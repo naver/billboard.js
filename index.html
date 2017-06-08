@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>billboard.js</title>
+    <meta name="description" content="Re-usable easy interface JavaScript chart library, based on D3 v4+" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+    <!-- libraries -->
+    <script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css" />
+    <link rel="stylesheet" href="./css/styles.css" />
+
+    <!-- highlight.js -->
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/default.min.css" />
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/rainbow.min.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/javascript.min.js"></script>
+
+    <!-- d3 & billboard.js -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="./release/latest/dist/billboard.min.js"></script>
+    <link rel="stylesheet" href="./release/latest/dist/billboard.min.css" />
+</head>
+<body>
+<nav id="topNav" class="navbar navbar-default navbar-fixed-top">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-navbar">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand page-scroll" href="#first">billboard.js</a>
+        </div>
+        <div class="navbar-collapse collapse" id="bs-navbar">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a class="page-scroll" href="#one">About</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#features">Features</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="#download">Download</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="./release/latest/doc/" target="bb">API</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="http://viewoss.navercorp.com/chart/billboard.js/blob/master/demo/" target="bb">Examples</a>
+                </li>
+                <li>
+                    <a class="page-scroll" href="//github.com/naver/billboard.js" target="bb">GitHub</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+<header id="first">
+    <div class="header-content">
+        <div class="inner">
+            <svg id="title-svg" viewBox="0 0 500 80">
+                <!-- Symbol-->
+                <symbol id="s-text">
+                    <text text-anchor="middle" x="50%" y="50%" dy=".35em">billboard.js</text>
+                </symbol>
+                <!-- Duplicate symbols-->
+                <use class="text" xlink:href="#s-text"></use>
+                <use class="text" xlink:href="#s-text"></use>
+                <use class="text" xlink:href="#s-text"></use>
+                <use class="text" xlink:href="#s-text"></use>
+                <use class="text" xlink:href="#s-text"></use>
+            </svg>
+
+            <h1 id="title-text">billboard.js</h1>
+            <h4>Re-usable easy interface JavaScript chart library, based on D3 v4+.</h4>
+
+            <!-- chart holder -->
+            <div id="chart"></div>
+
+            <hr>
+            <a href="#" class="btn btn-primary btn-xl">Get Started</a>
+        </div>
+    </div>
+    <script>
+	    if (/(Trident|Android [2-4]\.)/.test(navigator.userAgent)) {
+		    $("#title-svg").hide();
+		    $("#title-text").show();
+	    } else {
+		    $("#title-svg").show();
+		    $("#title-text").hide();
+	    }
+    </script>
+</header>
+<section class="bg-primary" id="one">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 text-center">
+                <h2 class="margin-top-0 text-primary">billboard.js, the "chart" library</h2>
+                <br>
+                <p class="text-faded">
+                    The name "billboard" came from the famous "<span style="text-decoration:underline">billboard chart</span>" which everybody knows.<br>
+                    billboard.js provide the easiest way to create 'chart' instantly.
+                </p>
+
+                <hr>
+                <h3>Quick Start Guide</h3>
+                <hr>
+                <p>
+                    <h4>Step 1. Load billboard.js with D3.js</h4>
+
+                    <pre><code class="xml">&lt;!-- Load D3.js -->
+&lt;script src="https://d3js.org/d3.v4.min.js">&lt;/script>
+
+&lt;!-- Load billboard.js with style -->
+&lt;script src="billboard.js">&lt;/script>
+&lt;link rel="stylesheet" href="billboard.css"></code></pre>
+
+                    <h4>Step 2. Setup your chart holder</h4>
+
+                    <pre><code class="xml">&lt;div id="chart">&lt;/div></code></pre>
+
+                    <h4>Step 3. Generate chart with options</h4>
+
+<pre><code class="javascript">var chart = bb.generate({
+    bindto: "#chart",
+    data: {
+        type: "bar",
+        columns: [
+            ["data1", 30, 200, 100, 400, 150, 250],
+            ["data2", 130, 100, 140, 200, 150, 50]
+        ]
+    }
+});</code></pre>
+
+                <p>
+                    <h4>Step 4. Done.</h4>
+                    Enjoy flavor of your data visualization with billboard.js!
+                </p>
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="container-fluid" id="features">
+    <div class="row">
+        <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
+            <h2 class="text-center text-primary">Features</h2>
+            <hr>
+            <div class="media wow fadeInRight">
+                <h3>Simple</h3>
+                <div class="media-body media-middle">
+                    <p>Chart generation is super easy. With detailed options, you can create chart instantly!</p>
+                </div>
+            </div>
+            <hr>
+            <div class="media wow fadeIn">
+                <h3>D3 v4+ Compatible</h3>
+                <div class="media-body media-middle">
+                    <p>Yes, billboard.js works on D3 v4+, what everybody was waiting for!</p>
+                </div>
+            </div>
+            <hr>
+            <div class="media wow fadeInRight">
+                <h3>Modular</h3>
+                <div class="media-body media-middle">
+                    <p>Every code was written as ESM(ES Module) with ES6+ syntax.</p>
+                </div>
+            </div>
+            <hr>
+            <div class="media wow fadeIn">
+                <h3>Fully compatible with C3.js</h3>
+                <div class="media-body media-middle">
+                    <p>billboard.js is forked project of the popular C3.js. You can migrate with the minimal change of your code, taking all the advantages which billboard.js brings.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<aside class="bg-dark" id="download">
+    <div class="container text-center">
+        <div class="call-to-action">
+            <h2 class="text-primary">Download</h2>
+            <h6 class="wide-space text-center">The current latest version is <span id="version">1.0</span>.</h6><br>
+
+            <h6 class="wide-space text-center">for DEVELOPMENT</h6>
+            <hr>
+            <p class="download">
+                <a href="./release/latest/billboard.js" download class="btn btn-default btn-lg wow flipInX">billboard.js</a>
+                <a href="./release/latest/billboard.css" download class="btn btn-default btn-lg wow flipInX">billboard.css</a>
+            </p>
+
+            <h6 class="wide-space text-center">for PRODUCTION</h6>
+            <hr>
+            <p class="download">
+                <a href="./release/latest/billboard.min.js" download class="btn btn-default btn-lg wow flipInX">billboard.min.js</a>
+                <a href="./release/latest/billboard.min.css" download class="btn btn-default btn-lg wow flipInX">billboard.min.css</a>
+            </p><br>
+
+            <h6 class="wide-space text-center">or install from NPM</h6>
+            <hr>
+            <pre style="width:280px"><code>$ npm install billboard.js</code></pre>
+        </div>
+    </div>
+</aside>
+
+<footer id="footer">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xs-12 col-sm-12 column text-right">
+                <h4 class="raleway">billboard.js</h4>
+                <p>This project is licensed under the MIT license.</p>
+                <ul class="list-unstyled">
+                    <li><a href="http://www.navercorp.com/" target="_new">© NAVER Corp.</a></li>
+                </ul>
+            </div>
+        </div>
+        <br/>
+        <!--<span class="pull-right text-muted small"><a href="http://www.bootstrapzero.com">Landing Zero by BootstrapZero</a> ©2015 Company</span>-->
+    </div>
+</footer>
+<script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="./js/wow.js"></script>
+<script src="./js/scripts.js"></script>
+<script>
+$(function() {
+	// generate chart
+    var chart = bb.generate({
+        bindto: "#chart",
+        data: {
+	        type: "bar",
+            columns: [
+                ["data1", 30, 200, 100, 400, 150, 250],
+                ["data2", 130, 100, 140, 200, 150, 50]
+            ]
+        },
+        color: {
+            pattern: ["#FF6384", "#36A2EB"]
+        },
+        point: {
+            r: 8
+        }
+    });
+
+    // interval for demo
+    var interval;
+
+    $("#first a").click(function(e) {
+    	e.preventDefault();
+
+	    if (interval) {
+		    return;
+	    }
+
+	    var queue = [
+		    ["line", "data1"],
+		    ["line", "data2"],
+		    ["step", "data1"],
+		    ["area", "data2"],
+		    ["donut"],
+		    ["spline"],
+		    ["pie"],
+		    ["area-spline"],
+		    ["bar"]
+	    ];
+
+	    interval = setInterval(function() {
+		    if (queue.length) {
+			    chart.transform.apply(chart, queue.shift());
+		    } else {
+			    clearInterval(interval);
+			    interval = null;
+		    }
+	    }, 1000);
+    });
+
+    $("#version").html(bb.version);
+    hljs.initHighlightingOnLoad();
+});
+</script>
+</body>
+</html>
