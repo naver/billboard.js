@@ -1,9 +1,15 @@
-.c3-target.c3-focused {
-  opacity: 1;
-}
-.c3-target.c3-focused path.c3-line, .c3-target.c3-focused path.c3-step {
-  stroke-width: 2px;
-}
-.c3-target.c3-defocused {
-  opacity: 0.3 !important;
+.bb-target {
+  &.bb-focused {
+    opacity: 1;
+  }
+
+  &.bb-focused {
+    path.bb-line, path.bb-step {
+      stroke-width: 2px;
+    }
+  }
+
+  &.bb-defocused {
+    opacity: 0.3 !important;
+  }
 }

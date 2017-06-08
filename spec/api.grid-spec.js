@@ -1,119 +1,129 @@
-describe('c3 api grid', function () {
-    'use strict';
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+import util from "./assets/util";
 
-    var chart, args;
+describe("API grid", function() {
+	let chart;
+	let args;
 
-    beforeEach(function (done) {
-        chart = window.initChart(chart, args, done);
-    });
+	beforeEach(done => {
+		chart = util.initChart(chart, args, done);
+	});
 
-    describe('ygrid.add and ygrid.remove', function () {
+	describe("ygrid.add and ygrid.remove", () => {
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				}
+			};
 
-        it('should update args', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, 200, 100, 400, 150, 250]
-                    ]
-                }
-            };
-            expect(true).toBeTruthy();
-        });
+			expect(true).to.be.ok;
+		});
 
-        it('should update y grids', function (done) {
-            var main = chart.internal.main,
-                expectedGrids = [
-                    {
-                        value: 100,
-                        text: 'Pressure Low'
-                    },
-                    {
-                        value: 200,
-                        text: 'Pressure High'
-                    }
-                ],
-                grids;
+		it("should update y grids", done => {
+			const main = chart.internal.main;
+			const expectedGrids = [{
+					value: 100,
+					text: "Pressure Low"
+				},
+				{
+					value: 200,
+					text: "Pressure High"
+				}];
 
-            // Call ygrids.add
-            chart.ygrids.add(expectedGrids);
-            setTimeout(function () {
-                grids = main.selectAll('.c3-ygrid-line');
-                expect(grids.size()).toBe(expectedGrids.length);
-                grids.each(function (d, i) {
-                    var y = +d3.select(this).select('line').attr('y1'),
-                        text = d3.select(this).select('text').text(),
-                        expectedY = Math.round(chart.internal.y(expectedGrids[i].value)),
-                        expectedText = expectedGrids[i].text;
-                    expect(y).toBe(expectedY);
-                    expect(text).toBe(expectedText);
-                });
+			let grids;
 
-                // Call ygrids.remove
-                chart.ygrids.remove(expectedGrids);
-                setTimeout(function () {
-                    grids = main.selectAll('.c3-ygrid-line');
-                    expect(grids.size()).toBe(0);
-                }, 500);
+			// Call ygrids.add
+			chart.ygrids.add(expectedGrids);
 
-            }, 500);
+			setTimeout(() => {
+				grids = main.selectAll(".bb-ygrid-line");
 
-            setTimeout(function () {
-                done();
-            }, 1200);
-        });
+				expect(grids.size()).to.be.equal(expectedGrids.length);
 
-        it("should update x ygrids even if it's zoomed", function (done) {
-            var main = chart.internal.main,
-                expectedGrids = [
-                    {
-                        value: 0,
-                        text: 'Pressure Low'
-                    },
-                    {
-                        value: 1,
-                        text: 'Pressure High'
-                    }
-                ],
-                grids, domain;
+				grids.each(function (d, i) {
+					const y = +d3.select(this).select("line").attr("y1");
+					const text = d3.select(this).select("text").text();
+					const expectedY = Math.round(chart.internal.y(expectedGrids[i].value));
+					const expectedText = expectedGrids[i].text;
 
-            chart.zoom([0, 2]);
-            setTimeout(function () {
+					expect(y).to.be.equal(expectedY);
+					expect(text).to.be.equal(expectedText);
+				});
 
-                // Call xgrids
-                chart.xgrids(expectedGrids);
-                setTimeout(function () {
-                    grids = main.selectAll('.c3-xgrid-line');
-                    expect(grids.size()).toBe(expectedGrids.length);
-                    grids.each(function (d, i) {
-                        var x = +d3.select(this).select('line').attr('x1'),
-                            text = d3.select(this).select('text').text(),
-                            expectedX = Math.round(chart.internal.x(expectedGrids[i].value)),
-                            expectedText = expectedGrids[i].text;
-                        expect(x).toBe(expectedX);
-                        expect(text).toBe(expectedText);
-                    });
+				// Call ygrids.remove
+				chart.ygrids.remove(expectedGrids);
 
-                    // check if it was not rescaled
-                    domain = chart.internal.y.domain();
-                    expect(domain[0]).toBeLessThan(0);
-                    expect(domain[1]).toBeGreaterThan(400);
+				setTimeout(() => {
+					grids = main.selectAll(".bb-ygrid-line");
 
-                    // Call xgrids.remove
-                    chart.xgrids.remove(expectedGrids);
-                    setTimeout(function () {
-                        grids = main.selectAll('.c3-xgrid-line');
-                        expect(grids.size()).toBe(0);
-                    }, 500); // for xgrids.remove()
+					expect(grids.size()).to.be.equal(0);
+				}, 500);
 
-                }, 500); // for xgrids()
+			}, 500);
 
-            }, 500); // for zoom
+			setTimeout(done, 1200);
+		});
 
-            setTimeout(function () {
-                done();
-            }, 1700);
-        });
+		it("should update x ygrids even if it's zoomed", done => {
+			const main = chart.internal.main;
+			const expectedGrids = [{
+						value: 0,
+						text: "Pressure Low"
+					},
+					{
+						value: 1,
+						text: "Pressure High"
+					}
+				];
 
-    });
+			let grids;
+			let domain;
 
+			chart.zoom([0, 2]);
+
+			setTimeout(() => {
+
+				// Call xgrids
+				chart.xgrids(expectedGrids);
+				setTimeout(() => {
+					grids = main.selectAll(".bb-xgrid-line");
+
+					expect(grids.size()).to.be.equal(expectedGrids.length);
+
+					grids.each(function(d, i) {
+						const x = +d3.select(this).select("line").attr("x1");
+						const text = d3.select(this).select("text").text();
+						const expectedX = Math.round(chart.internal.x(expectedGrids[i].value));
+						const expectedText = expectedGrids[i].text;
+
+						expect(x).to.be.equal(expectedX);
+						expect(text).to.be.equal(expectedText);
+					});
+
+					// check if it was not rescaled
+					domain = chart.internal.y.domain();
+					expect(domain[0]).to.be.below(0);
+					expect(domain[1]).to.be.above(400);
+
+					// Call xgrids.remove
+					chart.xgrids.remove(expectedGrids);
+
+					setTimeout(() => {
+						grids = main.selectAll(".bb-xgrid-line");
+
+						expect(grids.size()).to.be.equal(0);
+					}, 500); // for xgrids.remove()
+				}, 500); // for xgrids()
+			}, 500); // for zoom
+
+			setTimeout(done, 1700);
+		});
+	});
 });

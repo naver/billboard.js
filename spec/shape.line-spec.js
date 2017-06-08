@@ -1,170 +1,159 @@
-describe('c3 chart shape line', function () {
-    'use strict';
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+/* global describe, beforeEach, it, expect */
+import {
+	selectAll as d3SelectAll,
+	select as d3Select,
+} from "d3";
+import util from "./assets/util";
 
-    var chart, args;
+describe("chart shape line", () => {
+	let chart;
+	let args;
 
-    beforeEach(function (done) {
-        chart = window.initChart(chart, args, done);
-    });
+	beforeEach(done => {
+		chart = util.initChart(chart, args, done);
+	});
 
-    var parseSvgPath = window.parseSvgPath;
+	const parseSvgPath = util.parseSvgPath;
 
-    describe('shape-rendering for line chart', function () {
+	describe("shape-rendering for line chart", () => {
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", -150, 120, 110, 140, 115, 125]
+					],
+					type: "line"
+				}
+			};
+			return expect(true).to.be.ok;
+		});
 
-        it('should update args', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, 200, 100, 400, -150, 250],
-                        ['data2', 50, 20, 10, 40, 15, 25],
-                        ['data3', -150, 120, 110, 140, 115, 125]
-                    ],
-                    type: 'line'
-                }
-            };
-            expect(true).toBeTruthy();
+		it("Should render the lines correctly", done => {
+			setTimeout(() => {
+				const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
+				const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
 
-        });
+				expect(commands.length).to.be.equal(6);
+				done();
+			}, 500);
+		});
 
-        it("Should render the lines correctly", function(done) {
-             setTimeout(function () {
-                var target = chart.internal.main.select('.c3-chart-line.c3-target-data1');
-                var commands = parseSvgPath( target.select('.c3-line-data1').attr('d'));
-                expect(commands.length).toBe(6);
-                done();
-            }, 500);
-        });
+		it("should not have shape-rendering when it's line chart", () => {
+			d3SelectAll(".bb-line").each(function() {
+				const style = d3Select(this).style("shape-rendering");
 
-        it("should not have shape-rendering when it's line chart", function () {
-            d3.selectAll('.c3-line').each(function () {
-                var style = d3.select(this).style('shape-rendering');
-                expect(style).toBe('auto');
-            });
-        });
+				expect(style).to.be.equal("auto");
+			});
+		});
 
-        it('should change to step chart', function () {
-            args.data.type = 'step';
-            expect(true).toBeTruthy();
-        });
+		it("should change to step chart", () => {
+			args.data.type = "step";
+			return expect(true).to.be.ok;
+		});
 
-        it("should have shape-rendering = crispedges when it's step chart", function () {
-            d3.selectAll('.c3-line').each(function () {
-                var style = d3.select(this).style('shape-rendering').toLowerCase();
-                expect(style).toBe('crispedges');
-            });
-        });
+		it("should have shape-rendering = crispedges when it's step chart", () => {
+			d3SelectAll(".bb-line").each(function() {
+				const style = d3Select(this).style("shape-rendering")
+					.toLowerCase();
 
-        it('should change to spline chart', function () {
-            args.data.type = 'spline';
-            expect(true).toBeTruthy();
-        });
+				expect(style).to.be.equal("crispedges");
+			});
+		});
 
-        it('should use cardinal interpolation by default', function () {
-            expect(chart.internal.config.spline_interpolation_type).toBe('cardinal');
-        });
+		it("should change to spline chart", () => {
+			args.data.type = "spline";
+			return expect(true).to.be.ok;
+		});
 
-    });
+		it("should use cardinal interpolation by default", () => {
+			expect(chart.internal.config.spline_interpolation_type).to.be.equal("cardinal");
+		});
+	});
 
-    describe('point.show option', function () {
+	describe("point.show option", () => {
+		it("should change args to include null data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, null, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", -150, 120, 110, 140, 115, 125]
+					],
+					type: "line"
+				}
+			};
+			return expect(true).to.be.ok;
+		});
 
-        it('should change args to include null data', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, null, 100, 400, -150, 250],
-                        ['data2', 50, 20, 10, 40, 15, 25],
-                        ['data3', -150, 120, 110, 140, 115, 125]
-                    ],
-                    type: 'line'
-                }
-            };
-            expect(true).toBeTruthy();
-        });
+		it("should not show the circle for null", done => {
+			setTimeout(() => {
+				const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
 
-        it('should not show the circle for null', function (done) {
-            setTimeout(function () {
-                var target = chart.internal.main.select('.c3-chart-line.c3-target-data1');
-                expect(+target.select('.c3-circle-0').style('opacity')).toBe(1);
-                expect(+target.select('.c3-circle-1').style('opacity')).toBe(0);
-                expect(+target.select('.c3-circle-2').style('opacity')).toBe(1);
-                done();
-            }, 500);
-        });
+				expect(+target.select(".bb-circle-0").style("opacity")).to.be.equal(1);
+				expect(+target.select(".bb-circle-1").style("opacity")).to.be.equal(0);
+				expect(+target.select(".bb-circle-2").style("opacity")).to.be.equal(1);
+				done();
+			}, 500);
+		});
 
-        it('should not draw a line segment for null data', function(done) {
-            setTimeout(function () {
-                var target = chart.internal.main.select('.c3-chart-line.c3-target-data1');
-                var commands = parseSvgPath( target.select('.c3-line-data1').attr('d'));
-                var segments = 0;
-                for(var i = 0; i < commands.length; i++) {
-                    (commands[i].command === 'L') ? segments++ : null;
-                }
-                expect(segments).toBe(3);
-                done();
-            }, 500);
-        });
+		it("should not draw a line segment for null data", done => {
+			setTimeout(() => {
+				const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
+				const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
+				let segments = 0;
 
-        // it('should change args to include null data on scatter plot', function () {
-        //     args = {
-        //         data: {
-        //             columns: [
-        //                 ['data1', 30, null, 100, 400, -150, 250],
-        //                 ['data2', 50, 20, 10, 40, 15, 25],
-        //                 ['data3', -150, 120, 110, 140, 115, 125]
-        //             ],
-        //             type: 'scatter'
-        //         }
-        //     };
-        //     expect(true).toBeTruthy();
-        // });
+				for (let i = 0; i < commands.length; i++) {
+					commands[i].command === "L" && segments++;
+				}
+				expect(segments).to.be.equal(3);
+				done();
+			}, 500);
+		});
+	});
 
-        // it('should not show the circle for null', function (done) {
-        //     setTimeout(function () {
-        //         var target = chart.internal.main.select('.c3-chart-line.c3-target-data1');
-        //         expect(+target.select('.c3-circle-0').style('opacity')).toBe(0.5);
-        //         expect(+target.select('.c3-circle-1').style('opacity')).toBe(0);
-        //         expect(+target.select('.c3-circle-2').style('opacity')).toBe(0.5);
-        //         done();
-        //     }, 500);
-        // });
+	describe("spline.interpolation option", () => {
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", -150, 120, 110, 140, 115, 125]
+					],
+					type: "spline"
+				},
+				spline: {
+					interpolation: {
+						type: "monotone-x"
+					}
+				}
+			};
 
-    });
+			return expect(true).to.be.ok;
+		});
 
-    describe('spline.interpolation option', function () {
+		it("should update interpolation function", () => {
+			const to = chart.internal.getInterpolateType(chart.data()[0]);
 
-        it('should update args', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, 200, 100, 400, -150, 250],
-                        ['data2', 50, 20, 10, 40, 15, 25],
-                        ['data3', -150, 120, 110, 140, 115, 125]
-                    ],
-                    type: 'spline'
-                },
-                spline: {
-                    interpolation: {
-                        type: 'monotone'
-                    }
-                }
-            };
+			expect(to).to.be.equal("monotone-x");
+		});
 
-            expect(true).toBeTruthy();
-        });
+		it("should not use a non-valid interpolation", () => {
+			args.spline.interpolation.type = "foo";
+			return expect(true).to.be.ok;
+		});
 
-        it('should update interpolation function', function() {
-            expect(chart.internal.getInterpolate(chart.data()[0])).toBe('monotone');
-        });
+		it("should use cardinal interpolation when given option is not valid", () => {
+			const to = chart.internal.getInterpolateType(chart.data()[0]);
 
-        it('should not use a non-valid interpolation', function () {
-            args.spline.interpolation.type = 'foo';
-            expect(true).toBeTruthy();
-        });
-
-        it('should use cardinal interpolation when given option is not valid', function() {
-            expect(chart.internal.getInterpolate(chart.data()[0])).toBe('cardinal');
-        });
-
-    });
-
+			expect(to).to.be.equal("cardinal");
+		});
+	});
 });

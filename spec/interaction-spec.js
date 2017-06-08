@@ -1,116 +1,136 @@
-describe('c3 chart interaction', function () {
-    'use strict';
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+/* global describe, beforeEach, it, expect */
+import {
+	selectAll as d3SelectAll,
+	select as d3Select,
+} from "d3";
+import util from "./assets/util";
 
-    var chart, args;
+describe("chart interaction", () => {
+	const isChrome = window.navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
+	let chart;
+	let args;
 
-    beforeEach(function (done) {
-        chart = window.initChart(chart, args, done);
-    });
+	beforeEach(done => {
+		chart = util.initChart(chart, args, done);
+	});
 
-    describe('generate event rects', function () {
+	describe("generate event rects", () => {
+		describe("custom x", () => {
+			it("should generate bar chart", () => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", 0, 1000, 3000, 10000],
+							["data", 10, 10, 10, 10]
+						],
+						type: "bar"
+					}
+				};
+				return expect(true).to.be.ok;
+			});
 
-        describe('custom x', function () {
+			it("should have 4 event rects properly", () => {
+				const lefts = isChrome ? [69, 130, 198, 403] : [78, 138, 205.5, 407.5];
+				const widths = isChrome ? [61, 68, 205, 197.5] : [60, 67.5, 202, 194];
 
-            it('should generate bar chart', function () {
-                args = {
-                    data: {
-                        x: 'x',
-                        columns: [
-                            ['x', 0, 1000, 3000, 10000],
-                            ['data', 10, 10, 10, 10]
-                        ],
-                        type: 'bar'
-                    }
-                };
-                expect(true).toBeTruthy();
-            });
+				d3SelectAll(".bb-event-rect").each(function(d, i) {
+					const box = d3Select(this).node()
+						.getBoundingClientRect();
 
-            it('should have 4 event rects properly', function () {
-                var lefts = [78, 138, 205.5, 407.5],
-                    widths = [60, 67.5, 202, 194];
-                d3.selectAll('.c3-event-rect').each(function (d, i) {
-                    var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBeCloseTo(lefts[i], -2);
-                    expect(box.width).toBeCloseTo(widths[i], -2);
-                });
-            });
+					expect(box.left).to.be.closeTo(lefts[i], 10);
+					expect(box.width).to.be.closeTo(widths[i], 10);
+				});
+			});
 
-            it('should generate bar chart with only one data', function () {
-                args = {
-                    data: {
-                        x: 'x',
-                        columns: [
-                            ['x', 0],
-                            ['data', 10]
-                        ],
-                        type: 'bar'
-                    }
-                };
-                expect(true).toBeTruthy();
-            });
+			it("should generate bar chart with only one data", () => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", 0],
+							["data", 10]
+						],
+						type: "bar"
+					}
+				};
+				return expect(true).to.be.ok;
+			});
 
-            it('should have 1 event rects properly', function () {
-                var eventRects = d3.selectAll('.c3-event-rect');
-                expect(eventRects.size()).toBe(1);
-                eventRects.each(function () {
-                    var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBeCloseTo(40.5, -2);
-                    expect(box.width).toBeCloseTo(598, -2);
-                });
-            });
-        });
+			it("should have 1 event rects properly", () => {
+				const eventRects = d3SelectAll(".bb-event-rect");
 
-        describe('timeseries', function () {
+				expect(eventRects.size()).to.be.equal(1);
 
-            it('should generate line chart with timeseries', function () {
-                args = {
-                    data: {
-                        x: 'x',
-                        columns: [
-                            ['x', '20140101', '20140201', '20140210',  '20140301'],
-                            ['data', 10, 10, 10, 10]
-                        ]
-                    }
-                };
-                expect(true).toBeTruthy();
-            });
+				eventRects.each(function() {
+					const box = d3Select(this).node()
+						.getBoundingClientRect();
 
-            it('should have 4 event rects properly', function () {
-                var lefts = [43.5, 193, 353, 500],
-                    widths = [149.5, 160, 147, 136];
-                d3.selectAll('.c3-event-rect').each(function (d, i) {
-                    var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBeCloseTo(lefts[i], -2);
-                    expect(box.width).toBeCloseTo(widths[i], -2);
-                });
+					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
+					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);
+				});
+			});
+		});
 
-            });
+		describe("timeseries", () => {
+			it("should generate line chart with timeseries", () => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "20140101", "20140201", "20140210", "20140301"],
+							["data", 10, 10, 10, 10]
+						]
+					}
+				};
+				return expect(true).to.be.ok;
+			});
 
-            it('should generate line chart with only 1 data timeseries', function () {
-                args = {
-                    data: {
-                        x: 'x',
-                        columns: [
-                            ['x', '20140101'],
-                            ['data', 10]
-                        ]
-                    }
-                };
-                expect(true).toBeTruthy();
-            });
+			it("should have 4 event rects properly", () => {
+				const lefts = isChrome ? [33.5, 185.5, 348, 497.5] : [43.5, 193, 353, 500];
+				const widths = isChrome ? [152, 162.5, 149.5, 138.5] : [149.5, 160, 147, 136];
 
-            it('should have 1 event rects properly', function () {
-                var eventRects = d3.selectAll('.c3-event-rect');
-                expect(eventRects.size()).toBe(1);
-                eventRects.each(function () {
-                    var box = d3.select(this).node().getBoundingClientRect();
-                    expect(box.left).toBeCloseTo(40.5, -2);
-                    expect(box.width).toBeCloseTo(598, -2);
-                });
-            });
+				d3SelectAll(".bb-event-rect").each(function(d, i) {
+					const box = d3Select(this).node()
+						.getBoundingClientRect();
 
-        });
+					expect(box.left).to.be.closeTo(lefts[i], 10);
+					expect(box.width).to.be.closeTo(widths[i], 10);
+				});
+			});
 
-    });
+			it("should generate line chart with only 1 data timeseries", () => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "20140101"],
+							["data", 10]
+						]
+					}
+				};
 
+				return expect(true).to.be.ok;
+			});
+
+			it("should have 1 event rects properly", () => {
+				const eventRects = d3SelectAll(".bb-event-rect");
+
+				expect(eventRects.size()).to.be.equal(1);
+
+				eventRects.each(function() {
+					const box = d3Select(this).node()
+						.getBoundingClientRect();
+
+					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
+					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);
+				});
+			});
+		});
+	});
 });

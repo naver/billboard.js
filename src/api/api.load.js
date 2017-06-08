@@ -1,0 +1,129 @@
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import Chart from "../internals/Chart";
+import {extend} from "../internals/util";
+
+extend(Chart.prototype, {
+	/**
+	 * Load data to the chart.<br><br>
+	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+	 * - <b>Note:</b>
+	 * unload should be used if some data needs to be unloaded simultaneously. If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
+	 * done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering
+	 * @method load
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args
+	 * - If url, json, rows and columns given, the data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added.
+	 * - If classes given, the classes specifed by data.classes will be updated. classes must be Object that has target id as keys.
+	 * - If categories given, the categories specifed by axis.x.categories or data.x will be updated. categories must be Array.
+	 * - If axes given, the axes specifed by data.axes will be updated. axes must be Object that has target id as keys.
+	 * - If colors given, the colors specifed by data.colors will be updated. colors must be Object that has target id as keys.
+	 * - If type or types given, the type of targets will be updated. type must be String and types must be Object.
+	 * - If unload given, data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded.
+	 * - If done given, the specified function will be called after data loded.
+	 * @example
+	 *  // Load data1 and unload data2 and data3
+	 *  chart.load({
+	 *     columns: [
+	 *        ["data1", 100, 200, 150, ...],
+	 *        ...
+	 *    ],
+	 *    unload: ["data2", "data3"]
+	 *  });
+	 */
+	load(args) {
+		const $$ = this.internal;
+		const config = $$.config;
+
+		// update xs if specified
+		args.xs && $$.addXs(args.xs);
+
+		// update names if exists
+		"names" in args &&
+			this.data.names(args.names);
+
+		// update classes if exists
+		"classes" in args &&
+		Object.keys(args.classes).forEach(id => {
+			config.data_classes[id] = args.classes[id];
+		});
+
+		// update categories if exists
+		if ("categories" in args && $$.isCategorized()) {
+			config.axis_x_categories = args.categories;
+		}
+
+		// update axes if exists
+		"axes" in args &&
+		Object.keys(args.axes).forEach(id => {
+			config.data_axes[id] = args.axes[id];
+		});
+
+
+		// update colors if exists
+		"colors" in args &&
+		Object.keys(args.colors).forEach(id => {
+			config.data_colors[id] = args.colors[id];
+		});
+
+		// use cache if exists
+		if ("cacheIds" in args && $$.hasCaches(args.cacheIds)) {
+			$$.load($$.getCaches(args.cacheIds), args.done);
+			return;
+		}
+
+		// unload if needed
+		if ("unload" in args) {
+			// TODO: do not unload if target will load (included in url/rows/columns)
+			$$.unload(
+				$$.mapToTargetIds(
+					typeof args.unload === "boolean" && args.unload ?
+						null : args.unload), () => $$.loadFromArgs(args)
+			);
+		} else {
+			$$.loadFromArgs(args);
+		}
+	},
+
+	/**
+	 * Unload data to the chart.<br><br>
+	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+	 * - <b>Note:</b>
+	 * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.<br>
+	 * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
+	 * @method unload
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args
+	 * - If ids given, the data that has specified target id will be unloaded. ids should be String or Array. If ids is not specified, all data will be unloaded.
+	 * - If done given, the specified function will be called after data loded.
+	 * @example
+	 *  // Unload data2 and data3
+	 *  chart.unload({
+	 *    ids: ["data2", "data3"]
+	 *  });
+	 */
+	unload(argsValue) {
+		const $$ = this.internal;
+		let args = argsValue || {};
+
+		if (args instanceof Array) {
+			args = {ids: args};
+		} else if (typeof args === "string") {
+			args = {ids: [args]};
+		}
+
+		$$.unload($$.mapToTargetIds(args.ids), () => {
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true,
+				withLegend: true
+			});
+
+			args.done && args.done();
+		});
+	}
+});

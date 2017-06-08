@@ -1,24 +1,28 @@
-.c3-chart-arcs-title {
+.bb-chart-arcs-title {
   dominant-baseline: middle;
   font-size: 1.3em;
 }
 
-.c3-chart-arcs .c3-chart-arcs-background {
-  fill: #e0e0e0;
-  stroke: none;
-}
-.c3-chart-arcs .c3-chart-arcs-gauge-unit {
-  fill: #000;
-  font-size: 16px;
-}
-.c3-chart-arcs .c3-chart-arcs-gauge-max {
-  fill: #777;
-}
-.c3-chart-arcs .c3-chart-arcs-gauge-min {
-  fill: #777;
+.bb-chart-arcs {
+  .bb-chart-arcs-background {
+    fill: #e0e0e0;
+    stroke: none;
+  }
+
+  .bb-chart-arcs-gauge-unit {
+    fill: #000;
+    font-size: 16px;
+  }
+
+  .bb-chart-arcs-gauge-max {
+    fill: #777;
+  }
+
+  .bb-chart-arcs-gauge-min {
+    fill: #777;
+  }
 }
 
-.c3-chart-arc .c3-gauge-value {
+.bb-chart-arc .bb-gauge-value {
   fill: #000;
-/*  font-size: 28px !important;*/
 }

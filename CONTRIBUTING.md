@@ -1,40 +1,64 @@
-## Filing an issue
+# How to contribute to billboard.js
+billboard.js is opened to everyone and we're welcoming for any kind of contribution.
+We believe that our project can grow with your interests helping others' necessities.
 
-Before filing an issue, please [search the queue](https://github.com/c3js/c3/issues) to make sure it hasn't already been reported.
+## Style Guide
 
-If a bug, please include the following —
+billboard.js has several style guidelines to follow.
+Before your start, please read attentively below instructions.
 
-1. What version of C3?
-1. What browsers have you confirmed it in?
-1. Can you isolate the issue by providing a jsFiddle demonstrating it in a minimalist capacity?
+### Linting and Code Convention
+To maintain the code style, we adopted [ESLint](http://eslint.org/) to maintain our code quality. 
+The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are modified version based on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript). 
 
-Please *do not* ask for support using the issue queue. For support, please ask [on chat](https://gitter.im/c3js/c3) or [the mailing list](groups.google.com/forum/#!forum/c3js).
+### Commit Log Guidelines
+billboard.js use formatted commit logs for many different purposes (like creating CHANGELOG, ease history searching, etc.).
+To not break, you'll be forced to follow our commit log guidelines.
+Before your commit/push, make sure following our commit log guidelines.
 
-##Building C3 from sources
+The outline is as below:
+```bash
+<type>(<module>): <subject>
+<BLANK LINE>
+<body>
+<BLANK LINE>
+<footer>
+```
 
- 1. **Clone the repo from GitHub**
+- **Types**
+  - **feat**: A new feature
+  - **fix**: A bug fix
+  - **docs**: Documentation only changes
+  - **style**: Changes that do not affect the meaning of the code. Such as white-space, formatting, missing semi-colons, etc.
+  - **refactor**: A code change that neither fixes a bug nor adds a feature
+  - **test**: Adding missing tests. Changing tests.
+  - **chore**: Changes to the build process or tools and libraries such as documentation generation
 
-        git clone https://github.com/c3js/c3.git
-        cd c3
+Example commit of fixing a bug:
+```bash
+Fix(Axis): Correct tick rendering
 
- 2. **Acquire build dependencies.** Make sure you have [Node.js](http://nodejs.org/) installed on your workstation. This is only needed to _build_ C3 from sources. C3 itself has no dependency on Node.js once it is built. Now run:
+Update condition of tick to avoide unnecessary tick rendering
 
-        npm install -g grunt-cli
-        npm install
+Ref #20
+```
 
-    The first `npm` command sets up the popular [Grunt](http://gruntjs.com/) build tool. You might need to run this command with `sudo` if you're on Linux or Mac OS X, or in an Administrator command prompt on Windows. The second `npm` command fetches the remaining build dependencies.
+## How to submit Pull Requests
+Steps to submit your pull request:
 
- 3. **Run the build tool**
+1. Fork `billboard.js` on your repository
+2. Create new branch from your billboard.js master branch (and be sure always to be up-to-date)
+3. Do your work
+4. Create test code for your work (when is possible)
+5. Run `npm run lint` for linting and code style check. (update until without any error or warnings)
+6. Run test code by `npm run test` or `npm run test:chrome` to run the test on chrome browser.
+   Make sure tests are all passed at least in latest version of Chrome(mobile/desktop).
+7. Write commit log following convention and push to your repository branch.
+8. Create a new PR from your branch to billboard.js.
+9. Wait for reviews.
+   When your contribution is well enough to be accepted, then will be merged to our branch.
+10. All done!
 
-        grunt
 
-    Now you'll find the built files in `c3.js`, `c3.min.js`, `c3.css` & `c3.min.css`.
-
-## Running the tests
-The `grunt` script will automatically run the specification suite and report its results.
-
-Or, if you want to run the specs in a browser (e.g., for debugging), simply open `spec/runner.html` in your browser.
-
-## Contributing your changes
-
-Add something about PRs here, indicate that PRs should not bump the version number & the build output files (`c3.js`, `c3.min.js`, `c3.css` & `c3.min.css`) should be excluded
+## License
+By contributing to billboard.js, you're agreeing that your contributions will be licensed under its [MIT](https://opensource.org/licenses/MIT) license.

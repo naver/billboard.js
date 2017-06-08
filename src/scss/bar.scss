@@ -1,6 +1,7 @@
-.c3-bar {
+.bb-bar {
   stroke-width: 0;
-}
-.c3-bar._expanded_ {
-  fill-opacity: 0.75;
+
+  &._expanded_ {
+    fill-opacity: 0.75;
+  }
 }

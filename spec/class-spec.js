@@ -1,61 +1,65 @@
-describe('c3 chart class', function () {
-    'use strict';
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+import util from "./assets/util";
 
-    var chart;
+describe("chart class", function() {
+	let chart;
+	let args = {
+		data: {
+			columns: [
+				["data1", 30, 200, 100, 400, 150, 250],
+				["data2 prefix", 50, 20, 10, 40, 15, 25],
+				["data3 мужчины", 150, 120, 110, 140, 115, 125]
+			]
+		}
+	};
 
-    var args = {
-        data: {
-            columns: [
-                ['data1', 30, 200, 100, 400, 150, 250],
-                ['data2 prefix', 50, 20, 10, 40, 15, 25],
-                ['data3 мужчины', 150, 120, 110, 140, 115, 125]
-            ]
-        }
-    };
+	beforeEach(done => {
+		chart = util.initChart(chart, args, done);
+	});
 
-    beforeEach(function (done) {
-        chart = window.initChart(chart, args, done);
-    });
+	describe("internal.getTargetSelectorSuffix", () => {
+		it("should not replace any characters", () => {
+			const input = "data1";
+			const expected = `-${input}`;
+			const suffix = chart.internal.getTargetSelectorSuffix(input);
 
-    describe('internal.getTargetSelectorSuffix', function () {
+			expect(suffix).to.be.equal(expected);
+		});
 
-        it('should not replace any characters', function () {
-            var input = 'data1',
-                expected = '-' + input,
-                suffix = chart.internal.getTargetSelectorSuffix(input);
-            expect(suffix).toBe(expected);
-        });
+		it("should replace space to '-'", () => {
+			const input = "data1 suffix";
+			const expected = "-data1-suffix";
+			const suffix = chart.internal.getTargetSelectorSuffix(input);
 
-        it('should replace space to "-"', function () {
-            var input = 'data1 suffix',
-                expected = '-data1-suffix',
-                suffix = chart.internal.getTargetSelectorSuffix(input);
-            expect(suffix).toBe(expected);
-        });
+			expect(suffix).to.be.equal(expected);
+		});
 
-        it('should replace space to "-" with multibyte characters', function () {
-            var input = 'data1 suffix 日本語',
-                expected = '-data1-suffix-日本語',
-                suffix = chart.internal.getTargetSelectorSuffix(input);
-            expect(suffix).toBe(expected);
-        });
+		it("should replace space to '-' with multibyte characters", () => {
+			const input = "data1 suffix 日本語";
+			const expected = "-data1-suffix-日本語";
+			const suffix = chart.internal.getTargetSelectorSuffix(input);
 
-        it('should replace special charactors to "-"', function () {
-            var input = 'data1 !@#$%^&*()_=+,.<>"\':;[]/|?~`{}\\',
-                expected = '-data1--------------------------------',
-                suffix = chart.internal.getTargetSelectorSuffix(input);
-            expect(suffix).toBe(expected);
-        });
+			expect(suffix).to.be.equal(expected);
+		});
 
-    });
+		it("should replace special characters to '-'", () => {
+			const input = "data1 !@#$%^&*()_=+,.<>\"':;[]/|?~`{}\\";
+			const expected = "-data1--------------------------------";
+			const suffix = chart.internal.getTargetSelectorSuffix(input);
 
-    describe('multibyte characters on chart', function () {
+			expect(suffix).to.be.equal(expected);
+		});
+	});
 
-        it('should replace space to "-" with multibyte characters', function () {
-            var selector = '.c3-target-data3-мужчины';
-            expect(chart.internal.main.select(selector).size()).toBe(1);
-        });
+	describe("multibyte characters on chart", () => {
+		it("should replace space to '-' with multibyte characters", () => {
+			const selector = ".bb-target-data3-мужчины";
 
-    });
-
+			expect(chart.internal.main.select(selector).size()).to.be.equal(1);
+		});
+	});
 });

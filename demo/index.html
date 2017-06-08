@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="description" content="Examples of billboard.js. billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.">
+    <meta name="author" content="NAVER Corp.">
+    <title>billboard.js - examples</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.8/fallback.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="./simple-sidebar.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css" />
+    <link rel="stylesheet" type="text/css" href="./tomorrow.css" />
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/javascript.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/4.9.0/d3.js"></script>
+    <script>
+        !function() {
+	        var localPath = "../dist/";
+	        var remotePath = "../../gh-pages/release/latest/dist/";
+
+	        fallback.load({
+		        billboard_js: [
+			        localPath + "billboard.js",
+			        remotePath + "billboard.js"
+		        ],
+		        billboard_css: [
+			        localPath + "billboard.css",
+			        remotePath + "billboard.css"
+		        ]
+	        });
+        }();
+    </script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+
+<div id="wrapper">
+
+    <!-- Sidebar -->
+    <div id="sidebar-wrapper">
+        <h2 class="sidebar-brand">billboard.js</h2>
+        <ul class="sidebar-nav"></ul>
+    </div>
+    <!-- /#sidebar-wrapper -->
+
+    <!-- Page Content -->
+    <div id="page-content-wrapper">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-lg-12">
+                    <a href="#menu-toggle" class="btn btn-default" id="menu-toggle">Menu</a>
+
+                    <h2 id="title"></h2>
+                    <div class="chart_area">
+                        <h1>billboard.js examples</h1>
+                        <p>
+                            Checkout the example, clicking one of item from the left list.
+                        </p>
+                    </div>
+                    <div class="code">
+                        <h4 class="sub_tit">Sample code</h4>
+                        <pre><code class="javascript"></code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- /#page-content-wrapper -->
+</div>
+<!-- /#wrapper -->
+
+<script src="./demo.js"></script>
+<script src="./chart.js"></script>
+<script>
+!function() {
+	if (/Android [2-4]/.test(navigator.userAgent)) {
+		var interval = setInterval(function () {
+			if (bb && bb.generate) {
+				billboardDemo.init();
+				clearInterval(interval);
+			}
+
+		}, 1000);
+	} else {
+		fallback.ready(function() {
+			billboardDemo.init();
+		});
+	}
+}();
+</script>
+</body>
+</html>

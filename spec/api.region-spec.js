@@ -1,250 +1,261 @@
-describe('c3 api region', function () {
-    'use strict';
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+import util from "./assets/util";
 
-    var chart, args;
+describe("API region", function() {
+	let chart;
+	let args;
 
-    beforeEach(function (done) {
-        chart = window.initChart(chart, args, done);
-    });
+	beforeEach(done => {
+		chart = util.initChart(chart, args, done);
+	});
 
-    describe('api.region', function () {
+	describe("api.region", () => {
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				regions: [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					}
+				]
+			};
 
-        it('should update args', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, 200, 100, 400, 150, 250],
-                    ]
-                },
-                regions: [
-                    {
-                        axis: 'y',
-                        start: 300,
-                        end: 400,
-                        class: 'green',
-                    },
-                    {
-                        axis: 'y',
-                        start: 0,
-                        end: 100,
-                        class: 'green',
-                    }
-                ]
-            };
-            expect(true).toBeTruthy();
-        });
+			expect(true).to.be.ok;
+		});
 
-        it('should update regions', function (done) {
-            var main = chart.internal.main,
-                expectedRegions = [
-                    {
-                        axis: 'y',
-                        start: 250,
-                        end: 350,
-                        class: 'red'
-                    },
-                    {
-                        axis: 'y',
-                        start: 25,
-                        end: 75,
-                        class: 'red'
-                    }
-                ],
-                regions;
+		it("should update regions", done => {
+			const main = chart.internal.main;
+			const expectedRegions = [
+					{
+						axis: "y",
+						start: 250,
+						end: 350,
+						class: "red"
+					},
+					{
+						axis: "y",
+						start: 25,
+						end: 75,
+						class: "red"
+					}
+				];
+			let regions;
 
-            // Call regions API
-            chart.regions(expectedRegions);
-            setTimeout(function () {
-                regions = main.selectAll('.c3-region');
-                expect(regions.size()).toBe(expectedRegions.length);
+			// Call regions API
+			chart.regions(expectedRegions);
 
-                regions.each(function (d, i) {
-                    var region = d3.select(this),
-                        rect = region.select('rect'),
-                        y = +rect.attr('y'),
-                        height = +rect.attr('height'),
-                        expectedClass = 'red',
-                        unexpectedClass = 'green',
-                        expectedStart = Math.round(chart.internal.y(expectedRegions[i].start)),
-                        expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end)),
-                        expectedY = expectedEnd,
-                        expectedHeight = expectedStart - expectedEnd;
-                    expect(y).toBeCloseTo(expectedY, -1);
-                    expect(height).toBeCloseTo(expectedHeight, -1);
-                    expect(region.classed(expectedClass)).toBeTruthy();
-                    expect(region.classed(unexpectedClass)).toBeFalsy();
-                });
-            }, 500);
+			setTimeout(() => {
+				regions = main.selectAll(".bb-region");
 
-            setTimeout(function () {
-                done();
-            }, 1000);
-        });
-    });
+				expect(regions.size()).to.be.equal(expectedRegions.length);
 
-    describe('api.region.add', function () {
+				regions.each(function(d, i) {
+					const region = d3.select(this);
 
-        it('should update args', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, 200, 100, 400, 150, 250],
-                    ]
-                },
-                regions: [
-                    {
-                        axis: 'y',
-                        start: 300,
-                        end: 400,
-                        class: 'green',
-                    },
-                    {
-                        axis: 'y',
-                        start: 0,
-                        end: 100,
-                        class: 'green',
-                    }
-                ]
-            };
-            expect(true).toBeTruthy();
-        });
+					const rect = region.select("rect");
+					const y = +rect.attr("y");
+					const height = +rect.attr("height");
+					const expectedClass = "red";
+					const unexpectedClass = "green";
+					const expectedStart = Math.round(chart.internal.y(expectedRegions[i].start));
+					const expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end));
+					const expectedY = expectedEnd;
+					const expectedHeight = expectedStart - expectedEnd;
 
-        it('should add regions', function (done) {
-            var main = chart.internal.main,
-                expectedRegions = [
-                    {
-                        axis: 'y',
-                        start: 300,
-                        end: 400,
-                        class: 'green',
-                    },
-                    {
-                        axis: 'y',
-                        start: 0,
-                        end: 100,
-                        class: 'green',
-                    },
-                    {
-                        axis: 'y',
-                        start: 250,
-                        end: 350,
-                        class: 'red'
-                    },
-                    {
-                        axis: 'y',
-                        start: 25,
-                        end: 75,
-                        class: 'red'
-                    }
-                ],
-                expectedClasses = [
-                    'green',
-                    'green',
-                    'red',
-                    'red',
-                ],
-                regions;
+					expect(y).to.be.closeTo(expectedY, 1);
+					expect(height).to.be.closeTo(expectedHeight, 1);
 
-            // Call regions API
-            chart.regions(expectedRegions);
-            setTimeout(function () {
-                regions = main.selectAll('.c3-region');
-                expect(regions.size()).toBe(expectedRegions.length);
+					expect(region.classed(expectedClass)).to.be.ok;
+					expect(region.classed(unexpectedClass)).to.not.be.ok;
+				});
 
-                regions.each(function (d, i) {
-                    var region = d3.select(this),
-                        rect = region.select('rect'),
-                        y = +rect.attr('y'),
-                        height = +rect.attr('height'),
-                        expectedClass = expectedClasses[i],
-                        expectedStart = Math.round(chart.internal.y(expectedRegions[i].start)),
-                        expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end)),
-                        expectedY = expectedEnd,
-                        expectedHeight = expectedStart - expectedEnd;
-                    expect(y).toBeCloseTo(expectedY, -1);
-                    expect(height).toBeCloseTo(expectedHeight, -1);
-                    expect(region.classed(expectedClass)).toBeTruthy();
-                });
-            }, 500);
+				done();
+			}, 1000);
+		});
+	});
 
-            setTimeout(function () {
-                done();
-            }, 1000);
-        });
-    });
+	describe("api.region.add", () => {
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+					]
+				},
+				regions: [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					}
+				]
+			};
+			expect(true).to.be.ok;
+		});
 
-    describe('api.region.remove', function () {
+		it("should add regions", done => {
+			const main = chart.internal.main;
+			const expectedRegions = [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 250,
+						end: 350,
+						class: "red"
+					},
+					{
+						axis: "y",
+						start: 25,
+						end: 75,
+						class: "red"
+					}
+				];
 
-        it('should update args', function () {
-            args = {
-                data: {
-                    columns: [
-                        ['data1', 30, 200, 100, 400, 150, 250],
-                    ]
-                },
-                regions: [
-                    {
-                        axis: 'y',
-                        start: 300,
-                        end: 400,
-                        class: 'green',
-                    },
-                    {
-                        axis: 'y',
-                        start: 0,
-                        end: 100,
-                        class: 'green',
-                    },
-                    {
-                        axis: 'y',
-                        start: 250,
-                        end: 350,
-                        class: 'red'
-                    },
-                ]
-            };
-            expect(true).toBeTruthy();
-        });
+			const expectedClasses = [
+					"green",
+					"green",
+					"red",
+					"red",
+				];
 
-        it('should remove regions', function (done) {
-            var main = chart.internal.main,
-                expectedRegions = [
-                    {
-                        axis: 'y',
-                        start: 250,
-                        end: 350,
-                        class: 'red'
-                    },
-                ],
-                expectedClasses = ['red'],
-                regions;
+			let regions;
 
-            // Call regions API
-            chart.regions(expectedRegions);
-            setTimeout(function () {
-                regions = main.selectAll('.c3-region');
-                expect(regions.size()).toBe(expectedRegions.length);
+			// Call regions API
+			chart.regions(expectedRegions);
 
-                regions.each(function (d, i) {
-                    var region = d3.select(this),
-                        rect = region.select('rect'),
-                        y = +rect.attr('y'),
-                        height = +rect.attr('height'),
-                        expectedClass = expectedClasses[i],
-                        expectedStart = Math.round(chart.internal.y(expectedRegions[i].start)),
-                        expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end)),
-                        expectedY = expectedEnd,
-                        expectedHeight = expectedStart - expectedEnd;
-                    expect(y).toBeCloseTo(expectedY, -1);
-                    expect(height).toBeCloseTo(expectedHeight, -1);
-                    expect(region.classed(expectedClass)).toBeTruthy();
-                });
-            }, 500);
+			setTimeout(() => {
+				regions = main.selectAll(".bb-region");
 
-            setTimeout(function () {
-                done();
-            }, 1000);
-        });
-    });
+				expect(regions.size()).to.be.equal(expectedRegions.length);
 
+				regions.each(function(d, i) {
+					const region = d3.select(this);
+					const rect = region.select("rect");
+					const y = +rect.attr("y");
+					const height = +rect.attr("height");
+					const expectedClass = expectedClasses[i];
+					const expectedStart = Math.round(chart.internal.y(expectedRegions[i].start));
+					const expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end));
+					const expectedY = expectedEnd;
+					const expectedHeight = expectedStart - expectedEnd;
+
+					expect(y).to.be.closeTo(expectedY, 0.5);
+					expect(height).to.be.closeTo(expectedHeight, 1);
+					expect(region.classed(expectedClass)).to.be.ok;
+				});
+
+				done();
+			}, 500);
+		});
+	});
+
+	describe("api.region.remove", () => {
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+					]
+				},
+				regions: [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 250,
+						end: 350,
+						class: "red"
+					},
+				]
+			};
+
+			expect(true).to.be.ok;
+		});
+
+		it("should remove regions", done => {
+			const main = chart.internal.main;
+			const expectedRegions = [
+					{
+						axis: "y",
+						start: 250,
+						end: 350,
+						class: "red"
+					},
+				];
+			const expectedClasses = ["red"];
+			let regions;
+
+			// Call regions API
+			chart.regions(expectedRegions);
+
+			setTimeout(() => {
+				regions = main.selectAll(".bb-region");
+
+				expect(regions.size()).to.be.equal(expectedRegions.length);
+
+				regions.each(function (d, i) {
+					const region = d3.select(this);
+					const rect = region.select("rect");
+					const y = +rect.attr("y");
+					const height = +rect.attr("height");
+					const expectedClass = expectedClasses[i];
+					const expectedStart = Math.round(chart.internal.y(expectedRegions[i].start));
+					const expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end));
+					const expectedY = expectedEnd;
+					const expectedHeight = expectedStart - expectedEnd;
+
+					expect(y).to.be.closeTo(expectedY, 1);
+					expect(height).to.be.closeTo(expectedHeight, 1);
+					expect(region.classed(expectedClass)).to.be.ok;
+				});
+
+				done();
+			}, 500);
+		});
+	});
 });

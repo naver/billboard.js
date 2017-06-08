@@ -1,52 +1,217 @@
-c3 [![Build Status](https://travis-ci.org/c3js/c3.svg?branch=master)](https://travis-ci.org/c3js/c3) [![Dependency Status](https://david-dm.org/c3js/c3.svg)](https://david-dm.org/c3js/c3) [![devDependency Status](https://david-dm.org/c3js/c3/dev-status.svg)](https://david-dm.org/c3js/c3#info=devDependencies) [![license](http://img.shields.io/badge/license-MIT-brightgreen.svg?style=flat)](https://github.com/c3js/c3/blob/master/LICENSE) [![codecov.io](https://codecov.io/github/c3js/c3/coverage.svg?branch=master)](https://codecov.io/github/c3js/c3?branch=master)
-==
+# billboard.js
 
-c3 is a D3-based reusable chart library that enables deeper integration of charts into web applications.
+billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.
+> The name "billboard" came from the famous `billboard chart` which everybody knows.<br>
 
-Follow the link for more information: [http://c3js.org](http://c3js.org/)
+> This project was forked from C3.js v0.4.11.
+> - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)<br>
 
-## Tutorial and Examples
 
-+ [Getting Started](http://c3js.org/gettingstarted.html)
-+ [Examples](http://c3js.org/examples.html)
+## Documents
+- [API Documetation](http://naver.github.io/billboard.js/release/latest/doc/)
+- [Examples](https://cdn.rawgit.com/naver/billboard.js/663a3875/demo/)
+- [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 
-Additional samples can be found in this repository:
-+ [https://github.com/c3js/c3/tree/master/htdocs/samples](https://github.com/c3js/c3/tree/master/htdocs/samples)
 
-You can run these samples as:
+## Download and Installation
+
+Download dist files from repo directly or install it via npm. 
+
+### For development (Uncompressed)
+
+You can download the uncompressed files for development
+
+#### Latest
+  - http://naver.github.io/billboard.js/release/latest/dist/billboard.js
+  - http://naver.github.io/billboard.js/release/latest/dist/billboard.css
+
+#### Specific version
+  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.js
+  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.css
+
+### For production (Compressed)
+
+You can download the compressed files for production
+
+#### Latest
+  - http://naver.github.io/billboard.js/release/latest/dist/billboard.min.js
+  - http://naver.github.io/billboard.js/release/latest/dist/billboard.min.css
+
+#### Specific version
+  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.js
+  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.css
+
+### Packaged version (with D3.js inclusion)
+> Packaged version is not an official distribution.
+> Is just to provide for ease use of 'billboard.js' with dependency.
+
+ - **Latest**
+    - http://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js
+    - http://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.min.js
+ - **Specific version**
+    - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
+    - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
+
+
+### Installation with npm
+
+The following command shows how to install billboard.js using npm.
+
+```bash
+$ npm install billboard.js
 ```
-$ npm run serve
-```
 
-## Google Group
-For general C3.js-related discussion, please visit our [Google Group at https://groups.google.com/forum/#!forum/c3js](https://groups.google.com/forum/#!forum/c3js).
+## Supported Browsers
 
-## Gitter
-[![Join the chat at https://gitter.im/c3js/c3](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/c3js/c3?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+> Basically will work on all browsers which has SVG support.
 
-## Using the issue queue
-The [issue queue](https://github.com/c3js/c3/issues) is to be used for reporting defects and problems with C3.js, in addition to feature requests and ideas. It is **not** a catch-all support forum. **For general support enquiries, please use the [Google Group](https://groups.google.com/forum/#!forum/c3js) at https://groups.google.com/forum/#!forum/c3js.** All questions involving the interplay between C3.js and any other library (such as AngularJS) should be posted there first!
+|Internet Explorer|Chrome|Firefox|Safari|iOS|Android|
+|---|---|---|---|---|---|
+|9+|Latest|Latest|Latest|8+|4+|
 
-Before reporting an issue, please do the following:
-
-1. [Search for existing issues](https://github.com/c3js/c3/issues) to ensure you're not posting a duplicate.
-
-1.  [Search the Google Group](https://groups.google.com/forum/#!forum/c3js) to ensure it hasn't been addressed there already.
-
-1. Create a JSFiddle or Plunkr highlighting the issue. Please don't include any unnecessary dependencies so we can isolate that the issue is in fact with C3. *Please be advised that custom CSS can modify C3.js output!*
-
-1. When posting the issue, please use a descriptive title and include the version of C3 (or, if cloning from Git, the commit hash — C3 is under active development and the master branch contains the latest dev commits!), along with any platform/browser/OS information that may be relevant.
-
-## Pull requests
-Pull requests are welcome, though please post an issue first to see whether such a change is desirable.
-If you choose to submit a pull request, please do not bump the version number unless asked to, and please include test cases for any new features. Squash all your commits as well, please.
-
-## Playground
-Please fork this fiddle:
-+ [http://jsfiddle.net/masayuki0812/7kYJu/](http://jsfiddle.net/masayuki0812/7kYJu/)
 
 ## Dependency
-+ [D3.js](https://github.com/mbostock/d3) `~3.5.0`
+
+|[D3](https://d3js.org/) (required)|
+| --- |
+| 4+ |
+
+Load billboard.js after D3.js.
+
+```html
+<!-- 1) Load D3.js and billboard.js separately -->
+    <!-- Load D3 -->
+    <script src="https://d3js.org/d3.v4.min.js"></script>
+    
+    <!-- Load billboard.js with base style -->
+    <link rel="stylesheet" href="billboard.css">
+    <script src="billboard.js"></script>
+
+<!-- 2) or Load billboard.js packaged with D3.js -->
+    <link rel="stylesheet" href="billboard.css">
+    <script src="billboard.pkgd.js"></script>
+```
+
+> **Note**  
+> For migration from C3.js, checkout the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F) 
+
+## Basic usage example
+
+#### 1) Create chart holder element
+```html
+<div id="chart"></div>
+```
+
+#### 2) Generate chart with options
+```js
+// generate the chart
+var chart = bb.generate({
+    bindto: "#chart",
+    data: {
+    	type: "line",
+        columns: [
+            ["data1", 30, 200, 100, 400, 150, 250]
+        ]
+    }
+});
+
+// call some API
+chart.load( ... );
+```
+
+## How to start developing billboard.js?
+
+For anyone interested to develop billboard.js, follow the instructions below.
+
+### Development Environment
+
+#### 1. Clone the repository
+
+Clone the billboard.js repository and install the dependency modules.
+
+```bash
+# Create and move a folder.
+$ mkdir billboard.js && cd billboard.js
+
+# Clone the repository.
+$ git clone https://github.com/naver/billboard.js.git
+```
+
+#### 2. Install dependencies
+`npm` and `Yarn` are supported.
+
+```
+# Install the dependency modules.
+$ npm install
+
+# or
+$ yarn 
+```
+
+#### 3. Build
+
+Use npm script to build billboard.js
+
+```bash
+# Run webpack-dev-server for development
+$ npm start
+
+# Build
+$ npm run build
+
+# Generate jsdoc
+$ npm run jsdoc
+```
+
+Two folders will be created after complete build is completed.
+
+- **dist** folder: Includes the **billboard.js** and **billboard.min.js** files.
+- **doc** folder: Includes API documentation. The home page for the documentation is **doc/index.html**.
+
+### Linting
+
+To keep the same code style, we adopted [ESLint](http://eslint.org/) to maintain our code quality. The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are modified version based on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript).
+Setup your editor for check or run below command for linting.
+
+```bash
+$ npm run lint
+```
+
+### Test
+
+Once you created a branch and done with development, you must perform a test running `npm run test` command before you push code to a remote repository.
+
+```bash
+$ npm run test
+```
+Running a `npm run test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
+
+
+## Bug Report
+
+If you find a bug, please report to us posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
 
 ## License
-MIT
+billboard.js is released under the [MIT license](http://naver.github.io/billboard.js/LICENSE).
+
+```
+Copyright (c) 2017 NAVER Corp.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+```

@@ -1,121 +1,137 @@
-describe('c3 api load', function () {
-    'use strict';
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* eslint-disable */
+import util from "./assets/util";
 
-    var chart, args;
+describe("API load", function() {
+	let chart;
+	let args;
 
-    beforeEach(function (done) {
-        chart = window.initChart(chart, args, done);
-    });
+	beforeEach(done => {
+		chart = util.initChart(chart, args, done);
+	});
 
-    describe('indexed data', function () {
+	describe("indexed data", () => {
+		describe("as column", () => {
+			it("should update args", () => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+						]
+					}
+				};
 
-        describe('as column', function () {
+				expect(true).to.be.ok;
+			});
 
-            it('should update args', function () {
-                args = {
-                    data: {
-                        columns: [
-                            ['data1', 30, 200, 100, 400, 150, 250],
-                            ['data2', 5000, 2000, 1000, 4000, 1500, 2500]
-                        ]
-                    }
-                };
-                expect(true).toBeTruthy();
-            });
+			it("should load additional data", done => {
+				const main = chart.internal.main;
+				const legend = chart.internal.legend;
 
-            it('should load additional data', function (done) {
-                var main = chart.internal.main,
-                    legend = chart.internal.legend;
-                chart.load({
-                    columns: [
-                        ['data3', 800, 500, 900, 500, 1000, 700]
-                    ]
-                });
-                setTimeout(function () {
-                    var target = main.select('.c3-chart-line.c3-target.c3-target-data3'),
-                        legendItem = legend.select('.c3-legend-item.c3-legend-item-data3');
-                    expect(target.size()).toBe(1);
-                    expect(legendItem.size()).toBe(1);
-                    done();
-                }, 500);
-            });
+				chart.load({
+					columns: [
+						["data3", 800, 500, 900, 500, 1000, 700]
+					]
+				});
 
-        });
+				setTimeout(() => {
+					const target = main.select(".bb-chart-line.bb-target.bb-target-data3");
+					const legendItem = legend.select(".bb-legend-item.bb-legend-item-data3");
 
-    });
+					expect(target.size()).to.be.equal(1);
+					expect(legendItem.size()).to.be.equal(1);
 
-    describe('category data', function () {
+					done();
+				}, 500);
+			});
 
-        it('should update arg to category data', function () {
-            args = {
-                data: {
-                    x: 'x',
-                    columns: [
-                        ['x', 'cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6'],
-                        ['data1', 30, 200, 100, 400, 150, 250],
-                        ['data2', 5000, 2000, 1000, 4000, 1500, 2500]
-                    ]
-                },
-                axis: {
-                    x: {
-                        type: 'category'
-                    }
-                }
-            };
-            expect(true).toBeTruthy();
-        });
+		});
 
-        describe('as column', function () {
+	});
 
-            it('should load additional data', function (done) {
-                var main = chart.internal.main,
-                    legend = chart.internal.legend;
-                chart.load({
-                    columns: [
-                        ['data3', 800, 500, 900, 500, 1000, 700]
-                    ]
-                });
-                setTimeout(function () {
-                    var target = main.select('.c3-chart-line.c3-target.c3-target-data3'),
-                        legendItem = legend.select('.c3-legend-item.c3-legend-item-data3'),
-                        tickTexts = main.selectAll('.c3-axis-x g.tick text'),
-                        expected = ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6'];
-                    expect(target.size()).toBe(1);
-                    expect(legendItem.size()).toBe(1);
-                    tickTexts.each(function (d, i) {
-                        var text = d3.select(this).select('tspan').text();
-                        expect(text).toBe(expected[i]);
-                    });
-                    done();
-                }, 500);
-            });
+	describe("category data", () => {
+		it("should update arg to category data", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
 
-            it('should load additional data', function (done) {
-                var main = chart.internal.main,
-                    legend = chart.internal.legend;
-                chart.load({
-                    columns: [
-                        ['x', 'new1', 'new2', 'new3', 'new4', 'new5', 'new6'],
-                        ['data3', 800, 500, 900, 500, 1000, 700]
-                    ]
-                });
-                setTimeout(function () {
-                    var target = main.select('.c3-chart-line.c3-target.c3-target-data3'),
-                        legendItem = legend.select('.c3-legend-item.c3-legend-item-data3'),
-                        tickTexts = main.selectAll('.c3-axis-x g.tick text'),
-                        expected = ['new1', 'new2', 'new3', 'new4', 'new5', 'new6'];
-                    expect(target.size()).toBe(1);
-                    expect(legendItem.size()).toBe(1);
-                    tickTexts.each(function (d, i) {
-                        var text = d3.select(this).select('tspan').text();
-                        expect(text).toBe(expected[i]);
-                    });
-                    done();
-                }, 500);
-            });
+			expect(true).to.be.ok;
+		});
 
-        });
+		describe("as column", () => {
+			it("should load additional data", done => {
+				const main = chart.internal.main;
+				const legend = chart.internal.legend;
 
-    });
+				chart.load({
+					columns: [
+						["data3", 800, 500, 900, 500, 1000, 700]
+					]
+				});
 
+				setTimeout(() => {
+					const target = main.select(".bb-chart-line.bb-target.bb-target-data3");
+					const legendItem = legend.select(".bb-legend-item.bb-legend-item-data3");
+					const tickTexts = main.selectAll(".bb-axis-x g.tick text");
+					const expected = ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"];
+
+					expect(target.size()).to.be.equal(1);
+					expect(legendItem.size()).to.be.equal(1);
+
+					tickTexts.each(function(d, i) {
+						const text = d3.select(this).select("tspan").text();
+
+						expect(text).to.be.equal(expected[i]);
+					});
+
+					done();
+				}, 500);
+			});
+
+			it("should load additional data", done => {
+				const main = chart.internal.main;
+				const legend = chart.internal.legend;
+
+				chart.load({
+					columns: [
+						["x", "new1", "new2", "new3", "new4", "new5", "new6"],
+						["data3", 800, 500, 900, 500, 1000, 700]
+					]
+				});
+
+				setTimeout(() => {
+					const target = main.select(".bb-chart-line.bb-target.bb-target-data3");
+					const legendItem = legend.select(".bb-legend-item.bb-legend-item-data3");
+					const tickTexts = main.selectAll(".bb-axis-x g.tick text");
+					const expected = ["new1", "new2", "new3", "new4", "new5", "new6"];
+
+					expect(target.size()).to.be.equal(1);
+					expect(legendItem.size()).to.be.equal(1);
+
+					tickTexts.each(function(d, i) {
+						const text = d3.select(this).select("tspan").text();
+
+						expect(text).to.be.equal(expected[i]);
+					});
+					done();
+				}, 500);
+			});
+		});
+	});
 });

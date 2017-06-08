@@ -1,0 +1,27 @@
+{
+    "presets": [ 
+        [
+            "env", {
+                "targets": {
+                    "browsers": ["last 2 versions", "ie >= 9", "iOS >= 8"]
+                },
+                "module": false,
+                "loose": true,
+                "useBuiltIns": false
+            }
+        ]
+    ],
+    "plugins": [
+        "add-module-exports",
+        "transform-helper-modules",
+        "transform-inline-consecutive-adds",
+        "transform-merge-sibling-variables",
+        "transform-minify-booleans",
+        "minify-constant-folding",
+        "minify-dead-code-elimination",
+        "minify-guarded-expressions",
+        "minify-numeric-literals",
+        "minify-simplify",
+        "minify-type-constructors"
+    ]
+}
