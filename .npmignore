@@ -1,0 +1,17 @@
+node_modules/
+.idea/
+.github/
+config/
+spec/
+*.txt
+*.log
+*.yml
+*.opts
+.babelrc
+.eslintrc
+.editorconfig
+.npmignore
+jsdoc.json
+karma.conf.js
+webpack.config.js
+yarn.lock
