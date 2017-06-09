@@ -15,7 +15,7 @@ describe("chart data", () => {
 	let chart;
 	let args;
 
-	beforeEach(done =>{
+	beforeEach(done => {
 		chart = util.initChart(chart, args, done);
 	});
 
@@ -29,7 +29,7 @@ describe("chart data", () => {
 					}
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should draw correctly", () => {
@@ -70,7 +70,7 @@ describe("chart data", () => {
 					}
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should draw correctly", () => {
@@ -129,7 +129,7 @@ describe("chart data", () => {
 					}
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should draw nested JSON correctly", () => {
@@ -200,7 +200,7 @@ describe("chart data", () => {
 					order: () => 0
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should return false in isOrderAsc and isOrderDesc functions", () => {
@@ -219,7 +219,7 @@ describe("chart data", () => {
 					]
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		describe("normal x", () => {
@@ -257,7 +257,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -297,7 +297,7 @@ describe("chart data", () => {
 								}
 							}
 						};
-						return expect(true).to.be.ok;
+						expect(true).to.be.ok;
 					});
 
 					it("should have correct number of xs", () => {
@@ -343,7 +343,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -390,7 +390,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -429,7 +429,7 @@ describe("chart data", () => {
 						labels: true
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -459,7 +459,7 @@ describe("chart data", () => {
 
 			it("should update args to be stacked", () => {
 				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -504,7 +504,7 @@ describe("chart data", () => {
 						labels: true
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -533,7 +533,7 @@ describe("chart data", () => {
 
 			it("should update args to be stacked", () => {
 				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -578,7 +578,7 @@ describe("chart data", () => {
 						labels: true
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -607,7 +607,7 @@ describe("chart data", () => {
 
 			it("should update args to be stacked", () => {
 				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -647,7 +647,7 @@ describe("chart data", () => {
 						labels: true
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have data labels on all data", () => {
@@ -680,7 +680,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
@@ -712,7 +712,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
@@ -739,7 +739,7 @@ describe("chart data", () => {
 						labels: true
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have proper y domain", () => {
@@ -772,7 +772,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -797,7 +797,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -829,7 +829,7 @@ describe("chart data", () => {
 					args.axis = {
 						rotated: true
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -854,7 +854,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -901,7 +901,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -926,7 +926,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -959,7 +959,7 @@ describe("chart data", () => {
 					args.axis = {
 						rotated: true
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -986,7 +986,7 @@ describe("chart data", () => {
 					args.data.type = "line";
 					args.padding.left = 50;
 					args.padding.bottom = 0;
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1030,7 +1030,7 @@ describe("chart data", () => {
 							}
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1055,7 +1055,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1086,7 +1086,7 @@ describe("chart data", () => {
 					args.axis = {
 						rotated: true
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1111,7 +1111,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1151,7 +1151,7 @@ describe("chart data", () => {
 							type: "bar"
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1176,7 +1176,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1206,7 +1206,7 @@ describe("chart data", () => {
 					args.axis = {
 						rotated: true
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1231,7 +1231,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1271,7 +1271,7 @@ describe("chart data", () => {
 							type: "bar"
 						}
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1296,7 +1296,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1326,7 +1326,7 @@ describe("chart data", () => {
 					args.axis = {
 						rotated: true
 					};
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {
@@ -1351,7 +1351,7 @@ describe("chart data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
-					return expect(true).to.be.ok;
+					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding", () => {

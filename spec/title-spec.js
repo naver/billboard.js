@@ -47,7 +47,7 @@ describe("chart title", () => {
 			it("renders the title text", () => {
 				const titleEl = d3Select(".bb-title");
 
-				return expect(titleEl.node().textContent).to.equal("new title");
+				expect(titleEl.node().textContent).to.equal("new title");
 			});
 		});
 

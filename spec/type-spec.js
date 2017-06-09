@@ -27,14 +27,14 @@ describe("chart types", () => {
 						type: "pie"
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should return true", () => expect(chart.internal.hasArcType()).to.be.ok);
 
 			it("should change chart type to 'bar'", () => {
 				args.data.type = "bar";
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should return false", () => expect(chart.internal.hasArcType()).to.not.be.ok);
@@ -48,14 +48,14 @@ describe("chart types", () => {
 						type: "pie"
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should return true", () => expect(chart.internal.hasArcType()).to.be.ok);
 
 			it("should change chart type to 'bar'", () => {
 				args.data.type = "bar";
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should return false", () => expect(chart.internal.hasArcType()).to.not.be.ok);
@@ -74,7 +74,7 @@ describe("chart types", () => {
 					type: "pie"
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should return true for 'pie' type", () => expect(chart.internal.hasType("pie")).to.be.ok);
@@ -85,7 +85,7 @@ describe("chart types", () => {
 
 		it("should unload successfully", () => {
 			chart.unload([]);
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should return true for 'pie' type even if no data", () => expect(chart.internal.hasType("pie")).to.be.ok);
@@ -96,7 +96,7 @@ describe("chart types", () => {
 
 		it("should change chart type to 'bar' successfully", () => {
 			args.data.type = "bar";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should return false for 'pie' type even if no data", () => expect(chart.internal.hasType("pie")).to.not.be.ok);

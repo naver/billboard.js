@@ -32,7 +32,7 @@ describe("chart interaction", () => {
 						type: "bar"
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
@@ -59,7 +59,7 @@ describe("chart interaction", () => {
 						type: "bar"
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {
@@ -88,7 +88,7 @@ describe("chart interaction", () => {
 						]
 					}
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
@@ -115,7 +115,7 @@ describe("chart interaction", () => {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {

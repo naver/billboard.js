@@ -33,7 +33,7 @@ describe("chart shape line", () => {
 				}
 			};
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("Should render the lines correctly", done => {
@@ -57,7 +57,7 @@ describe("chart shape line", () => {
 
 		it("should change to step chart", () => {
 			args.data.type = "step";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
@@ -71,7 +71,7 @@ describe("chart shape line", () => {
 
 		it("should change to spline chart", () => {
 			args.data.type = "spline";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should use cardinal interpolation by default", () => {
@@ -91,7 +91,7 @@ describe("chart shape line", () => {
 					type: "line"
 				}
 			};
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should not show the circle for null", done => {
@@ -138,7 +138,7 @@ describe("chart shape line", () => {
 				}
 			};
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should update interpolation function", () => {
@@ -149,7 +149,7 @@ describe("chart shape line", () => {
 
 		it("should not use a non-valid interpolation", () => {
 			args.spline.interpolation.type = "foo";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should use cardinal interpolation when given option is not valid", () => {
