@@ -847,6 +847,8 @@ describe("chart data", () => {
 					texts.each(function(d, i) {
 						const text = d3Select(this);
 
+console.log("positive XY:", expectedYs[i], expectedXs[i]);
+
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
 					});
@@ -918,7 +920,7 @@ describe("chart data", () => {
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);
-
+console.log("negative XY:", expectedYs[i], expectedXs[i]);
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
 					});
@@ -973,9 +975,6 @@ describe("chart data", () => {
 					const texts = chart.internal.main.selectAll(".bb-texts-data1 text");
 					const expectedYs = [57, 162, 269, 375];
 					const expectedXs = [80, 584, 80, 514];
-					// 76.17123975409575 vs 83.26224669811396 = panthomjs 와 chrome 의 렌더링차이
-					// 518.453125 vs 509
-					// x 축 도메인에 의해 결정되는 부분은 모두 렌더링차이로 발생함
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);

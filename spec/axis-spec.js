@@ -671,6 +671,8 @@ describe("chart axis", function() {
 				const box = chart.internal.main.select(".bb-axis-x").node().getBoundingClientRect();
 				const height = chart.internal.getHorizontalAxisHeight("x");
 
+console.log("rotated tick height:", height);
+
 				expect(box.height).to.be.above(50);
 				expect(height).to.be.above(68);
 				expect(height).to.be.below(75);
