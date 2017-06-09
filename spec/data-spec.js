@@ -846,7 +846,7 @@ describe("chart data", () => {
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);
-console.log(+text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i])
+
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
 					});
@@ -872,14 +872,14 @@ console.log(+text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i])
 					texts.each(function(d, i) {
 						const text = d3Select(this);
 
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2.5);
+						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
 					});
 				});
 			});
 		});
 
-		describe("with negative values and null", () => {
+		describe.only("with negative values and null", () => {
 			describe("on not rotated axis", () => {
 				it("should update args", () => {
 					args = {
@@ -976,9 +976,9 @@ console.log(+text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i])
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);
-console.log(+text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i])
+
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 5);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 5);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 
