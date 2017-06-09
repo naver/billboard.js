@@ -847,10 +847,8 @@ describe("chart data", () => {
 					texts.each(function(d, i) {
 						const text = d3Select(this);
 
-console.log("positive XY:", +text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i]);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
 					});
 				});
 
@@ -921,8 +919,6 @@ console.log("positive XY:", +text.attr("y"), expectedYs[i], +text.attr("x"), exp
 					texts.each(function(d, i) {
 						const text = d3Select(this);
 
-console.log("negative XY:", +text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i]);
-
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
 					});
@@ -981,7 +977,7 @@ console.log("negative XY:", +text.attr("y"), expectedYs[i], +text.attr("x"), exp
 					texts.each(function(d, i) {
 						const text = d3Select(this);
 
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
+						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 5);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 5);
 					});
 				});

@@ -32,6 +32,7 @@ describe("chart shape line", () => {
 					type: "line"
 				}
 			};
+
 			return expect(true).to.be.ok;
 		});
 
@@ -41,6 +42,7 @@ describe("chart shape line", () => {
 				const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
 
 				expect(commands.length).to.be.equal(6);
+
 				done();
 			}, 500);
 		});
