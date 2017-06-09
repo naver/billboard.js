@@ -846,7 +846,7 @@ describe("chart data", () => {
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);
-
+console.log(+text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i])
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
 					});
@@ -976,7 +976,7 @@ describe("chart data", () => {
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);
-
+console.log(+text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i])
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 5);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 5);
 					});
