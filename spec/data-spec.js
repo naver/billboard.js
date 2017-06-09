@@ -879,7 +879,7 @@ describe("chart data", () => {
 			});
 		});
 
-		describe.only("with negative values and null", () => {
+		describe("with negative values and null", () => {
 			describe("on not rotated axis", () => {
 				it("should update args", () => {
 					args = {
