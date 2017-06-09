@@ -847,7 +847,7 @@ describe("chart data", () => {
 					texts.each(function(d, i) {
 						const text = d3Select(this);
 
-console.log("positive XY:", expectedYs[i], expectedXs[i]);
+console.log("positive XY:", +text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i]);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -920,7 +920,9 @@ console.log("positive XY:", expectedYs[i], expectedXs[i]);
 
 					texts.each(function(d, i) {
 						const text = d3Select(this);
-console.log("negative XY:", expectedYs[i], expectedXs[i]);
+
+console.log("negative XY:", +text.attr("y"), expectedYs[i], +text.attr("x"), expectedXs[i]);
+
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
 					});
