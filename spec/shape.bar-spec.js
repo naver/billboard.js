@@ -11,12 +11,12 @@ import util from "./assets/util";
 
 const setMouseEvent = util.setMouseEvent;
 
-describe("chart shape bar", () => {
+describe("Shape bar", () => {
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("with groups", () => {
@@ -34,8 +34,9 @@ describe("chart shape bar", () => {
 						type: "bar"
 					},
 				};
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
+
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
@@ -69,8 +70,10 @@ describe("chart shape bar", () => {
 						}
 					}
 				};
-				return expect(true).to.be.ok;
+
+				expect(true).to.be.ok;
 			});
+
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
@@ -104,7 +107,8 @@ describe("chart shape bar", () => {
 						}
 					}
 				};
-				return expect(true).to.be.ok;
+
+				expect(true).to.be.ok;
 			});
 
 			it("should be stacked", () => {
@@ -136,63 +140,72 @@ describe("chart shape bar", () => {
 						rotated: false
 					}
 				};
-				return expect(true).to.be.ok;
+
+				expect(true).to.be.ok;
 			});
 
 			it("should not be within bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 0, 0);
-				return expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
 			it("should be within bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 31, 280);
-				return expect(chart.internal.isWithinBar(bar)).to.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 
 			it("should not be within bar of negative value", () => {
 				const bar = d3Select(".bb-target-data3 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 68, 280);
-				return expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
 			it("should be within bar of negative value", () => {
 				const bar = d3Select(".bb-target-data3 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 68, 350);
-				return expect(chart.internal.isWithinBar(bar)).to.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 		});
 
 		describe("with rotated axis", () => {
 			it("should change the chart as axis rotated", () => {
 				args.axis.rotated = true;
-				return expect(true).to.be.ok;
+
+				expect(true).to.be.ok;
 			});
 
 			it("should not be within bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 0, 0);
-				return expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
 			it("should be within bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 190, 20);
-				return expect(chart.internal.isWithinBar(bar)).to.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 
 			it("should be within bar of negative value", () => {
 				const bar = d3Select(".bb-target-data3 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 68, 50);
-				return expect(chart.internal.isWithinBar(bar)).to.be.ok;
+
+				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 		});
 	});

@@ -5,10 +5,9 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("chart domain", function () {
-	var chart;
-
-	var args = {
+describe("Domain", function() {
+	let chart;
+	let args = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250],
@@ -21,70 +20,70 @@ describe("chart domain", function () {
 		}
 	};
 
-	beforeEach(function (done) {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
-	describe("axis.y.min", function () {
-
-		it("should change axis.y.min to -100", function () {
+	describe("axis.y.min", () => {
+		it("should change axis.y.min to -100", () => {
 			args.axis.y.min = -100;
 			expect(true).to.be.ok;
 		});
 
-		it("should be set properly when smaller than max of data", function () {
-			var domain = chart.internal.y.domain();
+		it("should be set properly when smaller than max of data", () => {
+			const domain = chart.internal.y.domain();
+
 			expect(domain[0]).to.be.equal(-150);
 			expect(domain[1]).to.be.equal(450);
 		});
 
-		it("should change axis.y.min to 500", function () {
+		it("should change axis.y.min to 500", () => {
 			args.axis.y.min = 500;
 			expect(true).to.be.ok;
 		});
 
-		it("should be set properly when bigger than max of data", function () {
-			var domain = chart.internal.y.domain();
+		it("should be set properly when bigger than max of data", () => {
+			const domain = chart.internal.y.domain();
+
 			expect(domain[0]).to.be.equal(499);
 			expect(domain[1]).to.be.equal(511);
 		});
 
-		it("should change axis.y.min to undefined", function () {
+		it("should change axis.y.min to undefined", () => {
 			args.axis.y.min = undefined;
 			expect(true).to.be.ok;
 		});
-
 	});
 
-	describe("axis.y.max", function () {
-
-		it("should change axis.y.max to 1000", function () {
+	describe("axis.y.max", () => {
+		it("should change axis.y.max to 1000", () => {
 			args.axis.y.max = 1000;
 			expect(true).to.be.ok;
 		});
 
-		it("should be set properly when bigger than min of data", function () {
-			var domain = chart.internal.y.domain();
+		it("should be set properly when bigger than min of data", () => {
+			const domain = chart.internal.y.domain();
+
 			expect(domain[0]).to.be.equal(-89);
 			expect(domain[1]).to.be.equal(1099);
 		});
 
-		it("should change axis.y.max to 0", function () {
+		it("should change axis.y.max to 0", () => {
 			args.axis.y.max = 0;
 			expect(true).to.be.ok;
 		});
 
-		it("should be set properly when smaller than min of data", function () {
-			var domain = chart.internal.y.domain();
+		it("should be set properly when smaller than min of data", () => {
+			const domain = chart.internal.y.domain();
+
 			expect(domain[0]).to.be.equal(-11);
 			expect(domain[1]).to.be.equal(1);
 		});
 
 	});
 
-	describe("axis.y.padding", function () {
-
-		it("should change axis.y.max to 1000", function () {
+	describe("axis.y.padding", () => {
+		it("should change axis.y.max to 1000", () => {
 			args = {
 				data: {
 					columns: [
@@ -98,16 +97,18 @@ describe("chart domain", function () {
 					}
 				}
 			};
-			expect(true).to.be.ok;
+
+			return expect(true).to.be.ok;
 		});
 
-		it("should be set properly when bigger than min of data", function () {
-			var domain = chart.internal.y.domain();
+		it("should be set properly when bigger than min of data", () => {
+			const domain = chart.internal.y.domain();
+
 			expect(domain[0]).to.be.closeTo(-9, 1);
 			expect(domain[1]).to.be.closeTo(69, 1);
 		});
 
-		it("should change axis.y.max to 1000 with top/bottom padding", function () {
+		it("should change axis.y.max to 1000 with top/bottom padding", () => {
 			args = {
 				data: {
 					columns: [
@@ -124,15 +125,15 @@ describe("chart domain", function () {
 					}
 				}
 			};
-			expect(true).to.be.ok;
+
+			return expect(true).to.be.ok;
 		});
 
-		it("should be set properly when bigger than min of data", function () {
-			var domain = chart.internal.y.domain();
+		it("should be set properly when bigger than min of data", () => {
+			const domain = chart.internal.y.domain();
+
 			expect(domain[0]).to.be.closeTo(-9, 1);
 			expect(domain[1]).to.be.closeTo(69, 1);
 		});
-
 	});
-
 });

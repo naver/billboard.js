@@ -10,12 +10,12 @@ import {
 } from "d3";
 import util from "./assets/util";
 
-describe("chart shape line", () => {
+describe("Shape line", () => {
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	const parseSvgPath = util.parseSvgPath;
@@ -32,17 +32,15 @@ describe("chart shape line", () => {
 					type: "line"
 				}
 			};
-			return expect(true).to.be.ok;
+
+			expect(true).to.be.ok;
 		});
 
-		it("Should render the lines correctly", done => {
-			setTimeout(() => {
-				const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
-				const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
+		it("Should render the lines correctly", () => {
+			const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
+			const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
 
-				expect(commands.length).to.be.equal(6);
-				done();
-			}, 500);
+			expect(commands.length).to.be.equal(6);
 		});
 
 		it("should not have shape-rendering when it's line chart", () => {
@@ -55,13 +53,12 @@ describe("chart shape line", () => {
 
 		it("should change to step chart", () => {
 			args.data.type = "step";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
 			d3SelectAll(".bb-line").each(function() {
-				const style = d3Select(this).style("shape-rendering")
-					.toLowerCase();
+				const style = d3Select(this).style("shape-rendering").toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
 			});
@@ -69,7 +66,7 @@ describe("chart shape line", () => {
 
 		it("should change to spline chart", () => {
 			args.data.type = "spline";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should use cardinal interpolation by default", () => {
@@ -89,18 +86,16 @@ describe("chart shape line", () => {
 					type: "line"
 				}
 			};
-			return expect(true).to.be.ok;
+
+			expect(true).to.be.ok;
 		});
 
-		it("should not show the circle for null", done => {
-			setTimeout(() => {
-				const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
+		it("should not show the circle for null", () => {
+			const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
 
-				expect(+target.select(".bb-circle-0").style("opacity")).to.be.equal(1);
-				expect(+target.select(".bb-circle-1").style("opacity")).to.be.equal(0);
-				expect(+target.select(".bb-circle-2").style("opacity")).to.be.equal(1);
-				done();
-			}, 500);
+			expect(+target.select(".bb-circle-0").style("opacity")).to.be.equal(1);
+			expect(+target.select(".bb-circle-1").style("opacity")).to.be.equal(0);
+			expect(+target.select(".bb-circle-2").style("opacity")).to.be.equal(1);
 		});
 
 		it("should not draw a line segment for null data", done => {
@@ -112,7 +107,9 @@ describe("chart shape line", () => {
 				for (let i = 0; i < commands.length; i++) {
 					commands[i].command === "L" && segments++;
 				}
+
 				expect(segments).to.be.equal(3);
+
 				done();
 			}, 500);
 		});
@@ -147,7 +144,7 @@ describe("chart shape line", () => {
 
 		it("should not use a non-valid interpolation", () => {
 			args.spline.interpolation.type = "foo";
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should use cardinal interpolation when given option is not valid", () => {

@@ -87,7 +87,7 @@ describe("API focus", function() {
 			}, 1000);
 		});
 
-		it("should focus multiple targets", function (done) {
+		it("should focus multiple targets", done => {
 			const main = chart.internal.main;
 			const legend = chart.internal.legend;
 
@@ -361,7 +361,7 @@ describe("API focus", function() {
 			}, 1000);
 		});
 
-		it("should revert one target after defocus", function (done) {
+		it("should revert one target after defocus", done => {
 			const main = chart.internal.main;
 			const legend = chart.internal.legend;
 
@@ -400,7 +400,7 @@ describe("API focus", function() {
 			}, 1000);
 		});
 
-		it("should focus multiple targets after focus", function (done) {
+		it("should focus multiple targets after focus", done => {
 			const main = chart.internal.main;
 			const legend = chart.internal.legend;
 
@@ -486,7 +486,7 @@ describe("API focus", function() {
 				show: false
 			};
 
-			expect(true).to.be.ok;
+			return expect(true).to.be.ok;
 		});
 
 		it("should focus all targets without showing legend", done => {
@@ -521,7 +521,7 @@ describe("API focus", function() {
 				const targets = main.select(".bb-chart-line.bb-target");
 				const legendItems = legend.select(".bb-legend-item");
 
-				targets.each(function () {
+				targets.each(function() {
 					const line = d3.select(this);
 
 					expect(line.classed(defocused)).to.be.ok;
@@ -533,7 +533,7 @@ describe("API focus", function() {
 			}, 1000);
 		});
 
-		it("should revert all targets after focus", function (done) {
+		it("should revert all targets after focus", done => {
 			const main = chart.internal.main;
 			const legend = chart.internal.legend;
 
@@ -546,8 +546,8 @@ describe("API focus", function() {
 					const targets = main.select(".bb-chart-line.bb-target");
 					const legendItems = legend.select(".bb-legend-item");
 
-					targets.each(function () {
-						var line = d3.select(this);
+					targets.each(function() {
+						const line = d3.select(this);
 
 						expect(line.classed(focused)).to.not.be.ok;
 					});
