@@ -11,7 +11,7 @@ import {
 } from "d3";
 import util from "./assets/util";
 
-describe("chart data", () => {
+describe("Data", () => {
 	let chart;
 	let args;
 

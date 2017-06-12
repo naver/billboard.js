@@ -10,13 +10,13 @@ import {
 } from "d3";
 import util from "./assets/util";
 
-describe("chart interaction", () => {
+describe("Interaction", () => {
 	const isChrome = window.navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("generate event rects", () => {
@@ -32,7 +32,8 @@ describe("chart interaction", () => {
 						type: "bar"
 					}
 				};
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
@@ -40,8 +41,7 @@ describe("chart interaction", () => {
 				const widths = isChrome ? [61, 68, 205, 197.5] : [60, 67.5, 202, 194];
 
 				d3SelectAll(".bb-event-rect").each(function(d, i) {
-					const box = d3Select(this).node()
-						.getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
@@ -59,7 +59,8 @@ describe("chart interaction", () => {
 						type: "bar"
 					}
 				};
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {
@@ -68,8 +69,7 @@ describe("chart interaction", () => {
 				expect(eventRects.size()).to.be.equal(1);
 
 				eventRects.each(function() {
-					const box = d3Select(this).node()
-						.getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
 					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);
@@ -88,7 +88,8 @@ describe("chart interaction", () => {
 						]
 					}
 				};
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
@@ -96,8 +97,7 @@ describe("chart interaction", () => {
 				const widths = isChrome ? [152, 162.5, 149.5, 138.5] : [149.5, 160, 147, 136];
 
 				d3SelectAll(".bb-event-rect").each(function(d, i) {
-					const box = d3Select(this).node()
-						.getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
@@ -115,7 +115,7 @@ describe("chart interaction", () => {
 					}
 				};
 
-				expect(true).to.be.ok;
+				return expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {
@@ -124,8 +124,7 @@ describe("chart interaction", () => {
 				expect(eventRects.size()).to.be.equal(1);
 
 				eventRects.each(function() {
-					const box = d3Select(this).node()
-						.getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
 					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);

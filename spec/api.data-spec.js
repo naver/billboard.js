@@ -56,7 +56,7 @@ describe("API data", function() {
 			const results = chart.data();
 			const expected = ["data1", "data2"];
 
-			results.forEach(function (result, i) {
+			results.forEach(function(result, i) {
 				expect(result.id).to.be.equal(expected[i]);
 			});
 		});

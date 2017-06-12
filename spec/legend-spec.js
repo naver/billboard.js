@@ -10,12 +10,12 @@ import {
 } from "d3";
 import util from "./assets/util";
 
-describe("chart legend", () => {
+describe("Legend", () => {
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("legend when multiple charts rendered", () => {

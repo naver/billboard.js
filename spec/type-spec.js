@@ -6,12 +6,12 @@
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
 
-describe("chart types", () => {
+describe("Types", () => {
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("internal.hasArcType", () => {
@@ -27,17 +27,21 @@ describe("chart types", () => {
 						type: "pie"
 					}
 				};
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
-			it("should return true", () => expect(chart.internal.hasArcType()).to.be.ok);
+			it("should return true",
+				() => expect(chart.internal.hasArcType()).to.be.ok);
 
 			it("should change chart type to 'bar'", () => {
 				args.data.type = "bar";
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
-			it("should return false", () => expect(chart.internal.hasArcType()).to.not.be.ok);
+			it("should return false",
+				() => expect(chart.internal.hasArcType()).to.not.be.ok);
 		});
 
 		describe("with empty data", () => {
@@ -48,17 +52,21 @@ describe("chart types", () => {
 						type: "pie"
 					}
 				};
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
-			it("should return true", () => expect(chart.internal.hasArcType()).to.be.ok);
+			it("should return true",
+				() => expect(chart.internal.hasArcType()).to.be.ok);
 
 			it("should change chart type to 'bar'", () => {
 				args.data.type = "bar";
-				expect(true).to.be.ok;
+
+				return expect(true).to.be.ok;
 			});
 
-			it("should return false", () => expect(chart.internal.hasArcType()).to.not.be.ok);
+			it("should return false",
+				() => expect(chart.internal.hasArcType()).to.not.be.ok);
 		});
 	});
 
@@ -74,35 +82,46 @@ describe("chart types", () => {
 					type: "pie"
 				}
 			};
-			expect(true).to.be.ok;
+
+			return expect(true).to.be.ok;
 		});
 
-		it("should return true for 'pie' type", () => expect(chart.internal.hasType("pie")).to.be.ok);
+		it("should return true for 'pie' type",
+			() => expect(chart.internal.hasType("pie")).to.be.ok);
 
-		it("should return false for 'line' type", () => expect(chart.internal.hasType("line")).to.not.be.ok);
+		it("should return false for 'line' type",
+			() => expect(chart.internal.hasType("line")).to.not.be.ok);
 
-		it("should return false for 'bar' type", () => expect(chart.internal.hasType("bar")).to.not.be.ok);
+		it("should return false for 'bar' type",
+			() => expect(chart.internal.hasType("bar")).to.not.be.ok);
 
 		it("should unload successfully", () => {
 			chart.unload([]);
 			expect(true).to.be.ok;
 		});
 
-		it("should return true for 'pie' type even if no data", () => expect(chart.internal.hasType("pie")).to.be.ok);
+		it("should return true for 'pie' type even if no data",
+			() => expect(chart.internal.hasType("pie")).to.be.ok);
 
-		it("should return false for 'line' type even if no data", () => expect(chart.internal.hasType("line")).to.not.be.ok);
+		it("should return false for 'line' type even if no data",
+			() => expect(chart.internal.hasType("line")).to.not.be.ok);
 
-		it("should return false for 'bar' type even if no data", () => expect(chart.internal.hasType("bar")).to.not.be.ok);
+		it("should return false for 'bar' type even if no data",
+			() => expect(chart.internal.hasType("bar")).to.not.be.ok);
 
 		it("should change chart type to 'bar' successfully", () => {
 			args.data.type = "bar";
-			expect(true).to.be.ok;
+
+			return expect(true).to.be.ok;
 		});
 
-		it("should return false for 'pie' type even if no data", () => expect(chart.internal.hasType("pie")).to.not.be.ok);
+		it("should return false for 'pie' type even if no data",
+			() => expect(chart.internal.hasType("pie")).to.not.be.ok);
 
-		it("should return false for 'line'' type even if no data", () => expect(chart.internal.hasType("line")).to.not.be.ok);
+		it("should return false for 'line'' type even if no data",
+			() => expect(chart.internal.hasType("line")).to.not.be.ok);
 
-		it("should return true for 'bar' type even if no data", () => expect(chart.internal.hasType("bar")).to.be.ok);
+		it("should return true for 'bar' type even if no data",
+			() => expect(chart.internal.hasType("bar")).to.be.ok);
 	});
 });

@@ -5,8 +5,8 @@
 /* eslint-disable */
 import {bb} from "../src/core";
 
-describe("Generate", () => {
-	it("exists", () => {
+describe("Generation", () => {
+	it("Instance has been created?", () => {
 		expect(bb).not.to.be.null;
 		expect(typeof bb).to.be.equal("object");
 	});

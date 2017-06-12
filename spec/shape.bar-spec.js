@@ -11,12 +11,12 @@ import util from "./assets/util";
 
 const setMouseEvent = util.setMouseEvent;
 
-describe("chart shape bar", () => {
+describe("Shape bar", () => {
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("with groups", () => {
@@ -36,6 +36,7 @@ describe("chart shape bar", () => {
 				};
 				expect(true).to.be.ok;
 			});
+
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
@@ -69,8 +70,10 @@ describe("chart shape bar", () => {
 						}
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
+
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
@@ -104,6 +107,7 @@ describe("chart shape bar", () => {
 						}
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
@@ -136,6 +140,7 @@ describe("chart shape bar", () => {
 						rotated: false
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
@@ -143,6 +148,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 0, 0);
+
 				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
@@ -150,6 +156,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 31, 280);
+
 				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 
@@ -157,6 +164,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data3 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 68, 280);
+
 				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
@@ -164,6 +172,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data3 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 68, 350);
+
 				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 		});
@@ -171,6 +180,7 @@ describe("chart shape bar", () => {
 		describe("with rotated axis", () => {
 			it("should change the chart as axis rotated", () => {
 				args.axis.rotated = true;
+
 				expect(true).to.be.ok;
 			});
 
@@ -178,6 +188,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 0, 0);
+
 				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
@@ -185,6 +196,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data1 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 190, 20);
+
 				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 
@@ -192,6 +204,7 @@ describe("chart shape bar", () => {
 				const bar = d3Select(".bb-target-data3 .bb-bar-0").node();
 
 				setMouseEvent(chart, "click", 68, 50);
+
 				expect(chart.internal.isWithinBar(bar)).to.be.ok;
 			});
 		});

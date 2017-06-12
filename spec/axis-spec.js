@@ -6,7 +6,7 @@
 import util from "./assets/util";
 import {bb} from "../src/core";
 
-describe("chart axis", function() {
+describe("Axis", function() {
 	let chart;
 	let args = {
 		data: {

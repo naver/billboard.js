@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
 
-describe("chart zoom", () => {
+describe("Zoom", function() {
 	let chart;
 	const args = {
 		data: {
@@ -28,8 +28,8 @@ describe("chart zoom", () => {
 		}
 	};
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("default extent", () => {
@@ -42,6 +42,7 @@ describe("chart zoom", () => {
 				expect(yDomain[1]).to.be.equal(expectedYDomain[1]);
 			});
 		});
+
 		describe("main chart domain", () => {
 			it("should have original y domain in subchart", () => {
 				const yDomain = chart.internal.y.domain();
@@ -51,6 +52,7 @@ describe("chart zoom", () => {
 				expect(subYDomain[1]).to.be.equal(yDomain[1]);
 			});
 		});
+
 		describe("main chart domain", () => {
 			it("should have specified brush extent", () => {
 				const brushExtent = chart.internal.brush.extent()();

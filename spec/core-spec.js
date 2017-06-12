@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("chart", function() {
+describe("Core", function() {
 	let chart;
 	let args = {
 		svg: {

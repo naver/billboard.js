@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("chart class", function() {
+describe("Class", function() {
 	let chart;
 	let args = {
 		data: {

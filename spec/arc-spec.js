@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("chart arc", () => {
+describe("Arc", () => {
 	let chart;
 	let args;
 
