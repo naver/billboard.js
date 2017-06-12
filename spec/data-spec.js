@@ -15,8 +15,8 @@ describe("Data", () => {
 	let chart;
 	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("load json", () => {
