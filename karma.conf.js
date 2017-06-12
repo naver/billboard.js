@@ -11,6 +11,10 @@ module.exports = function(config) {
 			"./spec/*-spec.js"
 		],
 
+		exclude: [
+			// "./spec/[a-b]*-spec.js"
+		],
+
 		client: {
 			mocha: {
 				opts: "./mocha.opts"

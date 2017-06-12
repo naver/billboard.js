@@ -1,4 +1,9 @@
 {
+    "env": {
+        "browser": true,
+        "node": true,
+        "mocha": true
+    },
     // Naver https://github.com/naver/eslint-config-naver/blob/master/STYLE_GUIDE.md
     "extends": "naver",
     "rules": {
