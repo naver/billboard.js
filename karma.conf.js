@@ -66,7 +66,7 @@ module.exports = function(config) {
 		},
 
 		// https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
-		browserNoActivityTimeout: 15000
+		browserNoActivityTimeout: 50000
 	};
 
 	karmaConfig.browsers.push(config.chrome ? "Chrome" : "PhantomJS");
