@@ -20,8 +20,8 @@ describe("Core", function() {
 		}
 	};
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("init", function() {

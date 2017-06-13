@@ -1,5 +1,9 @@
 # billboard.js
 
+[![Build Status](https://travis-ci.org/naver/billboard.js.svg?branch=master)](https://travis-ci.org/naver/billboard.js)
+[![Coverage Status](https://coveralls.io/repos/github/naver/billboard.js/badge.svg)](https://coveralls.io/github/naver/billboard.js)
+
+
 billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" came from the famous `billboard chart` which everybody knows.<br>
 
