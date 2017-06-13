@@ -6,3 +6,7 @@ install:
 cache:
   directories:
     - "node_modules"
+script:
+  - npm run coverage
+after_success:
+  - npm run coveralls

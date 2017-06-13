@@ -17,8 +17,8 @@ describe("Class", function() {
 		}
 	};
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.initChart(chart, args);
 	});
 
 	describe("internal.getTargetSelectorSuffix", () => {

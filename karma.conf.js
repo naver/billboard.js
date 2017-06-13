@@ -64,6 +64,9 @@ module.exports = function(config) {
 		webpackMiddleware: {
 			noInfo: true
 		},
+
+		// https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
+		browserNoActivityTimeout: 50000
 	};
 
 	karmaConfig.browsers.push(config.chrome ? "Chrome" : "PhantomJS");
@@ -72,7 +75,7 @@ module.exports = function(config) {
 		karmaConfig.reporters.push("coverage-istanbul");
 
 		karmaConfig.coverageIstanbulReporter = {
-			reports: ["text-summary", "html"],
+			reports: ["text-summary", "html", "lcovonly"],
 			dir: "./coverage"
 		};
 
