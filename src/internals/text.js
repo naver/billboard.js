@@ -215,7 +215,8 @@ extend(ChartInternal.prototype, {
 		}
 		// show labels regardless of the domain if value is null
 		if (d.value === null && !$$.config.axis_rotated) {
-			let boxHeight = textElement.getBoundingClientRect().height;
+			const boxHeight = textElement.getBoundingClientRect().height;
+
 			if (yPos < boxHeight) {
 				yPos = boxHeight;
 			} else if (yPos > this.height) {
