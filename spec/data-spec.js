@@ -190,11 +190,11 @@ describe("Data", () => {
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[556][i], 1);
 			});
 
-			d3SelectAll('.bb-circles-778-889 .bb-circle').each(function (d, i) {
+			d3SelectAll(".bb-circles-778-889 .bb-circle").each(function (d, i) {
 				const circle = d3Select(this);
 
-				expect(+circle.attr('cx')).toBeCloseTo(expectedCx[i], 0);
-				expect(+circle.attr('cy')).toBeCloseTo(expectedCy["778.889"][i], 0);
+				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
+				expect(+circle.attr("cy")).to.be.closeTo(expectedCy["778.889"][i], 0);
 			});
 		});
 	});
