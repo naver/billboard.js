@@ -166,7 +166,6 @@ extend(ChartInternal.prototype, {
 	 */
 	getXForText(points, d, textElement) {
 		const $$ = this;
-		const box = textElement.getBoundingClientRect();
 		let xPos;
 		let padding;
 
@@ -179,7 +178,7 @@ extend(ChartInternal.prototype, {
 		// show labels regardless of the domain if value is null
 		if (d.value === null) {
 			if (xPos > $$.width) {
-				xPos = $$.width - box.width;
+				xPos = $$.width - textElement.getBoundingClientRect().width;
 			} else if (xPos < 0) {
 				xPos = 4;
 			}
@@ -197,15 +196,14 @@ extend(ChartInternal.prototype, {
 	 */
 	getYForText(points, d, textElement) {
 		const $$ = this;
-		const box = textElement.getBoundingClientRect();
 		let yPos;
 
 		if ($$.config.axis_rotated) {
-			yPos = (points[0][0] + points[2][0] + box.height * 0.6) / 2;
+			yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * 0.6) / 2;
 		} else {
 			yPos = points[2][1];
 			if (d.value < 0 || (d.value === 0 && !$$.hasPositiveValue)) {
-				yPos += box.height;
+				yPos += textElement.getBoundingClientRect().height;
 				if ($$.isBarType(d) && $$.isSafari()) {
 					yPos -= 3;
 				} else if (!$$.isBarType(d) && $$.isChrome()) {
@@ -217,8 +215,10 @@ extend(ChartInternal.prototype, {
 		}
 		// show labels regardless of the domain if value is null
 		if (d.value === null && !$$.config.axis_rotated) {
-			if (yPos < box.height) {
-				yPos = box.height;
+			const boxHeight = textElement.getBoundingClientRect().height;
+
+			if (yPos < boxHeight) {
+				yPos = boxHeight;
 			} else if (yPos > this.height) {
 				yPos = this.height - 4;
 			}
