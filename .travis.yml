@@ -6,6 +6,8 @@ install:
 cache:
   directories:
     - "node_modules"
+before_script:
+    - npm run lint
 script:
   - npm run coverage
 after_success:
