@@ -190,8 +190,8 @@ describe("Data", () => {
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[556][i], 1);
 			});
 
-			d3.selectAll('.c3-circles-778-889 .c3-circle').each(function (d, i) {
-				const circle = d3.select(this);
+			d3SelectAll('.bb-circles-778-889 .bb-circle').each(function (d, i) {
+				const circle = d3Select(this);
 
 				expect(+circle.attr('cx')).toBeCloseTo(expectedCx[i], 0);
 				expect(+circle.attr('cy')).toBeCloseTo(expectedCy["778.889"][i], 0);
