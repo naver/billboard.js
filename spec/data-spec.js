@@ -194,7 +194,7 @@ describe("Data", () => {
 				const circle = d3Select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy["778.889"][i], 0);
+				expect(+circle.attr("cy")).to.be.closeTo(expectedCy["778.889"][i], 1);
 			});
 		});
 	});
