@@ -115,6 +115,10 @@ extend(ChartInternal.prototype, {
 	},
 
 	findValueInJson(object, path) {
+		if (object[path] !== undefined) {
+			return object[path];
+		}
+
 		const convertedPath = path.replace(/\[(\w+)\]/g, ".$1"); // convert indexes to properties (replace [] with .)
 		const pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
 		let target = object;
