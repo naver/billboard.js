@@ -1387,4 +1387,22 @@ describe("Data", () => {
 			});
 		});
 	});
+
+	describe("inner functions", () => {
+		it("should check returns of mapToTargetIds", () => {
+			// Given
+			let data = [1, 2, 3];
+			// When
+			let newData = chart.internal.mapToTargetIds(data);
+			// Then
+			expect(newData).to.eql(data).but.not.equal(data);
+
+			// Given
+			data = chart.internal.data.targets.map(d => d.id);
+			// When
+			newData = chart.internal.mapToTargetIds();
+			// Then
+			expect(newData).to.eql(data).but.not.equal(data);
+		});
+	});
 });

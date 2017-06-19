@@ -210,7 +210,7 @@ extend(ChartInternal.prototype, {
 	mapToTargetIds(ids) {
 		const $$ = this;
 
-		return ids ? [].concat(ids) : $$.mapToIds($$.data.targets);
+		return ids ? ids.concat() : $$.mapToIds($$.data.targets);
 	},
 
 	hasTarget(targets, id) {
