@@ -41,6 +41,9 @@
                     <a class="page-scroll" href="#one">About</a>
                 </li>
                 <li>
+                    <a class="page-scroll" href="#try">Try</a>
+                </li>
+                <li>
                     <a class="page-scroll" href="#features">Features</a>
                 </li>
                 <li>
@@ -95,6 +98,7 @@
 	    }
     </script>
 </header>
+
 <section class="bg-primary" id="one">
     <div class="container">
         <div class="row">
@@ -102,7 +106,7 @@
                 <h2 class="margin-top-0 text-primary">billboard.js, the "chart" library</h2>
                 <br>
                 <p class="text-faded">
-                    The name "billboard" came from the famous "<span style="text-decoration:underline">billboard chart</span>" which everybody knows.<br>
+                    The name "billboard" came from the famous<br>"<span style="text-decoration:underline">billboard chart</span>" which everybody knows.<br><br>
                     billboard.js provide the easiest way to create 'chart' instantly.
                 </p>
 
@@ -130,8 +134,8 @@
     data: {
         type: "bar",
         columns: [
-            ["data1", 30, 200, 100, 400, 150, 250],
-            ["data2", 130, 100, 140, 200, 150, 50]
+            ["data1", 30, 200, 100, 170, 150, 250],
+            ["data2", 130, 100, 140, 35, 110, 50]
         ]
     }
 });</code></pre>
@@ -145,7 +149,25 @@
     </div>
 </section>
 
-<section class="container-fluid" id="features">
+<section class="container-fluid" id="try">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-6 col-lg-offset-3 col-md-8 col-md-offset-2 text-center">
+                <h2 class="margin-top-0 text-primary">Let's Try!</h2><br>
+
+                <p class="text-faded">
+                    click <span style="text-decoration:underline;color:#f74b4b">edit on CODEPEN</span> to try tasting how easy is!
+                </p>
+
+                <p data-height="400" data-theme-id="dark" data-slug-hash="mwWvGO" data-default-tab="js,result" data-user="netil" data-embed-version="2" data-pen-title="billboard.js" class="codepen">See the Pen <a href="https://codepen.io/netil/pen/mwWvGO/">billboard.js</a> by Jae Sung Park (<a href="https://codepen.io/netil">@netil</a>) on <a href="https://codepen.io">CodePen</a>.</p>
+                <script async src="https://production-assets.codepen.io/assets/embed/ei.js"></script>
+
+            </div>
+        </div>
+    </div>
+</section>
+
+<section class="bg-dark" id="features">
     <div class="row">
         <div class="col-xs-10 col-xs-offset-1 col-sm-6 col-sm-offset-3 col-md-4 col-md-offset-4">
             <h2 class="text-center text-primary">Features</h2>
@@ -180,7 +202,8 @@
         </div>
     </div>
 </section>
-<aside class="bg-dark" id="download">
+
+<aside class="container-fluid" id="download">
     <div class="container text-center">
         <div class="call-to-action">
             <h2 class="text-primary">Download</h2>
