@@ -25,7 +25,7 @@ const data = function(targetIds) {
 	const targets = this.internal.data.targets;
 
 	return typeof targetIds === "undefined" ?
-		targets : targets.filter(t => [].concat(targetIds).indexOf(t.id) >= 0);
+		targets : targets.filter(t => targetIds.indexOf(t.id) >= 0);
 };
 
 /**

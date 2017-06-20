@@ -10,7 +10,7 @@ import {
 } from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, hasValue, isValue, notEmpty, isFunction} from "../internals/util";
+import {extend, hasValue, isArray, isValue, notEmpty, isFunction} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	isX(key) {
@@ -210,7 +210,7 @@ extend(ChartInternal.prototype, {
 	mapToTargetIds(ids) {
 		const $$ = this;
 
-		return ids ? ids.concat() : $$.mapToIds($$.data.targets);
+		return ids ? (isArray(ids) ? ids.concat() : [ids]) : $$.mapToIds($$.data.targets);
 	},
 
 	hasTarget(targets, id) {
@@ -453,7 +453,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	convertValuesToStep(values) {
-		const converted = [].concat(values);
+		const converted = isArray(values) ? values.concat() : [values];
 		let i;
 
 		if (!this.isCategorized()) {

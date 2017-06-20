@@ -108,7 +108,12 @@ extend(ChartInternal.prototype, {
 			});
 			data = this.convertRowsToData(newRows);
 		} else {
-			Object.keys(json).forEach(key => newRows.push([key].concat(json[key])));
+			Object.keys(json).forEach(key => {
+				const tmp = json[key].concat();
+
+				tmp.unshift(key);
+				newRows.push(tmp);
+			});
 			data = this.convertColumnsToData(newRows);
 		}
 		return data;
@@ -185,7 +190,6 @@ extend(ChartInternal.prototype, {
 		// save x for update data by load when custom x and bb.x API
 		ids.forEach(id => {
 			const xKey = this.getXKey(id);
-
 			if (this.isCustomX() || this.isTimeSeries()) {
 				// if included in input data
 				if (xs.indexOf(xKey) >= 0) {
@@ -208,7 +212,6 @@ extend(ChartInternal.prototype, {
 			}
 		});
 
-
 		// check x is defined
 		ids.forEach(id => {
 			if (!$$.data.xs[id]) {
@@ -227,10 +230,11 @@ extend(ChartInternal.prototype, {
 					const xKey = $$.getXKey(id);
 					const rawX = d[xKey];
 					const value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
-					let x;
 
+					let x;
 					// use x as categories if custom x and categorized
 					if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
+						
 						if (index === 0 && i === 0) {
 							config.axis_x_categories = [];
 						}

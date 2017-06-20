@@ -8,7 +8,7 @@ import {
 } from "d3";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isValue} from "./util";
+import {extend, isArray, isValue} from "./util";
 
 extend(ChartInternal.prototype, {
 	initGrid() {
@@ -327,7 +327,7 @@ extend(ChartInternal.prototype, {
 		return params ? function(line) {
 			let found = false;
 
-			[].concat(params).forEach(param => {
+			(isArray(params) ? params.concat() : [params]).forEach(param => {
 				if ((("value" in param && line.value === param.value) || ("class" in param && line.class === param.class))) {
 					found = true;
 				}
