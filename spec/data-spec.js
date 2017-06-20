@@ -1395,21 +1395,24 @@ describe("Data", () => {
 			// When
 			let newData = chart.internal.mapToTargetIds(data);
 			// Then
-			expect(newData).to.eql(data).but.not.equal(data);
+			expect(newData).to.deep.equal(data);
+			expect(newData).to.not.equal(data);
 
 			// Given
 			data = 1;
 			// When
 			newData = chart.internal.mapToTargetIds(data);
 			// Then
-			expect(newData).to.eql([data]).but.not.equal([data]);
+			expect(newData).to.deep.equal([data]);
+			expect(newData).to.not.equal([data]);
 
 			// Given
 			data = chart.internal.data.targets.map(d => d.id);
 			// When
 			newData = chart.internal.mapToTargetIds();
 			// Then
-			expect(newData).to.eql(data).but.not.equal(data);
+			expect(newData).to.deep.equal(data);
+			expect(newData).to.not.equal(data);
 		});
 	});
 });
