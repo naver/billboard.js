@@ -140,7 +140,8 @@ extend(ChartInternal.prototype, {
 				}
 			};
 
-			$$.svg.on("touchstart", touchHandler)
+			$$.svg
+				.on("touchstart", touchHandler)
 				.on("touchmove", touchHandler)
 				.on("touchend", () => {
 					const eventRect = getEventRect();
@@ -166,7 +167,7 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Updates the location and size of the eventRect.
 	 * @private
-	 * @param {Object} D3.select(CLASS.eventRects) object.
+	 * @param {Object} d3.select(CLASS.eventRects) object.
 	 */
 	updateEventRect(eventRectUpdate) {
 		const $$ = this;
@@ -200,8 +201,14 @@ extend(ChartInternal.prototype, {
 						return config.axis_rotated ? $$.height : $$.width;
 					}
 
-					if (prevX === null) { prevX = $$.x.domain()[0]; }
-					if (nextX === null) { nextX = $$.x.domain()[1]; }
+					if (prevX === null) {
+						prevX = $$.x.domain()[0];
+					}
+
+					if (nextX === null) {
+						nextX = $$.x.domain()[1];
+					}
+
 					return Math.max(0, ($$.x(nextX) - $$.x(prevX)) / 2);
 				};
 
@@ -260,12 +267,15 @@ extend(ChartInternal.prototype, {
 		$$.main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function() {
 				d3Select(this).classed(CLASS.EXPANDED, true);
+
 				if (config.data_selection_enabled) {
 					eventRect.style("cursor", config.data_selection_grouped ? "pointer" : null);
 				}
+
 				if (!config.tooltip_grouped) {
 					$$.hideXGridFocus();
 					$$.hideTooltip();
+
 					if (!config.data_selection_grouped) {
 						$$.unexpandCircles(index);
 						$$.unexpandBars(index);
@@ -279,10 +289,15 @@ extend(ChartInternal.prototype, {
 						eventRect.style("cursor", "pointer");
 					}
 				}
+
 				if (!config.tooltip_grouped) {
 					$$.showTooltip([d], this);
 					$$.showXGridFocus([d]);
-					if (config.point_focus_expand_enabled) { $$.expandCircles(index, d.id, true); }
+
+					if (config.point_focus_expand_enabled) {
+						$$.expandCircles(index, d.id, true);
+					}
+
 					$$.expandBars(index, d.id, true);
 				}
 			});
@@ -293,8 +308,10 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
-		if ($$.dragging) { return; } // do nothing when dragging
-		if ($$.hasArcType(targetsToShow)) { return; }
+		// do nothing when dragging
+		if ($$.dragging || $$.hasArcType(targetsToShow)) {
+			return;
+		}
 
 		const mouse = d3Mouse($$.main.select(`.${CLASS.eventRects} .${CLASS.eventRect}`).node());
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
@@ -315,6 +332,7 @@ extend(ChartInternal.prototype, {
 		} else {
 			sameXData = $$.filterByX(targetsToShow, closest.x);
 		}
+
 		// show tooltip when cursor is close to some point
 		const selectedData = sameXData.map(d => $$.addName(d));
 
@@ -332,6 +350,7 @@ extend(ChartInternal.prototype, {
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
 			$$.svg.select(`${CLASS.eventRect}`).style("cursor", "pointer");
+
 			if (!$$.mouseover) {
 				config.data_onover.call($$.api, closest);
 				$$.mouseover = closest;
@@ -357,68 +376,20 @@ extend(ChartInternal.prototype, {
 	 * Create eventRect for each data on the x-axis.
 	 * Register touch and drag events.
 	 * @private
-	 * @param {Object} D3.select(CLASS.eventRects) object.
-	 * @returns {Object} D3.select(CLASS.eventRects) object.
+	 * @param {Object} d3.select(CLASS.eventRects) object.
+	 * @returns {Object} d3.select(CLASS.eventRects) object.
 	 */
 	generateEventRectsForSingleX(eventRectEnter) {
 		const $$ = this;
 		const config = $$.config;
-		const isMouse = ($$.inputType === "mouse");
 
-		return eventRectEnter.append("rect")
+		const rect = eventRectEnter.append("rect")
 			.attr("class", $$.classEvent.bind($$))
 			.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
-			.on(isMouse ? "mouseover" : undefined, d => {
-				if ($$.dragging || $$.flowing || $$.hasArcType()) {
-					return;
-				} // do nothing while dragging/flowing
-
-				const index = d.index;
-
-				// Expand shapes for selection
-				if (config.point_focus_expand_enabled) {
-					$$.expandCircles(index, null, true);
-				}
-
-				$$.expandBars(index, null, true);
-
-				// Call event handler
-				index !== -1 && $$.main.selectAll(`.${CLASS.shape}-${index}`)
-					.each(d2 => config.data_onover.call($$.api, d2));
-			})
-			.on(isMouse ? "mousemove" : undefined, function(d) {
-				if ($$.dragging || $$.flowing || $$.hasArcType()) {
-					return;
-				} // do nothing while dragging/flowing
-
-				let index = d.index;
-				const eventRect = $$.svg.select(`.${CLASS.eventRect}-${index}`);
-
-				if ($$.isStepType(d) &&
-					$$.config.line_step_type === "step-after" &&
-					d3Mouse(this)[0] < $$.x($$.getXValue(d.id, index))
-				) {
-					index -= 1;
-				}
-
-				index === -1 ?
-					$$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
-			})
-			.on(isMouse ? "mouseout" : undefined, d => {
-				if (!$$.config || $$.hasArcType()) {
-					return;
-				} // chart is destroyed
-
-				const index = d.index;
-
-				$$.unselectRect();
-				// Call event handler
-				$$.main.selectAll(`.${CLASS.shape}-${index}`)
-					.each(d2 => config.data_onout.call($$.api, d2));
-			})
-			.on(isMouse ? "click" : undefined, d => {
+			.on("click", d => {
 				if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
 					$$.cancelClick && ($$.cancelClick = false);
+
 					return;
 				}
 
@@ -439,41 +410,85 @@ extend(ChartInternal.prototype, {
 						.on("dragend", () => { $$.dragend(); })
 				) : () => {}
 			);
+
+		if ($$.inputType === "mouse") {
+			rect
+				.on("mouseover", d => {
+					// do nothing while dragging/flowing
+					if ($$.dragging || $$.flowing || $$.hasArcType()) {
+						return;
+					}
+
+					const index = d.index;
+
+					// Expand shapes for selection
+					if (config.point_focus_expand_enabled) {
+						$$.expandCircles(index, null, true);
+					}
+
+					$$.expandBars(index, null, true);
+
+					// Call event handler
+					index !== -1 && $$.main.selectAll(`.${CLASS.shape}-${index}`)
+						.each(d2 => config.data_onover.call($$.api, d2));
+				})
+				.on("mousemove", function(d) {
+					// do nothing while dragging/flowing
+					if ($$.dragging || $$.flowing || $$.hasArcType()) {
+						return;
+					}
+
+					let index = d.index;
+					const eventRect = $$.svg.select(`.${CLASS.eventRect}-${index}`);
+
+					if ($$.isStepType(d) &&
+						$$.config.line_step_type === "step-after" &&
+						d3Mouse(this)[0] < $$.x($$.getXValue(d.id, index))
+					) {
+						index -= 1;
+					}
+
+					index === -1 ?
+						$$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
+				})
+				.on("mouseout", d => {
+					// chart is destroyed
+					if (!$$.config || $$.hasArcType()) {
+						return;
+					}
+
+					const index = d.index;
+
+					$$.unselectRect();
+
+					// Call event handler
+					$$.main.selectAll(`.${CLASS.shape}-${index}`)
+						.each(d2 => config.data_onout.call($$.api, d2));
+				});
+		}
+
+		return rect;
 	},
 
 	/**
 	 * Create an eventRect,
 	 * Register touch and drag events.
 	 * @private
-	 * @param {Object} D3.select(CLASS.eventRects) object.
-	 * @returns {Object} D3.select(CLASS.eventRects) object.
+	 * @param {Object} d3.select(CLASS.eventRects) object.
+	 * @returns {Object} d3.select(CLASS.eventRects) object.
 	 */
 	generateEventRectsForMultipleXs(eventRectEnter) {
 		const $$ = this;
 		const config = $$.config;
-		const isMouse = ($$.inputType === "mouse");
 
-		return eventRectEnter
+		const rect = eventRectEnter
 			.append("rect")
 			.attr("x", 0)
 			.attr("y", 0)
 			.attr("width", $$.width)
 			.attr("height", $$.height)
 			.attr("class", CLASS.eventRect)
-			.on(isMouse ? "mouseover" : undefined, function() {
-				$$.selectRectForMultipleXs(this);
-			})
-			.on(isMouse ? "mouseout" : undefined, () => {
-				if (!$$.config || $$.hasArcType()) {
-					return;
-				} // chart is destroyed
-
-				$$.unselectRect();
-			})
-			.on(isMouse ? "mousemove" : undefined, function() {
-				$$.selectRectForMultipleXs(this);
-			})
-			.on(isMouse ? "click" : undefined, function() {
+			.on("click", function() {
 				const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 				if ($$.hasArcType(targetsToShow)) {
@@ -507,6 +522,27 @@ extend(ChartInternal.prototype, {
 						.on("dragend", () => { $$.dragend(); })
 				) : () => {}
 			);
+
+
+		if ($$.inputType === "mouse") {
+			rect
+				.on("mouseover", function() {
+					$$.selectRectForMultipleXs(this);
+				})
+				.on("mouseout", () => {
+					// chart is destroyed
+					if (!$$.config || $$.hasArcType()) {
+						return;
+					}
+
+					$$.unselectRect();
+				})
+				.on("mousemove", function() {
+					$$.selectRectForMultipleXs(this);
+				});
+		}
+
+		return rect;
 	},
 
 	/**
@@ -530,5 +566,5 @@ extend(ChartInternal.prototype, {
 			.initMouseEvent(type, true, true, window, 0, x, y, x, y, false, false, false, false, 0, null);
 
 		eventRect.dispatchEvent(event);
-	},
+	}
 });
