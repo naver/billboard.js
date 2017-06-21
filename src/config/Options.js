@@ -701,12 +701,117 @@ export default class Options {
 			 * }
 			 */
 			data_onunselected: () => {},
+
+			/**
+			 * Load a CSV or JSON file from a URL. Note that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
+			 * @name data:url
+			 * @memberof Options
+			 * @type {String}
+			 * @default undefined
+			 * @example
+			 * data: {
+			 *     url: "/data/c3_test.csv"
+			 * }
+			 */
 			data_url: undefined,
 			data_headers: undefined,
+
+			/**
+			 * Parse a JSON object for data. See also data.keys.
+			 * @name data:json
+			 * @memberof Options
+			 * @type {Array}
+			 * @default undefined
+			 * @see data:keys
+			 * @example
+			 * data: {
+			 *     json: [
+			 *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
+			 *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
+			 *       {name: "www.site3.com", upload: 300, download: 200, total: 500},
+			 *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
+			 *     ],
+			 *     keys: {
+			 *       // x: "name", // it's possible to specify 'x' when category axis
+			 *       value: ["upload", "download"]
+			 *     }
+			 * }
+			 */
 			data_json: undefined,
+
+			/**
+			 * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
+			 * @name data:rows
+			 * @memberof Options
+			 * @type {Array}
+			 * @default undefined
+			 * @example
+			 * data: {
+			 *   rows: [
+			 *     ["A", "B", "C"],
+			 *     [90, 120, 300],
+			 *     [40, 160, 240],
+			 *     [50, 200, 290],
+			 *     [120, 160, 230],
+			 *     [80, 130, 300],
+			 *     [90, 220, 320]
+			 *   ]
+			 * }
+			 */
 			data_rows: undefined,
+
+			/**
+			 * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
+			 * @name data:columns
+			 * @memberof Options
+			 * @type {Array}
+			 * @default undefined
+			 * @example
+			 * data: {
+			 *   columns: [
+			 *      ["data1", 30, 20, 50, 40, 60, 50],
+			 *      ["data2", 200, 130, 90, 240, 130, 220],
+			 *      ["data3", 300, 200, 160, 400, 250, 250]
+			 *   ]
+			 * }
+			 */
 			data_columns: undefined,
+
+			/**
+			 * Used if loading JSON via data.url.
+			 * @name data:mimeType
+			 * @memberof Options
+			 * @type {String}
+			 * @default undefined
+			 * @example
+			 * data: {
+			 *    {
+			 *       mimeType: "json"
+			 *    }
+			 * }
+			 */
 			data_mimeType: undefined,
+
+			/**
+			 * Choose which JSON object keys correspond to desired data.
+			 * @name data:keys
+			 * @memberof Options
+			 * @type {String}
+			 * @default undefined
+			 * @example
+			 * data: {
+			 *     json: [
+			 *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
+			 *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
+			 *       {name: "www.site3.com", upload: 300, download: 200, total: 500},
+			 *       {name: "www.site4.com", upload: 400, download: 100, total: 500}
+			 *     ],
+			 *     keys: {
+			 *       // x: "name", // it's possible to specify 'x' when category axis
+			 *       value: ["upload", "download"]
+			 *     }
+			 * }
+			 */
 			data_keys: undefined,
 
 			/**
@@ -777,7 +882,7 @@ export default class Options {
 			 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
 			 * @property {String} [legend.position=bottom] Change the position of legend.<br>
 			 *  Available values are: `bottom`, `right` and `inset` are supported.
-			 *  @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
+			 * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
 			 *      This option accepts object that has the keys anchor, x, y and step.
 			 *      anchor decides the position of the legend. These anchors are available:
 			 *      - top-left
