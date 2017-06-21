@@ -6,6 +6,7 @@ import {
 	scaleLinear as d3ScaleLinear,
 	select as d3Select
 } from "d3";
+import {isArray} from "../internals/util";
 
 // Features:
 // 1. category axis
@@ -256,9 +257,13 @@ export default function(params = {}) {
 
 			tspan = text.selectAll("tspan")
 				.data((d, i) => {
-					const splitted = params.tickMultiline ?
-						splitTickText(d, params.tickWidth) : [].concat(textFormatted(d));
+					let splitted;
 
+					if (params.tickMultiline) {
+						splitted = splitTickText(d, params.tickWidth);
+					} else {
+						splitted = isArray(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
+					}
 					counts[i] = splitted.length;
 
 					return splitted.map(s => ({

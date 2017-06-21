@@ -278,9 +278,9 @@ describe("Axis", function() {
 							expect(tspan.attr("x")).to.be.equal(expectedX);
 
 							if (i === 0) {
-								expect(tspan.attr("dy")).to.be.equal(".71em");
+								expect(parseFloat(tspan.attr("dy"))).to.be.equal(0.71);
 							} else {
-								expect(tspan.attr("dy")).to.be.above(8);
+								expect(parseFloat(tspan.attr("dy"))).to.be.above(8);
 							}
 						});
 					});
@@ -377,9 +377,9 @@ describe("Axis", function() {
 							expect(tspan.attr("x")).to.be.equal(expectedX);
 
 							if (i === 0) {
-								expect(tspan.attr("dy")).to.be.below(0);
+								expect(parseFloat(tspan.attr("dy"))).to.be.below(0);
 							} else {
-								expect(tspan.attr("dy")).to.be.above(9);
+								expect(parseFloat(tspan.attr("dy"))).to.be.above(9);
 							}
 						});
 					});
@@ -483,9 +483,9 @@ describe("Axis", function() {
 
 						// unable to define pricise number because it differs depends on environment..
 						if (i === 0) {
-							expect(tspan.attr("dy")).to.be.equal(".71em");
+							expect(parseFloat(tspan.attr("dy"))).to.be.equal(0.71);
 						} else {
-							expect(tspan.attr("dy")).to.be.above(8);
+							expect(parseFloat(tspan.attr("dy"))).to.be.above(8);
 						}
 					});
 				});
@@ -538,9 +538,9 @@ describe("Axis", function() {
 
 						// unable to define pricise number because it differs depends on environment..
 						if (i === 0) {
-							expect(tspan.attr("dy")).to.be.below(0);
+							expect(parseFloat(tspan.attr("dy"))).to.be.below(0);
 						} else {
-							expect(tspan.attr("dy")).to.be.above(8);
+							expect(parseFloat(tspan.attr("dy"))).to.be.above(8);
 						}
 					});
 				});
@@ -594,9 +594,9 @@ describe("Axis", function() {
 
 							// unable to define pricise number because it differs depends on environment..
 							if (i === 0) {
-								expect(tspan.attr("dy")).to.be.below(0);
+								expect(parseFloat(tspan.attr("dy"))).to.be.below(0);
 							} else {
-								expect(tspan.attr("dy")).to.be.above(8);
+								expect(parseFloat(tspan.attr("dy"))).to.be.above(8);
 							}
 						});
 					});
@@ -708,7 +708,7 @@ describe("Axis", function() {
 						const text = tick.select("text");
 						const tspan = text.select("tspan");
 
-						expect(Math.round(text.attr("transform").replace(/\D/g, ""))).to.be.equal(45);
+						expect(Math.round(text.attr("transform").replace(/[A-z()]/g, ""))).to.be.equal(45);
 						expect(text.attr("y")).to.be.equal("4");
 						expect(parseFloat(tspan.attr("dx"))).to.be.closeTo(5.6, 0.5);
 					});

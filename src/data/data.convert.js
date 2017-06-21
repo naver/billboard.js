@@ -108,7 +108,12 @@ extend(ChartInternal.prototype, {
 			});
 			data = this.convertRowsToData(newRows);
 		} else {
-			Object.keys(json).forEach(key => newRows.push([key].concat(json[key])));
+			Object.keys(json).forEach(key => {
+				const tmp = json[key].concat();
+
+				tmp.unshift(key);
+				newRows.push(tmp);
+			});
 			data = this.convertColumnsToData(newRows);
 		}
 		return data;
@@ -207,7 +212,6 @@ extend(ChartInternal.prototype, {
 				$$.data.xs[id] = data.map((d, i) => i);
 			}
 		});
-
 
 		// check x is defined
 		ids.forEach(id => {
