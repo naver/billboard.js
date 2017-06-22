@@ -14,6 +14,7 @@ describe("Interaction", () => {
 	const isChrome = window.navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 	let chart;
 	let args;
+	let clicked = false;
 
 	beforeEach(() => {
 		chart = util.initChart(chart, args);
@@ -111,7 +112,10 @@ describe("Interaction", () => {
 						columns: [
 							["x", "20140101"],
 							["data", 10]
-						]
+						],
+						onclick: () => {
+							clicked = true;
+						}
 					}
 				};
 
@@ -129,6 +133,15 @@ describe("Interaction", () => {
 					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
 					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);
 				});
+			});
+
+			it("check for data click", () => {
+				const rect = d3.select(".bb-event-rect.bb-event-rect-0").node();
+				const circle = d3.select(".bb-circles-data circle").node().getBBox();
+
+				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+
+				expect(clicked).to.be.true;
 			});
 		});
 	});
