@@ -13,7 +13,7 @@ describe("API zoom", function() {
 		chart = util.initChart(chart, args, done);
 	});
 
-	describe("zoom", () => {
+	describe("zoom line chart", () => {
 
 		it("should update args", () => {
 			args = {
@@ -107,6 +107,39 @@ describe("API zoom", function() {
 		});
 
 	});
+
+	describe("zoom bar chart", () => {
+
+		it("should update args", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 150, 120, 110, 140, 115, 125]
+					],
+					type: "bar"
+				},
+				zoom: {
+					enabled: true
+				},
+			};
+
+			expect(true).to.be.ok;
+		});
+
+		it("should be zoomed properly", (done) => {
+			const target = [3, 5];
+			const bars = d3.select(".bb-chart-bars").node();
+			const orgWidth = bars.getBoundingClientRect().width;
+			chart.zoom(target);
+			setTimeout(() => {
+				expect(bars.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
+				done();
+			}, 500)
+		});
+	});
+
 
 	describe("unzoom", () => {
 		it("should load indexed data", () => {

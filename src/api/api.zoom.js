@@ -52,7 +52,8 @@ const zoom = function(domainValue) {
 
 		$$.redraw({
 			withTransition: true,
-			withY: $$.config.zoom_rescale
+			withY: $$.config.zoom_rescale,
+			withDimension: false
 		});
 
 		$$.config.zoom_onzoom.call(this, $$.x.orgDomain());
