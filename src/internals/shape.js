@@ -53,7 +53,7 @@ extend(ChartInternal.prototype, {
 
 	getShapeX(offset, targetsNum, indices, isSub) {
 		const $$ = this;
-		const scale = isSub ? $$.subX : $$.x;
+		const scale = isSub ? $$.subX : ($$.zoomScale ? $$.zoomScale : $$.x);
 
 		return d => {
 			const index = d.id in indices ? indices[d.id] : 0;
