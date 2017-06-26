@@ -46,8 +46,9 @@ describe("Legend", () => {
 		});
 
 		it("should have properly computed legend width", () => {
-			const expectedLeft = [156, 266, 378];
-			const expectedWidth = [112, 114, 104];
+			const isChrome = (window.navigator.userAgent.toLowerCase().indexOf("chrome") > -1);
+			const expectedLeft = isChrome ? [156, 266, 378] : [133, 260, 386];
+			const expectedWidth = isChrome ? [112, 114, 104] : [129, 129, 119];
 
 			d3SelectAll(".bb-legend-item").each(function(d, i) {
 				const rect = d3Select(this)
@@ -183,10 +184,8 @@ describe("Legend", () => {
 					hide: "data2"
 				}
 			};
-
 			expect(true).to.be.ok;
 		});
-
 		it("should not show legends", () => {
 			expect(d3Select(".bb-legend-item-data1").style("visibility")).to.be.equal("visible");
 			expect(d3Select(".bb-legend-item-data2").style("visibility")).to.be.equal("hidden");
@@ -271,23 +270,22 @@ describe("Legend", () => {
 		});
 
 		it("renders the correct amount of padding on the legend element", function() {
-			d3SelectAll(".bb-legend-item-padded1 .bb-legend-item-title, .bb-legend-item-padded2 .bb-legend-item-title")
-				.each(function(el, index) {
-					const itemWidth = d3Select(this)
-						.node()
-						.parentNode
-						.getBBox()
-						.width;
-					const textBoxWidth = d3Select(d3Select(this).node().parentNode)
-						.d3Select("text")
-						.node()
-						.getBBox()
-						.width;
-					const tileWidth = 15; // default value is 10, plus 5 more for padding
-					const expectedWidth = textBoxWidth + tileWidth + (index ? 0 : 10) + args.legend.padding;
+			d3SelectAll(".bb-legend-item-padded1 .bb-legend-item-title, .bb-legend-item-padded2 .bb-legend-item-title").each(function(el, index) {
+				const itemWidth = d3Select(this)
+					.node()
+					.parentNode
+					.getBBox()
+					.width;
+				const textBoxWidth = d3Select(d3Select(this).node().parentNode)
+					.d3Select("text")
+					.node()
+					.getBBox()
+					.width;
+				const tileWidth = 15; // default value is 10, plus 5 more for padding
+				const expectedWidth = textBoxWidth + tileWidth + (index ? 0 : 10) + args.legend.padding;
 
-					expect(itemWidth).to.be.equal(expectedWidth);
-				});
+				expect(itemWidth).to.be.equal(expectedWidth);
+			});
 		});
 	});
 });

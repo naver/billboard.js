@@ -3,6 +3,8 @@ module.exports = function(config) {
 		frameworks: ["mocha", "chai", "sinon"],
 
 		files: [
+			"./node_modules/phantomjs-polyfill/bind-polyfill.js",
+			"./node_modules/phantomjs-polyfill-object-assign/object-assign-polyfill.js",
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/d3/build/d3.min.js",
 			"./dist/billboard.css",
@@ -59,7 +61,6 @@ module.exports = function(config) {
 		browsers: [],
 
 		reporters: ["mocha"],
-		colors: true,
 		webpackMiddleware: {
 			noInfo: true
 		},
@@ -68,7 +69,7 @@ module.exports = function(config) {
 		browserNoActivityTimeout: 50000
 	};
 
-	karmaConfig.browsers.push(config.chrome ? "Chrome" : "ChromeHeadless");
+	karmaConfig.browsers.push(config.chrome ? "Chrome" : "PhantomJS");
 
 	if (config.coverage) {
 		karmaConfig.reporters.push("coverage-istanbul");

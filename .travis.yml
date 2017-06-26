@@ -1,14 +1,9 @@
 language: node_js
 node_js:
   - "6"
-dist: trusty # needs Ubuntu Trusty
-sudo: false  # no need for virtualization.
 install:
   - npm install
-addons:
-  chrome: stable # install chrome stable.
 cache:
-  yarn: true
   directories:
     - "node_modules"
 before_script:
