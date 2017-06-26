@@ -786,7 +786,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 1);
@@ -811,7 +811,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(189, 1);
@@ -843,7 +843,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 1);
@@ -868,7 +868,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(188, 1);
@@ -915,7 +915,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-215, 2);
@@ -940,7 +940,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-215, 2);
@@ -973,7 +973,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-222, 2);
@@ -1000,7 +1000,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-222, 2); // -220.4755083436658 vs -223.64837940981494
@@ -1044,7 +1044,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-243, 2);
@@ -1069,7 +1069,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-243, 2);
@@ -1100,7 +1100,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-256, 4);
@@ -1125,7 +1125,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-255, 5);
@@ -1165,7 +1165,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 3);
@@ -1190,7 +1190,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-95, 3);
@@ -1220,7 +1220,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(0, 1);
@@ -1245,7 +1245,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-87, 4);
@@ -1285,7 +1285,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-886, 3);
@@ -1310,7 +1310,7 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-885, 3);
@@ -1340,11 +1340,11 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
 					expect(domain[0]).to.be.closeTo(-900, 5);
-					expect(domain[1]).to.be.closeTo(0, 1);
+					expect(domain[1]).to.be.closeTo(0, 5);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1365,11 +1365,11 @@ describe("Data", () => {
 					expect(true).to.be.ok;
 				});
 
-				it("should have y domain with proper padding", () => {
+				it("should have y domain with proper padding #2", () => {
 					const domain = chart.internal.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-900, 5);
-					expect(domain[1]).to.be.closeTo(97, 5); // 93.11031792314344 vs 101.50714034882361
+					expect(domain[0]).to.be.closeTo(-900, 7);
+					expect(domain[1]).to.be.closeTo(97, 7);
 				});
 
 				it("should locate labels above each data point", () => {

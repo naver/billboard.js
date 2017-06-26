@@ -11,7 +11,6 @@ import {
 import util from "./assets/util";
 
 describe("Interaction", () => {
-	const isChrome = window.navigator.userAgent.toLowerCase().indexOf("chrome") > -1;
 	let chart;
 	let args;
 	let clicked = false;
@@ -38,8 +37,8 @@ describe("Interaction", () => {
 			});
 
 			it("should have 4 event rects properly", () => {
-				const lefts = isChrome ? [69, 130, 198, 403] : [78, 138, 205.5, 407.5];
-				const widths = isChrome ? [61, 68, 205, 197.5] : [60, 67.5, 202, 194];
+				const lefts = [69, 130, 198, 403];
+				const widths = [61, 68, 205, 197.5];
 
 				d3SelectAll(".bb-event-rect").each(function(d, i) {
 					const box = d3Select(this).node().getBoundingClientRect();
@@ -72,8 +71,8 @@ describe("Interaction", () => {
 				eventRects.each(function() {
 					const box = d3Select(this).node().getBoundingClientRect();
 
-					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
-					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);
+					expect(box.left).to.be.closeTo(30.5, 10);
+					expect(box.width).to.be.closeTo(608, 10);
 				});
 			});
 		});
@@ -94,8 +93,8 @@ describe("Interaction", () => {
 			});
 
 			it("should have 4 event rects properly", () => {
-				const lefts = isChrome ? [33.5, 185.5, 348, 497.5] : [43.5, 193, 353, 500];
-				const widths = isChrome ? [152, 162.5, 149.5, 138.5] : [149.5, 160, 147, 136];
+				const lefts = [33.5, 185.5, 348, 497.5];
+				const widths = [152, 162.5, 149.5, 138.5];
 
 				d3SelectAll(".bb-event-rect").each(function(d, i) {
 					const box = d3Select(this).node().getBoundingClientRect();
@@ -130,8 +129,8 @@ describe("Interaction", () => {
 				eventRects.each(function() {
 					const box = d3Select(this).node().getBoundingClientRect();
 
-					expect(box.left).to.be.closeTo(isChrome ? 30.5 : 40.5, 10);
-					expect(box.width).to.be.closeTo(isChrome ? 608 : 598, 10);
+					expect(box.left).to.be.closeTo(30.5, 10);
+					expect(box.width).to.be.closeTo(608, 10);
 				});
 			});
 
