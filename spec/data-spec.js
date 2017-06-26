@@ -871,8 +871,8 @@ describe("Data", () => {
 				it("should have y domain with proper padding", () => {
 					const domain = chart.internal.y.domain();
 
-					expect(domain[0]).to.be.closeTo(188, 1);
-					expect(domain[1]).to.be.closeTo(202, 1);
+					expect(domain[0]).to.be.closeTo(188, 5);
+					expect(domain[1]).to.be.closeTo(202, 5);
 				});
 
 				it("should locate labels above each data point", () => {
