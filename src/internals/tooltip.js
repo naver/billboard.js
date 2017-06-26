@@ -110,7 +110,7 @@ extend(ChartInternal.prototype, {
 				name = sanitise(nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index));
 				bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
 
-				text += `<tr class="${$$.CLASS.tooltipName}-${$$.getTargetSelectorSuffix(d[i].id)}">` +
+				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(d[i].id)}">` +
 					`<td class="name"><span style="background-color:${bgcolor}"></span>${name}</td>` +
 					`<td class="value">${value}</td>` +
 					`</tr>`;
