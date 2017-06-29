@@ -182,7 +182,6 @@
 				domain = scale.domain();
 				newScale.domain([domain[0], domain[1] - 1]);
 			}
-
 			return newScale;
 		}
 		function textFormatted(v) {
@@ -215,7 +214,6 @@
 		}
 		function axis(g) {
 			g.each(function () {
-
 				var g = axis.g = d3.select(this);
 
 				var scale0 = this.__chart__ || scale, scale1 = this.__chart__ = copyScale();
@@ -833,7 +831,6 @@
 	};
 	Axis.prototype.generateTransitions = function generateTransitions(duration) {
 		var $$ = this.owner, axes = $$.axes;
-
 		return {
 			axisX: duration ? axes.x.transition().duration(duration) : axes.x,
 			axisY: duration ? axes.y.transition().duration(duration) : axes.y,
@@ -847,7 +844,6 @@
 		$$.axes.y.style("opacity", isHidden ? 0 : 1);
 		$$.axes.y2.style("opacity", isHidden ? 0 : 1);
 		$$.axes.subx.style("opacity", isHidden ? 0 : 1);
-
 		transitions.axisX.call($$.xAxis);
 		transitions.axisY.call($$.yAxis);
 		transitions.axisY2.call($$.y2Axis);
