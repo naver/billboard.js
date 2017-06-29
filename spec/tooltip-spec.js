@@ -106,12 +106,6 @@ describe("Tooltip", function() {
 	});
 
 	describe("tooltip getTooltipContent", () => {
-		before(() => {
-			tooltipConfiguration = {
-				data_order: "desc"
-			};
-		});
-
 		it("should sort values desc", () => {
 			const eventRect = d3.select(".bb-event-rect-2").node();
 
@@ -121,9 +115,9 @@ describe("Tooltip", function() {
 			const len = tooltips.length;
 			const expected = [
 				"",
-				"bb-tooltip-name--data3",
-				"bb-tooltip-name--data1",
-				"bb-tooltip-name--data2"
+				"bb-tooltip-name-data3",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data2"
 			];
 
 			for (let i = 0; i < len; i++) {
