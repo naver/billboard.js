@@ -156,7 +156,6 @@ export default class ChartInternal {
 	initWithData(data) {
 		const $$ = this;
 		const config = $$.config;
-		const withoutTranistion = $$.config.transition_duration <= 0;
 		let binding = true;
 
 		$$.axis = new Axis($$);
@@ -212,7 +211,7 @@ export default class ChartInternal {
 
 		// Init sizes and scales
 		$$.updateSizes();
-		$$.updateScales(withoutTranistion);
+		$$.updateScales();
 
 		// Set domains for each scale
 		$$.x.domain(d3Extent($$.getXDomain($$.data.targets)));
