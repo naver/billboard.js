@@ -588,10 +588,10 @@ export default class Axis {
 		const axes = $$.axes;
 
 		return {
-			axisX: isNaN(duration) ? axes.x : axes.x.transition().duration(duration),
-			axisY: isNaN(duration) ? axes.y : axes.y.transition().duration(duration),
-			axisY2: isNaN(duration) ? axes.y2 : axes.y2.transition().duration(duration),
-			axisSubX: isNaN(duration) ? axes.subx : axes.subx.transition().duration(duration)
+			axisX: duration ? axes.x.transition().duration(duration) : axes.x,
+			axisY: duration ? axes.y.transition().duration(duration) : axes.y,
+			axisY2: duration ? axes.y2.transition().duration(duration) : axes.y2,
+			axisSubX: duration ? axes.subx.transition().duration(duration) : axes.subx,
 		};
 	}
 
