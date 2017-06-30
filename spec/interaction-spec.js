@@ -16,8 +16,8 @@ describe("INTERACTION", () => {
 	});
 
 	describe("generate event rects", () => {
-		describe("custom x", () => {
-			it("should generate bar chart", () => {
+		describe("custom x #1", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -28,23 +28,23 @@ describe("INTERACTION", () => {
 						type: "bar"
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
 				const lefts = [69, 130, 198, 403];
 				const widths = [61, 68, 205, 197.5];
 
-				chart.internal.main.selectAll(".bb-event-rect").each(function(d, i) {
+				chart.internal.main.selectAll(".bb-event-rect").each(function (d, i) {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
 				});
 			});
+		});
 
-			it("should generate bar chart with only one data", () => {
+		describe("custom x #2", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -55,8 +55,6 @@ describe("INTERACTION", () => {
 						type: "bar"
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {
@@ -73,8 +71,8 @@ describe("INTERACTION", () => {
 			});
 		});
 
-		describe("timeseries", () => {
-			it("should generate line chart with timeseries", () => {
+		describe("timeseries #1", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -84,23 +82,23 @@ describe("INTERACTION", () => {
 						]
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
 				const lefts = [33.5, 185.5, 348, 497.5];
 				const widths = [152, 162.5, 149.5, 138.5];
 
-				chart.internal.main.selectAll(".bb-event-rect").each(function(d, i) {
+				chart.internal.main.selectAll(".bb-event-rect").each(function (d, i) {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
 				});
 			});
+		});
 
-			it("should generate line chart with only 1 data timeseries", () => {
+		describe("timeseries #2", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -113,8 +111,6 @@ describe("INTERACTION", () => {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {

@@ -15,21 +15,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend when multiple charts rendered", () => {
-		it("should update args", () => {
-			args = {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 50],
-						["data3", 100]
-					]
-				}
-			};
-
-			expect(true).to.be.ok;
-		});
-
-		it("should update args with long data names", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -39,8 +25,6 @@ describe("LEGEND", () => {
 					]
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should have properly computed legend width", () => {
@@ -59,7 +43,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend position", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -68,8 +52,6 @@ describe("LEGEND", () => {
 					]
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should be located on the center of chart", () => {
@@ -81,7 +63,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend as inset", () => {
-		it("should change the legend to 'inset' successfully", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -96,8 +78,6 @@ describe("LEGEND", () => {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should be positioned properly", () => {
@@ -148,8 +128,10 @@ describe("LEGEND", () => {
 
 			expect(box.height).to.be.equal(48);
 		});
+	});
 
-		it("should update args to have only one series", () => {
+	describe("should update args to have only one series", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -160,8 +142,6 @@ describe("LEGEND", () => {
 					position: "inset"
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should locate legend properly", () => {
@@ -176,7 +156,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend.hide", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -188,8 +168,6 @@ describe("LEGEND", () => {
 					hide: true
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should not show legends", () => {
@@ -223,7 +201,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("legend.show", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -235,8 +213,6 @@ describe("LEGEND", () => {
 					show: false
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should not initially have rendered any legend items", () => {
@@ -255,7 +231,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("custom legend size", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -272,8 +248,6 @@ describe("LEGEND", () => {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("renders the legend item with the correct width and height", () => {
@@ -288,7 +262,7 @@ describe("LEGEND", () => {
 	});
 
 	describe("custom legend padding", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -300,8 +274,6 @@ describe("LEGEND", () => {
 					padding: 10
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("renders the correct amount of padding on the legend element", function() {

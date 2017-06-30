@@ -7,26 +7,30 @@ import util from "./assets/util";
 
 describe("DOMAIN", function() {
 	let chart;
-	let args = {
-		data: {
-			columns: [
-				["data1", 30, 200, 100, 400, 150, 250],
-				["data2", 50, 20, 10, 40, 15, 25]
-			]
-		},
-		axis: {
-			y: {
-				min: - 100
-			},
-			y2: {}
-		}
-	};
+	let args;
 
 	beforeEach(() => {
 		chart = util.generate(args);
 	});
 
 	describe("axis.y.min", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				},
+				axis: {
+					y: {
+						min: - 100
+					},
+					y2: {}
+				}
+			};
+		});
+
 		it("should be set properly when smaller than max of data", () => {
 			const domain = chart.internal.y.domain();
 
@@ -83,8 +87,8 @@ describe("DOMAIN", function() {
 
 	});
 
-	describe("axis.y.padding", () => {
-		it("should change axis.y.max to 1000", () => {
+	describe("axis.y.padding #1", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -98,8 +102,6 @@ describe("DOMAIN", function() {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should be set properly when bigger than min of data", () => {
@@ -108,8 +110,11 @@ describe("DOMAIN", function() {
 			expect(domain[0]).to.be.closeTo(-9, 1);
 			expect(domain[1]).to.be.closeTo(69, 1);
 		});
+	});
 
-		it("should change axis.y.max to 1000 with top/bottom padding", () => {
+	describe("axis.y.padding #2", () => {
+		before(() => {
+			// should change axis.y.max to 1000 with top/bottom padding
 			args = {
 				data: {
 					columns: [
@@ -126,8 +131,6 @@ describe("DOMAIN", function() {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should be set properly when bigger than min of data", () => {

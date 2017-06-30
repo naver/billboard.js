@@ -132,8 +132,6 @@ describe("SHAPE BAR", () => {
 						rotated: false
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should not be within bar", () => {

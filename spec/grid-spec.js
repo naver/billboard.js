@@ -14,7 +14,7 @@ describe("GRID", function() {
 	});
 
 	describe("y grid show", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -33,8 +33,6 @@ describe("GRID", function() {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should not show y grids", () => {
@@ -97,8 +95,8 @@ describe("GRID", function() {
 	});
 
 	describe("y grid lines", () => {
-		describe("position", () => {
-			it("should update args", () => {
+		describe("position #1", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -115,8 +113,6 @@ describe("GRID", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -128,7 +124,7 @@ describe("GRID", function() {
 					const lines = chart.internal.main.selectAll(".bb-ygrid-lines .bb-ygrid-line line");
 					const expectedY1s = [373, 268, 196];
 
-					lines.each(function(d, i) {
+					lines.each(function (d, i) {
 						const y1 = Number(d3.select(this).attr("y1"));
 
 						expect(y1).to.be.closeTo(expectedY1s[i], 1);
@@ -143,7 +139,7 @@ describe("GRID", function() {
 				const expectedPositions = ["start", "middle", "end"];
 				const expectedDxs = [4, 0, -4];
 
-				lines.each(function(d, i) {
+				lines.each(function (d, i) {
 					const text = d3.select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
@@ -152,8 +148,10 @@ describe("GRID", function() {
 					expect(+dx).to.be.equal(expectedDxs[i]);
 				});
 			});
+		});
 
-			it("should update args", () => {
+		describe("position #2", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -173,8 +171,6 @@ describe("GRID", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -216,8 +212,8 @@ describe("GRID", function() {
 	});
 
 	describe("x grid lines", () => {
-		describe("position", () => {
-			it("should have correct height", () => {
+		describe("position #1", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -234,8 +230,6 @@ describe("GRID", function() {
 						}
 					},
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -246,7 +240,7 @@ describe("GRID", function() {
 				const lines = chart.internal.main.selectAll(".bb-xgrid-lines .bb-xgrid-line");
 				const expectedX1s = [202, 397, 593];
 
-				lines.each(function(d, i) {
+				lines.each(function (d, i) {
 					const x1 = Number(d3.select(this).select("line").attr("x1"));
 
 					expect(x1).to.be.closeTo(expectedX1s[i], 1);
@@ -258,7 +252,7 @@ describe("GRID", function() {
 				const expectedPositions = ["start", "middle", "end"];
 				const expectedDxs = [4, 0, -4];
 
-				lines.each(function(d, i) {
+				lines.each(function (d, i) {
 					const text = d3.select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
@@ -267,8 +261,10 @@ describe("GRID", function() {
 					expect(+dx).to.be.equal(expectedDxs[i]);
 				});
 			});
+		});
 
-			it("should update args", () => {
+		describe("position #2", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -288,8 +284,6 @@ describe("GRID", function() {
 						}
 					},
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -325,7 +319,7 @@ describe("GRID", function() {
 		});
 
 		describe("with padding.top", () => {
-			it("should have correct height", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -343,8 +337,6 @@ describe("GRID", function() {
 						top: 50
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show x grid lines", () => {
@@ -365,7 +357,7 @@ describe("GRID", function() {
 		});
 
 		describe("on category axis", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -388,8 +380,6 @@ describe("GRID", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show x grid lines", () => {

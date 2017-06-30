@@ -17,7 +17,7 @@ describe("SHAPE LINE", () => {
 	const parseSvgPath = util.parseSvgPath;
 
 	describe("shape-rendering for line chart", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -28,8 +28,6 @@ describe("SHAPE LINE", () => {
 					type: "line"
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("Should render the lines correctly", () => {
@@ -73,7 +71,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("point.show option", () => {
-		it("should change args to include null data", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -84,8 +82,6 @@ describe("SHAPE LINE", () => {
 					type: "line"
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should not show the circle for null", () => {
@@ -114,7 +110,7 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("spline.interpolation option", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -130,8 +126,6 @@ describe("SHAPE LINE", () => {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should update interpolation function", () => {

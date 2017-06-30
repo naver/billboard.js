@@ -14,8 +14,8 @@ describe("DATA", () => {
 		chart = util.generate(args);
 	});
 
-	describe("load json", () => {
-		it("should update args", () => {
+	describe("load json #1", () => {
+		before(() => {
 			args = {
 				data: {
 					json: {
@@ -24,23 +24,23 @@ describe("DATA", () => {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should draw correctly", () => {
 			const expectedCx = [6, 299, 593];
 			const expectedCy = [371, 391, 332];
 
-			chart.internal.main.selectAll(".bb-circles-data1 .bb-circle").each(function(d, i) {
+			chart.internal.main.selectAll(".bb-circles-data1 .bb-circle").each(function (d, i) {
 				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], +1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[i], +1);
 			});
 		});
+	});
 
-		it("should update args", () => {
+	describe("load json #2", () => {
+		before(() => {
 			args = {
 				data: {
 					json: [{
@@ -66,8 +66,6 @@ describe("DATA", () => {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should draw correctly", () => {
@@ -75,22 +73,24 @@ describe("DATA", () => {
 			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
 			const main = chart.internal.main;
 
-			main.selectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
+			main.selectAll(".bb-circles-443 .bb-circle").each(function (d, i) {
 				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[443][i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
 			});
 
-			main.selectAll(".bb-circles-995 .bb-circle").each(function(d, i) {
+			main.selectAll(".bb-circles-995 .bb-circle").each(function (d, i) {
 				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[995][i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
 			});
 		});
+	});
 
-		it("should update nested JSON args", () => {
+	describe("load json #3", () => {
+		before(() => {
 			args = {
 				data: {
 					json: [{
@@ -130,8 +130,6 @@ describe("DATA", () => {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should draw nested JSON correctly", () => {
@@ -200,7 +198,7 @@ describe("DATA", () => {
 	});
 
 	describe("function in data.order", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -211,8 +209,6 @@ describe("DATA", () => {
 					order: () => 0
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should return false in isOrderAsc and isOrderDesc functions", () => {
@@ -221,7 +217,7 @@ describe("DATA", () => {
 	});
 
 	describe("data.xs", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -231,8 +227,6 @@ describe("DATA", () => {
 					]
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		describe("normal x", () => {
@@ -254,7 +248,7 @@ describe("DATA", () => {
 
 		describe("timeseries x", () => {
 			describe("without xFormat", () => {
-				it("should load timeseries data successfully", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "date",
@@ -270,8 +264,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -294,7 +286,7 @@ describe("DATA", () => {
 
 			describe("with xFormat", () => {
 				describe("timeseries x with xFormat", () => {
-					it("should load timeseries data successfully", () => {
+					before(() => {
 						args = {
 							data: {
 								x: "date",
@@ -311,8 +303,6 @@ describe("DATA", () => {
 								}
 							}
 						};
-
-						expect(true).to.be.ok;
 					});
 
 					it("should have correct number of xs", () => {
@@ -337,7 +327,7 @@ describe("DATA", () => {
 
 		describe("milliseconds timeseries x", () => {
 			describe("as date string", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "date",
@@ -358,8 +348,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -387,7 +375,7 @@ describe("DATA", () => {
 			});
 
 			describe("as unixtime number", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "date",
@@ -406,8 +394,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -430,7 +416,7 @@ describe("DATA", () => {
 
 	describe("data.label", () => {
 		describe("on line chart", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					padding: {
 						left: 50
@@ -446,8 +432,6 @@ describe("DATA", () => {
 						labels: true
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -510,7 +494,7 @@ describe("DATA", () => {
 		});
 
 		describe("on area chart", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					padding: {
 						left: 50
@@ -526,8 +510,6 @@ describe("DATA", () => {
 						labels: true
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -589,7 +571,7 @@ describe("DATA", () => {
 		});
 
 		describe("on bar chart", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					padding: {
 						left: 50
@@ -605,8 +587,6 @@ describe("DATA", () => {
 						labels: true
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -668,7 +648,7 @@ describe("DATA", () => {
 		});
 
 		describe("for all targets", () => {
-			it("should update args to show data label for all data", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -679,8 +659,6 @@ describe("DATA", () => {
 						labels: true
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have data labels on all data", () => {
@@ -702,7 +680,7 @@ describe("DATA", () => {
 
 		describe("for each target", () => {
 			describe("as true", () => {
-				it("should update args to show data label for only data1", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -717,8 +695,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
@@ -739,7 +715,7 @@ describe("DATA", () => {
 			});
 
 			describe("as function", () => {
-				it("should update args to show data label for only data1", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -754,8 +730,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
@@ -777,7 +751,7 @@ describe("DATA", () => {
 		});
 
 		describe("with small values", () => {
-			it("should update args to show data label", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -786,8 +760,6 @@ describe("DATA", () => {
 						labels: true
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have proper y domain", () => {
@@ -800,7 +772,7 @@ describe("DATA", () => {
 
 		describe("with positive values and null", () => {
 			describe("on not rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						padding: {
 							left: 40
@@ -815,8 +787,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -867,14 +837,13 @@ describe("DATA", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.padding.bottom = 50;
 					args.padding.top = 5;
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -926,7 +895,7 @@ describe("DATA", () => {
 
 		describe("with negative values and null", () => {
 			describe("on not rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						padding: {
 							left: 50
@@ -943,8 +912,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -995,7 +962,7 @@ describe("DATA", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.padding.left = 50;
 					args.padding.bottom = 0;
 
@@ -1003,7 +970,6 @@ describe("DATA", () => {
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1058,7 +1024,7 @@ describe("DATA", () => {
 
 		describe("with positive and negative values and null", () => {
 			describe("on non rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -1072,8 +1038,6 @@ describe("DATA", () => {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1123,15 +1087,12 @@ describe("DATA", () => {
 				});
 			});
 
-
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1183,7 +1144,7 @@ describe("DATA", () => {
 
 		describe("with positive grouped values", () => {
 			describe("on non rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -1196,8 +1157,6 @@ describe("DATA", () => {
 							type: "bar"
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1248,13 +1207,11 @@ describe("DATA", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1307,7 +1264,7 @@ describe("DATA", () => {
 
 		describe("with negative grouped values", () => {
 			describe("on non rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -1320,8 +1277,6 @@ describe("DATA", () => {
 							type: "bar"
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1372,13 +1327,11 @@ describe("DATA", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
