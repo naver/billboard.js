@@ -4,11 +4,6 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {
-	select as d3Select,
-	selectAll as d3SelectAll,
-	format as d3Format
-} from "d3";
 import util from "./assets/util";
 
 describe("Data", () => {
@@ -16,7 +11,7 @@ describe("Data", () => {
 	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("load json", () => {
@@ -29,6 +24,7 @@ describe("Data", () => {
 					}
 				}
 			};
+
 			expect(true).to.be.ok;
 		});
 
@@ -36,7 +32,7 @@ describe("Data", () => {
 			const expectedCx = [6, 299, 593];
 			const expectedCy = [371, 391, 332];
 
-			d3SelectAll(".bb-circles-data1 .bb-circle").each(function(d, i) {
+			chart.internal.main.selectAll(".bb-circles-data1 .bb-circle").each(function(d, i) {
 				const circle = d3Select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], +1);
@@ -70,6 +66,7 @@ describe("Data", () => {
 					}
 				}
 			};
+
 			expect(true).to.be.ok;
 		});
 
@@ -77,7 +74,7 @@ describe("Data", () => {
 			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
 
-			d3SelectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
+			chart.internal.main.selectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
 				const circle = d3Select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[443][i], 1);

@@ -707,8 +707,11 @@ describe("Axis", function() {
 						const tick = d3.select(this);
 						const text = tick.select("text");
 						const tspan = text.select("tspan");
+						const transform = text.attr("transform");
 
-						expect(Math.round(text.attr("transform").replace(/[A-z()]/g, ""))).to.be.equal(45);
+						transform &&
+							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.closeTo(45, 5);
+
 						expect(text.attr("y")).to.be.equal("4");
 						expect(parseFloat(tspan.attr("dx"))).to.be.closeTo(5.6, 0.5);
 					});
