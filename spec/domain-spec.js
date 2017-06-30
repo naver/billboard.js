@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Domain", function() {
+describe("DOMAIN", function() {
 	let chart;
 	let args = {
 		data: {
@@ -15,21 +15,18 @@ describe("Domain", function() {
 			]
 		},
 		axis: {
-			y: {},
+			y: {
+				min: - 100
+			},
 			y2: {}
 		}
 	};
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("axis.y.min", () => {
-		it("should change axis.y.min to -100", () => {
-			args.axis.y.min = -100;
-			expect(true).to.be.ok;
-		});
-
 		it("should be set properly when smaller than max of data", () => {
 			const domain = chart.internal.y.domain();
 
@@ -39,6 +36,7 @@ describe("Domain", function() {
 
 		it("should change axis.y.min to 500", () => {
 			args.axis.y.min = 500;
+
 			expect(true).to.be.ok;
 		});
 
@@ -51,6 +49,7 @@ describe("Domain", function() {
 
 		it("should change axis.y.min to undefined", () => {
 			args.axis.y.min = undefined;
+
 			expect(true).to.be.ok;
 		});
 	});
@@ -58,6 +57,7 @@ describe("Domain", function() {
 	describe("axis.y.max", () => {
 		it("should change axis.y.max to 1000", () => {
 			args.axis.y.max = 1000;
+
 			expect(true).to.be.ok;
 		});
 
@@ -70,6 +70,7 @@ describe("Domain", function() {
 
 		it("should change axis.y.max to 0", () => {
 			args.axis.y.max = 0;
+
 			expect(true).to.be.ok;
 		});
 
@@ -98,7 +99,7 @@ describe("Domain", function() {
 				}
 			};
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should be set properly when bigger than min of data", () => {
@@ -126,7 +127,7 @@ describe("Domain", function() {
 				}
 			};
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should be set properly when bigger than min of data", () => {

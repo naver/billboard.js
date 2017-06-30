@@ -4,19 +4,15 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {
-	selectAll as d3SelectAll,
-	select as d3Select,
-} from "d3";
 import util from "./assets/util";
 
-describe("Interaction", () => {
+describe("INTERACTION", () => {
 	let chart;
 	let args;
 	let clicked = false;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("generate event rects", () => {
@@ -33,15 +29,15 @@ describe("Interaction", () => {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
 				const lefts = [69, 130, 198, 403];
 				const widths = [61, 68, 205, 197.5];
 
-				d3SelectAll(".bb-event-rect").each(function(d, i) {
-					const box = d3Select(this).node().getBoundingClientRect();
+				chart.internal.main.selectAll(".bb-event-rect").each(function(d, i) {
+					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
@@ -60,16 +56,16 @@ describe("Interaction", () => {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {
-				const eventRects = d3SelectAll(".bb-event-rect");
+				const eventRects = chart.internal.main.selectAll(".bb-event-rect");
 
 				expect(eventRects.size()).to.be.equal(1);
 
 				eventRects.each(function() {
-					const box = d3Select(this).node().getBoundingClientRect();
+					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(30.5, 10);
 					expect(box.width).to.be.closeTo(608, 10);
@@ -89,15 +85,15 @@ describe("Interaction", () => {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 4 event rects properly", () => {
 				const lefts = [33.5, 185.5, 348, 497.5];
 				const widths = [152, 162.5, 149.5, 138.5];
 
-				d3SelectAll(".bb-event-rect").each(function(d, i) {
-					const box = d3Select(this).node().getBoundingClientRect();
+				chart.internal.main.selectAll(".bb-event-rect").each(function(d, i) {
+					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
@@ -118,16 +114,16 @@ describe("Interaction", () => {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should have 1 event rects properly", () => {
-				const eventRects = d3SelectAll(".bb-event-rect");
+				const eventRects = chart.internal.main.selectAll(".bb-event-rect");
 
 				expect(eventRects.size()).to.be.equal(1);
 
 				eventRects.each(function() {
-					const box = d3Select(this).node().getBoundingClientRect();
+					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(30.5, 10);
 					expect(box.width).to.be.closeTo(608, 10);
@@ -135,8 +131,9 @@ describe("Interaction", () => {
 			});
 
 			it("check for data click", () => {
-				const rect = d3.select(".bb-event-rect.bb-event-rect-0").node();
-				const circle = d3.select(".bb-circles-data circle").node().getBBox();
+				const main = chart.internal.main;
+				const rect = main.select(".bb-event-rect.bb-event-rect-0").node();
+				const circle = main.select(".bb-circles-data circle").node().getBBox();
 
 				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
 

@@ -4,18 +4,14 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {
-	selectAll as d3SelectAll,
-	select as d3Select,
-} from "d3";
 import util from "./assets/util";
 
-describe("Shape line", () => {
+describe("SHAPE LINE", () => {
 	let chart;
 	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	const parseSvgPath = util.parseSvgPath;
@@ -44,8 +40,8 @@ describe("Shape line", () => {
 		});
 
 		it("should not have shape-rendering when it's line chart", () => {
-			d3SelectAll(".bb-line").each(function() {
-				const style = d3Select(this).style("shape-rendering");
+			chart.internal.main.selectAll(".bb-line").each(function() {
+				const style = d3.select(this).style("shape-rendering");
 
 				expect(style).to.be.equal("auto");
 			});
@@ -53,12 +49,13 @@ describe("Shape line", () => {
 
 		it("should change to step chart", () => {
 			args.data.type = "step";
+
 			expect(true).to.be.ok;
 		});
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
-			d3SelectAll(".bb-line").each(function() {
-				const style = d3Select(this).style("shape-rendering").toLowerCase();
+			chart.internal.main.selectAll(".bb-line").each(function() {
+				const style = d3.select(this).style("shape-rendering").toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
 			});
@@ -66,6 +63,7 @@ describe("Shape line", () => {
 
 		it("should change to spline chart", () => {
 			args.data.type = "spline";
+
 			expect(true).to.be.ok;
 		});
 
@@ -133,7 +131,7 @@ describe("Shape line", () => {
 				}
 			};
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should update interpolation function", () => {
@@ -144,6 +142,7 @@ describe("Shape line", () => {
 
 		it("should not use a non-valid interpolation", () => {
 			args.spline.interpolation.type = "foo";
+
 			expect(true).to.be.ok;
 		});
 

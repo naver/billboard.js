@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Core", function() {
+describe("CORE", function() {
 	let chart;
 	let args = {
 		svg: {
@@ -67,10 +67,9 @@ describe("Core", function() {
 
 	describe("bindto", () => {
 		describe("selector", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = "#chart";
-				expect(true).to.be.ok;
 			});
 
 			it("should be created", () => {
@@ -81,11 +80,9 @@ describe("Core", function() {
 		});
 
 		describe("d3.selection object", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = d3.select("#chart");
-
-				expect(true).to.be.ok;
 			});
 
 			it("should be created", () => {
@@ -96,12 +93,9 @@ describe("Core", function() {
 		});
 
 		describe("null", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = "#chart-dummy";
-
-
-				expect(true).to.be.ok;
 			});
 
 			it("should not be created", () => {
@@ -112,12 +106,11 @@ describe("Core", function() {
 		});
 
 		describe("empty string", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = "#chart-dummy";
-
-				expect(true).to.be.ok;
 			});
+
 			it("should not be created", () => {
 				const svg = d3.select("#chart svg");
 
@@ -128,7 +121,7 @@ describe("Core", function() {
 	});
 
 	describe("empty data", () => {
-		it("should upaate args for empty data", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -137,8 +130,6 @@ describe("Core", function() {
 					]
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should generate a chart", () => {

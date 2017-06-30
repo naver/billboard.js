@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Arc", () => {
+describe("ARC", () => {
 	describe("show pie chart", () => {
 		const chart = util.generate({
 			data: {

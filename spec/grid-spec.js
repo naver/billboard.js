@@ -5,12 +5,12 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Grid", function() {
+describe("GRID", function() {
 	let chart;
 	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("y grid show", () => {
@@ -34,7 +34,7 @@ describe("Grid", function() {
 				}
 			};
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should not show y grids", () => {
@@ -44,7 +44,7 @@ describe("Grid", function() {
 		it("should update args to show y grids", () => {
 			args.grid.y.show = true;
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should show y grids", function() {
@@ -57,7 +57,7 @@ describe("Grid", function() {
 		it("should update args to show only 3 y grids", () => {
 			args.grid.y.ticks = 3;
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should show only 3 y grids", () => {
@@ -70,7 +70,7 @@ describe("Grid", function() {
 		it("should update args to show y grids depending on y axis ticks", () => {
 			args.axis.y.tick.count = 5;
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should show grids depending on y axis ticks", () => {
@@ -116,7 +116,7 @@ describe("Grid", function() {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -235,7 +235,7 @@ describe("Grid", function() {
 					},
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -289,7 +289,7 @@ describe("Grid", function() {
 					},
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -301,7 +301,7 @@ describe("Grid", function() {
 				const expectedY1s = [144, 283, 421];
 
 				lines.each(function(d, i) {
-					const y1 = Number(d3.select(this).select("line").attr("y1"));
+					const y1 = +d3.select(this).select("line").attr("y1");
 
 					expect(y1).to.be.closeTo(expectedY1s[i], 1);
 				});
@@ -344,7 +344,7 @@ describe("Grid", function() {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should show x grid lines", () => {
@@ -389,7 +389,7 @@ describe("Grid", function() {
 					}
 				};
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should show x grid lines", () => {

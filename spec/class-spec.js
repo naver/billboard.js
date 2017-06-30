@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Class", function() {
+describe("CLASS", function() {
 	const chart = util.generate({
 		data: {
 			columns: [

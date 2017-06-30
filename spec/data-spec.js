@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
 
-describe("Data", () => {
+describe("DATA", () => {
 	let chart;
 	let args;
 
@@ -33,7 +33,7 @@ describe("Data", () => {
 			const expectedCy = [371, 391, 332];
 
 			chart.internal.main.selectAll(".bb-circles-data1 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], +1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[i], +1);
@@ -73,16 +73,17 @@ describe("Data", () => {
 		it("should draw correctly", () => {
 			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
+			const main = chart.internal.main;
 
-			chart.internal.main.selectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[443][i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-995 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-995 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[995][i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
@@ -129,10 +130,12 @@ describe("Data", () => {
 					}
 				}
 			};
+
 			expect(true).to.be.ok;
 		});
 
 		it("should draw nested JSON correctly", () => {
+			const main = chart.internal.main;
 			const expectedCx = [98, 294, 490];
 			const expectedCy = {
 				443: [181, 326, 36],
@@ -144,51 +147,51 @@ describe("Data", () => {
 				"778.889": [347, 376, 340]
 			};
 
-			d3SelectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-995-996 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-995-996 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
 			});
 
 
-			d3SelectAll(".bb-circles-112-0- .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-112-0- .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[112][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-223-0--224 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-223-0--224 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[223][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-334-1--0--335 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-334-1--0--335 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[334][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-556-557-558-0- .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-556-557-558-0- .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[556][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-778-889 .bb-circle").each(function (d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-778-889 .bb-circle").each(function (d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy["778.889"][i], 1);
@@ -208,6 +211,7 @@ describe("Data", () => {
 					order: () => 0
 				}
 			};
+
 			expect(true).to.be.ok;
 		});
 
@@ -227,6 +231,7 @@ describe("Data", () => {
 					]
 				}
 			};
+
 			expect(true).to.be.ok;
 		});
 
@@ -265,6 +270,7 @@ describe("Data", () => {
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -305,6 +311,7 @@ describe("Data", () => {
 								}
 							}
 						};
+
 						expect(true).to.be.ok;
 					});
 
@@ -351,6 +358,7 @@ describe("Data", () => {
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -373,7 +381,7 @@ describe("Data", () => {
 					const expected = ["2014-05-20 17:25:00.123", "2014-05-20 17:30:00.345"];
 
 					chart.internal.main.selectAll(".bb-axis-x g.tick text").each(function(d, i) {
-						expect(d3Select(this).text()).to.be.equal(expected[i]);
+						expect(d3.select(this).text()).to.be.equal(expected[i]);
 					});
 				});
 			});
@@ -398,6 +406,7 @@ describe("Data", () => {
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -437,6 +446,7 @@ describe("Data", () => {
 						labels: true
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
@@ -456,8 +466,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -466,7 +476,11 @@ describe("Data", () => {
 			});
 
 			it("should update args to be stacked", () => {
-				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+
 				expect(true).to.be.ok;
 			});
 
@@ -485,8 +499,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -512,6 +526,7 @@ describe("Data", () => {
 						labels: true
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
@@ -530,8 +545,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -540,7 +555,11 @@ describe("Data", () => {
 			});
 
 			it("should update args to be stacked", () => {
-				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+
 				expect(true).to.be.ok;
 			});
 
@@ -559,8 +578,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 4);
@@ -586,6 +605,7 @@ describe("Data", () => {
 						labels: true
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
@@ -604,8 +624,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -614,7 +634,11 @@ describe("Data", () => {
 			});
 
 			it("should update args to be stacked", () => {
-				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+
 				expect(true).to.be.ok;
 			});
 
@@ -633,8 +657,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 4);
@@ -655,18 +679,23 @@ describe("Data", () => {
 						labels: true
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
 			it("should have data labels on all data", () => {
-				d3SelectAll(".bb-texts-data1 text").each(function(d, i) {
-					expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+				const main = chart.internal.main;
+
+				main.selectAll(".bb-texts-data1 text").each(function(d, i) {
+					expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 				});
-				d3SelectAll(".bb-texts-data2 text").each(function(d, i) {
-					expect(d3Select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
+
+				main.selectAll(".bb-texts-data2 text").each(function(d, i) {
+					expect(d3.select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
 				});
-				d3SelectAll(".bb-texts-data3 text").each(function(d, i) {
-					expect(d3Select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
+
+				main.selectAll(".bb-texts-data3 text").each(function(d, i) {
+					expect(d3.select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
 				});
 			});
 		});
@@ -688,18 +717,23 @@ describe("Data", () => {
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
-					d3SelectAll(".bb-texts-data1 text").each(function(d, i) {
-						expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+					const main = chart.internal.main;
+
+					main.selectAll(".bb-texts-data1 text").each(function(d, i) {
+						expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 					});
-					d3SelectAll(".bb-texts-data2 text").each(function() {
-						expect(d3Select(this).text()).to.be.equal("");
+
+					main.selectAll(".bb-texts-data2 text").each(function() {
+						expect(d3.select(this).text()).to.be.equal("");
 					});
-					d3SelectAll(".bb-texts-data3 text").each(function() {
-						expect(d3Select(this).text()).to.be.equal("");
+
+					main.selectAll(".bb-texts-data3 text").each(function() {
+						expect(d3.select(this).text()).to.be.equal("");
 					});
 				});
 			});
@@ -715,23 +749,28 @@ describe("Data", () => {
 							],
 							labels: {
 								format: {
-									data1: d3Format("$")
+									data1: d3.format("$")
 								}
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
-					d3SelectAll(".bb-texts-data1 text").each(function(d, i) {
-						expect(d3Select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
+					const main = chart.internal.main;
+
+					main.selectAll(".bb-texts-data1 text").each(function(d, i) {
+						expect(d3.select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
 					});
-					d3SelectAll(".bb-texts-data2 text").each(function() {
-						expect(d3Select(this).text()).to.equal("");
+
+					main.selectAll(".bb-texts-data2 text").each(function() {
+						expect(d3.select(this).text()).to.equal("");
 					});
-					d3SelectAll(".bb-texts-data3 text").each(function() {
-						expect(d3Select(this).text()).to.equal("");
+
+					main.selectAll(".bb-texts-data3 text").each(function() {
+						expect(d3.select(this).text()).to.equal("");
 					});
 				});
 			});
@@ -747,6 +786,7 @@ describe("Data", () => {
 						labels: true
 					}
 				};
+
 				expect(true).to.be.ok;
 			});
 
@@ -771,15 +811,11 @@ describe("Data", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => {
-									if (v === null) {
-										return "Not Applicable";
-									}
-									return d3Format("$")(v);
-								}
+								format: v => (v === null ? "Not Applicable" : d3.format("$")(v))
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -796,7 +832,7 @@ describe("Data", () => {
 					const expectedXs = [75, 225, 374, 524];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -805,6 +841,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -821,7 +858,7 @@ describe("Data", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -853,7 +890,7 @@ describe("Data", () => {
 					const expectedXs = [488.5, 514, 488.5, 4];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -878,7 +915,7 @@ describe("Data", () => {
 					const expectedXs = [76, 526, 76, 4];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -900,15 +937,13 @@ describe("Data", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => {
-									if (v === null) {
-										return "Not Applicable";
-									}
-									return d3Format("$")(v);
-								}
+								format: v => (v === null ?
+									"Not Applicable" : d3.format("$")(v)
+								)
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -925,7 +960,7 @@ describe("Data", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
@@ -934,6 +969,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -950,7 +986,7 @@ describe("Data", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -983,7 +1019,7 @@ describe("Data", () => {
 					const expectedXs = [80, 584, 80, 514];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 5);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
@@ -994,6 +1030,7 @@ describe("Data", () => {
 					args.data.type = "line";
 					args.padding.left = 50;
 					args.padding.bottom = 0;
+
 					expect(true).to.be.ok;
 				});
 
@@ -1010,7 +1047,7 @@ describe("Data", () => {
 					const expectedXs = [69, 527, 69, 527]; // 72.50132230092231
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1029,15 +1066,13 @@ describe("Data", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => {
-									if (v === null) {
-										return "Not Applicable";
-									}
-									return d3Format("$")(v);
-								}
+								format: v => (v === null ?
+									"Not Applicable" : d3.format("$")(v)
+								)
 							}
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -1054,7 +1089,7 @@ describe("Data", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1063,6 +1098,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1079,7 +1115,7 @@ describe("Data", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1094,6 +1130,7 @@ describe("Data", () => {
 					args.axis = {
 						rotated: true
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -1110,7 +1147,7 @@ describe("Data", () => {
 					const expectedXs = [72, 525, 513, 295];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1135,7 +1172,7 @@ describe("Data", () => {
 					const expectedXs = [70, 527, 515, 297];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1159,6 +1196,7 @@ describe("Data", () => {
 							type: "bar"
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -1175,7 +1213,7 @@ describe("Data", () => {
 					const expectedXs = [74, 225, 374, 524];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1184,6 +1222,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1200,7 +1239,7 @@ describe("Data", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1214,6 +1253,7 @@ describe("Data", () => {
 					args.axis = {
 						rotated: true
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -1230,7 +1270,7 @@ describe("Data", () => {
 					const expectedXs = [57, 150, 77, 362];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1239,6 +1279,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1255,7 +1296,7 @@ describe("Data", () => {
 					const expectedXs = [107, 192, 125, 386];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1279,6 +1320,7 @@ describe("Data", () => {
 							type: "bar"
 						}
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -1295,7 +1337,7 @@ describe("Data", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
@@ -1304,6 +1346,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1320,7 +1363,7 @@ describe("Data", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1334,6 +1377,7 @@ describe("Data", () => {
 					args.axis = {
 						rotated: true
 					};
+
 					expect(true).to.be.ok;
 				});
 
@@ -1350,7 +1394,7 @@ describe("Data", () => {
 					const expectedXs = [533, 441, 513, 232];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1359,6 +1403,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1375,7 +1420,7 @@ describe("Data", () => {
 					const expectedXs = [479, 397, 461, 206];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1387,26 +1432,28 @@ describe("Data", () => {
 
 	describe("inner functions", () => {
 		it("should check returns of mapToTargetIds", () => {
-			// Given
 			let data = [1, 2, 3];
-			// When
 			let newData = chart.internal.mapToTargetIds(data);
-			// Then
+
 			expect(newData).to.deep.equal(data);
 			expect(newData).to.not.equal(data);
 
 			// Given
 			data = 1;
+
 			// When
 			newData = chart.internal.mapToTargetIds(data);
+
 			// Then
 			expect(newData).to.deep.equal([data]);
 			expect(newData).to.not.equal([data]);
 
 			// Given
 			data = chart.internal.data.targets.map(d => d.id);
+
 			// When
 			newData = chart.internal.mapToTargetIds();
+
 			// Then
 			expect(newData).to.deep.equal(data);
 			expect(newData).to.not.equal(data);
