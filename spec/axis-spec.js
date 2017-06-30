@@ -32,8 +32,8 @@ describe("Axis", function() {
 		}
 	};
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.generate(args);
 	});
 
 	describe("axis.y.tick.count", () => {
@@ -43,7 +43,7 @@ describe("Axis", function() {
 		});
 
 		it("should have only 1 tick on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y").selectAll("g.tick").size();
+			const ticksSize = chart.internal.main.select(".bb-axis-y").selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(1);
 		});
@@ -54,7 +54,7 @@ describe("Axis", function() {
 		});
 
 		it("should have 2 ticks on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(2);
@@ -66,7 +66,7 @@ describe("Axis", function() {
 		});
 
 		it("should have 3 ticks on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(3);
@@ -83,14 +83,14 @@ describe("Axis", function() {
 		});
 
 		it("should have only 2 tick on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(2);
 		});
 
 		it("should have specified tick texts", () => {
-			d3.select(".bb-axis-y").selectAll("g.tick").each(function(d, i) {
+			chart.internal.main.select(".bb-axis-y").selectAll("g.tick").each(function(d, i) {
 				const text = d3.select(this)
 					.select("text").text();
 
@@ -122,7 +122,7 @@ describe("Axis", function() {
 		});
 
 		it("should have 7 ticks on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			// the count starts at initial value and increments by the set interval
@@ -132,7 +132,7 @@ describe("Axis", function() {
 		it("should have specified 30 second intervals", () => {
 			let prevValue;
 
-			d3.select(".bb-axis-y")
+			chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick")
 				.each((d, i) => {
 					if (i !== 0) {
@@ -156,7 +156,7 @@ describe("Axis", function() {
 		it("should have specified 60 second intervals", () => {
 			let prevValue;
 
-			d3.select(".bb-axis-y").selectAll("g.tick").each((d, i) => {
+			chart.internal.main.select(".bb-axis-y").selectAll("g.tick").each((d, i) => {
 				if (i !== 0) {
 					let result = d - prevValue;
 
@@ -192,7 +192,7 @@ describe("Axis", function() {
 			});
 
 			it("should use 'function' to generate ticks", () => {
-				d3.select(".bb-axis-x")
+				chart.internal.main.select(".bb-axis-x")
 					.selectAll("g.tick")
 					.each(function(d, i) {
 						const tick = d3.select(this).select("text").text();

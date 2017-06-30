@@ -107,7 +107,7 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+				getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
 		let line = d3Line();
 
 		line = config.axis_rotated ?
@@ -130,7 +130,10 @@ extend(ChartInternal.prototype, {
 				if (config.data_regions[d.id]) {
 					path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]);
 				} else {
-					if ($$.isStepType(d)) { values = $$.convertValuesToStep(values); }
+					if ($$.isStepType(d)) {
+						values = $$.convertValuesToStep(values);
+					}
+
 					path = line.curve($$.getInterpolate(d))(values);
 				}
 			} else {
@@ -141,17 +144,19 @@ extend(ChartInternal.prototype, {
 
 				path = config.axis_rotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
+
 			return path || "M 0 0";
 		};
 	},
 
-	generateGetLinePoints(lineIndices, isSub) { // partial duplication of generateGetBarPoints
+	generateGetLinePoints(lineIndices, isSubValue) { // partial duplication of generateGetBarPoints
 		const $$ = this;
 		const config = $$.config;
 		const lineTargetsNum = lineIndices.__max__ + 1;
-		const x = $$.getShapeX(0, lineTargetsNum, lineIndices, !!isSub);
-		const y = $$.getShapeY(!!isSub);
-		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, !!isSub);
+		const isSub = !!isSubValue;
+		const x = $$.getShapeX(0, lineTargetsNum, lineIndices, isSub);
+		const y = $$.getShapeY(isSub);
+		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return (d, i) => {
@@ -161,15 +166,20 @@ extend(ChartInternal.prototype, {
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated) {
-				if ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)) { posY = y0; }
+			if (config.axis_rotated && (
+					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+				)) {
+				posY = y0;
 			}
+
 			// 1 point that marks the line position
+			const point = [posX, posY - (y0 - offset)];
+
 			return [
-				[posX, posY - (y0 - offset)],
-				[posX, posY - (y0 - offset)], // needed for compatibility
-				[posX, posY - (y0 - offset)], // needed for compatibility
-				[posX, posY - (y0 - offset)]  // needed for compatibility
+				point,
+				point, // from here and below, needed for compatibility
+				point,
+				point
 			];
 		};
 	},
@@ -205,11 +215,13 @@ extend(ChartInternal.prototype, {
 		if (isDefined(_regions)) {
 			for (i = 0; i < _regions.length; i++) {
 				regions[i] = {};
+
 				if (isUndefined(_regions[i].start)) {
 					regions[i].start = d[0].x;
 				} else {
 					regions[i].start = $$.isTimeSeries() ? $$.parseDate(_regions[i].start) : _regions[i].start;
 				}
+
 				if (isUndefined(_regions[i].end)) {
 					regions[i].end = d[d.length - 1].x;
 				} else {
@@ -251,6 +263,7 @@ extend(ChartInternal.prototype, {
 				} else {
 					points = [[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
 				}
+
 				return generateM(points);
 			};
 		}
@@ -347,14 +360,17 @@ extend(ChartInternal.prototype, {
 				if ($$.isStepType(d)) {
 					values = $$.convertValuesToStep(values);
 				}
+
 				path = area.curve($$.getInterpolate(d))(values);
 			} else {
 				if (values[0]) {
 					x0 = $$.x(values[0].x);
 					y0 = $$.getYScale(d.id)(values[0].value);
 				}
+
 				path = config.axis_rotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
+
 			return path || "M 0 0";
 		};
 	},
@@ -379,8 +395,10 @@ extend(ChartInternal.prototype, {
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated) {
-				if ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)) { posY = y0; }
+			if (config.axis_rotated && (
+					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+				)) {
+				posY = y0;
 			}
 
 			// 1 point that marks the area position
@@ -492,6 +510,7 @@ extend(ChartInternal.prototype, {
 		if (reset) {
 			$$.unexpandCircles();
 		}
+
 		$$.getCircles(i, id)
 			.classed(CLASS.EXPANDED, true)
 			.attr("r", r);

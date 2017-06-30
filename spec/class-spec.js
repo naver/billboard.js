@@ -6,8 +6,7 @@
 import util from "./assets/util";
 
 describe("Class", function() {
-	let chart;
-	let args = {
+	const chart = util.generate({
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250],
@@ -15,10 +14,6 @@ describe("Class", function() {
 				["data3 мужчины", 150, 120, 110, 140, 115, 125]
 			]
 		}
-	};
-
-	beforeEach(() => {
-		chart = util.initChart(chart, args);
 	});
 
 	describe("internal.getTargetSelectorSuffix", () => {
@@ -39,8 +34,8 @@ describe("Class", function() {
 		});
 
 		it("should replace space to '-' with multibyte characters", () => {
-			const input = "data1 suffix 日本語";
-			const expected = "-data1-suffix-日本語";
+			const input = "data1 suffix 한글 日本語";
+			const expected = "-data1-suffix-한글-日本語";
 			const suffix = chart.internal.getTargetSelectorSuffix(input);
 
 			expect(suffix).to.be.equal(expected);

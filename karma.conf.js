@@ -6,7 +6,18 @@ module.exports = function(config) {
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/d3/build/d3.min.js",
 			"./dist/billboard.css",
-			"./spec/*-spec.js"
+			//"./spec/*-spec.js",
+			"./spec/api.axis-spec.js",
+			 "./spec/api.data-spec.js",
+			 "./spec/api.focus-spec.js",
+			 "./spec/api.grid-spec.js",
+			 "./spec/api.load-spec.js",
+			 "./spec/api.region-spec.js",
+			 "./spec/api.zoom-spec.js",
+			 "./spec/arc-spec.js",
+			 "./spec/bb-spec.js",
+			 "./spec/axis-spec.js",
+			 "./spec/class-spec.js",
 		],
 
 		exclude: [

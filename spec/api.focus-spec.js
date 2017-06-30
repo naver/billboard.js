@@ -6,12 +6,12 @@
 import util from "./assets/util";
 
 describe("API focus", function() {
-	const chart = util.initChart(chart, {
+	const chart = util.generate({
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400],
-				["data2", 1000, 800, 500, 2000],
-				["data3", 5000, 2000, 1000, 4000]
+				["data2", 500, 800, 500, 2000],
+				["data3", 5000, 2000, 500, 4000]
 			]
 		}
 	});
@@ -48,7 +48,7 @@ describe("API focus", function() {
 				});
 
 				done();
-			}, 1000);
+			}, 500);
 		});
 
 		it("should focus one target", done => {
@@ -78,7 +78,7 @@ describe("API focus", function() {
 				expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 				done();
-			}, 1000);
+			}, 500);
 		});
 
 		it("should focus multiple targets", done => {
@@ -109,7 +109,7 @@ describe("API focus", function() {
 				expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 				done();
-			}, 1000);
+			}, 500);
 		});
 	});
 
@@ -138,7 +138,7 @@ describe("API focus", function() {
 				});
 
 				done();
-			}, 1000);
+			}, 500);
 		});
 
 
@@ -175,7 +175,7 @@ describe("API focus", function() {
 				});
 
 				done();
-			}, 700);
+			}, 500);
 		});
 
 		it("should defocus multiple targets", done => {
@@ -211,7 +211,7 @@ describe("API focus", function() {
 				});
 
 				done();
-			}, 700);
+			}, 500);
 		});
 
 		it("should defocus multiple targets after focused", done => {
@@ -248,8 +248,8 @@ describe("API focus", function() {
 					expect(+legendItems.data3.style("opacity")).to.be.equal(1);
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 	});
@@ -282,8 +282,8 @@ describe("API focus", function() {
 					});
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 		it("should revert all targets after defocus", done => {
@@ -313,8 +313,8 @@ describe("API focus", function() {
 					});
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 		it("should revert one target after focus", done => {
@@ -352,8 +352,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.be.ok;
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 		it("should revert one target after defocus", done => {
@@ -391,8 +391,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 		it("should focus multiple targets after focus", done => {
@@ -430,8 +430,8 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.be.ok;
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 		it("should focus multiple targets after defocus", done => {
@@ -469,19 +469,19 @@ describe("API focus", function() {
 					expect(legendItems.data3.classed(itemFocused)).to.not.be.ok;
 
 					done();
-				}, 1000);
-			}, 1000);
+				}, 500);
+			}, 500);
 		});
 
 	});
 
 	describe("when legend.show = false", () => {
-		const chart = util.initChart(chart, {
+		const chart = util.generate({
 			data: {
 				columns: [
 					["data1", 30, 200, 100, 400],
-					["data2", 1000, 800, 500, 2000],
-					["data3", 5000, 2000, 1000, 4000]
+					["data2", 500, 800, 500, 2000],
+					["data3", 5000, 2000, 500, 4000]
 				]
 			},
 			legend: {
@@ -508,7 +508,7 @@ describe("API focus", function() {
 				expect(legendItems.size()).to.be.equal(0);
 
 				done();
-			}, 700);
+			}, 500);
 		});
 
 		it("should defocus all targets without showing legend", done => {
@@ -530,7 +530,7 @@ describe("API focus", function() {
 				expect(legendItems.size()).to.be.equal(0);
 
 				done();
-			}, 700);
+			}, 500);
 		});
 
 		it("should revert all targets after focus", done => {
@@ -555,8 +555,8 @@ describe("API focus", function() {
 					expect(legendItems.size()).to.be.equal(0);
 
 					done();
-				}, 700);
-			}, 700);
+				}, 500);
+			}, 500);
 		});
 	});
 });

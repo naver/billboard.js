@@ -7,12 +7,15 @@ import * as d3 from "d3";
 import {bb} from "../../src/core";
 
 const initDom = () => {
-	const $el = sandbox("chart");
+	const id = "chart";
 
-	$el.style.width = "640px";
-	$el.style.height = "480px";
+	if (!document.getElementById(id)) {
+		sandbox("chart", {
+			style: "width:640px;height:480px;"
+		});
 
-	document.body.style.margin = "0px";
+		document.body.style.margin = "0px";
+	}
 };
 
 const setMouseEvent = (chart, name, x, y, element) => {
@@ -30,10 +33,10 @@ const setMouseEvent = (chart, name, x, y, element) => {
 	}
 };
 
-const initChart = (chart, args, done) => {
-	if (typeof chart === "undefined") {
-		initDom();
-	}
+const generate = args => {
+	let chart;
+
+	initDom();
 
 	if (args) {
 		if (!args.bindto) {
@@ -42,14 +45,7 @@ const initChart = (chart, args, done) => {
 
 		window.d3 = d3;
 		chart = bb.generate(args);
-
-		/* window.d3.select(".jasmine_html-reporter")
-			.style("position", "absolute")
-			.style("width", "640px")
-			.style("right", 0);*/
 	}
-
-	done && window.setTimeout(done, 10);
 
 	return chart;
 }
@@ -121,6 +117,6 @@ const parseSvgPath = d => {
 export default {
 	initDom,
 	setMouseEvent,
-	initChart,
+	generate,
 	parseSvgPath
 };
