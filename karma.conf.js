@@ -4,9 +4,30 @@ module.exports = function(config) {
 
 		files: [
 			"./node_modules/lite-fixture/index.js",
-			"./node_modules/d3/build/d3.min.js",
-			"./dist/billboard.css",
-			"./spec/*-spec.js"
+			//"./spec/*-spec.js"
+			// to maintain order
+			"./spec/api.axis-spec.js",
+			"./spec/api.data-spec.js",
+			"./spec/api.focus-spec.js",
+			"./spec/api.grid-spec.js",
+			"./spec/api.load-spec.js",
+			"./spec/api.region-spec.js",
+			"./spec/api.zoom-spec.js",
+			"./spec/arc-spec.js",
+			"./spec/bb-spec.js",
+			"./spec/class-spec.js",
+			"./spec/core-spec.js",
+			"./spec/data-spec.js",
+			"./spec/domain-spec.js",
+			"./spec/grid-spec.js",
+			"./spec/interaction-spec.js",
+			"./spec/legend-spec.js",
+			"./spec/shape.bar-spec.js",
+			"./spec/shape.line-spec.js",
+			"./spec/title-spec.js",
+			"./spec/tooltip-spec.js",
+			"./spec/type-spec.js",
+			"./spec/zoom-spec.js"
 		],
 
 		exclude: [
