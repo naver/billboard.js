@@ -4,23 +4,18 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {
-	select as d3Select,
-	selectAll as d3SelectAll,
-	format as d3Format
-} from "d3";
 import util from "./assets/util";
 
-describe("Data", () => {
+describe("DATA", () => {
 	let chart;
 	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
-	describe("load json", () => {
-		it("should update args", () => {
+	describe("load json #1", () => {
+		before(() => {
 			args = {
 				data: {
 					json: {
@@ -29,22 +24,23 @@ describe("Data", () => {
 					}
 				}
 			};
-			expect(true).to.be.ok;
 		});
 
 		it("should draw correctly", () => {
 			const expectedCx = [6, 299, 593];
 			const expectedCy = [371, 391, 332];
 
-			d3SelectAll(".bb-circles-data1 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			chart.internal.main.selectAll(".bb-circles-data1 .bb-circle").each(function (d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], +1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[i], +1);
 			});
 		});
+	});
 
-		it("should update args", () => {
+	describe("load json #2", () => {
+		before(() => {
 			args = {
 				data: {
 					json: [{
@@ -70,29 +66,31 @@ describe("Data", () => {
 					}
 				}
 			};
-			expect(true).to.be.ok;
 		});
 
 		it("should draw correctly", () => {
 			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
+			const main = chart.internal.main;
 
-			d3SelectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-443 .bb-circle").each(function (d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[443][i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-995 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-995 .bb-circle").each(function (d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[995][i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
 			});
 		});
+	});
 
-		it("should update nested JSON args", () => {
+	describe("load json #3", () => {
+		before(() => {
 			args = {
 				data: {
 					json: [{
@@ -132,10 +130,10 @@ describe("Data", () => {
 					}
 				}
 			};
-			expect(true).to.be.ok;
 		});
 
 		it("should draw nested JSON correctly", () => {
+			const main = chart.internal.main;
 			const expectedCx = [98, 294, 490];
 			const expectedCy = {
 				443: [181, 326, 36],
@@ -147,51 +145,51 @@ describe("Data", () => {
 				"778.889": [347, 376, 340]
 			};
 
-			d3SelectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-443 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 1);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-995-996 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-995-996 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
 			});
 
 
-			d3SelectAll(".bb-circles-112-0- .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-112-0- .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[112][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-223-0--224 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-223-0--224 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[223][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-334-1--0--335 .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-334-1--0--335 .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[334][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-556-557-558-0- .bb-circle").each(function(d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-556-557-558-0- .bb-circle").each(function(d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[556][i], 1);
 			});
 
-			d3SelectAll(".bb-circles-778-889 .bb-circle").each(function (d, i) {
-				const circle = d3Select(this);
+			main.selectAll(".bb-circles-778-889 .bb-circle").each(function (d, i) {
+				const circle = d3.select(this);
 
 				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
 				expect(+circle.attr("cy")).to.be.closeTo(expectedCy["778.889"][i], 1);
@@ -200,7 +198,7 @@ describe("Data", () => {
 	});
 
 	describe("function in data.order", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -211,7 +209,6 @@ describe("Data", () => {
 					order: () => 0
 				}
 			};
-			expect(true).to.be.ok;
 		});
 
 		it("should return false in isOrderAsc and isOrderDesc functions", () => {
@@ -220,7 +217,7 @@ describe("Data", () => {
 	});
 
 	describe("data.xs", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -230,7 +227,6 @@ describe("Data", () => {
 					]
 				}
 			};
-			expect(true).to.be.ok;
 		});
 
 		describe("normal x", () => {
@@ -252,7 +248,7 @@ describe("Data", () => {
 
 		describe("timeseries x", () => {
 			describe("without xFormat", () => {
-				it("should load timeseries data successfully", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "date",
@@ -268,7 +264,6 @@ describe("Data", () => {
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -291,7 +286,7 @@ describe("Data", () => {
 
 			describe("with xFormat", () => {
 				describe("timeseries x with xFormat", () => {
-					it("should load timeseries data successfully", () => {
+					before(() => {
 						args = {
 							data: {
 								x: "date",
@@ -308,7 +303,6 @@ describe("Data", () => {
 								}
 							}
 						};
-						expect(true).to.be.ok;
 					});
 
 					it("should have correct number of xs", () => {
@@ -333,7 +327,7 @@ describe("Data", () => {
 
 		describe("milliseconds timeseries x", () => {
 			describe("as date string", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "date",
@@ -354,7 +348,6 @@ describe("Data", () => {
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -376,13 +369,13 @@ describe("Data", () => {
 					const expected = ["2014-05-20 17:25:00.123", "2014-05-20 17:30:00.345"];
 
 					chart.internal.main.selectAll(".bb-axis-x g.tick text").each(function(d, i) {
-						expect(d3Select(this).text()).to.be.equal(expected[i]);
+						expect(d3.select(this).text()).to.be.equal(expected[i]);
 					});
 				});
 			});
 
 			describe("as unixtime number", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "date",
@@ -401,7 +394,6 @@ describe("Data", () => {
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have correct number of xs", () => {
@@ -424,7 +416,7 @@ describe("Data", () => {
 
 	describe("data.label", () => {
 		describe("on line chart", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					padding: {
 						left: 50
@@ -440,7 +432,6 @@ describe("Data", () => {
 						labels: true
 					}
 				};
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -459,8 +450,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -469,7 +460,11 @@ describe("Data", () => {
 			});
 
 			it("should update args to be stacked", () => {
-				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+
 				expect(true).to.be.ok;
 			});
 
@@ -488,8 +483,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -499,7 +494,7 @@ describe("Data", () => {
 		});
 
 		describe("on area chart", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					padding: {
 						left: 50
@@ -515,7 +510,6 @@ describe("Data", () => {
 						labels: true
 					}
 				};
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -533,8 +527,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -543,7 +537,11 @@ describe("Data", () => {
 			});
 
 			it("should update args to be stacked", () => {
-				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+
 				expect(true).to.be.ok;
 			});
 
@@ -562,8 +560,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 4);
@@ -573,7 +571,7 @@ describe("Data", () => {
 		});
 
 		describe("on bar chart", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					padding: {
 						left: 50
@@ -589,7 +587,6 @@ describe("Data", () => {
 						labels: true
 					}
 				};
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -607,8 +604,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
@@ -617,7 +614,11 @@ describe("Data", () => {
 			});
 
 			it("should update args to be stacked", () => {
-				args.data.groups = [["data1", "data2"], ["data3", "data4"]];
+				args.data.groups = [
+					["data1", "data2"],
+					["data3", "data4"]
+				];
+
 				expect(true).to.be.ok;
 			});
 
@@ -636,8 +637,8 @@ describe("Data", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					d3SelectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
-						const text = d3Select(this);
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 4);
@@ -647,7 +648,7 @@ describe("Data", () => {
 		});
 
 		describe("for all targets", () => {
-			it("should update args to show data label for all data", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -658,25 +659,28 @@ describe("Data", () => {
 						labels: true
 					}
 				};
-				expect(true).to.be.ok;
 			});
 
 			it("should have data labels on all data", () => {
-				d3SelectAll(".bb-texts-data1 text").each(function(d, i) {
-					expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+				const main = chart.internal.main;
+
+				main.selectAll(".bb-texts-data1 text").each(function(d, i) {
+					expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 				});
-				d3SelectAll(".bb-texts-data2 text").each(function(d, i) {
-					expect(d3Select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
+
+				main.selectAll(".bb-texts-data2 text").each(function(d, i) {
+					expect(d3.select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
 				});
-				d3SelectAll(".bb-texts-data3 text").each(function(d, i) {
-					expect(d3Select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
+
+				main.selectAll(".bb-texts-data3 text").each(function(d, i) {
+					expect(d3.select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
 				});
 			});
 		});
 
 		describe("for each target", () => {
 			describe("as true", () => {
-				it("should update args to show data label for only data1", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -691,24 +695,27 @@ describe("Data", () => {
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
-					d3SelectAll(".bb-texts-data1 text").each(function(d, i) {
-						expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+					const main = chart.internal.main;
+
+					main.selectAll(".bb-texts-data1 text").each(function(d, i) {
+						expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 					});
-					d3SelectAll(".bb-texts-data2 text").each(function() {
-						expect(d3Select(this).text()).to.be.equal("");
+
+					main.selectAll(".bb-texts-data2 text").each(function() {
+						expect(d3.select(this).text()).to.be.equal("");
 					});
-					d3SelectAll(".bb-texts-data3 text").each(function() {
-						expect(d3Select(this).text()).to.be.equal("");
+
+					main.selectAll(".bb-texts-data3 text").each(function() {
+						expect(d3.select(this).text()).to.be.equal("");
 					});
 				});
 			});
 
 			describe("as function", () => {
-				it("should update args to show data label for only data1", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -718,30 +725,33 @@ describe("Data", () => {
 							],
 							labels: {
 								format: {
-									data1: d3Format("$")
+									data1: d3.format("$")
 								}
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have data labels on all data", () => {
-					d3SelectAll(".bb-texts-data1 text").each(function(d, i) {
-						expect(d3Select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
+					const main = chart.internal.main;
+
+					main.selectAll(".bb-texts-data1 text").each(function(d, i) {
+						expect(d3.select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
 					});
-					d3SelectAll(".bb-texts-data2 text").each(function() {
-						expect(d3Select(this).text()).to.equal("");
+
+					main.selectAll(".bb-texts-data2 text").each(function() {
+						expect(d3.select(this).text()).to.equal("");
 					});
-					d3SelectAll(".bb-texts-data3 text").each(function() {
-						expect(d3Select(this).text()).to.equal("");
+
+					main.selectAll(".bb-texts-data3 text").each(function() {
+						expect(d3.select(this).text()).to.equal("");
 					});
 				});
 			});
 		});
 
 		describe("with small values", () => {
-			it("should update args to show data label", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -750,7 +760,6 @@ describe("Data", () => {
 						labels: true
 					}
 				};
-				expect(true).to.be.ok;
 			});
 
 			it("should have proper y domain", () => {
@@ -763,7 +772,7 @@ describe("Data", () => {
 
 		describe("with positive values and null", () => {
 			describe("on not rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						padding: {
 							left: 40
@@ -774,16 +783,10 @@ describe("Data", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => {
-									if (v === null) {
-										return "Not Applicable";
-									}
-									return d3Format("$")(v);
-								}
+								format: v => (v === null ? "Not Applicable" : d3.format("$")(v))
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -799,7 +802,7 @@ describe("Data", () => {
 					const expectedXs = [75, 225, 374, 524];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -808,6 +811,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -824,7 +828,7 @@ describe("Data", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -833,14 +837,13 @@ describe("Data", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.padding.bottom = 50;
 					args.padding.top = 5;
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -856,7 +859,7 @@ describe("Data", () => {
 					const expectedXs = [488.5, 514, 488.5, 4];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -881,7 +884,7 @@ describe("Data", () => {
 					const expectedXs = [76, 526, 76, 4];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -892,7 +895,7 @@ describe("Data", () => {
 
 		describe("with negative values and null", () => {
 			describe("on not rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						padding: {
 							left: 50
@@ -903,16 +906,12 @@ describe("Data", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => {
-									if (v === null) {
-										return "Not Applicable";
-									}
-									return d3Format("$")(v);
-								}
+								format: v => (v === null ?
+									"Not Applicable" : d3.format("$")(v)
+								)
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -928,7 +927,7 @@ describe("Data", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
@@ -937,6 +936,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -953,7 +953,7 @@ describe("Data", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -962,7 +962,7 @@ describe("Data", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.padding.left = 50;
 					args.padding.bottom = 0;
 
@@ -970,7 +970,6 @@ describe("Data", () => {
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -986,7 +985,7 @@ describe("Data", () => {
 					const expectedXs = [80, 584, 80, 514];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 5);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
@@ -997,6 +996,7 @@ describe("Data", () => {
 					args.data.type = "line";
 					args.padding.left = 50;
 					args.padding.bottom = 0;
+
 					expect(true).to.be.ok;
 				});
 
@@ -1013,7 +1013,7 @@ describe("Data", () => {
 					const expectedXs = [69, 527, 69, 527]; // 72.50132230092231
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1024,7 +1024,7 @@ describe("Data", () => {
 
 		describe("with positive and negative values and null", () => {
 			describe("on non rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -1032,16 +1032,12 @@ describe("Data", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => {
-									if (v === null) {
-										return "Not Applicable";
-									}
-									return d3Format("$")(v);
-								}
+								format: v => (v === null ?
+									"Not Applicable" : d3.format("$")(v)
+								)
 							}
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1057,15 +1053,16 @@ describe("Data", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1082,22 +1079,20 @@ describe("Data", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 			});
 
-
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1113,7 +1108,7 @@ describe("Data", () => {
 					const expectedXs = [72, 525, 513, 295];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1138,7 +1133,7 @@ describe("Data", () => {
 					const expectedXs = [70, 527, 515, 297];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
@@ -1149,7 +1144,7 @@ describe("Data", () => {
 
 		describe("with positive grouped values", () => {
 			describe("on non rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -1162,7 +1157,6 @@ describe("Data", () => {
 							type: "bar"
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1178,7 +1172,7 @@ describe("Data", () => {
 					const expectedXs = [74, 225, 374, 524];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1187,6 +1181,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1203,7 +1198,7 @@ describe("Data", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1212,12 +1207,11 @@ describe("Data", () => {
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1233,7 +1227,7 @@ describe("Data", () => {
 					const expectedXs = [57, 150, 77, 362];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1242,6 +1236,7 @@ describe("Data", () => {
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1258,7 +1253,7 @@ describe("Data", () => {
 					const expectedXs = [107, 192, 125, 386];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1269,7 +1264,7 @@ describe("Data", () => {
 
 		describe("with negative grouped values", () => {
 			describe("on non rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -1282,7 +1277,6 @@ describe("Data", () => {
 							type: "bar"
 						}
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
@@ -1298,15 +1292,16 @@ describe("Data", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1323,27 +1318,26 @@ describe("Data", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 			});
 
 			describe("on rotated axis", () => {
-				it("should update args", () => {
+				before(() => {
 					args.data.type = "bar";
 					args.axis = {
 						rotated: true
 					};
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-900, 5);
+					expect(domain[0]).to.be.closeTo(-900, 6);
 					expect(domain[1]).to.be.closeTo(0, 5);
 				});
 
@@ -1353,15 +1347,16 @@ describe("Data", () => {
 					const expectedXs = [533, 441, 513, 232];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
 					});
 				});
 
 				it("should update args", () => {
 					args.data.type = "line";
+
 					expect(true).to.be.ok;
 				});
 
@@ -1378,7 +1373,7 @@ describe("Data", () => {
 					const expectedXs = [479, 397, 461, 206];
 
 					texts.each(function(d, i) {
-						const text = d3Select(this);
+						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
 						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
@@ -1390,26 +1385,28 @@ describe("Data", () => {
 
 	describe("inner functions", () => {
 		it("should check returns of mapToTargetIds", () => {
-			// Given
 			let data = [1, 2, 3];
-			// When
 			let newData = chart.internal.mapToTargetIds(data);
-			// Then
+
 			expect(newData).to.deep.equal(data);
 			expect(newData).to.not.equal(data);
 
 			// Given
 			data = 1;
+
 			// When
 			newData = chart.internal.mapToTargetIds(data);
+
 			// Then
 			expect(newData).to.deep.equal([data]);
 			expect(newData).to.not.equal([data]);
 
 			// Given
 			data = chart.internal.data.targets.map(d => d.id);
+
 			// When
 			newData = chart.internal.mapToTargetIds();
+
 			// Then
 			expect(newData).to.deep.equal(data);
 			expect(newData).to.not.equal(data);

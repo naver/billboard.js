@@ -52,6 +52,7 @@
     "babel-preset-es2015": "^6.24.1",
     "chai": "^4.0.2",
     "clean-webpack-plugin": "^0.1.16",
+    "coveralls": "^2.13.1",
     "css-loader": "^0.28.4",
     "docdash": "^0.4.0",
     "eslint": "^3.19.0",

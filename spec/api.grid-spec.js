@@ -6,26 +6,15 @@
 import util from "./assets/util";
 
 describe("API grid", function() {
-	let chart;
-	let args;
-
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	const chart = util.generate({
+		data: {
+			columns: [
+				["data1", 30, 200, 100, 400, 150, 250]
+			]
+		}
 	});
 
 	describe("ygrid.add and ygrid.remove", () => {
-		it("should update args", () => {
-			args = {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250]
-					]
-				}
-			};
-
-			expect(true).to.be.ok;
-		});
-
 		it("should update y grids", done => {
 			const main = chart.internal.main;
 			const expectedGrids = [{
@@ -64,11 +53,9 @@ describe("API grid", function() {
 					grids = main.selectAll(".bb-ygrid-line");
 
 					expect(grids.size()).to.be.equal(0);
+					done();
 				}, 500);
-
 			}, 500);
-
-			setTimeout(done, 1200);
 		});
 
 		it("should update x ygrids even if it's zoomed", done => {
@@ -119,11 +106,10 @@ describe("API grid", function() {
 						grids = main.selectAll(".bb-xgrid-line");
 
 						expect(grids.size()).to.be.equal(0);
+						done();
 					}, 500); // for xgrids.remove()
 				}, 500); // for xgrids()
 			}, 500); // for zoom
-
-			setTimeout(done, 1700);
 		});
 	});
 });

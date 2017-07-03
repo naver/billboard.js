@@ -5,36 +5,31 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Tooltip", function() {
+describe("TOOLTIP", function() {
 	let chart;
-	let tooltipConfiguration;
-	let args = () => ({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400, 150, 250],
-					["data2", 50, 20, 10, 40, 15, 25],
-					["data3", 150, 120, 110, 140, 115, 125]
-				],
-			},
-			tooltip: tooltipConfiguration
-		});
+	let args = {
+		data: {
+			columns: [
+				["data1", 30, 200, 100, 400, 150, 250],
+				["data2", 50, 20, 10, 40, 15, 25],
+				["data3", 150, 120, 110, 140, 115, 125]
+			],
+		},
+		tooltip: {}
+	};
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args());
+		chart = util.generate(args);
 	});
 
 	describe("tooltip position", () => {
-		before(() => {
-			tooltipConfiguration = {};
-		});
-
 		describe("without left margin", () => {
 			it("should show tooltip on proper position", () => {
-				const eventRect = d3.select(".bb-event-rect-2").node();
+				const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
 
 				util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
 
-				const tooltipContainer = d3.select(".bb-tooltip-container");
+				const tooltipContainer = d3.select(chart.element).select(".bb-tooltip-container");
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const topExpected = 115;
@@ -46,17 +41,16 @@ describe("Tooltip", function() {
 		});
 
 		describe("with left margin", () => {
-			it("should set left margin", () => {
-				d3.select("#chart").style("margin-left", "300px");
-				expect(true).to.be.ok;
+			before(() => {
+				chart.element.style.marginLeft = "300px";
 			});
 
 			it("should show tooltip on proper position", () => {
-				const eventRect = d3.select(".bb-event-rect-2").node();
+				const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
 
 				util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
 
-				const tooltipContainer = d3.select(".bb-tooltip-container");
+				const tooltipContainer = d3.select(chart.element).select(".bb-tooltip-container");
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const topExpected = 115;
@@ -73,15 +67,15 @@ describe("Tooltip", function() {
 		const leftExpected = 79;
 
 		before(() => {
-			tooltipConfiguration = {
+			args.tooltip = {
 				position: (data, width, height, element) => {
-					expect(data.length).to.be.equal(args().data.columns.length);
+					expect(data.length).to.be.equal(args.data.columns.length);
 					expect(data[0].index).to.be.equal(2);
 					expect(data[0].value).to.be.equal(100);
 					expect(data[0].id).to.be.equal("data1");
 					expect(width).to.be.above(0);
 					expect(height).to.be.above(0);
-					expect(element).to.be.equal(d3.select(".bb-event-rect-2").node());
+					expect(element).to.be.equal(chart.internal.main.select(".bb-event-rect-2").node());
 
 					return {
 						top: topExpected,
@@ -92,26 +86,30 @@ describe("Tooltip", function() {
 		});
 
 		it("should be set to the coordinate where the function returned", () => {
-				const eventRect = d3.select(".bb-event-rect-2").node();
-
-				util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
-
-				const tooltipContainer = d3.select(".bb-tooltip-container");
-				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
-				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
-
-				expect(top).to.be.equal(topExpected);
-				expect(left).to.be.equal(leftExpected);
-			});
-	});
-
-	describe("tooltip getTooltipContent", () => {
-		it("should sort values desc", () => {
-			const eventRect = d3.select(".bb-event-rect-2").node();
+			const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
 
 			util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
 
-			const tooltips = d3.selectAll(".bb-tooltip tr").nodes();
+			const tooltipContainer =  d3.select(chart.element).select(".bb-tooltip-container");
+			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
+			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+
+			expect(top).to.be.equal(topExpected);
+			expect(left).to.be.equal(leftExpected);
+		});
+	});
+
+	describe("tooltip getTooltipContent", () => {
+		before(() => {
+			args.tooltip.data_order = "desc";
+		});
+
+		it("should sort values desc", () => {
+			const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
+
+			util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
+
+			const tooltips =  d3.select(chart.element).selectAll(".bb-tooltip tr").nodes();
 			const len = tooltips.length;
 			const expected = [
 				"",

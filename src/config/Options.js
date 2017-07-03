@@ -476,7 +476,7 @@ export default class Options {
 			 * @default desc
 			 * @example
 			 * data: {
-			 *   lorder: "asc"
+			 *   order: "asc"
 			 * }
 			 */
 			data_order: "desc",

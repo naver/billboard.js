@@ -6,7 +6,7 @@
 import util from "./assets/util";
 import {bb} from "../src/core";
 
-describe("Axis", function() {
+describe("AXIS", function() {
 	let chart;
 	let args = {
 		data: {
@@ -32,8 +32,8 @@ describe("Axis", function() {
 		}
 	};
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
+	beforeEach(() => {
+		chart = util.generate(args);
 	});
 
 	describe("axis.y.tick.count", () => {
@@ -43,7 +43,7 @@ describe("Axis", function() {
 		});
 
 		it("should have only 1 tick on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y").selectAll("g.tick").size();
+			const ticksSize = chart.internal.main.select(".bb-axis-y").selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(1);
 		});
@@ -54,7 +54,7 @@ describe("Axis", function() {
 		});
 
 		it("should have 2 ticks on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(2);
@@ -66,7 +66,7 @@ describe("Axis", function() {
 		});
 
 		it("should have 3 ticks on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(3);
@@ -77,20 +77,19 @@ describe("Axis", function() {
 	describe("axis.y.tick.values", () => {
 		const values = [100, 500];
 
-		it("should update args to have only 2 ticks on y axis", () => {
+		before(() => {
 			args.axis.y.tick.values = values;
-			expect(true).to.be.ok;
 		});
 
 		it("should have only 2 tick on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			expect(ticksSize).to.be.equal(2);
 		});
 
 		it("should have specified tick texts", () => {
-			d3.select(".bb-axis-y").selectAll("g.tick").each(function(d, i) {
+			chart.internal.main.select(".bb-axis-y").selectAll("g.tick").each(function(d, i) {
 				const text = d3.select(this)
 					.select("text").text();
 
@@ -100,7 +99,7 @@ describe("Axis", function() {
 	});
 
 	describe("axis y timeseries", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -117,12 +116,10 @@ describe("Axis", function() {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should have 7 ticks on y axis", () => {
-			const ticksSize = d3.select(".bb-axis-y")
+			const ticksSize = chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick").size();
 
 			// the count starts at initial value and increments by the set interval
@@ -132,7 +129,7 @@ describe("Axis", function() {
 		it("should have specified 30 second intervals", () => {
 			let prevValue;
 
-			d3.select(".bb-axis-y")
+			chart.internal.main.select(".bb-axis-y")
 				.selectAll("g.tick")
 				.each((d, i) => {
 					if (i !== 0) {
@@ -156,7 +153,7 @@ describe("Axis", function() {
 		it("should have specified 60 second intervals", () => {
 			let prevValue;
 
-			d3.select(".bb-axis-y").selectAll("g.tick").each((d, i) => {
+			chart.internal.main.select(".bb-axis-y").selectAll("g.tick").each((d, i) => {
 				if (i !== 0) {
 					let result = d - prevValue;
 
@@ -192,7 +189,7 @@ describe("Axis", function() {
 			});
 
 			it("should use 'function' to generate ticks", () => {
-				d3.select(".bb-axis-x")
+				chart.internal.main.select(".bb-axis-x")
 					.selectAll("g.tick")
 					.each(function(d, i) {
 						const tick = d3.select(this).select("text").text();
@@ -206,7 +203,7 @@ describe("Axis", function() {
 	describe("axis.x.tick.width", () => {
 		describe("indexed x axis and y/y2 axis", () => {
 			describe("not rotated", () => {
-				it("should update args successfully", () => {
+				before(() => {
 					args = {
 						data: {
 							columns: [
@@ -223,8 +220,6 @@ describe("Axis", function() {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should construct indexed x axis properly", () => {
@@ -353,7 +348,7 @@ describe("Axis", function() {
 			});
 
 			describe("rotated", () => {
-				it("should update args to rotate axis", () => {
+				before(() => {
 					args.axis.rotated = true;
 					expect(true).to.be.ok;
 				});
@@ -421,7 +416,7 @@ describe("Axis", function() {
 
 		describe("category axis", () => {
 			describe("not rotated", () => {
-				it("should update args successfully", () => {
+				before(() => {
 					args = {
 						data: {
 							x: "x",
@@ -437,8 +432,6 @@ describe("Axis", function() {
 							}
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should locate ticks properly", () => {
@@ -492,9 +485,8 @@ describe("Axis", function() {
 			});
 
 			describe("rotated", () => {
-				it("should update args to rotate axis", () => {
+				before(() => {
 					args.axis.rotated = true;
-					expect(true).to.be.ok;
 				});
 
 				it("should locate ticks on rotated axis properly", () => {
@@ -549,12 +541,10 @@ describe("Axis", function() {
 
 			describe("option used", () => {
 				describe("as null", () => {
-					it("should update args not to split ticks", () => {
+					before(() => {
 						args.axis.x.tick = {
 							multiline: false
 						};
-
-						expect(true).to.be.ok;
 					});
 
 					it("should split x tick", () => {
@@ -567,12 +557,10 @@ describe("Axis", function() {
 				});
 
 				describe("as value", () => {
-					it("should update args not to split ticks", () => {
+					before(() => {
 						args.axis.x.tick = {
 							width: 150
 						};
-
-						expect(true).to.be.ok;
 					});
 
 					it("should split x tick to 2 lines properly", () => {
@@ -605,12 +593,10 @@ describe("Axis", function() {
 		});
 
 		describe("with axis.x.tick.format", () => {
-			it("should update args to use axis.x.tick.format", () => {
+			before(() => {
 				args.axis.x.tick.format = () => {
 					return ["this is a very long tick text", "on category axis"];
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should have multiline tick text", () => {
@@ -632,7 +618,7 @@ describe("Axis", function() {
 
 	describe("axis.x.tick.rotate", () => {
 		describe("not rotated", () => {
-			it("should update args successfully", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -651,8 +637,6 @@ describe("Axis", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should rotate tick texts", () => {
@@ -680,7 +664,7 @@ describe("Axis", function() {
 
 	describe("axis.y.tick.rotate", () => {
 		describe("not rotated", () => {
-			it("should update args successfully", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -697,8 +681,6 @@ describe("Axis", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should rotate tick texts", done => {
@@ -707,8 +689,11 @@ describe("Axis", function() {
 						const tick = d3.select(this);
 						const text = tick.select("text");
 						const tspan = text.select("tspan");
+						const transform = text.attr("transform");
 
-						expect(Math.round(text.attr("transform").replace(/[A-z()]/g, ""))).to.be.equal(45);
+						transform &&
+							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.closeTo(45, 5);
+
 						expect(text.attr("y")).to.be.equal("4");
 						expect(parseFloat(tspan.attr("dx"))).to.be.closeTo(5.6, 0.5);
 					});
@@ -729,7 +714,7 @@ describe("Axis", function() {
 
 	describe("axis.x.tick.fit", () => {
 		describe("axis.x.tick.fit = true", () => {
-			it("should set args for indexed data", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -739,8 +724,6 @@ describe("Axis", function() {
 						]
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show fitted ticks on indexed data", () => {
@@ -783,7 +766,7 @@ describe("Axis", function() {
 		});
 
 		describe("axis.x.tick.fit = false", () => {
-			it("should set args for indexed data", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -800,8 +783,6 @@ describe("Axis", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show fitted ticks on indexed data", () => {
@@ -843,7 +824,7 @@ describe("Axis", function() {
 	});
 
 	describe("axis.y.inner", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -857,8 +838,6 @@ describe("Axis", function() {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should not have inner y axis", () => {
@@ -891,7 +870,7 @@ describe("Axis", function() {
 	});
 
 	describe("axis.y2.inner", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -906,8 +885,6 @@ describe("Axis", function() {
 					}
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should not have inner y axis", () => {

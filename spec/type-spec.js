@@ -6,17 +6,17 @@
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
 
-describe("Types", () => {
+describe("TYPES", () => {
 	let chart;
 	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("internal.hasArcType", () => {
 		describe("with data", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -27,8 +27,6 @@ describe("Types", () => {
 						type: "pie"
 					}
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should return true",
@@ -37,7 +35,7 @@ describe("Types", () => {
 			it("should change chart type to 'bar'", () => {
 				args.data.type = "bar";
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should return false",
@@ -45,15 +43,13 @@ describe("Types", () => {
 		});
 
 		describe("with empty data", () => {
-			it("should update args to have empty data", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [],
 						type: "pie"
 					}
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should return true",
@@ -62,7 +58,7 @@ describe("Types", () => {
 			it("should change chart type to 'bar'", () => {
 				args.data.type = "bar";
 
-				return expect(true).to.be.ok;
+				expect(true).to.be.ok;
 			});
 
 			it("should return false",
@@ -71,7 +67,7 @@ describe("Types", () => {
 	});
 
 	describe("internal.hasType", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -82,8 +78,6 @@ describe("Types", () => {
 					type: "pie"
 				}
 			};
-
-			return expect(true).to.be.ok;
 		});
 
 		it("should return true for 'pie' type",
@@ -112,7 +106,7 @@ describe("Types", () => {
 		it("should change chart type to 'bar' successfully", () => {
 			args.data.type = "bar";
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should return false for 'pie' type even if no data",

@@ -7,25 +7,16 @@ import util from "./assets/util";
 
 describe("API load", function() {
 	let chart;
-	let args;
-
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
-	});
 
 	describe("indexed data", () => {
 		describe("as column", () => {
-			it("should update args", () => {
-				args = {
-					data: {
-						columns: [
-							["data1", 30, 200, 100, 400, 150, 250],
-							["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-						]
-					}
-				};
-
-				expect(true).to.be.ok;
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					]
+				}
 			});
 
 			it("should load additional data", done => {
@@ -54,24 +45,20 @@ describe("API load", function() {
 	});
 
 	describe("category data", () => {
-		it("should update arg to category data", () => {
-			args = {
-				data: {
-					x: "x",
-					columns: [
-						["x", "cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-					]
-				},
-				axis: {
-					x: {
-						type: "category"
-					}
+		chart = util.generate({
+			data: {
+				x: "x",
+				columns: [
+					["x", "cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
+					["data1", 30, 200, 100, 400, 150, 250],
+					["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+				]
+			},
+			axis: {
+				x: {
+					type: "category"
 				}
-			};
-
-			expect(true).to.be.ok;
+			}
 		});
 
 		describe("as column", () => {
@@ -129,6 +116,7 @@ describe("API load", function() {
 
 						expect(text).to.be.equal(expected[i]);
 					});
+
 					done();
 				}, 500);
 			});
