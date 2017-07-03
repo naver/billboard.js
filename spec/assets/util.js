@@ -6,6 +6,10 @@
 import * as d3 from "d3";
 import {bb} from "../../src/core";
 
+/**
+ * Create a DOM element
+ * @param {String} idValue id value
+ */
 const initDom = idValue => {
 	const id = idValue && idValue.replace && idValue.replace("#", "");
 
@@ -18,6 +22,11 @@ const initDom = idValue => {
 	}
 };
 
+/**
+ * Generate chart
+ * @param {Object} args chart options
+ * @return {bb} billboard.js instance
+ */
 const generate = args => {
 	let chart;
 
@@ -35,6 +44,14 @@ const generate = args => {
 	return chart;
 };
 
+/**
+ * Dispatch a mouse event
+ * @param {bb} chart billboard.js instance
+ * @param {String} name event name
+ * @param {Number} x coordinate x
+ * @param {Number} y coordinate y
+ * @param {HTMLElement} element DOM element to be dispatched
+ */
 const setMouseEvent = (chart, name, x, y, element) => {
 	const paddingLeft = chart.internal.main.node().transform.baseVal.getItem(0).matrix.e;
 	const event = document.createEvent("MouseEvents");
