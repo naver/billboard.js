@@ -6,8 +6,8 @@
 import * as d3 from "d3";
 import {bb} from "../../src/core";
 
-const initDom = () => {
-	const id = "chart";
+const initDom = idValue => {
+	const id = idValue && idValue.replace && idValue.replace("#", "");
 
 	if (!document.getElementById(id)) {
 		sandbox("chart", {
@@ -16,6 +16,23 @@ const initDom = () => {
 
 		document.body.style.margin = "0px";
 	}
+};
+
+const generate = args => {
+	let chart;
+
+	if (args) {
+		if (!args.bindto) {
+			args.bindto = "#chart";
+		}
+
+		initDom(args.bindto);
+
+		window.d3 = d3;
+		chart = bb.generate(args);
+	}
+
+	return chart;
 };
 
 const setMouseEvent = (chart, name, x, y, element) => {
@@ -32,23 +49,6 @@ const setMouseEvent = (chart, name, x, y, element) => {
 		element.dispatchEvent(event);
 	}
 };
-
-const generate = args => {
-	let chart;
-
-	initDom();
-
-	if (args) {
-		if (!args.bindto) {
-			args.bindto = "#chart";
-		}
-
-		window.d3 = d3;
-		chart = bb.generate(args);
-	}
-
-	return chart;
-}
 
 /**
  * Parse the d property of an SVG path into an array of drawing commands.
@@ -112,7 +112,7 @@ const parseSvgPath = d => {
 	}
 
 	return commands;
-}
+};
 
 export default {
 	initDom,
