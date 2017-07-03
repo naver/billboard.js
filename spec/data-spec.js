@@ -1056,7 +1056,7 @@ describe("DATA", () => {
 						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 
@@ -1082,7 +1082,7 @@ describe("DATA", () => {
 						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 			});
@@ -1295,7 +1295,7 @@ describe("DATA", () => {
 						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 
@@ -1321,7 +1321,7 @@ describe("DATA", () => {
 						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
 					});
 				});
 			});
@@ -1337,7 +1337,7 @@ describe("DATA", () => {
 				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-900, 5);
+					expect(domain[0]).to.be.closeTo(-900, 6);
 					expect(domain[1]).to.be.closeTo(0, 5);
 				});
 
@@ -1350,7 +1350,7 @@ describe("DATA", () => {
 						const text = d3.select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
+						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
 					});
 				});
 
