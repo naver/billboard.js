@@ -113,9 +113,9 @@ describe("TOOLTIP", function() {
 			const len = tooltips.length;
 			const expected = [
 				"",
-				"bb-tooltip-name--data3",
-				"bb-tooltip-name--data1",
-				"bb-tooltip-name--data2"
+				"bb-tooltip-name-data3",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data2"
 			];
 
 			for (let i = 0; i < len; i++) {
