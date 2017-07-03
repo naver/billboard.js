@@ -14,7 +14,10 @@ export default class Options {
 			/**
 			 * bindto The CSS selector or the element which the chart will be set to. D3 selection object can be specified. If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
 			 * If this option is not specified, the chart will be generated but not be set. Instead, we can access the element by chart.element and set it by ourselves.<br>
-			 * > <b>NOTE:</b> When chart is not binded, bb starts observing if chart.element is binded by MutationObserver. In this case, polyfill is required in IE9 and IE10 becuase they do not support MutationObserver. On the other hand, if chart always will be binded, polyfill will not be required because MutationObserver will never be called.
+			 * - **NOTE:**
+			 *  > When chart is not binded, bb starts observing if chart.element is binded by MutationObserver.
+			 *  > In this case, polyfill is required in IE9 and IE10 becuase they do not support MutationObserver.
+			 *  > On the other hand, if chart always will be binded, polyfill will not be required because MutationObserver will never be called.
 			 * @name bindto
 			 * @memberof Options
 			 * @type {String}
@@ -234,7 +237,7 @@ export default class Options {
 
 			/**
 			 * Set duration of transition (in milliseconds) for chart animation.<br><br>
-			 * <b>NOTE:</b>If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
+			 * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
 			 * @name transition
 			 * @memberof Options
 			 * @type {Object}
@@ -386,7 +389,7 @@ export default class Options {
 			/**
 			 * Set chart type at once.<br><br>
 			 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.<br><br>
-			 * <b>Available Values:</b>
+			 * **Available Values:**
 			 * - line
 			 * - spline
 			 * - step
@@ -465,7 +468,7 @@ export default class Options {
 
 			/**
 			 *  This option changes the order of stacking the data and pieces of pie/donut. If `null` specified, it will be the order the data loaded. If function specified, it will be used to sort the data and it will recieve the data as argument.<br><br>
-			 *  <b>Available Values:</b>
+			 *  **Available Values:**
 			 *  - desc
 			 *  - asc
 			 *  - function(data1, data2) { ... }
@@ -620,7 +623,7 @@ export default class Options {
 			/**
 			 * Enable to select data points by dragging.<br><br>
 			 * If this option set true, data points can be selected by dragging.
-			 * <b>Note:</b> If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
+			 * **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
 			 * @name data:selection:draggable
 			 * @memberof Options
 			 * @type {Boolean}
@@ -703,7 +706,7 @@ export default class Options {
 			data_onunselected: () => {},
 
 			/**
-			 * Load a CSV or JSON file from a URL. Note that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
+			 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
 			 * @name data:url
 			 * @memberof Options
 			 * @type {String}
@@ -957,10 +960,10 @@ export default class Options {
 
 			/**
 			 * Set type of x axis.<br><br>
-			 * <b>Available Values:</b>
-			 * -timeseries
-			 * -category
-			 * -indexed
+			 * **Available Values:**
+			 * - timeseries
+			 * - category
+			 * - indexed
 			 * @name axis:x:type
 			 * @memberof Options
 			 * @type {String}
@@ -1238,7 +1241,14 @@ export default class Options {
 
 			/**
 			 * Set padding for x axis.<br><br>
-			 * If this option is set, the range of x axis will increase/decrease according to the values. If no padding is needed in the ragen of x axis, 0 should be set. On category axis, this option will be ignored.
+			 * If this option is set, the range of x axis will increase/decrease according to the values.
+			 * If no padding is needed in the rage of x axis, 0 should be set.
+			 * - **NOTE:**
+			 *   The padding values aren't based on pixels. It differs according axis types<br>
+			 *   - **category:** The unit of tick value
+			 *     ex. the given value `1`, is same as the width of 1 tick width
+			 *   - **timeseries:** Numeric time value
+			 *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
 			 * @name axis:x:padding
 			 * @memberof Options
 			 * @type {Object}
@@ -1247,8 +1257,13 @@ export default class Options {
 			 * axis: {
 			 *   x: {
 			 *     padding: {
-			 *       left: 0,
-			 *       right: 0
+			 *       // when axis type is 'category'
+			 *       left: 1,  // set left padding width of equivalent value of a tick's width
+			 *       right: 0.5  // set right padding width as half of equivalent value of tick's width
+			 *
+			 *       // when axis type is 'timeseries'
+			 *       left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
+			 *       right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
 			 *     }
 			 *   }
 			 * }
@@ -1343,11 +1358,11 @@ export default class Options {
 			axis_y_show: true,
 
 			/**
-			 * Set type of y axis.
-			 * <b>Available Values:</b>
-			 * -timeseries
-			 * -category
-			 * -indexed
+			 * Set type of y axis.<br><br>
+			 * **Available Values:**
+			 *   - timeseries
+			 *   - category
+			 *   - indexed
 			 * @name axis:y:type
 			 * @memberof Options
 			 * @type {String}
@@ -1363,7 +1378,7 @@ export default class Options {
 
 			/**
 			 * Set max value of y axis.
-			 * <b>Note:</b> Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
+			 * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
 			 * @name axis:y:max
 			 * @memberof Options
 			 * @type {Number}
@@ -1379,7 +1394,8 @@ export default class Options {
 
 			/**
 			 * Set min value of y axis.
-			 * <b>Note:</b> Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
+			 * - **NOTE:**
+			 *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
 			 * @name axis:y:min
 			 * @memberof Options
 			 * @type {Number}
@@ -1521,7 +1537,7 @@ export default class Options {
 
 			/**
 			 * Set the number of y axis ticks.<br><br>
-			 * <b>Note:</b> The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
+			 * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 			 * @name axis:y:tick:count
 			 * @memberof Options
 			 * @type {Number}
@@ -1539,7 +1555,7 @@ export default class Options {
 
 			/**
 			 * Set the number of y axis ticks.<br><br>
-			 * <b>Note:</b> The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
+			 * **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 			 * @name axis:y:tick:time
 			 * @memberof Options
 			 * @private
@@ -1767,7 +1783,7 @@ export default class Options {
 
 			/**
 			 * Set the number of y2 axis ticks.
-			 * <b>Note:</b> This works in the same way as axis.y.tick.count.
+			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis:y2:tick:count
 			 * @memberof Options
 			 * @type {Number}
@@ -1785,7 +1801,7 @@ export default class Options {
 
 			/**
 			 * Set the number of y2 axis ticks.
-			 * <b>Note:</b> This works in the same way as axis.y.tick.count.
+			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis:y2:padding
 			 * @memberof Options
 			 * @type {Number}
@@ -1910,7 +1926,7 @@ export default class Options {
 			 * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
 			 *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
 			 * @property {Boolean} [line.step_type=step] Change step type for step chart.<br>
-			 * <b>Available values:</b>
+			 * **Available values:**
 			 * - step
 			 * - step-before
 			 * - step-after
