@@ -103,25 +103,27 @@ extend(ChartInternal.prototype, {
 	generateDrawLine(lineIndices, isSub) {
 		const $$ = this;
 		const config = $$.config;
+		const lineConnectNull = config.line_connectNull;
+		const axisRotated = config.axis_rotated;
 		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
 				getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+
 		let line = d3Line();
 
-		line = config.axis_rotated ?
+		line = axisRotated ?
 			line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 
-		if (!config.line_connectNull) {
+		if (!lineConnectNull) {
 			line = line.defined(d => d.value !== null);
 		}
 
 		return d => {
 			const x = isSub ? $$.x : $$.subX;
 			const y = yScaleGetter.call($$, d.id);
-			let values = config.line_connectNull ?
-				$$.filterRemoveNull(d.values) : d.values;
+			let values = d.values;
 			let x0 = 0;
 			let y0 = 0;
 			let path;
@@ -135,6 +137,10 @@ extend(ChartInternal.prototype, {
 					}
 
 					path = line.curve($$.getInterpolate(d))(values);
+
+					if (lineConnectNull) {
+						path = $$.adjustPathForNullData(path, values);
+					}
 				}
 			} else {
 				if (values[0]) {
@@ -142,11 +148,81 @@ extend(ChartInternal.prototype, {
 					y0 = y(values[0].value);
 				}
 
-				path = config.axis_rotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
 
 			return path || "M 0 0";
 		};
+	},
+
+	/**
+	 * Adjust line/area path data for lineConnectNull=true
+	 * @private
+	 * @param {String} path path data
+	 * @param {Object} values given data
+	 * @return {string} adjusted path data
+	 */
+	adjustPathForNullData(path, values) {
+		const $$ = this;
+		const rxCmd = /^M|Z$/g;
+		const pathData = path.replace(rxCmd, "").split("L");
+		const valueSize = values.length;
+		let result = [];
+
+		// for line
+		values.forEach((v, i) => {
+			v.value !== null &&
+				result.push(pathData[i]);
+		});
+
+		// for area
+		if (pathData.length > valueSize) {
+			const groups = this.config.data_groups;
+
+			// if stacked
+			if (groups.length) {
+				// get ordered data ids
+				const targetIds = $$.orderTargets($$.filterTargetsToShow($$.data.targets))
+					.map(t => t.id);
+
+				for (let i = 0, groupItem; (groupItem = groups[i]); i++) {
+					if (groupItem.indexOf(values[0].id) > -1) {
+						const groupData = [];
+
+						// sort group data according data order
+						targetIds.forEach(name => {
+							groupItem.indexOf(name) > -1 && groupData.push(name);
+						});
+
+						const dataIndex = groupData.indexOf(values[0].id);
+
+						// when data isn't first
+						if (dataIndex > 0) {
+							// get the previous line path data to set bottom path area
+							const prevDataId = $$.getTargetSelectorSuffix(groupData[dataIndex - 1]);
+							const prevPathData = $$.main.select(`path.${CLASS.line}${prevDataId}`)
+								.attr("d")
+								.replace(rxCmd, "")
+								.split("L")
+								.reverse();
+
+							result = result.concat(prevPathData);
+							pathData.splice(0);
+						}
+
+						break;
+					}
+				}
+			}
+
+			if (pathData.length) {
+				result = result.concat(pathData.splice(valueSize));
+			}
+
+			result[result.length - 1] += "Z";
+		}
+
+		return `M${result.join("L")}`;
 	},
 
 	generateGetLinePoints(lineIndices, isSubValue) { // partial duplication of generateGetBarPoints
@@ -329,6 +405,8 @@ extend(ChartInternal.prototype, {
 	generateDrawArea(areaIndices, isSub) {
 		const $$ = this;
 		const config = $$.config;
+		const lineConnectNull = config.line_connectNull;
+		const axisRotated = config.axis_rotated;
 		const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
@@ -336,9 +414,10 @@ extend(ChartInternal.prototype, {
 			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
 		const value1 = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value));
+
 		let area = d3Area();
 
-		area = config.axis_rotated ?
+		area = axisRotated ?
 			area.x0(value0)
 				.x1(value1)
 				.y(xValue) :
@@ -346,12 +425,12 @@ extend(ChartInternal.prototype, {
 				.y0(config.area_above ? 0 : value0)
 				.y1(value1);
 
-		if (!config.line_connectNull) {
+		if (!lineConnectNull) {
 			area = area.defined(d => d.value !== null);
 		}
 
 		return d => {
-			let values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values;
+			let values = d.values;
 			let x0 = 0;
 			let y0 = 0;
 			let path;
@@ -362,13 +441,17 @@ extend(ChartInternal.prototype, {
 				}
 
 				path = area.curve($$.getInterpolate(d))(values);
+
+				if (lineConnectNull) {
+					path = $$.adjustPathForNullData(path, values);
+				}
 			} else {
 				if (values[0]) {
 					x0 = $$.x(values[0].x);
 					y0 = $$.getYScale(d.id)(values[0].value);
 				}
 
-				path = config.axis_rotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
 
 			return path || "M 0 0";
