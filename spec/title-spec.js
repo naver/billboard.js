@@ -73,7 +73,7 @@ describe("TITLE", () => {
 					const titleEl = chart.internal.svg.select(".bb-title");
 
 					expect(+titleEl.attr("x") + titleEl.node().getBBox().width / 2).to.be.closeTo(320, 1);
-					expect(+titleEl.attr("y")).to.be.closeTo(37, 1);
+					expect(+titleEl.attr("y")).to.be.closeTo(37, 2);
 				});
 
 				it("adds the correct amount of padding to fit the title", () => {
