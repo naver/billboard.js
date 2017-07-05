@@ -430,7 +430,6 @@ extend(ChartInternal.prototype, {
 		}
 
 		return d => {
-			//let values = lineConnectNull ?  $$.filterRemoveNull(d.values) : d.values;
 			let values = d.values;
 			let x0 = 0;
 			let y0 = 0;
