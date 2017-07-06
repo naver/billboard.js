@@ -5,7 +5,6 @@
 import {
 	set as d3Set,
 	max as d3Max,
-	min as d3Min,
 	merge as d3Merge
 } from "d3";
 import CLASS from "../config/classes";
