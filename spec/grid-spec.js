@@ -5,16 +5,16 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Grid", function() {
+describe("GRID", function() {
 	let chart;
 	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("y grid show", () => {
-		it("should update args", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -33,8 +33,6 @@ describe("Grid", function() {
 					}
 				}
 			};
-
-			return expect(true).to.be.ok;
 		});
 
 		it("should not show y grids", () => {
@@ -44,7 +42,7 @@ describe("Grid", function() {
 		it("should update args to show y grids", () => {
 			args.grid.y.show = true;
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should show y grids", function() {
@@ -57,7 +55,7 @@ describe("Grid", function() {
 		it("should update args to show only 3 y grids", () => {
 			args.grid.y.ticks = 3;
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should show only 3 y grids", () => {
@@ -70,7 +68,7 @@ describe("Grid", function() {
 		it("should update args to show y grids depending on y axis ticks", () => {
 			args.axis.y.tick.count = 5;
 
-			return expect(true).to.be.ok;
+			expect(true).to.be.ok;
 		});
 
 		it("should show grids depending on y axis ticks", () => {
@@ -97,8 +95,8 @@ describe("Grid", function() {
 	});
 
 	describe("y grid lines", () => {
-		describe("position", () => {
-			it("should update args", () => {
+		describe("position #1", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -115,8 +113,6 @@ describe("Grid", function() {
 						}
 					}
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -128,10 +124,11 @@ describe("Grid", function() {
 					const lines = chart.internal.main.selectAll(".bb-ygrid-lines .bb-ygrid-line line");
 					const expectedY1s = [373, 268, 196];
 
-					lines.each(function(d, i) {
-						const y1 = Number(d3.select(this).attr("y1"));
+					lines.each(function (d, i) {
+						const line = d3.select(this);
+						const y1 = +line.attr("y1");
 
-						expect(y1).to.be.closeTo(expectedY1s[i], 1);
+						y1 && expect(y1).to.be.closeTo(expectedY1s[i], 1);
 					});
 
 					done();
@@ -143,7 +140,7 @@ describe("Grid", function() {
 				const expectedPositions = ["start", "middle", "end"];
 				const expectedDxs = [4, 0, -4];
 
-				lines.each(function(d, i) {
+				lines.each(function (d, i) {
 					const text = d3.select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
@@ -152,8 +149,10 @@ describe("Grid", function() {
 					expect(+dx).to.be.equal(expectedDxs[i]);
 				});
 			});
+		});
 
-			it("should update args", () => {
+		describe("position #2", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -173,8 +172,6 @@ describe("Grid", function() {
 						}
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -190,7 +187,7 @@ describe("Grid", function() {
 						const line = d3.select(this);
 						const x1 = Number(line.attr("x1"));
 
-						expect(x1).to.be.closeTo(expectedX1s[i], 1);
+						x1 && expect(x1).to.be.closeTo(expectedX1s[i], 1);
 					});
 
 					done();
@@ -216,8 +213,8 @@ describe("Grid", function() {
 	});
 
 	describe("x grid lines", () => {
-		describe("position", () => {
-			it("should have correct height", () => {
+		describe("position #1", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -234,8 +231,6 @@ describe("Grid", function() {
 						}
 					},
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -246,7 +241,7 @@ describe("Grid", function() {
 				const lines = chart.internal.main.selectAll(".bb-xgrid-lines .bb-xgrid-line");
 				const expectedX1s = [202, 397, 593];
 
-				lines.each(function(d, i) {
+				lines.each(function (d, i) {
 					const x1 = Number(d3.select(this).select("line").attr("x1"));
 
 					expect(x1).to.be.closeTo(expectedX1s[i], 1);
@@ -258,7 +253,7 @@ describe("Grid", function() {
 				const expectedPositions = ["start", "middle", "end"];
 				const expectedDxs = [4, 0, -4];
 
-				lines.each(function(d, i) {
+				lines.each(function (d, i) {
 					const text = d3.select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
@@ -267,8 +262,10 @@ describe("Grid", function() {
 					expect(+dx).to.be.equal(expectedDxs[i]);
 				});
 			});
+		});
 
-			it("should update args", () => {
+		describe("position #2", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -288,8 +285,6 @@ describe("Grid", function() {
 						}
 					},
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should show 3 grid lines", () => {
@@ -301,7 +296,7 @@ describe("Grid", function() {
 				const expectedY1s = [144, 283, 421];
 
 				lines.each(function(d, i) {
-					const y1 = Number(d3.select(this).select("line").attr("y1"));
+					const y1 = +d3.select(this).select("line").attr("y1");
 
 					expect(y1).to.be.closeTo(expectedY1s[i], 1);
 				});
@@ -325,7 +320,7 @@ describe("Grid", function() {
 		});
 
 		describe("with padding.top", () => {
-			it("should have correct height", () => {
+			before(() => {
 				args = {
 					data: {
 						columns: [
@@ -343,8 +338,6 @@ describe("Grid", function() {
 						top: 50
 					}
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should show x grid lines", () => {
@@ -365,7 +358,7 @@ describe("Grid", function() {
 		});
 
 		describe("on category axis", () => {
-			it("should update args", () => {
+			before(() => {
 				args = {
 					data: {
 						x: "x",
@@ -388,8 +381,6 @@ describe("Grid", function() {
 						}
 					}
 				};
-
-				return expect(true).to.be.ok;
 			});
 
 			it("should show x grid lines", () => {

@@ -5,29 +5,30 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Domain", function() {
+describe("DOMAIN", function() {
 	let chart;
-	let args = {
-		data: {
-			columns: [
-				["data1", 30, 200, 100, 400, 150, 250],
-				["data2", 50, 20, 10, 40, 15, 25]
-			]
-		},
-		axis: {
-			y: {},
-			y2: {}
-		}
-	};
+	let args;
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
 	describe("axis.y.min", () => {
-		it("should change axis.y.min to -100", () => {
-			args.axis.y.min = -100;
-			expect(true).to.be.ok;
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				},
+				axis: {
+					y: {
+						min: - 100
+					},
+					y2: {}
+				}
+			};
 		});
 
 		it("should be set properly when smaller than max of data", () => {
@@ -39,6 +40,7 @@ describe("Domain", function() {
 
 		it("should change axis.y.min to 500", () => {
 			args.axis.y.min = 500;
+
 			expect(true).to.be.ok;
 		});
 
@@ -51,6 +53,7 @@ describe("Domain", function() {
 
 		it("should change axis.y.min to undefined", () => {
 			args.axis.y.min = undefined;
+
 			expect(true).to.be.ok;
 		});
 	});
@@ -58,6 +61,7 @@ describe("Domain", function() {
 	describe("axis.y.max", () => {
 		it("should change axis.y.max to 1000", () => {
 			args.axis.y.max = 1000;
+
 			expect(true).to.be.ok;
 		});
 
@@ -70,6 +74,7 @@ describe("Domain", function() {
 
 		it("should change axis.y.max to 0", () => {
 			args.axis.y.max = 0;
+
 			expect(true).to.be.ok;
 		});
 
@@ -82,8 +87,8 @@ describe("Domain", function() {
 
 	});
 
-	describe("axis.y.padding", () => {
-		it("should change axis.y.max to 1000", () => {
+	describe("axis.y.padding #1", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -97,8 +102,6 @@ describe("Domain", function() {
 					}
 				}
 			};
-
-			return expect(true).to.be.ok;
 		});
 
 		it("should be set properly when bigger than min of data", () => {
@@ -107,8 +110,11 @@ describe("Domain", function() {
 			expect(domain[0]).to.be.closeTo(-9, 1);
 			expect(domain[1]).to.be.closeTo(69, 1);
 		});
+	});
 
-		it("should change axis.y.max to 1000 with top/bottom padding", () => {
+	describe("axis.y.padding #2", () => {
+		before(() => {
+			// should change axis.y.max to 1000 with top/bottom padding
 			args = {
 				data: {
 					columns: [
@@ -125,8 +131,6 @@ describe("Domain", function() {
 					}
 				}
 			};
-
-			return expect(true).to.be.ok;
 		});
 
 		it("should be set properly when bigger than min of data", () => {

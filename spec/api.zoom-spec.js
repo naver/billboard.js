@@ -7,16 +7,10 @@ import util from "./assets/util";
 
 describe("API zoom", function() {
 	let chart;
-	let args;
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
-	});
-
-	describe("zoom line chart", () => {
-
-		it("should update args", () => {
-			args = {
+	describe("zoom line chart #1", () => {
+		before(() => {
+			chart = util.generate({
 				data: {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
@@ -27,9 +21,7 @@ describe("API zoom", function() {
 				zoom: {
 					enabled: true
 				}
-			};
-
-			expect(true).to.be.ok;
+			});
 		});
 
 		it("should be zoomed properly", () => {
@@ -53,9 +45,11 @@ describe("API zoom", function() {
 			expect(Math.round(domain[0])).to.be.equal(target[0]);
 			expect(Math.round(domain[1])).to.be.equal(target[1]);
 		});
+	});
 
-		it("should load timeseries data", () => {
-			args = {
+	describe("zoom line chart #2", () => {
+		before(() => {
+			chart = util.generate({
 				data: {
 					x: "date",
 					columns: [
@@ -71,47 +65,52 @@ describe("API zoom", function() {
 				zoom: {
 					enabled: true
 				}
-			};
-
-			expect(true).to.be.ok;
+			});
 		});
 
-		it("should be zoomed properly (new Date)", () => {
+		it("should be zoomed properly (new Date)", done => {
 			const target = [new Date(2014, 7, 1), new Date(2014, 8, 1)];
 
 			chart.zoom(target);
 
-			const domain = chart.internal.zoomScale.domain();
-			expect(domain[0].getFullYear()).to.be.equal(target[0].getFullYear());
-			expect(domain[0].getMonth()).to.be.equal(target[0].getMonth());
-			expect(domain[0].getDate()).to.be.equal(target[0].getDate());
-			expect(domain[1].getFullYear()).to.be.equal(target[1].getFullYear());
-			expect(domain[1].getMonth()).to.be.equal(target[1].getMonth());
-			expect(domain[1].getDate()).to.be.equal(target[1].getDate());
+			setTimeout(() => {
+				const domain = chart.internal.zoomScale.domain();
+
+				expect(domain[0].getFullYear()).to.be.equal(target[0].getFullYear());
+				expect(domain[0].getMonth()).to.be.equal(target[0].getMonth());
+				expect(domain[0].getDate()).to.be.equal(target[0].getDate());
+				expect(domain[1].getFullYear()).to.be.equal(target[1].getFullYear());
+				expect(domain[1].getMonth()).to.be.equal(target[1].getMonth());
+				expect(domain[1].getDate()).to.be.equal(target[1].getDate());
+
+				done();
+			}, 500);
 		});
 
-		it("should be zoomed properly (string)", () => {
+		it("should be zoomed properly (string)", done => {
 			const target = ["2014-08-01", "2014-09-01"];
 
 			chart.zoom(target);
 
-			const domain = chart.internal.zoomScale.domain();
-			const targetDate = [chart.internal.parseDate(target[0]), chart.internal.parseDate(target[1])];
+			setTimeout(() => {
+				const domain = chart.internal.zoomScale.domain();
+				const targetDate = [chart.internal.parseDate(target[0]), chart.internal.parseDate(target[1])];
 
-			expect(domain[0].getFullYear()).to.be.equal(targetDate[0].getFullYear());
-			expect(domain[0].getMonth()).to.be.equal(targetDate[0].getMonth());
-			expect(domain[0].getDate()).to.be.equal(targetDate[0].getDate());
-			expect(domain[1].getFullYear()).to.be.equal(targetDate[1].getFullYear());
-			expect(domain[1].getMonth()).to.be.equal(targetDate[1].getMonth());
-			expect(domain[1].getDate()).to.be.equal(targetDate[1].getDate());
+				expect(domain[0].getFullYear()).to.be.equal(targetDate[0].getFullYear());
+				expect(domain[0].getMonth()).to.be.equal(targetDate[0].getMonth());
+				expect(domain[0].getDate()).to.be.equal(targetDate[0].getDate());
+				expect(domain[1].getFullYear()).to.be.equal(targetDate[1].getFullYear());
+				expect(domain[1].getMonth()).to.be.equal(targetDate[1].getMonth());
+				expect(domain[1].getDate()).to.be.equal(targetDate[1].getDate());
+
+				done();
+			}, 500)
 		});
-
 	});
 
 	describe("zoom bar chart", () => {
-
-		it("should update args", () => {
-			args = {
+		before(() => {
+			chart = util.generate({
 				data: {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250],
@@ -122,39 +121,42 @@ describe("API zoom", function() {
 				},
 				zoom: {
 					enabled: true
-				},
-			};
-
-			expect(true).to.be.ok;
+				}
+			});
 		});
 
-		it("should be zoomed properly", (done) => {
+		it("should be zoomed properly", done => {
 			const target = [3, 5];
 			const bars = d3.select(".bb-chart-bars").node();
+			const rects = d3.select(".bb-event-rects").node();
+			const rectlist = d3.selectAll(".bb-event-rect").nodes();
 			const orgWidth = bars.getBoundingClientRect().width;
+			const rectWidth = chart.internal.getEventRectWidth();
+			
 			chart.zoom(target);
+
 			setTimeout(() => {
+				rectlist.forEach(v => {
+					expect(parseFloat(d3.select(v).attr("width"))).to.be.equal(rectWidth);
+				});
 				expect(bars.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
+				expect(rects.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
+				
 				done();
 			}, 500)
 		});
 	});
 
-
 	describe("unzoom", () => {
-		it("should load indexed data", () => {
-			args = {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250]
-					]
-				},
-				zoom: {
-					enabled: true
-				}
-			};
-
-			expect(true).to.be.ok;
+		chart = util.generate({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250]
+				]
+			},
+			zoom: {
+				enabled: true
+			}
 		});
 
 		it("should be unzoomed properly", () => {

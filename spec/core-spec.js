@@ -5,7 +5,7 @@
 /* eslint-disable */
 import util from "./assets/util";
 
-describe("Core", function() {
+describe("CORE", function() {
 	let chart;
 	let args = {
 		svg: {
@@ -21,10 +21,10 @@ describe("Core", function() {
 	};
 
 	beforeEach(() => {
-		chart = util.initChart(chart, args);
+		chart = util.generate(args);
 	});
 
-	describe("init", function() {
+	describe("init", () => {
 		it("should be created", () => {
 			const svg = d3.select("#chart svg");
 
@@ -50,7 +50,7 @@ describe("Core", function() {
 		});
 	});
 
-	describe("size", function() {
+	describe("size", () => {
 		it("should have same width", () => {
 			const svg = d3.select("#chart svg");
 
@@ -65,12 +65,11 @@ describe("Core", function() {
 
 	});
 
-	describe("bindto", function() {
-		describe("selector", function() {
-			it("update args", function() {
+	describe("bindto", () => {
+		describe("selector", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = "#chart";
-				expect(true).to.be.ok;
 			});
 
 			it("should be created", () => {
@@ -81,10 +80,9 @@ describe("Core", function() {
 		});
 
 		describe("d3.selection object", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = d3.select("#chart");
-				expect(true).to.be.ok;
 			});
 
 			it("should be created", () => {
@@ -95,24 +93,24 @@ describe("Core", function() {
 		});
 
 		describe("null", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = "#chart-dummy";
-				expect(true).to.be.ok;
 			});
 
 			it("should not be created", () => {
 				const svg = d3.select("#chart svg");
+
 				expect(svg.size()).to.be.equal(0);
 			});
 		});
 
 		describe("empty string", () => {
-			it("update args", () => {
+			before(() => {
 				d3.select("#chart").html("");
 				args.bindto = "#chart-dummy";
-				expect(true).to.be.ok;
 			});
+
 			it("should not be created", () => {
 				const svg = d3.select("#chart svg");
 
@@ -123,7 +121,7 @@ describe("Core", function() {
 	});
 
 	describe("empty data", () => {
-		it("should upaate args for empty data", () => {
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -132,8 +130,6 @@ describe("Core", function() {
 					]
 				}
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should generate a chart", () => {

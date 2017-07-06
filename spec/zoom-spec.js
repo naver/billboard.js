@@ -6,9 +6,8 @@
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
 
-describe("Zoom", function() {
-	let chart;
-	const args = {
+describe("ZOOM", function() {
+	const chart = util.generate({
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 3150, 250],
@@ -26,10 +25,6 @@ describe("Zoom", function() {
 		subchart: {
 			show: true
 		}
-	};
-
-	beforeEach(() => {
-		chart = util.initChart(chart, args);
 	});
 
 	describe("default extent", () => {

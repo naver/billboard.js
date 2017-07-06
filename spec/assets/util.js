@@ -6,15 +6,52 @@
 import * as d3 from "d3";
 import {bb} from "../../src/core";
 
-const initDom = () => {
-	const $el = sandbox("chart");
+/**
+ * Create a DOM element
+ * @param {String} idValue id value
+ */
+const initDom = idValue => {
+	const id = idValue && idValue.replace && idValue.replace("#", "");
 
-	$el.style.width = "640px";
-	$el.style.height = "480px";
+	if (!document.getElementById(id)) {
+		sandbox("chart", {
+			style: "width:640px;height:480px;"
+		});
 
-	document.body.style.margin = "0px";
+		document.body.style.margin = "0px";
+	}
 };
 
+/**
+ * Generate chart
+ * @param {Object} args chart options
+ * @return {bb} billboard.js instance
+ */
+const generate = args => {
+	let chart;
+
+	if (args) {
+		if (!args.bindto) {
+			args.bindto = "#chart";
+		}
+
+		initDom(args.bindto);
+
+		window.d3 = d3;
+		chart = bb.generate(args);
+	}
+
+	return chart;
+};
+
+/**
+ * Dispatch a mouse event
+ * @param {bb} chart billboard.js instance
+ * @param {String} name event name
+ * @param {Number} x coordinate x
+ * @param {Number} y coordinate y
+ * @param {HTMLElement} element DOM element to be dispatched
+ */
 const setMouseEvent = (chart, name, x, y, element) => {
 	const paddingLeft = chart.internal.main.node().transform.baseVal.getItem(0).matrix.e;
 	const event = document.createEvent("MouseEvents");
@@ -29,30 +66,6 @@ const setMouseEvent = (chart, name, x, y, element) => {
 		element.dispatchEvent(event);
 	}
 };
-
-const initChart = (chart, args, done) => {
-	if (typeof chart === "undefined") {
-		initDom();
-	}
-
-	if (args) {
-		if (!args.bindto) {
-			args.bindto = "#chart";
-		}
-
-		window.d3 = d3;
-		chart = bb.generate(args);
-
-		/* window.d3.select(".jasmine_html-reporter")
-			.style("position", "absolute")
-			.style("width", "640px")
-			.style("right", 0);*/
-	}
-
-	done && window.setTimeout(done, 10);
-
-	return chart;
-}
 
 /**
  * Parse the d property of an SVG path into an array of drawing commands.
@@ -116,11 +129,11 @@ const parseSvgPath = d => {
 	}
 
 	return commands;
-}
+};
 
 export default {
 	initDom,
 	setMouseEvent,
-	initChart,
+	generate,
 	parseSvgPath
 };

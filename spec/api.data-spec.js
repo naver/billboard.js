@@ -6,8 +6,7 @@
 import util from "./assets/util";
 
 describe("API data", function() {
-	let chart;
-	let args = {
+	const chart = util.generate({
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250],
@@ -31,7 +30,7 @@ describe("API data", function() {
 				show: true
 			}
 		}
-	};
+	});
 
 	function toHex(value) {
 		function rgb2hex(rgb) {
@@ -46,12 +45,7 @@ describe("API data", function() {
 		return value.match("rgb") ? rgb2hex(value) : value;
 	}
 
-	beforeEach(done => {
-		chart = util.initChart(chart, args, done);
-	});
-
 	describe("data()", () => {
-
 		it("should return all of data if no argument given", () => {
 			const results = chart.data();
 			const expected = ["data1", "data2"];
@@ -87,6 +81,9 @@ describe("API data", function() {
 
 			expect(results.length).to.be.equal(1);
 			expect(results[0].id).to.be.equal("data2");
+
+			// revert
+			chart.show("data1");
 		});
 
 	});
@@ -119,7 +116,7 @@ describe("API data", function() {
 			expect(results.data2).to.be.equal("Data Name 2");
 		});
 
-		it("should return data.names specified as api", () => {
+		it("should return data.names specified as API", () => {
 			const results = chart.data.names({
 				data1: "New Data Name 1",
 				data2: "New Data Name 2"
@@ -129,14 +126,15 @@ describe("API data", function() {
 			expect(results.data2).to.be.equal("New Data Name 2");
 		});
 
-		it("should set data.names specified as api", () => {
-			expect(d3.select(".bb-legend-item-data1 text").text())
+		it("should set data.names specified as API", () => {
+			const svg = chart.internal.svg;
+
+			expect(svg.select(".bb-legend-item-data1 text").text())
 				.to.be.equal("New Data Name 1");
 
-			expect(d3.select(".bb-legend-item-data2 text").text())
+			expect(svg.select(".bb-legend-item-data2 text").text())
 				.to.be.equal("New Data Name 2");
 		});
-
 	});
 
 	describe("data.colors()", () => {
@@ -147,7 +145,7 @@ describe("API data", function() {
 			expect(toHex(results.data2)).to.be.equal("#00FF00");
 		});
 
-		it("should return data.colors specified as api", () => {
+		it("should return data.colors specified as API", () => {
 			const results = chart.data.colors({
 				data1: "#00FF00",
 				data2: "#FF0000"
@@ -157,51 +155,62 @@ describe("API data", function() {
 			expect(toHex(results.data2)).to.be.equal("#FF0000");
 		});
 
-		it("should set data.colors specified as api", () => {
-			expect(toHex(d3.select(".bb-line-data1").style("stroke")))
-				.to.be.equal("#00ff00");
+		it("should set data.colors specified as API", done => {
+			setTimeout(() => {
+				const svg = chart.internal.svg;
 
-			expect(toHex(d3.select(".bb-line-data2").style("stroke")))
-				.to.be.equal("#ff0000");
+				expect(toHex(svg.select(".bb-line-data1").style("stroke")))
+					.to.be.equal("#00ff00");
 
-			expect(toHex(d3.select(".bb-legend-item-data1 .bb-legend-item-tile").style("stroke")))
-				.to.be.equal("#00ff00");
+				expect(toHex(svg.select(".bb-line-data2").style("stroke")))
+					.to.be.equal("#ff0000");
 
-			expect(toHex(d3.select(".bb-legend-item-data2 .bb-legend-item-tile").style("stroke")))
-				.to.be.equal("#ff0000");
+				expect(toHex(svg.select(".bb-legend-item-data1 .bb-legend-item-tile").style("stroke")))
+					.to.be.equal("#00ff00");
+
+				expect(toHex(svg.select(".bb-legend-item-data2 .bb-legend-item-tile").style("stroke")))
+					.to.be.equal("#ff0000");
+
+				done();
+			}, 500);
 		});
 
 	});
 
 	describe("data.axes()", () => {
-
 		it("should return data.axes specified as argument", () => {
+			const main = chart.internal.main;
 			const results = chart.data.axes();
 
 			expect(results.data1).to.be.equal("y");
 			expect(results.data2).to.be.equal("y2");
 
-			expect(d3.select(".bb-axis-y g.tick text").text())
+			expect(main.select(".bb-axis-y g.tick text").text())
 				.to.be.equal("0");
 
-			expect(d3.select(".bb-axis-y2 g.tick text").text())
+			expect(main.select(".bb-axis-y2 g.tick text").text())
 				.to.be.equal("1000");
 		});
 
-		it("should return data.axes specified as api", () => {
+		it("should return data.axes specified as API", done => {
+			const main = chart.internal.main;
 			const results = chart.data.axes({
 				data1: "y2",
 				data2: "y"
 			});
 
-			expect(results.data1).to.be.equal("y2");
-			expect(results.data2).to.be.equal("y");
+			setTimeout(() => {
+				expect(results.data1).to.be.equal("y2");
+				expect(results.data2).to.be.equal("y");
 
-			expect(d3.select(".bb-axis-y g.tick text").text())
-				.to.be.equal("1000");
+				expect(main.select(".bb-axis-y g.tick text").text())
+					.to.be.equal("1000");
 
-			expect(d3.select(".bb-axis-y2 g.tick text").text())
-				.to.be.equal("0");
+				expect(main.select(".bb-axis-y2 g.tick text").text())
+					.to.be.equal("0");
+
+				done();
+			}, 500);
 		});
 	});
 });

@@ -37,7 +37,10 @@ extend(ChartInternal.prototype, {
 
 		$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(d => {
 			for (j = 0; j < config.data_groups.length; j++) {
-				if (config.data_groups[j].indexOf(d.id) < 0) { continue; }
+				if (config.data_groups[j].indexOf(d.id) < 0) {
+					continue;
+				}
+
 				for (k = 0; k < config.data_groups[j].length; k++) {
 					if (config.data_groups[j][k] in indices) {
 						indices[d.id] = indices[config.data_groups[j][k]];
@@ -89,6 +92,7 @@ extend(ChartInternal.prototype, {
 				if (t.id === d.id || indices[t.id] !== indices[d.id]) {
 					return;
 				}
+
 				if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
 					// check if the x values line up
 					if (typeof values[i] === "undefined" || +values[i].x !== +d.x) {  // "+" for timeseries
@@ -100,6 +104,7 @@ extend(ChartInternal.prototype, {
 							}
 						});
 					}
+
 					if (i in values && values[i].value * d.value >= 0) {
 						offset += scale(values[i].value) - y0;
 					}
@@ -123,6 +128,7 @@ extend(ChartInternal.prototype, {
 		} else if (that.nodeName === "path") {
 			isWithin = shape.classed(CLASS.bar) ? $$.isWithinBar(that) : true;
 		}
+
 		return isWithin;
 	},
 
@@ -152,12 +158,13 @@ extend(ChartInternal.prototype, {
 
 	getInterpolateType(d) {
 		const $$ = this;
-
-		let interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ?
+		const interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ?
 			$$.config.spline_interpolation_type : "cardinal";
 
-		interpolation = $$.isSplineType(d) ? interpolation : ($$.isStepType(d) ? $$.config.line_step_type : "linear");
-		return interpolation;
+		return $$.isSplineType(d) ?
+			interpolation : (
+				$$.isStepType(d) ?
+					$$.config.line_step_type : "linear"
+			);
 	}
-
 });
