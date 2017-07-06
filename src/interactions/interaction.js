@@ -230,9 +230,7 @@ extend(ChartInternal.prototype, {
 					return (xScale(thisX) + xScale(prevX)) / 2;
 				};
 			} else {
-				const edgs = $$.getEdgeX($$.data.targets);
-
-				rectW = (xScale(edgs[1]) - xScale(edgs[0])) / $$.getMaxDataCount();
+				rectW = $$.getEventRectWidth();
 				rectX = d => xScale(d.x) - (rectW / 2);
 			}
 
