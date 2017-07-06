@@ -807,7 +807,7 @@ export default class ChartInternal {
 	}
 
 	isCategorized() {
-		return this.config.axis_x_type.indexOf("categor") >= 0;
+		return this.config.axis_x_type.indexOf("category") >= 0;
 	}
 
 	isCustomX() {

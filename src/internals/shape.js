@@ -98,8 +98,12 @@ extend(ChartInternal.prototype, {
 					if (typeof values[i] === "undefined" || +values[i].x !== +d.x) {  // "+" for timeseries
 						// if not, try to find the value that does line up
 						i = -1;
+
 						values.forEach((v, j) => {
-							if (v.x === d.x) {
+							const x1 = v.x.constructor === Date ? +v.x : v.x;
+							const x2 = d.x.constructor === Date ? +d.x : d.x;
+
+							if (x1 === x2) {
 								i = j;
 							}
 						});
@@ -110,6 +114,7 @@ extend(ChartInternal.prototype, {
 					}
 				}
 			});
+
 			return offset;
 		};
 	},
