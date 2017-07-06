@@ -172,6 +172,7 @@ extend(ChartInternal.prototype, {
 	updateEventRect(eventRectUpdate) {
 		const $$ = this;
 		const config = $$.config;
+		const xScale = $$.zoomScale || $$.x;
 		const eventRectData = eventRectUpdate || $$.eventRect.data();// set update selection if null
 		let x;
 		let y;
@@ -202,14 +203,14 @@ extend(ChartInternal.prototype, {
 					}
 
 					if (prevX === null) {
-						prevX = $$.x.domain()[0];
+						prevX = xScale.domain()[0];
 					}
 
 					if (nextX === null) {
-						nextX = $$.x.domain()[1];
+						nextX = xScale.domain()[1];
 					}
 
-					return Math.max(0, ($$.x(nextX) - $$.x(prevX)) / 2);
+					return Math.max(0, (xScale(nextX) - xScale(prevX)) / 2);
 				};
 
 				rectX = d => {
@@ -223,16 +224,14 @@ extend(ChartInternal.prototype, {
 					}
 
 					if (prevX === null) {
-						prevX = $$.x.domain()[0];
+						prevX = xScale.domain()[0];
 					}
 
-					return ($$.x(thisX) + $$.x(prevX)) / 2;
+					return (xScale(thisX) + xScale(prevX)) / 2;
 				};
 			} else {
-				const edgs = $$.getEdgeX($$.data.targets);
-
-				rectW = ($$.x(edgs[1]) - $$.x(edgs[0])) / $$.getMaxDataCount();
-				rectX = d => $$.x(d.x) - (rectW / 2);
+				rectW = $$.getEventRectWidth();
+				rectX = d => xScale(d.x) - (rectW / 2);
 			}
 
 			x = config.axis_rotated ? 0 : rectX;

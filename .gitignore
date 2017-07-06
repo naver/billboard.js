@@ -4,3 +4,4 @@ node_modules
 /.idea
 /dist
 /doc
+/coverage

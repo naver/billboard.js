@@ -128,13 +128,20 @@ describe("API zoom", function() {
 		it("should be zoomed properly", done => {
 			const target = [3, 5];
 			const bars = d3.select(".bb-chart-bars").node();
+			const rects = d3.select(".bb-event-rects").node();
+			const rectlist = d3.selectAll(".bb-event-rect").nodes();
 			const orgWidth = bars.getBoundingClientRect().width;
-
+			const rectWidth = chart.internal.getEventRectWidth();
+			
 			chart.zoom(target);
 
 			setTimeout(() => {
+				rectlist.forEach(v => {
+					expect(parseFloat(d3.select(v).attr("width"))).to.be.equal(rectWidth);
+				});
 				expect(bars.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
-
+				expect(rects.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
+				
 				done();
 			}, 500)
 		});
