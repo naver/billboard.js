@@ -14,6 +14,7 @@ module.exports = function(config) {
 			"./spec/api.region-spec.js",
 			"./spec/api.zoom-spec.js",
 			"./spec/arc-spec.js",
+			"./spec/axis-spec.js",
 			"./spec/bb-spec.js",
 			"./spec/class-spec.js",
 			"./spec/core-spec.js",

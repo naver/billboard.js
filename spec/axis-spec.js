@@ -915,4 +915,38 @@ describe("AXIS", function() {
 			});
 		});
 	});
+
+	describe("axis.x.rotated", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 5, 10, 15]
+					],
+					types: {
+						data1: "bar"
+					}
+				},
+				axis: {
+					x: {
+						type: "category",
+						categories: ["text1", "text2", "text3"]
+					},
+					rotated: true
+				}
+			};
+		});
+
+		it("should render ticks of rotated axis inside bar position range", () => {
+			const barRects = chart.internal.main.select(".bb-event-rects").selectAll("rect.bb-event-rect");
+			const ticks = chart.internal.main.select(".bb-axis-x").selectAll("g.tick").nodes();
+
+			barRects.each(function(rect, idx){
+				const y = d3.select(this).attr("y");
+				const tick = d3.select(ticks[idx]);
+
+				expect(tick.attr("transform")).to.be.equal("translate(0,"+y+")");
+			});
+		});
+	});
 });

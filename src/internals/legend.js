@@ -506,7 +506,7 @@ extend(ChartInternal.prototype, {
 		$$.updateLegendStep(step);
 		// Update size and scale
 		$$.updateSizes();
-		$$.updateScales();
+		$$.updateScales(!withTransition);
 		$$.updateSvgSize();
 		// Update g positions
 		$$.transformAll(withTransitionForTransform, transitions);
