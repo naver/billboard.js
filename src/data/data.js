@@ -196,13 +196,6 @@ extend(ChartInternal.prototype, {
 		return maxTarget;
 	},
 
-	getEdgeX(targets) {
-		return !targets.length ? [0, 0] : [
-			d3Min(targets, t => t.values[0].x),
-			d3Max(targets, t => t.values[t.values.length - 1].x)
-		];
-	},
-
 	mapToIds(targets) {
 		return targets.map(d => d.id);
 	},
