@@ -146,4 +146,45 @@ describe("SHAPE LINE", () => {
 			expect(to).to.be.equal("cardinal");
 		});
 	});
+
+	describe("timeseries stacked area when line.connectNull=true", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["timestamps", 1495584000000, 1495605600000, 1495627200000, 1495648800000, 1495670400000],
+						["data1", 300, 150,  null, 120, 140],
+						["data2", 100, null, 200,  100, 100],
+						["data3", 100, 160,  200,  null, 50]
+					],
+					x: "timestamps",
+					order: "asc",
+					type: "area",
+					groups: [
+						["data1", "data2", "data3"]
+					]
+				},
+				line: {
+					connectNull: true
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("check for line path data count", () => {
+			chart.internal.main.selectAll("path.bb-line").each(function(d) {
+				const line = d3.select(this);
+
+				// it should have 4 lines
+				expect(line.attr("d").split("L").length).to.be.equal(4);
+			});
+		});
+	});
 });

@@ -164,9 +164,7 @@ export default class Axis {
 			}
 		}
 
-		return isFunction(format) ? function(v) {
-			return format.call($$, v);
-		} : format;
+		return isFunction(format) ? v => format.call($$, v) : format;
 	}
 
 	getTickValues(tickValues, axis) {
