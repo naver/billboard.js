@@ -294,16 +294,19 @@ extend(ChartInternal.prototype, {
 		return this.checkValueInTargets(targets, v => v > 0);
 	},
 
-	isOrderDesc() {
+	_checkOrder(type) {
 		const config = this.config;
 
-		return typeof(config.data_order) === "string" && config.data_order.toLowerCase() === "desc";
+		return typeof(config.data_order) === "string" &&
+			config.data_order.toLowerCase() === type;
+	},
+
+	isOrderDesc() {
+		return this._checkOrder("desc");
 	},
 
 	isOrderAsc() {
-		const config = this.config;
-
-		return typeof(config.data_order) === "string" && config.data_order.toLowerCase() === "asc";
+		return this._checkOrder("asc");
 	},
 
 	orderTargets(targets) {
@@ -323,6 +326,7 @@ extend(ChartInternal.prototype, {
 		} else if (isFunction(config.data_order)) {
 			targets.sort(config.data_order);
 		} // TODO: accept name array for order
+
 		return targets;
 	},
 
@@ -343,14 +347,11 @@ extend(ChartInternal.prototype, {
 	},
 
 	hasDataLabel() {
-		const config = this.config;
+		const dataLabels = this.config.data_labels;
+		const type = typeof dataLabels;
 
-		if (typeof config.data_labels === "boolean" && config.data_labels) {
-			return true;
-		} else if (typeof config.data_labels === "object" && notEmpty(config.data_labels)) {
-			return true;
-		}
-		return false;
+		return (type === "boolean" && dataLabels) ||
+			(type === "object" && notEmpty(dataLabels));
 	},
 
 	getDataLabelLength(min, max, key) {
@@ -367,6 +368,7 @@ extend(ChartInternal.prototype, {
 				lengths[i] = this.getBoundingClientRect()[key] * paddingCoef;
 			})
 			.remove();
+
 		return lengths;
 	},
 
