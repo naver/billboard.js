@@ -1,5 +1,6 @@
 var pkg = require("./package.json");
 var path = require("path");
+var webpack = require("webpack");
 var StringReplacePlugin = require("string-replace-webpack-plugin");
 var config = {
 	entry: {
@@ -32,7 +33,8 @@ var config = {
 		]
 	},
 	plugins: [
-		new StringReplacePlugin()
+		new StringReplacePlugin(),
+		new webpack.optimize.ModuleConcatenationPlugin()
 	]
 };
 
