@@ -12,7 +12,8 @@
     "test:chrome": "karma start --chrome",
     "coverage": "karma start --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "jsdoc": "npm run build && jsdoc -c jsdoc.json"
+    "jsdoc": "npm run build && jsdoc -c jsdoc.json",
+    "changelog": "node ./config/changelog.js"
   },
   "repository": {
     "type": "git",
