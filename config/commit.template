@@ -6,7 +6,7 @@
 <footer>(optional)
 
 ============= Sample ==============
-fix(core): update aborting animation logic
+fix(shape): update aborting animation logic
 
 Abort the animating post process when "tap" occurs or velocity is zero at inside border.
 
@@ -22,5 +22,5 @@ Ref #30
  - chore: Changes to the build process or tools and libraries such as documentation generation
 
 ============ See More =============
-https://github.com/naver/egjs/wiki/Commit-Log-Guidelines
+https://github.com/naver/billboard.js/blob/master/CONTRIBUTING.md#commit-log-guidelines
 
