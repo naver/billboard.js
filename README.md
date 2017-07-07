@@ -1,4 +1,6 @@
-# billboard.js [![Build Status](https://travis-ci.org/naver/billboard.js.svg?branch=master)](https://travis-ci.org/naver/billboard.js) [![Coverage Status](https://coveralls.io/repos/github/naver/billboard.js/badge.svg)](https://coveralls.io/github/naver/billboard.js)
+# billboard.js
+
+[![npm version](https://badge.fury.io/js/billboard.js.svg)](https://www.npmjs.com/package/billboard.js) [![Build Status](https://travis-ci.org/naver/billboard.js.svg?branch=master)](https://travis-ci.org/naver/billboard.js) [![Coverage Status](https://coveralls.io/repos/github/naver/billboard.js/badge.svg)](https://coveralls.io/github/naver/billboard.js)
 
 billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" came from the famous `billboard chart` which everybody knows.<br>
@@ -9,7 +11,9 @@ billboard.js is a re-usable easy interface JavaScript chart library, based on D3
 
 ## Documents
 - [API Documetation](http://naver.github.io/billboard.js/release/latest/doc/)
-- [Examples](https://cdn.rawgit.com/naver/billboard.js/8413325d/demo/)
+- [Examples](https://naver.github.io/billboard.js/demo/)
+- [Roadmap](https://github.com/naver/billboard.js/wiki/Roadmap)
+- [Contribution Guide](CONTRIBUTING.md)
 - [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 
 
@@ -60,6 +64,12 @@ The following command shows how to install billboard.js using npm.
 ```bash
 $ npm install billboard.js
 ```
+
+### Using CDN
+
+To create a link to a file provided over CDN, you must check the file URL in the CDN service.
+
+- cdnjs: https://cdnjs.com/libraries/billboard.js
 
 ## Supported Browsers
 
@@ -179,12 +189,12 @@ $ npm run lint
 
 ### Test
 
-Once you created a branch and done with development, you must perform a test running `npm run test` command before you push code to a remote repository.
+Once you created a branch and done with development, you must perform a test running `npm test` command before you push code to a remote repository.
 
 ```bash
-$ npm run test
+$ npm test
 ```
-Running a `npm run test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
+Running a `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
 
 
 ## Bug Report
