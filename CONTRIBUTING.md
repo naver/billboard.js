@@ -25,7 +25,7 @@ The outline is as below:
 <footer>
 ```
 
-- **Types**
+- #### Types
   - **feat**: A new feature
   - **fix**: A bug fix
   - **docs**: Documentation only changes
@@ -33,6 +33,17 @@ The outline is as below:
   - **refactor**: A code change that neither fixes a bug nor adds a feature
   - **test**: Adding missing tests. Changing tests.
   - **chore**: Changes to the build process or tools and libraries such as documentation generation
+  - **skip**: For commits made by after the 1st commit. Usually for applying code review changes.
+
+- #### Body
+A short descriptive message which commit consists.
+At the end preferably(or should) contain related github issue number referencing by `Ref #ISSUE-NO`.
+
+ex) When the commit is about issue number 20, then
+```bash
+Ref #20
+```
+
 
 Example commit of fixing a bug:
 ```bash
@@ -43,6 +54,12 @@ Update condition of tick to avoide unnecessary tick rendering
 Ref #20
 ```
 
+Example commit applying code review (after the 1st commit)
+> **Note:** Commit log starting with `skip:` type will be ignored by commit hook constraint.
+```bash
+skip: Applied the review
+```
+
 ## How to submit Pull Requests
 Steps to submit your pull request:
 
@@ -51,7 +68,7 @@ Steps to submit your pull request:
 3. Do your work
 4. Create test code for your work (when is possible)
 5. Run `npm run lint` for linting and code style check. (update until without any error or warnings)
-6. Run test code by `npm run test` or `npm run test:chrome` to run the test on chrome browser.
+6. Run test code by `npm test` or `npm test:chrome` to run the test on chrome browser.
    Make sure tests are all passed at least in latest version of Chrome(mobile/desktop).
 7. Write commit log following convention and push to your repository branch.
 8. Create a new PR from your branch to billboard.js.
