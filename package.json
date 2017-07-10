@@ -13,7 +13,9 @@
     "coverage": "karma start --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "jsdoc": "npm run build && jsdoc -c jsdoc.json",
-    "changelog": "node ./config/changelog.js"
+    "changelog": "node ./config/changelog.js",
+    "commitmsg": "node ./config/validate-commit-msg.js",
+    "prepush": "npm run lint"
   },
   "repository": {
     "type": "git",
@@ -61,6 +63,7 @@
     "eslint-loader": "^1.8.0",
     "eslint-plugin-import": "^2.3.0",
     "extract-text-webpack-plugin": "^2.1.2",
+    "husky": "^0.14.3",
     "inject-loader": "^3.0.0",
     "istanbul-instrumenter-loader": "^2.0.0",
     "jsdoc": "^3.4.3",
