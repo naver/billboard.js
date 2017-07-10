@@ -34,6 +34,21 @@ body {
     transition: all 0.5s ease;
 }
 
+#sidebar-wrapper .link {
+    font-family: Raleway;
+    text-align: center;
+    color: #fff;
+}
+
+#sidebar-wrapper .link a {
+    color: #b9fff6;
+}
+
+#sidebar-wrapper .link a.github {
+    padding-left: 20px;
+    background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%221.414%22%20fill%3D%22%23b9fff6%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.582%200%208c0%203.535%202.292%206.533%205.47%207.59.4.075.547-.172.547-.385%200-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056%201.225.824%201.225.824.714%201.223%201.873.87%202.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953%200-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117%200%200%20.67-.215%202.2.82.64-.178%201.32-.266%202-.27.68.004%201.36.092%202%20.27%201.52-1.035%202.19-.82%202.19-.82.43%201.102.16%201.915.08%202.117.51.56.82%201.274.82%202.147%200%203.073-1.87%203.75-3.65%203.947.28.24.54.73.54%201.48%200%201.07-.01%201.93-.01%202.19%200%20.21.14.46.55.38C13.71%2014.53%2016%2011.53%2016%208c0-4.418-3.582-8-8-8%22/%3E%3C/svg%3E") no-repeat;
+}
+
 #page-content-wrapper {
     width: 100%;
     position: absolute;
@@ -55,7 +70,7 @@ body {
     position: absolute;
     top: 0;
     width: 230px;
-    margin: 50px 0 30px 0;
+    margin: 80px 0 30px 0;
     padding: 0;
     list-style: none;
     font-family:Raleway,sans-serif;
