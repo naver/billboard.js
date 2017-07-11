@@ -572,6 +572,7 @@ img::-moz-selection {
 
 .download a {
     font-family: Raleway;
+    font-size: 16px;
 }
 
 .download :first-child {
