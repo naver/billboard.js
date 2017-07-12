@@ -88,6 +88,7 @@
     "uglify-js": "^2.8.22",
     "uglifyjs-webpack-plugin": "^0.4.4",
     "webpack": "^2.6.1",
+    "webpack-common-shake": "^1.5.3",
     "webpack-dev-server": "^2.4.5",
     "webpack-merge": "^4.1.0",
     "write-file-webpack-plugin": "^4.1.0",
