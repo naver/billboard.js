@@ -47,13 +47,15 @@ extend(ChartInternal.prototype, {
 		mainLineEnter.append("g")
 			.attr("class", classAreas);
 
-		// Circles for each data point on lines
-		mainLineEnter.append("g")
-			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
+		if (config.point_show) {
+			// Circles for each data point on lines
+			config.data_selection_enabled && mainLineEnter.append("g")
+				.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
 
-		mainLineEnter.append("g")
-			.attr("class", classCircles)
-			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+			mainLineEnter.append("g")
+				.attr("class", classCircles)
+				.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+		}
 
 		// Update date for selected circles
 		targets.forEach(t => {
@@ -418,61 +420,70 @@ extend(ChartInternal.prototype, {
 
 	updateCircle() {
 		const $$ = this;
+		const show = $$.config.point_show;
 
-		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data($$.lineOrScatterData.bind($$));
+		if (show) {
+			$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
+				.data($$.lineOrScatterData.bind($$));
 
-		$$.mainCircle.exit().remove();
+			$$.mainCircle.exit().remove();
 
-		$$.mainCircle = $$.mainCircle.enter().append("circle")
-			.attr("class", $$.classCircle.bind($$))
-			.attr("r", $$.pointR.bind($$))
-			.style("fill", $$.color)
-			.merge($$.mainCircle)
-			.style("opacity", $$.initialOpacityForCircle.bind($$));
+			$$.mainCircle = $$.mainCircle.enter().append("circle")
+				.attr("class", $$.classCircle.bind($$))
+				.attr("r", $$.pointR.bind($$))
+				.style("fill", $$.color)
+				.merge($$.mainCircle)
+				.style("opacity", $$.initialOpacityForCircle.bind($$));
+		}
 	},
 
 	redrawCircle(cx, cy, withTransition, flow) {
+		const show = this.config.point_show;
 		let selectedCircles = this.main.selectAll(`.${CLASS.selectedCircle}`);
 		let mainCircles;
+		let result = [];
 
-		if (withTransition) {
-			const transitionName = Math.random().toString();
+		if (show) {
+			if (withTransition) {
+				const transitionName = Math.random().toString();
 
-			if (flow) {
-				mainCircles = this.mainCircle
+				if (flow) {
+					mainCircles = this.mainCircle
 						.attr("cx", cx)
-					.transition(transitionName)
+						.transition(transitionName)
 						.attr("cx", cx)
 						.attr("cy", cy)
-					.transition(transitionName)
+						.transition(transitionName)
 						.style("opacity", this.opacityForCircle.bind(this))
 						.style("fill", this.color);
+				} else {
+					mainCircles = this.mainCircle
+						.transition(transitionName)
+						.attr("cx", cx)
+						.attr("cy", cy)
+						.transition(transitionName)
+						.style("opacity", this.opacityForCircle.bind(this))
+						.style("fill", this.color);
+				}
+
+				selectedCircles = selectedCircles.transition(Math.random().toString());
 			} else {
 				mainCircles = this.mainCircle
-					.transition(transitionName)
-						.attr("cx", cx)
-						.attr("cy", cy)
-					.transition(transitionName)
-						.style("opacity", this.opacityForCircle.bind(this))
-						.style("fill", this.color);
+					.attr("cx", cx)
+					.attr("cy", cy)
+					.style("opacity", this.opacityForCircle.bind(this))
+					.style("fill", this.color);
 			}
 
-			selectedCircles = selectedCircles.transition(Math.random().toString());
-		} else {
-			mainCircles = this.mainCircle
-				.attr("cx", cx)
-				.attr("cy", cy)
-				.style("opacity", this.opacityForCircle.bind(this))
-				.style("fill", this.color);
+			result = [
+				mainCircles,
+				selectedCircles
+					.attr("cx", cx)
+					.attr("cy", cy)
+			];
 		}
 
-		return [
-			mainCircles,
-			selectedCircles
-				.attr("cx", cx)
-				.attr("cy", cy)
-		];
+		return result;
 	},
 
 	circleX(d) {
