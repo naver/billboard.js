@@ -1,8 +1,6 @@
 # billboard.js
 
-[![Greenkeeper badge](https://badges.greenkeeper.io/naver/billboard.js.svg)](https://greenkeeper.io/)
-
-[![npm version](https://badge.fury.io/js/billboard.js.svg)](https://www.npmjs.com/package/billboard.js) [![Build Status](https://travis-ci.org/naver/billboard.js.svg?branch=master)](https://travis-ci.org/naver/billboard.js) [![Coverage Status](https://coveralls.io/repos/github/naver/billboard.js/badge.svg)](https://coveralls.io/github/naver/billboard.js)
+[![npm version](https://badge.fury.io/js/billboard.js.svg)](https://www.npmjs.com/package/billboard.js) [![Build Status](https://travis-ci.org/naver/billboard.js.svg?branch=master)](https://travis-ci.org/naver/billboard.js) [![Coverage Status](https://coveralls.io/repos/github/naver/billboard.js/badge.svg)](https://coveralls.io/github/naver/billboard.js) [![Greenkeeper badge](https://badges.greenkeeper.io/naver/billboard.js.svg)](https://greenkeeper.io/)
 
 billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" came from the famous `billboard chart` which everybody knows.<br>
