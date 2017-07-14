@@ -8,7 +8,7 @@ import {extend} from "./util";
 extend(ChartInternal.prototype, {
 	getClipPath(id) {
 		const isIE9 = window.navigator.appVersion
-				.toLowerCase().indexOf("msie 9.") >= 0;
+			.toLowerCase().indexOf("msie 9.") >= 0;
 
 		return `url(${(isIE9 ? "" : document.URL.split("#")[0])}#${id})`;
 	},
