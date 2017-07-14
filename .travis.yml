@@ -1,11 +1,10 @@
 language: node_js
 node_js:
   - "6"
-branches:
-  except:    # blocklist
-  - /^greenkeeper\/.*$/
 dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
+before_install:
+  - yarn global add greenkeeper-lockfile@1
 install:
   - npm install
 addons:
@@ -15,8 +14,11 @@ cache:
   directories:
     - "node_modules"
 before_script:
-    - npm run lint
+  - greenkeeper-lockfile-update
+  - npm run lint
 script:
   - npm run coverage
+after_script:
+  - greenkeeper-lockfile-upload
 after_success:
   - npm run coveralls
