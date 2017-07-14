@@ -220,7 +220,7 @@ extend(ChartInternal.prototype, {
 
 		return isDefined(config.axis_x_min) ?
 			($$.isTimeSeries() ? this.parseDate(config.axis_x_min) : config.axis_x_min) :
-		d3Min(targets, t => d3Min(t.values, v => v.x));
+			d3Min(targets, t => d3Min(t.values, v => v.x));
 	},
 
 	getXDomainMax(targets) {
@@ -229,7 +229,7 @@ extend(ChartInternal.prototype, {
 
 		return isDefined(config.axis_x_max) ?
 			($$.isTimeSeries() ? this.parseDate(config.axis_x_max) : config.axis_x_max) :
-		d3Max(targets, t => d3Max(t.values, v => v.x));
+			d3Max(targets, t => d3Max(t.values, v => v.x));
 	},
 
 	getXDomainPadding(domain) {
@@ -312,7 +312,7 @@ extend(ChartInternal.prototype, {
 
 		if (withUpdateXDomain) {
 			const domainValue = domain || (!$$.brush || $$.brushEmpty()) ?
-					$$.orgXDomain : $$.getBrushSelection().map(v => $$.subX.invert(v));
+				$$.orgXDomain : $$.getBrushSelection().map(v => $$.subX.invert(v));
 
 			$$.x.domain(domainValue);
 

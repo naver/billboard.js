@@ -12,8 +12,8 @@ import {extend} from "./util";
 extend(ChartInternal.prototype, {
 	getScale(min, max, forTimeseries) {
 		return (forTimeseries ?
-				d3ScaleTime() : d3ScaleLinear()
-			).range([min, max]);
+			d3ScaleTime() : d3ScaleLinear()
+		).range([min, max]);
 	},
 
 	getX(min, max, domain, offsetValue) {

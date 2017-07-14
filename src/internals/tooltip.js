@@ -39,7 +39,7 @@ extend(ChartInternal.prototype, {
 
 			$$.tooltip.html(config.tooltip_contents.call($$,
 				$$.data.targets.map(d => $$.addName(d.values[config.tooltip_init_x])),
-					$$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType()), $$.color));
+				$$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType()), $$.color));
 
 			$$.tooltip.style("top", config.tooltip_init_position.top)
 				.style("left", config.tooltip_init_position.left)
