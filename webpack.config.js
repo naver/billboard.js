@@ -1,7 +1,9 @@
-var pkg = require("./package.json");
-var path = require("path");
-var StringReplacePlugin = require("string-replace-webpack-plugin");
-var config = {
+const pkg = require("./package.json");
+const path = require("path");
+const StringReplacePlugin = require("string-replace-webpack-plugin");
+const ShakePlugin = require("webpack-common-shake").Plugin;
+
+const config = {
 	entry: {
 		"billboard": "./src/core.js",
 	},
@@ -13,7 +15,8 @@ var config = {
 	},
 	devtool: "cheap-module-source-map",
 	module: {
-		rules: [{
+		rules: [
+			{
 				test: /(\.js)$/,
 				exclude: /(node_modules)/,
 				loader: "babel-loader",
@@ -23,20 +26,17 @@ var config = {
 				loader: StringReplacePlugin.replace({
 					replacements: [{
 						pattern: /#__VERSION__#/ig,
-						replacement: function (match, p1, offset, string) {
-							return pkg.version;
-						}
+						replacement: (match, p1, offset, string) => pkg.version
 					}]
 				})
 			}
 		]
 	},
 	plugins: [
-		new StringReplacePlugin()
+		new StringReplacePlugin(),
+		new ShakePlugin()
 	]
 };
 
-module.exports = function(env) {
-	env = env || "development";
-	return require("./config/webpack.config." + env + ".js")(config);
-};
+module.exports = env =>
+	require(`./config/webpack.config.${env || "development"}.js`)(config);

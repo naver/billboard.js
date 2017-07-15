@@ -36,7 +36,7 @@ extend(ChartInternal.prototype, {
 		$$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
 
 		$$.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?
-		$$.radius * $$.innerRadiusRatio : 0;
+			$$.radius * $$.innerRadiusRatio : 0;
 	},
 	updateArc() {
 		const $$ = this;
