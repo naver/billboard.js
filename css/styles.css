@@ -331,8 +331,7 @@ header .header-content .inner p {
     }
 
     header .header-content .inner {
-        margin-right: auto;
-        margin-left: auto;
+        margin: 80px auto 0 auto;
         max-width: 1000px;
     }
 
@@ -573,6 +572,7 @@ img::-moz-selection {
 
 .download a {
     font-family: Raleway;
+    font-size: 16px;
 }
 
 .download :first-child {
