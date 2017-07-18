@@ -1,5 +1,6 @@
 const pkg = require("./package.json");
 const path = require("path");
+const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
 const ShakePlugin = require("webpack-common-shake").Plugin;
 
@@ -34,7 +35,8 @@ const config = {
 	},
 	plugins: [
 		new StringReplacePlugin(),
-		new ShakePlugin()
+		new ShakePlugin(),
+		new webpack.optimize.ModuleConcatenationPlugin()
 	]
 };
 

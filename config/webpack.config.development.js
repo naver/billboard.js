@@ -1,7 +1,7 @@
-var merge = require("webpack-merge");
-var WriteFilePlugin = require("write-file-webpack-plugin");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var config = {
+const merge = require("webpack-merge");
+const WriteFilePlugin = require("write-file-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const config = {
 	devtool: "inline-source-map",
 	devServer: {
 		publicPath: "/dist/"
@@ -25,6 +25,4 @@ var config = {
 	],
 };
 
-module.exports = function(common) {
-	return merge(common, config);
-};
+module.exports = common => merge(common, config);
