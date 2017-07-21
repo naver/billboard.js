@@ -111,7 +111,7 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
-				getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
 
 		let line = d3Line();
 
@@ -171,8 +171,8 @@ extend(ChartInternal.prototype, {
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
-					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-				)) {
+				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+			)) {
 				posY = y0;
 			}
 
@@ -403,8 +403,8 @@ extend(ChartInternal.prototype, {
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
-					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-				)) {
+				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+			)) {
 				posY = y0;
 			}
 

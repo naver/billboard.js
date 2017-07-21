@@ -126,9 +126,9 @@ extend(ChartInternal.prototype, {
 			) : $$.width;
 		} else {
 			end = config.axis_rotated ?
-				$$.width : "end" in d ? $$.x(
-						$$.isTimeSeries() ? $$.parseDate(d.end) : d.end
-					) : $$.width;
+				$$.width : "end" in d ?
+					$$.x($$.isTimeSeries() ? $$.parseDate(d.end) : d.end) :
+					$$.width;
 		}
 
 		return end < start ? 0 : end - start;

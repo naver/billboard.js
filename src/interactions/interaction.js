@@ -53,7 +53,8 @@ extend(ChartInternal.prototype, {
 		if (isMultipleX) {
 			eventRectUpdate = $$.eventRect.data([0]);
 			// update
-			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())  // enter : only one rect will be added
+			// enter : only one rect will be added
+			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
 			$$.updateEventRect(eventRectUpdate);
 			// exit : not needed because always only one rect exists
@@ -83,7 +84,7 @@ extend(ChartInternal.prototype, {
 
 			const getIndex = eventRect => {
 				let index = eventRect && eventRect.attr("class") && eventRect.attr("class")
-						.replace(new RegExp(`(${CLASS.eventRect}-?|s)`, "g"), "") * 1;
+					.replace(new RegExp(`(${CLASS.eventRect}-?|s)`, "g"), "") * 1;
 
 				if (isNaN(index) || index === null) {
 					index = -1;
@@ -402,12 +403,13 @@ extend(ChartInternal.prototype, {
 				});
 			})
 			.call(
-				config.data_selection_draggable && $$.drag ? (
-					d3Drag().origin(Object)
+				config.data_selection_draggable && $$.drag ?
+					(d3Drag()
+						.origin(Object)
 						.on("drag", function() { $$.drag(d3Mouse(this)); })
 						.on("dragstart", function() { $$.dragstart(d3Mouse(this)); })
 						.on("dragend", () => { $$.dragend(); })
-				) : () => {}
+					) : () => {}
 			);
 
 		if ($$.inputType === "mouse") {
@@ -514,12 +516,12 @@ extend(ChartInternal.prototype, {
 				}
 			})
 			.call(
-				config.data_selection_draggable && $$.drag ? (
-					d3Drag().origin(Object)
+				config.data_selection_draggable && $$.drag ?
+					(d3Drag().origin(Object)
 						.on("drag", function() { $$.drag(d3Mouse(this)); })
 						.on("dragstart", function() { $$.dragstart(d3Mouse(this)); })
 						.on("dragend", () => { $$.dragend(); })
-				) : () => {}
+					) : () => {}
 			);
 
 

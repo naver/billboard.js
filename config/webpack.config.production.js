@@ -1,14 +1,14 @@
-var merge = require("webpack-merge");
-var webpack = require("webpack");
-var path = require("path");
-var CleanWebpackPlugin = require("clean-webpack-plugin");
-var UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-var uglifyConfig = require("./uglify");
-var banner = require("./banner");
-var pkg = require("../package.json");
-var OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-var ExtractTextPlugin = require("extract-text-webpack-plugin");
-var config = {
+const merge = require("webpack-merge");
+const webpack = require("webpack");
+const path = require("path");
+const CleanWebpackPlugin = require("clean-webpack-plugin");
+const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
+const uglifyConfig = require("./uglify");
+const banner = require("./banner");
+const pkg = require("../package.json");
+const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const config = {
 	entry: {
 		"billboard": "./src/core.js",
 		"billboard.min": "./src/core.js",
@@ -17,7 +17,8 @@ var config = {
 		"d3": "d3"
 	}],
 	module: {
-		rules: [{
+		rules: [
+			{
 				test: /(\.js)$/,
 				loader: "eslint-loader",
 				include: path.resolve(process.cwd(), "src"),
@@ -60,6 +61,4 @@ var config = {
 	]
 };
 
-module.exports = function(common) {
-	return merge.smart(common, config);
-};
+module.exports = common => merge.smart(common, config);
