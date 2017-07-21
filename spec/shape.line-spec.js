@@ -187,4 +187,46 @@ describe("SHAPE LINE", () => {
 			});
 		});
 	});
+
+	describe("data point nodes generation", () => {
+		before(() => {
+			args = {
+				data: {
+				columns: [
+						["data1", 30, 200, 100, 400,150,250],
+						["data2",50,20,10,0,15,25]
+					],
+					selection: {
+						enabled: true
+					}
+				},
+				point: {
+					show: false
+				}
+			};
+		});
+
+		it("<g> selected node shouldn't be generated when point.show=false", () => {
+			const selectedCircle = chart.internal.main.selectAll(".bb-selected-circles");
+
+			expect(selectedCircle.empty()).to.be.true;
+		});
+
+		it("<circle> node shouldn't be generated when point.show=false", () => {
+			const circle = chart.internal.main.selectAll("circle");
+
+			expect(circle.empty()).to.be.true;
+		});
+
+		it("change option", () => {
+			args.data.selection.enabled = false;
+			args.point.show = true;
+		});
+
+		it("<g> selected node shouldn't be generated when data.selection.enabled=false", () => {
+			const selectedCircle = chart.internal.main.selectAll(".bb-selected-circles");
+
+			expect(selectedCircle.empty()).to.be.true;
+		});
+	});
 });

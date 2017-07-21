@@ -47,13 +47,15 @@ extend(ChartInternal.prototype, {
 		mainLineEnter.append("g")
 			.attr("class", classAreas);
 
-		// Circles for each data point on lines
-		mainLineEnter.append("g")
-			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
+		if (config.point_show) {
+			// Circles for each data point on lines
+			config.data_selection_enabled && mainLineEnter.append("g")
+				.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
 
-		mainLineEnter.append("g")
-			.attr("class", classCircles)
-			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+			mainLineEnter.append("g")
+				.attr("class", classCircles)
+				.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+		}
 
 		// Update date for selected circles
 		targets.forEach(t => {
@@ -419,6 +421,10 @@ extend(ChartInternal.prototype, {
 	updateCircle() {
 		const $$ = this;
 
+		if (!$$.config.point_show) {
+			return;
+		}
+
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
 			.data($$.lineOrScatterData.bind($$));
 
@@ -435,6 +441,10 @@ extend(ChartInternal.prototype, {
 	redrawCircle(cx, cy, withTransition, flow) {
 		let selectedCircles = this.main.selectAll(`.${CLASS.selectedCircle}`);
 		let mainCircles;
+
+		if (!this.config.point_show) {
+			return undefined;
+		}
 
 		if (withTransition) {
 			const transitionName = Math.random().toString();
