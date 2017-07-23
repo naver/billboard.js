@@ -79,7 +79,7 @@
     "lite-fixture": "^1.0.2",
     "mocha": "^3.4.2",
     "node-sass": "^4.5.3",
-    "optimize-css-assets-webpack-plugin": "^2.0.0",
+    "optimize-css-assets-webpack-plugin": "^3.0.0",
     "regenerator-runtime": "^0.10.5",
     "sass-loader": "^6.0.6",
     "sinon": "^2.3.4",
