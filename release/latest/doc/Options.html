@@ -339,7 +339,10 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>area: {     zerobased: false,     above: true }</code></pre>
+    <pre class="prettyprint"><code>area: {
+     zerobased: false,
+     above: true
+ }</code></pre>
 
 
 
@@ -422,7 +425,9 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  rotated: true}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  rotated: true
+}</code></pre>
 
 
 
@@ -506,7 +511,11 @@ This must be an array that includes category names in string. If category names 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    categories: ["Category 1", "Category 2", ...]  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    categories: ["Category 1", "Category 2", ...]
+  }
+}</code></pre>
 
 
 
@@ -589,7 +598,13 @@ This must be an array that includes category names in string. If category names 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner    // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521    extent: [[0, 0], [200, 60]]  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
+    // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
+    extent: [[0, 0], [200, 60]]
+  }
+}</code></pre>
 
 
 
@@ -673,7 +688,11 @@ The height of x axis can be set manually by this option. If you need more space 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    height: 20  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    height: 20
+  }
+}</code></pre>
 
 
 
@@ -780,7 +799,20 @@ The height of x axis can be set manually by this option. If you need more space 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    label: "Your X Axis"  }}axis: {  x: {    label: {       text: "Your X Axis",       position: "outer-center"    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    label: "Your X Axis"
+  }
+}
+
+axis: {
+  x: {
+    label: {
+       text: "Your X Axis",
+       position: "outer-center"
+    }
+  }
+}</code></pre>
 
 
 
@@ -864,7 +896,11 @@ If true, treat x value as localtime. If false, convert to UTC internally.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    localtime: false  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    localtime: false
+  }
+}</code></pre>
 
 
 
@@ -947,7 +983,11 @@ If true, treat x value as localtime. If false, convert to UTC internally.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    max: 100  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    max: 100
+  }
+}</code></pre>
 
 
 
@@ -1030,7 +1070,11 @@ If true, treat x value as localtime. If false, convert to UTC internally.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    min: -100  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    min: -100
+  }
+}</code></pre>
 
 
 
@@ -1125,7 +1169,19 @@ ex. the given value <code>1000*60*60*24</code>, which is numeric time equivalent
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    padding: {      // when axis type is 'category'      left: 1,  // set left padding width of equivalent value of a tick's width      right: 0.5  // set right padding width as half of equivalent value of tick's width      // when axis type is 'timeseries'      left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width      right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    padding: {
+      // when axis type is 'category'
+      left: 1,  // set left padding width of equivalent value of a tick's width
+      right: 0.5  // set right padding width as half of equivalent value of tick's width
+
+      // when axis type is 'timeseries'
+      left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
+      right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
+    }
+  }
+}</code></pre>
 
 
 
@@ -1208,7 +1264,11 @@ ex. the given value <code>1000*60*60*24</code>, which is numeric time equivalent
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    show: false  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    show: false
+  }
+}</code></pre>
 
 
 
@@ -1291,7 +1351,13 @@ ex. the given value <code>1000*60*60*24</code>, which is numeric time equivalent
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      centered: true    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      centered: true
+    }
+  }
+}</code></pre>
 
 
 
@@ -1375,7 +1441,13 @@ This option hides tick lines together with tick text. If this option is used on 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      count: 5    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      count: 5
+    }
+  }
+}</code></pre>
 
 
 
@@ -1421,7 +1493,8 @@ This option hides tick lines together with tick text. If this option is used on 
     
     <dt class="tag-default">Default Value:</dt>
     <dd class="tag-default"><ul class="dummy">
-            <li>- true for indexed axis and timeseries axis- false for category axis</li>
+            <li>- true for indexed axis and timeseries axis
+- false for category axis</li>
         </ul></dd>
     
 
@@ -1460,7 +1533,13 @@ We can change the number of ticks to be shown by axis.x.tick.culling.max.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      culling: false    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      culling: false
+    }
+  }
+}</code></pre>
 
 
 
@@ -1543,7 +1622,15 @@ We can change the number of ticks to be shown by axis.x.tick.culling.max.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      culling: {          max: 5      }    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      culling: {
+          max: 5
+      }
+    }
+  }
+}</code></pre>
 
 
 
@@ -1627,7 +1714,13 @@ If true set, the ticks will be positioned nicely. If false set, the ticks will b
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      fit: false    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      fit: false
+    }
+  }
+}</code></pre>
 
 
 
@@ -1710,7 +1803,15 @@ If true set, the ticks will be positioned nicely. If false set, the ticks will b
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      format: function(x) {          return x.getFullYear();      }    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      format: function(x) {
+          return x.getFullYear();
+      }
+    }
+  }
+}</code></pre>
 
 
 
@@ -1793,7 +1894,13 @@ If true set, the ticks will be positioned nicely. If false set, the ticks will b
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      multiline: false    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      multiline: false
+    }
+  }
+}</code></pre>
 
 
 
@@ -1876,7 +1983,13 @@ If true set, the ticks will be positioned nicely. If false set, the ticks will b
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      outer: false    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      outer: false
+    }
+  }
+}</code></pre>
 
 
 
@@ -1960,7 +2073,13 @@ If you set negative value, it will rotate to opposite direction.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      rotate: 60    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      rotate: 60
+    }
+  }
+}</code></pre>
 
 
 
@@ -2044,7 +2163,13 @@ If this option is provided, the position of the ticks will be determined based o
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      values: [1, 2, 4, 8, 16, 32, ...]    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      values: [1, 2, 4, 8, 16, 32, ...]
+    }
+  }
+}</code></pre>
 
 
 
@@ -2127,7 +2252,13 @@ If this option is provided, the position of the ticks will be determined based o
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      width: 50    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      width: 50
+    }
+  }
+}</code></pre>
 
 
 
@@ -2216,7 +2347,11 @@ If this option is provided, the position of the ticks will be determined based o
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    type: "timeseries"  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    type: "timeseries"
+  }
+}</code></pre>
 
 
 
@@ -2299,7 +2434,11 @@ If this option is provided, the position of the ticks will be determined based o
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    center: 0  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    center: 0
+  }
+}</code></pre>
 
 
 
@@ -2383,7 +2522,11 @@ This option set the default value for y2 axis when there is no data on init.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    default: [0, 1000]  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    default: [0, 1000]
+  }
+}</code></pre>
 
 
 
@@ -2466,7 +2609,11 @@ This option set the default value for y2 axis when there is no data on init.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    inner: true  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    inner: true
+  }
+}</code></pre>
 
 
 
@@ -2550,7 +2697,11 @@ If true set, the direction will be from the top to the bottom.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    inverted: true  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    inverted: true
+  }
+}</code></pre>
 
 
 
@@ -2637,7 +2788,20 @@ You can set y2 axis label and change its position by this option. This option wo
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    label: "Your Y2 Axis"  }}axis: {  y2: {    label: {       text: "Your Y2 Axis",       position: "outer-middle"    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    label: "Your Y2 Axis"
+  }
+}
+
+axis: {
+  y2: {
+    label: {
+       text: "Your Y2 Axis",
+       position: "outer-middle"
+    }
+  }
+}</code></pre>
 
 
 
@@ -2720,7 +2884,11 @@ You can set y2 axis label and change its position by this option. This option wo
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    max: 1000  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    max: 1000
+  }
+}</code></pre>
 
 
 
@@ -2803,7 +2971,11 @@ You can set y2 axis label and change its position by this option. This option wo
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    min: -1000  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    min: -1000
+  }
+}</code></pre>
 
 
 
@@ -2889,7 +3061,14 @@ You can set y2 axis label and change its position by this option. This option wo
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    padding: {      top: 100,      bottom: 100    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    padding: {
+      top: 100,
+      bottom: 100
+    }
+  }
+}</code></pre>
 
 
 
@@ -2972,7 +3151,11 @@ You can set y2 axis label and change its position by this option. This option wo
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    show: true  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    show: true
+  }
+}</code></pre>
 
 
 
@@ -3058,7 +3241,13 @@ You can set y2 axis label and change its position by this option. This option wo
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    tick: {      count: 5    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    tick: {
+      count: 5
+    }
+  }
+}</code></pre>
 
 
 
@@ -3142,7 +3331,14 @@ This option works in the same way as axis.y.format.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    tick: {      format: d3.format("$,")      //or format: function(d) { return "$" + d; }    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    tick: {
+      format: d3.format("$,")
+      //or format: function(d) { return "$" + d; }
+    }
+  }
+}</code></pre>
 
 
 
@@ -3225,7 +3421,13 @@ This option works in the same way as axis.y.format.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    tick: {      outer: false    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    tick: {
+      outer: false
+    }
+  }
+}</code></pre>
 
 
 
@@ -3308,7 +3510,13 @@ This option works in the same way as axis.y.format.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y2: {    tick: {      values: [100, 1000, 10000]    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y2: {
+    tick: {
+      values: [100, 1000, 10000]
+    }
+  }
+}</code></pre>
 
 
 
@@ -3391,7 +3599,11 @@ This option works in the same way as axis.y.format.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    center: 0  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    center: 0
+  }
+}</code></pre>
 
 
 
@@ -3475,7 +3687,11 @@ This option set the default value for y axis when there is no data on init.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    default: [0, 1000]  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    default: [0, 1000]
+  }
+}</code></pre>
 
 
 
@@ -3559,7 +3775,15 @@ This option accepts d3.format object as well as a function you define.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  x: {    tick: {      format: function(x) {          return x.getFullYear();      }    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  x: {
+    tick: {
+      format: function(x) {
+          return x.getFullYear();
+      }
+    }
+  }
+}</code></pre>
 
 
 
@@ -3642,7 +3866,11 @@ This option accepts d3.format object as well as a function you define.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    inner: true  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    inner: true
+  }
+}</code></pre>
 
 
 
@@ -3726,7 +3954,11 @@ If true set, the direction will be from the top to the bottom.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    inverted: true  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    inverted: true
+  }
+}</code></pre>
 
 
 
@@ -3813,7 +4045,20 @@ You can set y axis label and change its position by this option. This option wor
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    label: "Your Y Axis"  }}axis: {  y: {    label: {       text: "Your Y Axis",       position: "outer-middle"    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    label: "Your Y Axis"
+  }
+}
+
+axis: {
+  y: {
+    label: {
+       text: "Your Y Axis",
+       position: "outer-middle"
+    }
+  }
+}</code></pre>
 
 
 
@@ -3899,7 +4144,11 @@ You can set y axis label and change its position by this option. This option wor
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    max: 1000  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    max: 1000
+  }
+}</code></pre>
 
 
 
@@ -3986,7 +4235,11 @@ Padding will be added based on this value, so if you don't need the padding, ple
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    min: 1000  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    min: 1000
+  }
+}</code></pre>
 
 
 
@@ -4070,7 +4323,14 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    padding: {      top: 0,      bottom: 0    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    padding: {
+      top: 0,
+      bottom: 0
+    }
+  }
+}</code></pre>
 
 
 
@@ -4153,7 +4413,11 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    show: false  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    show: false
+  }
+}</code></pre>
 
 
 
@@ -4239,7 +4503,13 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    tick: {      count: 5    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    tick: {
+      count: 5
+    }
+  }
+}</code></pre>
 
 
 
@@ -4322,7 +4592,13 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    tick: {      outer: false    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    tick: {
+      outer: false
+    }
+  }
+}</code></pre>
 
 
 
@@ -4405,7 +4681,13 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    tick: {      values: [100, 1000, 10000]    }  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    tick: {
+      values: [100, 1000, 10000]
+    }
+  }
+}</code></pre>
 
 
 
@@ -4494,7 +4776,11 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>axis: {  y: {    type: "timeseries"  }}</code></pre>
+    <pre class="prettyprint"><code>axis: {
+  y: {
+    type: "timeseries"
+  }
+}</code></pre>
 
 
 
@@ -4778,7 +5064,15 @@ You can set padding for y axis to create more space on the edge of the axis. Thi
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>bar: {     width: 10,     // or     width: {         ratio: 0.2,         max: 200     },     zerobased: false }</code></pre>
+    <pre class="prettyprint"><code>bar: {
+     width: 10,
+     // or
+     width: {
+         ratio: 0.2,
+         max: 200
+     },
+     zerobased: false
+ }</code></pre>
 
 
 
@@ -4870,7 +5164,13 @@ On the other hand, if chart always will be binded, polyfill will not be required
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>bindto: "#myContainer"// or elementbindto: document.getElementById("myContainer")// or D3 selection objectbindto: d3.select("#myContainer")</code></pre>
+    <pre class="prettyprint"><code>bindto: "#myContainer"
+
+// or element
+bindto: document.getElementById("myContainer")
+
+// or D3 selection object
+bindto: d3.select("#myContainer")</code></pre>
 
 
 
@@ -5177,7 +5477,9 @@ On the other hand, if chart always will be binded, polyfill will not be required
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>color: {     pattern: ["#1f77b4", "#aec7e8", ...] }</code></pre>
+    <pre class="prettyprint"><code>color: {
+     pattern: ["#1f77b4", "#aec7e8", ...]
+ }</code></pre>
 
 
 
@@ -5260,7 +5562,12 @@ On the other hand, if chart always will be binded, polyfill will not be required
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {axes: {    data1: "y",    data2: "y2"  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+axes: {
+    data1: "y",
+    data2: "y2"
+  }
+}</code></pre>
 
 
 
@@ -5344,7 +5651,12 @@ If this option is specified, the element g for the data has an additional class 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  classes: {    data1: "additional-data1-class",    data2: "additional-data2-class"  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  classes: {
+    data1: "additional-data1-class",
+    data2: "additional-data2-class"
+  }
+}</code></pre>
 
 
 
@@ -5428,7 +5740,9 @@ This option should a function and the specified function receives color (e.g. '#
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  color: function(color, d) { ... }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  color: function(color, d) { ... }
+}</code></pre>
 
 
 
@@ -5511,7 +5825,12 @@ This option should a function and the specified function receives color (e.g. '#
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  colors: {    data1: "#ff0000",    ...  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  colors: {
+    data1: "#ff0000",
+    ...
+  }
+}</code></pre>
 
 
 
@@ -5594,7 +5913,13 @@ This option should a function and the specified function receives color (e.g. '#
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  columns: [     ["data1", 30, 20, 50, 40, 60, 50],     ["data2", 200, 130, 90, 240, 130, 220],     ["data3", 300, 200, 160, 400, 250, 250]  ]}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  columns: [
+     ["data1", 30, 20, 50, 40, 60, 50],
+     ["data2", 200, 130, 90, 240, 130, 220],
+     ["data3", 300, 200, 160, 400, 250, 250]
+  ]
+}</code></pre>
 
 
 
@@ -5677,7 +6002,13 @@ This option should a function and the specified function receives color (e.g. '#
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  empty: {    label: {      text: "No Data"    }  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  empty: {
+    label: {
+      text: "No Data"
+    }
+  }
+}</code></pre>
 
 
 
@@ -5760,7 +6091,12 @@ This option should a function and the specified function receives color (e.g. '#
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  groups: [    ["data1", "data2"],    ["data3"]  ]}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  groups: [
+    ["data1", "data2"],
+    ["data3"]
+  ]
+}</code></pre>
 
 
 
@@ -5847,7 +6183,12 @@ If true specified, all of data will be hidden. If multiple ids specified as an a
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  // all of data will be hidden  hide: true  // specified data will be hidden  hide: ["data1", ...]}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  // all of data will be hidden
+  hide: true
+  // specified data will be hidden
+  hide: ["data1", ...]
+}</code></pre>
 
 
 
@@ -5937,7 +6278,18 @@ If true specified, all of data will be hidden. If multiple ids specified as an a
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    json: [      {name: "www.site1.com", upload: 200, download: 200, total: 400},      {name: "www.site2.com", upload: 100, download: 300, total: 400},      {name: "www.site3.com", upload: 300, download: 200, total: 500},      {name: "www.site4.com", upload: 400, download: 100, total: 500}    ],    keys: {      // x: "name", // it's possible to specify 'x' when category axis      value: ["upload", "download"]    }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    json: [
+      {name: "www.site1.com", upload: 200, download: 200, total: 400},
+      {name: "www.site2.com", upload: 100, download: 300, total: 400},
+      {name: "www.site3.com", upload: 300, download: 200, total: 500},
+      {name: "www.site4.com", upload: 400, download: 100, total: 500}
+    ],
+    keys: {
+      // x: "name", // it's possible to specify 'x' when category axis
+      value: ["upload", "download"]
+    }
+}</code></pre>
 
 
 
@@ -6020,7 +6372,18 @@ If true specified, all of data will be hidden. If multiple ids specified as an a
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    json: [      {name: "www.site1.com", upload: 200, download: 200, total: 400},      {name: "www.site2.com", upload: 100, download: 300, total: 400},      {name: "www.site3.com", upload: 300, download: 200, total: 500},      {name: "www.site4.com", upload: 400, download: 100, total: 500}    ],    keys: {      // x: "name", // it's possible to specify 'x' when category axis      value: ["upload", "download"]    }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    json: [
+      {name: "www.site1.com", upload: 200, download: 200, total: 400},
+      {name: "www.site2.com", upload: 100, download: 300, total: 400},
+      {name: "www.site3.com", upload: 300, download: 200, total: 500},
+      {name: "www.site4.com", upload: 400, download: 100, total: 500}
+    ],
+    keys: {
+      // x: "name", // it's possible to specify 'x' when category axis
+      value: ["upload", "download"]
+    }
+}</code></pre>
 
 
 
@@ -6103,7 +6466,9 @@ If true specified, all of data will be hidden. If multiple ids specified as an a
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  labels: true}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  labels: true
+}</code></pre>
 
 
 
@@ -6194,7 +6559,16 @@ Formatter function can be defined for each data by specifying as an object and D
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  labels: {    format: function(v, id, i, j) { ... }    // it's possible to set for each data    //format: {    //    data1: function(v, id, i, j) { ... },    //    ...    //}  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  labels: {
+    format: function(v, id, i, j) { ... }
+    // it's possible to set for each data
+    //format: {
+    //    data1: function(v, id, i, j) { ... },
+    //    ...
+    //}
+  }
+}</code></pre>
 
 
 
@@ -6277,7 +6651,11 @@ Formatter function can be defined for each data by specifying as an object and D
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {   {      mimeType: "json"   }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+   {
+      mimeType: "json"
+   }
+}</code></pre>
 
 
 
@@ -6360,7 +6738,12 @@ Formatter function can be defined for each data by specifying as an object and D
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  names: {    data1: "Data Name 1",    data2: "Data Name 2"  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  names: {
+    data1: "Data Name 1",
+    data2: "Data Name 2"
+  }
+}</code></pre>
 
 
 
@@ -6444,7 +6827,9 @@ This callback will be called when each data point clicked and will receive d and
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    onclick: function(d, element) { ... }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    onclick: function(d, element) { ... }
+}</code></pre>
 
 
 
@@ -6528,7 +6913,9 @@ This callback will be called when mouse cursor or via touch moves out each data 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    onout: function(d) { ... }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    onout: function(d) { ... }
+}</code></pre>
 
 
 
@@ -6612,7 +6999,9 @@ This callback will be called when mouse cursor or via touch moves onto each data
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    onover: function(d) { ... }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    onover: function(d) { ... }
+}</code></pre>
 
 
 
@@ -6695,7 +7084,9 @@ This callback will be called when mouse cursor or via touch moves onto each data
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    onselected: function(d) { ... }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    onselected: function(d) { ... }
+}</code></pre>
 
 
 
@@ -6778,7 +7169,9 @@ This callback will be called when mouse cursor or via touch moves onto each data
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    onunselected: function(d) { ... }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    onunselected: function(d) { ... }
+}</code></pre>
 
 
 
@@ -6871,7 +7264,9 @@ This callback will be called when mouse cursor or via touch moves onto each data
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  order: "asc"}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  order: "asc"
+}</code></pre>
 
 
 
@@ -6956,7 +7351,18 @@ Currently this option supports only line chart and dashed style. If this option 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  regions: {    data1: [{        "start": 1,        "end": 2,        "style": "dashed"    }, {        "start":3    }],    ...  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  regions: {
+    data1: [{
+        "start": 1,
+        "end": 2,
+        "style": "dashed"
+    }, {
+        "start":3
+    }],
+    ...
+  }
+}</code></pre>
 
 
 
@@ -7039,7 +7445,17 @@ Currently this option supports only line chart and dashed style. If this option 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  rows: [    ["A", "B", "C"],    [90, 120, 300],    [40, 160, 240],    [50, 200, 290],    [120, 160, 230],    [80, 130, 300],    [90, 220, 320]  ]}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  rows: [
+    ["A", "B", "C"],
+    [90, 120, 300],
+    [40, 160, 240],
+    [50, 200, 290],
+    [120, 160, 230],
+    [80, 130, 300],
+    [90, 220, 320]
+  ]
+}</code></pre>
 
 
 
@@ -7124,7 +7540,11 @@ If this option set true, data points can be selected by dragging.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    selection: {      draggable: true  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    selection: {
+      draggable: true
+  }
+}</code></pre>
 
 
 
@@ -7208,7 +7628,11 @@ If this option is set true, we can select the data points and get/set its state 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    selection: {      enabled: true  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    selection: {
+      enabled: true
+  }
+}</code></pre>
 
 
 
@@ -7292,7 +7716,11 @@ If this option set true, multiple data points that have same x value will be sel
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    selection: {      grouped: true  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    selection: {
+      grouped: true
+  }
+}</code></pre>
 
 
 
@@ -7376,7 +7804,11 @@ The callback will receive d as an argument and it has some parameters like id, v
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    selection: {      isselectable: function(d) { ... }  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    selection: {
+      isselectable: function(d) { ... }
+  }
+}</code></pre>
 
 
 
@@ -7460,7 +7892,11 @@ If this option set true, multile data points can have the selected state at the 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    selection: {      multiple: false  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    selection: {
+      multiple: false
+  }
+}</code></pre>
 
 
 
@@ -7558,7 +7994,9 @@ If this option is specified, the type will be applied to every data. This settin
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: { type: "bar"}</code></pre>
+    <pre class="prettyprint"><code>data: {
+ type: "bar"
+}</code></pre>
 
 
 
@@ -7642,7 +8080,12 @@ This setting overwrites data.type setting.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  types: {    data1: "bar",    data2: "spline"  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  types: {
+    data1: "bar",
+    data2: "spline"
+  }
+}</code></pre>
 
 
 
@@ -7725,7 +8168,9 @@ This setting overwrites data.type setting.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {    url: "/data/c3_test.csv"}</code></pre>
+    <pre class="prettyprint"><code>data: {
+    url: "/data/c3_test.csv"
+}</code></pre>
 
 
 
@@ -7809,7 +8254,9 @@ We can show the data with non-index x values by this option. This option is requ
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  x: "date"}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  x: "date"
+}</code></pre>
 
 
 
@@ -7899,7 +8346,9 @@ We can show the data with non-index x values by this option. This option is requ
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  xFormat: "%Y-%m-%d %H:%M:%S"}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  xFormat: "%Y-%m-%d %H:%M:%S"
+}</code></pre>
 
 
 
@@ -7982,7 +8431,9 @@ We can show the data with non-index x values by this option. This option is requ
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  xLocaltime: false}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  xLocaltime: false
+}</code></pre>
 
 
 
@@ -8066,7 +8517,12 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  xs: {   data1: "x1",   data2: "x2"  }}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  xs: {
+   data1: "x1",
+   data2: "x2"
+  }
+}</code></pre>
 
 
 
@@ -8149,7 +8605,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>data: {  xSort: false}</code></pre>
+    <pre class="prettyprint"><code>data: {
+  xSort: false
+}</code></pre>
 
 
 
@@ -8166,7 +8624,7 @@ This option can be used if we want to show the data that has different x values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3738">line 3738</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3747">line 3747</a>
     </li></ul></dd>
     
 
@@ -8336,6 +8794,44 @@ This option can be used if we want to show the data that has different x values.
             
 
             <td class="description last"><p>Set threshold to show/hide labels.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
+                <td class="name"><code>donut.label.ratio</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Set ratio of labels position.</p></td>
         </tr>
 
     
@@ -8515,7 +9011,27 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>donut: {     label: {         show: false,         format: function(value, ratio, id) {             return d3.format("$")(value);         },         threshold: 0.1     },     expand: false,     width: 10,     title: "Donut Title",     padAngle: 0.2 }</code></pre>
+    <pre class="prettyprint"><code>donut: {
+     label: {
+         show: false,
+         format: function(value, ratio, id) {
+             return d3.format("$")(value);
+         },
+         threshold: 0.1,
+
+         // set ratio callback. Should return ratio value
+         ratio: function(d, radius, h) {
+         	...
+         	return ratio;
+         },
+         // or set ratio number
+         ratio: 0.5
+     },
+     expand: false,
+     width: 10,
+     title: "Donut Title",
+     padAngle: 0.2
+ }</code></pre>
 
 
 
@@ -8532,7 +9048,7 @@ This option can be used if we want to show the data that has different x values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3696">line 3696</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3705">line 3705</a>
     </li></ul></dd>
     
 
@@ -9019,7 +9535,19 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>gauge: {     label: {         show: false,         format: function(value, ratio) {             return value;         }     },     expand: false,     min: -100,     max: 200,     units: "%",     width: 10 }</code></pre>
+    <pre class="prettyprint"><code>gauge: {
+     label: {
+         show: false,
+         format: function(value, ratio) {
+             return value;
+         }
+     },
+     expand: false,
+     min: -100,
+     max: 200,
+     units: "%",
+     width: 10
+ }</code></pre>
 
 
 
@@ -9397,7 +9925,31 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>grid: {  x: {    show: true,    lines: [      {value: 2, text: "Label on 2"},      {value: 5, text: "Label on 5", class: "label-5"}      {value: 6, text: "Label on 6", position: "start"}    ]  },	 y: {    show: true,    lines: [      {value: 100, text: "Label on 100"},      {value: 200, text: "Label on 200", class: "label-200"}      {value: 300, text: "Label on 300", position: 'middle'}    ],    ticks: 5  },  focus: {     show: false  },  lines: {     front: false  }}</code></pre>
+    <pre class="prettyprint"><code>grid: {
+  x: {
+    show: true,
+    lines: [
+      {value: 2, text: "Label on 2"},
+      {value: 5, text: "Label on 5", class: "label-5"}
+      {value: 6, text: "Label on 6", position: "start"}
+    ]
+  },
+	 y: {
+    show: true,
+    lines: [
+      {value: 100, text: "Label on 100"},
+      {value: 200, text: "Label on 200", class: "label-200"}
+      {value: 300, text: "Label on 300", position: 'middle'}
+    ],
+    ticks: 5
+  },
+  focus: {
+     show: false
+  },
+  lines: {
+     front: false
+  }
+}</code></pre>
 
 
 
@@ -9657,7 +10209,13 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>interaction: {   enabled: false,   inputType: {       mouse: true,       touch: false   }}</code></pre>
+    <pre class="prettyprint"><code>interaction: {
+   enabled: false,
+   inputType: {
+       mouse: true,
+       touch: false
+   }
+}</code></pre>
 
 
 
@@ -10030,7 +10588,22 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>legend: {     show: true,     hide: true,     //or hide: "data1"     //or hide: ["data1", "data2"]     position: "bottom",  // bottom, right, inset     inset: {         anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right         x: 20,         y: 10,         step: 2     },     onclick: function(id) { ... },     onover: function(id) { ... },     onout: function(id) { ... } }</code></pre>
+    <pre class="prettyprint"><code>legend: {
+     show: true,
+     hide: true,
+     //or hide: "data1"
+     //or hide: ["data1", "data2"]
+     position: "bottom",  // bottom, right, inset
+     inset: {
+         anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right
+         x: 20,
+         y: 10,
+         step: 2
+     },
+     onclick: function(id) { ... },
+     onover: function(id) { ... },
+     onout: function(id) { ... }
+ }</code></pre>
 
 
 
@@ -10222,7 +10795,12 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>line: {     connectNull: true,     step: {         type: "step-after"     } }</code></pre>
+    <pre class="prettyprint"><code>line: {
+     connectNull: true,
+     step: {
+         type: "step-after"
+     }
+ }</code></pre>
 
 
 
@@ -10305,7 +10883,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>oninit: function() {  ...}</code></pre>
+    <pre class="prettyprint"><code>oninit: function() {
+  ...
+}</code></pre>
 
 
 
@@ -10388,7 +10968,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>onout: function() {  ...}</code></pre>
+    <pre class="prettyprint"><code>onout: function() {
+  ...
+}</code></pre>
 
 
 
@@ -10471,7 +11053,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>onover: function() {  ...}</code></pre>
+    <pre class="prettyprint"><code>onover: function() {
+  ...
+}</code></pre>
 
 
 
@@ -10554,7 +11138,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>onrendered: function() {  ...}</code></pre>
+    <pre class="prettyprint"><code>onrendered: function() {
+  ...
+}</code></pre>
 
 
 
@@ -10637,7 +11223,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>onresize: function() {  ...}</code></pre>
+    <pre class="prettyprint"><code>onresize: function() {
+  ...
+}</code></pre>
 
 
 
@@ -10720,7 +11308,9 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>onresized: function() {  ...}</code></pre>
+    <pre class="prettyprint"><code>onresized: function() {
+  ...
+}</code></pre>
 
 
 
@@ -10953,7 +11543,12 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>padding: {  top: 20,  right: 20,  bottom: 20,  left: 20}</code></pre>
+    <pre class="prettyprint"><code>padding: {
+  top: 20,
+  right: 20,
+  bottom: 20,
+  left: 20
+}</code></pre>
 
 
 
@@ -11146,6 +11741,44 @@ This option can be used if we want to show the data that has different x values.
 
         <tr>
             
+                <td class="name"><code>pie.label.ratio</code></td>
+            
+
+            <td class="type">
+            
+                
+<span class="param-type">Number</span>
+|
+
+<span class="param-type">function</span>
+
+
+            
+            </td>
+
+            
+                <td class="attributes">
+                
+                    &lt;optional><br>
+                
+
+                
+                </td>
+            
+
+            
+                <td class="default">
+                
+                </td>
+            
+
+            <td class="description last"><p>Set ratio of labels position.</p></td>
+        </tr>
+
+    
+
+        <tr>
+            
                 <td class="name"><code>pie.expand</code></td>
             
 
@@ -11247,7 +11880,25 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>pie: {     label: {         show: false,         format: function(value, ratio, id) {             return d3.format("$")(value);         },         threshold: 0.1     },     expand: false,     padAngle: 0.1 }</code></pre>
+    <pre class="prettyprint"><code>pie: {
+     label: {
+         show: false,
+         format: function(value, ratio, id) {
+             return d3.format("$")(value);
+         },
+         threshold: 0.1,
+
+         // set ratio callback. Should return ratio value
+         ratio: function(d, radius, h) {
+         	...
+         	return ratio;
+         },
+         // or set ratio number
+         ratio: 0.5
+     },
+     expand: false,
+     padAngle: 0.1
+ }</code></pre>
 
 
 
@@ -11543,7 +12194,19 @@ This option can be used if we want to show the data that has different x values.
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>point: {     show: false,     r: 5,     focus: {         expand: {             enabled: true,             r: 1         }     },     select: {         r: 3     } }</code></pre>
+    <pre class="prettyprint"><code>point: {
+     show: false,
+     r: 5,
+     focus: {
+         expand: {
+             enabled: true,
+             r: 1
+         }
+     },
+     select: {
+         r: 3
+     }
+ }</code></pre>
 
 
 
@@ -11560,7 +12223,7 @@ This option can be used if we want to show the data that has different x values.
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3790">line 3790</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3808">line 3808</a>
     </li></ul></dd>
     
 
@@ -11628,7 +12291,14 @@ axis must be x, y or y2. start and end should be the value where regions start a
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>regions: [	 {	     axis: "x",	     start: 1,	     end: 4,	     class: "region-1-4"	 } ]</code></pre>
+    <pre class="prettyprint"><code>regions: [
+	 {
+	     axis: "x",
+	     start: 1,
+	     end: 4,
+	     class: "region-1-4"
+	 }
+ ]</code></pre>
 
 
 
@@ -11776,7 +12446,9 @@ axis must be x, y or y2. start and end should be the value where regions start a
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>resize: {     auto: false }</code></pre>
+    <pre class="prettyprint"><code>resize: {
+     auto: false
+ }</code></pre>
 
 
 
@@ -11948,7 +12620,10 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>size: {  width: 640,  height: 480}</code></pre>
+    <pre class="prettyprint"><code>size: {
+  width: 640,
+  height: 480
+}</code></pre>
 
 
 
@@ -11965,7 +12640,7 @@ If value is not specified, the width of the chart will be calculated by the size
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3775">line 3775</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3793">line 3793</a>
     </li></ul></dd>
     
 
@@ -12096,7 +12771,11 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>spline: {     interpolation: {         type: "cardinal"     } }</code></pre>
+    <pre class="prettyprint"><code>spline: {
+     interpolation: {
+         type: "cardinal"
+     }
+ }</code></pre>
 
 
 
@@ -12315,7 +12994,13 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>subchart: {     show: true,     size: {         height: 20     },     onbrush: function(domain) { ... } }</code></pre>
+    <pre class="prettyprint"><code>subchart: {
+     show: true,
+     size: {
+         height: 20
+     },
+     onbrush: function(domain) { ... }
+ }</code></pre>
 
 
 
@@ -12455,7 +13140,9 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>svg: {  classname: "test_class"}</code></pre>
+    <pre class="prettyprint"><code>svg: {
+  classname: "test_class"
+}</code></pre>
 
 
 
@@ -12472,7 +13159,7 @@ If value is not specified, the width of the chart will be calculated by the size
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3863">line 3863</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3881">line 3881</a>
     </li></ul></dd>
     
 
@@ -12786,7 +13473,16 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>title: {     text: "Title Text",     padding: {         top: 10,         right: 10,         bottom: 10,         left: 10     },     position: "top-center" }</code></pre>
+    <pre class="prettyprint"><code>title: {
+     text: "Title Text",
+     padding: {
+         top: 10,
+         right: 10,
+         bottom: 10,
+         left: 10
+     },
+     position: "top-center"
+ }</code></pre>
 
 
 
@@ -12803,7 +13499,7 @@ If value is not specified, the width of the chart will be calculated by the size
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3810">line 3810</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line3828">line 3828</a>
     </li></ul></dd>
     
 
@@ -13152,7 +13848,21 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>tooltip: {     show: true,     grouped: false,     format: {         title: function(x) { return "Data " + x; },         name: function(name, ratio, id, index) { return name; },         value: function(value, ratio, id, index) { return ratio; }     },     position: function(data, width, height, element) {         return {top: 0, left: 0}     },     contents: function(d, defaultTitleFormat, defaultValueFormat, color) {         return ... // formatted html as you want     } }</code></pre>
+    <pre class="prettyprint"><code>tooltip: {
+     show: true,
+     grouped: false,
+     format: {
+         title: function(x) { return "Data " + x; },
+         name: function(name, ratio, id, index) { return name; },
+         value: function(value, ratio, id, index) { return ratio; }
+     },
+     position: function(data, width, height, element) {
+         return {top: 0, left: 0}
+     },
+     contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
+         return ... // formatted html as you want
+     }
+ }</code></pre>
 
 
 
@@ -13303,7 +14013,9 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>transition: { duration: 500}</code></pre>
+    <pre class="prettyprint"><code>transition: {
+ duration: 500
+}</code></pre>
 
 
 
@@ -13640,7 +14352,14 @@ If value is not specified, the width of the chart will be calculated by the size
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>zoom: {     enabled: true,     rescale: true,     extent: [1, 100]  // enable more zooming     onzoom: function(domain) { ... },     onzoomstart: function(event) { ... },     onzoomend: function(domain) { ... } }</code></pre>
+    <pre class="prettyprint"><code>zoom: {
+     enabled: true,
+     rescale: true,
+     extent: [1, 100]  // enable more zooming
+     onzoom: function(domain) { ... },
+     onzoomstart: function(event) { ... },
+     onzoomend: function(domain) { ... }
+ }</code></pre>
 
 
 

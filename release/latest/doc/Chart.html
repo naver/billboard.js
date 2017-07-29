@@ -128,7 +128,14 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>var chart = bb.generate({ data: {   columns: [	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],	    ["count1", 11, 8, 7, 6, 5 ],	    ["count2", 9, 3, 6, 2, 8 ]  ]}}</code></pre>
+    <pre class="prettyprint"><code>var chart = bb.generate({
+ data: {
+   columns: [
+	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
+	    ["count1", 11, 8, 7, 6, 5 ],
+	    ["count2", 9, 3, 6, 2, 8 ]
+  ]}
+}</code></pre>
 
 
 
@@ -182,7 +189,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9888">line 9888</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9907">line 9907</a>
     </li></ul></dd>
     
 
@@ -235,7 +242,11 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Update axis' labelchart.axis.labels({  x: "New X Axis Label",  y: "New Y Axis Label"});</code></pre>
+    <pre class="prettyprint"><code>// Update axis' label
+chart.axis.labels({
+  x: "New X Axis Label",
+  y: "New Y Axis Label"
+});</code></pre>
 
 
 
@@ -320,7 +331,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9705">line 9705</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9724">line 9724</a>
     </li></ul></dd>
     
 
@@ -373,7 +384,9 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>chart.categories([     "Category 1", "Category 2", ...]);</code></pre>
+    <pre class="prettyprint"><code>chart.categories([
+     "Category 1", "Category 2", ...
+]);</code></pre>
 
 
 
@@ -458,7 +471,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9686">line 9686</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9705">line 9705</a>
     </li></ul></dd>
     
 
@@ -619,7 +632,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9741">line 9741</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9760">line 9760</a>
     </li></ul></dd>
     
 
@@ -757,7 +770,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9601">line 9601</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9620">line 9620</a>
     </li></ul></dd>
     
 
@@ -810,7 +823,14 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Get only data1 datachart.data("data1");// Get data1 and data2 datachart.data(["data1", "data2"]);// Get all datachart.data();</code></pre>
+    <pre class="prettyprint"><code>// Get only data1 data
+chart.data("data1");
+
+// Get data1 and data2 data
+chart.data(["data1", "data2"]);
+
+// Get all data
+chart.data();</code></pre>
 
 
 
@@ -898,7 +918,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9629">line 9629</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9648">line 9648</a>
     </li></ul></dd>
     
 
@@ -951,7 +971,14 @@
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Get shown data by filtering to include only data1 datachart.data.shown("data1");// Get shown data by filtering to include data1 and data2 datachart.data.shown(["data1", "data2"]);// Get all shown datachart.data.shown();</code></pre>
+    <pre class="prettyprint"><code>// Get shown data by filtering to include only data1 data
+chart.data.shown("data1");
+
+// Get shown data by filtering to include data1 and data2 data
+chart.data.shown(["data1", "data2"]);
+
+// Get all shown data
+chart.data.shown();</code></pre>
 
 
 
@@ -1039,7 +1066,7 @@
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8607">line 8607</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8626">line 8626</a>
     </li></ul></dd>
     
 
@@ -1093,7 +1120,14 @@ You can specify multiple targets by giving an array that includes id as String. 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// data1 will be faded out and the others will be reverted.chart.defocus("data1");// data1 and data2 will be faded out and the others will be reverted.chart.defocus(["data1", "data2"]);// all targets will be faded out.chart.defocus();</code></pre>
+    <pre class="prettyprint"><code>// data1 will be faded out and the others will be reverted.
+chart.defocus("data1");
+
+// data1 and data2 will be faded out and the others will be reverted.
+chart.defocus(["data1", "data2"]);
+
+// all targets will be faded out.
+chart.defocus();</code></pre>
 
 
 
@@ -1181,7 +1215,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10023">line 10023</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10042">line 10042</a>
     </li></ul></dd>
     
 
@@ -1270,7 +1304,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8987">line 8987</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9006">line 9006</a>
     </li></ul></dd>
     
 
@@ -1324,7 +1358,27 @@ By this API, you can append new data points to the chart.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// 2 data points will be apprended to the tail and popped from the head.// After that, 4 data points will be appended and no data points will be poppoed.chart.flow({ columns: [   ["x", "2013-01-11", "2013-01-21"],   ["data1", 500, 200],   ["data2", 100, 300],   ["data3", 200, 120] ], done: function () {   chart.flow({     columns: [       ["x", "2013-02-11", "2013-02-12", "2013-02-13", "2013-02-14"],       ["data1", 200, 300, 100, 250],       ["data2", 100, 90, 40, 120],       ["data3", 100, 100, 300, 500]     ],     length: 0   }); }});</code></pre>
+    <pre class="prettyprint"><code>// 2 data points will be apprended to the tail and popped from the head.
+// After that, 4 data points will be appended and no data points will be poppoed.
+chart.flow({
+ columns: [
+   ["x", "2013-01-11", "2013-01-21"],
+   ["data1", 500, 200],
+   ["data2", 100, 300],
+   ["data3", 200, 120]
+ ],
+ done: function () {
+   chart.flow({
+     columns: [
+       ["x", "2013-02-11", "2013-02-12", "2013-02-13", "2013-02-14"],
+       ["data1", 200, 300, 100, 250],
+       ["data2", 100, 90, 40, 120],
+       ["data3", 100, 100, 300, 500]
+     ],
+     length: 0
+   });
+ }
+});</code></pre>
 
 
 
@@ -1415,7 +1469,7 @@ By this API, you can append new data points to the chart.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10006">line 10006</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10025">line 10025</a>
     </li></ul></dd>
     
 
@@ -1504,7 +1558,7 @@ By this API, you can append new data points to the chart.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8580">line 8580</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8599">line 8599</a>
     </li></ul></dd>
     
 
@@ -1558,7 +1612,14 @@ You can specify multiple targets by giving an array that includes id as String. 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// data1 will be highlighted and the others will be faded out chart.focus("data1");// data1 and data2 will be highlighted and the others will be faded outchart.focus(["data1", "data2"]);// all targets will be highlightedchart.focus();</code></pre>
+    <pre class="prettyprint"><code>// data1 will be highlighted and the others will be faded out
+ chart.focus("data1");
+
+// data1 and data2 will be highlighted and the others will be faded out
+chart.focus(["data1", "data2"]);
+
+// all targets will be highlighted
+chart.focus();</code></pre>
 
 
 
@@ -1646,7 +1707,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9377">line 9377</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9396">line 9396</a>
     </li></ul></dd>
     
 
@@ -1699,7 +1760,10 @@ You can specify multiple targets by giving an array that includes id as String. 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// data1 and data2 will be a new group. chart.groups([    ["data1", "data2"] ]);</code></pre>
+    <pre class="prettyprint"><code>// data1 and data2 will be a new group.
+ chart.groups([
+    ["data1", "data2"]
+ ]);</code></pre>
 
 
 
@@ -1784,7 +1848,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8707">line 8707</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8726">line 8726</a>
     </li></ul></dd>
     
 
@@ -1943,7 +2007,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9942">line 9942</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9961">line 9961</a>
     </li></ul></dd>
     
 
@@ -1996,7 +2060,14 @@ You can specify multiple targets by giving an array that includes id as String. 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Show legend for data1.chart.legend.show("data1");// Show legend for data1 and data2.chart.legend.show(["data1", "data2"]);// Show all legend.chart.legend.show();</code></pre>
+    <pre class="prettyprint"><code>// Show legend for data1.
+chart.legend.show("data1");
+
+// Show legend for data1 and data2.
+chart.legend.show(["data1", "data2"]);
+
+// Show all legend.
+chart.legend.show();</code></pre>
 
 
 
@@ -2088,7 +2159,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8887">line 8887</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8906">line 8906</a>
     </li></ul></dd>
     
 
@@ -2147,7 +2218,14 @@ done will be called after data loaded, but it's not after rendering. It's becaus
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Load data1 and unload data2 and data3 chart.load({    columns: [       ["data1", 100, 200, 150, ...],       ...   ],   unload: ["data2", "data3"] });</code></pre>
+    <pre class="prettyprint"><code>// Load data1 and unload data2 and data3
+ chart.load({
+    columns: [
+       ["data1", 100, 200, 150, ...],
+       ...
+   ],
+   unload: ["data2", "data3"]
+ });</code></pre>
 
 
 
@@ -2241,7 +2319,7 @@ done will be called after data loaded, but it's not after rendering. It's becaus
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9520">line 9520</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9539">line 9539</a>
     </li></ul></dd>
     
 
@@ -2294,7 +2372,11 @@ done will be called after data loaded, but it's not after rendering. It's becaus
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Show 2 regionschart.regions([   {axis: "x", start: 5, class: "regionX"},   {axis: "y", end: 50, class: "regionY"}]);</code></pre>
+    <pre class="prettyprint"><code>// Show 2 regions
+chart.regions([
+   {axis: "x", start: 5, class: "regionX"},
+   {axis: "y", end: 50, class: "regionY"}
+]);</code></pre>
 
 
 
@@ -2401,7 +2483,7 @@ done will be called after data loaded, but it's not after rendering. It's becaus
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9540">line 9540</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9559">line 9559</a>
     </li></ul></dd>
     
 
@@ -2455,7 +2537,16 @@ This API adds new region instead of replacing like regions.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Add a new regionchart.regions.add(   {axis: "x", start: 5, class: "regionX"});// Add new regionschart.regions.add([   {axis: "x", start: 5, class: "regionX"},   {axis: "y", end: 50, class: "regionY"}]);</code></pre>
+    <pre class="prettyprint"><code>// Add a new region
+chart.regions.add(
+   {axis: "x", start: 5, class: "regionX"}
+);
+
+// Add new regions
+chart.regions.add([
+   {axis: "x", start: 5, class: "regionX"},
+   {axis: "y", end: 50, class: "regionY"}
+]);</code></pre>
 
 
 
@@ -2565,7 +2656,7 @@ This API adds new region instead of replacing like regions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9986">line 9986</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10005">line 10005</a>
     </li></ul></dd>
     
 
@@ -2618,7 +2709,11 @@ This API adds new region instead of replacing like regions.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Resize to 640x480chart.resize({   width: 640,   height: 480});</code></pre>
+    <pre class="prettyprint"><code>// Resize to 640x480
+chart.resize({
+   width: 640,
+   height: 480
+});</code></pre>
 
 
 
@@ -2703,7 +2798,7 @@ This API adds new region instead of replacing like regions.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8634">line 8634</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8653">line 8653</a>
     </li></ul></dd>
     
 
@@ -2757,7 +2852,14 @@ You can specify multiple targets by giving an array that includes id as String. 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// data1 will be reverted.chart.revert("data1");// data1 and data2 will be reverted.chart.revert(["data1", "data2"]);// all targets will be reverted.chart.revert();</code></pre>
+    <pre class="prettyprint"><code>// data1 will be reverted.
+chart.revert("data1");
+
+// data1 and data2 will be reverted.
+chart.revert(["data1", "data2"]);
+
+// all targets will be reverted.
+chart.revert();</code></pre>
 
 
 
@@ -2845,7 +2947,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9243">line 9243</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9262">line 9262</a>
     </li></ul></dd>
     
 
@@ -2898,7 +3000,8 @@ You can specify multiple targets by giving an array that includes id as String. 
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// select from 'data1', indices 2 and unselect others selected chart.select("data1", 2, true);</code></pre>
+    <pre class="prettyprint"><code>// select from 'data1', indices 2 and unselect others selected
+ chart.select("data1", 2, true);</code></pre>
 
 
 
@@ -3029,7 +3132,7 @@ You can specify multiple targets by giving an array that includes id as String. 
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9215">line 9215</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9234">line 9234</a>
     </li></ul></dd>
     
 
@@ -3083,7 +3186,11 @@ By this API, you can get selected data points information. To use this API, data
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// all selected data points will be returned. chart.selected(); // all selected data points of data1 will be returned. chart.selected("data1");</code></pre>
+    <pre class="prettyprint"><code>// all selected data points will be returned.
+ chart.selected();
+
+ // all selected data points of data1 will be returned.
+ chart.selected("data1");</code></pre>
 
 
 
@@ -3190,7 +3297,7 @@ By this API, you can get selected data points information. To use this API, data
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8681">line 8681</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8700">line 8700</a>
     </li></ul></dd>
     
 
@@ -3349,7 +3456,7 @@ By this API, you can get selected data points information. To use this API, data
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8733">line 8733</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8752">line 8752</a>
     </li></ul></dd>
     
 
@@ -3505,7 +3612,7 @@ By this API, you can get selected data points information. To use this API, data
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10084">line 10084</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line10103">line 10103</a>
     </li></ul></dd>
     
 
@@ -3638,7 +3745,7 @@ By this API, you can get selected data points information. To use this API, data
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9318">line 9318</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9337">line 9337</a>
     </li></ul></dd>
     
 
@@ -3691,7 +3798,14 @@ By this API, you can get selected data points information. To use this API, data
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// all targets will be bar chart. chart.transform("bar"); // only data1 will be bar chart. chart.transform("bar", "data1"); // only data1 and data2 will be bar chart. chart.transform("bar", ["data1", "data2"]);</code></pre>
+    <pre class="prettyprint"><code>// all targets will be bar chart.
+ chart.transform("bar");
+
+ // only data1 will be bar chart.
+ chart.transform("bar", "data1");
+
+ // only data1 and data2 will be bar chart.
+ chart.transform("bar", ["data1", "data2"]);</code></pre>
 
 
 
@@ -3802,7 +3916,7 @@ By this API, you can get selected data points information. To use this API, data
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8937">line 8937</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8956">line 8956</a>
     </li></ul></dd>
     
 
@@ -3861,7 +3975,10 @@ If you call load API soon after/before unload, unload param of load should be us
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Unload data2 and data3 chart.unload({   ids: ["data2", "data3"] });</code></pre>
+    <pre class="prettyprint"><code>// Unload data2 and data3
+ chart.unload({
+   ids: ["data2", "data3"]
+ });</code></pre>
 
 
 
@@ -3949,7 +4066,7 @@ If you call load API soon after/before unload, unload param of load should be us
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9273">line 9273</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9292">line 9292</a>
     </li></ul></dd>
     
 
@@ -4002,7 +4119,8 @@ If you call load API soon after/before unload, unload param of load should be us
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// unselect from 'data1', indices 2 chart.unselect("data1", 2);</code></pre>
+    <pre class="prettyprint"><code>// unselect from 'data1', indices 2
+ chart.unselect("data1", 2);</code></pre>
 
 
 
@@ -4110,7 +4228,7 @@ If you call load API soon after/before unload, unload param of load should be us
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8851">line 8851</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8870">line 8870</a>
     </li></ul></dd>
     
 
@@ -4199,7 +4317,7 @@ If you call load API soon after/before unload, unload param of load should be us
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9775">line 9775</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9794">line 9794</a>
     </li></ul></dd>
     
 
@@ -4252,7 +4370,11 @@ If you call load API soon after/before unload, unload param of load should be us
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Get current x values chart.x(); // Update x values for all targets chart.x([100, 200, 300, 400, ...]);</code></pre>
+    <pre class="prettyprint"><code>// Get current x values
+ chart.x();
+
+ // Update x values for all targets
+ chart.x([100, 200, 300, 400, ...]);</code></pre>
 
 
 
@@ -4359,7 +4481,7 @@ If you call load API soon after/before unload, unload param of load should be us
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9409">line 9409</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9428">line 9428</a>
     </li></ul></dd>
     
 
@@ -4412,7 +4534,11 @@ If you call load API soon after/before unload, unload param of load should be us
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Show 2 x grid lineschart.xgrids([   {value: 1, text: "Label 1"},   {value: 4, text: "Label 4"}]);</code></pre>
+    <pre class="prettyprint"><code>// Show 2 x grid lines
+chart.xgrids([
+   {value: 1, text: "Label 1"},
+   {value: 4, text: "Label 4"}
+]);</code></pre>
 
 
 
@@ -4497,7 +4623,7 @@ If you call load API soon after/before unload, unload param of load should be us
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9432">line 9432</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9451">line 9451</a>
     </li></ul></dd>
     
 
@@ -4551,7 +4677,16 @@ This API adds new x grid lines instead of replacing like xgrids.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Add a new x grid linechart.xgrids.add(  {value: 4, text: "Label 4"});// Add new x grid lineschart.xgrids.add([  {value: 2, text: "Label 2"},  {value: 4, text: "Label 4"}]);</code></pre>
+    <pre class="prettyprint"><code>// Add a new x grid line
+chart.xgrids.add(
+  {value: 4, text: "Label 4"}
+);
+
+// Add new x grid lines
+chart.xgrids.add([
+  {value: 2, text: "Label 2"},
+  {value: 4, text: "Label 4"}
+]);</code></pre>
 
 
 
@@ -4639,7 +4774,7 @@ This API adds new x grid lines instead of replacing like xgrids.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9799">line 9799</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9818">line 9818</a>
     </li></ul></dd>
     
 
@@ -4692,7 +4827,14 @@ This API adds new x grid lines instead of replacing like xgrids.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Get current x values chart.xs(); // Update x values for all targets chart.xs({   data1: [10, 20, 30, 40, ...],   data2: [100, 200, 300, 400, ...] });</code></pre>
+    <pre class="prettyprint"><code>// Get current x values
+ chart.xs();
+
+ // Update x values for all targets
+ chart.xs({
+   data1: [10, 20, 30, 40, ...],
+   data2: [100, 200, 300, 400, ...]
+ });</code></pre>
 
 
 
@@ -4799,7 +4941,7 @@ This API adds new x grid lines instead of replacing like xgrids.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9458">line 9458</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9477">line 9477</a>
     </li></ul></dd>
     
 
@@ -4852,7 +4994,11 @@ This API adds new x grid lines instead of replacing like xgrids.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Show 2 y grid lineschart.ygrids([   {value: 100, text: "Label 1"},   {value: 400, text: "Label 4"}]);</code></pre>
+    <pre class="prettyprint"><code>// Show 2 y grid lines
+chart.ygrids([
+   {value: 100, text: "Label 1"},
+   {value: 400, text: "Label 4"}
+]);</code></pre>
 
 
 
@@ -4937,7 +5083,7 @@ This API adds new x grid lines instead of replacing like xgrids.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9477">line 9477</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line9496">line 9496</a>
     </li></ul></dd>
     
 
@@ -4991,7 +5137,16 @@ This API adds new y grid lines instead of replacing like ygrids.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Add a new x grid linechart.ygrids.add(  {value: 400, text: "Label 4"});// Add new x grid lineschart.ygrids.add([  {value: 200, text: "Label 2"},  {value: 400, text: "Label 4"}]);</code></pre>
+    <pre class="prettyprint"><code>// Add a new x grid line
+chart.ygrids.add(
+  {value: 400, text: "Label 4"}
+);
+
+// Add new x grid lines
+chart.ygrids.add([
+  {value: 200, text: "Label 2"},
+  {value: 400, text: "Label 4"}
+]);</code></pre>
 
 
 
@@ -5079,7 +5234,7 @@ This API adds new y grid lines instead of replacing like ygrids.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8765">line 8765</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8784">line 8784</a>
     </li></ul></dd>
     
 
@@ -5132,7 +5287,11 @@ This API adds new y grid lines instead of replacing like ygrids.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Zoom to specified domain chart.zoom([10, 20]); // Get the current zoomed domain chart.zoom();</code></pre>
+    <pre class="prettyprint"><code>// Zoom to specified domain
+ chart.zoom([10, 20]);
+
+ // Get the current zoomed domain
+ chart.zoom();</code></pre>
 
 
 
@@ -5217,7 +5376,7 @@ This API adds new y grid lines instead of replacing like ygrids.</p>
     
     <dt class="tag-source">Source:</dt>
     <dd class="tag-source"><ul class="dummy"><li>
-        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8808">line 8808</a>
+        <a href="billboard.js.html">billboard.js</a>, <a href="billboard.js.html#line8827">line 8827</a>
     </li></ul></dd>
     
 
@@ -5270,7 +5429,8 @@ This API adds new y grid lines instead of replacing like ygrids.</p>
 
     <h5>Example</h5>
     
-    <pre class="prettyprint"><code>// Enable zooming chart.zoom.enable(true);</code></pre>
+    <pre class="prettyprint"><code>// Enable zooming
+ chart.zoom.enable(true);</code></pre>
 
 
 

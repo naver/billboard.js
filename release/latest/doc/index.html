@@ -46,7 +46,8 @@
 
 
     <section class="readme">
-        <article><h1>billboard.js <a href="https://travis-ci.org/naver/billboard.js"><img src="https://travis-ci.org/naver/billboard.js.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/naver/billboard.js"><img src="https://coveralls.io/repos/github/naver/billboard.js/badge.svg" alt="Coverage Status"></a></h1><p>billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.</p>
+        <article><h1>billboard.js</h1><p><a href="https://www.npmjs.com/package/billboard.js"><img src="https://badge.fury.io/js/billboard.js.svg" alt="npm version"></a> <a href="https://travis-ci.org/naver/billboard.js"><img src="https://travis-ci.org/naver/billboard.js.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/naver/billboard.js"><img src="https://coveralls.io/repos/github/naver/billboard.js/badge.svg" alt="Coverage Status"></a> <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/naver/billboard.js.svg" alt="Greenkeeper badge"></a></p>
+<p>billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.</p>
 <blockquote>
 <p>The name &quot;billboard&quot; came from the famous <code>billboard chart</code> which everybody knows.<br></p>
 <p>This project was forked from C3.js v0.4.11.</p>
@@ -56,7 +57,9 @@
 </blockquote>
 <h2>Documents</h2><ul>
 <li><a href="http://naver.github.io/billboard.js/release/latest/doc/">API Documetation</a></li>
-<li><a href="https://cdn.rawgit.com/naver/billboard.js/8413325d/demo/">Examples</a></li>
+<li><a href="https://naver.github.io/billboard.js/demo/">Examples</a></li>
+<li><a href="https://github.com/naver/billboard.js/wiki/Roadmap">Roadmap</a></li>
+<li><a href="CONTRIBUTING.md">Contribution Guide</a></li>
 <li><a href="https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F">Migration guide from C3.js</a></li>
 </ul>
 <h2>Download and Installation</h2><p>Download dist files from repo directly or install it via npm. </p>
@@ -95,7 +98,11 @@ Is just to provide for ease use of 'billboard.js' with dependency.</p>
 </li>
 </ul>
 <h3>Installation with npm</h3><p>The following command shows how to install billboard.js using npm.</p>
-<pre class="prettyprint source lang-bash"><code>$ npm install billboard.js</code></pre><h2>Supported Browsers</h2><blockquote>
+<pre class="prettyprint source lang-bash"><code>$ npm install billboard.js</code></pre><h3>Using CDN</h3><p>To create a link to a file provided over CDN, you must check the file URL in the CDN service.</p>
+<ul>
+<li>cdnjs: https://cdnjs.com/libraries/billboard.js</li>
+</ul>
+<h2>Supported Browsers</h2><blockquote>
 <p>Basically will work on all browsers which has SVG support.</p>
 </blockquote>
 <table>
@@ -184,8 +191,8 @@ $ npm run jsdoc</code></pre><p>Two folders will be created after complete build 
 </ul>
 <h3>Linting</h3><p>To keep the same code style, we adopted <a href="http://eslint.org/">ESLint</a> to maintain our code quality. The <a href="https://github.com/naver/eslint-config-naver/tree/master/rules">rules</a> are modified version based on <a href="https://github.com/airbnb/javascript">Airbnb JavaScript Style Guide</a>.
 Setup your editor for check or run below command for linting.</p>
-<pre class="prettyprint source lang-bash"><code>$ npm run lint</code></pre><h3>Test</h3><p>Once you created a branch and done with development, you must perform a test running <code>npm run test</code> command before you push code to a remote repository.</p>
-<pre class="prettyprint source lang-bash"><code>$ npm run test</code></pre><p>Running a <code>npm run test</code> command will start <a href="https://mochajs.org/">Mocha</a> tests via <a href="https://karma-runner.github.io/">Karma-runner</a>.</p>
+<pre class="prettyprint source lang-bash"><code>$ npm run lint</code></pre><h3>Test</h3><p>Once you created a branch and done with development, you must perform a test running <code>npm test</code> command before you push code to a remote repository.</p>
+<pre class="prettyprint source lang-bash"><code>$ npm test</code></pre><p>Running a <code>npm test</code> command will start <a href="https://mochajs.org/">Mocha</a> tests via <a href="https://karma-runner.github.io/">Karma-runner</a>.</p>
 <h2>Bug Report</h2><p>If you find a bug, please report to us posting <a href="https://github.com/naver/billboard.js/issues">issues</a> on GitHub.</p>
 <h2>License</h2><p>billboard.js is released under the <a href="http://naver.github.io/billboard.js/LICENSE">MIT license</a>.</p>
 <pre class="prettyprint source"><code>Copyright (c) 2017 NAVER Corp.
