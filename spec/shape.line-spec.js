@@ -26,6 +26,9 @@ describe("SHAPE LINE", () => {
 						["data3", -150, 120, 110, 140, 115, 125]
 					],
 					type: "line"
+				},
+				line : {
+					step : {}
 				}
 			};
 		});
@@ -50,6 +53,13 @@ describe("SHAPE LINE", () => {
 
 			expect(true).to.be.ok;
 		});
+
+		it("should change line type to step-after", () => {
+			args.line.step.type = "step-after";
+
+			expect(true).to.be.ok;
+		});
+
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
 			chart.internal.main.selectAll(".bb-line").each(function() {

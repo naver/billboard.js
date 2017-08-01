@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
+	curveStepBefore as d3CurveStepBefore,
+	curveStepAfter as d3CurveStepAfter,
 	curveBasisClosed as d3CurveBasisClosed,
 	curveBasisOpen as d3CurveBasisOpen,
 	curveBasis as d3CurveBasis,
@@ -157,7 +159,9 @@ extend(ChartInternal.prototype, {
 			"natural": d3CurveNatural,
 			"linear-closed": d3CurveLinearClosed,
 			"linear": d3CurveLinear,
-			"step": d3CurveStep
+			"step": d3CurveStep,
+			"step-after": d3CurveStepAfter,
+			"step-before": d3CurveStepBefore
 		}[interpolation];
 	},
 
