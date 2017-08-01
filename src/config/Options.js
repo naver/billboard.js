@@ -1990,6 +1990,7 @@ export default class Options {
 			 * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
 			 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
 			 * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+			 * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean} [pie.expand=true] Enable or disable expanding pie pieces.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
 			 * @example
@@ -1999,7 +2000,15 @@ export default class Options {
 			 *          format: function(value, ratio, id) {
 			 *              return d3.format("$")(value);
 			 *          },
-			 *          threshold: 0.1
+			 *          threshold: 0.1,
+			 *
+			 *          // set ratio callback. Should return ratio value
+			 *          ratio: function(d, radius, h) {
+			 *          	...
+			 *          	return ratio;
+			 *          },
+			 *          // or set ratio number
+			 *          ratio: 0.5
 			 *      },
 			 *      expand: false,
 			 *      padAngle: 0.1
@@ -2063,6 +2072,7 @@ export default class Options {
 			 * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
 			 * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
 			 * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+			 * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
 			 * @property {Number} [donut.width] Set width of donut chart.
 			 * @property {String} [donut.title=""] Set title of donut chart.
@@ -2074,7 +2084,15 @@ export default class Options {
 			 *          format: function(value, ratio, id) {
 			 *              return d3.format("$")(value);
 			 *          },
-			 *          threshold: 0.1
+			 *          threshold: 0.1,
+			 *
+			 *          // set ratio callback. Should return ratio value
+			 *          ratio: function(d, radius, h) {
+			 *          	...
+			 *          	return ratio;
+			 *          },
+			 *          // or set ratio number
+			 *          ratio: 0.5
 			 *      },
 			 *      expand: false,
 			 *      width: 10,

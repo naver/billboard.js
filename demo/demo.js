@@ -325,8 +325,8 @@ var demos = {
 					],
 					type : 'pie',
 					onclick: function (d, i) { console.log("onclick", d, i); },
-					onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-					onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+					onover: function (d, i) { console.log("onover", d, i); },
+					onout: function (d, i) { console.log("onout", d, i); }
 				}
 			},
 			func: function(chart) {
@@ -361,8 +361,8 @@ var demos = {
 					],
 					type : 'donut',
 					onclick: function (d, i) { console.log("onclick", d, i); },
-					onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-					onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+					onover: function (d, i) { console.log("onover", d, i); },
+					onout: function (d, i) { console.log("onout", d, i); }
 				},
 				donut: {
 					title: "Iris Petal Width"
@@ -399,8 +399,8 @@ var demos = {
 					],
 					type: 'gauge',
 					onclick: function (d, i) { console.log("onclick", d, i); },
-					onmouseover: function (d, i) { console.log("onmouseover", d, i); },
-					onmouseout: function (d, i) { console.log("onmouseout", d, i); }
+					onover: function (d, i) { console.log("onover", d, i); },
+					onout: function (d, i) { console.log("onout", d, i); }
 				},
 				gauge: {
 	//        label: {

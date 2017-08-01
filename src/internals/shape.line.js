@@ -47,13 +47,15 @@ extend(ChartInternal.prototype, {
 		mainLineEnter.append("g")
 			.attr("class", classAreas);
 
-		// Circles for each data point on lines
-		mainLineEnter.append("g")
-			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
+		if (config.point_show) {
+			// Circles for each data point on lines
+			config.data_selection_enabled && mainLineEnter.append("g")
+				.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
 
-		mainLineEnter.append("g")
-			.attr("class", classCircles)
-			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+			mainLineEnter.append("g")
+				.attr("class", classCircles)
+				.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+		}
 
 		// Update date for selected circles
 		targets.forEach(t => {
@@ -103,25 +105,27 @@ extend(ChartInternal.prototype, {
 	generateDrawLine(lineIndices, isSub) {
 		const $$ = this;
 		const config = $$.config;
+		const lineConnectNull = config.line_connectNull;
+		const axisRotated = config.axis_rotated;
 		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
-				getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+
 		let line = d3Line();
 
-		line = config.axis_rotated ?
+		line = axisRotated ?
 			line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 
-		if (!config.line_connectNull) {
+		if (!lineConnectNull) {
 			line = line.defined(d => d.value !== null);
 		}
 
 		return d => {
 			const x = isSub ? $$.x : $$.subX;
 			const y = yScaleGetter.call($$, d.id);
-			let values = config.line_connectNull ?
-				$$.filterRemoveNull(d.values) : d.values;
+			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
 			let x0 = 0;
 			let y0 = 0;
 			let path;
@@ -142,7 +146,7 @@ extend(ChartInternal.prototype, {
 					y0 = y(values[0].value);
 				}
 
-				path = config.axis_rotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
 
 			return path || "M 0 0";
@@ -167,8 +171,8 @@ extend(ChartInternal.prototype, {
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
-					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-				)) {
+				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+			)) {
 				posY = y0;
 			}
 
@@ -329,6 +333,8 @@ extend(ChartInternal.prototype, {
 	generateDrawArea(areaIndices, isSub) {
 		const $$ = this;
 		const config = $$.config;
+		const lineConnectNull = config.line_connectNull;
+		const axisRotated = config.axis_rotated;
 		const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
@@ -336,9 +342,10 @@ extend(ChartInternal.prototype, {
 			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
 		const value1 = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value));
+
 		let area = d3Area();
 
-		area = config.axis_rotated ?
+		area = axisRotated ?
 			area.x0(value0)
 				.x1(value1)
 				.y(xValue) :
@@ -346,12 +353,12 @@ extend(ChartInternal.prototype, {
 				.y0(config.area_above ? 0 : value0)
 				.y1(value1);
 
-		if (!config.line_connectNull) {
+		if (!lineConnectNull) {
 			area = area.defined(d => d.value !== null);
 		}
 
 		return d => {
-			let values = config.line_connectNull ? $$.filterRemoveNull(d.values) : d.values;
+			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
 			let x0 = 0;
 			let y0 = 0;
 			let path;
@@ -368,7 +375,7 @@ extend(ChartInternal.prototype, {
 					y0 = $$.getYScale(d.id)(values[0].value);
 				}
 
-				path = config.axis_rotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
 
 			return path || "M 0 0";
@@ -396,8 +403,8 @@ extend(ChartInternal.prototype, {
 
 			// fix posY not to overflow opposite quadrant
 			if (config.axis_rotated && (
-					(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-				)) {
+				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+			)) {
 				posY = y0;
 			}
 
@@ -413,6 +420,10 @@ extend(ChartInternal.prototype, {
 
 	updateCircle() {
 		const $$ = this;
+
+		if (!$$.config.point_show) {
+			return;
+		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
 			.data($$.lineOrScatterData.bind($$));
@@ -431,26 +442,30 @@ extend(ChartInternal.prototype, {
 		let selectedCircles = this.main.selectAll(`.${CLASS.selectedCircle}`);
 		let mainCircles;
 
+		if (!this.config.point_show) {
+			return undefined;
+		}
+
 		if (withTransition) {
 			const transitionName = Math.random().toString();
 
 			if (flow) {
 				mainCircles = this.mainCircle
-						.attr("cx", cx)
+					.attr("cx", cx)
 					.transition(transitionName)
-						.attr("cx", cx)
-						.attr("cy", cy)
+					.attr("cx", cx)
+					.attr("cy", cy)
 					.transition(transitionName)
-						.style("opacity", this.opacityForCircle.bind(this))
-						.style("fill", this.color);
+					.style("opacity", this.opacityForCircle.bind(this))
+					.style("fill", this.color);
 			} else {
 				mainCircles = this.mainCircle
 					.transition(transitionName)
-						.attr("cx", cx)
-						.attr("cy", cy)
+					.attr("cx", cx)
+					.attr("cy", cy)
 					.transition(transitionName)
-						.style("opacity", this.opacityForCircle.bind(this))
-						.style("fill", this.color);
+					.style("opacity", this.opacityForCircle.bind(this))
+					.style("fill", this.color);
 			}
 
 			selectedCircles = selectedCircles.transition(Math.random().toString());
