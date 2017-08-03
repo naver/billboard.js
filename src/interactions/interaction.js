@@ -92,27 +92,8 @@ extend(ChartInternal.prototype, {
 
 				return index;
 			};
-			let startClientY;
 
 			const selectRect = context => {
-				const eventType = d3Event.type;
-				const touch = d3Event.changedTouches[0];
-				const axisRotated = $$.config.axis_rotated;
-
-				// If movement is less than 5px, scrolling outside the chart is prevented from working.
-				const currentClientY = touch.clientY;
-
-				if (eventType === "touchstart") {
-					startClientY = currentClientY;
-					axisRotated && d3Event.preventDefault();
-				} else if (eventType === "touchmove" && startClientY) {
-					const moveY = Math.abs(startClientY - currentClientY);
-
-					if (!axisRotated && moveY < 5) {
-						d3Event.preventDefault();
-					}
-				}
-
 				if (isMultipleX) {
 					$$.selectRectForMultipleXs(context);
 				} else {
@@ -127,27 +108,29 @@ extend(ChartInternal.prototype, {
 				}
 			};
 
-			const touchHandler = function() {
-				const eventRect = getEventRect();
-
-				if (eventRect.classed(CLASS.eventRect)) {
-					if ($$.dragging || $$.flowing || $$.hasArcType()) {
-						return;
-					}
-
-					selectRect(this);
-				} else {
-					$$.unselectRect();
-				}
-			};
-
 			$$.svg
-				.on("touchstart", touchHandler)
-				.on("touchmove", touchHandler)
+				.on("touchstart touchmove", () => {
+					const eventRect = getEventRect();
+
+					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+						if ($$.dragging || $$.flowing || $$.hasArcType()) {
+							return;
+						}
+
+						// prevent document scrolling
+						/^touch(start|move)$/.test(d3Event.type) &&
+							$$.config.interaction_inputType_preventDefault &&
+								d3Event.preventDefault();
+
+						selectRect(this);
+					} else {
+						$$.unselectRect();
+					}
+				})
 				.on("touchend", () => {
 					const eventRect = getEventRect();
 
-					if (eventRect.classed(CLASS.eventRect)) {
+					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
 						if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
 							$$.cancelClick && ($$.cancelClick = false);
 

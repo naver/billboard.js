@@ -226,13 +226,16 @@ export default class ChartInternal {
 
 		// -- Basic Elements --
 
-		const isTouch = $$.inputType === "touch";
-
-		// Define svg
 		$$.svg = $$.selectChart.append("svg")
-			.style("overflow", "hidden")
-			.on(isTouch ? "touchstart" : "mouseenter", () => config.onover.call($$))
-			.on(isTouch ? "touchend" : "mouseleave", () => config.onout.call($$));
+			.style("overflow", "hidden");
+
+		if (config.interaction_enabled && $$.inputType) {
+			const isTouch = $$.inputType === "touch";
+
+			$$.svg
+				.on(isTouch ? "touchstart" : "mouseenter", () => config.onover.call($$))
+				.on(isTouch ? "touchend" : "mouseleave", () => config.onout.call($$));
+		}
 
 		$$.config.svg_classname &&
 			$$.svg.attr("class", $$.config.svg_classname);
@@ -1244,19 +1247,12 @@ export default class ChartInternal {
 	convertInputType() {
 		const $$ = this;
 		const config = $$.config;
-		const hasMouse = config.interaction_inputType_mouse ? !!("onmouseover" in window) : false;
-		let hasTouch;
+		const hasMouse = config.interaction_inputType_mouse ? ("onmouseover" in window) : false;
+		let hasTouch = false;
 
 		if (config.interaction_inputType_touch) {
 			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 			hasTouch = ("ontouchstart" in window) || (window.DocumentTouch && document instanceof window.DocumentTouch);
-
-			// https://github.com/ariya/phantomjs/issues/10375
-			if (/PhantomJS/.test(window.navigator.userAgent)) {
-				hasTouch = false;
-			}
-		} else {
-			hasTouch = false;
 		}
 
 		return (hasTouch && "touch") || (hasMouse && "mouse") || null;

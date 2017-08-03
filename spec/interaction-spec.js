@@ -136,5 +136,93 @@ describe("INTERACTION", () => {
 				expect(clicked).to.be.true;
 			});
 		});
+
+		describe("interaction", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", 0, 1000, 3000, 10000],
+							["data", 10, 10, 10, 10]
+						]
+					},
+					interaction: {
+						inputType: {
+							preventDefault: false
+						}
+					}
+				};
+			});
+
+			it("check for mouse event bidings", () => {
+				const internal = chart.internal;
+				const svg = internal.svg;
+
+				expect(svg.on("mouseenter")).to.not.be.null;
+				expect(svg.on("mouseleave")).to.not.be.null;
+
+				internal.main.selectAll(".bb-event-rect").each(function() {
+					const el = d3.select(this);
+
+					expect(el.on("mouseenter")).to.not.be.null;
+					expect(el.on("mouseleave")).to.not.be.null;
+					expect(el.on("mousemove")).to.not.be.null;
+					expect(el.on("mouseover")).to.not.be.null;
+					expect(el.on("mouseout")).to.not.be.null;
+				});
+			});
+
+			it("check for inputType.preventDefault option", () => {
+				const preventDefault = chart.internal.config.interaction_inputType_preventDefault;
+
+				expect(preventDefault).to.be.false;
+			});
+
+			it("set inputType.mouse=false", () => {
+				args.interaction.inputType.mouse = false;
+			});
+
+			it("mouse events shouldn't be attached", () => {
+				const internal = chart.internal;
+				const svg = internal.svg;
+
+				expect(svg.on("mouseenter")).to.be.undefined;
+				expect(svg.on("mouseleave")).to.be.undefined;
+
+				internal.main.selectAll(".bb-event-rect").each(function() {
+					const el = d3.select(this);
+
+					expect(el.on("mouseenter")).to.be.undefined;
+					expect(el.on("mouseleave")).to.be.undefined;
+					expect(el.on("mousemove")).to.be.undefined;
+					expect(el.on("mouseover")).to.be.undefined;
+					expect(el.on("mouseout")).to.be.undefined;
+				});
+			});
+
+			it("set interaction.enabled=false", () => {
+				args.interaction.enabled = false;
+				args.interaction.inputType.mouse = true;
+			});
+
+			it("mouse events shouldn't be attached", () => {
+				const internal = chart.internal;
+				const svg = internal.svg;
+
+				expect(svg.on("mouseenter")).to.be.undefined;
+				expect(svg.on("mouseleave")).to.be.undefined;
+
+				internal.main.selectAll(".bb-event-rect").each(function() {
+					const el = d3.select(this);
+
+					expect(el.on("mouseenter")).to.be.undefined;
+					expect(el.on("mouseleave")).to.be.undefined;
+					expect(el.on("mousemove")).to.be.undefined;
+					expect(el.on("mouseover")).to.be.undefined;
+					expect(el.on("mouseout")).to.be.undefined;
+				});
+			});
+		});
 	});
 });
