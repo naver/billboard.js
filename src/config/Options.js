@@ -244,7 +244,7 @@ export default class Options {
 			 * @property {Number} [transition.duration=350] duration in milliseconds
 			 * @example
 			 * transition: {
-			 *  duration: 500
+			 *    duration: 500
 			 * }
 			 */
 			transition_duration: 350,
@@ -378,7 +378,7 @@ export default class Options {
 			 * @default {}
 			 * @example
 			 * data: {
-			 * axes: {
+			 *   axes: {
 			 *     data1: "y",
 			 *     data2: "y2"
 			 *   }
@@ -1297,7 +1297,9 @@ export default class Options {
 			 *   x: {
 			 *     // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
 			 *     // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
-			 *     extent: [[0, 0], [200, 60]]
+			 *     extent: [
+			 *         [0, 0], [200, 60]
+			 *     ]
 			 *   }
 			 * }
 			 */
@@ -1306,14 +1308,14 @@ export default class Options {
 			/**
 			 * Set label on x axis.<br><br>
 			 *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
-			 *  - If it's horizontal axis:
+			 *  - **If it's horizontal axis:**
 			 *    - inner-right [default]
 			 *    - inner-center
 			 *    - inner-left
 			 *    - outer-right
 			 *    - outer-center
 			 *    - outer-left
-			 *  - If it's vertical axis:
+			 *  - **If it's vertical axis:**
 			 *    - inner-top [default]
 			 *    - inner-middle
 			 *    - inner-bottom
@@ -1579,7 +1581,10 @@ export default class Options {
 
 			/**
 			 * Set padding for y axis.<br><br>
-			 * You can set padding for y axis to create more space on the edge of the axis. This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+			 * You can set padding for y axis to create more space on the edge of the axis.
+			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+			 *
+			 * **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis:y:padding
 			 * @memberof Options
 			 * @type {Object}
@@ -1860,7 +1865,7 @@ export default class Options {
 			 *       {value: 6, text: "Label on 6", position: "start"}
 			 *     ]
 			 *   },
-			 * 	 y: {
+			 *   y: {
 			 *     show: true,
 			 *     lines: [
 			 *       {value: 100, text: "Label on 100"},
@@ -1925,7 +1930,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
 			 *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-			 * @property {Boolean} [line.step_type=step] Change step type for step chart.<br>
+			 * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
 			 * **Available values:**
 			 * - step
 			 * - step-before
@@ -2135,12 +2140,12 @@ export default class Options {
 			 * @default []
 			 * @example
 			 *  regions: [
-			 *	 {
-			 *	     axis: "x",
-			 *	     start: 1,
-			 *	     end: 4,
-			 *	     class: "region-1-4"
-			 *	 }
+			 *    {
+			 *	    axis: "x",
+			 *	    start: 1,
+			 *	    end: 4,
+			 *	    class: "region-1-4"
+			 *    }
 			 *  ]
 			 */
 			regions: [],
