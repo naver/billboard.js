@@ -1960,7 +1960,7 @@ var Options = function Options() {
        * @property {Number} [transition.duration=350] duration in milliseconds
        * @example
        * transition: {
-       *  duration: 500
+       *    duration: 500
        * }
        */
 						transition_duration: 350,
@@ -2096,7 +2096,7 @@ var Options = function Options() {
        * @default {}
        * @example
        * data: {
-       * axes: {
+       *   axes: {
        *     data1: "y",
        *     data2: "y2"
        *   }
@@ -3016,7 +3016,9 @@ var Options = function Options() {
        *   x: {
        *     // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
        *     // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
-       *     extent: [[0, 0], [200, 60]]
+       *     extent: [
+       *         [0, 0], [200, 60]
+       *     ]
        *   }
        * }
        */
@@ -3025,14 +3027,14 @@ var Options = function Options() {
 						/**
        * Set label on x axis.&lt;br>&lt;br>
        *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
-       *  - If it's horizontal axis:
+       *  - **If it's horizontal axis:**
        *    - inner-right [default]
        *    - inner-center
        *    - inner-left
        *    - outer-right
        *    - outer-center
        *    - outer-left
-       *  - If it's vertical axis:
+       *  - **If it's vertical axis:**
        *    - inner-top [default]
        *    - inner-middle
        *    - inner-bottom
@@ -3298,7 +3300,10 @@ var Options = function Options() {
 
 						/**
        * Set padding for y axis.&lt;br>&lt;br>
-       * You can set padding for y axis to create more space on the edge of the axis. This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+       * You can set padding for y axis to create more space on the edge of the axis.
+       * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+       *
+       * **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
        * @name axis:y:padding
        * @memberof Options
        * @type {Object}
@@ -3579,7 +3584,7 @@ var Options = function Options() {
        *       {value: 6, text: "Label on 6", position: "start"}
        *     ]
        *   },
-       * 	 y: {
+       *   y: {
        *     show: true,
        *     lines: [
        *       {value: 100, text: "Label on 100"},
@@ -3644,7 +3649,7 @@ var Options = function Options() {
        * @type {Object}
        * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.&lt;br>
        *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-       * @property {Boolean} [line.step_type=step] Change step type for step chart.&lt;br>
+       * @property {Boolean} [line.step.type=step] Change step type for step chart.&lt;br>
        * **Available values:**
        * - step
        * - step-before
@@ -3709,6 +3714,7 @@ var Options = function Options() {
        * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
        * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
        * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+       * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
        * @property {Boolean} [pie.expand=true] Enable or disable expanding pie pieces.
        * @property {Number} [pie.padAngle=0] Set padding between data.
        * @example
@@ -3718,7 +3724,15 @@ var Options = function Options() {
        *          format: function(value, ratio, id) {
        *              return d3.format("$")(value);
        *          },
-       *          threshold: 0.1
+       *          threshold: 0.1,
+       *
+       *          // set ratio callback. Should return ratio value
+       *          ratio: function(d, radius, h) {
+       *          	...
+       *          	return ratio;
+       *          },
+       *          // or set ratio number
+       *          ratio: 0.5
        *      },
        *      expand: false,
        *      padAngle: 0.1
@@ -3782,6 +3796,7 @@ var Options = function Options() {
        * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
        * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
        * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+       * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
        * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
        * @property {Number} [donut.width] Set width of donut chart.
        * @property {String} [donut.title=""] Set title of donut chart.
@@ -3793,7 +3808,15 @@ var Options = function Options() {
        *          format: function(value, ratio, id) {
        *              return d3.format("$")(value);
        *          },
-       *          threshold: 0.1
+       *          threshold: 0.1,
+       *
+       *          // set ratio callback. Should return ratio value
+       *          ratio: function(d, radius, h) {
+       *          	...
+       *          	return ratio;
+       *          },
+       *          // or set ratio number
+       *          ratio: 0.5
        *      },
        *      expand: false,
        *      width: 10,
@@ -3836,12 +3859,12 @@ var Options = function Options() {
        * @default []
        * @example
        *  regions: [
-       *	 {
-       *	     axis: "x",
-       *	     start: 1,
-       *	     end: 4,
-       *	     class: "region-1-4"
-       *	 }
+       *    {
+       *	    axis: "x",
+       *	    start: 1,
+       *	    end: 4,
+       *	    class: "region-1-4"
+       *    }
        *  ]
        */
 						regions: [],
@@ -5017,8 +5040,7 @@ function _interopRequireDefault(obj) { return obj &amp;&amp; obj.__esModule ? ob
 		// clear old rects
 
 
-		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX ? (eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()) // enter : only one rect will be added
-		.merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)) : (maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets), eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
+		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX ? (eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)) : (maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets), eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
 			return d;
 		}), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)), $$.inputType === "touch" &amp;&amp; !$$.hasArcType()) {
 			var getEventRect = function () {
@@ -5586,11 +5608,11 @@ function _interopRequireDefault(obj) { return obj &amp;&amp; obj.__esModule ? ob
 
 
 		// Lines for each data
-		mainLineEnter.append("g").attr("class", classLines), mainLineEnter.append("g").attr("class", classAreas), mainLineEnter.append("g").attr("class", function (d) {
+		mainLineEnter.append("g").attr("class", classLines), mainLineEnter.append("g").attr("class", classAreas), config.point_show &amp;&amp; (config.data_selection_enabled &amp;&amp; mainLineEnter.append("g").attr("class", function (d) {
 			return $$.generateClass(_classes2.default.selectedCircles, d.id);
 		}), mainLineEnter.append("g").attr("class", classCircles).style("cursor", function (d) {
 			return config.data_selection_isselectable(d) ? "pointer" : null;
-		}), targets.forEach(function (t) {
+		})), targets.forEach(function (t) {
 			$$.main.selectAll("." + _classes2.default.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + _classes2.default.selectedCircle).each(function (d) {
 				d.value = t.values[d.index].value;
 			});
@@ -5805,12 +5827,14 @@ function _interopRequireDefault(obj) { return obj &amp;&amp; obj.__esModule ? ob
 	updateCircle: function updateCircle() {
 		var $$ = this;
 
-		$$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineOrScatterData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append("circle").attr("class", $$.classCircle.bind($$)).attr("r", $$.pointR.bind($$)).style("fill", $$.color).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$));
+		$$.config.point_show &amp;&amp; ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineOrScatterData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append("circle").attr("class", $$.classCircle.bind($$)).attr("r", $$.pointR.bind($$)).style("fill", $$.color).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
 	},
 	redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
 		var selectedCircles = this.main.selectAll("." + _classes2.default.selectedCircle),
 		    mainCircles = void 0;
 
+
+		if (!this.config.point_show) return undefined;
 
 		if (withTransition) {
 			var transitionName = Math.random().toString();
@@ -10182,7 +10206,7 @@ function _interopRequireDefault(obj) { return obj &amp;&amp; obj.__esModule ? ob
 <br class="clear">
 
 <footer>
-    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.4.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
 </footer>
 
 <script>prettyPrint();</script>
