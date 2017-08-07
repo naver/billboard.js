@@ -137,7 +137,7 @@ describe("INTERACTION", () => {
 			});
 		});
 
-		describe("interaction", () => {
+		describe("check for event binding", () => {
 			before(() => {
 				args = {
 					data: {
@@ -149,7 +149,9 @@ describe("INTERACTION", () => {
 					},
 					interaction: {
 						inputType: {
-							preventDefault: false
+							touch: {
+								preventDefault: false
+							}
 						}
 					}
 				};
@@ -173,12 +175,6 @@ describe("INTERACTION", () => {
 				});
 			});
 
-			it("check for inputType.preventDefault option", () => {
-				const preventDefault = chart.internal.config.interaction_inputType_preventDefault;
-
-				expect(preventDefault).to.be.false;
-			});
-
 			it("set inputType.mouse=false", () => {
 				args.interaction.inputType.mouse = false;
 			});
@@ -199,6 +195,12 @@ describe("INTERACTION", () => {
 					expect(el.on("mouseover")).to.be.undefined;
 					expect(el.on("mouseout")).to.be.undefined;
 				});
+			});
+
+			it("check for inputType.preventDefault option", () => {
+				const preventDefault = chart.internal.config.interaction_inputType_touch.preventDefault;
+
+				expect(preventDefault).to.be.false;
 			});
 
 			it("set interaction.enabled=false", () => {

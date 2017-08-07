@@ -10,7 +10,7 @@ import {
 } from "d3";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend} from "../internals/util";
+import {extend, isBoolean} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -108,8 +108,38 @@ extend(ChartInternal.prototype, {
 				}
 			};
 
+			// call event.prenvetDefault()
+			// according 'interaction.inputType.touch.preventDefault' option
+			const preventDefault = config.interaction_inputType_touch.preventDefault;
+			const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+			const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+			let startPx;
+
+			const preventEvent = event => {
+				const eventType = event.type;
+				const touch = event.changedTouches[0];
+				const currentXY = touch[`client${config.axis_rotated ? "Y" : "X"}`];
+
+				// prevent document scrolling
+				if (eventType === "touchstart") {
+					if (isPrevented) {
+						event.preventDefault();
+					} else if (preventThreshold !== null) {
+						startPx = currentXY;
+					}
+				} else if (eventType === "touchmove") {
+					if (isPrevented || startPx === true || (
+						preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold
+					)) {
+						// once prevented, keep prevented during whole 'touchmove' context
+						startPx = true;
+						event.preventDefault();
+					}
+				}
+			};
+
 			$$.svg
-				.on("touchstart touchmove", () => {
+				.on("touchstart touchmove", function() {
 					const eventRect = getEventRect();
 
 					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
@@ -117,11 +147,7 @@ extend(ChartInternal.prototype, {
 							return;
 						}
 
-						// prevent document scrolling
-						/^touch(start|move)$/.test(d3Event.type) &&
-							$$.config.interaction_inputType_preventDefault &&
-								d3Event.preventDefault();
-
+						preventEvent(d3Event);
 						selectRect(this);
 					} else {
 						$$.unselectRect();

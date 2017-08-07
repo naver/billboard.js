@@ -514,6 +514,13 @@ var demos = {
 				},
 				axis: {
 					rotated: true
+				},
+				interaction: {
+					inputType: {
+						touch: {
+							preventDefault: true
+						}
+					}
 				}
 			}
 		},
