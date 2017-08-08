@@ -1,6 +1,6 @@
 # billboard.js
 
-[![npm version](https://badge.fury.io/js/billboard.js.svg)](https://www.npmjs.com/package/billboard.js) [![Build Status](https://travis-ci.org/naver/billboard.js.svg?branch=master)](https://travis-ci.org/naver/billboard.js) [![Coverage Status](https://coveralls.io/repos/github/naver/billboard.js/badge.svg)](https://coveralls.io/github/naver/billboard.js) [![Greenkeeper badge](https://badges.greenkeeper.io/naver/billboard.js.svg)](https://greenkeeper.io/)
+[![version][badge-version]][link-version] [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![Greenkeeper][badge-gk]][link-gk]
 
 billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" came from the famous `billboard chart` which everybody knows.<br>
@@ -225,3 +225,17 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 ```
+
+<!-- badges -->
+[badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
+[badge-version]: https://img.shields.io/npm/v/billboard.js.svg?style=flat
+[badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
+[badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
+[badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
+
+<!-- links -->
+[link-download]: http://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
+[link-version]: https://www.npmjs.com/package/billboard.js
+[link-build-status]: https://travis-ci.org/naver/billboard.js
+[link-coverage]: https://coveralls.io/github/naver/billboard.js
+[link-gk]: https://greenkeeper.io/
