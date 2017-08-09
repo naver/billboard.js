@@ -8,7 +8,6 @@ billboard.js is a re-usable easy interface JavaScript chart library, based on D3
 > This project was forked from C3.js v0.4.11.
 > - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)<br>
 
-
 ## Documents
 - [API Documetation](http://naver.github.io/billboard.js/release/latest/doc/)
 - [Examples](https://naver.github.io/billboard.js/demo/)
@@ -16,6 +15,8 @@ billboard.js is a re-usable easy interface JavaScript chart library, based on D3
 - [Contribution Guide](CONTRIBUTING.md)
 - [Migration guide from C3.js](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 
+## Supported chart types
+![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png)
 
 ## Download and Installation
 
