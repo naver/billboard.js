@@ -280,10 +280,13 @@ export default class ChartInternal {
 		// Grids
 		$$.initGrid();
 
+		// Add Axis here, when clipPath is 'false'
+		!config.clipPath && $$.axis.init();
+
 		// Define g for chart area
-		main.append("g")
-			.attr("clip-path", $$.clipPath)
-			.attr("class", CLASS.chart);
+		const g = main.append("g").attr("class", CLASS.chart);
+
+		config.clipPath && g.attr("clip-path", $$.clipPath);
 
 		// Grid lines
 		config.grid_lines_front && $$.initGridLines();
@@ -307,8 +310,8 @@ export default class ChartInternal {
 		config.axis_x_extent &&
 			$$.brush.scale($$.getDefaultExtent());
 
-		// Add Axis
-		$$.axis.init();
+		// Add Axis here, when clipPath is 'true'
+		config.clipPath && $$.axis.init();
 
 		// Set targets
 		$$.updateTargets($$.data.targets);
