@@ -17,9 +17,6 @@ const xml2js = require("xml2js");
 const period = process.argv[2] ? process.argv[2].split(":") : [,];
 
 const changelog = {
-	// github issue URL
-	issueURL: "https://github.com/naver/billboard.js/issues",
-
 	// Commit log tag filtering types for changelog
 	filterType: {
 		feat: "Features",
@@ -195,7 +192,7 @@ const changelog = {
 					markdown += template.item
 						.replace(/{=SUBJECT}/g, el.subject)
 						.replace(/{=ISSUE-NO}/g, el.issueNo)
-						.replace(/{=URL}/g, this.issueURL)
+						.replace(/{=URL}/g, pkg.bugs.url)
 						.replace(/{=SUBJECT}/g, el.subject);
 				}
 			}
