@@ -143,19 +143,29 @@ export default class Options {
 			 * @property {Boolean} [interaction.brighten=true]
 			 * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 			 * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
+			 * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
 			 * @example
 			 * interaction: {
              *    enabled: false,
              *    inputType: {
              *        mouse: true,
              *        touch: false
+             *
+             *        // or declare preventDefault explicitly.
+             *        // In this case touch inputType is enabled by default
+             *        touch: {
+             *            preventDefault: true
+             *
+             *            // or threshold pixel value (pixel moved from touchstart to touchmove)
+             *            preventDefault: 5
+             *        }
              *    }
 			 * }
 			 */
-			interaction_brighten: true,
 			interaction_enabled: true,
+			interaction_brighten: true,
 			interaction_inputType_mouse: true,
-			interaction_inputType_touch: true,
+			interaction_inputType_touch: {},
 
 			/**
 			 * Set a callback to execute when mouse/touch enters the chart.

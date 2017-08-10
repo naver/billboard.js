@@ -132,7 +132,6 @@ const parseSvgPath = d => {
 };
 
 export default {
-	initDom,
 	setMouseEvent,
 	generate,
 	parseSvgPath

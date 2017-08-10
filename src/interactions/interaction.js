@@ -10,7 +10,7 @@ import {
 } from "d3";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend} from "../internals/util";
+import {extend, isBoolean} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -92,27 +92,8 @@ extend(ChartInternal.prototype, {
 
 				return index;
 			};
-			let startClientY;
 
 			const selectRect = context => {
-				const eventType = d3Event.type;
-				const touch = d3Event.changedTouches[0];
-				const axisRotated = $$.config.axis_rotated;
-
-				// If movement is less than 5px, scrolling outside the chart is prevented from working.
-				const currentClientY = touch.clientY;
-
-				if (eventType === "touchstart") {
-					startClientY = currentClientY;
-					axisRotated && d3Event.preventDefault();
-				} else if (eventType === "touchmove" && startClientY) {
-					const moveY = Math.abs(startClientY - currentClientY);
-
-					if (!axisRotated && moveY < 5) {
-						d3Event.preventDefault();
-					}
-				}
-
 				if (isMultipleX) {
 					$$.selectRectForMultipleXs(context);
 				} else {
@@ -127,27 +108,55 @@ extend(ChartInternal.prototype, {
 				}
 			};
 
-			const touchHandler = function() {
-				const eventRect = getEventRect();
+			// call event.prenvetDefault()
+			// according 'interaction.inputType.touch.preventDefault' option
+			const preventDefault = config.interaction_inputType_touch.preventDefault;
+			const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+			const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+			let startPx;
 
-				if (eventRect.classed(CLASS.eventRect)) {
-					if ($$.dragging || $$.flowing || $$.hasArcType()) {
-						return;
+			const preventEvent = event => {
+				const eventType = event.type;
+				const touch = event.changedTouches[0];
+				const currentXY = touch[`client${config.axis_rotated ? "Y" : "X"}`];
+
+				// prevent document scrolling
+				if (eventType === "touchstart") {
+					if (isPrevented) {
+						event.preventDefault();
+					} else if (preventThreshold !== null) {
+						startPx = currentXY;
 					}
-
-					selectRect(this);
-				} else {
-					$$.unselectRect();
+				} else if (eventType === "touchmove") {
+					if (isPrevented || startPx === true || (
+						preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold
+					)) {
+						// once prevented, keep prevented during whole 'touchmove' context
+						startPx = true;
+						event.preventDefault();
+					}
 				}
 			};
 
 			$$.svg
-				.on("touchstart", touchHandler)
-				.on("touchmove", touchHandler)
+				.on("touchstart touchmove", function() {
+					const eventRect = getEventRect();
+
+					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+						if ($$.dragging || $$.flowing || $$.hasArcType()) {
+							return;
+						}
+
+						preventEvent(d3Event);
+						selectRect(this);
+					} else {
+						$$.unselectRect();
+					}
+				})
 				.on("touchend", () => {
 					const eventRect = getEventRect();
 
-					if (eventRect.classed(CLASS.eventRect)) {
+					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
 						if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
 							$$.cancelClick && ($$.cancelClick = false);
 
