@@ -72,6 +72,7 @@ $ npm install billboard.js
 To create a link to a file provided over CDN, you must check the file URL in the CDN service.
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
+- jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/
 
 ## Supported Browsers
 
