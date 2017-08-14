@@ -41,7 +41,7 @@
     "babel-helper-modules": "^6.0.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-add-module-exports": "^0.2.1",
-    "babel-plugin-minify-constant-folding": "^0.1.3",
+    "babel-plugin-minify-constant-folding": "^0.2.0",
     "babel-plugin-minify-dead-code-elimination": "^0.1.7",
     "babel-plugin-minify-guarded-expressions": "^0.1.2",
     "babel-plugin-minify-numeric-literals": "^0.1.1",
