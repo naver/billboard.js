@@ -48,7 +48,7 @@
     "babel-plugin-minify-simplify": "^0.1.2",
     "babel-plugin-minify-type-constructors": "^0.1.2",
     "babel-plugin-transform-helper-modules": "^6.1.0",
-    "babel-plugin-transform-inline-consecutive-adds": "^0.1.2",
+    "babel-plugin-transform-inline-consecutive-adds": "^0.2.0",
     "babel-plugin-transform-merge-sibling-variables": "^6.8.5",
     "babel-plugin-transform-minify-booleans": "^6.8.2",
     "babel-preset-env": "^1.6.0",
