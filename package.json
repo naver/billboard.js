@@ -80,7 +80,7 @@
     "mocha": "^3.4.2",
     "node-sass": "^4.5.3",
     "optimize-css-assets-webpack-plugin": "^3.0.0",
-    "regenerator-runtime": "^0.10.5",
+    "regenerator-runtime": "^0.11.0",
     "sass-loader": "^6.0.6",
     "sinon": "^3.0.0",
     "string-replace-webpack-plugin": "^0.1.3",
