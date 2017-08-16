@@ -166,7 +166,7 @@ extend(ChartInternal.prototype, {
 
 				$$.main.selectAll(selecter)
 					.selectAll(`.${CLASS.shape}`)
-					.each((d, i) => {
+					.each(function(d, i) {
 						const shape = d3Select(this);
 
 						if (shape.classed(CLASS.SELECTED)) {
