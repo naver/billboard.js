@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # version
-VERSION=`node -pe "require('./package.json').version"`
+VERSION=$(node -pe "require('./package.json').version")
 
 # folder to be pushed
 DIST_FOLDER=release
