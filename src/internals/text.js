@@ -149,9 +149,10 @@ extend(ChartInternal.prototype, {
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
 		return function(d, i) {
-			let getPoints = $$.isBarType(d) ? getBarPoints : getLinePoints;
+			const getPoints = ($$.isAreaType(d) && getAreaPoints) ||
+				($$.isBarType(d) && getBarPoints) ||
+				getLinePoints;
 
-			getPoints = $$.isAreaType(d) ? getAreaPoints : getPoints;
 			return getter.call($$, getPoints(d, i), d, this);
 		};
 	},
@@ -166,10 +167,11 @@ extend(ChartInternal.prototype, {
 	 */
 	getXForText(points, d, textElement) {
 		const $$ = this;
+		const config = $$.config;
 		let xPos;
 		let padding;
 
-		if ($$.config.axis_rotated) {
+		if (config.axis_rotated) {
 			padding = $$.isBarType(d) ? 4 : 6;
 			xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
 		} else {
@@ -183,7 +185,8 @@ extend(ChartInternal.prototype, {
 				xPos = 4;
 			}
 		}
-		return xPos;
+
+		return xPos + (config.data_labels_position.x || 0);
 	},
 
 	/**
@@ -196,9 +199,10 @@ extend(ChartInternal.prototype, {
 	 */
 	getYForText(points, d, textElement) {
 		const $$ = this;
+		const config = $$.config;
 		let yPos;
 
-		if ($$.config.axis_rotated) {
+		if (config.axis_rotated) {
 			yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * 0.6) / 2;
 		} else {
 			yPos = points[2][1];
@@ -214,7 +218,7 @@ extend(ChartInternal.prototype, {
 			}
 		}
 		// show labels regardless of the domain if value is null
-		if (d.value === null && !$$.config.axis_rotated) {
+		if (d.value === null && !config.axis_rotated) {
 			const boxHeight = textElement.getBoundingClientRect().height;
 
 			if (yPos < boxHeight) {
@@ -223,6 +227,7 @@ extend(ChartInternal.prototype, {
 				yPos = this.height - 4;
 			}
 		}
-		return yPos;
+
+		return yPos + (config.data_labels_position.y || 0);
 	},
 });
