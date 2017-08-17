@@ -5,6 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
+import CLASS from "../src/config/classes";
 
 describe("INTERACTION", () => {
 	let chart;
@@ -224,6 +225,33 @@ describe("INTERACTION", () => {
 					expect(el.on("mouseover")).to.be.undefined;
 					expect(el.on("mouseout")).to.be.undefined;
 				});
+			});
+		});
+
+		describe("check for data.selection", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250]
+						],
+						selection: {
+							enabled: true
+						}
+					}
+				};
+			});
+
+			it("data point circle should be selected and unselected", () => {
+				const circle = d3.select(".bb-shape-2").node();
+				const box = circle.getBBox();
+				const rect = d3.select(".bb-event-rect-2").node();
+
+				util.setMouseEvent(chart, "click", box.x, box.y, rect);
+				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.true;
+
+				util.setMouseEvent(chart, "click", box.x, box.y, rect);
+				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.false;
 			});
 		});
 	});
