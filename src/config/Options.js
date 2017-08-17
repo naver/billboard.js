@@ -700,7 +700,11 @@ export default class Options {
 			 * @default function() {}
 			 * @example
 			 * data: {
-			 *     onselected: function(d) { ... }
+			 *     onselected: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+			 *        // element - <circle>
+			  *        ...
+			  *    }
 			 * }
 			 */
 			data_onselected: () => {},
@@ -712,9 +716,11 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
-			 * data: {
-			 *     onunselected: function(d) { ... }
-			 * }
+			 *     onunselected: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+			 *        // element - <circle>
+			  *        ...
+			  *    }
 			 */
 			data_onunselected: () => {},
 
