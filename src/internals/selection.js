@@ -139,6 +139,7 @@ extend(ChartInternal.prototype, {
 		} else if (that.nodeName === "path") {
 			toggle = $$.togglePath;
 		}
+
 		return toggle;
 	},
 
@@ -155,6 +156,7 @@ extend(ChartInternal.prototype, {
 		const shape = d3Select(that);
 		const isSelected = shape.classed(CLASS.SELECTED);
 		const toggle = $$.getToggle(that, d).bind($$);
+		let toggledShape;
 
 		if (config.data_selection_enabled && config.data_selection_isselectable(d)) {
 			if (!config.data_selection_multiple) {
@@ -164,18 +166,22 @@ extend(ChartInternal.prototype, {
 					selecter = `.${selecter}${$$.getTargetSelectorSuffix(d.id)}`;
 				}
 
-				$$.main.selectAll(selecter)
-					.selectAll(`.${CLASS.shape}`)
+				$$.main.selectAll(`${selecter}`)
+					.selectAll(`circle.${CLASS.shape}`)
 					.each(function(d, i) {
 						const shape = d3Select(this);
 
 						if (shape.classed(CLASS.SELECTED)) {
+							toggledShape = shape;
 							toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
 						}
 					});
 			}
-			shape.classed(CLASS.SELECTED, !isSelected);
-			toggle(!isSelected, shape, d, i);
+
+			if (!toggledShape || toggledShape.node() !== shape.node()) {
+				shape.classed(CLASS.SELECTED, !isSelected);
+				toggle(!isSelected, shape, d, i);
+			}
 		}
 	},
 });
