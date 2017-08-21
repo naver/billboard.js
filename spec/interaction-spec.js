@@ -132,7 +132,10 @@ describe("INTERACTION", () => {
 				const rect = main.select(".bb-event-rect.bb-event-rect-0").node();
 				const circle = main.select(".bb-circles-data circle").node().getBBox();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
 
 				expect(clicked).to.be.true;
 			});
@@ -247,11 +250,67 @@ describe("INTERACTION", () => {
 				const box = circle.getBBox();
 				const rect = d3.select(".bb-event-rect-2").node();
 
-				util.setMouseEvent(chart, "click", box.x, box.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: box.x,
+					clientY: box.y
+				}, chart);
+
 				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.true;
 
-				util.setMouseEvent(chart, "click", box.x, box.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: box.x,
+					clientY: box.y
+				}, chart);
+
 				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.false;
+			});
+		});
+
+		describe("check for touch move selection", () => {
+			const selection = [];
+
+			before(() => {
+				// Given
+				args = {
+					size: {
+						width: 250,
+						height: 300
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 10, 190, 95, 40, 15, 25]
+						]
+					},
+					interaction: {
+						inputType: {
+							touch: true
+						}
+					},
+					tooltip: {
+						format: {
+							title: function(title) {
+								if (selection.indexOf(title) === -1) {
+									selection.push(title);
+								}
+
+								return title;
+							}
+						}
+					}
+				};
+			});
+
+			it("showed each data points tooltip?", done => {
+				util.simulator(chart.internal.svg.node(), {
+					pos: [250,150],
+					deltaX: -200,
+					deltaY: 0,
+					duration: 500,
+				}, () => {
+					expect(selection).to.deep.equal([5, 4, 3, 2, 1, 0]);
+					done();
+				});
 			});
 		});
 	});
