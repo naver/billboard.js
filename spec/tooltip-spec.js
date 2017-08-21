@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 import util from "./assets/util";
+import CLASS from "../src/config/classes";
 
 describe("TOOLTIP", function() {
 	let chart;
@@ -25,11 +26,14 @@ describe("TOOLTIP", function() {
 	describe("tooltip position", () => {
 		describe("without left margin", () => {
 			it("should show tooltip on proper position", () => {
-				const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
+				const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
 
-				util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
+				util.fireEvent(eventRect, "mousemove", {
+					clientX: 100,
+					clientY: 100
+				}, chart);
 
-				const tooltipContainer = d3.select(chart.element).select(".bb-tooltip-container");
+				const tooltipContainer = chart.internal.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const topExpected = 115;
@@ -46,11 +50,14 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should show tooltip on proper position", () => {
-				const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
+				const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
 
-				util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
+				util.fireEvent(eventRect, "mousemove", {
+					clientX: 100,
+					clientY: 100
+				}, chart);
 
-				const tooltipContainer = d3.select(chart.element).select(".bb-tooltip-container");
+				const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const topExpected = 115;
@@ -75,7 +82,7 @@ describe("TOOLTIP", function() {
 					expect(data[0].id).to.be.equal("data1");
 					expect(width).to.be.above(0);
 					expect(height).to.be.above(0);
-					expect(element).to.be.equal(chart.internal.main.select(".bb-event-rect-2").node());
+					expect(element).to.be.equal(chart.internal.main.select(`.${CLASS.eventRect}-2`).node());
 
 					return {
 						top: topExpected,
@@ -86,11 +93,14 @@ describe("TOOLTIP", function() {
 		});
 
 		it("should be set to the coordinate where the function returned", () => {
-			const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
+			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
 
-			util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
+			util.fireEvent(eventRect, "mousemove", {
+				clientX: 100,
+				clientY: 100
+			}, chart);
 
-			const tooltipContainer =  d3.select(chart.element).select(".bb-tooltip-container");
+			const tooltipContainer =  d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
 			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 
@@ -105,11 +115,14 @@ describe("TOOLTIP", function() {
 		});
 
 		it("should sort values desc", () => {
-			const eventRect = chart.internal.main.select(".bb-event-rect-2").node();
+			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
 
-			util.setMouseEvent(chart, "mousemove", 100, 100, eventRect);
+			util.fireEvent(eventRect, "mousemove", {
+				clientX: 100,
+				clientY: 100
+			}, chart);
 
-			const tooltips =  d3.select(chart.element).selectAll(".bb-tooltip tr").nodes();
+			const tooltips =  d3.select(chart.element).selectAll(`.${CLASS.tooltip} tr`).nodes();
 			const len = tooltips.length;
 			const expected = [
 				"",
