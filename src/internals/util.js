@@ -9,10 +9,11 @@ import {
 import CLASS from "../config/classes";
 
 const isValue = v => v || v === 0;
-const isFunction = o => typeof o === "function";
-const isString = o => typeof o === "string";
+const isFunction = v => typeof v === "function";
+const isString = v => typeof v === "string";
 const isUndefined = v => typeof v === "undefined";
 const isDefined = v => typeof v !== "undefined";
+const isBoolean = v => typeof v === "boolean";
 const ceil10 = v => Math.ceil(v / 10) * 10;
 const asHalfPixel = n => Math.ceil(n) + 0.5;
 const diffDomain = d => d[1] - d[0];
@@ -225,6 +226,7 @@ export {
 	isValue,
 	isDefined,
 	isUndefined,
+	isBoolean,
 	notEmpty,
 	ceil10,
 	isFunction,

@@ -143,19 +143,29 @@ export default class Options {
 			 * @property {Boolean} [interaction.brighten=true]
 			 * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 			 * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
+			 * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
 			 * @example
 			 * interaction: {
              *    enabled: false,
              *    inputType: {
              *        mouse: true,
              *        touch: false
+             *
+             *        // or declare preventDefault explicitly.
+             *        // In this case touch inputType is enabled by default
+             *        touch: {
+             *            preventDefault: true
+             *
+             *            // or threshold pixel value (pixel moved from touchstart to touchmove)
+             *            preventDefault: 5
+             *        }
              *    }
 			 * }
 			 */
-			interaction_brighten: true,
 			interaction_enabled: true,
+			interaction_brighten: true,
 			interaction_inputType_mouse: true,
-			interaction_inputType_touch: true,
+			interaction_inputType_touch: {},
 
 			/**
 			 * Set a callback to execute when mouse/touch enters the chart.
@@ -244,7 +254,7 @@ export default class Options {
 			 * @property {Number} [transition.duration=350] duration in milliseconds
 			 * @example
 			 * transition: {
-			 *  duration: 500
+			 *    duration: 500
 			 * }
 			 */
 			transition_duration: 350,
@@ -378,7 +388,7 @@ export default class Options {
 			 * @default {}
 			 * @example
 			 * data: {
-			 * axes: {
+			 *   axes: {
 			 *     data1: "y",
 			 *     data2: "y2"
 			 *   }
@@ -430,41 +440,44 @@ export default class Options {
 			data_types: {},
 
 			/**
-			 * Show labels on each data points.
+			 * Set labels options
 			 * @name data:labels
 			 * @memberof Options
-			 * @type {Boolean}
-			 * @default false
-			 * @example
-			 * data: {
-			 *   labels: true
-			 * }
-			 */
-			/**
-			 * Set formatter function for data labels.<br>
+			 * @type {Object}
+			 * @property {Boolean} [donut.labels=false] Show or hide labels on each data points
+			 * @property {Function} [donut.labels.format={}] Set formatter function for data labels.<br>
 			 * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
 			 *  - `v` is the value of the data point where the label is shown.
 			 *  - `id` is the id of the data where the label is shown.
 			 *  - `i` is the index of the data point where the label is shown.
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-			 * @name data:labels:format
+			 * @property {Number} [donut.labels.position.x=0] x coordinate position, relative the original.
+			 * @property {NUmber} [donut.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
 			 * data: {
+			 *   labels: true,
+			 *
+			 *   // or set specific options
 			 *   labels: {
-			 *     format: function(v, id, i, j) { ... }
+			 *     format: function(v, id, i, j) { ... },
 			 *     // it's possible to set for each data
 			 *     //format: {
 			 *     //    data1: function(v, id, i, j) { ... },
 			 *     //    ...
-			 *     //}
+			 *     //},
+			 *     position: {
+			 *        x: -10,
+			 *        y: 10
+			 *     }
 			 *   }
 			 * }
 			 */
 			data_labels: {},
+			data_labels_position: {},
 
 			/**
 			 *  This option changes the order of stacking the data and pieces of pie/donut. If `null` specified, it will be the order the data loaded. If function specified, it will be used to sort the data and it will recieve the data as argument.<br><br>
@@ -687,7 +700,11 @@ export default class Options {
 			 * @default function() {}
 			 * @example
 			 * data: {
-			 *     onselected: function(d) { ... }
+			 *     onselected: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+			 *        // element - <circle>
+			  *        ...
+			  *    }
 			 * }
 			 */
 			data_onselected: () => {},
@@ -699,9 +716,11 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
-			 * data: {
-			 *     onunselected: function(d) { ... }
-			 * }
+			 *     onunselected: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+			 *        // element - <circle>
+			  *        ...
+			  *    }
 			 */
 			data_onunselected: () => {},
 
@@ -1297,7 +1316,9 @@ export default class Options {
 			 *   x: {
 			 *     // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
 			 *     // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
-			 *     extent: [[0, 0], [200, 60]]
+			 *     extent: [
+			 *         [0, 0], [200, 60]
+			 *     ]
 			 *   }
 			 * }
 			 */
@@ -1306,14 +1327,14 @@ export default class Options {
 			/**
 			 * Set label on x axis.<br><br>
 			 *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
-			 *  - If it's horizontal axis:
+			 *  - **If it's horizontal axis:**
 			 *    - inner-right [default]
 			 *    - inner-center
 			 *    - inner-left
 			 *    - outer-right
 			 *    - outer-center
 			 *    - outer-left
-			 *  - If it's vertical axis:
+			 *  - **If it's vertical axis:**
 			 *    - inner-top [default]
 			 *    - inner-middle
 			 *    - inner-bottom
@@ -1579,7 +1600,10 @@ export default class Options {
 
 			/**
 			 * Set padding for y axis.<br><br>
-			 * You can set padding for y axis to create more space on the edge of the axis. This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+			 * You can set padding for y axis to create more space on the edge of the axis.
+			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+			 *
+			 * **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis:y:padding
 			 * @memberof Options
 			 * @type {Object}
@@ -1860,7 +1884,7 @@ export default class Options {
 			 *       {value: 6, text: "Label on 6", position: "start"}
 			 *     ]
 			 *   },
-			 * 	 y: {
+			 *   y: {
 			 *     show: true,
 			 *     lines: [
 			 *       {value: 100, text: "Label on 100"},
@@ -1925,7 +1949,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
 			 *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-			 * @property {Boolean} [line.step_type=step] Change step type for step chart.<br>
+			 * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
 			 * **Available values:**
 			 * - step
 			 * - step-before
@@ -2135,12 +2159,12 @@ export default class Options {
 			 * @default []
 			 * @example
 			 *  regions: [
-			 *	 {
-			 *	     axis: "x",
-			 *	     start: 1,
-			 *	     end: 4,
-			 *	     class: "region-1-4"
-			 *	 }
+			 *    {
+			 *	    axis: "x",
+			 *	    start: 1,
+			 *	    end: 4,
+			 *	    class: "region-1-4"
+			 *    }
 			 *  ]
 			 */
 			regions: [],

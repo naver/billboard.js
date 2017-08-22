@@ -5,6 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
+import CLASS from "../src/config/classes";
 
 describe("INTERACTION", () => {
 	let chart;
@@ -131,9 +132,185 @@ describe("INTERACTION", () => {
 				const rect = main.select(".bb-event-rect.bb-event-rect-0").node();
 				const circle = main.select(".bb-circles-data circle").node().getBBox();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
 
 				expect(clicked).to.be.true;
+			});
+		});
+
+		describe("check for event binding", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", 0, 1000, 3000, 10000],
+							["data", 10, 10, 10, 10]
+						]
+					},
+					interaction: {
+						inputType: {
+							touch: {
+								preventDefault: false
+							}
+						}
+					}
+				};
+			});
+
+			it("check for mouse event bidings", () => {
+				const internal = chart.internal;
+				const svg = internal.svg;
+
+				expect(svg.on("mouseenter")).to.not.be.null;
+				expect(svg.on("mouseleave")).to.not.be.null;
+
+				internal.main.selectAll(".bb-event-rect").each(function() {
+					const el = d3.select(this);
+
+					expect(el.on("mouseenter")).to.not.be.null;
+					expect(el.on("mouseleave")).to.not.be.null;
+					expect(el.on("mousemove")).to.not.be.null;
+					expect(el.on("mouseover")).to.not.be.null;
+					expect(el.on("mouseout")).to.not.be.null;
+				});
+			});
+
+			it("set inputType.mouse=false", () => {
+				args.interaction.inputType.mouse = false;
+			});
+
+			it("mouse events shouldn't be attached", () => {
+				const internal = chart.internal;
+				const svg = internal.svg;
+
+				expect(svg.on("mouseenter")).to.be.undefined;
+				expect(svg.on("mouseleave")).to.be.undefined;
+
+				internal.main.selectAll(".bb-event-rect").each(function() {
+					const el = d3.select(this);
+
+					expect(el.on("mouseenter")).to.be.undefined;
+					expect(el.on("mouseleave")).to.be.undefined;
+					expect(el.on("mousemove")).to.be.undefined;
+					expect(el.on("mouseover")).to.be.undefined;
+					expect(el.on("mouseout")).to.be.undefined;
+				});
+			});
+
+			it("check for inputType.preventDefault option", () => {
+				const preventDefault = chart.internal.config.interaction_inputType_touch.preventDefault;
+
+				expect(preventDefault).to.be.false;
+			});
+
+			it("set interaction.enabled=false", () => {
+				args.interaction.enabled = false;
+				args.interaction.inputType.mouse = true;
+			});
+
+			it("mouse events shouldn't be attached", () => {
+				const internal = chart.internal;
+				const svg = internal.svg;
+
+				expect(svg.on("mouseenter")).to.be.undefined;
+				expect(svg.on("mouseleave")).to.be.undefined;
+
+				internal.main.selectAll(".bb-event-rect").each(function() {
+					const el = d3.select(this);
+
+					expect(el.on("mouseenter")).to.be.undefined;
+					expect(el.on("mouseleave")).to.be.undefined;
+					expect(el.on("mousemove")).to.be.undefined;
+					expect(el.on("mouseover")).to.be.undefined;
+					expect(el.on("mouseout")).to.be.undefined;
+				});
+			});
+		});
+
+		describe("check for data.selection", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250]
+						],
+						selection: {
+							enabled: true
+						}
+					}
+				};
+			});
+
+			it("data point circle should be selected and unselected", () => {
+				const circle = d3.select(".bb-shape-2").node();
+				const box = circle.getBBox();
+				const rect = d3.select(".bb-event-rect-2").node();
+
+				util.fireEvent(rect, "click", {
+					clientX: box.x,
+					clientY: box.y
+				}, chart);
+
+				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.true;
+
+				util.fireEvent(rect, "click", {
+					clientX: box.x,
+					clientY: box.y
+				}, chart);
+
+				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.false;
+			});
+		});
+
+		describe("check for touch move selection", () => {
+			const selection = [];
+
+			before(() => {
+				// Given
+				args = {
+					size: {
+						width: 250,
+						height: 300
+					},
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 10, 190, 95, 40, 15, 25]
+						]
+					},
+					interaction: {
+						inputType: {
+							touch: true
+						}
+					},
+					tooltip: {
+						format: {
+							title: function(title) {
+								if (selection.indexOf(title) === -1) {
+									selection.push(title);
+								}
+
+								return title;
+							}
+						}
+					}
+				};
+			});
+
+			it("showed each data points tooltip?", done => {
+				util.simulator(chart.internal.svg.node(), {
+					pos: [250,150],
+					deltaX: -200,
+					deltaY: 0,
+					duration: 500,
+				}, () => {
+					expect(selection).to.deep.equal([5, 4, 3, 2, 1, 0]);
+					done();
+				});
 			});
 		});
 	});

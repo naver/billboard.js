@@ -6,8 +6,6 @@
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
 
-const setMouseEvent = util.setMouseEvent;
-
 describe("SHAPE BAR", () => {
 	let chart;
 	let args;
@@ -138,7 +136,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 0, 0);
+				util.fireEvent(null, "click", {
+					clientX: 0,
+					clientY: 0
+				}, chart);
 
 				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
@@ -147,7 +148,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 31, 280);
+				util.fireEvent(null, "click", {
+					clientX: 31,
+					clientY: 280
+				}, chart);
 
 				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
@@ -156,7 +160,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data3 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 68, 280);
+				util.fireEvent(null, "click", {
+					clientX: 68,
+					clientY: 280
+				}, chart);
 
 				expect(internal.isWithinBar(bar)).to.not.be.ok;
 			});
@@ -165,7 +172,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data3 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 68, 350);
+				util.fireEvent(null, "click", {
+					clientX: 68,
+					clientY: 350
+				}, chart);
 
 				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
@@ -180,7 +190,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 0, 0);
+				util.fireEvent(null, "click", {
+					clientX: 0,
+					clientY: 0
+				}, chart);
 
 				expect(internal.isWithinBar(bar)).to.not.be.ok;
 			});
@@ -189,7 +202,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 190, 20);
+				util.fireEvent(null, "click", {
+					clientX: 190,
+					clientY: 20
+				}, chart);
 
 				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
@@ -198,7 +214,10 @@ describe("SHAPE BAR", () => {
 				const internal = chart.internal;
 				const bar = internal.main.select(".bb-target-data3 .bb-bar-0").node();
 
-				setMouseEvent(chart, "click", 68, 50);
+				util.fireEvent(null, "click", {
+					clientX: 68,
+					clientY: 50
+				}, chart);
 
 				expect(internal.isWithinBar(bar)).to.be.ok;
 			});

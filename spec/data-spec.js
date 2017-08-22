@@ -459,13 +459,11 @@ describe("DATA", () => {
 				});
 			});
 
-			it("should update args to be stacked", () => {
+			it("set options data.groups to be stacked", () => {
 				args.data.groups = [
 					["data1", "data2"],
 					["data3", "data4"]
 				];
-
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -488,6 +486,39 @@ describe("DATA", () => {
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
+					});
+				});
+			});
+
+			it("set options data.labels.position", () => {
+				args.data.labels = {
+					position: {
+						x: 20,
+						y: -20
+					}
+				};
+			});
+
+			it("should locate data labels in correct position", () => {
+				const expectedTextY = {
+					data1: [120, 40, 75],
+					data2: [161, 127, 159],
+					data3: [272.5, 307, 274.5],
+					data4: [313, 394, 358]
+				};
+				const expectedTextX = {
+					data1: [6, 296, 583],
+					data2: [6, 296, 583],
+					data3: [6, 296, 583],
+					data4: [6, 296, 583]
+				};
+
+				Object.keys(expectedTextY).forEach(key => {
+					chart.internal.main.selectAll(`.bb-texts-${key} text.bb-text`).each(function(d, i) {
+						const text = d3.select(this);
+
+						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i] - 20, 3);
+						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i] + 20, 3);
 					});
 				});
 			});
@@ -536,13 +567,11 @@ describe("DATA", () => {
 				});
 			});
 
-			it("should update args to be stacked", () => {
+			it("set options data.groups to be stacked", () => {
 				args.data.groups = [
 					["data1", "data2"],
 					["data3", "data4"]
 				];
-
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -613,13 +642,11 @@ describe("DATA", () => {
 				});
 			});
 
-			it("should update args to be stacked", () => {
+			it("set options data.groups to be stacked", () => {
 				args.data.groups = [
 					["data1", "data2"],
 					["data3", "data4"]
 				];
-
-				expect(true).to.be.ok;
 			});
 
 			it("should locate data labels in correct position", () => {
@@ -809,10 +836,8 @@ describe("DATA", () => {
 					});
 				});
 
-				it("should update args", () => {
+				it("set options data.type=line", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {

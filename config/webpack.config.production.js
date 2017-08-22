@@ -5,7 +5,6 @@ const CleanWebpackPlugin = require("clean-webpack-plugin");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const uglifyConfig = require("./uglify");
 const banner = require("./banner");
-const pkg = require("../package.json");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const config = {

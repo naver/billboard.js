@@ -4,6 +4,7 @@
  */
 /* global sandbox, window */
 import * as d3 from "d3";
+import simulant from "simulant";
 import {bb} from "../../src/core";
 
 /**
@@ -29,13 +30,21 @@ const initDom = idValue => {
  */
 const generate = args => {
 	let chart;
+	let inputType = "mouse";
 
 	if (args) {
 		if (!args.bindto) {
 			args.bindto = "#chart";
 		}
 
-		initDom(args.bindto);
+		initDom(args);
+
+		// when touch param is set, make to be 'touch' input mode
+		if (args.interaction && args.interaction.inputType && args.interaction.inputType.touch) {
+			inputType = "touch";
+		}
+
+		bb.chart.internal.fn.convertInputType = () => inputType;
 
 		window.d3 = d3;
 		chart = bb.generate(args);
@@ -45,26 +54,49 @@ const generate = args => {
 };
 
 /**
- * Dispatch a mouse event
- * @param {bb} chart billboard.js instance
+ * Dispatch an event
+ * @param {HTMLElement|SVGElement} element DOM element to be dispatched
  * @param {String} name event name
- * @param {Number} x coordinate x
- * @param {Number} y coordinate y
- * @param {HTMLElement} element DOM element to be dispatched
+ * @param {Object} options value to be set
+ * @param {bb} chart billboard.js instance
  */
-const setMouseEvent = (chart, name, x, y, element) => {
-	const paddingLeft = chart.internal.main.node().transform.baseVal.getItem(0).matrix.e;
-	const event = document.createEvent("MouseEvents");
+const fireEvent = (element, name, options = {}, chart) => {
+	const paddingLeft =
+		(chart && chart.internal.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
 
-	event.initMouseEvent(name, true, true, window,
-		0, 0, 0, x + paddingLeft, y + 5,
-		false, false, false, false, 0, null);
-
-	d3.event = event;
+	// adjust clientX/Y value
+	"clientX" in options && (options.clientX += paddingLeft);
+	"clientY" in options && (options.clientY += 5);
 
 	if (element) {
-		element.dispatchEvent(event);
+		d3.event = simulant.fire(element, name, options);
+
+	// for legacy tests compatibility
+	} else {
+		const event = document.createEvent("MouseEvents");
+
+		event.initMouseEvent(name, true, true, window,
+			0, 0, 0, options.clientX, options.clientY,
+			false, false, false, false, 0, null);
+
+		d3.event = event;
 	}
+};
+
+/**
+ * Run gesture simulator
+ * @param {HTMLElement|SVGElement} el
+ * @param {Object} option
+ * @param {Function} callback
+ */
+const simulator = (el, option = {}, callback) => {
+	Simulator.gestures.pan(el, Object.assign({
+		pos: [50, 50],
+		deltaX: -100,
+		deltaY: 0,
+		duration: 500,
+		easing: "linear"
+	}, option), callback);
 };
 
 /**
@@ -72,7 +104,6 @@ const setMouseEvent = (chart, name, x, y, element) => {
  * @param  {String} d SvgPath d attribute.]
  * @return {Array} an array of drawing commands.
  */
-
 const parseSvgPath = d => {
 	const commands = [];
 	const commandTokens = ["M","L","I","H","V","C","S","Q","T","A"];
@@ -132,8 +163,8 @@ const parseSvgPath = d => {
 };
 
 export default {
-	initDom,
-	setMouseEvent,
+	fireEvent,
 	generate,
-	parseSvgPath
+	parseSvgPath,
+	simulator
 };
