@@ -2,8 +2,8 @@
 
 [![version][badge-version]][link-version] [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![Greenkeeper][badge-gk]][link-gk]
 
-billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.
-> The name "billboard" came from the famous `billboard chart` which everybody knows.<br>
+billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
+> The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
 
 > This project was forked from C3.js v0.4.11.
 > - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)<br>
@@ -115,7 +115,7 @@ Load billboard.js after D3.js.
 <div id="chart"></div>
 ```
 
-#### 2) Generate chart with options
+#### 2) Generate a chart with options
 ```js
 // generate the chart
 var chart = bb.generate({
