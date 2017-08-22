@@ -1,0 +1,8 @@
+billboard.js authors ordered by first contribution.
+
+Jae Sung Park <alberto.park@gmail.com>
+Son Chan Uk <sculove@gmail.com>
+Kim Joo Hwee <kjhwee91@gmail.com>
+Yun Hwa Heo <yunhwa.heo@navercorp.com>
+Petr Vítek <rattus.PV@gmail.com>
+Mark Winter <wintermarkedward@gmail.com>
