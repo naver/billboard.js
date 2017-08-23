@@ -9,8 +9,12 @@ import util from "./assets/util";
 describe("SHAPE LINE", () => {
 	let chart;
 	let args;
+	let skipEach = false;
 
-	beforeEach(() => {
+	beforeEach(function(){
+		if(skipEach){
+			return ;
+		}
 		chart = util.generate(args);
 	});
 
@@ -26,6 +30,9 @@ describe("SHAPE LINE", () => {
 						["data3", -150, 120, 110, 140, 115, 125]
 					],
 					type: "line"
+				},
+				line : {
+					step : {}
 				}
 			};
 		});
@@ -50,6 +57,13 @@ describe("SHAPE LINE", () => {
 
 			expect(true).to.be.ok;
 		});
+
+		it("should change line type to step-after", () => {
+			args.line.step.type = "step-after";
+
+			expect(true).to.be.ok;
+		});
+
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
 			chart.internal.main.selectAll(".bb-line").each(function() {
@@ -228,5 +242,63 @@ describe("SHAPE LINE", () => {
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
+	});
+
+	describe("step type generation", () => {
+		before(() => {
+			skipEach = true;
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400,150,250],
+						["data2",50,20,10,0,15,25]
+					],
+					type: "step"
+				},
+				line: {
+					step: {
+						type: "step-after"
+					}
+				}
+			};
+		});
+
+		it("check line.step.type=step-after option", () => {
+			const generateChartWithStep = () => {
+				chart = util.generate(args)
+			};
+
+			expect(generateChartWithStep).to.not.throw();
+		});
+
+		it("step-after type's interpolate use d3 curve function ", () => {
+			const to = chart.internal.getInterpolate(chart.data()[0]);
+
+			expect(to).to.be.equal(d3.curveStepAfter);
+		});
+
+		it("should change to line.step.type option", () => {
+			args.line.step.type = "step-before";
+
+			expect(true).to.be.ok;
+		});
+
+		it("check line.step.type=step-before option", () => {
+			const generateChartWithStep = () => {
+				chart = util.generate(args)
+			};
+
+			expect(generateChartWithStep).to.not.throw();
+		});
+
+		it("step-before type's interpolate use d3 curve function ", () => {
+			const to = chart.internal.getInterpolate(chart.data()[0]);
+
+			expect(to).to.be.equal(d3.curveStepBefore);
+		});
+
+		after(() => {
+			skipEach = false;
+		})
 	});
 });
