@@ -42,13 +42,21 @@ describe("SELECTION", () => {
 				let circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
 				let rect = d3.select(`.${CLASS.eventRect}-3`).node();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
 				expect(spySelected.calledOnce).to.be.true;
 
 				circle = d3.select(`.${CLASS.shape}-4`).node().getBBox();
 				rect = d3.select(`.${CLASS.eventRect}-4`).node();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
 				expect(spySelected.calledTwice).to.be.true;
 
 				// should be selected multiple data points
@@ -63,13 +71,21 @@ describe("SELECTION", () => {
 				let circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
 				let rect = d3.select(`.${CLASS.eventRect}-3`).node();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
 				expect(spySelected.calledOnce).to.be.true;
 
 				circle = d3.select(`.${CLASS.shape}-4`).node().getBBox();
 				rect = d3.select(`.${CLASS.eventRect}-4`).node();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
 				expect(spySelected.calledTwice).to.be.true;
 				expect(spyUnSelected.calledOnce).to.be.true;
 
@@ -81,8 +97,15 @@ describe("SELECTION", () => {
 				const circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
 				const rect = d3.select(`.${CLASS.eventRect}-3`).node();
 
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
-				util.setMouseEvent(chart, "click", circle.x, circle.y, rect);
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
 
 				expect(spySelected.calledOnce).to.be.true;
 				expect(spyUnSelected.calledOnce).to.be.true;
