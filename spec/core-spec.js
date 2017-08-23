@@ -179,7 +179,7 @@ describe("CORE", function() {
 			};
 		});
 
-		it("clip-path property should be null", () => {
+		it("chart should have clip-path property", () => {
 			const main = chart.internal.main.select(".bb-chart");
 
 			expect(main.attr("clip-path")).to.not.be.null;
