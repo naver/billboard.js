@@ -34,6 +34,20 @@ export default class Options {
 			bindto: "#chart",
 
 			/**
+			 * Set clip-path property of chart element
+			 * - **NOTE:**
+			 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
+			 *  > Is to make chart element positioned over axis element.
+			 * @name clipPath
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @example
+			 * clipPath: false
+			 */
+			clipPath: true,
+
+			/**
 			 * Set svg element's class name
 			 * @name svg
 			 * @memberof Options

@@ -139,7 +139,7 @@ describe("CORE", function() {
 			expect(ticks.size()).to.be.equal(0);
 		});
 
-		it("should upaate args for empty data", () => {
+		it("should update args for empty data", () => {
 			args = {
 				data: {
 					x: "x",
@@ -163,6 +163,50 @@ describe("CORE", function() {
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
+		});
+	});
+
+	describe("options", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 50, 120, 175],
+						["data2", 130, 100, 0, 170, 75, 140]
+					]
+				},
+				clipPath: true
+			};
+		});
+
+		it("chart should have clip-path property", () => {
+			const main = chart.internal.main.select(".bb-chart");
+
+			expect(main.attr("clip-path")).to.not.be.null;
+		});
+
+		it("check for chart node's position", () => {
+			const next = chart.internal.main.select(".bb-axis-y2").node().nextSibling;
+
+			// axis element should be the last positioned
+			expect(next).to.be.null;
+		});
+
+		it("set option clipPath=true", () => {
+			args.clipPath = false;
+		});
+
+		it("clip-path property should be null", () => {
+			const main = chart.internal.main.select(".bb-chart");
+
+			expect(main.attr("clip-path")).to.be.null;
+		});
+
+		it("check for chart node's position", () => {
+			const previous = chart.internal.main.select(".bb-chart").node().previousSibling;
+
+			// chart element should positioned after axis element
+			expect(d3.select(previous).classed("bb-axis-y2")).to.be.true;
 		});
 	});
 });
