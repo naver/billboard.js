@@ -220,6 +220,19 @@ export default class Options {
 			onresized: () => {},
 
 			/**
+			 * Set a callback to execute before the chart is initialized
+			 * @name onbeforeinit
+			 * @memberof Options
+			 * @type {Function}
+			 * @default function(){}
+			 * @example
+			 * onbeforeinit: function() {
+			 *   ...
+			 * }
+			 */
+			onbeforeinit: () => {},
+
+			/**
 			 * Set a callback to execute when the chart is initialized.
 			 * @name oninit
 			 * @memberof Options
@@ -231,6 +244,19 @@ export default class Options {
 			 * }
 			 */
 			oninit: () => {},
+
+			/**
+			 * Set a callback to execute after the chart is initialized
+			 * @name onafterinit
+			 * @memberof Options
+			 * @type {Function}
+			 * @default function(){}
+			 * @example
+			 * onafterinit: function() {
+			 *   ...
+			 * }
+			 */
+			onafterinit: () => {},
 
 			/**
 			 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
@@ -2257,4 +2283,3 @@ export default class Options {
 		};
 	}
 }
-
