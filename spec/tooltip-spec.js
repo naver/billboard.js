@@ -14,7 +14,7 @@ describe("TOOLTIP", function() {
 				["data1", 30, 200, 100, 400, 150, 250],
 				["data2", 50, 20, 10, 40, 15, 25],
 				["data3", 150, 120, 110, 140, 115, 125]
-			],
+			]
 		},
 		tooltip: {}
 	};
@@ -109,12 +109,8 @@ describe("TOOLTIP", function() {
 		});
 	});
 
-	describe("tooltip getTooltipContent", () => {
-		before(() => {
-			args.tooltip.data_order = "desc";
-		});
-
-		it("should sort values desc", () => {
+	describe("tooltip order", () => {
+		it("should sort values in descending order", () => {
 			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
 
 			util.fireEvent(eventRect, "mousemove", {
@@ -129,6 +125,58 @@ describe("TOOLTIP", function() {
 				"bb-tooltip-name-data3",
 				"bb-tooltip-name-data1",
 				"bb-tooltip-name-data2"
+			];
+
+			for (let i = 0; i < len; i++) {
+				expect(tooltips[i].className).to.be.equal(expected[i]);
+			}
+		});
+
+		it("set options data.order=asc", () => {
+			args.data.order = "asc";
+		});
+
+		it("should sort values ascending order", () => {
+			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
+
+			util.fireEvent(eventRect, "mousemove", {
+				clientX: 100,
+				clientY: 100
+			}, chart);
+
+			const tooltips =  d3.select(chart.element).selectAll(`.${CLASS.tooltip} tr`).nodes();
+			const len = tooltips.length;
+			const expected = [
+				"",
+				"bb-tooltip-name-data2",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data3"
+			];
+
+			for (let i = 0; i < len; i++) {
+				expect(tooltips[i].className).to.be.equal(expected[i]);
+			}
+		});
+
+		it("set options data.order=null", () => {
+			args.data.order = null;
+		});
+
+		it("should sort values ascending order", () => {
+			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
+
+			util.fireEvent(eventRect, "mousemove", {
+				clientX: 100,
+				clientY: 100
+			}, chart);
+
+			const tooltips =  d3.select(chart.element).selectAll(`.${CLASS.tooltip} tr`).nodes();
+			const len = tooltips.length;
+			const expected = [
+				"",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data2",
+				"bb-tooltip-name-data3"
 			];
 
 			for (let i = 0; i < len; i++) {

@@ -63,57 +63,66 @@ extend(ChartInternal.prototype, {
 		const valueFormat = config.tooltip_format_value || defaultValueFormat;
 		const orderAsc = $$.isOrderAsc();
 		let text;
-		let i;
 		let title;
 		let value;
 		let name;
 		let bgcolor;
 
-		if (config.data_groups.length === 0) {
-			d.sort((a, b) => {
-				const v1 = a ? a.value : null;
-				const v2 = b ? b.value : null;
+		if (config.data_order !== null) {
+			if (config.data_groups.length === 0) {
+				d.sort((a, b) => {
+					const v1 = a ? a.value : null;
+					const v2 = b ? b.value : null;
 
-				return orderAsc ? v1 - v2 : v2 - v1;
-			});
-		} else {
-			const ids = $$.orderTargets($$.data.targets).map(i2 => i2.id);
+					return orderAsc ? v1 - v2 : v2 - v1;
+				});
+			} else {
+				const ids = $$.orderTargets($$.data.targets)
+					.map(i2 => i2.id);
 
-			d.sort((a, b) => {
-				let v1 = a ? a.value : null;
-				let v2 = b ? b.value : null;
+				d.sort((a, b) => {
+					let v1 = a ? a.value : null;
+					let v2 = b ? b.value : null;
 
-				if (v1 > 0 && v2 > 0) {
-					v1 = a ? ids.indexOf(a.id) : null;
-					v2 = b ? ids.indexOf(b.id) : null;
-				}
-				return orderAsc ? v1 - v2 : v2 - v1;
-			});
+					if (v1 > 0 && v2 > 0) {
+						v1 = a.id ? ids.indexOf(a.id) : null;
+						v2 = b.id ? ids.indexOf(b.id) : null;
+					}
+
+					return orderAsc ? v1 - v2 : v2 - v1;
+				});
+			}
 		}
 
-		for (i = 0; i < d.length; i++) {
-			if (!(d[i] && (d[i].value || d[i].value === 0))) {
+		for (let i = 0, row, len = d.length; i < len; i++) {
+			if (!(
+				(row = d[i]) &&
+				(row.value || row.value === 0)
+			)) {
 				continue;
 			}
 
 			if (!text) {
-				title = sanitise(titleFormat ? titleFormat(d[i].x) : d[i].x);
+				title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
 				text = (title || title === 0 ? `<tr><th colspan="2">${title}</th></tr>` : "");
 				text = `<table class="${$$.CLASS.tooltip}">${text}`;
 			}
 
-			value = sanitise(valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index, d));
+			value = sanitise(valueFormat(row.value, row.ratio, row.id, row.index, d));
 
 			if (value !== undefined) {
 				// Skip elements when their name is set to null
-				if (d[i].name === null) { continue; }
-				name = sanitise(nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index));
-				bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+				if (row.name === null) {
+					continue;
+				}
 
-				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(d[i].id)}">` +
-					`<td class="name"><span style="background-color:${bgcolor}"></span>${name}</td>` +
-					`<td class="value">${value}</td>` +
-					`</tr>`;
+				name = sanitise(nameFormat(row.name, row.ratio, row.id, row.index));
+				bgcolor = $$.levelColor ? $$.levelColor(row.value) : color(row.id);
+
+				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}">
+							<td class="name"><span style="background-color:${bgcolor}"></span>${name}</td>
+							<td class="value">${value}</td>
+						</tr>`;
 			}
 		}
 
