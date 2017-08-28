@@ -147,14 +147,23 @@ var billboardDemo = {
 		inst.timer = [];
 		this.chartInst.push(inst);
 
-		this.$code.innerHTML = "var chart = bb.generate("+
+		var codeStr = "var chart = bb.generate("+
 			JSON.stringify(options, function(key, value) {
 				if (typeof value === "function") {
 					return value.toString();
+				} else if (/(columns|rows|json)/.test(key)) {
+					var str = JSON.stringify(value)
+						.replace(/\[\[/g, "[\r\n\t[")
+						.replace(/\]\]/g, "]\r\n    ]")
+						.replace(/(],)/g, "$1\r\n\t")
+						.replace(/(\"|\d),/g, "$1, ");
+
+					return key === "json" ?
+						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
 				}
 
 				return value;
-			},2)
+			}, 2)
 			.replace(/(\"function)/g, "function")
 			.replace(/(}\")/g, "}")
 			.replace(/\\"/g, "\"")
@@ -163,6 +172,7 @@ var billboardDemo = {
 			.replace(/\\r/g, "\r")
 			.replace(/\\n/g, "\n") +");";
 
+		this.$code.innerHTML = codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
 		this.$code.scrollTop = 0;
 
 		try {
