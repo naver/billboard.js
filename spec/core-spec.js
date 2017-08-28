@@ -50,6 +50,48 @@ describe("CORE", function() {
 		});
 	});
 
+	describe("init callbacks", () => {
+		let oninit = false;
+		let onbeforeinit = false;
+		let onafterinit = false;
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 150, 120, 110, 140, 115, 125]
+					]
+				},
+				oninit: () => {
+					oninit = true;
+				},
+				onbeforeinit: () => {
+					onbeforeinit = true;
+				},
+				onafterinit: () => {
+					onafterinit = true;
+				}
+			}
+		});
+
+		it("check for oninit callback", done => {
+			expect(oninit).to.be.true;
+			done();
+		});
+
+		it("check for onbeforeinit callback", done => {
+			expect(onbeforeinit).to.be.true;
+			done();
+		});
+
+		it("check for onafterinit callback", done => {
+			expect(onafterinit).to.be.true;
+			done();
+		});
+	});
+
 	describe("size", () => {
 		it("should have same width", () => {
 			const svg = d3.select("#chart svg");
