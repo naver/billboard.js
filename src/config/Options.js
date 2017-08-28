@@ -739,6 +739,34 @@ export default class Options {
 			data_onunselected: () => {},
 
 			/**
+			 * Set a callback for minimum data
+			 * @name data:onmin
+			 * @memberof Options
+			 * @type {Function}
+			 * @default undefined
+			 * @example
+			 *     onmin: function(data) {
+			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3, element: circle}, ... ]
+		     *        ...
+			 *    }
+			 */
+			data_onmin: undefined,
+
+			/**
+			 * Set a callback for maximum data
+			 * @name data:onmax
+			 * @memberof Options
+			 * @type {Function}
+			 * @default undefined
+			 * @example
+			 *     onmax: function(data) {
+			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3, element: circle}, ... ]
+		     *        ...
+			 *    }
+			 */
+			data_onmax: undefined,
+
+			/**
 			 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
 			 * @name data:url
 			 * @memberof Options

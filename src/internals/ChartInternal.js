@@ -14,7 +14,7 @@ import {
 } from "d3";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {addEvent, notEmpty, asHalfPixel, isValue, getOption} from "./util";
+import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction} from "./util";
 
 /**
  * Internal chart class.
@@ -322,6 +322,8 @@ export default class ChartInternal {
 		// Draw with targets
 		if (binding) {
 			$$.updateDimension();
+
+			// oninit callback
 			$$.config.oninit.call($$);
 
 			$$.redraw({
@@ -331,6 +333,14 @@ export default class ChartInternal {
 				withUpdateOrgXDomain: true,
 				withTransitionForAxis: false
 			});
+
+			// data.onmin/max callback
+			if ($$.config.data_onmin || $$.config.data_onmax) {
+				const minMax = $$.getMinMaxData();
+
+				isFunction($$.config.data_onmin) && $$.config.data_onmin.call($$, minMax.min);
+				isFunction($$.config.data_onmax) && $$.config.data_onmax.call($$, minMax.max);
+			}
 		}
 
 		// Bind resize event

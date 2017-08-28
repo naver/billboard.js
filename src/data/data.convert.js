@@ -36,7 +36,6 @@ extend(ChartInternal.prototype, {
 			if (type === "json") {
 				d = this.convertJsonToData(JSON.parse(response), keys);
 			} else if (type === "tsv") {
-				// ref : https://github.com/d3/d3-dsv#dsv_parse
 				d = this.convertTsvToData(response);
 			} else {
 				d = this.convertCsvToData(response);
@@ -46,36 +45,35 @@ extend(ChartInternal.prototype, {
 		});
 	},
 
-	convertCsvToData(xsv) {
-		const rows = d3CsvParseRows(xsv);
+	_convertCsvTsvToData(parser, xsv) {
+		const rows = parser.rows(xsv);
 		let d;
 
 		if (rows.length === 1) {
 			d = [{}];
+
 			rows[0].forEach(id => {
 				d[0][id] = null;
 			});
 		} else {
-			d = d3CsvParse(xsv);
+			d = parser.parse(xsv);
 		}
 
 		return d;
 	},
 
-	convertTsvToData(xsv) {
-		const rows = d3TsvParseRows(xsv);
-		let d;
+	convertCsvToData(xsv) {
+		return this._convertCsvTsvToData({
+			rows: d3CsvParseRows,
+			parse: d3CsvParse
+		}, xsv);
+	},
 
-		if (rows.length === 1) {
-			d = [{}];
-			rows[0].forEach(id => {
-				d[0][id] = null;
-			});
-		} else {
-			d = d3TsvParse(xsv);
-		}
-
-		return d;
+	convertTsvToData(tsv) {
+		return this._convertCsvTsvToData({
+			rows: d3TsvParseRows,
+			parse: d3TsvParse
+		}, tsv);
 	},
 
 	convertJsonToData(json, keys) {

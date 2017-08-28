@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
-import {isString, extend} from "./util";
+import {isString, isArray, extend} from "./util";
 
 extend(ChartInternal.prototype, {
 	setTargetType(targetIds, type) {
@@ -54,63 +54,50 @@ extend(ChartInternal.prototype, {
 	},
 
 	isLineType(d) {
-		const config = this.config;
 		const id = isString(d) ? d : d.id;
 
-		return !config.data_types[id] ||
-			["line", "spline", "area", "area-spline", "step", "area-step"]
-				.indexOf(config.data_types[id]) >= 0;
+		return !this.config.data_types[id] ||
+			this.isTypeOf(id, ["line", "spline", "area", "area-spline", "step", "area-step"]);
+	},
+
+	isTypeOf(d, type) {
+		const id = isString(d) ? d : d.id;
+		const dataType = this.config.data_types[id];
+
+		return isArray(type) ?
+			type.indexOf(dataType) >= 0 : dataType === type;
 	},
 
 	isStepType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return ["step", "area-step"]
-			.indexOf(this.config.data_types[id]) >= 0;
+		return this.isTypeOf(d, ["step", "area-step"]);
 	},
 
 	isSplineType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return ["spline", "area-spline"]
-			.indexOf(this.config.data_types[id]) >= 0;
+		return this.isTypeOf(d, ["spline", "area-spline"]);
 	},
 
 	isAreaType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return ["area", "area-spline", "area-step"]
-			.indexOf(this.config.data_types[id]) >= 0;
+		return this.isTypeOf(d, ["area", "area-spline", "area-step"]);
 	},
 
 	isBarType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return this.config.data_types[id] === "bar";
+		return this.isTypeOf(d, "bar");
 	},
 
 	isScatterType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return this.config.data_types[id] === "scatter";
+		return this.isTypeOf(d, "scatter");
 	},
 
 	isPieType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return this.config.data_types[id] === "pie";
+		return this.isTypeOf(d, "pie");
 	},
 
 	isGaugeType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return this.config.data_types[id] === "gauge";
+		return this.isTypeOf(d, "gauge");
 	},
 
 	isDonutType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return this.config.data_types[id] === "donut";
+		return this.isTypeOf(d, "donut");
 	},
 
 	isArcType(d) {
