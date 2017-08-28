@@ -14,7 +14,7 @@ import {
 } from "d3";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {addEvent, notEmpty, asHalfPixel, isValue, getOption} from "./util";
+import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction} from "./util";
 
 /**
  * Internal chart class.
@@ -40,7 +40,7 @@ export default class ChartInternal {
 
 		// can do something
 
-		config.onbeforeinit.call($$);
+		isFunction(config.onbeforeinit) && config.onbeforeinit.call($$);
 	}
 
 	afterInit() {
@@ -49,7 +49,7 @@ export default class ChartInternal {
 
 		// can do something
 
-		config.onafterinit.call($$);
+		isFunction(config.onafterinit) && config.onafterinit.call($$);
 	}
 
 	init() {

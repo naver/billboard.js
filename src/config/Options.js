@@ -230,7 +230,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onbeforeinit: () => {},
+			onbeforeinit: undefined,
 
 			/**
 			 * Set a callback to execute when the chart is initialized.
@@ -256,7 +256,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onafterinit: () => {},
+			onafterinit: undefined,
 
 			/**
 			 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
