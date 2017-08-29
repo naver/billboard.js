@@ -35,11 +35,21 @@ export default class ChartInternal {
 	}
 
 	beforeInit() {
+		const $$ = this;
+		const config = $$.config;
+
 		// can do something
+
+		isFunction(config.onbeforeinit) && config.onbeforeinit.call($$);
 	}
 
 	afterInit() {
+		const $$ = this;
+		const config = $$.config;
+
 		// can do something
+
+		isFunction(config.onafterinit) && config.onafterinit.call($$);
 	}
 
 	init() {
