@@ -18,7 +18,6 @@ describe("TOOLTIP", function() {
 		},
 		tooltip: {}
 	};
-	let spy;
 
 	// check for the tooltip's ordering
 	const checkTooltip = (chart, expected) => {
@@ -206,14 +205,14 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set options data.order=function", () => {
-			args.data.order = spy = sinon.spy(function(a, b) {
+			args.data.order = sinon.spy(function(a, b) {
 				return a.value - b.value;
 			});
 		});
 
 		it("data.order function should be called", () => {
 			checkTooltip(chart);
- 			expect(spy.called).to.be.true;
+ 			expect(args.data.order.called).to.be.true;
 		});
 	});
 });
