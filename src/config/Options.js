@@ -520,19 +520,43 @@ export default class Options {
 			data_labels_position: {},
 
 			/**
-			 *  This option changes the order of stacking the data and pieces of pie/donut. If `null` specified, it will be the order the data loaded. If function specified, it will be used to sort the data and it will recieve the data as argument.<br><br>
+			 *  This option changes the order of stacking the data and pieces of pie/donut and also applied for ordering tooltip data.
+			 *  - If `null` specified, it will be the order the data loaded.
+			 *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
+			 *
+			 * **NOTE:** For stacking data, tooltip ordering is bound to stacking order.
+			 *
 			 *  **Available Values:**
-			 *  - desc
-			 *  - asc
-			 *  - function(data1, data2) { ... }
-			 *  - null
+			 *  - `desc`: In descending order
+			 *  - `asc`: In ascending order
+			 *  - `null`: It keeps the data input order
+			 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 			 * @name data:order
 			 * @memberof Options
 			 * @type {String|Function}
 			 * @default desc
 			 * @example
 			 * data: {
+			 *   // in descending order (default)
+			 *   order: "desc"
+			 *
+			 *   // in ascending order
 			 *   order: "asc"
+			 *
+			 *   // keeps data input order
+			 *   order: null
+			 *
+			 *   // specifying sort function
+			 *   order: function(a, b) {
+			 *       // the data passed at the rendering
+			 *       {id: "data1", id_org: "data1", values: [
+			 *           {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+			 *           ...
+			 *       ]}
+			 *
+			 *       // the data passed for tooltip
+			 *       {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
+			 *   }
 			 * }
 			 */
 			data_order: "desc",
