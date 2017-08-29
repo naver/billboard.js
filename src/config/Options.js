@@ -498,11 +498,13 @@ export default class Options {
 			 *  - If `null` specified, it will be the order the data loaded.
 			 *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
 			 *
+			 * **NOTE:** For stacking data, tooltip ordering is bound to stacking order.
+			 *
 			 *  **Available Values:**
 			 *  - `desc`: In descending order
 			 *  - `asc`: In ascending order
-			 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 			 *  - `null`: It keeps the data input order
+			 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 			 * @name data:order
 			 * @memberof Options
 			 * @type {String|Function}
@@ -517,6 +519,18 @@ export default class Options {
 			 *
 			 *   // keeps data input order
 			 *   order: null
+			 *
+			 *   // specifying sort function
+			 *   order: function(a, b) {
+			 *       // the data passed at the rendering
+			 *       {id: "data1", id_org: "data1", values: [
+			 *           {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+			 *           ...
+			 *       ]}
+			 *
+			 *       // the data passed for tooltip
+			 *       {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
+			 *   }
 			 * }
 			 */
 			data_order: "desc",

@@ -5,7 +5,7 @@
 import {mouse as d3Mouse} from "d3";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isValue, sanitise, isString} from "./util";
+import {extend, isValue, sanitise, isString, isFunction} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -70,15 +70,17 @@ extend(ChartInternal.prototype, {
 
 		if (config.data_order !== null) {
 			if (config.data_groups.length === 0) {
-				d.sort((a, b) => {
-					const v1 = a ? a.value : null;
-					const v2 = b ? b.value : null;
+				d.sort(isFunction(config.data_order) ?
+					config.data_order : (a, b) => {
+						const v1 = a ? a.value : null;
+						const v2 = b ? b.value : null;
 
-					return orderAsc ? v1 - v2 : v2 - v1;
-				});
+						return orderAsc ? v1 - v2 : v2 - v1;
+					});
 			} else {
 				const ids = $$.orderTargets($$.data.targets)
-					.map(i2 => i2.id);
+					.map(i2 => i2.id)
+					.reverse();
 
 				d.sort((a, b) => {
 					let v1 = a ? a.value : null;
@@ -89,7 +91,7 @@ extend(ChartInternal.prototype, {
 						v2 = b.id ? ids.indexOf(b.id) : null;
 					}
 
-					return orderAsc ? v1 - v2 : v2 - v1;
+					return v1 - v2;
 				});
 			}
 		}
