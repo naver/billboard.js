@@ -368,10 +368,46 @@ extend(ChartInternal.prototype, {
 			.attr("class", CLASS.chartArcs)
 			.attr("transform", $$.getTranslate("arc"));
 
-		$$.arcs.append("text")
-			.attr("class", CLASS.chartArcsTitle)
-			.style("text-anchor", "middle")
-			.text($$.getArcTitle());
+		$$.setArcTitle();
+	},
+
+	/**
+	 * Set arc title text
+	 * @private
+	 */
+	setArcTitle() {
+		const $$ = this;
+		const title = $$.getArcTitle();
+
+		if (title) {
+			const multiline = title.split("\n");
+			const text = $$.arcs.append("text")
+				.attr("class", CLASS.chartArcsTitle)
+				.style("text-anchor", "middle");
+
+			// if is multiline text
+			if (multiline.length > 1) {
+				const fontSize = +text.style("font-size").replace("px", "");
+				const height = Math.floor(
+					text.text(".").node()
+						.getBBox().height, text.text("")
+				);
+
+				multiline.forEach((v, i) =>
+					text.insert("tspan")
+						.text(v)
+						.attr("x", 0)
+						.attr("dy", i ? height : 0)
+				);
+
+				text.attr("y", `-${
+					fontSize * (multiline.length - 2) ||
+					fontSize / 2
+				}`);
+			} else {
+				text.text(title);
+			}
+		}
 	},
 
 	redrawArc(duration, durationForExit, withTransform) {
