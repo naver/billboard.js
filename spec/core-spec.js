@@ -76,19 +76,16 @@ describe("CORE", function() {
 			}
 		});
 
-		it("check for oninit callback", done => {
+		it("check for oninit callback", () => {
 			expect(oninit).to.be.true;
-			done();
 		});
 
-		it("check for onbeforeinit callback", done => {
+		it("check for onbeforeinit callback", () => {
 			expect(onbeforeinit).to.be.true;
-			done();
 		});
 
-		it("check for onafterinit callback", done => {
+		it("check for onafterinit callback", () => {
 			expect(onafterinit).to.be.true;
-			done();
 		});
 	});
 
