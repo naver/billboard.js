@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import CLASS from "../src/config/classes";
 import util from "./assets/util";
 
 describe("ARC", () => {
@@ -97,9 +98,8 @@ describe("ARC", () => {
 			expect(arcs.data3.attr("d").indexOf("NaN")).to.be.equal(-1);
 		});
 
-		it("should set padAngle value", () => {
+		it("check for donut's options", () => {
 			const value = 0.05;
-
 			const chart = util.generate({
 				data: {
 					columns: [
@@ -109,13 +109,13 @@ describe("ARC", () => {
 					type: "donut"
 				},
 				donut: {
+					title: "text1\ntext2\ntext3",
 					padAngle: value
 				}
 			});
 
-			const padAngle = chart.internal.pie.padAngle();
-
-			expect(padAngle()).to.be.equal(value);
+			expect(chart.internal.pie.padAngle()()).to.be.equal(value);
+			expect(chart.internal.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
 		});
 	});
 

@@ -2167,7 +2167,7 @@ export default class Options {
 			 * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
 			 * @property {Number} [donut.width] Set width of donut chart.
-			 * @property {String} [donut.title=""] Set title of donut chart.
+			 * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
 			 * @property {Number} [donut.padAngle=0] Set padding between data.
 			 * @example
 			 *  donut: {
@@ -2188,8 +2188,11 @@ export default class Options {
 			 *      },
 			 *      expand: false,
 			 *      width: 10,
-			 *      title: "Donut Title",
-			 *      padAngle: 0.2
+			 *      padAngle: 0.2,
+			 *      title: "Donut Title"
+			 *
+			 *      // title with line break
+			 *      title: "Title1\nTitle2"
 			 *  }
 			 */
 			donut_label_show: true,
