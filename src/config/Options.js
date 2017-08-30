@@ -520,19 +520,40 @@ export default class Options {
 			data_labels_position: {},
 
 			/**
-			 *  This option changes the order of stacking the data and pieces of pie/donut. If `null` specified, it will be the order the data loaded. If function specified, it will be used to sort the data and it will recieve the data as argument.<br><br>
+			 *  This option changes the order of stacking data and pieces of pie/donut.
+			 *  - If `null` specified, it will be the order the data loaded.
+			 *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
+			 *
 			 *  **Available Values:**
-			 *  - desc
-			 *  - asc
-			 *  - function(data1, data2) { ... }
-			 *  - null
+			 *  - `desc`: In descending order
+			 *  - `asc`: In ascending order
+			 *  - `null`: It keeps the data load order
+			 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 			 * @name data:order
 			 * @memberof Options
-			 * @type {String|Function}
+			 * @type {String|Function|null}
 			 * @default desc
 			 * @example
 			 * data: {
+			 *   // in descending order (default)
+			 *   order: "desc"
+			 *
+			 *   // in ascending order
 			 *   order: "asc"
+			 *
+			 *   // keeps data input order
+			 *   order: null
+			 *
+			 *   // specifying sort function
+			 *   order: function(a, b) {
+			 *       // param data passed format
+			 *       {
+			 *          id: "data1", id_org: "data1", values: [
+			 *              {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
+			 *              ...
+			 *          ]
+			 *       }
+			 *   }
 			 * }
 			 */
 			data_order: "desc",
@@ -2254,10 +2275,16 @@ export default class Options {
 			 * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
 			 *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
 			 *  If undefined returned, the row of that value will be skipped.
-			 * @property {function} [tooltip.position] Set custom position for the tooltip.<br>
+			 * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
 			 *  This option can be used to modify the tooltip position by returning object that has top and left.
-			 * @property {function} [tooltip.contents] Set custom HTML for the tooltip.<br>
+			 * @property {Function} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+			 * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
+			 *  **Available Values:**
+			 *  - `desc`: In descending data value order
+			 *  - `asc`: In ascending data value order
+			 *  - `null`: It keeps the data display order
+			 *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
 			 * @example
 			 *  tooltip: {
 			 *      show: true,
@@ -2272,7 +2299,17 @@ export default class Options {
   			 *      },
   			 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
   			 *          return ... // formatted html as you want
-    		 *      }
+    		 *      },
+    		 *
+    		 *      // sort tooltip data value display in ascending order
+    		 *      order: "asc",
+    		 *
+			 *      // specifying sort function
+			 *      order: function(a, b) {
+			 *         // param data passed format
+			 *         {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
+			 *           ...
+			 *      }
 			 *  }
 			 */
 			tooltip_show: true,
@@ -2293,6 +2330,7 @@ export default class Options {
 			},
 			tooltip_onshow: () => {},
 			tooltip_onhide: () => {},
+			tooltip_order: null,
 
 			/**
 			 * Set title options

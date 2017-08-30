@@ -14,10 +14,33 @@ describe("TOOLTIP", function() {
 				["data1", 30, 200, 100, 400, 150, 250],
 				["data2", 50, 20, 10, 40, 15, 25],
 				["data3", 150, 120, 110, 140, 115, 125]
-			],
+			]
 		},
 		tooltip: {}
 	};
+
+	// check for the tooltip's ordering
+	const checkTooltip = (chart, expected) => {
+		const eventRect = chart.internal.main
+			.select(`.${CLASS.eventRect}-2`)
+			.node();
+
+		util.fireEvent(eventRect, "mousemove", {
+			clientX: 100,
+			clientY: 100
+		}, chart);
+
+		const tooltips =  d3.select(chart.element)
+			.selectAll(`.${CLASS.tooltip} tr`)
+			.nodes();
+
+		if (expected) {
+			for (let i = 1, el; (el = tooltips[i]); i++) {
+				expect(el.className).to.be.equal(expected[i - 1]);
+			}
+		}
+	};
+
 
 	beforeEach(() => {
 		chart = util.generate(args);
@@ -109,31 +132,87 @@ describe("TOOLTIP", function() {
 		});
 	});
 
-	describe("tooltip getTooltipContent", () => {
-		before(() => {
-			args.tooltip.data_order = "desc";
+	describe("tooltip order", () => {
+		it("should sort values in data display order", () => {
+			checkTooltip(chart, [
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data2",
+				"bb-tooltip-name-data3"
+			]);
 		});
 
-		it("should sort values desc", () => {
-			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
+		it("set options tooltip.order=asc", () => {
+			args.tooltip.order = "asc";
+		});
 
-			util.fireEvent(eventRect, "mousemove", {
-				clientX: 100,
-				clientY: 100
-			}, chart);
+		it("should sort values ascending order", () => {
+			checkTooltip(chart, [
+				"bb-tooltip-name-data2",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data3"
+			]);
+		});
 
-			const tooltips =  d3.select(chart.element).selectAll(`.${CLASS.tooltip} tr`).nodes();
-			const len = tooltips.length;
-			const expected = [
-				"",
+		it("set options tooltip.order=desc", () => {
+			args.tooltip.order = "desc";
+		});
+
+		it("set options tooltip.order=desc", () => {
+			checkTooltip(chart, [
 				"bb-tooltip-name-data3",
 				"bb-tooltip-name-data1",
 				"bb-tooltip-name-data2"
-			];
+			]);
+		});
 
-			for (let i = 0; i < len; i++) {
-				expect(tooltips[i].className).to.be.equal(expected[i]);
-			}
+		// check for stacking bar
+		it("set options data.groups", () => {
+			args.data.type = "bar";
+			args.data.groups = [["data1", "data2", "data3"]];
+			args.tooltip.order = args.data.order = "desc";
+		});
+
+		it("stacked bar: should sort values in descending order", () => {
+			checkTooltip(chart, [
+				"bb-tooltip-name-data3",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data2"
+			]);
+		});
+
+		it("set options tooltip.order=asc", () => {
+			args.tooltip.order = args.data.order = "asc";
+		});
+
+		it("stacked bar: should sort values in ascending order", () => {
+			checkTooltip(chart, [
+				"bb-tooltip-name-data2",
+				"bb-tooltip-name-data1",
+				"bb-tooltip-name-data3"
+			]);
+		});
+
+		it("set options tooltip.order=null", () => {
+			args.tooltip.order = args.data.order = null;
+		});
+
+		it("stacked bar: should be ordered in data input order", () => {
+			checkTooltip(chart, [
+				"bb-tooltip-name-data3",
+				"bb-tooltip-name-data2",
+				"bb-tooltip-name-data1"
+			]);
+		});
+
+		it("set options tooltip.order=function", () => {
+			args.tooltip.order = sinon.spy(function(a, b) {
+				return a.value - b.value;
+			});
+		});
+
+		it("data.order function should be called", () => {
+			checkTooltip(chart);
+ 			expect(args.tooltip.order.called).to.be.true;
 		});
 	});
 });
