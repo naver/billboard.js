@@ -986,15 +986,23 @@ export default class Options {
 			 *      - bottom-right
 			 *  x and y set the position of the legend based on the anchor.<br>
 			 *  step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
+			 * @property {Boolean} [legend.equally=false] Set to all items have same width size.
+			 * @property {Boolean} [legend.padding=0] Set padding value
 			 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
 			 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
 			 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+			 * @property {Number} [legend.item.tile.width=10] Set width of item tile element
+			 * @property {Number} [legend.item.tile.height=10] Set height of item tile element
 			 * @example
 			 *  legend: {
 			 *      show: true,
 			 *      hide: true,
 			 *      //or hide: "data1"
              *      //or hide: ["data1", "data2"]
+			 *      template: {
+			 *          bindto: "#legend",   // <ul id='legend'></ul>
+			 *          template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"  // will be as: <li style='background-color:#1f77b4'>data1</li>
+			 *      },
              *      position: "bottom",  // bottom, right, inset
 			 *      inset: {
 			 *          anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right
@@ -1002,21 +1010,23 @@ export default class Options {
 			 *          y: 10,
 			 *          step: 2
 			 *      },
-			 *      item: {
+             *      equally: false,
+             *      padding: 10,
+             *      item: {
 			 *          onclick: function(id) { ... },
 			 *          onover: function(id) { ... },
-			 *          onout: function(id) { ... }
-			 *      },
-			 *      template: {
-			 *          bindto: "#legend",   // <ul id='legend'></ul>
-			 *          template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"  // will be as: <li style='background-color:#1f77b4'>data1</li>
+			 *          onout: function(id) { ... },
+			 *
+			 *          // set tile's size
+			 *          tile: {
+			 *              width: 20,
+			 *              height: 15
+			 *          }
 			 *      }
 			 *  }
 			 */
 			legend_show: true,
 			legend_hide: false,
-			legend_template_bindto: undefined,
-			legend_template_html: undefined,
 			legend_position: "bottom",
 			legend_inset_anchor: "top-left",
 			legend_inset_x: 10,
@@ -1025,8 +1035,6 @@ export default class Options {
 			legend_item_onclick: undefined,
 			legend_item_onover: undefined,
 			legend_item_onout: undefined,
-
-			// @TODO add api doc
 			legend_equally: false,
 			legend_padding: 0,
 			legend_item_tile_width: 10,
