@@ -5,6 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import util from "./assets/util";
+import CLASS from "../src/config/classes";
 
 describe("LEGEND", () => {
 	let chart;
@@ -230,7 +231,7 @@ describe("LEGEND", () => {
 		});
 	});
 
-	describe("custom legend size", () => {
+	describe("custom legend settings", () => {
 		before(() => {
 			args = {
 				data: {
@@ -259,20 +260,10 @@ describe("LEGEND", () => {
 				expect(tileWidth).to.be.equal(args.legend.item.tile.width);
 			});
 		});
-	});
 
-	describe("custom legend padding", () => {
-		before(() => {
-			args = {
-				data: {
-					columns: [
-						["padded1", 30, 200, 100, 400, 150, 250],
-						["padded2", 130, 100, 200, 100, 250, 150]
-					]
-				},
-				legend: {
-					padding: 10
-				}
+		it("set options legend.padding=10", () => {
+			args.legend = {
+				padding: 10
 			};
 		});
 
@@ -287,6 +278,47 @@ describe("LEGEND", () => {
 
 					expect(itemWidth).to.be.equal(expectedWidth);
 				});
+		});
+	});
+
+	describe("set legend using template", () => {
+		before(() => {
+			sandbox("legend-wrapper").innerHTML = "<ul id='legend'></ul>";
+
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 200, 100, 250, 150]
+					],
+					colors: {
+						data1: "rgb(42, 208, 255)",
+						data2: "rgb(250, 113, 113)"
+					}
+				},
+				legend: {
+					template: {
+						bindto: "#legend",
+						html: "<li style='background-color:{=COLOR}'>{=NAME}</li>"
+					}
+				}
+			};
+		});
+
+		it("check for legend template setting", () => {
+			const legend = d3.select("#legend");
+
+			expect(legend.html()).not.to.be.null;
+
+			legend.selectAll(`.${CLASS.legendItem}`).each(function(v) {
+				const item = d3.select(this);
+
+				expect(item.html()).to.be.equal(v);
+				expect(item.style("background-color")).to.be.equal(chart.color(v));
+
+				// check for event bind
+				expect(item.on("click")).not.be.null;
+			});
 		});
 	});
 });

@@ -8,8 +8,7 @@ import {
 } from "d3";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isDefined, getOption, isEmpty} from "./util";
-
+import {extend, isDefined, getOption, isEmpty, isFunction} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -18,18 +17,53 @@ extend(ChartInternal.prototype, {
 	 */
 	initLegend() {
 		const $$ = this;
+		const config = $$.config;
 
 		$$.legendItemTextBox = {};
 		$$.legendHasRendered = false;
-		$$.legend = $$.svg.append("g").attr("transform", $$.getTranslate("legend"));
-		if (!$$.config.legend_show) {
+		$$.legend = $$.svg.append("g");
+
+		if (config.legend_show) {
+			if (config.legend_template_bindto && config.legend_template_html) {
+				$$.updateLegendTemplate();
+			} else {
+				$$.legend.attr("transform", $$.getTranslate("legend"));
+
+				// MEMO: call here to update legend box and translate for all
+				// MEMO: translate will be updated by this, so transform not needed in updateLegend()
+				$$.updateLegendWithDefaults();
+			}
+		} else {
 			$$.legend.style("visibility", "hidden");
 			$$.hiddenLegendIds = $$.mapToIds($$.data.targets);
-			return;
 		}
-		// MEMO: call here to update legend box and tranlate for all
-		// MEMO: translate will be upated by this, so transform not needed in updateLegend()
-		$$.updateLegendWithDefaults();
+	},
+
+	/**
+	 * Update legend using template option
+	 */
+	updateLegendTemplate() {
+		const $$ = this;
+		const config = $$.config;
+		const wrapper = d3Select(config.legend_template_bindto);
+		const template = config.legend_template_html;
+
+		if (!wrapper.empty()) {
+			const targets = $$.mapToIds($$.data.targets);
+			let html = "";
+
+			targets.forEach(v => {
+				html += template
+					.replace(/{=COLOR}/g, $$.color(v))
+					.replace(/{=NAME}/g, v);
+			});
+
+			const legendItem = wrapper.html(html)
+				.selectAll(function() { return this.childNodes; })
+				.data(targets);
+
+			$$.setLegendItem(legendItem);
+		}
 	},
 
 	/**
@@ -74,6 +108,7 @@ extend(ChartInternal.prototype, {
 				$$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
 		};
 	},
+
 	/**
 	 * Transform Legend
 	 * @private
@@ -125,6 +160,7 @@ extend(ChartInternal.prototype, {
 			$$.isLegendRight ||
 			$$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
 	},
+
 	/**
 	 * Get the height of the legend
 	 * @private
@@ -143,6 +179,7 @@ extend(ChartInternal.prototype, {
 		}
 		return h;
 	},
+
 	/**
 	 * Get the opacity of the legend
 	 * @private
@@ -162,6 +199,7 @@ extend(ChartInternal.prototype, {
 	opacityForUnfocusedLegend(legendItem) {
 		return legendItem.classed(CLASS.legendItemHidden) ? null : "0.3";
 	},
+
 	/**
 	 * Toggles the focus of the legend
 	 * @private
@@ -183,6 +221,7 @@ extend(ChartInternal.prototype, {
 				return opacity.call($$, d3Select(this));
 			});
 	},
+
 	/**
 	 * Revert the legend to its default state
 	 * @private
@@ -198,6 +237,7 @@ extend(ChartInternal.prototype, {
 				return $$.opacityForLegend(d3Select(this));
 			});
 	},
+
 	/**
 	 * Shows the legend
 	 * @private
@@ -223,6 +263,7 @@ extend(ChartInternal.prototype, {
 				return $$.opacityForLegend(d3Select(this));
 			});
 	},
+
 	/**
 	 * Hide the legend
 	 * @private
@@ -241,6 +282,7 @@ extend(ChartInternal.prototype, {
 			.style("opacity", "0")
 			.style("visibility", "hidden");
 	},
+
 	/**
 	 * Clear the LegendItemTextBox cache.
 	 * @private
@@ -248,6 +290,61 @@ extend(ChartInternal.prototype, {
 	clearLegendItemTextBoxCache() {
 		this.legendItemTextBox = {};
 	},
+
+	/**
+	 * Set legend item style & bind events
+	 * @private
+	 * @param {d3.selection} item
+	 */
+	setLegendItem(item) {
+		const $$ = this;
+		const config = $$.config;
+		const isTouch = $$.inputType === "touch";
+
+		item
+			.attr("class", id => $$.generateClass(CLASS.legendItem, id))
+			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
+			.style("cursor", "pointer")
+			.on("click", id => {
+				if (isFunction(config.legend_item_onclick)) {
+					config.legend_item_onclick.call($$, id);
+				} else {
+					if (d3Event.altKey) {
+						$$.api.hide();
+						$$.api.show(id);
+					} else {
+						$$.api.toggle(id);
+						!isTouch && $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert();
+					}
+				}
+
+				isTouch && $$.hideTooltip();
+			});
+
+		if (!isTouch) {
+			item
+				.on("mouseout", function(id) {
+					if (isFunction(config.legend_item_onout)) {
+						config.legend_item_onout.call($$, id);
+					} else {
+						d3Select(this).classed(CLASS.legendItemFocused, false);
+						$$.api.revert();
+					}
+				})
+				.on("mouseover", function(id) {
+					if (isFunction(config.legend_item_onover)) {
+						config.legend_item_onover.call($$, id);
+					} else {
+						d3Select(this).classed(CLASS.legendItemFocused, true);
+
+						if (!$$.transiting && $$.isTargetToShow(id)) {
+							$$.api.focus(id);
+						}
+					}
+				});
+		}
+	},
+
 	/**
 	 * Update the legend
 	 * @private
@@ -262,7 +359,6 @@ extend(ChartInternal.prototype, {
 		const paddingRight = 10;
 		const posMin = 10;
 		const tileWidth = config.legend_item_tile_width + 5;
-		const isTouch = ($$.inputType === "touch");
 		let maxWidth = 0;
 		let maxHeight = 0;
 		let xForLegend;
@@ -389,42 +485,9 @@ extend(ChartInternal.prototype, {
 		const l = $$.legend.selectAll(`.${CLASS.legendItem}`)
 			.data(targetIdz)
 			.enter()
-			.append("g")
-			.attr("class", id => $$.generateClass(CLASS.legendItem, id))
-			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
-			.style("cursor", "pointer")
-			.on(isTouch ? "touchstart" : "click", id => {
-				if (config.legend_item_onclick) {
-					config.legend_item_onclick.call($$, id);
-				} else {
-					if (d3Event.altKey) {
-						$$.api.hide();
-						$$.api.show(id);
-					} else {
-						$$.api.toggle(id);
-						$$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert();
-					}
-				}
-				isTouch && $$.hideTooltip();
-			})
-			.on(isTouch ? undefined : "mouseover", function(id) {
-				if (config.legend_item_onover) {
-					config.legend_item_onover.call($$, id);
-				} else {
-					d3Select(this).classed(CLASS.legendItemFocused, true);
-					if (!$$.transiting && $$.isTargetToShow(id)) {
-						$$.api.focus(id);
-					}
-				}
-			})
-			.on(isTouch ? "touchend" : "mouseout", function(id) {
-				if (config.legend_item_onout) {
-					config.legend_item_onout.call($$, id);
-				} else {
-					d3Select(this).classed(CLASS.legendItemFocused, false);
-					$$.api.revert();
-				}
-			});
+			.append("g");
+
+		$$.setLegendItem(l);
 
 		l.append("text")
 			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id))
@@ -511,5 +574,5 @@ extend(ChartInternal.prototype, {
 		// Update g positions
 		$$.transformAll(withTransitionForTransform, transitions);
 		$$.legendHasRendered = true;
-	},
+	}
 });

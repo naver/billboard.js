@@ -970,6 +970,11 @@ export default class Options {
 			 * @property {Boolean} [legend.show=true] Show or hide legend.
 			 * @property {Boolean} [legend.hide=false] Hide legend
 			 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
+			 * @property {String|HTMLElement} [legend.template.bindto=undefined] Template element to bind to.
+			 * @property {String} [legend.template.html=undefined] Template html string.<br>
+			 *      Inside of template string, the 'color' and 'data name' can be placed using template-like syntax string:
+			 *      - {=COLOR}: data color value
+			 *      - {=NAME}: data name value
 			 * @property {String} [legend.position=bottom] Change the position of legend.<br>
 			 *  Available values are: `bottom`, `right` and `inset` are supported.
 			 * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
@@ -997,13 +1002,21 @@ export default class Options {
 			 *          y: 10,
 			 *          step: 2
 			 *      },
-			 *      onclick: function(id) { ... },
-			 *      onover: function(id) { ... },
-			 *      onout: function(id) { ... }
+			 *      item: {
+			 *          onclick: function(id) { ... },
+			 *          onover: function(id) { ... },
+			 *          onout: function(id) { ... }
+			 *      },
+			 *      template: {
+			 *          bindto: "#legend",   // <ul id='legend'></ul>
+			 *          template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"  // will be as: <li style='background-color:#1f77b4'>data1</li>
+			 *      }
 			 *  }
 			 */
 			legend_show: true,
 			legend_hide: false,
+			legend_template_bindto: undefined,
+			legend_template_html: undefined,
 			legend_position: "bottom",
 			legend_inset_anchor: "top-left",
 			legend_inset_x: 10,
@@ -1012,6 +1025,8 @@ export default class Options {
 			legend_item_onclick: undefined,
 			legend_item_onover: undefined,
 			legend_item_onout: undefined,
+
+			// @TODO add api doc
 			legend_equally: false,
 			legend_padding: 0,
 			legend_item_tile_width: 10,

@@ -59,8 +59,7 @@ extend(Chart.prototype, {
 				targets.style("opacity", null).style("opacity", "0");
 			});
 
-		options.withLegend &&
-		$$.hideLegend(targetIds);
+		options.withLegend && $$.hideLegend(targetIds);
 
 		$$.redraw({
 			withUpdateOrgXDomain: true,
