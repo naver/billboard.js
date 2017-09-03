@@ -981,9 +981,13 @@ export default class Options {
 			 *      - bottom-right
 			 *  x and y set the position of the legend based on the anchor.<br>
 			 *  step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
+			 * @property {Boolean} [legend.equally=false] Set to all items have same width size.
+			 * @property {Boolean} [legend.padding=0] Set padding value
 			 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
 			 * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
 			 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+			 * @property {Number} [legend.item.tile.width=10] Set width of item tile element
+			 * @property {Number} [legend.item.tile.height=10] Set height of item tile element
 			 * @example
 			 *  legend: {
 			 *      show: true,
@@ -997,9 +1001,19 @@ export default class Options {
 			 *          y: 10,
 			 *          step: 2
 			 *      },
-			 *      onclick: function(id) { ... },
-			 *      onover: function(id) { ... },
-			 *      onout: function(id) { ... }
+             *      equally: false,
+             *      padding: 10,
+             *      item: {
+			 *          onclick: function(id) { ... },
+			 *          onover: function(id) { ... },
+			 *          onout: function(id) { ... },
+			 *
+			 *          // set tile's size
+			 *          tile: {
+			 *              width: 20,
+			 *              height: 15
+			 *          }
+			 *      }
 			 *  }
 			 */
 			legend_show: true,
