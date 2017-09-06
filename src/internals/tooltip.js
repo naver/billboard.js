@@ -5,7 +5,7 @@
 import {mouse as d3Mouse} from "d3";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isValue, sanitise, isString} from "./util";
+import {extend, isValue, sanitise, isString, isFunction} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -46,6 +46,7 @@ extend(ChartInternal.prototype, {
 				.style("display", "block");
 		}
 	},
+
 	/**
 	 * Returns the tooltip content(HTML string)
 	 * @private
@@ -61,64 +62,78 @@ extend(ChartInternal.prototype, {
 		const titleFormat = config.tooltip_format_title || defaultTitleFormat;
 		const nameFormat = config.tooltip_format_name || (name => name);
 		const valueFormat = config.tooltip_format_value || defaultValueFormat;
-		const orderAsc = $$.isOrderAsc();
+		const order = config.tooltip_order;
 		let text;
-		let i;
 		let title;
 		let value;
 		let name;
 		let bgcolor;
 
-		if (config.data_groups.length === 0) {
-			d.sort((a, b) => {
-				const v1 = a ? a.value : null;
-				const v2 = b ? b.value : null;
-
-				return orderAsc ? v1 - v2 : v2 - v1;
-			});
-		} else {
-			const ids = $$.orderTargets($$.data.targets).map(i2 => i2.id);
+		if (order === null && config.data_groups.length) {
+			// for stacked data, order should aligned with the visually displayed data
+			const ids = $$.orderTargets($$.data.targets)
+				.map(i2 => i2.id)
+				.reverse();
 
 			d.sort((a, b) => {
 				let v1 = a ? a.value : null;
 				let v2 = b ? b.value : null;
 
 				if (v1 > 0 && v2 > 0) {
-					v1 = a ? ids.indexOf(a.id) : null;
-					v2 = b ? ids.indexOf(b.id) : null;
+					v1 = a.id ? ids.indexOf(a.id) : null;
+					v2 = b.id ? ids.indexOf(b.id) : null;
 				}
-				return orderAsc ? v1 - v2 : v2 - v1;
+
+				return v1 - v2;
 			});
+		} else if (/^(asc|desc)$/.test(order)) {
+			const isAscending = order === "asc";
+
+			d.sort((a, b) => {
+				const v1 = a ? a.value : null;
+				const v2 = b ? b.value : null;
+
+				return isAscending ? v1 - v2 : v2 - v1;
+			});
+		} else if (isFunction(order)) {
+			d.sort(order);
 		}
 
-		for (i = 0; i < d.length; i++) {
-			if (!(d[i] && (d[i].value || d[i].value === 0))) {
+		for (let i = 0, row, len = d.length; i < len; i++) {
+			if (!(
+				(row = d[i]) &&
+				(row.value || row.value === 0)
+			)) {
 				continue;
 			}
 
 			if (!text) {
-				title = sanitise(titleFormat ? titleFormat(d[i].x) : d[i].x);
+				title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
 				text = (title || title === 0 ? `<tr><th colspan="2">${title}</th></tr>` : "");
 				text = `<table class="${$$.CLASS.tooltip}">${text}`;
 			}
 
-			value = sanitise(valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index, d));
+			value = sanitise(valueFormat(row.value, row.ratio, row.id, row.index, d));
 
 			if (value !== undefined) {
 				// Skip elements when their name is set to null
-				if (d[i].name === null) { continue; }
-				name = sanitise(nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index));
-				bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id);
+				if (row.name === null) {
+					continue;
+				}
 
-				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(d[i].id)}">` +
-					`<td class="name"><span style="background-color:${bgcolor}"></span>${name}</td>` +
-					`<td class="value">${value}</td>` +
-					`</tr>`;
+				name = sanitise(nameFormat(row.name, row.ratio, row.id, row.index));
+				bgcolor = $$.levelColor ? $$.levelColor(row.value) : color(row.id);
+
+				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}">
+							<td class="name"><span style="background-color:${bgcolor}"></span>${name}</td>
+							<td class="value">${value}</td>
+						</tr>`;
 			}
 		}
 
 		return `${text}</table>`;
 	},
+
 	/**
 	 * Returns the position of the tooltip
 	 * @private
@@ -179,6 +194,7 @@ extend(ChartInternal.prototype, {
 			left: tooltipLeft
 		};
 	},
+
 	/**
 	 * Show the tooltip
 	 * @private
@@ -216,11 +232,12 @@ extend(ChartInternal.prototype, {
 			.style("top", `${position.top}px`)
 			.style("left", `${position.left}px`);
 	},
+
 	/**
 	 * Hide the tooltip
 	 * @private
 	 */
 	hideTooltip() {
 		this.tooltip.style("display", "none");
-	},
+	}
 });
