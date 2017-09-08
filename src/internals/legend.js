@@ -41,6 +41,7 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Update legend using template option
+	 * @private
 	 */
 	updateLegendTemplate() {
 		const $$ = this;
