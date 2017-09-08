@@ -970,9 +970,9 @@ export default class Options {
 			 * @property {Boolean} [legend.show=true] Show or hide legend.
 			 * @property {Boolean} [legend.hide=false] Hide legend
 			 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
-			 * @property {String|HTMLElement} [legend.template.bindto=undefined] Template element to bind to.
-			 * @property {String} [legend.template.html=undefined] Template html string.<br>
-			 *      Inside of template string, the 'color' and 'data name' can be placed using template-like syntax string:
+			 * @property {String|HTMLElement} [legend.contents.bindto=undefined] Template element to bind to.
+			 * @property {String|Function} [legend.contents.template=undefined] Template html string.<br>
+			 *      If set as string, within template string the 'color' and 'data name' can be placed using template-like syntax string:
 			 *      - {=COLOR}: data color value
 			 *      - {=NAME}: data name value
 			 * @property {String} [legend.position=bottom] Change the position of legend.<br>
@@ -999,9 +999,19 @@ export default class Options {
 			 *      hide: true,
 			 *      //or hide: "data1"
              *      //or hide: ["data1", "data2"]
-			 *      template: {
+			 *      contents: {
 			 *          bindto: "#legend",   // <ul id='legend'></ul>
-			 *          template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"  // will be as: <li style='background-color:#1f77b4'>data1</li>
+			 *
+			 *          // will be as: <li style='background-color:#1f77b4'>data1</li>
+			 *          template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"
+			 *
+			 *          // or using function
+			 *          template: function(name, color) {
+			 *               // if you want omit some legend, return falsy value
+			 *               if (name !== "data1") {
+			 *                    return "<li style='background-color:"+ color +">"+ name +"</li>";
+			 *               }
+			 *          }
 			 *      },
              *      position: "bottom",  // bottom, right, inset
 			 *      inset: {
@@ -1027,6 +1037,8 @@ export default class Options {
 			 */
 			legend_show: true,
 			legend_hide: false,
+			legend_contents_bindto: undefined,
+			legend_contents_template: undefined,
 			legend_position: "bottom",
 			legend_inset_anchor: "top-left",
 			legend_inset_x: 10,

@@ -24,7 +24,7 @@ extend(ChartInternal.prototype, {
 		$$.legend = $$.svg.append("g");
 
 		if (config.legend_show) {
-			if (config.legend_template_bindto && config.legend_template_html) {
+			if (config.legend_contents_bindto && config.legend_contents_template) {
 				$$.updateLegendTemplate();
 			} else {
 				$$.legend.attr("transform", $$.getTranslate("legend"));
@@ -45,22 +45,30 @@ extend(ChartInternal.prototype, {
 	updateLegendTemplate() {
 		const $$ = this;
 		const config = $$.config;
-		const wrapper = d3Select(config.legend_template_bindto);
-		const template = config.legend_template_html;
+		const wrapper = d3Select(config.legend_contents_bindto);
+		const template = config.legend_contents_template;
 
 		if (!wrapper.empty()) {
 			const targets = $$.mapToIds($$.data.targets);
+			const ids = [];
 			let html = "";
 
 			targets.forEach(v => {
-				html += template
-					.replace(/{=COLOR}/g, $$.color(v))
-					.replace(/{=NAME}/g, v);
+				const content = isFunction(template) ?
+					template.call($$, v, $$.color(v)) :
+					template
+						.replace(/{=COLOR}/g, $$.color(v))
+						.replace(/{=NAME}/g, v);
+
+				if (content) {
+					ids.push(v);
+					html += content;
+				}
 			});
 
 			const legendItem = wrapper.html(html)
 				.selectAll(function() { return this.childNodes; })
-				.data(targets);
+				.data(ids);
 
 			$$.setLegendItem(legendItem);
 		}
