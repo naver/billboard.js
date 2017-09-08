@@ -297,20 +297,21 @@ describe("LEGEND", () => {
 					}
 				},
 				legend: {
-					template: {
+					contents: {
 						bindto: "#legend",
-						html: "<li style='background-color:{=COLOR}'>{=NAME}</li>"
+						template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"
 					}
 				}
 			};
 		});
 
-		it("check for legend template setting", () => {
+		it("check for legend template setting with template string", () => {
 			const legend = d3.select("#legend");
+			const items = legend.selectAll(`.${CLASS.legendItem}`);
 
 			expect(legend.html()).not.to.be.null;
 
-			legend.selectAll(`.${CLASS.legendItem}`).each(function(v) {
+			items.each(function(v) {
 				const item = d3.select(this);
 
 				expect(item.html()).to.be.equal(v);
@@ -319,6 +320,35 @@ describe("LEGEND", () => {
 				// check for event bind
 				expect(item.on("click")).not.be.null;
 			});
+
+			expect(items.size()).to.be.equal(2);
+		});
+
+		it("set options legend.content.template as function", () => {
+			args.legend.contents.template = function(name, color) {
+				if (name !== "data1") {
+					return `<li style='background-color:${color}'>${name}</li>`;
+				}
+			}
+		});
+
+		it("check for legend template setting with template function callback", () => {
+			const legend = d3.select("#legend");
+			const items = legend.selectAll(`.${CLASS.legendItem}`);
+
+			expect(legend.html()).not.to.be.null;
+
+			items.each(function(v) {
+				const item = d3.select(this);
+
+				expect(item.html()).to.be.equal(v);
+				expect(item.style("background-color")).to.be.equal(chart.color(v));
+
+				// check for event bind
+				expect(item.on("click")).not.be.null;
+			});
+
+			expect(items.size()).to.be.equal(1);
 		});
 	});
 });
