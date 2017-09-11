@@ -1,4 +1,4 @@
-# billboard.js
+<img src=https://naver.github.io/billboard.js/img/billboard.js.svg width=350 alt=billboard.js>
 
 [![version][badge-version]][link-version] [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![Greenkeeper][badge-gk]][link-gk]
 
