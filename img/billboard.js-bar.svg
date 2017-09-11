@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1"
+    xmlns="http://www.w3.org/2000/svg"
+    xmlns:xlink="http://www.w3.org/1999/xlink"
+    x="0px" y="0px"
+    viewBox="37.9 44.1 11.7 17"
+    xml:space="preserve">
+    <style type="text/css">
+    rect {
+        fill-opacity:1;
+        stroke-width:0.10;
+    }
+
+    path {
+        fill:none;
+        stroke:#000;
+        stroke-width:0.3px;
+        stroke-linecap:butt;
+        stroke-linejoin:miter;
+        stroke-opacity:1;
+    }
+    </style>
+    <g transform="matrix(0.8,0,0,0.8,21.1,5.6)">
+        <rect style="fill:#2acefd" x="23.5" y="54.65" width="3.3" height="11.8" />
+        <rect style="fill:#f87070" x="26.65" y="50.75" width="3.3" height="15.8" />
+        <rect style="fill:#1f77b4" x="29.95" y="50.75" width="3.3" height="15.8" />
+        <path d="M 22.75,66.6 H 33.9" />
+    </g>
+</svg>
