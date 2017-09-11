@@ -138,14 +138,7 @@ footer p {
 }
 
 .navbar-header > .navbar-brand {
-    font-family: Raleway,Arial,sans-serif;
-    font-weight: bold;
-    text-shadow: #00a9cc 1px 1px, #00a9cc 2px 2px;
-    color: #fff;
     padding: 15px;
-    -webkit-transition: padding .2s ease-in;
-    -moz-transition: padding .2s ease-in;
-    transition: padding .2s ease-in;
 }
 
 .navbar-header > .navbar-brand:hover,
@@ -657,4 +650,8 @@ code from : https://codepen.io/cesar2535/pen/ByYXpN
     100% {
         stroke-dashoffset: -400;
     }
+}
+
+.logo {
+    width: 120px;
 }
