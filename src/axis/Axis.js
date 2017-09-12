@@ -67,10 +67,11 @@ export default class Axis {
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
 			withoutTransition,
+			orgXScale: $$.x
 		};
 
 		const axis = bbAxis(axisParams)
-			.scale(scale)
+			.scale($$.zoomScale || scale)
 			.orient(orient);
 
 		let newTickValues = tickValues;
@@ -595,11 +596,12 @@ export default class Axis {
 
 	redraw(transitions, isHidden) {
 		const $$ = this.owner;
+		const opacity = isHidden ? "0" : "1";
 
-		$$.axes.x.style("opacity", isHidden ? "0" : "1");
-		$$.axes.y.style("opacity", isHidden ? "0" : "1");
-		$$.axes.y2.style("opacity", isHidden ? "0" : "1");
-		$$.axes.subx.style("opacity", isHidden ? "0" : "1");
+		$$.axes.x.style("opacity", opacity);
+		$$.axes.y.style("opacity", opacity);
+		$$.axes.y2.style("opacity", opacity);
+		$$.axes.subx.style("opacity", opacity);
 
 		transitions.axisX.call($$.xAxis);
 		transitions.axisY.call($$.yAxis);

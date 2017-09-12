@@ -511,5 +511,5 @@ extend(ChartInternal.prototype, {
 		// Update g positions
 		$$.transformAll(withTransitionForTransform, transitions);
 		$$.legendHasRendered = true;
-	},
+	}
 });
