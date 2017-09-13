@@ -10,7 +10,7 @@ import {
 } from "d3";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, diffDomain} from "../internals/util";
+import {extend, diffDomain, isFunction} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -46,7 +46,8 @@ extend(ChartInternal.prototype, {
 
 				$$.redrawEventRect();
 				$$.updateZoom();
-				config.zoom_onzoomend.call($$.api, $$.x.orgDomain());
+
+				isFunction(config.zoom_onzoomend) && config.zoom_onzoomend.call($$.api, $$.x.orgDomain());
 			});
 
 		$$.zoom.orgScaleExtent = () => {
@@ -60,6 +61,7 @@ extend(ChartInternal.prototype, {
 			const extent = this.orgScaleExtent();
 
 			this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
+
 			return this;
 		};
 
@@ -100,6 +102,18 @@ extend(ChartInternal.prototype, {
 		// 	.call(z)
 		// 	.on("dblclick.zoom", null);
 
+		if ($$.zoomScale) {
+			const range1 = $$.zoomScale.domain()[0];
+			const range2 = $$.x.domain()[0];
+			const delta = 0.015;
+
+			// reset scale when zoom is out as initial
+			if (range1 <= range2 || (range1 - delta) <= range2) {
+				$$.zoomScale = null;
+				$$.xAxis.scale($$.x);
+			}
+		}
+
 		$$.main.select(`.${CLASS.eventRects}`)
 			.call(z)
 			.on("dblclick.zoom", null);
@@ -116,6 +130,7 @@ extend(ChartInternal.prototype, {
 		if (!config.zoom_enabled) {
 			return;
 		}
+
 		const zoom = $$.zoom;
 		const x = $$.x;
 		const event = d3Event;
@@ -149,6 +164,6 @@ extend(ChartInternal.prototype, {
 			$$.cancelClick = true;
 		}
 
-		config.zoom_onzoom.call($$.api, x.orgDomain());
+		isFunction(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, x.orgDomain());
 	},
 });

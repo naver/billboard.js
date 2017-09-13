@@ -568,6 +568,7 @@ export default class ChartInternal {
 
 		if (targetsToShow.length) {
 			$$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain);
+
 			if (!config.axis_x_tick_values) {
 				tickValues = $$.axis.updateXAxisTickValues(targetsToShow);
 			}
@@ -904,11 +905,15 @@ export default class ChartInternal {
 	}
 
 	xx(d) {
-		if (this.config.zoom_enabled && this.zoomScale) {
-			return d ? this.zoomScale(d.x) : null;
-		} else {
-			return d ? this.x(d.x) : null;
+		const x = d ? d.x : null;
+		let scale = null;
+
+		if (x) {
+			scale = this.config.zoom_enabled && this.zoomScale ?
+				this.zoomScale(x) : this.x(x);
 		}
+
+		return scale;
 	}
 
 	xv(d) {
@@ -1134,26 +1139,6 @@ export default class ChartInternal {
 		});
 
 		addEvent(window, "resize", $$.resizeFunction);
-
-		// if (window.attachEvent) {
-		// 	window.attachEvent("onresize", $$.resizeFunction);
-		// } else if (window.addEventListener) {
-		// 	window.addEventListener("resize", $$.resizeFunction, false);
-		// } else {
-		// 	// fallback to this, if this is a very old browser
-		// 	let wrapper = window.onresize;
-		// 	if (!wrapper) {
-		// 		// create a wrapper that will call all charts
-		// 		wrapper = $$.generateResize();
-		// 	} else if (!wrapper.add || !wrapper.remove) {
-		// 		// there is already a handler registered, make sure we call it too
-		// 		wrapper = $$.generateResize();
-		// 		wrapper.add(window.onresize);
-		// 	}
-		// 	// add this graph to the wrapper, we will be removed if the user calls destroy
-		// 	wrapper.add($$.resizeFunction);
-		// 	window.onresize = wrapper;
-		// }
 	}
 
 	generateResize() {

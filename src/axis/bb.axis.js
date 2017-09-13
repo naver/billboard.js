@@ -157,7 +157,9 @@ export default function(params = {}) {
 			let tickX;
 			let tickY;
 
-			const range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent(scale.range());
+			const range = scale.rangeExtent ?
+				scale.rangeExtent() :
+				scaleExtent((params.orgXScale || scale).range());
 
 			// update selection - data join
 			const path = g.selectAll(".domain").data([0]);
