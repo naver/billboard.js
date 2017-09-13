@@ -20,10 +20,10 @@
         stroke-opacity:1;
     }
     </style>
-    <g transform="matrix(0.8,0,0,0.8,21.1,5.6)">
-        <rect style="fill:#2acefd" x="23.5" y="54.65" width="3.3" height="11.8" />
-        <rect style="fill:#f87070" x="26.65" y="50.75" width="3.3" height="15.8" />
-        <rect style="fill:#1f77b4" x="29.95" y="50.75" width="3.3" height="15.8" />
+    <g aria-label="billboard.js" transform="matrix(0.8,0,0,0.8,21.1,5.6)">
+        <rect style="fill:#2acefd" x="23.37" y="54.65" width="3.3" height="11.8" />
+        <rect style="fill:#f87070" x="26.65" y="50.75" width="3.3" height="15.7" />
+        <rect style="fill:#1f77b4" x="29.95" y="50.75" width="3.3" height="15.7" />
         <path d="M 22.75,66.6 H 33.9" />
     </g>
 </svg>
