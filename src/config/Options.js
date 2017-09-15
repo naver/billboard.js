@@ -991,6 +991,11 @@ export default class Options {
 			 * @property {Boolean} [legend.show=true] Show or hide legend.
 			 * @property {Boolean} [legend.hide=false] Hide legend
 			 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
+			 * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
+			 * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
+			 *      If set string value, within template the 'color' and 'title' can be replaced using template-like syntax string:
+			 *      - {=COLOR}: data color value
+			 *      - {=TITLE}: data title value
 			 * @property {String} [legend.position=bottom] Change the position of legend.<br>
 			 *  Available values are: `bottom`, `right` and `inset` are supported.
 			 * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
@@ -1015,6 +1020,20 @@ export default class Options {
 			 *      hide: true,
 			 *      //or hide: "data1"
              *      //or hide: ["data1", "data2"]
+			 *      contents: {
+			 *          bindto: "#legend",   // <ul id='legend'></ul>
+			 *
+			 *          // will be as: <li style='background-color:#1f77b4'>data1</li>
+			 *          template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
+			 *
+			 *          // or using function
+			 *          template: function(title, color) {
+			 *               // if you want omit some legend, return falsy value
+			 *               if (title !== "data1") {
+			 *                    return "<li style='background-color:"+ color +">"+ title +"</li>";
+			 *               }
+			 *          }
+			 *      },
              *      position: "bottom",  // bottom, right, inset
 			 *      inset: {
 			 *          anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right
@@ -1039,6 +1058,8 @@ export default class Options {
 			 */
 			legend_show: true,
 			legend_hide: false,
+			legend_contents_bindto: undefined,
+			legend_contents_template: undefined,
 			legend_position: "bottom",
 			legend_inset_anchor: "top-left",
 			legend_inset_x: 10,

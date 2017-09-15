@@ -37,7 +37,7 @@ const generate = args => {
 			args.bindto = "#chart";
 		}
 
-		initDom(args);
+		initDom(args.bindto);
 
 		// when touch param is set, make to be 'touch' input mode
 		if (args.interaction && args.interaction.inputType && args.interaction.inputType.touch) {
