@@ -59,7 +59,7 @@ extend(ChartInternal.prototype, {
 					template.call($$, v, $$.color(v)) :
 					template
 						.replace(/{=COLOR}/g, $$.color(v))
-						.replace(/{=NAME}/g, v);
+						.replace(/{=TITLE}/g, v);
 
 				if (content) {
 					ids.push(v);

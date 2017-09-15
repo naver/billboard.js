@@ -299,7 +299,7 @@ describe("LEGEND", () => {
 				legend: {
 					contents: {
 						bindto: "#legend",
-						template: "<li style='background-color:{=COLOR}'>{=NAME}</li>"
+						template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
 					}
 				}
 			};
@@ -325,9 +325,9 @@ describe("LEGEND", () => {
 		});
 
 		it("set options legend.content.template as function", () => {
-			args.legend.contents.template = function(name, color) {
-				if (name !== "data1") {
-					return `<li style='background-color:${color}'>${name}</li>`;
+			args.legend.contents.template = function(title, color) {
+				if (title !== "data1") {
+					return `<li style='background-color:${color}'>${title}</li>`;
 				}
 			}
 		});
