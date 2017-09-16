@@ -608,10 +608,14 @@ extend(ChartInternal.prototype, {
 			}
 		}
 
-		main.selectAll(`.${CLASS.chartArc}`)
+		const gaugeTextValue = main.selectAll(`.${CLASS.chartArc}`)
 			.select("text")
 			.style("opacity", "0")
-			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : ""))
+			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : ""));
+
+		config.gauge_fullCircle && gaugeTextValue.attr("dy", `${Math.round($$.radius / 14)}`);
+
+		gaugeTextValue
 			.text($$.textForArcLabel.bind($$))
 			.attr("transform", $$.transformForArcLabel.bind($$))
 			.style("font-size", d => ($$.isGaugeType(d.data) ? `${Math.round($$.radius / 5)}px` : ""))
@@ -623,48 +627,63 @@ extend(ChartInternal.prototype, {
 			.style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0");
 
 		if ($$.hasType("gauge")) {
+			const endAngle = (config.gauge_fullCircle ? -4 : -1) * config.gauge_startingAngle;
+
 			$$.arcs.select(`.${CLASS.chartArcsBackground}`)
 				.attr("d", () => {
 					const d = {
 						data: [{value: config.gauge_max}],
 						startAngle: config.gauge_startingAngle,
-						endAngle: -1 * config.gauge_startingAngle
+						endAngle: endAngle
 					};
 
 					return $$.getArc(d, true, true);
 				});
+
 			$$.arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
 				.attr("dy", ".75em")
 				.text(config.gauge_label_show ? config.gauge_units : "");
-			$$.arcs.select(`.${CLASS.chartArcsGaugeMin}`)
-				.attr("dx", `${-1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)))}px`)
-				.attr("dy", "1.2em")
-				.text(config.gauge_label_show ? $$.textForGaugeMinMax(config.gauge_min, false) : "");
-			$$.arcs.select(`.${CLASS.chartArcsGaugeMax}`)
-				.attr("dx", `${$$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2))}px`)
-				.attr("dy", "1.2em")
-				.text(config.gauge_label_show ? $$.textForGaugeMinMax(config.gauge_max, true) : "");
+
+			if (config.gauge_label_show) {
+				$$.arcs.select(`.${CLASS.chartArcsGaugeMin}`)
+					.attr("dx", `${-1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)))}px`)
+					.attr("dy", "1.2em")
+					.text($$.textForGaugeMinMax(config.gauge_min, false));
+
+				// show max text when isn't fullCircle
+				!config.gauge_fullCircle && $$.arcs.select(`.${CLASS.chartArcsGaugeMax}`)
+					.attr("dx", `${$$.innerRadius + (($$.radius - $$.innerRadius) / 2)}px`)
+					.attr("dy", "1.2em")
+					.text($$.textForGaugeMinMax(config.gauge_max, true));
+			}
 		}
 	},
 
 	initGauge() {
-		const arcs = this.arcs;
+		const $$ = this;
+		const config = $$.config;
+		const arcs = $$.arcs;
 
-		if (this.hasType("gauge")) {
+		if ($$.hasType("gauge")) {
 			arcs.append("path")
 				.attr("class", CLASS.chartArcsBackground);
+
 			arcs.append("text")
 				.attr("class", CLASS.chartArcsGaugeUnit)
 				.style("text-anchor", "middle")
 				.style("pointer-events", "none");
-			arcs.append("text")
-				.attr("class", CLASS.chartArcsGaugeMin)
-				.style("text-anchor", "middle")
-				.style("pointer-events", "none");
-			arcs.append("text")
-				.attr("class", CLASS.chartArcsGaugeMax)
-				.style("text-anchor", "middle")
-				.style("pointer-events", "none");
+
+			if (config.gauge_label_show) {
+				arcs.append("text")
+					.attr("class", CLASS.chartArcsGaugeMin)
+					.style("text-anchor", "middle")
+					.style("pointer-events", "none");
+
+				!config.gauge_fullCircle && arcs.append("text")
+					.attr("class", CLASS.chartArcsGaugeMax)
+					.style("text-anchor", "middle")
+					.style("pointer-events", "none");
+			}
 		}
 	},
 
