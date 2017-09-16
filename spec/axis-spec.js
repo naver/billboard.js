@@ -77,7 +77,7 @@ describe("AXIS", function() {
 	describe("axis.y.tick.values", () => {
 		const values = [100, 500];
 
-		before(() => {
+		it("set options axis.y.tick.values", () => {
 			args.axis.y.tick.values = values;
 		});
 
