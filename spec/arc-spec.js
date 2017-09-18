@@ -154,8 +154,7 @@ describe("ARC", () => {
 					width: 10,
 					max: 10,
 					expand: true,
-					fullCircle: true,
-					startingAngle: Math.PI/2
+					fullCircle: true
 				},
 				data: {
 					columns: [
@@ -168,13 +167,15 @@ describe("ARC", () => {
 			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
 			const data = chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data`)
 					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data.${CLASS.arcs}.${CLASS.arcs}-data`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}${CLASS.arc}-data`);
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data`);
 
 			setTimeout(() => {
 				// This test has bee updated to make tests pass. @TODO double-check this test is accurate.
 				expect(data.attr("d")).to.match(/M-221.*?,-2\..+A221.*?,221.*?,0,1,1,-68.*?,210.*?L-65.*?,201.*?A211.*?,211.*?,0,1,0,-211.*?,-2.*?Z/);
+				done();
 			}, 500);
 		});
+
 
 		it("should show custom min/max gauge labels", () => {
 			const chart = util.generate({
@@ -208,7 +209,7 @@ describe("ARC", () => {
 			expect(max.text()).to.equal("Max: 100%");
 		});
 
-		it("should not show gauge labels", done => {
+		it("should not show gauge labels", () => {
 			const chart = util.generate({
 				gauge: {
 					label: {
@@ -231,7 +232,7 @@ describe("ARC", () => {
 			expect(max.empty()).to.be.true;
 		});
 
-		it("check for fullCircle option", done => {
+		it("check for fullCircle option", () => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
