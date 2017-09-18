@@ -905,15 +905,11 @@ export default class ChartInternal {
 	}
 
 	xx(d) {
-		const x = d ? d.x : null;
-		let scale = null;
-
-		if (x) {
-			scale = this.config.zoom_enabled && this.zoomScale ?
-				this.zoomScale(x) : this.x(x);
+		if (this.config.zoom_enabled && this.zoomScale) {
+			return d ? this.zoomScale(d.x) : null;
+		} else {
+			return d ? this.x(d.x) : null;
 		}
-
-		return scale;
 	}
 
 	xv(d) {
