@@ -228,34 +228,7 @@ extend(ChartInternal.prototype, {
 	 * @return {Array} filtered array data
 	 */
 	getFilteredDataByValue(data, value) {
-		const $$ = this;
-
-		return data.filter(t => {
-			if (t.value === value) {
-				// select element. It needs schedule by setTimeout to avoid collision with d3's transitions tween
-				setTimeout(() => (t.element = $$.getElementByDataIndex(t)), 0);
-
-				return true;
-			}
-
-			return false;
-		});
-	},
-
-	/**
-	 * Get element by data index
-	 * @private
-	 * @param {Object} data
-	 * @return {SVGElement|null}
-	 */
-	getElementByDataIndex(data) {
-		const isArcType = this.isTypeOf(data.id, ["pie", "gauge", "donut"]);
-
-		// ex. selector for Arc types: .bb-target-data1 .bb-shape-1 / others: .bb-target-data1 .bb-arc-data1
-		const selector = `.${CLASS.target}-${data.id} .${isArcType ? CLASS.arc : CLASS.shape}-${isArcType ? data.id : data.index}`;
-		const element = d3Select(selector);
-
-		return element.empty() ? null : element.node();
+		return data.filter(t => t.value === value);
 	},
 
 	getMaxDataCount() {
