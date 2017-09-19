@@ -1467,11 +1467,6 @@ describe("DATA", () => {
 				expect(minData[0].value).to.be.equal(minData[1].value);
 				expect(minData[0].id).to.not.be.equal(minData[1].id);
 
-				expect(minData[0].element.tagName).to.be.equal("circle");
-				expect(minData[1].element.tagName).to.be.equal("circle");
-				expect(minData[0].element.getAttribute("cy")).to.be.equal(minData[1].element.getAttribute("cy"));
-				expect(+minData[0].element.getAttribute("cy")).to.be.closeTo(390, 5);
-
 				done();
 			}, 100);
 		});
@@ -1483,8 +1478,6 @@ describe("DATA", () => {
 				expect(maxData[0].value).to.be.equal(400);
 				expect(maxData[0].id).to.be.equal("data1");
 
-				expect(maxData[0].element.tagName).to.be.equal("circle");
-				expect(+maxData[0].element.getAttribute("cy")).to.be.closeTo(36, 5);
 				done();
 			}, 100);
 		});

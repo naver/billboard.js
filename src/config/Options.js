@@ -793,7 +793,7 @@ export default class Options {
 			 * @default undefined
 			 * @example
 			 *     onmin: function(data) {
-			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3, element: circle}, ... ]
+			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
 		     *        ...
 			 *    }
 			 */
@@ -807,7 +807,7 @@ export default class Options {
 			 * @default undefined
 			 * @example
 			 *     onmax: function(data) {
-			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3, element: circle}, ... ]
+			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
 		     *        ...
 			 *    }
 			 */
