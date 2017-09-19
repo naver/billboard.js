@@ -6,8 +6,7 @@ import {
 	set as d3Set,
 	min as d3Min,
 	max as d3Max,
-	merge as d3Merge,
-	select as d3Select
+	merge as d3Merge
 } from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
