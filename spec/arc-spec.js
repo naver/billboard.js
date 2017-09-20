@@ -20,17 +20,17 @@ describe("ARC", () => {
 		});
 
 		it("should have correct classes", () => {
-			const chartArc = chart.internal.main.select(".bb-chart-arcs");
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
 			const arcs = {
-				data1: chartArc.select(".bb-chart-arc.bb-target.bb-target-data1")
-					.select("g.bb-shapes.bb-shapes-data1.bb-arcs.bb-arcs-data1")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data1"),
-				data2: chartArc.select(".bb-chart-arc.bb-target.bb-target-data2")
-					.select("g.bb-shapes.bb-shapes-data2.bb-arcs.bb-arcs-data2")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data2"),
-				data3: chartArc.select(".bb-chart-arc.bb-target.bb-target-data3")
-					.select("g.bb-shapes.bb-shapes-data3.bb-arcs.bb-arcs-data3")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data3")
+				data1: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data1`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data1.${CLASS.arcs}.${CLASS.arcs}-data1`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data1`),
+				data2: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data2`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data2.${CLASS.arcs}.${CLASS.arcs}-data2`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data2`),
+				data3: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data3`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data3.${CLASS.arcs}.${CLASS.arcs}-data3`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data3`)
 			};
 
 			expect(arcs.data1.size()).to.be.equal(1);
@@ -41,9 +41,9 @@ describe("ARC", () => {
 		it("should have correct d", () => {
 			const main = chart.internal.main;
 
-			expect(main.select(".bb-arc-data1").attr("d")).to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
-			expect(main.select(".bb-arc-data2").attr("d")).to.match(/M1\..+,-211\..+A211\..+,211\..+,0,0,1,1\..+,211\..+L0,0Z/);
-			expect(main.select(".bb-arc-data3").attr("d")).to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
+			expect(main.select(`.${CLASS.arc}-data1`).attr("d")).to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
+			expect(main.select(`.${CLASS.arc}-data2`).attr("d")).to.match(/M1\..+,-211\..+A211\..+,211\..+,0,0,1,1\..+,211\..+L0,0Z/);
+			expect(main.select(`.${CLASS.arc}-data3`).attr("d")).to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
 		});
 
 		it("should have correct d even if data id can be converted to a color", done => {
@@ -59,7 +59,7 @@ describe("ARC", () => {
 			});
 
 			setTimeout(() => {
-				expect(chart.internal.main.select(".bb-arc-black").attr("d"))
+				expect(chart.internal.main.select(`.${CLASS.arc}-black`).attr("d"))
 					.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
 
 				done();
@@ -80,17 +80,17 @@ describe("ARC", () => {
 		});
 
 		it("should have correct d attribute", () => {
-			const chartArc = chart.internal.main.select(".bb-chart-arcs");
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
 			const arcs = {
-				data1: chartArc.select(".bb-chart-arc.bb-target.bb-target-data1")
-					.select("g.bb-shapes.bb-shapes-data1.bb-arcs.bb-arcs-data1")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data1"),
-				data2: chartArc.select(".bb-chart-arc.bb-target.bb-target-data2")
-					.select("g.bb-shapes.bb-shapes-data2.bb-arcs.bb-arcs-data2")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data2"),
-				data3: chartArc.select(".bb-chart-arc.bb-target.bb-target-data3")
-					.select("g.bb-shapes.bb-shapes-data3.bb-arcs.bb-arcs-data3")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data3")
+				data1: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data1`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data1.${CLASS.arcs}.${CLASS.arcs}-data1`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data1`),
+				data2: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data2`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data2.${CLASS.arcs}.${CLASS.arcs}-data2`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data2`),
+				data3: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data3`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data3.${CLASS.arcs}.${CLASS.arcs}-data3`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data3`)
 			};
 
 			expect(arcs.data1.attr("d").indexOf("NaN")).to.be.equal(-1);
@@ -135,13 +135,14 @@ describe("ARC", () => {
 				}
 			});
 
-			setTimeout(() => {
-				const chartArc = chart.internal.main.select(".bb-chart-arcs");
-				const data = chartArc.select(".bb-chart-arc.bb-target.bb-target-data")
-						.select("g.bb-shapes.bb-shapes-data.bb-arcs.bb-arcs-data")
-						.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data");
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const data = chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data.${CLASS.arcs}.${CLASS.arcs}-data`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data`);
 
+			setTimeout(() => {
 				expect(data.attr("d")).to.match(/M-304,-3\..+A304,304,0,0,1,245\..+,-178\..+L237\..+,-172\..+A294,294,0,0,0,-294,-3\..+Z/);
+				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
 				done();
 			}, 500);
@@ -159,24 +160,24 @@ describe("ARC", () => {
 					columns: [
 						["data", 8]
 					],
-					type: "gauge",
-					fullCircle: true,
-					startingAngle: Math.PI/2
+					type: "gauge"
 				}
 			});
 
-			const chartArc = chart.internal.main.select(".bb-chart-arcs");
-			const data = chartArc.select(".bb-chart-arc.bb-target.bb-target-data")
-					.select("g.bb-shapes.bb-shapes-data.bb-arcs.bb-arcs-data")
-					.select("path.bb-shape.bb-shape.bb-arc.bb-arc-data");
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const data = chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data`)
+					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data.${CLASS.arcs}.${CLASS.arcs}-data`)
+					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data`);
 
 			setTimeout(() => {
 				// This test has bee updated to make tests pass. @TODO double-check this test is accurate.
 				expect(data.attr("d")).to.match(/M-221.*?,-2\..+A221.*?,221.*?,0,1,1,-68.*?,210.*?L-65.*?,201.*?A211.*?,211.*?,0,1,0,-211.*?,-2.*?Z/);
+				done();
 			}, 500);
 		});
 
-		it("should show custom min/max guage labels", () => {
+
+		it("should show custom min/max gauge labels", () => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -196,18 +197,70 @@ describe("ARC", () => {
 					columns: [
 						["data", 8]
 					],
-					type: "gauge",
-					fullCircle: true,
-					startingAngle: Math.PI/2
+					type: "gauge"
 				}
 			});
 
-			const chartArc = chart.internal.main.select(".bb-chart-arcs");
-			const min = chartArc.select(".bb-chart-arcs-gauge-min");
-			const max = chartArc.select(".bb-chart-arcs-gauge-max");
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
+			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
 
 			expect(min.text()).to.equal("Min: 0%");
 			expect(max.text()).to.equal("Max: 100%");
+		});
+
+		it("should not show gauge labels", () => {
+			const chart = util.generate({
+				gauge: {
+					label: {
+						show: false
+					}
+				},
+				data: {
+					columns: [
+						["data", 75]
+					],
+					type: "gauge"
+				}
+			});
+
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
+			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`)
+
+			expect(min.empty()).to.be.true;
+			expect(max.empty()).to.be.true;
+		});
+
+		it("check for fullCircle option", () => {
+			const chart = util.generate({
+				gauge: {
+					width: 10,
+					max: 10,
+					expand: true,
+					fullCircle: true
+				},
+				data: {
+					columns: [
+						["data", 75]
+					],
+					type: "gauge"
+				}
+			});
+
+			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
+			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`)
+
+			// check if gauge value text is centered
+			expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
+
+			// check background height
+			expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(400);
+
+			// with fullCircle option, only min text is showed
+			expect(min.empty()).to.be.false;
+			expect(max.empty()).to.be.true;
 		});
 	});
 });
