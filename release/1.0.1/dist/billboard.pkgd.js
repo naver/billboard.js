@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.1.0
+ * @version 1.0.1
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3
@@ -93,7 +93,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 
 exports.__esModule = !0;
-exports.isObject = exports.isArray = exports.merge = exports.getRectSegList = exports.removeEvent = exports.addEvent = exports.extend = exports.brushEmpty = exports.getBrushSelection = exports.isEmpty = exports.diffDomain = exports.getPathBox = exports.sanitise = exports.hasValue = exports.isString = exports.getOption = exports.asHalfPixel = exports.isFunction = exports.ceil10 = exports.notEmpty = exports.isBoolean = exports.isUndefined = exports.isDefined = exports.isValue = undefined;
+exports.isObject = exports.isArray = exports.merge = exports.getRectSegList = exports.removeEvent = exports.addEvent = exports.extend = exports.brushEmpty = exports.getBrushSelection = exports.isEmpty = exports.diffDomain = exports.getPathBox = exports.sanitise = exports.hasValue = exports.isString = exports.getOption = exports.asHalfPixel = exports.isFunction = exports.ceil10 = exports.notEmpty = exports.isUndefined = exports.isDefined = exports.isValue = undefined;
 
 var _typeof2 = __webpack_require__(5),
     _typeof3 = _interopRequireDefault(_typeof2),
@@ -110,20 +110,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var isValue = function (v) {
 	return v || v === 0;
 },
-    isFunction = function (v) {
-	return typeof v === "function";
+    isFunction = function (o) {
+	return typeof o === "function";
 },
-    isString = function (v) {
-	return typeof v === "string";
+    isString = function (o) {
+	return typeof o === "string";
 },
     isUndefined = function (v) {
 	return typeof v === "undefined";
 },
     isDefined = function (v) {
 	return typeof v !== "undefined";
-},
-    isBoolean = function (v) {
-	return typeof v === "boolean";
 },
     ceil10 = function (v) {
 	return Math.ceil(v / 10) * 10;
@@ -301,7 +298,6 @@ var isArray = function (arr) {
 exports.isValue = isValue;
 exports.isDefined = isDefined;
 exports.isUndefined = isUndefined;
-exports.isBoolean = isBoolean;
 exports.notEmpty = notEmpty;
 exports.ceil10 = ceil10;
 exports.isFunction = isFunction;
@@ -364,13 +360,9 @@ var ChartInternal = function () {
 	}
 
 	return ChartInternal.prototype.beforeInit = function beforeInit() {
-		var $$ = this,
-		    config = $$.config;
-		(0, _util.isFunction)(config.onbeforeinit) && config.onbeforeinit.call($$);
+		// can do something
 	}, ChartInternal.prototype.afterInit = function afterInit() {
-		var $$ = this,
-		    config = $$.config;
-		(0, _util.isFunction)(config.onafterinit) && config.onafterinit.call($$);
+		// can do something
 	}, ChartInternal.prototype.init = function init() {
 		var $$ = this,
 		    config = $$.config;
@@ -393,19 +385,19 @@ var ChartInternal = function () {
 		var $$ = this,
 		    config = $$.config,
 		    binding = !0;
+		$$.axis = new _Axis2.default($$), $$.initPie && $$.initPie(), $$.initBrush && $$.initBrush(), $$.initZoom && $$.initZoom(), $$.selectChart = config.bindto ? typeof config.bindto.node === "function" ? config.bindto : (0, _d.select)(config.bindto) : (0, _d.selectAll)([]), $$.selectChart.empty() && ($$.selectChart = (0, _d.select)(document.createElement("div")).style("opacity", "0"), $$.observeInserted($$.selectChart), binding = !1), $$.selectChart.html("").classed("bb", !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain((0, _d.extent)($$.getXDomain($$.data.targets))), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain();
 
 
-		if ($$.axis = new _Axis2.default($$), $$.initPie && $$.initPie(), $$.initBrush && $$.initBrush(), $$.initZoom && $$.initZoom(), $$.selectChart = config.bindto ? typeof config.bindto.node === "function" ? config.bindto : (0, _d.select)(config.bindto) : (0, _d.selectAll)([]), $$.selectChart.empty() && ($$.selectChart = (0, _d.select)(document.createElement("div")).style("opacity", "0"), $$.observeInserted($$.selectChart), binding = !1), $$.selectChart.html("").classed("bb", !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain((0, _d.extent)($$.getXDomain($$.data.targets))), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden"), config.interaction_enabled && $$.inputType) {
-			var isTouch = $$.inputType === "touch";
+		// -- Basic Elements --
 
-			$$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
-				return config.onover.call($$);
-			}).on(isTouch ? "touchend" : "mouseleave", function () {
-				return config.onout.call($$);
-			});
-		}
+		var isTouch = $$.inputType === "touch";
 
-		$$.config.svg_classname && $$.svg.attr("class", $$.config.svg_classname);
+		// Define svg
+		$$.svg = $$.selectChart.append("svg").style("overflow", "hidden").on(isTouch ? "touchstart" : "mouseenter", function () {
+			return config.onover.call($$);
+		}).on(isTouch ? "touchend" : "mouseleave", function () {
+			return config.onout.call($$);
+		}), $$.config.svg_classname && $$.svg.attr("class", $$.config.svg_classname);
 
 
 		// Define defs
@@ -422,30 +414,13 @@ var ChartInternal = function () {
 		var main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
 
 		$$.main = main, config.subchart_show && $$.initSubchart && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), main.append("text").attr("class", _classes2.default.text + " " + _classes2.default.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-		.attr("dominant-baseline", "middle"), $$.initRegion(), $$.initGrid(), config.clipPath || $$.axis.init();
-
-
-		// Define g for chart area
-		var g = main.append("g").attr("class", _classes2.default.chart);
-
-		// Draw with targets
-		if (config.clipPath && g.attr("clip-path", $$.clipPath), config.grid_lines_front && $$.initGridLines(), $$.initEventRect(), $$.initChartElements(), main.insert("rect", config.zoom_privileged ? null : "g." + _classes2.default.regions).attr("class", _classes2.default.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), binding && ($$.updateDimension(), $$.config.oninit.call($$), $$.redraw({
+		.attr("dominant-baseline", "middle"), $$.initRegion(), $$.initGrid(), main.append("g").attr("clip-path", $$.clipPath).attr("class", _classes2.default.chart), config.grid_lines_front && $$.initGridLines(), $$.initEventRect(), $$.initChartElements(), main.insert("rect", config.zoom_privileged ? null : "g." + _classes2.default.regions).attr("class", _classes2.default.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), $$.axis.init(), $$.updateTargets($$.data.targets), binding && ($$.updateDimension(), $$.config.oninit.call($$), $$.redraw({
 			withTransition: !1,
 			withTransform: !0,
 			withUpdateXDomain: !0,
 			withUpdateOrgXDomain: !0,
 			withTransitionForAxis: !1
-		}), $$.config.data_onmin || $$.config.data_onmax))
-
-			// data.onmin/max callback
-			{
-				var _minMax = $$.getMinMaxData();
-
-				(0, _util.isFunction)($$.config.data_onmin) && $$.config.data_onmin.call($$, _minMax.min), (0, _util.isFunction)($$.config.data_onmax) && $$.config.data_onmax.call($$, _minMax.max);
-			}
-
-		// Bind resize event
-		$$.bindResize(), $$.api.element = $$.selectChart.node();
+		})), $$.bindResize(), $$.api.element = $$.selectChart.node();
 	}, ChartInternal.prototype.initChartElements = function initChartElements() {
 		this.initBar && this.initBar(), this.initLine && this.initLine(), this.initArc && this.initArc(), this.initGauge && this.initGauge(), this.initText && this.initText();
 	}, ChartInternal.prototype.smoothLines = function smoothLines(el, type) {
@@ -547,7 +522,7 @@ var ChartInternal = function () {
 
 
 		// show/hide if manual culling needed
-		if ($$.inputType === "touch" && $$.hideTooltip(), withLegend && config.legend_show && !config.legend_contents_bindto ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : withDimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), targetsToShow.length ? ($$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), $$.y.domain($$.getYDomain(targetsToShow, "y", xDomainForZoom)), $$.y2.domain($$.getYDomain(targetsToShow, "y2", xDomainForZoom)), !config.axis_y_tick_values && config.axis_y_tick_count && $$.yAxis.tickValues($$.axis.generateTickValues($$.y.domain(), config.axis_y_tick_count, $$.isTimeSeriesY())), !config.axis_y2_tick_values && config.axis_y2_tick_count && $$.y2Axis.tickValues($$.axis.generateTickValues($$.y2.domain(), config.axis_y2_tick_count)), $$.axis.redraw(transitions, hideAxis), $$.axis.updateLabels(withTransition), (withUpdateXDomain || withUpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
+		if ($$.inputType === "touch" && $$.hideTooltip(), withLegend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : withDimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), targetsToShow.length ? ($$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), $$.y.domain($$.getYDomain(targetsToShow, "y", xDomainForZoom)), $$.y2.domain($$.getYDomain(targetsToShow, "y2", xDomainForZoom)), !config.axis_y_tick_values && config.axis_y_tick_count && $$.yAxis.tickValues($$.axis.generateTickValues($$.y.domain(), config.axis_y_tick_count, $$.isTimeSeriesY())), !config.axis_y2_tick_values && config.axis_y2_tick_count && $$.y2Axis.tickValues($$.axis.generateTickValues($$.y2.domain(), config.axis_y2_tick_count)), $$.axis.redraw(transitions, hideAxis), $$.axis.updateLabels(withTransition), (withUpdateXDomain || withUpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
 				for (var _i = 1; _i < tickValues.length; _i++) if (tickValues.length / _i < config.axis_x_tick_culling_max) {
 					intervalForCulling = _i;
 
@@ -781,11 +756,11 @@ var ChartInternal = function () {
 	}, ChartInternal.prototype.convertInputType = function convertInputType() {
 		var $$ = this,
 		    config = $$.config,
-		    hasMouse = !!config.interaction_inputType_mouse && "onmouseover" in window,
-		    hasTouch = !1;
+		    hasMouse = !!config.interaction_inputType_mouse && !!("onmouseover" in window),
+		    hasTouch = void 0;
 
 
-		return config.interaction_inputType_touch && (hasTouch = "ontouchstart" in window || window.DocumentTouch && document instanceof window.DocumentTouch), hasTouch && "touch" || hasMouse && "mouse" || null;
+		return config.interaction_inputType_touch ? (hasTouch = "ontouchstart" in window || window.DocumentTouch && document instanceof window.DocumentTouch, /PhantomJS/.test(window.navigator.userAgent) && (hasTouch = !1)) : hasTouch = !1, hasTouch && "touch" || hasMouse && "mouse" || null;
 	}, ChartInternal;
 }();
 
@@ -796,14 +771,14 @@ module.exports = exports["default"];
 /* 2 */
 /***/ (function(module, exports, __webpack_require__) {
 
-// https://d3js.org Version 4.10.0. Copyright 2017 Mike Bostock.
+// https://d3js.org Version 4.9.1. Copyright 2017 Mike Bostock.
 (function (global, factory) {
 	 true ? factory(exports) :
 	typeof define === 'function' && define.amd ? define(['exports'], factory) :
 	(factory((global.d3 = global.d3 || {})));
 }(this, (function (exports) { 'use strict';
 
-var version = "4.10.0";
+var version = "4.9.1";
 
 var ascending = function(a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -1372,17 +1347,11 @@ function translateY(y) {
   return "translate(0," + (y + 0.5) + ")";
 }
 
-function number$1(scale) {
-  return function(d) {
-    return +scale(d);
-  };
-}
-
 function center(scale) {
   var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
   if (scale.round()) offset = Math.round(offset);
   return function(d) {
-    return +scale(d) + offset;
+    return scale(d) + offset;
   };
 }
 
@@ -1406,9 +1375,9 @@ function axis(orient, scale) {
         format = tickFormat == null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : identity$1) : tickFormat,
         spacing = Math.max(tickSizeInner, 0) + tickPadding,
         range = scale.range(),
-        range0 = +range[0] + 0.5,
-        range1 = +range[range.length - 1] + 0.5,
-        position = (scale.bandwidth ? center : number$1)(scale.copy()),
+        range0 = range[0] + 0.5,
+        range1 = range[range.length - 1] + 0.5,
+        position = (scale.bandwidth ? center : identity$1)(scale.copy()),
         selection = context.selection ? context.selection() : context,
         path = selection.selectAll(".domain").data([null]),
         tick = selection.selectAll(".tick").data(values, scale).order(),
@@ -2048,9 +2017,9 @@ var selection_exit = function() {
   return new Selection(this._exit || this._groups.map(sparse), this._parents);
 };
 
-var selection_merge = function(selection$$1) {
+var selection_merge = function(selection) {
 
-  for (var groups0 = this._groups, groups1 = selection$$1._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
+  for (var groups0 = this._groups, groups1 = selection._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
     for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
       if (node = group0[i] || group1[i]) {
         merge[i] = node;
@@ -2634,10 +2603,6 @@ function defaultSubject(d) {
   return d == null ? {x: exports.event.x, y: exports.event.y} : d;
 }
 
-function touchable() {
-  return "ontouchstart" in this;
-}
-
 var drag = function() {
   var filter = defaultFilter$1,
       container = defaultContainer,
@@ -2651,14 +2616,12 @@ var drag = function() {
       touchending,
       clickDistance2 = 0;
 
-  function drag(selection) {
-    selection
+  function drag(selection$$1) {
+    selection$$1
         .on("mousedown.drag", mousedowned)
-      .filter(touchable)
         .on("touchstart.drag", touchstarted)
         .on("touchmove.drag", touchmoved)
         .on("touchend.drag touchcancel.drag", touchended)
-        .style("touch-action", "none")
         .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
@@ -3349,7 +3312,7 @@ function nogamma(a, b) {
   return d ? linear(a, d) : constant$3(isNaN(a) ? b : a);
 }
 
-var interpolateRgb = (function rgbGamma(y) {
+var interpolateRgb = ((function rgbGamma(y) {
   var color$$1 = gamma(y);
 
   function rgb$$1(start, end) {
@@ -3369,7 +3332,7 @@ var interpolateRgb = (function rgbGamma(y) {
   rgb$$1.gamma = rgbGamma;
 
   return rgb$$1;
-})(1);
+}))(1);
 
 function rgbSpline(spline) {
   return function(colors) {
@@ -3804,7 +3767,7 @@ var clockLast = 0;
 var clockNow = 0;
 var clockSkew = 0;
 var clock = typeof performance === "object" && performance.now ? performance : Date;
-var setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function(f) { setTimeout(f, 17); };
+var setFrame = typeof requestAnimationFrame === "function" ? requestAnimationFrame : function(f) { setTimeout(f, 17); };
 
 function now() {
   return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
@@ -4082,7 +4045,7 @@ function create(node, id, self) {
 
 var interrupt = function(node, name) {
   var schedules = node.__transition,
-      schedule$$1,
+      schedule,
       active,
       empty = true,
       i;
@@ -4092,11 +4055,11 @@ var interrupt = function(node, name) {
   name = name == null ? null : name + "";
 
   for (i in schedules) {
-    if ((schedule$$1 = schedules[i]).name !== name) { empty = false; continue; }
-    active = schedule$$1.state > STARTING && schedule$$1.state < ENDING;
-    schedule$$1.state = ENDED;
-    schedule$$1.timer.stop();
-    if (active) schedule$$1.on.call("interrupt", node, node.__data__, schedule$$1.index, schedule$$1.group);
+    if ((schedule = schedules[i]).name !== name) { empty = false; continue; }
+    active = schedule.state > STARTING && schedule.state < ENDING;
+    schedule.state = ENDED;
+    schedule.timer.stop();
+    if (active) schedule.on.call("interrupt", node, node.__data__, schedule.index, schedule.group);
     delete schedules[i];
   }
 
@@ -4112,8 +4075,8 @@ var selection_interrupt = function(name) {
 function tweenRemove(id, name) {
   var tween0, tween1;
   return function() {
-    var schedule$$1 = set$1(this, id),
-        tween = schedule$$1.tween;
+    var schedule = set$1(this, id),
+        tween = schedule.tween;
 
     // If this node shared tween with the previous node,
     // just assign the updated shared tween and we’re done!
@@ -4129,7 +4092,7 @@ function tweenRemove(id, name) {
       }
     }
 
-    schedule$$1.tween = tween1;
+    schedule.tween = tween1;
   };
 }
 
@@ -4137,8 +4100,8 @@ function tweenFunction(id, name, value) {
   var tween0, tween1;
   if (typeof value !== "function") throw new Error;
   return function() {
-    var schedule$$1 = set$1(this, id),
-        tween = schedule$$1.tween;
+    var schedule = set$1(this, id),
+        tween = schedule.tween;
 
     // If this node shared tween with the previous node,
     // just assign the updated shared tween and we’re done!
@@ -4154,7 +4117,7 @@ function tweenFunction(id, name, value) {
       if (i === n) tween1.push(t);
     }
 
-    schedule$$1.tween = tween1;
+    schedule.tween = tween1;
   };
 }
 
@@ -4180,8 +4143,8 @@ function tweenValue(transition, name, value) {
   var id = transition._id;
 
   transition.each(function() {
-    var schedule$$1 = set$1(this, id);
-    (schedule$$1.value || (schedule$$1.value = {}))[name] = value.apply(this, arguments);
+    var schedule = set$1(this, id);
+    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
   });
 
   return function(node) {
@@ -4189,7 +4152,7 @@ function tweenValue(transition, name, value) {
   };
 }
 
-var interpolate = function(a, b) {
+var interpolate$$1 = function(a, b) {
   var c;
   return (typeof b === "number" ? reinterpolate
       : b instanceof color ? interpolateRgb
@@ -4260,7 +4223,7 @@ function attrFunctionNS$1(fullname, interpolate$$1, value) {
 }
 
 var transition_attr = function(name, value) {
-  var fullname = namespace(name), i = fullname === "transform" ? interpolateTransformSvg : interpolate;
+  var fullname = namespace(name), i = fullname === "transform" ? interpolateTransformSvg : interpolate$$1;
   return this.attrTween(name, typeof value === "function"
       ? (fullname.local ? attrFunctionNS$1 : attrFunction$1)(fullname, i, tweenValue(this, "attr." + name, value))
       : value == null ? (fullname.local ? attrRemoveNS$1 : attrRemove$1)(fullname)
@@ -4371,10 +4334,10 @@ var transition_filter = function(match) {
   return new Transition(subgroups, this._parents, this._name, this._id);
 };
 
-var transition_merge = function(transition$$1) {
-  if (transition$$1._id !== this._id) throw new Error;
+var transition_merge = function(transition) {
+  if (transition._id !== this._id) throw new Error;
 
-  for (var groups0 = this._groups, groups1 = transition$$1._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
+  for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = new Array(m0), j = 0; j < m; ++j) {
     for (var group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = new Array(n), node, i = 0; i < n; ++i) {
       if (node = group0[i] || group1[i]) {
         merge[i] = node;
@@ -4400,15 +4363,15 @@ function start(name) {
 function onFunction(id, name, listener) {
   var on0, on1, sit = start(name) ? init : set$1;
   return function() {
-    var schedule$$1 = sit(this, id),
-        on = schedule$$1.on;
+    var schedule = sit(this, id),
+        on = schedule.on;
 
     // If this node shared a dispatch with the previous node,
     // just assign the updated shared dispatch and we’re done!
     // Otherwise, copy-on-write.
     if (on !== on0) (on1 = (on0 = on).copy()).on(name, listener);
 
-    schedule$$1.on = on1;
+    schedule.on = on1;
   };
 }
 
@@ -4480,7 +4443,7 @@ var transition_selection = function() {
   return new Selection$1(this._groups, this._parents);
 };
 
-function styleRemove$1(name, interpolate$$1) {
+function styleRemove$1(name, interpolate$$2) {
   var value00,
       value10,
       interpolate0;
@@ -4489,7 +4452,7 @@ function styleRemove$1(name, interpolate$$1) {
         value1 = (this.style.removeProperty(name), styleValue(this, name));
     return value0 === value1 ? null
         : value0 === value00 && value1 === value10 ? interpolate0
-        : interpolate0 = interpolate$$1(value00 = value0, value10 = value1);
+        : interpolate0 = interpolate$$2(value00 = value0, value10 = value1);
   };
 }
 
@@ -4499,18 +4462,18 @@ function styleRemoveEnd(name) {
   };
 }
 
-function styleConstant$1(name, interpolate$$1, value1) {
+function styleConstant$1(name, interpolate$$2, value1) {
   var value00,
       interpolate0;
   return function() {
     var value0 = styleValue(this, name);
     return value0 === value1 ? null
         : value0 === value00 ? interpolate0
-        : interpolate0 = interpolate$$1(value00 = value0, value1);
+        : interpolate0 = interpolate$$2(value00 = value0, value1);
   };
 }
 
-function styleFunction$1(name, interpolate$$1, value) {
+function styleFunction$1(name, interpolate$$2, value) {
   var value00,
       value10,
       interpolate0;
@@ -4520,12 +4483,12 @@ function styleFunction$1(name, interpolate$$1, value) {
     if (value1 == null) value1 = (this.style.removeProperty(name), styleValue(this, name));
     return value0 === value1 ? null
         : value0 === value00 && value1 === value10 ? interpolate0
-        : interpolate0 = interpolate$$1(value00 = value0, value10 = value1);
+        : interpolate0 = interpolate$$2(value00 = value0, value10 = value1);
   };
 }
 
 var transition_style = function(name, value, priority) {
-  var i = (name += "") === "transform" ? interpolateTransformCss : interpolate;
+  var i = (name += "") === "transform" ? interpolateTransformCss : interpolate$$1;
   return value == null ? this
           .styleTween(name, styleRemove$1(name, i))
           .on("end.style." + name, styleRemoveEnd(name))
@@ -4896,13 +4859,13 @@ var root$1 = [null];
 
 var active = function(node, name) {
   var schedules = node.__transition,
-      schedule$$1,
+      schedule,
       i;
 
   if (schedules) {
     name = name == null ? null : name + "";
     for (i in schedules) {
-      if ((schedule$$1 = schedules[i]).state > SCHEDULED && schedule$$1.name === name) {
+      if ((schedule = schedules[i]).state > SCHEDULED && schedule.name === name) {
         return new Transition([[node]], root$1, name, +i);
       }
     }
@@ -5111,7 +5074,7 @@ function brush$1(dim) {
         .on("mousedown.brush touchstart.brush", started);
   }
 
-  brush.move = function(group, selection) {
+  brush.move = function(group, selection$$1) {
     if (group.selection) {
       group
           .on("start.brush", function() { emitter(this, arguments).beforestart().start(); })
@@ -5121,7 +5084,7 @@ function brush$1(dim) {
                 state = that.__brush,
                 emit = emitter(that, arguments),
                 selection0 = state.selection,
-                selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
+                selection1 = dim.input(typeof selection$$1 === "function" ? selection$$1.apply(this, arguments) : selection$$1, state.extent),
                 i = interpolateValue(selection0, selection1);
 
             function tween(t) {
@@ -5138,7 +5101,7 @@ function brush$1(dim) {
             var that = this,
                 args = arguments,
                 state = that.__brush,
-                selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
+                selection1 = dim.input(typeof selection$$1 === "function" ? selection$$1.apply(that, args) : selection$$1, state.extent),
                 emit = emitter(that, args).beforestart();
 
             interrupt(that);
@@ -5151,22 +5114,22 @@ function brush$1(dim) {
 
   function redraw() {
     var group = select(this),
-        selection = local$$1(this).selection;
+        selection$$1 = local$$1(this).selection;
 
-    if (selection) {
+    if (selection$$1) {
       group.selectAll(".selection")
           .style("display", null)
-          .attr("x", selection[0][0])
-          .attr("y", selection[0][1])
-          .attr("width", selection[1][0] - selection[0][0])
-          .attr("height", selection[1][1] - selection[0][1]);
+          .attr("x", selection$$1[0][0])
+          .attr("y", selection$$1[0][1])
+          .attr("width", selection$$1[1][0] - selection$$1[0][0])
+          .attr("height", selection$$1[1][1] - selection$$1[0][1]);
 
       group.selectAll(".handle")
           .style("display", null)
-          .attr("x", function(d) { return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2; })
-          .attr("y", function(d) { return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2; })
-          .attr("width", function(d) { return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize; })
-          .attr("height", function(d) { return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize; });
+          .attr("x", function(d) { return d.type[d.type.length - 1] === "e" ? selection$$1[1][0] - handleSize / 2 : selection$$1[0][0] - handleSize / 2; })
+          .attr("y", function(d) { return d.type[0] === "s" ? selection$$1[1][1] - handleSize / 2 : selection$$1[0][1] - handleSize / 2; })
+          .attr("width", function(d) { return d.type === "n" || d.type === "s" ? selection$$1[1][0] - selection$$1[0][0] + handleSize : handleSize; })
+          .attr("height", function(d) { return d.type === "e" || d.type === "w" ? selection$$1[1][1] - selection$$1[0][1] + handleSize : handleSize; });
     }
 
     else {
@@ -5224,7 +5187,7 @@ function brush$1(dim) {
         signY = dim === X ? null : signsY[type],
         state = local$$1(that),
         extent = state.extent,
-        selection = state.selection,
+        selection$$1 = state.selection,
         W = extent[0][0], w0, w1,
         N = extent[0][1], n0, n1,
         E = extent[1][0], e0, e1,
@@ -5240,15 +5203,15 @@ function brush$1(dim) {
         emit = emitter(that, arguments).beforestart();
 
     if (type === "overlay") {
-      state.selection = selection = [
+      state.selection = selection$$1 = [
         [w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]],
         [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]
       ];
     } else {
-      w0 = selection[0][0];
-      n0 = selection[0][1];
-      e0 = selection[1][0];
-      s0 = selection[1][1];
+      w0 = selection$$1[0][0];
+      n0 = selection$$1[0][1];
+      e0 = selection$$1[1][0];
+      s0 = selection$$1[1][1];
     }
 
     w1 = w0;
@@ -5334,14 +5297,14 @@ function brush$1(dim) {
         if (type in flipY) overlay.attr("cursor", cursors[type = flipY[type]]);
       }
 
-      if (state.selection) selection = state.selection; // May be set by brush.move!
-      if (lockX) w1 = selection[0][0], e1 = selection[1][0];
-      if (lockY) n1 = selection[0][1], s1 = selection[1][1];
+      if (state.selection) selection$$1 = state.selection; // May be set by brush.move!
+      if (lockX) w1 = selection$$1[0][0], e1 = selection$$1[1][0];
+      if (lockY) n1 = selection$$1[0][1], s1 = selection$$1[1][1];
 
-      if (selection[0][0] !== w1
-          || selection[0][1] !== n1
-          || selection[1][0] !== e1
-          || selection[1][1] !== s1) {
+      if (selection$$1[0][0] !== w1
+          || selection$$1[0][1] !== n1
+          || selection$$1[1][0] !== e1
+          || selection$$1[1][1] !== s1) {
         state.selection = [[w1, n1], [e1, s1]];
         redraw.call(that);
         emit.brush();
@@ -5361,8 +5324,8 @@ function brush$1(dim) {
       }
       group.attr("pointer-events", "all");
       overlay.attr("cursor", cursors.overlay);
-      if (state.selection) selection = state.selection; // May be set by brush.move (on start)!
-      if (empty(selection)) state.selection = null, redraw.call(that);
+      if (state.selection) selection$$1 = state.selection; // May be set by brush.move (on start)!
+      if (empty(selection$$1)) state.selection = null, redraw.call(that);
       emit.end();
     }
 
@@ -5891,10 +5854,10 @@ var nest = function() {
       nest;
 
   function apply(array, depth, createResult, setResult) {
-    if (depth >= keys.length) {
-      if (sortValues != null) array.sort(sortValues);
-      return rollup != null ? rollup(array) : array;
-    }
+    if (depth >= keys.length) return rollup != null
+        ? rollup(array) : (sortValues != null
+        ? array.sort(sortValues)
+        : array);
 
     var i = -1,
         n = array.length,
@@ -6999,17 +6962,17 @@ var manyBody = function() {
   }
 
   function accumulate(quad) {
-    var strength = 0, q, c, x, y, i;
+    var strength = 0, q, c, x$$1, y$$1, i;
 
     // For internal nodes, accumulate forces from child quadrants.
     if (quad.length) {
-      for (x = y = i = 0; i < 4; ++i) {
+      for (x$$1 = y$$1 = i = 0; i < 4; ++i) {
         if ((q = quad[i]) && (c = q.value)) {
-          strength += c, x += c * q.x, y += c * q.y;
+          strength += c, x$$1 += c * q.x, y$$1 += c * q.y;
         }
       }
-      quad.x = x / strength;
-      quad.y = y / strength;
+      quad.x = x$$1 / strength;
+      quad.y = y$$1 / strength;
     }
 
     // For leaf nodes, accumulate forces from coincident quadrants.
@@ -7027,20 +6990,20 @@ var manyBody = function() {
   function apply(quad, x1, _, x2) {
     if (!quad.value) return true;
 
-    var x = quad.x - node.x,
-        y = quad.y - node.y,
+    var x$$1 = quad.x - node.x,
+        y$$1 = quad.y - node.y,
         w = x2 - x1,
-        l = x * x + y * y;
+        l = x$$1 * x$$1 + y$$1 * y$$1;
 
     // Apply the Barnes-Hut approximation if possible.
     // Limit forces for very close nodes; randomize direction if coincident.
     if (w * w / theta2 < l) {
       if (l < distanceMax2) {
-        if (x === 0) x = jiggle(), l += x * x;
-        if (y === 0) y = jiggle(), l += y * y;
+        if (x$$1 === 0) x$$1 = jiggle(), l += x$$1 * x$$1;
+        if (y$$1 === 0) y$$1 = jiggle(), l += y$$1 * y$$1;
         if (l < distanceMin2) l = Math.sqrt(distanceMin2 * l);
-        node.vx += x * quad.value * alpha / l;
-        node.vy += y * quad.value * alpha / l;
+        node.vx += x$$1 * quad.value * alpha / l;
+        node.vy += y$$1 * quad.value * alpha / l;
       }
       return true;
     }
@@ -7050,15 +7013,15 @@ var manyBody = function() {
 
     // Limit forces for very close nodes; randomize direction if coincident.
     if (quad.data !== node || quad.next) {
-      if (x === 0) x = jiggle(), l += x * x;
-      if (y === 0) y = jiggle(), l += y * y;
+      if (x$$1 === 0) x$$1 = jiggle(), l += x$$1 * x$$1;
+      if (y$$1 === 0) y$$1 = jiggle(), l += y$$1 * y$$1;
       if (l < distanceMin2) l = Math.sqrt(distanceMin2 * l);
     }
 
     do if (quad.data !== node) {
       w = strengths[quad.data.index] * alpha / l;
-      node.vx += x * w;
-      node.vy += y * w;
+      node.vx += x$$1 * w;
+      node.vy += y$$1 * w;
     } while (quad = quad.next);
   }
 
@@ -10295,7 +10258,7 @@ function scaleTranslate(kx, ky, tx, ty) {
 }
 
 var identity$5 = function() {
-  var k = 1, tx = 0, ty = 0, sx = 1, sy = 1, transform$$1 = identity$4, // scale, translate and reflect
+  var k = 1, tx = 0, ty = 0, sx = 1, sy = 1, transform = identity$4, // scale, translate and reflect
       x0 = null, y0, x1, y1, clip = identity$4, // clip extent
       cache,
       cacheStream,
@@ -10308,22 +10271,22 @@ var identity$5 = function() {
 
   return projection = {
     stream: function(stream) {
-      return cache && cacheStream === stream ? cache : cache = transform$$1(clip(cacheStream = stream));
+      return cache && cacheStream === stream ? cache : cache = transform(clip(cacheStream = stream));
     },
     clipExtent: function(_) {
       return arguments.length ? (clip = _ == null ? (x0 = y0 = x1 = y1 = null, identity$4) : clipExtent(x0 = +_[0][0], y0 = +_[0][1], x1 = +_[1][0], y1 = +_[1][1]), reset()) : x0 == null ? null : [[x0, y0], [x1, y1]];
     },
     scale: function(_) {
-      return arguments.length ? (transform$$1 = scaleTranslate((k = +_) * sx, k * sy, tx, ty), reset()) : k;
+      return arguments.length ? (transform = scaleTranslate((k = +_) * sx, k * sy, tx, ty), reset()) : k;
     },
     translate: function(_) {
-      return arguments.length ? (transform$$1 = scaleTranslate(k * sx, k * sy, tx = +_[0], ty = +_[1]), reset()) : [tx, ty];
+      return arguments.length ? (transform = scaleTranslate(k * sx, k * sy, tx = +_[0], ty = +_[1]), reset()) : [tx, ty];
     },
     reflectX: function(_) {
-      return arguments.length ? (transform$$1 = scaleTranslate(k * (sx = _ ? -1 : 1), k * sy, tx, ty), reset()) : sx < 0;
+      return arguments.length ? (transform = scaleTranslate(k * (sx = _ ? -1 : 1), k * sy, tx, ty), reset()) : sx < 0;
     },
     reflectY: function(_) {
-      return arguments.length ? (transform$$1 = scaleTranslate(k * sx, k * (sy = _ ? -1 : 1), tx, ty), reset()) : sy < 0;
+      return arguments.length ? (transform = scaleTranslate(k * sx, k * (sy = _ ? -1 : 1), tx, ty), reset()) : sy < 0;
     },
     fitExtent: function(extent, object) {
       return fitExtent(projection, extent, object);
@@ -10676,92 +10639,83 @@ Node.prototype = hierarchy.prototype = {
   copy: node_copy
 };
 
-var slice$3 = Array.prototype.slice;
-
-function shuffle$1(array) {
-  var m = array.length,
-      t,
-      i;
-
-  while (m) {
-    i = Math.random() * m-- | 0;
-    t = array[m];
-    array[m] = array[i];
-    array[i] = t;
-  }
-
-  return array;
+function Node$2(value) {
+  this._ = value;
+  this.next = null;
 }
 
-var enclose = function(circles) {
-  var i = 0, n = (circles = shuffle$1(slice$3.call(circles))).length, B = [], p, e;
+var shuffle$1 = function(array) {
+  var i,
+      n = (array = array.slice()).length,
+      head = null,
+      node = head;
 
-  while (i < n) {
-    p = circles[i];
-    if (e && enclosesWeak(e, p)) ++i;
-    else e = encloseBasis(B = extendBasis(B, p)), i = 0;
+  while (n) {
+    var next = new Node$2(array[n - 1]);
+    if (node) node = node.next = next;
+    else node = head = next;
+    array[i] = array[--n];
   }
 
-  return e;
+  return {
+    head: head,
+    tail: node
+  };
 };
 
-function extendBasis(B, p) {
-  var i, j;
+var enclose = function(circles) {
+  return encloseN(shuffle$1(circles), []);
+};
 
-  if (enclosesWeakAll(p, B)) return [p];
-
-  // If we get here then B must have at least one element.
-  for (i = 0; i < B.length; ++i) {
-    if (enclosesNot(p, B[i])
-        && enclosesWeakAll(encloseBasis2(B[i], p), B)) {
-      return [B[i], p];
-    }
-  }
-
-  // If we get here then B must have at least two elements.
-  for (i = 0; i < B.length - 1; ++i) {
-    for (j = i + 1; j < B.length; ++j) {
-      if (enclosesNot(encloseBasis2(B[i], B[j]), p)
-          && enclosesNot(encloseBasis2(B[i], p), B[j])
-          && enclosesNot(encloseBasis2(B[j], p), B[i])
-          && enclosesWeakAll(encloseBasis3(B[i], B[j], p), B)) {
-        return [B[i], B[j], p];
-      }
-    }
-  }
-
-  // If we get here then something is very wrong.
-  throw new Error;
+function encloses(a, b) {
+  var dx = b.x - a.x,
+      dy = b.y - a.y,
+      dr = a.r - b.r;
+  return dr * dr + 1e-6 > dx * dx + dy * dy;
 }
 
-function enclosesNot(a, b) {
-  var dr = a.r - b.r, dx = b.x - a.x, dy = b.y - a.y;
-  return dr < 0 || dr * dr < dx * dx + dy * dy;
-}
+// Returns the smallest circle that contains circles L and intersects circles B.
+function encloseN(L, B) {
+  var circle,
+      l0 = null,
+      l1 = L.head,
+      l2,
+      p1;
 
-function enclosesWeak(a, b) {
-  var dr = a.r - b.r + 1e-6, dx = b.x - a.x, dy = b.y - a.y;
-  return dr > 0 && dr * dr > dx * dx + dy * dy;
-}
-
-function enclosesWeakAll(a, B) {
-  for (var i = 0; i < B.length; ++i) {
-    if (!enclosesWeak(a, B[i])) {
-      return false;
-    }
-  }
-  return true;
-}
-
-function encloseBasis(B) {
   switch (B.length) {
-    case 1: return encloseBasis1(B[0]);
-    case 2: return encloseBasis2(B[0], B[1]);
-    case 3: return encloseBasis3(B[0], B[1], B[2]);
+    case 1: circle = enclose1(B[0]); break;
+    case 2: circle = enclose2(B[0], B[1]); break;
+    case 3: circle = enclose3(B[0], B[1], B[2]); break;
   }
+
+  while (l1) {
+    p1 = l1._, l2 = l1.next;
+    if (!circle || !encloses(circle, p1)) {
+
+      // Temporarily truncate L before l1.
+      if (l0) L.tail = l0, l0.next = null;
+      else L.head = L.tail = null;
+
+      B.push(p1);
+      circle = encloseN(L, B); // Note: reorders L!
+      B.pop();
+
+      // Move l1 to the front of L and reconnect the truncated list L.
+      if (L.head) l1.next = L.head, L.head = l1;
+      else l1.next = null, L.head = L.tail = l1;
+      l0 = L.tail, l0.next = l2;
+
+    } else {
+      l0 = l1;
+    }
+    l1 = l2;
+  }
+
+  L.tail = l0;
+  return circle;
 }
 
-function encloseBasis1(a) {
+function enclose1(a) {
   return {
     x: a.x,
     y: a.y,
@@ -10769,7 +10723,7 @@ function encloseBasis1(a) {
   };
 }
 
-function encloseBasis2(a, b) {
+function enclose2(a, b) {
   var x1 = a.x, y1 = a.y, r1 = a.r,
       x2 = b.x, y2 = b.y, r2 = b.r,
       x21 = x2 - x1, y21 = y2 - y1, r21 = r2 - r1,
@@ -10781,31 +10735,30 @@ function encloseBasis2(a, b) {
   };
 }
 
-function encloseBasis3(a, b, c) {
+function enclose3(a, b, c) {
   var x1 = a.x, y1 = a.y, r1 = a.r,
       x2 = b.x, y2 = b.y, r2 = b.r,
       x3 = c.x, y3 = c.y, r3 = c.r,
-      a2 = x1 - x2,
-      a3 = x1 - x3,
-      b2 = y1 - y2,
-      b3 = y1 - y3,
-      c2 = r2 - r1,
-      c3 = r3 - r1,
-      d1 = x1 * x1 + y1 * y1 - r1 * r1,
-      d2 = d1 - x2 * x2 - y2 * y2 + r2 * r2,
-      d3 = d1 - x3 * x3 - y3 * y3 + r3 * r3,
+      a2 = 2 * (x1 - x2),
+      b2 = 2 * (y1 - y2),
+      c2 = 2 * (r2 - r1),
+      d2 = x1 * x1 + y1 * y1 - r1 * r1 - x2 * x2 - y2 * y2 + r2 * r2,
+      a3 = 2 * (x1 - x3),
+      b3 = 2 * (y1 - y3),
+      c3 = 2 * (r3 - r1),
+      d3 = x1 * x1 + y1 * y1 - r1 * r1 - x3 * x3 - y3 * y3 + r3 * r3,
       ab = a3 * b2 - a2 * b3,
-      xa = (b2 * d3 - b3 * d2) / (ab * 2) - x1,
+      xa = (b2 * d3 - b3 * d2) / ab - x1,
       xb = (b3 * c2 - b2 * c3) / ab,
-      ya = (a3 * d2 - a2 * d3) / (ab * 2) - y1,
+      ya = (a3 * d2 - a2 * d3) / ab - y1,
       yb = (a2 * c3 - a3 * c2) / ab,
       A = xb * xb + yb * yb - 1,
-      B = 2 * (r1 + xa * xb + ya * yb),
+      B = 2 * (xa * xb + ya * yb + r1),
       C = xa * xa + ya * ya - r1 * r1,
-      r = -(A ? (B + Math.sqrt(B * B - 4 * A * C)) / (2 * A) : C / B);
+      r = (-B - Math.sqrt(B * B - 4 * A * C)) / (2 * A);
   return {
-    x: x1 + xa + xb * r,
-    y: y1 + ya + yb * r,
+    x: xa + xb * r + x1,
+    y: ya + yb * r + y1,
     r: r
   };
 }
@@ -10836,12 +10789,12 @@ function intersects(a, b) {
   return dr * dr - 1e-6 > dx * dx + dy * dy;
 }
 
-function score(node) {
+function distance2(node, x, y) {
   var a = node._,
       b = node.next._,
       ab = a.r + b.r,
-      dx = (a.x * b.r + b.x * a.r) / ab,
-      dy = (a.y * b.r + b.y * a.r) / ab;
+      dx = (a.x * b.r + b.x * a.r) / ab - x,
+      dy = (a.y * b.r + b.y * a.r) / ab - y;
   return dx * dx + dy * dy;
 }
 
@@ -10854,7 +10807,7 @@ function Node$1(circle) {
 function packEnclose(circles) {
   if (!(n = circles.length)) return 0;
 
-  var a, b, c, n, aa, ca, i, j, k, sj, sk;
+  var a, b, c, n;
 
   // Place the first circle.
   a = circles[0], a.x = 0, a.y = 0;
@@ -10866,6 +10819,15 @@ function packEnclose(circles) {
 
   // Place the third circle.
   place(b, a, c = circles[2]);
+
+  // Initialize the weighted centroid.
+  var aa = a.r * a.r,
+      ba = b.r * b.r,
+      ca = c.r * c.r,
+      oa = aa + ba + ca,
+      ox = aa * a.x + ba * b.x + ca * c.x,
+      oy = aa * a.y + ba * b.y + ca * c.y,
+      cx, cy, i, j, k, sj, sk;
 
   // Initialize the front-chain using the first three circles a, b and c.
   a = new Node$1(a), b = new Node$1(b), c = new Node$1(c);
@@ -10900,10 +10862,15 @@ function packEnclose(circles) {
     // Success! Insert the new circle c between a and b.
     c.previous = a, c.next = b, a.next = b.previous = b = c;
 
+    // Update the weighted centroid.
+    oa += ca = c._.r * c._.r;
+    ox += ca * c._.x;
+    oy += ca * c._.y;
+
     // Compute the new closest circle pair to the centroid.
-    aa = score(a);
+    aa = distance2(a, cx = ox / oa, cy = oy / oa);
     while ((c = c.next) !== b) {
-      if ((ca = score(c)) < aa) {
+      if ((ca = distance2(c, cx, cy)) < aa) {
         a = c, aa = ca;
       }
     }
@@ -11460,7 +11427,7 @@ function squarifyRatio(ratio, parent, x0, y0, x1, y1) {
   return rows;
 }
 
-var squarify = (function custom(ratio) {
+var squarify = ((function custom(ratio) {
 
   function squarify(parent, x0, y0, x1, y1) {
     squarifyRatio(ratio, parent, x0, y0, x1, y1);
@@ -11471,7 +11438,7 @@ var squarify = (function custom(ratio) {
   };
 
   return squarify;
-})(phi);
+}))(phi);
 
 var index$3 = function() {
   var tile = squarify,
@@ -11614,7 +11581,7 @@ var sliceDice = function(parent, x0, y0, x1, y1) {
   (parent.depth & 1 ? treemapSlice : treemapDice)(parent, x0, y0, x1, y1);
 };
 
-var resquarify = (function custom(ratio) {
+var resquarify = ((function custom(ratio) {
 
   function resquarify(parent, x0, y0, x1, y1) {
     if ((rows = parent._squarify) && (rows.ratio === ratio)) {
@@ -11645,7 +11612,7 @@ var resquarify = (function custom(ratio) {
   };
 
   return resquarify;
-})(phi);
+}))(phi);
 
 var area$1 = function(polygon) {
   var i = -1,
@@ -11781,7 +11748,7 @@ var length$2 = function(polygon) {
   return perimeter;
 };
 
-var slice$4 = [].slice;
+var slice$3 = [].slice;
 
 var noabort = {};
 
@@ -11803,7 +11770,7 @@ Queue.prototype = queue.prototype = {
     if (typeof callback !== "function") throw new Error("invalid callback");
     if (this._call) throw new Error("defer after await");
     if (this._error != null) return this;
-    var t = slice$4.call(arguments, 1);
+    var t = slice$3.call(arguments, 1);
     t.push(callback);
     ++this._waiting, this._tasks.push(t);
     poke$1(this);
@@ -11907,7 +11874,7 @@ var defaultSource$1 = function() {
   return Math.random();
 };
 
-var uniform = (function sourceRandomUniform(source) {
+var uniform = ((function sourceRandomUniform(source) {
   function randomUniform(min, max) {
     min = min == null ? 0 : +min;
     max = max == null ? 1 : +max;
@@ -11921,9 +11888,9 @@ var uniform = (function sourceRandomUniform(source) {
   randomUniform.source = sourceRandomUniform;
 
   return randomUniform;
-})(defaultSource$1);
+}))(defaultSource$1);
 
-var normal = (function sourceRandomNormal(source) {
+var normal = ((function sourceRandomNormal(source) {
   function randomNormal(mu, sigma) {
     var x, r;
     mu = mu == null ? 0 : +mu;
@@ -11948,9 +11915,9 @@ var normal = (function sourceRandomNormal(source) {
   randomNormal.source = sourceRandomNormal;
 
   return randomNormal;
-})(defaultSource$1);
+}))(defaultSource$1);
 
-var logNormal = (function sourceRandomLogNormal(source) {
+var logNormal = ((function sourceRandomLogNormal(source) {
   function randomLogNormal() {
     var randomNormal = normal.source(source).apply(this, arguments);
     return function() {
@@ -11961,9 +11928,9 @@ var logNormal = (function sourceRandomLogNormal(source) {
   randomLogNormal.source = sourceRandomLogNormal;
 
   return randomLogNormal;
-})(defaultSource$1);
+}))(defaultSource$1);
 
-var irwinHall = (function sourceRandomIrwinHall(source) {
+var irwinHall = ((function sourceRandomIrwinHall(source) {
   function randomIrwinHall(n) {
     return function() {
       for (var sum = 0, i = 0; i < n; ++i) sum += source();
@@ -11974,9 +11941,9 @@ var irwinHall = (function sourceRandomIrwinHall(source) {
   randomIrwinHall.source = sourceRandomIrwinHall;
 
   return randomIrwinHall;
-})(defaultSource$1);
+}))(defaultSource$1);
 
-var bates = (function sourceRandomBates(source) {
+var bates = ((function sourceRandomBates(source) {
   function randomBates(n) {
     var randomIrwinHall = irwinHall.source(source)(n);
     return function() {
@@ -11987,9 +11954,9 @@ var bates = (function sourceRandomBates(source) {
   randomBates.source = sourceRandomBates;
 
   return randomBates;
-})(defaultSource$1);
+}))(defaultSource$1);
 
-var exponential$1 = (function sourceRandomExponential(source) {
+var exponential$1 = ((function sourceRandomExponential(source) {
   function randomExponential(lambda) {
     return function() {
       return -Math.log(1 - source()) / lambda;
@@ -11999,7 +11966,7 @@ var exponential$1 = (function sourceRandomExponential(source) {
   randomExponential.source = sourceRandomExponential;
 
   return randomExponential;
-})(defaultSource$1);
+}))(defaultSource$1);
 
 var request = function(url, callback) {
   var request,
@@ -12202,7 +12169,7 @@ var tsv$1 = dsv$1("text/tab-separated-values", tsvParse);
 var array$2 = Array.prototype;
 
 var map$3 = array$2.map;
-var slice$5 = array$2.slice;
+var slice$4 = array$2.slice;
 
 var implicit = {name: "implicit"};
 
@@ -12211,7 +12178,7 @@ function ordinal(range) {
       domain = [],
       unknown = implicit;
 
-  range = range == null ? [] : slice$5.call(range);
+  range = range == null ? [] : slice$4.call(range);
 
   function scale(d) {
     var key = d + "", i = index.get(key);
@@ -12231,7 +12198,7 @@ function ordinal(range) {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = slice$5.call(_), scale) : range.slice();
+    return arguments.length ? (range = slice$4.call(_), scale) : range.slice();
   };
 
   scale.unknown = function(_) {
@@ -12252,7 +12219,7 @@ function band() {
   var scale = ordinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range,
-      range = [0, 1],
+      range$$1 = [0, 1],
       step,
       bandwidth,
       round = false,
@@ -12264,9 +12231,9 @@ function band() {
 
   function rescale() {
     var n = domain().length,
-        reverse = range[1] < range[0],
-        start = range[reverse - 0],
-        stop = range[1 - reverse];
+        reverse = range$$1[1] < range$$1[0],
+        start = range$$1[reverse - 0],
+        stop = range$$1[1 - reverse];
     step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2);
     if (round) step = Math.floor(step);
     start += (stop - start - step * (n - paddingInner)) * align;
@@ -12281,11 +12248,11 @@ function band() {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = [+_[0], +_[1]], rescale()) : range.slice();
+    return arguments.length ? (range$$1 = [+_[0], +_[1]], rescale()) : range$$1.slice();
   };
 
   scale.rangeRound = function(_) {
-    return range = [+_[0], +_[1]], round = true, rescale();
+    return range$$1 = [+_[0], +_[1]], round = true, rescale();
   };
 
   scale.bandwidth = function() {
@@ -12319,7 +12286,7 @@ function band() {
   scale.copy = function() {
     return band()
         .domain(domain())
-        .range(range)
+        .range(range$$1)
         .round(round)
         .paddingInner(paddingInner)
         .paddingOuter(paddingOuter)
@@ -12353,7 +12320,7 @@ var constant$9 = function(x) {
   };
 };
 
-var number$2 = function(x) {
+var number$1 = function(x) {
   return +x;
 };
 
@@ -12372,22 +12339,22 @@ function deinterpolateClamp(deinterpolate) {
   };
 }
 
-function reinterpolateClamp(reinterpolate$$1) {
+function reinterpolateClamp(reinterpolate) {
   return function(a, b) {
-    var r = reinterpolate$$1(a = +a, b = +b);
+    var r = reinterpolate(a = +a, b = +b);
     return function(t) { return t <= 0 ? a : t >= 1 ? b : r(t); };
   };
 }
 
-function bimap(domain, range, deinterpolate, reinterpolate$$1) {
-  var d0 = domain[0], d1 = domain[1], r0 = range[0], r1 = range[1];
-  if (d1 < d0) d0 = deinterpolate(d1, d0), r0 = reinterpolate$$1(r1, r0);
-  else d0 = deinterpolate(d0, d1), r0 = reinterpolate$$1(r0, r1);
+function bimap(domain, range$$1, deinterpolate, reinterpolate) {
+  var d0 = domain[0], d1 = domain[1], r0 = range$$1[0], r1 = range$$1[1];
+  if (d1 < d0) d0 = deinterpolate(d1, d0), r0 = reinterpolate(r1, r0);
+  else d0 = deinterpolate(d0, d1), r0 = reinterpolate(r0, r1);
   return function(x) { return r0(d0(x)); };
 }
 
-function polymap(domain, range, deinterpolate, reinterpolate$$1) {
-  var j = Math.min(domain.length, range.length) - 1,
+function polymap(domain, range$$1, deinterpolate, reinterpolate) {
+  var j = Math.min(domain.length, range$$1.length) - 1,
       d = new Array(j),
       r = new Array(j),
       i = -1;
@@ -12395,12 +12362,12 @@ function polymap(domain, range, deinterpolate, reinterpolate$$1) {
   // Reverse descending domains.
   if (domain[j] < domain[0]) {
     domain = domain.slice().reverse();
-    range = range.slice().reverse();
+    range$$1 = range$$1.slice().reverse();
   }
 
   while (++i < j) {
     d[i] = deinterpolate(domain[i], domain[i + 1]);
-    r[i] = reinterpolate$$1(range[i], range[i + 1]);
+    r[i] = reinterpolate(range$$1[i], range$$1[i + 1]);
   }
 
   return function(x) {
@@ -12419,39 +12386,39 @@ function copy(source, target) {
 
 // deinterpolate(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
 // reinterpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding domain value x in [a,b].
-function continuous(deinterpolate, reinterpolate$$1) {
+function continuous(deinterpolate, reinterpolate) {
   var domain = unit,
-      range = unit,
-      interpolate = interpolateValue,
+      range$$1 = unit,
+      interpolate$$1 = interpolateValue,
       clamp = false,
       piecewise,
       output,
       input;
 
   function rescale() {
-    piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap;
+    piecewise = Math.min(domain.length, range$$1.length) > 2 ? polymap : bimap;
     output = input = null;
     return scale;
   }
 
   function scale(x) {
-    return (output || (output = piecewise(domain, range, clamp ? deinterpolateClamp(deinterpolate) : deinterpolate, interpolate)))(+x);
+    return (output || (output = piecewise(domain, range$$1, clamp ? deinterpolateClamp(deinterpolate) : deinterpolate, interpolate$$1)))(+x);
   }
 
   scale.invert = function(y) {
-    return (input || (input = piecewise(range, domain, deinterpolateLinear, clamp ? reinterpolateClamp(reinterpolate$$1) : reinterpolate$$1)))(+y);
+    return (input || (input = piecewise(range$$1, domain, deinterpolateLinear, clamp ? reinterpolateClamp(reinterpolate) : reinterpolate)))(+y);
   };
 
   scale.domain = function(_) {
-    return arguments.length ? (domain = map$3.call(_, number$2), rescale()) : domain.slice();
+    return arguments.length ? (domain = map$3.call(_, number$1), rescale()) : domain.slice();
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = slice$5.call(_), rescale()) : range.slice();
+    return arguments.length ? (range$$1 = slice$4.call(_), rescale()) : range$$1.slice();
   };
 
   scale.rangeRound = function(_) {
-    return range = slice$5.call(_), interpolate = interpolateRound, rescale();
+    return range$$1 = slice$4.call(_), interpolate$$1 = interpolateRound, rescale();
   };
 
   scale.clamp = function(_) {
@@ -12459,7 +12426,7 @@ function continuous(deinterpolate, reinterpolate$$1) {
   };
 
   scale.interpolate = function(_) {
-    return arguments.length ? (interpolate = _, rescale()) : interpolate;
+    return arguments.length ? (interpolate$$1 = _, rescale()) : interpolate$$1;
   };
 
   return rescale();
@@ -12569,7 +12536,7 @@ function identity$6() {
   scale.invert = scale;
 
   scale.domain = scale.range = function(_) {
-    return arguments.length ? (domain = map$3.call(_, number$2), scale) : domain.slice();
+    return arguments.length ? (domain = map$3.call(_, number$1), scale) : domain.slice();
   };
 
   scale.copy = function() {
@@ -12756,24 +12723,24 @@ function sqrt$1() {
   return pow$1().exponent(0.5);
 }
 
-function quantile() {
+function quantile$$1() {
   var domain = [],
-      range = [],
+      range$$1 = [],
       thresholds = [];
 
   function rescale() {
-    var i = 0, n = Math.max(1, range.length);
+    var i = 0, n = Math.max(1, range$$1.length);
     thresholds = new Array(n - 1);
     while (++i < n) thresholds[i - 1] = threshold(domain, i / n);
     return scale;
   }
 
   function scale(x) {
-    if (!isNaN(x = +x)) return range[bisectRight(thresholds, x)];
+    if (!isNaN(x = +x)) return range$$1[bisectRight(thresholds, x)];
   }
 
   scale.invertExtent = function(y) {
-    var i = range.indexOf(y);
+    var i = range$$1.indexOf(y);
     return i < 0 ? [NaN, NaN] : [
       i > 0 ? thresholds[i - 1] : domain[0],
       i < thresholds.length ? thresholds[i] : domain[domain.length - 1]
@@ -12789,7 +12756,7 @@ function quantile() {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = slice$5.call(_), rescale()) : range.slice();
+    return arguments.length ? (range$$1 = slice$4.call(_), rescale()) : range$$1.slice();
   };
 
   scale.quantiles = function() {
@@ -12797,9 +12764,9 @@ function quantile() {
   };
 
   scale.copy = function() {
-    return quantile()
+    return quantile$$1()
         .domain(domain)
-        .range(range);
+        .range(range$$1);
   };
 
   return scale;
@@ -12810,10 +12777,10 @@ function quantize$1() {
       x1 = 1,
       n = 1,
       domain = [0.5],
-      range = [0, 1];
+      range$$1 = [0, 1];
 
   function scale(x) {
-    if (x <= x) return range[bisectRight(domain, x, 0, n)];
+    if (x <= x) return range$$1[bisectRight(domain, x, 0, n)];
   }
 
   function rescale() {
@@ -12828,11 +12795,11 @@ function quantize$1() {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (n = (range = slice$5.call(_)).length - 1, rescale()) : range.slice();
+    return arguments.length ? (n = (range$$1 = slice$4.call(_)).length - 1, rescale()) : range$$1.slice();
   };
 
   scale.invertExtent = function(y) {
-    var i = range.indexOf(y);
+    var i = range$$1.indexOf(y);
     return i < 0 ? [NaN, NaN]
         : i < 1 ? [x0, domain[0]]
         : i >= n ? [domain[n - 1], x1]
@@ -12842,7 +12809,7 @@ function quantize$1() {
   scale.copy = function() {
     return quantize$1()
         .domain([x0, x1])
-        .range(range);
+        .range(range$$1);
   };
 
   return linearish(scale);
@@ -12850,30 +12817,30 @@ function quantize$1() {
 
 function threshold$1() {
   var domain = [0.5],
-      range = [0, 1],
+      range$$1 = [0, 1],
       n = 1;
 
   function scale(x) {
-    if (x <= x) return range[bisectRight(domain, x, 0, n)];
+    if (x <= x) return range$$1[bisectRight(domain, x, 0, n)];
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (domain = slice$5.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
+    return arguments.length ? (domain = slice$4.call(_), n = Math.min(domain.length, range$$1.length - 1), scale) : domain.slice();
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = slice$5.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
+    return arguments.length ? (range$$1 = slice$4.call(_), n = Math.min(domain.length, range$$1.length - 1), scale) : range$$1.slice();
   };
 
   scale.invertExtent = function(y) {
-    var i = range.indexOf(y);
+    var i = range$$1.indexOf(y);
     return [domain[i - 1], domain[i]];
   };
 
   scale.copy = function() {
     return threshold$1()
         .domain(domain)
-        .range(range);
+        .range(range$$1);
   };
 
   return scale;
@@ -12917,13 +12884,7 @@ function newInterval(floori, offseti, count, field) {
     return newInterval(function(date) {
       if (date >= date) while (floori(date), !test(date)) date.setTime(date - 1);
     }, function(date, step) {
-      if (date >= date) {
-        if (step < 0) while (++step <= 0) {
-          while (offseti(date, -1), !test(date)) {} // eslint-disable-line no-empty
-        } else while (--step >= 0) {
-          while (offseti(date, +1), !test(date)) {} // eslint-disable-line no-empty
-        }
-      }
+      if (date >= date) while (--step >= 0) while (offseti(date, 1), !test(date)) {} // eslint-disable-line no-empty
     });
   };
 
@@ -13776,7 +13737,7 @@ function date$1(t) {
   return new Date(t);
 }
 
-function number$3(t) {
+function number$2(t) {
   return t instanceof Date ? +t : +new Date(+t);
 }
 
@@ -13815,39 +13776,39 @@ function calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1
     [  year$$1,  1,      durationYear  ]
   ];
 
-  function tickFormat(date$$1) {
-    return (second$$1(date$$1) < date$$1 ? formatMillisecond
-        : minute$$1(date$$1) < date$$1 ? formatSecond
-        : hour$$1(date$$1) < date$$1 ? formatMinute
-        : day$$1(date$$1) < date$$1 ? formatHour
-        : month$$1(date$$1) < date$$1 ? (week(date$$1) < date$$1 ? formatDay : formatWeek)
-        : year$$1(date$$1) < date$$1 ? formatMonth
-        : formatYear)(date$$1);
+  function tickFormat(date) {
+    return (second$$1(date) < date ? formatMillisecond
+        : minute$$1(date) < date ? formatSecond
+        : hour$$1(date) < date ? formatMinute
+        : day$$1(date) < date ? formatHour
+        : month$$1(date) < date ? (week(date) < date ? formatDay : formatWeek)
+        : year$$1(date) < date ? formatMonth
+        : formatYear)(date);
   }
 
-  function tickInterval(interval$$1, start, stop, step) {
-    if (interval$$1 == null) interval$$1 = 10;
+  function tickInterval(interval, start, stop, step) {
+    if (interval == null) interval = 10;
 
     // If a desired tick count is specified, pick a reasonable tick interval
     // based on the extent of the domain and a rough estimate of tick size.
     // Otherwise, assume interval is already a time interval and use it.
-    if (typeof interval$$1 === "number") {
-      var target = Math.abs(stop - start) / interval$$1,
+    if (typeof interval === "number") {
+      var target = Math.abs(stop - start) / interval,
           i = bisector(function(i) { return i[2]; }).right(tickIntervals, target);
       if (i === tickIntervals.length) {
-        step = tickStep(start / durationYear, stop / durationYear, interval$$1);
-        interval$$1 = year$$1;
+        step = tickStep(start / durationYear, stop / durationYear, interval);
+        interval = year$$1;
       } else if (i) {
         i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i];
         step = i[1];
-        interval$$1 = i[0];
+        interval = i[0];
       } else {
-        step = tickStep(start, stop, interval$$1);
-        interval$$1 = millisecond$$1;
+        step = tickStep(start, stop, interval);
+        interval = millisecond$$1;
       }
     }
 
-    return step == null ? interval$$1 : interval$$1.every(step);
+    return step == null ? interval : interval.every(step);
   }
 
   scale.invert = function(y) {
@@ -13855,17 +13816,17 @@ function calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1
   };
 
   scale.domain = function(_) {
-    return arguments.length ? domain(map$3.call(_, number$3)) : domain().map(date$1);
+    return arguments.length ? domain(map$3.call(_, number$2)) : domain().map(date$1);
   };
 
-  scale.ticks = function(interval$$1, step) {
+  scale.ticks = function(interval, step) {
     var d = domain(),
         t0 = d[0],
         t1 = d[d.length - 1],
         r = t1 < t0,
         t;
     if (r) t = t0, t0 = t1, t1 = t;
-    t = tickInterval(interval$$1, t0, t1, step);
+    t = tickInterval(interval, t0, t1, step);
     t = t ? t.range(t0, t1 + 1) : []; // inclusive stop
     return r ? t.reverse() : t;
   };
@@ -13874,10 +13835,10 @@ function calendar(year$$1, month$$1, week, day$$1, hour$$1, minute$$1, second$$1
     return specifier == null ? tickFormat : format(specifier);
   };
 
-  scale.nice = function(interval$$1, step) {
+  scale.nice = function(interval, step) {
     var d = domain();
-    return (interval$$1 = tickInterval(interval$$1, d[0], d[d.length - 1], step))
-        ? domain(nice(d, interval$$1))
+    return (interval = tickInterval(interval, d[0], d[d.length - 1], step))
+        ? domain(nice(d, interval))
         : scale;
   };
 
@@ -14295,8 +14256,8 @@ function y$3(p) {
 }
 
 var line = function() {
-  var x = x$3,
-      y = y$3,
+  var x$$1 = x$3,
+      y$$1 = y$3,
       defined = constant$10(true),
       context = null,
       curve = curveLinear,
@@ -14316,18 +14277,18 @@ var line = function() {
         if (defined0 = !defined0) output.lineStart();
         else output.lineEnd();
       }
-      if (defined0) output.point(+x(d, i, data), +y(d, i, data));
+      if (defined0) output.point(+x$$1(d, i, data), +y$$1(d, i, data));
     }
 
     if (buffer) return output = null, buffer + "" || null;
   }
 
   line.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : constant$10(+_), line) : x;
+    return arguments.length ? (x$$1 = typeof _ === "function" ? _ : constant$10(+_), line) : x$$1;
   };
 
   line.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : constant$10(+_), line) : y;
+    return arguments.length ? (y$$1 = typeof _ === "function" ? _ : constant$10(+_), line) : y$$1;
   };
 
   line.defined = function(_) {
@@ -14567,7 +14528,7 @@ function curveRadial(curve) {
   return radial;
 }
 
-function lineRadial(l) {
+function radialLine(l) {
   var c = l.curve;
 
   l.angle = l.x, delete l.x;
@@ -14580,11 +14541,11 @@ function lineRadial(l) {
   return l;
 }
 
-var lineRadial$1 = function() {
-  return lineRadial(line().curve(curveRadialLinear));
+var radialLine$1 = function() {
+  return radialLine(line().curve(curveRadialLinear));
 };
 
-var areaRadial = function() {
+var radialArea = function() {
   var a = area$2().curve(curveRadialLinear),
       c = a.curve,
       x0 = a.lineX0,
@@ -14598,10 +14559,10 @@ var areaRadial = function() {
   a.radius = a.y, delete a.y;
   a.innerRadius = a.y0, delete a.y0;
   a.outerRadius = a.y1, delete a.y1;
-  a.lineStartAngle = function() { return lineRadial(x0()); }, delete a.lineX0;
-  a.lineEndAngle = function() { return lineRadial(x1()); }, delete a.lineX1;
-  a.lineInnerRadius = function() { return lineRadial(y0()); }, delete a.lineY0;
-  a.lineOuterRadius = function() { return lineRadial(y1()); }, delete a.lineY1;
+  a.lineStartAngle = function() { return radialLine(x0()); }, delete a.lineX0;
+  a.lineEndAngle = function() { return radialLine(x1()); }, delete a.lineX1;
+  a.lineInnerRadius = function() { return radialLine(y0()); }, delete a.lineY0;
+  a.lineOuterRadius = function() { return radialLine(y1()); }, delete a.lineY1;
 
   a.curve = function(_) {
     return arguments.length ? c(curveRadial(_)) : c()._curve;
@@ -14610,11 +14571,11 @@ var areaRadial = function() {
   return a;
 };
 
-var pointRadial = function(x, y) {
+var slice$5 = Array.prototype.slice;
+
+var radialPoint = function(x, y) {
   return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
 };
-
-var slice$6 = Array.prototype.slice;
 
 function linkSource(d) {
   return d.source;
@@ -14627,14 +14588,14 @@ function linkTarget(d) {
 function link$2(curve) {
   var source = linkSource,
       target = linkTarget,
-      x = x$3,
-      y = y$3,
+      x$$1 = x$3,
+      y$$1 = y$3,
       context = null;
 
   function link() {
-    var buffer, argv = slice$6.call(arguments), s = source.apply(this, argv), t = target.apply(this, argv);
+    var buffer, argv = slice$5.call(arguments), s = source.apply(this, argv), t = target.apply(this, argv);
     if (!context) context = buffer = path();
-    curve(context, +x.apply(this, (argv[0] = s, argv)), +y.apply(this, argv), +x.apply(this, (argv[0] = t, argv)), +y.apply(this, argv));
+    curve(context, +x$$1.apply(this, (argv[0] = s, argv)), +y$$1.apply(this, argv), +x$$1.apply(this, (argv[0] = t, argv)), +y$$1.apply(this, argv));
     if (buffer) return context = null, buffer + "" || null;
   }
 
@@ -14647,11 +14608,11 @@ function link$2(curve) {
   };
 
   link.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : constant$10(+_), link) : x;
+    return arguments.length ? (x$$1 = typeof _ === "function" ? _ : constant$10(+_), link) : x$$1;
   };
 
   link.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : constant$10(+_), link) : y;
+    return arguments.length ? (y$$1 = typeof _ === "function" ? _ : constant$10(+_), link) : y$$1;
   };
 
   link.context = function(_) {
@@ -14672,10 +14633,10 @@ function curveVertical(context, x0, y0, x1, y1) {
 }
 
 function curveRadial$1(context, x0, y0, x1, y1) {
-  var p0 = pointRadial(x0, y0),
-      p1 = pointRadial(x0, y0 = (y0 + y1) / 2),
-      p2 = pointRadial(x1, y0),
-      p3 = pointRadial(x1, y1);
+  var p0 = radialPoint(x0, y0),
+      p1 = radialPoint(x0, y0 = (y0 + y1) / 2),
+      p2 = radialPoint(x1, y0),
+      p3 = radialPoint(x1, y1);
   context.moveTo(p0[0], p0[1]);
   context.bezierCurveTo(p1[0], p1[1], p2[0], p2[1], p3[0], p3[1]);
 }
@@ -15028,7 +14989,7 @@ Bundle.prototype = {
   }
 };
 
-var bundle = (function custom(beta) {
+var bundle = ((function custom(beta) {
 
   function bundle(context) {
     return beta === 1 ? new Basis(context) : new Bundle(context, beta);
@@ -15039,7 +15000,7 @@ var bundle = (function custom(beta) {
   };
 
   return bundle;
-})(0.85);
+}))(0.85);
 
 function point$3(that, x, y) {
   that._context.bezierCurveTo(
@@ -15090,7 +15051,7 @@ Cardinal.prototype = {
   }
 };
 
-var cardinal = (function custom(tension) {
+var cardinal = ((function custom(tension) {
 
   function cardinal(context) {
     return new Cardinal(context, tension);
@@ -15101,7 +15062,7 @@ var cardinal = (function custom(tension) {
   };
 
   return cardinal;
-})(0);
+}))(0);
 
 function CardinalClosed(context, tension) {
   this._context = context;
@@ -15149,18 +15110,18 @@ CardinalClosed.prototype = {
   }
 };
 
-var cardinalClosed = (function custom(tension) {
+var cardinalClosed = ((function custom(tension) {
 
-  function cardinal$$1(context) {
+  function cardinal(context) {
     return new CardinalClosed(context, tension);
   }
 
-  cardinal$$1.tension = function(tension) {
+  cardinal.tension = function(tension) {
     return custom(+tension);
   };
 
-  return cardinal$$1;
-})(0);
+  return cardinal;
+}))(0);
 
 function CardinalOpen(context, tension) {
   this._context = context;
@@ -15197,18 +15158,18 @@ CardinalOpen.prototype = {
   }
 };
 
-var cardinalOpen = (function custom(tension) {
+var cardinalOpen = ((function custom(tension) {
 
-  function cardinal$$1(context) {
+  function cardinal(context) {
     return new CardinalOpen(context, tension);
   }
 
-  cardinal$$1.tension = function(tension) {
+  cardinal.tension = function(tension) {
     return custom(+tension);
   };
 
-  return cardinal$$1;
-})(0);
+  return cardinal;
+}))(0);
 
 function point$4(that, x, y) {
   var x1 = that._x1,
@@ -15283,7 +15244,7 @@ CatmullRom.prototype = {
   }
 };
 
-var catmullRom = (function custom(alpha) {
+var catmullRom = ((function custom(alpha) {
 
   function catmullRom(context) {
     return alpha ? new CatmullRom(context, alpha) : new Cardinal(context, 0);
@@ -15294,7 +15255,7 @@ var catmullRom = (function custom(alpha) {
   };
 
   return catmullRom;
-})(0.5);
+}))(0.5);
 
 function CatmullRomClosed(context, alpha) {
   this._context = context;
@@ -15354,18 +15315,18 @@ CatmullRomClosed.prototype = {
   }
 };
 
-var catmullRomClosed = (function custom(alpha) {
+var catmullRomClosed = ((function custom(alpha) {
 
-  function catmullRom$$1(context) {
+  function catmullRom(context) {
     return alpha ? new CatmullRomClosed(context, alpha) : new CardinalClosed(context, 0);
   }
 
-  catmullRom$$1.alpha = function(alpha) {
+  catmullRom.alpha = function(alpha) {
     return custom(+alpha);
   };
 
-  return catmullRom$$1;
-})(0.5);
+  return catmullRom;
+}))(0.5);
 
 function CatmullRomOpen(context, alpha) {
   this._context = context;
@@ -15414,18 +15375,18 @@ CatmullRomOpen.prototype = {
   }
 };
 
-var catmullRomOpen = (function custom(alpha) {
+var catmullRomOpen = ((function custom(alpha) {
 
-  function catmullRom$$1(context) {
+  function catmullRom(context) {
     return alpha ? new CatmullRomOpen(context, alpha) : new CardinalOpen(context, 0);
   }
 
-  catmullRom$$1.alpha = function(alpha) {
+  catmullRom.alpha = function(alpha) {
     return custom(+alpha);
   };
 
-  return catmullRom$$1;
-})(0.5);
+  return catmullRom;
+}))(0.5);
 
 function LinearClosed(context) {
   this._context = context;
@@ -15727,7 +15688,7 @@ var stack = function() {
   }
 
   stack.keys = function(_) {
-    return arguments.length ? (keys = typeof _ === "function" ? _ : constant$10(slice$6.call(_)), stack) : keys;
+    return arguments.length ? (keys = typeof _ === "function" ? _ : constant$10(slice$5.call(_)), stack) : keys;
   };
 
   stack.value = function(_) {
@@ -15735,7 +15696,7 @@ var stack = function() {
   };
 
   stack.order = function(_) {
-    return arguments.length ? (order = _ == null ? none$2 : typeof _ === "function" ? _ : constant$10(slice$6.call(_)), stack) : order;
+    return arguments.length ? (order = _ == null ? none$2 : typeof _ === "function" ? _ : constant$10(slice$5.call(_)), stack) : order;
   };
 
   stack.offset = function(_) {
@@ -16788,13 +16749,13 @@ Diagram.prototype = {
 };
 
 var voronoi = function() {
-  var x = x$4,
-      y = y$4,
+  var x$$1 = x$4,
+      y$$1 = y$4,
       extent = null;
 
   function voronoi(data) {
     return new Diagram(data.map(function(d, i) {
-      var s = [Math.round(x(d, i, data) / epsilon$4) * epsilon$4, Math.round(y(d, i, data) / epsilon$4) * epsilon$4];
+      var s = [Math.round(x$$1(d, i, data) / epsilon$4) * epsilon$4, Math.round(y$$1(d, i, data) / epsilon$4) * epsilon$4];
       s.index = i;
       s.data = d;
       return s;
@@ -16814,11 +16775,11 @@ var voronoi = function() {
   };
 
   voronoi.x = function(_) {
-    return arguments.length ? (x = typeof _ === "function" ? _ : constant$11(+_), voronoi) : x;
+    return arguments.length ? (x$$1 = typeof _ === "function" ? _ : constant$11(+_), voronoi) : x$$1;
   };
 
   voronoi.y = function(_) {
-    return arguments.length ? (y = typeof _ === "function" ? _ : constant$11(+_), voronoi) : y;
+    return arguments.length ? (y$$1 = typeof _ === "function" ? _ : constant$11(+_), voronoi) : y$$1;
   };
 
   voronoi.extent = function(_) {
@@ -16926,18 +16887,9 @@ function defaultTransform() {
   return this.__zoom || identity$8;
 }
 
-function defaultWheelDelta() {
-  return -exports.event.deltaY * (exports.event.deltaMode ? 120 : 1) / 500;
-}
-
-function touchable$1() {
-  return "ontouchstart" in this;
-}
-
 var zoom = function() {
   var filter = defaultFilter$2,
       extent = defaultExtent$1,
-      wheelDelta = defaultWheelDelta,
       k0 = 0,
       k1 = Infinity,
       x0 = -k1,
@@ -16945,7 +16897,7 @@ var zoom = function() {
       y0 = x0,
       y1 = x1,
       duration = 250,
-      interpolate = interpolateZoom,
+      interpolate$$1 = interpolateZoom,
       gestures = [],
       listeners = dispatch("start", "zoom", "end"),
       touchstarting,
@@ -16956,28 +16908,26 @@ var zoom = function() {
 
   function zoom(selection$$1) {
     selection$$1
-        .property("__zoom", defaultTransform)
         .on("wheel.zoom", wheeled)
         .on("mousedown.zoom", mousedowned)
         .on("dblclick.zoom", dblclicked)
-      .filter(touchable$1)
         .on("touchstart.zoom", touchstarted)
         .on("touchmove.zoom", touchmoved)
         .on("touchend.zoom touchcancel.zoom", touchended)
-        .style("touch-action", "none")
-        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
+        .property("__zoom", defaultTransform);
   }
 
-  zoom.transform = function(collection, transform$$1) {
+  zoom.transform = function(collection, transform) {
     var selection$$1 = collection.selection ? collection.selection() : collection;
     selection$$1.property("__zoom", defaultTransform);
     if (collection !== selection$$1) {
-      schedule(collection, transform$$1);
+      schedule(collection, transform);
     } else {
       selection$$1.interrupt().each(function() {
         gesture(this, arguments)
             .start()
-            .zoom(null, typeof transform$$1 === "function" ? transform$$1.apply(this, arguments) : transform$$1)
+            .zoom(null, typeof transform === "function" ? transform.apply(this, arguments) : transform)
             .end();
       });
     }
@@ -17011,34 +16961,22 @@ var zoom = function() {
     });
   };
 
-  zoom.translateTo = function(selection$$1, x, y) {
-    zoom.transform(selection$$1, function() {
-      var e = extent.apply(this, arguments),
-          t = this.__zoom,
-          p = centroid(e);
-      return constrain(identity$8.translate(p[0], p[1]).scale(t.k).translate(
-        typeof x === "function" ? -x.apply(this, arguments) : -x,
-        typeof y === "function" ? -y.apply(this, arguments) : -y
-      ), e);
-    });
-  };
-
-  function scale(transform$$1, k) {
+  function scale(transform, k) {
     k = Math.max(k0, Math.min(k1, k));
-    return k === transform$$1.k ? transform$$1 : new Transform(k, transform$$1.x, transform$$1.y);
+    return k === transform.k ? transform : new Transform(k, transform.x, transform.y);
   }
 
-  function translate(transform$$1, p0, p1) {
-    var x = p0[0] - p1[0] * transform$$1.k, y = p0[1] - p1[1] * transform$$1.k;
-    return x === transform$$1.x && y === transform$$1.y ? transform$$1 : new Transform(transform$$1.k, x, y);
+  function translate(transform, p0, p1) {
+    var x = p0[0] - p1[0] * transform.k, y = p0[1] - p1[1] * transform.k;
+    return x === transform.x && y === transform.y ? transform : new Transform(transform.k, x, y);
   }
 
-  function constrain(transform$$1, extent) {
-    var dx0 = transform$$1.invertX(extent[0][0]) - x0,
-        dx1 = transform$$1.invertX(extent[1][0]) - x1,
-        dy0 = transform$$1.invertY(extent[0][1]) - y0,
-        dy1 = transform$$1.invertY(extent[1][1]) - y1;
-    return transform$$1.translate(
+  function constrain(transform, extent) {
+    var dx0 = transform.invertX(extent[0][0]) - x0,
+        dx1 = transform.invertX(extent[1][0]) - x1,
+        dy0 = transform.invertY(extent[0][1]) - y0,
+        dy1 = transform.invertY(extent[1][1]) - y1;
+    return transform.translate(
       dx1 > dx0 ? (dx0 + dx1) / 2 : Math.min(0, dx0) || Math.max(0, dx1),
       dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1)
     );
@@ -17048,7 +16986,7 @@ var zoom = function() {
     return [(+extent[0][0] + +extent[1][0]) / 2, (+extent[0][1] + +extent[1][1]) / 2];
   }
 
-  function schedule(transition$$1, transform$$1, center) {
+  function schedule(transition$$1, transform, center) {
     transition$$1
         .on("start.zoom", function() { gesture(this, arguments).start(); })
         .on("interrupt.zoom end.zoom", function() { gesture(this, arguments).end(); })
@@ -17060,8 +16998,8 @@ var zoom = function() {
               p = center || centroid(e),
               w = Math.max(e[1][0] - e[0][0], e[1][1] - e[0][1]),
               a = that.__zoom,
-              b = typeof transform$$1 === "function" ? transform$$1.apply(that, args) : transform$$1,
-              i = interpolate(a.invert(p).concat(w / a.k), b.invert(p).concat(w / b.k));
+              b = typeof transform === "function" ? transform.apply(that, args) : transform,
+              i = interpolate$$1(a.invert(p).concat(w / a.k), b.invert(p).concat(w / b.k));
           return function(t) {
             if (t === 1) t = b; // Avoid rounding error on end.
             else { var l = i(t), k = w / l[2]; t = new Transform(k, p[0] - l[0] * k, p[1] - l[1] * k); }
@@ -17095,11 +17033,11 @@ var zoom = function() {
       }
       return this;
     },
-    zoom: function(key, transform$$1) {
-      if (this.mouse && key !== "mouse") this.mouse[1] = transform$$1.invert(this.mouse[0]);
-      if (this.touch0 && key !== "touch") this.touch0[1] = transform$$1.invert(this.touch0[0]);
-      if (this.touch1 && key !== "touch") this.touch1[1] = transform$$1.invert(this.touch1[0]);
-      this.that.__zoom = transform$$1;
+    zoom: function(key, transform) {
+      if (this.mouse && key !== "mouse") this.mouse[1] = transform.invert(this.mouse[0]);
+      if (this.touch0 && key !== "touch") this.touch0[1] = transform.invert(this.touch0[0]);
+      if (this.touch1 && key !== "touch") this.touch1[1] = transform.invert(this.touch1[0]);
+      this.that.__zoom = transform;
       this.emit("zoom");
       return this;
     },
@@ -17120,7 +17058,7 @@ var zoom = function() {
     if (!filter.apply(this, arguments)) return;
     var g = gesture(this, arguments),
         t = this.__zoom,
-        k = Math.max(k0, Math.min(k1, t.k * Math.pow(2, wheelDelta.apply(this, arguments)))),
+        k = Math.max(k0, Math.min(k1, t.k * Math.pow(2, -exports.event.deltaY * (exports.event.deltaMode ? 120 : 1) / 500))),
         p = mouse(this);
 
     // If the mouse is in the same location as before, reuse it.
@@ -17274,10 +17212,6 @@ var zoom = function() {
     else g.end();
   }
 
-  zoom.wheelDelta = function(_) {
-    return arguments.length ? (wheelDelta = typeof _ === "function" ? _ : constant$12(+_), zoom) : wheelDelta;
-  };
-
   zoom.filter = function(_) {
     return arguments.length ? (filter = typeof _ === "function" ? _ : constant$12(!!_), zoom) : filter;
   };
@@ -17299,7 +17233,7 @@ var zoom = function() {
   };
 
   zoom.interpolate = function(_) {
-    return arguments.length ? (interpolate = _, zoom) : interpolate;
+    return arguments.length ? (interpolate$$1 = _, zoom) : interpolate$$1;
   };
 
   zoom.on = function() {
@@ -17310,7 +17244,7 @@ var zoom = function() {
   zoom.clickDistance = function(_) {
     return arguments.length ? (clickDistance2 = (_ = +_) * _, zoom) : Math.sqrt(clickDistance2);
   };
-
+    
   return zoom;
 };
 
@@ -17541,7 +17475,7 @@ exports.scaleOrdinal = ordinal;
 exports.scaleImplicit = implicit;
 exports.scalePow = pow$1;
 exports.scaleSqrt = sqrt$1;
-exports.scaleQuantile = quantile;
+exports.scaleQuantile = quantile$$1;
 exports.scaleQuantize = quantize$1;
 exports.scaleThreshold = threshold$1;
 exports.scaleTime = time;
@@ -17579,11 +17513,8 @@ exports.arc = arc;
 exports.area = area$2;
 exports.line = line;
 exports.pie = pie;
-exports.areaRadial = areaRadial;
-exports.radialArea = areaRadial;
-exports.lineRadial = lineRadial$1;
-exports.radialLine = lineRadial$1;
-exports.pointRadial = pointRadial;
+exports.radialArea = radialArea;
+exports.radialLine = radialLine$1;
 exports.linkHorizontal = linkHorizontal;
 exports.linkVertical = linkVertical;
 exports.linkRadial = linkRadial;
@@ -17930,10 +17861,9 @@ var Axis = function () {
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
-			withoutTransition: withoutTransition,
-			orgXScale: $$.x
+			withoutTransition: withoutTransition
 		},
-		    axis = (0, _bb2.default)(axisParams).scale($$.zoomScale || scale).orient(orient),
+		    axis = (0, _bb2.default)(axisParams).scale(scale).orient(orient),
 		    newTickValues = tickValues;
 
 
@@ -18158,9 +18088,9 @@ var Axis = function () {
 			axisSubX: duration ? axes.subx.transition().duration(duration) : axes.subx
 		};
 	}, Axis.prototype.redraw = function redraw(transitions, isHidden) {
-		var $$ = this.owner,
-		    opacity = isHidden ? "0" : "1";
-		$$.axes.x.style("opacity", opacity), $$.axes.y.style("opacity", opacity), $$.axes.y2.style("opacity", opacity), $$.axes.subx.style("opacity", opacity), transitions.axisX.call($$.xAxis), transitions.axisY.call($$.yAxis), transitions.axisY2.call($$.y2Axis), transitions.axisSubX.call($$.subXAxis);
+		var $$ = this.owner;
+
+		$$.axes.x.style("opacity", isHidden ? "0" : "1"), $$.axes.y.style("opacity", isHidden ? "0" : "1"), $$.axes.y2.style("opacity", isHidden ? "0" : "1"), $$.axes.subx.style("opacity", isHidden ? "0" : "1"), transitions.axisX.call($$.xAxis), transitions.axisY.call($$.yAxis), transitions.axisY2.call($$.y2Axis), transitions.axisSubX.call($$.subXAxis);
 	}, Axis;
 }();
 
@@ -18315,7 +18245,7 @@ exports.default = function () {
 			    tickTransform = void 0,
 			    tickX = void 0,
 			    tickY = void 0,
-			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent((params.orgXScale || scale).range()),
+			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent(scale.range()),
 			    path = g.selectAll(".domain").data([0]),
 			    pathUpdate = path.enter().append("path").attr("class", "domain").merge(transitionise(path));
 
@@ -18485,7 +18415,7 @@ function _interopRequireWildcard(obj) { if (obj && obj.__esModule) return obj; v
 
 /**
  * @namespace bb
- * @version 1.1.0
+ * @version 1.0.1
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -18499,7 +18429,7 @@ var bb = {
   * 	bb.version;  // "1.0.0"
   * @memberof bb
   */
-	version: "1.1.0",
+	version: "1.0.1",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -18740,20 +18670,6 @@ var Options = function Options() {
 						bindto: "#chart",
 
 						/**
-       * Set clip-path property of chart element
-       * - **NOTE:**
-       *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
-       *  > Is to make chart element positioned over axis element.
-       * @name clipPath
-       * @memberof Options
-       * @type {Boolean}
-       * @default true
-       * @example
-       * clipPath: false
-       */
-						clipPath: !0,
-
-						/**
        * Set svg element's class name
        * @name svg
        * @memberof Options
@@ -18863,29 +18779,19 @@ var Options = function Options() {
        * @property {Boolean} [interaction.brighten=true]
        * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
        * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
-       * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
        * @example
        * interaction: {
                 *    enabled: false,
                 *    inputType: {
                 *        mouse: true,
                 *        touch: false
-                *
-                *        // or declare preventDefault explicitly.
-                *        // In this case touch inputType is enabled by default
-                *        touch: {
-                *            preventDefault: true
-                *
-                *            // or threshold pixel value (pixel moved from touchstart to touchmove)
-                *            preventDefault: 5
-                *        }
                 *    }
        * }
        */
-						interaction_enabled: !0,
 						interaction_brighten: !0,
+						interaction_enabled: !0,
 						interaction_inputType_mouse: !0,
-						interaction_inputType_touch: {},
+						interaction_inputType_touch: !0,
 
 						/**
        * Set a callback to execute when mouse/touch enters the chart.
@@ -18940,19 +18846,6 @@ var Options = function Options() {
 						onresized: function onresized() {},
 
 						/**
-       * Set a callback to execute before the chart is initialized
-       * @name onbeforeinit
-       * @memberof Options
-       * @type {Function}
-       * @default function(){}
-       * @example
-       * onbeforeinit: function() {
-       *   ...
-       * }
-       */
-						onbeforeinit: undefined,
-
-						/**
        * Set a callback to execute when the chart is initialized.
        * @name oninit
        * @memberof Options
@@ -18964,19 +18857,6 @@ var Options = function Options() {
        * }
        */
 						oninit: function oninit() {},
-
-						/**
-       * Set a callback to execute after the chart is initialized
-       * @name onafterinit
-       * @memberof Options
-       * @type {Function}
-       * @default function(){}
-       * @example
-       * onafterinit: function() {
-       *   ...
-       * }
-       */
-						onafterinit: undefined,
 
 						/**
        * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
@@ -19000,7 +18880,7 @@ var Options = function Options() {
        * @property {Number} [transition.duration=350] duration in milliseconds
        * @example
        * transition: {
-       *    duration: 500
+       *  duration: 500
        * }
        */
 						transition_duration: 350,
@@ -19136,7 +19016,7 @@ var Options = function Options() {
        * @default {}
        * @example
        * data: {
-       *   axes: {
+       * axes: {
        *     data1: "y",
        *     data2: "y2"
        *   }
@@ -19188,80 +19068,56 @@ var Options = function Options() {
 						data_types: {},
 
 						/**
-       * Set labels options
+       * Show labels on each data points.
        * @name data:labels
        * @memberof Options
-       * @type {Object}
-       * @property {Boolean} [donut.labels=false] Show or hide labels on each data points
-       * @property {Function} [donut.labels.format={}] Set formatter function for data labels.<br>
+       * @type {Boolean}
+       * @default false
+       * @example
+       * data: {
+       *   labels: true
+       * }
+       */
+						/**
+       * Set formatter function for data labels.<br>
        * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
        *  - `v` is the value of the data point where the label is shown.
        *  - `id` is the id of the data where the label is shown.
        *  - `i` is the index of the data point where the label is shown.
        *  - `j` is the sub index of the data point where the label is shown.<br><br>
        * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-       * @property {Number} [donut.labels.position.x=0] x coordinate position, relative the original.
-       * @property {NUmber} [donut.labels.position.y=0] y coordinate position, relative the original.
+       * @name data:labels:format
        * @memberof Options
        * @type {Object}
        * @default {}
        * @example
        * data: {
-       *   labels: true,
-       *
-       *   // or set specific options
        *   labels: {
-       *     format: function(v, id, i, j) { ... },
+       *     format: function(v, id, i, j) { ... }
        *     // it's possible to set for each data
        *     //format: {
        *     //    data1: function(v, id, i, j) { ... },
        *     //    ...
-       *     //},
-       *     position: {
-       *        x: -10,
-       *        y: 10
-       *     }
+       *     //}
        *   }
        * }
        */
 						data_labels: {},
-						data_labels_position: {},
 
 						/**
-       *  This option changes the order of stacking data and pieces of pie/donut.
-       *  - If `null` specified, it will be the order the data loaded.
-       *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
-       *
+       *  This option changes the order of stacking the data and pieces of pie/donut. If `null` specified, it will be the order the data loaded. If function specified, it will be used to sort the data and it will recieve the data as argument.<br><br>
        *  **Available Values:**
-       *  - `desc`: In descending order
-       *  - `asc`: In ascending order
-       *  - `null`: It keeps the data load order
-       *  - `function(data1, data2) { ... }`: Array.sort compareFunction
+       *  - desc
+       *  - asc
+       *  - function(data1, data2) { ... }
+       *  - null
        * @name data:order
        * @memberof Options
-       * @type {String|Function|null}
+       * @type {String|Function}
        * @default desc
        * @example
        * data: {
-       *   // in descending order (default)
-       *   order: "desc"
-       *
-       *   // in ascending order
        *   order: "asc"
-       *
-       *   // keeps data input order
-       *   order: null
-       *
-       *   // specifying sort function
-       *   order: function(a, b) {
-       *       // param data passed format
-       *       {
-       *          id: "data1", id_org: "data1", values: [
-       *              {x: 5, value: 250, id: "data1", index: 5, name: "data1"},
-       *              ...
-       *          ]
-       *       }
-       *   }
        * }
        */
 						data_order: "desc",
@@ -19471,11 +19327,7 @@ var Options = function Options() {
        * @default function() {}
        * @example
        * data: {
-       *     onselected: function(d, element) {
-       *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-       *        // element - <circle>
-        *        ...
-        *    }
+       *     onselected: function(d) { ... }
        * }
        */
 						data_onselected: function data_onselected() {},
@@ -19487,41 +19339,11 @@ var Options = function Options() {
        * @type {Function}
        * @default function() {}
        * @example
-       *     onunselected: function(d, element) {
-       *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-       *        // element - <circle>
-        *        ...
-        *    }
+       * data: {
+       *     onunselected: function(d) { ... }
+       * }
        */
 						data_onunselected: function data_onunselected() {},
-
-						/**
-       * Set a callback for minimum data
-       * @name data:onmin
-       * @memberof Options
-       * @type {Function}
-       * @default undefined
-       * @example
-       *     onmin: function(data) {
-       *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
-          *        ...
-       *    }
-       */
-						data_onmin: undefined,
-
-						/**
-       * Set a callback for maximum data
-       * @name data:onmax
-       * @memberof Options
-       * @type {Function}
-       * @default undefined
-       * @example
-       *     onmax: function(data) {
-       *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
-          *        ...
-       *    }
-       */
-						data_onmax: undefined,
 
 						/**
        * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
@@ -19701,11 +19523,6 @@ var Options = function Options() {
        * @property {Boolean} [legend.show=true] Show or hide legend.
        * @property {Boolean} [legend.hide=false] Hide legend
        *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
-       * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
-       * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
-       *      If set string value, within template the 'color' and 'title' can be replaced using template-like syntax string:
-       *      - {=COLOR}: data color value
-       *      - {=TITLE}: data title value
        * @property {String} [legend.position=bottom] Change the position of legend.<br>
        *  Available values are: `bottom`, `right` and `inset` are supported.
        * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
@@ -19717,33 +19534,15 @@ var Options = function Options() {
        *      - bottom-right
        *  x and y set the position of the legend based on the anchor.<br>
        *  step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
-       * @property {Boolean} [legend.equally=false] Set to all items have same width size.
-       * @property {Boolean} [legend.padding=0] Set padding value
        * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
        * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
        * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
-       * @property {Number} [legend.item.tile.width=10] Set width of item tile element
-       * @property {Number} [legend.item.tile.height=10] Set height of item tile element
        * @example
        *  legend: {
        *      show: true,
        *      hide: true,
        *      //or hide: "data1"
                 *      //or hide: ["data1", "data2"]
-       *      contents: {
-       *          bindto: "#legend",   // <ul id='legend'></ul>
-       *
-       *          // will be as: <li style='background-color:#1f77b4'>data1</li>
-       *          template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
-       *
-       *          // or using function
-       *          template: function(title, color) {
-       *               // if you want omit some legend, return falsy value
-       *               if (title !== "data1") {
-       *                    return "<li style='background-color:"+ color +">"+ title +"</li>";
-       *               }
-       *          }
-       *      },
                 *      position: "bottom",  // bottom, right, inset
        *      inset: {
        *          anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right
@@ -19751,25 +19550,13 @@ var Options = function Options() {
        *          y: 10,
        *          step: 2
        *      },
-                *      equally: false,
-                *      padding: 10,
-                *      item: {
-       *          onclick: function(id) { ... },
-       *          onover: function(id) { ... },
-       *          onout: function(id) { ... },
-       *
-       *          // set tile's size
-       *          tile: {
-       *              width: 20,
-       *              height: 15
-       *          }
-       *      }
+       *      onclick: function(id) { ... },
+       *      onover: function(id) { ... },
+       *      onout: function(id) { ... }
        *  }
        */
 						legend_show: !0,
 						legend_hide: !1,
-						legend_contents_bindto: undefined,
-						legend_contents_template: undefined,
 						legend_position: "bottom",
 						legend_inset_anchor: "top-left",
 						legend_inset_x: 10,
@@ -20149,9 +19936,7 @@ var Options = function Options() {
        *   x: {
        *     // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
        *     // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
-       *     extent: [
-       *         [0, 0], [200, 60]
-       *     ]
+       *     extent: [[0, 0], [200, 60]]
        *   }
        * }
        */
@@ -20160,14 +19945,14 @@ var Options = function Options() {
 						/**
        * Set label on x axis.<br><br>
        *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
-       *  - **If it's horizontal axis:**
+       *  - If it's horizontal axis:
        *    - inner-right [default]
        *    - inner-center
        *    - inner-left
        *    - outer-right
        *    - outer-center
        *    - outer-left
-       *  - **If it's vertical axis:**
+       *  - If it's vertical axis:
        *    - inner-top [default]
        *    - inner-middle
        *    - inner-bottom
@@ -20433,10 +20218,7 @@ var Options = function Options() {
 
 						/**
        * Set padding for y axis.<br><br>
-       * You can set padding for y axis to create more space on the edge of the axis.
-       * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
-       *
-       * **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+       * You can set padding for y axis to create more space on the edge of the axis. This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
        * @name axis:y:padding
        * @memberof Options
        * @type {Object}
@@ -20717,7 +20499,7 @@ var Options = function Options() {
        *       {value: 6, text: "Label on 6", position: "start"}
        *     ]
        *   },
-       *   y: {
+       * 	 y: {
        *     show: true,
        *     lines: [
        *       {value: 100, text: "Label on 100"},
@@ -20782,7 +20564,7 @@ var Options = function Options() {
        * @type {Object}
        * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
        *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-       * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
+       * @property {Boolean} [line.step_type=step] Change step type for step chart.<br>
        * **Available values:**
        * - step
        * - step-before
@@ -20847,7 +20629,6 @@ var Options = function Options() {
        * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
        * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
        * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
-       * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
        * @property {Boolean} [pie.expand=true] Enable or disable expanding pie pieces.
        * @property {Number} [pie.padAngle=0] Set padding between data.
        * @example
@@ -20857,15 +20638,7 @@ var Options = function Options() {
        *          format: function(value, ratio, id) {
        *              return d3.format("$")(value);
        *          },
-       *          threshold: 0.1,
-       *
-       *          // set ratio callback. Should return ratio value
-       *          ratio: function(d, radius, h) {
-       *          	...
-       *          	return ratio;
-       *          },
-       *          // or set ratio number
-       *          ratio: 0.5
+       *          threshold: 0.1
        *      },
        *      expand: false,
        *      padAngle: 0.1
@@ -20884,12 +20657,11 @@ var Options = function Options() {
        * @name gauge
        * @memberof Options
        * @type {Object}
-       * @property {Boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
+       * @property {Boolean} [gauge.fullCircle=false]
        * @property {Boolean} [gauge.label.show=true] Show or hide label on gauge.
        * @property {Function} [gauge.label.format] Set formatter for the label on gauge.
-       * @property {Function} [gauge.label.extents] Set customized min/max label text.
        * @property {Boolean} [gauge.expand=true] Enable or disable expanding gauge.
-       * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+       * @property {Number} [gauge.expand.duration=50]
        * @property {Number} [gauge.min=0] Set min value of the gauge.
        * @property {Number} [gauge.max=100] Set max value of the gauge.
        * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
@@ -20897,22 +20669,13 @@ var Options = function Options() {
        * @property {Number} [gauge.width] Set width of gauge chart.
        * @example
        *  gauge: {
-       *      fullCircle: false,
        *      label: {
        *          show: false,
        *          format: function(value, ratio) {
        *              return value;
-       *          },
-       *          extents: function(value, isMax) {
-      	 *              return (isMax ? "Max:" : "Min:") + value;
        *          }
        *      },
        *      expand: false,
-       *
-       *      // or set duration
-       *      expand: {
-       *          duration: 20
-       *      },
        *      min: -100,
        *      max: 200,
        *      units: "%",
@@ -20939,10 +20702,9 @@ var Options = function Options() {
        * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
        * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
        * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
-       * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
        * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
        * @property {Number} [donut.width] Set width of donut chart.
-       * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+       * @property {String} [donut.title=""] Set title of donut chart.
        * @property {Number} [donut.padAngle=0] Set padding between data.
        * @example
        *  donut: {
@@ -20951,23 +20713,12 @@ var Options = function Options() {
        *          format: function(value, ratio, id) {
        *              return d3.format("$")(value);
        *          },
-       *          threshold: 0.1,
-       *
-       *          // set ratio callback. Should return ratio value
-       *          ratio: function(d, radius, h) {
-       *          	...
-       *          	return ratio;
-       *          },
-       *          // or set ratio number
-       *          ratio: 0.5
+       *          threshold: 0.1
        *      },
        *      expand: false,
        *      width: 10,
-       *      padAngle: 0.2,
-       *      title: "Donut Title"
-       *
-       *      // title with line break
-       *      title: "Title1\nTitle2"
+       *      title: "Donut Title",
+       *      padAngle: 0.2
        *  }
        */
 						donut_label_show: !0,
@@ -21005,12 +20756,12 @@ var Options = function Options() {
        * @default []
        * @example
        *  regions: [
-       *    {
-       *	    axis: "x",
-       *	    start: 1,
-       *	    end: 4,
-       *	    class: "region-1-4"
-       *    }
+       *	 {
+       *	     axis: "x",
+       *	     start: 1,
+       *	     end: 4,
+       *	     class: "region-1-4"
+       *	 }
        *  ]
        */
 						regions: [],
@@ -21029,16 +20780,10 @@ var Options = function Options() {
        * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
        *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
        *  If undefined returned, the row of that value will be skipped.
-       * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
+       * @property {function} [tooltip.position] Set custom position for the tooltip.<br>
        *  This option can be used to modify the tooltip position by returning object that has top and left.
-       * @property {Function} [tooltip.contents] Set custom HTML for the tooltip.<br>
+       * @property {function} [tooltip.contents] Set custom HTML for the tooltip.<br>
        *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
-       * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
-       *  **Available Values:**
-       *  - `desc`: In descending data value order
-       *  - `asc`: In ascending data value order
-       *  - `null`: It keeps the data display order
-       *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
        * @example
        *  tooltip: {
        *      show: true,
@@ -21053,17 +20798,7 @@ var Options = function Options() {
       		 *      },
       		 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
       		 *          return ... // formatted html as you want
-       		 *      },
-       		 *
-       		 *      // sort tooltip data value display in ascending order
-       		 *      order: "asc",
-       		 *
-       *      // specifying sort function
-       *      order: function(a, b) {
-       *         // param data passed format
-       *         {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
-       *           ...
-       *      }
+       		 *      }
        *  }
        */
 						tooltip_show: !0,
@@ -21083,7 +20818,6 @@ var Options = function Options() {
 						},
 						tooltip_onshow: function tooltip_onshow() {},
 						tooltip_onhide: function tooltip_onhide() {},
-						tooltip_order: null,
 
 						/**
        * Set title options
@@ -21565,67 +21299,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		return typeof x === "undefined" ? null : x;
 	},
-
-
-	/**
-  * Get min/max value from the data
-  * @private
-  * @param {Array} data array data to be evaluated
-  * @return {{min: {Number}, max: {Number}}}
-  */
-	getMinMaxValue: function getMinMaxValue(data) {
-		var min = void 0,
-		    max = void 0;
-
-
-		return (data || this.data.targets.map(function (t) {
-			return t.values;
-		})).forEach(function (v) {
-			min = (0, _d.min)([min, (0, _d.min)(v, function (t) {
-				return t.value;
-			})]), max = (0, _d.max)([max, (0, _d.max)(v, function (t) {
-				return t.value;
-			})]);
-		}), { min: min, max: max };
-	},
-
-
-	/**
-  * Get the min/max data
-  * @private
-  * @return {{min: Array, max: Array}}
-  */
-	getMinMaxData: function getMinMaxData() {
-		var _this = this,
-		    data = this.data.targets.map(function (t) {
-			return t.values;
-		}),
-		    minMax = this.getMinMaxValue(data),
-		    min = [],
-		    max = [];
-
-		return data.forEach(function (v) {
-			var minData = _this.getFilteredDataByValue(v, minMax.min),
-			    maxData = _this.getFilteredDataByValue(v, minMax.max);
-			minData.length && (min = min.concat(minData)), maxData.length && (max = max.concat(maxData));
-		}), { min: min, max: max };
-	},
-
-
-	/**
-  * Get filtered data by value
-  * @private
-  * @param {Object} data
-  * @param {Number} value
-  * @return {Array} filtered array data
-  */
-	getFilteredDataByValue: function getFilteredDataByValue(data, value) {
-		return data.filter(function (t) {
-			return t.value === value;
-		});
-	},
 	getMaxDataCount: function getMaxDataCount() {
-		return (0, _d.max)(this.data.targets, function (t) {
+		var $$ = this;
+
+		return (0, _d.max)($$.data.targets, function (t) {
 			return t.values.length;
 		});
 	},
@@ -21937,26 +21614,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			d = type === "json" ? _this.convertJsonToData(JSON.parse(response), keys) : type === "tsv" ? _this.convertTsvToData(response) : _this.convertCsvToData(response), done.call(_this, d);
 		});
 	},
-	_convertCsvTsvToData: function _convertCsvTsvToData(parser, xsv) {
-		var rows = parser.rows(xsv),
+	convertCsvToData: function convertCsvToData(xsv) {
+		var rows = (0, _d.csvParseRows)(xsv),
 		    d = void 0;
 
 
 		return rows.length === 1 ? (d = [{}], rows[0].forEach(function (id) {
 			d[0][id] = null;
-		})) : d = parser.parse(xsv), d;
+		})) : d = (0, _d.csvParse)(xsv), d;
 	},
-	convertCsvToData: function convertCsvToData(xsv) {
-		return this._convertCsvTsvToData({
-			rows: _d.csvParseRows,
-			parse: _d.csvParse
-		}, xsv);
-	},
-	convertTsvToData: function convertTsvToData(tsv) {
-		return this._convertCsvTsvToData({
-			rows: _d.tsvParseRows,
-			parse: _d.tsvParse
-		}, tsv);
+	convertTsvToData: function convertTsvToData(xsv) {
+		var rows = (0, _d.tsvParseRows)(xsv),
+		    d = void 0;
+
+
+		return rows.length === 1 ? (d = [{}], rows[0].forEach(function (id) {
+			d[0][id] = null;
+		})) : d = (0, _d.tsvParse)(xsv), d;
 	},
 	convertJsonToData: function convertJsonToData(json, keys) {
 		var _this2 = this,
@@ -22263,7 +21937,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		// clear old rects
 
 
-		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX ? (eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)) : (maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets), eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
+		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX ? (eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()) // enter : only one rect will be added
+		.merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)) : (maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets), eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
 			return d;
 		}), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)), $$.inputType === "touch" && !$$.hasArcType()) {
 			var getEventRect = function () {
@@ -22276,38 +21951,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 				return (isNaN(index) || index === null) && (index = -1), index;
 			},
+			    startClientY = void 0,
 			    selectRect = function (context) {
+				var eventType = _d.event.type,
+				    touch = _d.event.changedTouches[0],
+				    axisRotated = $$.config.axis_rotated,
+				    currentClientY = touch.clientY;
+
+				// If movement is less than 5px, scrolling outside the chart is prevented from working.
+
+
+				if (eventType === "touchstart") startClientY = currentClientY, axisRotated && _d.event.preventDefault();else if (eventType === "touchmove" && startClientY) {
+					var moveY = Math.abs(startClientY - currentClientY);
+
+					!axisRotated && moveY < 5 && _d.event.preventDefault();
+				}
+
 				if (isMultipleX) $$.selectRectForMultipleXs(context);else {
 					var eventRect = getEventRect(),
 					    index = getIndex(eventRect);
 					index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
 				}
 			},
-			    preventDefault = config.interaction_inputType_touch.preventDefault,
-			    isPrevented = (0, _util.isBoolean)(preventDefault) && preventDefault || !1,
-			    preventThreshold = !isNaN(preventDefault) && preventDefault || null,
-			    startPx = void 0,
-			    preventEvent = function (event) {
-				var eventType = event.type,
-				    touch = event.changedTouches[0],
-				    currentXY = touch["client" + (config.axis_rotated ? "Y" : "X")];
-				eventType === "touchstart" ? isPrevented ? event.preventDefault() : preventThreshold !== null && (startPx = currentXY) : eventType === "touchmove" && (isPrevented || startPx === !0 || preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold) && (startPx = !0, event.preventDefault());
-			};
-
-			// call event.prenvetDefault()
-			// according 'interaction.inputType.touch.preventDefault' option
-			$$.svg.on("touchstart touchmove", function () {
+			    touchHandler = function () {
 				var eventRect = getEventRect();
 
-				if (!eventRect.empty() && eventRect.classed(_classes2.default.eventRect)) {
+				if (eventRect.classed(_classes2.default.eventRect)) {
 					if ($$.dragging || $$.flowing || $$.hasArcType()) return;
 
-					preventEvent(_d.event), selectRect(this);
+					selectRect(this);
 				} else $$.unselectRect();
-			}).on("touchend", function () {
+			};
+
+			$$.svg.on("touchstart", touchHandler).on("touchmove", touchHandler).on("touchend", function () {
 				var eventRect = getEventRect();
 
-				if (!eventRect.empty() && eventRect.classed(_classes2.default.eventRect)) {
+				if (eventRect.classed(_classes2.default.eventRect)) {
 					if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1));
 
 					// Call event handler
@@ -22774,9 +22453,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			"natural": _d.curveNatural,
 			"linear-closed": _d.curveLinearClosed,
 			"linear": _d.curveLinear,
-			"step": _d.curveStep,
-			"step-after": _d.curveStepAfter,
-			"step-before": _d.curveStepBefore
+			"step": _d.curveStep
 		}[interpolation];
 	},
 	getInterpolateType: function getInterpolateType(d) {
@@ -22829,11 +22506,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		// Lines for each data
-		mainLineEnter.append("g").attr("class", classLines), mainLineEnter.append("g").attr("class", classAreas), config.point_show && (config.data_selection_enabled && mainLineEnter.append("g").attr("class", function (d) {
+		mainLineEnter.append("g").attr("class", classLines), mainLineEnter.append("g").attr("class", classAreas), mainLineEnter.append("g").attr("class", function (d) {
 			return $$.generateClass(_classes2.default.selectedCircles, d.id);
 		}), mainLineEnter.append("g").attr("class", classCircles).style("cursor", function (d) {
 			return config.data_selection_isselectable(d) ? "pointer" : null;
-		})), targets.forEach(function (t) {
+		}), targets.forEach(function (t) {
 			$$.main.selectAll("." + _classes2.default.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + _classes2.default.selectedCircle).each(function (d) {
 				d.value = t.values[d.index].value;
 			});
@@ -23048,14 +22725,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	updateCircle: function updateCircle() {
 		var $$ = this;
 
-		$$.config.point_show && ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineOrScatterData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append("circle").attr("class", $$.classCircle.bind($$)).attr("r", $$.pointR.bind($$)).style("fill", $$.color).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
+		$$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineOrScatterData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append("circle").attr("class", $$.classCircle.bind($$)).attr("r", $$.pointR.bind($$)).style("fill", $$.color).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 	redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
 		var selectedCircles = this.main.selectAll("." + _classes2.default.selectedCircle),
 		    mainCircles = void 0;
 
-
-		if (!this.config.point_show) return undefined;
 
 		if (withTransition) {
 			var transitionName = Math.random().toString();
@@ -23396,9 +23071,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		return function (d, i) {
-			var getPoints = $$.isAreaType(d) && getAreaPoints || $$.isBarType(d) && getBarPoints || getLinePoints;
+			var getPoints = $$.isBarType(d) ? getBarPoints : getLinePoints;
 
-			return getter.call($$, getPoints(d, i), d, this);
+			return getPoints = $$.isAreaType(d) ? getAreaPoints : getPoints, getter.call($$, getPoints(d, i), d, this);
 		};
 	},
 
@@ -23413,12 +23088,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   */
 	getXForText: function getXForText(points, d, textElement) {
 		var $$ = this,
-		    config = $$.config,
 		    xPos = void 0,
 		    padding = void 0;
 
-
-		return config.axis_rotated ? (padding = $$.isBarType(d) ? 4 : 6, xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1)) : xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : points[0][0], d.value === null && (xPos > $$.width ? xPos = $$.width - textElement.getBoundingClientRect().width : xPos < 0 && (xPos = 4)), xPos + (config.data_labels_position.x || 0);
+		return $$.config.axis_rotated ? (padding = $$.isBarType(d) ? 4 : 6, xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1)) : xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : points[0][0], d.value === null && (xPos > $$.width ? xPos = $$.width - textElement.getBoundingClientRect().width : xPos < 0 && (xPos = 4)), xPos;
 	},
 
 
@@ -23432,17 +23105,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   */
 	getYForText: function getYForText(points, d, textElement) {
 		var $$ = this,
-		    config = $$.config,
 		    yPos = void 0;
 
 		// show labels regardless of the domain if value is null
-		if (config.axis_rotated ? yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * 0.6) / 2 : (yPos = points[2][1], d.value < 0 || d.value === 0 && !$$.hasPositiveValue ? (yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= 3 : !$$.isBarType(d) && $$.isChrome() && (yPos += 3)) : yPos += $$.isBarType(d) ? -3 : -6), d.value === null && !config.axis_rotated) {
+		if ($$.config.axis_rotated ? yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * 0.6) / 2 : (yPos = points[2][1], d.value < 0 || d.value === 0 && !$$.hasPositiveValue ? (yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= 3 : !$$.isBarType(d) && $$.isChrome() && (yPos += 3)) : yPos += $$.isBarType(d) ? -3 : -6), d.value === null && !$$.config.axis_rotated) {
 			var boxHeight = textElement.getBoundingClientRect().height;
 
 			yPos < boxHeight ? yPos = boxHeight : yPos > this.height && (yPos = this.height - 4);
 		}
-
-		return yPos + (config.data_labels_position.y || 0);
+		return yPos;
 	}
 });
 
@@ -23490,40 +23161,51 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		return this.hasType("pie", targets) || this.hasType("donut", targets) || this.hasType("gauge", targets);
 	},
 	isLineType: function isLineType(d) {
-		var id = (0, _util.isString)(d) ? d : d.id;
-
-		return !this.config.data_types[id] || this.isTypeOf(id, ["line", "spline", "area", "area-spline", "step", "area-step"]);
-	},
-	isTypeOf: function isTypeOf(d, type) {
-		var id = (0, _util.isString)(d) ? d : d.id,
-		    dataType = this.config.data_types[id];
+		var config = this.config,
+		    id = (0, _util.isString)(d) ? d : d.id;
 
 
-		return (0, _util.isArray)(type) ? type.indexOf(dataType) >= 0 : dataType === type;
+		return !config.data_types[id] || ["line", "spline", "area", "area-spline", "step", "area-step"].indexOf(config.data_types[id]) >= 0;
 	},
 	isStepType: function isStepType(d) {
-		return this.isTypeOf(d, ["step", "area-step"]);
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return ["step", "area-step"].indexOf(this.config.data_types[id]) >= 0;
 	},
 	isSplineType: function isSplineType(d) {
-		return this.isTypeOf(d, ["spline", "area-spline"]);
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return ["spline", "area-spline"].indexOf(this.config.data_types[id]) >= 0;
 	},
 	isAreaType: function isAreaType(d) {
-		return this.isTypeOf(d, ["area", "area-spline", "area-step"]);
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return ["area", "area-spline", "area-step"].indexOf(this.config.data_types[id]) >= 0;
 	},
 	isBarType: function isBarType(d) {
-		return this.isTypeOf(d, "bar");
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return this.config.data_types[id] === "bar";
 	},
 	isScatterType: function isScatterType(d) {
-		return this.isTypeOf(d, "scatter");
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return this.config.data_types[id] === "scatter";
 	},
 	isPieType: function isPieType(d) {
-		return this.isTypeOf(d, "pie");
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return this.config.data_types[id] === "pie";
 	},
 	isGaugeType: function isGaugeType(d) {
-		return this.isTypeOf(d, "gauge");
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return this.config.data_types[id] === "gauge";
 	},
 	isDonutType: function isDonutType(d) {
-		return this.isTypeOf(d, "donut");
+		var id = (0, _util.isString)(d) ? d : d.id;
+
+		return this.config.data_types[id] === "donut";
 	},
 	isArcType: function isArcType(d) {
 		return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d);
@@ -23786,7 +23468,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}
 	},
 
-
 	/**
   * Returns the tooltip content(HTML string)
   * @private
@@ -23804,47 +23485,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return name;
 		},
 		    valueFormat = config.tooltip_format_value || defaultValueFormat,
-		    order = config.tooltip_order,
+		    orderAsc = $$.isOrderAsc(),
 		    text = void 0,
+		    i = void 0,
 		    title = void 0,
 		    value = void 0,
 		    name = void 0,
 		    bgcolor = void 0;
 
 
-		if (order === null && config.data_groups.length) {
-			// for stacked data, order should aligned with the visually displayed data
+		if (config.data_groups.length === 0) d.sort(function (a, b) {
+				var v1 = a ? a.value : null,
+				    v2 = b ? b.value : null;
+
+
+				return orderAsc ? v1 - v2 : v2 - v1;
+			});else {
 			var ids = $$.orderTargets($$.data.targets).map(function (i2) {
 				return i2.id;
-			}).reverse();
+			});
 
 			d.sort(function (a, b) {
 				var v1 = a ? a.value : null,
 				    v2 = b ? b.value : null;
 
-
-				return v1 > 0 && v2 > 0 && (v1 = a.id ? ids.indexOf(a.id) : null, v2 = b.id ? ids.indexOf(b.id) : null), v1 - v2;
+				return v1 > 0 && v2 > 0 && (v1 = a ? ids.indexOf(a.id) : null, v2 = b ? ids.indexOf(b.id) : null), orderAsc ? v1 - v2 : v2 - v1;
 			});
-		} else if (/^(asc|desc)$/.test(order)) {
-			d.sort(function (a, b) {
-				var v1 = a ? a.value : null,
-				    v2 = b ? b.value : null;
+		}
 
-
-				return order === "asc" ? v1 - v2 : v2 - v1;
-			});
-		} else (0, _util.isFunction)(order) && d.sort(order);
-
-		for (var row, i = 0, len = d.length; i < len; i++) if ((row = d[i]) && (row.value || row.value === 0) && (text || (title = (0, _util.sanitise)(titleFormat ? titleFormat(row.x) : row.x), text = title || title === 0 ? "<tr><th colspan=\"2\">" + title + "</th></tr>" : "", text = "<table class=\"" + $$.CLASS.tooltip + "\">" + text), value = (0, _util.sanitise)(valueFormat(row.value, row.ratio, row.id, row.index, d)), value !== undefined)) {
-				// Skip elements when their name is set to null
-				if (row.name === null) continue;
-
-				name = (0, _util.sanitise)(nameFormat(row.name, row.ratio, row.id, row.index)), bgcolor = $$.levelColor ? $$.levelColor(row.value) : color(row.id), text += "<tr class=\"" + $$.CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id) + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + bgcolor + "\"></span>" + name + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + value + "</td>\n\t\t\t\t\t\t</tr>";
-			}
+		for (i = 0; i < d.length; i++) if (d[i] && (d[i].value || d[i].value === 0) && (text || (title = (0, _util.sanitise)(titleFormat ? titleFormat(d[i].x) : d[i].x), text = title || title === 0 ? "<tr><th colspan=\"2\">" + title + "</th></tr>" : "", text = "<table class=\"" + $$.CLASS.tooltip + "\">" + text), value = (0, _util.sanitise)(valueFormat(d[i].value, d[i].ratio, d[i].id, d[i].index, d)), value !== undefined)) {
+			// Skip elements when their name is set to null
+			if (d[i].name === null) continue;
+			name = (0, _util.sanitise)(nameFormat(d[i].name, d[i].ratio, d[i].id, d[i].index)), bgcolor = $$.levelColor ? $$.levelColor(d[i].value) : color(d[i].id), text += "<tr class=\"" + $$.CLASS.tooltipName + $$.getTargetSelectorSuffix(d[i].id) + "\">" + ("<td class=\"name\"><span style=\"background-color:" + bgcolor + "\"></span>" + name + "</td>") + ("<td class=\"value\">" + value + "</td></tr>");
+		}
 
 		return text + "</table>";
 	},
-
 
 	/**
   * Returns the position of the tooltip
@@ -23876,7 +23552,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 	},
 
-
 	/**
   * Show the tooltip
   * @private
@@ -23906,7 +23581,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		// Set tooltip
 	},
-
 
 	/**
   * Hide the tooltip
@@ -23943,40 +23617,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @private
   */
 	initLegend: function initLegend() {
-		var $$ = this,
-		    config = $$.config;
-		$$.legendItemTextBox = {}, $$.legendHasRendered = !1, $$.legend = $$.svg.append("g"), config.legend_show ? config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : ($$.legend.attr("transform", $$.getTranslate("legend")), $$.updateLegendWithDefaults()) : ($$.legend.style("visibility", "hidden"), $$.hiddenLegendIds = $$.mapToIds($$.data.targets));
-	},
+		var $$ = this;
 
-
-	/**
-  * Update legend using template option
-  * @private
-  */
-	updateLegendTemplate: function updateLegendTemplate() {
-		var $$ = this,
-		    config = $$.config,
-		    wrapper = (0, _d.select)(config.legend_contents_bindto),
-		    template = config.legend_contents_template;
-
-
-		if (!wrapper.empty()) {
-			var targets = $$.mapToIds($$.data.targets),
-			    ids = [],
-			    html = "";
-			targets.forEach(function (v) {
-				var content = (0, _util.isFunction)(template) ? template.call($$, v, $$.color(v)) : template.replace(/{=COLOR}/g, $$.color(v)).replace(/{=TITLE}/g, v);
-
-				content && (ids.push(v), html += content);
-			});
-
-
-			var legendItem = wrapper.html(html).selectAll(function () {
-				return this.childNodes;
-			}).data(ids);
-
-			$$.setLegendItem(legendItem);
-		}
+		return $$.legendItemTextBox = {}, $$.legendHasRendered = !1, $$.legend = $$.svg.append("g").attr("transform", $$.getTranslate("legend")), $$.config.legend_show ? void $$.updateLegendWithDefaults() : ($$.legend.style("visibility", "hidden"), void ($$.hiddenLegendIds = $$.mapToIds($$.data.targets)));
+		// MEMO: call here to update legend box and tranlate for all
+		// MEMO: translate will be upated by this, so transform not needed in updateLegend()
 	},
 
 
@@ -24015,7 +23660,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
 		};
 	},
-
 
 	/**
   * Transform Legend
@@ -24070,7 +23714,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		return $$.config.legend_show ? $$.isLegendRight || $$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
 	},
 
-
 	/**
   * Get the height of the legend
   * @private
@@ -24082,7 +23725,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		return $$.config.legend_show && ($$.isLegendRight ? h = $$.currentHeight : h = Math.max(20, $$.legendItemHeight) * ($$.legendStep + 1)), h;
 	},
-
 
 	/**
   * Get the opacity of the legend
@@ -24105,7 +23747,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		return legendItem.classed(_classes2.default.legendItemHidden) ? null : "0.3";
 	},
 
-
 	/**
   * Toggles the focus of the legend
   * @private
@@ -24124,7 +23765,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		});
 	},
 
-
 	/**
   * Revert the legend to its default state
   * @private
@@ -24136,7 +23776,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return $$.opacityForLegend((0, _d.select)(this));
 		});
 	},
-
 
 	/**
   * Shows the legend
@@ -24151,7 +23790,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		});
 	},
 
-
 	/**
   * Hide the legend
   * @private
@@ -24163,7 +23801,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		config.legend_show && (0, _util.isEmpty)(targetIds) && (config.legend_show = !1, $$.legend.style("visibility", "hidden")), $$.addHiddenLegendIds(targetIds), $$.legend.selectAll($$.selectorLegends(targetIds)).style("opacity", "0").style("visibility", "hidden");
 	},
 
-
 	/**
   * Clear the LegendItemTextBox cache.
   * @private
@@ -24171,30 +23808,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	clearLegendItemTextBoxCache: function clearLegendItemTextBoxCache() {
 		this.legendItemTextBox = {};
 	},
-
-
-	/**
-  * Set legend item style & bind events
-  * @private
-  * @param {d3.selection} item
-  */
-	setLegendItem: function setLegendItem(item) {
-		var $$ = this,
-		    config = $$.config,
-		    isTouch = $$.inputType === "touch";
-		item.attr("class", function (id) {
-			return $$.generateClass(_classes2.default.legendItem, id);
-		}).style("visibility", function (id) {
-			return $$.isLegendToShow(id) ? "visible" : "hidden";
-		}).style("cursor", "pointer").on("click", function (id) {
-			(0, _util.isFunction)(config.legend_item_onclick) ? config.legend_item_onclick.call($$, id) : _d.event.altKey ? ($$.api.hide(), $$.api.show(id)) : ($$.api.toggle(id), !isTouch && $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert()), isTouch && $$.hideTooltip();
-		}), isTouch || item.on("mouseout", function (id) {
-			(0, _util.isFunction)(config.legend_item_onout) ? config.legend_item_onout.call($$, id) : ((0, _d.select)(this).classed(_classes2.default.legendItemFocused, !1), $$.api.revert());
-		}).on("mouseover", function (id) {
-			(0, _util.isFunction)(config.legend_item_onover) ? config.legend_item_onover.call($$, id) : ((0, _d.select)(this).classed(_classes2.default.legendItemFocused, !0), !$$.transiting && $$.isTargetToShow(id) && $$.api.focus(id));
-		});
-	},
-
 
 	/**
   * Update the legend
@@ -24208,6 +23821,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    config = $$.config,
 		    posMin = 10,
 		    tileWidth = config.legend_item_tile_width + 5,
+		    isTouch = $$.inputType === "touch",
 		    maxWidth = 0,
 		    maxHeight = 0,
 		    xForLegend = void 0,
@@ -24296,10 +23910,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    yForLegendTile = function (id, i) {
 			return yForLegend(id, i) + 4;
 		},
-		    l = $$.legend.selectAll("." + _classes2.default.legendItem).data(targetIdz).enter().append("g");
+		    l = $$.legend.selectAll("." + _classes2.default.legendItem).data(targetIdz).enter().append("g").attr("class", function (id) {
+			return $$.generateClass(_classes2.default.legendItem, id);
+		}).style("visibility", function (id) {
+			return $$.isLegendToShow(id) ? "visible" : "hidden";
+		}).style("cursor", "pointer").on(isTouch ? "touchstart" : "click", function (id) {
+			config.legend_item_onclick ? config.legend_item_onclick.call($$, id) : _d.event.altKey ? ($$.api.hide(), $$.api.show(id)) : ($$.api.toggle(id), $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert()), isTouch && $$.hideTooltip();
+		}).on(isTouch ? undefined : "mouseover", function (id) {
+			config.legend_item_onover ? config.legend_item_onover.call($$, id) : ((0, _d.select)(this).classed(_classes2.default.legendItemFocused, !0), !$$.transiting && $$.isTargetToShow(id) && $$.api.focus(id));
+		}).on(isTouch ? "touchend" : "mouseout", function (id) {
+			config.legend_item_onout ? config.legend_item_onout.call($$, id) : ((0, _d.select)(this).classed(_classes2.default.legendItemFocused, !1), $$.api.revert());
+		});
 
 		// Define g for legend area
-		$$.setLegendItem(l), l.append("text").text(function (id) {
+		l.append("text").text(function (id) {
 			return (0, _util.isDefined)(config.data_names[id]) ? config.data_names[id] : id;
 		}).each(function (id, i) {
 			updatePositions(this, id, i);
@@ -24729,33 +24353,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	initArc: function initArc() {
 		var $$ = this;
 
-		$$.arcs = $$.main.select("." + _classes2.default.chart).append("g").attr("class", _classes2.default.chartArcs).attr("transform", $$.getTranslate("arc")), $$.setArcTitle();
-	},
-
-
-	/**
-  * Set arc title text
-  * @private
-  */
-	setArcTitle: function setArcTitle() {
-		var $$ = this,
-		    title = $$.getArcTitle();
-
-
-		if (title) {
-			var multiline = title.split("\n"),
-			    text = $$.arcs.append("text").attr("class", _classes2.default.chartArcsTitle).style("text-anchor", "middle");
-
-
-			// if is multiline text
-			if (multiline.length > 1) {
-				var fontSize = +text.style("font-size").replace("px", ""),
-				    height = Math.floor(text.text(".").node().getBBox().height, text.text(""));
-				multiline.forEach(function (v, i) {
-					return text.insert("tspan").text(v).attr("x", 0).attr("dy", i ? height : 0);
-				}), text.attr("y", "-" + (fontSize * (multiline.length - 2) || fontSize / 2));
-			} else text.text(title);
-		}
+		$$.arcs = $$.main.select("." + _classes2.default.chart).append("g").attr("class", _classes2.default.chartArcs).attr("transform", $$.getTranslate("arc")), $$.arcs.append("text").attr("class", _classes2.default.chartArcsTitle).style("text-anchor", "middle").text($$.getArcTitle());
 	},
 	redrawArc: function redrawArc(duration, durationForExit, withTransform) {
 
@@ -24838,73 +24436,66 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    arcData = updated ? $$.convertToArcData(updated) : null;
 			$$.showTooltip([arcData], this);
 		}), isTouch && $$.hasArcType())) {
-				var _getEventArc = function () {
-					var touch = _d.event.changedTouches[0],
-					    eventArc = (0, _d.select)(document.elementFromPoint(touch.clientX, touch.clientY));
+			var getEventArc = function () {
+				var touch = _d.event.changedTouches[0],
+				    eventArc = (0, _d.select)(document.elementFromPoint(touch.clientX, touch.clientY));
 
 
-					return eventArc;
-				};
+				return eventArc;
+			};
 
-				$$.svg.on("touchstart", function () {
-					if (!$$.transiting) // skip while transiting
-						{
+			$$.svg.on("touchstart", function () {
+				if (!$$.transiting) // skip while transiting
+					{
 
-							var eventArc = _getEventArc(),
-							    datum = eventArc.datum(),
-							    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
-							    arcData = updated ? $$.convertToArcData(updated) : null,
-							    id = arcData && arcData.id || undefined;
-							id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onover(arcData, this);
-						}
-				}).on("touchend", function () {
-					if (!$$.transiting) // skip while transiting
-						{
+						var eventArc = getEventArc(),
+						    datum = eventArc.datum(),
+						    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
+						    arcData = updated ? $$.convertToArcData(updated) : null,
+						    id = arcData && arcData.id || undefined;
+						id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onover(arcData, this);
+					}
+			}).on("touchend", function () {
+				if (!$$.transiting) // skip while transiting
+					{
 
-							var eventArc = _getEventArc(),
-							    datum = eventArc.datum(),
-							    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
-							    arcData = updated ? $$.convertToArcData(updated) : null,
-							    id = arcData && arcData.id || undefined;
-							id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onout(arcData, this);
-						}
-				}).on("touchmove", function () {
-					var eventArc = _getEventArc(),
-					    datum = eventArc.datum(),
-					    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
-					    arcData = updated ? $$.convertToArcData(updated) : null,
-					    id = arcData && arcData.id || undefined;
-					id === undefined ? unselectArc() : selectArc(this, arcData, id);
-				});
-			}
+						var eventArc = getEventArc(),
+						    datum = eventArc.datum(),
+						    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
+						    arcData = updated ? $$.convertToArcData(updated) : null,
+						    id = arcData && arcData.id || undefined;
+						id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onout(arcData, this);
+					}
+			}).on("touchmove", function () {
+				var eventArc = getEventArc(),
+				    datum = eventArc.datum(),
+				    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
+				    arcData = updated ? $$.convertToArcData(updated) : null,
+				    id = arcData && arcData.id || undefined;
+				id === undefined ? unselectArc() : selectArc(this, arcData, id);
+			});
+		}
 
-		var gaugeTextValue = main.selectAll("." + _classes2.default.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
+		main.selectAll("." + _classes2.default.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
 			return $$.isGaugeType(d.data) ? _classes2.default.gaugeValue : "";
-		});
-
-		if (config.gauge_fullCircle && gaugeTextValue.attr("dy", "" + Math.round($$.radius / 14)), gaugeTextValue.text($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+		}).text($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
 			return $$.isGaugeType(d.data) ? Math.round($$.radius / 5) + "px" : "";
 		}).transition().duration(duration).style("opacity", function (d) {
 			return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-		}), main.select("." + _classes2.default.chartArcsTitle).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge")) {
-			var endAngle = (config.gauge_fullCircle ? -4 : -1) * config.gauge_startingAngle;
+		}), main.select("." + _classes2.default.chartArcsTitle).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge") && ($$.arcs.select("." + _classes2.default.chartArcsBackground).attr("d", function () {
+			var d = {
+				data: [{ value: config.gauge_max }],
+				startAngle: config.gauge_startingAngle,
+				endAngle: -1 * config.gauge_startingAngle
+			};
 
-			$$.arcs.select("." + _classes2.default.chartArcsBackground).attr("d", function () {
-				var d = {
-					data: [{ value: config.gauge_max }],
-					startAngle: config.gauge_startingAngle,
-					endAngle: endAngle
-				};
-
-				return $$.getArc(d, !0, !0);
-			}), $$.arcs.select("." + _classes2.default.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select("." + _classes2.default.chartArcsGaugeMin).attr("dx", -1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !config.gauge_fullCircle && $$.arcs.select("." + _classes2.default.chartArcsGaugeMax).attr("dx", $$.innerRadius + ($$.radius - $$.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
-		}
+			return $$.getArc(d, !0, !0);
+		}), $$.arcs.select("." + _classes2.default.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), $$.arcs.select("." + _classes2.default.chartArcsGaugeMin).attr("dx", -1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text(config.gauge_label_show ? $$.textForGaugeMinMax(config.gauge_min, !1) : ""), $$.arcs.select("." + _classes2.default.chartArcsGaugeMax).attr("dx", $$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2) + "px").attr("dy", "1.2em").text(config.gauge_label_show ? $$.textForGaugeMinMax(config.gauge_max, !0) : ""));
 	},
 	initGauge: function initGauge() {
-		var $$ = this,
-		    config = $$.config,
-		    arcs = $$.arcs;
-		$$.hasType("gauge") && (arcs.append("path").attr("class", _classes2.default.chartArcsBackground), arcs.append("text").attr("class", _classes2.default.chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none"), config.gauge_label_show && (arcs.append("text").attr("class", _classes2.default.chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none"), !config.gauge_fullCircle && arcs.append("text").attr("class", _classes2.default.chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none")));
+		var arcs = this.arcs;
+
+		this.hasType("gauge") && (arcs.append("path").attr("class", _classes2.default.chartArcsBackground), arcs.append("text").attr("class", _classes2.default.chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none"), arcs.append("text").attr("class", _classes2.default.chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none"), arcs.append("text").attr("class", _classes2.default.chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none"));
 	},
 	getGaugeLabelHeight: function getGaugeLabelHeight() {
 		return this.config.gauge_label_show ? 20 : 0;
@@ -25037,8 +24628,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		// do nothing if not selectable
 		// skip when single selection because drag is used for multiple selection
 
-		if (!$$.hasArcType() && config.data_selection_enabled && (!config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple) // skip if zoomable because of conflict drag dehavior
-			{
+		if (!$$.hasArcType() && config.data_selection_enabled && (!config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple) {
 				var sx = $$.dragStart[0],
 				    sy = $$.dragStart[1],
 				    mx = mouse[0],
@@ -25067,7 +24657,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						return;
 					isWithin ^ isIncluded && (shape.classed(_classes2.default.INCLUDED, !isIncluded), shape.classed(_classes2.default.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
 				});
-			}
+			} // skip if zoomable because of conflict drag dehavior
 	},
 
 
@@ -25223,7 +24813,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    toggle = void 0;
 
-
 		return that.nodeName === "circle" ? $$.isStepType(d) ? toggle = function () {} : toggle = $$.togglePoint : that.nodeName === "path" && (toggle = $$.togglePath), toggle;
 	},
 
@@ -25236,26 +24825,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @param {Number} index
   */
 	toggleShape: function toggleShape(that, d, i) {
-		var $$ = this,
+		var _this = this,
+		    $$ = this,
 		    config = $$.config,
 		    shape = (0, _d.select)(that),
 		    isSelected = shape.classed(_classes2.default.SELECTED),
-		    toggle = $$.getToggle(that, d).bind($$),
-		    toggledShape = void 0;
-
+		    toggle = $$.getToggle(that, d).bind($$);
 
 		if (config.data_selection_enabled && config.data_selection_isselectable(d)) {
 			if (!config.data_selection_multiple) {
 				var selecter = "." + _classes2.default.shapes;
 
-				config.data_selection_grouped && (selecter = "." + selecter + $$.getTargetSelectorSuffix(d.id)), $$.main.selectAll("" + selecter).selectAll("circle." + _classes2.default.shape).each(function (d, i) {
-					var shape = (0, _d.select)(this);
+				config.data_selection_grouped && (selecter = "." + selecter + $$.getTargetSelectorSuffix(d.id)), $$.main.selectAll(selecter).selectAll("." + _classes2.default.shape).each(function (d, i) {
+					var shape = (0, _d.select)(_this);
 
-					shape.classed(_classes2.default.SELECTED) && (toggledShape = shape, toggle(!1, shape.classed(_classes2.default.SELECTED, !1), d, i));
+					shape.classed(_classes2.default.SELECTED) && toggle(!1, shape.classed(_classes2.default.SELECTED, !1), d, i);
 				});
 			}
-
-			toggledShape && toggledShape.node() === shape.node() || (shape.classed(_classes2.default.SELECTED, !isSelected), toggle(!isSelected, shape, d, i));
+			shape.classed(_classes2.default.SELECTED, !isSelected), toggle(!isSelected, shape, d, i);
 		}
 	}
 });
@@ -25465,19 +25052,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		// subchart
-		if ($$.context.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (_d.event && _d.event.type === "zoom" && $$.brush.update(), withSubchart))
-
-			// update subchart elements if needed
-			{
-				$$.brushEmpty() || $$.brush.update();
+		if ($$.context.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (_d.event && _d.event.type === "zoom" && $$.brush.update(), withSubchart)) {
+			$$.brushEmpty() || $$.brush.update();
 
 
-				// setup drawer - MEMO: this must be called after axis updated
-				var _drawAreaOnSub = $$.generateDrawArea(areaIndices, !0),
-				    _drawBarOnSub = $$.generateDrawBar(barIndices, !0),
-				    _drawLineOnSub = $$.generateDrawLine(lineIndices, !0);
-				$$.updateBarForSubchart(duration), $$.updateLineForSubchart(duration), $$.updateAreaForSubchart(duration), $$.redrawBarForSubchart(_drawBarOnSub, duration, duration), $$.redrawLineForSubchart(_drawLineOnSub, duration, duration), $$.redrawAreaForSubchart(_drawAreaOnSub, duration, duration);
-			}
+			// setup drawer - MEMO: this must be called after axis updated
+			var drawAreaOnSub = $$.generateDrawArea(areaIndices, !0),
+			    drawBarOnSub = $$.generateDrawBar(barIndices, !0),
+			    drawLineOnSub = $$.generateDrawLine(lineIndices, !0);
+			$$.updateBarForSubchart(duration), $$.updateLineForSubchart(duration), $$.updateAreaForSubchart(duration), $$.redrawBarForSubchart(drawBarOnSub, duration, duration), $$.redrawLineForSubchart(drawLineOnSub, duration, duration), $$.redrawAreaForSubchart(drawAreaOnSub, duration, duration);
+		}
 	},
 
 	/**
@@ -25562,7 +25146,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			var event = _d.event.sourceEvent;
 
 			// if click, do nothing. otherwise, click interaction will be canceled.
-			event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), (0, _util.isFunction)(config.zoom_onzoomend) && config.zoom_onzoomend.call($$.api, $$.x.orgDomain()));
+			event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), config.zoom_onzoomend.call($$.api, $$.x.orgDomain()));
 		}), $$.zoom.orgScaleExtent = function () {
 			var extent = config.zoom_extent ? config.zoom_extent : [1, 10];
 
@@ -25570,7 +25154,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}, $$.zoom.updateScaleExtent = function () {
 			var ratio = (0, _util.diffDomain)($$.x.orgDomain()) / (0, _util.diffDomain)($$.getZoomDomain()),
 			    extent = this.orgScaleExtent();
-
 
 			return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
 		}, $$.zoom.updateTransformScale = function (transform) {
@@ -25611,15 +25194,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		// 	.call(z)
 		// 	.on("dblclick.zoom", null);
 
-		if ($$.zoomScale) {
-			var range1 = $$.zoomScale.domain()[0],
-			    range2 = $$.x.domain()[0];
-
-
-			// reset scale when zoom is out as initial
-			(range1 <= range2 || range1 - 0.015 <= range2) && ($$.zoomScale = null, $$.xAxis.scale($$.x));
-		}
-
 		$$.main.select("." + _classes2.default.eventRects).call(z).on("dblclick.zoom", null);
 	},
 
@@ -25634,7 +25208,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		if (config.zoom_enabled) {
-
 				var zoom = $$.zoom,
 				    x = $$.x,
 				    event = _d.event,
@@ -25645,7 +25218,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					withSubchart: !1,
 					withEventRect: !1,
 					withDimension: !1
-				}), event.sourceEvent.type === "mousemove" && ($$.cancelClick = !0), (0, _util.isFunction)(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, x.orgDomain()));
+				}), event.sourceEvent.type === "mousemove" && ($$.cancelClick = !0), config.zoom_onzoom.call($$.api, x.orgDomain()));
 			}
 	}
 });
