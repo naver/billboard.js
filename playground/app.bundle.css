@@ -1,0 +1,912 @@
+@import url(https://fonts.googleapis.com/css?family=Bungee);@import url(https://fonts.googleapis.com/css?family=Roboto:400,500);/*
+html5doctor.com Reset Stylesheet
+v1.6.1
+Last Updated: 2010-09-17
+Author: Richard Clark - http://richclarkdesign.com
+Twitter: @rich_clark
+License : http://html5doctor.com/html-5-reset-stylesheet/
+*/
+
+html, body, div, span, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+abbr, address, cite, code,
+del, dfn, em, img, ins, kbd, q, samp,
+small, strong, sub, sup, var,
+b, i,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, figcaption, figure,
+footer, header, hgroup, menu, nav, section, summary,
+time, mark, audio, video {
+    margin:0;
+    padding:0;
+    border:0;
+    outline:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+body {
+    line-height:1;
+}
+
+article,aside,details,figcaption,figure,
+footer,header,hgroup,menu,nav,section {
+    display:block;
+}
+
+nav ul {
+    list-style:none;
+}
+
+blockquote, q {
+    quotes:none;
+}
+
+blockquote:before, blockquote:after,
+q:before, q:after {
+    content:'';
+    content:none;
+}
+
+a {
+    margin:0;
+    padding:0;
+    font-size:100%;
+    vertical-align:baseline;
+    background:transparent;
+}
+
+/* change colours to suit your needs */
+ins {
+    background-color:#ff9;
+    color:#000;
+    text-decoration:none;
+}
+
+/* change colours to suit your needs */
+mark {
+    background-color:#ff9;
+    color:#000;
+    font-style:italic;
+    font-weight:bold;
+}
+
+del {
+    text-decoration: line-through;
+}
+
+abbr[title], dfn[title] {
+    border-bottom:1px dotted;
+    cursor:help;
+}
+
+table {
+    border-collapse:collapse;
+    border-spacing:0;
+}
+
+/* change border colour to suit your needs */
+hr {
+    display:block;
+    height:1px;
+    border:0;
+    border-top:1px solid #cccccc;
+    margin:1em 0;
+    padding:0;
+}
+
+input, select {
+    vertical-align:middle;
+}
+
+
+/* fallback */
+@font-face {
+    font-family: 'Material Icons';
+    font-style: normal;
+    font-weight: 400;
+    /*src: url(MaterialIcons-Regular.woff2) format('woff2'),*/
+    src: url(https://fonts.gstatic.com/s/materialicons/v29/2fcrYFNaTjcS6g4U3t-Y5UEw0lE80llgEseQY3FEmqw.woff2) format('woff2');
+}
+
+.material-icons {
+    font-family: 'Material Icons';
+    font-weight: normal;
+    font-style: normal;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: normal;
+    text-transform: none;
+    display: inline-block;
+    white-space: nowrap;
+    word-wrap: normal;
+    direction: ltr;
+    -webkit-font-feature-settings: 'liga';
+    -webkit-font-smoothing: antialiased;
+}
+
+/* BASICS */
+
+.CodeMirror {
+  /* Set height, width, borders, and global font properties here */
+  font-family: monospace;
+  height: 300px;
+  color: black;
+  direction: ltr;
+}
+
+/* PADDING */
+
+.CodeMirror-lines {
+  padding: 4px 0; /* Vertical padding around content */
+}
+.CodeMirror pre {
+  padding: 0 4px; /* Horizontal padding of content */
+}
+
+.CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  background-color: white; /* The little square between H and V scrollbars */
+}
+
+/* GUTTER */
+
+.CodeMirror-gutters {
+  border-right: 1px solid #ddd;
+  background-color: #f7f7f7;
+  white-space: nowrap;
+}
+.CodeMirror-linenumbers {}
+.CodeMirror-linenumber {
+  padding: 0 3px 0 5px;
+  min-width: 20px;
+  text-align: right;
+  color: #999;
+  white-space: nowrap;
+}
+
+.CodeMirror-guttermarker { color: black; }
+.CodeMirror-guttermarker-subtle { color: #999; }
+
+/* CURSOR */
+
+.CodeMirror-cursor {
+  border-left: 1px solid black;
+  border-right: none;
+  width: 0;
+}
+/* Shown when moving in bi-directional text */
+.CodeMirror div.CodeMirror-secondarycursor {
+  border-left: 1px solid silver;
+}
+.cm-fat-cursor .CodeMirror-cursor {
+  width: auto;
+  border: 0 !important;
+  background: #7e7;
+}
+.cm-fat-cursor div.CodeMirror-cursors {
+  z-index: 1;
+}
+
+.cm-animate-fat-cursor {
+  width: auto;
+  border: 0;
+  -webkit-animation: blink 1.06s steps(1) infinite;
+  -moz-animation: blink 1.06s steps(1) infinite;
+  animation: blink 1.06s steps(1) infinite;
+  background-color: #7e7;
+}
+@-moz-keyframes blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+@-webkit-keyframes blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+@keyframes blink {
+  0% {}
+  50% { background-color: transparent; }
+  100% {}
+}
+
+/* Can style cursor different in overwrite (non-insert) mode */
+.CodeMirror-overwrite .CodeMirror-cursor {}
+
+.cm-tab { display: inline-block; text-decoration: inherit; }
+
+.CodeMirror-rulers {
+  position: absolute;
+  left: 0; right: 0; top: -50px; bottom: -20px;
+  overflow: hidden;
+}
+.CodeMirror-ruler {
+  border-left: 1px solid #ccc;
+  top: 0; bottom: 0;
+  position: absolute;
+}
+
+/* DEFAULT THEME */
+
+.cm-s-default .cm-header {color: blue;}
+.cm-s-default .cm-quote {color: #090;}
+.cm-negative {color: #d44;}
+.cm-positive {color: #292;}
+.cm-header, .cm-strong {font-weight: bold;}
+.cm-em {font-style: italic;}
+.cm-link {text-decoration: underline;}
+.cm-strikethrough {text-decoration: line-through;}
+
+.cm-s-default .cm-keyword {color: #708;}
+.cm-s-default .cm-atom {color: #219;}
+.cm-s-default .cm-number {color: #164;}
+.cm-s-default .cm-def {color: #00f;}
+.cm-s-default .cm-variable,
+.cm-s-default .cm-punctuation,
+.cm-s-default .cm-property,
+.cm-s-default .cm-operator {}
+.cm-s-default .cm-variable-2 {color: #05a;}
+.cm-s-default .cm-variable-3, .cm-s-default .cm-type {color: #085;}
+.cm-s-default .cm-comment {color: #a50;}
+.cm-s-default .cm-string {color: #a11;}
+.cm-s-default .cm-string-2 {color: #f50;}
+.cm-s-default .cm-meta {color: #555;}
+.cm-s-default .cm-qualifier {color: #555;}
+.cm-s-default .cm-builtin {color: #30a;}
+.cm-s-default .cm-bracket {color: #997;}
+.cm-s-default .cm-tag {color: #170;}
+.cm-s-default .cm-attribute {color: #00c;}
+.cm-s-default .cm-hr {color: #999;}
+.cm-s-default .cm-link {color: #00c;}
+
+.cm-s-default .cm-error {color: #f00;}
+.cm-invalidchar {color: #f00;}
+
+.CodeMirror-composing { border-bottom: 2px solid; }
+
+/* Default styles for common addons */
+
+div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+.CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
+.CodeMirror-activeline-background {background: #e8f2ff;}
+
+/* STOP */
+
+/* The rest of this file contains styles related to the mechanics of
+   the editor. You probably shouldn't touch them. */
+
+.CodeMirror {
+  position: relative;
+  overflow: hidden;
+  background: white;
+}
+
+.CodeMirror-scroll {
+  overflow: scroll !important; /* Things will break if this is overridden */
+  /* 30px is the magic margin used to hide the element's real scrollbars */
+  /* See overflow: hidden in .CodeMirror */
+  margin-bottom: -30px; margin-right: -30px;
+  padding-bottom: 30px;
+  height: 100%;
+  outline: none; /* Prevent dragging from highlighting the element */
+  position: relative;
+}
+.CodeMirror-sizer {
+  position: relative;
+  border-right: 30px solid transparent;
+}
+
+/* The fake, visible scrollbars. Used to force redraw during scrolling
+   before actual scrolling happens, thus preventing shaking and
+   flickering artifacts. */
+.CodeMirror-vscrollbar, .CodeMirror-hscrollbar, .CodeMirror-scrollbar-filler, .CodeMirror-gutter-filler {
+  position: absolute;
+  z-index: 6;
+  display: none;
+}
+.CodeMirror-vscrollbar {
+  right: 0; top: 0;
+  overflow-x: hidden;
+  overflow-y: scroll;
+}
+.CodeMirror-hscrollbar {
+  bottom: 0; left: 0;
+  overflow-y: hidden;
+  overflow-x: scroll;
+}
+.CodeMirror-scrollbar-filler {
+  right: 0; bottom: 0;
+}
+.CodeMirror-gutter-filler {
+  left: 0; bottom: 0;
+}
+
+.CodeMirror-gutters {
+  position: absolute; left: 0; top: 0;
+  min-height: 100%;
+  z-index: 3;
+}
+.CodeMirror-gutter {
+  white-space: normal;
+  height: 100%;
+  display: inline-block;
+  vertical-align: top;
+  margin-bottom: -30px;
+}
+.CodeMirror-gutter-wrapper {
+  position: absolute;
+  z-index: 4;
+  background: none !important;
+  border: none !important;
+}
+.CodeMirror-gutter-background {
+  position: absolute;
+  top: 0; bottom: 0;
+  z-index: 4;
+}
+.CodeMirror-gutter-elt {
+  position: absolute;
+  cursor: default;
+  z-index: 4;
+}
+.CodeMirror-gutter-wrapper ::selection { background-color: transparent }
+.CodeMirror-gutter-wrapper ::-moz-selection { background-color: transparent }
+
+.CodeMirror-lines {
+  cursor: text;
+  min-height: 1px; /* prevents collapsing before first draw */
+}
+.CodeMirror pre {
+  /* Reset some styles that the rest of the page might have set */
+  -moz-border-radius: 0; -webkit-border-radius: 0; border-radius: 0;
+  border-width: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: inherit;
+  margin: 0;
+  white-space: pre;
+  word-wrap: normal;
+  line-height: inherit;
+  color: inherit;
+  z-index: 2;
+  position: relative;
+  overflow: visible;
+  -webkit-tap-highlight-color: transparent;
+  -webkit-font-variant-ligatures: contextual;
+  font-variant-ligatures: contextual;
+}
+.CodeMirror-wrap pre {
+  word-wrap: break-word;
+  white-space: pre-wrap;
+  word-break: normal;
+}
+
+.CodeMirror-linebackground {
+  position: absolute;
+  left: 0; right: 0; top: 0; bottom: 0;
+  z-index: 0;
+}
+
+.CodeMirror-linewidget {
+  position: relative;
+  z-index: 2;
+  overflow: auto;
+}
+
+.CodeMirror-widget {}
+
+.CodeMirror-rtl pre { direction: rtl; }
+
+.CodeMirror-code {
+  outline: none;
+}
+
+/* Force content-box sizing for the elements where we expect it */
+.CodeMirror-scroll,
+.CodeMirror-sizer,
+.CodeMirror-gutter,
+.CodeMirror-gutters,
+.CodeMirror-linenumber {
+  -moz-box-sizing: content-box;
+  box-sizing: content-box;
+}
+
+.CodeMirror-measure {
+  position: absolute;
+  width: 100%;
+  height: 0;
+  overflow: hidden;
+  visibility: hidden;
+}
+
+.CodeMirror-cursor {
+  position: absolute;
+  pointer-events: none;
+}
+.CodeMirror-measure pre { position: static; }
+
+div.CodeMirror-cursors {
+  visibility: hidden;
+  position: relative;
+  z-index: 3;
+}
+div.CodeMirror-dragcursors {
+  visibility: visible;
+}
+
+.CodeMirror-focused div.CodeMirror-cursors {
+  visibility: visible;
+}
+
+.CodeMirror-selected { background: #d9d9d9; }
+.CodeMirror-focused .CodeMirror-selected { background: #d7d4f0; }
+.CodeMirror-crosshair { cursor: crosshair; }
+.CodeMirror-line::selection, .CodeMirror-line > span::selection, .CodeMirror-line > span > span::selection { background: #d7d4f0; }
+.CodeMirror-line::-moz-selection, .CodeMirror-line > span::-moz-selection, .CodeMirror-line > span > span::-moz-selection { background: #d7d4f0; }
+
+.cm-searching {
+  background-color: #ffa;
+  background-color: rgba(255, 255, 0, .4);
+}
+
+/* Used to force a border model for a node */
+.cm-force-border { padding-right: .1px; }
+
+@media print {
+  /* Hide the cursor when printing */
+  .CodeMirror div.CodeMirror-cursors {
+    visibility: hidden;
+  }
+}
+
+/* See issue #2901 */
+.cm-tab-wrap-hack:after { content: ''; }
+
+/* Help users use markselection to safely style text background */
+span.CodeMirror-selectedtext { background: none; }
+/*!
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * 
+ * billboard.js, JavaScript chart library
+ * http://naver.github.io/billboard.js/
+ * 
+ * @version 1.0.1
+ */
+/*-- Chart --*/
+.bb svg {
+  font: 10px sans-serif;
+  -webkit-tap-highlight-color: transparent; }
+
+.bb path, .bb line {
+  fill: none;
+  stroke: #000; }
+
+.bb text {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  user-select: none; }
+
+.bb-legend-item-tile,
+.bb-xgrid-focus,
+.bb-ygrid,
+.bb-event-rect,
+.bb-bars path {
+  shape-rendering: crispEdges; }
+
+.bb-chart-arc path {
+  stroke: #fff; }
+
+.bb-chart-arc text {
+  fill: #fff;
+  font-size: 13px; }
+
+/*-- Axis --*/
+/*-- Grid --*/
+.bb-grid line {
+  stroke: #aaa; }
+
+.bb-grid text {
+  fill: #aaa; }
+
+.bb-xgrid, .bb-ygrid {
+  stroke-dasharray: 3 3; }
+
+/*-- Text on Chart --*/
+.bb-text.bb-empty {
+  fill: #808080;
+  font-size: 2em; }
+
+/*-- Line --*/
+.bb-line {
+  stroke-width: 1px; }
+
+/*-- Point --*/
+.bb-circle._expanded_ {
+  stroke-width: 1px;
+  stroke: white; }
+
+.bb-selected-circle {
+  fill: white;
+  stroke-width: 2px; }
+
+/*-- Bar --*/
+.bb-bar {
+  stroke-width: 0; }
+  .bb-bar._expanded_ {
+    fill-opacity: 0.75; }
+
+/*-- Focus --*/
+.bb-target.bb-focused {
+  opacity: 1; }
+
+.bb-target.bb-focused path.bb-line, .bb-target.bb-focused path.bb-step {
+  stroke-width: 2px; }
+
+.bb-target.bb-defocused {
+  opacity: 0.3 !important; }
+
+/*-- Region --*/
+.bb-region {
+  fill: steelblue;
+  fill-opacity: .1; }
+
+/*-- Brush --*/
+.bb-brush .extent {
+  fill-opacity: .1; }
+
+/*-- Select - Drag --*/
+/*-- Legend --*/
+.bb-legend-item {
+  font-size: 12px; }
+
+.bb-legend-item-hidden {
+  opacity: 0.15; }
+
+.bb-legend-background {
+  opacity: 0.75;
+  fill: white;
+  stroke: lightgray;
+  stroke-width: 1; }
+
+/*-- Title --*/
+.bb-title {
+  font: 14px sans-serif; }
+
+/*-- Tooltip --*/
+.bb-tooltip-container {
+  z-index: 10; }
+
+.bb-tooltip {
+  border-collapse: collapse;
+  border-spacing: 0;
+  background-color: #fff;
+  empty-cells: show;
+  opacity: 0.9;
+  -webkit-box-shadow: 7px 7px 12px -9px #777777;
+  -moz-box-shadow: 7px 7px 12px -9px #777777;
+  box-shadow: 7px 7px 12px -9px #777777; }
+  .bb-tooltip tr {
+    border: 1px solid #CCC; }
+  .bb-tooltip th {
+    background-color: #aaa;
+    font-size: 14px;
+    padding: 2px 5px;
+    text-align: left;
+    color: #FFF; }
+  .bb-tooltip td {
+    font-size: 13px;
+    padding: 3px 6px;
+    background-color: #fff;
+    border-left: 1px dotted #999; }
+    .bb-tooltip td > span {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 6px; }
+    .bb-tooltip td.value {
+      text-align: right; }
+
+/*-- Area --*/
+.bb-area {
+  stroke-width: 0;
+  opacity: 0.2; }
+
+/*-- Arc --*/
+.bb-chart-arcs-title {
+  dominant-baseline: middle;
+  font-size: 1.3em; }
+
+.bb-chart-arcs .bb-chart-arcs-background {
+  fill: #e0e0e0;
+  stroke: none; }
+
+.bb-chart-arcs .bb-chart-arcs-gauge-unit {
+  fill: #000;
+  font-size: 16px; }
+
+.bb-chart-arcs .bb-chart-arcs-gauge-max {
+  fill: #777; }
+
+.bb-chart-arcs .bb-chart-arcs-gauge-min {
+  fill: #777; }
+
+.bb-chart-arc .bb-gauge-value {
+  fill: #000; }/**  app.scss **/
+html {
+  padding: 10px; }
+
+#app {
+  border: 1px solid #d7d7d7;
+  position: relative;
+  height: 100%;
+  box-sizing: border-box; }
+
+#wrapper {
+  height: 100%; }
+
+.ReactCodeMirror {
+  width: 100%;
+  height: auto;
+  position: absolute; }
+
+.guide_card .ReactCodeMirror {
+  width: auto;
+  height: auto;
+  position: relative; }
+
+.muidocs-icon-custom-github:before {
+  content: "github"; }
+
+.CodeMirror {
+  width: 100%;
+  height: 100%; }
+
+.type {
+  color: #009688; }
+
+.err {
+  background: #ffd9d9; }
+
+.bbtitle {
+  width: 60%;
+  height: 10%;
+  margin: 0;
+  left: 0;
+  text-align: center;
+  font-family: 'Roboto', sans-serif;
+  font-size: 25px; }
+
+.bbtitle .logo {
+  width: 145px;
+  height: 33px;
+  margin-left: 10px;
+  background-repeat: no-repeat;
+  position: relative;
+  top: 9px;
+  box-sizing: content-box;
+  background-color: #fff;
+  border-style: none; }
+
+.chart {
+  width: 60%;
+  height: 40%;
+  margin: 0;
+  left: 0; }
+
+.tabviews {
+  width: 60%;
+  height: 50%;
+  margin: 0;
+  left: 0; }
+
+.textConfigure, .dataTable {
+  width: 100%; }
+
+.layer_wrapper {
+  padding: 10px; }
+
+.inputConfigure {
+  width: 40%;
+  left: 60%;
+  position: absolute;
+  height: 100%;
+  top: 0;
+  border-left: 1px solid #d7d7d7;
+  box-sizing: border-box; }
+
+.scroll {
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll; }
+
+.property_clear {
+  opacity: 0; }
+
+.property.activated .property_clear {
+  opacity: 1; }
+
+.property_content {
+  display: inline-block; }
+
+.property:hover .edit_function {
+  opacity: 1; }
+
+.property.updated {
+  color: red; }
+
+.property.deactivated {
+  opacity: 0.5; }
+
+.property.deactivated .activate_check {
+  opacity: 0; }
+
+.property:hover .activate_check {
+  opacity: 1; }
+
+.react-toolbox_checkbox {
+  display: inline-block; }
+
+.property_name {
+  color: #424242;
+  font-weight: 500; }
+
+.property .material-icons {
+  font-size: 20px;
+  padding-left: 10px; }
+
+.property .property_info {
+  top: 6px;
+  padding-left: 12px; }
+
+.property .property_info, .property .edit_code_property {
+  opacity: 0; }
+
+.property:hover .property_info, .property:hover .edit_code_property {
+  opacity: 1; }
+
+.property_type {
+  font-size: 14px;
+  line-height: 16px;
+  height: 16px;
+  margin: 0;
+  margin-top: 4px;
+  color: rgba(0, 0, 0, 0.54);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap; }
+
+.member svg {
+  color: #ff8a65 !important; }
+
+.number_guide {
+  font-size: 14px;
+  line-height: 24px;
+  font-family: Roboto, sans-serif;
+  text-align: center; }
+
+.codepen-export {
+  position: absolute;
+  right: 60px;
+  z-index: 1000; }
+
+.codepen-export input[type="submit"] {
+  border: none;
+  width: 60px;
+  height: 40px;
+  background: none;
+  display: inline-block; }
+
+.codepen-export .button {
+  background-size: contain !important;
+  border: none;
+  width: 60px  !important;
+  height: 40px  !important;
+  background-image: url("data:image/svg+xml,%3C?xml version='1.0' encoding='utf-8'?%3E %3C!-- Generator: Adobe Illustrator 16.0.4, SVG Export Plug-In . SVG Version: 6.00 Build 0) --%3E %3C!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.1//EN' 'http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd'%3E %3Csvg version='1.1' id='Layer_1' xmlns='http://www.w3.org/2000/svg' xmlns:xlink='http://www.w3.org/1999/xlink' x='0px' y='0px' width='179.851px' height='120.095px' viewBox='0 0 179.851 120.095' enable-background='new 0 0 179.851 120.095' xml:space='preserve'%3E %3Cg%3E %3Cg%3E %3Crect x='104.055' y='54.547' fill='%23EFEFEF' width='48.38' height='11'/%3E %3C/g%3E %3Cg%3E %3Cg%3E %3Cpath fill='%23EFEFEF' d='M149.336,60.047c-8.046-8.046-11.881-23.957-12.196-34.996c11.031,14.821,25.367,27.747,42.711,34.996 c-17.344,6.941-31.048,20.649-42.711,34.996C138.087,83.223,140.975,68.875,149.336,60.047z'/%3E %3C/g%3E %3C/g%3E %3C/g%3E %3Cg%3E %3Cpolygon fill='%23EFEFEF' points='29.301,54.708 29.301,65.388 37.284,60.048 '/%3E %3Cpolygon fill='%23EFEFEF' points='56.856,46.956 56.856,32.073 31.855,48.739 43.023,56.21 '/%3E %3Cpolygon fill='%23EFEFEF' points='88.239,48.739 63.238,32.073 63.238,46.956 77.072,56.21 '/%3E %3Cpolygon fill='%23EFEFEF' points='31.855,71.356 56.856,88.022 56.856,73.14 43.023,63.888 '/%3E %3Cpolygon fill='%23EFEFEF' points='63.238,73.14 63.238,88.022 88.239,71.356 77.072,63.888 '/%3E %3Cpolygon fill='%23EFEFEF' points='60.047,52.499 48.762,60.048 60.047,67.597 71.333,60.048 '/%3E %3Cpath fill='%23EFEFEF' d='M60.047,0C26.885,0,0,26.884,0,60.048s26.885,60.047,60.047,60.047c33.164,0,60.048-26.883,60.048-60.047 S93.211,0,60.047,0z M97.175,71.36c0,0.141-0.01,0.279-0.028,0.418c-0.007,0.045-0.018,0.092-0.025,0.137 c-0.017,0.09-0.032,0.18-0.056,0.268c-0.014,0.053-0.033,0.104-0.05,0.154c-0.025,0.078-0.051,0.156-0.082,0.234 c-0.021,0.053-0.048,0.104-0.071,0.154c-0.034,0.072-0.069,0.143-0.108,0.213c-0.028,0.049-0.061,0.098-0.091,0.146 c-0.043,0.066-0.087,0.131-0.135,0.193c-0.035,0.049-0.071,0.094-0.11,0.139c-0.05,0.059-0.103,0.117-0.158,0.172 c-0.042,0.043-0.083,0.086-0.127,0.125c-0.058,0.053-0.119,0.104-0.182,0.152c-0.047,0.037-0.094,0.074-0.144,0.109 c-0.019,0.012-0.035,0.027-0.054,0.039L61.817,96.64c-0.536,0.357-1.152,0.537-1.771,0.537c-0.616,0-1.233-0.18-1.77-0.537 L24.34,74.015c-0.018-0.012-0.034-0.027-0.052-0.039c-0.05-0.035-0.098-0.072-0.145-0.109c-0.062-0.049-0.123-0.1-0.181-0.152 c-0.044-0.039-0.086-0.082-0.128-0.125c-0.056-0.055-0.107-0.113-0.159-0.172c-0.037-0.045-0.074-0.09-0.109-0.139 c-0.047-0.062-0.092-0.127-0.134-0.193c-0.032-0.049-0.062-0.098-0.092-0.146c-0.039-0.07-0.074-0.141-0.108-0.213 c-0.024-0.051-0.049-0.102-0.071-0.154c-0.031-0.078-0.058-0.156-0.082-0.234c-0.018-0.051-0.035-0.102-0.05-0.154 c-0.023-0.088-0.039-0.178-0.056-0.268c-0.008-0.045-0.02-0.092-0.025-0.137c-0.019-0.139-0.029-0.277-0.029-0.418V48.735 c0-0.141,0.011-0.279,0.029-0.416c0.006-0.047,0.018-0.092,0.025-0.139c0.017-0.09,0.032-0.18,0.056-0.268 c0.015-0.053,0.032-0.104,0.05-0.154c0.024-0.078,0.051-0.156,0.082-0.232c0.022-0.053,0.047-0.105,0.071-0.156 c0.034-0.072,0.069-0.143,0.108-0.211c0.029-0.051,0.06-0.1,0.092-0.148c0.042-0.066,0.087-0.131,0.134-0.193 c0.035-0.047,0.072-0.094,0.109-0.139c0.052-0.059,0.104-0.117,0.159-0.172c0.042-0.043,0.084-0.086,0.128-0.125 c0.058-0.053,0.118-0.104,0.181-0.152c0.047-0.037,0.095-0.074,0.145-0.109c0.018-0.012,0.034-0.027,0.052-0.039l33.938-22.625 c1.072-0.715,2.468-0.715,3.54,0l33.937,22.625c0.019,0.012,0.035,0.027,0.054,0.039c0.05,0.035,0.097,0.072,0.144,0.109 c0.062,0.049,0.124,0.1,0.182,0.152c0.044,0.039,0.085,0.082,0.127,0.125c0.056,0.055,0.108,0.113,0.158,0.172 c0.039,0.045,0.075,0.092,0.11,0.139c0.048,0.062,0.092,0.127,0.135,0.193c0.03,0.049,0.062,0.098,0.091,0.148 c0.039,0.068,0.074,0.139,0.108,0.211c0.023,0.051,0.05,0.104,0.071,0.156c0.031,0.076,0.057,0.154,0.082,0.232 c0.017,0.051,0.036,0.102,0.05,0.154c0.023,0.088,0.039,0.178,0.056,0.268c0.008,0.047,0.019,0.092,0.025,0.139 c0.019,0.137,0.028,0.275,0.028,0.416V71.36z'/%3E %3Cpolygon fill='%23EFEFEF' points='90.794,65.388 90.794,54.708 82.812,60.048 '/%3E %3C/g%3E %3C/svg%3E") !important; }
+
+.drawer_close {
+  transform: translate(-10px, 200px) !important; }
+
+.drawer_open {
+  transform: translate(-10px, -10px) !important; }
+
+.table-row:hover .table-row-column {
+  opacity: 1; }
+
+.table-row-column {
+  opacity: 0; }
+
+/**  app.css **/
+.guide_card .example {
+  padding: 10px !important;
+  background: #F5F5F5;
+  font-size: 13px; }
+
+.guide_card .text_title {
+  font-weight: 500;
+  margin-bottom: 9px;
+  margin-top: 22px;
+  font-family: 'Roboto', sans-serif; }
+
+.text_content {
+  font-weight: 400;
+  font-family: 'Roboto', sans-serif; }
+
+/*! Color themes for Google Code Prettify | MIT License | github.com/jmblog/color-themes-for-google-code-prettify */
+.prettyprint {
+  font-family: Menlo, "Bitstream Vera Sans Mono", "DejaVu Sans Mono", Monaco, Consolas, monospace;
+  border: 0 !important; }
+
+.pln {
+  color: #333; }
+
+/* Specify class=linenums on a pre to get line numbering */
+ol.linenums {
+  margin-top: 0;
+  margin-bottom: 0;
+  color: #cccccc; }
+
+li.L0,
+li.L1,
+li.L2,
+li.L3,
+li.L4,
+li.L5,
+li.L6,
+li.L7,
+li.L8,
+li.L9 {
+  padding-left: 1em;
+  background-color: #fff;
+  list-style-type: decimal; }
+
+@media screen {
+  /* string content */
+  .str {
+    color: #d14; }
+  /* keyword */
+  .kwd {
+    color: #333; }
+  /* comment */
+  .com {
+    color: #998; }
+  /* type name */
+  .typ {
+    color: #458; }
+  /* literal value */
+  .lit {
+    color: #458; }
+  /* punctuation */
+  .pun {
+    color: #333; }
+  /* lisp open bracket */
+  .opn {
+    color: #333; }
+  /* lisp close bracket */
+  .clo {
+    color: #333; }
+  /* markup tag name */
+  .tag {
+    color: #000080; }
+  /* markup attribute name */
+  .atn {
+    color: #008080; }
+  /* markup attribute value */
+  .atv {
+    color: #d14; }
+  /* declaration */
+  .dec {
+    color: #333; }
+  /* variable name */
+  .var {
+    color: #008080; }
+  /* function name */
+  .fun {
+    color: #900; } }
+
+/*# sourceMappingURL=app.bundle.css.map*/
