@@ -58,6 +58,9 @@ describe("API load", function() {
 				x: {
 					type: "category"
 				}
+			},
+			point: {
+				show: false
 			}
 		});
 
