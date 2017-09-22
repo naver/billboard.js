@@ -443,7 +443,7 @@ extend(ChartInternal.prototype, {
 		let mainCircles;
 
 		if (!this.config.point_show) {
-			return undefined;
+			return [];
 		}
 
 		if (withTransition) {
