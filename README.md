@@ -65,18 +65,16 @@ You can download the compressed files for production
 
 ### Installation with npm
 
-The following command shows how to install billboard.js using npm.
-
 ```bash
 $ npm install billboard.js
 ```
 
 ### Using CDN
 
-To create a link to a file provided over CDN, you must check the file URL in the CDN service.
+If you want use without installation, load files directly from one the CDN providers.
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
-- jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/
+- jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/ [![](https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded)](https://www.jsdelivr.com/package/npm/billboard.js)
 - unpkg: https://unpkg.com/billboard.js/dist/
 
 ## Supported Browsers
