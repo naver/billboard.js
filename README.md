@@ -71,7 +71,7 @@ $ npm install billboard.js
 
 ### Using CDN
 
-If you want use without installation, load files directly from one the CDN providers.
+If you want use without installation, load files directly from one of the CDN providers.
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
 - jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/ [![](https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded)](https://www.jsdelivr.com/package/npm/billboard.js)
