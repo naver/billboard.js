@@ -18,8 +18,11 @@
         "class-methods-use-this": 0,
         "no-useless-escape": 0,
         "no-loop-func": 0,
-        "no-console":["error", {
-            allow: ["error"]
-        }]
+        "no-console":[
+            "error", {
+                "allow": ["error"]
+            }
+        ],
+        "array-element-newline": 0
     }
 }
