@@ -45,6 +45,23 @@ describe("API zoom", function() {
 			expect(Math.round(domain[0])).to.be.equal(target[0]);
 			expect(Math.round(domain[1])).to.be.equal(target[1]);
 		});
+
+		it("should be zoomed and showing focus grid properly when target contained minus value", () => {
+			const target = [-2, 3]; // zoom in cotaining minus value
+
+			chart.zoom(target);
+
+			const zoomScale = chart.internal.zoomScale;
+			
+			// If target contained minus value should not be null
+			expect(zoomScale).to.not.be.null;
+
+			const domain = chart.internal.zoomScale.domain();
+
+			// domain value must be above than target
+			expect(Math.round(domain[0])).to.be.above(target[0]);
+			expect(Math.round(domain[1])).to.be.above(target[1]);
+		});
 	});
 
 	describe("zoom line chart #2", () => {
