@@ -103,14 +103,20 @@ extend(ChartInternal.prototype, {
 		// 	.on("dblclick.zoom", null);
 
 		if ($$.zoomScale) {
-			const range1 = $$.zoomScale.domain()[0];
-			const range2 = $$.x.domain()[0];
+			const zoomLeftDomain = $$.zoomScale.domain()[0];
+			const leftDomain = $$.x.domain()[0];
+			const zoomRightDomain = $$.zoomScale.domain()[1];
+			const rightDomain = $$.x.domain()[1];
 			const delta = 0.015;
 
+			// check the zoomed chart is shown between leftDomain(x) and rightDomain(x).
+			const initLeft = zoomLeftDomain <= leftDomain || (zoomLeftDomain - delta) <= leftDomain;
+			const initRight = rightDomain <= zoomRightDomain || rightDomain <= (zoomRightDomain - delta);
+
 			// reset scale when zoom is out as initial
-			if (range1 <= range2 || (range1 - delta) <= range2) {
-				$$.zoomScale = null;
+			if (initLeft && initRight) {
 				$$.xAxis.scale($$.x);
+				$$.zoomScale = null;
 			}
 		}
 
