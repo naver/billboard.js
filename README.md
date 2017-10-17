@@ -100,12 +100,18 @@ Load billboard.js after D3.js.
     <script src="https://d3js.org/d3.v4.min.js"></script>
     
     <!-- Load billboard.js with base style -->
-    <link rel="stylesheet" href="billboard.css">
-    <script src="billboard.js"></script>
+    <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+    <script src="$YOUR_PATH/billboard.js"></script>
 
 <!-- 2) or Load billboard.js packaged with D3.js -->
-    <link rel="stylesheet" href="billboard.css">
-    <script src="billboard.pkgd.js"></script>
+    <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+    <script src="$YOUR_PATH/billboard.pkgd.js"></script>
+```
+
+or use importing ESM.
+
+```js
+import {bb} from "billboard.js";
 ```
 
 > **Note**  
