@@ -296,6 +296,10 @@ header .header-content .inner p {
 }
 
 @media(max-width:860px) {
+    header .header-content {
+        padding-top: 100px;
+    }
+
     pre {
         width: 300px;
     }
