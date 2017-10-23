@@ -179,7 +179,7 @@ footer p {
 }
 
 
-@media(min-width:768px) {
+@media(min-width:1024px) {
     .navbar-default {
         border-color: transparent;
         background-color: transparent;
@@ -259,7 +259,7 @@ header {
 header .header-content {
     position: relative;
     width: 100%;
-    padding: 100px 15px;
+    padding: 10px 15px 50px 15px;
     text-align: center;
     z-index: 2;
 }
@@ -295,7 +295,11 @@ header .header-content .inner p {
   display:none;
 }
 
-@media(max-width:768px) {
+@media(max-width:860px) {
+    header .header-content {
+        padding-top: 100px;
+    }
+
     pre {
         width: 300px;
     }
@@ -303,24 +307,16 @@ header .header-content .inner p {
     #title-svg {
         font-size: 90px;
     }
+
+    .navbar-default .nav > li > a,
+    .navbar-default .nav > li > a:focus {
+        font-size: 11px;
+    }
 }
 
 @media(min-width:768px) {
     .icon-lg {
         font-size: 80px;
-    }
-    
-    header {
-        min-height: 100%;
-    }
-
-    header .header-content {
-        position: absolute;
-        top: 50%;
-        padding: 0 50px;
-        -webkit-transform: translateY(-50%);
-        -ms-transform: translateY(-50%);
-        transform: translateY(-50%);
     }
 
     header .header-content .inner {
