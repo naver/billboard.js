@@ -549,7 +549,9 @@ var demos = {
 					x : {
 						type : 'timeseries',
 						tick: {
-							format: function (x) { return x.getFullYear(); }
+							format: function (x) {
+							return x.getFullYear();
+						}
 							//format: '%Y' // format string is also available for timeseries data
 						}
 					}
@@ -694,8 +696,9 @@ var demos = {
 				axis : {
 					y : {
 						tick: {
-							format: d3.format("$,")
-//                format: function (d) { return "$" + d; }
+						format: function(x) {
+						    return d3.format("$,")(x);
+						}
 						}
 					}
 				}
@@ -1123,12 +1126,9 @@ var demos = {
 					},
 					color: function (color, d) {
 						// d will be 'id' when called for legends
-						if(d.id && d.id === 'data3'){
-							var darker = d3.rgb(color).darker(d.value / 150).toString();
-							return darker;
-						} else {
-							return color;
-						}
+						return (d.id && d.id === 'data3') ?
+							d3.rgb(color).darker(d.value / 150).toString() :
+							color;
 					}
 				}
 			}
@@ -1174,7 +1174,9 @@ var demos = {
 					}, 2000),
 
 					setTimeout(function () {
-						chart.groups([['data1', 'data2', 'data3', 'data4', 'data5']])
+						chart.groups([
+							['data1', 'data2', 'data3', 'data4', 'data5']
+						]);
 					}, 3000)
 				];
 			}
@@ -1215,7 +1217,9 @@ var demos = {
 					labels: {
 						// format: function (v, id, i, j) { return "Default Format"; },
 						format: {
-							data1: d3.format('$'),
+							data1: function(x) {
+							return d3.format('$')(x)
+						}
 							// data1: function (v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -1516,13 +1520,17 @@ var demos = {
 				axis : {
 					y : {
 						tick: {
-							format: d3.format("s")
+							format: function(x) {
+							return d3.format("s")(x);
+						}
 						}
 					},
 					y2: {
 						show: true,
 						tick: {
-							format: d3.format("$")
+							format: function(x) {
+							return d3.format("$")(x);
+						}
 						}
 					}
 				},
@@ -1531,6 +1539,7 @@ var demos = {
 						title: function (d) { return 'Data ' + d; },
 						value: function (value, ratio, id) {
 							var format = id === 'data1' ? d3.format(',') : d3.format('$');
+
 							return format(value);
 						}
 						// value: d3.format(',') // apply this format to both y and y2
@@ -1721,42 +1730,42 @@ var demos = {
 							done: function () {
 								chart.flow({
 									columns: [
-										['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-										['data1', 200, 300, 100, 250],
-										['data2', 100, 90, 40, 120],
-										['data3', 100, 100, 300, 500]
+                                      ['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+                                      ['data1', 200, 300, 100, 250],
+                                      ['data2', 100, 90, 40, 120],
+                                      ['data3', 100, 100, 300, 500]
 									],
 									length: 0,
 									duration: 1500,
 									done: function () {
-										chart.flow({
-											columns: [
-												['x', '2013-03-01', '2013-03-02'],
-												['data1', 200, 300],
-												['data2', 150, 250],
-												['data3', 100, 100]
-											],
-											length: 2,
-											duration: 1500,
-											done: function () {
-												chart.flow({
-													columns: [
-														['x', '2013-03-21', '2013-04-01'],
-														['data1', 500, 200],
-														['data2', 100, 150],
-														['data3', 200, 400]
-													],
-													to: '2013-03-01',
-													duration: 1500,
-												});
-											}
-										});
+                                      chart.flow({
+                                             columns: [
+                                                ['x', '2013-03-01', '2013-03-02'],
+                                                ['data1', 200, 300],
+                                                ['data2', 150, 250],
+                                                ['data3', 100, 100]
+                                            ],
+                                            length: 2,
+                                            duration: 1500,
+                                            done: function () {
+                                                 chart.flow({
+                                                    columns: [
+                                                        ['x', '2013-03-21', '2013-04-01'],
+                                                        ['data1', 500, 200],
+                                                        ['data2', 100, 150],
+                                                        ['data3', 200, 400]
+                                                    ],
+                                                    to: '2013-03-01',
+                                                    duration: 1500,
+                                                 });
+                                            }
+                                      });
 									}
 								});
 							},
 						});
 					}, 1000)
-				];
+                ];
 			}
 		},
 		DataName: {
