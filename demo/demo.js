@@ -1527,9 +1527,11 @@ var demos = {
 					contents: {
 						"bindto": "#legend",
 						"template": function(title, color) {
+
 						    return title !== "data2" ?
 						       "<span style='color:#fff;padding:10px;background-color:"+ color +"'>"+ title +"</span>" : "";
 					       }
+
 					}
 				}
 			}
