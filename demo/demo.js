@@ -514,13 +514,6 @@ var demos = {
 				},
 				axis: {
 					rotated: true
-				},
-				interaction: {
-					inputType: {
-						touch: {
-							preventDefault: true
-						}
-					}
 				}
 			}
 		},
@@ -556,7 +549,9 @@ var demos = {
 					x : {
 						type : 'timeseries',
 						tick: {
-							format: function (x) { return x.getFullYear(); }
+							format: function (x) {
+							return x.getFullYear();
+						}
 							//format: '%Y' // format string is also available for timeseries data
 						}
 					}
@@ -701,8 +696,9 @@ var demos = {
 				axis : {
 					y : {
 						tick: {
-							format: d3.format("$,")
-//                format: function (d) { return "$" + d; }
+						format: function(x) {
+						    return d3.format("$,")(x);
+						}
 						}
 					}
 				}
@@ -1130,12 +1126,9 @@ var demos = {
 					},
 					color: function (color, d) {
 						// d will be 'id' when called for legends
-						if(d.id && d.id === 'data3'){
-							var darker = d3.rgb(color).darker(d.value / 150).toString();
-							return darker;
-						} else {
-							return color;
-						}
+						return (d.id && d.id === 'data3') ?
+							d3.rgb(color).darker(d.value / 150).toString() :
+							color;
 					}
 				}
 			}
@@ -1181,7 +1174,9 @@ var demos = {
 					}, 2000),
 
 					setTimeout(function () {
-						chart.groups([['data1', 'data2', 'data3', 'data4', 'data5']])
+						chart.groups([
+							['data1', 'data2', 'data3', 'data4', 'data5']
+						]);
 					}, 3000)
 				];
 			}
@@ -1222,7 +1217,9 @@ var demos = {
 					labels: {
 						// format: function (v, id, i, j) { return "Default Format"; },
 						format: {
-							data1: d3.format('$'),
+							data1: function(x) {
+							return d3.format('$')(x)
+						}
 							// data1: function (v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -1231,6 +1228,52 @@ var demos = {
 					y: {
 						lines: [{value: 0}]
 					}
+				}
+			}
+		},
+		DataLabelPosition: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30, -200, -100, 400, 150, 250]
+					],
+					labels: {
+						position: {
+							x: -25,
+							y: 5
+						}
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
+		OnMinMaxCallback: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, -200, 100, 200, 190, 280],
+						["data2", 30, 200, 120, 400, 150, 150]
+					],
+					onmin: function(data) {
+						data.forEach(function(v) {
+							// select data points
+							d3.select(".bb-shapes-"+ v.id +" .bb-circle-"+ v.index)
+								.style("fill", "red")
+								.attr("r", "8");
+						});
+					    },
+					onmax: function(data) {
+						data.forEach(function(v) {
+							// select data points
+							d3.select(".bb-shapes-"+ v.id +" .bb-circle-"+ v.index)
+								.style("fill", "green")
+								.attr("r", "8");
+						});
+					    }
 				}
 			}
 		}
@@ -1355,6 +1398,26 @@ var demos = {
 	},
 
 	Interaction: {
+		PreventScrollOnTouch: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true
+				},
+				interaction: {
+					inputType: {
+						touch: {
+							preventDefault: true
+						}
+					}
+				}
+			}
+		},
 		SubChart: {
 			options: {
 				data: {
@@ -1430,6 +1493,42 @@ var demos = {
 						chart.transform('line');
 					}, 4000)
 				];
+			}
+		},
+		LegendTemplate1: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100],
+						['data2', 300],
+						['data3', 200]
+					],
+					type: 'pie'
+				},
+				legend: {
+					contents: {
+						"bindto": "#legend",
+						"template": "<span style='color:#fff;padding:10px;background-color:{=COLOR}'>{=TITLE}</span>"
+					}
+				}
+			}
+		},
+		LegendTemplate2: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100],
+						['data2', 300],
+						['data3', 200]
+					],
+					type: 'pie'
+				},
+				legend: {
+					contents: {
+						"bindto": "#legend",
+						"template": function(title, color) { return title !== "data2" ? "<span style='background-color:"+ color +";padding:10px'>"+ title +"</span>" : ""; }
+					}
+				}
 			}
 		},
 		CustomLegend: {
@@ -1523,13 +1622,17 @@ var demos = {
 				axis : {
 					y : {
 						tick: {
-							format: d3.format("s")
+							format: function(x) {
+							return d3.format("s")(x);
+						}
 						}
 					},
 					y2: {
 						show: true,
 						tick: {
-							format: d3.format("$")
+							format: function(x) {
+							return d3.format("$")(x);
+						}
 						}
 					}
 				},
@@ -1538,10 +1641,30 @@ var demos = {
 						title: function (d) { return 'Data ' + d; },
 						value: function (value, ratio, id) {
 							var format = id === 'data1' ? d3.format(',') : d3.format('$');
+
 							return format(value);
 						}
 						// value: d3.format(',') // apply this format to both y and y2
 					}
+				}
+			}
+		},
+		TooltipOrder: {
+			options: {
+				data: {
+					type: "bar",
+					columns: [
+						['data1', 120, 200, 300, 100, 150, 250],
+						['data2', 50, 29, 17, 40, 15, 25],
+						['data3', 100, 320, 210, 340, 215, 125]
+					],
+					groups: [
+						["data1", "data2", "data3"]
+					],
+					order: "asc"
+				},
+				tooltip: {
+					order: "desc"
 				}
 			}
 		}
@@ -1642,6 +1765,83 @@ var demos = {
 					}, 2000)
 				];
 			}
+		},
+		clipPath: {
+			options: {
+				data: {
+					columns: [
+						['sample', 30, 200, 0, 400, 0, 250]
+					]
+				},
+				axis: {
+					y: {
+						padding: {
+							bottom: 0
+						}
+					}
+				},
+				point: {
+					r: 5
+				},
+				clipPath: false
+			}
+		}
+	},
+	DonutChartOptions: {
+		LabelRatio: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Title Text",
+					label: {
+						ratio: 1.5
+					}
+				},
+				legend: {
+					show: false
+				}
+			},
+			style: [
+				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+			]
+		},
+		MultilneTitle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Title 1\nTitle 2\nTitle 3"
+				}
+			}
+		},
+		padAngle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Title Text",
+					padAngle: 0.1
+				}
+			}
 		}
 	},
 	LineChartOptions: {
@@ -1660,7 +1860,30 @@ var demos = {
 		}
 	},
 	PieChartOptions: {
-		PieLabelFormat: {
+		LabelRatio: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						ratio: 2.4
+					}
+				},
+				legend: {
+					show: false
+				}
+			},
+			style: [
+				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+			]
+		},
+		LabelFormat: {
 			options: {
 				data: {
 					columns: [
@@ -1728,42 +1951,42 @@ var demos = {
 							done: function () {
 								chart.flow({
 									columns: [
-										['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-										['data1', 200, 300, 100, 250],
-										['data2', 100, 90, 40, 120],
-										['data3', 100, 100, 300, 500]
+                                      ['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+                                      ['data1', 200, 300, 100, 250],
+                                      ['data2', 100, 90, 40, 120],
+                                      ['data3', 100, 100, 300, 500]
 									],
 									length: 0,
 									duration: 1500,
 									done: function () {
-										chart.flow({
-											columns: [
-												['x', '2013-03-01', '2013-03-02'],
-												['data1', 200, 300],
-												['data2', 150, 250],
-												['data3', 100, 100]
-											],
-											length: 2,
-											duration: 1500,
-											done: function () {
-												chart.flow({
-													columns: [
-														['x', '2013-03-21', '2013-04-01'],
-														['data1', 500, 200],
-														['data2', 100, 150],
-														['data3', 200, 400]
-													],
-													to: '2013-03-01',
-													duration: 1500,
-												});
-											}
-										});
+                                      chart.flow({
+                                             columns: [
+                                                ['x', '2013-03-01', '2013-03-02'],
+                                                ['data1', 200, 300],
+                                                ['data2', 150, 250],
+                                                ['data3', 100, 100]
+                                            ],
+                                            length: 2,
+                                            duration: 1500,
+                                            done: function () {
+                                                 chart.flow({
+                                                    columns: [
+                                                        ['x', '2013-03-21', '2013-04-01'],
+                                                        ['data1', 500, 200],
+                                                        ['data2', 100, 150],
+                                                        ['data3', 200, 400]
+                                                    ],
+                                                    to: '2013-03-01',
+                                                    duration: 1500,
+                                                 });
+                                            }
+                                      });
 									}
 								});
 							},
 						});
 					}, 1000)
-				];
+                ];
 			}
 		},
 		DataName: {
