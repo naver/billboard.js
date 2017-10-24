@@ -141,7 +141,7 @@ var billboardDemo = {
 				legend.style.textAlign = "center";
 
 				this.$chartArea.appendChild(legend);
-				legend = "&lt;div id='legend'>&lt;/div>";
+				legend = "&lt;div id=\"legend\">&lt;/div>";
 			}
 		}
 
@@ -180,10 +180,10 @@ var billboardDemo = {
 			.replace(/\\t/g, "\t")
 			.replace(/\t{5}/g,"")
 			.replace(/\\r/g, "\r")
-			.replace(/\s\\n/g, "\n") +");";
+			.replace(/\\n(?!T)/g, "\n") +");";
 
 		// markup
-		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id='"+ key +"'>&lt;/div>\r\n"+ (legend ? legend + "\r\n" : "") +"\r\n";
+		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id=\""+ key +"\">&lt;/div>\r\n"+ (legend ? legend + "\r\n" : "") +"\r\n";
 
 		// script
 		this.$code.innerHTML += "// Script\r\n"+ codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
