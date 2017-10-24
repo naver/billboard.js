@@ -1526,7 +1526,11 @@ var demos = {
 				legend: {
 					contents: {
 						"bindto": "#legend",
-						"template": function(title, color) { return title !== "data2" ? "<span style='background-color:"+ color +";padding:10px'>"+ title +"</span>" : ""; }
+						"template": function(title, color) {
+						    // omit 'data2' to be shown
+						    return title !== "data2" ?
+						        "<span style='background-color:"+ color +";padding:10px'>"+ title +"</span>" : "";
+						}
 					}
 				}
 			}
