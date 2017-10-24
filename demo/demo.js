@@ -1230,6 +1230,52 @@ var demos = {
 					}
 				}
 			}
+		},
+		DataLabelPosition: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30, -200, -100, 400, 150, 250]
+					],
+					labels: {
+						position: {
+							x: -25,
+							y: 5
+						}
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
+		OnMinMaxCallback: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, -200, 100, 200, 190, 280],
+						["data2", 30, 200, 120, 400, 150, 150]
+					],
+					onmin: function(data) {
+						data.forEach(function(v) {
+							// select data points
+							d3.select(".bb-shapes-"+ v.id +" .bb-circle-"+ v.index)
+								.style("fill", "red")
+								.attr("r", "8");
+						});
+					    },
+					onmax: function(data) {
+						data.forEach(function(v) {
+							// select data points
+							d3.select(".bb-shapes-"+ v.id +" .bb-circle-"+ v.index)
+								.style("fill", "green")
+								.attr("r", "8");
+						});
+					    }
+				}
+			}
 		}
 	},
 
@@ -1352,6 +1398,26 @@ var demos = {
 	},
 
 	Interaction: {
+		PreventScrollOnTouch: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true
+				},
+				interaction: {
+					inputType: {
+						touch: {
+							preventDefault: true
+						}
+					}
+				}
+			}
+		},
 		SubChart: {
 			options: {
 				data: {
@@ -1427,6 +1493,46 @@ var demos = {
 						chart.transform('line');
 					}, 4000)
 				];
+			}
+		},
+		LegendTemplate1: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100],
+						['data2', 300],
+						['data3', 200]
+					],
+					type: 'pie'
+				},
+				legend: {
+					contents: {
+						"bindto": "#legend",
+						"template": "<span style='color:#fff;padding:10px;background-color:{=COLOR}'>{=TITLE}</span>"
+					}
+				}
+			}
+		},
+		LegendTemplate2: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100],
+						['data2', 300],
+						['data3', 200]
+					],
+					type: 'pie'
+				},
+				legend: {
+					contents: {
+						"bindto": "#legend",
+						"template": function(title, color) {
+						    // omit 'data2' legend
+						    return title !== "data2" ?
+						       "<span style='color:#fff;padding:10px;background-color:"+ color +"'>"+ title +"</span>" : "";
+					       }
+					}
+				}
 			}
 		},
 		CustomLegend: {
@@ -1546,6 +1652,25 @@ var demos = {
 					}
 				}
 			}
+		},
+		TooltipOrder: {
+			options: {
+				data: {
+					type: "bar",
+					columns: [
+						['data1', 120, 200, 300, 100, 150, 250],
+						['data2', 50, 29, 17, 40, 15, 25],
+						['data3', 100, 320, 210, 340, 215, 125]
+					],
+					groups: [
+						["data1", "data2", "data3"]
+					],
+					order: "asc"
+				},
+				tooltip: {
+					order: "desc"
+				}
+			}
 		}
 	},
 	ChartOptions: {
@@ -1644,6 +1769,83 @@ var demos = {
 					}, 2000)
 				];
 			}
+		},
+		clipPath: {
+			options: {
+				data: {
+					columns: [
+						['sample', 30, 200, 0, 400, 0, 250]
+					]
+				},
+				axis: {
+					y: {
+						padding: {
+							bottom: 0
+						}
+					}
+				},
+				point: {
+					r: 5
+				},
+				clipPath: false
+			}
+		}
+	},
+	DonutChartOptions: {
+		LabelRatio: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Title Text",
+					label: {
+						ratio: 1.5
+					}
+				},
+				legend: {
+					show: false
+				}
+			},
+			style: [
+				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+			]
+		},
+		MultilneTitle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Title 1\nTitle 2\nTitle 3"
+				}
+			}
+		},
+		padAngle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					title: "Title Text",
+					padAngle: 0.1
+				}
+			}
 		}
 	},
 	LineChartOptions: {
@@ -1662,7 +1864,30 @@ var demos = {
 		}
 	},
 	PieChartOptions: {
-		PieLabelFormat: {
+		LabelRatio: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 45],
+						['data3', 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						ratio: 2.4
+					}
+				},
+				legend: {
+					show: false
+				}
+			},
+			style: [
+				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+			]
+		},
+		LabelFormat: {
 			options: {
 				data: {
 					columns: [

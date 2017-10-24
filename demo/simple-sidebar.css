@@ -200,3 +200,6 @@ div.row {
 /* Style For Regions */
 #Regions .fill_green { fill: green; }
 #Regions .fill_red { fill: red; }
+
+/* Style For Donut */
+#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}

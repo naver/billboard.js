@@ -134,6 +134,15 @@ var billboardDemo = {
 
 			this.$chartArea.innerHTML = "";
 			this.$chartArea.appendChild($el);
+
+			if (key.indexOf("LegendTemplate") > -1) {
+				var legend = document.createElement("div");
+				legend.id = "legend";
+				legend.style.textAlign = "center";
+
+				this.$chartArea.appendChild(legend);
+				legend = "&lt;div id='legend'>&lt;/div>";
+			}
 		}
 
 		var type = demos[type][key];
@@ -167,12 +176,17 @@ var billboardDemo = {
 			.replace(/(\"function)/g, "function")
 			.replace(/(}\")/g, "}")
 			.replace(/\\"/g, "\"")
+			.replace(/</g, "&lt;")
 			.replace(/\\t/g, "\t")
 			.replace(/\t{5}/g,"")
 			.replace(/\\r/g, "\r")
-			.replace(/\\n/g, "\n") +");";
+			.replace(/\s\\n/g, "\n") +");";
 
-		this.$code.innerHTML = codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
+		// markup
+		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id='"+ key +"'>&lt;/div>\r\n"+ (legend ? legend + "\r\n" : "") +"\r\n";
+
+		// script
+		this.$code.innerHTML += "// Script\r\n"+ codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
 		this.$code.scrollTop = 0;
 
 		try {
@@ -189,6 +203,7 @@ var billboardDemo = {
 			}
 		} catch(e) {}
 
+		// style
 		if (style) {
 			this.$code.innerHTML += "\r\n\r\n/* Style */\r\n"+ style.join("\r\n");
 		}
