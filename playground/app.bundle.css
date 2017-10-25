@@ -189,7 +189,12 @@ input, select {
 .cm-fat-cursor div.CodeMirror-cursors {
   z-index: 1;
 }
-
+.cm-fat-cursor-mark {
+  background-color: rgba(20, 255, 20, 0.5);
+  -webkit-animation: blink 1.06s steps(1) infinite;
+  -moz-animation: blink 1.06s steps(1) infinite;
+  animation: blink 1.06s steps(1) infinite;
+}
 .cm-animate-fat-cursor {
   width: auto;
   border: 0;
@@ -476,7 +481,7 @@ span.CodeMirror-selectedtext { background: none; }
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.0.1
+ * @version 1.1.1
  */
 /*-- Chart --*/
 .bb svg {
@@ -683,6 +688,7 @@ html {
   font-size: 25px; }
 
 .bbtitle .logo {
+  display: inline-block;
   width: 145px;
   height: 33px;
   margin-left: 10px;
@@ -705,11 +711,34 @@ html {
   margin: 0;
   left: 0; }
 
-.textConfigure, .dataTable {
+.textConfigure, .data-table {
   width: 100%; }
 
+.data-table .remove-data {
+  text-align: center;
+  opacity: 0; }
+
+.data-table .add-data {
+  position: relative;
+  text-align: center; }
+
+.data-table .add-data.column {
+  top: 33px; }
+
+.data-table .add-data .row {
+  top: 3px; }
+
+.data-table .header-text:hover .remove-data {
+  opacity: 1; }
+
+.data-table .table-row:hover .remove-data {
+  opacity: 1; }
+
 .layer_wrapper {
-  padding: 10px; }
+  margin: 10px; }
+
+.bb {
+  height: 100%; }
 
 .inputConfigure {
   width: 40%;
@@ -908,5 +937,3 @@ li.L9 {
   /* function name */
   .fun {
     color: #900; } }
-
-/*# sourceMappingURL=app.bundle.css.map*/

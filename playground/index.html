@@ -1,14 +1,41 @@
 <html>
 <head>
-    <script src="https://cdn.rawgit.com/google/code-prettify/master/loader/run_prettify.js"></script>
+    <meta charset="utf-8">
+    <title>billboard.js playground</title>
+    <meta name="description" content="Create chart easy with GUI & Command & Table UI 🎨 with billboard.js">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <link rel="shortcut icon" type="image/x-icon" href="resources/favicon.ico">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prettify/r298/run_prettify.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.4/lodash.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/prop-types/15.6.0/prop-types.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react/0.14.9/react.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/0.14.9/react-dom.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/redux/3.7.2/redux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/react-redux/5.0.6/react-redux.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/4.11.0/d3.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/billboard.js/1.1.1/billboard.js"></script>
     <link href="app.bundle.css" rel="stylesheet">
 </head>
 <body>
 
-
+<style>
+    .logo {
+        background-image : url(resources/logo.svg);
+    }
+</style>
 <div id="app"></div>
 
 
 </body>
 <script src="app.bundle.js"></script>
+
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-108628932-1"></script>
+<script>
+	window.dataLayer = window.dataLayer || [];
+	function gtag(){dataLayer.push(arguments);}
+	gtag('js', new Date());
+
+	gtag('config', 'UA-108628932-1');
+</script>
 </html>
