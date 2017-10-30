@@ -132,52 +132,60 @@ describe("SHAPE BAR", () => {
 				};
 			});
 
-			it("should not be within bar", () => {
+			it("should not be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data1 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.not.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 0,
 					clientY: 0
 				}, chart);
-
-				expect(chart.internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
-			it("should be within bar", () => {
+			it("should be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data1 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 31,
 					clientY: 280
 				}, chart);
-
-				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
 
-			it("should not be within bar of negative value", () => {
+			it("should not be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data3 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data3 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.not.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 280
 				}, chart);
-
-				expect(internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
-			it("should be within bar of negative value", () => {
+			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data3 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data3 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 350
 				}, chart);
-
-				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
 		});
 
@@ -186,41 +194,80 @@ describe("SHAPE BAR", () => {
 				args.axis.rotated = true;
   			});
 
-			it("should not be within bar", () => {
+			it("should not be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data1 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.not.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 0,
 					clientY: 0
 				}, chart);
-
-				expect(internal.isWithinBar(bar)).to.not.be.ok;
 			});
 
-			it("should be within bar", () => {
+			it("should be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data1 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data1 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 190,
 					clientY: 20
 				}, chart);
-
-				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
 
-			it("should be within bar of negative value", () => {
+			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(".bb-target-data3 .bb-bar-0").node();
+				const bar = internal.main.select(".bb-target-data3 .bb-bar-0")
+					.on("click", function() {
+						expect(internal.isWithinBar(this)).to.be.ok;
+						done();
+					});
 
-				util.fireEvent(null, "click", {
+				util.fireEvent(bar.node(), "click", {
 					clientX: 68,
 					clientY: 50
 				}, chart);
-
-				expect(internal.isWithinBar(bar)).to.be.ok;
 			});
+		});
+	});
+
+	describe("multiple xs", () => {
+		before(() => {
+			args = {
+				data: {
+					type: "bar",
+					xs: {
+						"data1": "x",
+						"data2": "x2"
+					},
+					x: "x",
+					columns: [
+						["x", "a", "b", "c", "d"],
+						["x2", "e", "f", "g", "h"],
+						["data1", 2407067, 3499561, 2811458, 2766504],
+						["data2", 2211645, 2211645, 2200597, 2352318]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("should not throw error on click", () => {
+			const internal = chart.internal;
+			const bar = internal.main.select(".bb-event-rects-multiple rect").node();
+
+			expect(() => util.fireEvent(bar, "click")).to.not.throw();
 		});
 	});
 });

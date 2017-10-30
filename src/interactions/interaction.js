@@ -322,7 +322,7 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		const mouse = d3Mouse($$.main.select(`.${CLASS.eventRects} .${CLASS.eventRect}`).node());
+		const mouse = d3Mouse(context);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
 		let sameXData;
 
@@ -532,7 +532,6 @@ extend(ChartInternal.prototype, {
 						.on("dragend", () => { $$.dragend(); })
 					) : () => {}
 			);
-
 
 		if ($$.inputType === "mouse") {
 			rect

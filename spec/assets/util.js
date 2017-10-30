@@ -68,19 +68,7 @@ const fireEvent = (element, name, options = {}, chart) => {
 	"clientX" in options && (options.clientX += paddingLeft);
 	"clientY" in options && (options.clientY += 5);
 
-	if (element) {
-		d3.event = simulant.fire(element, name, options);
-
-	// for legacy tests compatibility
-	} else {
-		const event = document.createEvent("MouseEvents");
-
-		event.initMouseEvent(name, true, true, window,
-			0, 0, 0, options.clientX, options.clientY,
-			false, false, false, false, 0, null);
-
-		d3.event = event;
-	}
+	element && simulant.fire(element, name, options);
 };
 
 /**
