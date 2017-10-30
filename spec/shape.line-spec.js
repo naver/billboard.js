@@ -301,4 +301,44 @@ describe("SHAPE LINE", () => {
 			skipEach = false;
 		})
 	});
+
+	describe("line options", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 0, 15, 25]
+					]
+				},
+				line: {
+					classes: [
+						"line-class-1",
+						"line-class-2"
+					]
+				}
+			};
+		});
+
+		it("should not throw when using the line.classes options", () => {
+			const generateChartWithLineClasses = () => {
+				chart = util.generate(args);
+			};
+
+			expect(generateChartWithLineClasses).to.not.throw();
+		});
+
+		it("should define config.line_classes", () => {
+			chart = util.generate(args);
+
+			expect(chart.internal.config).to.have.property('line_classes');
+		});
+
+		it("config.line_classes should be an array and include the specified classes", () => {
+			chart = util.generate(args);
+
+			expect(chart.internal.config.line_classes).to.include('line-class-1');
+			expect(chart.internal.config.line_classes).to.include('line-class-2');
+		});
+	});
 });

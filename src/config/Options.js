@@ -2074,6 +2074,7 @@ export default class Options {
 			 * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
 			 *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
 			 * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
+			 * @property {Array}   [line.classes=['line1', 'line2'] If set, used to set a css class on each line.
 			 * **Available values:**
 			 * - step
 			 * - step-before
@@ -2088,6 +2089,7 @@ export default class Options {
 			 */
 			line_connectNull: false,
 			line_step_type: "step",
+			line_classes: undefined,
 
 			/**
 			 * Set bar options

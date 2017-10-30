@@ -30,6 +30,21 @@ extend(ChartInternal.prototype, {
 		return this.generateClass(CLASS.shapes, d.id);
 	},
 
+	generateExtraLineClass() {
+		const $$ = this;
+		const classes = $$.config.line_classes || [];
+		const ids = [];
+
+		return function(d) {
+			const id = d.id || (d.data && d.data.id) || d;
+
+			if (ids.indexOf(id) < 0) {
+				ids.push(id);
+			}
+			return classes[ids.indexOf(id) % classes.length];
+		};
+	},
+
 	classLine(d) {
 		return this.classShape(d) + this.generateClass(CLASS.line, d.id);
 	},
