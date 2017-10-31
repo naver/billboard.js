@@ -466,7 +466,13 @@ export default function(params = {}) {
 		return tickOffset;
 	};
 
-	axis.tickInterval = function() {
+	/**
+	 * Get tick interval count
+	 * @private
+	 * @param {Number} size Total data size
+	 * @return {number}
+	 */
+	axis.tickInterval = function(size) {
 		let interval;
 
 		if (params.isCategory) {
@@ -476,7 +482,7 @@ export default function(params = {}) {
 				.node()
 				.getTotalLength() - outerTickSize * 2;
 
-			interval = length / axis.g.selectAll("line").size();
+			interval = length / (size || axis.g.selectAll("line").size());
 		}
 
 		return interval === Infinity ? 0 : interval;
