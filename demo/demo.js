@@ -2600,6 +2600,22 @@ var demos = {
 				"#StyleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
 				"#StyleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
 			]
+		},
+		StyleForLines: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				line: {
+					classes: [
+						'line-class-data1',
+						'line-class-data2'
+					]
+				}
+			}
 		}
 	}
 };
