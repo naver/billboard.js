@@ -77,6 +77,7 @@ require("./interactions/interaction.js");
 require("./internals/size.js");
 require("./internals/shape.js");
 require("./internals/shape.line.js");
+require("./internals/shape.point.js");
 require("./internals/shape.bar.js");
 require("./internals/text.js");
 require("./internals/type.js");

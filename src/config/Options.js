@@ -2044,6 +2044,9 @@ export default class Options {
 			 * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
 			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
+			 * @property {String} [point.type="circle"] The type of point to be drawn. (valid values are "circle" or "rectangle")
+			 * @property {Function} [point.create=undefined] If specified and the point.type option is set to undefined, will be invoked to create line points, this function must return a d3 selection.
+			 * @property {Function} [point.update=undefined] If specified and the point.type option is set to undefined, will be invoked to update line points, this function must return a d3 selection.
 			 * @example
 			 *  point: {
 			 *      show: false,
@@ -2056,6 +2059,13 @@ export default class Options {
 			 *      },
 			 *      select: {
 			 *          r: 3
+			 *      },
+			 *      type: "custom",
+			 *      create(element, cssClassFn, sizeFn, fillStyleFn) {
+			 *
+			 *      },
+			 *      update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
+			 *
 			 *      }
 			 *  }
 			 */
@@ -2065,6 +2075,9 @@ export default class Options {
 			point_focus_expand_enabled: true,
 			point_focus_expand_r: undefined,
 			point_select_r: undefined,
+			point_type: "circle",
+			point_create: undefined,
+			point_update: undefined,
 
 			/**
 			 * Set line options

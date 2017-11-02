@@ -435,52 +435,47 @@ extend(ChartInternal.prototype, {
 
 		$$.mainCircle.exit().remove();
 
-		$$.mainCircle = $$.mainCircle.enter().append("circle")
-			.attr("class", $$.classCircle.bind($$))
-			.attr("r", $$.pointR.bind($$))
-			.style("fill", $$.color)
+		let createFn;
+
+		if ($$.hasValidPointType()) {
+			createFn = $$[$$.config.point_type].create;
+		} else if ($$.hasValidPointDrawMethods()) {
+			createFn = $$.config.point_create;
+		} else {
+			createFn = $$.circle.create;
+		}
+
+		$$.mainCircle = createFn($$.mainCircle, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)
 			.merge($$.mainCircle)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 
 	redrawCircle(cx, cy, withTransition, flow) {
-		let selectedCircles = this.main.selectAll(`.${CLASS.selectedCircle}`);
-		let mainCircles;
+		const selectedCircles = this.main.selectAll(`.${CLASS.selectedCircle}`);
 
 		if (!this.config.point_show) {
 			return [];
 		}
 
-		if (withTransition) {
-			const transitionName = Math.random().toString();
+		let updateFn;
 
-			if (flow) {
-				mainCircles = this.mainCircle
-					.attr("cx", cx)
-					.transition(transitionName)
-					.attr("cx", cx)
-					.attr("cy", cy)
-					.transition(transitionName)
-					.style("opacity", this.opacityForCircle.bind(this))
-					.style("fill", this.color);
-			} else {
-				mainCircles = this.mainCircle
-					.transition(transitionName)
-					.attr("cx", cx)
-					.attr("cy", cy)
-					.transition(transitionName)
-					.style("opacity", this.opacityForCircle.bind(this))
-					.style("fill", this.color);
-			}
-
-			selectedCircles = selectedCircles.transition(Math.random().toString());
+		if (this.hasValidPointType()) {
+			updateFn = this[this.config.point_type].update;
+		} else if (this.hasValidPointDrawMethods()) {
+			updateFn = this.config.point_update;
 		} else {
-			mainCircles = this.mainCircle
-				.attr("cx", cx)
-				.attr("cy", cy)
-				.style("opacity", this.opacityForCircle.bind(this))
-				.style("fill", this.color);
+			updateFn = this.circle.update;
 		}
+
+		const mainCircles = updateFn(
+			this.mainCircle,
+			cx,
+			cy,
+			this.opacityForCircle.bind(this),
+			this.color,
+			withTransition,
+			flow,
+			this.main.selectAll(`.${CLASS.selectedCircle}`));
 
 		return [
 			mainCircles,
