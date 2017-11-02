@@ -718,8 +718,8 @@ export default class ChartInternal {
 		$$.updateCircleY();
 
 		// generate circle x/y functions depending on updated params
-		const cx = ($$.config.axis_rotated ? $$.circleY : $$.circleX).bind($$);
-		const cy = ($$.config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
+		const cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$);
+		const cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
 
 		if (options.flow) {
 			flow = $$.generateFlow({

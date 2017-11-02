@@ -1344,59 +1344,6 @@ var demos = {
 		}
 	},
 
-	Region: {
-		Region: {
-			options: {
-				data: {
-					columns: [
-						['data1', 30, 200, 100, 400, 150, 250, 400],
-						['data2', 830, 1200, 1100, 1400, 1150, 1250, 1500],
-					],
-					axes: {
-						data2: 'y2'
-					}
-				},
-				axis: {
-					y2: {
-						show: true
-					}
-				},
-				regions: [
-					{axis: 'x', end: 1, class: 'regionX'},
-					{axis: 'x', start: 2, end: 4, class: 'regionX'},
-					{axis: 'x', start: 5, class: 'regionX'},
-					{axis: 'y', end: 50, class: 'regionY'},
-					{axis: 'y', start: 80, end: 140, class: 'regionY'},
-					{axis: 'y', start: 400, class: 'regionY'},
-					{axis: 'y2', end: 900, class: 'regionY2'},
-					{axis: 'y2', start: 1150, end: 1250, class: 'regionY2'},
-					{axis: 'y2', start: 1300, class: 'regionY2'},
-				]
-			}
-		},
-		RegionWithTimeseries: {
-			options: {
-				data: {
-					x: 'date',
-					columns: [
-						['date', '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
-						['sample', 30, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: 'timeseries'
-					}
-				},
-				regions: [
-					{start: '2014-01-05', end: '2014-01-10'},
-					{start: new Date('2014/01/15'), end: new Date('20 Jan 2014')},
-					{start: 1390575600000, end: 1391007600000} // start => 2014-01-25 00:00:00, end => 2014-01-30 00:00:00
-				]
-			}
-		}
-	},
-
 	Interaction: {
 		PreventScrollOnTouch: {
 			options: {
@@ -1580,6 +1527,162 @@ var demos = {
 						.on('click', function (id) {
 							chart.toggle(id);
 						});
+			}
+		}
+	},
+
+	Point: {
+		RectanglePoints: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					type: "rectangle"
+				}
+			}
+		},
+		CustomPointsTriangle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					type: {
+						create: function(element, cssClassFn, sizeFn, fillStyleFn) {
+							return element.enter().append("polygon")
+								.attr("class", cssClassFn)
+								.style("fill", fillStyleFn);
+						},
+						update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+						                 withTransition, flow, selectedCircles) {
+							var size = this.pointR(element) * 3.0;
+							var halfSize = size * 0.5;
+
+							function getPoints(d) {
+								var x1 = xPosFn(d);
+								var y1 = yPosFn(d) - halfSize;
+								var x2 = x1 - halfSize;
+								var y2 = y1 + size;
+								var x3 = x1 + halfSize;
+								var y3 = y2;
+
+								return [x1, y1, x2, y2, x3, y3].join(" ");
+							}
+
+							return element
+								.attr("points", getPoints)
+								.style("opacity", opacityStyleFn)
+								.style("fill", fillStyleFn);
+						}
+					}
+				}
+			}
+		},
+		CustomPointsDiamond: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					type: {
+						create: function(element, cssClassFn, sizeFn, fillStyle) {
+							// create custom an element node
+							return element.enter().append("polygon")
+								.attr("class", cssClassFn)
+								.style("fill", fillStyle);
+						},
+
+						update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+						                 withTransition, flow, selectedCircles) {
+							var size = this.pointR(element) * 3.0;
+							var halfSize = size * 0.5;
+
+							function getPoints(d) {
+								var x1 = xPosFn(d);
+								var y1 = yPosFn(d) - halfSize;
+								var x2 = x1 - halfSize;
+								var y2 = y1 + halfSize;
+								var x3 = x1;
+								var y3 = y2 + halfSize;
+								var x4 = x1 + halfSize;
+								var y4 = y2;
+
+								return [x1, y1, x2, y2, x3, y3, x4, y4].join(" ");
+							}
+
+							// style the custom element added
+							mainCircles = element
+								.attr("points", getPoints)
+								.style("opacity", opacityStyleFn)
+								.style("fill", fillStyleFn);
+
+							return mainCircles;
+						}
+					}
+				}
+			}
+		}
+	},
+
+	Region: {
+		Region: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30, 200, 100, 400, 150, 250, 400],
+						['data2', 830, 1200, 1100, 1400, 1150, 1250, 1500],
+					],
+					axes: {
+						data2: 'y2'
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{axis: 'x', end: 1, class: 'regionX'},
+					{axis: 'x', start: 2, end: 4, class: 'regionX'},
+					{axis: 'x', start: 5, class: 'regionX'},
+					{axis: 'y', end: 50, class: 'regionY'},
+					{axis: 'y', start: 80, end: 140, class: 'regionY'},
+					{axis: 'y', start: 400, class: 'regionY'},
+					{axis: 'y2', end: 900, class: 'regionY2'},
+					{axis: 'y2', start: 1150, end: 1250, class: 'regionY2'},
+					{axis: 'y2', start: 1300, class: 'regionY2'},
+				]
+			}
+		},
+		RegionWithTimeseries: {
+			options: {
+				data: {
+					x: 'date',
+					columns: [
+						['date', '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
+						['sample', 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: 'timeseries'
+					}
+				},
+				regions: [
+					{start: '2014-01-05', end: '2014-01-10'},
+					{start: new Date('2014/01/15'), end: new Date('20 Jan 2014')},
+					{start: 1390575600000, end: 1391007600000} // start => 2014-01-25 00:00:00, end => 2014-01-30 00:00:00
+				]
 			}
 		}
 	},
@@ -2260,6 +2363,72 @@ var demos = {
 			]
 		}
 	},
+
+	Style: {
+		StyleForRegion: {
+			options: {
+				data: {
+					columns: [
+						['sample', 30, 200, 100, 400, 150, 250]
+					]
+				},
+				regions: [
+					{start:0, end:1},
+					{start:2, end:4, class:'foo'}
+				]
+			},
+			style: [
+				"#StyleForRegion .bb-region-0 {fill:red;}",
+				"#StyleForRegion .bb-region.foo {fill:green;}"
+			]
+		},
+		StyleForGrid: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500]
+					]
+				},
+				grid: {
+					x: {
+						lines: [{value: 2}, {value: 4, class: 'grid4', text: 'LABEL 4'}]
+					},
+					y: {
+						lines: [{value: 500}, {value: 800, class: 'grid800', text: 'LABEL 800'}]
+					}
+				}
+			},
+			style: [
+				"#StyleForGrid .bb-xgrid-line line {stroke: blue;}",
+				"#StyleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}",
+				"#StyleForGrid .bb-xgrid-line.grid4 text {fill: pink;}",
+				"#StyleForGrid .bb-ygrid-line line {stroke: red;}",
+				"#StyleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
+				"#StyleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
+			]
+		},
+		StyleForLines: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				line: {
+					classes: [
+						'line-class-data1',
+						'line-class-data2'
+					]
+				}
+			},
+			style: [
+				"#StyleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }",
+				"#StyleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }"
+			]
+		}
+	},
+
 	Transform: {
 		ToLineChart: {
 			options: {
@@ -2269,6 +2438,9 @@ var demos = {
 						['data2', 130, 100, 140, 200, 150, 50]
 					],
 					type: 'bar'
+				},
+				point: {
+					type: "rectangle"
 				}
 			},
 			func: function(chart) {
@@ -2555,66 +2727,6 @@ var demos = {
 						chart.transform('donut');
 					}, 4000)
 				];
-			}
-		}
-	},
-	Style: {
-		StyleForRegion: {
-			options: {
-				data: {
-					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
-					]
-				},
-				regions: [
-					{start:0, end:1},
-					{start:2, end:4, class:'foo'}
-				]
-			},
-			style: [
-				"#StyleForRegion .bb-region-0 {fill:red;}",
-				"#StyleForRegion .bb-region.foo {fill:green;}"
-			]
-		},
-		StyleForGrid: {
-			options: {
-				data: {
-					columns: [
-						['data1', 100, 200, 1000, 900, 500]
-					]
-				},
-				grid: {
-					x: {
-						lines: [{value: 2}, {value: 4, class: 'grid4', text: 'LABEL 4'}]
-					},
-					y: {
-						lines: [{value: 500}, {value: 800, class: 'grid800', text: 'LABEL 800'}]
-					}
-				}
-			},
-			style: [
-				"#StyleForGrid .bb-xgrid-line line {stroke: blue;}",
-				"#StyleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}",
-				"#StyleForGrid .bb-xgrid-line.grid4 text {fill: pink;}",
-				"#StyleForGrid .bb-ygrid-line line {stroke: red;}",
-				"#StyleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
-				"#StyleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
-			]
-		},
-		StyleForLines: {
-			options: {
-				data: {
-					columns: [
-						['data1', 100, 200, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200]
-					]
-				},
-				line: {
-					classes: [
-						'line-class-data1',
-						'line-class-data2'
-					]
-				}
 			}
 		}
 	}

@@ -305,28 +305,36 @@ extend(ChartInternal.prototype, {
 				$$.axes.x
 					.transition(gt)
 					.call($$.xAxis.setTransition(gt)),
+
 				mainBar
 					.transition(gt)
 					.attr("transform", transform),
+
 				mainLine
 					.transition(gt)
 					.attr("transform", transform),
+
 				mainArea
 					.transition(gt)
 					.attr("transform", transform),
+
 				mainCircle
 					.transition(gt)
 					.attr("transform", transform),
+
 				mainText
 					.transition(gt)
 					.attr("transform", transform),
+
 				mainRegion
 					.filter($$.isRegionOnX)
 					.transition(gt)
 					.attr("transform", transform),
+
 				xgrid
 					.transition(gt)
 					.attr("transform", transform),
+
 				xgridLines
 					.transition(gt)
 					.attr("transform", transform),
@@ -391,9 +399,20 @@ extend(ChartInternal.prototype, {
 					.attr("d", drawArea);
 
 				mainCircle
-					.attr("transform", null)
-					.attr("cx", cx)
-					.attr("cy", cy);
+					.attr("transform", null);
+
+				if ($$.isCirclePoint()) {
+					mainCircle
+						.attr("cx", cx)
+						.attr("cy", cy);
+				} else {
+					const xFunc = d => cx(d) - config.point_r;
+					const yFunc = d => cy(d) - config.point_r;
+
+					mainCircle
+						.attr("x", xFunc)
+						.attr("y", yFunc);
+				}
 
 				mainText
 					.attr("transform", null)

@@ -106,6 +106,11 @@ extend(ChartInternal.prototype, {
 			this.isGaugeType(d);
 	},
 
+	// determine if is 'circle' data point
+	isCirclePoint() {
+		return this.config.point_type === "circle";
+	},
+
 	lineData(d) {
 		return this.isLineType(d) ? [d] : [];
 	},

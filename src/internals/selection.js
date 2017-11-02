@@ -129,7 +129,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		let toggle;
 
-		if (that.nodeName === "circle") {
+		if (that.nodeName !== "path") {
 			if ($$.isStepType(d)) {
 				// circle is hidden in step chart, so treat as within the click area
 				toggle = () => {}; // TODO: how to select step chart?
@@ -167,7 +167,7 @@ extend(ChartInternal.prototype, {
 				}
 
 				$$.main.selectAll(`${selecter}`)
-					.selectAll(`circle.${CLASS.shape}`)
+					.selectAll(`.${CLASS.shape}`)
 					.each(function(d, i) {
 						const shape = d3Select(this);
 

@@ -435,65 +435,63 @@ extend(ChartInternal.prototype, {
 
 		$$.mainCircle.exit().remove();
 
-		$$.mainCircle = $$.mainCircle.enter().append("circle")
-			.attr("class", $$.classCircle.bind($$))
-			.attr("r", $$.pointR.bind($$))
-			.style("fill", $$.color)
+		let createFn = $$.circle.create;
+
+		if ($$.hasValidPointType()) {
+			createFn = $$[$$.config.point_type].create;
+		} else if ($$.hasValidPointDrawMethods()) {
+			createFn = $$.config.point_type.create;
+		}
+
+		$$.mainCircle = createFn($$.mainCircle, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)
 			.merge($$.mainCircle)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 
 	redrawCircle(cx, cy, withTransition, flow) {
-		let selectedCircles = this.main.selectAll(`.${CLASS.selectedCircle}`);
-		let mainCircles;
+		const $$ = this;
+		const selectedCircles = $$.main.selectAll(`.${CLASS.selectedCircle}`);
+		const pointType = $$.config.point_type;
 
-		if (!this.config.point_show) {
+		if (!$$.config.point_show) {
 			return [];
 		}
 
-		if (withTransition) {
-			const transitionName = Math.random().toString();
+		let updateFn = $$.circle.update;
 
-			if (flow) {
-				mainCircles = this.mainCircle
-					.attr("cx", cx)
-					.transition(transitionName)
-					.attr("cx", cx)
-					.attr("cy", cy)
-					.transition(transitionName)
-					.style("opacity", this.opacityForCircle.bind(this))
-					.style("fill", this.color);
-			} else {
-				mainCircles = this.mainCircle
-					.transition(transitionName)
-					.attr("cx", cx)
-					.attr("cy", cy)
-					.transition(transitionName)
-					.style("opacity", this.opacityForCircle.bind(this))
-					.style("fill", this.color);
-			}
-
-			selectedCircles = selectedCircles.transition(Math.random().toString());
-		} else {
-			mainCircles = this.mainCircle
-				.attr("cx", cx)
-				.attr("cy", cy)
-				.style("opacity", this.opacityForCircle.bind(this))
-				.style("fill", this.color);
+		if ($$.hasValidPointType()) {
+			updateFn = $$[pointType].update;
+		} else if ($$.hasValidPointDrawMethods()) {
+			updateFn = pointType.update;
 		}
+
+		const mainCircles = updateFn.bind(this)(
+			$$.mainCircle,
+			cx,
+			cy,
+			$$.opacityForCircle.bind($$),
+			$$.color,
+			withTransition,
+			flow,
+			$$.main.selectAll(`.${CLASS.selectedCircle}`)
+		);
+		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		return [
 			mainCircles,
 			selectedCircles
-				.attr("cx", cx)
-				.attr("cy", cy)
+				.attr(`${posAttr}x`, cx)
+				.attr(`${posAttr}y`, cy)
 		];
 	},
 
 	circleX(d) {
-		return this.config.zoom_enabled && this.zoomScale ?
-			(d.x || d.x === 0 ? this.zoomScale(d.x) : null) :
-			(d.x || d.x === 0 ? this.x(d.x) : null);
+		const $$ = this;
+		const hasValue = isValue(d.x);
+
+		return $$.config.zoom_enabled && $$.zoomScale ?
+			(hasValue ? $$.zoomScale(d.x) : null) :
+			(hasValue ? $$.x(d.x) : null);
 	},
 
 	updateCircleY() {
@@ -531,19 +529,35 @@ extend(ChartInternal.prototype, {
 			$$.unexpandCircles();
 		}
 
-		$$.getCircles(i, id)
-			.classed(CLASS.EXPANDED, true)
-			.attr("r", r);
+		const circles = $$.getCircles(i, id)
+			.classed(CLASS.EXPANDED, true);
+
+		if ($$.isCirclePoint()) {
+			circles.attr("r", r);
+		} else {
+			const scale = r(circles) / $$.config.point_r;
+
+			circles
+				.style("transform-origin", "center")
+				.style("transform", `scale(${scale})`);
+		}
 	},
 
 	unexpandCircles(i) {
 		const $$ = this;
 		const r = $$.pointR.bind($$);
 
-		$$.getCircles(i)
+		const circles = $$.getCircles(i)
 			.filter(function() { return d3Select(this).classed(CLASS.EXPANDED); })
-			.classed(CLASS.EXPANDED, false)
-			.attr("r", r);
+			.classed(CLASS.EXPANDED, false);
+
+		if ($$.isCirclePoint()) {
+			circles.attr("r", r);
+		} else {
+			circles
+				.style("transform-origin", null)
+				.style("transform", null);
+		}
 	},
 
 	pointR(d) {
@@ -572,8 +586,10 @@ extend(ChartInternal.prototype, {
 	isWithinCircle(that, r) {
 		const mouse = d3Mouse(that);
 		const d3This = d3Select(that);
-		const cx = +d3This.attr("cx");
-		const cy = +d3This.attr("cy");
+
+		const posAttr = this.isCirclePoint() ? "c" : "";
+		const cx = +d3This.attr(`${posAttr}x`);
+		const cy = +d3This.attr(`${posAttr}y`);
 
 		return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < r;
 	},
