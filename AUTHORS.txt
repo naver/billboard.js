@@ -6,3 +6,6 @@ Kim Joo Hwee <kjhwee91@gmail.com>
 Yun Hwa Heo <yunhwa.heo@navercorp.com>
 Petr Vítek <rattus.PV@gmail.com>
 Mark Winter <wintermarkedward@gmail.com>
+Hansol Lim <dev.hansollim@gmail.com>
+Gyuil Han <cnabro91@gmail.com>
+Julien Castelain <jcastelain@gmail.com>
