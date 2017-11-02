@@ -102,6 +102,8 @@ export default class ChartInternal {
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
 
+		$$.extraLineClasses = $$.generateExtraLineClass();
+
 		$$.dataTimeFormat = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 		$$.axisTimeFormat = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
