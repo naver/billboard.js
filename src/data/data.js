@@ -470,7 +470,7 @@ extend(ChartInternal.prototype, {
 		values
 			.filter(v => v && $$.isBarType(v.id))
 			.forEach(v => {
-				const shape = $$.main.select().node(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)}.${CLASS.bar}-${v.index}`);
+				const shape = $$.main.select(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}`).node();
 
 				if (!closest && $$.isWithinBar(shape)) {
 					closest = v;
