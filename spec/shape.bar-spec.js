@@ -44,6 +44,8 @@ describe("SHAPE BAR", () => {
 		});
 
 		describe("with timeseries data", () => {
+			let barWidth = 0;
+
 			before(() => {
 				args = {
 					data: {
@@ -54,13 +56,13 @@ describe("SHAPE BAR", () => {
 							["data2", 50, 20, 10, 40, 15, 25],
 						],
 						groups: [
-							["data1", "data2"],
+							["data1", "data2"]
 						],
 						type: "bar"
 					},
 					axis: {
 						x: {
-							type: "timeseries",
+							type: "timeseries"
 						}
 					}
 				};
@@ -73,8 +75,26 @@ describe("SHAPE BAR", () => {
 					const rect = d3.select(this).node()
 						.getBoundingClientRect();
 
+					// Get bar width for the next test
+					if (i === 0) {
+						barWidth = rect.width;
+					}
+
 					expect(rect.bottom).to.be.closeTo(expectedBottom[i], 1); // change -1 => 1
 				});
+			});
+
+			it("set options axis.x.tick.count", () => {
+				args.axis.x.tick = {
+					count: 3
+				};
+			});
+
+			it("check for bar width regardless tick count limit", () => {
+				const width = chart.internal.main.select(".bb-bars-data1 .bb-bar").node()
+					.getBoundingClientRect().width;
+
+				expect(width).to.be.equal(barWidth);
 			});
 		});
 

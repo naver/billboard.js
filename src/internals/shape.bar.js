@@ -73,9 +73,12 @@ extend(ChartInternal.prototype, {
 	getBarW(axis, barTargetsNum) {
 		const $$ = this;
 		const config = $$.config;
-		const w = typeof config.bar_width === "number" ? config.bar_width : barTargetsNum ? (axis.tickInterval() * config.bar_width_ratio) / barTargetsNum : 0;
+		const w = typeof config.bar_width === "number" ?
+			config.bar_width : barTargetsNum ?
+				(axis.tickInterval($$.getMaxDataCount()) * config.bar_width_ratio) / barTargetsNum : 0;
 
-		return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
+		return config.bar_width_max && w > config.bar_width_max ?
+			config.bar_width_max : w;
 	},
 
 	getBars(i, id) {
@@ -111,14 +114,12 @@ extend(ChartInternal.prototype, {
 
 			// switch points if axis is rotated, not applicable for sub chart
 			const indexX = config.axis_rotated ? 1 : 0;
-			const indexY = config.axis_rotated ? 0 : 1;
+			const indexY = +!indexX;
 
-			const path = `M ${points[0][indexX]},${points[0][indexY]}
-			L ${points[1][indexX]},${points[1][indexY]}
-			L ${points[2][indexX]},${points[2][indexY]}
-			L ${points[3][indexX]},${points[3][indexY]} z`;
-
-			return path;
+			return `M ${points[0][indexX]},${points[0][indexY]}
+				L ${points[1][indexX]},${points[1][indexY]}
+				L ${points[2][indexX]},${points[2][indexY]}
+				L ${points[3][indexX]},${points[3][indexY]} z`;
 		};
 	},
 
@@ -139,9 +140,12 @@ extend(ChartInternal.prototype, {
 			let posY = barY(d);
 
 			// fix posY not to overflow opposite quadrant
-			if ($$.config.axis_rotated) {
-				if ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)) { posY = y0; }
+			if ($$.config.axis_rotated && (
+				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+			)) {
+				posY = y0;
 			}
+
 			// 4 points that make a bar
 			return [
 				[posX, offset],
