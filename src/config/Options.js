@@ -2060,12 +2060,18 @@ export default class Options {
 			 *      select: {
 			 *          r: 3
 			 *      },
-			 *      type: "custom",
-			 *      create(element, cssClassFn, sizeFn, fillStyleFn) {
 			 *
+			 *      // "circle", "rectangle" or "custom" for custom shapes
+			 *      type: "custom",
+			 *
+			 *      // to create a custom type, set create & update functions as well
+			 *      create(element, cssClassFn, sizeFn, fillStyleFn) {
+			 *          // should create node element to be used as data point and must return a d3.selection
+			 *          return element;
 			 *      },
 			 *      update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
-			 *
+			 *          // adjust the position & styles to the given element and must return a d3.selection
+			 *          return element;
 			 *      }
 			 *  }
 			 */

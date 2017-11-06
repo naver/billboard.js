@@ -435,14 +435,12 @@ extend(ChartInternal.prototype, {
 
 		$$.mainCircle.exit().remove();
 
-		let createFn;
+		let createFn = $$.circle.create;
 
 		if ($$.hasValidPointType()) {
 			createFn = $$[$$.config.point_type].create;
 		} else if ($$.hasValidPointDrawMethods()) {
 			createFn = $$.config.point_create;
-		} else {
-			createFn = $$.circle.create;
 		}
 
 		$$.mainCircle = createFn($$.mainCircle, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)
@@ -457,14 +455,12 @@ extend(ChartInternal.prototype, {
 			return [];
 		}
 
-		let updateFn;
+		let updateFn = this.circle.update;
 
 		if (this.hasValidPointType()) {
 			updateFn = this[this.config.point_type].update;
 		} else if (this.hasValidPointDrawMethods()) {
 			updateFn = this.config.point_update;
-		} else {
-			updateFn = this.circle.update;
 		}
 
 		const mainCircles = updateFn(
@@ -526,19 +522,25 @@ extend(ChartInternal.prototype, {
 			$$.unexpandCircles();
 		}
 
-		$$.getCircles(i, id)
-			.classed(CLASS.EXPANDED, true)
-			.attr("r", r);
+		const circles = $$.getCircles(i, id)
+			.classed(CLASS.EXPANDED, true);
+
+		if ($$.config.point_type === "circle") {
+			circles.attr("r", r);
+		}
 	},
 
 	unexpandCircles(i) {
 		const $$ = this;
 		const r = $$.pointR.bind($$);
 
-		$$.getCircles(i)
+		const circles = $$.getCircles(i)
 			.filter(function() { return d3Select(this).classed(CLASS.EXPANDED); })
-			.classed(CLASS.EXPANDED, false)
-			.attr("r", r);
+			.classed(CLASS.EXPANDED, false);
+
+		if ($$.config.point_type === "circle") {
+			circles.attr("r", r);
+		}
 	},
 
 	pointR(d) {

@@ -5,11 +5,9 @@
 import ChartInternal from "./ChartInternal";
 import {isFunction, extend} from "./util";
 
-const POINT_TYPES = ["circle", "rectangle"];
-
 extend(ChartInternal.prototype, {
 	hasValidPointType() {
-		return POINT_TYPES.includes(this.config.point_type);
+		return /^(circle|rectangle)$/i.test(this.config.point_type);
 	},
 
 	hasValidPointDrawMethods() {
