@@ -7,12 +7,12 @@ import {isFunction, extend} from "./util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType() {
-		return /^(circle|rectangle)$/i.test(this.config.point_type);
+		return /^(circle|rectangle|triangle)$/i.test(this.config.point_type);
 	},
 
 	hasValidPointDrawMethods() {
-		return this.config.point_type === "custom" &&
-			isFunction(this.config.point_create) && isFunction(this.config.point_update);
+		return typeof this.config.point_type === "object" &&
+			isFunction(this.config.point_type.create) && isFunction(this.config.point_type.update);
 	},
 
 	circle: {
@@ -114,6 +114,37 @@ extend(ChartInternal.prototype, {
 					.style("opacity", opacityStyleFn)
 					.style("fill", fillStyleFn);
 			}
+			return mainCircles;
+		}
+	},
+
+	triangle: {
+		create(element, cssClassFn, sizeFn, fillStyleFn) {
+			return element.enter().append("polygon")
+				.attr("class", cssClassFn)
+				.style("fill", fillStyleFn);
+		},
+
+		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+			withTransition, flow, selectedCircles) {
+			const triangleSize = 10;
+
+			function getPoints(d) {
+				const x1 = xPosFn(d);
+				const y1 = yPosFn(d) - (triangleSize * 0.5);
+				const x2 = x1 - (triangleSize * 0.5);
+				const y2 = y1 + triangleSize;
+				const x3 = x1 + (triangleSize * 0.5);
+				const y3 = y2;
+
+				return `${x1} ${y1} ${x2} ${y2} ${x3} ${y3}`;
+			}
+
+			const mainCircles = element
+				.attr("points", getPoints)
+				.style("opacity", opacityStyleFn)
+				.style("fill", fillStyleFn);
+
 			return mainCircles;
 		}
 	}

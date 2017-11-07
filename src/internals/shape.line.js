@@ -440,7 +440,7 @@ extend(ChartInternal.prototype, {
 		if ($$.hasValidPointType()) {
 			createFn = $$[$$.config.point_type].create;
 		} else if ($$.hasValidPointDrawMethods()) {
-			createFn = $$.config.point_create;
+			createFn = $$.config.point_type.create;
 		}
 
 		$$.mainCircle = createFn($$.mainCircle, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)
@@ -460,7 +460,7 @@ extend(ChartInternal.prototype, {
 		if (this.hasValidPointType()) {
 			updateFn = this[this.config.point_type].update;
 		} else if (this.hasValidPointDrawMethods()) {
-			updateFn = this.config.point_update;
+			updateFn = this.config.point_type.update;
 		}
 
 		const mainCircles = updateFn(
