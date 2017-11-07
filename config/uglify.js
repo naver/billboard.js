@@ -1,17 +1,14 @@
 module.exports = {
 	include: /\.min\.js$/,
-	beautify: false,
-	mangle: {
-		screw_ie8: true,
-		keep_fnames: true
-	},
-	compress: {
-		screw_ie8: true,
+	uglifyOptions: {  // https://github.com/mishoo/UglifyJS2/tree/harmony#minify-options
+		ecma: 5,
+		ie8: true,
+		output: {
+			beautify: false,
+			comments: false
+		},
+		keep_fnames: true,
 		warnings: false
 	},
-	output: {
-		screw_ie8: false
-	},
-	comments: false,
 	sourceMap: true
 };
