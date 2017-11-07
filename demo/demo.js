@@ -2617,5 +2617,64 @@ var demos = {
 				}
 			}
 		}
+	},
+	Customization: {
+		RectangleForPoints: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					type: "rectangle"
+				}
+			}
+		},
+		CustomShapesForPoints: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					type: {
+						create(element, cssClassFn, sizeFn, fillStyle) {
+							return element.enter().append("polygon")
+								.attr("class", cssClassFn)
+								.style("fill", fillStyle);
+						},
+
+						update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+									withTransition, flow, selectedCircles) {
+							let mainCircles;
+							const triangleSize = 10;
+
+							function getPoints(d) {
+								const x1 = xPosFn(d);
+								const y1 = yPosFn(d) - (triangleSize * 0.5);
+								const x2 = x1 - (triangleSize * 0.5);
+								const y2 = y1 + (triangleSize * 0.5);
+								const x3 = x1;
+								const y3 = y2 + (triangleSize * 0.5);
+								const x4 = x1 + (triangleSize * 0.5);
+								const y4 = y2;
+								return `${x1} ${y1} ${x2} ${y2} ${x3} ${y3} ${x4} ${y4}`;
+							}
+
+							mainCircles = element
+								.attr("points", getPoints)
+								.style("opacity", opacityStyleFn)
+								.style("fill", fillStyleFn);
+
+							return mainCircles;
+						}
+					}
+				}
+			}
+		}
 	}
 };
