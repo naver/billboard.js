@@ -1,5 +1,5 @@
 module.exports = {
-	include: /\.min\.js$/,
+	test: /\.min\.js$/,
 	uglifyOptions: {  // https://github.com/mishoo/UglifyJS2/tree/harmony#minify-options
 		ecma: 5,
 		ie8: true,

@@ -69,7 +69,7 @@
     "inject-loader": "^3.0.1",
     "istanbul-instrumenter-loader": "^3.0.0",
     "istanbul-lib-instrument": "^1.7.4",
-    "jsdoc": "^3.5.4",
+    "jsdoc": "^3.5.5",
     "karma": "^1.7.0",
     "karma-chai": "^0.1.0",
     "karma-chrome-launcher": "^2.2.0",
