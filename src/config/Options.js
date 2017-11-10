@@ -2044,12 +2044,12 @@ export default class Options {
 			 * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
 			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
-			 * @property {String} [point.type="circle"] The type of point to be drawn
+			 * @property {String|Object} [point.type="circle"] The type of point to be drawn<br>
 			 * **Available Values:**
 			 *  - circle
 			 *  - rectangle
-			 * @property {Function} [point.create=undefined] If specified and the point.type option is set to undefined, will be invoked to create line points, this function must return a d3 selection.
-			 * @property {Function} [point.update=undefined] If specified and the point.type option is set to undefined, will be invoked to update line points, this function must return a d3 selection.
+			 * @property {Function} [point.type.create] If specified will be invoked to create data points, this function must return a d3 selection.
+			 * @property {Function} [point.type.update] If specified will be invoked to update data points, this function must return a d3 selection.
 			 * @example
 			 *  point: {
 			 *      show: false,
@@ -2069,12 +2069,14 @@ export default class Options {
 			 *      // or for custom shapes you can use an object with a "create" and "update" functions
 			 *      type: {
 			 *          // to create a custom type, set create & update functions as well
-			 *          create(element, cssClassFn, sizeFn, fillStyleFn) {
+			 *          create: function(element, cssClassFn, sizeFn, fillStyleFn) {
 			 *              // should create node element to be used as data point and must return a d3.selection
+			 *              ...
 			 *              return element;
 			 *          },
-			 *          update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
+			 *          update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			 *              // adjust the position & styles to the given element and must return a d3.selection
+			 *              ...
 			 *              return element;
 			 *          }
 			 *      }
@@ -2087,8 +2089,6 @@ export default class Options {
 			point_focus_expand_r: undefined,
 			point_select_r: undefined,
 			point_type: "circle",
-			point_create: undefined,
-			point_update: undefined,
 
 			/**
 			 * Set line options
