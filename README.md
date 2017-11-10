@@ -215,7 +215,7 @@ Running a `npm test` command will start [Mocha](https://mochajs.org/) tests via 
 If you find a bug, please report to us posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
 
 ## License
-billboard.js is released under the [MIT license](http://naver.github.io/billboard.js/LICENSE).
+billboard.js is released under the [MIT license](https://github.com/naver/billboard.js/blob/master/LICENSE).
 
 ```
 Copyright (c) 2017 NAVER Corp.
