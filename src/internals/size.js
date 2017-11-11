@@ -4,7 +4,7 @@
  */
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {isValue, ceil10, extend} from "./util";
+import {isValue, ceil10, extend, capitalize} from "./util";
 
 extend(ChartInternal.prototype, {
 	getCurrentWidth() {
@@ -85,26 +85,36 @@ extend(ChartInternal.prototype, {
 		return paddingRight;
 	},
 
+	/**
+	 * Get the parent rect element's size
+	 * @param {String} key property/attribute name
+	 * @private
+	 */
 	getParentRectValue(key) {
+		const offsetName = `offset${capitalize(key)}`;
 		let parent = this.selectChart.node();
 		let v;
 
-		while (parent && parent.tagName !== "BODY") {
+		while (!v && parent && parent.tagName !== "BODY") {
 			try {
 				v = parent.getBoundingClientRect()[key];
 			} catch (e) {
-				if (key === "width") {
+				if (offsetName in parent) {
 					// In IE in certain cases getBoundingClientRect
 					// will cause an "unspecified error"
-					v = parent.offsetWidth;
+					v = parent[offsetName];
 				}
 			}
 
-			if (v) {
-				break;
-			}
-
 			parent = parent.parentNode;
+		}
+
+		if (key === "width") {
+			// Sometimes element's width value is incorrect(ex. flex container)
+			// In this case, use body's offsetWidth instead.
+			const bodyWidth = document.body.offsetWidth;
+
+			v > bodyWidth && (v = bodyWidth);
 		}
 
 		return v;
