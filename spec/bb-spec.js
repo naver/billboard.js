@@ -27,8 +27,9 @@ describe("Interface & initialization", () => {
 
 	it("should resize correctly in flex container", done => {
 		// set flex container
-		document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="chart"></div></div></div>';
+		document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
 		const chart = bb.generate({
+			bindto: "#flex-container",
 			data: {
 				columns: [
 					["data1", 30, 200, 100, 400],
@@ -46,6 +47,9 @@ describe("Interface & initialization", () => {
 
 		setTimeout(() => {
 			expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
+
+			// reset the body
+			document.body.innerHTML = "";
 			done();
 		}, 100);
 	});
