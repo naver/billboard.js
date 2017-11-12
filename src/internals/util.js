@@ -171,8 +171,15 @@ function removeEvent(element, type, handler) {
 }
 
 /**
+ * Return first letter capitalized
+ * @param {String} str
+ * @private
+ */
+const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
+
+/**
  * Check if is array
- * @param arr *
+ * @param {Array} arr
  * @returns {Boolean}
  * @private
  */
@@ -245,6 +252,7 @@ export {
 	removeEvent,
 	getRectSegList,
 	merge,
+	capitalize,
 	isArray,
 	isObject
 };
