@@ -484,29 +484,31 @@ var demos = {
 				}
 			},
 			func: function(chart) {
-				setTimeout(function () {
-					chart.load({
-						columns: [
-							['data1', 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
-						]
-					});
-				}, 1000);
+				chart.timer = [
+                    setTimeout(function () {
+						chart.load({
+							columns: [
+								['data1', 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
+							]
+						});
+					}, 1000),
 
-				setTimeout(function () {
-					chart.load({
-						columns: [
-							['data2', 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
-						]
-					});
-				}, 2000);
+					setTimeout(function () {
+						chart.load({
+							columns: [
+								['data2', 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
+							]
+						});
+					}, 2000),
 
-				setTimeout(function () {
-					chart.load({
-						columns: [
-							['data3', 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
-						]
-					});
-				}, 3000);
+					setTimeout(function () {
+						chart.load({
+							columns: [
+								['data3', 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
+							]
+						});
+					}, 3000)
+				];
 			}
 		},
 		CombinationChart: {
