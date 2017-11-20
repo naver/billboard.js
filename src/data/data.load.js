@@ -16,6 +16,7 @@ extend(ChartInternal.prototype, {
 			if (args.filter) {
 				targets = targets.filter(args.filter);
 			}
+
 			// set type if args.types || args.type specified
 			if (args.type || args.types) {
 				targets.forEach(t => {
@@ -24,6 +25,7 @@ extend(ChartInternal.prototype, {
 					$$.setTargetType(t.id, type);
 				});
 			}
+
 			// Update/Add data
 			$$.data.targets.forEach(d => {
 				for (let i = 0; i < targets.length; i++) {
@@ -34,6 +36,7 @@ extend(ChartInternal.prototype, {
 					}
 				}
 			});
+
 			$$.data.targets = $$.data.targets.concat(targets); // add remained
 		}
 
@@ -41,9 +44,13 @@ extend(ChartInternal.prototype, {
 		$$.updateTargets($$.data.targets);
 
 		// Redraw with new targets
-		$$.redraw({withUpdateOrgXDomain: true, withUpdateXDomain: true, withLegend: true});
+		$$.redraw({
+			withUpdateOrgXDomain: true,
+			withUpdateXDomain: true,
+			withLegend: true
+		});
 
-		if (args.done) { args.done(); }
+		args.done && args.done();
 	},
 
 	loadFromArgs(args) {
@@ -100,6 +107,9 @@ extend(ChartInternal.prototype, {
 			// Remove target
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
 		});
+
+		// reset internally cached data
+		$$.resetCache();
 	}
 });
 

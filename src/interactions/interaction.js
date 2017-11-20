@@ -336,7 +336,7 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		if ($$.isScatterType(closest) || !config.tooltip_grouped) {
+		if ($$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped) {
 			sameXData = [closest];
 		} else {
 			sameXData = $$.filterByX(targetsToShow, closest.x);

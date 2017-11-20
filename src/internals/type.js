@@ -84,6 +84,10 @@ extend(ChartInternal.prototype, {
 		return this.isTypeOf(d, "bar");
 	},
 
+	isBubbleType(d) {
+		return this.isTypeOf(d, "bubble");
+	},
+
 	isScatterType(d) {
 		return this.isTypeOf(d, "scatter");
 	},
@@ -123,14 +127,15 @@ extend(ChartInternal.prototype, {
 		return this.isBarType(d) ? d.values : [];
 	},
 
-	lineOrScatterData(d) {
-		return this.isLineType(d) ||
-			this.isScatterType(d) ? d.values : [];
+	// determine if data is line, scatter or bubble type
+	lineScatterBubbleData(d) {
+		return this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) ?
+			d.values : [];
 	},
 
-	barOrLineData(d) {
-		return this.isBarType(d) ||
-			this.isLineType(d) ? d.values : [];
+	barLineBubbleData(d) {
+		return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ?
+			d.values : [];
 	},
 
 	// https://github.com/d3/d3-shape#curves

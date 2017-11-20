@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {extend} from "../internals/util";
+import {extend, isUndefined} from "../internals/util";
 
 /**
  * Get data loaded in the chart.
@@ -24,7 +24,7 @@ import {extend} from "../internals/util";
 const data = function(targetIds) {
 	const targets = this.internal.data.targets;
 
-	return typeof targetIds === "undefined" ?
+	return isUndefined(targetIds) ?
 		targets : targets.filter(t => targetIds.indexOf(t.id) >= 0);
 };
 

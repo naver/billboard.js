@@ -6,7 +6,7 @@ import {
 	scaleLinear as d3ScaleLinear,
 	select as d3Select
 } from "d3";
-import {isArray} from "../internals/util";
+import {isArray, isDefined, isFunction} from "../internals/util";
 
 // Features:
 // 1. category axis
@@ -84,7 +84,7 @@ export default function(params = {}) {
 	function textFormatted(v) {
 		const formatted = tickFormat ? tickFormat(v) : v;
 
-		return typeof formatted !== "undefined" ? formatted : "";
+		return isDefined(formatted) ? formatted : "";
 	}
 
 	function getSizeFor1Char(tick) {
@@ -509,7 +509,7 @@ export default function(params = {}) {
 	};
 
 	axis.tickValues = function(x) {
-		if (typeof x === "function") {
+		if (isFunction(x)) {
 			tickValues = function() {
 				return x(scale.domain());
 			};

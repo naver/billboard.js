@@ -3,12 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3";
-import {
-	isFunction,
-	isString,
-	isValue,
-	isEmpty
-} from "../internals/util";
+import {isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
 import bbAxis from "./bb.axis";
 import CLASS from "../config/classes";
 
@@ -46,7 +41,6 @@ export default class Axis {
 
 		$$.axes.y2 = main.append("g")
 			.attr("class", `${CLASS.axis} ${CLASS.axisY2}`)
-			// clip-path?
 			.attr("transform", $$.getTranslate("y2"))
 			.style("visibility", config.axis_y2_show ? "visible" : "hidden");
 
@@ -76,7 +70,7 @@ export default class Axis {
 
 		let newTickValues = tickValues;
 
-		if ($$.isTimeSeries() && tickValues && typeof tickValues !== "function") {
+		if ($$.isTimeSeries() && tickValues && isFunction(tickValues)) {
 			newTickValues = tickValues.map(v => $$.parseDate(v));
 		}
 
@@ -111,6 +105,7 @@ export default class Axis {
 			$$.xAxis.tickValues(tickValues);
 			$$.subXAxis.tickValues(tickValues);
 		}
+
 		return tickValues;
 	}
 
@@ -134,6 +129,7 @@ export default class Axis {
 		} else {
 			axis.tickValues(tickValues);
 		}
+
 		return axis;
 	}
 
@@ -176,6 +172,7 @@ export default class Axis {
 		} else {
 			values = axis ? axis.tickValues() : undefined;
 		}
+
 		return values;
 	}
 
@@ -203,6 +200,7 @@ export default class Axis {
 		} else if (axisId === "x") {
 			option = config.axis_x_label;
 		}
+
 		return option;
 	}
 
@@ -215,6 +213,7 @@ export default class Axis {
 		} else {
 			text = option ? option.text : null;
 		}
+
 		return text;
 	}
 
@@ -238,7 +237,8 @@ export default class Axis {
 
 	getLabelPosition(axisId, defaultPosition) {
 		const option = this.getLabelOptionByAxisId(axisId);
-		const position = (typeof option === "object" && option.position) ? option.position : defaultPosition;
+		const position = (isObjectType(option) && option.position) ?
+			option.position : defaultPosition;
 
 		return {
 			isInner: !!~position.indexOf("inner"),
@@ -523,7 +523,7 @@ export default class Axis {
 	}
 
 	getPadding(padding, key, defaultValue, domainLength) {
-		const p = typeof padding === "number" ? padding : padding[key];
+		const p = isNumber(padding) ? padding : padding[key];
 
 		if (!isValue(p)) {
 			return defaultValue;

@@ -9,9 +9,9 @@ import {
 	event as d3Event,
 	interpolate as d3Interpolate
 } from "d3";
-import ChartInternal from "./ChartInternal";
+import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction} from "./util";
+import {extend, isFunction} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initPie() {

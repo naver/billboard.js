@@ -270,8 +270,8 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		// Hide when scatter plot exists
-		if ($$.hasType("scatter") || $$.hasArcType()) {
+		// Hide when bubble/scatter plot exists
+		if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType()) {
 			return;
 		}
 
@@ -290,13 +290,13 @@ extend(ChartInternal.prototype, {
 
 	updateXgridFocus() {
 		const $$ = this;
-		const config = $$.config;
+		const isRotated = $$.config.axis_rotated;
 
 		$$.main.select(`line.${CLASS.xgridFocus}`)
-			.attr("x1", config.axis_rotated ? 0 : -10)
-			.attr("x2", config.axis_rotated ? $$.width : -10)
-			.attr("y1", config.axis_rotated ? -10 : 0)
-			.attr("y2", config.axis_rotated ? -10 : $$.height);
+			.attr("x1", isRotated ? 0 : -10)
+			.attr("x2", isRotated ? $$.width : -10)
+			.attr("y1", isRotated ? -10 : 0)
+			.attr("y2", isRotated ? -10 : $$.height);
 	},
 
 	generateGridData(type, scale) {
@@ -316,10 +316,12 @@ extend(ChartInternal.prototype, {
 			}
 		} else {
 			gridData = scale.ticks(10);
+
 			if (gridData.length > tickNum) { // use only int
 				gridData = gridData.filter(d => String(d).indexOf(".") < 0);
 			}
 		}
+
 		return gridData;
 	},
 
@@ -341,9 +343,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const toRemove = $$.getGridFilterToRemove(params);
-		const toShow = function(line) {
-			return !toRemove(line);
-		};
+		const toShow = line => !toRemove(line);
 		const classLines = forX ? CLASS.xgridLines : CLASS.ygridLines;
 		const classLine = forX ? CLASS.xgridLine : CLASS.ygridLine;
 
@@ -355,10 +355,8 @@ extend(ChartInternal.prototype, {
 			.style("opacity", "0")
 			.remove();
 
-		if (forX) {
-			config.grid_x_lines = config.grid_x_lines.filter(toShow);
-		} else {
-			config.grid_y_lines = config.grid_y_lines.filter(toShow);
-		}
+		const gridLines = `grid_${forX ? "x" : "y"}_lines`;
+
+		config[gridLines] = config[gridLines].filter(toShow);
 	},
 });

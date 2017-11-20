@@ -8,28 +8,28 @@ import {
 	extent as d3Extent
 } from "d3"; // selection
 import ChartInternal from "./ChartInternal";
-import {extend, isDefined, notEmpty, isValue, diffDomain} from "./util";
+import {extend, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
 
 
 extend(ChartInternal.prototype, {
-	getYDomainMin(targets) {
+	getYDomainMinMax(targets, type) {
 		const $$ = this;
 		const config = $$.config;
+		const isMin = type === "min";
+
+		const dataGroups = config.data_groups;
 		const ids = $$.mapToIds(targets);
 		const ys = $$.getValuesAsIdKeyed(targets);
-		let j;
-		let k;
-		let baseId;
-		let idsInGroup;
-		let id;
-		let hasNegativeValue;
+		const f = isMin ? d3Min : d3Max;
 
-		if (config.data_groups.length > 0) {
-			hasNegativeValue = $$.hasNegativeValueInTargets(targets);
+		if (dataGroups.length > 0) {
+			const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
+			let baseId;
+			let idsInGroup;
 
-			for (j = 0; j < config.data_groups.length; j++) {
+			for (let j = 0; (idsInGroup = dataGroups[j]); j++) {
 				// Determine baseId
-				idsInGroup = config.data_groups[j].filter(v => (ids.indexOf(v) >= 0));
+				idsInGroup = idsInGroup.filter(v => ids.indexOf(v) >= 0);
 
 				if (idsInGroup.length === 0) {
 					continue;
@@ -37,81 +37,47 @@ extend(ChartInternal.prototype, {
 
 				baseId = idsInGroup[0];
 
-				// Consider negative values
-				if (hasNegativeValue && ys[baseId]) {
-					ys[baseId].forEach((v, i) => {
+				// Consider values
+				if (hasValue && ys[baseId]) {
+					const setter = isMin ? (v, i) => {
 						ys[baseId][i] = v < 0 ? v : 0;
-					});
+					} : (v, i) => {
+						ys[baseId][i] = v > 0 ? v : 0;
+					};
+
+					ys[baseId].forEach(setter);
 				}
 
 				// Compute min
-				for (k = 1; k < idsInGroup.length; k++) {
-					id = idsInGroup[k];
-
+				for (let k = 1, id; (id = idsInGroup[k]); k++) {
 					if (!ys[id]) {
 						continue;
 					}
 
 					ys[id].forEach((v, i) => {
+						const val = +v;
+						const meetCondition = isMin ? val > 0 : val < 0;
+
 						if ($$.axis.getId(id) === $$.axis.getId(baseId) &&
-							ys[baseId] && !(hasNegativeValue && +v > 0)) {
-							ys[baseId][i] += +v;
+							ys[baseId] && !(hasValue && meetCondition)) {
+							ys[baseId][i] += val;
 						}
 					});
 				}
 			}
 		}
-		return d3Min(Object.keys(ys).map(key => d3Min(ys[key])));
+
+		return f(Object.keys(ys).map(key => f(ys[key])));
 	},
+
+	getYDomainMin(targets) {
+		return this.getYDomainMinMax(targets, "min");
+	},
+
 	getYDomainMax(targets) {
-		const $$ = this;
-		const config = $$.config;
-		const ids = $$.mapToIds(targets);
-		const ys = $$.getValuesAsIdKeyed(targets);
-		let j;
-		let k;
-		let baseId;
-		let idsInGroup;
-		let id;
-		let hasPositiveValue;
-
-		if (config.data_groups.length > 0) {
-			hasPositiveValue = $$.hasPositiveValueInTargets(targets);
-			for (j = 0; j < config.data_groups.length; j++) {
-				// Determine baseId
-				idsInGroup = config.data_groups[j].filter(v => (ids.indexOf(v) >= 0));
-
-				if (idsInGroup.length === 0) {
-					continue;
-				}
-
-				baseId = idsInGroup[0];
-
-				// Consider positive values
-				if (hasPositiveValue && ys[baseId]) {
-					ys[baseId].forEach((v, i) => {
-						ys[baseId][i] = v > 0 ? v : 0;
-					});
-				}
-				// Compute max
-				for (k = 1; k < idsInGroup.length; k++) {
-					id = idsInGroup[k];
-
-					if (!ys[id]) {
-						continue;
-					}
-
-					ys[id].forEach((v, i) => {
-						if ($$.axis.getId(id) === $$.axis.getId(baseId) &&
-							ys[baseId] && !(hasPositiveValue && +v < 0)) {
-							ys[baseId][i] += +v;
-						}
-					});
-				}
-			}
-		}
-		return d3Max(Object.keys(ys).map(key => d3Max(ys[key])));
+		return this.getYDomainMinMax(targets, "max");
 	},
+
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
 		const config = $$.config;
@@ -160,15 +126,15 @@ extend(ChartInternal.prototype, {
 
 		// Bar/Area chart should be 0-based if all positive|negative
 		if (isZeroBased) {
-			if (isAllPositive) { yDomainMin = 0; }
-			if (isAllNegative) { yDomainMax = 0; }
+			isAllPositive && (yDomainMin = 0);
+			isAllNegative && (yDomainMax = 0);
 		}
 
 		const domainLength = Math.abs(yDomainMax - yDomainMin);
 		let paddingTop = domainLength * 0.1;
 		let paddingBottom = domainLength * 0.1;
 
-		if (typeof center !== "undefined") {
+		if (isDefined(center)) {
 			const yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
 
 			yDomainMax = center + yDomainAbs;
@@ -201,12 +167,8 @@ extend(ChartInternal.prototype, {
 
 		// Bar/Area chart should be 0-based if all positive|negative
 		if (isZeroBased) {
-			if (isAllPositive) {
-				paddingBottom = yDomainMin;
-			}
-			if (isAllNegative) {
-				paddingTop = -yDomainMax;
-			}
+			isAllPositive && (paddingBottom = yDomainMin);
+			isAllNegative && (paddingTop = -yDomainMax);
 		}
 
 		const domain = [yDomainMin - paddingBottom, yDomainMax + paddingTop];
@@ -214,28 +176,29 @@ extend(ChartInternal.prototype, {
 		return isInverted ? domain.reverse() : domain;
 	},
 
-	getXDomainMin(targets) {
+	getXDomainMinMax(targets, type) {
 		const $$ = this;
-		const config = $$.config;
+		const value = $$.config[`axis_x_${type}`];
+		const f = type === "min" ? d3Min : d3Max;
 
-		return isDefined(config.axis_x_min) ?
-			($$.isTimeSeries() ? this.parseDate(config.axis_x_min) : config.axis_x_min) :
-			d3Min(targets, t => d3Min(t.values, v => v.x));
+		return isDefined(value) ?
+			($$.isTimeSeries() ? $$.parseDate(value) : value) :
+			f(targets, t => f(t.values, v => v.x));
+	},
+
+	getXDomainMin(targets) {
+		return this.getXDomainMinMax(targets, "min");
 	},
 
 	getXDomainMax(targets) {
-		const $$ = this;
-		const config = $$.config;
-
-		return isDefined(config.axis_x_max) ?
-			($$.isTimeSeries() ? this.parseDate(config.axis_x_max) : config.axis_x_max) :
-			d3Max(targets, t => d3Max(t.values, v => v.x));
+		return this.getXDomainMinMax(targets, "max");
 	},
 
 	getXDomainPadding(domain) {
 		const $$ = this;
 		const config = $$.config;
 		const diff = domain[1] - domain[0];
+		const xPadding = config.axis_x_padding;
 		let maxDataCount;
 		let padding;
 		let paddingLeft;
@@ -250,17 +213,21 @@ extend(ChartInternal.prototype, {
 			padding = diff * 0.01;
 		}
 
-		if (typeof config.axis_x_padding === "object" && notEmpty(config.axis_x_padding)) {
-			paddingLeft = isValue(config.axis_x_padding.left) ? config.axis_x_padding.left : padding;
-			paddingRight = isValue(config.axis_x_padding.right) ? config.axis_x_padding.right : padding;
-		} else if (typeof config.axis_x_padding === "number") {
-			paddingLeft = config.axis_x_padding;
-			paddingRight = config.axis_x_padding;
+		if (isObject(xPadding) && notEmpty(xPadding)) {
+			paddingLeft = isValue(xPadding.left) ? xPadding.left : padding;
+			paddingRight = isValue(xPadding.right) ? xPadding.right : padding;
+		} else if (isNumber(config.axis_x_padding)) {
+			paddingLeft = xPadding;
+			paddingRight = xPadding;
 		} else {
 			paddingLeft = padding;
 			paddingRight = padding;
 		}
-		return {left: paddingLeft, right: paddingRight};
+
+		return {
+			left: paddingLeft,
+			right: paddingRight
+		};
 	},
 
 	getXDomain(targets) {
@@ -297,16 +264,15 @@ extend(ChartInternal.prototype, {
 	updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
 		const $$ = this;
 		const config = $$.config;
+		const zoomEnabled = config.zoom_enabled;
 
 		if (withUpdateOrgXDomain) {
 			$$.x.domain(domain || d3Extent($$.getXDomain(targets)));
 			$$.orgXDomain = $$.x.domain();
 
-			config.zoom_enabled &&
-				$$.zoom.updateScaleExtent();
+			zoomEnabled && $$.zoom.updateScaleExtent();
 
 			$$.subX.domain($$.x.domain());
-
 			$$.brush && $$.brush.scale($$.subX);
 		}
 
@@ -315,13 +281,11 @@ extend(ChartInternal.prototype, {
 				$$.orgXDomain : $$.getBrushSelection().map(v => $$.subX.invert(v));
 
 			$$.x.domain(domainValue);
-
-			config.zoom_enabled &&
-				$$.zoom.updateScaleExtent();
+			zoomEnabled && $$.zoom.updateScaleExtent();
 		}
 
 		// Trim domain when too big by zoom mousemove event
-		if (withTrim) { $$.x.domain($$.trimXDomain($$.x.orgDomain())); }
+		withTrim && $$.x.domain($$.trimXDomain($$.x.orgDomain()));
 
 		return $$.x.domain();
 	},

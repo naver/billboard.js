@@ -20,6 +20,7 @@ extend(ChartInternal.prototype, {
 
 		$$.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartTexts);
+
 		$$.mainText = d3SelectAll([]);
 	},
 
@@ -36,6 +37,7 @@ extend(ChartInternal.prototype, {
 		const mainTextUpdate = $$.main.select(`.${CLASS.chartTexts}`).selectAll(`.${CLASS.chartText}`)
 			.data(targets)
 			.attr("class", d => classChartText(d) + classFocus(d));
+
 		const mainTextEnter = mainTextUpdate.enter().append("g")
 			.attr("class", classChartText)
 			.style("opacity", "0")
@@ -53,11 +55,11 @@ extend(ChartInternal.prototype, {
 	updateText(durationForExit) {
 		const $$ = this;
 		const config = $$.config;
-		const barOrLineData = $$.barOrLineData.bind($$);
+		const barLineBubbleData = $$.barLineBubbleData.bind($$);
 		const classText = $$.classText.bind($$);
 
 		$$.mainText = $$.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
-			.data(barOrLineData);
+			.data(barLineBubbleData);
 
 		$$.mainText.exit()
 			.transition()
@@ -206,15 +208,25 @@ extend(ChartInternal.prototype, {
 			yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * 0.6) / 2;
 		} else {
 			yPos = points[2][1];
+
 			if (d.value < 0 || (d.value === 0 && !$$.hasPositiveValue)) {
 				yPos += textElement.getBoundingClientRect().height;
+
 				if ($$.isBarType(d) && $$.isSafari()) {
 					yPos -= 3;
 				} else if (!$$.isBarType(d) && $$.isChrome()) {
 					yPos += 3;
 				}
 			} else {
-				yPos += $$.isBarType(d) ? -3 : -6;
+				let diff = -6;
+
+				if ($$.isBarType(d)) {
+					diff = -3;
+				} else if ($$.isBubbleType(d)) {
+					diff = 3;
+				}
+
+				yPos += diff;
 			}
 		}
 		// show labels regardless of the domain if value is null
@@ -229,5 +241,5 @@ extend(ChartInternal.prototype, {
 		}
 
 		return yPos + (config.data_labels_position.y || 0);
-	},
+	}
 });

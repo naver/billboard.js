@@ -10,7 +10,7 @@ import {
 } from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, hasValue, isArray, isValue, notEmpty, isFunction} from "../internals/util";
+import {extend, hasValue, isArray, isValue, notEmpty, isFunction, isBoolean, isDefined, isUndefined, isString, isObjectType} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	isX(key) {
@@ -56,7 +56,9 @@ extend(ChartInternal.prototype, {
 	getXValue(id, i) {
 		const $$ = this;
 
-		return id in $$.data.xs && $$.data.xs[id] && isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
+		return id in $$.data.xs &&
+			$$.data.xs[id] &&
+			isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
 	},
 
 	getOtherTargetXs() {
@@ -86,7 +88,10 @@ extend(ChartInternal.prototype, {
 	},
 
 	isMultipleX() {
-		return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("scatter");
+		return notEmpty(this.config.data_xs) ||
+			!this.config.data_xSort ||
+			this.hasType("bubble") ||
+			this.hasType("scatter");
 	},
 
 	addName(data) {
@@ -154,6 +159,7 @@ extend(ChartInternal.prototype, {
 
 		if ($$.data.targets.length) {
 			$$.xs = [];
+
 			$$.data.targets[0].values.forEach(v => {
 				$$.xs[v.index] = v.x;
 			});
@@ -163,13 +169,13 @@ extend(ChartInternal.prototype, {
 	getPrevX(i) {
 		const x = this.xs[i - 1];
 
-		return typeof x !== "undefined" ? x : null;
+		return isDefined(x) ? x : null;
 	},
 
 	getNextX(i) {
 		const x = this.xs[i + 1];
 
-		return typeof x !== "undefined" ? x : null;
+		return isDefined(x) ? x : null;
 	},
 
 	/**
@@ -197,39 +203,51 @@ extend(ChartInternal.prototype, {
 	 * @return {{min: Array, max: Array}}
 	 */
 	getMinMaxData() {
-		const data = this.data.targets.map(t => t.values);
-		const minMax = this.getMinMaxValue(data);
+		const $$ = this;
 
-		let min = [];
-		let max = [];
+		if (!$$.cache.$minMaxData) {
+			const data = $$.data.targets.map(t => t.values);
+			const minMax = $$.getMinMaxValue(data);
 
-		data.forEach(v => {
-			const minData = this.getFilteredDataByValue(v, minMax.min);
-			const maxData = this.getFilteredDataByValue(v, minMax.max);
+			let min = [];
+			let max = [];
 
-			if (minData.length) {
-				min = min.concat(minData);
-			}
+			data.forEach(v => {
+				const minData = $$.getFilteredDataByValue(v, minMax.min);
+				const maxData = $$.getFilteredDataByValue(v, minMax.max);
 
-			if (maxData.length) {
-				max = max.concat(maxData);
-			}
-		});
+				if (minData.length) {
+					min = min.concat(minData);
+				}
 
-		return {min, max};
+				if (maxData.length) {
+					max = max.concat(maxData);
+				}
+			});
+
+			// update the cached data
+			$$.cache.$minMaxData = {min, max};
+		}
+
+		return $$.cache.$minMaxData;
 	},
 
 	/**
 	 * Get filtered data by value
-	 * @private
 	 * @param {Object} data
 	 * @param {Number} value
 	 * @return {Array} filtered array data
+	 * @private
 	 */
 	getFilteredDataByValue(data, value) {
 		return data.filter(t => t.value === value);
 	},
 
+	/**
+	 * Return the max length of the data
+	 * @return {Number} max data length
+	 * @private
+	 */
 	getMaxDataCount() {
 		return d3Max(this.data.targets, t => t.values.length);
 	},
@@ -249,6 +267,7 @@ extend(ChartInternal.prototype, {
 		} else {
 			maxTarget = length ? targets[0] : null;
 		}
+
 		return maxTarget;
 	},
 
@@ -264,13 +283,13 @@ extend(ChartInternal.prototype, {
 
 	hasTarget(targets, id) {
 		const ids = this.mapToIds(targets);
-		let i;
 
-		for (i = 0; i < ids.length; i++) {
-			if (ids[i] === id) {
+		for (let i = 0, val; (val = ids[i]); i++) {
+			if (val === id) {
 				return true;
 			}
 		}
+
 		return false;
 	},
 
@@ -295,6 +314,7 @@ extend(ChartInternal.prototype, {
 		)).values();
 
 		xs = $$.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
+
 		return xs.sort((a, b) => (a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN));
 	},
 
@@ -323,23 +343,24 @@ extend(ChartInternal.prototype, {
 				ys[t.id].push(v.value);
 			});
 		});
+
 		return ys;
 	},
 
 	checkValueInTargets(targets, checker) {
 		const ids = Object.keys(targets);
-		let i;
-		let j;
 		let values;
 
-		for (i = 0; i < ids.length; i++) {
+		for (let i = 0; i < ids.length; i++) {
 			values = targets[ids[i]].values;
-			for (j = 0; j < values.length; j++) {
+
+			for (let j = 0; j < values.length; j++) {
 				if (checker(values[j].value)) {
 					return true;
 				}
 			}
 		}
+
 		return false;
 	},
 
@@ -354,7 +375,7 @@ extend(ChartInternal.prototype, {
 	_checkOrder(type) {
 		const config = this.config;
 
-		return typeof(config.data_order) === "string" &&
+		return isString(config.data_order) &&
 			config.data_order.toLowerCase() === type;
 	},
 
@@ -405,10 +426,9 @@ extend(ChartInternal.prototype, {
 
 	hasDataLabel() {
 		const dataLabels = this.config.data_labels;
-		const type = typeof dataLabels;
 
-		return (type === "boolean" && dataLabels) ||
-			(type === "object" && notEmpty(dataLabels));
+		return (isBoolean(dataLabels) && dataLabels) ||
+			(isObjectType(dataLabels) && notEmpty(dataLabels));
 	},
 
 	getDataLabelLength(min, max, key) {
@@ -505,13 +525,12 @@ extend(ChartInternal.prototype, {
 
 	convertValuesToStep(values) {
 		const converted = isArray(values) ? values.concat() : [values];
-		let i;
 
 		if (!this.isCategorized()) {
 			return values;
 		}
 
-		for (i = values.length + 1; i > 0; i--) {
+		for (let i = values.length + 1; i > 0; i--) {
 			converted[i] = converted[i - 1];
 		}
 
@@ -520,6 +539,7 @@ extend(ChartInternal.prototype, {
 			value: converted[0].value,
 			id: converted[0].id
 		};
+
 		converted[values.length + 1] = {
 			x: converted[values.length].x + 1,
 			value: converted[values.length].value,
@@ -534,13 +554,16 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const current = config[`data_${name}`];
 
-		if (typeof attrs === "undefined") {
+		if (isUndefined(attrs)) {
 			return current;
 		}
+
 		Object.keys(attrs).forEach(id => {
 			current[id] = attrs[id];
 		});
+
 		$$.redraw({withLegend: true});
+
 		return current;
 	}
 });
