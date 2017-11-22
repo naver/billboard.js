@@ -216,11 +216,12 @@ extend(ChartInternal.prototype, {
 			interval = window.setInterval(() => {
 				if (!$$.transiting) {
 					window.clearInterval(interval);
-					if ($$.legend.selectAll(".bb-legend-item-focused").size() > 0) {
+
+					$$.legend.selectAll(`.${CLASS.legendItemFocused}`).size() > 0 &&
 						$$.expandArc(targetIds);
-					}
 				}
 			}, 10);
+
 			return;
 		}
 

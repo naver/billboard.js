@@ -358,7 +358,7 @@ extend(ChartInternal.prototype, {
 
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-			$$.svg.select(`${CLASS.eventRect}`).style("cursor", "pointer");
+			$$.svg.select(`.${CLASS.eventRect}`).style("cursor", "pointer");
 
 			if (!$$.mouseover) {
 				config.data_onover.call($$.api, closest);
@@ -516,7 +516,7 @@ extend(ChartInternal.prototype, {
 				if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
 					$$.main.selectAll(`.${CLASS.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
 						.selectAll(`.${CLASS.shape}-${closest.index}`)
-						.each(() => {
+						.each(function() {
 							if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
 								$$.toggleShape(this, closest, closest.index);
 								$$.config.data_onclick.call($$.api, closest, this);
