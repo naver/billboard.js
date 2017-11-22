@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {isValue, extend} from "../internals/util";
+import {isValue, isDefined, extend} from "../internals/util";
 
 /**
  * Define tooltip
@@ -41,9 +41,9 @@ tooltip.show = function(args) {
 			// TODO: when tooltip_grouped = false
 			index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x);
 		}
-	} else if (typeof args.x !== "undefined") {
+	} else if (isDefined(args.x)) {
 		index = $$.getIndexByX(args.x);
-	} else if (typeof args.index !== "undefined") {
+	} else if (isDefined(args.index)) {
 		index = args.index;
 	}
 

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
-import {isValue, extend} from "./util";
+import {isValue, isFunction, isObjectType, extend} from "./util";
 
 const getFormat = ($$, typeValue, v) => {
 	const config = $$.config;
@@ -56,9 +56,9 @@ extend(ChartInternal.prototype, {
 		let format;
 
 		// find format according to axis id
-		if (typeof dataLabels.format === "function") {
+		if (isFunction(dataLabels.format)) {
 			format = dataLabels.format;
-		} else if (typeof dataLabels.format === "object") {
+		} else if (isObjectType(dataLabels.format)) {
 			if (dataLabels.format[targetId]) {
 				format = dataLabels.format[targetId] === true ? defaultFormat : dataLabels.format[targetId];
 			} else {

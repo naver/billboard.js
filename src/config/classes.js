@@ -2,7 +2,11 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-const CLASS = {
+/**
+ * CSS class names definition
+ * @private
+ */
+export default {
 	target: "bb-target",
 	chart: "bb-chart",
 	chartLine: "bb-chart-line",
@@ -79,5 +83,3 @@ const CLASS = {
 	SELECTED: "_selected_",
 	INCLUDED: "_included_"
 };
-
-export default CLASS;

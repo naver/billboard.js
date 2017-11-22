@@ -16,8 +16,6 @@ extend(Chart.prototype, {
 	 * chart.color("data1");
 	 */
 	color(id) {
-		const $$ = this.internal;
-
-		return $$.color(id); // more patterns
+		return this.internal.color(id); // more patterns
 	}
 });

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {extend} from "../internals/util";
+import {extend, isString, isBoolean} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
@@ -42,12 +42,10 @@ extend(Chart.prototype, {
 		args.xs && $$.addXs(args.xs);
 
 		// update names if exists
-		"names" in args &&
-			this.data.names(args.names);
+		"names" in args && this.data.names(args.names);
 
 		// update classes if exists
-		"classes" in args &&
-		Object.keys(args.classes).forEach(id => {
+		"classes" in args && Object.keys(args.classes).forEach(id => {
 			config.data_classes[id] = args.classes[id];
 		});
 
@@ -57,15 +55,13 @@ extend(Chart.prototype, {
 		}
 
 		// update axes if exists
-		"axes" in args &&
-		Object.keys(args.axes).forEach(id => {
+		"axes" in args && Object.keys(args.axes).forEach(id => {
 			config.data_axes[id] = args.axes[id];
 		});
 
 
 		// update colors if exists
-		"colors" in args &&
-		Object.keys(args.colors).forEach(id => {
+		"colors" in args && Object.keys(args.colors).forEach(id => {
 			config.data_colors[id] = args.colors[id];
 		});
 
@@ -80,7 +76,7 @@ extend(Chart.prototype, {
 			// TODO: do not unload if target will load (included in url/rows/columns)
 			$$.unload(
 				$$.mapToTargetIds(
-					typeof args.unload === "boolean" && args.unload ?
+					isBoolean(args.unload) && args.unload ?
 						null : args.unload), () => $$.loadFromArgs(args)
 			);
 		} else {
@@ -112,7 +108,7 @@ extend(Chart.prototype, {
 
 		if (args instanceof Array) {
 			args = {ids: args};
-		} else if (typeof args === "string") {
+		} else if (isString(args)) {
 			args = {ids: [args]};
 		}
 

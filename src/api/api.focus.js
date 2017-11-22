@@ -71,10 +71,7 @@ extend(Chart.prototype, {
 		);
 
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
-
-		$$.hasArcType() &&
-		$$.unexpandArc(targetIds);
-
+		$$.hasArcType() && $$.unexpandArc(targetIds);
 		$$.toggleFocusLegend(targetIds, false);
 
 		$$.focusedTargetIds = $$.focusedTargetIds.filter(id => targetIds.indexOf(id) < 0);
@@ -104,9 +101,7 @@ extend(Chart.prototype, {
 		const candidates = $$.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
 
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
-
-		$$.hasArcType() &&
-		$$.unexpandArc(targetIds);
+		$$.hasArcType() && $$.unexpandArc(targetIds);
 
 		if ($$.config.legend_show) {
 			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));

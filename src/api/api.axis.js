@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {isValue, isDefined, extend} from "../internals/util";
+import {isValue, isDefined, isObjectType, extend} from "../internals/util";
 
 /**
  * Set the min/max value
@@ -18,11 +18,11 @@ const setMinMax = ($$, type, value) => {
 	const axisY = `axis_y_${type}`;
 	const axisY2 = `axis_y2_${type}`;
 
-	if (typeof value !== "undefined") {
-		if (typeof value === "object") {
-			if (isValue(value.x)) { config[axisX] = value.x; }
-			if (isValue(value.y)) { config[axisY] = value.y; }
-			if (isValue(value.y2)) { config[axisY2] = value.y2; }
+	if (isDefined(value)) {
+		if (isObjectType(value)) {
+			isValue(value.x) && (config[axisX] = value.x);
+			isValue(value.y) && (config[axisY] = value.y);
+			isValue(value.y2) && (config[axisY2] = value.y2);
 		} else {
 			config[axisY] = value;
 			config[axisY2] = value;
@@ -63,7 +63,7 @@ const axis = function() {};
 
 /**
  * Get and set axis labels.
- * @method axis:labels
+ * @method axis․labels
  * @instance
  * @memberof Chart
  * @param {Object} labels specified axis' label to be updated.
@@ -101,11 +101,9 @@ axis.labels = function(labels) {
  * });
  */
 axis.min = function(min) {
-	if (arguments.length) {
-		return setMinMax(this.internal, "min", min);
-	} else {
-		return getMinMax(this.internal, "min");
-	}
+	return arguments.length ?
+		setMinMax(this.internal, "min", min) :
+		getMinMax(this.internal, "min");
 };
 
 /**
@@ -123,11 +121,9 @@ axis.min = function(min) {
  * });
  */
 axis.max = function(max) {
-	if (arguments.length) {
-		return setMinMax(this.internal, "max", max);
-	} else {
-		return getMinMax(this.internal, "max");
-	}
+	return arguments.length ?
+		setMinMax(this.internal, "max", max) :
+		getMinMax(this.internal, "max");
 };
 
 /**
@@ -152,13 +148,15 @@ axis.max = function(max) {
  * });
  */
 axis.range = function(range) {
+	const axis = this.axis;
+
 	if (arguments.length) {
-		isDefined(range.max) && this.axis.max(range.max);
-		isDefined(range.min) && this.axis.min(range.min);
+		isDefined(range.max) && axis.max(range.max);
+		isDefined(range.min) && axis.min(range.min);
 	} else {
 		return {
-			max: this.axis.max(),
-			min: this.axis.min()
+			max: axis.max(),
+			min: axis.min()
 		};
 	}
 

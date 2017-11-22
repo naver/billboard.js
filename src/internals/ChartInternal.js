@@ -14,7 +14,7 @@ import {
 } from "d3";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction} from "./util";
+import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber} from "./util";
 
 /**
  * Internal chart class.
@@ -172,19 +172,12 @@ export default class ChartInternal {
 
 		$$.axis = new Axis($$);
 
-		$$.initPie && $$.initPie();
-
 		$$.initBrush && $$.initBrush();
-
 		$$.initZoom && $$.initZoom();
 
-		if (!config.bindto) {
-			$$.selectChart = d3SelectAll([]);
-		} else if (typeof config.bindto.node === "function") {
-			$$.selectChart = config.bindto;
-		} else {
-			$$.selectChart = d3Select(config.bindto);
-		}
+		// select bind element
+		$$.selectChart = isFunction(config.bindto.node) ?
+			config.bindto : d3Select(!config.bindto ? [] : config.bindto);
 
 		if ($$.selectChart.empty()) {
 			$$.selectChart = d3Select(document.createElement("div")).style("opacity", "0");
@@ -249,8 +242,8 @@ export default class ChartInternal {
 				.on(isTouch ? "touchend" : "mouseleave", () => config.onout.call($$));
 		}
 
-		$$.config.svg_classname &&
-			$$.svg.attr("class", $$.config.svg_classname);
+		config.svg_classname &&
+			$$.svg.attr("class", config.svg_classname);
 
 		// Define defs
 		const defs = $$.svg.append("defs");
@@ -336,7 +329,7 @@ export default class ChartInternal {
 			$$.updateDimension();
 
 			// oninit callback
-			$$.config.oninit.call($$);
+			config.oninit.call($$);
 
 			$$.redraw({
 				withTransition: false,
@@ -347,11 +340,11 @@ export default class ChartInternal {
 			});
 
 			// data.onmin/max callback
-			if ($$.config.data_onmin || $$.config.data_onmax) {
+			if (config.data_onmin || config.data_onmax) {
 				const minMax = $$.getMinMaxData();
 
-				isFunction($$.config.data_onmin) && $$.config.data_onmin.call($$, minMax.min);
-				isFunction($$.config.data_onmax) && $$.config.data_onmax.call($$, minMax.max);
+				isFunction(config.data_onmin) && config.data_onmin.call($$, minMax.min);
+				isFunction(config.data_onmax) && config.data_onmax.call($$, minMax.max);
 			}
 		}
 
@@ -363,27 +356,23 @@ export default class ChartInternal {
 	}
 
 	initChartElements() {
-		this.initBar && this.initBar();
-		this.initLine && this.initLine();
-		this.initArc && this.initArc();
-		this.initGauge && this.initGauge();
-		this.initText && this.initText();
+		["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Text"].forEach(v => {
+			const method = `init${v}`;
+
+			this[method] && this[method]();
+		});
 	}
 
 	smoothLines(el, type) {
 		if (type === "grid") {
 			el.each(function() {
 				const g = d3Select(this);
-				const x1 = g.attr("x1");
-				const x2 = g.attr("x2");
-				const y1 = g.attr("y1");
-				const y2 = g.attr("y2");
 
 				g.attr({
-					"x1": Math.ceil(x1),
-					"x2": Math.ceil(x2),
-					"y1": Math.ceil(y1),
-					"y2": Math.ceil(y2)
+					"x1": Math.ceil(g.attr("x1")),
+					"x2": Math.ceil(g.attr("x2")),
+					"y1": Math.ceil(g.attr("y1")),
+					"y2": Math.ceil(g.attr("y2"))
 				});
 			});
 		}
@@ -673,14 +662,13 @@ export default class ChartInternal {
 		// bars
 		$$.updateBar(durationForExit);
 
-		// lines, areas and cricles
+		// lines, areas and circles
 		$$.updateLine(durationForExit);
 		$$.updateArea(durationForExit);
 		$$.updateCircle();
 
 		// text
-		$$.hasDataLabel() &&
-			$$.updateText(durationForExit);
+		$$.hasDataLabel() && $$.updateText(durationForExit);
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
@@ -899,7 +887,7 @@ export default class ChartInternal {
 	opacityForCircle(d) {
 		const opacity = this.config.point_show ? "1" : "0";
 
-		return isValue(d.value) ? (this.isScatterType(d) ? "0.5" : opacity) : "0";
+		return isValue(d.value) ? (this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) : "0";
 	}
 
 	opacityForText() {
@@ -920,7 +908,7 @@ export default class ChartInternal {
 
 		if ($$.isTimeSeries()) {
 			value = $$.parseDate(d.value);
-		} else if ($$.isCategorized() && typeof d.value === "string") {
+		} else if ($$.isCategorized() && isString(d.value)) {
 			value = $$.config.axis_x_categories.indexOf(d.value);
 		}
 
@@ -1064,7 +1052,7 @@ export default class ChartInternal {
 	observeInserted(selection) {
 		const $$ = this;
 
-		if (typeof MutationObserver === "undefined") {
+		if (isUndefined(MutationObserver)) {
 			console && console.error &&
 				console.error("MutationObserver not defined.");
 
@@ -1221,9 +1209,9 @@ export default class ChartInternal {
 
 		if (date instanceof Date) {
 			parsedDate = date;
-		} else if (typeof date === "string") {
+		} else if (isString(date)) {
 			parsedDate = $$.dataTimeFormat($$.config.data_xFormat)(date);
-		} else if (typeof date === "number" && !isNaN(date)) {
+		} else if (isNumber(date) && !isNaN(date)) {
 			parsedDate = new Date(+date);
 		}
 		if (!parsedDate || isNaN(+parsedDate)) {
@@ -1237,13 +1225,13 @@ export default class ChartInternal {
 	isTabVisible() {
 		let hidden;
 
-		if (typeof document.hidden !== "undefined") { // Opera 12.10 and Firefox 18 and later support
+		if (isDefined(document.hidden)) { // Opera 12.10 and Firefox 18 and later support
 			hidden = "hidden";
-		} else if (typeof document.mozHidden !== "undefined") {
+		} else if (isDefined(document.mozHidden)) {
 			hidden = "mozHidden";
-		} else if (typeof document.msHidden !== "undefined") {
+		} else if (isDefined(document.msHidden)) {
 			hidden = "msHidden";
-		} else if (typeof document.webkitHidden !== "undefined") {
+		} else if (isDefined(document.webkitHidden)) {
 			hidden = "webkitHidden";
 		}
 

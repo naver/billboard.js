@@ -11,17 +11,35 @@ import CLASS from "../config/classes";
 const isValue = v => v || v === 0;
 const isFunction = v => typeof v === "function";
 const isString = v => typeof v === "string";
+const isNumber = v => typeof v === "number";
 const isUndefined = v => typeof v === "undefined";
 const isDefined = v => typeof v !== "undefined";
 const isBoolean = v => typeof v === "boolean";
 const ceil10 = v => Math.ceil(v / 10) * 10;
 const asHalfPixel = n => Math.ceil(n) + 0.5;
 const diffDomain = d => d[1] - d[0];
+const isObjectType = v => typeof v === "object";
 const isEmpty = o => (
-	typeof o === "undefined" || o === null ||
+	isUndefined(o) || o === null ||
 		(isString(o) && o.length === 0) ||
-		(typeof o === "object" && Object.keys(o).length === 0)
+		(isObjectType(o) && Object.keys(o).length === 0)
 );
+/**
+ * Check if is array
+ * @param {Array} arr
+ * @returns {Boolean}
+ * @private
+ */
+const isArray = arr => arr && arr.constructor === Array;
+
+/**
+ * Check if is object
+ * @param {Object} obj
+ * @returns {Boolean}
+ * @private
+ */
+const isObject = obj => obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+
 const notEmpty = o => !isEmpty(o);
 const getOption = (options, key, defaultValue) => (
 	isDefined(options[key]) ? options[key] : defaultValue
@@ -33,10 +51,14 @@ const hasValue = (dict, value) => {
 
 	return found;
 };
-const sanitise = str => (
-	typeof str === "string" ?
-		str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str
-);
+
+/**
+ * Replace tag sign to html entity
+ * @param {String} str
+ * @return {String}
+ * @private
+ */
+const sanitise = str => (isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str);
 
 // substitution of SVGPathSeg API polyfill
 const getRectSegList = path => {
@@ -129,7 +151,7 @@ function extend(target = {}, source) {
 	return target;
 }
 
-const SUPPORT_ADDEVENTLISTENER = !!("addEventListener" in document);
+const SUPPORT_ADDEVENTLISTENER = "addEventListener" in document;
 const SUPPORT_PASSIVE = (() => {
 	let supportsPassiveOption = false;
 
@@ -142,6 +164,7 @@ const SUPPORT_PASSIVE = (() => {
 			}));
 		}
 	} catch (e) {}
+
 	return supportsPassiveOption;
 })();
 
@@ -149,9 +172,10 @@ function addEvent(element, type, handler, eventListenerOptions) {
 	if (SUPPORT_ADDEVENTLISTENER) {
 		let options = eventListenerOptions || false;
 
-		if (typeof eventListenerOptions === "object") {
+		if (isObjectType(eventListenerOptions)) {
 			options = SUPPORT_PASSIVE ? eventListenerOptions : false;
 		}
+
 		element.addEventListener(type, handler, options);
 	} else if (element.attachEvent) {
 		element.attachEvent(`on${type}`, handler);
@@ -176,22 +200,6 @@ function removeEvent(element, type, handler) {
  * @private
  */
 const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
-
-/**
- * Check if is array
- * @param {Array} arr
- * @returns {Boolean}
- * @private
- */
-const isArray = arr => arr && arr.constructor === Array;
-
-/**
- * Check if is object
- * @param {Object} obj
- * @returns {Boolean}
- * @private
- */
-const isObject = obj => obj && !obj.nodeType && typeof obj === "object" && !isArray(obj);
 
 /**
  * Merge object returning new object
@@ -234,17 +242,21 @@ export {
 	isDefined,
 	isUndefined,
 	isBoolean,
+	isString,
+	isNumber,
+	isArray,
+	isEmpty,
+	isObject,
+	isObjectType,
 	notEmpty,
 	ceil10,
 	isFunction,
 	asHalfPixel,
 	getOption,
-	isString,
 	hasValue,
 	sanitise,
 	getPathBox,
 	diffDomain,
-	isEmpty,
 	getBrushSelection,
 	brushEmpty,
 	extend,
@@ -252,7 +264,5 @@ export {
 	removeEvent,
 	getRectSegList,
 	merge,
-	capitalize,
-	isArray,
-	isObject
+	capitalize
 };

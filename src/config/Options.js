@@ -440,17 +440,18 @@ export default class Options {
 			 * Set chart type at once.<br><br>
 			 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.<br><br>
 			 * **Available Values:**
-			 * - line
-			 * - spline
-			 * - step
 			 * - area
 			 * - area-spline
 			 * - area-step
 			 * - bar
-			 * - scatter
-			 * - pie
+			 * - bubble
 			 * - donut
 			 * - gauge
+			 * - line
+			 * - pie
+			 * - scatter
+			 * - spline
+			 * - step
 			 * @name data:type
 			 * @memberof Options
 			 * @type {String}
@@ -2040,20 +2041,31 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [point.show=true] Whether to show each point in line.
-			 * @property {Number} [point.r=2.5] The radius size of each point.
+			 * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
+			 *  - **Note:** Disabled for 'bubble' type
 			 * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
+			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
+			 *  - **Note:** For 'bubble' type, the default is `bubbleSize*1.15`
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
 			 * @property {String|Object} [point.type="circle"] The type of point to be drawn<br>
-			 * **Available Values:**
+			 * - **Note:** If chart has 'bubble' type, only circle can be used.<br>
+			 * - **Available Values:**
 			 *  - circle
 			 *  - rectangle
+			 *
 			 * @property {Function} [point.type.create] If specified will be invoked to create data points, this function must return a d3 selection.
 			 * @property {Function} [point.type.update] If specified will be invoked to update data points, this function must return a d3 selection.
 			 * @example
 			 *  point: {
 			 *      show: false,
 			 *      r: 5,
+			 *
+			 *      // or customize the radius
+			 *      r: function(d) {
+			 *          ...
+			 *          return r;
+			 *      },
+			 *
 			 *      focus: {
 			 *          expand: {
 			 *              enabled: true,
@@ -2143,6 +2155,28 @@ export default class Options {
 			bar_width_ratio: 0.6,
 			bar_width_max: undefined,
 			bar_zerobased: true,
+
+			/**
+			 * Set bubble options
+			 * @name bubble
+			 * @memberof Options
+			 * @type {Object}
+			 * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
+			 * @example
+			 *  bubble: {
+			 *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
+			 *      // And the lesser will have radius relatively from tha max value.
+			 *      maxR: 50,
+			 *
+			 *      // or set radius callback
+			 *      maxR: function(d) {
+			 *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
+			 *          ...
+			 *          return Math.sqrt(d.value * 2);
+			 *      }
+			 *  }
+			 */
+			bubble_maxR: 35,
 
 			/**
 			 * Set area options
@@ -2251,6 +2285,7 @@ export default class Options {
 			gauge_width: undefined,
 			gauge_expand: {},
 			gauge_expand_duration: 50,
+
 
 			/**
 			 * Set donut options

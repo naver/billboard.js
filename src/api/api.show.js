@@ -16,7 +16,6 @@ extend(Chart.prototype, {
 	 */
 	show(targetIdsValue, options = {}) {
 		const $$ = this.internal;
-
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
 
 		$$.removeHiddenTargetIds(targetIds);
@@ -28,8 +27,7 @@ extend(Chart.prototype, {
 				targets.style("opacity", null).style("opacity", "1");
 			});
 
-		options.withLegend &&
-		$$.showLegend(targetIds);
+		options.withLegend && $$.showLegend(targetIds);
 
 		$$.redraw({
 			withUpdateOrgXDomain: true,

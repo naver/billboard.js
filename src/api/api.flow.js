@@ -75,44 +75,41 @@ extend(Chart.prototype, {
 		// Update/Add data
 		$$.data.targets.forEach(t => {
 			let found = false;
-			let i;
-			let j;
 
-			for (i = 0; i < targets.length; i++) {
+			for (let i = 0; i < targets.length; i++) {
 				if (t.id === targets[i].id) {
 					found = true;
 
 					if (t.values[t.values.length - 1]) {
 						tail = t.values[t.values.length - 1].index + 1;
 					}
+
 					length = targets[i].values.length;
 
-					for (j = 0; j < length; j++) {
+					for (let j = 0; j < length; j++) {
 						targets[i].values[j].index = tail + j;
+
 						if (!$$.isTimeSeries()) {
 							targets[i].values[j].x = tail + j;
 						}
 					}
-					t.values = t.values.concat(targets[i].values);
 
+					t.values = t.values.concat(targets[i].values);
 					targets.splice(i, 1);
 					break;
 				}
 			}
 
-			if (!found) { notfoundIds.push(t.id); }
+			!found && notfoundIds.push(t.id);
 		});
 
 		// Append null for not found targets
 		$$.data.targets.forEach(t => {
-			let i;
-			let j;
-
-			for (i = 0; i < notfoundIds.length; i++) {
+			for (let i = 0; i < notfoundIds.length; i++) {
 				if (t.id === notfoundIds[i]) {
 					tail = t.values[t.values.length - 1].index + 1;
 
-					for (j = 0; j < length; j++) {
+					for (let j = 0; j < length; j++) {
 						t.values.push({
 							id: t.id,
 							index: tail + j,
@@ -127,10 +124,9 @@ extend(Chart.prototype, {
 		// Generate null values for new target
 		if ($$.data.targets.length) {
 			targets.forEach(t => {
-				let i;
 				const missing = [];
 
-				for (i = $$.data.targets[0].values[0].index; i < tail; i++) {
+				for (let i = $$.data.targets[0].values[0].index; i < tail; i++) {
 					missing.push({
 						id: t.id,
 						index: i,
@@ -172,11 +168,9 @@ extend(Chart.prototype, {
 		// If only one data, update the domain to flow from left edge of the chart
 		if (!orgDataCount) {
 			if ($$.isTimeSeries()) {
-				if (baseTarget.values.length > 1) {
-					diff = baseTarget.values[baseTarget.values.length - 1].x - baseValue.x;
-				} else {
-					diff = baseValue.x - $$.getXDomain($$.data.targets)[0];
-				}
+				diff = baseTarget.values.length > 1 ?
+					baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
+					baseValue.x - $$.getXDomain($$.data.targets)[0];
 			} else {
 				diff = 1;
 			}
@@ -341,17 +335,18 @@ extend(ChartInternal.prototype, {
 			]);
 
 			gt.call(wait, () => {
-				let i;
 				const shapes = [];
 				const texts = [];
 				const eventRects = [];
 
 				// remove flowed elements
 				if (flowLength) {
-					for (i = 0; i < flowLength; i++) {
-						shapes.push(`.${CLASS.shape}-${flowIndex + i}`);
-						texts.push(`.${CLASS.text}-${flowIndex + i}`);
-						eventRects.push(`.${CLASS.eventRect}-${flowIndex + i}`);
+					for (let i = 0; i < flowLength; i++) {
+						const index = flowIndex + i;
+
+						shapes.push(`.${CLASS.shape}-${index}`);
+						texts.push(`.${CLASS.text}-${index}`);
+						eventRects.push(`.${CLASS.eventRect}-${index}`);
 					}
 
 					$$.svg.selectAll(`.${CLASS.shapes}`)

@@ -25,8 +25,8 @@ import {
 } from "d3";
 
 import CLASS from "../config/classes";
-import ChartInternal from "./ChartInternal";
-import {isUndefined, extend} from "./util";
+import ChartInternal from "../internals/ChartInternal";
+import {isUndefined, extend} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	getShapeIndices(typeFilter) {
@@ -97,7 +97,7 @@ extend(ChartInternal.prototype, {
 
 				if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
 					// check if the x values line up
-					if (typeof values[i] === "undefined" || +values[i].x !== +d.x) { // "+" for timeseries
+					if (isUndefined(values[i]) || +values[i].x !== +d.x) { // "+" for timeseries
 						// if not, try to find the value that does line up
 						i = -1;
 
