@@ -245,7 +245,6 @@ export default class ChartInternal {
 		config.svg_classname &&
 			$$.svg.attr("class", config.svg_classname);
 
-		// Define defs
 		const defs = $$.svg.append("defs");
 
 		$$.clipChart = $$.appendClip(defs, $$.clipId);
@@ -253,6 +252,12 @@ export default class ChartInternal {
 		$$.clipYAxis = $$.appendClip(defs, $$.clipIdForYAxis);
 		$$.clipGrid = $$.appendClip(defs, $$.clipIdForGrid);
 		$$.clipSubchart = $$.appendClip(defs, $$.clipIdForSubchart);
+
+		if (isFunction(config.pattern) && $$.patterns) {
+			const defsNode = defs.node();
+
+			$$.patterns.forEach(p => defsNode.appendChild(p.node));
+		}
 
 		$$.updateSvgSize();
 

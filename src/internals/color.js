@@ -7,7 +7,7 @@ import {
 	schemeCategory10 as d3SchemeCategory10
 } from "d3";
 import ChartInternal from "./ChartInternal";
-import {notEmpty, extend} from "./util";
+import {notEmpty, extend, isFunction, colorizePattern} from "./util";
 
 extend(ChartInternal.prototype, {
 	generateColor() {
@@ -16,8 +16,15 @@ extend(ChartInternal.prototype, {
 		const colors = config.data_colors;
 		const callback = config.data_color;
 		const ids = [];
-		const pattern = notEmpty(config.color_pattern) ?
+		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern : d3ScaleOrdinal(d3SchemeCategory10).range();
+
+		if (isFunction(config.pattern)) {
+			const patterns = config.pattern(pattern, colorizePattern);
+
+			pattern = patterns.map(p => `url("#${p.id}")`);
+			$$.patterns = patterns;
+		}
 
 		return function(d) {
 			const id = d.id || (d.data && d.data.id) || d;

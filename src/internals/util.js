@@ -237,6 +237,28 @@ const merge = (target, ...objectN) => {
 	return extend(target, ...objectN);
 };
 
+const colorizePattern = (pattern, color) => {
+	const suffix = color.replace(/[#\(\)\s,]/g, "");
+	const id = `bb-colorize-pattern-${suffix}`;
+	const node = pattern.cloneNode(true);
+
+	node.setAttribute("id", id);
+	node.removeAttribute("class");
+
+	const w = node.getAttribute("width");
+	const h = node.getAttribute("height");
+
+	const rect = document.createElementNS("http://www.w3.org/2000/svg", "rect");
+
+	rect.style.fill = color;
+	rect.setAttribute("width", w);
+	rect.setAttribute("height", h);
+
+	node.insertBefore(rect, node.firstChild);
+
+	return {id, node};
+};
+
 export {
 	isValue,
 	isDefined,
@@ -264,5 +286,6 @@ export {
 	removeEvent,
 	getRectSegList,
 	merge,
-	capitalize
+	capitalize,
+	colorizePattern
 };
