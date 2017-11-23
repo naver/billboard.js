@@ -254,6 +254,11 @@ export default class ChartInternal {
 		$$.clipGrid = $$.appendClip(defs, $$.clipIdForGrid);
 		$$.clipSubchart = $$.appendClip(defs, $$.clipIdForSubchart);
 
+		// set color patterns
+		if (isFunction(config.color_tiles) && $$.patterns) {
+			$$.patterns.forEach(p => defs.append(() => p.node));
+		}
+
 		$$.updateSvgSize();
 
 		// Set initialized scales to brush and zoom

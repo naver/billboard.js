@@ -124,10 +124,13 @@ extend(ChartInternal.prototype, {
 				name = sanitise(nameFormat(row.name, row.ratio, row.id, row.index));
 				bgcolor = $$.levelColor ? $$.levelColor(row.value) : color(row.id);
 
-				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}">
-							<td class="name"><span style="background-color:${bgcolor}"></span>${name}</td>
-							<td class="value">${value}</td>
-						</tr>`;
+				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}"><td class="name">`;
+
+				text += $$.patterns ?
+					`<svg width="10" height="10"><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :
+					`<span style="background-image:${bgcolor}"></span>`;
+
+				text += `${name}</td><td class="value">${value}</td></tr>`;
 			}
 		}
 

@@ -4,6 +4,7 @@
  */
 import {
 	event as d3Event,
+	select as d3Select,
 	brushSelection as d3BrushSelection
 } from "d3";
 import CLASS from "../config/classes";
@@ -237,6 +238,32 @@ const merge = (target, ...objectN) => {
 	return extend(target, ...objectN);
 };
 
+/**
+ * Set pattern's background color
+ * (it adds a <rect> element to simulate bg-color)
+ * @param {SVGPatternElement} pattern
+ * @param {String} color
+ * @return {{id: string, node: SVGPatternElement}}
+ * @private
+ */
+const colorizePattern = (pattern, color) => {
+	const suffix = color.replace(/[#\(\)\s,]/g, "");
+	const id = `${CLASS.colorizePattern}-${suffix}`;
+	const node = d3Select(pattern.cloneNode(true));
+
+	node
+		.attr("id", id)
+		.insert("rect", ":first-child")
+		.attr("width", node.attr("width"))
+		.attr("height", node.attr("height"))
+		.style("fill", color);
+
+	return {
+		id,
+		node: node.node()
+	};
+};
+
 export {
 	isValue,
 	isDefined,
@@ -264,5 +291,6 @@ export {
 	removeEvent,
 	getRectSegList,
 	merge,
-	capitalize
+	capitalize,
+	colorizePattern
 };

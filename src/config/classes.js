@@ -78,6 +78,7 @@ export default {
 	legendItemTile: "bb-legend-item-tile",
 	legendItemHidden: "bb-legend-item-hidden",
 	legendItemFocused: "bb-legend-item-focused",
+	colorizePattern: "bb-colorize-pattern",
 	dragarea: "bb-dragarea",
 	EXPANDED: "_expanded_",
 	SELECTED: "_selected_",

@@ -972,16 +972,42 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Array} [color.pattern] custom color pattern
+			 * @property {Function} [color.tiles] if defined, allows use svg's patterns. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
 			 * @property {Object} [color.threshold] color threshold
 			 * @property {String} [color.threshold.unit] unit
 			 * @property {Array} [color.threshold.value] value
 			 * @property {Array} [color.threshold.max=100] max value
 			 * @example
 			 *  color: {
-			 *      pattern: ["#1f77b4", "#aec7e8", ...]
+			 *      pattern: ["#1f77b4", "#aec7e8", ...],
+			 *
+			 *      // Set colors' patterns
+			 *      // it should return an array of SVGPatternElement
+			 *      tiles: function() {
+			 *         var pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+			 *         var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+			 *         var circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+			 *
+			 *         pattern.setAttribute("patternUnits", "userSpaceOnUse");
+			 *         pattern.setAttribute("width", "32");
+			 *         pattern.setAttribute("height", "32");
+			 *
+			 *         g.style.fill = "#000";
+			 *         g.style.opacity = "0.2";
+             *
+			 *         circle1.setAttribute("cx", "3");
+			 *         circle1.setAttribute("cy", "3");
+			 *         circle1.setAttribute("r", "3");
+             *
+			 *         g.appendChild(circle1);
+			 *         pattern.appendChild(g);
+			 *
+			 *         return [pattern];
+			 *      }
 			 *  }
 			 */
 			color_pattern: [],
+			color_tiles: undefined,
 			color_threshold: {},
 
 			/**

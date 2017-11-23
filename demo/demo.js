@@ -1874,6 +1874,54 @@ var demos = {
 				}
 			}
 		},
+		ColorTiles: {
+			options: {
+				data: {
+					columns: [
+						['data1', 10],
+						['data2', 15],
+						['data3', 30],
+						['data4', 45],
+					],
+					type: "pie"
+				},
+				color: {
+					tiles: function() {
+						function circlePattern(fillColor, opacity, radiusMin, radiusMax) {
+							var pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+								.attr("patternUnits", "userSpaceOnUse")
+								.attr("width", "32")
+								.attr("height", "32");
+
+							var g = pattern
+								.append("g")
+								.style("fill", fillColor || "#000")
+								.style("opactiy", opacity || "0.2");
+
+							g
+								.append("circle")
+								.attr("cx", "3")
+								.attr("cy", "3")
+								.attr("r", radiusMin || "3");
+
+							g
+								.append("circle")
+								.attr("cx", "13")
+								.attr("cy", "13")
+								.attr("r", radiusMax || "9");
+
+							return pattern.node();
+						}
+
+						// Should return an array of SVGPatternElement
+						return [
+							circlePattern("#FFF", "0.2", "3", "10"),
+							circlePattern("yellow", "0.3", "3", "3")
+						];
+					    }
+				}
+			}
+		},
 		DurationOfTransition: {
 			options: {
 				data: {
