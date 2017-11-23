@@ -10,7 +10,6 @@ import CLASS from "../src/config/classes";
 describe("INTERACTION", () => {
 	let chart;
 	let args;
-	let clicked = false;
 
 	beforeEach(() => {
 		chart = util.generate(args);
@@ -35,7 +34,7 @@ describe("INTERACTION", () => {
 				const lefts = [69, 130, 198, 403];
 				const widths = [61, 68, 205, 197.5];
 
-				chart.internal.main.selectAll(".bb-event-rect").each(function (d, i) {
+				chart.internal.main.selectAll(`.${CLASS.eventRect}`).each(function(d, i) {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
@@ -59,7 +58,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("should have 1 event rects properly", () => {
-				const eventRects = chart.internal.main.selectAll(".bb-event-rect");
+				const eventRects = chart.internal.main.selectAll(`.${CLASS.eventRect}`);
 
 				expect(eventRects.size()).to.be.equal(1);
 
@@ -89,7 +88,7 @@ describe("INTERACTION", () => {
 				const lefts = [33.5, 185.5, 348, 497.5];
 				const widths = [152, 162.5, 149.5, 138.5];
 
-				chart.internal.main.selectAll(".bb-event-rect").each(function (d, i) {
+				chart.internal.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
@@ -106,16 +105,13 @@ describe("INTERACTION", () => {
 						columns: [
 							["x", "20140101"],
 							["data", 10]
-						],
-						onclick: () => {
-							clicked = true;
-						}
+						]
 					}
 				};
 			});
 
 			it("should have 1 event rects properly", () => {
-				const eventRects = chart.internal.main.selectAll(".bb-event-rect");
+				const eventRects = chart.internal.main.selectAll(`.${CLASS.eventRect}`);
 
 				expect(eventRects.size()).to.be.equal(1);
 
@@ -126,11 +122,36 @@ describe("INTERACTION", () => {
 					expect(box.width).to.be.closeTo(608, 10);
 				});
 			});
+		});
 
-			it("check for data click", () => {
+		describe("check for data.onclick", () => {
+			let clicked = false;
+			let data;
+
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							["x", "20140101"],
+							["data1", 10],
+							["data2", 20]
+						],
+						onclick: d => {
+							clicked = true;
+							data = d;
+						}
+					},
+					point: {
+						type: "circle"
+					}
+				};
+			});
+
+			it("check for data click for line", () => {
 				const main = chart.internal.main;
-				const rect = main.select(".bb-event-rect.bb-event-rect-0").node();
-				const circle = main.select(".bb-circles-data circle").node().getBBox();
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -138,6 +159,198 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+			});
+
+			it("set option point.type='rectangle'", () => {
+				args.point.type = "rectangle";
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for rectangle data point", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const circle = main.select(`.${CLASS.circles}-data1 rect`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+			});
+
+			it("set option point.type=polygon(custom triangle)", () => {
+				args.point.type = {
+					create: function(element, cssClassFn, sizeFn, fillStyleFn) {
+						return element.enter().append("polygon")
+							.attr("class", cssClassFn)
+							.style("fill", fillStyleFn);
+					},
+					update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+					                 withTransition, flow, selectedCircles) {
+						var size = this.pointR(element) * 3.0;
+						var halfSize = size * 0.5;
+
+						function getPoints(d) {
+							var x1 = xPosFn(d);
+							var y1 = yPosFn(d) - halfSize;
+							var x2 = x1 - halfSize;
+							var y2 = y1 + size;
+							var x3 = x1 + halfSize;
+							var y3 = y2;
+
+							return [x1, y1, x2, y2, x3, y3].join(" ");
+						}
+
+						return element
+							.attr("points", getPoints)
+							.style("opacity", opacityStyleFn)
+							.style("fill", fillStyleFn);
+					}
+				};
+
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for polygon data point", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const circle = main.select(`.${CLASS.circles}-data2 polygon`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
+			});
+
+			it("set option data.type='area'", () => {
+				args.data.type = "area";
+				args.point.type = "circle";
+
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for area", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+			});
+
+			it("set option data.type='scatter'", () => {
+				args.data.type = "scatter";
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for scatter", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
+			});
+
+			it("set option data.type='bubble'", () => {
+				args.data.type = "bubble";
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for bubble", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
+				const delta = 50;
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x + delta,
+					clientY: circle.y + delta
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
+			});
+
+			it("set option data.type='bar'", () => {
+				args.data.type = "bar";
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for bar", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+				const path = main.select(`.${CLASS.bars}-data1 path`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: path.x,
+					clientY: path.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+			});
+
+			it("set option data.type='pie'", () => {
+				args.data.type = "pie";
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for pie", () => {
+				const main = chart.internal.main;
+				const path = main.select(`.${CLASS.arcs}-data1 path`).node();
+				const box = path.getBBox();
+
+				util.fireEvent(path, "click", {
+					clientX: Math.abs(box.x),
+					clientY: Math.abs(box.y)
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+			});
+
+			it("set option data.type='gauge'", () => {
+				args.data.type = "gauge";
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for gauge", () => {
+				const main = chart.internal.main;
+				const path = main.select(`.${CLASS.arcs}-data1 path`).node();
+				const box = path.getBBox();
+
+				util.fireEvent(path, "click", {
+					clientX: Math.abs(box.x),
+					clientY: Math.abs(box.y)
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
 			});
 		});
 
@@ -248,7 +461,7 @@ describe("INTERACTION", () => {
 			it("data point circle should be selected and unselected", () => {
 				const circle = d3.select(".bb-shape-2").node();
 				const box = circle.getBBox();
-				const rect = d3.select(".bb-event-rect-2").node();
+				const rect = d3.select(`.${CLASS.eventRect}-2`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: box.x,

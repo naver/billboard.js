@@ -128,7 +128,7 @@ extend(ChartInternal.prototype, {
 
 		if (!$$.isTargetToShow(d.id)) {
 			isWithin = false;
-		} else if ($$.hasValidPointType()) {
+		} else if ($$.hasValidPointType(that.nodeName)) {
 			isWithin = $$.isStepType(d) ?
 				$$.isWithinStep(that, $$.getYScale(d.id)(d.value)) :
 				$$.isWithinCircle(that, $$.pointSelectR(d) * 1.5);
