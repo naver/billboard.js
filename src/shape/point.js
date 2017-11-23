@@ -7,7 +7,7 @@ import {isFunction, isObjectType, extend} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
-		return /^(circle|rectangle)$/i.test(type || this.config.point_type);
+		return /^(circle|rect(angle)?|polygon|ellipse)$/i.test(type || this.config.point_type);
 	},
 
 	hasValidPointDrawMethods() {

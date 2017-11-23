@@ -594,13 +594,21 @@ extend(ChartInternal.prototype, {
 			selectR(d) : (selectR || $$.pointR(d) * 4);
 	},
 
-	isWithinCircle(that, r) {
-		const mouse = d3Mouse(that);
-		const d3This = d3Select(that);
+	isWithinCircle(node, r) {
+		const mouse = d3Mouse(node);
+		const element = d3Select(node);
+		const prefix = this.isCirclePoint() ? "c" : "";
 
-		const posAttr = this.isCirclePoint() ? "c" : "";
-		const cx = +d3This.attr(`${posAttr}x`);
-		const cy = +d3This.attr(`${posAttr}y`);
+		let cx = +element.attr(`${prefix}x`);
+		let cy = +element.attr(`${prefix}y`);
+
+		// if node don't have cx/y or x/y attribute value
+		if (!(cx || cy) && node.nodeType === 1) {
+			const domRect = node.getBBox ? node.getBBox() : node.getBoundingClientRect();
+
+			cx = domRect.x;
+			cy = domRect.y;
+		}
 
 		return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < r;
 	},

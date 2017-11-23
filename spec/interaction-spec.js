@@ -126,6 +126,7 @@ describe("INTERACTION", () => {
 
 		describe("check for data.onclick", () => {
 			let clicked = false;
+			let data;
 
 			before(() => {
 				args = {
@@ -136,9 +137,13 @@ describe("INTERACTION", () => {
 							["data1", 10],
 							["data2", 20]
 						],
-						onclick: () => {
+						onclick: d => {
 							clicked = true;
+							data = d;
 						}
+					},
+					point: {
+						type: "circle"
 					}
 				};
 			});
@@ -154,16 +159,88 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
 			});
 
-			it("set option date.type='area'", () => {
-				args.data.type = "area";
+			it("set option point.type='rectangle'", () => {
+				args.point.type = "rectangle";
 				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for rectangle data point", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const circle = main.select(`.${CLASS.circles}-data1 rect`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
+			});
+
+			it("set option point.type=polygon(custom triangle)", () => {
+				args.point.type = {
+					create: function(element, cssClassFn, sizeFn, fillStyleFn) {
+						return element.enter().append("polygon")
+							.attr("class", cssClassFn)
+							.style("fill", fillStyleFn);
+					},
+					update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+					                 withTransition, flow, selectedCircles) {
+						var size = this.pointR(element) * 3.0;
+						var halfSize = size * 0.5;
+
+						function getPoints(d) {
+							var x1 = xPosFn(d);
+							var y1 = yPosFn(d) - halfSize;
+							var x2 = x1 - halfSize;
+							var y2 = y1 + size;
+							var x3 = x1 + halfSize;
+							var y3 = y2;
+
+							return [x1, y1, x2, y2, x3, y3].join(" ");
+						}
+
+						return element
+							.attr("points", getPoints)
+							.style("opacity", opacityStyleFn)
+							.style("fill", fillStyleFn);
+					}
+				};
+
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for polygon data point", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const circle = main.select(`.${CLASS.circles}-data2 polygon`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
+			});
+
+			it("set option data.type='area'", () => {
+				args.data.type = "area";
+				args.point.type = "circle";
+
+				clicked = false;
+				data = null;
 			});
 
 			it("check for data click for area", () => {
 				const main = chart.internal.main;
-				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
+				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
 				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
 
 				util.fireEvent(rect, "click", {
@@ -172,11 +249,13 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
 			});
 
-			it("set option date.type='scatter'", () => {
+			it("set option data.type='scatter'", () => {
 				args.data.type = "scatter";
 				clicked = false;
+				data = null;
 			});
 
 			it("check for data click for scatter", () => {
@@ -190,11 +269,13 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
 			});
 
-			it("set option date.type='bubble'", () => {
+			it("set option data.type='bubble'", () => {
 				args.data.type = "bubble";
 				clicked = false;
+				data = null;
 			});
 
 			it("check for data click for bubble", () => {
@@ -209,11 +290,13 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
 			});
 
-			it("set option date.type='bar'", () => {
+			it("set option data.type='bar'", () => {
 				args.data.type = "bar";
 				clicked = false;
+				data = null;
 			});
 
 			it("check for data click for bar", () => {
@@ -227,11 +310,13 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
 			});
 
-			it("set option date.type='pie'", () => {
+			it("set option data.type='pie'", () => {
 				args.data.type = "pie";
 				clicked = false;
+				data = null;
 			});
 
 			it("check for data click for pie", () => {
@@ -245,11 +330,13 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
 			});
 
-			it("set option date.type='gauge'", () => {
+			it("set option data.type='gauge'", () => {
 				args.data.type = "gauge";
 				clicked = false;
+				data = null;
 			});
 
 			it("check for data click for gauge", () => {
@@ -263,6 +350,7 @@ describe("INTERACTION", () => {
 				}, chart);
 
 				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(10);
 			});
 		});
 
