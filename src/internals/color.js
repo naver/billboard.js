@@ -19,11 +19,16 @@ extend(ChartInternal.prototype, {
 		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern : d3ScaleOrdinal(d3SchemeCategory10).range();
 
-		if (isFunction(config.pattern)) {
-			const patterns = config.pattern(pattern, colorizePattern);
+		if (isFunction(config.color_tiles)) {
+			const tiles = config.color_tiles();
 
-			pattern = patterns.map(p => `url("#${p.id}")`);
-			$$.patterns = patterns;
+			// Add background color to patterns
+			const colorizedPatterns = pattern.map((p, index) =>
+				colorizePattern(tiles[index % tiles.length], p)
+			);
+
+			pattern = colorizedPatterns.map(p => `url("#${p.id}")`);
+			$$.patterns = colorizedPatterns;
 		}
 
 		return function(d) {

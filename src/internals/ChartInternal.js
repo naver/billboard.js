@@ -253,7 +253,7 @@ export default class ChartInternal {
 		$$.clipGrid = $$.appendClip(defs, $$.clipIdForGrid);
 		$$.clipSubchart = $$.appendClip(defs, $$.clipIdForSubchart);
 
-		if (isFunction(config.pattern) && $$.patterns) {
+		if (isFunction(config.color_tiles) && $$.patterns) {
 			const defsNode = defs.node();
 
 			$$.patterns.forEach(p => defsNode.appendChild(p.node));

@@ -1956,43 +1956,47 @@ var demos = {
 					],
 					type: "pie"
 				},
-				pattern: function(colors, colorize) {
+				color: {
+					tiles: function() {
+						function circlePattern(fillColor, opacity, radiusMin, radiusMax) {
+							const pattern = document.createElementNS(
+								"http://www.w3.org/2000/svg", "pattern");
+							pattern.setAttribute("patternUnits", "userSpaceOnUse");
+							pattern.setAttribute("width", "32");
+							pattern.setAttribute("height", "32");
 
-					function circlePattern(fillColor, opacity, radiusMin, radiusMax) {
-						const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
-						pattern.setAttribute("patternUnits", "userSpaceOnUse");
-						pattern.setAttribute("width", "32");
-						pattern.setAttribute("height", "32");
+							const g = document.createElementNS(
+								"http://www.w3.org/2000/svg", "g");
+							g.style.fill = fillColor || "#000";
+							g.style.opacity = opacity || "0.2";
 
-						const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-						g.style.fill = fillColor || "#000";
-						g.style.opacity = opacity || "0.2";
+							const rmin = radiusMin || "3";
+							const rmax = radiusMax || "9";
 
-						const rmin = radiusMin || "3";
-						const rmax = radiusMax || "9";
+							const circle1 = document.createElementNS(
+								"http://www.w3.org/2000/svg", "circle")
+							circle1.setAttribute("cx", "3");
+							circle1.setAttribute("cy", "3");
+							circle1.setAttribute("r", rmin);
 
-						const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-						circle1.setAttribute("cx", "3");
-						circle1.setAttribute("cy", "3");
-						circle1.setAttribute("r", rmin);
+							const circle2 = document.createElementNS(
+								"http://www.w3.org/2000/svg", "circle")
+							circle2.setAttribute("cx", "13");
+							circle2.setAttribute("cy", "13");
+							circle2.setAttribute("r", rmax);
 
-						const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
-						circle2.setAttribute("cx", "13");
-						circle2.setAttribute("cy", "13");
-						circle2.setAttribute("r", rmax);
+							g.appendChild(circle1);
+							g.appendChild(circle2);
+							pattern.appendChild(g);
+							return pattern;
+						}
 
-						g.appendChild(circle1);
-						g.appendChild(circle2);
-						pattern.appendChild(g);
-						return pattern;
+						return [
+							circlePattern("#FFF", "0.2", "1", "10"),
+							circlePattern("#000", "0.3", "3", "6")
+						];
 					}
 
-					const patterns = [
-						circlePattern("#FFF", "0.2", "1", "10"),
-						circlePattern("#000", "0.3", "3", "6")
-					];
-
-					return colors.map((color, index) => colorize(patterns[index % patterns.length], color));
 				}
 			}
 		}
