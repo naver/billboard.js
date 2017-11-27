@@ -972,16 +972,46 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Array} [color.pattern] custom color pattern
+			 * @property {Function} [color.tiles] if defined, this function will be invoked to and allows user declaring patterns
 			 * @property {Object} [color.threshold] color threshold
 			 * @property {String} [color.threshold.unit] unit
 			 * @property {Array} [color.threshold.value] value
 			 * @property {Array} [color.threshold.max=100] max value
 			 * @example
 			 *  color: {
-			 *      pattern: ["#1f77b4", "#aec7e8", ...]
+			 *      pattern: ["#1f77b4", "#aec7e8", ...],
+			 *
+			 *      tiles: function() {
+			 *        const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+			 *        pattern.setAttribute("id", "patternZ")
+			 *        pattern.setAttribute("patternUnits", "userSpaceOnUse");
+			 *        pattern.setAttribute("width", "32");
+			 *        pattern.setAttribute("height", "32");
+			 *
+			 *        const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+			 *        g.style.fill = "#000";
+			 *        g.style.opacity = "0.2";
+
+			 *        const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+			 *        circle1.setAttribute("cx", "3");
+			 *        circle1.setAttribute("cy", "3");
+			 *        circle1.setAttribute("r", "3");
+
+			 *        const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+			 *        circle2.setAttribute("cx", "13");
+			 *        circle2.setAttribute("cy", "13");
+			 *        circle2.setAttribute("r", "9");
+
+			 *         g.appendChild(circle1);
+			 *         g.appendChild(circle2);
+			 *         pattern.appendChild(g);
+			 *
+			 *          return [pattern];
+			 *      }
 			 *  }
 			 */
 			color_pattern: [],
+			color_tiles: undefined,
 			color_threshold: {},
 
 			/**
