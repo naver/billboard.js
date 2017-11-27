@@ -352,6 +352,45 @@ describe("INTERACTION", () => {
 				expect(clicked).to.be.true;
 				expect(data.value).to.be.equal(10);
 			});
+
+			it("set option data.xs", () => {
+				args.data.columns = [
+					['x', '2010-12-15', '2011-10-21', '2012-11-10', '2013-10-21', '2014-11-21', '2015-11-21'],
+					['data1', 30, 200, 100, 400, 150, 250],
+					['x2', '2008-8-21', '2009-5-21', '2010-3-21', '2011-9-22', '2014-11-21', '2015-11-21'],
+					['data2', 130, 340, 200, 500, 250, 350]
+				];
+
+				args.data.type = "line";
+
+				args.data.xs = {
+					'data1': 'x',
+					'data2': 'x2',
+				};
+
+				args.axis = {
+					x: {
+						type: "timeseries"
+					}
+				};
+
+				clicked = false;
+				data = null;
+			});
+
+			it("check for data click for multiple xs", () => {
+				const main = chart.internal.main;
+				const rect = main.select(`.${CLASS.eventRects}.${CLASS.eventRectsMultiple} rect`).node();
+				const circle = main.select(`.${CLASS.circles}.${CLASS.circles}-data1 circle`).node().getBBox();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(30);
+			});
 		});
 
 		describe("check for event binding", () => {
