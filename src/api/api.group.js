@@ -10,7 +10,7 @@ extend(Chart.prototype, {
 	 * Update groups for the targets.
 	 * @method groups
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Array} groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
 	 * @example
 	 *  // data1 and data2 will be a new group.

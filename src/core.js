@@ -19,13 +19,13 @@ const bb = {
 	 * @property {String} version version
 	 * @example
 	 * 	bb.version;  // "1.0.0"
-	 * @memberof bb
+	 * @memberOf bb
 	 */
 	version: "#__VERSION__#",
 	/**
 	 * generate charts
 	 * @param {Options} options chart options
-	 * @memberof bb
+	 * @memberOf bb
 	 * @return {Chart}
 	 * @see {@link Options} for different generation options
 	 * @see {@link Chart} for different methods API

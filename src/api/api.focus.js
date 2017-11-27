@@ -13,7 +13,7 @@ extend(Chart.prototype, {
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
 	 * @method focus
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String|Array} targetIdsValue Target ids to be highlighted.
 	 * @example
 	 *  // data1 will be highlighted and the others will be faded out
@@ -51,7 +51,7 @@ extend(Chart.prototype, {
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
 	 * @method defocus
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String|Array} Target ids to be faded out.
 	 * @example
 	 * // data1 will be faded out and the others will be reverted.
@@ -83,7 +83,7 @@ extend(Chart.prototype, {
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
 	 * @method revert
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String|Array} Target ids to be reverted
 	 * @example
 	 * // data1 will be reverted.

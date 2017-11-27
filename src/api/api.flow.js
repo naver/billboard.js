@@ -18,7 +18,7 @@ extend(Chart.prototype, {
 	 * By this API, you can append new data points to the chart.
 	 * @method flow
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Object} args
 	 * - If json, rows and columns given, the data will be loaded. If data that has the same target id is given, the chart will be appended. Otherwise, new target will be added. One of these is required when calling. If json specified, keys is required as well as data.json
 	 * - If to is given, the lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points.
@@ -208,7 +208,7 @@ extend(Chart.prototype, {
 extend(ChartInternal.prototype, {
 	/**
 	 * Generate flow
-	 * @memberof ChartInternal
+	 * @memberOf ChartInternal
 	 * @private
 	 * @param {Object} args
 	 * @return {Function}

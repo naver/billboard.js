@@ -14,7 +14,7 @@ import {isDefined, extend} from "../internals/util";
  * Zoom by giving x domain.
  * @method zoom
  * @instance
- * @memberof Chart
+ * @memberOf Chart
  * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
  * @example
  *  // Zoom to specified domain
@@ -47,6 +47,7 @@ const zoom = function(domainValue) {
 			$$.zoom.updateTransformScale(d3ZoomIdentity
 				.translate(tx, 0)
 				.scale(k));
+
 			resultDomain = $$.zoomScale.domain();
 		}
 
@@ -60,115 +61,119 @@ const zoom = function(domainValue) {
 	} else {
 		resultDomain = ($$.zoomScale || $$.x).domain();
 	}
+
 	return resultDomain;
 };
 
-/**
- * Enable and disable zooming.
- * @method zoom:enable
- * @instance
- * @memberof Chart
- * @param {Boolean} enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.
- * @example
- *  // Enable zooming
- *  chart.zoom.enable(true);
- */
-zoom.enable = function(enabled) {
-	const $$ = this.internal;
+extend(zoom, {
+	/**
+	 * Enable and disable zooming.
+	 * @method zoom․enable
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Boolean} enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.
+	 * @example
+	 *  // Enable zooming
+	 *  chart.zoom.enable(true);
+	 */
+	enable: function(enabled) {
+		const $$ = this.internal;
 
-	$$.config.zoom_enabled = enabled;
-	$$.updateAndRedraw();
-};
+		$$.config.zoom_enabled = enabled;
+		$$.updateAndRedraw();
+	},
 
-/**
- * Set zoom max
- * @method zoom:max
- * @instance
- * @memberof Chart
- * @param {Number} max
- */
-zoom.max = function(max) {
-	const $$ = this.internal;
-	const config = $$.config;
+	/**
+	 * Set zoom max
+	 * @method zoom․max
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Number} max
+	 */
+	max: function(max) {
+		const $$ = this.internal;
+		const config = $$.config;
 
-	if (max === 0 || max) {
-		config.zoom_x_max = d3Max([$$.orgXDomain[1], max]);
-	} else {
-		return config.zoom_x_max;
+		if (max === 0 || max) {
+			config.zoom_x_max = d3Max([$$.orgXDomain[1], max]);
+		} else {
+			return config.zoom_x_max;
+		}
+
+		return undefined;
+	},
+
+	/**
+	 * Set zoom min
+	 * @method zoom․min
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Number} min
+	 */
+	min: function(min) {
+		const $$ = this.internal;
+		const config = $$.config;
+
+		if (min === 0 || min) {
+			config.zoom_x_min = d3Min([$$.orgXDomain[0], min]);
+		} else {
+			return config.zoom_x_min;
+		}
+
+		return undefined;
+	},
+
+	/**
+	 * Set zoom range
+	 * @method zoom․range
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Object} range
+	 * @return {Object} range
+	 * {
+	 *   min: 0,
+	 *   max: 100
+	 * }
+	 * @example
+	 *  chart.zoom.range({
+	 *      min: 10,
+	 *      max: 100
+	 *  });
+	 */
+	range: function(range) {
+		const domain = this.domain;
+
+		if (arguments.length) {
+			isDefined(range.max) && domain.max(range.max);
+			isDefined(range.min) && domain.min(range.min);
+		} else {
+			return {
+				max: domain.max(),
+				min: domain.min()
+			};
+		}
+
+		return undefined;
 	}
-
-	return undefined;
-};
-
-/**
- * Set zoom min
- * @method zoom:min
- * @instance
- * @memberof Chart
- * @param {Number} min
- */
-zoom.min = function(min) {
-	const $$ = this.internal;
-	const config = $$.config;
-
-	if (min === 0 || min) {
-		config.zoom_x_min = d3Min([$$.orgXDomain[0], min]);
-	} else {
-		return config.zoom_x_min;
-	}
-
-	return undefined;
-};
-
-/**
- * Set zoom range
- * @method zoom:range
- * @instance
- * @memberof Chart
- * @param {Object} range
- * @return {Object} range
- * {
- *   min: 0,
- *   max: 100
- * }
- * @example
- *  chart.zoom.range({
- *      min: 10,
- *      max: 100
- *  });
- */
-zoom.range = function(range) {
-	if (arguments.length) {
-		isDefined(range.max) && this.domain.max(range.max);
-		isDefined(range.min) && this.domain.min(range.min);
-	} else {
-		return {
-			max: this.domain.max(),
-			min: this.domain.min()
-		};
-	}
-
-	return undefined;
-};
+});
 
 extend(Chart.prototype, {
 	zoom,
+
 	/**
 	 * Unzoom zoomed area
 	 * @method unzoom
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @example
 	 *  chart.unzoom();
 	 */
 	unzoom() {
 		const $$ = this.internal;
 
-		if ($$.config.subchart_show) {
-			$$.brush.getSelection().call($$.brush.move, null);
-		} else {
+		$$.config.subchart_show ?
+			$$.brush.getSelection().call($$.brush.move, null) :
 			$$.zoom.updateTransformScale(d3ZoomIdentity);
-		}
 
 		$$.redraw({
 			withTransition: true,
