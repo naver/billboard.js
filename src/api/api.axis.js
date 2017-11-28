@@ -111,7 +111,7 @@ const axis = extend(() => {}, {
 
 	/**
 	 * Get and set axis max value.
-	 * @name axis․max
+	 * @method axis․max
 	 * @instance
 	 * @memberOf Chart
 	 * @param {Object} max If max is given, specified axis' max value will be updated. If no argument is given, the current max values for each axis will be returned.
@@ -124,9 +124,11 @@ const axis = extend(() => {}, {
 	 * });
 	 */
 	max: function(max) {
+		const $$ = this.internal;
+
 		return arguments.length ?
-			setMinMax(this.internal, "max", max) :
-			getMinMax(this.internal, "max");
+			setMinMax($$, "max", max) :
+			getMinMax($$, "max");
 	},
 
 	/**
