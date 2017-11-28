@@ -14,16 +14,20 @@ extend(Chart.prototype, {
 	 * done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 * @method load
 	 * @instance
-	 * @memberof Chart
-	 * @param {Object} args
-	 * - If url, json, rows and columns given, the data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added.
-	 * - If classes given, the classes specifed by data.classes will be updated. classes must be Object that has target id as keys.
-	 * - If categories given, the categories specifed by axis.x.categories or data.x will be updated. categories must be Array.
-	 * - If axes given, the axes specifed by data.axes will be updated. axes must be Object that has target id as keys.
-	 * - If colors given, the colors specifed by data.colors will be updated. colors must be Object that has target id as keys.
-	 * - If type or types given, the type of targets will be updated. type must be String and types must be Object.
-	 * - If unload given, data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded.
-	 * - If done given, the specified function will be called after data loded.
+	 * @memberOf Chart
+	 * @param {Object} args The object can consist with following members:<br>
+	 *
+	 *    | Key | Description |
+	 *    | --- | --- |
+	 *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
+	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
+	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
+	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+	 *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
+	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. |
+	 *    | done | The specified function will be called after data loaded.|
+	 *
 	 * @example
 	 *  // Load data1 and unload data2 and data3
 	 *  chart.load({
@@ -31,7 +35,9 @@ extend(Chart.prototype, {
 	 *        ["data1", 100, 200, 150, ...],
 	 *        ...
 	 *    ],
-	 *    unload: ["data2", "data3"]
+	 *    unload: ["data2", "data3"],
+	 *    url: "...",
+	 *    done: function() { ... }
 	 *  });
 	 */
 	load(args) {
@@ -92,7 +98,7 @@ extend(Chart.prototype, {
 	 * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 * @method unload
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Object} args
 	 * - If ids given, the data that has specified target id will be unloaded. ids should be String or Array. If ids is not specified, all data will be unloaded.
 	 * - If done given, the specified function will be called after data loded.

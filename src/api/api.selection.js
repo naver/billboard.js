@@ -13,7 +13,7 @@ extend(Chart.prototype, {
 	 * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
 	 * @method selected
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String} targetId You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
 	 * @return {Array} dataPoint
 	 * @example
@@ -41,7 +41,7 @@ extend(Chart.prototype, {
 	 * Set data points to be selected.
 	 * @method select
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String} ids
 	 * @param {Number} indices
 	 * @param {Boolean} resetOther
@@ -86,7 +86,7 @@ extend(Chart.prototype, {
 	 * Set data points to be un-selected.
 	 * @method unselect
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String} ids
 	 * @param {Number} indices
 	 * @example

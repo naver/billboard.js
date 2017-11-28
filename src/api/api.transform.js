@@ -11,7 +11,7 @@ extend(Chart.prototype, {
 	 * Change the type of the chart.
 	 * @method transform
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String} type Specify the type to be transformed. The types listed in data.type can be used.
 	 * @param {String|Array} targetIds Specify targets to be transformed. If not given, all targets will be the candidate.
 	 * @example

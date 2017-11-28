@@ -10,7 +10,7 @@ extend(Chart.prototype, {
 	 * Get and set x values for the chart.
 	 * @method x
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Array} x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
 	 * @return {Object} xs
 	 * @example
@@ -39,7 +39,7 @@ extend(Chart.prototype, {
 	 * Get and set x values for the chart.
 	 * @method xs
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Array} xs If xs is given, specified target's x values will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
 	 * @return {Object} xs
 	 * @example

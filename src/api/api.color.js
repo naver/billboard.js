@@ -10,7 +10,7 @@ extend(Chart.prototype, {
 	 * Get the color
 	 * @method color
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String} id id to get the color
 	 * @example
 	 * chart.color("data1");

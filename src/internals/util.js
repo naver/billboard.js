@@ -144,11 +144,10 @@ const brushEmpty = function() {
 };
 
 function extend(target = {}, source) {
-	let p;
-
-	for (p in source) {
+	for (const p in source) {
 		target[p] = source[p];
 	}
+
 	return target;
 }
 

@@ -11,7 +11,7 @@ extend(Chart.prototype, {
 	 * Resize the chart.
 	 * @method resize
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Object} size This argument should include width and height in pixels.
 	 * @example
 	 * // Resize to 640x480
@@ -33,7 +33,7 @@ extend(Chart.prototype, {
 	 * Force to redraw.
 	 * @method flush
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @example
 	 * chart.flush();
 	 */
@@ -49,7 +49,7 @@ extend(Chart.prototype, {
 	 * Reset the chart object and remove element and events completely.
 	 * @method destroy
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @example
 	 * chart.destroy();
 	 */

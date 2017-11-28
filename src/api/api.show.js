@@ -10,7 +10,7 @@ extend(Chart.prototype, {
 	 * Show data points
 	 * @method show
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String|Array} targetIdsValue
 	 * @param {Object} options
 	 */
@@ -40,7 +40,7 @@ extend(Chart.prototype, {
 	 * Hide data points
 	 * @method hide
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {String|Array} targetIdsValue
 	 * @param {Object} options
 	 */
@@ -70,7 +70,7 @@ extend(Chart.prototype, {
 	 * Toggle data points
 	 * @method toggle
 	 * @instance
-	 * @memberof Chart
+	 * @memberOf Chart
 	 * @param {Array} targetIds
 	 * @param {Object} options
 	 */

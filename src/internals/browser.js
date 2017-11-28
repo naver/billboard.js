@@ -4,9 +4,22 @@
  */
 import {isDefined} from "../internals/util";
 
-/* eslint-disable no-new-func, no-nested-ternary */
-const win = isDefined(window) && window.Math === Math ? window : isDefined(self) && self.Math === Math ? self : Function("return this")();
-/* eslint-enable no-new-func, no-nested-ternary */
+/**
+ * Window object
+ * @module
+ * @ignore
+ */
+/* eslint-disable no-new-func */
+const win = isDefined(window) && window.Math === Math ?
+	window : isDefined(self) && (
+		self.Math === Math ?
+			self : Function("return this")()
+	);
+/* eslint-enable no-new-func */
 
-export {win as window};
-export const document = win.document;
+const doc = win.document;
+
+export {
+	win as window,
+	doc as document
+};
