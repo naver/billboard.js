@@ -972,7 +972,11 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Object}
 			 * @property {Array} [color.pattern] custom color pattern
-			 * @property {Function} [color.tiles] if defined, allows use svg's patterns. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
+			 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
+			 *  - **Note:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
+			 *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
+			 *    - `bb-colorize-pattern-red`
+			 *    - `bb-colorize-pattern-fff`
 			 * @property {Object} [color.threshold] color threshold
 			 * @property {String} [color.threshold.unit] unit
 			 * @property {Array} [color.threshold.value] value

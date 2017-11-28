@@ -1874,7 +1874,7 @@ var demos = {
 				}
 			}
 		},
-		ColorTiles: {
+		ColorTiles1: {
 			options: {
 				data: {
 					columns: [
@@ -1919,6 +1919,46 @@ var demos = {
 							circlePattern("yellow", "0.3", "3", "3")
 						];
 					    }
+				}
+			}
+		},
+		ColorTiles2: {
+			options: {
+				data: {
+					columns: [
+						['data1', 50, 25, 45, 19, 50],
+						['data2', 15, 23, 8, 17, 45],
+						['data3', 30, 35, 45, 40, 20]
+					],
+					types: {
+						data1: "area-spline",
+						data2: "bar",
+						data3: "bubble"
+					}
+				},
+				color: {
+					pattern: ["red", "blue", "cyan"],
+					tiles: function() {
+						var pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+							.attr("patternUnits", "userSpaceOnUse")
+							.attr("width", "6")
+							.attr("height", "6");
+
+						var g = pattern
+							.append("g")
+							.attr("fill-rule", "evenodd")
+							.attr("stroke-width", 1)
+							.append("g")
+							.attr("fill", "rgb(255, 127, 14)");
+
+						g.append("polygon").attr("points", "5 0 6 0 0 6 0 5");
+						g.append("polygon").attr("points", "6 5 6 6 5 6");
+
+						// Should return an array of SVGPatternElement
+						return [
+							pattern.node()
+						];
+					}
 				}
 			}
 		},

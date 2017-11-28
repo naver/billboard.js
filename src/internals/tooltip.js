@@ -127,8 +127,8 @@ extend(ChartInternal.prototype, {
 				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}"><td class="name">`;
 
 				text += $$.patterns ?
-					`<svg width="10" height="10"><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :
-					`<span style="background-image:${bgcolor}"></span>`;
+					`<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :
+					`<span style="background-color:${bgcolor}"></span>`;
 
 				text += `${name}</td><td class="value">${value}</td></tr>`;
 			}
