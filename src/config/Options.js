@@ -20,7 +20,7 @@ export default class Options {
 			 *  > On the other hand, if chart always will be binded, polyfill will not be required because MutationObserver will never be called.
 			 * @name bindto
 			 * @memberOf Options
-			 * @type {String}
+			 * @type {String|HTMLElement|d3.selection}
 			 * @default #chart
 			 * @example
 			 * bindto: "#myContainer"
@@ -832,7 +832,7 @@ export default class Options {
 			 * Parse a JSON object for data. See also data.keys.
 			 * @name data․json
 			 * @memberOf Options
-			 * @type {Array}
+			 * @type {Object}
 			 * @default undefined
 			 * @see data․keys
 			 * @example
@@ -1187,7 +1187,7 @@ export default class Options {
 			 * Centerise ticks on category axis.
 			 * @name axis․x․tick․centered
 			 * @memberOf Options
-			 * @type {Array}
+			 * @type {Boolean}
 			 * @default false
 			 * @example
 			 * axis: {
@@ -1225,7 +1225,7 @@ export default class Options {
 			 * We can change the number of ticks to be shown by axis.x.tick.culling.max.
 			 * @name axis․x․tick․culling
 			 * @memberOf Options
-			 * @type {Function}
+			 * @type {Boolean}
 			 * @default
 			 * - true for indexed axis and timeseries axis
 			 * - false for category axis
@@ -1795,7 +1795,7 @@ export default class Options {
 			 * Show or hide y2 axis.
 			 * @name axis․y2․show
 			 * @memberOf Options
-			 * @type {Array}
+			 * @type {Boolean}
 			 * @default false
 			 * @example
 			 * axis: {
@@ -1983,7 +1983,7 @@ export default class Options {
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․padding
 			 * @memberOf Options
-			 * @type {Number}
+			 * @type {Object}
 			 * @default {}
 			 * @example
 			 * axis: {
