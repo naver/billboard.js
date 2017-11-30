@@ -2,19 +2,52 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {
+	select as d3Select
+} from "d3";
+
 import ChartInternal from "../internals/ChartInternal";
-import {isFunction, isObjectType, extend} from "../internals/util";
+import {isFunction, isObjectType, extend, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
 		return /^(circle|rect(angle)?|polygon|ellipse)$/i.test(type || this.config.point_type);
 	},
 
-	hasValidPointDrawMethods() {
-		const pointType = this.config.point_type;
+	hasValidPointDrawMethods(type) {
+		const pointType = type || this.config.point_type;
 
 		return isObjectType(pointType) &&
 			isFunction(pointType.create) && isFunction(pointType.update);
+	},
+
+	generatePoint() {
+		const $$ = this;
+		const config = $$.config;
+		const ids = [];
+		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+
+		return function(method, context, ...args) {
+			return function(d) {
+				const id = d.id || (d.data && d.data.id) || d;
+				let point;
+
+				if (ids.indexOf(id) < 0) {
+					ids.push(id);
+				}
+				point = pattern[ids.indexOf(id) % pattern.length];
+
+				if ($$.hasValidPointType(point)) {
+					point = $$[point];
+
+				// If no valid point is found, default to "circle"
+				} else if (!$$.hasValidPointDrawMethods(point)) {
+					point = $$.circle;
+				}
+
+				return point[method].bind(context)(d3Select(this), ...args);
+			};
+		};
 	},
 
 	getTransitionName() {
@@ -24,10 +57,11 @@ extend(ChartInternal.prototype, {
 	// 'circle' data point
 	circle: {
 		create(element, cssClassFn, sizeFn, fillStyleFn) {
-			return (element.empty() ? element.enter().append("circle") : element)
+			return element.append("circle")
 				.attr("class", cssClassFn)
 				.attr("r", sizeFn)
-				.style("fill", fillStyleFn);
+				.style("fill", fillStyleFn)
+				.node();
 		},
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
@@ -70,11 +104,12 @@ extend(ChartInternal.prototype, {
 		create(element, cssClassFn, sizeFn, fillStyleFn) {
 			const rectSizeFn = d => sizeFn(d) * 2.0;
 
-			return element.enter().append("rect")
+			return element.append("rect")
 				.attr("class", cssClassFn)
 				.attr("width", rectSizeFn)
 				.attr("height", rectSizeFn)
-				.style("fill", fillStyleFn);
+				.style("fill", fillStyleFn)
+				.node();
 		},
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,

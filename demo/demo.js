@@ -1608,12 +1608,13 @@ var demos = {
 				point: {
 					type: {
 						create: function(element, cssClassFn, sizeFn, fillStyleFn) {
-							return element.enter().append("polygon")
+							return element.append("polygon")
 								.attr("class", cssClassFn)
-								.style("fill", fillStyleFn);
+								.style("fill", fillStyleFn)
+								.node();
 						},
 						update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
-						                 withTransition, flow, selectedCircles) {
+														withTransition, flow, selectedCircles) {
 							var size = this.pointR(element) * 3.0;
 							var halfSize = size * 0.5;
 
@@ -1649,9 +1650,10 @@ var demos = {
 					type: {
 						create: function(element, cssClassFn, sizeFn, fillStyle) {
 							// create custom an element node
-							return element.enter().append("polygon")
+							return element.append("polygon")
 								.attr("class", cssClassFn)
-								.style("fill", fillStyle);
+								.style("fill", fillStyle)
+								.node();
 						},
 
 						update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
@@ -1681,6 +1683,59 @@ var demos = {
 							return mainCircles;
 						}
 					}
+				}
+			}
+		},
+		Patterns: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 60, 500, 300, 200],
+						['data3', 80, 40, 800, 30, 120],
+						['data4', 120, 100, 50, 120, 210]
+					]
+				},
+				point: {
+					pattern: [
+						"circle",
+						{
+							create: function(element, cssClassFn, sizeFn, fillStyleFn) {
+								return element.append("polygon")
+									.attr("class", cssClassFn)
+									.style("fill", fillStyleFn)
+									.node();
+							},
+
+							update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+															withTransition, flow, selectedCircles) {
+								var size = this.pointR(element) * 3.0;
+								var halfSize = size * 0.5;
+
+								function getPoints(d) {
+									var x1 = xPosFn(d);
+									var y1 = yPosFn(d) - halfSize;
+									var x2 = x1 - halfSize;
+									var y2 = y1 + halfSize;
+									var x3 = x1;
+									var y3 = y2 + halfSize;
+									var x4 = x1 + halfSize;
+									var y4 = y2;
+
+									return [x1, y1, x2, y2, x3, y3, x4, y4].join(" ");
+								}
+
+								// style the custom element added
+								mainCircles = element
+									.attr("points", getPoints)
+									.style("opacity", opacityStyleFn)
+									.style("fill", fillStyleFn);
+
+								return mainCircles;
+							}
+						},
+						"rectangle"
+					]
 				}
 			}
 		}

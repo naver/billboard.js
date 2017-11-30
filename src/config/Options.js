@@ -2082,6 +2082,11 @@ export default class Options {
 			 * - **Available Values:**
 			 *  - circle
 			 *  - rectangle
+			 * @property {Array} [point.pattern=[]] The type of point to be drawn for each line<br>
+			 * - **Note:** If chart has 'bubble' type, only circle can be used.<br>
+			 * - **Available Values:**
+			 *  - circle
+			 *  - rectangle
 			 *
 			 * @property {Function} [point.type.create] If specified will be invoked to create data points, this function must return a d3 selection.
 			 * @property {Function} [point.type.update] If specified will be invoked to update data points, this function must return a d3 selection.
@@ -2121,7 +2126,27 @@ export default class Options {
 			 *              ...
 			 *              return element;
 			 *          }
-			 *      }
+			 *      },
+			 *
+			 *      pattern: ["circle", "rectangle"],
+			 *
+			 *      pattern: [
+			 *        "circle",
+			 *        "rectangle",
+			 *        {
+			 *          // to create a custom type, set create & update functions as well
+			 *          create: function(element, cssClassFn, sizeFn, fillStyleFn) {
+			 *              // should create node element to be used as data point and must return node
+			 *              ...
+			 *              return element.node();
+			 *          },
+			 *          update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
+			 *              // adjust the position & styles to the given element and must return a d3.selection
+			 *              ...
+			 *              return element;
+			 *          }
+			 *        }
+			 *     ],
 			 *  }
 			 */
 			point_show: true,
@@ -2129,6 +2154,7 @@ export default class Options {
 			point_sensitivity: 10,
 			point_focus_expand_enabled: true,
 			point_focus_expand_r: undefined,
+			point_pattern: [],
 			point_select_r: undefined,
 			point_type: "circle",
 

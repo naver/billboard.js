@@ -101,6 +101,7 @@ export default class ChartInternal {
 
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
+		$$.point = $$.generatePoint();
 
 		$$.extraLineClasses = $$.generateExtraLineClass();
 
