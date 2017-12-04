@@ -2092,7 +2092,11 @@ export default class Options {
 			 * - **Available Values:**
 			 *  - circle
 			 *  - rectangle
-			 *
+			 * @property {Array} [point.pattern=[]] The type of point to be drawn for each line<br>
+ 			 * - **Note:** If chart has 'bubble' type, only circle can be used.<br>
+			 * - **Available Values:**
+			 *  - circle
+ 			 *  - rectangle
 			 * @property {Function} [point.type.create] If specified will be invoked to create data points, this function must return a d3 selection.
 			 * @property {Function} [point.type.update] If specified will be invoked to update data points, this function must return a d3 selection.
 			 * @example
@@ -2116,22 +2120,15 @@ export default class Options {
 			 *          r: 3
 			 *      },
 			 *
-			 *      type: "rectangle",
+			 *      type: "rectangle", // valid values are "circle" or "rectangle"
 			 *
-			 *      // or for custom shapes you can use an object with a "create" and "update" functions
-			 *      type: {
-			 *          // to create a custom type, set create & update functions as well
-			 *          create: function(element, cssClassFn, sizeFn, fillStyleFn) {
-			 *              // should create node element to be used as data point and must return a d3.selection
-			 *              ...
-			 *              return element;
-			 *          },
-			 *          update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
-			 *              // adjust the position & styles to the given element and must return a d3.selection
-			 *              ...
-			 *              return element;
-			 *          }
-			 *      }
+			 *      pattern: ["circle", "rectangle"],
+			 *
+ 			 *      pattern: [
+ 			 *        "circle",
+ 			 *        "rectangle",
+ 			 *        "<polygon points='0 6 4 0 -4 0'></polygon>"
+ 			 *     ],
 			 *  }
 			 */
 			point_show: true,
@@ -2139,6 +2136,7 @@ export default class Options {
 			point_sensitivity: 10,
 			point_focus_expand_enabled: true,
 			point_focus_expand_r: undefined,
+			point_pattern: [],
 			point_select_r: undefined,
 			point_type: "circle",
 
