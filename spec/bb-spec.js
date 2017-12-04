@@ -22,6 +22,7 @@ describe("Interface & initialization", () => {
 		});
 
 		expect(chart).not.to.be.null;
+		expect(d3.select(chart.element).classed("bb")).to.be.true;
 		expect(chart.internal.svg.node().tagName).to.be.equal("svg");
 	});
 
@@ -52,5 +53,23 @@ describe("Interface & initialization", () => {
 			document.body.innerHTML = "";
 			done();
 		}, 100);
+	});
+
+	it("instantiate with different classname on wrapper element", () => {
+		const bindtoClassName = "billboard-js";
+		const chart = bb.generate({
+			bindto: {
+				element: "#chart",
+				classname: bindtoClassName
+			},
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 500, 800, 500, 2000]
+				]
+			}
+		});
+
+		expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
 	});
 });

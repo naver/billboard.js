@@ -14,7 +14,7 @@ import {
 } from "d3";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber} from "./util";
+import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";
 
 /**
  * Internal chart class.
@@ -175,9 +175,19 @@ export default class ChartInternal {
 		$$.initBrush && $$.initBrush();
 		$$.initZoom && $$.initZoom();
 
+		const bindto = {
+			element: config.bindto,
+			classname: "bb"
+		};
+
+		if (isObject(config.bindto)) {
+			bindto.element = config.bindto.element || "#chart";
+			bindto.classname = config.bindto.classname || bindto.classname;
+		}
+
 		// select bind element
-		$$.selectChart = isFunction(config.bindto.node) ?
-			config.bindto : d3Select(!config.bindto ? [] : config.bindto);
+		$$.selectChart = isFunction(bindto.element.node) ?
+			config.bindto.element : d3Select(!bindto.element ? [] : bindto.element);
 
 		if ($$.selectChart.empty()) {
 			$$.selectChart = d3Select(document.createElement("div")).style("opacity", "0");
@@ -185,7 +195,7 @@ export default class ChartInternal {
 			binding = false;
 		}
 
-		$$.selectChart.html("").classed("bb", true);
+		$$.selectChart.html("").classed(bindto.classname, true);
 
 		// Init data as targets
 		$$.data.xs = {};
