@@ -12,24 +12,34 @@ export default class Options {
 	constructor() {
 		this.value = {
 			/**
-			 * bindto The CSS selector or the element which the chart will be set to. D3 selection object can be specified. If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
+			 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
+			 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
 			 * If this option is not specified, the chart will be generated but not be set. Instead, we can access the element by chart.element and set it by ourselves.<br>
 			 * - **NOTE:**
-			 *  > When chart is not binded, bb starts observing if chart.element is binded by MutationObserver.
-			 *  > In this case, polyfill is required in IE9 and IE10 becuase they do not support MutationObserver.
-			 *  > On the other hand, if chart always will be binded, polyfill will not be required because MutationObserver will never be called.
+			 *  > When chart is not bound, it'll start observing if `chart.element` is bound by MutationObserver.<br>
+			 *  > In this case, polyfill is required in IE9 and IE10 because they do not support MutationObserver.<br>
+			 *  > On the other hand, if chart always will be bound, polyfill will not be required because MutationObserver will never be called.
 			 * @name bindto
 			 * @memberOf Options
-			 * @type {String|HTMLElement|d3.selection}
+			 * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.
+			 * @property {String|HTMLElement|d3.selection} bindto.element=#chart Specify the element where chart will be drawn.
+			 * @property {String} [bindto.classname=bb] Specify the class name of bind element.<br>
+			 *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
 			 * @default #chart
 			 * @example
 			 * bindto: "#myContainer"
 			 *
-			 * // or element
+			 * // or HTMLElement
 			 * bindto: document.getElementById("myContainer")
 			 *
 			 * // or D3 selection object
 			 * bindto: d3.select("#myContainer")
+			 *
+			 * // or to change default classname
+			 * bindto: {
+			 *  element: "#chart",
+			 *  classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
+			 * }
 			 */
 			bindto: "#chart",
 
