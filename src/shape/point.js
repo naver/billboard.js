@@ -37,6 +37,8 @@ extend(ChartInternal.prototype, {
 		const node = defs.node().lastChild;
 
 		node.setAttribute("id", id);
+		node.style.fill = "inherit";
+		node.style.stroke = "none";
 	},
 
 	pointFromDefs(id) {
@@ -73,7 +75,7 @@ extend(ChartInternal.prototype, {
 					}
 
 					if (method === "create") {
-						return $$.custom.create.bind(context)(d3Select(this), pointId);
+						return $$.custom.create.bind(context)(d3Select(this), pointId, ...args);
 					} else if (method === "update") {
 						return $$.custom.update.bind(context)(d3Select(this), ...args);
 					}
@@ -89,32 +91,20 @@ extend(ChartInternal.prototype, {
 	},
 
 	custom: {
-		create(element, id) {
+		create(element, id, cssClassFn, sizeFn, fillStyleFn) {
 			return element.append("use")
 				.attr("xlink:href", `#${id}`)
+				.attr("class", cssClassFn)
+				.style("fill", fillStyleFn)
 				.node();
 		},
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
-			const size = this.pointR(element) * 3;
-			const halfSize = size * 0.5;
-
-			function getPoints(d) {
-				const x1 = xPosFn(d);
-				const y1 = yPosFn(d) - halfSize;
-				const x2 = x1 - halfSize;
-				const y2 = y1 + size;
-				const x3 = x1 + halfSize;
-				const y3 = y2;
-
-				return [x1, y1, x2, y2, x3, y3].join(" ");
-			}
-
-			// The attribute should be set on the element's
-			// first child and not "element" itself.
+			const box = element.node().getBBox();
 			const mainCircles = element
-				.attr("points", getPoints);
+				.attr("x", d => xPosFn(d) - (box.width * 0.25))
+				.attr("y", d => yPosFn(d) - (box.height * 0.5));
 
 			return mainCircles
 				.style("opacity", opacityStyleFn)
