@@ -21,6 +21,31 @@ extend(ChartInternal.prototype, {
 			isFunction(pointType.create) && isFunction(pointType.update);
 	},
 
+	insertPointInfoDefs(point, id) {
+		const $$ = this;
+		const defs = $$.svg.select("defs");
+
+		if (defs.size < 1) {
+			return;
+		}
+
+		const html = defs.html();
+
+		// Add the point node into <defs>
+		defs.html(`${html}${point}`);
+
+		const node = defs.node().lastChild;
+
+		node.setAttribute("id", id);
+	},
+
+	pointFromDefs(id) {
+		const $$ = this;
+		const defs = $$.svg.select("defs");
+
+		return defs.select(`#${id}`);
+	},
+
 	generatePoint() {
 		const $$ = this;
 		const config = $$.config;
@@ -39,10 +64,19 @@ extend(ChartInternal.prototype, {
 
 				if ($$.hasValidPointType(point)) {
 					point = $$[point];
-
-				// If no valid point is found, default to "circle"
 				} else if (!$$.hasValidPointDrawMethods(point)) {
-					point = $$.circle;
+					const pointId = `bb-point-${id}`;
+					const pointFromDefs = $$.pointFromDefs(pointId);
+
+					if (pointFromDefs.size() < 1) {
+						$$.insertPointInfoDefs(point, pointId);
+					}
+
+					if (method === "create") {
+						return $$.custom.create.bind(context)(d3Select(this), pointId);
+					} else if (method === "update") {
+						return $$.custom.update.bind(context)(d3Select(this), ...args);
+					}
 				}
 
 				return point[method].bind(context)(d3Select(this), ...args);
@@ -52,6 +86,40 @@ extend(ChartInternal.prototype, {
 
 	getTransitionName() {
 		return Math.random().toString();
+	},
+
+	custom: {
+		create(element, id) {
+			return element.append("use")
+				.attr("xlink:href", `#${id}`)
+				.node();
+		},
+
+		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+			withTransition, flow, selectedCircles) {
+			const size = this.pointR(element) * 3;
+			const halfSize = size * 0.5;
+
+			function getPoints(d) {
+				const x1 = xPosFn(d);
+				const y1 = yPosFn(d) - halfSize;
+				const x2 = x1 - halfSize;
+				const y2 = y1 + size;
+				const x3 = x1 + halfSize;
+				const y3 = y2;
+
+				return [x1, y1, x2, y2, x3, y3].join(" ");
+			}
+
+			// The attribute should be set on the element's
+			// first child and not "element" itself.
+			const mainCircles = element
+				.attr("points", getPoints);
+
+			return mainCircles
+				.style("opacity", opacityStyleFn)
+				.style("fill", fillStyleFn);
+		}
 	},
 
 	// 'circle' data point
