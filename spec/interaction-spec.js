@@ -163,7 +163,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("set option point.type='rectangle'", () => {
-				args.point.type = "rectangle";
+				args.point.pattern = ["rectangle"];
 				clicked = false;
 				data = null;
 			});
@@ -183,34 +183,9 @@ describe("INTERACTION", () => {
 			});
 
 			it("set option point.type=polygon(custom triangle)", () => {
-				args.point.type = {
-					create: function(element, cssClassFn, sizeFn, fillStyleFn) {
-						return element.enter().append("polygon")
-							.attr("class", cssClassFn)
-							.style("fill", fillStyleFn);
-					},
-					update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
-					                 withTransition, flow, selectedCircles) {
-						var size = this.pointR(element) * 3.0;
-						var halfSize = size * 0.5;
-
-						function getPoints(d) {
-							var x1 = xPosFn(d);
-							var y1 = yPosFn(d) - halfSize;
-							var x2 = x1 - halfSize;
-							var y2 = y1 + size;
-							var x3 = x1 + halfSize;
-							var y3 = y2;
-
-							return [x1, y1, x2, y2, x3, y3].join(" ");
-						}
-
-						return element
-							.attr("points", getPoints)
-							.style("opacity", opacityStyleFn)
-							.style("fill", fillStyleFn);
-					}
-				};
+				args.point.pattern = 	[
+					"<polygon points='5 2.5 2.5 5 7.5 5'></polygon>"
+				];
 
 				clicked = false;
 				data = null;
@@ -219,20 +194,20 @@ describe("INTERACTION", () => {
 			it("check for data click for polygon data point", () => {
 				const main = chart.internal.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
-				const circle = main.select(`.${CLASS.circles}-data2 polygon`).node().getBBox();
+				const circle = main.select(`.${CLASS.circles}-data2 use`).node().getBBox();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
 					clientY: circle.y
 				}, chart);
 
-				expect(clicked).to.be.true;
-				expect(data.value).to.be.equal(20);
+				expect(clicked).to.be.false;
+				expect(data).to.be.equal(null);
 			});
 
 			it("set option data.type='area'", () => {
 				args.data.type = "area";
-				args.point.type = "circle";
+				args.point.pattern = ["circle"];
 
 				clicked = false;
 				data = null;

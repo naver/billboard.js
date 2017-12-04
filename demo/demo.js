@@ -1606,79 +1606,59 @@ var demos = {
 					]
 				},
 				point: {
-					type: {
-						create: function(element, cssClassFn, sizeFn, fillStyleFn) {
-							return element.enter().append("polygon")
-								.attr("class", cssClassFn)
-								.style("fill", fillStyleFn);
-						},
-						update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
-						                 withTransition, flow, selectedCircles) {
-							var size = this.pointR(element) * 3.0;
-							var halfSize = size * 0.5;
-
-							function getPoints(d) {
-								var x1 = xPosFn(d);
-								var y1 = yPosFn(d) - halfSize;
-								var x2 = x1 - halfSize;
-								var y2 = y1 + size;
-								var x3 = x1 + halfSize;
-								var y3 = y2;
-
-								return [x1, y1, x2, y2, x3, y3].join(" ");
-							}
-
-							return element
-								.attr("points", getPoints)
-								.style("opacity", opacityStyleFn)
-								.style("fill", fillStyleFn);
-						}
-					}
+					pattern: [
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+					]
 				}
 			}
 		},
-		CustomPointsDiamond: {
+		CustomPointsDiamonds: {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 200, 1000, 900, 500],
+						['data1', 100, 400, 1000, 900, 500],
 						['data2', 20, 40, 500, 300, 200]
 					]
 				},
 				point: {
-					type: {
-						create: function(element, cssClassFn, sizeFn, fillStyle) {
-							// create custom an element node
-							return element.enter().append("polygon")
-								.attr("class", cssClassFn)
-								.style("fill", fillStyle);
-						},
-
-						update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
-						                 withTransition, flow, selectedCircles) {
-							var size = this.pointR(element) * 3.0;
-							var halfSize = size * 0.5;
-
-							function getPoints(d) {
-								var x1 = xPosFn(d);
-								var y1 = yPosFn(d) - halfSize;
-								var x2 = x1 - halfSize;
-								var y2 = y1 + halfSize;
-								var x3 = x1;
-								var y3 = y2 + halfSize;
-								var x4 = x1 + halfSize;
-								var y4 = y2;
-
-								return [x1, y1, x2, y2, x3, y3, x4, y4].join(" ");
-							}
-
-							// style the custom element added
-							return element
-								.attr("points", getPoints)
-								.style("opacity", opacityStyleFn)
-								.style("fill", fillStyleFn);
-						}
-					}
+					pattern: [
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+					]
+				}
+			}
+		},
+		CustomPointsHearts: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 400, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					pattern: [
+						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
+					]
+				}
+			}
+		},
+		CombinationPoints: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 400, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200],
+						['data3', 80, 350, 800, 450, 500],
+						['data4', 150, 240, 300, 700, 300]
+					]
+				},
+				point: {
+					pattern: [
+						"circle",
+						"rectangle",
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+					]
 				}
 			}
 		}

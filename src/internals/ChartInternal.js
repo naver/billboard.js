@@ -82,7 +82,8 @@ export default class ChartInternal {
 		const config = $$.config;
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
-		$$.clipId = `bb-${+new Date()}-clip`;
+		$$.datetimeId = `bb-${+new Date()}`;
+		$$.clipId = `${$$.datetimeId}-clip`;
 		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
 		$$.clipIdForGrid = `${$$.clipId}-grid`;
@@ -101,6 +102,7 @@ export default class ChartInternal {
 
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
+		$$.point = $$.generatePoint();
 
 		$$.extraLineClasses = $$.generateExtraLineClass();
 
@@ -257,17 +259,17 @@ export default class ChartInternal {
 			$$.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		const defs = $$.svg.append("defs");
+		$$.defs = $$.svg.append("defs");
 
-		$$.clipChart = $$.appendClip(defs, $$.clipId);
-		$$.clipXAxis = $$.appendClip(defs, $$.clipIdForXAxis);
-		$$.clipYAxis = $$.appendClip(defs, $$.clipIdForYAxis);
-		$$.clipGrid = $$.appendClip(defs, $$.clipIdForGrid);
-		$$.clipSubchart = $$.appendClip(defs, $$.clipIdForSubchart);
+		$$.clipChart = $$.appendClip($$.defs, $$.clipId);
+		$$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis);
+		$$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis);
+		$$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid);
+		$$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart);
 
 		// set color patterns
 		if (isFunction(config.color_tiles) && $$.patterns) {
-			$$.patterns.forEach(p => defs.append(() => p.node));
+			$$.patterns.forEach(p => $$.defs.append(() => p.node));
 		}
 
 		$$.updateSvgSize();

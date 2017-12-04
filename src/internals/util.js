@@ -267,6 +267,7 @@ const colorizePattern = (pattern, color) => {
  * Copy array like object to array
  * @param {Object} v
  * @returns {Array}
+ * @private
  */
 const toArray = v => [].slice.call(v);
 
@@ -274,6 +275,7 @@ const toArray = v => [].slice.call(v);
  * Get css rules for specified stylesheets
  * @param {Array} styleSheets The stylesheets to get the rules from
  * @returns {Array}
+ * @private
  */
 const getCssRules = styleSheets => {
 	let rules = [];

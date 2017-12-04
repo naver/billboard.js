@@ -2087,14 +2087,23 @@ export default class Options {
 			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
 			 *  - **Note:** For 'bubble' type, the default is `bubbleSize*1.15`
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
-			 * @property {String|Object} [point.type="circle"] The type of point to be drawn<br>
-			 * - **Note:** If chart has 'bubble' type, only circle can be used.<br>
+			 * @property {String} [point.type="circle"] The type of point to be drawn<br>
+			 * - **Note:**
+			 *  - If chart has 'bubble' type, only circle can be used.
+			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
 			 *  - circle
 			 *  - rectangle
-			 *
-			 * @property {Function} [point.type.create] If specified will be invoked to create data points, this function must return a d3 selection.
-			 * @property {Function} [point.type.update] If specified will be invoked to update data points, this function must return a d3 selection.
+			 * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line<br>
+ 			 * - **Note:**
+			 *  - This is an `experimental` feature and can have some unexpected behaviors.
+			 *  - If chart has 'bubble' type, only circle can be used.
+			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
+			 * - **Available Values:**
+			 *  - circle
+ 			 *  - rectangle
+			 *  - svg shape tag interpreted as string<br>
+			 *    (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
 			 * @example
 			 *  point: {
 			 *      show: false,
@@ -2116,22 +2125,15 @@ export default class Options {
 			 *          r: 3
 			 *      },
 			 *
+			 *      // valid values are "circle" or "rectangle"
 			 *      type: "rectangle",
 			 *
-			 *      // or for custom shapes you can use an object with a "create" and "update" functions
-			 *      type: {
-			 *          // to create a custom type, set create & update functions as well
-			 *          create: function(element, cssClassFn, sizeFn, fillStyleFn) {
-			 *              // should create node element to be used as data point and must return a d3.selection
-			 *              ...
-			 *              return element;
-			 *          },
-			 *          update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
-			 *              // adjust the position & styles to the given element and must return a d3.selection
-			 *              ...
-			 *              return element;
-			 *          }
-			 *      }
+			 *      // or indicate as pattern
+ 			 *      pattern: [
+ 			 *        "circle",
+ 			 *        "rectangle",
+ 			 *        "<polygon points='0 6 4 0 -4 0'></polygon>"
+ 			 *     ],
 			 *  }
 			 */
 			point_show: true,
@@ -2139,6 +2141,7 @@ export default class Options {
 			point_sensitivity: 10,
 			point_focus_expand_enabled: true,
 			point_focus_expand_r: undefined,
+			point_pattern: [],
 			point_select_r: undefined,
 			point_type: "circle",
 

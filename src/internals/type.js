@@ -112,7 +112,11 @@ extend(ChartInternal.prototype, {
 
 	// determine if is 'circle' data point
 	isCirclePoint() {
-		return this.config.point_type === "circle";
+		const config = this.config;
+		const pattern = config.point_pattern;
+
+		return config.point_type === "circle" &&
+			(!pattern || (isArray(pattern) && pattern.length === 0));
 	},
 
 	lineData(d) {

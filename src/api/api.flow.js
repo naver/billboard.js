@@ -406,7 +406,9 @@ extend(ChartInternal.prototype, {
 
 					mainCircle
 						.attr("x", xFunc)
-						.attr("y", yFunc);
+						.attr("y", yFunc)
+						.attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
+						.attr("cy", cy);
 				}
 
 				mainText
