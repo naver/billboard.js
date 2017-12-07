@@ -24,7 +24,7 @@ extend(ChartInternal.prototype, {
 	// 'circle' data point
 	circle: {
 		create(element, cssClassFn, sizeFn, fillStyleFn) {
-			return (element.empty() ? element.enter().append("circle") : element)
+			return element.enter().append("circle")
 				.attr("class", cssClassFn)
 				.attr("r", sizeFn)
 				.style("fill", fillStyleFn);
@@ -32,29 +32,32 @@ extend(ChartInternal.prototype, {
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
-			let mainCircles;
+			const $$ = this;
+			let mainCircles = element;
+
+			// when '.load()' called, bubble size should be updated
+			if ($$.hasType("bubble")) {
+				mainCircles = mainCircles
+					.attr("r", $$.pointR.bind($$));
+			}
 
 			if (withTransition) {
-				const transitionName = this.getTransitionName();
+				const transitionName = $$.getTransitionName();
 
 				if (flow) {
-					mainCircles = element
-						.attr("cx", xPosFn)
-						.transition(transitionName)
-						.attr("cx", xPosFn)
-						.attr("cy", yPosFn)
-						.transition(transitionName);
-				} else {
-					mainCircles = element
-						.transition(transitionName)
-						.attr("cx", xPosFn)
-						.attr("cy", yPosFn)
-						.transition(transitionName);
+					mainCircles = mainCircles
+						.attr("cx", xPosFn);
 				}
 
-				selectedCircles.transition(this.getTransitionName());
+				mainCircles = mainCircles
+					.transition(transitionName)
+					.attr("cx", xPosFn)
+					.attr("cy", yPosFn)
+					.transition(transitionName);
+
+				selectedCircles.transition($$.getTransitionName());
 			} else {
-				mainCircles = element
+				mainCircles = mainCircles
 					.attr("cx", xPosFn)
 					.attr("cy", yPosFn);
 			}
@@ -79,33 +82,30 @@ extend(ChartInternal.prototype, {
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
-			const r = this.config.point_r;
+			const $$ = this;
+			const r = $$.config.point_r;
 			const rectXPosFn = d => xPosFn(d) - r;
 			const rectYPosFn = d => yPosFn(d) - r;
 
-			let mainCircles;
+			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = this.getTransitionName();
+				const transitionName = $$.getTransitionName();
 
 				if (flow) {
-					mainCircles = element
-						.attr("x", rectXPosFn)
-						.transition(transitionName)
-						.attr("x", rectXPosFn)
-						.attr("y", rectYPosFn)
-						.transition(transitionName);
-				} else {
-					mainCircles = element
-						.transition(transitionName)
-						.attr("x", rectXPosFn)
-						.attr("y", rectYPosFn)
-						.transition(transitionName);
+					mainCircles = mainCircles
+						.attr("x", rectXPosFn);
 				}
 
-				selectedCircles.transition(this.getTransitionName());
+				mainCircles = mainCircles
+					.transition(transitionName)
+					.attr("x", rectXPosFn)
+					.attr("y", rectYPosFn)
+					.transition(transitionName);
+
+				selectedCircles.transition($$.getTransitionName());
 			} else {
-				mainCircles = element
+				mainCircles = mainCircles
 					.attr("x", rectXPosFn)
 					.attr("y", rectYPosFn);
 			}

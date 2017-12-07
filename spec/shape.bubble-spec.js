@@ -46,7 +46,7 @@ describe("SHAPE BUBBLE", () => {
 		it("bubble size should be updated", done => {
 			chart.load({
 				columns: [
-					['data1', 380, 350, 200, 380, 10]
+					['data1', 500, 350, 200, 380, 10]
 				]
 			});
 
