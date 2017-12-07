@@ -2499,6 +2499,28 @@ var demos = {
 				"#Regions .fill_green { fill: green; }",
 				"#Regions .fill_red { fill: red; }"
 			]
+		},
+		Export: {
+			options: {
+				data: {
+					columns: [
+						['sample', 30, 200, 100, 400, 150, 250]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.export("image/png", dataUrl => {
+					const link = document.createElement("a");
+
+					link.download = `${Date.now()}.png`;
+					link.href = dataUrl;
+					document.body.appendChild(link);
+
+					setTimeout(() => {
+						link.click();
+					}, 400);
+				});
+			}
 		}
 	},
 

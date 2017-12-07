@@ -117,5 +117,6 @@ require("./api/api.chart.js");
 require("./api/api.tooltip.js");
 require("./axis/bb.axis.js");
 require("./internals/ua.js");
+require("./api/api.export.js");
 
 export {bb, d3};
