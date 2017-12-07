@@ -516,9 +516,16 @@ extend(ChartInternal.prototype, {
 		} else {
 			const scale = r(circles) / $$.config.point_r;
 
-			circles
-				.style("transform-origin", "center")
-				.style("transform", `scale(${scale})`);
+			// transform must be applied to each node individually
+			circles.each(function(d) {
+				const box = this.getBBox();
+				const x1 = box.x + (box.width * 0.5);
+				const y1 = box.y + (box.height * 0.5);
+				const x2 = (1 - scale) * x1;
+				const y2 = (1 - scale) * y1;
+
+				this.style.transform = `translate(${x2}px, ${y2}px) scale(${scale})`;
+			});
 		}
 	},
 

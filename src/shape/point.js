@@ -103,7 +103,7 @@ extend(ChartInternal.prototype, {
 			withTransition, flow, selectedCircles) {
 			const box = element.node().getBBox();
 			const mainCircles = element
-				.attr("x", d => xPosFn(d) - (box.width * 0.25))
+				.attr("x", d => xPosFn(d) - (box.width * 0.5))
 				.attr("y", d => yPosFn(d) - (box.height * 0.5));
 
 			return mainCircles
