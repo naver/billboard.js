@@ -70,7 +70,7 @@ export default class Axis {
 
 		let newTickValues = tickValues;
 
-		if ($$.isTimeSeries() && tickValues && isFunction(tickValues)) {
+		if ($$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
 			newTickValues = tickValues.map(v => $$.parseDate(v));
 		}
 
