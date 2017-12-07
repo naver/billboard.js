@@ -56,6 +56,9 @@ extend(ChartInternal.prototype, {
 	loadFromArgs(args) {
 		const $$ = this;
 
+		// reset internally cached data
+		$$.resetCache();
+
 		if (args.data) {
 			$$.load($$.convertDataToTargets(args.data), args);
 		} else if (args.url) {
@@ -77,6 +80,9 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
+
+		// reset internally cached data
+		$$.resetCache();
 
 		if (!done) {
 			done = () => {};
@@ -107,9 +113,6 @@ extend(ChartInternal.prototype, {
 			// Remove target
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
 		});
-
-		// reset internally cached data
-		$$.resetCache();
 	}
 });
 

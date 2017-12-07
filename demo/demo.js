@@ -1673,12 +1673,10 @@ var demos = {
 							}
 
 							// style the custom element added
-							mainCircles = element
+							return element
 								.attr("points", getPoints)
 								.style("opacity", opacityStyleFn)
 								.style("fill", fillStyleFn);
-
-							return mainCircles;
 						}
 					}
 				}
