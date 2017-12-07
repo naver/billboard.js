@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+
+    <title> </title>
+
+    <link href="../dist/billboard.css" rel="stylesheet">
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/4.9.0/d3.js"></script>
+    <script src="../dist/billboard.js"></script>
+</head>
+
+<body>
+
+<div id="chart"></div>
+
+<script>
+
+  var chart = bb.generate({
+    data: {
+      // Line chart data
+      columns: [
+        ['data1',  50, 100, 200, 300, 120],
+        ['data2',  20,  80, 120, 350,  10],
+        ['data3',  30, 210, 140, 240,  80],
+        // ['data4',  60, 180, 230,  20,  30],
+        // ['data5', 160, 10,  30,  220,  70],
+        // ['data6',  90, 240,  10, 270,  90],
+        // ['data7', 120,  20, 180,  80, 210],
+      ],
+      // type: 'bar'
+
+      // Pie chart data
+      // columns: [
+      //   ['data1', 20],
+      //   ['data2', 35],
+      //   ['data3', 45]
+      // ],
+      // type: "pie"
+    },
+
+
+    point: {
+      type: "rectangle",
+
+      pattern: [
+        "circle",
+        "rectangle",
+
+        // star
+        "<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' style='fill:inherit;stroke:none' />",
+
+        // heart
+        // "<path d='m0.811876,3.124389l2.36343,0l0.730318,-2.343391l0.730319,2.343391l2.36343,0l-1.912052,1.448279l0.730356,2.343391l-1.912053,-1.448318l-1.912052,1.448318l0.730356,-2.343391l-1.912052,-1.448279z' />"
+
+        // {
+        //   create(element, cssClassFn, sizeFn, fillStyleFn) {
+        //     return element.append("polygon")
+        //       .attr("class", cssClassFn)
+        //       .style("fill", fillStyleFn)
+        //       .node();
+        //   },
+        //
+        //   update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
+        //     var size = this.pointR(element) * 3;
+        //     var halfSize = size * 0.5;
+        //
+        //     function getPoints(d) {
+        //         var x1 = xPosFn(d);
+        //         var y1 = yPosFn(d) - halfSize;
+        //         var x2 = x1 - halfSize;
+        //         var y2 = y1 + size;
+        //         var x3 = x1 + halfSize;
+        //         var y3 = y2;
+        //
+        //         return [x1, y1, x2, y2, x3, y3].join(" ");
+        //       }
+        //
+        //     return element
+        //       .attr("points", getPoints)
+        //       .style("opacity", opacityStyleFn)
+        //       .style("fill", fillStyleFn);
+        //   }
+        // },
+
+        //"start", // invalid point type
+
+        // {
+        //   create(element, cssClassFn, sizeFn, fillStyleFn) {
+        //     return element.append("polygon")
+        //       .attr("class", cssClassFn)
+        //       .style("fill", fillStyleFn)
+        //       .node();
+        //   },
+        //
+        //   update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
+        //     var size = this.pointR(element) * 3;
+        //     var halfSize = size * 0.5;
+        //
+        //     function getPoints(d) {
+        //       var x1 = xPosFn(d);
+        //       var y1 = yPosFn(d) - halfSize;
+        //       var x2 = x1 - halfSize;
+        //       var y2 = y1 + halfSize;
+        //       var x3 = x1;
+        //       var y3 = y2 + halfSize;
+        //       var x4 = x1 + halfSize;
+        //       var y4 = y2;
+        //
+        //       return [x1, y1, x2, y2, x3, y3, x4, y4].join(" ");
+        //     }
+        //
+        //     // style the custom element added
+        //     mainCircles = element
+        //       .attr("points", getPoints)
+        //       .style("opacity", opacityStyleFn)
+        //       .style("fill", fillStyleFn);
+        //
+        //     return mainCircles;
+        //   }
+        // }
+      ]
+    },
+
+    // color: {
+    //   pattern: ['red', 'gold', 'green'],
+    //   tiles: function() {
+    //     const pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+    //     pattern.setAttribute("patternUnits", "userSpaceOnUse");
+    //     pattern.setAttribute("width", "32");
+    //     pattern.setAttribute("height", "32");
+
+    //     const g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    //     g.style.fill = "#000";
+    //     g.style.opacity = "0.2";
+
+    //     const circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+    //     circle1.setAttribute("cx", "3");
+    //     circle1.setAttribute("cy", "3");
+    //     circle1.setAttribute("r", "3");
+
+    //     const circle2 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+    //     circle2.setAttribute("cx", "13");
+    //     circle2.setAttribute("cy", "13");
+    //     circle2.setAttribute("r", "3");
+
+    //     g.appendChild(circle1);
+    //     g.appendChild(circle2);
+    //     pattern.appendChild(g);
+
+    //     const pattern2 = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+    //     pattern2.setAttribute("patternUnits", "userSpaceOnUse");
+    //     pattern2.setAttribute("width", "32");
+    //     pattern2.setAttribute("height", "32");
+
+    //     const g2 = document.createElementNS("http://www.w3.org/2000/svg", "g");
+    //     g2.style.fill = "#000";
+    //     g2.style.opacity = "0.2";
+
+    //     const circle21 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+    //     circle21.setAttribute("cx", "3");
+    //     circle21.setAttribute("cy", "3");
+    //     circle21.setAttribute("r", "3");
+
+    //     const circle22 = document.createElementNS("http://www.w3.org/2000/svg", "circle")
+    //     circle22.setAttribute("cx", "13");
+    //     circle22.setAttribute("cy", "13");
+    //     circle22.setAttribute("r", "9");
+
+    //     g2.appendChild(circle21);
+    //     g2.appendChild(circle22);
+    //     pattern2.appendChild(g2);
+
+    //     return [pattern, pattern2];
+    //   }
+    // },
+
+
+
+    bindto: '#chart'
+  });
+
+</script>
+</body>
+</html>

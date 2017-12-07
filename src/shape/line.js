@@ -435,15 +435,8 @@ extend(ChartInternal.prototype, {
 
 		$$.mainCircle.exit().remove();
 
-		let createFn = $$.circle.create;
-
-		if ($$.hasValidPointType()) {
-			createFn = $$[$$.config.point_type].create;
-		} else if ($$.hasValidPointDrawMethods()) {
-			createFn = $$.config.point_type.create;
-		}
-
-		$$.mainCircle = createFn($$.mainCircle, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)
+		$$.mainCircle = $$.mainCircle.enter()
+			.append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color))
 			.merge($$.mainCircle)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
@@ -451,30 +444,16 @@ extend(ChartInternal.prototype, {
 	redrawCircle(cx, cy, withTransition, flow) {
 		const $$ = this;
 		const selectedCircles = $$.main.selectAll(`.${CLASS.selectedCircle}`);
-		const pointType = $$.config.point_type;
 
 		if (!$$.config.point_show) {
 			return [];
 		}
 
-		let updateFn = $$.circle.update;
-
-		if ($$.hasValidPointType()) {
-			updateFn = $$[pointType].update;
-		} else if ($$.hasValidPointDrawMethods()) {
-			updateFn = pointType.update;
-		}
-
-		const mainCircles = updateFn.bind(this)(
-			$$.mainCircle,
-			cx,
-			cy,
-			$$.opacityForCircle.bind($$),
-			$$.color,
-			withTransition,
-			flow,
-			$$.main.selectAll(`.${CLASS.selectedCircle}`)
+		const mainCircles = $$.mainCircle.each(
+			$$.point("update", this, cx, cy, $$.opacityForCircle.bind($$),
+				$$.color, withTransition, flow, selectedCircles)
 		);
+
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		return [

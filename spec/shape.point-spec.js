@@ -76,38 +76,41 @@ describe("SHAPE POINT", () => {
 					]
 				},
 				point: {
-					type: {
-						create(element, cssClassFn, sizeFn, fillStyle) {
-							return element.enter().append("polygon")
-								.attr("class", cssClassFn)
-								.style("fill", fillStyle);
-						},
+					pattern: [
+						{
+							create(element, cssClassFn, sizeFn, fillStyle) {
+								return element.append("polygon")
+									.attr("class", cssClassFn)
+									.style("fill", fillStyle)
+									.node();
+							},
 
-						update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
-									withTransition, flow, selectedCircles) {
-							let mainCircles;
-							const triangleSize = 10;
+							update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+										withTransition, flow, selectedCircles) {
+								let mainCircles;
+								const triangleSize = 10;
 
-							function getPoints(d) {
-								const x1 = xPosFn(d);
-								const y1 = yPosFn(d) - (triangleSize * 0.5);
-								const x2 = x1 - (triangleSize * 0.5);
-								const y2 = y1 + (triangleSize * 0.5);
-								const x3 = x1;
-								const y3 = y2 + (triangleSize * 0.5);
-								const x4 = x1 + (triangleSize * 0.5);
-								const y4 = y2;
-								return `${x1} ${y1} ${x2} ${y2} ${x3} ${y3} ${x4} ${y4}`;
+								function getPoints(d) {
+									const x1 = xPosFn(d);
+									const y1 = yPosFn(d) - (triangleSize * 0.5);
+									const x2 = x1 - (triangleSize * 0.5);
+									const y2 = y1 + (triangleSize * 0.5);
+									const x3 = x1;
+									const y3 = y2 + (triangleSize * 0.5);
+									const x4 = x1 + (triangleSize * 0.5);
+									const y4 = y2;
+									return `${x1} ${y1} ${x2} ${y2} ${x3} ${y3} ${x4} ${y4}`;
+								}
+
+								mainCircles = element
+									.attr("points", getPoints)
+									.style("opacity", opacityStyleFn)
+									.style("fill", fillStyleFn);
+
+								return mainCircles;
 							}
-
-							mainCircles = element
-								.attr("points", getPoints)
-								.style("opacity", opacityStyleFn)
-								.style("fill", fillStyleFn);
-
-							return mainCircles;
 						}
-					}
+					]
 				}
 			};
 		});

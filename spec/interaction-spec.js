@@ -183,11 +183,12 @@ describe("INTERACTION", () => {
 			});
 
 			it("set option point.type=polygon(custom triangle)", () => {
-				args.point.type = {
+				args.point.pattern = [{
 					create: function(element, cssClassFn, sizeFn, fillStyleFn) {
-						return element.enter().append("polygon")
+						return element.append("polygon")
 							.attr("class", cssClassFn)
-							.style("fill", fillStyleFn);
+							.style("fill", fillStyleFn)
+							.node();
 					},
 					update: function(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 					                 withTransition, flow, selectedCircles) {
@@ -210,7 +211,7 @@ describe("INTERACTION", () => {
 							.style("opacity", opacityStyleFn)
 							.style("fill", fillStyleFn);
 					}
-				};
+				}];
 
 				clicked = false;
 				data = null;
@@ -233,6 +234,7 @@ describe("INTERACTION", () => {
 			it("set option data.type='area'", () => {
 				args.data.type = "area";
 				args.point.type = "circle";
+				args.point.pattern = [];
 
 				clicked = false;
 				data = null;

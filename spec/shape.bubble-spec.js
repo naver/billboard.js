@@ -43,7 +43,7 @@ describe("SHAPE BUBBLE", () => {
 			expect(r).to.be.closeTo(5, 1);
 		});
 
-		it("bubble size should be updated", done => {
+		xit("bubble size should be updated", done => {
 			chart.load({
 				columns: [
 					['data1', 500, 350, 200, 380, 10]
