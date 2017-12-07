@@ -263,6 +263,39 @@ const colorizePattern = (pattern, color) => {
 	};
 };
 
+/**
+ * Copy array like object to array
+ * @param {Object} arrayLink
+ * @returns {Array}
+ */
+const asArray = arrayLike => {
+	const len = arrayLike.length;
+	const output = [];
+
+	for (let i = 0; i < len; i++) {
+		output.push(arrayLike[i]);
+	}
+	return output;
+};
+
+/**
+ * Get css rules for specified stylesheets
+ * @param {Array} styleSheets The stylesheets to get the rules from
+ * @returns {Array}
+ */
+const getCssRules = styleSheets => {
+	const rules = [];
+
+	styleSheets.forEach(sheet => {
+		try {
+			asArray(sheet.cssRules || []).forEach(rules.push.bind(rules));
+		} catch (e) {
+			console.error(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
+		}
+	});
+	return rules;
+};
+
 export {
 	isValue,
 	isDefined,
@@ -291,5 +324,7 @@ export {
 	getRectSegList,
 	merge,
 	capitalize,
-	colorizePattern
+	colorizePattern,
+	asArray,
+	getCssRules
 };
