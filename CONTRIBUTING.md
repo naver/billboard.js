@@ -49,7 +49,7 @@ Example commit of fixing a bug:
 ```bash
 Fix(Axis): Correct tick rendering
 
-Update condition of tick to avoide unnecessary tick rendering
+Update condition of tick to avoid unnecessary tick rendering
 
 Ref #20
 ```
