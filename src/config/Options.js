@@ -2433,7 +2433,9 @@ export default class Options {
 			 *  **Available Values:**
 			 *  - `desc`: In descending data value order
 			 *  - `asc`: In ascending data value order
-			 *  - `null`: It keeps the data display order
+			 *  - `null`: It keeps the data display order<br>
+			 *     **NOTE:** When `data.groups` is set, the order will follow as the stacked graph order.<br>
+			 *      If want to order as data bound, set any value rather than asc, desc or null. (ex. empty string "")
 			 *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
 			 * @example
 			 *  tooltip: {
