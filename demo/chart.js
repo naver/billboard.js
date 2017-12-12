@@ -165,8 +165,9 @@ var billboardDemo = {
 						.replace(/\[\[/g, "[\r\n\t[")
 						.replace(/\]\]/g, "]\r\n    ]")
 						.replace(/(],)/g, "$1\r\n\t")
-						.replace(/(\"|\d),/g, "$1, ");
-
+						.replace(/(\"|\d),/g, "$1, ")
+						.replace(/"([^(")"]+)":/g,"$1:");
+						
 					return key === "json" ?
 						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
 				}
