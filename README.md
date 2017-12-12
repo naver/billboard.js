@@ -9,7 +9,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 > - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)<br>
 
 ## Documents
-- [API Documetation](http://naver.github.io/billboard.js/release/latest/doc/)
+- [API Documentation](http://naver.github.io/billboard.js/release/latest/doc/)
 - [Examples](https://naver.github.io/billboard.js/demo/)
 - [Roadmap](https://github.com/naver/billboard.js/wiki/Roadmap)
 - [Contribution Guide](CONTRIBUTING.md)
