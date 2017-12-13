@@ -2,7 +2,10 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3";
+import {
+	namespaces as d3Namespaces,
+	select as d3Select
+} from "d3";
 import ChartInternal from "../internals/ChartInternal";
 import {isFunction, isObjectType, extend, notEmpty} from "../internals/util";
 
@@ -26,16 +29,21 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		const html = defs.html();
+		const parser = new DOMParser();
+		const doc = parser.parseFromString(point, "image/svg+xml");
+		const node = doc.firstChild;
+		const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
+		const attribs = node.attributes;
 
-		// Add the point node into <defs>
-		defs.html(`${html}${point}`);
+		for (let i = 0, l = attribs.length; i < l; i++) {
+			const name = attribs[i].name;
 
-		const node = defs.node().lastChild;
-
-		node.setAttribute("id", id);
-		node.style.fill = "inherit";
-		node.style.stroke = "none";
+			clone.setAttribute(name, node.getAttribute(name));
+		}
+		clone.setAttribute("id", id);
+		clone.style.fill = "inherit";
+		clone.style.stroke = "none";
+		defs.node().appendChild(clone);
 	},
 
 	pointFromDefs(id) {
@@ -64,7 +72,7 @@ extend(ChartInternal.prototype, {
 				if ($$.hasValidPointType(point)) {
 					point = $$[point];
 				} else if (!$$.hasValidPointDrawMethods(point)) {
-					const pointId = `bb-point-${id}`;
+					const pointId = `${$$.clipId}-point-${id}`;
 					const pointFromDefs = $$.pointFromDefs(pointId);
 
 					if (pointFromDefs.size() < 1) {
