@@ -106,10 +106,32 @@ extend(ChartInternal.prototype, {
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
+			const $$ = this;
 			const box = element.node().getBBox();
-			const mainCircles = element
-				.attr("x", d => xPosFn(d) - (box.width * 0.5))
-				.attr("y", d => yPosFn(d) - (box.height * 0.5));
+			const xPosFn2 = d => xPosFn(d) - (box.width * 0.5);
+			const yPosFn2 = d => yPosFn(d) - (box.height * 0.5);
+			let mainCircles;
+
+			if (withTransition) {
+				const transitionName = $$.getTransitionName();
+
+				if (flow) {
+					mainCircles = element
+						.attr("x", xPosFn2);
+				}
+
+				mainCircles = element
+					.transition(transitionName)
+					.attr("x", xPosFn2)
+					.attr("y", yPosFn2)
+					.transition(transitionName);
+
+				selectedCircles.transition($$.getTransitionName());
+			} else {
+				mainCircles = element
+					.attr("x", xPosFn2)
+					.attr("y", yPosFn2);
+			}
 
 			return mainCircles
 				.style("opacity", opacityStyleFn)
