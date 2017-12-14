@@ -435,15 +435,8 @@ extend(ChartInternal.prototype, {
 
 		$$.mainCircle.exit().remove();
 
-		let createFn = $$.circle.create;
-
-		if ($$.hasValidPointType()) {
-			createFn = $$[$$.config.point_type].create;
-		} else if ($$.hasValidPointDrawMethods()) {
-			createFn = $$.config.point_type.create;
-		}
-
-		$$.mainCircle = createFn($$.mainCircle, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)
+		$$.mainCircle = $$.mainCircle.enter()
+			.append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color))
 			.merge($$.mainCircle)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
@@ -451,30 +444,20 @@ extend(ChartInternal.prototype, {
 	redrawCircle(cx, cy, withTransition, flow) {
 		const $$ = this;
 		const selectedCircles = $$.main.selectAll(`.${CLASS.selectedCircle}`);
-		const pointType = $$.config.point_type;
 
 		if (!$$.config.point_show) {
 			return [];
 		}
 
-		let updateFn = $$.circle.update;
+		const mainCircles = [];
 
-		if ($$.hasValidPointType()) {
-			updateFn = $$[pointType].update;
-		} else if ($$.hasValidPointDrawMethods()) {
-			updateFn = pointType.update;
-		}
+		$$.mainCircle.each(function(d) {
+			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
+			const result = fn(d);
 
-		const mainCircles = updateFn.bind(this)(
-			$$.mainCircle,
-			cx,
-			cy,
-			$$.opacityForCircle.bind($$),
-			$$.color,
-			withTransition,
-			flow,
-			$$.main.selectAll(`.${CLASS.selectedCircle}`)
-		);
+			mainCircles.push(result);
+		});
+
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		return [
@@ -532,15 +515,18 @@ extend(ChartInternal.prototype, {
 		const circles = $$.getCircles(i, id)
 			.classed(CLASS.EXPANDED, true);
 
-		if ($$.isCirclePoint()) {
-			circles.attr("r", r);
-		} else {
-			const scale = r(circles) / $$.config.point_r;
+		const scale = r(circles) / $$.config.point_r;
 
-			circles
-				.style("transform-origin", "center")
-				.style("transform", `scale(${scale})`);
-		}
+		// transform must be applied to each node individually
+		circles.each(function(d) {
+			const box = this.getBBox();
+			const x1 = box.x + (box.width * 0.5);
+			const y1 = box.y + (box.height * 0.5);
+			const x2 = (1 - scale) * x1;
+			const y2 = (1 - scale) * y1;
+
+			this.style.transform = `translate(${x2}px, ${y2}px) scale(${scale})`;
+		});
 	},
 
 	unexpandCircles(i) {
@@ -551,13 +537,9 @@ extend(ChartInternal.prototype, {
 			.filter(function() { return d3Select(this).classed(CLASS.EXPANDED); })
 			.classed(CLASS.EXPANDED, false);
 
-		if ($$.isCirclePoint()) {
-			circles.attr("r", r);
-		} else {
-			circles
-				.style("transform-origin", null)
-				.style("transform", null);
-		}
+		const scale = r(circles) / $$.config.point_r;
+
+		circles.style("transform", `scale(${scale})`);
 	},
 
 	pointR(d) {
