@@ -5,7 +5,7 @@ dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
 before_install:
   - npm install -g npm@5
-  - yarn global add greenkeeper-lockfile@1
+  - npm install -g greenkeeper-lockfile@1
 install:
   - npm install
 addons:
