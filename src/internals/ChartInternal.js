@@ -242,7 +242,8 @@ export default class ChartInternal {
 		// -- Basic Elements --
 
 		$$.svg = $$.selectChart.append("svg")
-			.style("overflow", "hidden");
+			.style("overflow", "hidden")
+			.style("display", "block");
 
 		if (config.interaction_enabled && $$.inputType) {
 			const isTouch = $$.inputType === "touch";
@@ -1035,9 +1036,6 @@ export default class ChartInternal {
 		$$.svg.select(`.${CLASS.zoomRect}`)
 			.attr("width", $$.width)
 			.attr("height", $$.height);
-
-		// MEMO: parent div"s height will be bigger than svg when <!DOCTYPE html>
-		$$.selectChart.style("max-height", `${$$.currentHeight}px`);
 
 		$$.brush && $$.brush.scale($$.subX, brushHeight);
 	}

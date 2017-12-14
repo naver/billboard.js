@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 import {bb} from "../src/core";
+import util from "./assets/util";
 
 describe("Interface & initialization", () => {
 	it("Check for billboard.js object", () => {
@@ -13,7 +14,7 @@ describe("Interface & initialization", () => {
 	});
 
 	it("Check for initialization", () => {
-		const chart = bb.generate({
+		const chart = util.generate({
 			data: {
 				columns: [
 					["data1", 30]
@@ -29,7 +30,7 @@ describe("Interface & initialization", () => {
 	it("should resize correctly in flex container", done => {
 		// set flex container
 		document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
-		const chart = bb.generate({
+		const chart = util.generate({
 			bindto: "#flex-container",
 			data: {
 				columns: [
@@ -53,6 +54,34 @@ describe("Interface & initialization", () => {
 			document.body.innerHTML = "";
 			done();
 		}, 100);
+	});
+
+	it("height shouldn't be increased on resize event", done => {
+		const body = document.body;
+		body.innerHTML = '<div id="chartResize"></div>';
+
+		const chart = bb.generate({
+			bindto: "#chartResize",
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 500, 800, 500, 2000]
+				]
+			}
+		});
+		const chartHeight = +chart.internal.svg.attr("height");
+
+		body.style.width = `${+body.style.width.replace("px", "") - 100}px`;
+		chart.internal.resizeFunction();
+
+		setTimeout(() => {
+			expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
+
+			// reset the body
+			body.removeAttribute("style");
+			body.innerHTML = "";
+			done();
+		}, 500);
 	});
 
 	it("instantiate with different classname on wrapper element", () => {
