@@ -110,7 +110,7 @@ extend(ChartInternal.prototype, {
 			const box = element.node().getBBox();
 			const xPosFn2 = d => xPosFn(d) - (box.width * 0.5);
 			const yPosFn2 = d => yPosFn(d) - (box.height * 0.5);
-			let mainCircles;
+			let mainCircles = element;
 
 			if (withTransition) {
 				const transitionName = $$.getTransitionName();

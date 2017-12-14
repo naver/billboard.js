@@ -449,9 +449,14 @@ extend(ChartInternal.prototype, {
 			return [];
 		}
 
-		const mainCircles = $$.mainCircle.each(
-			$$.point("update", this, cx, cy, $$.opacityForCircle.bind($$),
-				$$.color, withTransition, flow, selectedCircles));
+		const mainCircles = [];
+
+		$$.mainCircle.each(function(d) {
+			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
+			const result = fn(d);
+
+			mainCircles.push(result);
+		});
 
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
