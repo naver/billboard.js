@@ -203,3 +203,7 @@ div.row {
 
 /* Style For Donut */
 #LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}
+
+/* Style For Lines */
+#StyleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }
+#StyleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }

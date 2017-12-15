@@ -12,7 +12,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data1', 230, 190, 300, 500, 300, 400]
@@ -20,7 +20,7 @@ var demos = {
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data3', 130, 150, 200, 300, 200, 100]
@@ -28,7 +28,7 @@ var demos = {
 						});
 					}, 1500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'data1'
 						});
@@ -59,7 +59,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data3', 400, 500, 450, 700, 600, 500]
@@ -93,7 +93,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data1', 100, 250, 150, 200, 100, 350]
@@ -101,7 +101,7 @@ var demos = {
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data3', 80, 150, 100, 180, 80, 150]
@@ -109,7 +109,7 @@ var demos = {
 						});
 					}, 1500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'data2'
 						});
@@ -210,7 +210,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data3', 130, -150, 200, 300, -200, 100]
@@ -241,17 +241,17 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.groups([['data1', 'data2', 'data3']])
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [['data4', 100, -50, 150, 200, -300, -100]]
 						});
 					}, 1500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.groups([['data1', 'data2', 'data3', 'data4']])
 					}, 2000)
 				];
@@ -287,7 +287,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							xs: {
 								virginica: 'virginica_x'
@@ -299,13 +299,13 @@ var demos = {
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'setosa'
 						});
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								["virginica", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
@@ -324,14 +324,14 @@ var demos = {
 						['data2', 120],
 					],
 					type : 'pie',
-					onclick: function (d, i) { console.log("onclick", d, i); },
-					onover: function (d, i) { console.log("onover", d, i); },
-					onout: function (d, i) { console.log("onout", d, i); }
+					onclick: function(d, i) { console.log("onclick", d, i); },
+					onover: function(d, i) { console.log("onover", d, i); },
+					onout: function(d, i) { console.log("onout", d, i); }
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
@@ -341,7 +341,7 @@ var demos = {
 						});
 					}, 1500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'data1'
 						});
@@ -360,9 +360,9 @@ var demos = {
 						['data2', 120],
 					],
 					type : 'donut',
-					onclick: function (d, i) { console.log("onclick", d, i); },
-					onover: function (d, i) { console.log("onover", d, i); },
-					onout: function (d, i) { console.log("onout", d, i); }
+					onclick: function(d, i) { console.log("onclick", d, i); },
+					onover: function(d, i) { console.log("onover", d, i); },
+					onout: function(d, i) { console.log("onout", d, i); }
 				},
 				donut: {
 					title: "Iris Petal Width"
@@ -370,7 +370,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
@@ -380,7 +380,7 @@ var demos = {
 						});
 					}, 1500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'data1'
 						});
@@ -398,9 +398,9 @@ var demos = {
 						['data', 91.4]
 					],
 					type: 'gauge',
-					onclick: function (d, i) { console.log("onclick", d, i); },
-					onover: function (d, i) { console.log("onover", d, i); },
-					onout: function (d, i) { console.log("onout", d, i); }
+					onclick: function(d, i) { console.log("onclick", d, i); },
+					onover: function(d, i) { console.log("onover", d, i); },
+					onout: function(d, i) { console.log("onout", d, i); }
 				},
 				gauge: {
 	//        label: {
@@ -428,35 +428,86 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [['data', 10]]
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [['data', 50]]
 						});
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [['data', 70]]
 						});
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [['data', 0]]
 						});
 					}, 4000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [['data', 100]]
 						});
 					}, 5000)
+				];
+			}
+		},
+		BubbleChart: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30, 350, 200, 380, 150, 250, 50, 80, 55, 220],
+						['data2', 130, 100, 10, 200, 80, 50, 200, 123, 185, 98],
+						['data3', 230, 153, 85, 300, 250, 120, 5, 84, 99, 289]
+					],
+					type: 'bubble',
+					labels: true
+				},
+				bubble: {
+					maxR: 50
+				},
+				axis: {
+					x: {
+						type: "category"
+					},
+					y: {
+						max: 450
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+                    setTimeout(function() {
+						chart.load({
+							columns: [
+								['data1', 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
+							]
+						});
+					}, 1000),
+
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								['data2', 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
+							]
+						});
+					}, 2000),
+
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								['data3', 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
+							]
+						});
+					}, 3000)
 				];
 			}
 		},
@@ -470,12 +521,14 @@ var demos = {
 						['data4', 200, 130, 90, 240, 130, 220],
 						['data5', 130, 120, 150, 140, 160, 150],
 						['data6', 90, 70, 20, 50, 60, 120],
+						['data7', 283, 170, 275, 143, 220, 255]
 					],
 					type: 'bar',
 					types: {
 						data3: 'spline',
 						data4: 'line',
 						data6: 'area',
+						data7: 'step'
 					},
 					groups: [
 						['data1', 'data2']
@@ -549,7 +602,7 @@ var demos = {
 					x : {
 						type : 'timeseries',
 						tick: {
-							format: function (x) {
+							format: function(x) {
 							return x.getFullYear();
 						}
 							//format: '%Y' // format string is also available for timeseries data
@@ -625,7 +678,7 @@ var demos = {
 					x: 'x',
 					columns: [
 						['x', '2013-10-31', '2013-12-31', '2014-01-31', '2014-02-28'],
-						['sample', 30, 100, 400, 150],
+						['sample', 30, 100, 400, 150]
 					]
 				},
 				axis : {
@@ -670,7 +723,7 @@ var demos = {
 					x : 'x',
 					columns: [
 						['x', 'www.somesitename1.com', 'www.somesitename2.com', 'www.somesitename3.com', 'www.somesitename4.com', 'www.somesitename5.com', 'www.somesitename6.com', 'www.somesitename7.com', 'www.somesitename8.com', 'www.somesitename9.com', 'www.somesitename10.com', 'www.somesitename11.com', 'www.somesitename12.com'],
-						['pv', 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400],
+						['pv', 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
 					],
 					type: 'bar'
 				},
@@ -696,9 +749,9 @@ var demos = {
 				axis : {
 					y : {
 						tick: {
-						format: function(x) {
-						    return d3.format("$,")(x);
-						}
+							format: function(x) {
+							    return d3.format("$,")(x);
+							}
 						}
 					}
 				}
@@ -737,7 +790,7 @@ var demos = {
 				axis: {
 					y: {
 						max: 400,
-						min: -400,
+						min: -400
 						// Range includes padding, set 0 if no padding needed
 						// padding: {top:0, bottom:0}
 					}
@@ -846,7 +899,7 @@ var demos = {
 						[50, 200, 290],
 						[120, 160, 230],
 						[80, 130, 300],
-						[90, 220, 320],
+						[90, 220, 320]
 					]
 				}
 			}
@@ -861,9 +914,9 @@ var demos = {
 					}
 				}
 			},
-			func: function (chart) {
+			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart = bb.generate({
 							bindto: "#JSONData",
 							data: {
@@ -871,7 +924,7 @@ var demos = {
 									{name: 'www.site1.com', upload: 200, download: 200, total: 400},
 									{name: 'www.site2.com', upload: 100, download: 300, total: 400},
 									{name: 'www.site3.com', upload: 300, download: 200, total: 500},
-									{name: 'www.site4.com', upload: 400, download: 100, total: 500},
+									{name: 'www.site4.com', upload: 400, download: 100, total: 500}
 								],
 								keys: {
 									// x: 'name', // it's possible to specify 'x' when category axis
@@ -886,16 +939,16 @@ var demos = {
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							json: [
 								{name: 'www.site1.com', upload: 800, download: 500, total: 400},
 								{name: 'www.site2.com', upload: 600, download: 600, total: 400},
 								{name: 'www.site3.com', upload: 400, download: 800, total: 500},
-								{name: 'www.site4.com', upload: 400, download: 700, total: 500},
+								{name: 'www.site4.com', upload: 400, download: 700, total: 500}
 							],
 							keys: {
-								value: ['upload', 'download'],
+								value: ['upload', 'download']
 							}
 						});
 					}, 2000)
@@ -908,9 +961,9 @@ var demos = {
 					url: './data/test.csv'
 				}
 			},
-			func: function (chart) {
+			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						bb.generate({
 							bindto: "#DataFromURL-csv",
 							data: {
@@ -929,7 +982,7 @@ var demos = {
 					columns: [
 						['x', 'www.site1.com', 'www.site2.com', 'www.site3.com', 'www.site4.com'],
 						['download', 30, 200, 100, 400],
-						['loading', 90, 100, 140, 200],
+						['loading', 90, 100, 140, 200]
 					],
 					groups: [
 						['download', 'loading']
@@ -944,46 +997,46 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['x', 'www.siteA.com', 'www.siteB.com', 'www.siteC.com', 'www.siteD.com'],
 								['download', 130, 200, 150, 350],
-								['loading', 190, 180, 190, 140],
+								['loading', 190, 180, 190, 140]
 							],
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['x', 'www.siteE.com', 'www.siteF.com', 'www.siteG.com'],
 								['download', 30, 300, 200],
-								['loading', 90, 130, 240],
+								['loading', 90, 130, 240]
 							],
 						});
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['x', 'www.site1.com', 'www.site2.com', 'www.site3.com', 'www.site4.com'],
 								['download', 130, 300, 200, 470],
-								['loading', 190, 130, 240, 340],
+								['loading', 190, 130, 240, 340]
 							],
 						});
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['download', 30, 30, 20, 170],
-								['loading', 90, 30, 40, 40],
+								['loading', 90, 30, 40, 40]
 							],
 						});
 					}, 4000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							url: './data/string_x.csv'
 						});
@@ -1000,23 +1053,23 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							url: './data/test2.csv'
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data1', 130, 120, 150, 140, 160, 150],
-								['data4', 30, 20, 50, 40, 60, 50],
+								['data4', 30, 20, 50, 40, 60, 50]
 							],
-							unload: ['data2', 'data3'],
+							unload: ['data2', 'data3']
 						});
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							rows: [
 								['data2', 'data3'],
@@ -1025,13 +1078,13 @@ var demos = {
 								[200, 290],
 								[160, 230],
 								[130, 300],
-								[220, 320],
+								[220, 320]
 							],
-							unload: 'data4',
+							unload: 'data4'
 						});
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns:[
 								['data4', 30, 20, 50, 40, 60, 50,100,200]
@@ -1040,13 +1093,13 @@ var demos = {
 						});
 					}, 4000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'data4'
 						});
 					}, 5000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns:[
 								['data2', null, 30, 20, 50, 40, 60, 50]
@@ -1054,11 +1107,11 @@ var demos = {
 						});
 					}, 6000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload();
 					}, 7000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							rows: [
 								['data4', 'data2', 'data3'],
@@ -1067,13 +1120,13 @@ var demos = {
 								[50, 200, 290],
 								[120, 160, 230],
 								[80, 130, 300],
-								[90, 220, 320],
+								[90, 220, 320]
 							],
 							type: 'bar'
 						});
 					}, 8000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							rows: [
 								['data5', 'data6'],
@@ -1082,13 +1135,13 @@ var demos = {
 								[150, 500],
 								[220, 460],
 								[180, 430],
-								[190, 520],
+								[190, 520]
 							],
 							type: 'line'
 						});
 					}, 9000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: ['data2', 'data3']
 						});
@@ -1124,11 +1177,10 @@ var demos = {
 						data2: '#00ff00',
 						data3: '#0000ff'
 					},
-					color: function (color, d) {
+					color: function(color, d) {
 						// d will be 'id' when called for legends
 						return (d.id && d.id === 'data3') ?
-							d3.rgb(color).darker(d.value / 150).toString() :
-							color;
+							d3.rgb(color).darker(d.value / 150).toString() : color;
 					}
 				}
 			}
@@ -1157,23 +1209,23 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data4', 1200, 1300, 1450, 1600, 1520, 1820],
+								['data4', 1200, 1300, 1450, 1600, 1520, 1820]
 							]
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data5', 200, 300, 450, 600, 520, 820],
+								['data5', 200, 300, 450, 600, 520, 820]
 							]
 						});
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.groups([
 							['data1', 'data2', 'data3', 'data4', 'data5']
 						]);
@@ -1215,12 +1267,12 @@ var demos = {
 					],
 					type: 'bar',
 					labels: {
-						// format: function (v, id, i, j) { return "Default Format"; },
+						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
 							data1: function(x) {
 							return d3.format('$')(x)
 						}
-							// data1: function (v, id, i, j) { return "Format for data1"; },
+							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
 					}
 				},
@@ -1320,7 +1372,7 @@ var demos = {
 				data: {
 					columns: [
 						['sample', 30, 200, 100, 400, 150, 250],
-						['sample2', 1300, 1200, 1100, 1400, 1500, 1250],
+						['sample2', 1300, 1200, 1100, 1400, 1500, 1250]
 					],
 					axes: {
 						sample2: 'y2'
@@ -1340,59 +1392,6 @@ var demos = {
 						]
 					}
 				}
-			}
-		}
-	},
-
-	Region: {
-		Region: {
-			options: {
-				data: {
-					columns: [
-						['data1', 30, 200, 100, 400, 150, 250, 400],
-						['data2', 830, 1200, 1100, 1400, 1150, 1250, 1500],
-					],
-					axes: {
-						data2: 'y2'
-					}
-				},
-				axis: {
-					y2: {
-						show: true
-					}
-				},
-				regions: [
-					{axis: 'x', end: 1, class: 'regionX'},
-					{axis: 'x', start: 2, end: 4, class: 'regionX'},
-					{axis: 'x', start: 5, class: 'regionX'},
-					{axis: 'y', end: 50, class: 'regionY'},
-					{axis: 'y', start: 80, end: 140, class: 'regionY'},
-					{axis: 'y', start: 400, class: 'regionY'},
-					{axis: 'y2', end: 900, class: 'regionY2'},
-					{axis: 'y2', start: 1150, end: 1250, class: 'regionY2'},
-					{axis: 'y2', start: 1300, class: 'regionY2'},
-				]
-			}
-		},
-		RegionWithTimeseries: {
-			options: {
-				data: {
-					x: 'date',
-					columns: [
-						['date', '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
-						['sample', 30, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: 'timeseries'
-					}
-				},
-				regions: [
-					{start: '2014-01-05', end: '2014-01-10'},
-					{start: new Date('2014/01/15'), end: new Date('20 Jan 2014')},
-					{start: 1390575600000, end: 1391007600000} // start => 2014-01-25 00:00:00, end => 2014-01-30 00:00:00
-				]
 			}
 		}
 	},
@@ -1471,7 +1470,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data3', 130, 150, 200, 300, 200, 100]
@@ -1479,17 +1478,17 @@ var demos = {
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.unload({
 							ids: 'data1'
 						});
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('pie');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line');
 					}, 4000)
 				];
@@ -1561,25 +1560,159 @@ var demos = {
 						.data(['data1', 'data2', 'data3'])
 						.enter()
 						.append('span')
-						.attr('data-id', function (id) {
+						.attr('data-id', function(id) {
 							return id;
 						})
-						.html(function (id) {
+						.html(function(id) {
 							return id;
 						})
-						.each(function (id) {
+						.each(function(id) {
 							d3.select(this)
 								.style('background-color', chart.color(id));
 						})
-						.on('mouseover', function (id) {
+						.on('mouseover', function(id) {
 							chart.focus(id);
 						})
-						.on('mouseout', function (id) {
+						.on('mouseout', function(id) {
 							chart.revert();
 						})
-						.on('click', function (id) {
+						.on('click', function(id) {
 							chart.toggle(id);
 						});
+			}
+		}
+	},
+
+	Point: {
+		RectanglePoints: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					type: "rectangle"
+				}
+			}
+		},
+		CustomPointsTriangle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					pattern: [
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+					]
+				}
+			}
+		},
+		CustomPointsDiamonds: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 400, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					pattern: [
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+					]
+				}
+			}
+		},
+		CustomPointsHearts: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 400, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					pattern: [
+						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />"
+					]
+				}
+			}
+		},
+		CombinationPoints: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 400, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200],
+						['data3', 80, 350, 800, 450, 500],
+						['data4', 150, 240, 300, 700, 300]
+					]
+				},
+				point: {
+					pattern: [
+						"circle",
+						"rectangle",
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+					]
+				}
+			}
+		}
+	},
+
+	Region: {
+		Region: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30, 200, 100, 400, 150, 250, 400],
+						['data2', 830, 1200, 1100, 1400, 1150, 1250, 1500]
+					],
+					axes: {
+						data2: 'y2'
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				regions: [
+					{axis: 'x', end: 1, class: 'regionX'},
+					{axis: 'x', start: 2, end: 4, class: 'regionX'},
+					{axis: 'x', start: 5, class: 'regionX'},
+					{axis: 'y', end: 50, class: 'regionY'},
+					{axis: 'y', start: 80, end: 140, class: 'regionY'},
+					{axis: 'y', start: 400, class: 'regionY'},
+					{axis: 'y2', end: 900, class: 'regionY2'},
+					{axis: 'y2', start: 1150, end: 1250, class: 'regionY2'},
+					{axis: 'y2', start: 1300, class: 'regionY2'}
+				]
+			}
+		},
+		RegionWithTimeseries: {
+			options: {
+				data: {
+					x: 'date',
+					columns: [
+						['date', '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
+						['sample', 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: 'timeseries'
+					}
+				},
+				regions: [
+					{start: '2014-01-05', end: '2014-01-10'},
+					{start: new Date('2014/01/15'), end: new Date('20 Jan 2014')},
+					{start: 1390575600000, end: 1391007600000} // start => 2014-01-25 00:00:00, end => 2014-01-30 00:00:00
+				]
 			}
 		}
 	},
@@ -1642,8 +1775,8 @@ var demos = {
 				},
 				tooltip: {
 					format: {
-						title: function (d) { return 'Data ' + d; },
-						value: function (value, ratio, id) {
+						title: function(d) { return 'Data ' + d; },
+						value: function(value, ratio, id) {
 							var format = id === 'data1' ? d3.format(',') : d3.format('$');
 
 							return format(value);
@@ -1719,6 +1852,94 @@ var demos = {
 				}
 			}
 		},
+		ColorTiles1: {
+			options: {
+				data: {
+					columns: [
+						['data1', 10],
+						['data2', 15],
+						['data3', 30],
+						['data4', 45],
+					],
+					type: "pie"
+				},
+				color: {
+					tiles: function() {
+						function circlePattern(fillColor, opacity, radiusMin, radiusMax) {
+							var pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+								.attr("patternUnits", "userSpaceOnUse")
+								.attr("width", "32")
+								.attr("height", "32");
+
+							var g = pattern
+								.append("g")
+								.style("fill", fillColor || "#000")
+								.style("opactiy", opacity || "0.2");
+
+							g
+								.append("circle")
+								.attr("cx", "3")
+								.attr("cy", "3")
+								.attr("r", radiusMin || "3");
+
+							g
+								.append("circle")
+								.attr("cx", "13")
+								.attr("cy", "13")
+								.attr("r", radiusMax || "9");
+
+							return pattern.node();
+						}
+
+						// Should return an array of SVGPatternElement
+						return [
+							circlePattern("#FFF", "0.2", "3", "10"),
+							circlePattern("yellow", "0.3", "3", "3")
+						];
+					    }
+				}
+			}
+		},
+		ColorTiles2: {
+			options: {
+				data: {
+					columns: [
+						['data1', 50, 25, 45, 19, 50],
+						['data2', 15, 23, 8, 17, 45],
+						['data3', 30, 35, 45, 40, 20]
+					],
+					types: {
+						data1: "area-spline",
+						data2: "bar",
+						data3: "bubble"
+					}
+				},
+				color: {
+					pattern: ["red", "blue", "cyan"],
+					tiles: function() {
+						var pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+							.attr("patternUnits", "userSpaceOnUse")
+							.attr("width", "6")
+							.attr("height", "6");
+
+						var g = pattern
+							.append("g")
+							.attr("fill-rule", "evenodd")
+							.attr("stroke-width", 1)
+							.append("g")
+							.attr("fill", "rgb(255, 127, 14)");
+
+						g.append("polygon").attr("points", "5 0 6 0 0 6 0 5");
+						g.append("polygon").attr("points", "6 5 6 6 5 6");
+
+						// Should return an array of SVGPatternElement
+						return [
+							pattern.node()
+						];
+					}
+				}
+			}
+		},
 		DurationOfTransition: {
 			options: {
 				data: {
@@ -1730,13 +1951,13 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							url: './data/test2.csv'
 						});
 					}, 500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data1', 30, 20, 50, 40, 60, 50],
@@ -1746,7 +1967,7 @@ var demos = {
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							rows: [
 								['data1', 'data2', 'data3'],
@@ -1755,12 +1976,12 @@ var demos = {
 								[50, 200, 290],
 								[120, 160, 230],
 								[80, 130, 300],
-								[90, 220, 320],
+								[90, 220, 320]
 							]
 						});
 					}, 1500),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.load({
 							columns:[
 								['data1', null, 30, 20, 50, 40, 60, 50, 100, 200]
@@ -1898,7 +2119,7 @@ var demos = {
 				},
 				pie: {
 					label: {
-						format: function (value, ratio, id) {
+						format: function(value, ratio, id) {
 							return d3.format('$')(value);
 						}
 					}
@@ -1929,7 +2150,7 @@ var demos = {
 						['x', '2012-12-29', '2012-12-30', '2012-12-31'],
 						['data1', 230, 300, 330],
 						['data2', 190, 230, 200],
-						['data3', 90, 130, 180],
+						['data3', 90, 130, 180]
 					]
 				},
 				axis: {
@@ -1943,16 +2164,16 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.flow({
 							columns: [
 								['x', '2013-01-11', '2013-01-21'],
 								['data1', 500, 200],
 								['data2', 100, 300],
-								['data3', 200, 120],
+								['data3', 200, 120]
 							],
 							duration: 1500,
-							done: function () {
+							done: function() {
 								chart.flow({
 									columns: [
                                       ['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
@@ -1962,7 +2183,7 @@ var demos = {
 									],
 									length: 0,
 									duration: 1500,
-									done: function () {
+									done: function() {
                                       chart.flow({
                                              columns: [
                                                 ['x', '2013-03-01', '2013-03-02'],
@@ -1972,7 +2193,7 @@ var demos = {
                                             ],
                                             length: 2,
                                             duration: 1500,
-                                            done: function () {
+                                            done: function() {
                                                  chart.flow({
                                                     columns: [
                                                         ['x', '2013-03-21', '2013-04-01'],
@@ -1981,7 +2202,7 @@ var demos = {
                                                         ['data3', 200, 400]
                                                     ],
                                                     to: '2013-03-01',
-                                                    duration: 1500,
+                                                    duration: 1500
                                                  });
                                             }
                                       });
@@ -2008,11 +2229,11 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.data.names({data1: 'New name for data1', data2: 'New name for data2'});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.data.names({data1: 'New name for data1 again'});
 					}, 2000)
 				];
@@ -2037,19 +2258,19 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.data.colors({
 							data1: d3.rgb('#ff0000').darker(1),
 							data2: d3.rgb('#00ff00').darker(1),
-							data3: d3.rgb('#0000ff').darker(1),
+							data3: d3.rgb('#0000ff').darker(1)
 						});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.data.colors({
 							data1: d3.rgb('#ff0000').darker(2),
 							data2: d3.rgb('#00ff00').darker(2),
-							data3: d3.rgb('#0000ff').darker(2),
+							data3: d3.rgb('#0000ff').darker(2)
 						});
 					}, 2000)
 				];
@@ -2079,11 +2300,11 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.labels({y2: 'New Y2 Axis Label'});
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.labels({y: 'New Y Axis Label', y2: 'New Y2 Axis Label Again'});
 					}, 2000)
 				];
@@ -2109,39 +2330,39 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.max(500);
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.min(-500);
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.max({y: 600, y2: 100});
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.min({y: -600, y2: -100});
 					}, 4000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.range({max: 1000, min: -1000});
 					}, 5000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.range({max: {y: 600, y2: 100}, min: {y: -100, y2: 0}});
 					}, 6000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.max({x: 10});
 					}, 7000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.min({x: -10});
 					}, 8000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.axis.range({max: {x: 5}, min: {x: 0}});
 					}, 9000)
 				];
@@ -2158,15 +2379,15 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.resize({height:100, width:300})
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.resize({height:200})
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.resize();
 					}, 3000)
 				];
@@ -2182,31 +2403,31 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids([{value: 1, text:'Label 1'}, {value: 4, text: 'Label 4'}]);
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids([{value: 2, text:'Label 2'}]);
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids.add([{value: 3, text:'Label 3', class:'hoge'}]);
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids.remove({value:2});
 					}, 4000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids.remove({class:'hoge'});
 					}, 5000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids([{value: 1, text:'Label 1'}, {value: 4, text: 'Label 4'}]);
 					}, 6000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.xgrids.remove();
 					}, 7000)
 				];
@@ -2236,7 +2457,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.regions([
 							{
 								axis: "y",
@@ -2258,8 +2479,103 @@ var demos = {
 				"#Regions .fill_green { fill: green; }",
 				"#Regions .fill_red { fill: red; }"
 			]
+		},
+		Export: {
+			options: {
+				data: {
+					columns: [
+						['sample', 30, 200, 100, 400, 150, 250]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						// crate a div element
+						var exported = document.createElement("div");
+
+						document.getElementById("Export")
+							.insertAdjacentElement("afterend", exported);
+
+						// Call after the chart finished rendering
+						chart.export("image/png", function(dataUrl) {
+							// append an image element
+							var img = document.createElement("img");
+
+							img.src = dataUrl;
+							exported.appendChild(img);
+						});
+					}, 500)
+				]
+			}
 		}
 	},
+
+	Style: {
+		StyleForRegion: {
+			options: {
+				data: {
+					columns: [
+						['sample', 30, 200, 100, 400, 150, 250]
+					]
+				},
+				regions: [
+					{start:0, end:1},
+					{start:2, end:4, class:'foo'}
+				]
+			},
+			style: [
+				"#StyleForRegion .bb-region-0 {fill:red;}",
+				"#StyleForRegion .bb-region.foo {fill:green;}"
+			]
+		},
+		StyleForGrid: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500]
+					]
+				},
+				grid: {
+					x: {
+						lines: [{value: 2}, {value: 4, class: 'grid4', text: 'LABEL 4'}]
+					},
+					y: {
+						lines: [{value: 500}, {value: 800, class: 'grid800', text: 'LABEL 800'}]
+					}
+				}
+			},
+			style: [
+				"#StyleForGrid .bb-xgrid-line line {stroke: blue;}",
+				"#StyleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}",
+				"#StyleForGrid .bb-xgrid-line.grid4 text {fill: pink;}",
+				"#StyleForGrid .bb-ygrid-line line {stroke: red;}",
+				"#StyleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
+				"#StyleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
+			]
+		},
+		StyleForLines: {
+			options: {
+				data: {
+					columns: [
+						['data1', 100, 200, 1000, 900, 500],
+						['data2', 20, 40, 500, 300, 200]
+					]
+				},
+				line: {
+					classes: [
+						'line-class-data1',
+						'line-class-data2'
+					]
+				}
+			},
+			style: [
+				"#StyleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }",
+				"#StyleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }"
+			]
+		}
+	},
+
 	Transform: {
 		ToLineChart: {
 			options: {
@@ -2269,23 +2585,26 @@ var demos = {
 						['data2', 130, 100, 140, 200, 150, 50]
 					],
 					type: 'bar'
+				},
+				point: {
+					type: "rectangle"
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line', 'data1');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line', 'data2');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line');
 					}, 4000)
 				];
@@ -2303,19 +2622,19 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('spline', 'data1');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('spline', 'data2');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('spline');
 					}, 4000)
 				];
@@ -2333,19 +2652,19 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar', 'data1');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar', 'data2');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar');
 					}, 4000)
 				];
@@ -2363,19 +2682,19 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('area', 'data1');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('area', 'data2');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('area');
 					}, 4000)
 				];
@@ -2393,19 +2712,19 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('area-spline', 'data1');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('area-spline', 'data2');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('bar');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('area-spline');
 					}, 4000)
 				];
@@ -2489,15 +2808,15 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('scatter');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('pie');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('scatter');
 					}, 3000)
 				]
@@ -2514,15 +2833,15 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('pie');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('pie');
 					}, 3000)
 				];
@@ -2539,67 +2858,23 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('donut');
 					}, 1000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('line');
 					}, 2000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('pie');
 					}, 3000),
 
-					setTimeout(function () {
+					setTimeout(function() {
 						chart.transform('donut');
 					}, 4000)
 				];
 			}
-		}
-	},
-	Style: {
-		StyleForRegion: {
-			options: {
-				data: {
-					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
-					]
-				},
-				regions: [
-					{start:0, end:1},
-					{start:2, end:4, class:'foo'}
-				]
-			},
-			style: [
-				"#StyleForRegion .bb-region-0 {fill:red;}",
-				"#StyleForRegion .bb-region.foo {fill:green;}"
-			]
-		},
-		StyleForGrid: {
-			options: {
-				data: {
-					columns: [
-						['data1', 100, 200, 1000, 900, 500]
-					]
-				},
-				grid: {
-					x: {
-						lines: [{value: 2}, {value: 4, class: 'grid4', text: 'LABEL 4'}]
-					},
-					y: {
-						lines: [{value: 500}, {value: 800, class: 'grid800', text: 'LABEL 800'}]
-					}
-				}
-			},
-			style: [
-				"#StyleForGrid .bb-xgrid-line line {stroke: blue;}",
-				"#StyleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}",
-				"#StyleForGrid .bb-xgrid-line.grid4 text {fill: pink;}",
-				"#StyleForGrid .bb-ygrid-line line {stroke: red;}",
-				"#StyleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
-				"#StyleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
-			]
 		}
 	}
 };
