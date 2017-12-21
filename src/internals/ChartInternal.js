@@ -81,8 +81,10 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 
-		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
+		// datetime to be used for uniqueness
 		$$.datetimeId = `bb-${+new Date()}`;
+
+		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
 		$$.clipId = `${$$.datetimeId}-clip`;
 		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;

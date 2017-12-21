@@ -115,17 +115,19 @@ describe("COLOR", () => {
 			});
 
 			it("should create correct pattern names", () => {
+				const internal = chart.internal;
+				const datetimeId = internal.datetimeId;
 				const expectedIds = [
-					`${CLASS.colorizePattern}-red`,
-					`${CLASS.colorizePattern}-gold`,
-					`${CLASS.colorizePattern}-green`
+					`${datetimeId}-pattern-red`,
+					`${datetimeId}-pattern-gold`,
+					`${datetimeId}-pattern-green`
 				];
 
-				const patterns = chart.internal.patterns;
+				internal.patterns.forEach((p, idx) => {
+					const id = `${expectedIds[idx]}-${idx}`;
 
-				patterns.forEach((p, idx) => {
-					expect(p.id).to.be.equal(expectedIds[idx]);
-					expect(p.node.id).to.be.equal(expectedIds[idx]);
+					expect(p.id).to.be.equal(id);
+					expect(p.node.id).to.be.equal(id);
 				});
 			});
 		});

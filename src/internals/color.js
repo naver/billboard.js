@@ -3,11 +3,37 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
+	select as d3Select,
 	scaleOrdinal as d3ScaleOrdinal,
 	schemeCategory10 as d3SchemeCategory10
 } from "d3";
 import ChartInternal from "./ChartInternal";
-import {notEmpty, extend, isFunction, colorizePattern} from "./util";
+import {notEmpty, extend, isFunction} from "./util";
+
+/**
+ * Set pattern's background color
+ * (it adds a <rect> element to simulate bg-color)
+ * @param {SVGPatternElement} pattern SVG pattern element
+ * @param {String} color Color string
+ * @param {String} id ID to be set
+ * @return {{id: string, node: SVGPatternElement}}
+ * @private
+ */
+const colorizePattern = (pattern, color, id) => {
+	const node = d3Select(pattern.cloneNode(true));
+
+	node
+		.attr("id", id)
+		.insert("rect", ":first-child")
+		.attr("width", node.attr("width"))
+		.attr("height", node.attr("height"))
+		.style("fill", color);
+
+	return {
+		id,
+		node: node.node()
+	};
+};
 
 extend(ChartInternal.prototype, {
 	generateColor() {
@@ -23,9 +49,12 @@ extend(ChartInternal.prototype, {
 			const tiles = config.color_tiles();
 
 			// Add background color to patterns
-			const colorizedPatterns = pattern.map((p, index) =>
-				colorizePattern(tiles[index % tiles.length], p)
-			);
+			const colorizedPatterns = pattern.map((p, index) => {
+				const color = p.replace(/[#\(\)\s,]/g, "");
+				const id = `${$$.datetimeId}-pattern-${color}-${index}`;
+
+				return colorizePattern(tiles[index % tiles.length], p, id);
+			});
 
 			pattern = colorizedPatterns.map(p => `url(#${p.id})`);
 			$$.patterns = colorizedPatterns;
@@ -33,7 +62,9 @@ extend(ChartInternal.prototype, {
 
 		return function(d) {
 			const id = d.id || (d.data && d.data.id) || d;
+			const isLine = $$.isTypeOf(id, "line");
 			let color;
+
 
 			// if callback function is provided
 			if (colors[id] instanceof Function) {
@@ -44,7 +75,7 @@ extend(ChartInternal.prototype, {
 				color = colors[id];
 
 			// if not specified, choose from pattern
-			} else {
+			} else if (!isLine) {
 				if (ids.indexOf(id) < 0) { ids.push(id); }
 				color = pattern[ids.indexOf(id) % pattern.length];
 				colors[id] = color;
