@@ -124,8 +124,8 @@ describe("COLOR", () => {
 				const patterns = chart.internal.patterns;
 
 				patterns.forEach((p, idx) => {
-					expect(p.id).to.be.equal(expectedIds[idx]);
-					expect(p.node.id).to.be.equal(expectedIds[idx]);
+					expect(p.id).to.include(expectedIds[idx]);
+					expect(p.node.id).to.include(expectedIds[idx]);
 				});
 			});
 		});
