@@ -245,8 +245,9 @@ const merge = (target, ...objectN) => {
  * @return {{id: string, node: SVGPatternElement}}
  * @private
  */
-const colorizePattern = (pattern, color) => {
-	const suffix = color.replace(/[#\(\)\s,]/g, "");
+const colorizePattern = (pattern, color, index) => {
+	const c = color.replace(/[#\(\)\s,]/g, "");
+	const suffix = `${c}-${Date.now()}-${index}`;
 	const id = `${CLASS.colorizePattern}-${suffix}`;
 	const node = d3Select(pattern.cloneNode(true));
 

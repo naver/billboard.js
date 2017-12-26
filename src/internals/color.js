@@ -24,7 +24,7 @@ extend(ChartInternal.prototype, {
 
 			// Add background color to patterns
 			const colorizedPatterns = pattern.map((p, index) =>
-				colorizePattern(tiles[index % tiles.length], p)
+				colorizePattern(tiles[index % tiles.length], p, index)
 			);
 
 			pattern = colorizedPatterns.map(p => `url(#${p.id})`);
@@ -33,7 +33,9 @@ extend(ChartInternal.prototype, {
 
 		return function(d) {
 			const id = d.id || (d.data && d.data.id) || d;
+			const isLine = $$.isTypeOf(id, "line");
 			let color;
+
 
 			// if callback function is provided
 			if (colors[id] instanceof Function) {
@@ -44,7 +46,7 @@ extend(ChartInternal.prototype, {
 				color = colors[id];
 
 			// if not specified, choose from pattern
-			} else {
+			} else if (!isLine) {
 				if (ids.indexOf(id) < 0) { ids.push(id); }
 				color = pattern[ids.indexOf(id) % pattern.length];
 				colors[id] = color;
