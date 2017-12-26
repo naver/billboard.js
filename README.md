@@ -22,7 +22,7 @@ Play with the diverse option generating on the fly!
 - https://naver.github.io/billboard.js/playground/
 
 ## Supported chart types
-![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png)
+![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=1)
 
 ## Download and Installation
 
