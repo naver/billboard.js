@@ -180,6 +180,7 @@ var billboardDemo = {
 			.replace(/\\t/g, "\t")
 			.replace(/\t{5}/g,"")
 			.replace(/\\r/g, "\r")
+			.replace(/"(\w+)":/g,"$1:")
 			.replace(/\\n(?!T)/g, "\n") +");";
 
 		// markup
