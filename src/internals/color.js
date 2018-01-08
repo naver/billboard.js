@@ -44,6 +44,8 @@ extend(ChartInternal.prototype, {
 		const ids = [];
 		let pattern = notEmpty(config.color_pattern) ?
 			config.color_pattern : d3ScaleOrdinal(d3SchemeCategory10).range();
+		const originalColorPattern = pattern;
+
 
 		if (isFunction(config.color_tiles)) {
 			const tiles = config.color_tiles();
@@ -62,7 +64,7 @@ extend(ChartInternal.prototype, {
 
 		return function(d) {
 			const id = d.id || (d.data && d.data.id) || d;
-			const isLine = $$.isTypeOf(id, "line");
+			const usePattern = $$.config.data_types[id] !== undefined;
 			let color;
 
 
@@ -75,9 +77,11 @@ extend(ChartInternal.prototype, {
 				color = colors[id];
 
 			// if not specified, choose from pattern
-			} else if (!isLine) {
+			} else {
 				if (ids.indexOf(id) < 0) { ids.push(id); }
-				color = pattern[ids.indexOf(id) % pattern.length];
+
+				color = usePattern ? pattern[ids.indexOf(id) % pattern.length] :
+					originalColorPattern[ids.indexOf(id) % originalColorPattern.length];
 				colors[id] = color;
 			}
 
