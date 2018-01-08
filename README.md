@@ -218,7 +218,7 @@ If you find a bug, please report to us posting [issues](https://github.com/naver
 billboard.js is released under the [MIT license](https://github.com/naver/billboard.js/blob/master/LICENSE).
 
 ```
-Copyright (c) 2017 NAVER Corp.
+Copyright (c) 2018 NAVER Corp.
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
