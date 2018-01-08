@@ -131,5 +131,54 @@ describe("COLOR", () => {
 				});
 			});
 		});
+
+		describe("pattern shouldn't be applying for line types", () => {
+			const checkStroke = (path=[false, false]) => {
+				const internal = chart.internal;
+				const rx = /#bb-\d+-pattern-/;
+
+				chart.data().forEach(v => {
+					const id = v.id;
+					const isLine = internal.isTypeOf(id, ["line", "spline", "step"]) || !internal.config.data_types[id];
+					const stroke = internal.main.select(`.bb-shapes-${id} path`).style("stroke");
+
+					expect(rx.test(stroke)).to.be[!isLine];
+				})
+			};
+
+			it("set options data.type=undefined", () => {
+				args.data.type = undefined;
+			});
+
+			it("check for stroke", checkStroke);
+
+			it("set options data.type=line", () => {
+				args.data.type = "line";
+			});
+
+			it("check for stroke", checkStroke);
+
+			it("set options data.type=spline", () => {
+				args.data.type = "spline";
+			});
+
+			it("check for stroke", checkStroke);
+
+			it("set options data.type=step", () => {
+				args.data.type = "step";
+			});
+
+			it("check for stroke", checkStroke);
+
+			it("set options data.type", () => {
+				args.data.type = undefined;
+				args.data.types = {
+					data1: "bar",
+					data2: "line"
+				};
+			});
+
+			it("check for stroke", checkStroke);
+		});
 	});
 });
