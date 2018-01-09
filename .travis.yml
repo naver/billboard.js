@@ -8,6 +8,7 @@ before_install:
   - npm install -g greenkeeper-lockfile@1
 install:
   - npm install
+sudo: required
 addons:
   chrome: stable # install chrome stable.
 cache:
