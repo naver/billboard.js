@@ -921,16 +921,20 @@ describe("AXIS", function() {
 			args = {
 				data: {
 					columns: [
-						["data1", 5, 10, 15]
-					],
-					types: {
-						data1: "bar"
-					}
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15],
+						["data3", 50, 20, 10, 40, 15],
+						["data4", 30, 200, 130, 400, 30],
+						["data5", 50, 20, 10, 40, 415]
+					]
+				},
+				legend: {
+					show: false
 				},
 				axis: {
 					x: {
 						type: "category",
-						categories: ["text1", "text2", "text3"]
+						categories: ["cat1", "cat2", "cat3", "cat4", "cat5"]
 					},
 					rotated: true
 				}
@@ -941,7 +945,7 @@ describe("AXIS", function() {
 			const barRects = chart.internal.main.select(".bb-event-rects").selectAll("rect.bb-event-rect");
 			const ticks = chart.internal.main.select(".bb-axis-x").selectAll("g.tick").nodes();
 
-			barRects.each(function(rect, idx){
+			barRects.each(function(d, idx){
 				const y = d3.select(this).attr("y");
 				const tick = d3.select(ticks[idx]);
 
