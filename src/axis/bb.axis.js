@@ -118,7 +118,7 @@ export default function(params = {}) {
 
 	function transitionise(selection) {
 		return params.withoutTransition ?
-			selection : selection.transition(transition);
+			selection.interrupt() : selection.transition(transition);
 	}
 
 	function axis(g) {
