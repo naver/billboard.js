@@ -64,7 +64,8 @@ extend(ChartInternal.prototype, {
 
 		return function(d) {
 			const id = d.id || (d.data && d.data.id) || d;
-			const usePattern = $$.config.data_types[id] !== undefined;
+			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !$$.config.data_types[id];
+
 			let color;
 
 
@@ -80,8 +81,9 @@ extend(ChartInternal.prototype, {
 			} else {
 				if (ids.indexOf(id) < 0) { ids.push(id); }
 
-				color = usePattern ? pattern[ids.indexOf(id) % pattern.length] :
-					originalColorPattern[ids.indexOf(id) % originalColorPattern.length];
+				color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] :
+					pattern[ids.indexOf(id) % pattern.length];
+
 				colors[id] = color;
 			}
 
