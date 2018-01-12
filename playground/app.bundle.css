@@ -275,8 +275,8 @@ input, select {
 
 /* Default styles for common addons */
 
-div.CodeMirror span.CodeMirror-matchingbracket {color: #0f0;}
-div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
+div.CodeMirror span.CodeMirror-matchingbracket {color: #0b0;}
+div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #a22;}
 .CodeMirror-matchingtag { background: rgba(255, 150, 0, .3); }
 .CodeMirror-activeline-background {background: #e8f2ff;}
 
@@ -400,7 +400,7 @@ div.CodeMirror span.CodeMirror-nonmatchingbracket {color: #f22;}
 .CodeMirror-linewidget {
   position: relative;
   z-index: 2;
-  overflow: auto;
+  padding: 0.1px; /* Force widget margins to stay inside of the container */
 }
 
 .CodeMirror-widget {}
@@ -481,7 +481,7 @@ span.CodeMirror-selectedtext { background: none; }
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.1.1
+ * @version 1.2.0
  */
 /*-- Chart --*/
 .bb svg {
@@ -609,7 +609,7 @@ span.CodeMirror-selectedtext { background: none; }
     padding: 3px 6px;
     background-color: #fff;
     border-left: 1px dotted #999; }
-    .bb-tooltip td > span {
+    .bb-tooltip td > span, .bb-tooltip td > svg {
       display: inline-block;
       width: 10px;
       height: 10px;
