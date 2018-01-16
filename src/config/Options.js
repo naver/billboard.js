@@ -317,7 +317,7 @@ export default class Options {
 			 * @type {String}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
              *   x: "date"
 			 * }
 			 */
@@ -331,10 +331,10 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
              *   xs: {
-             *    data1: "x1",
-             *    data2: "x2"
+             *      data1: "x1",
+             *      data2: "x2"
              *   }
 			 * }
 			 */
@@ -347,7 +347,7 @@ export default class Options {
 			 * @type {String}
 			 * @default %Y-%m-%d
 			 * @example
-			 * data․ {
+			 * data: {
              *   xFormat: "%Y-%m-%d %H:%M:%S"
 			 * }
 			 * @see [D3's time specifier](https://npm.runkit.com/d3-time-format)
@@ -361,7 +361,7 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default true
 			 * @example
-			 * data․ {
+			 * data: {
              *   xLocaltime: false
 			 * }
 			 */
@@ -374,7 +374,7 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default true
 			 * @example
-			 * data․ {
+			 * data: {
              *   xSort: false
 			 * }
 			 */
@@ -388,7 +388,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
              *   names: {
              *     data1: "Data Name 1",
              *     data2: "Data Name 2"
@@ -405,7 +405,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
              *   classes: {
              *     data1: "additional-data1-class",
              *     data2: "additional-data2-class"
@@ -421,7 +421,7 @@ export default class Options {
 			 * @type {Array}
 			 * @default []
 			 * @example
-			 * data․ {
+			 * data: {
              *   groups: [
              *     ["data1", "data2"],
              *     ["data3"]
@@ -437,7 +437,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   axes: {
 			 *     data1: "y",
 			 *     data2: "y2"
@@ -467,8 +467,8 @@ export default class Options {
 			 * @type {String}
 			 * @default line
 			 * @example
-			 * data․ {
-			 *  type: "bar"
+			 * data: {
+			 *    type: "bar"
 			 * }
 			 */
 			data_type: undefined,
@@ -481,7 +481,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   types: {
 			 *     data1: "bar",
 			 *     data2: "spline"
@@ -509,7 +509,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   labels: true,
 			 *
 			 *   // or set specific options
@@ -545,7 +545,7 @@ export default class Options {
 			 * @type {String|Function|null}
 			 * @default desc
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   // in descending order (default)
 			 *   order: "desc"
 			 *
@@ -578,7 +578,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   regions: {
 			 *     data1: [{
 			 *         "start": 1,
@@ -601,7 +601,7 @@ export default class Options {
 			 * @type {Function}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   color: function(color, d) { ... }
 			 * }
 			 */
@@ -614,7 +614,7 @@ export default class Options {
 			 * @type {Object}
 			 * @default {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   colors: {
 			 *     data1: "#ff0000",
 			 *     ...
@@ -631,7 +631,7 @@ export default class Options {
 			 * @type {Boolean|Array}
 			 * @default false
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   // all of data will be hidden
 			 *   hide: true
 			 *   // specified data will be hidden
@@ -649,10 +649,10 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default false
 			 * @example
-			 * data․ {
-			 *     selection․ {
+			 * data: {
+			 *    selection․ {
 			 *       enabled: true
-			 *   }
+			 *    }
 			 * }
 			 */
 			data_selection_enabled: false,
@@ -665,10 +665,10 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default false
 			 * @example
-			 * data․ {
-			 *     selection․ {
+			 * data: {
+			 *    selection․ {
 			 *       grouped: true
-			 *   }
+			 *    }
 			 * }
 			 */
 			data_selection_grouped: false,
@@ -681,10 +681,10 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() { return true; }
 			 * @example
-			 * data․ {
-			 *     selection․ {
+			 * data: {
+			 *    selection․ {
 			 *       isselectable: function(d) { ... }
-			 *   }
+			 *    }
 			 * }
 			 */
 			data_selection_isselectable: () => true,
@@ -697,10 +697,10 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default true
 			 * @example
-			 * data․ {
-			 *     selection․ {
+			 * data: {
+			 *    selection․ {
 			 *       multiple: false
-			 *   }
+			 *    }
 			 * }
 			 */
 			data_selection_multiple: true,
@@ -714,8 +714,8 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default false
 			 * @example
-			 * data․ {
-			 *     selection․ {
+			 * data: {
+			 *    selection․ {
 			 *       draggable: true
 			 *   }
 			 * }
@@ -730,7 +730,7 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     onclick: function(d, element) { ... }
 			 * }
 			 */
@@ -744,7 +744,7 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     onover: function(d) { ... }
 			 * }
 			 */
@@ -758,7 +758,7 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     onout: function(d) { ... }
 			 * }
 			 */
@@ -771,12 +771,12 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     onselected: function(d, element) {
 			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
 			 *        // element - <circle>
-			  *        ...
-			  *    }
+			 *        ...
+			 *    }
 			 * }
 			 */
 			data_onselected: () => {},
@@ -788,11 +788,13 @@ export default class Options {
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
+			 * data: {
 			 *     onunselected: function(d, element) {
 			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
 			 *        // element - <circle>
-			  *        ...
-			  *    }
+			 *        ...
+			 *    }
+			 * }
 			 */
 			data_onunselected: () => {},
 
@@ -803,7 +805,7 @@ export default class Options {
 			 * @type {Function}
 			 * @default undefined
 			 * @example
-			 *     onmin: function(data) {
+			 *    onmin: function(data) {
 			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
 		     *        ...
 			 *    }
@@ -817,7 +819,7 @@ export default class Options {
 			 * @type {Function}
 			 * @default undefined
 			 * @example
-			 *     onmax: function(data) {
+			 *    onmax: function(data) {
 			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
 		     *        ...
 			 *    }
@@ -831,7 +833,7 @@ export default class Options {
 			 * @type {String}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     url: "/data/c3_test.csv"
 			 * }
 			 */
@@ -846,7 +848,7 @@ export default class Options {
 			 * @default undefined
 			 * @see data․keys
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     json: [
 			 *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
 			 *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
@@ -868,7 +870,7 @@ export default class Options {
 			 * @type {Array}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   rows: [
 			 *     ["A", "B", "C"],
 			 *     [90, 120, 300],
@@ -889,7 +891,7 @@ export default class Options {
 			 * @type {Array}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   columns: [
 			 *      ["data1", 30, 20, 50, 40, 60, 50],
 			 *      ["data2", 200, 130, 90, 240, 130, 220],
@@ -906,7 +908,7 @@ export default class Options {
 			 * @type {String}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
 			 *    {
 			 *       mimeType: "json"
 			 *    }
@@ -921,7 +923,7 @@ export default class Options {
 			 * @type {String}
 			 * @default undefined
 			 * @example
-			 * data․ {
+			 * data: {
 			 *     json: [
 			 *       {name: "www.site1.com", upload: 200, download: 200, total: 400},
 			 *       {name: "www.site2.com", upload: 100, download: 300, total: 400},
@@ -943,7 +945,7 @@ export default class Options {
 			 * @type {String}
 			 * @default ""
 			 * @example
-			 * data․ {
+			 * data: {
 			 *   empty: {
 			 *     label: {
 			 *       text: "No Data"
@@ -2405,10 +2407,10 @@ export default class Options {
 			 * @example
 			 *  regions: [
 			 *    {
-			 *	    axis: "x",
-			 *	    start: 1,
-			 *	    end: 4,
-			 *	    class: "region-1-4"
+			 *	   axis: "x",
+			 *	   start: 1,
+			 *	   end: 4,
+			 *	   class: "region-1-4"
 			 *    }
 			 *  ]
 			 */
