@@ -54,12 +54,14 @@ export default class Axis {
 		tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		const $$ = this.owner;
 		const config = $$.config;
+		const isCategory = $$.isCategorized();
 		const axisParams = {
-			isCategory: $$.isCategorized(),
+			isCategory,
 			withOuterTick,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
+			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
 			withoutTransition,
 			orgXScale: $$.x
 		};
@@ -77,8 +79,9 @@ export default class Axis {
 		// Set tick
 		axis.tickFormat(tickFormat).tickValues(newTickValues);
 
-		if ($$.isCategorized()) {
+		if (isCategory) {
 			axis.tickCentered(config.axis_x_tick_centered);
+
 			if (isEmpty(config.axis_x_tick_culling)) {
 				config.axis_x_tick_culling = false;
 			}
@@ -99,6 +102,7 @@ export default class Axis {
 				$$.isTimeSeries()
 			);
 		}
+
 		if (axis) {
 			axis.tickValues(tickValues);
 		} else {
@@ -116,7 +120,7 @@ export default class Axis {
 		const axisParams = {
 			withOuterTick,
 			withoutTransition,
-			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate,
+			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
 		};
 		const axis = bbAxis(axisParams)
 			.scale(scale)
@@ -190,18 +194,8 @@ export default class Axis {
 
 	getLabelOptionByAxisId(axisId) {
 		const $$ = this.owner;
-		const config = $$.config;
-		let option;
 
-		if (axisId === "y") {
-			option = config.axis_y_label;
-		} else if (axisId === "y2") {
-			option = config.axis_y2_label;
-		} else if (axisId === "x") {
-			option = config.axis_x_label;
-		}
-
-		return option;
+		return $$.config[`axis_${axisId}_label`];
 	}
 
 	getLabelText(axisId) {
@@ -223,13 +217,7 @@ export default class Axis {
 		const option = this.getLabelOptionByAxisId(axisId);
 
 		if (isString(option)) {
-			if (axisId === "y") {
-				config.axis_y_label = text;
-			} else if (axisId === "y2") {
-				config.axis_y2_label = text;
-			} else if (axisId === "x") {
-				config.axis_x_label = text;
-			}
+			config[`axis_${axisId}_label`] = text;
 		} else if (option) {
 			option.text = text;
 		}
@@ -272,6 +260,7 @@ export default class Axis {
 		} else {
 			label = id === "y" ? this.getYAxisLabelPosition() : this.getXAxisLabelPosition();
 		}
+
 		return label;
 	}
 
@@ -302,6 +291,7 @@ export default class Axis {
 		} else {
 			x = position.isMiddle ? -$$.height / 2 : 0;
 		}
+
 		return x;
 	}
 
@@ -319,6 +309,7 @@ export default class Axis {
 		} else {
 			dx = position.isBottom ? "0.5em" : "0";
 		}
+
 		return dx;
 	}
 
@@ -336,6 +327,7 @@ export default class Axis {
 		} else {
 			anchor = position.isMiddle ? "middle" : "end";
 		}
+
 		return anchor;
 	}
 
@@ -435,24 +427,13 @@ export default class Axis {
 			let scale;
 			let axis;
 
-			if (id === "y") {
-				scale = $$.y.copy().domain($$.getYDomain(targetsToShow, "y"));
+			if (/^y2?$/.test(id)) {
+				scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id));
 				axis = this.getYAxis(
 					scale,
-					$$.yOrient,
-					config.axis_y_tick_format,
-					$$.yAxisTickValues,
-					false,
-					true,
-					true
-				);
-			} else if (id === "y2") {
-				scale = $$.y2.copy().domain($$.getYDomain(targetsToShow, "y2"));
-				axis = this.getYAxis(
-					scale,
-					$$.y2Orient,
-					config.axis_y2_tick_format,
-					$$.y2AxisTickValues,
+					$$[`${id}Orient`],
+					config[`axis_${id}_tick_format`],
+					$$[`${id}AxisTickValues`],
 					false,
 					true,
 					true
@@ -486,14 +467,18 @@ export default class Axis {
 				.each(function() {
 					d3Select(this).selectAll("text")
 						.each(function() {
-							const box = this.getBoundingClientRect();
+							const boxWidth = this.getBoundingClientRect().width;
 
-							if (maxWidth < box.width) { maxWidth = box.width; }
+							maxWidth < boxWidth && (maxWidth = boxWidth);
 						});
+
 					dummy.remove();
 				});
 		}
-		$$.currentMaxTickWidths[id] = maxWidth <= 0 ? $$.currentMaxTickWidths[id] : maxWidth;
+
+		$$.currentMaxTickWidths[id] = maxWidth <= 0 ?
+			$$.currentMaxTickWidths[id] : maxWidth;
+
 		return $$.currentMaxTickWidths[id];
 	}
 
@@ -528,9 +513,11 @@ export default class Axis {
 		if (!isValue(p)) {
 			return defaultValue;
 		}
+
 		if (padding.unit === "ratio") {
 			return padding[key] * domainLength;
 		}
+
 		// assume padding is pixels if unit is not specified
 		return this.convertPixelsToAxisPadding(p, domainLength);
 	}

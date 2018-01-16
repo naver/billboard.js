@@ -138,6 +138,6 @@ extend(ChartInternal.prototype, {
 				$$.y2AxisTickValues, config.axis_y2_tick_outer);
 
 		// update for arc
-		if ($$.updateArc) { $$.updateArc(); }
+		$$.updateArc && $$.updateArc();
 	},
 });

@@ -244,14 +244,12 @@ describe("AXIS", function() {
 					});
 				});
 
-				it("should set axis.x.tick.format", () => {
+				it("set options axis.x.tick.format", () => {
 					args.axis.x = {
 						tick: {
 							format: () => "very long tick text on x axis"
 						}
 					};
-
-					expect(true).to.be.ok;
 				});
 
 				it("should split x axis tick text to multiple lines", () => {
@@ -325,13 +323,11 @@ describe("AXIS", function() {
 					});
 				});
 
-				it("should set big values in y", () => {
+				it("set options data.columns, big values in y", () => {
 					args.data.columns = [
 						["data1", 3000000000000000, 200, 100, 400, 150, 250],
 						["data2", 50, 20, 10, 40, 15, 25]
 					];
-
-					expect(true).to.be.ok;
 				});
 
 				it("should not split y axis tick text to multiple lines", () => {
@@ -428,7 +424,10 @@ describe("AXIS", function() {
 						},
 						axis: {
 							x: {
-								type: "category"
+								type: "category",
+								tick: {
+									tooltip: true
+								}
 							}
 						}
 					};
@@ -480,6 +479,16 @@ describe("AXIS", function() {
 						} else {
 							expect(parseFloat(tspan.attr("dy"))).to.be.above(8);
 						}
+					});
+				});
+
+				it("should set tooltip", () => {
+					const ticks = chart.internal.main.select(".bb-axis-x")
+						.selectAll("g.tick");
+					const categories = chart.categories();
+
+					ticks.each(function(d, i) {
+						expect(d3.select(this).select("title").text()).to.be.equal(categories[i]);
 					});
 				});
 			});

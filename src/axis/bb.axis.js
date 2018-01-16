@@ -6,11 +6,11 @@ import {
 	scaleLinear as d3ScaleLinear,
 	select as d3Select
 } from "d3";
-import {isArray, isDefined, isFunction} from "../internals/util";
+import {isArray, toArray, isDefined, isFunction} from "../internals/util";
 
 // Features:
 // 1. category axis
-// 2. ceil values of translate/x/y to int for half pixel antialiasing
+// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
 // 3. multiline tick text
 let tickTextCharSize;
 
@@ -48,7 +48,7 @@ export default function(params = {}) {
 
 		if (scale.ticks) {
 			return scale.ticks(
-				...(tickArguments ? Array.prototype.slice.call(tickArguments) : [])
+				...(tickArguments ? toArray(tickArguments) : [])
 			).map(v => (
 				// round the tick value if is number
 				/(string|number)/.test(typeof v) && !isNaN(v) ?
@@ -398,6 +398,12 @@ export default function(params = {}) {
 					pathUpdate.attr("d", `M${outerTickSize},${range[0]}H0V${range[1]}H${outerTickSize}`);
 			}
 
+			// Append <title> for tooltip display
+			params.tickTitle && textUpdate.append("title")
+				.each(function(index) {
+					d3Select(this).text(params.tickTitle[index]);
+				});
+
 			if (scale1.bandwidth) {
 				const x = scale1;
 				const dx = x.bandwidth() / 2;
@@ -493,7 +499,7 @@ export default function(params = {}) {
 			return tickArguments;
 		}
 
-		tickArguments = Array.prototype.slice.call(args);
+		tickArguments = toArray(args);
 
 		return axis;
 	};

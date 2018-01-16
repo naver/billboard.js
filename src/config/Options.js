@@ -1396,6 +1396,24 @@ export default class Options {
 			axis_x_tick_width: null,
 
 			/**
+			 * Set to display system tooltip for tick text
+			 * - **Note:** Only available for category axis type (`axis.x.type='category'`)
+			 * @name axis․x․tick․tooltip
+			 * @memberOf Options
+			 * @type {Boolean}
+			 * @default false
+			 * @example
+			 * axis: {
+			 *   x: {
+			 *     tick: {
+			 *       tooltip: true
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_x_tick_tooltip: false,
+
+			/**
 			 * Set max value of x axis range.
 			 * @name axis․x․max
 			 * @memberOf Options
