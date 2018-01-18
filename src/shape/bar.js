@@ -171,9 +171,11 @@ extend(ChartInternal.prototype, {
 		const ex = x + w + offset;
 		const sy = y + h + offset;
 		const ey = y - offset;
-		const isIn = sx < mouse[0] && mouse[0] < ex && ey < mouse[1] && mouse[1] < sy;
 
-		return isIn;
+		return sx < mouse[0] &&
+			mouse[0] < ex &&
+			ey < mouse[1] &&
+			mouse[1] < sy;
 	}
 });
 
