@@ -92,7 +92,9 @@ const axis = extend(() => {}, {
 	 * @method axis․min
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Object} min If min is given, specified axis' min value will be updated. If no argument is given, the current min values for each axis will be returned.
+	 * @param {Object} min If min is given, specified axis' min value will be updated.<br>
+	 *     If no argument is given, the min values set on generating option for each axis will be returned.
+	 *     If not set any min values on generation, it will return `undefined`.
 	 * @example
 	 * // Update axis' min
 	 * chart.axis.min({
@@ -114,7 +116,9 @@ const axis = extend(() => {}, {
 	 * @method axis․max
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Object} max If max is given, specified axis' max value will be updated. If no argument is given, the current max values for each axis will be returned.
+	 * @param {Object} max If max is given, specified axis' max value will be updated.<br>
+	 *     If no argument is given, the max values set on generating option for each axis will be returned.
+	 *     If not set any max values on generation, it will return `undefined`.
 	 * @example
 	 * // Update axis' label
 	 * chart.axis.max({

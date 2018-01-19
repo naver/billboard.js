@@ -6,11 +6,7 @@ module.exports = function(config) {
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/hammer-simulator/index.js",
 			"./spec/assets/hammer-simulator.run.js",
-			"./spec/*-spec.js"
-		],
-
-		exclude: [
-			// "./spec/[a-b]*-spec.js"
+			"./spec/**/*-spec.js"
 		],
 
 		client: {
@@ -51,7 +47,7 @@ module.exports = function(config) {
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
-			"./spec/*-spec.js": config.coverage ? ["webpack"] : ["webpack", "sourcemap"]
+			"./spec/**/*-spec.js": config.coverage ? ["webpack"] : ["webpack", "sourcemap"]
 		},
 
 		// start these browsers
