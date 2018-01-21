@@ -31,4 +31,12 @@ describe("API chart", () => {
 			expect(svg.empty()).to.be.true;
 		});
 	});
+
+	//chart.flush
+
+	// chart.transform
+
+	// chart.toggle
+
+	// chart.groups
 });
