@@ -7,12 +7,16 @@ import {extend} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
-	 * Show data points
+	 * Show data series on chart
 	 * @method show
 	 * @instance
 	 * @memberOf Chart
-	 * @param {String|Array} targetIdsValue
-	 * @param {Object} options
+	 * @param {String|Array} [targetIdsValue=all] The target id value.
+	 * @param {Object} [options] The object can consist with following members:<br>
+	 *
+	 *    | Key | Type | default | Description |
+	 *    | --- | --- | --- | --- |
+	 *    | withLegend | Boolean | false | whether or not display legend |
 	 */
 	show(targetIdsValue, options = {}) {
 		const $$ = this.internal;
@@ -37,12 +41,16 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Hide data points
+	 * Hide data series from chart
 	 * @method hide
 	 * @instance
 	 * @memberOf Chart
-	 * @param {String|Array} targetIdsValue
-	 * @param {Object} options
+	 * @param {String|Array} [targetIdsValue=all] The target id value.
+	 * @param {Object} [options] The object can consist with following members:<br>
+	 *
+	 *    | Key | Type | default | Description |
+	 *    | --- | --- | --- | --- |
+	 *    | withLegend | Boolean | false | whether or not display legend |
 	 */
 	hide(targetIdsValue, options = {}) {
 		const $$ = this.internal;
@@ -67,12 +75,16 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Toggle data points
+	 * Toggle data series on chart
 	 * @method toggle
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Array} targetIds
-	 * @param {Object} options
+	 * @param {Array} [targetIdsValue=all] The target id value.
+	 * @param {Object} [options] The object can consist with following members:<br>
+	 *
+	 *    | Key | Type | default | Description |
+	 *    | --- | --- | --- | --- |
+	 *    | withLegend | Boolean | false | whether or not display legend |
 	 */
 	toggle(targetIds, options = {}) {
 		const that = this;

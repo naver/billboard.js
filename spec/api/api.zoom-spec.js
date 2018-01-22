@@ -197,5 +197,5 @@ describe("API zoom", function() {
 		});
 	});
 
-	// zoom.enable / max/min/range
+	// @TODO zoom.enable / max/min/range
 });
