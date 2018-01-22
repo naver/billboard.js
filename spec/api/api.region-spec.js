@@ -8,7 +8,7 @@ import util from "../assets/util";
 describe("API region", function() {
 	let chart;
 
-	describe("api.region", () => {
+	describe("regions()", () => {
 		chart = util.generate({
 			data: {
 				columns: [
@@ -82,7 +82,7 @@ describe("API region", function() {
 		});
 	});
 
-	describe("api.region.add", () => {
+	describe("Add regions using regions()", () => {
 		chart = util.generate({
 			data: {
 				columns: [
@@ -172,7 +172,7 @@ describe("API region", function() {
 		});
 	});
 
-	describe("api.region.remove", () => {
+	describe("Remove regions using regions()", () => {
 		chart = util.generate({
 			data: {
 				columns: [
@@ -242,4 +242,6 @@ describe("API region", function() {
 			}, 500);
 		});
 	});
+
+	// regions.add / remove
 });

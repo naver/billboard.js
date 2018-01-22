@@ -196,4 +196,6 @@ describe("API zoom", function() {
 			expect(domain[1]).to.be.equal(orginal[1]);
 		});
 	});
+
+	// @TODO zoom.enable / max/min/range
 });
