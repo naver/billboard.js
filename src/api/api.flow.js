@@ -19,31 +19,44 @@ extend(Chart.prototype, {
 	 * @method flow
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Object} args
-	 * - If json, rows and columns given, the data will be loaded. If data that has the same target id is given, the chart will be appended. Otherwise, new target will be added. One of these is required when calling. If json specified, keys is required as well as data.json
-	 * - If to is given, the lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points.
-	 * - If length is given, the lower x edge will move by the number of this argument.
-	 * - If duration is given, the duration of the transition will be specified value. If not given, transition.duration will be used as default.
-	 * - If done is given, the specified function will be called when flow ends.
+	 * @param {Object} args The object can consist with following members:<br>
+	 *
+	 *    | Key | Type | Description |
+	 *    | --- | --- | --- |
+	 *    | json | Object | Data as JSON format (@see [data․json](Options.html#.data%25E2%2580%25A4json)) |
+	 *    | rows | Array | Data in array as row format (@see [data․rows](Options.html#.data%25E2%2580%25A4json)) |
+	 *    | columns | Array | Data in array as column format (@see [data․columns](Options.html#.data%25E2%2580%25A4columns)) |
+	 *    | to | String | The lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points |
+	 *    | length | Number | The lower x edge will move by the number of this argument |
+	 *    | duration | Number | The duration of the transition will be specified value. If not given, transition.duration will be used as default |
+	 *    | done | Function | The specified function will be called when flow ends |
+	 *
+	 * - **NOTE:**
+	 *   If json, rows and columns given, the data will be loaded.<br>
+	 *   If data that has the same target id is given, the chart will be appended.<br>
+	 *   Otherwise, new target will be added. One of these is required when calling.<br>
+	 *   If json specified, keys is required as well as data.json.
 	 * @example
 	 * // 2 data points will be apprended to the tail and popped from the head.
 	 * // After that, 4 data points will be appended and no data points will be poppoed.
 	 * chart.flow({
 	 *  columns: [
-	 *    ["x", "2013-01-11", "2013-01-21"],
+	 *    ["x", "2018-01-11", "2018-01-21"],
 	 *    ["data1", 500, 200],
 	 *    ["data2", 100, 300],
 	 *    ["data3", 200, 120]
 	 *  ],
+	 *  to: "2013-01-11",
 	 *  done: function () {
 	 *    chart.flow({
 	 *      columns: [
-	 *        ["x", "2013-02-11", "2013-02-12", "2013-02-13", "2013-02-14"],
+	 *        ["x", "2018-02-11", "2018-02-12", "2018-02-13", "2018-02-14"],
 	 *        ["data1", 200, 300, 100, 250],
 	 *        ["data2", 100, 90, 40, 120],
 	 *        ["data3", 100, 100, 300, 500]
 	 *      ],
-	 *      length: 0
+	 *      length: 2,
+     *      duration: 1500
 	 *    });
 	 *  }
 	 * });
