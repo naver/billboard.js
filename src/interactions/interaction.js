@@ -12,6 +12,43 @@ import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isBoolean} from "../internals/util";
 
+// Get mouse event
+let getMouseEvent = () => {
+	const getParams = () => ({
+		bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+	});
+
+	try {
+		// eslint-disable-next-line no-new
+		new MouseEvent("t");
+		getMouseEvent = () => (eventType, params = getParams()) => new MouseEvent(eventType, params);
+	} catch (e) {
+		// Polyfills DOM4 MouseEvent
+		getMouseEvent = () => (
+			eventType,
+			params = getParams()
+		) => {
+			const mouseEvent = document.createEvent("MouseEvent");
+
+			// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+			mouseEvent.initMouseEvent(
+				eventType,
+				params.bubbles,
+				params.cancelable,
+				window,
+				0, // the event's mouse click count
+				params.screenX, params.screenY,
+				params.clientX, params.clientY,
+				false, false, false, false, 0, null
+			);
+
+			return mouseEvent;
+		};
+	}
+
+	return getMouseEvent();
+};
+
 extend(ChartInternal.prototype, {
 	/**
 	 * Initialize the area that detects the event.
@@ -555,25 +592,29 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
-	 * Dispatch an event.
+	 * Dispatch a mouse event.
 	 * @private
 	 * @param {String} type event type
 	 * @param {Number} index Index of eventRect
-	 * @param {Object} mouse Object
+	 * @param {Array} mouse x and y coordinate value
 	 */
 	dispatchEvent(type, index, mouse) {
 		const $$ = this;
-		const selector = $$.isMultipleX() ?
-			`.${CLASS.eventRect}` : `${CLASS.eventRect}-${index}`;
+		const selector = `.${
+			$$.isMultipleX() ? CLASS.eventRect : `${CLASS.eventRect}-${index}`
+		}`;
 
 		const eventRect = $$.main.select(selector).node();
 		const box = eventRect.getBoundingClientRect();
 		const x = box.left + (mouse ? mouse[0] : 0);
 		const y = box.top + (mouse ? mouse[1] : 0);
+		const mouseEvent = getMouseEvent();
 
-		const event = document.createEvent("MouseEvents")
-			.initMouseEvent(type, true, true, window, 0, x, y, x, y, false, false, false, false, 0, null);
-
-		eventRect.dispatchEvent(event);
+		eventRect.dispatchEvent(mouseEvent(type, {
+			screenX: x,
+			screenY: y,
+			clientX: x,
+			clientY: y
+		}));
 	}
 });
