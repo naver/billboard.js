@@ -21,10 +21,12 @@ describe("Interface & initialization", () => {
 				]
 			}
 		});
+		const internal = chart.internal;
 
 		expect(chart).not.to.be.null;
 		expect(d3.select(chart.element).classed("bb")).to.be.true;
-		expect(chart.internal.svg.node().tagName).to.be.equal("svg");
+		expect(internal.svg.node().tagName).to.be.equal("svg");
+		expect(internal.convertInputType()).to.be.equal(internal.inputType);
 	});
 
 	it("should resize correctly in flex container", done => {
