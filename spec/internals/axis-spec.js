@@ -490,6 +490,9 @@ describe("AXIS", function() {
 					ticks.each(function(d, i) {
 						expect(d3.select(this).select("title").text()).to.be.equal(categories[i]);
 					});
+
+					// check when toggling displaying data series
+					expect(() => chart.hide("data1")).to.not.throw();
 				});
 			});
 

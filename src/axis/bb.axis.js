@@ -399,7 +399,7 @@ export default function(params = {}) {
 			}
 
 			// Append <title> for tooltip display
-			params.tickTitle && textUpdate.append("title")
+			params.tickTitle && textUpdate.append && textUpdate.append("title")
 				.each(function(index) {
 					d3Select(this).text(params.tickTitle[index]);
 				});
