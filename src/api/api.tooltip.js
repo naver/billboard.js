@@ -18,10 +18,27 @@ const tooltip = extend(() => {}, {
 	 *
 	 *    | Key | Type | Description |
 	 *    | --- | --- | --- |
-	 *    | data | Object | Determine focus data with following keys: `x`, `id`, `value` and `index` |
 	 *    | index | Number | Determine focus by index |
-	 *    | mouse | Array | Determine x and y coordinate value |
-	 *    | x | Number | Determine focus by x Axis index |
+	 *    | x | Number|Date | Determine focus by x Axis index |
+	 *    | data | Object | Determine focus data with following keys: `x` or `index`.<br>When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is set, the target is determined by mouse position and needs specify `x`, `id` and `value`. |
+	 *    | mouse | Array | Determine x and y coordinate value relative the targeted x Axis element.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
+	 *
+	 * @example
+	 *  // show the 2nd x Axis coordinate tooltip
+	 *  chart.tooltip.show({
+	 *    index: 1
+	 *  });
+	 *
+	 *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate relative the x Axis element.
+	 *  chart.tooltip.show({
+	 *    data: {x: 2},
+	 *    mouse: [50, 100]
+	 *  });
+	 *
+	 *  // show tooltip for timeseries x axis
+	 *  chart.tooltip.show({
+	 *    x: new Date("2018-01-02 00:00")
+	 *  });
 	 */
 	show: function(args = {}) {
 		const $$ = this.internal;
