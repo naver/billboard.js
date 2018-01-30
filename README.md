@@ -21,6 +21,11 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 Play with the diverse option generating on the fly!
 - https://naver.github.io/billboard.js/playground/
 
+## Questions?
+If you have any questions, checkout previous posts or post new one from:
+- [Stack Overflow: billboard.js tagged posts](https://stackoverflow.com/questions/tagged/billboard.js)
+- [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
+
 ## Supported chart types
 ![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=1)
 
