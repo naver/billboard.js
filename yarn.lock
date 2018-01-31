@@ -812,9 +812,9 @@ babel-plugin-transform-helper-modules@^6.1.0:
   version "6.1.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-transform-helper-modules/-/babel-plugin-transform-helper-modules-6.1.0.tgz#0fcab67d38e8a8a02da5f5ab7d3a3a1dc8e97665"
 
-babel-plugin-transform-inline-consecutive-adds@^0.2.0:
-  version "0.2.0"
-  resolved "https://registry.yarnpkg.com/babel-plugin-transform-inline-consecutive-adds/-/babel-plugin-transform-inline-consecutive-adds-0.2.0.tgz#15dae78921057f4004f8eafd79e15ddc5f12f426"
+babel-plugin-transform-inline-consecutive-adds@^0.3.0:
+  version "0.3.0"
+  resolved "https://registry.yarnpkg.com/babel-plugin-transform-inline-consecutive-adds/-/babel-plugin-transform-inline-consecutive-adds-0.3.0.tgz#f07d93689c0002ed2b2b62969bdd99f734e03f57"
 
 babel-plugin-transform-merge-sibling-variables@^6.8.6:
   version "6.8.6"
