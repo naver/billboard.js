@@ -14,11 +14,12 @@ extend(Chart.prototype, {
 	 * @method selected
 	 * @instance
 	 * @memberOf Chart
-	 * @param {String} targetId You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
-	 * @return {Array} dataPoint
+	 * @param {String} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
+	 * @return {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
 	 * @example
 	 *  // all selected data points will be returned.
 	 *  chart.selected();
+	 *  // --> ex.) [{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ... ]
 	 *
 	 *  // all selected data points of data1 will be returned.
 	 *  chart.selected("data1");
@@ -38,16 +39,28 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Set data points to be selected.
+	 * Set data points to be selected. (`[data.selection.enabled](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)`
 	 * @method select
 	 * @instance
 	 * @memberOf Chart
-	 * @param {String} ids
-	 * @param {Number} indices
-	 * @param {Boolean} resetOther
+	 * @param {String|Array} [ids] id value to get selected.
+	 * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
+	 * @param {Boolean} [resetOther] Unselect already selected.
 	 * @example
+	 *  // select all data points
+	 *  chart.select();
+	 *
+	 *  // select all from 'data2'
+	 *  chart.select("data2");
+	 *
+	 *  // select all from 'data1' and 'data2'
+	 *  chart.select(["data1", "data2"]);
+	 *
 	 *  // select from 'data1', indices 2 and unselect others selected
-	 *  chart.select("data1", 2, true);
+	 *  chart.select("data1", [2], true);
+	 *
+	 *  // select from 'data1', indices 0, 3 and 5
+	 *  chart.select("data1", [0, 3, 5]);
 	 */
 	select(ids, indices, resetOther) {
 		const $$ = this.internal;
@@ -87,11 +100,17 @@ extend(Chart.prototype, {
 	 * @method unselect
 	 * @instance
 	 * @memberOf Chart
-	 * @param {String} ids
-	 * @param {Number} indices
+	 * @param {String|Array} [ids] id value to be unselected.
+	 * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
 	 * @example
+	 *  // unselect all data points
+	 *  chart.unselect();
+	 *
+	 *  // unselect all from 'data1'
+	 *  chart.unselect("data1");
+	 *
 	 *  // unselect from 'data1', indices 2
-	 *  chart.unselect("data1", 2);
+	 *  chart.unselect("data1", [2]);
 	 */
 	unselect(ids, indices) {
 		const $$ = this.internal;
