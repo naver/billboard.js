@@ -503,8 +503,8 @@ export default class Options {
 			 *  - `i` is the index of the data point where the label is shown.
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-			 * @property {Number} [donut.labels.position.x=0] x coordinate position, relative the original.
-			 * @property {NUmber} [donut.labels.position.y=0] y coordinate position, relative the original.
+			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
+			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberOf Options
 			 * @type {Object}
 			 * @default {}
