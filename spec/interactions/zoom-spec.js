@@ -30,7 +30,7 @@ describe("ZOOM", function() {
 					}
 				},
 				zoom: {
-					enable: true
+					enabled: true
 				},
 				subchart: {
 					show: true
@@ -83,7 +83,7 @@ describe("ZOOM", function() {
 					]
 				},
 				zoom: {
-					enable: true
+					enabled: true
 				}
 			};
 		});

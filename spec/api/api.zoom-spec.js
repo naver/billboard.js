@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";
 
 describe("API zoom", function() {
 	let chart;
@@ -144,9 +145,9 @@ describe("API zoom", function() {
 
 		it("should be zoomed properly", done => {
 			const target = [3, 5];
-			const bars = d3.select(".bb-chart-bars").node();
-			const rects = d3.select(".bb-event-rects").node();
-			const rectlist = d3.selectAll(".bb-event-rect").nodes();
+			const bars = d3.select(`.${CLASS.chartBars}`).node();
+			const rects = d3.select(`.${CLASS.eventRects}`).node();
+			const rectlist = d3.selectAll(`.${CLASS.eventRect}`).nodes();
 			const orgWidth = bars.getBoundingClientRect().width;
 			const rectWidth = chart.internal.getEventRectWidth();
 
@@ -197,5 +198,55 @@ describe("API zoom", function() {
 		});
 	});
 
-	// @TODO zoom.enable / max/min/range
+	describe("zoom.enable()", () => {
+		chart = util.generate({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250]
+				]
+			},
+			zoom: {
+				enabled: true
+			}
+		});
+
+		it("should be disabled & enabled zoom", () => {
+			const main = chart.internal.main;
+			const domain = [1, 2];
+
+			// when disable zoom
+			chart.zoom.enable(false);
+
+			const selector = `.${CLASS.eventRect}-1`;
+			const xValue = +main.select(selector).attr("x");
+			const tickTransform = [];
+
+			main.selectAll(`.${CLASS.axisX} .tick`).each(function() {
+				tickTransform.push(this.getAttribute("transform"));
+			});
+
+			// check the returned domain value
+			chart.zoom(domain).forEach((v, i) => {
+				expect(Math.round(v)).to.not.equal(domain[i]);
+			});
+
+			expect(+main.select(selector).attr("x")).to.be.equal(xValue);
+
+			// check x Axis to not be zoomed
+			main.selectAll(`.${CLASS.axisX} .tick`).each(function(i) {
+				expect(this.getAttribute("transform")).to.be.equal(tickTransform[i]);
+			});
+
+			// when enable zoom
+			chart.zoom.enable(true);
+
+			chart.zoom(domain).forEach((v, i) => {
+				expect(Math.round(v)).to.equal(domain[i]);
+			});
+
+			expect(+main.select(selector).attr("x")).to.below(xValue);
+		});
+	});
+
+	// @TODO zoom.max/min/range
 });

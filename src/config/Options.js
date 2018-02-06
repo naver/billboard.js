@@ -131,6 +131,8 @@ export default class Options {
 			 * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
 			 *  If true set, y domain will be updated according to the zoomed region.
 			 * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
+			 * @property {Number} [zoom.x.min] Set x Axis minimum zoom range
+			 * @property {Number} [zoom.x.max] Set x Axis maximum zoom range
 			 * @property {Function} [zoom.onzoom=function(){}] Set callback that is called when the chart is zooming.<br>
 			 *  Specified function receives the zoomed domain.
 			 * @property {Function} [zoom.onzoomstart=function(){}] Set callback that is called when zooming starts.<br>
@@ -142,6 +144,10 @@ export default class Options {
 			 *      enabled: true,
 			 *      rescale: true,
 			 *      extent: [1, 100]  // enable more zooming
+			 *      x: {
+			 *          min: -1,  // set min range
+			 *          max: 10  // set max range
+			 *      },
 			 *      onzoom: function(domain) { ... },
 			 *      onzoomstart: function(event) { ... },
 			 *      onzoomend: function(domain) { ... }

@@ -8,7 +8,7 @@ import {
 	zoomIdentity as d3ZoomIdentity,
 } from "d3";
 import Chart from "../internals/Chart";
-import {isDefined, extend} from "../internals/util";
+import {isDefined, isObject, extend} from "../internals/util";
 
 /**
  * Zoom by giving x domain.
@@ -16,6 +16,7 @@ import {isDefined, extend} from "../internals/util";
  * @instance
  * @memberOf Chart
  * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+ * @return {Array} domain value in array
  * @example
  *  // Zoom to specified domain
  *  chart.zoom([10, 20]);
@@ -25,11 +26,12 @@ import {isDefined, extend} from "../internals/util";
  */
 const zoom = function(domainValue) {
 	const $$ = this.internal;
+	const isTimeSeries = $$.isTimeSeries();
 	let domain = domainValue;
 	let resultDomain;
 
-	if (domain) {
-		if ($$.isTimeSeries()) {
+	if ($$.config.zoom_enabled && domain) {
+		if (isTimeSeries) {
 			domain = domain.map(x => $$.parseDate(x));
 		}
 
@@ -41,12 +43,12 @@ const zoom = function(domainValue) {
 		} else {
 			const orgDomain = $$.x.orgDomain();
 			const k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]);
-			const tx = $$.isTimeSeries() ?
+			const tx = isTimeSeries ?
 				(0 - k * $$.x(domain[0].getTime())) : domain[0] - k * $$.x(domain[0]);
 
-			$$.zoom.updateTransformScale(d3ZoomIdentity
-				.translate(tx, 0)
-				.scale(k));
+			$$.zoom.updateTransformScale(
+				d3ZoomIdentity.translate(tx, 0).scale(k)
+			);
 
 			resultDomain = $$.zoomScale.domain();
 		}
@@ -71,12 +73,15 @@ extend(zoom, {
 	 * @method zoom․enable
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Boolean} enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.
+	 * @param {Boolean} enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.<br>When set to false, the current zooming status will be reset.
 	 * @example
 	 *  // Enable zooming
 	 *  chart.zoom.enable(true);
+	 *
+	 *  // Disable zooming
+	 *  chart.zoom.enable(false);
 	 */
-	enable: function(enabled) {
+	enable: function(enabled = false) {
 		const $$ = this.internal;
 
 		$$.config.zoom_enabled = enabled;
@@ -84,11 +89,15 @@ extend(zoom, {
 	},
 
 	/**
-	 * Set zoom max
+	 * Set or get x Axis maximum zoom range value
 	 * @method zoom․max
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Number} max
+	 * @param {Number} [max] maximum value to set for zoom
+	 * @return {Number} zoom max value
+	 * @example
+	 *  // Set maximum range value
+	 *  chart.zoom.max(20);
 	 */
 	max: function(max) {
 		const $$ = this.internal;
@@ -96,19 +105,21 @@ extend(zoom, {
 
 		if (max === 0 || max) {
 			config.zoom_x_max = d3Max([$$.orgXDomain[1], max]);
-		} else {
-			return config.zoom_x_max;
 		}
 
-		return undefined;
+		return config.zoom_x_max;
 	},
 
 	/**
-	 * Set zoom min
+	 * Set or get x Axis minimum zoom range value
 	 * @method zoom․min
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Number} min
+	 * @param {Number} [min] minimum value tp set for zoom
+	 * @return {Number} zoom min value
+	 * @example
+	 *  // Set minimum range value
+	 *  chart.zoom.min(-1);
 	 */
 	min: function(min) {
 		const $$ = this.internal;
@@ -116,11 +127,9 @@ extend(zoom, {
 
 		if (min === 0 || min) {
 			config.zoom_x_min = d3Min([$$.orgXDomain[0], min]);
-		} else {
-			return config.zoom_x_min;
 		}
 
-		return undefined;
+		return config.zoom_x_min;
 	},
 
 	/**
@@ -128,8 +137,8 @@ extend(zoom, {
 	 * @method zoom․range
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Object} range
-	 * @return {Object} range
+	 * @param {Object} [range]
+	 * @return {Object} zoom range value
 	 * {
 	 *   min: 0,
 	 *   max: 100
@@ -143,17 +152,15 @@ extend(zoom, {
 	range: function(range) {
 		const domain = this.domain;
 
-		if (arguments.length) {
+		if (isObject(range)) {
 			isDefined(range.max) && domain.max(range.max);
 			isDefined(range.min) && domain.min(range.min);
-		} else {
-			return {
-				max: domain.max(),
-				min: domain.min()
-			};
 		}
 
-		return undefined;
+		return {
+			max: domain.max(),
+			min: domain.min()
+		};
 	}
 });
 
