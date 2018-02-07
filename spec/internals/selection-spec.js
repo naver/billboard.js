@@ -14,8 +14,8 @@ describe("SELECTION", () => {
 	const spyUnSelected = sinon.spy();
 
 	beforeEach(() => {
-		spySelected.reset();
-		spyUnSelected.reset();
+		spySelected.resetHistory();
+		spyUnSelected.resetHistory();
 
 		chart = util.generate(args);
 	});
