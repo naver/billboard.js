@@ -30,6 +30,10 @@ describe("INTERACTION", () => {
 				};
 			});
 
+			it("inputType should be 'mouse", () => {
+				expect(chart.internal.inputType).to.be.equal("mouse");
+			});
+
 			it("should have 4 event rects properly", () => {
 				const lefts = [69, 130, 198, 403];
 				const widths = [61, 68, 205, 197.5];
@@ -406,7 +410,7 @@ describe("INTERACTION", () => {
 				});
 			});
 
-			it("set inputType.mouse=false", () => {
+			it("set option inputType.mouse=false", () => {
 				args.interaction.inputType.mouse = false;
 			});
 
@@ -526,6 +530,10 @@ describe("INTERACTION", () => {
 						}
 					}
 				};
+			});
+
+			it("inputType should be 'touch", () => {
+				expect(chart.internal.inputType).to.be.equal("touch");
 			});
 
 			it("showed each data points tooltip?", done => {
