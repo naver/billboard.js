@@ -1258,15 +1258,16 @@ export default class ChartInternal {
 	convertInputType() {
 		const $$ = this;
 		const config = $$.config;
-		const hasMouse = config.interaction_inputType_mouse ? ("onmouseover" in window) : false;
+		const isMobile = $$.isMobile();
+		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
 		let hasTouch = false;
 
-		if (notEmpty(config.interaction_inputType_touch)) {
+		if (config.interaction_inputType_touch) {
 			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 			// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
 			hasTouch = ("ontouchmove" in window) || (window.DocumentTouch && document instanceof window.DocumentTouch);
 		}
 
-		return (hasTouch && "touch") || (hasMouse && "mouse") || null;
+		return (hasMouse && "mouse") || (hasTouch && "touch") || null;
 	}
 }
