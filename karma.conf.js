@@ -26,7 +26,7 @@ module.exports = function(config) {
 						options: {
 							presets: [
 								[
-									"es2015",
+									"env",
 									{
 										"loose": true,
 										"modules": false
