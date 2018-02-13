@@ -457,7 +457,9 @@ export default class Options {
 			 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.<br><br>
 			 * **Available Values:**
 			 * - area
+			 * - area-line-range
 			 * - area-spline
+			 * - area-spline-range
 			 * - area-step
 			 * - bar
 			 * - bubble
@@ -889,6 +891,25 @@ export default class Options {
 			 *     [90, 220, 320]
 			 *   ]
 			 * }
+			 *
+			 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+			 * // - an array of [high, mid, low] data following the order
+			 * // - or an object with 'high', 'mid' and 'low' key value
+			 * data: {
+			 *   rows: [
+			 *      ["data1", "data2"],
+			 *      [
+			 *        // or {high:150, mid: 140, low: 110}, 120
+			 *        [150, 140, 110], 120
+			 *      ],
+			 *      [[155, 130, 115], 55],
+			 *      [[160, 135, 120], 60]
+			 *   ],
+			 *   types: {
+			 *       data1: "area-line-range",
+			 *       data2: "line"
+			 *   }
+			 * }
 			 */
 			data_rows: undefined,
 
@@ -905,6 +926,20 @@ export default class Options {
 			 *      ["data2", 200, 130, 90, 240, 130, 220],
 			 *      ["data3", 300, 200, 160, 400, 250, 250]
 			 *   ]
+			 * }
+			 *
+			 * // for 'range' types('area-line-range' or 'area-spline-range'), data should contain:
+			 * // - an array of [high, mid, low] data following the order
+			 * // - or an object with 'high', 'mid' and 'low' key value
+			 * data: {
+			 *   columns: [
+			 *      ["data1",
+			 *          [150, 140, 110],  // or {high:150, mid: 140, low: 110}
+			 *          [150, 140, 110],
+			 *          [150, 140, 110]
+			 *      ]
+			 *   ],
+			 *   type: "area-line-range"
 			 * }
 			 */
 			data_columns: undefined,

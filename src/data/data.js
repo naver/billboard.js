@@ -10,7 +10,19 @@ import {
 } from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, hasValue, isArray, isValue, notEmpty, isFunction, isBoolean, isDefined, isUndefined, isString, isObjectType} from "../internals/util";
+import {
+	extend,
+	hasValue,
+	isArray,
+	isBoolean,
+	isDefined,
+	isFunction,
+	isObjectType,
+	isString,
+	isUndefined,
+	isValue,
+	notEmpty
+} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	isX(key) {
@@ -30,7 +42,8 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		return config.data_x ? config.data_x : notEmpty(config.data_xs) ? config.data_xs[id] : null;
+		return config.data_x ?
+			config.data_x : (notEmpty(config.data_xs) ? config.data_xs[id] : null);
 	},
 
 	getXValuesOfXKey(key, targets) {
@@ -102,6 +115,7 @@ extend(ChartInternal.prototype, {
 			name = $$.config.data_names[data.id];
 			data.name = name !== undefined ? name : data.id;
 		}
+
 		return data;
 	},
 
@@ -118,6 +132,7 @@ extend(ChartInternal.prototype, {
 			t.values.forEach((v, i) => {
 				v.x = $$.generateTargetX(x[i], t.id, i);
 			});
+
 			$$.data.xs[t.id] = x;
 		});
 	},
@@ -126,9 +141,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		targets.forEach(t => {
-			if (xs[t.id]) {
-				$$.updateTargetX([t], xs[t.id]);
-			}
+			xs[t.id] && $$.updateTargetX([t], xs[t.id]);
 		});
 	},
 
@@ -143,6 +156,7 @@ extend(ChartInternal.prototype, {
 		} else {
 			x = index;
 		}
+
 		return x;
 	},
 
@@ -335,13 +349,25 @@ extend(ChartInternal.prototype, {
 	},
 
 	getValuesAsIdKeyed(targets) {
+		const $$ = this;
 		const ys = {};
 
 		targets.forEach(t => {
-			ys[t.id] = [];
+			const data = [];
+
 			t.values.forEach(v => {
-				ys[t.id].push(v.value);
+				const value = v.value;
+
+				if (isArray(value)) {
+					data.push(...value);
+				} else if ($$.isObject(value) && "high" in value) {
+					data.push(...Object.values(value));
+				} else {
+					data.push(value);
+				}
 			});
+
+			ys[t.id] = data;
 		});
 
 		return ys;
@@ -463,11 +489,15 @@ extend(ChartInternal.prototype, {
 		let i;
 
 		for (i = index - 1; i >= 0; i--) {
-			if (targetX !== values[i].x) { break; }
+			if (targetX !== values[i].x) {
+				break;
+			}
 			sames.push(values[i]);
 		}
 		for (i = index; i < values.length; i++) {
-			if (targetX !== values[i].x) { break; }
+			if (targetX !== values[i].x) {
+				break;
+			}
 			sames.push(values[i]);
 		}
 		return sames;
@@ -549,6 +579,30 @@ extend(ChartInternal.prototype, {
 		return converted;
 	},
 
+	convertValuesToRange(values) {
+		const converted = isArray(values) ? values.concat() : [values];
+		const ranges = [];
+
+		converted.forEach(range => {
+			const x = range.x;
+			const id = range.id;
+
+			ranges.push({
+				x,
+				id,
+				value: range.value[0]
+			});
+
+			ranges.push({
+				x,
+				id,
+				value: range.value[2]
+			});
+		});
+
+		return ranges;
+	},
+
 	updateDataAttributes(name, attrs) {
 		const $$ = this;
 		const config = $$.config;
@@ -565,6 +619,16 @@ extend(ChartInternal.prototype, {
 		$$.redraw({withLegend: true});
 
 		return current;
+	},
+
+	getAreaRangeData(d, type) {
+		if (isArray(d.value)) {
+			const index = ["high", "mid", "low"].indexOf(type);
+
+			return index === -1 ? 0 : d.value[index];
+		}
+
+		return d.value[type];
 	}
 });
 

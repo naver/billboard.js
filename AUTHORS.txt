@@ -12,3 +12,4 @@ Julien Castelain <jcastelain@gmail.com>
 Kim Jong Hyen <fussaep@gmail.com>
 dtc03012 <https://github.com/dtc03012>
 Kim Dong Min <https://github.com/haracejacob>
+Russell Shingleton <russellshomes@aol.com>

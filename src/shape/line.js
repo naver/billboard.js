@@ -2,15 +2,10 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	area as d3Area,
-	line as d3Line,
-	select as d3Select,
-	mouse as d3Mouse,
-} from "d3";
+import {area as d3Area, line as d3Line, mouse as d3Mouse, select as d3Select} from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {isFunction, isValue, isDefined, isUndefined, extend} from "../internals/util";
+import {extend, isDefined, isFunction, isUndefined, isValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initLine() {
@@ -116,7 +111,9 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+			getPoints(d, i)[0][1] :
+			$$.isAreaRangeType(d) ? yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "mid")) :
+				yScaleGetter.call($$, d.id)(d.value));
 
 		let line = d3Line();
 
@@ -215,7 +212,9 @@ extend(ChartInternal.prototype, {
 			let idx;
 
 			for (idx = 0; idx < withinRegions.length; idx++) {
-				if (withinRegions[idx].start < withinX && withinX <= withinRegions[idx].end) { return true; }
+				if (withinRegions[idx].start < withinX && withinX <= withinRegions[idx].end) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -327,11 +326,13 @@ extend(ChartInternal.prototype, {
 	},
 
 	redrawArea(drawArea, withTransition) {
+		const $$ = this;
+
 		return [
 			(withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
 				.attr("d", drawArea)
 				.style("fill", this.color)
-				.style("opacity", this.orgAreaOpacity)
+				.style("opacity", d => ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity))
 		];
 	},
 
@@ -344,23 +345,11 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const value0 = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
+			getPoints(d, i)[0][1] :
+			yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
 		const value1 = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value));
-
-		let area = d3Area();
-
-		area = axisRotated ?
-			area.x0(value0)
-				.x1(value1)
-				.y(xValue) :
-			area.x(xValue)
-				.y0(config.area_above ? 0 : value0)
-				.y1(value1);
-
-		if (!lineConnectNull) {
-			area = area.defined(d => d.value !== null);
-		}
+			getPoints(d, i)[1][1] :
+			yScaleGetter.call($$, d.id)(d.value));
 
 		return d => {
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
@@ -369,6 +358,35 @@ extend(ChartInternal.prototype, {
 			let path;
 
 			if ($$.isAreaType(d)) {
+				const isAreaRangeType = $$.isAreaRangeType(d);
+				let area = d3Area();
+
+				if (axisRotated) {
+					if (isAreaRangeType) {
+						area = area.x0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
+							.x1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")))
+							.y(xValue);
+					} else {
+						area = area.x0(value0)
+							.x1(value1)
+							.y(xValue);
+					}
+				} else {
+					if (isAreaRangeType) {
+						area = area.x(xValue)
+							.y0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
+							.y1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")));
+					} else {
+						area = area.x(xValue)
+							.y0(config.area_above ? 0 : value0)
+							.y1(value1);
+					}
+				}
+
+				if (!lineConnectNull) {
+					area = area.defined(d => d.value !== null);
+				}
+
 				if ($$.isStepType(d)) {
 					values = $$.convertValuesToStep(values);
 				}
@@ -391,7 +409,8 @@ extend(ChartInternal.prototype, {
 		return 0;
 	},
 
-	generateGetAreaPoints(areaIndices, isSub) { // partial duplication of generateGetBarPoints
+	generateGetAreaPoints(areaIndices, isSub) {
+		// partial duplication of generateGetBarPoints
 		const $$ = this;
 		const config = $$.config;
 		const areaTargetsNum = areaIndices.__max__ + 1;
@@ -491,7 +510,8 @@ extend(ChartInternal.prototype, {
 			};
 		} else {
 			$$.circleY = function(d) {
-				return $$.getYScale(d.id)(d.value);
+				return $$.isAreaRangeType(d) ? $$.getYScale(d.id)($$.getAreaRangeData(d, "mid")) :
+					$$.getYScale(d.id)(d.value);
 			};
 		}
 	},
@@ -540,7 +560,9 @@ extend(ChartInternal.prototype, {
 		const r = $$.pointR.bind($$);
 
 		const circles = $$.getCircles(i)
-			.filter(function() { return d3Select(this).classed(CLASS.EXPANDED); })
+			.filter(function() {
+				return d3Select(this).classed(CLASS.EXPANDED);
+			})
 			.classed(CLASS.EXPANDED, false);
 
 		const scale = r(circles) / $$.config.point_r;
@@ -548,7 +570,7 @@ extend(ChartInternal.prototype, {
 		circles.attr("r", r);
 
 		!$$.isCirclePoint() &&
-			circles.style("transform", `scale(${scale})`);
+		circles.style("transform", `scale(${scale})`);
 	},
 
 	pointR(d) {

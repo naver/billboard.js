@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("SHAPE LINE", () => {
@@ -11,9 +12,9 @@ describe("SHAPE LINE", () => {
 	let args;
 	let skipEach = false;
 
-	beforeEach(function(){
-		if(skipEach){
-			return ;
+	beforeEach(function() {
+		if (skipEach) {
+			return;
 		}
 		chart = util.generate(args);
 	});
@@ -31,21 +32,21 @@ describe("SHAPE LINE", () => {
 					],
 					type: "line"
 				},
-				line : {
-					step : {}
+				line: {
+					step: {}
 				}
 			};
 		});
 
 		it("Should render the lines correctly", () => {
-			const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
-			const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
+			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
 
 			expect(commands.length).to.be.equal(6);
 		});
 
 		it("should not have shape-rendering when it's line chart", () => {
-			chart.internal.main.selectAll(".bb-line").each(function() {
+			chart.internal.main.selectAll(`.${CLASS.line}`).each(function() {
 				const style = d3.select(this).style("shape-rendering");
 
 				expect(style).to.be.equal("auto");
@@ -66,7 +67,7 @@ describe("SHAPE LINE", () => {
 
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
-			chart.internal.main.selectAll(".bb-line").each(function() {
+			chart.internal.main.selectAll(`.${CLASS.line}`).each(function() {
 				const style = d3.select(this).style("shape-rendering").toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
@@ -99,17 +100,17 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("should not show the circle for null", () => {
-			const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
+			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 
-			expect(+target.select(".bb-circle-0").style("opacity")).to.be.equal(1);
-			expect(+target.select(".bb-circle-1").style("opacity")).to.be.equal(0);
-			expect(+target.select(".bb-circle-2").style("opacity")).to.be.equal(1);
+			expect(+target.select(`.${CLASS.circle}-0`).style("opacity")).to.be.equal(1);
+			expect(+target.select(`.${CLASS.circle}-1`).style("opacity")).to.be.equal(0);
+			expect(+target.select(`.${CLASS.circle}-2`).style("opacity")).to.be.equal(1);
 		});
 
 		it("should not draw a line segment for null data", done => {
 			setTimeout(() => {
-				const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
-				const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
+				const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+				const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
 				let segments = 0;
 
 				for (let i = 0; i < commands.length; i++) {
@@ -167,9 +168,9 @@ describe("SHAPE LINE", () => {
 				data: {
 					columns: [
 						["timestamps", 1495584000000, 1495605600000, 1495627200000, 1495648800000, 1495670400000],
-						["data1", 300, 150,  null, 120, 140],
-						["data2", 100, null, 200,  100, 100],
-						["data3", 100, 160,  200,  null, 50]
+						["data1", 300, 150, null, 120, 140],
+						["data2", 100, null, 200, 100, 100],
+						["data3", 100, 160, 200, null, 50]
 					],
 					x: "timestamps",
 					order: "asc",
@@ -193,7 +194,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("check for line path data count", () => {
-			chart.internal.main.selectAll("path.bb-line").each(function(d) {
+			chart.internal.main.selectAll(`path.${CLASS.line}`).each(function(d) {
 				const line = d3.select(this);
 
 				// it should have 4 lines
@@ -206,9 +207,9 @@ describe("SHAPE LINE", () => {
 		before(() => {
 			args = {
 				data: {
-				columns: [
-						["data1", 30, 200, 100, 400,150,250],
-						["data2",50,20,10,0,15,25]
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 0, 15, 25]
 					],
 					selection: {
 						enabled: true
@@ -221,7 +222,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("<g> selected node shouldn't be generated when point.show=false", () => {
-			const selectedCircle = chart.internal.main.selectAll(".bb-selected-circles");
+			const selectedCircle = chart.internal.main.selectAll(`.${CLASS.selectedCircles}`);
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
@@ -238,10 +239,57 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("<g> selected node shouldn't be generated when data.selection.enabled=false", () => {
-			const selectedCircle = chart.internal.main.selectAll(".bb-selected-circles");
+			const selectedCircle = chart.internal.main.selectAll(`.${CLASS.selectedCircles}`);
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
+	});
+
+	describe("area-range type generation", () => {
+		before(() => {
+			skipEach = true;
+			args = {
+				data: {
+					x: "timestamps",
+					columns: [
+						['timestamps', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+						['data1', [150, 140, 110], [155, 130, 115], [160, 135, 120], [135, 120, 110], [180, 150, 130], [199, 160, 125]],
+						['data2', {high: 155, low: 145, mid: 150},
+							{high: 200, mid: 190, low: 150},
+							{high: 230, mid: 215, low: 200},
+							{high: 210, mid: 200, low: 180},
+							{high: 220, mid: 210, low: 190},
+							{high: 200, mid: 180, low: 160}],
+					],
+					type: "area-spline-range",
+				},
+			};
+		});
+
+		it("Should render the lines correctly when array data supplied", () => {
+			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
+
+			expect(commands.length).to.be.equal(6);
+		});
+
+		it("Should render the lines correctly when array data supplied", () => {
+			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data2`);
+			const commands = parseSvgPath(target.select(`.${CLASS.line}-data2`).attr("d"));
+
+			expect(commands.length).to.be.equal(6);
+		});
+
+		it("should use cardinal interpolation by default", () => {
+			expect(chart.internal.config.spline_interpolation_type).to.be.equal("cardinal");
+		});
+
+		it("should change to area-line-range chart", () => {
+			args.data.type = "area-line-range chart";
+
+			expect(true).to.be.ok;
+		});
+
 	});
 
 	describe("step type generation", () => {
@@ -250,8 +298,8 @@ describe("SHAPE LINE", () => {
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 200, 100, 400,150,250],
-						["data2",50,20,10,0,15,25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 0, 15, 25]
 					],
 					type: "step"
 				},

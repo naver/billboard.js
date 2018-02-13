@@ -11,7 +11,7 @@ import {
 	tsvParseRows as d3TsvParseRows,
 } from "d3";
 import ChartInternal from "../internals/ChartInternal";
-import {isUndefined, isDefined, isValue, notEmpty, extend} from "../internals/util";
+import {isUndefined, isDefined, isValue, notEmpty, extend, isArray} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
@@ -88,6 +88,7 @@ extend(ChartInternal.prototype, {
 			} else {
 				targetKeys = keys.value;
 			}
+
 			newRows.push(targetKeys);
 
 			json.forEach(o => {
@@ -97,13 +98,16 @@ extend(ChartInternal.prototype, {
 				for (const key of targetKeys) {
 					// convert undefined to null because undefined data will be removed in convertDataToTargets()
 					v = this.findValueInJson(o, key);
+
 					if (isUndefined(v)) {
 						v = null;
 					}
+
 					newRow.push(v);
 				}
 				newRows.push(newRow);
 			});
+
 			data = this.convertRowsToData(newRows);
 		} else {
 			Object.keys(json).forEach(key => {
@@ -112,8 +116,10 @@ extend(ChartInternal.prototype, {
 				tmp.unshift(key);
 				newRows.push(tmp);
 			});
+
 			data = this.convertColumnsToData(newRows);
 		}
+
 		return data;
 	},
 
@@ -134,24 +140,25 @@ extend(ChartInternal.prototype, {
 				break;
 			}
 		}
+
 		return target;
 	},
 
 	convertRowsToData(rows) {
 		const keys = rows[0];
 		const newRows = [];
-		let newRow = {};
-		let i;
-		let j;
 
-		for (i = 1; i < rows.length; i++) {
-			newRow = {};
-			for (j = 0; j < rows[i].length; j++) {
+		for (let i = 1, len1 = rows.length; i < len1; i++) {
+			const newRow = {};
+
+			for (let j = 0, len2 = rows[i].length; j < len2; j++) {
 				if (isUndefined(rows[i][j])) {
 					throw new Error(`Source data is missing a component at (${i}, ${j})!`);
 				}
+
 				newRow[keys[j]] = rows[i][j];
 			}
+
 			newRows.push(newRow);
 		}
 
@@ -160,22 +167,23 @@ extend(ChartInternal.prototype, {
 
 	convertColumnsToData(columns) {
 		const newRows = [];
-		let i;
-		let j;
-		let key;
 
-		for (i = 0; i < columns.length; i++) {
-			key = columns[i][0];
-			for (j = 1; j < columns[i].length; j++) {
+		for (let i = 0, len1 = columns.length; i < len1; i++) {
+			const key = columns[i][0];
+
+			for (let j = 1, len2 = columns[i].length; j < len2; j++) {
 				if (isUndefined(newRows[j - 1])) {
 					newRows[j - 1] = {};
 				}
+
 				if (isUndefined(columns[i][j])) {
 					throw new Error(`Source data is missing a component at (${i}, ${j})!`);
 				}
+
 				newRows[j - 1][key] = columns[i][j];
 			}
 		}
+
 		return newRows;
 	},
 
@@ -197,7 +205,8 @@ extend(ChartInternal.prototype, {
 							.concat(
 								data.map(d => d[xKey])
 									.filter(isValue)
-									.map((rawX, i) => $$.generateTargetX(rawX, id, i)));
+									.map((rawX, i) => $$.generateTargetX(rawX, id, i))
+							);
 				} else if (config.data_x) {
 					// if not included in input data, find from preloaded data of other id's x
 					this.data.xs[id] = this.getOtherTargetXs();
@@ -228,7 +237,9 @@ extend(ChartInternal.prototype, {
 				values: data.map((d, i) => {
 					const xKey = $$.getXKey(id);
 					const rawX = d[xKey];
-					const value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
+					const value = d[id] !== null && !isNaN(d[id]) ?
+						+d[id] : (isArray(d[id]) || ($$.isObject(d[id]) && d[id].high) ? d[id] : null);
+
 					let x;
 
 					// use x as categories if custom x and categorized
@@ -236,7 +247,9 @@ extend(ChartInternal.prototype, {
 						if (index === 0 && i === 0) {
 							config.axis_x_categories = [];
 						}
+
 						x = config.axis_x_categories.indexOf(rawX);
+
 						if (x === -1) {
 							x = config.axis_x_categories.length;
 							config.axis_x_categories.push(rawX);
@@ -244,11 +257,13 @@ extend(ChartInternal.prototype, {
 					} else {
 						x = $$.generateTargetX(rawX, id, i);
 					}
+
 					// mark as x = undefined if value is undefined and filter to remove after mapped
 					if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
 						x = undefined;
 					}
-					return {x: x, value: value, id: convertedId};
+
+					return {x, value, id: convertedId};
 				}).filter(v => isDefined(v.x))
 			};
 		});
@@ -266,11 +281,14 @@ extend(ChartInternal.prototype, {
 					return x1 - x2;
 				});
 			}
+
 			// indexing each value
 			i = 0;
+
 			t.values.forEach(v => {
 				v.index = i++;
 			});
+
 			// this needs to be sorted because its index and value.index is identical
 			$$.data.xs[t.id].sort((v1, v2) => v1 - v2);
 		});
@@ -286,9 +304,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		// cache as original id keyed
-		targets.forEach(d => {
-			$$.addCache(d.id_org, d);
-		});
+		targets.forEach(d => $$.addCache(d.id_org, d));
 
 		return targets;
 	}
