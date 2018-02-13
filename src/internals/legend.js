@@ -4,11 +4,12 @@
  */
 import {
 	select as d3Select,
-	event as d3Event
+	event as d3Event,
+	namespaces as d3Namespaces
 } from "d3";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isDefined, getOption, isEmpty, isFunction} from "./util";
+import {extend, isDefined, getOption, isEmpty, isFunction, notEmpty} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -380,42 +381,47 @@ extend(ChartInternal.prototype, {
 		const steps = {};
 		let step = 0;
 		let background;
+		const isLegendRightOrInset = $$.isLegendRight || $$.isLegendInset;
+
 		// Skip elements when their name is set to null
 		const targetIdz = targetIds
 			.filter(id => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
 		const optionz = options || {};
 		const withTransition = getOption(optionz, "withTransition", true);
 		const withTransitionForTransform = getOption(optionz, "withTransitionForTransform", true);
+
 		const getTextBox = function(textElement, id) {
 			if (!$$.legendItemTextBox[id]) {
 				$$.legendItemTextBox[id] =
 					$$.getTextRect(textElement.textContent, CLASS.legendItem, textElement);
 			}
+
 			return $$.legendItemTextBox[id];
 		};
+
 		const updatePositions = function(textElement, id, index) {
 			const reset = index === 0;
 			const isLast = index === targetIdz.length - 1;
 			const box = getTextBox(textElement, id);
 			const itemWidth = box.width + tileWidth +
-				(isLast && !($$.isLegendRight || $$.isLegendInset) ? 0 : paddingRight) + config.legend_padding;
+				(isLast && !isLegendRightOrInset ? 0 : paddingRight) + config.legend_padding;
 			const itemHeight = box.height + paddingTop;
-			const itemLength = $$.isLegendRight ||
-				$$.isLegendInset ? itemHeight : itemWidth;
-			const areaLength = $$.isLegendRight ||
-				$$.isLegendInset ? $$.getLegendHeight() : $$.getLegendWidth();
+			const itemLength = isLegendRightOrInset ? itemHeight : itemWidth;
+			const areaLength = isLegendRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
 			let margin;
 
 			// MEMO: care about condifion of step, totalLength
 			const updateValues = function(id2, withoutStep) {
 				if (!withoutStep) {
 					margin = (areaLength - totalLength - itemLength) / 2;
+
 					if (margin < posMin) {
 						margin = (areaLength - itemLength) / 2;
 						totalLength = 0;
 						step++;
 					}
 				}
+
 				steps[id2] = step;
 				margins[step] = $$.isLegendInset ? 10 : margin;
 				offsets[id2] = totalLength;
@@ -434,6 +440,7 @@ extend(ChartInternal.prototype, {
 				heights[id] = 0;
 				steps[id] = 0;
 				offsets[id] = 0;
+
 				return;
 			}
 
@@ -448,12 +455,13 @@ extend(ChartInternal.prototype, {
 				maxHeight = itemHeight;
 			}
 
-			const maxLength = $$.isLegendRight || $$.isLegendInset ? maxHeight : maxWidth;
+			const maxLength = isLegendRightOrInset ? maxHeight : maxWidth;
 
 			if (config.legend_equally) {
 				Object.keys(widths).forEach(id2 => (widths[id2] = maxWidth));
 				Object.keys(heights).forEach(id2 => (heights[id2] = maxHeight));
 				margin = (areaLength - maxLength * targetIdz.length) / 2;
+
 				if (margin < posMin) {
 					totalLength = 0;
 					step = 0;
@@ -489,6 +497,7 @@ extend(ChartInternal.prototype, {
 		const x1ForLegendTile = (id, i) => xForLegend(id, i) - 2;
 		const x2ForLegendTile = (id, i) => xForLegend(id, i) - 2 + config.legend_item_tile_width;
 		const yForLegendTile = (id, i) => yForLegend(id, i) + 4;
+		const pos = -200;
 
 		// Define g for legend area
 		const l = $$.legend.selectAll(`.${CLASS.legendItem}`)
@@ -504,24 +513,54 @@ extend(ChartInternal.prototype, {
 				updatePositions(this, id, i);
 			})
 			.style("pointer-events", "none")
-			.attr("x", $$.isLegendRight || $$.isLegendInset ? xForLegendText : -200)
-			.attr("y", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendText);
+			.attr("x", isLegendRightOrInset ? xForLegendText : pos)
+			.attr("y", isLegendRightOrInset ? pos : yForLegendText);
 
 		l.append("rect")
 			.attr("class", CLASS.legendItemEvent)
 			.style("fill-opacity", "0")
-			.attr("x", $$.isLegendRight || $$.isLegendInset ? xForLegendRect : -200)
-			.attr("y", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendRect);
+			.attr("x", isLegendRightOrInset ? xForLegendRect : pos)
+			.attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
-		l.append("line")
-			.attr("class", CLASS.legendItemTile)
-			.style("stroke", $$.color)
-			.style("pointer-events", "none")
-			.attr("x1", $$.isLegendRight || $$.isLegendInset ? x1ForLegendTile : -200)
-			.attr("y1", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-			.attr("x2", $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
-			.attr("y2", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-			.attr("stroke-width", config.legend_item_tile_height);
+		const usePoint = $$.config.legend_usePoint;
+
+		if (usePoint) {
+			const ids = [];
+
+			l.append(d => {
+				const pattern = notEmpty(config.point_pattern) ?
+					config.point_pattern : [config.point_type];
+
+				ids.indexOf(d) === -1 && ids.push(d);
+
+				let point = pattern[ids.indexOf(d) % pattern.length];
+
+				if (point === "rectangle") {
+					point = "rect";
+				}
+
+				return document.createElementNS(d3Namespaces.svg, $$.hasValidPointType(point) ? point : "use");
+			})
+				.attr("class", CLASS.legendItemPoint)
+				.style("fill", d => $$.color(d))
+				.style("pointer-events", "none")
+				.attr("href", (data, idx, selection) => {
+					const node = selection[idx];
+					const nodeName = node.nodeName.toLowerCase();
+
+					return nodeName === "use" ? `#${$$.datetimeId}-point-${data}` : undefined;
+				});
+		} else {
+			l.append("line")
+				.attr("class", CLASS.legendItemTile)
+				.style("stroke", $$.color)
+				.style("pointer-events", "none")
+				.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
+				.attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
+				.attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
+				.attr("y2", isLegendRightOrInset ? pos : yForLegendTile)
+				.attr("stroke-width", config.legend_item_tile_height);
+		}
 
 		// Set background for inset legend
 		background = $$.legend.select(`.${CLASS.legendBackground} rect`);
@@ -552,15 +591,57 @@ extend(ChartInternal.prototype, {
 			.attr("x", xForLegendRect)
 			.attr("y", yForLegendRect);
 
-		const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
-			.data(targetIdz);
 
-		(withTransition ? tiles.transition() : tiles)
-			.style("stroke", $$.color)
-			.attr("x1", x1ForLegendTile)
-			.attr("y1", yForLegendTile)
-			.attr("x2", x2ForLegendTile)
-			.attr("y2", yForLegendTile);
+		if (usePoint) {
+			const tiles = $$.legend.selectAll(`.${CLASS.legendItemPoint}`)
+				.data(targetIdz);
+
+			(withTransition ? tiles.transition() : tiles)
+				.each(function() {
+					const nodeName = this.nodeName.toLowerCase();
+					const pointR = $$.config.point_r;
+					let x = "x";
+					let y = "y";
+					let xOffset = 2;
+					let yOffset = 2.5;
+					let radius;
+					let width;
+					let height;
+
+					if (nodeName === "circle") {
+						const size = pointR * 0.2;
+
+						x = "cx";
+						y = "cy";
+						radius = pointR + size;
+						xOffset = pointR * 2;
+						yOffset = -size;
+					} else if (nodeName === "rect") {
+						const size = pointR * 2.5;
+
+						width = size;
+						height = size;
+						yOffset = 3;
+					}
+
+					d3Select(this)
+						.attr(x, d => x1ForLegendTile(d) + xOffset)
+						.attr(y, d => yForLegendTile(d) - yOffset)
+						.attr("r", radius)
+						.attr("width", width)
+						.attr("height", height);
+				});
+		} else {
+			const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
+				.data(targetIdz);
+
+			(withTransition ? tiles.transition() : tiles)
+				.style("stroke", $$.color)
+				.attr("x1", x1ForLegendTile)
+				.attr("y1", yForLegendTile)
+				.attr("x2", x2ForLegendTile)
+				.attr("y2", yForLegendTile);
+		}
 
 		if (background) {
 			(withTransition ? background.transition() : background)
@@ -576,10 +657,12 @@ extend(ChartInternal.prototype, {
 		$$.updateLegendItemWidth(maxWidth);
 		$$.updateLegendItemHeight(maxHeight);
 		$$.updateLegendStep(step);
+
 		// Update size and scale
 		$$.updateSizes();
 		$$.updateScales(!withTransition);
 		$$.updateSvgSize();
+
 		// Update g positions
 		$$.transformAll(withTransitionForTransform, transitions);
 		$$.legendHasRendered = true;

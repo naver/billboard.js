@@ -185,6 +185,13 @@ div.row {
     color: white;
 }
 
+/* for IE10+ */
+@media all and (-ms-high-contrast:none) {
+    #sidebar-wrapper .link a.github {
+        background-position-x: -23px;
+    }
+}
+
 /* Style For Region */
 #StyleForRegion .bb-region-0 {fill:red;}
 #StyleForRegion .bb-region.foo {fill:green;}

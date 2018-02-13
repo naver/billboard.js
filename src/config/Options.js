@@ -1042,20 +1042,22 @@ export default class Options {
 			 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
 			 * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
 			 * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
-			 *      If set string value, within template the 'color' and 'title' can be replaced using template-like syntax string:
-			 *      - {=COLOR}: data color value
-			 *      - {=TITLE}: data title value
+			 *  If set string value, within template the 'color' and 'title' can be replaced using template-like syntax string:
+			 *  - {=COLOR}: data color value
+			 *  - {=TITLE}: data title value
 			 * @property {String} [legend.position=bottom] Change the position of legend.<br>
 			 *  Available values are: `bottom`, `right` and `inset` are supported.
 			 * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
-			 *      This option accepts object that has the keys anchor, x, y and step.
-			 *      anchor decides the position of the legend. These anchors are available:
-			 *      - top-left
-			 *      - top-right
-			 *      - bottom-left
-			 *      - bottom-right
-			 *  x and y set the position of the legend based on the anchor.<br>
-			 *  step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
+			 *  This option accepts object that has the keys `anchor`, `x`, `y` and `step`.
+			 *  - **anchor** decides the position of the legend:
+			 *   - top-left
+			 *   - top-right
+			 *   - bottom-left
+			 *   - bottom-right
+			 *  - **x** and **y**:
+			 *   - set the position of the legend based on the anchor.
+			 *  - **step**:
+			 *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 			 * @property {Boolean} [legend.equally=false] Set to all items have same width size.
 			 * @property {Boolean} [legend.padding=0] Set padding value
 			 * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
@@ -1063,6 +1065,7 @@ export default class Options {
 			 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
 			 * @property {Number} [legend.item.tile.width=10] Set width of item tile element
 			 * @property {Number} [legend.item.tile.height=10] Set height of item tile element
+			 * @property {Boolean} [legend.usePoint=false] Whether to use custom points in legend.
 			 * @example
 			 *  legend: {
 			 *      show: true,
@@ -1102,7 +1105,8 @@ export default class Options {
 			 *              width: 20,
 			 *              height: 15
 			 *          }
-			 *      }
+			 *      },
+			 *      usePoint: true
 			 *  }
 			 */
 			legend_show: true,
@@ -1121,6 +1125,7 @@ export default class Options {
 			legend_padding: 0,
 			legend_item_tile_width: 10,
 			legend_item_tile_height: 10,
+			legend_usePoint: false,
 
 			/**
 			 * Switch x and y axis position.
