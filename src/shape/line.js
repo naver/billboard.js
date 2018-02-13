@@ -116,7 +116,9 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)(d.value));
+			getPoints(d, i)[0][1] :
+			$$.isArray(d.value) ? d.value[1] :
+				yScaleGetter.call($$, d.id)(d.value));
 
 		let line = d3Line();
 
@@ -175,9 +177,7 @@ extend(ChartInternal.prototype, {
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && (
-				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-			)) {
+			if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
 				posY = y0;
 			}
 
@@ -215,7 +215,9 @@ extend(ChartInternal.prototype, {
 			let idx;
 
 			for (idx = 0; idx < withinRegions.length; idx++) {
-				if (withinRegions[idx].start < withinX && withinX <= withinRegions[idx].end) { return true; }
+				if (withinRegions[idx].start < withinX && withinX <= withinRegions[idx].end) {
+					return true;
+				}
 			}
 			return false;
 		}
@@ -344,19 +346,25 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const value0 = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
+			getPoints(d, i)[0][1] :
+			$$.isArray(d.value) ? d.value[2] :
+				yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
 		const value1 = (d, i) => (config.data_groups.length > 0 ?
-			getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value));
+			getPoints(d, i)[1][1] :
+			$$.isArray(d.value) ? d.value[0] :
+				yScaleGetter.call($$, d.id)(d.value));
 
 		let area = d3Area();
 
-		area = axisRotated ?
-			area.x0(value0)
+		if (axisRotated) {
+			area = area.x0(value0)
 				.x1(value1)
-				.y(xValue) :
-			area.x(xValue)
+				.y(xValue);
+		} else {
+			area = area.x(xValue)
 				.y0(config.area_above ? 0 : value0)
 				.y1(value1);
+		}
 
 		if (!lineConnectNull) {
 			area = area.defined(d => d.value !== null);
@@ -391,7 +399,9 @@ extend(ChartInternal.prototype, {
 		return 0;
 	},
 
-	generateGetAreaPoints(areaIndices, isSub) { // partial duplication of generateGetBarPoints
+	generateGetAreaPoints(areaIndices, isSub) {
+		// partial duplication of generateGetBarPoints
+
 		const $$ = this;
 		const config = $$.config;
 		const areaTargetsNum = areaIndices.__max__ + 1;
@@ -407,9 +417,8 @@ extend(ChartInternal.prototype, {
 			let posY = y(d);
 
 			// fix posY not to overflow opposite quadrant
-			if (config.axis_rotated && (
-				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
-			)) {
+			if (config.axis_rotated &&
+				((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
 				posY = y0;
 			}
 
@@ -491,7 +500,8 @@ extend(ChartInternal.prototype, {
 			};
 		} else {
 			$$.circleY = function(d) {
-				return $$.getYScale(d.id)(d.value);
+				return $$.isArray(d.value) ? d.value[1] :
+					$$.getYScale(d.id)(d.value);
 			};
 		}
 	},
@@ -540,7 +550,9 @@ extend(ChartInternal.prototype, {
 		const r = $$.pointR.bind($$);
 
 		const circles = $$.getCircles(i)
-			.filter(function() { return d3Select(this).classed(CLASS.EXPANDED); })
+			.filter(function() {
+				return d3Select(this).classed(CLASS.EXPANDED);
+			})
 			.classed(CLASS.EXPANDED, false);
 
 		const scale = r(circles) / $$.config.point_r;
@@ -548,7 +560,7 @@ extend(ChartInternal.prototype, {
 		circles.attr("r", r);
 
 		!$$.isCirclePoint() &&
-			circles.style("transform", `scale(${scale})`);
+		circles.style("transform", `scale(${scale})`);
 	},
 
 	pointR(d) {

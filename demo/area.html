@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport"
+          content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
+    <meta name="description"
+          content="Examples of billboard.js. billboard.js is a re-usable easy interface JavaScript chart library, based on D3 v4+.">
+    <meta name="author" content="NAVER Corp.">
+    <title>billboard.js - examples</title>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.8/fallback.min.js"></script>
+
+    <!-- jQuery -->
+    <script src="//code.jquery.com/jquery-1.12.4.min.js"></script>
+
+    <!-- Bootstrap Core JavaScript -->
+    <script src="//cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+    <!-- Bootstrap Core CSS -->
+    <link href="//cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom CSS -->
+    <link href="./simple-sidebar.css" rel="stylesheet">
+
+    <link rel="stylesheet" type="text/css"
+          href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/styles/default.min.css"/>
+    <link rel="stylesheet" type="text/css" href="./tomorrow.css"/>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/javascript.min.js"></script>
+
+    <script src="//cdnjs.cloudflare.com/ajax/libs/d3/4.9.0/d3.js"></script>
+
+    <link href="../dist/billboard.css" rel="stylesheet">
+    <script src="../dist/billboard.js"></script>
+
+    <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+    <script src="//oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="//oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+<body>
+
+<div id="bbChart" style="width: 80%; margin: 0 auto;margin-top: 20px;"></div>
+
+<script>
+
+    let options = {};
+    var chartbb = bb.generate({
+        bindto: '#bbChart',
+        data: {
+            x: 'x',
+            //  xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+            columns: [
+                ['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+                // ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
+                // ['data1', 100, 200, 400, 200, 200, 200],
+                // ['data2', 50, 100, 200, 100, 100, 100],
+                // ['data3', 10, 50, 100, 50, 50, 50],
+                ['data1',
+                    [50, 40, 10],
+                    [55, 30, 15],
+                    [60, 35, 20],
+                    [85, 20, 10],
+                    [80, 50, 30],
+                    [99, 60, 25]],
+                ['data2',
+                    [150, 140, 110],
+                    [155, 130, 115],
+                    [160, 135, 120],
+                    [195, 140, 110],
+                    [180, 150, 130],
+                    [199, 160, 125]],
+            ],
+            type: "spline",
+            types: {
+                data1: "area-spline-range",
+                data2: "area-spline-range",
+                // data3: "area-spline-range",
+            },
+            // groups: [
+            //     ["data1", "data2", "data3"]
+            // ]
+        },
+
+        axis: {
+            x: {
+                type: 'timeseries',
+                tick: {
+                    format: '%Y-%m-%d'
+                }
+            }
+        },
+    })
+
+</script>
+</body>
+</html>

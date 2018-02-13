@@ -11,7 +11,7 @@ import {
 	tsvParseRows as d3TsvParseRows,
 } from "d3";
 import ChartInternal from "../internals/ChartInternal";
-import {isUndefined, isDefined, isValue, notEmpty, extend} from "../internals/util";
+import {isUndefined, isDefined, isValue, notEmpty, extend, isArray} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
@@ -189,6 +189,7 @@ extend(ChartInternal.prototype, {
 		ids.forEach(id => {
 			const xKey = this.getXKey(id);
 
+
 			if (this.isCustomX() || this.isTimeSeries()) {
 				// if included in input data
 				if (xs.indexOf(xKey) >= 0) {
@@ -228,7 +229,8 @@ extend(ChartInternal.prototype, {
 				values: data.map((d, i) => {
 					const xKey = $$.getXKey(id);
 					const rawX = d[xKey];
-					const value = d[id] !== null && !isNaN(d[id]) ? +d[id] : null;
+					const value = d[id] !== null && !isNaN(d[id]) ? +d[id] :
+						isArray(d[id]) ? d[id] : null;
 					let x;
 
 					// use x as categories if custom x and categorized

@@ -57,7 +57,7 @@ extend(ChartInternal.prototype, {
 		const id = isString(d) ? d : d.id;
 
 		return !this.config.data_types[id] ||
-			this.isTypeOf(id, ["line", "spline", "area", "area-spline", "step", "area-step"]);
+			this.isTypeOf(id, ["line", "spline", "area", "area-spline", "area-spline-range", "step", "area-step"]);
 	},
 
 	isTypeOf(d, type) {
@@ -73,11 +73,15 @@ extend(ChartInternal.prototype, {
 	},
 
 	isSplineType(d) {
-		return this.isTypeOf(d, ["spline", "area-spline"]);
+		return this.isTypeOf(d, ["spline", "area-spline", "area-spline-range"]);
 	},
 
 	isAreaType(d) {
-		return this.isTypeOf(d, ["area", "area-spline", "area-step"]);
+		return this.isTypeOf(d, ["area", "area-spline", "area-spline-range", "area-step"]);
+	},
+
+	isAreaRangeType(d) {
+		return this.isTypeOf(d, ["area-spline-range"]);
 	},
 
 	isBarType(d) {
