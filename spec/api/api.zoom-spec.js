@@ -248,5 +248,57 @@ describe("API zoom", function() {
 		});
 	});
 
-	// @TODO zoom.max/min/range
+	describe("zoom.min/max/range()", () => {
+		chart = util.generate({
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400, 150, 250]
+				]
+			},
+			zoom: {
+				enabled: true
+			}
+		});
+
+		it("should be updated the minimum zoom range", () => {
+			const range = chart.zoom.min(-1);
+			const zoomRange = chart.zoom([-1, 1]);
+
+			expect(Math.round(zoomRange[0])).to.be.equal(range);
+			expect(+chart.internal.main.select(`.${CLASS.axisX} .tick`).attr("transform").match(/\d+/)[0]).to.be.above(250);
+		});
+
+		it("should be updated the maximum zoom range", () => {
+			const range = chart.zoom.max(6);
+			const zoomRange = chart.zoom([4, 6]);
+
+			expect(Math.round(zoomRange[1])).to.be.equal(range);
+
+			const tick = chart.internal.main.selectAll(`.${CLASS.axisX} .tick`);
+			expect(+tick.filter(`:nth-child(${tick.size() + 1})`).attr("transform").match(/\d+/)[0]).to.be.below(500);
+		});
+
+		it("should be updated zoom range", () => {
+			const main = chart.internal.main;
+			const range = chart.zoom.range({
+				min: -2,
+				max: 7
+			});
+
+			// check the min range
+			let zoomRange = chart.zoom([-2, 1]);
+
+			expect(Math.round(zoomRange[0])).to.be.equal(range.min);
+			expect(+main.select(`.${CLASS.axisX} .tick`).attr("transform").match(/\d+/)[0]).to.be.above(350);
+
+			// check the max range
+			zoomRange = chart.zoom([5, 7]);
+
+			expect(Math.round(zoomRange[1])).to.be.equal(range.max);
+
+			const tick = main.selectAll(`.${CLASS.axisX} .tick`);
+
+			expect(+tick.filter(`:nth-child(${tick.size() + 1})`).attr("transform").match(/\d+/)[0]).to.be.below(5);
+		});
+	});
 });
