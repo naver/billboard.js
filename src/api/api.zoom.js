@@ -150,16 +150,16 @@ extend(zoom, {
 	 *  });
 	 */
 	range: function(range) {
-		const domain = this.domain;
+		const zoom = this.zoom;
 
 		if (isObject(range)) {
-			isDefined(range.max) && domain.max(range.max);
-			isDefined(range.min) && domain.min(range.min);
+			isDefined(range.min) && zoom.min(range.min);
+			isDefined(range.max) && zoom.max(range.max);
 		}
 
 		return {
-			max: domain.max(),
-			min: domain.min()
+			min: zoom.min(),
+			max: zoom.max()
 		};
 	}
 });
