@@ -2,15 +2,10 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	area as d3Area,
-	line as d3Line,
-	select as d3Select,
-	mouse as d3Mouse,
-} from "d3";
+import {area as d3Area, line as d3Line, mouse as d3Mouse, select as d3Select} from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {isFunction, isValue, isDefined, isUndefined, extend} from "../internals/util";
+import {extend, isDefined, isFunction, isUndefined, isValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initLine() {
@@ -117,7 +112,7 @@ extend(ChartInternal.prototype, {
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[0][1] :
-			$$.isArray(d.value) ? d.value[1] :
+			$$.isAreaRangeType(d) ? yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "mid")) :
 				yScaleGetter.call($$, d.id)(d.value));
 
 		let line = d3Line();
@@ -347,28 +342,11 @@ extend(ChartInternal.prototype, {
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const value0 = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[0][1] :
-			$$.isArray(d.value) ? d.value[2] :
-				yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
+			yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
 		const value1 = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[1][1] :
-			$$.isArray(d.value) ? d.value[0] :
-				yScaleGetter.call($$, d.id)(d.value));
+			yScaleGetter.call($$, d.id)(d.value));
 
-		let area = d3Area();
-
-		if (axisRotated) {
-			area = area.x0(value0)
-				.x1(value1)
-				.y(xValue);
-		} else {
-			area = area.x(xValue)
-				.y0(config.area_above ? 0 : value0)
-				.y1(value1);
-		}
-
-		if (!lineConnectNull) {
-			area = area.defined(d => d.value !== null);
-		}
 
 		return d => {
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
@@ -377,6 +355,26 @@ extend(ChartInternal.prototype, {
 			let path;
 
 			if ($$.isAreaType(d)) {
+				let area = d3Area();
+
+				if (axisRotated) {
+					area = area.x0(value0)
+						.x1(value1)
+						.y(xValue);
+				} else if ($$.isAreaRangeType(d)) {
+					area = area.x(xValue)
+						.y0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
+						.y1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")));
+				} else {
+					area = area.x(xValue)
+						.y0(config.area_above ? 0 : value0)
+						.y1(value1);
+				}
+
+				if (!lineConnectNull) {
+					area = area.defined(d => d.value !== null);
+				}
+
 				if ($$.isStepType(d)) {
 					values = $$.convertValuesToStep(values);
 				}
@@ -390,7 +388,6 @@ extend(ChartInternal.prototype, {
 
 				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
-
 			return path || "M 0 0";
 		};
 	},
@@ -500,7 +497,7 @@ extend(ChartInternal.prototype, {
 			};
 		} else {
 			$$.circleY = function(d) {
-				return $$.isArray(d.value) ? d.value[1] :
+				return $$.isAreaRangeType(d) ? $$.getYScale(d.id)($$.getAreaRangeData(d, "mid")) :
 					$$.getYScale(d.id)(d.value);
 			};
 		}

@@ -74,7 +74,7 @@ extend(ChartInternal.prototype, {
 		let bgcolor;
 
 		const getRowValue = function(row) {
-			return $$.isArray(row.value) ? row.value[1] : row.value;
+			return $$.isAreaRangeType(row) ? $$.getAreaRangeData(row, "mid") : row.value;
 		};
 
 		if (order === null && config.data_groups.length) {
@@ -118,9 +118,9 @@ extend(ChartInternal.prototype, {
 				text = `<table class="${$$.CLASS.tooltip}">${text}`;
 			}
 
-			if ($$.isArray(row.value)) {
-				hiValue = sanitise(valueFormat(row.value[0], row.ratio, row.id, row.index, d));
-				loValue = sanitise(valueFormat(row.value[2], row.ratio, row.id, row.index, d));
+			if ($$.isAreaRangeType(row)) {
+				hiValue = sanitise(valueFormat($$.getAreaRangeData(row, "high"), row.ratio, row.id, row.index, d));
+				loValue = sanitise(valueFormat($$.getAreaRangeData(row, "low"), row.ratio, row.id, row.index, d));
 			}
 
 			value = sanitise(valueFormat(getRowValue(row), row.ratio, row.id, row.index, d));
@@ -142,7 +142,7 @@ extend(ChartInternal.prototype, {
 					`<span style="background-color:${bgcolor}"></span>`;
 
 
-				if ($$.isArray(row.value)) {
+				if ($$.isAreaRangeType(row)) {
 					text += `${name}</td><td class="value"><b>Mid:</b> ${value} <b>High:</b> ${hiValue} <b>Low:</b> ${loValue}</td></tr>`;
 				} else {
 					text += `${name}</td><td class="value">${value}</td></tr>`;

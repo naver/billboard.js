@@ -230,7 +230,8 @@ extend(ChartInternal.prototype, {
 					const xKey = $$.getXKey(id);
 					const rawX = d[xKey];
 					const value = d[id] !== null && !isNaN(d[id]) ? +d[id] :
-						isArray(d[id]) ? d[id] : null;
+						isArray(d[id]) || ($$.isObject(d[id]) && d[id].high) ? d[id] :
+							null;
 					let x;
 
 					// use x as categories if custom x and categorized
