@@ -1063,6 +1063,7 @@ export default class Options {
 			 * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
 			 * @property {Number} [legend.item.tile.width=10] Set width of item tile element
 			 * @property {Number} [legend.item.tile.height=10] Set height of item tile element
+			 * @property {Boolean} [legend.usePoint=false] Whether to use custom points in legend.
 			 * @example
 			 *  legend: {
 			 *      show: true,
@@ -1121,6 +1122,7 @@ export default class Options {
 			legend_padding: 0,
 			legend_item_tile_width: 10,
 			legend_item_tile_height: 10,
+			legend_usePoint: false,
 
 			/**
 			 * Switch x and y axis position.

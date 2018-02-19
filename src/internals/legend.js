@@ -4,11 +4,12 @@
  */
 import {
 	select as d3Select,
-	event as d3Event
+	event as d3Event,
+	namespaces as d3Namespaces
 } from "d3";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isDefined, getOption, isEmpty, isFunction} from "./util";
+import {extend, isDefined, getOption, isEmpty, isFunction, notEmpty} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -466,6 +467,7 @@ extend(ChartInternal.prototype, {
 			}
 		};
 
+
 		if ($$.isLegendInset) {
 			step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
 			$$.updateLegendStep(step);
@@ -513,15 +515,47 @@ extend(ChartInternal.prototype, {
 			.attr("x", $$.isLegendRight || $$.isLegendInset ? xForLegendRect : -200)
 			.attr("y", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendRect);
 
-		l.append("line")
-			.attr("class", CLASS.legendItemTile)
-			.style("stroke", $$.color)
-			.style("pointer-events", "none")
-			.attr("x1", $$.isLegendRight || $$.isLegendInset ? x1ForLegendTile : -200)
-			.attr("y1", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-			.attr("x2", $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
-			.attr("y2", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-			.attr("stroke-width", config.legend_item_tile_height);
+		const usePoint = $$.config.legend_usePoint;
+
+		if (usePoint) {
+			const ids = [];
+
+			l.append(d => {
+				const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+
+				if (ids.indexOf(d) === -1) {
+					ids.push(d);
+				}
+				let point = pattern[ids.indexOf(d) % pattern.length];
+
+				if (point === "rectangle") {
+					point = "rect";
+				}
+
+				const nodeType = $$.hasValidPointType(point) ? point : "use";
+
+				return document.createElementNS(d3Namespaces.svg, nodeType);
+			})
+				.attr("class", CLASS.legendItemPoint)
+				.style("fill", d => $$.color(d))
+				.style("pointer-events", "none")
+				.attr("href", (data, idx, selection) => {
+					const node = selection[idx];
+					const nodeName = node.nodeName.toLowerCase();
+
+					return nodeName === "use" ? `#${$$.datetimeId}-point-${data}` : undefined;
+				});
+		} else {
+			l.append("line")
+				.attr("class", CLASS.legendItemTile)
+				.style("stroke", $$.color)
+				.style("pointer-events", "none")
+				.attr("x1", $$.isLegendRight || $$.isLegendInset ? x1ForLegendTile : -200)
+				.attr("y1", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
+				.attr("x2", $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
+				.attr("y2", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
+				.attr("stroke-width", config.legend_item_tile_height);
+		}
 
 		// Set background for inset legend
 		background = $$.legend.select(`.${CLASS.legendBackground} rect`);
@@ -552,15 +586,56 @@ extend(ChartInternal.prototype, {
 			.attr("x", xForLegendRect)
 			.attr("y", yForLegendRect);
 
-		const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
-			.data(targetIdz);
 
-		(withTransition ? tiles.transition() : tiles)
-			.style("stroke", $$.color)
-			.attr("x1", x1ForLegendTile)
-			.attr("y1", yForLegendTile)
-			.attr("x2", x2ForLegendTile)
-			.attr("y2", yForLegendTile);
+		if (usePoint) {
+			const tiles = $$.legend.selectAll(`.${CLASS.legendItemPoint}`)
+				.data(targetIdz);
+
+			(withTransition ? tiles.transition() : tiles)
+				.each((data, idx, selection) => {
+					const node = selection[idx];
+					const nodeName = node.nodeName.toLowerCase();
+					const d3Node = d3Select(node);
+					let x = "x";
+					let y = "y";
+					let yOffset = 2.5;
+					let radius;
+					let width;
+					let height;
+
+					if (nodeName === "circle") {
+						x = "cx";
+						y = "cy";
+						radius = $$.config.point_r + ($$.config.point_r * 0.2);
+						yOffset = -($$.config.point_r);
+					}
+
+					if (nodeName === "rect") {
+						width = $$.config.point_r * 2.5;
+						height = $$.config.point_r * 2.5;
+						yOffset = 0;
+					}
+
+
+					d3Node
+						.attr(x, x1ForLegendTile)
+						.attr(y, d => yForLegendTile(d) - yOffset)
+						.attr("r", radius)
+						.attr("width", width)
+						.attr("height", height);
+				});
+		} else {
+			const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
+				.data(targetIdz);
+
+
+			(withTransition ? tiles.transition() : tiles)
+				.style("stroke", $$.color)
+				.attr("x1", x1ForLegendTile)
+				.attr("y1", yForLegendTile)
+				.attr("x2", x2ForLegendTile)
+				.attr("y2", yForLegendTile);
+		}
 
 		if (background) {
 			(withTransition ? background.transition() : background)
