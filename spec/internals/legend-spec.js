@@ -358,6 +358,9 @@ describe("LEGEND", () => {
             ["data4", 80, 20, 250, 320, 180, 50]
           ]
         },
+				legend: {
+					usePoint: true
+				},
         point: {
           pattern: [
             "circle",

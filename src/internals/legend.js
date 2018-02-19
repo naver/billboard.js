@@ -515,19 +515,9 @@ extend(ChartInternal.prototype, {
 			.attr("x", $$.isLegendRight || $$.isLegendInset ? xForLegendRect : -200)
 			.attr("y", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendRect);
 
-		const hasCustomPoints = $$.config.point_pattern.length;
+		const usePoint = $$.config.legend_usePoint;
 
-		if (!hasCustomPoints) {
-			l.append("line")
-				.attr("class", CLASS.legendItemTile)
-				.style("stroke", $$.color)
-				.style("pointer-events", "none")
-				.attr("x1", $$.isLegendRight || $$.isLegendInset ? x1ForLegendTile : -200)
-				.attr("y1", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-				.attr("x2", $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
-				.attr("y2", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
-				.attr("stroke-width", config.legend_item_tile_height);
-		} else {
+		if (usePoint) {
 			const ids = [];
 
 			l.append(d => {
@@ -555,6 +545,16 @@ extend(ChartInternal.prototype, {
 
 					return nodeName === "use" ? `#${$$.datetimeId}-point-${data}` : undefined;
 				});
+		} else {
+			l.append("line")
+				.attr("class", CLASS.legendItemTile)
+				.style("stroke", $$.color)
+				.style("pointer-events", "none")
+				.attr("x1", $$.isLegendRight || $$.isLegendInset ? x1ForLegendTile : -200)
+				.attr("y1", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
+				.attr("x2", $$.isLegendRight || $$.isLegendInset ? x2ForLegendTile : -200)
+				.attr("y2", $$.isLegendRight || $$.isLegendInset ? -200 : yForLegendTile)
+				.attr("stroke-width", config.legend_item_tile_height);
 		}
 
 		// Set background for inset legend
@@ -587,18 +587,7 @@ extend(ChartInternal.prototype, {
 			.attr("y", yForLegendRect);
 
 
-		if (!hasCustomPoints) {
-			const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
-				.data(targetIdz);
-
-
-			(withTransition ? tiles.transition() : tiles)
-				.style("stroke", $$.color)
-				.attr("x1", x1ForLegendTile)
-				.attr("y1", yForLegendTile)
-				.attr("x2", x2ForLegendTile)
-				.attr("y2", yForLegendTile);
-		} else {
+		if (usePoint) {
 			const tiles = $$.legend.selectAll(`.${CLASS.legendItemPoint}`)
 				.data(targetIdz);
 
@@ -609,7 +598,7 @@ extend(ChartInternal.prototype, {
 					const d3Node = d3Select(node);
 					let x = "x";
 					let y = "y";
-					let yOffset = 2;
+					let yOffset = 2.5;
 					let radius;
 					let width;
 					let height;
@@ -617,13 +606,13 @@ extend(ChartInternal.prototype, {
 					if (nodeName === "circle") {
 						x = "cx";
 						y = "cy";
-						radius = $$.config.point_r;
+						radius = $$.config.point_r + ($$.config.point_r * 0.2);
 						yOffset = -($$.config.point_r);
 					}
 
 					if (nodeName === "rect") {
-						width = $$.config.point_r * 2;
-						height = $$.config.point_r * 2;
+						width = $$.config.point_r * 2.5;
+						height = $$.config.point_r * 2.5;
 						yOffset = 0;
 					}
 
@@ -635,6 +624,17 @@ extend(ChartInternal.prototype, {
 						.attr("width", width)
 						.attr("height", height);
 				});
+		} else {
+			const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
+				.data(targetIdz);
+
+
+			(withTransition ? tiles.transition() : tiles)
+				.style("stroke", $$.color)
+				.attr("x1", x1ForLegendTile)
+				.attr("y1", yForLegendTile)
+				.attr("x2", x2ForLegendTile)
+				.attr("y2", yForLegendTile);
 		}
 
 		if (background) {
