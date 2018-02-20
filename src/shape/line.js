@@ -324,11 +324,13 @@ extend(ChartInternal.prototype, {
 	},
 
 	redrawArea(drawArea, withTransition) {
+		const $$ = this;
+
 		return [
 			(withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
 				.attr("d", drawArea)
 				.style("fill", this.color)
-				.style("opacity", this.orgAreaOpacity)
+				.style("opacity", d => ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity))
 		];
 	},
 

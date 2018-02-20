@@ -65,14 +65,7 @@
                     [135, 120, 110],
                     [180, 150, 130],
                     [199, 160, 125]],
-                ['data2',
-                    [20, 15, 5],
-                    [40, 25, 15],
-                    [60, 35, 25],
-                    [80, 45, 35],
-                    [70, 55, 25],
-                    [40, 25, 15]],
-                ['data3', 10, 50, 100, 50, 50, 50],
+                ['data2', [20, 15, 5], [40, 25, 15], [60, 35, 25], [80, 45, 35], [70, 55, 25],                    [40, 25, 15]],                ['data3', 10, 50, 100, 50, 50, 50],
                 ['data4', {high: 155, low: 145, mid: 150},
                     {high: 200, mid: 190, low: 150},
                     {high: 230, mid: 215, low: 200},
@@ -81,12 +74,15 @@
                     {high: 200, mid: 180, low: 160}],
 
             ],
-            type: "spline",
+            type: "area-spline-range",
             types: {
-                data1: "area-line-range",
-                data2: "area-spline-range",
-                data4: "area-spline-range",
-            },
+                data3: 'line'
+            }
+            // types: {
+            //     data1: "area-line-range",
+            //     data2: "area-spline-range",
+            //     data4: "area-spline-range",
+            // },
             // groups: [
             //     ["data1", "data2", "data3"]
             // ]

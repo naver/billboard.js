@@ -606,16 +606,9 @@ extend(ChartInternal.prototype, {
 
 	getAreaRangeData(d, type) {
 		if (isArray(d.value)) {
-			switch (type) {
-				case "high":
-					return d.value[0];
-				case "mid":
-					return d.value[1];
-				case "low":
-					return d.value[2];
-				default:
-					return 0;
-			}
+			const index = ["high", "mid", "low"].indexOf(type);
+
+			return index === -1 ? 0 : d.value[index];
 		}
 		return d.value[type];
 	}

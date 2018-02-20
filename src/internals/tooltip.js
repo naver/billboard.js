@@ -111,6 +111,7 @@ extend(ChartInternal.prototype, {
 			if (!((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0))) {
 				continue;
 			}
+			const isAreaRangeType = $$.isAreaRangeType(row);
 
 			if (!text) {
 				title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
@@ -118,7 +119,7 @@ extend(ChartInternal.prototype, {
 				text = `<table class="${$$.CLASS.tooltip}">${text}`;
 			}
 
-			if ($$.isAreaRangeType(row)) {
+			if (isAreaRangeType) {
 				hiValue = sanitise(valueFormat($$.getAreaRangeData(row, "high"), row.ratio, row.id, row.index, d));
 				loValue = sanitise(valueFormat($$.getAreaRangeData(row, "low"), row.ratio, row.id, row.index, d));
 			}
@@ -142,11 +143,9 @@ extend(ChartInternal.prototype, {
 					`<span style="background-color:${bgcolor}"></span>`;
 
 
-				if ($$.isAreaRangeType(row)) {
-					text += `${name}</td><td class="value"><b>Mid:</b> ${value} <b>High:</b> ${hiValue} <b>Low:</b> ${loValue}</td></tr>`;
-				} else {
-					text += `${name}</td><td class="value">${value}</td></tr>`;
-				}
+				text += `${name}</td><td class="value">${
+					isAreaRangeType ? `<b>Mid:</b> ${value} <b>High:</b> ${hiValue} <b>Low:</b> ${loValue}` : value
+				}</td></tr>`;
 			}
 		}
 
