@@ -4,7 +4,8 @@ const ExtractTextPlugin = require("extract-text-webpack-plugin");
 const config = {
 	devtool: "inline-source-map",
 	devServer: {
-		publicPath: "/dist/"
+		publicPath: "/dist/",
+		stats: "minimal"
 	},
 	module: {
 		rules: [{

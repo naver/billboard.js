@@ -2,6 +2,7 @@ const pkg = require("./package.json");
 const path = require("path");
 const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
+const Stylish = require("webpack-stylish");
 
 const config = {
 	entry: {
@@ -34,8 +35,10 @@ const config = {
 	},
 	plugins: [
 		new StringReplacePlugin(),
-		new webpack.optimize.ModuleConcatenationPlugin()
-	]
+		new webpack.optimize.ModuleConcatenationPlugin(),
+		new Stylish()
+	],
+	stats: "minimal"
 };
 
 module.exports = env =>
