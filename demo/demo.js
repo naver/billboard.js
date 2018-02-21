@@ -2162,6 +2162,36 @@ var demos = {
 					padAngle: 0.1
 				}
 			}
+		},
+		InnerRadius: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 50],
+						['data3', 20]
+					],
+					type: 'pie'
+				},
+				pie: {
+					innerRadius: 20
+				}
+			}
+		},
+		Gap: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 50],
+						['data3', 20]
+					],
+					type: 'pie'
+				},
+				pie: {
+					gap: 2
+				}
+			}
 		}
 	},
 	API: {
