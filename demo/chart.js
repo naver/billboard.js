@@ -26,15 +26,18 @@ var billboardDemo = {
 		var $wrapper = this.$wrapper;
 		var WIDTH = this.WIDTH;
 
-		// bind click event to menu list
-		$list.addEventListener("click", (function(e) {
+		var clickHandler = (function(e) {
 			e.target.tagName === "A" && this.clickHandler(e.target.href)
-		}).bind(this));
+		}).bind(this);
+
+		// bind click event to menu list
+		$list.addEventListener("click", clickHandler, false);
+		document.querySelector(".chart_area ul").addEventListener("click", clickHandler, false);
 
 		document.getElementById("menu-toggle").addEventListener("click", function(e) {
 			$wrapper.className = $wrapper.className ? "" : "toggled";
 			e.preventDefault();
-		});
+		}, false);
 
 		window.addEventListener("resize", function() {
 			if (window.innerWidth > WIDTH) {

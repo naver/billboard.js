@@ -44,3 +44,11 @@ pre code {
   border: 1px solid #ccc;
   padding: 10px;
 }
+
+.chart_area h4 {
+  border-bottom:dotted 1px;padding:10px 0 5px
+}
+
+.chart_area ul {
+  font-size:1.1em;
+}
