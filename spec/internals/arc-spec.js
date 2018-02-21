@@ -117,6 +117,28 @@ describe("ARC", () => {
 			expect(chart.internal.pie.padAngle()()).to.be.equal(value);
 			expect(chart.internal.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
 		});
+
+		it("check for padding and innerRadius", () => {
+			const padding = 5;
+			const innerRadius = 20;
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 60],
+						["data2", 40]
+					],
+					type: "pie"
+				},
+				pie: {
+					padding,
+					innerRadius
+				}
+			});
+			const internal = chart.internal;
+
+			expect(internal.pie.padAngle()()).to.be.equal(padding * 0.01);
+			expect(internal.innerRadius).to.be.equal(innerRadius);
+		});
 	});
 
 	describe("show gauge", () => {
