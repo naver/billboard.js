@@ -37,8 +37,8 @@ export default class Options {
 			 *
 			 * // or to change default classname
 			 * bindto: {
-			 *  element: "#chart",
-			 *  classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
+			 *    element: "#chart",
+			 *    classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
 			 * }
 			 */
 			bindto: "#chart",
@@ -521,11 +521,12 @@ export default class Options {
 			 *   // or set specific options
 			 *   labels: {
 			 *     format: function(v, id, i, j) { ... },
+			 *
 			 *     // it's possible to set for each data
-			 *     //format: {
-			 *     //    data1: function(v, id, i, j) { ... },
-			 *     //    ...
-			 *     //},
+			 *     format: {
+			 *         data1: function(v, id, i, j) { ... },
+			 *         ...
+			 *     },
 			 *     position: {
 			 *        x: -10,
 			 *        y: 10
@@ -640,6 +641,7 @@ export default class Options {
 			 * data: {
 			 *   // all of data will be hidden
 			 *   hide: true
+			 *
 			 *   // specified data will be hidden
 			 *   hide: ["data1", ...]
 			 * }
@@ -656,7 +658,7 @@ export default class Options {
 			 * @default false
 			 * @example
 			 * data: {
-			 *    selection․ {
+			 *    selection: {
 			 *       enabled: true
 			 *    }
 			 * }
@@ -672,7 +674,7 @@ export default class Options {
 			 * @default false
 			 * @example
 			 * data: {
-			 *    selection․ {
+			 *    selection: {
 			 *       grouped: true
 			 *    }
 			 * }
@@ -688,7 +690,7 @@ export default class Options {
 			 * @default function() { return true; }
 			 * @example
 			 * data: {
-			 *    selection․ {
+			 *    selection: {
 			 *       isselectable: function(d) { ... }
 			 *    }
 			 * }
@@ -704,7 +706,7 @@ export default class Options {
 			 * @default true
 			 * @example
 			 * data: {
-			 *    selection․ {
+			 *    selection: {
 			 *       multiple: false
 			 *    }
 			 * }
@@ -721,7 +723,7 @@ export default class Options {
 			 * @default false
 			 * @example
 			 * data: {
-			 *    selection․ {
+			 *    selection: {
 			 *       draggable: true
 			 *   }
 			 * }
@@ -811,10 +813,10 @@ export default class Options {
 			 * @type {Function}
 			 * @default undefined
 			 * @example
-			 *    onmin: function(data) {
-			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
-		     *        ...
-			 *    }
+			 *  onmin: function(data) {
+			 *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+		     *    ...
+			 *  }
 			 */
 			data_onmin: undefined,
 
@@ -825,10 +827,10 @@ export default class Options {
 			 * @type {Function}
 			 * @default undefined
 			 * @example
-			 *    onmax: function(data) {
-			 *        // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
-		     *        ...
-			 *    }
+			 *  onmax: function(data) {
+			 *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+		     *    ...
+			 *  }
 			 */
 			data_onmax: undefined,
 
@@ -840,7 +842,7 @@ export default class Options {
 			 * @default undefined
 			 * @example
 			 * data: {
-			 *     url: "/data/c3_test.csv"
+			 *     url: "/data/test.csv"
 			 * }
 			 */
 			data_url: undefined,
@@ -915,9 +917,7 @@ export default class Options {
 			 * @default undefined
 			 * @example
 			 * data: {
-			 *    {
-			 *       mimeType: "json"
-			 *    }
+			 *     mimeType: "json"
 			 * }
 			 */
 			data_mimeType: undefined,
@@ -2290,8 +2290,8 @@ export default class Options {
 			 *
 			 *          // set ratio callback. Should return ratio value
 			 *          ratio: function(d, radius, h) {
-			 *          	...
-			 *          	return ratio;
+			 *              ...
+			 *              return ratio;
 			 *          },
 			 *          // or set ratio number
 			 *          ratio: 0.5
@@ -2436,10 +2436,10 @@ export default class Options {
 			 * @example
 			 *  regions: [
 			 *    {
-			 *	   axis: "x",
-			 *	   start: 1,
-			 *	   end: 4,
-			 *	   class: "region-1-4"
+			 *      axis: "x",
+			 *      start: 1,
+			 *      end: 4,
+			 *      class: "region-1-4"
 			 *    }
 			 *  ]
 			 */
