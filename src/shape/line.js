@@ -357,20 +357,29 @@ extend(ChartInternal.prototype, {
 			let path;
 
 			if ($$.isAreaType(d)) {
+				const isAreaRangeType = $$.isAreaRangeType(d);
 				let area = d3Area();
 
 				if (axisRotated) {
-					area = area.x0(value0)
-						.x1(value1)
-						.y(xValue);
-				} else if ($$.isAreaRangeType(d)) {
-					area = area.x(xValue)
-						.y0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
-						.y1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")));
+					if (isAreaRangeType) {
+						area = area.x0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
+							.x1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")))
+							.y(xValue);
+					} else {
+						area = area.x0(value0)
+							.x1(value1)
+							.y(xValue);
+					}
 				} else {
-					area = area.x(xValue)
-						.y0(config.area_above ? 0 : value0)
-						.y1(value1);
+					if (isAreaRangeType) {
+						area = area.x(xValue)
+							.y0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
+							.y1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")));
+					} else {
+						area = area.x(xValue)
+							.y0(config.area_above ? 0 : value0)
+							.y1(value1);
+					}
 				}
 
 				if (!lineConnectNull) {

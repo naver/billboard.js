@@ -350,7 +350,7 @@ extend(ChartInternal.prototype, {
 			t.values.forEach(v => {
 				if (isArray(v.value)) {
 					ys[t.id].push(...v.value);
-				} else if ($$.isObject(v.value) && v.value.high) {
+				} else if ($$.isObject(v.value) && "high" in v.value) {
 					ys[t.id].push(...Object.values(v.value));
 				} else {
 					ys[t.id].push(v.value);
