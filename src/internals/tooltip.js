@@ -31,7 +31,9 @@ extend(ChartInternal.prototype, {
 				config.tooltip_init_x = $$.parseDate(config.tooltip_init_x);
 
 				for (i = 0; i < $$.data.targets[0].values.length; i++) {
-					if (($$.data.targets[0].values[i].x - config.tooltip_init_x) === 0) { break; }
+					if (($$.data.targets[0].values[i].x - config.tooltip_init_x) === 0) {
+						break;
+					}
 				}
 
 				config.tooltip_init_x = i;
@@ -65,9 +67,15 @@ extend(ChartInternal.prototype, {
 		const order = config.tooltip_order;
 		let text;
 		let title;
+		let hiValue;
+		let loValue;
 		let value;
 		let name;
 		let bgcolor;
+
+		const getRowValue = function(row) {
+			return $$.isAreaRangeType(row) ? $$.getAreaRangeData(row, "mid") : row.value;
+		};
 
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
@@ -90,8 +98,8 @@ extend(ChartInternal.prototype, {
 			const isAscending = order === "asc";
 
 			d.sort((a, b) => {
-				const v1 = a ? a.value : null;
-				const v2 = b ? b.value : null;
+				const v1 = a ? getRowValue(a) : null;
+				const v2 = b ? getRowValue(b) : null;
 
 				return isAscending ? v1 - v2 : v2 - v1;
 			});
@@ -100,12 +108,10 @@ extend(ChartInternal.prototype, {
 		}
 
 		for (let i = 0, row, len = d.length; i < len; i++) {
-			if (!(
-				(row = d[i]) &&
-				(row.value || row.value === 0)
-			)) {
+			if (!((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0))) {
 				continue;
 			}
+			const isAreaRangeType = $$.isAreaRangeType(row);
 
 			if (!text) {
 				title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
@@ -113,7 +119,13 @@ extend(ChartInternal.prototype, {
 				text = `<table class="${$$.CLASS.tooltip}">${text}`;
 			}
 
-			value = sanitise(valueFormat(row.value, row.ratio, row.id, row.index, d));
+			if (isAreaRangeType) {
+				hiValue = sanitise(valueFormat($$.getAreaRangeData(row, "high"), row.ratio, row.id, row.index, d));
+				loValue = sanitise(valueFormat($$.getAreaRangeData(row, "low"), row.ratio, row.id, row.index, d));
+			}
+
+			value = sanitise(valueFormat(getRowValue(row), row.ratio, row.id, row.index, d));
+
 
 			if (value !== undefined) {
 				// Skip elements when their name is set to null
@@ -130,7 +142,10 @@ extend(ChartInternal.prototype, {
 					`<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :
 					`<span style="background-color:${bgcolor}"></span>`;
 
-				text += `${name}</td><td class="value">${value}</td></tr>`;
+
+				text += `${name}</td><td class="value">${
+					isAreaRangeType ? `<b>Mid:</b> ${value} <b>High:</b> ${hiValue} <b>Low:</b> ${loValue}` : value
+				}</td></tr>`;
 			}
 		}
 

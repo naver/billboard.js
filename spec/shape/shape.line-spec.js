@@ -11,9 +11,9 @@ describe("SHAPE LINE", () => {
 	let args;
 	let skipEach = false;
 
-	beforeEach(function(){
-		if(skipEach){
-			return ;
+	beforeEach(function() {
+		if (skipEach) {
+			return;
 		}
 		chart = util.generate(args);
 	});
@@ -31,8 +31,8 @@ describe("SHAPE LINE", () => {
 					],
 					type: "line"
 				},
-				line : {
-					step : {}
+				line: {
+					step: {}
 				}
 			};
 		});
@@ -167,9 +167,9 @@ describe("SHAPE LINE", () => {
 				data: {
 					columns: [
 						["timestamps", 1495584000000, 1495605600000, 1495627200000, 1495648800000, 1495670400000],
-						["data1", 300, 150,  null, 120, 140],
-						["data2", 100, null, 200,  100, 100],
-						["data3", 100, 160,  200,  null, 50]
+						["data1", 300, 150, null, 120, 140],
+						["data2", 100, null, 200, 100, 100],
+						["data3", 100, 160, 200, null, 50]
 					],
 					x: "timestamps",
 					order: "asc",
@@ -206,9 +206,9 @@ describe("SHAPE LINE", () => {
 		before(() => {
 			args = {
 				data: {
-				columns: [
-						["data1", 30, 200, 100, 400,150,250],
-						["data2",50,20,10,0,15,25]
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 0, 15, 25]
 					],
 					selection: {
 						enabled: true
@@ -244,14 +244,61 @@ describe("SHAPE LINE", () => {
 		});
 	});
 
+	describe("area-range type generation", () => {
+		before(() => {
+			skipEach = true;
+			args = {
+				data: {
+					x: "timestamps",
+					columns: [
+						['timestamps', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+						['data1', [150, 140, 110], [155, 130, 115], [160, 135, 120], [135, 120, 110], [180, 150, 130], [199, 160, 125]],
+						['data2', {high: 155, low: 145, mid: 150},
+							{high: 200, mid: 190, low: 150},
+							{high: 230, mid: 215, low: 200},
+							{high: 210, mid: 200, low: 180},
+							{high: 220, mid: 210, low: 190},
+							{high: 200, mid: 180, low: 160}],
+					],
+					type: "area-spline-range",
+				},
+			};
+		});
+
+		it("Should render the lines correctly when array data supplied", () => {
+			const target = chart.internal.main.select(".bb-chart-line.bb-target-data1");
+			const commands = parseSvgPath(target.select(".bb-line-data1").attr("d"));
+
+			expect(commands.length).to.be.equal(6);
+		});
+
+		it("Should render the lines correctly when array data supplied", () => {
+			const target = chart.internal.main.select(".bb-chart-line.bb-target-data2");
+			const commands = parseSvgPath(target.select(".bb-line-data2").attr("d"));
+
+			expect(commands.length).to.be.equal(6);
+		});
+
+		it("should use cardinal interpolation by default", () => {
+			expect(chart.internal.config.spline_interpolation_type).to.be.equal("cardinal");
+		});
+
+		it("should change to area-line-range chart", () => {
+			args.data.type = "area-line-range chart";
+
+			expect(true).to.be.ok;
+		});
+
+	});
+
 	describe("step type generation", () => {
 		before(() => {
 			skipEach = true;
 			args = {
 				data: {
 					columns: [
-						["data1", 30, 200, 100, 400,150,250],
-						["data2",50,20,10,0,15,25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 0, 15, 25]
 					],
 					type: "step"
 				},

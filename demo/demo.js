@@ -36,6 +36,62 @@ var demos = {
 				];
 			}
 		},
+		AreaRangeChart: {
+			options: {
+				data: {
+					x: 'x',
+					//  xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+					columns: [
+						['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+						// ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
+						['data1', [150, 140, 110], [155, 130, 115], [160, 135, 120], [135, 120, 110], [180, 150, 130], [199, 160, 125]],
+						['data2', 130, 340, 200, 500, 250, 350]
+
+					],
+					types: {
+						data1: "area-spline-range",
+					}
+				},
+				axis: {
+					x: {
+						type: 'timeseries',
+						tick: {
+							format: '%Y-%m-%d'
+						}
+					}
+				},
+
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								['data3', [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
+							],
+							types: {
+								data3: "area-spline-range",
+							}
+						});
+					}, 1000),
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								['data4', {high: 155, low: 145, mid: 150},
+									{high: 200, mid: 190, low: 150},
+									{high: 230, mid: 215, low: 200},
+									{high: 210, mid: 200, low: 180},
+									{high: 220, mid: 210, low: 190},
+									{high: 200, mid: 180, low: 160}],
+							],
+							types: {
+								data4: "area-spline-range",
+							}
+						});
+					}, 1500)
+				];
+			}
+		},
 		TimeseriesChart: {
 			options: {
 				data: {
@@ -141,8 +197,8 @@ var demos = {
 						['data2', 50, 20, 10, 40, 15, 25]
 					],
 					regions: {
-						'data1': [{'start':1, 'end':2, 'style':'dashed'},{'start':3}], // currently 'dashed' style only
-						'data2': [{'end':3}]
+						'data1': [{'start': 1, 'end': 2, 'style': 'dashed'}, {'start': 3}], // currently 'dashed' style only
+						'data2': [{'end': 3}]
 					}
 				}
 			}
@@ -235,7 +291,7 @@ var demos = {
 				},
 				grid: {
 					y: {
-						lines: [{value:0}]
+						lines: [{value: 0}]
 					}
 				}
 			},
@@ -323,10 +379,16 @@ var demos = {
 						['data1', 30],
 						['data2', 120],
 					],
-					type : 'pie',
-					onclick: function(d, i) { console.log("onclick", d, i); },
-					onover: function(d, i) { console.log("onover", d, i); },
-					onout: function(d, i) { console.log("onout", d, i); }
+					type: 'pie',
+					onclick: function(d, i) {
+						console.log("onclick", d, i);
+					},
+					onover: function(d, i) {
+						console.log("onover", d, i);
+					},
+					onout: function(d, i) {
+						console.log("onout", d, i);
+					}
 				}
 			},
 			func: function(chart) {
@@ -359,10 +421,16 @@ var demos = {
 						['data1', 30],
 						['data2', 120],
 					],
-					type : 'donut',
-					onclick: function(d, i) { console.log("onclick", d, i); },
-					onover: function(d, i) { console.log("onover", d, i); },
-					onout: function(d, i) { console.log("onout", d, i); }
+					type: 'donut',
+					onclick: function(d, i) {
+						console.log("onclick", d, i);
+					},
+					onover: function(d, i) {
+						console.log("onover", d, i);
+					},
+					onout: function(d, i) {
+						console.log("onout", d, i);
+					}
 				},
 				donut: {
 					title: "Iris Petal Width"
@@ -398,27 +466,33 @@ var demos = {
 						['data', 91.4]
 					],
 					type: 'gauge',
-					onclick: function(d, i) { console.log("onclick", d, i); },
-					onover: function(d, i) { console.log("onover", d, i); },
-					onout: function(d, i) { console.log("onout", d, i); }
+					onclick: function(d, i) {
+						console.log("onclick", d, i);
+					},
+					onover: function(d, i) {
+						console.log("onover", d, i);
+					},
+					onout: function(d, i) {
+						console.log("onout", d, i);
+					}
 				},
 				gauge: {
-	//        label: {
-	//            format: function(value, ratio) {
-	//                return value;
-	//            },
-	//            show: false // to turn off the min/max labels.
-	//        },
-	//    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
-	//    max: 100, // 100 is default
-	//    units: ' %',
-	//    width: 39 // for adjusting arc thickness
+					//        label: {
+					//            format: function(value, ratio) {
+					//                return value;
+					//            },
+					//            show: false // to turn off the min/max labels.
+					//        },
+					//    min: 0, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					//    max: 100, // 100 is default
+					//    units: ' %',
+					//    width: 39 // for adjusting arc thickness
 				},
 				color: {
 					pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
 					threshold: {
-	//            unit: 'value', // percentage is default
-	//            max: 200, // 100 is default
+						//            unit: 'value', // percentage is default
+						//            max: 200, // 100 is default
 						values: [30, 60, 90, 100]
 					}
 				},
@@ -485,7 +559,7 @@ var demos = {
 			},
 			func: function(chart) {
 				chart.timer = [
-                    setTimeout(function() {
+					setTimeout(function() {
 						chart.load({
 							columns: [
 								['data1', 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
@@ -598,13 +672,13 @@ var demos = {
 						['sample', 30, 200, 100, 400, 150, 250]
 					]
 				},
-				axis : {
-					x : {
-						type : 'timeseries',
+				axis: {
+					x: {
+						type: 'timeseries',
 						tick: {
 							format: function(x) {
-							return x.getFullYear();
-						}
+								return x.getFullYear();
+							}
 							//format: '%Y' // format string is also available for timeseries data
 						}
 					}
@@ -681,9 +755,9 @@ var demos = {
 						['sample', 30, 100, 400, 150]
 					]
 				},
-				axis : {
-					x : {
-						type : 'timeseries',
+				axis: {
+					x: {
+						type: 'timeseries',
 						tick: {
 							fit: true,
 							format: "%e %b %y"
@@ -720,7 +794,7 @@ var demos = {
 		RotateXAxisTickText: {
 			options: {
 				data: {
-					x : 'x',
+					x: 'x',
 					columns: [
 						['x', 'www.somesitename1.com', 'www.somesitename2.com', 'www.somesitename3.com', 'www.somesitename4.com', 'www.somesitename5.com', 'www.somesitename6.com', 'www.somesitename7.com', 'www.somesitename8.com', 'www.somesitename9.com', 'www.somesitename10.com', 'www.somesitename11.com', 'www.somesitename12.com'],
 						['pv', 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
@@ -746,11 +820,11 @@ var demos = {
 						['sample', 30, 200, 100, 400, 150, 2500]
 					]
 				},
-				axis : {
-					y : {
+				axis: {
+					y: {
 						tick: {
 							format: function(x) {
-							    return d3.format("$,")(x);
+								return d3.format("$,")(x);
 							}
 						}
 					}
@@ -978,7 +1052,7 @@ var demos = {
 		CategoryData: {
 			options: {
 				data: {
-					x : 'x',
+					x: 'x',
 					columns: [
 						['x', 'www.site1.com', 'www.site2.com', 'www.site3.com', 'www.site4.com'],
 						['download', 30, 200, 100, 400],
@@ -1086,8 +1160,8 @@ var demos = {
 
 					setTimeout(function() {
 						chart.load({
-							columns:[
-								['data4', 30, 20, 50, 40, 60, 50,100,200]
+							columns: [
+								['data4', 30, 20, 50, 40, 60, 50, 100, 200]
 							],
 							type: 'bar'
 						});
@@ -1101,7 +1175,7 @@ var demos = {
 
 					setTimeout(function() {
 						chart.load({
-							columns:[
+							columns: [
 								['data2', null, 30, 20, 50, 40, 60, 50]
 							]
 						});
@@ -1203,7 +1277,7 @@ var demos = {
 				},
 				grid: {
 					y: {
-						lines: [{value:0}]
+						lines: [{value: 0}]
 					}
 				}
 			},
@@ -1270,8 +1344,8 @@ var demos = {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
 							data1: function(x) {
-							return d3.format('$')(x)
-						}
+								return d3.format('$')(x)
+							}
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
 					}
@@ -1313,19 +1387,19 @@ var demos = {
 					onmin: function(data) {
 						data.forEach(function(v) {
 							// select data points
-							d3.select(".bb-shapes-"+ v.id +" .bb-circle-"+ v.index)
+							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "red")
 								.attr("r", "8");
 						});
-					    },
+					},
 					onmax: function(data) {
 						data.forEach(function(v) {
 							// select data points
-							d3.select(".bb-shapes-"+ v.id +" .bb-circle-"+ v.index)
+							d3.select(".bb-shapes-" + v.id + " .bb-circle-" + v.index)
 								.style("fill", "green")
 								.attr("r", "8");
 						});
-					    }
+					}
 				}
 			}
 		}
@@ -1526,9 +1600,9 @@ var demos = {
 					contents: {
 						"bindto": "#legend",
 						"template": function(title, color) {
-						    // omit 'data2' to be shown
-						    return title !== "data2" ?
-						        "<span style='background-color:"+ color +";padding:10px'>"+ title +"</span>" : "";
+							// omit 'data2' to be shown
+							return title !== "data2" ?
+								"<span style='background-color:" + color + ";padding:10px'>" + title + "</span>" : "";
 						}
 					}
 				}
@@ -1549,36 +1623,36 @@ var demos = {
 				}
 			},
 			func: function(chart) {
-					function toggle(id) {
-						chart.toggle(id);
-					}
+				function toggle(id) {
+					chart.toggle(id);
+				}
 
-					d3.select('.chart_area')
-						.insert('div', '.chart')
-						.attr('class', 'legend')
-						.selectAll('span')
-						.data(['data1', 'data2', 'data3'])
-						.enter()
-						.append('span')
-						.attr('data-id', function(id) {
-							return id;
-						})
-						.html(function(id) {
-							return id;
-						})
-						.each(function(id) {
-							d3.select(this)
-								.style('background-color', chart.color(id));
-						})
-						.on('mouseover', function(id) {
-							chart.focus(id);
-						})
-						.on('mouseout', function(id) {
-							chart.revert();
-						})
-						.on('click', function(id) {
-							chart.toggle(id);
-						});
+				d3.select('.chart_area')
+					.insert('div', '.chart')
+					.attr('class', 'legend')
+					.selectAll('span')
+					.data(['data1', 'data2', 'data3'])
+					.enter()
+					.append('span')
+					.attr('data-id', function(id) {
+						return id;
+					})
+					.html(function(id) {
+						return id;
+					})
+					.each(function(id) {
+						d3.select(this)
+							.style('background-color', chart.color(id));
+					})
+					.on('mouseover', function(id) {
+						chart.focus(id);
+					})
+					.on('mouseout', function(id) {
+						chart.revert();
+					})
+					.on('click', function(id) {
+						chart.toggle(id);
+					});
 			}
 		},
 		usePoint: {
@@ -1779,26 +1853,28 @@ var demos = {
 						data2: 'y2'
 					}
 				},
-				axis : {
-					y : {
+				axis: {
+					y: {
 						tick: {
 							format: function(x) {
-							return d3.format("s")(x);
-						}
+								return d3.format("s")(x);
+							}
 						}
 					},
 					y2: {
 						show: true,
 						tick: {
 							format: function(x) {
-							return d3.format("$")(x);
-						}
+								return d3.format("$")(x);
+							}
 						}
 					}
 				},
 				tooltip: {
 					format: {
-						title: function(d) { return 'Data ' + d; },
+						title: function(d) {
+							return 'Data ' + d;
+						},
 						value: function(value, ratio, id) {
 							var format = id === 'data1' ? d3.format(',') : d3.format('$');
 
@@ -1919,7 +1995,7 @@ var demos = {
 							circlePattern("#FFF", "0.2", "3", "10"),
 							circlePattern("yellow", "0.3", "3", "3")
 						];
-					    }
+					}
 				}
 			}
 		},
@@ -2006,7 +2082,7 @@ var demos = {
 
 					setTimeout(function() {
 						chart.load({
-							columns:[
+							columns: [
 								['data1', null, 30, 20, 50, 40, 60, 50, 100, 200]
 							]
 						});
@@ -2199,42 +2275,42 @@ var demos = {
 							done: function() {
 								chart.flow({
 									columns: [
-                                      ['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-                                      ['data1', 200, 300, 100, 250],
-                                      ['data2', 100, 90, 40, 120],
-                                      ['data3', 100, 100, 300, 500]
+										['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+										['data1', 200, 300, 100, 250],
+										['data2', 100, 90, 40, 120],
+										['data3', 100, 100, 300, 500]
 									],
 									length: 0,
 									duration: 1500,
 									done: function() {
-                                      chart.flow({
-                                             columns: [
-                                                ['x', '2013-03-01', '2013-03-02'],
-                                                ['data1', 200, 300],
-                                                ['data2', 150, 250],
-                                                ['data3', 100, 100]
-                                            ],
-                                            length: 2,
-                                            duration: 1500,
-                                            done: function() {
-                                                 chart.flow({
-                                                    columns: [
-                                                        ['x', '2013-03-21', '2013-04-01'],
-                                                        ['data1', 500, 200],
-                                                        ['data2', 100, 150],
-                                                        ['data3', 200, 400]
-                                                    ],
-                                                    to: '2013-03-01',
-                                                    duration: 1500
-                                                 });
-                                            }
-                                      });
+										chart.flow({
+											columns: [
+												['x', '2013-03-01', '2013-03-02'],
+												['data1', 200, 300],
+												['data2', 150, 250],
+												['data3', 100, 100]
+											],
+											length: 2,
+											duration: 1500,
+											done: function() {
+												chart.flow({
+													columns: [
+														['x', '2013-03-21', '2013-04-01'],
+														['data1', 500, 200],
+														['data2', 100, 150],
+														['data3', 200, 400]
+													],
+													to: '2013-03-01',
+													duration: 1500
+												});
+											}
+										});
 									}
 								});
 							},
 						});
 					}, 1000)
-                ];
+				];
 			}
 		},
 		DataName: {
@@ -2403,11 +2479,11 @@ var demos = {
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.resize({height:100, width:300})
+						chart.resize({height: 100, width: 300})
 					}, 1000),
 
 					setTimeout(function() {
-						chart.resize({height:200})
+						chart.resize({height: 200})
 					}, 2000),
 
 					setTimeout(function() {
@@ -2427,27 +2503,27 @@ var demos = {
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.xgrids([{value: 1, text:'Label 1'}, {value: 4, text: 'Label 4'}]);
+						chart.xgrids([{value: 1, text: 'Label 1'}, {value: 4, text: 'Label 4'}]);
 					}, 1000),
 
 					setTimeout(function() {
-						chart.xgrids([{value: 2, text:'Label 2'}]);
+						chart.xgrids([{value: 2, text: 'Label 2'}]);
 					}, 2000),
 
 					setTimeout(function() {
-						chart.xgrids.add([{value: 3, text:'Label 3', class:'hoge'}]);
+						chart.xgrids.add([{value: 3, text: 'Label 3', class: 'hoge'}]);
 					}, 3000),
 
 					setTimeout(function() {
-						chart.xgrids.remove({value:2});
+						chart.xgrids.remove({value: 2});
 					}, 4000),
 
 					setTimeout(function() {
-						chart.xgrids.remove({class:'hoge'});
+						chart.xgrids.remove({class: 'hoge'});
 					}, 5000),
 
 					setTimeout(function() {
-						chart.xgrids([{value: 1, text:'Label 1'}, {value: 4, text: 'Label 4'}]);
+						chart.xgrids([{value: 1, text: 'Label 1'}, {value: 4, text: 'Label 4'}]);
 					}, 6000),
 
 					setTimeout(function() {
@@ -2543,8 +2619,8 @@ var demos = {
 					]
 				},
 				regions: [
-					{start:0, end:1},
-					{start:2, end:4, class:'foo'}
+					{start: 0, end: 1},
+					{start: 2, end: 4, class: 'foo'}
 				]
 			},
 			style: [

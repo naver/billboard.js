@@ -2,15 +2,22 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	set as d3Set,
-	min as d3Min,
-	max as d3Max,
-	merge as d3Merge
-} from "d3";
+import {max as d3Max, merge as d3Merge, min as d3Min, set as d3Set} from "d3";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, hasValue, isArray, isValue, notEmpty, isFunction, isBoolean, isDefined, isUndefined, isString, isObjectType} from "../internals/util";
+import {
+	extend,
+	hasValue,
+	isArray,
+	isBoolean,
+	isDefined,
+	isFunction,
+	isObjectType,
+	isString,
+	isUndefined,
+	isValue,
+	notEmpty
+} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	isX(key) {
@@ -57,8 +64,8 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return id in $$.data.xs &&
-			$$.data.xs[id] &&
-			isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
+		$$.data.xs[id] &&
+		isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
 	},
 
 	getOtherTargetXs() {
@@ -335,15 +342,21 @@ extend(ChartInternal.prototype, {
 	},
 
 	getValuesAsIdKeyed(targets) {
+		const $$ = this;
 		const ys = {};
 
 		targets.forEach(t => {
 			ys[t.id] = [];
 			t.values.forEach(v => {
-				ys[t.id].push(v.value);
+				if (isArray(v.value)) {
+					ys[t.id].push(...v.value);
+				} else if ($$.isObject(v.value) && "high" in v.value) {
+					ys[t.id].push(...Object.values(v.value));
+				} else {
+					ys[t.id].push(v.value);
+				}
 			});
 		});
-
 		return ys;
 	},
 
@@ -463,11 +476,15 @@ extend(ChartInternal.prototype, {
 		let i;
 
 		for (i = index - 1; i >= 0; i--) {
-			if (targetX !== values[i].x) { break; }
+			if (targetX !== values[i].x) {
+				break;
+			}
 			sames.push(values[i]);
 		}
 		for (i = index; i < values.length; i++) {
-			if (targetX !== values[i].x) { break; }
+			if (targetX !== values[i].x) {
+				break;
+			}
 			sames.push(values[i]);
 		}
 		return sames;
@@ -549,6 +566,26 @@ extend(ChartInternal.prototype, {
 		return converted;
 	},
 
+	convertValuesToRange(values) {
+		const converted = isArray(values) ? values.concat() : [values];
+		const ranges = [];
+
+		converted.forEach(range => {
+			ranges.push({
+				x: range.x,
+				value: range.value[0],
+				id: range.id
+			});
+			ranges.push({
+				x: range.x,
+				value: range.value[2],
+				id: range.id
+			});
+		});
+
+		return ranges;
+	},
+
 	updateDataAttributes(name, attrs) {
 		const $$ = this;
 		const config = $$.config;
@@ -565,6 +602,15 @@ extend(ChartInternal.prototype, {
 		$$.redraw({withLegend: true});
 
 		return current;
+	},
+
+	getAreaRangeData(d, type) {
+		if (isArray(d.value)) {
+			const index = ["high", "mid", "low"].indexOf(type);
+
+			return index === -1 ? 0 : d.value[index];
+		}
+		return d.value[type];
 	}
 });
 
