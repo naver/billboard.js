@@ -94,6 +94,7 @@
     "webpack-common-shake": "^1.5.3",
     "webpack-dev-server": "^2.7.1",
     "webpack-merge": "^4.1.0",
+    "webpack-stylish": "^0.1.5",
     "write-file-webpack-plugin": "^4.1.0",
     "xml2js": "^0.4.18"
   }

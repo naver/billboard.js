@@ -17,6 +17,13 @@ extend(Chart.prototype, {
 	 *    | Key | Type | default | Description |
 	 *    | --- | --- | --- | --- |
 	 *    | withLegend | Boolean | false | whether or not display legend |
+	 *
+	 * @example
+	 * // show 'data1'
+	 * chart.show("data1");
+	 *
+	 * // show 'data1' and 'data3'
+	 * chart.show(["data1", "data3"]);
 	 */
 	show(targetIdsValue, options = {}) {
 		const $$ = this.internal;
@@ -51,6 +58,13 @@ extend(Chart.prototype, {
 	 *    | Key | Type | default | Description |
 	 *    | --- | --- | --- | --- |
 	 *    | withLegend | Boolean | false | whether or not display legend |
+	 *
+	 * @example
+	 * // hide 'data1'
+	 * chart.hide("data1");
+	 *
+	 * // hide 'data1' and 'data3'
+	 * chart.hide(["data1", "data3"]);
 	 */
 	hide(targetIdsValue, options = {}) {
 		const $$ = this.internal;
@@ -75,16 +89,23 @@ extend(Chart.prototype, {
 	},
 
 	/**
-	 * Toggle data series on chart
+	 * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
 	 * @method toggle
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Array} [targetIdsValue=all] The target id value.
+	 * @param {String|Array} [targetIdsValue=all] The target id value.
 	 * @param {Object} [options] The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | default | Description |
 	 *    | --- | --- | --- | --- |
 	 *    | withLegend | Boolean | false | whether or not display legend |
+	 *
+	 * @example
+	 * // toggle 'data1'
+	 * chart.toggle("data1");
+	 *
+	 * // toggle 'data1' and 'data3'
+	 * chart.toggle(["data1", "data3"]);
 	 */
 	toggle(targetIds, options = {}) {
 		const that = this;

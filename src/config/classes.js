@@ -76,6 +76,7 @@ export default {
 	legendItem: "bb-legend-item",
 	legendItemEvent: "bb-legend-item-event",
 	legendItemTile: "bb-legend-item-tile",
+	legendItemPoint: "bb-legend-item-point",
 	legendItemHidden: "bb-legend-item-hidden",
 	legendItemFocused: "bb-legend-item-focused",
 	dragarea: "bb-dragarea",

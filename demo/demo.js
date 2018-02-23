@@ -1654,6 +1654,29 @@ var demos = {
 						chart.toggle(id);
 					});
 			}
+		},
+		usePoint: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 200, 100, 250, 150],
+						["data3", 60, 190, 320, 520, 20, 300],
+						["data4", 80, 20, 250, 320, 180, 50]
+					]
+				},
+				point: {
+					pattern: [
+						"circle",
+						"rectangle",
+						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>"
+					]
+				},
+				legend: {
+					usePoint: true
+				}
+			}
 		}
 	},
 
