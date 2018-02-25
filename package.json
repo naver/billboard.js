@@ -92,7 +92,7 @@
     "uglifyjs-webpack-plugin": "^1.1.8",
     "webpack": "^3.11.0",
     "webpack-common-shake": "^1.5.3",
-    "webpack-dev-server": "^2.7.1",
+    "webpack-dev-server": "^3.0.0",
     "webpack-merge": "^4.1.0",
     "webpack-stylish": "^0.1.5",
     "write-file-webpack-plugin": "^4.1.0",
