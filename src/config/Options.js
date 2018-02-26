@@ -2313,7 +2313,9 @@ export default class Options {
 			 * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
 			 * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean} [pie.expand=true] Enable or disable expanding pie pieces.
+			 * @property {Number} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
+			 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
 			 * @example
 			 *  pie: {
 			 *      label: {
@@ -2332,7 +2334,9 @@ export default class Options {
 			 *          ratio: 0.5
 			 *      },
 			 *      expand: false,
-			 *      padAngle: 0.1
+			 * 	    innerRadius: 0,
+			 *      padAngle: 0.1,
+			 *      padding: 0
 			 *  }
 			 */
 			pie_label_show: true,
@@ -2341,7 +2345,9 @@ export default class Options {
 			pie_label_ratio: undefined,
 			pie_expand: {},
 			pie_expand_duration: 50,
+			pie_innerRadius: 0,
 			pie_padAngle: 0,
+			pie_padding: 0,
 
 			/**
 			 * Set gauge options
