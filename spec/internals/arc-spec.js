@@ -118,7 +118,7 @@ describe("ARC", () => {
 			expect(chart.internal.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
 		});
 
-		it("check for gap", () => {
+		it("check for padding", () => {
 			const value = 5;
 			const chart = util.generate({
 				data: {
@@ -129,7 +129,7 @@ describe("ARC", () => {
 					type: "pie"
 				},
 				pie: {
-					gap: value
+					padding: value
 				}
 			});
 

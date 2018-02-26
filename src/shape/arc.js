@@ -18,8 +18,8 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		const padAngle = $$.hasType("pie") && config.pie_gap ?
-			config.pie_gap * 0.01 : config[`${config.data_type}_padAngle`] ?
+		const padAngle = $$.hasType("pie") && config.pie_padding ?
+			config.pie_padding * 0.01 : config[`${config.data_type}_padAngle`] ?
 				config[`${config.data_type}_padAngle`] : 0;
 
 		$$.pie = d3Pie()
@@ -39,8 +39,8 @@ extend(ChartInternal.prototype, {
 		$$.radius = $$.radiusExpanded * 0.95;
 		$$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
 
-		const innerRadius = config.pie_gap ?
-			config.pie_gap : config.pie_innerRadius ?
+		const innerRadius = config.pie_padding ?
+			config.pie_padding * ($$.innerRadiusRatio + 0.1) : config.pie_innerRadius ?
 				config.pie_innerRadius : 0;
 
 		$$.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?

@@ -2149,20 +2149,6 @@ var demos = {
 				}
 			}
 		},
-		PadAngle: {
-			options: {
-				data: {
-					columns: [
-						['data1', 30],
-						['data2', 50]
-					],
-					type: 'pie'
-				},
-				pie: {
-					padAngle: 0.1
-				}
-			}
-		},
 		InnerRadius: {
 			options: {
 				data: {
@@ -2178,7 +2164,21 @@ var demos = {
 				}
 			}
 		},
-		Gap: {
+		PadAngle: {
+			options: {
+				data: {
+					columns: [
+						['data1', 30],
+						['data2', 50]
+					],
+					type: 'pie'
+				},
+				pie: {
+					padAngle: 0.1
+				}
+			}
+		},
+		Padding: {
 			options: {
 				data: {
 					columns: [
@@ -2189,7 +2189,7 @@ var demos = {
 					type: 'pie'
 				},
 				pie: {
-					gap: 2
+					padding: 3
 				}
 			}
 		}
