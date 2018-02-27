@@ -2,11 +2,9 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	easeLinear as d3EaseLinear,
-	transition as d3Transition,
-	selectAll as d3SelectAll
-} from "d3";
+import {selectAll as d3SelectAll} from "d3-selection";
+import {easeLinear as d3EaseLinear} from "d3-ease";
+import {transition as d3Transition} from "d3-transition";
 import Chart from "../internals/Chart";
 import ChartInternal from "../internals/ChartInternal";
 import {isDefined, isValue, diffDomain, extend} from "../internals/util";

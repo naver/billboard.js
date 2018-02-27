@@ -6,7 +6,11 @@
   "main": "dist/billboard.js",
   "scripts": {
     "start": "webpack-dev-server --open",
-    "build": "webpack --env production && webpack --env packaged",
+    "build": "npm run build:production && npm run build:packaged",
+    "build:production": "webpack --env.mode=production",
+    "build:packaged": "webpack --env.mode=packaged",
+    "build:production:monitor": "npm run build:production -- --env.monitor=true",
+    "build:packaged:monitor": "npm run build:packaged -- --env.monitor=true",
     "deploy": "bash ./config/deploy.sh",
     "lint": "eslint src",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
@@ -94,6 +98,7 @@
     "webpack-common-shake": "^1.5.3",
     "webpack-dev-server": "^2.7.1",
     "webpack-merge": "^4.1.0",
+    "webpack-monitor": "^1.0.14",
     "webpack-stylish": "^0.1.5",
     "write-file-webpack-plugin": "^4.1.0",
     "xml2js": "^0.4.18"

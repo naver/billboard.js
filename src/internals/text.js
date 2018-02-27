@@ -5,7 +5,7 @@
 import {
 	select as d3Select,
 	selectAll as d3SelectAll
-} from "d3";
+} from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {extend} from "./util";

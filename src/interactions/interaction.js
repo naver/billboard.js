@@ -3,11 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
-	drag as d3Drag,
 	mouse as d3Mouse,
 	select as d3Select,
 	event as d3Event
-} from "d3";
+} from "d3-selection";
+import {drag as d3Drag} from "d3-drag";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isBoolean} from "../internals/util";

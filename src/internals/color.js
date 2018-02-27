@@ -2,11 +2,11 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {select as d3Select} from "d3-selection";
 import {
-	select as d3Select,
 	scaleOrdinal as d3ScaleOrdinal,
 	schemeCategory10 as d3SchemeCategory10
-} from "d3";
+} from "d3-scale";
 import ChartInternal from "./ChartInternal";
 import {notEmpty, extend, isFunction} from "./util";
 
