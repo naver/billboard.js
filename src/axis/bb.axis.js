@@ -2,10 +2,8 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	scaleLinear as d3ScaleLinear,
-	select as d3Select
-} from "d3";
+import {scaleLinear as d3ScaleLinear} from "d3-scale";
+import {select as d3Select} from "d3-selection";
 import {isArray, toArray, isDefined, isFunction} from "../internals/util";
 
 // Features:

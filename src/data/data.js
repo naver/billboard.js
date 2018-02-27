@@ -3,11 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
-	set as d3Set,
 	min as d3Min,
 	max as d3Max,
 	merge as d3Merge
-} from "d3";
+} from "d3-array";
+import {set as d3Set} from "d3-collection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
 import {

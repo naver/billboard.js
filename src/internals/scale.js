@@ -5,7 +5,7 @@
 import {
 	scaleTime as d3ScaleTime,
 	scaleLinear as d3ScaleLinear
-} from "d3";
+} from "d3-scale";
 import ChartInternal from "./ChartInternal";
 import {extend} from "./util";
 

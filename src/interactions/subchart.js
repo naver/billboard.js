@@ -4,10 +4,12 @@
  */
 import {
 	select as d3Select,
-	brushX as d3BrushX,
-	brushY as d3BrushY,
 	event as d3Event
-} from "d3";
+} from "d3-selection";
+import {
+	brushX as d3BrushX,
+	brushY as d3BrushY
+} from "d3-brush";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isFunction} from "../internals/util";

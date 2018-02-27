@@ -7,14 +7,13 @@ const uglifyConfig = require("./uglify");
 const banner = require("./banner");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 const config = {
 	entry: {
 		"billboard": "./src/core.js",
 		"billboard.min": "./src/core.js",
 	},
-	externals: [{
-		"d3": "d3"
-	}],
+	externals: /^d3-[a-z-]+$/i,
 	module: {
 		rules: [
 			{

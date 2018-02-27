@@ -3,10 +3,11 @@ const path = require("path");
 const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
 const Stylish = require("webpack-stylish");
+const WebpackMonitor = require("webpack-monitor");
 
 const config = {
 	entry: {
-		"billboard": "./src/core.js",
+		billboard: "./src/core.js",
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
@@ -41,5 +42,12 @@ const config = {
 	stats: "minimal"
 };
 
-module.exports = env =>
-	require(`./config/webpack.config.${env || "development"}.js`)(config);
+module.exports = env => {
+	env.monitor && config.plugins.push(
+		new WebpackMonitor({
+			launch: true
+		})
+	);
+
+	return require(`./config/webpack.config.${env.mode || "development"}.js`)(config);
+}
