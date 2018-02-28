@@ -4,9 +4,9 @@
  */
 import {
 	min as d3Min,
-	max as d3Max,
-	zoomIdentity as d3ZoomIdentity,
-} from "d3";
+	max as d3Max
+} from "d3-array";
+import {zoomIdentity as d3ZoomIdentity} from "d3-zoom";
 import Chart from "../internals/Chart";
 import {isDefined, isObject, extend} from "../internals/util";
 

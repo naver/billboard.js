@@ -5,7 +5,7 @@
 import {
 	min as d3Min,
 	max as d3Max
-} from "d3";
+} from "d3-array";
 import ChartInternal from "../internals/ChartInternal";
 import {extend, isFunction, isNumber} from "../internals/util";
 

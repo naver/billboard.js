@@ -14,7 +14,7 @@ addons:
 cache:
   yarn: true
   directories:
-    - "node_modules"
+    - $HOME/.npm
 before_script:
   - greenkeeper-lockfile-update
   - npm run lint

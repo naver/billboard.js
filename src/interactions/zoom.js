@@ -3,11 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
-	event as d3Event,
-	zoom as d3Zoom,
 	min as d3Min,
 	max as d3Max
-} from "d3";
+} from "d3-array";
+import {event as d3Event} from "d3-selection";
+import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, diffDomain, isFunction} from "../internals/util";

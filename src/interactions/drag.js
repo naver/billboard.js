@@ -2,9 +2,7 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-} from "d3"; // interpolate
+import {select as d3Select} from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, getPathBox} from "../internals/util";

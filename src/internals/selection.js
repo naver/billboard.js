@@ -2,10 +2,8 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	select as d3Select,
-	rgb as d3Rgb
-} from "d3";
+import {select as d3Select} from "d3-selection";
+import {rgb as d3Rgb} from "d3-color";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {extend} from "./util";

@@ -20,10 +20,9 @@ import {
 	curveMonotoneX as d3CurveMonotoneX,
 	curveMonotoneY as d3CurveMonotoneY,
 	curveNatural as d3CurveNatural,
-	curveStep as d3CurveStep,
-	select as d3Select
-} from "d3";
-
+	curveStep as d3CurveStep
+} from "d3-shape";
+import {select as d3Select} from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
 import {isUndefined, extend} from "../internals/util";

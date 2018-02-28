@@ -6,12 +6,15 @@ import {
 	timeParse as d3TimeParse,
 	timeFormat as d3TimeFormat,
 	utcParse as d3UtcParse,
-	utcFormat as d3UtcFormat,
+	utcFormat as d3UtcFormat
+} from "d3-time-format";
+import {
 	select as d3Select,
-	selectAll as d3SelectAll,
-	extent as d3Extent,
-	transition as d3Transition
-} from "d3";
+	selectAll as d3SelectAll
+} from "d3-selection";
+import {extent as d3Extent} from "d3-array";
+import {transition as d3Transition} from "d3-transition";
+
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";

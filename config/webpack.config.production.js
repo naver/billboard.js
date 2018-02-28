@@ -7,14 +7,20 @@ const uglifyConfig = require("./uglify");
 const banner = require("./banner");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 const config = {
 	entry: {
 		"billboard": "./src/core.js",
 		"billboard.min": "./src/core.js",
 	},
-	externals: [{
-		"d3": "d3"
-	}],
+	externals: function(context, request, callback) {
+		// every 'd3-*' import, will be externally required as 'd3'
+		if(/^d3-/.test(request)) {
+			return callback(null, "d3");
+		}
+
+		callback();
+	},
 	module: {
 		rules: [
 			{

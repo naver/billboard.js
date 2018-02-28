@@ -6,7 +6,7 @@ import {
 	select as d3Select,
 	event as d3Event,
 	namespaces as d3Namespaces
-} from "d3";
+} from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isDefined, getOption, isEmpty, isFunction, notEmpty} from "./util";

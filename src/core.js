@@ -2,7 +2,6 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import * as d3 from "d3";
 import Chart from "./internals/Chart";
 import ChartInternal from "./internals/ChartInternal";
 import Axis from "./axis/Axis";
@@ -119,4 +118,5 @@ require("./axis/bb.axis.js");
 require("./internals/ua.js");
 require("./api/api.export.js");
 
-export {bb, d3};
+export {bb};
+export default bb;

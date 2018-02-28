@@ -8,7 +8,9 @@ module.exports = {
 			comments: false
 		},
 		keep_fnames: true,
-		warnings: false
+		warnings: false,
+		dead_code: true,
+		unused: true
 	},
 	sourceMap: true
 };
