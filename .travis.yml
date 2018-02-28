@@ -6,16 +6,12 @@ sudo: false  # no need for virtualization.
 before_install:
   - npm install -g npm@5
   - npm install -g greenkeeper-lockfile@1
-  - npm cache clear --force
 install:
   - npm install
+  - npm i d3-dsv d3-request d3-scale d3-time-format d3-zoom
 sudo: required
 addons:
   chrome: stable # install chrome stable.
-cache:
-  yarn: true
-  directories:
-    - $HOME/.npm
 before_script:
   - greenkeeper-lockfile-update
   - npm run lint
