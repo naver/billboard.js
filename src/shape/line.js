@@ -2,7 +2,14 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {area as d3Area, line as d3Line, mouse as d3Mouse, select as d3Select} from "d3";
+import {
+	area as d3Area,
+	line as d3Line
+} from "d3-shape";
+import {
+	mouse as d3Mouse,
+	select as d3Select
+} from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
 import {extend, isDefined, isFunction, isUndefined, isValue} from "../internals/util";

@@ -8,16 +8,14 @@ before_install:
   - npm install -g greenkeeper-lockfile@1
 install:
   - npm install
+  - npm i d3-dsv d3-request d3-scale d3-time-format d3-zoom
 sudo: required
 addons:
   chrome: stable # install chrome stable.
-cache:
-  yarn: true
-  directories:
-    - "node_modules"
 before_script:
   - greenkeeper-lockfile-update
   - npm run lint
+  - ls /home/travis/build/naver/billboard.js/node_modules
 script:
   - npm run coverage
 after_script:

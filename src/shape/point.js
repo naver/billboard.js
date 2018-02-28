@@ -5,7 +5,7 @@
 import {
 	namespaces as d3Namespaces,
 	select as d3Select
-} from "d3";
+} from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
 import {isFunction, isObjectType, extend, notEmpty} from "../internals/util";
 

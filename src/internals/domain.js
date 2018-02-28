@@ -6,10 +6,9 @@ import {
 	min as d3Min,
 	max as d3Max,
 	extent as d3Extent
-} from "d3"; // selection
+} from "d3-array"; // selection
 import ChartInternal from "./ChartInternal";
 import {extend, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
-
 
 extend(ChartInternal.prototype, {
 	getYDomainMinMax(targets, type) {

@@ -4,11 +4,13 @@
  */
 import {
 	select as d3Select,
+	event as d3Event
+} from "d3-selection";
+import {
 	arc as d3Arc,
-	pie as d3Pie,
-	event as d3Event,
-	interpolate as d3Interpolate
-} from "d3";
+	pie as d3Pie
+} from "d3-shape";
+import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isFunction} from "../internals/util";

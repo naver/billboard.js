@@ -117,7 +117,11 @@ Load billboard.js after D3.js.
 or use importing ESM.
 
 ```js
+// as named import
 import {bb} from "billboard.js";
+
+// or as importing default
+import bb from "billboard.js";
 ```
 
 > **Note**  

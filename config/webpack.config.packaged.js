@@ -11,14 +11,15 @@ const config = {
 	},
 	devtool: false,
 	module: {
-		rules: [{
-			test: /\.scss$/,
-			use: [{
-				loader: "css-loader"
-			}, {
-				loader: "sass-loader"
-			}]
-		}],
+		rules: [
+			{
+				test: /\.scss$/,
+				use: [
+					{loader: "css-loader"},
+					{loader: "sass-loader"}
+				],
+			}
+		],
 	},
 	plugins: [
 		new UglifyJSPlugin(uglifyConfig),

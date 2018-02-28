@@ -28,8 +28,7 @@ module.exports = function(config) {
 								[
 									"env",
 									{
-										"loose": true,
-										"modules": false
+										"loose": true
 									}
 								]
 							],
