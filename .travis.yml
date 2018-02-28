@@ -18,7 +18,6 @@ cache:
 before_script:
   - greenkeeper-lockfile-update
   - npm run lint
-  - ls /home/travis/build/naver/billboard.js/node_modules
 script:
   - npm run coverage
 after_script:
