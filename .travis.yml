@@ -6,7 +6,7 @@ sudo: false  # no need for virtualization.
 before_install:
   - npm install -g npm@5
   - npm install -g greenkeeper-lockfile@1
-  - npm clear cache --force
+  - npm cache clear --force
 install:
   - npm install
 sudo: required
