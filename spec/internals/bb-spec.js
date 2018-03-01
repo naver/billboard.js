@@ -27,6 +27,12 @@ describe("Interface & initialization", () => {
 		expect(d3.select(chart.element).classed("bb")).to.be.true;
 		expect(internal.svg.node().tagName).to.be.equal("svg");
 		expect(internal.convertInputType()).to.be.equal(internal.inputType);
+
+		expect(chart).to.be.equal(bb.instance[0]);
+	});
+
+	it("should return version string", () => {
+		expect(bb.version.length > 0).to.be.ok;
 	});
 
 	it("should resize correctly in flex container", done => {

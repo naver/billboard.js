@@ -48,8 +48,28 @@ const bb = {
 	 *  chart.data("data1");
 	 */
 	generate(config) {
-		return new Chart(config);
+		const inst = new Chart(config);
+
+		this.instance.push(inst);
+
+		return inst;
 	},
+	/**
+	 * An array containing instance created
+	 * @property {Array} instance instance array
+	 * @example
+	 *  // generate charts
+	 *  var chart1 = bb.generate(...);
+	 *  var chart2 = bb.generate(...);
+	 *
+	 *  bb.instance;  // [ chart1, chart2, ... ]
+	 * @memberOf bb
+	 */
+	instance: [],
+	/**
+	 * Internal chart object
+	 * @private
+	 */
 	chart: {
 		fn: Chart.prototype,
 		internal: {

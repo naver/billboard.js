@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
  */
 import {
 	timeParse as d3TimeParse,
