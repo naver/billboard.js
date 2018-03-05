@@ -80,7 +80,12 @@ export default function(params = {}) {
 	}
 
 	function textFormatted(v) {
-		const formatted = tickFormat ? tickFormat(v) : v;
+		// to round float numbers from 'binary floating point'
+		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
+		const value = /\d+\.\d+0{5,}\d$/.test(v) ?
+			+String(v).replace(/0+\d$/, "") : v;
+		const formatted = tickFormat ? tickFormat(value) : value;
 
 		return isDefined(formatted) ? formatted : "";
 	}
@@ -89,6 +94,7 @@ export default function(params = {}) {
 		if (tickTextCharSize) {
 			return tickTextCharSize;
 		}
+
 		const size = {
 			h: 11.5,
 			w: 5.5,
@@ -97,7 +103,7 @@ export default function(params = {}) {
 		tick.select("text")
 			.text(textFormatted)
 			.each(function(d) {
-				const box = this.getBoundingClientRect();
+				const box = this.getBBox();
 				const text = textFormatted(d);
 				const h = box.height;
 				const w = text ? (box.width / text.length) : undefined;
@@ -256,19 +262,18 @@ export default function(params = {}) {
 			const text = tick.select("text");
 
 			tspan = text.selectAll("tspan")
-				.data((d, i) => {
-					let splitted;
+				.data((d, index) => {
+					const split = params.tickMultiline ?
+						splitTickText(d, params.tickWidth) : (
+							isArray(textFormatted(d)) ?
+								textFormatted(d).concat() : [textFormatted(d)]
+						);
 
-					if (params.tickMultiline) {
-						splitted = splitTickText(d, params.tickWidth);
-					} else {
-						splitted = isArray(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
-					}
-					counts[i] = splitted.length;
+					counts[index] = split.length;
 
-					return splitted.map(s => ({
-						index: i,
-						splitted: s,
+					return split.map(splitted => ({
+						index,
+						splitted
 					}));
 				});
 

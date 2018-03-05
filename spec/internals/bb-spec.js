@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {bb} from "../../src/core";
+import bb from "../../src/core";
 import util from "../assets/util";
 
 describe("Interface & initialization", () => {

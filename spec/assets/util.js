@@ -3,9 +3,10 @@
  * billboard.js project is licensed under the MIT license
  */
 /* global sandbox, window */
+/* eslint-disable */
 import * as d3 from "d3";
 import simulant from "simulant";
-import {bb} from "../../src/core";
+import bb from "../../src/core";
 
 /**
  * Create a DOM element
