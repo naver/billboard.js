@@ -43,11 +43,11 @@ const config = {
 };
 
 module.exports = env => {
-	env.monitor && config.plugins.push(
+	env && env.monitor && config.plugins.push(
 		new WebpackMonitor({
 			launch: true
 		})
 	);
 
-	return require(`./config/webpack.config.${env.mode || "development"}.js`)(config);
+	return require(`./config/webpack.config.${(env && env.mode) || "development"}.js`)(config);
 }
