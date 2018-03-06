@@ -319,9 +319,9 @@ describe("LEGEND", () => {
 		});
 
 		it("set options legend.content.template as function", () => {
-			args.legend.contents.template = function(title, color) {
+			args.legend.contents.template = function(title, color, data) {
 				if (title !== "data1") {
-					return `<li style='background-color:${color}'>${title}</li>`;
+					return `<li style='background-color:${color}'>${title}-${data[0].value}</li>`;
 				}
 			}
 		});
@@ -335,7 +335,7 @@ describe("LEGEND", () => {
 			items.each(function(v) {
 				const item = d3.select(this);
 
-				expect(item.html()).to.be.equal(v);
+				expect(item.html()).to.be.equal(`${v}-${chart.data.values(v)[0]}`);
 				expect(item.style("background-color")).to.be.equal(chart.color(v));
 
 				// check for event bind

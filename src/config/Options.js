@@ -1077,9 +1077,13 @@ export default class Options {
 			 *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
 			 * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
 			 * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
-			 *  If set string value, within template the 'color' and 'title' can be replaced using template-like syntax string:
-			 *  - {=COLOR}: data color value
-			 *  - {=TITLE}: data title value
+			 *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
+			 *    - {=COLOR}: data color value
+			 *    - {=TITLE}: data title value
+			 *  - If set `function` value, will pass following arguments to the given function:
+			 *   - title {String}: data's id value
+			 *   - color {String}: color string
+			 *   - data {Array}: data array
 			 * @property {String} [legend.position=bottom] Change the position of legend.<br>
 			 *  Available values are: `bottom`, `right` and `inset` are supported.
 			 * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
@@ -1114,7 +1118,7 @@ export default class Options {
 			 *          template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
 			 *
 			 *          // or using function
-			 *          template: function(title, color) {
+			 *          template: function(id, color, data) {
 			 *               // if you want omit some legend, return falsy value
 			 *               if (title !== "data1") {
 			 *                    return "<li style='background-color:"+ color +">"+ title +"</li>";

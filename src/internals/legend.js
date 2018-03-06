@@ -51,13 +51,13 @@ extend(ChartInternal.prototype, {
 		const template = config.legend_contents_template;
 
 		if (!wrapper.empty()) {
-			const targets = $$.mapToIds($$.data.targets);
+			const targets = $$.data.targets;
 			const ids = [];
 			let html = "";
 
-			targets.forEach(v => {
+			$$.mapToIds(targets).forEach(v => {
 				const content = isFunction(template) ?
-					template.call($$, v, $$.color(v)) :
+					template.call($$, v, $$.color(v), $$.api.data(v)[0].values) :
 					template
 						.replace(/{=COLOR}/g, $$.color(v))
 						.replace(/{=TITLE}/g, v);
