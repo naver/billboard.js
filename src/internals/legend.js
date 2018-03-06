@@ -56,8 +56,10 @@ extend(ChartInternal.prototype, {
 			let html = "";
 
 			targets.forEach(v => {
+				const data = $$.data.targets.filter(t => t.id === v);
+				const values = data.map(d => d.values);
 				const content = isFunction(template) ?
-					template.call($$, v, $$.color(v)) :
+					template.call($$, v, $$.color(v), values) :
 					template
 						.replace(/{=COLOR}/g, $$.color(v))
 						.replace(/{=TITLE}/g, v);
