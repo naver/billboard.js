@@ -10,7 +10,6 @@ import {isArray, toArray, isDefined, isFunction} from "../internals/util";
 // 1. category axis
 // 2. ceil values of translate/x/y to int for half pixel anti-aliasing
 // 3. multiline tick text
-let tickTextCharSize;
 
 export default function(params = {}) {
 	let scale = d3ScaleLinear();
@@ -90,35 +89,33 @@ export default function(params = {}) {
 		return isDefined(formatted) ? formatted : "";
 	}
 
-	function getSizeFor1Char(tick) {
-		if (tickTextCharSize) {
-			return tickTextCharSize;
-		}
-
+	let getSizeFor1Char = tick => {
+		// default size for one character
 		const size = {
 			h: 11.5,
-			w: 5.5,
+			w: 5.5
 		};
 
-		tick.select("text")
-			.text(textFormatted)
-			.each(function(d) {
-				const box = this.getBBox();
-				const text = textFormatted(d);
+		!tick.empty() && tick.select("text")
+			.text("0")
+			.call(el => {
+				const box = el.node().getBBox();
 				const h = box.height;
-				const w = text ? (box.width / text.length) : undefined;
+				const w = box.width;
 
 				if (h && w) {
 					size.h = h;
 					size.w = w;
 				}
-			})
-			.text("");
 
-		tickTextCharSize = size;
+				el.text("");
+			});
+
+		// overwrite to return calculated size
+		getSizeFor1Char = () => size;
 
 		return size;
-	}
+	};
 
 	function transitionise(selection) {
 		return params.withoutTransition ?
@@ -225,7 +222,7 @@ export default function(params = {}) {
 						subtext = text.substr(0, i + 1);
 						textWidth = sizeFor1Char.w * subtext.length;
 
-						// if text width gets over tick width, split by space index or crrent index
+						// if text width gets over tick width, split by space index or current index
 						if (maxWidth < textWidth) {
 							return split(
 								splitted.concat(text.substr(0, spaceIndex || i)),

@@ -255,7 +255,7 @@ describe("AXIS", function() {
 
 				it("should split x axis tick text to multiple lines", () => {
 					const ticks = chart.internal.main.select(`.${CLASS.axisX}`).selectAll("g.tick");
-					const expectedTexts = ["very long tick text", "on x axis"];
+					const expectedTexts = ["very long tick", "text on x axis"];
 					const expectedX = "0";
 
 					expect(ticks.size()).to.be.equal(6);
@@ -462,7 +462,8 @@ describe("AXIS", function() {
 					const expectedTickTexts = [
 							"this is a very",
 							"long tick text",
-							"on category axis"
+							"on category",
+							"axis"
 						];
 					const expectedX = "0";
 
@@ -528,12 +529,13 @@ describe("AXIS", function() {
 					const tspans = tick.selectAll("tspan");
 					const expectedTickTexts = [
 							"this is a very",
-							"long tick text on",
-							"category axis"
+							"long tick text",
+							"on category",
+							"axis"
 						];
 					const expectedX = "-9";
 
-					expect(tspans.size()).to.be.equal(3);
+					expect(tspans.size()).to.be.equal(expectedTickTexts.length);
 
 					tspans.each(function(d, i) {
 						const tspan = d3.select(this);
@@ -585,7 +587,7 @@ describe("AXIS", function() {
 							];
 						const expectedX = "-9";
 
-						expect(tspans.size()).to.be.equal(2);
+						expect(tspans.size()).to.be.equal(expectedTickTexts.length);
 
 						tspans.each(function(d, i) {
 							const tspan = d3.select(this);
@@ -617,7 +619,7 @@ describe("AXIS", function() {
 				const tspans = tick.selectAll("tspan");
 				const expectedTickTexts = ["this is a very long tick text", "on category axis"];
 
-				expect(tspans.size()).to.be.equal(2);
+				expect(tspans.size()).to.be.equal(expectedTickTexts.length);
 
 				tspans.each(function(d, i) {
 					const tspan = d3.select(this);
