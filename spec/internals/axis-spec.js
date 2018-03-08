@@ -530,8 +530,8 @@ describe("AXIS", function() {
 					const expectedTickTexts = [
 							"this is a very",
 							"long tick text",
-							"on",
-							"category axis"
+							"on category",
+							"axis"
 						];
 					const expectedX = "-9";
 
