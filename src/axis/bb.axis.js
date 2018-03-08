@@ -104,7 +104,7 @@ export default function(params = {}) {
 			.text(textFormatted)
 			.each(function(d) {
 				const box = this.getBBox();
-				const text = textFormatted(d);
+				const text = textFormatted(d).toString();
 				const h = box.height;
 				const w = text ? (box.width / text.length) : undefined;
 
@@ -225,7 +225,7 @@ export default function(params = {}) {
 						subtext = text.substr(0, i + 1);
 						textWidth = sizeFor1Char.w * subtext.length;
 
-						// if text width gets over tick width, split by space index or crrent index
+						// if text width gets over tick width, split by space index or current index
 						if (maxWidth < textWidth) {
 							return split(
 								splitted.concat(text.substr(0, spaceIndex || i)),
