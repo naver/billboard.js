@@ -255,7 +255,7 @@ describe("AXIS", function() {
 
 				it("should split x axis tick text to multiple lines", () => {
 					const ticks = chart.internal.main.select(`.${CLASS.axisX}`).selectAll("g.tick");
-					const expectedTexts = ["very long tick text", "on x axis"];
+					const expectedTexts = ["very long tick", "text on x axis"];
 					const expectedX = "0";
 
 					expect(ticks.size()).to.be.equal(6);
@@ -529,7 +529,8 @@ describe("AXIS", function() {
 					const tspans = tick.selectAll("tspan");
 					const expectedTickTexts = [
 							"this is a very",
-							"long tick text on",
+							"long tick text",
+							"on",
 							"category axis"
 						];
 					const expectedX = "-9";
