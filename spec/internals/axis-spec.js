@@ -535,7 +535,7 @@ describe("AXIS", function() {
 						];
 					const expectedX = "-9";
 
-					expect(tspans.size()).to.be.equal(3);
+					expect(tspans.size()).to.be.equal(4);
 
 					tspans.each(function(d, i) {
 						const tspan = d3.select(this);
