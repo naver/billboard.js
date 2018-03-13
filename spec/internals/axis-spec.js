@@ -608,26 +608,41 @@ describe("AXIS", function() {
 		});
 
 		describe("with axis.x.tick.format", () => {
+			const tickTexts = ["this is a very long tick text", "on category axis"];
+
 			before(() => {
-				args.axis.x.tick.format = () => {
-					return ["this is a very long tick text", "on category axis"];
-				};
+				args.axis.x.tick.format = () => tickTexts;
 			});
 
 			it("should have multiline tick text", () => {
 				const tick = chart.internal.main.select(`.${CLASS.axisX}`).select("g.tick");
 				const tspans = tick.selectAll("tspan");
-				const expectedTickTexts = ["this is a very long tick text", "on category axis"];
 
-				expect(tspans.size()).to.be.equal(expectedTickTexts.length);
+				expect(tspans.size()).to.be.equal(tickTexts.length);
 
 				tspans.each(function(d, i) {
 					const tspan = d3.select(this);
 
-					expect(tspan.text()).to.be.equal(expectedTickTexts[i]);
+					expect(tspan.text()).to.be.equal(tickTexts[i]);
 				});
 			});
+		});
 
+		describe("axis.x.tick.format for category type", () => {
+			const len = 3;
+
+			before(() => {
+				args.axis.x.tick.format = (i, name) => name && name.substr(0, len);
+			});
+
+			it("should have multiline tick text", () => {
+				const tick = chart.internal.main.select(`.${CLASS.axisX}`).select("g.tick");
+				const tspans = tick.selectAll("tspan");
+
+				tspans.each(function() {
+					expect(this.textContent.length).to.be.equal(len);
+				});
+			});
 		});
 	});
 
