@@ -82,8 +82,7 @@ export default function(params = {}) {
 		// to round float numbers from 'binary floating point'
 		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
 		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-		const value = /\d+\.\d+0{5,}\d$/.test(v) ?
-			+String(v).replace(/0+\d$/, "") : v;
+		const value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v).replace(/0+\d$/, "") : v;
 		const formatted = tickFormat ? tickFormat(value) : value;
 
 		return isDefined(formatted) ? formatted : "";

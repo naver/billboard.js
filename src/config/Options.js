@@ -1272,8 +1272,14 @@ export default class Options {
 			 * axis: {
 			 *   x: {
 			 *     tick: {
+			 *        // for timeseries, a 'datetime' object is given as parameter
 			 *       format: function(x) {
 			 *           return x.getFullYear();
+			 *       }
+			 *
+			 *       // for category, index(Number) and categoryName(String) are given as parameter
+			 *       format: function(index, categoryName) {
+			 *           return categoryName.substr(0, 10);
 			 *       }
 			 *     }
 			 *   }
@@ -1739,13 +1745,13 @@ export default class Options {
 			/**
 			 * Set formatter for y axis tick text.<br><br>
 			 * This option accepts d3.format object as well as a function you define.
-			 * @name axis․y․format
+			 * @name axis․y․tick․format
 			 * @memberOf Options
 			 * @type {Function}
 			 * @default undefined
 			 * @example
 			 * axis: {
-			 *   x: {
+			 *   y: {
 			 *     tick: {
 			 *       format: function(x) {
 			 *           return x.getFullYear();

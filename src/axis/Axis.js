@@ -146,38 +146,34 @@ export default class Axis {
 	getXAxisTickFormat() {
 		const $$ = this.owner;
 		const config = $$.config;
+		const tickFormat = config.axis_x_tick_format;
+		const isTimeSeries = $$.isTimeSeries();
+		const isCategorized = $$.isCategorized();
 		let format;
 
-		if ($$.isTimeSeries()) {
-			format = $$.defaultAxisTimeFormat;
+		if (tickFormat) {
+			if (isFunction(tickFormat)) {
+				format = tickFormat;
+			} else if (isTimeSeries) {
+				format = date => (date ? $$.axisTimeFormat(tickFormat)(date) : "");
+			}
 		} else {
-			format = $$.isCategorized() ?
-				$$.categoryName : function(v) {
-					return v < 0 ? v.toFixed(0) : v;
-				};
-		}
-
-		if (config.axis_x_tick_format) {
-			if (isFunction(config.axis_x_tick_format)) {
-				format = config.axis_x_tick_format;
-			} else if ($$.isTimeSeries()) {
-				format = date => (date ? $$.axisTimeFormat(config.axis_x_tick_format)(date) : "");
+			if (isTimeSeries) {
+				format = $$.defaultAxisTimeFormat;
+			} else {
+				format = isCategorized ?
+					$$.categoryName : v => (v < 0 ? v.toFixed(0) : v);
 			}
 		}
 
-		return isFunction(format) ? v => format.call($$, v) : format;
+		return isFunction(format) ? v =>
+			format.apply($$, isCategorized ?
+				[v, $$.categoryName(v)] : [v]
+			) : format;
 	}
 
 	getTickValues(tickValues, axis) {
-		let values;
-
-		if (tickValues) {
-			values = tickValues;
-		} else {
-			values = axis ? axis.tickValues() : undefined;
-		}
-
-		return values;
+		return tickValues || (axis ? axis.tickValues() : undefined);
 	}
 
 	getXAxisTickValues() {
