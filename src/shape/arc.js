@@ -10,6 +10,7 @@ import {
 	arc as d3Arc,
 	pie as d3Pie
 } from "d3-shape";
+import {sum as d3Sum} from "d3-array";
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
@@ -129,6 +130,7 @@ extend(ChartInternal.prototype, {
 
 		return newArc;
 	},
+
 	getSvgArcExpanded(rate) {
 		const $$ = this;
 		const arc = d3Arc()
@@ -141,6 +143,7 @@ extend(ChartInternal.prototype, {
 			return updated ? arc(updated) : "M 0 0";
 		};
 	},
+
 	getArc(d, withoutUpdate, force) {
 		return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
 	},
@@ -181,9 +184,28 @@ extend(ChartInternal.prototype, {
 	getArcRatio(d) {
 		const $$ = this;
 		const config = $$.config;
-		const whole = Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2);
+		let val = null;
 
-		return d ? (d.endAngle - d.startAngle) / whole : null;
+		if (d) {
+			// if has padAngle set, calculate rate based on value
+			if ($$.pie.padAngle()()) {
+				let total = $$.getTotalDataSum();
+
+				if ($$.hiddenTargetIds.length) {
+					total -= d3Sum($$.api.data.values.call($$.api, $$.hiddenTargetIds));
+				}
+
+				val = d.value / total;
+
+			// otherwise, based on the rendered angle value
+			} else {
+				val = (d.endAngle - d.startAngle) / (
+					Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
+				);
+			}
+		}
+
+		return val;
 	},
 
 	convertToArcData(d) {
@@ -469,6 +491,7 @@ extend(ChartInternal.prototype, {
 					d.startAngle = config.gauge_startingAngle;
 					d.endAngle = config.gauge_startingAngle;
 				}
+
 				this._current = d;
 			})
 			.merge(mainArc);
