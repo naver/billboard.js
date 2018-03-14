@@ -90,13 +90,27 @@ describe("API data", function() {
 
 	describe("data.values()", () => {
 		it("should return values for specified target", () => {
-			const values = chart.data.values("data1");
-			const expectedValues = [30, 200, 100, 400, 150, 250];
+			const expectedValues1 = [30, 200, 100, 400, 150, 250];
+			const expectedValues2 = [5000, 2000, 1000, 4000, 1500, 2500];
 
-			expect(values.length).to.be.equal(6);
+			// retrieve one data value
+			let values = chart.data.values("data1");
+
+			expect(values.length).to.be.equal(expectedValues1.length);
 
 			values.forEach((v, i) => {
-				expect(v).to.be.equal(expectedValues[i]);
+				expect(v).to.be.equal(expectedValues1[i]);
+			});
+
+			// retrieve two data values
+			values = chart.data.values(["data1", "data2"]);
+
+			expect(values.length).to.be.equal(expectedValues1.length + expectedValues2.length);
+
+			values.forEach((v, i) => {
+				const expected = expectedValues1.concat(expectedValues2);
+
+				expect(v).to.be.equal(expected[i]);
 			});
 		});
 

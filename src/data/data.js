@@ -5,7 +5,8 @@
 import {
 	min as d3Min,
 	max as d3Max,
-	merge as d3Merge
+	merge as d3Merge,
+	sum as d3Sum
 } from "d3-array";
 import {set as d3Set} from "d3-collection";
 import CLASS from "../config/classes";
@@ -244,6 +245,28 @@ extend(ChartInternal.prototype, {
 		}
 
 		return $$.cache.$minMaxData;
+	},
+
+	/**
+	 * Get total data sum
+	 * @private
+	 * @return {Number}
+	 */
+	getTotalDataSum() {
+		const $$ = this;
+
+		if (!$$.cache.$totalDataSum) {
+			let total = 0;
+
+			$$.data.targets.map(t => t.values)
+				.forEach(v => {
+					total += d3Sum(v, t => t.value);
+				});
+
+			$$.cache.$totalDataSum = total;
+		}
+
+		return $$.cache.$totalDataSum;
 	},
 
 	/**

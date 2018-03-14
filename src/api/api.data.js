@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {extend, isUndefined} from "../internals/util";
+import {extend, isUndefined, isArray} from "../internals/util";
 
 /**
  * Get data loaded in the chart.
@@ -65,8 +65,12 @@ extend(data, {
 		if (targetId) {
 			const targets = this.data(targetId);
 
-			if (targets && targets[0]) {
-				values = targets[0].values.map(d => d.value);
+			if (targets && isArray(targets)) {
+				values = [];
+
+				targets.forEach(v => {
+					values = values.concat(v.values.map(d => d.value));
+				});
 			}
 		}
 

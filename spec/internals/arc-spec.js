@@ -116,6 +116,12 @@ describe("ARC", () => {
 
 			expect(chart.internal.pie.padAngle()()).to.be.equal(value);
 			expect(chart.internal.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
+
+			d3.selectAll(`.${CLASS.chartArc} text`).each(function(d) {
+				const value = parseInt(this.textContent);
+
+				expect(value).to.be.equal(d.value);
+			});
 		});
 
 		it("check for padding and innerRadius", () => {
@@ -138,6 +144,12 @@ describe("ARC", () => {
 
 			expect(internal.pie.padAngle()()).to.be.equal(padding * 0.01);
 			expect(internal.innerRadius).to.be.equal(innerRadius);
+
+			d3.selectAll(`.${CLASS.chartArc} text`).each(function(d) {
+				const value = parseInt(this.textContent);
+
+				expect(value).to.be.equal(d.value);
+			});
 		});
 	});
 
