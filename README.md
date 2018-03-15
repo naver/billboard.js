@@ -28,7 +28,7 @@ If you have any questions, checkout previous posts or post new one from:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=1)
+![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=2)
 
 ## Download and Installation
 
