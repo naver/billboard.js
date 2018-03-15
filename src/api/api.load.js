@@ -25,7 +25,7 @@ extend(Chart.prototype, {
 	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
 	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
 	 *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
-	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. |
+	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
 	 *    | done | The specified function will be called after data loaded.|
 	 *
 	 * @example
@@ -78,12 +78,10 @@ extend(Chart.prototype, {
 		}
 
 		// unload if needed
-		if ("unload" in args) {
+		if ("unload" in args && args.unload !== false) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
-			$$.unload(
-				$$.mapToTargetIds(
-					isBoolean(args.unload) && args.unload ?
-						null : args.unload), () => $$.loadFromArgs(args)
+			$$.unload($$.mapToTargetIds(isBoolean(args.unload) && args.unload ? null : args.unload), () =>
+				$$.loadFromArgs(args)
 			);
 		} else {
 			$$.loadFromArgs(args);
