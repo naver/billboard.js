@@ -94,7 +94,7 @@
     "style-loader": "^0.20.1",
     "uglify-js": "^3.3.10",
     "uglifyjs-webpack-plugin": "^1.1.8",
-    "webpack": "^3.11.0",
+    "webpack": "^4.2.0",
     "webpack-common-shake": "^1.5.3",
     "webpack-dev-server": "^2.7.1",
     "webpack-merge": "^4.1.0",
