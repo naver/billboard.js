@@ -157,12 +157,9 @@ export default class Options {
 			zoom_extent: undefined,
 			zoom_privileged: false,
 			zoom_rescale: false,
-			zoom_onzoom: () => {
-			},
-			zoom_onzoomstart: () => {
-			},
-			zoom_onzoomend: () => {
-			},
+			zoom_onzoom: () => {},
+			zoom_onzoomstart: () => {},
+			zoom_onzoomend: () => {},
 			zoom_x_min: undefined,
 			zoom_x_max: undefined,
 
@@ -211,8 +208,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onover: () => {
-			},
+			onover: () => {},
 
 			/**
 			 * Set a callback to execute when mouse/touch leaves the chart.
@@ -225,8 +221,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onout: () => {
-			},
+			onout: () => {},
 
 			/**
 			 * Set a callback to execute when user resizes the screen.
@@ -239,8 +234,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onresize: () => {
-			},
+			onresize: () => {},
 
 			/**
 			 * SSet a callback to execute when screen resize finished.
@@ -253,8 +247,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onresized: () => {
-			},
+			onresized: () => {},
 
 			/**
 			 * Set a callback to execute before the chart is initialized
@@ -280,8 +273,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			oninit: () => {
-			},
+			oninit: () => {},
 
 			/**
 			 * Set a callback to execute after the chart is initialized
@@ -307,8 +299,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onrendered: () => {
-			},
+			onrendered: () => {},
 
 			/**
 			 * Set duration of transition (in milliseconds) for chart animation.<br><br>
@@ -753,8 +744,7 @@ export default class Options {
 			 *     onclick: function(d, element) { ... }
 			 * }
 			 */
-			data_onclick: () => {
-			},
+			data_onclick: () => {},
 
 			/**
 			 * Set a callback for mouse/touch over event on each data point.<br><br>
@@ -768,8 +758,7 @@ export default class Options {
 			 *     onover: function(d) { ... }
 			 * }
 			 */
-			data_onover: () => {
-			},
+			data_onover: () => {},
 
 			/**
 			 * Set a callback for mouse/touch out event on each data point.<br><br>
@@ -783,8 +772,7 @@ export default class Options {
 			 *     onout: function(d) { ... }
 			 * }
 			 */
-			data_onout: () => {
-			},
+			data_onout: () => {},
 
 			/**
 			 * Set a callback for on data selection.
@@ -801,8 +789,7 @@ export default class Options {
 			 *    }
 			 * }
 			 */
-			data_onselected: () => {
-			},
+			data_onselected: () => {},
 
 			/**
 			 * Set a callback for on data un-selection.
@@ -819,8 +806,7 @@ export default class Options {
 			 *    }
 			 * }
 			 */
-			data_onunselected: () => {
-			},
+			data_onunselected: () => {},
 
 			/**
 			 * Set a callback for minimum data
@@ -1031,8 +1017,7 @@ export default class Options {
 			subchart_show: false,
 			subchart_size_height: 60,
 			subchart_axis_x_show: true,
-			subchart_onbrush: () => {
-			},
+			subchart_onbrush: () => {},
 
 			/**
 			 * Set color of the data values
@@ -2598,10 +2583,8 @@ export default class Options {
 				left: "50px"
 			},
 			tooltip_linked: false,
-			tooltip_onshow: () => {
-			},
-			tooltip_onhide: () => {
-			},
+			tooltip_onshow: () => {},
+			tooltip_onhide: () => {},
 			tooltip_onShown: undefined,
 			tooltip_onHidden: undefined,
 			tooltip_order: null,
