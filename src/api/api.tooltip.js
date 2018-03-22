@@ -74,8 +74,6 @@ const tooltip = extend(() => {}, {
 		["mouseover", "mousemove"].forEach(eventName => {
 			$$.dispatchEvent(eventName, index, mouse);
 		});
-
-		$$.config.tooltip_onshow.call($$, args.data);
 	},
 
 	/**
@@ -89,8 +87,6 @@ const tooltip = extend(() => {}, {
 
 		// TODO: get target data by checking the state of focus
 		$$.dispatchEvent("mouseout", 0);
-
-		$$.config.tooltip_onhide.call(this);
 	}
 });
 
