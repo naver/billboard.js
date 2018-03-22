@@ -39,7 +39,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "d3": "^4.13.0"
+    "d3": "^5.0.0"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
