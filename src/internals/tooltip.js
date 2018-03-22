@@ -246,11 +246,38 @@ extend(ChartInternal.prototype, {
 		const tWidth = $$.tooltip.property("offsetWidth");
 		const tHeight = $$.tooltip.property("offsetHeight");
 		const position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
+		const x = selectedData[0].x || undefined;
 
 		// Set tooltip
 		$$.tooltip
 			.style("top", `${position.top}px`)
 			.style("left", `${position.left}px`);
+
+		if (config.tooltip_linked) {
+			$$.api.internal.charts.forEach(c => {
+				if (c !== $$.api) {
+					const tt = c.internal.tooltip;
+					const cWidth = tt.property("offsetWidth");
+					const cHeight = tt.property("offsetHeight");
+
+					if (!cHeight && !cWidth) {
+						c.tooltip.show({x: x});
+					}
+				}
+			});
+		}
+
+		if (config.tooltip_onShown) {
+			config.tooltip_onShown.call({
+				width: tWidth,
+				height: tHeight,
+				position: position,
+				selectedData: selectedData,
+				element: element,
+				x: x,
+				chart: this.api
+			});
+		}
 	},
 
 	/**
@@ -258,6 +285,27 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 */
 	hideTooltip() {
+		const $$ = this;
+		const config = $$.config;
+
 		this.tooltip.style("display", "none");
+
+		if (config.tooltip_linked) {
+			$$.api.internal.charts.forEach(c => {
+				if (c !== $$.api) {
+					const tt = c.internal.tooltip;
+					const cWidth = tt.property("offsetWidth");
+					const cHeight = tt.property("offsetHeight");
+
+					if (cHeight && cWidth) {
+						c.tooltip.hide();
+					}
+				}
+			});
+		}
+
+		if (config.tooltip_onHidden) {
+			config.tooltip_onHidden.call(this.api);
+		}
 	}
 });
