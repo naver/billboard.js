@@ -257,10 +257,8 @@ extend(ChartInternal.prototype, {
 			$$.api.internal.charts.forEach(c => {
 				if (c !== $$.api) {
 					const tt = c.internal.tooltip;
-					const cWidth = tt.property("offsetWidth");
-					const cHeight = tt.property("offsetHeight");
 
-					if (!cHeight && !cWidth) {
+					if (tt.style("display") !== "block") {
 						c.tooltip.show({x: x});
 					}
 				}
@@ -268,15 +266,18 @@ extend(ChartInternal.prototype, {
 		}
 
 		if (config.tooltip_onShown) {
-			config.tooltip_onShown.call({
-				width: tWidth,
-				height: tHeight,
-				position: position,
-				selectedData: selectedData,
-				element: element,
-				x: x,
-				chart: this.api
-			});
+			if (!$$.cache.tooltip_shown_callback) {
+				config.tooltip_onShown.call({
+					width: tWidth,
+					height: tHeight,
+					position: position,
+					selectedData: selectedData,
+					element: element,
+					x: x,
+					chart: this.api
+				});
+				$$.cache.tooltip_shown_callback = true;
+			}
 		}
 	},
 
@@ -294,10 +295,8 @@ extend(ChartInternal.prototype, {
 			$$.api.internal.charts.forEach(c => {
 				if (c !== $$.api) {
 					const tt = c.internal.tooltip;
-					const cWidth = tt.property("offsetWidth");
-					const cHeight = tt.property("offsetHeight");
 
-					if (cHeight && cWidth) {
+					if (tt.style("display") === "block") {
 						c.tooltip.hide();
 					}
 				}
@@ -306,6 +305,7 @@ extend(ChartInternal.prototype, {
 
 		if (config.tooltip_onHidden) {
 			config.tooltip_onHidden.call(this.api);
+			delete $$.cache.tooltip_shown_callback;
 		}
 	}
 });
