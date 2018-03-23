@@ -6,7 +6,7 @@
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("TOOLTIP", function() {
+describe("TOOLTIP", function () {
 	let chart;
 	let args = {
 		data: {
@@ -30,7 +30,7 @@ describe("TOOLTIP", function() {
 			clientY: 100
 		}, chart);
 
-		const tooltips =  d3.select(chart.element)
+		const tooltips = d3.select(chart.element)
 			.selectAll(`.${CLASS.tooltip} tr`)
 			.nodes();
 
@@ -39,6 +39,7 @@ describe("TOOLTIP", function() {
 				expect(el.className).to.be.equal(expected[i - 1]);
 			}
 		}
+
 	};
 
 
@@ -127,13 +128,15 @@ describe("TOOLTIP", function() {
 				clientX: 100,
 				clientY: 100
 			}, chart);
+			setTimeout(function () {
+				const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
+				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
+				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 
-			const tooltipContainer =  d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
-			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
-			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+				expect(top).to.be.equal(topExpected);
+				expect(left).to.be.equal(leftExpected);
+			}, 500)
 
-			expect(top).to.be.equal(topExpected);
-			expect(left).to.be.equal(leftExpected);
 		});
 	});
 
@@ -210,14 +213,17 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set options tooltip.order=function", () => {
-			args.tooltip.order = sinon.spy(function(a, b) {
+			args.tooltip.order = sinon.spy(function (a, b) {
 				return a.value - b.value;
 			});
 		});
 
 		it("data.order function should be called", () => {
 			checkTooltip(chart);
- 			expect(args.tooltip.order.called).to.be.true;
+			setTimeout(function () {
+				expect(args.tooltip.order.called).to.be.true;
+			}, 500)
+
 		});
 	});
 });

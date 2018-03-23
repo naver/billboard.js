@@ -3,7 +3,7 @@ var billboardDemo = {
 	/**
 	 * Initializer
 	 */
-	init: function() {
+	init: function () {
 		this.$wrapper = document.getElementById("wrapper");
 		this.$chartArea = document.querySelector(".chart_area");
 		this.$list = document.querySelector(".sidebar-nav");
@@ -21,12 +21,12 @@ var billboardDemo = {
 		location.href.indexOf("#") > -1 && this.clickHandler(location.href);
 	},
 
-	_bindEvents: function() {
+	_bindEvents: function () {
 		var $list = this.$list;
 		var $wrapper = this.$wrapper;
 		var WIDTH = this.WIDTH;
 
-		var clickHandler = (function(e) {
+		var clickHandler = (function (e) {
 			e.target.tagName === "A" && this.clickHandler(e.target.href)
 		}).bind(this);
 
@@ -34,12 +34,12 @@ var billboardDemo = {
 		$list.addEventListener("click", clickHandler, false);
 		document.querySelector(".chart_area ul").addEventListener("click", clickHandler, false);
 
-		document.getElementById("menu-toggle").addEventListener("click", function(e) {
+		document.getElementById("menu-toggle").addEventListener("click", function (e) {
 			$wrapper.className = $wrapper.className ? "" : "toggled";
 			e.preventDefault();
 		}, false);
 
-		window.addEventListener("resize", function() {
+		window.addEventListener("resize", function () {
 			if (window.innerWidth > WIDTH) {
 				$wrapper && ($wrapper.className = "");
 			}
@@ -51,13 +51,13 @@ var billboardDemo = {
 	 * Create left menu list
 	 * @private
 	 */
-	_createList: function() {
+	_createList: function () {
 		var html = [];
 
-		Object.keys(demos).forEach(function(key) {
+		Object.keys(demos).forEach(function (key) {
 			html.push("<li><h4>" + key + "</h4>");
 
-			Object.keys(demos[key]).forEach(function(v, i) {
+			Object.keys(demos[key]).forEach(function (v, i) {
 				i === 0 && html.push("<ul>");
 				html.push("<li><a href='#" + [key, v].join(".") + "'>" + v + "</a></li>");
 			});
@@ -73,7 +73,7 @@ var billboardDemo = {
 	 * Click handler
 	 * @param {String} type
 	 */
-	clickHandler: function(type) {
+	clickHandler: function (type) {
 		// remove legend
 		var $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
@@ -113,15 +113,15 @@ var billboardDemo = {
 	 * @param {String} key
 	 * @returns {boolean}
 	 */
-	generate: function(type, key) {
+	generate: function (type, key) {
 		var chartInst = this.chartInst;
 		var typeData = demos[type][key];
 
 		var isArray = Array.isArray(typeData);
 
 		chartInst.length &&
-		chartInst.forEach(function(c, i, array) {
-			c.timer && c.timer.forEach(function(v) {
+		chartInst.forEach(function (c, i, array) {
+			c.timer && c.timer.forEach(function (v) {
 				clearTimeout(v);
 			});
 
@@ -141,7 +141,7 @@ var billboardDemo = {
 		if (isArray) {
 			typeData.forEach((t, i) => {this._addChartInstance(t, key, i + 1, code)})
 		} else {
-			this._addChartInstance(typeData, key)
+			this._addChartInstance(typeData, key, undefined, code)
 		}
 		this.$code.innerHTML = "";
 		code.markup.forEach(t => {this.$code.innerHTML += t})
@@ -150,7 +150,7 @@ var billboardDemo = {
 		hljs.highlightBlock(this.$code);
 		return false;
 	},
-	_addChartInstance: function(type, key, index, code) {
+	_addChartInstance: function (type, key, index, code) {
 
 		if (index) {
 			key += `_${index}`
@@ -187,7 +187,7 @@ var billboardDemo = {
 		this.chartInst.push(inst);
 
 		var codeStr = "var chart = bb.generate(" +
-			JSON.stringify(options, function(k, v) {
+			JSON.stringify(options, function (k, v) {
 				if (typeof v === "function") {
 					return v.toString();
 				} else if (/(columns|rows|json)/.test(k)) {
