@@ -232,13 +232,28 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		// tooltip_show_callback is used to prevent duplicate
-		// calls on showTooltip updates when mouse is moved
-		if (config.tooltip_onshow && !$$.cache.tooltip_show_callback) {
-			config.tooltip_onshow.call(this.api);
-			$$.cache.tooltip_show_callback = true;
+		if ($$._handleBeforeShown($$, config)) {
+			if ($$._handleShow($$, config, selectedData, forArc, positionFunction, dataToShow, element)) {
+				$$._handleAfterShown($$, config);
+			}
 		}
+	},
 
+	/**
+	 * Hide the tooltip
+	 * @private
+	 */
+	hideTooltip() {
+		const $$ = this;
+		const config = $$.config;
+
+		if ($$._handleBeforeHide($$, config)) {
+			if ($$._handleHide($$, config)) {
+				$$._handleAfterHide($$, config);
+			}
+		}
+	},
+	_handleShow($$, config, selectedData, forArc, positionFunction, dataToShow, element) {
 		$$.tooltip.html(
 			config.tooltip_contents.call(
 				$$,
@@ -261,36 +276,45 @@ extend(ChartInternal.prototype, {
 			.style("left", `${position.left}px`);
 
 		$$._handleLinkedCharts({show: 1, x: x});
-
+		return true;
+	},
+	_handleBeforeShown($$, config) {
+		// tooltip_show_callback is used to prevent duplicate
+		// calls on showTooltip updates when mouse is moved
+		if (config.tooltip_onshow && !$$.cache.tooltip_show_callback) {
+			config.tooltip_onshow.call(this.api);
+			$$.cache.tooltip_show_callback = true;
+		}
+		return true;
+	},
+	_handleAfterShown($$, config) {
 		// tooltip_shown_callback is used to prevent duplicate
 		// calls on showTooltip updates when mouse is moved
 		if (config.tooltip_onshown && !$$.cache.tooltip_shown_callback) {
 			config.tooltip_onshown.call(this.api);
 			$$.cache.tooltip_shown_callback = true;
 		}
+		return true;
 	},
-
-	/**
-	 * Hide the tooltip
-	 * @private
-	 */
-	hideTooltip() {
-		const $$ = this;
-		const config = $$.config;
-
+	_handleHide($$, config) {
+		this.tooltip.style("display", "none");
+		$$._handleLinkedCharts({hide: true});
+		return true;
+	},
+	_handleBeforeHide($$, config) {
 		if (config.tooltip_onhide && $$.cache.tooltip_show_callback) {
 			config.tooltip_onhide.call(this.api);
 			delete $$.cache.tooltip_show_callback;
 		}
-		this.tooltip.style("display", "none");
-		$$._handleLinkedCharts({hide: true});
-
+		return true;
+	},
+	_handleAfterHide($$, config) {
 		if (config.tooltip_onhidden && $$.cache.tooltip_shown_callback) {
 			config.tooltip_onhidden.call(this.api);
 			delete $$.cache.tooltip_shown_callback;
 		}
+		return true;
 	},
-
 	_handleLinkedCharts(data) {
 		const $$ = this;
 
