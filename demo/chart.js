@@ -1,5 +1,5 @@
 /* eslint-disable */
-var billboardDemo = {
+let billboardDemo = {
 	/**
 	 * Initializer
 	 */
@@ -22,11 +22,11 @@ var billboardDemo = {
 	},
 
 	_bindEvents: function() {
-		var $list = this.$list;
-		var $wrapper = this.$wrapper;
-		var WIDTH = this.WIDTH;
+		let $list = this.$list;
+		let $wrapper = this.$wrapper;
+		let WIDTH = this.WIDTH;
 
-		var clickHandler = (function(e) {
+		let clickHandler = (function(e) {
 			e.target.tagName === "A" && this.clickHandler(e.target.href)
 		}).bind(this);
 
@@ -52,14 +52,14 @@ var billboardDemo = {
 	 * @private
 	 */
 	_createList: function() {
-		var html = [];
+		let html = [];
 
-		Object.keys(demos).forEach(function (key) {
+		Object.keys(demos).forEach(function(key) {
 			html.push("<li><h4>" + key + "</h4>");
 
-			Object.keys(demos[key]).forEach(function (v, i) {
+			Object.keys(demos[key]).forEach(function(v, i) {
 				i === 0 && html.push("<ul>");
-				html.push("<li><a href='#"+ [key, v].join(".") + "'>" + v + "</a></li>");
+				html.push("<li><a href='#" + [key, v].join(".") + "'>" + v + "</a></li>");
 			});
 
 			html.push("</ul></li>");
@@ -75,14 +75,14 @@ var billboardDemo = {
 	 */
 	clickHandler: function(type) {
 		// remove legend
-		var $legend = document.querySelector(".legend");
+		let $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
 
 		if (window.innerWidth <= this.WIDTH) {
 			this.$wrapper.className = "";
 		}
 
-		type = type.replace(/.*#/,"").split(".");
+		type = type.replace(/.*#/, "").split(".");
 
 		if (type.length < 2) {
 			return;
@@ -97,14 +97,14 @@ var billboardDemo = {
 		this.$codeArea.style.display = "block";
 
 		// remove selected class
-		var $selected = this.$list.querySelector("[class="+ this.selectedClass +"]");
-		$selected && ($selected.className = $selected.className.replace(this.selectedClass,""));
+		let $selected = this.$list.querySelector("[class=" + this.selectedClass + "]");
+		$selected && ($selected.className = $selected.className.replace(this.selectedClass, ""));
 
 		// add selected class
-		$selected = this.$list.querySelector("[href='#"+ type.join(".") +"']");
+		$selected = this.$list.querySelector("[href='#" + type.join(".") + "']");
 		$selected.className += this.selectedClass;
 
-		window.scrollTo(0,0);
+		window.scrollTo(0, 0);
 	},
 
 	/**
@@ -114,32 +114,54 @@ var billboardDemo = {
 	 * @returns {boolean}
 	 */
 	generate: function(type, key) {
-		var chartInst = this.chartInst;
+		let chartInst = this.chartInst;
+		let typeData = demos[type][key];
+
+		let isArray = Array.isArray(typeData);
 
 		chartInst.length &&
-			chartInst.forEach(function(c, i, array) {
-				c.timer && c.timer.forEach(function(v) {
-					clearTimeout(v);
-				});
-
-				c.element.parentNode.removeChild(c.element);
-
-				//c.destroy();
-				array.shift();
+		chartInst.forEach(function(c, i, array) {
+			c.timer && c.timer.forEach(function(v) {
+				clearTimeout(v);
 			});
 
-		// generate chart
-		var $el = document.getElementById(key);
+			if (c.element.parentNode)
+				c.element.parentNode.removeChild(c.element);
 
+			// c.destroy();
+			// array.shift();
+		});
+		this.chartInst = [];
+
+		// generate chart
+		if (isArray) {
+			typeData.forEach((t, i) => {this._addChartInstance(t, key, i + 1, typeData.length)})
+		} else {
+			this._addChartInstance(typeData, key)
+		}
+
+
+		return false;
+	},
+	_addChartInstance: function(type, key, index, items) {
+
+		if (index) {
+			key += `_${index}`
+		}
+
+		let $el = document.getElementById(key);
+		let legend;
 		if (!$el) {
 			$el = document.createElement("div");
 			$el.id = key;
+			if ((index && index === 1) || !index) {
+				this.$chartArea.innerHTML = "";
+			}
 
-			this.$chartArea.innerHTML = "";
 			this.$chartArea.appendChild($el);
 
 			if (key.indexOf("LegendTemplate") > -1) {
-				var legend = document.createElement("div");
+				legend = document.createElement("div");
 				legend.id = "legend";
 				legend.style.textAlign = "center";
 
@@ -148,72 +170,68 @@ var billboardDemo = {
 			}
 		}
 
-		var type = demos[type][key];
-		var func = type.func;
-		var style = type.style;
-
-		var options = type.options;
+		let func = type.func;
+		let style = type.style;
+		let options = type.options;
 		options.bindto = "#" + key;
 
-		var inst = bb.generate(options);
+		let inst = bb.generate(options);
 		inst.timer = [];
 		this.chartInst.push(inst);
 
-		var codeStr = "var chart = bb.generate("+
-			JSON.stringify(options, function(key, value) {
-				if (typeof value === "function") {
-					return value.toString();
-				} else if (/(columns|rows|json)/.test(key)) {
-					var str = JSON.stringify(value)
+		let codeStr = "let chart = bb.generate(" +
+			JSON.stringify(options, function(k, v) {
+				if (typeof v === "function") {
+					return v.toString();
+				} else if (/(columns|rows|json)/.test(k)) {
+					let str = JSON.stringify(v)
 						.replace(/\[\[/g, "[\r\n\t[")
 						.replace(/\]\]/g, "]\r\n    ]")
 						.replace(/(],)/g, "$1\r\n\t")
 						.replace(/(\"|\d),/g, "$1, ");
 
-					return key === "json" ?
+					return k === "json" ?
 						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
 				}
 
-				return value;
+				return v;
 			}, 2)
-			.replace(/(\"function)/g, "function")
-			.replace(/(}\")/g, "}")
-			.replace(/\\"/g, "\"")
-			.replace(/</g, "&lt;")
-			.replace(/\\t/g, "\t")
-			.replace(/\t{5}/g,"")
-			.replace(/\\r/g, "\r")
-			.replace(/"(\w+)":/g,"$1:")
-			.replace(/\\n(?!T)/g, "\n") +");";
+				.replace(/(\"function)/g, "function")
+				.replace(/(}\")/g, "}")
+				.replace(/\\"/g, "\"")
+				.replace(/</g, "&lt;")
+				.replace(/\\t/g, "\t")
+				.replace(/\t{5}/g, "")
+				.replace(/\\r/g, "\r")
+				.replace(/"(\w+)":/g, "$1:")
+				.replace(/\\n(?!T)/g, "\n") + ");";
 
 		// markup
-		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id=\""+ key +"\">&lt;/div>\r\n"+ (legend ? legend + "\r\n" : "") +"\r\n";
+		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n";
 
 		// script
-		this.$code.innerHTML += "// Script\r\n"+ codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
+		this.$code.innerHTML += "// Script\r\n" + codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
 		this.$code.scrollTop = 0;
 
 		try {
 			if (func) {
 				this.$code.innerHTML += "\r\n\r\n" + func.toString()
-					.replace(/[\t\s]*function \(chart\) \{[\r\n\t\s]*/,"")
-					.replace(/}$/,"")
-					.replace(/chart.timer = \[[\r\n\t\s]*/,"")
-					.replace(/\t{5}/g,"")
-					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/,"")
+					.replace(/[\t\s]*function \(chart\) \{[\r\n\t\s]*/, "")
+					.replace(/}$/, "")
+					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
+					.replace(/\t{5}/g, "")
+					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/, "")
 					.replace(/(\d)\),?/g, "$1);");
 
 				func(inst);
 			}
-		} catch(e) {}
+		} catch (e) {}
 
 		// style
 		if (style) {
-			this.$code.innerHTML += "\r\n\r\n/* Style */\r\n"+ style.join("\r\n");
+			this.$code.innerHTML += "\r\n\r\n/* Style */\r\n" + style.join("\r\n");
 		}
 
 		hljs.highlightBlock(this.$code);
-
-		return false;
 	}
 };

@@ -387,16 +387,16 @@ var demos = {
 						['data1', 30],
 						['data2', 120],
 					],
-					type : 'pie',
+					type: 'pie',
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
-					    },
+					},
 					onover: function(d, i) {
 						console.log("onover", d, i);
-					    },
+					},
 					onout: function(d, i) {
 						console.log("onout", d, i);
-					    }
+					}
 				}
 			},
 			func: function(chart) {
@@ -432,13 +432,13 @@ var demos = {
 					type: 'donut',
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
-					    },
+					},
 					onover: function(d, i) {
 						console.log("onover", d, i);
-					    },
+					},
 					onout: function(d, i) {
 						console.log("onout", d, i);
-					    }
+					}
 				},
 				donut: {
 					title: "Iris Petal Width"
@@ -476,10 +476,10 @@ var demos = {
 					type: 'gauge',
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
-					    },
+					},
 					onover: function(d, i) {
 						console.log("onover", d, i);
-					    },
+					},
 					onout: function(d, i) {
 						console.log("onout", d, i);
 					}
@@ -1911,7 +1911,65 @@ var demos = {
 					order: "desc"
 				}
 			}
-		}
+		},
+		LinkedTooltips: [
+			{
+				options: {
+					data: {
+						x: 'x',
+						columns: [
+							['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+							['data', 20, 30, 10, 10, 30, 40],
+						],
+					},
+					axis: {
+						x: {
+							type: 'timeseries',
+							tick: {
+								format: '%Y-%m-%d'
+							}
+						}
+					},
+					tooltip: {
+						linked: true,
+						onShown: function() {
+							alertify.notify('Graph 1 tooltip onShown', 'success', 2);
+						},
+						onHidden: function() {
+							alertify.notify('Graph 1 tooltip onHidden', 'warning', 2);
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: 'x',
+						columns: [
+							['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+							['data', 10, 50, 100, 50, 50, 50],
+						],
+					},
+					axis: {
+						x: {
+							type: 'timeseries',
+							tick: {
+								format: '%Y-%m-%d'
+							}
+						}
+					},
+					tooltip: {
+						linked: true,
+						onShown: function() {
+							alertify.notify('Graph 2 tooltip onShown', 'success', 2);
+						},
+						onHidden: function() {
+							alertify.notify('Graph 2 tooltip onHidden', 'warning', 2);
+						}
+					}
+				}
+			}
+		]
 	},
 	ChartOptions: {
 		ChartSize: {

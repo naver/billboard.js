@@ -255,7 +255,9 @@ extend(ChartInternal.prototype, {
 
 		if (config.tooltip_linked) {
 			$$.api.internal.charts.forEach(c => {
-				if (c !== $$.api) {
+				const isInDom = document.body.contains(c.element);
+
+				if (c !== $$.api && isInDom) {
 					const tt = c.internal.tooltip;
 
 					if (tt.style("display") !== "block") {
@@ -293,7 +295,9 @@ extend(ChartInternal.prototype, {
 
 		if (config.tooltip_linked) {
 			$$.api.internal.charts.forEach(c => {
-				if (c !== $$.api) {
+				const isInDom = document.body.contains(c.element);
+
+				if (c !== $$.api && isInDom) {
 					const tt = c.internal.tooltip;
 
 					if (tt.style("display") === "block") {
