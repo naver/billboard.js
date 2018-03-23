@@ -2503,6 +2503,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
+			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.<br>
 			 * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
 			 *  Specified function receives x of the data point to show.
 			 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
@@ -2514,6 +2515,18 @@ export default class Options {
 			 *  This option can be used to modify the tooltip position by returning object that has top and left.
 			 * @property {Function} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+			 * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.<br>
+			 *   **Available Values:**
+			 *   - `this`: Reference to the current chart instance.
+			 * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.<br>
+			 *   **Available Values:**
+			 *   - `this`: Reference to the current chart instance.
+			 * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown.<br>
+			 *   **Available Values:**
+			 *   - `this`: Reference to the current chart instance.
+			 * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.<br>
+			 *   **Available Values:**
+			 *   - `this`: Reference to the current chart instance.
 			 * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
 			 *  **Available Values:**
 			 *  - `desc`: In descending data value order
@@ -2547,23 +2560,25 @@ export default class Options {
 			 *         {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
 			 *           ...
 			 *      },
-			 *      onShown: function(){
-			 *			// 'this' will give a reference to data from tooltip.js showTooltip method.
-			 *			// data	available:
-			 *			// chart: reference to the chart instance
-			 *			// element: html element
-			 *			// height
-			 *			// width
-			 *			// selectedData: data associated with tooltip {x: Tue Jan 01 2013 00:00:00 GMT-0500 (EST), value: 10, id: "data", index: 0, name: "data"}
-			 * 			// x: x coordinate from the first data element
-			 * 			// position: {top: 0, left: 0}
+			 *      onshow: function(){
+			 *			// 'this' will give a reference to chart
+			 *		    //  fires prior tooltip is shown
 			 *      },
-			 *      onHidden: function(){
+			 *      onhide: function(){
 			 *      	// 'this' will give a reference to chart
+			 *          //  fires prior tooltip is hidden
 			 *      },
-			 *      // Link any tooltips when multiple charts are on the screen
-			 *      linked: false
-			 *
+			 *      onshown: function(){
+			 *			// 'this' will give a reference to chart
+			 *		    //  fires after tooltip is shown
+			 *      },
+			 *      onhidden: function(){
+			 *      	// 'this' will give a reference to chart
+			 *          //  fires after tooltip is hidden
+			 *      },
+			 *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
+			 *      // Useful for timeseries correlation
+			 *      linked: true
 			 *  }
 			 */
 			tooltip_show: true,
@@ -2585,8 +2600,8 @@ export default class Options {
 			tooltip_linked: false,
 			tooltip_onshow: () => {},
 			tooltip_onhide: () => {},
-			tooltip_onShown: undefined,
-			tooltip_onHidden: undefined,
+			tooltip_onshown: () => {},
+			tooltip_onhidden: () => {},
 			tooltip_order: null,
 
 			/**

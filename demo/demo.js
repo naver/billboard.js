@@ -1932,11 +1932,17 @@ var demos = {
 					},
 					tooltip: {
 						linked: true,
-						onShown: function() {
-							alertify.notify('Graph 1 tooltip onShown', 'success', 2);
+						onshow: function() {
+							alertify.notify('Graph 1 tooltip BEFORE show', 'warning', 2);
 						},
-						onHidden: function() {
-							alertify.notify('Graph 1 tooltip onHidden', 'warning', 2);
+						onhide: function() {
+							alertify.notify('Graph 1 tooltip BEFORE hide', 'warning', 2);
+						},
+						onshown: function() {
+							alertify.notify('Graph 1 tooltip AFTER show', 'success', 2);
+						},
+						onhidden: function() {
+							alertify.notify('Graph 1 tooltip AFTER hide', 'error', 2);
 						}
 					}
 				}
@@ -1960,11 +1966,17 @@ var demos = {
 					},
 					tooltip: {
 						linked: true,
-						onShown: function() {
-							alertify.notify('Graph 2 tooltip onShown', 'success', 2);
+						onshow: function() {
+							alertify.notify('Graph 2 tooltip BEFORE show', 'warning', 2);
 						},
-						onHidden: function() {
-							alertify.notify('Graph 2 tooltip onHidden', 'warning', 2);
+						onhide: function() {
+							alertify.notify('Graph 2 tooltip BEFORE hide', 'warning', 2);
+						},
+						onshown: function() {
+							alertify.notify('Graph 2 tooltip AFTER show', 'success', 2);
+						},
+						onhidden: function() {
+							alertify.notify('Graph 2 tooltip AFTER hide', 'error', 2);
 						}
 					}
 				}

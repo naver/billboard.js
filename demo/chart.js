@@ -1,5 +1,5 @@
 /* eslint-disable */
-let billboardDemo = {
+var billboardDemo = {
 	/**
 	 * Initializer
 	 */
@@ -22,11 +22,11 @@ let billboardDemo = {
 	},
 
 	_bindEvents: function() {
-		let $list = this.$list;
-		let $wrapper = this.$wrapper;
-		let WIDTH = this.WIDTH;
+		var $list = this.$list;
+		var $wrapper = this.$wrapper;
+		var WIDTH = this.WIDTH;
 
-		let clickHandler = (function(e) {
+		var clickHandler = (function(e) {
 			e.target.tagName === "A" && this.clickHandler(e.target.href)
 		}).bind(this);
 
@@ -52,7 +52,7 @@ let billboardDemo = {
 	 * @private
 	 */
 	_createList: function() {
-		let html = [];
+		var html = [];
 
 		Object.keys(demos).forEach(function(key) {
 			html.push("<li><h4>" + key + "</h4>");
@@ -75,7 +75,7 @@ let billboardDemo = {
 	 */
 	clickHandler: function(type) {
 		// remove legend
-		let $legend = document.querySelector(".legend");
+		var $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
 
 		if (window.innerWidth <= this.WIDTH) {
@@ -97,7 +97,7 @@ let billboardDemo = {
 		this.$codeArea.style.display = "block";
 
 		// remove selected class
-		let $selected = this.$list.querySelector("[class=" + this.selectedClass + "]");
+		var $selected = this.$list.querySelector("[class=" + this.selectedClass + "]");
 		$selected && ($selected.className = $selected.className.replace(this.selectedClass, ""));
 
 		// add selected class
@@ -114,10 +114,10 @@ let billboardDemo = {
 	 * @returns {boolean}
 	 */
 	generate: function(type, key) {
-		let chartInst = this.chartInst;
-		let typeData = demos[type][key];
+		var chartInst = this.chartInst;
+		var typeData = demos[type][key];
 
-		let isArray = Array.isArray(typeData);
+		var isArray = Array.isArray(typeData);
 
 		chartInst.length &&
 		chartInst.forEach(function(c, i, array) {
@@ -133,7 +133,7 @@ let billboardDemo = {
 		});
 		this.chartInst = [];
 
-		let code = {
+		var code = {
 			markup: [],
 			data: []
 		};
@@ -156,8 +156,8 @@ let billboardDemo = {
 			key += `_${index}`
 		}
 
-		let $el = document.getElementById(key);
-		let legend;
+		var $el = document.getElementById(key);
+		var legend;
 		if (!$el) {
 			$el = document.createElement("div");
 			$el.id = key;
@@ -177,21 +177,21 @@ let billboardDemo = {
 			}
 		}
 
-		let func = type.func;
-		let style = type.style;
-		let options = type.options;
+		var func = type.func;
+		var style = type.style;
+		var options = type.options;
 		options.bindto = "#" + key;
 
-		let inst = bb.generate(options);
+		var inst = bb.generate(options);
 		inst.timer = [];
 		this.chartInst.push(inst);
 
-		let codeStr = "let chart = bb.generate(" +
+		var codeStr = "var chart = bb.generate(" +
 			JSON.stringify(options, function(k, v) {
 				if (typeof v === "function") {
 					return v.toString();
 				} else if (/(columns|rows|json)/.test(k)) {
-					let str = JSON.stringify(v)
+					var str = JSON.stringify(v)
 						.replace(/\[\[/g, "[\r\n\t[")
 						.replace(/\]\]/g, "]\r\n    ]")
 						.replace(/(],)/g, "$1\r\n\t")

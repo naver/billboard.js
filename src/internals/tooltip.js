@@ -5,7 +5,7 @@
 import {mouse as d3Mouse} from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isValue, sanitise, isString, isFunction} from "./util";
+import {extend, isFunction, isString, isValue, sanitise} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -232,55 +232,52 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		$$.tooltip.html(
-			config.tooltip_contents.call(
-				$$,
-				selectedData,
-				$$.axis.getXAxisTickFormat(),
-				$$.getYFormat(forArc),
-				$$.color
-			))
-			.style("display", "block");
-
 		// Get tooltip dimensions
 		const tWidth = $$.tooltip.property("offsetWidth");
 		const tHeight = $$.tooltip.property("offsetHeight");
 		const position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
 		const x = selectedData[0].x || undefined;
 
-		// Set tooltip
-		$$.tooltip
-			.style("top", `${position.top}px`)
-			.style("left", `${position.left}px`);
+		const beforeShow = new Promise(resolve => {
+			// tooltip_show_callback is used to prevent duplicate
+			// calls on showTooltip updates when mouse is moved
+			if (!$$.cache.tooltip_show_callback) {
+				$$.config.tooltip_onshow.call(this.api);
+				$$.cache.tooltip_show_callback = true;
+			}
+			resolve("beforeShow");
+		});
 
-		if (config.tooltip_linked) {
-			$$.api.internal.charts.forEach(c => {
-				const isInDom = document.body.contains(c.element);
+		const show = new Promise(resolve => {
+			$$.tooltip.html(
+				config.tooltip_contents.call(
+					$$,
+					selectedData,
+					$$.axis.getXAxisTickFormat(),
+					$$.getYFormat(forArc),
+					$$.color
+				))
+				.style("display", "block");
 
-				if (c !== $$.api && isInDom) {
-					const tt = c.internal.tooltip;
 
-					if (tt.style("display") !== "block") {
-						c.tooltip.show({x: x});
-					}
-				}
-			});
-		}
+			// Set tooltip
+			$$.tooltip
+				.style("top", `${position.top}px`)
+				.style("left", `${position.left}px`);
 
-		if (config.tooltip_onShown) {
+			$$._handleLinkedCharts({show: 1, x: x});
+
+			resolve("show");
+		});
+
+		beforeShow.then(() => show).then(() => {
+			// tooltip_shown_callback is used to prevent duplicate
+			// calls on showTooltip updates when mouse is moved
 			if (!$$.cache.tooltip_shown_callback) {
-				config.tooltip_onShown.call({
-					width: tWidth,
-					height: tHeight,
-					position: position,
-					selectedData: selectedData,
-					element: element,
-					x: x,
-					chart: this.api
-				});
+				config.tooltip_onshown.call(this.api);
 				$$.cache.tooltip_shown_callback = true;
 			}
-		}
+		});
 	},
 
 	/**
@@ -291,25 +288,45 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		this.tooltip.style("display", "none");
+		const beforeHide = new Promise(resolve => {
+			if ($$.cache.tooltip_show_callback) {
+				$$.config.tooltip_onhide.call(this.api);
+				delete $$.cache.tooltip_show_callback;
+			}
+			resolve("beforeHide");
+		});
 
-		if (config.tooltip_linked) {
+		const hide = new Promise(resolve => {
+			this.tooltip.style("display", "none");
+			$$._handleLinkedCharts({hide: true});
+			resolve("hide");
+		});
+
+		beforeHide.then(() => hide).then(() => {
+			if ($$.cache.tooltip_shown_callback) {
+				config.tooltip_onhidden.call(this.api);
+				delete $$.cache.tooltip_shown_callback;
+			}
+		});
+	},
+
+	_handleLinkedCharts(data) {
+		const $$ = this;
+
+		if ($$.config.tooltip_linked) {
 			$$.api.internal.charts.forEach(c => {
 				const isInDom = document.body.contains(c.element);
 
 				if (c !== $$.api && isInDom) {
 					const tt = c.internal.tooltip;
 
-					if (tt.style("display") === "block") {
+					if (tt.style("display") === "block" && data.hide) {
 						c.tooltip.hide();
+					} else if (tt.style("display") !== "block" && data.show) {
+						c.tooltip.show({x: data.x});
 					}
 				}
 			});
-		}
-
-		if (config.tooltip_onHidden) {
-			config.tooltip_onHidden.call(this.api);
-			delete $$.cache.tooltip_shown_callback;
 		}
 	}
 });
