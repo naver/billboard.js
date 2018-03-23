@@ -128,15 +128,12 @@ describe("TOOLTIP", function () {
 				clientX: 100,
 				clientY: 100
 			}, chart);
-			setTimeout(function () {
-				const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
-				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
-				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+			const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
+			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
+			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 
-				expect(top).to.be.equal(topExpected);
-				expect(left).to.be.equal(leftExpected);
-			}, 500)
-
+			expect(top).to.be.equal(topExpected);
+			expect(left).to.be.equal(leftExpected);
 		});
 	});
 
@@ -220,10 +217,7 @@ describe("TOOLTIP", function () {
 
 		it("data.order function should be called", () => {
 			checkTooltip(chart);
-			setTimeout(function () {
-				expect(args.tooltip.order.called).to.be.true;
-			}, 500)
-
+			expect(args.tooltip.order.called).to.be.true;
 		});
 	});
 });

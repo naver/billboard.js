@@ -232,52 +232,42 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		const beforeShow = new Promise(resolve => {
-			// tooltip_show_callback is used to prevent duplicate
-			// calls on showTooltip updates when mouse is moved
-			// if (config.tooltip_onshow && !$$.cache.tooltip_show_callback) {
-			// 	config.tooltip_onshow.call(this.api);
-			// 	$$.cache.tooltip_show_callback = true;
-			// }
-			resolve("beforeShow");
-		});
+		// tooltip_show_callback is used to prevent duplicate
+		// calls on showTooltip updates when mouse is moved
+		if (config.tooltip_onshow && !$$.cache.tooltip_show_callback) {
+			config.tooltip_onshow.call(this.api);
+			$$.cache.tooltip_show_callback = true;
+		}
 
-		const show = new Promise(resolve => {
-			// Get tooltip dimensions
-			const tWidth = $$.tooltip.property("offsetWidth");
-			const tHeight = $$.tooltip.property("offsetHeight");
-			const position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
-			const x = selectedData[0].x || undefined;
+		$$.tooltip.html(
+			config.tooltip_contents.call(
+				$$,
+				selectedData,
+				$$.axis.getXAxisTickFormat(),
+				$$.getYFormat(forArc),
+				$$.color
+			))
+			.style("display", "block");
 
-			$$.tooltip.html(
-				config.tooltip_contents.call(
-					$$,
-					selectedData,
-					$$.axis.getXAxisTickFormat(),
-					$$.getYFormat(forArc),
-					$$.color
-				))
-				.style("display", "block");
+		// Get tooltip dimensions
+		const tWidth = $$.tooltip.property("offsetWidth");
+		const tHeight = $$.tooltip.property("offsetHeight");
+		const position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
+		const x = selectedData[0].x || undefined;
 
+		// Set tooltip
+		$$.tooltip
+			.style("top", `${position.top}px`)
+			.style("left", `${position.left}px`);
 
-			// Set tooltip
-			$$.tooltip
-				.style("top", `${position.top}px`)
-				.style("left", `${position.left}px`);
+		$$._handleLinkedCharts({show: 1, x: x});
 
-			$$._handleLinkedCharts({show: 1, x: x});
-
-			resolve("show");
-		});
-
-		beforeShow.then(() => show).then(() => {
-			// tooltip_shown_callback is used to prevent duplicate
-			// calls on showTooltip updates when mouse is moved
-			if (config.tooltip_onshown && !$$.cache.tooltip_shown_callback) {
-				config.tooltip_onshown.call(this.api);
-				$$.cache.tooltip_shown_callback = true;
-			}
-		});
+		// tooltip_shown_callback is used to prevent duplicate
+		// calls on showTooltip updates when mouse is moved
+		if (config.tooltip_onshown && !$$.cache.tooltip_shown_callback) {
+			config.tooltip_onshown.call(this.api);
+			$$.cache.tooltip_shown_callback = true;
+		}
 	},
 
 	/**
@@ -288,26 +278,17 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		const beforeHide = new Promise(resolve => {
-			// if (config.tooltip_onhide && $$.cache.tooltip_show_callback) {
-			// 	config.tooltip_onhide.call(this.api);
-			// 	delete $$.cache.tooltip_show_callback;
-			// }
-			resolve("beforeHide");
-		});
+		if (config.tooltip_onhide && $$.cache.tooltip_show_callback) {
+			config.tooltip_onhide.call(this.api);
+			delete $$.cache.tooltip_show_callback;
+		}
+		this.tooltip.style("display", "none");
+		$$._handleLinkedCharts({hide: true});
 
-		const hide = new Promise(resolve => {
-			this.tooltip.style("display", "none");
-			$$._handleLinkedCharts({hide: true});
-			resolve("hide");
-		});
-
-		beforeHide.then(() => hide).then(() => {
-			if (config.tooltip_onhidden && $$.cache.tooltip_shown_callback) {
-				config.tooltip_onhidden.call(this.api);
-				delete $$.cache.tooltip_shown_callback;
-			}
-		});
+		if (config.tooltip_onhidden && $$.cache.tooltip_shown_callback) {
+			config.tooltip_onhidden.call(this.api);
+			delete $$.cache.tooltip_shown_callback;
+		}
 	},
 
 	_handleLinkedCharts(data) {
