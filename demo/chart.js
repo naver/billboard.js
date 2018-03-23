@@ -133,17 +133,24 @@ let billboardDemo = {
 		});
 		this.chartInst = [];
 
+		let code = {
+			markup: [],
+			data: []
+		};
 		// generate chart
 		if (isArray) {
-			typeData.forEach((t, i) => {this._addChartInstance(t, key, i + 1, typeData.length)})
+			typeData.forEach((t, i) => {this._addChartInstance(t, key, i + 1, code)})
 		} else {
 			this._addChartInstance(typeData, key)
 		}
-
-
+		this.$code.innerHTML = "";
+		code.markup.forEach(t => {this.$code.innerHTML += t})
+		code.data.forEach(t => {this.$code.innerHTML += t});
+		this.$code.scrollTop = 0;
+		hljs.highlightBlock(this.$code);
 		return false;
 	},
-	_addChartInstance: function(type, key, index, items) {
+	_addChartInstance: function(type, key, index, code) {
 
 		if (index) {
 			key += `_${index}`
@@ -207,21 +214,27 @@ let billboardDemo = {
 				.replace(/\\n(?!T)/g, "\n") + ");";
 
 		// markup
-		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n";
+		if ((index && index === 1) || !index) {
+			code.markup.push("&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n");
+		} else if (index && index > 1) {
+			code.markup.push("&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n");
+		}
 
-		// script
-		this.$code.innerHTML += "// Script\r\n" + codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
-		this.$code.scrollTop = 0;
+		if (index && index > 1) {
+			code.data.push("\r\n\r\n");
+		}
+		// script this.$code.innerHTML
+		code.data.push("// Script\r\n" + codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1"));
 
 		try {
 			if (func) {
-				this.$code.innerHTML += "\r\n\r\n" + func.toString()
+				code.data.push("\r\n\r\n" + func.toString()
 					.replace(/[\t\s]*function \(chart\) \{[\r\n\t\s]*/, "")
 					.replace(/}$/, "")
 					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
 					.replace(/\t{5}/g, "")
 					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/, "")
-					.replace(/(\d)\),?/g, "$1);");
+					.replace(/(\d)\),?/g, "$1);"));
 
 				func(inst);
 			}
@@ -229,9 +242,8 @@ let billboardDemo = {
 
 		// style
 		if (style) {
-			this.$code.innerHTML += "\r\n\r\n/* Style */\r\n" + style.join("\r\n");
+			code.data.push("\r\n\r\n/* Style */\r\n" + style.join("\r\n"));
 		}
 
-		hljs.highlightBlock(this.$code);
 	}
 };
