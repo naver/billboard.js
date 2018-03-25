@@ -5,7 +5,7 @@
 import {mouse as d3Mouse} from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isValue, sanitise, isString, isFunction} from "./util";
+import {extend, isFunction, isString, isValue, sanitise} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -232,6 +232,28 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
+		if ($$._handleBeforeShown($$, config)) {
+			if ($$._handleShow($$, config, selectedData, forArc, positionFunction, dataToShow, element)) {
+				$$._handleAfterShown($$, config);
+			}
+		}
+	},
+
+	/**
+	 * Hide the tooltip
+	 * @private
+	 */
+	hideTooltip() {
+		const $$ = this;
+		const config = $$.config;
+
+		if ($$._handleBeforeHide($$, config)) {
+			if ($$._handleHide($$, config)) {
+				$$._handleAfterHide($$, config);
+			}
+		}
+	},
+	_handleShow($$, config, selectedData, forArc, positionFunction, dataToShow, element) {
 		$$.tooltip.html(
 			config.tooltip_contents.call(
 				$$,
@@ -246,18 +268,70 @@ extend(ChartInternal.prototype, {
 		const tWidth = $$.tooltip.property("offsetWidth");
 		const tHeight = $$.tooltip.property("offsetHeight");
 		const position = positionFunction.call(this, dataToShow, tWidth, tHeight, element);
+		const x = selectedData[0].x || undefined;
 
 		// Set tooltip
 		$$.tooltip
 			.style("top", `${position.top}px`)
 			.style("left", `${position.left}px`);
-	},
 
-	/**
-	 * Hide the tooltip
-	 * @private
-	 */
-	hideTooltip() {
+		$$._handleLinkedCharts({show: 1, x: x});
+		return true;
+	},
+	_handleBeforeShown($$, config) {
+		// tooltip_show_callback is used to prevent duplicate
+		// calls on showTooltip updates when mouse is moved
+		if (config.tooltip_onshow && !$$.cache.tooltip_show_callback) {
+			config.tooltip_onshow.call(this.api);
+			$$.cache.tooltip_show_callback = true;
+		}
+		return true;
+	},
+	_handleAfterShown($$, config) {
+		// tooltip_shown_callback is used to prevent duplicate
+		// calls on showTooltip updates when mouse is moved
+		if (config.tooltip_onshown && !$$.cache.tooltip_shown_callback) {
+			config.tooltip_onshown.call(this.api);
+			$$.cache.tooltip_shown_callback = true;
+		}
+		return true;
+	},
+	_handleHide($$, config) {
 		this.tooltip.style("display", "none");
+		$$._handleLinkedCharts({hide: true});
+		return true;
+	},
+	_handleBeforeHide($$, config) {
+		if (config.tooltip_onhide && $$.cache.tooltip_show_callback) {
+			config.tooltip_onhide.call(this.api);
+			delete $$.cache.tooltip_show_callback;
+		}
+		return true;
+	},
+	_handleAfterHide($$, config) {
+		if (config.tooltip_onhidden && $$.cache.tooltip_shown_callback) {
+			config.tooltip_onhidden.call(this.api);
+			delete $$.cache.tooltip_shown_callback;
+		}
+		return true;
+	},
+	_handleLinkedCharts(data) {
+		const $$ = this;
+
+		if ($$.config.tooltip_linked) {
+			$$.api.internal.charts.forEach(c => {
+				const isInDom = document.body.contains(c.element);
+
+				if (c !== $$.api && isInDom) {
+					const tt = c.internal.tooltip;
+
+					if (tt.style("display") === "block" && data.hide) {
+						c.tooltip.hide();
+					} else if (tt.style("display") !== "block" && data.show) {
+						c.tooltip.show({x: data.x});
+					}
+				}
+			});
+		}
 	}
 });

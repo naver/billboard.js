@@ -17,7 +17,7 @@ const bb = {
 	 * Version information
 	 * @property {String} version version
 	 * @example
-	 * 	bb.version;  // "1.0.0"
+	 *    bb.version;  // "1.0.0"
 	 * @memberOf bb
 	 */
 	version: "#__VERSION__#",
@@ -49,6 +49,8 @@ const bb = {
 	 */
 	generate(config) {
 		const inst = new Chart(config);
+
+		inst.internal.charts = this.instance;
 
 		this.instance.push(inst);
 
