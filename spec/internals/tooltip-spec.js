@@ -122,8 +122,6 @@ describe("TOOLTIP", function() {
 		it("chart tooltip.onshown function should be called", () => {
 			checkCallback(chart, 'onshown', 2);
 		});
-
-
 	});
 
 	describe("tooltip position", () => {
