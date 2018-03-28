@@ -6,20 +6,12 @@ const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const uglifyConfig = require("./uglify");
 const banner = require("./banner");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const config = {
 	entry: {
 		"billboard": "./src/core.js",
 		"billboard.min": "./src/core.js",
-	},
-	externals: function(context, request, callback) {
-		// every 'd3-*' import, will be externally required as 'd3'
-		if(/^d3-/.test(request)) {
-			return callback(null, "d3");
-		}
-
-		callback();
 	},
 	module: {
 		rules: [
@@ -32,14 +24,11 @@ const config = {
 			},
 			{
 				test: /\.scss$/,
-				use: ExtractTextPlugin.extract({
-					use: [{
-						loader: "css-loader",
-					}, {
-						loader: "sass-loader",
-					}],
-					fallback: "style-loader",
-				}),
+				use: [
+					MiniCssExtractPlugin.loader,
+					"css-loader",
+					"sass-loader"
+				]
 			}
 		],
 	},
@@ -49,7 +38,9 @@ const config = {
 			verbose: true,
 			dry: false
 		}),
-		new ExtractTextPlugin("[name].css"),
+		new MiniCssExtractPlugin({
+			filename: "[name].css"
+		}),
 		new UglifyJSPlugin(uglifyConfig),
 		new OptimizeCssAssetsPlugin({
 			assetNameRegExp: /\.min\.css$/,

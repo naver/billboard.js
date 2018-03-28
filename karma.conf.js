@@ -17,6 +17,8 @@ module.exports = function(config) {
 
 		webpack: {
 			devtool: "inline-source-map",
+			mode: "development",
+			stats: "none",
 			module: {
 				rules: [
 					{
@@ -57,7 +59,7 @@ module.exports = function(config) {
 		reporters: ["mocha"],
 		colors: true,
 		webpackMiddleware: {
-			noInfo: true
+			logLevel: "error"
 		},
 
 		// https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout

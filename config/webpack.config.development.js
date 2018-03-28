@@ -1,6 +1,6 @@
 const merge = require("webpack-merge");
 const WriteFilePlugin = require("write-file-webpack-plugin");
-const ExtractTextPlugin = require("extract-text-webpack-plugin");
+
 const config = {
 	devtool: "inline-source-map",
 	devServer: {
@@ -8,22 +8,22 @@ const config = {
 		stats: "minimal"
 	},
 	module: {
-		rules: [{
-			test: /\.scss$/,
-			use: ExtractTextPlugin.extract({
+		rules: [
+			{
+				test: /\.scss$/,
 				use: [{
-					loader: "css-loader",
+					loader: "style-loader" // creates style nodes from JS strings
 				}, {
-					loader: "sass-loader",
-				}],
-				fallback: "style-loader",
-			}),
-		}]
+					loader: "css-loader" // translates CSS into CommonJS
+				}, {
+					loader: "sass-loader" // compiles Sass to CSS
+				}]
+			}
+		]
 	},
 	plugins: [
-		new ExtractTextPlugin("[name].css"),
-		new WriteFilePlugin(),
+		new WriteFilePlugin()
 	],
 };
 
-module.exports = common => merge(common, config);
+module.exports = common => merge.smart(common, config);

@@ -27,6 +27,7 @@ describe("COLOR", () => {
 					type: "bar"
 				},
 				color: {
+					pattern: ["red", "blue"],
 					tiles: function() {
 						function circlePattern(fillColor, opacity, radiusMin, radiusMax) {
 							const pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
@@ -64,7 +65,7 @@ describe("COLOR", () => {
 		});
 
 		it("should create patterns property", () => {
-			expect(chart.internal.patterns).to.be.an('array');
+			expect(chart.internal.patterns).to.be.an("array");
 		});
 
 		it("patterns should be an array with id and pattern objects", () => {
@@ -72,7 +73,7 @@ describe("COLOR", () => {
 			const numPatterns = patterns.length;
 
 			const valid = patterns.map(p => {
-				return isString(p.id) && p.node.nodeName.toLowerCase() === 'pattern';
+				return isString(p.id) && p.node.nodeName.toLowerCase() === "pattern";
 			});
 
 			expect(valid.length).to.be.equal(numPatterns);
