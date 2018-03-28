@@ -46,8 +46,8 @@ const generate = args => {
 		}
 
 		bb.chart.internal.fn.convertInputType = () => inputType;
-
 		window.d3 = d3;
+
 		chart = bb.generate(args);
 	}
 

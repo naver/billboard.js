@@ -9,40 +9,37 @@ import {
 	tsvParseRows as d3TsvParseRows,
 } from "d3-dsv";
 import {keys as d3Keys} from "d3-collection";
-import {request as d3Request} from "d3-request";
 import ChartInternal from "../internals/ChartInternal";
-import {isUndefined, isDefined, isValue, notEmpty, extend, isArray} from "../internals/util";
+import {isUndefined, isDefined, isValue, notEmpty, extend, isArray, capitalize} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
-		const type = mimeType;
-		const req = d3Request(url);
+		const req = new XMLHttpRequest();
 
 		if (headers) {
 			for (const header of Object.keys(headers)) {
-				req.header(header, headers[header]);
+				req.setRequestHeader(header, headers[header]);
 			}
 		}
 
-		req.get((error, data) => {
-			let d;
+		req.open("GET", url);
+		req.onreadystatechange = () => {
+			if (req.readyState === 4) {
+				if (req.status === 200) {
+					const response = req.responseText;
 
-			if (!data) {
-				throw new Error(`${error.responseURL} ${error.status} (${error.statusText})`);
+					response && done.call(this,
+						this[`convert${capitalize(mimeType)}ToData`](
+							mimeType === "json" ? JSON.parse(response) : response,
+							keys
+						));
+				} else {
+					throw new Error(`${url}: Something went wrong loading!`);
+				}
 			}
+		};
 
-			const response = data.response || data.responseText;
-
-			if (type === "json") {
-				d = this.convertJsonToData(JSON.parse(response), keys);
-			} else if (type === "tsv") {
-				d = this.convertTsvToData(response);
-			} else {
-				d = this.convertCsvToData(response);
-			}
-
-			done.call(this, d);
-		});
+		req.send();
 	},
 
 	_convertCsvTsvToData(parser, xsv) {

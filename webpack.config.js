@@ -15,6 +15,14 @@ const config = {
 		libraryTarget: "umd",
 		umdNamedDefine: true,
 	},
+	externals: (context, request, callback) => {
+		// every 'd3-*' import, will be externally required as 'd3'
+		if (/^d3-/.test(request)) {
+			return callback(null, "d3");
+		}
+
+		callback();
+	},
 	devtool: "cheap-module-source-map",
 	module: {
 		rules: [
@@ -39,15 +47,20 @@ const config = {
 		new webpack.optimize.ModuleConcatenationPlugin(),
 		new Stylish()
 	],
-	stats: "minimal"
+	stats: "minimal",
+	mode: "none"
 };
 
 module.exports = env => {
+	const mode = (env && env.mode) || "development";
+
+	mode === "packaged" && delete config.externals;
+
 	env && env.monitor && config.plugins.push(
 		new WebpackMonitor({
 			launch: true
 		})
 	);
 
-	return require(`./config/webpack.config.${(env && env.mode) || "development"}.js`)(config);
-}
+	return require(`./config/webpack.config.${mode}.js`)(config);
+};
