@@ -10,7 +10,6 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$codeArea = document.querySelector(".code");
 		this.$code = document.querySelector("code");
-		this.chartInst = [];
 
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
@@ -114,24 +113,24 @@ var billboardDemo = {
 	 * @returns {boolean}
 	 */
 	generate: function(type, key) {
-		var chartInst = this.chartInst;
+		var inst = bb.instance;
 		var typeData = demos[type][key];
 		var isArray = Array.isArray(typeData);
 		var self = this;
 
-		chartInst.length && chartInst.forEach(function (c, i, array) {
-			c.timer && c.timer.forEach(function (v) {
-				clearTimeout(v);
-			});
+		inst.length && inst.forEach(function (c) {
+			var timer = c.timer;
+			var el = c.element;
 
-			if (c.element.parentNode)
-				c.element.parentNode.removeChild(c.element);
-
-			//c.destroy();
-			array.shift();
+			try {
+				timer && timer.forEach(function (v) {
+					clearTimeout(v);
+				});
+			} finally {
+				el.parentNode && el.parentNode.removeChild(el);
+				c.destroy();
+			}
 		});
-
-		this.chartInst = [];
 
 		var code = {
 			markup: [],
@@ -191,7 +190,6 @@ var billboardDemo = {
 		var inst = bb.generate(options);
 
 		inst.timer = [];
-		this.chartInst.push(inst);
 
 		var codeStr = "var chart = bb.generate(" +
 			JSON.stringify(options, function (k, v) {
@@ -230,6 +228,7 @@ var billboardDemo = {
 		if (index && index > 1) {
 			code.data.push("\r\n\r\n");
 		}
+
 		// script this.$code.innerHTML
 		code.data.push("// Script\r\n" + codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1"));
 
