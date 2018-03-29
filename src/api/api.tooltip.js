@@ -85,8 +85,8 @@ const tooltip = extend(() => {}, {
 	hide: function() {
 		const $$ = this.internal;
 
-		// TODO: get target data by checking the state of focus
-		$$.dispatchEvent("mouseout", 0);
+		$$.hideTooltip();
+		$$.hideXGridFocus();
 	}
 });
 

@@ -41,7 +41,7 @@ describe("API tooltip", () => {
 		expect(tooltip.html()).to.be.ok;
 		expect(tooltip.style("display")).to.be.equal("block");
 
-		// check if tooltip data are correctly rendering
+		// check if tooltip data are correctly rendered
 		chart.data().forEach(v => {
 			const id = v.id;
 			const data = tooltip.select(`.${CLASS.tooltipName}-${id}`);
