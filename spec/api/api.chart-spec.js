@@ -5,6 +5,7 @@
  /* eslint-disable */
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import bb from "../../src/core";
 
 describe("API chart", () => {
 	let chart;
@@ -111,6 +112,8 @@ describe("API chart", () => {
 			chart.destroy();
 
 			expect(d3.select("#chart svg").empty()).to.be.true;
+			expect(Object.keys(chart).length).to.be.equal(0);
+			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 		});
 	});
 });

@@ -56,30 +56,23 @@ extend(Chart.prototype, {
 	destroy() {
 		const $$ = this.internal;
 
+		$$.charts.splice($$.charts.indexOf(this), 1);
 		window.clearInterval($$.intervalForObserveInserted);
 
-		if ($$.resizeTimeout !== undefined) {
+		$$.resizeTimeout !== undefined &&
 			window.clearTimeout($$.resizeTimeout);
-		}
 
 		removeEvent(window, "resize", $$.resizeFunction);
-		// if (window.detachEvent) {
-		//     window.detachEvent('onresize', $$.resizeFunction);
-		// } else if (window.removeEventListener) {
-		//     window.removeEventListener('resize', $$.resizeFunction);
-		// } else {
-		//     var wrapper = window.onresize;
-		//     // check if no one else removed our wrapper and remove our resizeFunction from it
-		//     if (wrapper && wrapper.add && wrapper.remove) {
-		//         wrapper.remove($$.resizeFunction);
-		//     }
-		// }
-
 		$$.selectChart.classed("bb", false).html("");
 
-		// MEMO: this is needed because the reference of some elements will not be released, then memory leak will happen.
-		Object.keys($$).forEach(key => {
-			$$[key] = null;
+		// Reference of some elements will not be released, then memory leak will happen.
+		Object.keys(this).forEach(key => {
+			key === "internal" && Object.keys($$).forEach(k => {
+				$$[k] = null;
+			});
+
+			this[key] = null;
+			delete this[key];
 		});
 
 		return null;
