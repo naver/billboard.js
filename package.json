@@ -49,7 +49,7 @@
     "babel-plugin-add-module-exports": "^0.2.1",
     "babel-plugin-minify-constant-folding": "^0.3.0",
     "babel-plugin-minify-dead-code-elimination": "^0.3.0",
-    "babel-plugin-minify-guarded-expressions": "^0.3.0",
+    "babel-plugin-minify-guarded-expressions": "^0.4.0",
     "babel-plugin-minify-numeric-literals": "^0.3.0",
     "babel-plugin-minify-simplify": "^0.3.0",
     "babel-plugin-minify-type-constructors": "^0.3.0",
