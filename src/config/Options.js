@@ -2257,23 +2257,26 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Number} [bar.width] Change the width of bar chart.
 			 * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
-			 * @property {Number} [bar.width.max]
+			 * @property {Number} [bar.width.max] The maximum width value for ratio.
 			 * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+			 * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
 			 * @example
 			 *  bar: {
 			 *      width: 10,
 			 *      // or
 			 *      width: {
 			 *          ratio: 0.2,
-			 *          max: 200
+			 *          max: 20
 			 *      },
-			 *      zerobased: false
+			 *      zerobased: false,
+			 *      padding: 1
 			 *  }
 			 */
 			bar_width: undefined,
 			bar_width_ratio: 0.6,
 			bar_width_max: undefined,
 			bar_zerobased: true,
+			bar_padding: 0,
 
 			/**
 			 * Set bubble options

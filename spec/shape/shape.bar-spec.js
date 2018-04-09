@@ -291,4 +291,43 @@ describe("SHAPE BAR", () => {
 			expect(() => util.fireEvent(bar, "click")).to.not.throw();
 		});
 	});
+
+	describe("options", () => {
+		const width = 15;
+		const padding = 3;
+
+		before(() => {
+			args = {
+				data: {
+					type: "bar",
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					]
+				},
+				bar: {
+					width: width,
+					padding: padding
+				}
+			};
+		});
+
+		it(`bar width should be ${width}px`, () => {
+			const internal = chart.internal;
+			const barWidth = internal.main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)
+				.node().getBBox().width;
+
+			expect(barWidth).to.be.equal(width);
+		});
+
+		it(`bar padding should be ${padding}px`, () => {
+			const internal = chart.internal;
+			const bar1 = internal.main.select(`.${CLASS.chartBar}.${CLASS.target}-data1 path.${CLASS.shape}`)
+				.node().getBBox().x + width;
+			const bar2 = internal.main.select(`.${CLASS.chartBar}.${CLASS.target}-data2 path.${CLASS.shape}`)
+				.node().getBBox().x;
+
+			expect(bar2 - bar1).to.be.equal(padding);
+		});
+	});
 });

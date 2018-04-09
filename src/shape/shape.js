@@ -33,36 +33,55 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const indices = {};
 		let i = 0;
-		let j;
-		let k;
 
 		$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(d => {
-			for (j = 0; j < config.data_groups.length; j++) {
+			for (let j = 0; j < config.data_groups.length; j++) {
 				if (config.data_groups[j].indexOf(d.id) < 0) {
 					continue;
 				}
 
-				for (k = 0; k < config.data_groups[j].length; k++) {
+				for (let k = 0; k < config.data_groups[j].length; k++) {
 					if (config.data_groups[j][k] in indices) {
 						indices[d.id] = indices[config.data_groups[j][k]];
 						break;
 					}
 				}
 			}
-			if (isUndefined(indices[d.id])) { indices[d.id] = i++; }
+
+			if (isUndefined(indices[d.id])) {
+				indices[d.id] = i++;
+			}
 		});
+
 		indices.__max__ = i - 1;
+
 		return indices;
 	},
 
 	getShapeX(offset, targetsNum, indices, isSub) {
 		const $$ = this;
 		const scale = isSub ? $$.subX : ($$.zoomScale ? $$.zoomScale : $$.x);
+		const barPadding = $$.config.bar_padding;
 
 		return d => {
 			const index = d.id in indices ? indices[d.id] : 0;
+			let x = d.x || d.x === 0 ?
+				scale(d.x) - offset * (targetsNum / 2 - index) : 0;
 
-			return d.x || d.x === 0 ? scale(d.x) - offset * (targetsNum / 2 - index) : 0;
+			// adjust x position for bar.padding option
+			if (offset && x && targetsNum > 1 && barPadding) {
+				if (index) {
+					x += barPadding * index;
+				}
+
+				if (targetsNum > 2) {
+					x -= (targetsNum - 1) * barPadding / 2;
+				} else if (targetsNum === 2) {
+					x -= barPadding / 2;
+				}
+			}
+
+			return x;
 		};
 	},
 
