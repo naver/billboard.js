@@ -2,6 +2,4 @@ node_modules
 .DS_Store
 *.log
 /.idea
-/dist
-/doc
 /coverage
