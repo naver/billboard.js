@@ -10,7 +10,6 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$codeArea = document.querySelector(".code");
 		this.$code = document.querySelector("code");
-		this.chartInst = [];
 
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
@@ -82,7 +81,7 @@ var billboardDemo = {
 			this.$wrapper.className = "";
 		}
 
-		type = type.replace(/.*#/,"").split(".");
+		type = type.replace(/.*#/, "").split(".");
 
 		if (type.length < 2) {
 			return;
@@ -104,7 +103,7 @@ var billboardDemo = {
 		$selected = this.$list.querySelector("[href='#"+ type.join(".") +"']");
 		$selected.className += this.selectedClass;
 
-		window.scrollTo(0,0);
+		window.scrollTo(0, 0);
 	},
 
 	/**
@@ -114,32 +113,66 @@ var billboardDemo = {
 	 * @returns {boolean}
 	 */
 	generate: function(type, key) {
-		var chartInst = this.chartInst;
+		var inst = bb.instance;
+		var typeData = demos[type][key];
+		var isArray = Array.isArray(typeData);
+		var self = this;
 
-		chartInst.length &&
-			chartInst.forEach(function(c, i, array) {
-				c.timer && c.timer.forEach(function(v) {
+		inst.length && inst.forEach(function (c) {
+			var timer = c.timer;
+			var el = c.element;
+
+			try {
+				timer && timer.forEach(function (v) {
 					clearTimeout(v);
 				});
+			} finally {
+				el.parentNode && el.parentNode.removeChild(el);
+				c.destroy();
+			}
+		});
 
-				c.element.parentNode.removeChild(c.element);
-
-				//c.destroy();
-				array.shift();
-			});
+		var code = {
+			markup: [],
+			data: []
+		};
 
 		// generate chart
+		isArray ? typeData.forEach(function(t, i) {
+			self._addChartInstance(t, key, i + 1, code);
+		}) : this._addChartInstance(typeData, key, undefined, code);
+
+		this.$code.innerHTML = "";
+
+		code.markup.forEach(function(t) { self.$code.innerHTML += t; });
+		code.data.forEach(function(t) { self.$code.innerHTML += t; });
+
+		this.$code.scrollTop = 0;
+
+		hljs.highlightBlock(this.$code);
+
+		return false;
+	},
+
+	_addChartInstance: function(type, key, index, code) {
+		if (index) {
+			key += "_"+ index;
+		}
+
 		var $el = document.getElementById(key);
+		var legend;
 
 		if (!$el) {
 			$el = document.createElement("div");
 			$el.id = key;
+			if ((index && index === 1) || !index) {
+				this.$chartArea.innerHTML = "";
+			}
 
-			this.$chartArea.innerHTML = "";
 			this.$chartArea.appendChild($el);
 
 			if (key.indexOf("LegendTemplate") > -1) {
-				var legend = document.createElement("div");
+				legend = document.createElement("div");
 				legend.id = "legend";
 				legend.style.textAlign = "center";
 
@@ -148,72 +181,74 @@ var billboardDemo = {
 			}
 		}
 
-		var type = demos[type][key];
 		var func = type.func;
 		var style = type.style;
-
 		var options = type.options;
+
 		options.bindto = "#" + key;
 
 		var inst = bb.generate(options);
-		inst.timer = [];
-		this.chartInst.push(inst);
 
-		var codeStr = "var chart = bb.generate("+
-			JSON.stringify(options, function(key, value) {
-				if (typeof value === "function") {
-					return value.toString();
-				} else if (/(columns|rows|json)/.test(key)) {
-					var str = JSON.stringify(value)
+		inst.timer = [];
+
+		var codeStr = "var chart = bb.generate(" +
+			JSON.stringify(options, function (k, v) {
+				if (typeof v === "function") {
+					return v.toString();
+				} else if (/(columns|rows|json)/.test(k)) {
+					var str = JSON.stringify(v)
 						.replace(/\[\[/g, "[\r\n\t[")
 						.replace(/\]\]/g, "]\r\n    ]")
 						.replace(/(],)/g, "$1\r\n\t")
 						.replace(/(\"|\d),/g, "$1, ");
 
-					return key === "json" ?
+					return k === "json" ?
 						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
 				}
 
-				return value;
+				return v;
 			}, 2)
-			.replace(/(\"function)/g, "function")
-			.replace(/(}\")/g, "}")
-			.replace(/\\"/g, "\"")
-			.replace(/</g, "&lt;")
-			.replace(/\\t/g, "\t")
-			.replace(/\t{5}/g,"")
-			.replace(/\\r/g, "\r")
-			.replace(/"(\w+)":/g,"$1:")
-			.replace(/\\n(?!T)/g, "\n") +");";
+				.replace(/(\"function)/g, "function")
+				.replace(/(}\")/g, "}")
+				.replace(/\\"/g, "\"")
+				.replace(/</g, "&lt;")
+				.replace(/\\t/g, "\t")
+				.replace(/\t{5}/g, "")
+				.replace(/\\r/g, "\r")
+				.replace(/"(\w+)":/g, "$1:")
+				.replace(/\\n(?!T)/g, "\n") + ");";
 
 		// markup
-		this.$code.innerHTML = "&lt;!-- Markup -->\r\n&lt;div id=\""+ key +"\">&lt;/div>\r\n"+ (legend ? legend + "\r\n" : "") +"\r\n";
+		if ((index && index === 1) || !index) {
+			code.markup.push("&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n");
+		} else if (index && index > 1) {
+			code.markup.push("&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n");
+		}
 
-		// script
-		this.$code.innerHTML += "// Script\r\n"+ codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1");
-		this.$code.scrollTop = 0;
+		if (index && index > 1) {
+			code.data.push("\r\n\r\n");
+		}
+
+		// script this.$code.innerHTML
+		code.data.push("// Script\r\n" + codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1"));
 
 		try {
 			if (func) {
-				this.$code.innerHTML += "\r\n\r\n" + func.toString()
-					.replace(/[\t\s]*function \(chart\) \{[\r\n\t\s]*/,"")
-					.replace(/}$/,"")
-					.replace(/chart.timer = \[[\r\n\t\s]*/,"")
-					.replace(/\t{5}/g,"")
-					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/,"")
-					.replace(/(\d)\),?/g, "$1);");
+				code.data.push("\r\n\r\n" + func.toString()
+					.replace(/[\t\s]*function \(chart\) \{[\r\n\t\s]*/, "")
+					.replace(/}$/, "")
+					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
+					.replace(/\t{5}/g, "")
+					.replace(/[\r\n\t\s]*\];?[\r\n\t\s]*$/, "")
+					.replace(/(\d)\),?/g, "$1);"));
 
 				func(inst);
 			}
-		} catch(e) {}
+		} catch (e) {}
 
 		// style
 		if (style) {
-			this.$code.innerHTML += "\r\n\r\n/* Style */\r\n"+ style.join("\r\n");
+			code.data.push("\r\n\r\n/* Style */\r\n" + style.join("\r\n"));
 		}
-
-		hljs.highlightBlock(this.$code);
-
-		return false;
 	}
 };
