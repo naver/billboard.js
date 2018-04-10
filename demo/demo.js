@@ -387,16 +387,16 @@ var demos = {
 						['data1', 30],
 						['data2', 120],
 					],
-					type : 'pie',
+					type: 'pie',
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
-					    },
+					},
 					onover: function(d, i) {
 						console.log("onover", d, i);
-					    },
+					},
 					onout: function(d, i) {
 						console.log("onout", d, i);
-					    }
+					}
 				}
 			},
 			func: function(chart) {
@@ -432,13 +432,13 @@ var demos = {
 					type: 'donut',
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
-					    },
+					},
 					onover: function(d, i) {
 						console.log("onover", d, i);
-					    },
+					},
 					onout: function(d, i) {
 						console.log("onout", d, i);
-					    }
+					}
 				},
 				donut: {
 					title: "Iris Petal Width"
@@ -476,10 +476,10 @@ var demos = {
 					type: 'gauge',
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
-					    },
+					},
 					onover: function(d, i) {
 						console.log("onover", d, i);
-					    },
+					},
 					onout: function(d, i) {
 						console.log("onout", d, i);
 					}
@@ -814,7 +814,8 @@ var demos = {
 						type: 'category',
 						tick: {
 							rotate: 75,
-							multiline: false
+							multiline: false,
+							tooltip: true
 						},
 						height: 130
 					}
@@ -1909,6 +1910,88 @@ var demos = {
 				},
 				tooltip: {
 					order: "desc"
+				}
+			}
+		},
+		LinkedTooltips: [
+			{
+				options: {
+					data: {
+						x: 'x',
+						columns: [
+							['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+							['data', 20, 30, 10, 10, 30, 40],
+						],
+					},
+					axis: {
+						x: {
+							type: 'timeseries',
+							tick: {
+								format: '%Y-%m-%d'
+							}
+						}
+					},
+					tooltip: {
+						linked: true
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						x: 'x',
+						columns: [
+							['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+							['data', 10, 50, 100, 50, 50, 50],
+						],
+					},
+					axis: {
+						x: {
+							type: 'timeseries',
+							tick: {
+								format: '%Y-%m-%d'
+							}
+						}
+					},
+					tooltip: {
+						linked: true
+					}
+				}
+			}
+		]
+	},
+	BarChartOptions: {
+		Width: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50],
+						["data3", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						ratio: 0.9,
+						max: 30
+					}
+				}
+			}
+		},
+		Padding: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 250, 140, 200, 150, 50],
+						["data3", 100, 200, 340, 300, 250, 250],
+						["data4", 80, 230, 240, 100, 350, 150]
+					],
+					type: "bar"
+				},
+				bar: {
+					padding: 3
 				}
 			}
 		}
