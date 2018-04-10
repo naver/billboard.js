@@ -547,6 +547,7 @@ export default class Axis {
 				start = values[0];
 				end = values[values.length - 1];
 				interval = (end - start) / (count + 1);
+
 				// re-construct unique values
 				tickValues = [start];
 
@@ -554,6 +555,7 @@ export default class Axis {
 					tickValue = +start + interval * (i + 1);
 					tickValues.push(forTimeSeries ? new Date(tickValue) : tickValue);
 				}
+
 				tickValues.push(end);
 			}
 		}

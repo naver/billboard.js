@@ -1960,6 +1960,42 @@ var demos = {
 			}
 		]
 	},
+	BarChartOptions: {
+		Width: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50],
+						["data3", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						ratio: 0.9,
+						max: 30
+					}
+				}
+			}
+		},
+		Padding: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 250, 140, 200, 150, 50],
+						["data3", 100, 200, 340, 300, 250, 250],
+						["data4", 80, 230, 240, 100, 350, 150]
+					],
+					type: "bar"
+				},
+				bar: {
+					padding: 3
+				}
+			}
+		}
+	},
 	ChartOptions: {
 		ChartSize: {
 			options: {
