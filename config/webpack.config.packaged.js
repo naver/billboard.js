@@ -1,5 +1,6 @@
 const merge = require("webpack-merge");
 const webpack = require("webpack");
+const StringReplacePlugin = require("string-replace-webpack-plugin");
 const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
 const uglifyConfig = require("./uglify");
 const banner = require("./banner");
@@ -13,11 +14,13 @@ const config = {
 	module: {
 		rules: [
 			{
-				test: /\.scss$/,
-				use: [
-					{loader: "css-loader"},
-					{loader: "sass-loader"}
-				],
+				test: /(core\.js)$/,
+				loader: StringReplacePlugin.replace({
+					replacements: [{
+						pattern: /import \"\.\/scss\/main.scss\";/ig,
+						replacement: () => ""
+					}]
+				})
 			}
 		],
 	},
