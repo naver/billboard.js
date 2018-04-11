@@ -3,10 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
-import {
-	scaleOrdinal as d3ScaleOrdinal,
-	schemeCategory10 as d3SchemeCategory10
-} from "d3-scale";
+import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import ChartInternal from "./ChartInternal";
 import {notEmpty, extend, isFunction} from "./util";
 
@@ -35,6 +32,10 @@ const colorizePattern = (pattern, color, id) => {
 	};
 };
 
+// Replacement of d3.schemeCategory10.
+// Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
+const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
+
 extend(ChartInternal.prototype, {
 	generateColor() {
 		const $$ = this;
@@ -43,7 +44,7 @@ extend(ChartInternal.prototype, {
 		const callback = config.data_color;
 		const ids = [];
 		let pattern = notEmpty(config.color_pattern) ?
-			config.color_pattern : d3ScaleOrdinal(d3SchemeCategory10).range();
+			config.color_pattern : d3ScaleOrdinal(schemeCategory10).range();
 		const originalColorPattern = pattern;
 
 
@@ -65,9 +66,7 @@ extend(ChartInternal.prototype, {
 		return function(d) {
 			const id = d.id || (d.data && d.data.id) || d;
 			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !$$.config.data_types[id];
-
 			let color;
-
 
 			// if callback function is provided
 			if (colors[id] instanceof Function) {
@@ -79,7 +78,9 @@ extend(ChartInternal.prototype, {
 
 			// if not specified, choose from pattern
 			} else {
-				if (ids.indexOf(id) < 0) { ids.push(id); }
+				if (ids.indexOf(id) < 0) {
+					ids.push(id);
+				}
 
 				color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] :
 					pattern[ids.indexOf(id) % pattern.length];
