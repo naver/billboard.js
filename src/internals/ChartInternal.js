@@ -360,7 +360,8 @@ export default class ChartInternal {
 				withTransform: true,
 				withUpdateXDomain: true,
 				withUpdateOrgXDomain: true,
-				withTransitionForAxis: false
+				withTransitionForAxis: false,
+				initializing: true
 			});
 
 			// data.onmin/max callback
@@ -565,7 +566,8 @@ export default class ChartInternal {
 
 		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
-		$$.inputType === "touch" && $$.hideTooltip();
+		!(options.initializing && config.tooltip_init_show) &&
+			$$.inputType === "touch" && $$.hideTooltip();
 
 		// update legend and transform each g
 		if (withLegend && config.legend_show && !config.legend_contents_bindto) {

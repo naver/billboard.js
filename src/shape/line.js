@@ -535,9 +535,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
 
-		if (reset) {
-			$$.unexpandCircles();
-		}
+		reset && $$.unexpandCircles();
 
 		const circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
 		const scale = r(circles) / $$.config.point_r;

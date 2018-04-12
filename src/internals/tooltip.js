@@ -27,13 +27,14 @@ extend(ChartInternal.prototype, {
 		// Show tooltip if needed
 		if (config.tooltip_init_show) {
 			if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
+				const targets = $$.data.targets[0];
+				const len = targets.values.length;
 				let i;
-				let len;
 
 				config.tooltip_init_x = $$.parseDate(config.tooltip_init_x);
 
-				for (i = 0, len = $$.data.targets[0].values.length; i < len; i++) {
-					if (($$.data.targets[0].values[i].x - config.tooltip_init_x) === 0) {
+				for (i = 0; i < len; i++) {
+					if ((targets.values[i].x - config.tooltip_init_x) === 0) {
 						break;
 					}
 				}
@@ -218,7 +219,7 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Show the tooltip
 	 * @private
-	 * @param {Object} data
+	 * @param {Object} selectedData
 	 * @param {HTMLElement} element
 	 */
 	showTooltip(selectedData, element) {
