@@ -88,7 +88,7 @@
     "node-sass": "^4.8.3",
     "optimize-css-assets-webpack-plugin": "^4.0.0",
     "regenerator-runtime": "^0.11.0",
-    "sass-loader": "^6.0.7",
+    "sass-loader": "^7.0.0",
     "simulant": "^0.2.2",
     "sinon": "^4.5.0",
     "string-replace-webpack-plugin": "^0.1.3",
