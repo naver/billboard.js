@@ -19,7 +19,7 @@ const tooltip = extend(() => {}, {
 	 *    | Key | Type | Description |
 	 *    | --- | --- | --- |
 	 *    | index | Number | Determine focus by index |
-	 *    | x | Number|Date | Determine focus by x Axis index |
+	 *    | x | Number &vert; Date | Determine focus by x Axis index |
 	 *    | data | Object | Determine focus data with following keys: `x` or `index`.<br>When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is set, the target is determined by mouse position and needs specify `x`, `id` and `value`. |
 	 *    | mouse | Array | Determine x and y coordinate value relative the targeted x Axis element.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
 	 *
@@ -70,8 +70,10 @@ const tooltip = extend(() => {}, {
 			index = args.index;
 		}
 
-		// emulate mouse events to show
-		["mouseover", "mousemove"].forEach(eventName => {
+		// emulate events to show
+		($$.inputType === "mouse" ?
+			["mouseover", "mousemove"] : ["touchstart"]
+		).forEach(eventName => {
 			$$.dispatchEvent(eventName, index, mouse);
 		});
 	},
@@ -87,6 +89,8 @@ const tooltip = extend(() => {}, {
 
 		$$.hideTooltip();
 		$$.hideXGridFocus();
+		$$.unexpandCircles();
+		$$.unexpandBars();
 	}
 });
 

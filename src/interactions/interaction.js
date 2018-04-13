@@ -12,41 +12,60 @@ import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isBoolean} from "../internals/util";
 
-// Get mouse event
-let getMouseEvent = () => {
-	const getParams = () => ({
-		bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
-	});
+// emulate event
+const emulateEvent = {
+	mouse: (() => {
+		const getParams = () => ({
+			bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+		});
 
-	try {
-		// eslint-disable-next-line no-new
-		new MouseEvent("t");
-		getMouseEvent = () => (eventType, params = getParams()) => new MouseEvent(eventType, params);
-	} catch (e) {
-		// Polyfills DOM4 MouseEvent
-		getMouseEvent = () => (
-			eventType,
-			params = getParams()
-		) => {
-			const mouseEvent = document.createEvent("MouseEvent");
+		try {
+			// eslint-disable-next-line no-new
+			new MouseEvent("t");
 
-			// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-			mouseEvent.initMouseEvent(
-				eventType,
-				params.bubbles,
-				params.cancelable,
-				window,
-				0, // the event's mouse click count
-				params.screenX, params.screenY,
-				params.clientX, params.clientY,
-				false, false, false, false, 0, null
-			);
+			return (el, eventType, params = getParams()) => {
+				el.dispatchEvent(new MouseEvent(eventType, params));
+			};
+		} catch (e) {
+			// Polyfills DOM4 MouseEvent
+			return (el, eventType, params = getParams()) => {
+				const mouseEvent = document.createEvent("MouseEvent");
 
-			return mouseEvent;
-		};
+				// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+				mouseEvent.initMouseEvent(
+					eventType,
+					params.bubbles,
+					params.cancelable,
+					window,
+					0, // the event's mouse click count
+					params.screenX, params.screenY,
+					params.clientX, params.clientY,
+					false, false, false, false, 0, null
+				);
+
+				el.dispatchEvent(mouseEvent);
+			};
+		}
+	})(),
+	touch: (el, eventType, params) => {
+		const touchObj = new Touch(Object.assign({
+			identifier: Date.now(),
+			target: el,
+			radiusX: 2.5,
+			radiusY: 2.5,
+			rotationAngle: 10,
+			force: 0.5
+		}, params));
+
+		el.dispatchEvent(new TouchEvent(eventType, {
+			cancelable: true,
+			bubbles: true,
+			shiftKey: true,
+			touches: [touchObj],
+			targetTouches: [],
+			changedTouches: [touchObj]
+		}));
 	}
-
-	return getMouseEvent();
 };
 
 extend(ChartInternal.prototype, {
@@ -137,15 +156,15 @@ extend(ChartInternal.prototype, {
 					const eventRect = getEventRect();
 					const index = getIndex(eventRect);
 
-					if (index === -1) {
-						$$.unselectRect();
-					} else {
+					$$.setOver(index);
+
+					index === -1 ?
+						$$.unselectRect() :
 						$$.selectRectForSingle(context, eventRect, index);
-					}
 				}
 			};
 
-			// call event.prenvetDefault()
+			// call event.preventDefault()
 			// according 'interaction.inputType.touch.preventDefault' option
 			const preventDefault = config.interaction_inputType_touch.preventDefault;
 			const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
@@ -204,8 +223,8 @@ extend(ChartInternal.prototype, {
 						const index = getIndex(eventRect);
 
 						!isMultipleX && index !== -1 &&
-						$$.main.selectAll(`.${CLASS.shape}-${index}`)
-							.each(d2 => config.data_onout.call($$.api, d2));
+							$$.main.selectAll(`.${CLASS.shape}-${index}`)
+								.each(d2 => config.data_onout.call($$.api, d2));
 					}
 				});
 		}
@@ -297,9 +316,7 @@ extend(ChartInternal.prototype, {
 	selectRectForSingle(context, eventRect, index) {
 		const $$ = this;
 		const config = $$.config;
-		// Show tooltip
-		const selectedData = $$.filterTargetsToShow($$.data.targets)
-			.map(t => $$.addName($$.getValueOnIndex(t.values, index)));
+		const selectedData = $$.getAllValuesOnIndex(index);
 
 		if (config.tooltip_grouped) {
 			$$.showTooltip(selectedData, context);
@@ -323,8 +340,7 @@ extend(ChartInternal.prototype, {
 					$$.hideTooltip();
 
 					if (!config.data_selection_grouped) {
-						$$.unexpandCircles(index);
-						$$.unexpandBars(index);
+						$$.expandCirclesBars(index);
 					}
 				}
 			})
@@ -339,14 +355,19 @@ extend(ChartInternal.prototype, {
 				if (!config.tooltip_grouped) {
 					$$.showTooltip([d], this);
 					$$.showXGridFocus([d]);
-
-					if (config.point_focus_expand_enabled) {
-						$$.expandCircles(index, d.id, true);
-					}
-
-					$$.expandBars(index, d.id, true);
+					$$.expandCirclesBars(index, d.id, true);
 				}
 			});
+	},
+
+	expandCirclesBars(index, id, reset) {
+		const $$ = this;
+		const config = $$.config;
+
+		config.point_focus_expand_enabled &&
+			$$.expandCircles(index, id, reset);
+
+		$$.expandBars(index, id, reset);
 	},
 
 	selectRectForMultipleXs(context) {
@@ -385,10 +406,7 @@ extend(ChartInternal.prototype, {
 		$$.showTooltip(selectedData, context);
 
 		// expand points
-		if (config.point_focus_expand_enabled) {
-			$$.expandCircles(closest.index, closest.id, true);
-		}
-		$$.expandBars(closest.index, closest.id, true);
+		$$.expandCirclesBars(closest.index, closest.id, true);
 
 		// Show xgrid focus line
 		$$.showXGridFocus(selectedData);
@@ -416,6 +434,17 @@ extend(ChartInternal.prototype, {
 		$$.hideTooltip();
 		$$.unexpandCircles();
 		$$.unexpandBars();
+	},
+
+	setOver(index) {
+		const $$ = this;
+		const config = $$.config;
+
+		$$.expandCirclesBars(index, null, true);
+
+		// Call event handler
+		index !== -1 && $$.main.selectAll(`.${CLASS.shape}-${index}`)
+			.each(d2 => config.data_onover.call($$.api, d2));
 	},
 
 	/**
@@ -466,18 +495,7 @@ extend(ChartInternal.prototype, {
 						return;
 					}
 
-					const index = d.index;
-
-					// Expand shapes for selection
-					if (config.point_focus_expand_enabled) {
-						$$.expandCircles(index, null, true);
-					}
-
-					$$.expandBars(index, null, true);
-
-					// Call event handler
-					index !== -1 && $$.main.selectAll(`.${CLASS.shape}-${index}`)
-						.each(d2 => config.data_onover.call($$.api, d2));
+					$$.setOver(d.index);
 				})
 				.on("mousemove", function(d) {
 					// do nothing while dragging/flowing
@@ -572,7 +590,7 @@ extend(ChartInternal.prototype, {
 
 		if ($$.inputType === "mouse") {
 			rect
-				.on("mouseover", function() {
+				.on("mouseover mousemove", function() {
 					$$.selectRectForMultipleXs(this);
 				})
 				.on("mouseout", () => {
@@ -582,9 +600,6 @@ extend(ChartInternal.prototype, {
 					}
 
 					$$.unselectRect();
-				})
-				.on("mousemove", function() {
-					$$.selectRectForMultipleXs(this);
 				});
 		}
 
@@ -606,15 +621,15 @@ extend(ChartInternal.prototype, {
 
 		const eventRect = $$.main.select(selector).node();
 		const box = eventRect.getBoundingClientRect();
-		const x = box.left + (mouse ? mouse[0] : 0);
+		const x = box.left + (mouse ? mouse[0] : 0) + (box.width / 2);
 		const y = box.top + (mouse ? mouse[1] : 0);
-		const mouseEvent = getMouseEvent();
-
-		eventRect.dispatchEvent(mouseEvent(type, {
+		const params = {
 			screenX: x,
 			screenY: y,
 			clientX: x,
 			clientY: y
-		}));
+		};
+
+		emulateEvent[/^mouse/.test(type) ? "mouse" : "touch"](eventRect, type, params);
 	}
 });

@@ -76,9 +76,7 @@ describe("TOOLTIP", function() {
 		}
 	};
 
-
 	const checkCallback = (chart, doHide) => {
-
 		const eventRect = chart.internal.main
 			.select(`.${CLASS.eventRect}-2`)
 			.node();
@@ -101,7 +99,6 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("Tooltip callbacks", () => {
-
 		before(() => {
 			args.tooltip.onshow = () => {
 				if (chart.internal.cache.callback_test === 0) {
@@ -138,7 +135,6 @@ describe("TOOLTIP", function() {
 			let test = chart.internal.cache.callback_test;
 			expect(test).to.be.equal(4);
 		});
-
 
 		describe("show/shown should execute in proper order", () => {
 			before(() => {
@@ -181,8 +177,6 @@ describe("TOOLTIP", function() {
 				expect(chart.internal.cache.callback_test2).to.be.equal(2);
 			});
 		});
-
-
 	});
 
 	describe("tooltip position", () => {
@@ -445,10 +439,6 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("linked tooltip order", () => {
-		before(() => {
-
-		});
-
 		it("chart 1 should sort values in data display order", () => {
 			checkLinkedTooltip(chart, chart2, [
 				`${CLASS.tooltipName}-data1`,
@@ -592,6 +582,48 @@ describe("TOOLTIP", function() {
 		it("chart 2 data.order function should be called", () => {
 			checkLinkedTooltip(chart2, chart);
 			expect(args2.tooltip.order.called).to.be.true;
+		});
+	});
+
+	describe("tooltip display at initialization", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 150, 120, 110, 140, 115, 125]
+					]
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				},
+				tooltip: {
+					init: {
+						show: true,
+						x: 1,
+						position: {
+							left: "100px",
+							top: "30px"
+						}
+					}
+				}
+			};
+		});
+
+		it("tooltip should be displayed", () => {
+			const tooltip = chart.internal.tooltip;
+			const pos = {
+				left: tooltip.style("left"),
+				top: tooltip.style("top")
+			};
+
+			expect(tooltip.style("display")).to.be.equal("block");
+
+			expect(pos.left).to.be.equal(args.tooltip.init.position.left);
+			expect(pos.top).to.be.equal(args.tooltip.init.position.top);
 		});
 	});
 });

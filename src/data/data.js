@@ -120,6 +120,13 @@ extend(ChartInternal.prototype, {
 		return data;
 	},
 
+	getAllValuesOnIndex(index) {
+		const $$ = this;
+
+		return $$.filterTargetsToShow($$.data.targets)
+			.map(t => $$.addName($$.getValueOnIndex(t.values, index)));
+	},
+
 	getValueOnIndex(values, index) {
 		const valueOnIndex = values.filter(v => v.index === index);
 
