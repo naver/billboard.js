@@ -5,7 +5,7 @@
  */
 import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import {select as d3Select} from "d3-selection";
-import {isArray, toArray, isDefined, isFunction} from "../internals/util";
+import {isArray, toArray, isDefined, isFunction, isString} from "../internals/util";
 
 // Features:
 // 1. category axis
@@ -197,13 +197,19 @@ export default function(params = {}) {
 			// this should be called only when category axis
 			function splitTickText(d, maxWidthValue) {
 				const tickText = textFormatted(d);
-				const splitted = [];
+				const splitted = isString(tickText) && tickText.indexOf("\n") > -1 ?
+					tickText.split("\n") : [];
+
+				if (splitted.length) {
+					return splitted;
+				}
+
 				let maxWidth = maxWidthValue;
 				let subtext;
 				let spaceIndex;
 				let textWidth;
 
-				if (Object.prototype.toString.call(tickText) === "[object Array]") {
+				if (isArray(tickText)) {
 					return tickText;
 				}
 
@@ -215,6 +221,7 @@ export default function(params = {}) {
 
 				function split(splitted, text) {
 					spaceIndex = undefined;
+
 					for (let i = 1; i < text.length; i++) {
 						if (text.charAt(i) === " ") {
 							spaceIndex = i;

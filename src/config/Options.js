@@ -1418,6 +1418,8 @@ export default class Options {
 
 			/**
 			 * Set tick text to be multiline
+			 * - **NOTE:**
+			 *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
 			 * @name axis․x․tick․multiline
 			 * @memberOf Options
 			 * @type {Boolean}
@@ -1430,12 +1432,24 @@ export default class Options {
 			 *     }
 			 *   }
 			 * }
+			 * @example
+			 * // example of line break with '\n'
+			 * // In this case, 'axis.x.tick.width' is ignored
+			 * data: {
+			 *    x: "x",
+			 *    columns: [
+			 *        ["x", "long\ntext", "Another\nLong\nText"],
+			 *        ...
+			 *    ],
+			 * }
 			 */
 			axis_x_tick_multiline: true,
 
 
 			/**
 			 * Set tick width
+			 * - **NOTE:**
+			 *  > When x tick text contains `\n`, this option is ignored.
 			 * @name axis․x․tick․width
 			 * @memberOf Options
 			 * @type {Number}

@@ -628,6 +628,28 @@ describe("AXIS", function() {
 			});
 		});
 
+		describe("tick text with '\n' to line break", () => {
+			const tickText = "this is a very\nlong\ntick text";
+
+			before(() => {
+				args.axis.x.tick.format = () => tickText;
+			});
+
+			it("should have multiline tick text", () => {
+				const tick = chart.internal.main.select(`.${CLASS.axisX}`).select("g.tick");
+				const tspans = tick.selectAll("tspan");
+				const lineBreaks = tickText.split("\n");
+
+				expect(tspans.size()).to.be.equal(lineBreaks.length);
+
+				tspans.each(function(d, i) {
+					const tspan = d3.select(this);
+
+					expect(tspan.text()).to.be.equal(lineBreaks[i]);
+				});
+			});
+		});
+
 		describe("axis.x.tick.format for category type", () => {
 			const len = 3;
 
