@@ -2104,6 +2104,7 @@ export default class Options {
 			 * @name grid
 			 * @memberOf Options
 			 * @type {Object}
+			 * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
 			 * @property {Boolean} [x.show=false] Show grids along x axis.
 			 * @property {Boolean} [x.lines=[]] Show additional grid lines along x axis.<br>
 			 *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
@@ -2111,9 +2112,9 @@ export default class Options {
 			 * @property {Boolean} [y.show=false] Show grids along x axis.
 			 * @property {Boolean} [y.lines=[]] Show additional grid lines along y axis.<br>
 			 *  This option accepts array including object that has value, text, position and class.
-			 * @property {Boolean} [y.ticks=10]
+			 * @property {Boolean} [y.ticks=10] Number of y grids to be shown.
 			 * @property {Boolean} [focus.show=true] Show grids when focus.
-			 * @property {Boolean} [lines.front=true]
+			 * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
 			 * @default undefined
 			 * @example
 			 * grid: {
@@ -2134,6 +2135,7 @@ export default class Options {
 			 *     ],
 			 *     ticks: 5
 			 *   },
+			 *   front: true,
 			 *   focus: {
 			 *      show: false
 			 *   },
@@ -2149,6 +2151,7 @@ export default class Options {
 			grid_y_lines: [],
 			grid_y_ticks: 10,
 			grid_focus_show: true,
+			grid_front: false,
 			grid_lines_front: true,
 
 			/**

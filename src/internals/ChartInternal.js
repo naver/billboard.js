@@ -322,6 +322,7 @@ export default class ChartInternal {
 
 		// Grid lines
 		config.grid_lines_front && $$.initGridLines();
+		config.grid_front && $$.initXYFocusGrid();
 
 		// Cover whole with rects for events
 		$$.initEventRect();

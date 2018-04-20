@@ -15,30 +15,10 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		$$.grid = $$.main.append("g")
-			.attr("clip-path", $$.clipPathForGrid)
-			.attr("class", CLASS.grid);
-
-		if (config.grid_x_show) {
-			$$.grid.append("g").attr("class", CLASS.xgrids);
-		}
-
-		if (config.grid_y_show) {
-			$$.grid.append("g").attr("class", CLASS.ygrids);
-		}
-
-		if (config.grid_focus_show) {
-			$$.grid.append("g")
-				.attr("class", CLASS.xgridFocus)
-				.append("line")
-				.attr("class", CLASS.xgridFocus);
-		}
-
 		$$.xgrid = d3SelectAll([]);
 
-		if (!config.grid_lines_front) {
-			$$.initGridLines();
-		}
+		!config.grid_lines_front && $$.initGridLines();
+		!config.grid_front && $$.initXYFocusGrid();
 	},
 
 	initGridLines() {
@@ -150,9 +130,7 @@ extend(ChartInternal.prototype, {
 		main.select(`line.${CLASS.xgridFocus}`)
 			.style("visibility", "hidden");
 
-		if (config.grid_x_show) {
-			$$.updateXGrid();
-		}
+		config.grid_x_show && $$.updateXGrid();
 
 		$$.xgridLines = main.select(`.${CLASS.xgridLines}`)
 			.selectAll(`.${CLASS.xgridLine}`)
@@ -181,9 +159,8 @@ extend(ChartInternal.prototype, {
 		$$.xgridLines = xgridLine.merge($$.xgridLines);
 
 		// Y-Grid
-		if (config.grid_y_show) {
-			$$.updateYGrid();
-		}
+		config.grid_y_show && $$.updateYGrid();
+
 		$$.ygridLines = main.select(`.${CLASS.ygridLines}`)
 			.selectAll(`.${CLASS.ygridLine}`)
 			.data(config.grid_y_lines);
@@ -257,6 +234,30 @@ extend(ChartInternal.prototype, {
 			(withTransition ? lines.transition() : lines).style("opacity", "1"),
 			(withTransition ? texts.transition() : texts).style("opacity", "1")
 		];
+	},
+
+	initXYFocusGrid() {
+		const $$ = this;
+		const config = $$.config;
+
+		$$.grid = $$.main.append("g")
+			.attr("clip-path", $$.clipPathForGrid)
+			.attr("class", CLASS.grid);
+
+		if (config.grid_x_show) {
+			$$.grid.append("g").attr("class", CLASS.xgrids);
+		}
+
+		if (config.grid_y_show) {
+			$$.grid.append("g").attr("class", CLASS.ygrids);
+		}
+
+		if (config.grid_focus_show) {
+			$$.grid.append("g")
+				.attr("class", CLASS.xgridFocus)
+				.append("line")
+				.attr("class", CLASS.xgridFocus);
+		}
 	},
 
 	showXGridFocus(selectedData) {
