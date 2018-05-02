@@ -298,9 +298,10 @@ extend(ChartInternal.prototype, {
 
 		if ($$.config.tooltip_linked) {
 			$$.api.internal.charts.forEach(c => {
+				const isLinked = c.internal.config.tooltip_linked;
 				const isInDom = document.body.contains(c.element);
 
-				if (c !== $$.api && isInDom) {
+				if (c !== $$.api && isLinked && isInDom) {
 					const isShowing = c.internal.tooltip.style("display") === "block";
 
 					if (isShowing && !show) {
