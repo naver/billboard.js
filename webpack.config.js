@@ -4,6 +4,7 @@ const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
 const Stylish = require("webpack-stylish");
 const WebpackMonitor = require("webpack-monitor");
+const WebpackBar = require("webpackbar");
 
 const config = {
 	entry: {
@@ -45,7 +46,8 @@ const config = {
 	plugins: [
 		new StringReplacePlugin(),
 		new webpack.optimize.ModuleConcatenationPlugin(),
-		new Stylish()
+		new Stylish(),
+		new WebpackBar()
 	],
 	stats: "minimal",
 	mode: "none"

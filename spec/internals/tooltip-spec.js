@@ -413,7 +413,6 @@ describe("TOOLTIP", function() {
 
 		it("linked tooltips should be set to the coordinate where the function returned", () => {
 			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
-			// const eventRect2 = chart2.internal.main.select(`.${CLASS.eventRect}-2`).node();
 
 			util.fireEvent(eventRect, "mousemove", {
 				clientX: 100,
@@ -568,10 +567,9 @@ describe("TOOLTIP", function() {
 		});
 
 		it("linked charts set options tooltip.order=function", () => {
-			args.tooltip.order = sinon.spy(function(a, b) {
+			args2.tooltip.order = args.tooltip.order = sinon.spy(function(a, b) {
 				return a.value - b.value;
 			});
-			args2.tooltip.order = args.tooltip.order;
 		});
 
 		it("chart 1 data.order function should be called", () => {
@@ -582,6 +580,19 @@ describe("TOOLTIP", function() {
 		it("chart 2 data.order function should be called", () => {
 			checkLinkedTooltip(chart2, chart);
 			expect(args2.tooltip.order.called).to.be.true;
+		});
+	});
+
+	describe("linked tooltip", () => {
+		before(() => {
+			args.tooltip.linked = false;
+			args2.tooltip.order = sinon.spy();
+		});
+
+		it("second chart tooltip shouldn't be called", () => {
+			checkLinkedTooltip(chart, chart2);
+
+			expect(args2.tooltip.order.called).to.be.false;
 		});
 	});
 
