@@ -7,19 +7,24 @@ import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("API load", function() {
-	describe("indexed data as column", () => {
-		const chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400, 150, 250],
-					["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-				]
-			},
-			point: {
-				show: true
-			}
-		});
+	let chart;
+	let args = {
+		data: {
+			columns: [
+				["data1", 30, 200, 100, 400, 150, 250],
+				["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+			]
+		},
+		point: {
+			show: true
+		}
+	};
 
+	beforeEach(() => {
+		chart = util.generate(args);
+	});
+
+	describe("indexed data as column", () => {
 		it("should load additional data", done => {
 			const main = chart.internal.main;
 			const legend = chart.internal.legend;
@@ -45,23 +50,25 @@ describe("API load", function() {
 	});
 
 	describe("category data", () => {
-		const chart = util.generate({
-			data: {
-				x: "x",
-				columns: [
-					["x", "cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
-					["data1", 30, 200, 100, 400, 150, 250],
-					["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-				]
-			},
-			axis: {
-				x: {
-					type: "category"
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "cat1", "cat2", "cat3", "cat4", "cat5", "cat6"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				},
+				point: {
+					show: false
 				}
-			},
-			point: {
-				show: false
-			}
+			};
 		});
 
 		describe("as column", () => {
@@ -123,6 +130,48 @@ describe("API load", function() {
 					done();
 				}, 500);
 			});
+		});
+	});
+
+	describe("JSON data", () => {
+		before(() => {
+			args.data = {
+				json: [
+					{name: "www.site1.com", upload: 200, download: 200},
+					{name: "www.site2.com", upload: 100, download: 300},
+					{name: "www.site3.com", upload: 300, download: 200},
+					{name: "www.site4.com", upload: 400, download: 100}
+				],
+				keys: {
+					x: "name",
+					value: ["upload", "download"]
+				}
+			};
+		});
+
+		it("should load json data", done => {
+			const json = [
+				{name: "www.site5.com", upload: 300, download: 100},
+				{name: "www.site6.com", upload: 400, download: 200},
+				{name: "www.site7.com", upload: 200, download: 400},
+				{name: "www.site8.com", upload: 100, download: 500}
+			];
+
+			chart.load({json});
+
+			setTimeout(() => {
+				const categories = chart.categories();
+				const upload = chart.data.values("upload");
+				const download = chart.data.values("download");
+
+				json.forEach((v, i) => {
+					expect(v.name).to.be.equal(categories[i]);
+					expect(v.upload).to.be.equal(upload[i]);
+					expect(v.download).to.be.equal(download[i]);
+				});
+
+				done();
+			}, 1000);
 		});
 	});
 });

@@ -194,6 +194,7 @@ function removeEvent(element, type, handler) {
 /**
  * Return first letter capitalized
  * @param {String} str
+ * @return {String} capitalized string
  * @private
  */
 const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
@@ -265,33 +266,33 @@ const getCssRules = styleSheets => {
 };
 
 export {
-	isValue,
-	isDefined,
-	isUndefined,
-	isBoolean,
-	isString,
-	isNumber,
+	addEvent,
+	asHalfPixel,
+	brushEmpty,
+	capitalize,
+	ceil10,
+	diffDomain,
+	extend,
+	getBrushSelection,
+	getCssRules,
+	getOption,
+	getPathBox,
+	getRectSegList,
+	hasValue,
 	isArray,
+	isBoolean,
+	isDefined,
 	isEmpty,
+	isFunction,
+	isNumber,
 	isObject,
 	isObjectType,
+	isString,
+	isUndefined,
+	isValue,
 	notEmpty,
-	ceil10,
-	isFunction,
-	asHalfPixel,
-	getOption,
-	hasValue,
-	sanitise,
-	getPathBox,
-	diffDomain,
-	getBrushSelection,
-	brushEmpty,
-	extend,
-	addEvent,
-	removeEvent,
-	getRectSegList,
 	merge,
-	capitalize,
-	toArray,
-	getCssRules
+	removeEvent,
+	sanitise,
+	toArray
 };
