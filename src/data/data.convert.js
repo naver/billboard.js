@@ -73,15 +73,18 @@ extend(ChartInternal.prototype, {
 		}, tsv);
 	},
 
-	convertJsonToData(json, keys) {
+	convertJsonToData(json, keysParam) {
+		const config = this.config;
 		const newRows = [];
 		let targetKeys;
 		let data;
 
-		if (keys) { // when keys specified, json would be an array that includes objects
+		if (isArray(json)) {
+			const keys = keysParam || config.data_keys;
+
 			if (keys.x) {
 				targetKeys = keys.value.concat(keys.x);
-				this.config.data_x = keys.x;
+				config.data_x = keys.x;
 			} else {
 				targetKeys = keys.value;
 			}
@@ -90,11 +93,10 @@ extend(ChartInternal.prototype, {
 
 			json.forEach(o => {
 				const newRow = [];
-				let v;
 
 				for (const key of targetKeys) {
 					// convert undefined to null because undefined data will be removed in convertDataToTargets()
-					v = this.findValueInJson(o, key);
+					let v = this.findValueInJson(o, key);
 
 					if (isUndefined(v)) {
 						v = null;
@@ -102,6 +104,7 @@ extend(ChartInternal.prototype, {
 
 					newRow.push(v);
 				}
+
 				newRows.push(newRow);
 			});
 
