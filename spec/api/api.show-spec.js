@@ -153,7 +153,7 @@ describe("API show", () => {
 			chart.toggle();
 
 			main.selectAll(`.${CLASS.chartLine}`).each(function() {
-				expect(+this.style.opacity).to.be.equal(0);
+				expect(+this.style.opacity).to.be.below(1);
 			});
 
 			legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);

@@ -29,41 +29,24 @@ describe("TOOLTIP", function() {
 		},
 		tooltip: {}
 	};
+	const spy1 = sinon.spy();
+	const spy2 = sinon.spy();
 
-
-	// check for the tooltip's ordering
-	const checkTooltip = (chart, expected) => {
-		const eventRect = chart.internal.main
-			.select(`.${CLASS.eventRect}-2`)
-			.node();
-
-		util.fireEvent(eventRect, "mousemove", {
-			clientX: 100,
-			clientY: 100
-		}, chart);
-
-		const tooltips = d3.select(chart.element)
-			.selectAll(`.${CLASS.tooltip} tr`)
-			.nodes();
-
-		if (expected) {
-			for (let i = 1, el; (el = tooltips[i]); i++) {
-				expect(el.className).to.be.equal(expected[i - 1]);
-			}
-		}
-
-	};
-
-	// check for the tooltip's ordering
-	const checkLinkedTooltip = (hoverChart, checkChart, expected) => {
+	// hover chart
+	const hoverChart = (hoverChart, eventName = "mousemove") => {
 		const eventRect = hoverChart.internal.main
 			.select(`.${CLASS.eventRect}-2`)
 			.node();
 
-		util.fireEvent(eventRect, "mousemove", {
+		util.fireEvent(eventRect, eventName, {
 			clientX: 100,
 			clientY: 100
 		}, hoverChart);
+	};
+
+	// check for the tooltip's ordering
+	const checkTooltip = (checkChart, expected) => {
+		hoverChart(checkChart);
 
 		const tooltips = d3.select(checkChart.element)
 			.selectAll(`.${CLASS.tooltip} tr`)
@@ -74,24 +57,27 @@ describe("TOOLTIP", function() {
 				expect(el.className).to.be.equal(expected[i - 1]);
 			}
 		}
+
 	};
 
-	const checkCallback = (chart, doHide) => {
-		const eventRect = chart.internal.main
-			.select(`.${CLASS.eventRect}-2`)
-			.node();
+	// check for the tooltip's ordering
+	const checkLinkedTooltip = (chart1, chart2, expected) => {
+		hoverChart(chart1);
 
-		util.fireEvent(eventRect, "mousemove", {
-			clientX: 100,
-			clientY: 100
-		}, chart);
+		const tooltips = d3.select(chart2.element)
+			.selectAll(`.${CLASS.tooltip} tr`)
+			.nodes();
 
-		if (doHide) {
-			util.fireEvent(eventRect, "mouseout", {
-				clientX: 100,
-				clientY: 100
-			}, chart);
+		if (expected) {
+			for (let i = 1, el; (el = tooltips[i]); i++) {
+				expect(el.className).to.be.equal(expected[i - 1]);
+			}
 		}
+	};
+
+	const checkCallback = (checkChart, doHide) => {
+		hoverChart(checkChart);
+		doHide && hoverChart(checkChart, "mouseout");
 	};
 
 	beforeEach(() => {
@@ -182,12 +168,7 @@ describe("TOOLTIP", function() {
 	describe("tooltip position", () => {
 		describe("without left margin", () => {
 			it("should show tooltip on proper position", () => {
-				const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
-
-				util.fireEvent(eventRect, "mousemove", {
-					clientX: 100,
-					clientY: 100
-				}, chart);
+				hoverChart(chart);
 
 				const tooltipContainer = chart.internal.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
@@ -211,12 +192,7 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should show tooltip on proper position", () => {
-				const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
-
-				util.fireEvent(eventRect, "mousemove", {
-					clientX: 100,
-					clientY: 100
-				}, chart);
+				hoverChart(chart);
 
 				const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
@@ -254,12 +230,8 @@ describe("TOOLTIP", function() {
 		});
 
 		it("should be set to the coordinate where the function returned", () => {
-			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
+			hoverChart(chart);
 
-			util.fireEvent(eventRect, "mousemove", {
-				clientX: 100,
-				clientY: 100
-			}, chart);
 			const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
 			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
@@ -366,6 +338,38 @@ describe("TOOLTIP", function() {
 		});
 	});
 
+	describe("linked tooltip", () => {
+		beforeEach(() => {
+			spy1.resetHistory();
+			spy2.resetHistory();
+		});
+
+		it("set options tooltip.linked=false", () => {
+			args.tooltip.linked = false;
+			args2.tooltip.order = spy2;
+		});
+
+		it("second chart tooltip shouldn't be called", () => {
+			hoverChart(chart);
+
+			expect(args2.tooltip.order.called).to.be.false;
+		});
+
+		it("set options tooltip.linked=false", () => {
+			args2.tooltip.linked = args.tooltip.linked = {name: "some"};
+			args.tooltip.order = spy1;
+
+			chart2 = util.generate(args2);
+		});
+
+		it("both charts should be called", () => {
+			hoverChart(chart2);
+
+			expect(args.tooltip.order.called).to.be.true;
+			expect(args2.tooltip.order.called).to.be.true;
+		});
+	});
+
 	describe("linked tooltip positionFunction", () => {
 		const topExpected = 37;
 		const leftExpected = 79;
@@ -412,12 +416,8 @@ describe("TOOLTIP", function() {
 		});
 
 		it("linked tooltips should be set to the coordinate where the function returned", () => {
-			const eventRect = chart.internal.main.select(`.${CLASS.eventRect}-2`).node();
+			hoverChart(chart);
 
-			util.fireEvent(eventRect, "mousemove", {
-				clientX: 100,
-				clientY: 100
-			}, chart);
 			const tooltipContainer1 = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
 			const top1 = Math.floor(+tooltipContainer1.style("top").replace(/px/, ""));
 			const left1 = Math.floor(+tooltipContainer1.style("left").replace(/px/, ""));
@@ -567,9 +567,7 @@ describe("TOOLTIP", function() {
 		});
 
 		it("linked charts set options tooltip.order=function", () => {
-			args2.tooltip.order = args.tooltip.order = sinon.spy(function(a, b) {
-				return a.value - b.value;
-			});
+			args2.tooltip.order = args.tooltip.order = sinon.spy((a, b) =>  a.value - b.value);
 		});
 
 		it("chart 1 data.order function should be called", () => {
@@ -580,19 +578,6 @@ describe("TOOLTIP", function() {
 		it("chart 2 data.order function should be called", () => {
 			checkLinkedTooltip(chart2, chart);
 			expect(args2.tooltip.order.called).to.be.true;
-		});
-	});
-
-	describe("linked tooltip", () => {
-		before(() => {
-			args.tooltip.linked = false;
-			args2.tooltip.order = sinon.spy();
-		});
-
-		it("second chart tooltip shouldn't be called", () => {
-			checkLinkedTooltip(chart, chart2);
-
-			expect(args2.tooltip.order.called).to.be.false;
 		});
 	});
 

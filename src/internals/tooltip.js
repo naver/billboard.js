@@ -297,17 +297,20 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		if ($$.config.tooltip_linked) {
+			const linkedName = $$.config.tooltip_linked_name;
+
 			$$.api.internal.charts.forEach(c => {
-				const isLinked = c.internal.config.tooltip_linked;
-				const isInDom = document.body.contains(c.element);
+				if (c !== $$.api) {
+					const internal = c.internal;
+					const isLinked = internal.config.tooltip_linked;
+					const name = internal.config.tooltip_linked_name;
+					const isInDom = document.body.contains(c.element);
 
-				if (c !== $$.api && isLinked && isInDom) {
-					const isShowing = c.internal.tooltip.style("display") === "block";
+					if (isLinked && linkedName === name && isInDom) {
+						const isShowing = internal.tooltip.style("display") === "block";
 
-					if (isShowing && !show) {
-						c.tooltip.hide();
-					} else if (!isShowing && show) {
-						c.tooltip.show({x});
+						isShowing ^ show &&
+							c.tooltip[isShowing ? "hide" : "show"]({x});
 					}
 				}
 			});

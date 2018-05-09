@@ -2523,7 +2523,8 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
-			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.<br>
+			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
+			 * @property {Boolean} [tooltip.linked.name] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
 			 * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
 			 *  Specified function receives x of the data point to show.
 			 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
@@ -2597,7 +2598,12 @@ export default class Options {
 			 *
 			 *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
 			 *      // Useful for timeseries correlation
-			 *      linked: true
+			 *      linked: true,
+			 *
+			 *      // Specify name to interact those with the same name only.
+			 *      linked: {
+			 *          name: "some-group"
+			 *      }
 			 *  }
 			 */
 			tooltip_show: true,
@@ -2617,6 +2623,7 @@ export default class Options {
 				left: "50px"
 			},
 			tooltip_linked: false,
+			tooltip_linked_name: "",
 			tooltip_onshow: () => {},
 			tooltip_onhide: () => {},
 			tooltip_onshown: () => {},
