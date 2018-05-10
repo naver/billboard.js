@@ -2,9 +2,10 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {select as d3Select} from "d3-selection";
 import Chart from "../internals/Chart";
 import {window} from "../internals/browser";
-import {removeEvent, extend} from "../internals/util";
+import {notEmpty, isDefined, extend} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
@@ -56,24 +57,26 @@ extend(Chart.prototype, {
 	destroy() {
 		const $$ = this.internal;
 
-		$$.charts.splice($$.charts.indexOf(this), 1);
-		window.clearInterval($$.intervalForObserveInserted);
+		if (notEmpty($$)) {
+			$$.charts.splice($$.charts.indexOf(this), 1);
 
-		$$.resizeTimeout !== undefined &&
-			window.clearTimeout($$.resizeTimeout);
+			// clear timers
+			isDefined($$.intervalForObserveInserted) && window.clearInterval($$.intervalForObserveInserted);
+			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
-		removeEvent(window, "resize", $$.resizeFunction);
-		$$.selectChart.classed("bb", false).html("");
+			d3Select(window).on("resize", null);
+			$$.selectChart.classed("bb", false).html("");
 
-		// Reference of some elements will not be released, then memory leak will happen.
-		Object.keys(this).forEach(key => {
-			key === "internal" && Object.keys($$).forEach(k => {
-				$$[k] = null;
+			// releasing references
+			Object.keys(this).forEach(key => {
+				key === "internal" && Object.keys($$).forEach(k => {
+					$$[k] = null;
+				});
+
+				this[key] = null;
+				delete this[key];
 			});
-
-			this[key] = null;
-			delete this[key];
-		});
+		}
 
 		return null;
 	}
