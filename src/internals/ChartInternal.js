@@ -18,7 +18,7 @@ import {transition as d3Transition} from "d3-transition";
 
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {addEvent, notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";
+import {notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";
 
 /**
  * Internal chart class.
@@ -84,6 +84,7 @@ export default class ChartInternal {
 	initParams() {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
 		$$.datetimeId = `bb-${+new Date()}`;
@@ -133,15 +134,15 @@ export default class ChartInternal {
 		$$.focusedTargetIds = [];
 		$$.defocusedTargetIds = [];
 
-		$$.xOrient = config.axis_rotated ? "left" : "bottom";
+		$$.xOrient = isRotated ? "left" : "bottom";
 
-		$$.yOrient = config.axis_rotated ?
+		$$.yOrient = isRotated ?
 			(config.axis_y_inner ? "top" : "bottom") : (config.axis_y_inner ? "right" : "left");
 
-		$$.y2Orient = config.axis_rotated ?
+		$$.y2Orient = isRotated ?
 			(config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
 
-		$$.subXOrient = config.axis_rotated ? "left" : "bottom";
+		$$.subXOrient = isRotated ? "left" : "bottom";
 		$$.isLegendRight = config.legend_position === "right";
 		$$.isLegendInset = config.legend_position === "inset";
 
@@ -162,7 +163,7 @@ export default class ChartInternal {
 		};
 
 		$$.rotated_padding_left = 30;
-		$$.rotated_padding_right = config.axis_rotated && !config.axis_x_show ? 0 : 30;
+		$$.rotated_padding_right = isRotated && !config.axis_x_show ? 0 : 30;
 		$$.rotated_padding_top = 5;
 
 		$$.withoutFadeIn = {};
@@ -1133,9 +1134,8 @@ export default class ChartInternal {
 
 		if (config.resize_auto) {
 			$$.resizeFunction.add(() => {
-				if ($$.resizeTimeout !== undefined) {
+				isDefined($$.resizeTimeout) &&
 					window.clearTimeout($$.resizeTimeout);
-				}
 
 				$$.resizeTimeout = window.setTimeout(() => {
 					delete $$.resizeTimeout;
@@ -1148,7 +1148,7 @@ export default class ChartInternal {
 			config.onresized.call($$);
 		});
 
-		addEvent(window, "resize", $$.resizeFunction);
+		d3Select(window).on("resize", $$.resizeFunction);
 	}
 
 	generateResize() {
