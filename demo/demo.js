@@ -5,8 +5,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					]
 				}
 			},
@@ -15,7 +15,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data1', 230, 190, 300, 500, 300, 400]
+								["data1", 230, 190, 300, 500, 300, 400]
 							]
 						});
 					}, 1000),
@@ -23,14 +23,14 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', 130, 150, 200, 300, 200, 100]
+								["data3", 130, 150, 200, 300, 200, 100]
 							]
 						});
 					}, 1500),
 
 					setTimeout(function() {
 						chart.unload({
-							ids: 'data1'
+							ids: "data1"
 						});
 					}, 2000)
 				];
@@ -39,18 +39,18 @@ var demos = {
 		TimeseriesChart: {
 			options: {
 				data: {
-					x: 'x',
-					//  xFormat: '%Y%m%d', // 'xFormat' can be used as custom format of 'x'
+					x: "x",
+					//  xFormat: "%Y%m%d", // "xFormat" can be used as custom format of "x"
 					columns: [
-						['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-						// ['x', '20130101', '20130102', '20130103', '20130104', '20130105', '20130106'],
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 340, 200, 500, 250, 350]
+						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+						// ["x", "20130101", "20130102", "20130103", "20130104", "20130105", "20130106"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						tick: {
 							format: '%Y-%m-%d'
 						}
@@ -62,7 +62,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', 400, 500, 450, 700, 600, 500]
+								["data3", 400, 500, 450, 700, 600, 500]
 							]
 						});
 					}, 1000)
@@ -73,21 +73,21 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'spline'
+					type: "spline"
 				}
 			}
 		},
 		SimpleXYLineChart: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', 30, 50, 100, 230, 300, 310],
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 300, 200, 300, 250, 450]
+						["x", 30, 50, 100, 230, 300, 310],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 300, 200, 300, 250, 450]
 					]
 				}
 			},
@@ -96,7 +96,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data1', 100, 250, 150, 200, 100, 350]
+								["data1", 100, 250, 150, 200, 100, 350]
 							]
 						});
 					}, 1000),
@@ -104,14 +104,14 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', 80, 150, 100, 180, 80, 150]
+								["data3", 80, 150, 100, 180, 80, 150]
 							]
 						});
 					}, 1500),
 
 					setTimeout(function() {
 						chart.unload({
-							ids: 'data2'
+							ids: "data2"
 						});
 					}, 2000)
 				];
@@ -121,14 +121,14 @@ var demos = {
 			options: {
 				data: {
 					xs: {
-						'data1': 'x1',
-						'data2': 'x2',
+						"data1": "x1",
+						"data2": "x2",
 					},
 					columns: [
-						['x1', 10, 30, 45, 50, 70, 100],
-						['x2', 30, 50, 75, 100, 120],
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 20, 180, 240, 100, 190]
+						["x1", 10, 30, 45, 50, 70, 100],
+						["x2", 30, 50, 75, 100, 120],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 20, 180, 240, 100, 190]
 					]
 				}
 			}
@@ -137,12 +137,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					regions: {
-						'data1': [{'start': 1, 'end': 2, 'style': 'dashed'}, {'start': 3}], // currently 'dashed' style only
-						'data2': [{'end': 3}]
+						"data1": [{"start": 1, "end": 2, "style": "dashed"}, {"start": 3}], // currently "dashed" style only
+						"data2": [{"end": 3}]
 					}
 				}
 			}
@@ -151,11 +151,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 300, 350, 300, 0, 0, 100],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 300, 350, 300, 0, 0, 100],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
 					types: {
-						data1: 'step',
+						data1: "step",
 						data2: 'area-step'
 					}
 				}
@@ -165,11 +165,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 300, 350, 300, 0, 0, 0],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
 					types: {
-						data1: 'area',
+						data1: "area",
 						data2: 'area-spline'
 					}
 				}
@@ -212,17 +212,18 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
+								["data3", [220, 215, 205], [240, 225, 215], [260, 235, 225], [280, 245, 235], [270, 255, 225], [240, 225, 215]],
 							],
 							types: {
 								data3: "area-spline-range"
 							}
 						});
 					}, 1000),
+
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data4',
+								["data4",
 									{high: 155, low: 145, mid: 150},
 									{high: 200, mid: 190, low: 150},
 									{high: 230, mid: 215, low: 200},
@@ -243,15 +244,17 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 300, 350, 300, 0, 0, 120],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 300, 350, 300, 0, 0, 120],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
 					types: {
 						data1: 'area-spline',
 						data2: 'area-spline'
-						// 'line', 'spline', 'step', 'area', 'area-step' are also available to stack
+						// "line", "spline", "step", "area", 'area-step' are also available to stack
 					},
-					groups: [['data1', 'data2']]
+					groups: [
+						["data1", "data2"]
+					]
 				}
 			}
 		},
@@ -259,10 +262,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'bar'
+					type: "bar"
 				},
 				bar: {
 					width: {
@@ -277,7 +280,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', 130, -150, 200, 300, -200, 100]
+								["data3", 130, -150, 200, 300, -200, 100]
 							]
 						});
 					}, 1000)
@@ -288,13 +291,13 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', -30, 200, 200, 400, -150, 250],
-						['data2', 130, 100, -100, 200, -150, 50],
-						['data3', -230, 200, 200, -300, 250, 250]
+						["data1", -30, 200, 200, 400, -150, 250],
+						["data2", 130, 100, -100, 200, -150, 50],
+						["data3", -230, 200, 200, -300, 250, 250]
 					],
-					type: 'bar',
+					type: "bar",
 					groups: [
-						['data1', 'data2']
+						["data1", "data2"]
 					]
 				},
 				grid: {
@@ -306,17 +309,17 @@ var demos = {
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.groups([['data1', 'data2', 'data3']])
+						chart.groups([["data1", "data2", "data3"]])
 					}, 1000),
 
 					setTimeout(function() {
 						chart.load({
-							columns: [['data4', 100, -50, 150, 200, -300, -100]]
+							columns: [["data4", 100, -50, 150, 200, -300, -100]]
 						});
 					}, 1500),
 
 					setTimeout(function() {
-						chart.groups([['data1', 'data2', 'data3', 'data4']])
+						chart.groups([["data1", "data2", "data3", "data4"]])
 					}, 2000)
 				];
 			}
@@ -325,8 +328,8 @@ var demos = {
 			options: {
 				data: {
 					xs: {
-						setosa: 'setosa_x',
-						versicolor: 'versicolor_x',
+						setosa: "setosa_x",
+						versicolor: "versicolor_x",
 					},
 					// iris data from R
 					columns: [
@@ -335,17 +338,17 @@ var demos = {
 						["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
 						["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
 					],
-					type: 'scatter'
+					type: "scatter"
 				},
 				axis: {
 					x: {
-						label: 'Sepal.Width',
+						label: "Sepal.Width",
 						tick: {
 							fit: false
 						}
 					},
 					y: {
-						label: 'Petal.Width'
+						label: "Petal.Width"
 					}
 				}
 			},
@@ -354,7 +357,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							xs: {
-								virginica: 'virginica_x'
+								virginica: "virginica_x"
 							},
 							columns: [
 								["virginica_x", 3.3, 2.7, 3.0, 2.9, 3.0, 3.0, 2.5, 2.9, 2.5, 3.6, 3.2, 2.7, 3.0, 2.5, 2.8, 3.2, 3.0, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2, 2.8, 3.0, 2.8, 3.0, 2.8, 3.8, 2.8, 2.8, 2.6, 3.0, 3.4, 3.1, 3.0, 3.1, 3.1, 3.1, 2.7, 3.2, 3.3, 3.0, 2.5, 3.0, 3.4, 3.0],
@@ -365,7 +368,7 @@ var demos = {
 
 					setTimeout(function() {
 						chart.unload({
-							ids: 'setosa'
+							ids: "setosa"
 						});
 					}, 2000),
 
@@ -384,10 +387,10 @@ var demos = {
 				data: {
 					// iris data from R
 					columns: [
-						['data1', 30],
-						['data2', 120],
+						["data1", 30],
+						["data2", 120],
 					],
-					type: 'pie',
+					type: "pie",
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
 					},
@@ -412,12 +415,8 @@ var demos = {
 					}, 1500),
 
 					setTimeout(function() {
-						chart.unload({
-							ids: 'data1'
-						});
-						chart.unload({
-							ids: 'data2'
-						});
+						chart.unload({ ids: "data1" });
+						chart.unload({ ids: "data2" });
 					}, 2500)
 				]
 			}
@@ -426,10 +425,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 120],
+						["data1", 30],
+						["data2", 120],
 					],
-					type: 'donut',
+					type: "donut",
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
 					},
@@ -458,10 +457,10 @@ var demos = {
 
 					setTimeout(function() {
 						chart.unload({
-							ids: 'data1'
+							ids: "data1"
 						});
 						chart.unload({
-							ids: 'data2'
+							ids: "data2"
 						});
 					}, 2500)
 				];
@@ -471,9 +470,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data', 91.4]
+						["data", 91.4]
 					],
-					type: 'gauge',
+					type: "gauge",
 					onclick: function(d, i) {
 						console.log("onclick", d, i);
 					},
@@ -499,7 +498,7 @@ var demos = {
 				color: {
 					pattern: ['#FF0000', '#F97600', '#F6C600', '#60B044'], // the three color levels for the percentage values.
 					threshold: {
-						// unit: 'value', // percentage is default
+						// unit: "value", // percentage is default
 						// max: 200, // 100 is default
 						values: [30, 60, 90, 100]
 					}
@@ -512,31 +511,31 @@ var demos = {
 				chart.timer = [
 					setTimeout(function() {
 						chart.load({
-							columns: [['data', 10]]
+							columns: [["data", 10]]
 						});
 					}, 1000),
 
 					setTimeout(function() {
 						chart.load({
-							columns: [['data', 50]]
+							columns: [["data", 50]]
 						});
 					}, 2000),
 
 					setTimeout(function() {
 						chart.load({
-							columns: [['data', 70]]
+							columns: [["data", 70]]
 						});
 					}, 3000),
 
 					setTimeout(function() {
 						chart.load({
-							columns: [['data', 0]]
+							columns: [["data", 0]]
 						});
 					}, 4000),
 
 					setTimeout(function() {
 						chart.load({
-							columns: [['data', 100]]
+							columns: [["data", 100]]
 						});
 					}, 5000)
 				];
@@ -546,11 +545,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 350, 200, 380, 150, 250, 50, 80, 55, 220],
-						['data2', 130, 100, 10, 200, 80, 50, 200, 123, 185, 98],
-						['data3', 230, 153, 85, 300, 250, 120, 5, 84, 99, 289]
+						["data1", 30, 350, 200, 380, 150, 250, 50, 80, 55, 220],
+						["data2", 130, 100, 10, 200, 80, 50, 200, 123, 185, 98],
+						["data3", 230, 153, 85, 300, 250, 120, 5, 84, 99, 289]
 					],
-					type: 'bubble',
+					type: "bubble",
 					labels: true
 				},
 				bubble: {
@@ -570,7 +569,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data1', 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
+								["data1", 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
 							]
 						});
 					}, 1000),
@@ -578,7 +577,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data2', 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
+								["data2", 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
 							]
 						});
 					}, 2000),
@@ -586,7 +585,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
+								["data3", 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
 							]
 						});
 					}, 3000)
@@ -597,23 +596,23 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 20, 50, 40, 60, 50],
-						['data2', 200, 130, 90, 240, 130, 220],
-						['data3', 300, 200, 160, 400, 250, 250],
-						['data4', 200, 130, 90, 240, 130, 220],
-						['data5', 130, 120, 150, 140, 160, 150],
-						['data6', 90, 70, 20, 50, 60, 120],
-						['data7', 283, 170, 275, 143, 220, 255]
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250],
+						["data4", 200, 130, 90, 240, 130, 220],
+						["data5", 130, 120, 150, 140, 160, 150],
+						["data6", 90, 70, 20, 50, 60, 120],
+						["data7", 283, 170, 275, 143, 220, 255]
 					],
-					type: 'bar',
+					type: "bar",
 					types: {
-						data3: 'spline',
-						data4: 'line',
-						data6: 'area',
-						data7: 'step'
+						data3: "spline",
+						data4: "line",
+						data6: "area",
+						data7: "step"
 					},
 					groups: [
-						['data1', 'data2']
+						["data1", "data2"]
 					]
 				}
 			}
@@ -625,13 +624,13 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250, 50, 100, 250]
+						["data1", 30, 200, 100, 400, 150, 250, 50, 100, 250]
 					]
 				},
 				axis: {
 					x: {
-						type: 'category',
-						categories: ['cat1', 'cat2', 'cat3', 'cat4', 'cat5', 'cat6', 'cat7', 'cat8', 'cat9']
+						type: "category",
+						categories: ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8", "cat9"]
 					}
 				}
 			}
@@ -640,11 +639,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					types: {
-						data1: 'bar',
+						data1: "bar",
 					}
 				},
 				axis: {
@@ -656,12 +655,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					axes: {
-						data1: 'y',
-						data2: 'y2'
+						data1: "y",
+						data2: "y2"
 					}
 				},
 				axis: {
@@ -674,20 +673,20 @@ var demos = {
 		XAxisTickFormat: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
-						['sample', 30, 200, 100, 400, 150, 250]
+						["x", '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						tick: {
 							format: function(x) {
+								// format: "%Y" // format string is also available for timeseries data
 								return x.getFullYear();
 							}
-							//format: '%Y' // format string is also available for timeseries data
 						}
 					}
 				}
@@ -696,15 +695,15 @@ var demos = {
 		XAxisTickCount: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
-						['sample', 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
+						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
+						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						tick: {
 							count: 4,
 							format: '%Y-%m-%d'
@@ -716,15 +715,15 @@ var demos = {
 		XAxisTickValues: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
-						['sample', 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
+						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
+						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						tick: {
 							// this also works for non timeseries data
 							values: ['2013-01-05', '2013-01-10']
@@ -737,12 +736,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
 					]
 				},
 				axis: {
 					x: {
-						type: 'category',
+						type: "category",
 						tick: {
 							culling: {
 								max: 4 // the number of tick texts will be adjusted to less than this value
@@ -757,15 +756,15 @@ var demos = {
 		XAxisTickFitting: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', '2013-10-31', '2013-12-31', '2014-01-31', '2014-02-28'],
-						['sample', 30, 100, 400, 150]
+						["x", '2013-10-31', '2013-12-31', '2014-01-31', '2014-02-28'],
+						["sample", 30, 100, 400, 150]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						tick: {
 							fit: true,
 							format: "%e %b %y"
@@ -777,23 +776,23 @@ var demos = {
 		XAxisTimezone: {
 			options: {
 				data: {
-					x: 'x',
-					xFormat: '%Y',
+					x: "x",
+					xFormat: "%Y",
 					columns: [
-//            ['x', '2012-12-31', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05'],
-						['x', '2010', '2011', '2012', '2013', '2014', '2015'],
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 340, 200, 500, 250, 350]
+//            ["x", '2012-12-31', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05'],
+						["x", "2010", "2011", "2012", "2013", "2014", "2015"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						// if true, treat x value as localtime (Default)
 						// if false, convert to UTC internally
 						localtime: false,
 						tick: {
-							format: '%Y-%m-%d %H:%M:%S'
+							format: "%Y-%m-%d %H:%M:%S"
 						}
 					}
 				}
@@ -802,16 +801,16 @@ var demos = {
 		RotateXAxisTickText: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', 'www.somesitename1.com', 'www.somesitename2.com', 'www.somesitename3.com', 'www.somesitename4.com', 'www.somesitename5.com', 'www.somesitename6.com', 'www.somesitename7.com', 'www.somesitename8.com', 'www.somesitename9.com', 'www.somesitename10.com', 'www.somesitename11.com', 'www.somesitename12.com'],
-						['pv', 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
+						["x", "www.somesitename1.com", "www.somesitename2.com", "www.somesitename3.com", "www.somesitename4.com", "www.somesitename5.com", "www.somesitename6.com", "www.somesitename7.com", "www.somesitename8.com", "www.somesitename9.com", "www.somesitename10.com", "www.somesitename11.com", "www.somesitename12.com"],
+						["pv", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
 					],
-					type: 'bar'
+					type: "bar"
 				},
 				axis: {
 					x: {
-						type: 'category',
+						type: "category",
 						tick: {
 							rotate: 75,
 							multiline: false,
@@ -826,7 +825,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 2500]
+						["sample", 30, 200, 100, 400, 150, 2500]
 					]
 				},
 				axis: {
@@ -844,12 +843,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					axes: {
-						data1: 'y',
-						data2: 'y2'
+						data1: "y",
+						data2: "y2"
 					}
 				},
 				axis: {
@@ -867,7 +866,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				axis: {
@@ -884,11 +883,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250],
-						['sample2', 130, 300, 200, 500, 250, 350]
+						["sample", 30, 200, 100, 400, 150, 250],
+						["sample2", 130, 300, 200, 500, 250, 350]
 					],
 					axes: {
-						sample2: 'y2'
+						sample2: "y2"
 					}
 				},
 				axis: {
@@ -909,12 +908,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample1', 30, 200, 100, 400, 150, 250],
-						['sample2', 430, 300, 500, 400, 650, 250]
+						["sample1", 30, 200, 100, 400, 150, 250],
+						["sample2", 430, 300, 500, 400, 650, 250]
 					],
 					axes: {
-						sample1: 'y',
-						sample2: 'y2'
+						sample1: "y",
+						sample2: "y2"
 					}
 				},
 				axis: {
@@ -965,9 +964,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 20, 50, 40, 60, 50],
-						['data2', 200, 130, 90, 240, 130, 220],
-						['data3', 300, 200, 160, 400, 250, 250]
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250]
 					]
 				}
 			}
@@ -976,7 +975,7 @@ var demos = {
 			options: {
 				data: {
 					rows: [
-						['data1', 'data2', 'data3'],
+						["data1", "data2", "data3"],
 						[90, 120, 300],
 						[40, 160, 240],
 						[50, 200, 290],
@@ -1004,19 +1003,19 @@ var demos = {
 							bindto: "#JSONData",
 							data: {
 								json: [
-									{name: 'www.site1.com', upload: 200, download: 200, total: 400},
-									{name: 'www.site2.com', upload: 100, download: 300, total: 400},
-									{name: 'www.site3.com', upload: 300, download: 200, total: 500},
-									{name: 'www.site4.com', upload: 400, download: 100, total: 500}
+									{name: "www.site1.com", upload: 200, download: 200, total: 400},
+									{name: "www.site2.com", upload: 100, download: 300, total: 400},
+									{name: "www.site3.com", upload: 300, download: 200, total: 500},
+									{name: "www.site4.com", upload: 400, download: 100, total: 500}
 								],
 								keys: {
-									// x: 'name', // it's possible to specify 'x' when category axis
-									value: ['upload', 'download'],
+									// x: "name", // it's possible to specify "x" when category axis
+									value: ["upload", "download"],
 								}
 							},
 							axis: {
 								x: {
-									// type: 'category'
+									// type: "category"
 								}
 							}
 						});
@@ -1025,13 +1024,13 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							json: [
-								{name: 'www.site1.com', upload: 800, download: 500, total: 400},
-								{name: 'www.site2.com', upload: 600, download: 600, total: 400},
-								{name: 'www.site3.com', upload: 400, download: 800, total: 500},
-								{name: 'www.site4.com', upload: 400, download: 700, total: 500}
+								{name: "www.site1.com", upload: 800, download: 500, total: 400},
+								{name: "www.site2.com", upload: 600, download: 600, total: 400},
+								{name: "www.site3.com", upload: 400, download: 800, total: 500},
+								{name: "www.site4.com", upload: 400, download: 700, total: 500}
 							],
 							keys: {
-								value: ['upload', 'download']
+								value: ["upload", "download"]
 							}
 						});
 					}, 2000)
@@ -1051,7 +1050,7 @@ var demos = {
 							bindto: "#DataFromURL-csv",
 							data: {
 								url: './data/test.json',
-								mimeType: 'json'
+								mimeType: "json"
 							}
 						});
 					}, 1000)
@@ -1061,20 +1060,20 @@ var demos = {
 		CategoryData: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', 'www.site1.com', 'www.site2.com', 'www.site3.com', 'www.site4.com'],
-						['download', 30, 200, 100, 400],
-						['loading', 90, 100, 140, 200]
+						["x", "www.site1.com", "www.site2.com", "www.site3.com", "www.site4.com"],
+						["download", 30, 200, 100, 400],
+						["loading", 90, 100, 140, 200]
 					],
 					groups: [
-						['download', 'loading']
+						["download", "loading"]
 					],
-					type: 'bar'
+					type: "bar"
 				},
 				axis: {
 					x: {
-						type: 'category' // this needed to load string x value
+						type: "category" // this needed to load string x value
 					}
 				}
 			},
@@ -1083,9 +1082,9 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['x', 'www.siteA.com', 'www.siteB.com', 'www.siteC.com', 'www.siteD.com'],
-								['download', 130, 200, 150, 350],
-								['loading', 190, 180, 190, 140]
+								["x", "www.siteA.com", "www.siteB.com", "www.siteC.com", "www.siteD.com"],
+								["download", 130, 200, 150, 350],
+								["loading", 190, 180, 190, 140]
 							],
 						});
 					}, 1000),
@@ -1093,9 +1092,9 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['x', 'www.siteE.com', 'www.siteF.com', 'www.siteG.com'],
-								['download', 30, 300, 200],
-								['loading', 90, 130, 240]
+								["x", "www.siteE.com", "www.siteF.com", "www.siteG.com"],
+								["download", 30, 300, 200],
+								["loading", 90, 130, 240]
 							],
 						});
 					}, 2000),
@@ -1103,9 +1102,9 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['x', 'www.site1.com', 'www.site2.com', 'www.site3.com', 'www.site4.com'],
-								['download', 130, 300, 200, 470],
-								['loading', 190, 130, 240, 340]
+								["x", "www.site1.com", "www.site2.com", "www.site3.com", "www.site4.com"],
+								["download", 130, 300, 200, 470],
+								["loading", 190, 130, 240, 340]
 							],
 						});
 					}, 3000),
@@ -1113,8 +1112,8 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['download', 30, 30, 20, 170],
-								['loading', 90, 30, 40, 40]
+								["download", 30, 30, 20, 170],
+								["loading", 90, 30, 40, 40]
 							],
 						});
 					}, 4000),
@@ -1131,7 +1130,7 @@ var demos = {
 			options: {
 				data: {
 					url: './data/test.csv',
-					type: 'line'
+					type: "line"
 				}
 			},
 			func: function(chart) {
@@ -1145,17 +1144,17 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data1', 130, 120, 150, 140, 160, 150],
-								['data4', 30, 20, 50, 40, 60, 50]
+								["data1", 130, 120, 150, 140, 160, 150],
+								["data4", 30, 20, 50, 40, 60, 50]
 							],
-							unload: ['data2', 'data3']
+							unload: ["data2", "data3"]
 						});
 					}, 2000),
 
 					setTimeout(function() {
 						chart.load({
 							rows: [
-								['data2', 'data3'],
+								["data2", "data3"],
 								[120, 300],
 								[160, 240],
 								[200, 290],
@@ -1163,29 +1162,29 @@ var demos = {
 								[130, 300],
 								[220, 320]
 							],
-							unload: 'data4'
+							unload: "data4"
 						});
 					}, 3000),
 
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data4', 30, 20, 50, 40, 60, 50, 100, 200]
+								["data4", 30, 20, 50, 40, 60, 50, 100, 200]
 							],
-							type: 'bar'
+							type: "bar"
 						});
 					}, 4000),
 
 					setTimeout(function() {
 						chart.unload({
-							ids: 'data4'
+							ids: "data4"
 						});
 					}, 5000),
 
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data2', null, 30, 20, 50, 40, 60, 50]
+								["data2", null, 30, 20, 50, 40, 60, 50]
 							]
 						});
 					}, 6000),
@@ -1197,7 +1196,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							rows: [
-								['data4', 'data2', 'data3'],
+								["data4", "data2", "data3"],
 								[90, 120, 300],
 								[40, 160, 240],
 								[50, 200, 290],
@@ -1205,14 +1204,14 @@ var demos = {
 								[80, 130, 300],
 								[90, 220, 320]
 							],
-							type: 'bar'
+							type: "bar"
 						});
 					}, 8000),
 
 					setTimeout(function() {
 						chart.load({
 							rows: [
-								['data5', 'data6'],
+								["data5", "data6"],
 								[190, 420],
 								[140, 460],
 								[150, 500],
@@ -1220,13 +1219,13 @@ var demos = {
 								[180, 430],
 								[190, 520]
 							],
-							type: 'line'
+							type: "line"
 						});
 					}, 9000),
 
 					setTimeout(function() {
 						chart.unload({
-							ids: ['data2', 'data3']
+							ids: ["data2", "data3"]
 						});
 					}, 10000)
 				];
@@ -1236,8 +1235,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					names: {
 						data1: 'Name 1',
@@ -1250,19 +1249,19 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 20, 50, 40, 60, 50],
-						['data2', 200, 130, 90, 240, 130, 220],
-						['data3', 300, 200, 160, 400, 250, 250]
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250]
 					],
-					type: 'bar',
+					type: "bar",
 					colors: {
 						data1: '#ff0000',
 						data2: '#00ff00',
 						data3: '#0000ff'
 					},
 					color: function(color, d) {
-						// d will be 'id' when called for legends
-						return (d.id && d.id === 'data3') ?
+						// d will be "id" when called for legends
+						return (d.id && d.id === "data3") ?
 							d3.rgb(color).darker(d.value / 150).toString() : color;
 					}
 				}
@@ -1272,16 +1271,16 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 130, 200, 320, 400, 530, 750],
-						['data2', -130, 10, 130, 200, 150, 250],
-						['data3', -130, -50, -10, -200, -250, -150]
+						["data1", 130, 200, 320, 400, 530, 750],
+						["data2", -130, 10, 130, 200, 150, 250],
+						["data3", -130, -50, -10, -200, -250, -150]
 					],
-					type: 'bar',
+					type: "bar",
 					groups: [
-						['data1', 'data2', 'data3']
+						["data1", "data2", "data3"]
 					],
-					order: 'desc' // stack order by sum of values descendantly. this is default.
-					// order: 'asc'  // stack order by sum of values ascendantly.
+					order: "desc" // stack order by sum of values descendantly. this is default.
+					// order: "asc"  // stack order by sum of values ascendantly.
 					// order: null   // stack order by data definition.
 				},
 				grid: {
@@ -1295,7 +1294,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data4', 1200, 1300, 1450, 1600, 1520, 1820]
+								["data4", 1200, 1300, 1450, 1600, 1520, 1820]
 							]
 						});
 					}, 1000),
@@ -1303,14 +1302,14 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data5', 200, 300, 450, 600, 520, 820]
+								["data5", 200, 300, 450, 600, 520, 820]
 							]
 						});
 					}, 2000),
 
 					setTimeout(function() {
 						chart.groups([
-							['data1', 'data2', 'data3', 'data4', 'data5']
+							["data1", "data2", "data3", "data4", "data5"]
 						]);
 					}, 3000)
 				];
@@ -1320,14 +1319,14 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, -200, -100, 400, 150, 250],
-						['data2', -50, 150, -150, 150, -50, -150],
-						['data3', -100, 100, -40, 100, -150, -50]
+						["data1", 30, -200, -100, 400, 150, 250],
+						["data2", -50, 150, -150, 150, -50, -150],
+						["data3", -100, 100, -40, 100, -150, -50]
 					],
 					groups: [
-						['data1', 'data2']
+						["data1", "data2"]
 					],
-					type: 'bar',
+					type: "bar",
 					labels: true
 				},
 				grid: {
@@ -1341,14 +1340,14 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, -200, -100, 400, 150, 250],
-						['data2', -50, 150, -150, 150, -50, -150],
-						['data3', -100, 100, -40, 100, -150, -50]
+						["data1", 30, -200, -100, 400, 150, 250],
+						["data2", -50, 150, -150, 150, -50, -150],
+						["data3", -100, 100, -40, 100, -150, -50]
 					],
 					groups: [
-						['data1', 'data2']
+						["data1", "data2"]
 					],
-					type: 'bar',
+					type: "bar",
 					labels: {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
@@ -1370,7 +1369,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, -200, -100, 400, 150, 250]
+						["data1", 30, -200, -100, 400, 150, 250]
 					],
 					labels: {
 						position: {
@@ -1419,7 +1418,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250, 120, 200]
+						["sample", 30, 200, 100, 400, 150, 250, 120, 200]
 					]
 				},
 				grid: {
@@ -1436,15 +1435,15 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				grid: {
 					x: {
 						lines: [
 							{value: 1, text: 'Label 1'},
-							{value: 3, text: 'Label 3', position: 'middle'},
-							{value: 4.5, text: 'Label 4.5', position: 'start'}
+							{value: 3, text: 'Label 3', position: "middle"},
+							{value: 4.5, text: 'Label 4.5', position: "start"}
 						]
 					}
 				}
@@ -1454,11 +1453,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250],
-						['sample2', 1300, 1200, 1100, 1400, 1500, 1250]
+						["sample", 30, 200, 100, 400, 150, 250],
+						["sample2", 1300, 1200, 1100, 1400, 1500, 1250]
 					],
 					axes: {
-						sample2: 'y2'
+						sample2: "y2"
 					}
 				},
 				axis: {
@@ -1470,8 +1469,8 @@ var demos = {
 					y: {
 						lines: [
 							{value: 50, text: 'Label 50 for y'},
-							{value: 1300, text: 'Label 1300 for y2', axis: 'y2', position: 'start'},
-							{value: 350, text: 'Label 350 for y', position: 'middle'}
+							{value: 1300, text: 'Label 1300 for y2', axis: "y2", position: "start"},
+							{value: 350, text: 'Label 350 for y', position: "middle"}
 						]
 					}
 				}
@@ -1504,7 +1503,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				subchart: {
@@ -1516,7 +1515,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
+						["sample", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
 					]
 				},
 				zoom: {
@@ -1531,7 +1530,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				legend: {
@@ -1543,12 +1542,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					]
 				},
 				legend: {
-					position: 'right'
+					position: "right"
 				}
 			},
 			func: function(chart) {
@@ -1556,23 +1555,23 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data3', 130, 150, 200, 300, 200, 100]
+								["data3", 130, 150, 200, 300, 200, 100]
 							]
 						});
 					}, 1000),
 
 					setTimeout(function() {
 						chart.unload({
-							ids: 'data1'
+							ids: "data1"
 						});
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('pie');
+						chart.transform("pie");
 					}, 3000),
 
 					setTimeout(function() {
-						chart.transform('line');
+						chart.transform("line");
 					}, 4000)
 				];
 			}
@@ -1581,11 +1580,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100],
-						['data2', 300],
-						['data3', 200]
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				legend: {
 					contents: {
@@ -1599,17 +1598,17 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100],
-						['data2', 300],
-						['data3', 200]
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				legend: {
 					contents: {
 						"bindto": "#legend",
 						"template": function(title, color) {
-							// omit 'data2' to be shown
+							// omit "data2" to be shown
 							return title !== "data2" ?
 								"<span style='background-color:" + color + ";padding:10px'>" + title + "</span>" : "";
 						}
@@ -1621,47 +1620,45 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100],
-						['data2', 300],
-						['data3', 200]
+						["data1", 100],
+						["data2", 300],
+						["data3", 200]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				legend: {
 					show: false
 				}
 			},
 			func: function(chart) {
-				function toggle(id) {
-					chart.toggle(id);
-				}
+				function toggle(id) { chart.toggle(id); }
 
-				d3.select('.chart_area')
-					.insert('div', '.chart')
-					.attr('class', 'legend')
-					.selectAll('span')
-					.data(['data1', 'data2', 'data3'])
-					.enter()
-					.append('span')
-					.attr('data-id', function(id) {
-						return id;
-					})
-					.html(function(id) {
-						return id;
-					})
-					.each(function(id) {
-						d3.select(this)
-							.style('background-color', chart.color(id));
-					})
-					.on('mouseover', function(id) {
-						chart.focus(id);
-					})
-					.on('mouseout', function(id) {
-						chart.revert();
-					})
-					.on('click', function(id) {
-						chart.toggle(id);
-					});
+d3.select(".chart_area")
+	.insert("div", ".chart")
+	.attr("class", "legend")
+	.selectAll("span")
+	.data(["data1", "data2", "data3"])
+	.enter()
+	.append("span")
+	.attr('data-id', function(id) {
+		return id;
+	})
+	.html(function(id) {
+		return id;
+	})
+	.each(function(id) {
+		d3.select(this)
+			.style('background-color', chart.color(id));
+	})
+	.on("mouseover", function(id) {
+		chart.focus(id);
+	})
+	.on("mouseout", function(id) {
+		chart.revert();
+	})
+	.on("click", function(id) {
+		chart.toggle(id);
+	});
 			}
 		},
 		usePoint: {
@@ -1694,8 +1691,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 200, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200]
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
 					]
 				},
 				point: {
@@ -1707,8 +1704,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 200, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200]
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
 					]
 				},
 				point: {
@@ -1722,8 +1719,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 400, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200]
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
 					]
 				},
 				point: {
@@ -1737,8 +1734,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 400, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200]
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
 					]
 				},
 				point: {
@@ -1752,10 +1749,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 400, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200],
-						['data3', 80, 350, 800, 450, 500],
-						['data4', 150, 240, 300, 700, 300]
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200],
+						["data3", 80, 350, 800, 450, 500],
+						["data4", 150, 240, 300, 700, 300]
 					]
 				},
 				point: {
@@ -1775,11 +1772,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250, 400],
-						['data2', 830, 1200, 1100, 1400, 1150, 1250, 1500]
+						["data1", 30, 200, 100, 400, 150, 250, 400],
+						["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
 					],
 					axes: {
-						data2: 'y2'
+						data2: "y2"
 					}
 				},
 				axis: {
@@ -1788,30 +1785,30 @@ var demos = {
 					}
 				},
 				regions: [
-					{axis: 'x', end: 1, class: 'regionX'},
-					{axis: 'x', start: 2, end: 4, class: 'regionX'},
-					{axis: 'x', start: 5, class: 'regionX'},
-					{axis: 'y', end: 50, class: 'regionY'},
-					{axis: 'y', start: 80, end: 140, class: 'regionY'},
-					{axis: 'y', start: 400, class: 'regionY'},
-					{axis: 'y2', end: 900, class: 'regionY2'},
-					{axis: 'y2', start: 1150, end: 1250, class: 'regionY2'},
-					{axis: 'y2', start: 1300, class: 'regionY2'}
+					{axis: "x", end: 1, class: "regionX"},
+					{axis: "x", start: 2, end: 4, class: "regionX"},
+					{axis: "x", start: 5, class: "regionX"},
+					{axis: "y", end: 50, class: "regionY"},
+					{axis: "y", start: 80, end: 140, class: "regionY"},
+					{axis: "y", start: 400, class: "regionY"},
+					{axis: "y2", end: 900, class: "regionY2"},
+					{axis: "y2", start: 1150, end: 1250, class: "regionY2"},
+					{axis: "y2", start: 1300, class: "regionY2"}
 				]
 			}
 		},
 		RegionWithTimeseries: {
 			options: {
 				data: {
-					x: 'date',
+					x: "date",
 					columns: [
-						['date', '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
-						['sample', 30, 200, 100, 400, 150, 250]
+						["date", '2014-01-01', '2014-01-10', '2014-01-20', '2014-01-30', '2014-02-01'],
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries'
+						type: "timeseries"
 					}
 				},
 				regions: [
@@ -1828,8 +1825,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					]
 				},
 				tooltip: {
@@ -1841,9 +1838,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25],
-						['data3', 500, 320, 210, 340, 215, 125]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 500, 320, 210, 340, 215, 125]
 					]
 				},
 				tooltip: {
@@ -1855,11 +1852,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30000, 20000, 10000, 40000, 15000, 250000],
-						['data2', 100, 200, 100, 40, 150, 250]
+						["data1", 30000, 20000, 10000, 40000, 15000, 250000],
+						["data2", 100, 200, 100, 40, 150, 250]
 					],
 					axes: {
-						data2: 'y2'
+						data2: "y2"
 					}
 				},
 				axis: {
@@ -1885,7 +1882,7 @@ var demos = {
 							return 'Data ' + d;
 						},
 						value: function(value, ratio, id) {
-							var format = id === 'data1' ? d3.format(',') : d3.format('$');
+							var format = id === "data1" ? d3.format(',') : d3.format('$');
 
 							return format(value);
 						}
@@ -1899,9 +1896,9 @@ var demos = {
 				data: {
 					type: "bar",
 					columns: [
-						['data1', 120, 200, 300, 100, 150, 250],
-						['data2', 50, 29, 17, 40, 15, 25],
-						['data3', 100, 320, 210, 340, 215, 125]
+						["data1", 120, 200, 300, 100, 150, 250],
+						["data2", 50, 29, 17, 40, 15, 25],
+						["data3", 100, 320, 210, 340, 215, 125]
 					],
 					groups: [
 						["data1", "data2", "data3"]
@@ -1917,15 +1914,15 @@ var demos = {
 			{
 				options: {
 					data: {
-						x: 'x',
+						x: "x",
 						columns: [
-							['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-							['data', 20, 30, 10, 10, 30, 40],
+							["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+							["data", 20, 30, 10, 10, 30, 40],
 						],
 					},
 					axis: {
 						x: {
-							type: 'timeseries',
+							type: "timeseries",
 							tick: {
 								format: '%Y-%m-%d'
 							}
@@ -1939,15 +1936,15 @@ var demos = {
 			{
 				options: {
 					data: {
-						x: 'x',
+						x: "x",
 						columns: [
-							['x', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-							['data', 10, 50, 100, 50, 50, 50],
+							["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+							["data", 10, 50, 100, 50, 50, 50],
 						],
 					},
 					axis: {
 						x: {
-							type: 'timeseries',
+							type: "timeseries",
 							tick: {
 								format: '%Y-%m-%d'
 							}
@@ -2005,7 +2002,7 @@ var demos = {
 				},
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				}
 			}
@@ -2020,7 +2017,7 @@ var demos = {
 				},
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250000000000]
+						["sample", 30, 200, 100, 400, 150, 250000000000]
 					]
 				}
 			}
@@ -2029,12 +2026,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25],
-						['data3', 130, 220, 140, 200, 250, 450],
-						['data4', 250, 320, 210, 240, 215, 225],
-						['data5', 430, 500, 400, 280, 290, 350],
-						['data6', 100, 120, 310, 340, 415, 225]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 130, 220, 140, 200, 250, 450],
+						["data4", 250, 320, 210, 240, 215, 225],
+						["data5", 430, 500, 400, 280, 290, 350],
+						["data6", 100, 120, 310, 340, 415, 225]
 					]
 				},
 				color: {
@@ -2046,10 +2043,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 10],
-						['data2', 15],
-						['data3', 30],
-						['data4', 45],
+						["data1", 10],
+						["data2", 15],
+						["data3", 30],
+						["data4", 45],
 					],
 					type: "pie"
 				},
@@ -2094,9 +2091,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 50, 25, 45, 19, 50],
-						['data2', 15, 23, 8, 17, 45],
-						['data3', 30, 35, 45, 40, 20]
+						["data1", 50, 25, 45, 19, 50],
+						["data2", 15, 23, 8, 17, 45],
+						["data3", 30, 35, 45, 40, 20]
 					],
 					types: {
 						data1: "area-spline",
@@ -2150,9 +2147,9 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data1', 30, 20, 50, 40, 60, 50],
-								['data2', 200, 130, 90, 240, 130, 220],
-								['data3', 300, 200, 160, 400, 250, 250]
+								["data1", 30, 20, 50, 40, 60, 50],
+								["data2", 200, 130, 90, 240, 130, 220],
+								["data3", 300, 200, 160, 400, 250, 250]
 							]
 						});
 					}, 1000),
@@ -2160,7 +2157,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							rows: [
-								['data1', 'data2', 'data3'],
+								["data1", "data2", "data3"],
 								[90, 120, 300],
 								[40, 160, 240],
 								[50, 200, 290],
@@ -2174,7 +2171,7 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								['data1', null, 30, 20, 50, 40, 60, 50, 100, 200]
+								["data1", null, 30, 20, 50, 40, 60, 50, 100, 200]
 							]
 						});
 					}, 2000)
@@ -2185,7 +2182,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 0, 400, 0, 250]
+						["sample", 30, 200, 0, 400, 0, 250]
 					]
 				},
 				axis: {
@@ -2207,9 +2204,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 45],
-						['data3', 25]
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
 					],
 					type: "donut"
 				},
@@ -2231,9 +2228,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 45],
-						['data3', 25]
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
 					],
 					type: "donut"
 				},
@@ -2246,9 +2243,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 45],
-						['data3', 25]
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
 					],
 					type: "donut"
 				},
@@ -2264,8 +2261,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					]
 				},
 				point: {
@@ -2279,9 +2276,9 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 45],
-						['data3', 25]
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
 					],
 					type: "pie"
 				},
@@ -2302,10 +2299,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 50]
+						["data1", 30],
+						["data2", 50]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				pie: {
 					label: {
@@ -2320,11 +2317,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 50],
-						['data3', 20]
+						["data1", 30],
+						["data2", 50],
+						["data3", 20]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				pie: {
 					innerRadius: 20
@@ -2335,10 +2332,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 50]
+						["data1", 30],
+						["data2", 50]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				pie: {
 					padAngle: 0.1
@@ -2349,11 +2346,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30],
-						['data2', 50],
-						['data3', 20]
+						["data1", 30],
+						["data2", 50],
+						["data3", 20]
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				pie: {
 					padding: 3
@@ -2365,17 +2362,17 @@ var demos = {
 		Flow: {
 			options: {
 				data: {
-					x: 'x',
+					x: "x",
 					columns: [
-						['x', '2012-12-29', '2012-12-30', '2012-12-31'],
-						['data1', 230, 300, 330],
-						['data2', 190, 230, 200],
-						['data3', 90, 130, 180]
+						["x", '2012-12-29', '2012-12-30', '2012-12-31'],
+						["data1", 230, 300, 330],
+						["data2", 190, 230, 200],
+						["data3", 90, 130, 180]
 					]
 				},
 				axis: {
 					x: {
-						type: 'timeseries',
+						type: "timeseries",
 						tick: {
 							format: '%m/%d',
 						}
@@ -2387,46 +2384,46 @@ var demos = {
 					setTimeout(function() {
 						chart.flow({
 							columns: [
-								['x', '2013-01-11', '2013-01-21'],
-								['data1', 500, 200],
-								['data2', 100, 300],
-								['data3', 200, 120]
+								["x", '2013-01-11', '2013-01-21'],
+								["data1", 500, 200],
+								["data2", 100, 300],
+								["data3", 200, 120]
 							],
 							duration: 1500,
 							done: function() {
 								chart.flow({
 									columns: [
-										['x', '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-										['data1', 200, 300, 100, 250],
-										['data2', 100, 90, 40, 120],
-										['data3', 100, 100, 300, 500]
+   								            ["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+   								            ["data1", 200, 300, 100, 250],
+   								            ["data2", 100, 90, 40, 120],
+   								            ["data3", 100, 100, 300, 500]
 									],
 									length: 0,
 									duration: 1500,
 									done: function() {
-										chart.flow({
-											columns: [
-												['x', '2013-03-01', '2013-03-02'],
-												['data1', 200, 300],
-												['data2', 150, 250],
-												['data3', 100, 100]
-											],
-											length: 2,
-											duration: 1500,
-											done: function() {
-												chart.flow({
-													columns: [
-														['x', '2013-03-21', '2013-04-01'],
-														['data1', 500, 200],
-														['data2', 100, 150],
-														['data3', 200, 400]
-													],
-													to: '2013-03-01',
-													duration: 1500
-												});
-											}
-										});
-									}
+   								            chart.flow({
+   								                columns: [
+   								                    ["x", '2013-03-01', '2013-03-02'],
+   								                    ["data1", 200, 300],
+   								                    ["data2", 150, 250],
+   								                    ["data3", 100, 100]
+   								                ],
+   								                length: 2,
+   								                duration: 1500,
+   								                done: function() {
+   								                    chart.flow({
+   								                        columns: [
+   								                            ["x", '2013-03-21', '2013-04-01'],
+   								                            ["data1", 500, 200],
+   								                            ["data2", 100, 150],
+   								                            ["data3", 200, 400]
+   								                        ],
+   								                        to: '2013-03-01',
+   								                        duration: 1500
+   								                    });
+   								                }
+   								            });
+   								    }
 								});
 							},
 						});
@@ -2438,8 +2435,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					names: {
 						data1: 'Name 1',
@@ -2463,11 +2460,11 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 20, 50, 40, 60, 50],
-						['data2', 200, 130, 90, 240, 130, 220],
-						['data3', 300, 200, 160, 400, 250, 250]
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250]
 					],
-					type: 'bar',
+					type: "bar",
 					colors: {
 						data1: '#ff0000',
 						data2: '#00ff00',
@@ -2500,12 +2497,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					axes: {
-						data1: 'y',
-						data2: 'y2'
+						data1: "y",
+						data2: "y2"
 					}
 				},
 				axis: {
@@ -2534,12 +2531,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					axes: {
-						data1: 'y',
-						data2: 'y2'
+						data1: "y",
+						data2: "y2"
 					}
 				},
 				axis: {
@@ -2592,8 +2589,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 50, 20, 10, 40, 15, 25]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					]
 				}
 			},
@@ -2617,7 +2614,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				}
 			},
@@ -2632,7 +2629,7 @@ var demos = {
 					}, 2000),
 
 					setTimeout(function() {
-						chart.xgrids.add([{value: 3, text: 'Label 3', class: 'hoge'}]);
+						chart.xgrids.add([{value: 3, text: 'Label 3', class: "hoge"}]);
 					}, 3000),
 
 					setTimeout(function() {
@@ -2640,7 +2637,7 @@ var demos = {
 					}, 4000),
 
 					setTimeout(function() {
-						chart.xgrids.remove({class: 'hoge'});
+						chart.xgrids.remove({class: "hoge"});
 					}, 5000),
 
 					setTimeout(function() {
@@ -2704,7 +2701,7 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				}
 			},
@@ -2736,12 +2733,12 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['sample', 30, 200, 100, 400, 150, 250]
+						["sample", 30, 200, 100, 400, 150, 250]
 					]
 				},
 				regions: [
 					{start: 0, end: 1},
-					{start: 2, end: 4, class: 'foo'}
+					{start: 2, end: 4, class: "foo"}
 				]
 			},
 			style: [
@@ -2753,15 +2750,15 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 200, 1000, 900, 500]
+						["data1", 100, 200, 1000, 900, 500]
 					]
 				},
 				grid: {
 					x: {
-						lines: [{value: 2}, {value: 4, class: 'grid4', text: 'LABEL 4'}]
+						lines: [{value: 2}, {value: 4, class: "grid4", text: 'LABEL 4'}]
 					},
 					y: {
-						lines: [{value: 500}, {value: 800, class: 'grid800', text: 'LABEL 800'}]
+						lines: [{value: 500}, {value: 800, class: "grid800", text: 'LABEL 800'}]
 					}
 				}
 			},
@@ -2778,8 +2775,8 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 100, 200, 1000, 900, 500],
-						['data2', 20, 40, 500, 300, 200]
+						["data1", 100, 200, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
 					]
 				},
 				line: {
@@ -2801,10 +2798,10 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'bar'
+					type: "bar"
 				},
 				point: {
 					type: "rectangle"
@@ -2813,19 +2810,19 @@ var demos = {
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('line', 'data1');
+						chart.transform("line", "data1");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('line', 'data2');
+						chart.transform("line", "data2");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('bar');
+						chart.transform("bar");
 					}, 3000),
 
 					setTimeout(function() {
-						chart.transform('line');
+						chart.transform("line");
 					}, 4000)
 				];
 			}
@@ -2834,28 +2831,28 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'bar'
+					type: "bar"
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('spline', 'data1');
+						chart.transform("spline", "data1");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('spline', 'data2');
+						chart.transform("spline", "data2");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('bar');
+						chart.transform("bar");
 					}, 3000),
 
 					setTimeout(function() {
-						chart.transform('spline');
+						chart.transform("spline");
 					}, 4000)
 				];
 			}
@@ -2864,28 +2861,28 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'line'
+					type: "line"
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('bar', 'data1');
+						chart.transform("bar", "data1");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('bar', 'data2');
+						chart.transform("bar", "data2");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('line');
+						chart.transform("line");
 					}, 3000),
 
 					setTimeout(function() {
-						chart.transform('bar');
+						chart.transform("bar");
 					}, 4000)
 				];
 			}
@@ -2894,28 +2891,28 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'bar'
+					type: "bar"
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('area', 'data1');
+						chart.transform("area", "data1");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('area', 'data2');
+						chart.transform("area", "data2");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('bar');
+						chart.transform("bar");
 					}, 3000),
 
 					setTimeout(function() {
-						chart.transform('area');
+						chart.transform("area");
 					}, 4000)
 				];
 			}
@@ -2924,24 +2921,24 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: 'bar'
+					type: "bar"
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('area-spline', 'data1');
+						chart.transform('area-spline', "data1");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('area-spline', 'data2');
+						chart.transform('area-spline', "data2");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('bar');
+						chart.transform("bar");
 					}, 3000),
 
 					setTimeout(function() {
@@ -2954,8 +2951,8 @@ var demos = {
 			options: {
 				data: {
 					xs: {
-						setosa: 'setosa_x',
-						versicolor: 'versicolor_x',
+						setosa: "setosa_x",
+						versicolor: "versicolor_x",
 					},
 					// iris data from R
 					columns: [
@@ -3012,32 +3009,32 @@ var demos = {
 							1.2, 1.3, 1.3, 1.1, 1.3
 						],
 					],
-					type: 'pie'
+					type: "pie"
 				},
 				axis: {
 					x: {
-						label: 'Sepal.Width',
+						label: "Sepal.Width",
 						tick: {
 							fit: false
 						}
 					},
 					y: {
-						label: 'Petal.Width'
+						label: "Petal.Width"
 					}
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('scatter');
+						chart.transform("scatter");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('pie');
+						chart.transform("pie");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('scatter');
+						chart.transform("scatter");
 					}, 3000)
 				]
 			}
@@ -3046,23 +3043,23 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					]
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('pie');
+						chart.transform("pie");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('line');
+						chart.transform("line");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('pie');
+						chart.transform("pie");
 					}, 3000)
 				];
 			}
@@ -3071,27 +3068,27 @@ var demos = {
 			options: {
 				data: {
 					columns: [
-						['data1', 30, 200, 100, 400, 150, 250],
-						['data2', 130, 100, 140, 200, 150, 50]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					]
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.transform('donut');
+						chart.transform("donut");
 					}, 1000),
 
 					setTimeout(function() {
-						chart.transform('line');
+						chart.transform("line");
 					}, 2000),
 
 					setTimeout(function() {
-						chart.transform('pie');
+						chart.transform("pie");
 					}, 3000),
 
 					setTimeout(function() {
-						chart.transform('donut');
+						chart.transform("donut");
 					}, 4000)
 				];
 			}
