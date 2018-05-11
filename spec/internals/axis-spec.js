@@ -6,6 +6,7 @@
 import util from "../assets/util";
 import bb from "../../src/core";
 import CLASS from "../../src/config/classes";
+import getSizeFor1Char from "exports-loader?getSizeFor1Char!../../src/axis/bb.axis";
 
 describe("AXIS", function() {
 	let chart;
@@ -80,6 +81,13 @@ describe("AXIS", function() {
 
 		before(() => {
 			args.axis.y.tick.values = values;
+		});
+
+		it("should compute char dimension", () => {
+			const size = getSizeFor1Char(d3.select(".tick"));
+
+			expect(size.w && size.h).to.be.ok;
+			expect(getSizeFor1Char.size).to.be.equal(size);
 		});
 
 		it("should have only 2 tick on y axis", () => {
@@ -1005,7 +1013,6 @@ describe("AXIS", function() {
 			});
 		});
 	});
-
 
 	describe("axis text on 'binary floating point'", () => {
 		before(() => {
