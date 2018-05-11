@@ -1,6 +1,6 @@
 {
   "name": "billboard.js",
-  "version": "1.4.1-snapshot",
+  "version": "1.4.1-nightly",
   "description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
   "homepage": "http://naver.github.io/billboard.js/",
   "main": "dist/billboard.js",
