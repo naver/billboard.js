@@ -22,6 +22,8 @@ const isEmpty = o => (
 		(isString(o) && o.length === 0) ||
 		(isObjectType(o) && Object.keys(o).length === 0)
 );
+const notEmpty = o => !isEmpty(o);
+
 /**
  * Check if is array
  * @param {Array} arr
@@ -38,7 +40,6 @@ const isArray = arr => arr && arr.constructor === Array;
  */
 const isObject = obj => obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
 
-const notEmpty = o => !isEmpty(o);
 const getOption = (options, key, defaultValue) => (
 	isDefined(options[key]) ? options[key] : defaultValue
 );

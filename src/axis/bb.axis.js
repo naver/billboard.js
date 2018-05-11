@@ -12,6 +12,37 @@ import {isArray, toArray, isDefined, isFunction, isString} from "../internals/ut
 // 2. ceil values of translate/x/y to int for half pixel anti-aliasing
 // 3. multiline tick text
 
+/**
+ * Compute a character dimension
+ * @param {d3.selection} node
+ * @return {{w: number, h: number}}
+ * @private
+ */
+const getSizeFor1Char = node => {
+	// default size for one character
+	const size = {
+		w: 5.5,
+		h: 11.5
+	};
+
+	!node.empty() && node.select("text")
+		.text("0")
+		.call(el => {
+			const box = el.node().getBBox();
+			const h = box.height;
+			const w = box.width;
+
+			if (h && w) {
+				size.h = h;
+				size.w = w;
+			}
+
+			el.text("");
+		});
+
+	return (getSizeFor1Char.size = size);
+};
+
 export default function(params = {}) {
 	let scale = d3ScaleLinear();
 	let orient = "bottom";
@@ -89,34 +120,6 @@ export default function(params = {}) {
 		return isDefined(formatted) ? formatted : "";
 	}
 
-	let getSizeFor1Char = tick => {
-		// default size for one character
-		const size = {
-			h: 11.5,
-			w: 5.5
-		};
-
-		!tick.empty() && tick.select("text")
-			.text("0")
-			.call(el => {
-				const box = el.node().getBBox();
-				const h = box.height;
-				const w = box.width;
-
-				if (h && w) {
-					size.h = h;
-					size.w = w;
-				}
-
-				el.text("");
-			});
-
-		// overwrite to return calculated size
-		getSizeFor1Char = () => size;
-
-		return size;
-	};
-
 	function transitionise(selection) {
 		return params.withoutTransition ?
 			selection.interrupt() : selection.transition(transition);
@@ -189,7 +192,7 @@ export default function(params = {}) {
 			}
 
 			let tspan;
-			const sizeFor1Char = getSizeFor1Char(g.select(".tick"));
+			const sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick"));
 			const counts = [];
 			const tickLength = Math.max(innerTickSize, 0) + tickPadding;
 			const isVertical = orient === "left" || orient === "right";
