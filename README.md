@@ -9,7 +9,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 > - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)<br>
 
 ## Documents
-- [API Documentation](http://naver.github.io/billboard.js/release/latest/doc/)
+- [API Documentation](https://naver.github.io/billboard.js/release/latest/doc/)
 - [Examples](https://naver.github.io/billboard.js/demo/)
 - [Roadmap](https://github.com/naver/billboard.js/wiki/Roadmap)
 - [Contribution Guide](CONTRIBUTING.md)
@@ -39,35 +39,35 @@ Download dist files from repo directly or install it via npm.
 You can download the uncompressed files for development
 
 #### Latest
-  - http://naver.github.io/billboard.js/release/latest/dist/billboard.js
-  - http://naver.github.io/billboard.js/release/latest/dist/billboard.css
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.js
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.css
 
 #### Specific version
-  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.js
-  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.css
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.js
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.css
 
 ### For production (Compressed)
 
 You can download the compressed files for production
 
 #### Latest
-  - http://naver.github.io/billboard.js/release/latest/dist/billboard.min.js
-  - http://naver.github.io/billboard.js/release/latest/dist/billboard.min.css
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.min.js
+  - https://naver.github.io/billboard.js/release/latest/dist/billboard.min.css
 
 #### Specific version
-  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.js
-  - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.css
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.js
+  - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.css
 
 ### Packaged version (with D3.js inclusion)
 > Packaged version is not an official distribution.
 > Is just to provide for ease use of 'billboard.js' with dependency.
 
  - **Latest**
-    - http://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js
-    - http://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.min.js
+    - https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js
+    - https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.min.js
  - **Specific version**
-    - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
-    - http://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
+    - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
+    - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
 
 
 ### Installation with npm
@@ -203,7 +203,7 @@ Two folders will be created after complete build is completed.
 
 ### Linting
 
-To keep the same code style, we adopted [ESLint](http://eslint.org/) to maintain our code quality. The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are modified version based on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript).
+To keep the same code style, we adopted [ESLint](https://eslint.org/) to maintain our code quality. The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are modified version based on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript).
 Setup your editor for check or run below command for linting.
 
 ```bash
@@ -257,7 +257,7 @@ THE SOFTWARE.
 [badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
 
 <!-- links -->
-[link-download]: http://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
+[link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
 [link-version]: https://www.npmjs.com/package/billboard.js
 [link-build-status]: https://travis-ci.org/naver/billboard.js
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
