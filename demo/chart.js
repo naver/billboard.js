@@ -115,7 +115,7 @@ var billboardDemo = {
 	generate: function(type, key) {
 		var inst = bb.instance;
 		var typeData = demos[type][key];
-		var isArray = Array.isArray(typeData);
+		var isArray = typeData && typeData.constructor === Array;
 		var self = this;
 
 		inst.length && inst.forEach(function (c) {
@@ -165,6 +165,7 @@ var billboardDemo = {
 		if (!$el) {
 			$el = document.createElement("div");
 			$el.id = key;
+
 			if ((index && index === 1) || !index) {
 				this.$chartArea.innerHTML = "";
 			}
@@ -191,10 +192,10 @@ var billboardDemo = {
 
 		inst.timer = [];
 
-		var codeStr = "var chart = bb.generate(" +
+		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
 			JSON.stringify(options, function (k, v) {
 				if (typeof v === "function") {
-					return v.toString();
+					return v.toString().replace(/\t+}$/, Array(/(format|data)/.test(k) ? 8 : 4).join(" ") + "}");
 				} else if (/(columns|rows|json)/.test(k)) {
 					var str = JSON.stringify(v)
 						.replace(/\[\[/g, "[\r\n\t[")
@@ -208,15 +209,14 @@ var billboardDemo = {
 
 				return v;
 			}, 2)
-				.replace(/(\"function)/g, "function")
-				.replace(/(}\")/g, "}")
-				.replace(/\\"/g, "\"")
-				.replace(/</g, "&lt;")
-				.replace(/\\t/g, "\t")
-				.replace(/\t{5}/g, "")
-				.replace(/\\r/g, "\r")
-				.replace(/"(\w+)":/g, "$1:")
-				.replace(/\\n(?!T)/g, "\n") + ");";
+			.replace(/\"?(function|})\"?/g, "$1")
+			.replace(/\\"/g, "\"")
+			.replace(/</g, "&lt;")
+			.replace(/\\t/g, "\t")
+			.replace(/\t{5}/g, "")
+			.replace(/\\r/g, "\r")
+			.replace(/"(\w+)":/g, "$1:")
+			.replace(/\\n(?!T)/g, "\n") + ");";
 
 		// markup
 		if ((index && index === 1) || !index) {
@@ -235,7 +235,7 @@ var billboardDemo = {
 		try {
 			if (func) {
 				code.data.push("\r\n\r\n" + func.toString()
-					.replace(/[\t\s]*function \(chart\) \{[\r\n\t\s]*/, "")
+					.replace(/[\t\s]*function\s*\(chart\) \{[\r\n\t\s]*/, "")
 					.replace(/}$/, "")
 					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
 					.replace(/\t{5}/g, "")
@@ -244,7 +244,7 @@ var billboardDemo = {
 
 				func(inst);
 			}
-		} catch (e) {}
+		} catch(e) {}
 
 		// style
 		if (style) {
