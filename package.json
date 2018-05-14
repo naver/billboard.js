@@ -7,12 +7,12 @@
   "scripts": {
     "start": "webpack-dev-server --open",
     "build": "npm run build:production && npm run build:packaged",
-    "build:nightly": "npm run build:production -- --env.nightly=true && npm run build:packaged -- --env.nightly=true",
     "build:production": "webpack --env.mode=production",
     "build:packaged": "webpack --env.mode=packaged",
     "build:dev": "webpack --env.mode=development",
     "build:production:monitor": "npm run build:production -- --env.monitor=true",
     "build:packaged:monitor": "npm run build:packaged -- --env.monitor=true",
+    "build:nightly": "node ./config/nightly.js",
     "deploy": "bash ./config/deploy.sh",
     "lint": "eslint src",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
