@@ -6,6 +6,24 @@ const Stylish = require("webpack-stylish");
 const WebpackMonitor = require("webpack-monitor");
 const WebpackBar = require("webpackbar");
 
+// get datetime as string
+function getDatetime() {
+	// convert to 2 digit
+	const get2digit = val => (String(val).length === 1 ? `0${val}` : val);
+
+	// get 'YYYY-MM-DD' formatted value
+	const date = new Date();
+
+	return [
+		date.getFullYear(),
+		get2digit(date.getMonth() + 1),
+		get2digit(date.getDate()),
+		get2digit(date.getHours()),
+		get2digit(date.getMinutes()),
+		get2digit(date.getSeconds())
+	].join("");
+}
+
 const config = {
 	entry: {
 		billboard: "./src/core.js",
@@ -54,15 +72,25 @@ const config = {
 };
 
 module.exports = env => {
-	const mode = (env && env.mode) || "development";
+	let mode = "development";
+
+	if (env) {
+		if (env.mode) {
+			mode = env.mode;
+		}
+
+		env.monitor && config.plugins.push(
+			new WebpackMonitor({
+				launch: true
+			})
+		);
+
+		if (env.nightly) {
+			pkg.version = pkg.version.replace(/snapshot/, `nightly-${getDatetime()}`);
+		}
+	}
 
 	mode === "packaged" && delete config.externals;
-
-	env && env.monitor && config.plugins.push(
-		new WebpackMonitor({
-			launch: true
-		})
-	);
 
 	return require(`./config/webpack.config.${mode}.js`)(config);
 };
