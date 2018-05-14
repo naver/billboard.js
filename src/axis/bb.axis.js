@@ -5,7 +5,7 @@
  */
 import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import {select as d3Select} from "d3-selection";
-import {isArray, toArray, isDefined, isFunction, isString} from "../internals/util";
+import {isArray, toArray, isDefined, isFunction, isString, isNumber} from "../internals/util";
 
 // Features:
 // 1. category axis
@@ -80,8 +80,9 @@ export default function(params = {}) {
 				...(tickArguments ? toArray(tickArguments) : [])
 			).map(v => (
 				// round the tick value if is number
-				/(string|number)/.test(typeof v) && !isNaN(v) ?
-					Math.round(v * 10) / 10 : v
+				(isString(v) && isNumber(v) && !isNaN(v) &&
+					Math.round(v * 10) / 10
+				) || v
 			));
 		}
 
