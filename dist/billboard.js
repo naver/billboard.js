@@ -1426,9 +1426,6 @@ module.exports = exports["default"];
 
 exports.__esModule = !0;
 
-var _typeof2 = __webpack_require__(7),
-    _typeof3 = _interopRequireDefault(_typeof2);
-
 exports.default = function () {
 
 	function axisX(selection, x) {
@@ -1457,7 +1454,7 @@ exports.default = function () {
 		if (scale.ticks) return scale.ticks.apply(scale, tickArguments ? (0, _util.toArray)(tickArguments) : []).map(function (v) {
 				return (
 					// round the tick value if is number
-					/(string|number)/.test(typeof v === "undefined" ? "undefined" : (0, _typeof3.default)(v)) && !isNaN(v) ? Math.round(v * 10) / 10 : v
+					(0, _util.isString)(v) && (0, _util.isNumber)(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
 				);
 			});
 
@@ -1688,22 +1685,8 @@ exports.default = function () {
 
 var _d3Scale = __webpack_require__(4),
     _d3Selection = __webpack_require__(4),
-    _util = __webpack_require__(6);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
-
-// Features:
-// 1. category axis
-// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
-// 3. multiline tick text
-
-/**
- * Compute a character dimension
- * @param {d3.selection} node
- * @return {{w: number, h: number}}
- * @private
- */
-var getSizeFor1Char = function (node) {
+    _util = __webpack_require__(6),
+    getSizeFor1Char = function getSizeFor1Char(node) {
 	// default size for one character
 	var size = {
 		w: 5.5,
@@ -1716,11 +1699,26 @@ var getSizeFor1Char = function (node) {
 		    w = box.width;
 		h && w && (size.h = h, size.w = w), el.text("");
 	}), getSizeFor1Char.size = size;
-}; /**
-    * Copyright (c) 2017 NAVER Corp.
-    * billboard.js project is licensed under the MIT license
-    * @ignore
-    */
+};
+
+// Features:
+// 1. category axis
+// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
+// 3. multiline tick text
+
+/**
+ * Compute a character dimension
+ * @param {d3.selection} node
+ * @return {{w: number, h: number}}
+ * @private
+ */
+
+
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
 module.exports = exports["default"];
 
 /***/ }),
