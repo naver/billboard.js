@@ -107,6 +107,33 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("tick values less than 0", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data", 0.01, 0.02, 0, 0.01]
+					]
+				},
+				axis: {
+					y: {
+						padding: {
+							bottom: 0
+						}
+					}
+				}
+			};
+		});
+
+		it("tick values should be shown correctly", () => {
+			chart.internal.main
+				.select(`.${CLASS.axisY}`)
+				.selectAll("g.tick").each((v, i) => {
+				i > 0 && expect(v > 0).to.be.true;
+			});
+		});
+	});
+
 	describe("axis y timeseries", () => {
 		before(() => {
 			args = {
