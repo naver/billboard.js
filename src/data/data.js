@@ -443,9 +443,16 @@ extend(ChartInternal.prototype, {
 		return this._checkOrder("asc");
 	},
 
-	orderTargets(targets) {
+	/**
+	 * Sort targets data
+	 * @param {Array} targetsValue
+	 * @return {Array}
+	 * @priavate
+	 */
+	orderTargets(targetsValue) {
 		const $$ = this;
 		const config = $$.config;
+		const targets = [...targetsValue];
 		const orderAsc = $$.isOrderAsc();
 		const orderDesc = $$.isOrderDesc();
 
