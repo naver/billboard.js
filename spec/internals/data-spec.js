@@ -197,7 +197,7 @@ describe("DATA", () => {
 		});
 	});
 
-	describe("function in data.order", () => {
+	describe("check data.order", () => {
 		before(() => {
 			args = {
 				data: {
@@ -213,6 +213,22 @@ describe("DATA", () => {
 
 		it("should return false in isOrderAsc and isOrderDesc functions", () => {
 			expect(chart.internal.isOrderAsc() || chart.internal.isOrderDesc()).to.be.equal(false);
+		});
+
+		it("set options data.order=desc", () => {
+			args.data.order = "desc";
+		});
+
+		it("orderTargets shouldn't be changing its order", () => {
+			const data = chart.data();
+			const targetIds = data.map(v => v.id);
+
+			// when
+			chart.internal.orderTargets(data);
+
+			data.map(v => v.id).forEach((v, i) => {
+				expect(v).to.be.equal(targetIds[i]);
+			});
 		});
 	});
 
