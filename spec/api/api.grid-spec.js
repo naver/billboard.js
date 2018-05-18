@@ -4,9 +4,10 @@
  */
 /* eslint-disable */
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";
 
 describe("API grid", function() {
-	const chart = util.generate({
+	let chart = util.generate({
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250]
@@ -14,7 +15,7 @@ describe("API grid", function() {
 		}
 	});
 
-	describe("ygrid.add and ygrid.remove", () => {
+	describe("ygrids.add() / ygrids.remove()", () => {
 		it("should update y grids", done => {
 			const main = chart.internal.main;
 			const expectedGrids = [{
@@ -28,11 +29,11 @@ describe("API grid", function() {
 
 			let grids;
 
-			// Call ygrids.add
+			// add grid
 			chart.ygrids.add(expectedGrids);
 
 			setTimeout(() => {
-				grids = main.selectAll(".bb-ygrid-line");
+				grids = main.selectAll(`.${CLASS.ygridLine}`);
 
 				expect(grids.size()).to.be.equal(expectedGrids.length);
 
@@ -46,11 +47,11 @@ describe("API grid", function() {
 					expect(text).to.be.equal(expectedText);
 				});
 
-				// Call ygrids.remove
+				// remove grid
 				chart.ygrids.remove(expectedGrids);
 
 				setTimeout(() => {
-					grids = main.selectAll(".bb-ygrid-line");
+					grids = main.selectAll(`.${CLASS.ygridLine}`);
 
 					expect(grids.size()).to.be.equal(0);
 					done();
@@ -75,12 +76,14 @@ describe("API grid", function() {
 
 			chart.zoom([0, 2]);
 
+			// for zoom
 			setTimeout(() => {
-
 				// Call xgrids
 				chart.xgrids(expectedGrids);
+
+				// for xgrids()
 				setTimeout(() => {
-					grids = main.selectAll(".bb-xgrid-line");
+					grids = main.selectAll(`.${CLASS.xgridLine}`);
 
 					expect(grids.size()).to.be.equal(expectedGrids.length);
 
@@ -102,14 +105,91 @@ describe("API grid", function() {
 					// Call xgrids.remove
 					chart.xgrids.remove(expectedGrids);
 
+					// for xgrids.remove()
 					setTimeout(() => {
-						grids = main.selectAll(".bb-xgrid-line");
+						grids = main.selectAll(`.${CLASS.xgridLine}`);
 
 						expect(grids.size()).to.be.equal(0);
 						done();
-					}, 500); // for xgrids.remove()
-				}, 500); // for xgrids()
-			}, 500); // for zoom
+					}, 500);
+				}, 500);
+			}, 500);
+		});
+	});
+
+	describe("xgrids()", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 170, 150, 250]
+					],
+				},
+				grid: {
+					y: {
+						lines: [{value: 1, class: "test"}]
+					}
+				}
+			});
+		});
+
+		it("should update y grids", done => {
+			const gridData = {
+				value: 2, text: "grid text", position: "middle", class:"some-class"
+			};
+
+			chart.xgrids([gridData]);
+
+			setTimeout(() => {
+				const xgrid = chart.internal.main.select(`.${CLASS.xgridLine}`);
+
+				expect(xgrid.classed(gridData.class)).to.be.true;
+
+				const text = xgrid.select("text");
+
+				expect(text.text()).to.be.equal(gridData.text);
+				expect(text.attr("text-anchor")).to.be.equal(gridData.position);
+
+				done();
+			}, 500);
+		});
+	});
+
+	describe("ygrids()", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 170, 150, 250]
+					],
+				},
+				grid: {
+					y: {
+						lines: [{value: 150, class: "test"}]
+					}
+				}
+			});
+		});
+
+		it("should update y grids", done => {
+			const gridData = {
+				value: 250, text: "grid text", position: "start", class:"some-class"
+			};
+
+			chart.ygrids([gridData]);
+
+			setTimeout(() => {
+				const ygrid = chart.internal.main.select(`.${CLASS.ygridLine}`);
+
+				expect(ygrid.classed(gridData.class)).to.be.true;
+
+				const text = ygrid.select("text");
+
+				expect(text.text()).to.be.equal(gridData.text);
+				expect(text.attr("text-anchor")).to.be.equal(gridData.position);
+
+				done();
+			}, 500);
 		});
 	});
 });

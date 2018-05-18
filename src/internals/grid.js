@@ -10,6 +10,21 @@ import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {extend, isArray, isValue} from "./util";
 
+// Grid position and text anchor helpers
+const getGridTextAnchor = d => isValue(d.position) || "end";
+const getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
+const getGridTextX = (isX, width, height) => d => {
+	let x = isX ? 0 : width;
+
+	if (d.position === "start") {
+		x = isX ? -height : 0;
+	} else if (d.position === "middle") {
+		x = (isX ? -height : width) / 2;
+	}
+
+	return x;
+};
+
 extend(ChartInternal.prototype, {
 	initGrid() {
 		const $$ = this;
@@ -37,10 +52,11 @@ extend(ChartInternal.prototype, {
 	updateXGrid(withoutUpdate) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, $$.x);
 		const tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
 
-		$$.xgridAttr = config.axis_rotated ? {
+		$$.xgridAttr = isRotated ? {
 			"x1": 0,
 			"x2": $$.width,
 			"y1": d => $$.x(d) - tickOffset,
@@ -70,7 +86,7 @@ extend(ChartInternal.prototype, {
 				Object.keys($$.xgridAttr).forEach(id => {
 					grid.attr(id, $$.xgridAttr[id])
 						.style("opacity", () => (
-							grid.attr(config.axis_rotated ? "y1" : "x1") === (config.axis_rotated ? $$.height : 0) ?
+							grid.attr(isRotated ? "y1" : "x1") === (isRotated ? $$.height : 0) ?
 								"0" : "1"
 						));
 				});
@@ -81,6 +97,7 @@ extend(ChartInternal.prototype, {
 	updateYGrid() {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
 
 		$$.ygrid = $$.main.select(`.${CLASS.ygrids}`)
@@ -95,40 +112,37 @@ extend(ChartInternal.prototype, {
 			.attr("class", CLASS.ygrid)
 			.merge($$.ygrid);
 
-		$$.ygrid.attr("x1", config.axis_rotated ? $$.y : 0)
-			.attr("x2", config.axis_rotated ? $$.y : $$.width)
-			.attr("y1", config.axis_rotated ? 0 : $$.y)
-			.attr("y2", config.axis_rotated ? $$.height : $$.y);
+		$$.ygrid.attr("x1", isRotated ? $$.y : 0)
+			.attr("x2", isRotated ? $$.y : $$.width)
+			.attr("y1", isRotated ? 0 : $$.y)
+			.attr("y2", isRotated ? $$.height : $$.y);
 
 		$$.smoothLines($$.ygrid, "grid");
 	},
 
-	gridTextAnchor(d) {
-		return d.position ? d.position : "end";
-	},
-
-	gridTextDx(d) {
-		return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
-	},
-
-	xGridTextX(d) {
-		return d.position === "start" ? -this.height : d.position === "middle" ? -this.height / 2 : 0;
-	},
-
-	yGridTextX(d) {
-		return d.position === "start" ? 0 : d.position === "middle" ? this.width / 2 : this.width;
-	},
-
 	updateGrid(duration) {
 		const $$ = this;
-		const main = $$.main;
-		const config = $$.config;
 
 		// hide if arc type
 		$$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible");
 
-		main.select(`line.${CLASS.xgridFocus}`)
+		$$.main.select(`line.${CLASS.xgridFocus}`)
 			.style("visibility", "hidden");
+
+		$$.updateXGridLines(duration);
+		$$.updateYGridLines(duration);
+	},
+
+	/**
+	 * Update X Grid lines
+	 * @param {Number} duration
+	 * @private
+	 */
+	updateXGridLines(duration) {
+		const $$ = this;
+		const main = $$.main;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
 
 		config.grid_x_show && $$.updateXGrid();
 
@@ -143,22 +157,41 @@ extend(ChartInternal.prototype, {
 			.remove();
 
 		// enter
-		const xgridLine = $$.xgridLines.enter().append("g")
-			.attr("class", d => CLASS.xgridLine + (d.class ? ` ${d.class}` : ""));
+		const xgridLine = $$.xgridLines.enter().append("g");
 
 		xgridLine.append("line")
 			.style("opacity", "0");
 
 		xgridLine.append("text")
-			.attr("text-anchor", $$.gridTextAnchor)
-			.attr("transform", config.axis_rotated ? "" : "rotate(-90)")
-			.attr("dx", $$.gridTextDx)
+			.attr("transform", isRotated ? "" : "rotate(-90)")
 			.attr("dy", -5)
 			.style("opacity", "0");
 
 		$$.xgridLines = xgridLine.merge($$.xgridLines);
 
-		// Y-Grid
+		$$.xgridLines
+			.attr("class", d => `${CLASS.xgridLine} ${d.class || ""}`.trim())
+			.select("text")
+			.attr("text-anchor", getGridTextAnchor)
+			.attr("dx", getGridTextDx)
+			.transition()
+			.duration(duration)
+			.text(d => d.text)
+			.transition()
+			.style("opacity", "1");
+	},
+
+	/**
+	 * Update Y Grid lines
+	 * @param {Number} duration
+	 * @private
+	 */
+	updateYGridLines(duration) {
+		const $$ = this;
+		const main = $$.main;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
+
 		config.grid_y_show && $$.updateYGrid();
 
 		$$.ygridLines = main.select(`.${CLASS.ygridLines}`)
@@ -173,17 +206,13 @@ extend(ChartInternal.prototype, {
 			.remove();
 
 		// enter
-		const ygridLine = $$.ygridLines.enter().append("g")
-			.attr("class", d => CLASS.ygridLine + (d.class ? ` ${d.class}` : ""));
+		const ygridLine = $$.ygridLines.enter().append("g");
 
 		ygridLine.append("line")
 			.style("opacity", "0");
 
 		ygridLine.append("text")
-			.attr("text-anchor", $$.gridTextAnchor)
-			.attr("transform", config.axis_rotated ? "rotate(-90)" : "")
-			.attr("dx", $$.gridTextDx)
-			.attr("dy", -5)
+			.attr("transform", isRotated ? "rotate(-90)" : "")
 			.style("opacity", "0");
 
 		$$.ygridLines = ygridLine.merge($$.ygridLines);
@@ -191,20 +220,25 @@ extend(ChartInternal.prototype, {
 		// update
 		const yv = $$.yv.bind($$);
 
-		$$.ygridLines.select("line")
+		$$.ygridLines
+			.attr("class", d => `${CLASS.ygridLine} ${d.class || ""}`.trim())
+			.select("line")
 			.transition()
 			.duration(duration)
-			.attr("x1", config.axis_rotated ? yv : 0)
-			.attr("x2", config.axis_rotated ? yv : $$.width)
-			.attr("y1", config.axis_rotated ? 0 : yv)
-			.attr("y2", config.axis_rotated ? $$.height : yv)
+			.attr("x1", isRotated ? yv : 0)
+			.attr("x2", isRotated ? yv : $$.width)
+			.attr("y1", isRotated ? 0 : yv)
+			.attr("y2", isRotated ? $$.height : yv)
 			.transition()
 			.style("opacity", "1");
 
 		$$.ygridLines.select("text")
+			.attr("text-anchor", getGridTextAnchor)
+			.attr("dx", getGridTextDx)
 			.transition()
 			.duration(duration)
-			.attr("x", config.axis_rotated ? $$.xGridTextX.bind($$) : $$.yGridTextX.bind($$))
+			.attr("dy", -5)
+			.attr("x", getGridTextX(isRotated, $$.width, $$.height))
 			.attr("y", yv)
 			.text(d => d.text)
 			.transition()
@@ -213,20 +247,20 @@ extend(ChartInternal.prototype, {
 
 	redrawGrid(withTransition) {
 		const $$ = this;
-		const rotated = $$.config.axis_rotated;
+		const isRotated = $$.config.axis_rotated;
 		const xv = $$.xv.bind($$);
 
 		let lines = $$.xgridLines.select("line");
 		let texts = $$.xgridLines.select("text");
 
 		lines = (withTransition ? lines.transition() : lines)
-			.attr("x1", rotated ? 0 : xv)
-			.attr("x2", rotated ? $$.width : xv)
-			.attr("y1", rotated ? xv : 0)
-			.attr("y2", rotated ? xv : $$.height);
+			.attr("x1", isRotated ? 0 : xv)
+			.attr("x2", isRotated ? $$.width : xv)
+			.attr("y1", isRotated ? xv : 0)
+			.attr("y2", isRotated ? xv : $$.height);
 
 		texts = (withTransition ? texts.transition() : texts)
-			.attr("x", rotated ? $$.yGridTextX.bind($$) : $$.xGridTextX.bind($$))
+			.attr("x", getGridTextX(!isRotated, $$.width, $$.height))
 			.attr("y", xv)
 			.text(d => d.text);
 

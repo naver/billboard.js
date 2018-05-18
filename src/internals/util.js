@@ -194,7 +194,7 @@ const merge = (target, ...objectN) => {
 };
 
 /**
- * Copy array like object to array
+ * Convert to array
  * @param {Object} v
  * @returns {Array}
  * @private
