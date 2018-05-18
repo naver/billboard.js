@@ -5,10 +5,10 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180518114353
+ * @version 1.4.1-nightly-20180518124159
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
- * - d3 ^5.1.0
+ * - d3 ^5.4.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -116,7 +116,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180518114353
+ * @version 1.4.1-nightly-20180518124159
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -130,7 +130,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180518114353",
+	version: "1.4.1-nightly-20180518124159",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -515,7 +515,6 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-
 		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), $$.updateZoom && $$.updateZoom()), $$.updateCircleY();
 
 
@@ -711,7 +710,6 @@ var ChartInternal = function () {
 
 			var timer = void 0;loop();
 		};
-
 
 		return f.add = function (transition) {
 			Array.isArray(transition) ? transitionsToWait = [].concat(transitionsToWait, transition) : transitionsToWait.push(transition);
@@ -1122,7 +1120,6 @@ var isValue = function (v) {
 
 	// seg0
 
-
 	return list.push({
 		x: bbox.x,
 		y: bbox.y + bbox.height
@@ -1156,7 +1153,6 @@ var isValue = function (v) {
 	    event = _d3Selection.event;
 
 	// check from event
-
 
 	return event && event.constructor.name === "BrushEvent" ? selection = event.selection : this.context && (selection = this.context.select("." + _classes2.default.brush).node()) && (selection = (0, _d3Brush.brushSelection)(selection)), selection;
 },
@@ -1215,6 +1211,7 @@ function extend() {
  * @return {String} capitalized string
  * @private
  */
+
 var capitalize = function (str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 },
@@ -1273,6 +1270,8 @@ var capitalize = function (str) {
  * @returns {Array}
  * @private
  */
+
+
 exports.asHalfPixel = asHalfPixel;
 exports.brushEmpty = brushEmpty;
 exports.capitalize = capitalize;
@@ -1531,8 +1530,6 @@ exports.default = function () {
 			var g = (0, _d3Selection.select)(this);
 
 			axis.g = g;
-
-
 			var scale0 = this.__chart__ || scale,
 			    scale1 = copyScale();
 			this.__chart__ = scale1;
@@ -1551,9 +1548,8 @@ exports.default = function () {
 
 
 			// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
+
 			tick = tickEnter.merge(tick);
-
-
 			var tickUpdate = transitionise(tick).style("opacity", "1"),
 			    tickTransform = void 0,
 			    tickX = void 0,
@@ -1566,22 +1562,20 @@ exports.default = function () {
 
 
 			// enter + update selection
+
 			tickEnter.append("line"), tickEnter.append("text");
-
-
 			var lineEnter = tickEnter.select("line"),
 			    lineUpdate = tickUpdate.select("line"),
 			    textEnter = tickEnter.select("text"),
 			    textUpdate = tickUpdate.select("text");
 			params.isCategory ? (tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2), tickX = tickCentered ? 0 : tickOffset, tickY = tickCentered ? tickOffset : 0) : (tickX = 0, tickOffset = tickX);
-
-
 			var tspan = void 0,
 			    sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
 			    counts = [],
 			    tickLength = Math.max(6, 0) + 3,
 			    isVertical = orient === "left" || orient === "right",
-			    text = tick.select("text");tspan = text.selectAll("tspan").data(function (d, index) {
+			    text = tick.select("text");
+			tspan = text.selectAll("tspan").data(function (d, index) {
 				var split = params.tickMultiline ? splitTickText(d, params.tickWidth) : (0, _util.isArray)(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
 
 				return counts[index] = split.length, split.map(function (splitted) {
@@ -1756,6 +1750,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 			return key && target && (0, _util.isObjectType)(target) && key in target ? (target = target[key], find()) : key ? undefined : target;
 		};
+
 		Object.keys(thisConfig).forEach(function (key) {
 			target = config, keys = key.split("_"), read = find(), (0, _util.isDefined)(read) && (thisConfig[key] = read);
 		});
@@ -4615,18 +4610,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		// MEMO: avoid inverting domain unexpectedly
 
-
 		if (yDomainMin = (0, _util.isValue)(yMin) ? yMin : (0, _util.isValue)(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = (0, _util.isValue)(yMax) ? yMax : (0, _util.isValue)(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
 			return axisId === "y2" ? $$.y2.domain() : $$.y.domain();
 
 		isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
-
-
 		var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
 		    isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
 		((0, _util.isValue)(yMin) && isAllPositive || (0, _util.isValue)(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
-
-
 		var domainLength = Math.abs(yDomainMax - yDomainMin),
 		    paddingTop = domainLength * .1,
 		    paddingBottom = domainLength * .1;
@@ -4641,7 +4631,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		// add padding for data label
 		if (showHorizontalDataLabel) {
 			lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "width");
-
 			var diff = (0, _util.diffDomain)($$.y.range()),
 			    ratio = [lengths[0] / diff, lengths[1] / diff];
 			paddingTop += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1])), paddingBottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
@@ -5116,7 +5105,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * Sort targets data
   * @param {Array} targetsValue
   * @return {Array}
-  * @priavate
+  * @private
   */
 	orderTargets: function orderTargets(targetsValue) {
 		var $$ = this,
@@ -5132,7 +5121,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			},
 			    t1Sum = t1.values.reduce(reducer, 0),
 			    t2Sum = t2.values.reduce(reducer, 0);
-
 
 			return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
 		}) : (0, _util.isFunction)(config.data_order) && targets.sort(config.data_order), targets;
@@ -5208,7 +5196,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    closest = void 0;
 
 		// find mouseovering bar
-
 
 		return values.filter(function (v) {
 			return v && $$.isBarType(v.id);
@@ -5415,7 +5402,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    target = object; // convert indexes to properties (replace [] with .)
 		// strip a leading dot
 
-
 		for (var _iterator3 = pathArray, _isArray3 = Array.isArray(_iterator3), _i3 = 0, _iterator3 = _isArray3 ? _iterator3 : _iterator3[Symbol.iterator]();;) {
 			var _ref3;
 
@@ -5510,7 +5496,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 					// use x as categories if custom x and categorized
 
-
 					return $$.isCustomX() && $$.isCategorized() && index === 0 && !(0, _util.isUndefined)(rawX) ? (index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), ((0, _util.isUndefined)(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), { x: x, value: value, id: convertedId };
 				}).filter(function (v) {
 					return (0, _util.isDefined)(v.x);
@@ -5593,7 +5578,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    targetIds = rawTargetIds;
 
 		// reset internally cached data
-
 
 		// If no target, call done and return
 		return $$.resetCache(), done || (done = function () {}), targetIds = targetIds.filter(function (id) {
@@ -5737,7 +5721,6 @@ var emulateEvent = {
 
 		// clear old rects
 
-
 		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX ? (eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)) : (maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets), eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
 			return d;
 		}), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)), $$.inputType === "touch" && !$$.hasArcType()) {
@@ -5771,6 +5754,8 @@ var emulateEvent = {
 
 			// call event.preventDefault()
 			// according 'interaction.inputType.touch.preventDefault' option
+
+
 			$$.svg.on("touchstart touchmove", function () {
 				var eventRect = getEventRect();
 
@@ -5811,7 +5796,6 @@ var emulateEvent = {
 		    y = void 0,
 		    w = void 0,
 		    h = void 0; // set update selection if null
-
 
 		if ($$.isMultipleX()) x = 0, y = 0, w = $$.width, h = $$.height;else {
 			var rectW = void 0,
@@ -5863,7 +5847,6 @@ var emulateEvent = {
 
 		// do nothing when dragging
 		if (!($$.dragging || $$.hasArcType(targetsToShow))) {
-
 				var mouse = (0, _d3Selection.mouse)(context),
 				    closest = $$.findClosestFromTargets(targetsToShow, mouse),
 				    sameXData = void 0;
@@ -5934,7 +5917,6 @@ var emulateEvent = {
 		}).on("mousemove", function (d) {
 			// do nothing while dragging/flowing
 			if (!($$.dragging || $$.flowing || $$.hasArcType())) {
-
 					var index = d.index,
 					    eventRect = $$.svg.select("." + _classes2.default.eventRect + "-" + index);
 					$$.isStepType(d) && $$.config.line_step_type === "step-after" && (0, _d3Selection.mouse)(this)[0] < $$.x($$.getXValue(d.id, index)) && (index -= 1), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
@@ -5968,7 +5950,6 @@ var emulateEvent = {
 
 			// select if selection enabled
 			if (!$$.hasArcType(targetsToShow)) {
-
 					var mouse = (0, _d3Selection.mouse)(this),
 					    closest = $$.findClosestFromTargets(targetsToShow, mouse);
 					!closest || ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && $$.main.selectAll("." + _classes2.default.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + _classes2.default.shape + "-" + closest.index).each(function () {
@@ -6196,7 +6177,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    x = d.x || d.x === 0 ? scale(d.x) - offset * (targetsNum / 2 - index) : 0;
 
 			// adjust x position for bar.padding option
-
 
 			return offset && x && targetsNum > 1 && barPadding && (index && (x += barPadding * index), targetsNum > 2 ? x -= (targetsNum - 1) * barPadding / 2 : targetsNum === 2 && (x -= barPadding / 2)), x;
 		};
@@ -6612,7 +6592,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}), isMouse && mainArc.on("mouseover", function (d) {
 			if (!$$.transiting) // skip while transiting
 				{
-
 					var updated = $$.updateAngle(d),
 					    arcData = updated ? $$.convertToArcData(updated) : null,
 					    id = arcData && arcData.id || undefined;
@@ -6641,23 +6620,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				$$.svg.on("touchstart", function () {
 					if (!$$.transiting) // skip while transiting
 						{
-
 							var eventArc = _getEventArc(),
 							    datum = eventArc.datum(),
 							    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
 							    arcData = updated ? $$.convertToArcData(updated) : null,
 							    id = arcData && arcData.id || undefined;
+
 							id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onover(arcData, this);
 						}
 				}).on("touchend", function () {
 					if (!$$.transiting) // skip while transiting
 						{
-
 							var eventArc = _getEventArc(),
 							    datum = eventArc.datum(),
 							    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
 							    arcData = updated ? $$.convertToArcData(updated) : null,
 							    id = arcData && arcData.id || undefined;
+
 							id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onout(arcData, this);
 						}
 				}).on("touchmove", function () {
@@ -6666,6 +6645,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					    updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
 					    arcData = updated ? $$.convertToArcData(updated) : null,
 					    id = arcData && arcData.id || undefined;
+
 					id === undefined ? unselectArc() : selectArc(this, arcData, id);
 				});
 			}
@@ -6757,6 +6737,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    color = function (d) {
 			return $$.color(d.id);
 		};
+
 		$$.mainBar = $$.main.selectAll("." + _classes2.default.bars).selectAll("." + _classes2.default.bar).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("stroke", color).style("fill", color).merge($$.mainBar).style("opacity", initialOpacity);
 	},
 	redrawBar: function redrawBar(drawBar, withTransition) {
@@ -6801,7 +6782,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 			// switch points if axis is rotated, not applicable for sub chart
 
-
 			return "M " + points[0][indexX] + "," + points[0][indexY] + "\n\t\t\t\tL " + points[1][indexX] + "," + points[1][indexY] + "\n\t\t\t\tL " + points[2][indexX] + "," + points[2][indexY] + "\n\t\t\t\tL " + points[3][indexX] + "," + points[3][indexY] + " z";
 		};
 	},
@@ -6824,7 +6804,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 			// fix posY not to overflow opposite quadrant
-
 
 			// 4 points that make a bar
 			return $$.config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), [[posX, offset], [posX, posY - (y0 - offset)], [posX + barW, posY - (y0 - offset)], [posX + barW, offset]];
@@ -6895,8 +6874,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    maxR = $$.config.bubble_maxR;
 		(0, _util.isFunction)(maxR) ? maxR = maxR(d) : !(0, _util.isNumber)(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
-
-
 		var max = (0, _d3Array.max)($$.getMinMaxData().max.map(function (d) {
 			return d.value;
 		})),
@@ -6988,7 +6965,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		},
 		    line = (0, _d3Shape.line)();
 
-
 		return line = axisRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
 			return d.value !== null;
 		})), function (d) {
@@ -7020,7 +6996,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    offset = lineOffset(d, i) || y0,
 			    posX = x(d),
 			    posY = y(d); // offset is for stacked area chart
-
 
 			// fix posY not to overflow opposite quadrant
 			config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0);
@@ -7079,6 +7054,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return y(dt.value);
 		};
 
+
 		// Generate
 		for (sWithRegion = $$.isTimeSeries() ? function (d0, d1, k, timeseriesDiff) {
 			var x0 = d0.x.getTime(),
@@ -7129,7 +7105,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
 		};
 
-
 		return function (d) {
 			var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
 			    x0 = 0,
@@ -7178,7 +7153,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 			// fix posY not to overflow opposite quadrant
-
 
 			// 1 point that marks the area position
 			return config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), [[posX, offset], [posX, posY - (y0 - offset)], [posX, posY - (y0 - offset)], // needed for compatibility
@@ -7239,8 +7213,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    r = $$.pointExpandedR.bind($$);
 		reset && $$.unexpandCircles();
-
-
 		var circles = $$.getCircles(i, id).classed(_classes2.default.EXPANDED, !0),
 		    scale = r(circles) / $$.config.point_r;
 		$$.isCirclePoint() ? circles.attr("r", r) : circles.each(function () {
@@ -7248,7 +7220,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    box = this.getBBox(),
 			    x1 = box.x + box.width * .5,
 			    y1 = box.y + box.height * .5;
-
 			this.tagName === "circle" ? point.attr("r", r) : point.style("transform", "translate(" + (1 - scale) * x1 + "px, " + (1 - scale) * y1 + "px) scale(" + scale + ")");
 		});
 	},
@@ -7403,7 +7374,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			},
 			    mainCircles = element;
 
-
 			if (withTransition) {
 				var transitionName = $$.getTransitionName();
 
@@ -7424,7 +7394,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    mainCircles = element;
 
 			// when '.load()' called, bubble size should be updated
-
 
 			if ($$.hasType("bubble") && (mainCircles = mainCircles.attr("r", $$.pointR.bind($$))), withTransition) {
 				var transitionName = $$.getTransitionName();
@@ -7455,7 +7424,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				return yPosFn(d) - r;
 			},
 			    mainCircles = element;
-
 
 			if (withTransition) {
 				var transitionName = $$.getTransitionName();
@@ -7568,6 +7536,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    svg = dummy.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px"),
 		    font = (0, _d3Selection.select)(element).style("font"),
 		    rect = void 0;
+
 
 		return svg.selectAll(".dummy").data([text]).enter().append("text").classed(cls ? cls : "", !0).style("font", font).text(text).each(function () {
 			rect = this.getBoundingClientRect();
@@ -7807,6 +7776,7 @@ var getGridTextAnchor = function (d) {
 		return d.position === "start" ? x = isX ? -height : 0 : d.position === "middle" && (x = (isX ? -height : width) / 2), x;
 	};
 };
+
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	initGrid: function initGrid() {
 		var $$ = this,
@@ -8082,7 +8052,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return $$.isAreaRangeType(row) ? $$.getAreaRangeData(row, "mid") : row.value;
 		};
 
-
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
 			var ids = $$.orderTargets($$.data.targets).map(function (i2) {
@@ -8145,7 +8114,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		// Determine tooltip position
 
-
 		return forArc ? (tooltipLeft = isTouch ? mouse[0] : ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2 + mouse[0], tooltipTop = isTouch ? mouse[1] + 20 : $$.height / 2 + mouse[1] + 20) : (svgLeft = $$.getSvgLeft(!0), config.axis_rotated ? (tooltipLeft = svgLeft + mouse[0] + 100, tooltipRight = tooltipLeft + tWidth, chartRight = $$.currentWidth - $$.getCurrentPaddingRight(), tooltipTop = $$.x(dataToShow[0].x) + 20) : (tooltipLeft = svgLeft + $$.getCurrentPaddingLeft(!0) + $$.x(dataToShow[0].x) + 20, tooltipRight = tooltipLeft + tWidth, chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(), tooltipTop = mouse[1] + 15), tooltipRight > chartRight && (tooltipLeft -= tooltipRight - chartRight + 20), tooltipTop + tHeight > $$.currentHeight && (tooltipTop -= tHeight + 30)), tooltipTop < 0 && (tooltipTop = 0), {
 			top: tooltipTop,
 			left: tooltipLeft
@@ -8170,7 +8138,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		if (dataToShow.length !== 0 && config.tooltip_show) {
-
 				var datum = $$.tooltip.datum(),
 				    width = datum && datum.width || 0,
 				    height = datum && datum.height || 0;
@@ -8582,6 +8549,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 
 		// Skip elements when their name is set to null
+
+
 		$$.isLegendInset && (step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length, $$.updateLegendStep(step)), $$.isLegendRight ? (xForLegend = function (id) {
 			return maxWidth * steps[id];
 		}, yForLegend = function (id) {
@@ -8595,7 +8564,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}, yForLegend = function (id) {
 			return maxHeight * steps[id];
 		});
-
 
 		var xForLegendText = function (id, i) {
 			return xForLegend(id, i) + 4 + config.legend_item_tile_width;
@@ -8621,6 +8589,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    l = $$.legend.selectAll("." + _classes2.default.legendItem).data(targetIdz).enter().append("g");
 
 		// Define g for legend area
+
+
 		$$.setLegendItem(l), l.append("text").text(function (id) {
 			return (0, _util.isDefined)(config.data_names[id]) ? config.data_names[id] : id;
 		}).each(function (id, i) {
@@ -9036,7 +9006,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					    isWithin = !1,
 					    box = void 0;
 
-
 					if (shape.classed(_classes2.default.circle)) _x = shape.attr("cx") * 1, _y = shape.attr("cy") * 1, toggle = $$.togglePoint, isWithin = minX < _x && _x < maxX && minY < _y && _y < maxY;else if (shape.classed(_classes2.default.bar)) box = (0, _util.getPathBox)(this), _x = box.x, _y = box.y, _w = box.width, _h = box.height, toggle = $$.togglePath, isWithin = !(maxX < _x || _x + _w < minX) && !(maxY < _y || _y + _h < minY);else
 						// line/area selection not supported yet
 						return;
@@ -9445,10 +9414,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 				// setup drawer - MEMO: this must be called after axis updated
-				var _drawAreaOnSub = $$.generateDrawArea(areaIndices, !0),
-				    _drawBarOnSub = $$.generateDrawBar(barIndices, !0),
-				    _drawLineOnSub = $$.generateDrawLine(lineIndices, !0);
-				$$.updateBarForSubchart(duration), $$.updateLineForSubchart(duration), $$.updateAreaForSubchart(duration), $$.redrawBarForSubchart(_drawBarOnSub, duration, duration), $$.redrawLineForSubchart(_drawLineOnSub, duration, duration), $$.redrawAreaForSubchart(_drawAreaOnSub, duration, duration);
+				var drawAreaOnSub = $$.generateDrawArea(areaIndices, !0),
+				    drawBarOnSub = $$.generateDrawBar(barIndices, !0),
+				    drawLineOnSub = $$.generateDrawLine(lineIndices, !0);
+				$$.updateBarForSubchart(duration), $$.updateLineForSubchart(duration), $$.updateAreaForSubchart(duration), $$.redrawBarForSubchart(drawBarOnSub, duration, duration), $$.redrawLineForSubchart(drawLineOnSub, duration, duration), $$.redrawAreaForSubchart(drawAreaOnSub, duration, duration);
 			}
 	},
 
@@ -9612,7 +9581,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		if (config.zoom_enabled) {
-
 				var zoom = $$.zoom,
 				    x = $$.x,
 				    event = _d3Selection.event,
@@ -9668,6 +9636,8 @@ var colorizePattern = function (pattern, color, id) {
 
 // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
+
+
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	generateColor: function generateColor() {
 		var $$ = this,
@@ -9690,6 +9660,7 @@ var colorizePattern = function (pattern, color, id) {
 			});
 
 			// Add background color to patterns
+
 			pattern = colorizedPatterns.map(function (p) {
 				return "url(#" + p.id + ")";
 			}), $$.patterns = colorizedPatterns;
@@ -9701,7 +9672,6 @@ var colorizePattern = function (pattern, color, id) {
 			    color = void 0;
 
 			// if callback function is provided
-
 
 			return colors[id] instanceof Function ? color = colors[id](d) : colors[id] ? color = colors[id] : (ids.indexOf(id) < 0 && ids.push(id), color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] : pattern[ids.indexOf(id) % pattern.length], colors[id] = color), callback instanceof Function ? callback(color, d) : color;
 		};
@@ -10436,7 +10406,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		// update xs if specified
 
-
 		// use cache if exists
 		return args.xs && $$.addXs(args.xs), "names" in args && this.data.names(args.names), "classes" in args && Object.keys(args.classes).forEach(function (id) {
 			config.data_classes[id] = args.classes[id];
@@ -10679,7 +10648,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    mainArea = $$.mainArea || (0, _d3Selection.selectAll)([]),
 			    mainCircle = $$.mainCircle || (0, _d3Selection.selectAll)([]);
 
-
 			// set flag
 			$$.flowing = !0, $$.data.targets.forEach(function (d) {
 				d.values.splice(0, flowLength);
@@ -10716,11 +10684,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 				if (xgrid.size() && xgrid.attr("transform", null).attr($$.xgridAttr), xgridLines.attr("transform", null), xgridLines.select("line").attr("x1", config.axis_rotated ? 0 : xv).attr("x2", config.axis_rotated ? $$.width : xv), xgridLines.select("text").attr("x", config.axis_rotated ? $$.width : 0).attr("y", xv), mainBar.attr("transform", null).attr("d", drawBar), mainLine.attr("transform", null).attr("d", drawLine), mainArea.attr("transform", null).attr("d", drawArea), mainCircle.attr("transform", null), $$.isCirclePoint()) mainCircle.attr("cx", cx).attr("cy", cy);else {
-					mainCircle.attr("x", function xFunc(d) {
+					var xFunc = function (d) {
 						return cx(d) - config.point_r;
-					}).attr("y", function yFunc(d) {
+					},
+					    yFunc = function (d) {
 						return cy(d) - config.point_r;
-					}).attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
+					};
+
+					mainCircle.attr("x", xFunc).attr("y", yFunc).attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
 					.attr("cy", cy);
 				}
 
@@ -11676,6 +11647,8 @@ var setMinMax = function ($$, type, value) {
 /**
  * Define axis
  */
+
+
 (0, _util.extend)(_Chart2.default.prototype, { axis: axis });
 
 /***/ }),
@@ -12009,14 +11982,11 @@ var b64EncodeUnicode = function (str) {
 		return r.cssText;
 	});
 	clone.setAttribute("xmlns", _d3Selection.namespaces.xhtml);
-
-
 	var nodeXml = new XMLSerializer().serializeToString(clone),
 	    dataStr = ("<svg xmlns=\"" + _d3Selection.namespaces.svg + "\" width=\"" + bounds.width + "\" height=\"" + bounds.height + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t<style>" + cssText.join("\n") + "</style>\n\t\t\t\t" + nodeXml + "\n\t\t\t</foreignObject></svg>").replace(/#/g, "%23").replace("/\n/g", "%0A");
 
 	// foreignObject not supported in IE11 and below
 	// https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-
 
 	return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
 };
@@ -12031,6 +12001,8 @@ var b64EncodeUnicode = function (str) {
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
+
 (0, _util.extend)(_Chart2.default.prototype, {
 	/**
   * Export chart as an image.
@@ -15655,7 +15627,7 @@ function point() {
   return pointish(band().paddingInner(1));
 }
 
-// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 21 modules
+// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
 var d3_interpolate = __webpack_require__(67);
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
@@ -15837,20 +15809,55 @@ function continuous(deinterpolate, reinterpolate) {
   };
 });
 
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDefault.js
-/* harmony default export */ var formatDefault = (function(x, p) {
-  x = x.toPrecision(p);
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
+// [[fill]align][sign][symbol][0][width][,][.precision][~][type]
+var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 
-  out: for (var n = x.length, i = 1, i0 = -1, i1; i < n; ++i) {
-    switch (x[i]) {
+function formatSpecifier(specifier) {
+  return new FormatSpecifier(specifier);
+}
+
+formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
+
+function FormatSpecifier(specifier) {
+  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
+  var match;
+  this.fill = match[1] || " ";
+  this.align = match[2] || ">";
+  this.sign = match[3] || "-";
+  this.symbol = match[4] || "";
+  this.zero = !!match[5];
+  this.width = match[6] && +match[6];
+  this.comma = !!match[7];
+  this.precision = match[8] && +match[8].slice(1);
+  this.trim = !!match[9];
+  this.type = match[10] || "";
+}
+
+FormatSpecifier.prototype.toString = function() {
+  return this.fill
+      + this.align
+      + this.sign
+      + this.symbol
+      + (this.zero ? "0" : "")
+      + (this.width == null ? "" : Math.max(1, this.width | 0))
+      + (this.comma ? "," : "")
+      + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
+      + (this.trim ? "~" : "")
+      + this.type;
+};
+
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
+// Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
+/* harmony default export */ var formatTrim = (function(s) {
+  out: for (var n = s.length, i = 1, i0 = -1, i1; i < n; ++i) {
+    switch (s[i]) {
       case ".": i0 = i1 = i; break;
       case "0": if (i0 === 0) i0 = i; i1 = i; break;
-      case "e": break out;
-      default: if (i0 > 0) i0 = 0; break;
+      default: if (i0 > 0) { if (!+s[i]) break out; i0 = 0; } break;
     }
   }
-
-  return i0 > 0 ? x.slice(0, i0) + x.slice(i1 + 1) : x;
+  return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
@@ -15888,9 +15895,7 @@ var prefixExponent;
 
 
 
-
 /* harmony default export */ var formatTypes = ({
-  "": formatDefault,
   "%": function(x, p) { return (x * 100).toFixed(p); },
   "b": function(x) { return Math.round(x).toString(2); },
   "c": function(x) { return x + ""; },
@@ -15906,70 +15911,13 @@ var prefixExponent;
   "x": function(x) { return Math.round(x).toString(16); }
 });
 
-// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
-
-
-// [[fill]align][sign][symbol][0][width][,][.precision][type]
-var re = /^(?:(.)?([<>=^]))?([+\-\( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?([a-z%])?$/i;
-
-function formatSpecifier(specifier) {
-  return new FormatSpecifier(specifier);
-}
-
-formatSpecifier.prototype = FormatSpecifier.prototype; // instanceof
-
-function FormatSpecifier(specifier) {
-  if (!(match = re.exec(specifier))) throw new Error("invalid format: " + specifier);
-
-  var match,
-      fill = match[1] || " ",
-      align = match[2] || ">",
-      sign = match[3] || "-",
-      symbol = match[4] || "",
-      zero = !!match[5],
-      width = match[6] && +match[6],
-      comma = !!match[7],
-      precision = match[8] && +match[8].slice(1),
-      type = match[9] || "";
-
-  // The "n" type is an alias for ",g".
-  if (type === "n") comma = true, type = "g";
-
-  // Map invalid types to the default format.
-  else if (!formatTypes[type]) type = "";
-
-  // If zero fill is specified, padding goes after sign and before digits.
-  if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
-
-  this.fill = fill;
-  this.align = align;
-  this.sign = sign;
-  this.symbol = symbol;
-  this.zero = zero;
-  this.width = width;
-  this.comma = comma;
-  this.precision = precision;
-  this.type = type;
-}
-
-FormatSpecifier.prototype.toString = function() {
-  return this.fill
-      + this.align
-      + this.sign
-      + this.symbol
-      + (this.zero ? "0" : "")
-      + (this.width == null ? "" : Math.max(1, this.width | 0))
-      + (this.comma ? "," : "")
-      + (this.precision == null ? "" : "." + Math.max(0, this.precision | 0))
-      + this.type;
-};
-
 // CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
 /* harmony default export */ var identity = (function(x) {
   return x;
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
+
 
 
 
@@ -15998,7 +15946,17 @@ var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z",
         width = specifier.width,
         comma = specifier.comma,
         precision = specifier.precision,
+        trim = specifier.trim,
         type = specifier.type;
+
+    // The "n" type is an alias for ",g".
+    if (type === "n") comma = true, type = "g";
+
+    // The "" type, and any invalid type, is an alias for ".12~g".
+    else if (!formatTypes[type]) precision == null && (precision = 12), trim = true, type = "g";
+
+    // If zero fill is specified, padding goes after sign and before digits.
+    if (zero || (fill === "0" && align === "=")) zero = true, fill = "0", align = "=";
 
     // Compute the prefix and suffix.
     // For SI-prefix, the suffix is lazily computed.
@@ -16009,13 +15967,13 @@ var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z",
     // Is this an integer type?
     // Can this type generate exponential notation?
     var formatType = formatTypes[type],
-        maybeSuffix = !type || /[defgprs%]/.test(type);
+        maybeSuffix = /[defgprs%]/.test(type);
 
     // Set the default precision if not specified,
     // or clamp the specified precision to the supported range.
     // For significant precision, it must be in [1, 21].
     // For fixed precision, it must be in [0, 20].
-    precision = precision == null ? (type ? 6 : 12)
+    precision = precision == null ? 6
         : /[gprs]/.test(type) ? Math.max(1, Math.min(21, precision))
         : Math.max(0, Math.min(20, precision));
 
@@ -16033,6 +15991,9 @@ var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z",
         // Perform the initial formatting.
         var valueNegative = value < 0;
         value = formatType(Math.abs(value), precision);
+
+        // Trim insignificant zeros.
+        if (trim) value = formatTrim(value);
 
         // If a negative value rounds to zero during formatting, treat as positive.
         if (valueNegative && +value === 0) valueNegative = false;
@@ -17869,7 +17830,7 @@ function create(node, id, self) {
   });
 });
 
-// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 21 modules
+// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
 var d3_interpolate = __webpack_require__(67);
 
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
@@ -19152,6 +19113,16 @@ function cubehelix_cubehelix(hue) {
 /* harmony default export */ var src_cubehelix = (cubehelix_cubehelix(color_hue));
 var cubehelixLong = cubehelix_cubehelix(nogamma);
 
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/piecewise.js
+function piecewise(interpolate, values) {
+  var i = 0, n = values.length - 1, v = values[0], I = new Array(n < 0 ? 0 : n);
+  while (i < n) I[i] = interpolate(v, v = values[++i]);
+  return function(t) {
+    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
+    return I[i](t - i);
+  };
+}
+
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/quantize.js
 /* harmony default export */ var quantize = (function(interpolator, n) {
   var samples = new Array(n);
@@ -19182,7 +19153,9 @@ var cubehelixLong = cubehelix_cubehelix(nogamma);
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "interpolateHclLong", function() { return hclLong; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "interpolateCubehelix", function() { return src_cubehelix; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "interpolateCubehelixLong", function() { return cubehelixLong; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "piecewise", function() { return piecewise; });
 /* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "quantize", function() { return quantize; });
+
 
 
 
@@ -20212,7 +20185,7 @@ var d3_dispatch = __webpack_require__(77);
 // EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
 var d3_drag = __webpack_require__(73);
 
-// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 21 modules
+// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
 var d3_interpolate = __webpack_require__(67);
 
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
@@ -20927,6 +20900,9 @@ define(Color, color, {
   displayable: function() {
     return this.rgb().displayable();
   },
+  hex: function() {
+    return this.rgb().hex();
+  },
   toString: function() {
     return this.rgb() + "";
   }
@@ -20993,6 +20969,9 @@ define(Rgb, rgb, extend(Color, {
         && (0 <= this.b && this.b <= 255)
         && (0 <= this.opacity && this.opacity <= 1);
   },
+  hex: function() {
+    return "#" + hex(this.r) + hex(this.g) + hex(this.b);
+  },
   toString: function() {
     var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
     return (a === 1 ? "rgb(" : "rgba(")
@@ -21002,6 +20981,11 @@ define(Rgb, rgb, extend(Color, {
         + (a === 1 ? ")" : ", " + a + ")");
   }
 }));
+
+function hex(value) {
+  value = Math.max(0, Math.min(255, Math.round(value) || 0));
+  return (value < 16 ? "0" : "") + value.toString(16);
+}
 
 function hsla(h, s, l, a) {
   if (a <= 0) h = s = l = NaN;
@@ -21557,7 +21541,7 @@ var d3_dispatch = __webpack_require__(77);
 // EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
 var d3_drag = __webpack_require__(73);
 
-// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 21 modules
+// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
 var d3_interpolate = __webpack_require__(67);
 
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
