@@ -5,10 +5,10 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180514180902
+ * @version 1.4.1-nightly-20180518114353
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
- * - d3
+ * - d3 ^5.1.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -116,7 +116,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180514180902
+ * @version 1.4.1-nightly-20180518114353
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -130,7 +130,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180514180902",
+	version: "1.4.1-nightly-20180518114353",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -1260,7 +1260,7 @@ var capitalize = function (str) {
 
 
 /**
- * Copy array like object to array
+ * Convert to array
  * @param {Object} v
  * @returns {Array}
  * @private
@@ -5110,9 +5110,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	isOrderAsc: function isOrderAsc() {
 		return this._checkOrder("asc");
 	},
-	orderTargets: function orderTargets(targets) {
+
+
+	/**
+  * Sort targets data
+  * @param {Array} targetsValue
+  * @return {Array}
+  * @priavate
+  */
+	orderTargets: function orderTargets(targetsValue) {
 		var $$ = this,
 		    config = $$.config,
+		    targets = [].concat(targetsValue),
 		    orderAsc = $$.isOrderAsc(),
 		    orderDesc = $$.isOrderDesc();
 		// TODO: accept name array for order
@@ -7780,10 +7789,24 @@ var _d3Selection = __webpack_require__(63),
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// Grid position and text anchor helpers
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+var getGridTextAnchor = function (d) {
+	return (0, _util.isValue)(d.position) || "end";
+},
+    getGridTextDx = function (d) {
+	return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
+},
+    getGridTextX = function (isX, width, height) {
+	return function (d) {
+		var x = isX ? 0 : width;
+
+		return d.position === "start" ? x = isX ? -height : 0 : d.position === "middle" && (x = (isX ? -height : width) / 2), x;
+	};
+};
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	initGrid: function initGrid() {
 		var $$ = this,
@@ -7798,9 +7821,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	updateXGrid: function updateXGrid(withoutUpdate) {
 		var $$ = this,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
 		    xgridData = $$.generateGridData(config.grid_x_type, $$.x),
 		    tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
-		$$.xgridAttr = config.axis_rotated ? {
+		$$.xgridAttr = isRotated ? {
 			"x1": 0,
 			"x2": $$.width,
 			"y1": function y1(d) {
@@ -7823,7 +7847,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 			Object.keys($$.xgridAttr).forEach(function (id) {
 				grid.attr(id, $$.xgridAttr[id]).style("opacity", function () {
-					return grid.attr(config.axis_rotated ? "y1" : "x1") === (config.axis_rotated ? $$.height : 0) ? "0" : "1";
+					return grid.attr(isRotated ? "y1" : "x1") === (isRotated ? $$.height : 0) ? "0" : "1";
 				});
 			});
 		});
@@ -7831,63 +7855,79 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	updateYGrid: function updateYGrid() {
 		var $$ = this,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
 		    gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
-		$$.ygrid = $$.main.select("." + _classes2.default.ygrids).selectAll("." + _classes2.default.ygrid).data(gridValues), $$.ygrid.exit().remove(), $$.ygrid = $$.ygrid.enter().append("line").attr("class", _classes2.default.ygrid).merge($$.ygrid), $$.ygrid.attr("x1", config.axis_rotated ? $$.y : 0).attr("x2", config.axis_rotated ? $$.y : $$.width).attr("y1", config.axis_rotated ? 0 : $$.y).attr("y2", config.axis_rotated ? $$.height : $$.y), $$.smoothLines($$.ygrid, "grid");
-	},
-	gridTextAnchor: function gridTextAnchor(d) {
-		return d.position ? d.position : "end";
-	},
-	gridTextDx: function gridTextDx(d) {
-		return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
-	},
-	xGridTextX: function xGridTextX(d) {
-		return d.position === "start" ? -this.height : d.position === "middle" ? -this.height / 2 : 0;
-	},
-	yGridTextX: function yGridTextX(d) {
-		return d.position === "start" ? 0 : d.position === "middle" ? this.width / 2 : this.width;
+		$$.ygrid = $$.main.select("." + _classes2.default.ygrids).selectAll("." + _classes2.default.ygrid).data(gridValues), $$.ygrid.exit().remove(), $$.ygrid = $$.ygrid.enter().append("line").attr("class", _classes2.default.ygrid).merge($$.ygrid), $$.ygrid.attr("x1", isRotated ? $$.y : 0).attr("x2", isRotated ? $$.y : $$.width).attr("y1", isRotated ? 0 : $$.y).attr("y2", isRotated ? $$.height : $$.y), $$.smoothLines($$.ygrid, "grid");
 	},
 	updateGrid: function updateGrid(duration) {
-		var $$ = this,
-		    main = $$.main,
-		    config = $$.config;
-
+		var $$ = this;
 
 		// hide if arc type
-		$$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible"), main.select("line." + _classes2.default.xgridFocus).style("visibility", "hidden"), config.grid_x_show && $$.updateXGrid(), $$.xgridLines = main.select("." + _classes2.default.xgridLines).selectAll("." + _classes2.default.xgridLine).data(config.grid_x_lines), $$.xgridLines.exit().transition().duration(duration).style("opacity", "0").remove();
+		$$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.main.select("line." + _classes2.default.xgridFocus).style("visibility", "hidden"), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
+	},
+
+
+	/**
+  * Update X Grid lines
+  * @param {Number} duration
+  * @private
+  */
+	updateXGridLines: function updateXGridLines(duration) {
+		var $$ = this,
+		    main = $$.main,
+		    config = $$.config,
+		    isRotated = config.axis_rotated;
+		config.grid_x_show && $$.updateXGrid(), $$.xgridLines = main.select("." + _classes2.default.xgridLines).selectAll("." + _classes2.default.xgridLine).data(config.grid_x_lines), $$.xgridLines.exit().transition().duration(duration).style("opacity", "0").remove();
 
 
 		// enter
-		var xgridLine = $$.xgridLines.enter().append("g").attr("class", function (d) {
-			return _classes2.default.xgridLine + (d.class ? " " + d.class : "");
-		});
+		var xgridLine = $$.xgridLines.enter().append("g");
 
-		xgridLine.append("line").style("opacity", "0"), xgridLine.append("text").attr("text-anchor", $$.gridTextAnchor).attr("transform", config.axis_rotated ? "" : "rotate(-90)").attr("dx", $$.gridTextDx).attr("dy", -5).style("opacity", "0"), $$.xgridLines = xgridLine.merge($$.xgridLines), config.grid_y_show && $$.updateYGrid(), $$.ygridLines = main.select("." + _classes2.default.ygridLines).selectAll("." + _classes2.default.ygridLine).data(config.grid_y_lines), $$.ygridLines.exit().transition().duration(duration).style("opacity", "0").remove();
+		xgridLine.append("line").style("opacity", "0"), xgridLine.append("text").attr("transform", isRotated ? "" : "rotate(-90)").attr("dy", -5).style("opacity", "0"), $$.xgridLines = xgridLine.merge($$.xgridLines), $$.xgridLines.attr("class", function (d) {
+			return (_classes2.default.xgridLine + " " + (d.class || "")).trim();
+		}).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).text(function (d) {
+			return d.text;
+		}).transition().style("opacity", "1");
+	},
+
+
+	/**
+  * Update Y Grid lines
+  * @param {Number} duration
+  * @private
+  */
+	updateYGridLines: function updateYGridLines(duration) {
+		var $$ = this,
+		    main = $$.main,
+		    config = $$.config,
+		    isRotated = config.axis_rotated;
+		config.grid_y_show && $$.updateYGrid(), $$.ygridLines = main.select("." + _classes2.default.ygridLines).selectAll("." + _classes2.default.ygridLine).data(config.grid_y_lines), $$.ygridLines.exit().transition().duration(duration).style("opacity", "0").remove();
 
 
 		// enter
-		var ygridLine = $$.ygridLines.enter().append("g").attr("class", function (d) {
-			return _classes2.default.ygridLine + (d.class ? " " + d.class : "");
-		});
+		var ygridLine = $$.ygridLines.enter().append("g");
 
-		ygridLine.append("line").style("opacity", "0"), ygridLine.append("text").attr("text-anchor", $$.gridTextAnchor).attr("transform", config.axis_rotated ? "rotate(-90)" : "").attr("dx", $$.gridTextDx).attr("dy", -5).style("opacity", "0"), $$.ygridLines = ygridLine.merge($$.ygridLines);
+		ygridLine.append("line").style("opacity", "0"), ygridLine.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0"), $$.ygridLines = ygridLine.merge($$.ygridLines);
 
 
 		// update
 		var yv = $$.yv.bind($$);
 
-		$$.ygridLines.select("line").transition().duration(duration).attr("x1", config.axis_rotated ? yv : 0).attr("x2", config.axis_rotated ? yv : $$.width).attr("y1", config.axis_rotated ? 0 : yv).attr("y2", config.axis_rotated ? $$.height : yv).transition().style("opacity", "1"), $$.ygridLines.select("text").transition().duration(duration).attr("x", config.axis_rotated ? $$.xGridTextX.bind($$) : $$.yGridTextX.bind($$)).attr("y", yv).text(function (d) {
+		$$.ygridLines.attr("class", function (d) {
+			return (_classes2.default.ygridLine + " " + (d.class || "")).trim();
+		}).select("line").transition().duration(duration).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : $$.width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? $$.height : yv).transition().style("opacity", "1"), $$.ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).attr("dy", -5).attr("x", getGridTextX(isRotated, $$.width, $$.height)).attr("y", yv).text(function (d) {
 			return d.text;
 		}).transition().style("opacity", "1");
 	},
 	redrawGrid: function redrawGrid(withTransition) {
 		var $$ = this,
-		    rotated = $$.config.axis_rotated,
+		    isRotated = $$.config.axis_rotated,
 		    xv = $$.xv.bind($$),
 		    lines = $$.xgridLines.select("line"),
 		    texts = $$.xgridLines.select("text");
 
 
-		return lines = (withTransition ? lines.transition() : lines).attr("x1", rotated ? 0 : xv).attr("x2", rotated ? $$.width : xv).attr("y1", rotated ? xv : 0).attr("y2", rotated ? xv : $$.height), texts = (withTransition ? texts.transition() : texts).attr("x", rotated ? $$.yGridTextX.bind($$) : $$.xGridTextX.bind($$)).attr("y", xv).text(function (d) {
+		return lines = (withTransition ? lines.transition() : lines).attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? $$.width : xv).attr("y1", isRotated ? xv : 0).attr("y2", isRotated ? xv : $$.height), texts = (withTransition ? texts.transition() : texts).attr("x", getGridTextX(!isRotated, $$.width, $$.height)).attr("y", xv).text(function (d) {
 			return d.text;
 		}), [(withTransition ? lines.transition() : lines).style("opacity", "1"), (withTransition ? texts.transition() : texts).style("opacity", "1")];
 	},
