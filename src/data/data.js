@@ -447,7 +447,7 @@ extend(ChartInternal.prototype, {
 	 * Sort targets data
 	 * @param {Array} targetsValue
 	 * @return {Array}
-	 * @priavate
+	 * @private
 	 */
 	orderTargets(targetsValue) {
 		const $$ = this;
