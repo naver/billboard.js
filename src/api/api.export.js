@@ -51,8 +51,9 @@ const nodeToSvgDataUrl = node => {
 extend(Chart.prototype, {
 	/**
 	 * Export chart as an image.
-	 * - **NOTE:** IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
-	 *
+	 * - **NOTE:**
+	 *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
+	 *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
 	 * @method export
 	 * @instance
 	 * @memberOf Chart
