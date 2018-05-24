@@ -39,9 +39,8 @@ describe("AXIS", function() {
 	});
 
 	describe("axis.y.tick.count", () => {
-		it("should update args to have only 1 tick on y axis", () => {
+		it("set options axis.y.tick.count=1", () => {
 			args.axis.y.tick.count = 1;
-			expect(true).to.be.ok;
 		});
 
 		it("should have only 1 tick on y axis", () => {
@@ -50,9 +49,8 @@ describe("AXIS", function() {
 			expect(ticksSize).to.be.equal(1);
 		});
 
-		it("should update args to have 2 ticks on y axis", () => {
+		it("set options axis.y.tick.count=2", () => {
 			args.axis.y.tick.count = 2;
-			expect(true).to.be.ok;
 		});
 
 		it("should have 2 ticks on y axis", () => {
@@ -62,9 +60,8 @@ describe("AXIS", function() {
 			expect(ticksSize).to.be.equal(2);
 		});
 
-		it("should update args to have 3 ticks on y axis", () => {
+		it("set options axis.y.tick.count=3", () => {
 			args.axis.y.tick.count = 3;
-			expect(true).to.be.ok;
 		});
 
 		it("should have 3 ticks on y axis", () => {
@@ -178,12 +175,10 @@ describe("AXIS", function() {
 				});
 		});
 
-		it("should update args to set axis.y.time", () => {
+		it("set options axis.y.tick.time", () => {
 			args.axis.y.tick.time = {
 				value : d3.timeMinute.every(60)
 			};
-
-			expect(true).to.be.ok;
 		});
 
 		it("should have specified 60 second intervals", () => {
@@ -382,7 +377,6 @@ describe("AXIS", function() {
 			describe("rotated", () => {
 				before(() => {
 					args.axis.rotated = true;
-					expect(true).to.be.ok;
 				});
 
 				it("should split x axis tick text to multiple lines", () => {
@@ -819,7 +813,7 @@ describe("AXIS", function() {
 				expect(ticks.size()).to.be.equal(6);
 			});
 
-			it("should set args for x-based data", () => {
+			it("set options for x-based data", () => {
 				args = {
 					data: {
 						x: "x",
@@ -831,8 +825,6 @@ describe("AXIS", function() {
 						]
 					}
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show fitted ticks on indexed data", () => {
@@ -878,7 +870,7 @@ describe("AXIS", function() {
 				expect(ticks.size()).to.be.equal(11);
 			});
 
-			it("should set args for x-based data", () => {
+			it("set options x-based data", () => {
 				args.data = {
 					x: "x",
 					columns: [
@@ -888,8 +880,6 @@ describe("AXIS", function() {
 						["data3", 150, 120, 110, 140, 115, 125]
 					]
 				};
-
-				expect(true).to.be.ok;
 			});
 
 			it("should show fitted ticks on indexed data", () => {
@@ -938,9 +928,8 @@ describe("AXIS", function() {
 			});
 		});
 
-		it("should update args to have inner y axis", () => {
+		it("set options axis.y.inner=true", () => {
 			args.axis.y.inner = true;
-			expect(true).to.be.ok;
 		});
 
 		it("should have inner y axis", () => {
@@ -985,10 +974,8 @@ describe("AXIS", function() {
 			});
 		});
 
-		it("should update args to have inner y axis", () => {
+		it("set options axis.y2.inner=true", () => {
 			args.axis.y2.inner = true;
-
-			expect(true).to.be.ok;
 		});
 
 		it("should have inner y axis", () => {
