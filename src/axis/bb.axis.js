@@ -43,6 +43,25 @@ const getSizeFor1Char = node => {
 	return (getSizeFor1Char.size = size);
 };
 
+/**
+ * Get axis string by orient
+ * @param {String} orient Orientation string - top|bottom|left|right
+ * @param {Boolean} isRotate Whether chart is rotated
+ * @return {String} x|y|y2
+ * @private
+ */
+const getAxisByOrient = (orient, isRotate) => (
+	isRotate ? {
+		left: "x",
+		bottom: "y",
+		top: "y2",
+	} : {
+		bottom: "x",
+		left: "y",
+		right: "y2"
+	}
+)[orient];
+
 export default function(params = {}) {
 	let scale = d3ScaleLinear();
 	let orient = "bottom";
@@ -250,8 +269,8 @@ export default function(params = {}) {
 				return split(splitted, String(tickText));
 			}
 
-			const text = tick.select("text");
-			let tspan = text.selectAll("tspan")
+			let tspan = tick.select("text")
+				.selectAll("tspan")
 				.data((d, index) => {
 					const split = params.tickMultiline ?
 						splitTickText(d, params.tickWidth) : (
@@ -261,10 +280,7 @@ export default function(params = {}) {
 
 					counts[index] = split.length;
 
-					return split.map(splitted => ({
-						index,
-						splitted
-					}));
+					return split.map(splitted => ({index, splitted}));
 				});
 
 			tspan.exit().remove();
@@ -274,22 +290,6 @@ export default function(params = {}) {
 				.append("tspan")
 				.merge(tspan)
 				.text(d => d.splitted);
-
-			const rotate = params.tickTextRotate;
-
-			// tick text helpers
-			const tspanDy = (d, i) => (i !== 0 ? sizeFor1Char.h : (
-				isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : ".71em"
-			));
-			const tickSize = d => {
-				const tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
-
-				return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
-			};
-			const textAnchorForText = r => (!r ? "middle" : (r > 0 ? "start" : "end"));
-			const textTransform = r => (r ? `rotate(${r})` : "");
-			const dxForText = r => (r ? 8 * Math.sin(Math.PI * (r / 180)) : 0);
-			const yForText = r => (r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength);
 
 			// line/text enter and path update
 			const tickTransform = isTopBottom ? axisX : axisY;
@@ -307,20 +307,62 @@ export default function(params = {}) {
 					`M${outerTickSized},${range[0]}H0V${range[1]}H${outerTickSized}`;
 			});
 
+			// tick text helpers
+			const rotate = params.tickTextRotate;
+			const tickSize = d => {
+				const tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
+
+				return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
+			};
+			const textAnchorForText = r => (!r ? "middle" : (r > 0 ? "start" : "end"));
+			const textTransform = r => (r ? `rotate(${r})` : null);
+			const yForText = r => (r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength);
+
+			// Get axis.tick.text.position option value
+			const axisType = getAxisByOrient(orient, rotate);
+			const tickTextPos = axisType ? params.config[`axis_${axisType}_tick_text_position`] : {x: 0, y: 0};
+
+			// set <tspan>'s position
+			tspan
+				.attr("x", isTopBottom ? 0 : tickLength * sign)
+				.attr("dx", (() => {
+					let dx = 0;
+
+					if (orient === "bottom" && rotate) {
+						dx = 8 * Math.sin(Math.PI * (rotate / 180));
+					}
+
+					return dx + (tickTextPos.x || 0);
+				})())
+				.attr("dy", (d, i) => {
+					const defValue = ".71em";
+					let dy = 0;
+
+					if (orient !== "top") {
+						if (i === 0) {
+							dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) :
+								(tickTextPos.y === 0 ? defValue : 0);
+						} else {
+							dy = sizeFor1Char.h;
+						}
+					}
+
+					return isNumber(dy) && tickTextPos.y ?
+						dy + tickTextPos.y : dy || defValue;
+				});
+
 			switch (orient) {
 				case "bottom":
-					lineUpdate.attr("x1", tickX)
+					lineUpdate
+						.attr("x1", tickX)
 						.attr("x2", tickX)
 						.attr("y2", tickSize);
 
-					textUpdate.attr("x", 0)
+					textUpdate
+						.attr("x", 0)
 						.attr("y", yForText(rotate))
 						.style("text-anchor", textAnchorForText(rotate))
 						.attr("transform", textTransform(rotate));
-
-					tspan.attr("x", 0)
-						.attr("dy", tspanDy)
-						.attr("dx", dxForText(rotate));
 					break;
 				case "top":
 					lineUpdate
@@ -329,28 +371,19 @@ export default function(params = {}) {
 
 					textUpdate
 						.attr("x", 0)
-						.attr("y", -tickLength);
-
-					text.style("text-anchor", "middle");
-
-					tspan
-						.attr("x", 0)
-						.attr("dy", "0em");
+						.attr("y", -tickLength)
+						.style("text-anchor", "middle");
 					break;
 				case "left":
-					lineUpdate.attr("x2", -innerTickSize)
+					lineUpdate
+						.attr("x2", -innerTickSize)
 						.attr("y1", tickY)
 						.attr("y2", tickY);
 
 					textUpdate
 						.attr("x", -tickLength)
-						.attr("y", tickOffset);
-
-					text.style("text-anchor", "end");
-
-					tspan
-						.attr("x", -tickLength)
-						.attr("dy", tspanDy);
+						.attr("y", tickOffset)
+						.style("text-anchor", "end");
 					break;
 				case "right":
 					lineUpdate
@@ -359,13 +392,8 @@ export default function(params = {}) {
 
 					textUpdate
 						.attr("x", tickLength)
-						.attr("y", 0);
-
-					text.style("text-anchor", "start");
-
-					tspan
-						.attr("x", tickLength)
-						.attr("dy", tspanDy);
+						.attr("y", 0)
+						.style("text-anchor", "start");
 			}
 
 			// Append <title> for tooltip display

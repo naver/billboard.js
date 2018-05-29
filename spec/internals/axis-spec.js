@@ -733,8 +733,9 @@ describe("AXIS", function() {
 			});
 
 			it("should have automatically calculated x axis height", () => {
-				const box = chart.internal.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
-				const height = chart.internal.getHorizontalAxisHeight("x");
+				const internal = chart.internal;
+				const box = internal.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
+				const height = internal.getHorizontalAxisHeight("x");
 
 				expect(box.height).to.be.above(50);
 				expect(height).to.be.above(68);
@@ -1053,6 +1054,70 @@ describe("AXIS", function() {
 
 			chart.internal.main.selectAll(`.${CLASS.axisY} tspan`).each(v => {
 				expect(rx.test(v.splitted)).to.be.false;
+			});
+		});
+	});
+
+	describe("axis text's position", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "category 1", "category 2", "category 3", "category 4", "category 5", "category 6"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							text: {
+								position: {
+									x: 20,
+									y: 10
+								}
+							}
+						}
+					},
+					y: {
+						tick: {
+							text: {
+								position: {
+									x: -5,
+									y: 20
+								}
+							}
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							text: {
+								position: {
+									x: 0,
+									y: 10
+								}
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("should be rounded tick text values", () => {
+			const main = chart.internal.main;
+
+			["x", "y", "y2"].forEach(v => {
+				const pos = args.axis[v].tick.text.position;
+
+				main.selectAll(`.${CLASS[`axis${v.toUpperCase()}`]} tspan`).each(function() {
+					const tspan = d3.select(this);
+
+					expect(+tspan.attr("dx")).to.be.equal(pos.x);
+					expect(+tspan.attr("dy")).to.be.equal(pos.y + (v !== "x" ? 3 : 0));
+				});
 			});
 		});
 	});
