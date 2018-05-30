@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180518124159
+ * @version 1.4.1-nightly-20180530114610
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.4.0
@@ -116,7 +116,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180518124159
+ * @version 1.4.1-nightly-20180530114610
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -130,7 +130,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180518124159",
+	version: "1.4.1-nightly-20180530114610",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -776,8 +776,9 @@ var Axis = function () {
 	return Axis.prototype.init = function init() {
 		var $$ = this.owner,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
 		    main = $$.main;
-		$$.axes.x = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisX).attr("clip-path", $$.clipPathForXAxis).attr("transform", $$.getTranslate("x")).style("visibility", config.axis_x_show ? "visible" : "hidden"), $$.axes.x.append("text").attr("class", _classes2.default.axisXLabel).attr("transform", config.axis_rotated ? "rotate(-90)" : "").style("text-anchor", this.textAnchorForXAxisLabel.bind(this)), $$.axes.y = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY).attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis).attr("transform", $$.getTranslate("y")).style("visibility", config.axis_y_show ? "visible" : "hidden"), $$.axes.y.append("text").attr("class", _classes2.default.axisYLabel).attr("transform", config.axis_rotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForYAxisLabel.bind(this)), $$.axes.y2 = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY2).attr("transform", $$.getTranslate("y2")).style("visibility", config.axis_y2_show ? "visible" : "hidden"), $$.axes.y2.append("text").attr("class", _classes2.default.axisY2Label).attr("transform", config.axis_rotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
+		$$.axes.x = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisX).attr("clip-path", $$.clipPathForXAxis).attr("transform", $$.getTranslate("x")).style("visibility", config.axis_x_show ? "visible" : "hidden"), $$.axes.x.append("text").attr("class", _classes2.default.axisXLabel).attr("transform", isRotated ? "rotate(-90)" : "").style("text-anchor", this.textAnchorForXAxisLabel.bind(this)), $$.axes.y = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY).attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis).attr("transform", $$.getTranslate("y")).style("visibility", config.axis_y_show ? "visible" : "hidden"), $$.axes.y.append("text").attr("class", _classes2.default.axisYLabel).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForYAxisLabel.bind(this)), $$.axes.y2 = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY2).attr("transform", $$.getTranslate("y2")).style("visibility", config.axis_y2_show ? "visible" : "hidden"), $$.axes.y2.append("text").attr("class", _classes2.default.axisY2Label).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
 	}, Axis.prototype.getXAxis = function getXAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -785,11 +786,12 @@ var Axis = function () {
 		    axisParams = {
 			isCategory: isCategory,
 			withOuterTick: withOuterTick,
+			withoutTransition: withoutTransition,
+			config: config,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
 			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
-			withoutTransition: withoutTransition,
 			orgXScale: $$.x
 		},
 		    axis = (0, _bb2.default)(axisParams).scale($$.zoomScale || scale).orient(orient),
@@ -799,25 +801,29 @@ var Axis = function () {
 		return $$.isTimeSeries() && tickValues && !(0, _util.isFunction)(tickValues) && (newTickValues = tickValues.map(function (v) {
 			return $$.parseDate(v);
 		})), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), (0, _util.isEmpty)(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), axis;
-	}, Axis.prototype.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
-		var $$ = this.owner,
-		    config = $$.config,
-		    tickValues = void 0;
-
-
-		return (config.axis_x_tick_fit || config.axis_x_tick_count) && (tickValues = this.generateTickValues($$.mapTargetsToUniqueXs(targets), config.axis_x_tick_count, $$.isTimeSeries())), axis ? axis.tickValues(tickValues) : ($$.xAxis.tickValues(tickValues), $$.subXAxis.tickValues(tickValues)), tickValues;
 	}, Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		var $$ = this.owner,
 		    config = $$.config,
 		    axisParams = {
 			withOuterTick: withOuterTick,
 			withoutTransition: withoutTransition,
+			config: config,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
 		},
 		    axis = (0, _bb2.default)(axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
 
 
-		return $$.isTimeSeriesY() ? axis.ticks(config.axis_y_tick_time_value) : axis.tickValues(tickValues), axis;
+		return $$.isTimeSeriesY() ?
+		// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+		axis.ticks(config.axis_y_tick_time_value) : axis.tickValues(tickValues), axis;
+	}, Axis.prototype.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
+		var $$ = this.owner,
+		    config = $$.config,
+		    xTickCount = config.axis_x_tick_count,
+		    tickValues = void 0;
+
+
+		return (config.axis_x_tick_fit || xTickCount) && (tickValues = this.generateTickValues($$.mapTargetsToUniqueXs(targets), xTickCount, $$.isTimeSeries())), axis ? axis.tickValues(tickValues) : ($$.xAxis.tickValues(tickValues), $$.subXAxis.tickValues(tickValues)), tickValues;
 	}, Axis.prototype.getId = function getId(id) {
 		var config = this.owner.config;
 
@@ -833,7 +839,7 @@ var Axis = function () {
 
 		return tickFormat ? (0, _util.isFunction)(tickFormat) ? format = tickFormat : isTimeSeries && (format = function (date) {
 			return date ? $$.axisTimeFormat(tickFormat)(date) : "";
-		}) : isTimeSeries ? format = $$.defaultAxisTimeFormat : format = isCategorized ? $$.categoryName : function (v) {
+		}) : format = isTimeSeries ? $$.defaultAxisTimeFormat : isCategorized ? $$.categoryName : function (v) {
 			return v < 0 ? v.toFixed(0) : v;
 		}, (0, _util.isFunction)(format) ? function (v) {
 			return format.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
@@ -851,11 +857,9 @@ var Axis = function () {
 
 		return $$.config["axis_" + axisId + "_label"];
 	}, Axis.prototype.getLabelText = function getLabelText(axisId) {
-		var option = this.getLabelOptionByAxisId(axisId),
-		    text = void 0;
+		var option = this.getLabelOptionByAxisId(axisId);
 
-
-		return text = (0, _util.isString)(option) ? option : option ? option.text : null, text;
+		return (0, _util.isString)(option) ? option : option ? option.text : null;
 	}, Axis.prototype.setLabelText = function setLabelText(axisId, text) {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -883,9 +887,7 @@ var Axis = function () {
 	}, Axis.prototype.getY2AxisLabelPosition = function getY2AxisLabelPosition() {
 		return this.getLabelPosition("y2", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
 	}, Axis.prototype.getLabelPositionById = function getLabelPositionById(id) {
-		var label = void 0;
-
-		return label = id === "y2" ? this.getY2AxisLabelPosition() : id === "y" ? this.getYAxisLabelPosition() : this.getXAxisLabelPosition(), label;
+		return this["get" + id.toUpperCase() + "AxisLabelPosition"]();
 	}, Axis.prototype.textForXAxisLabel = function textForXAxisLabel() {
 		return this.getLabelText("x");
 	}, Axis.prototype.textForYAxisLabel = function textForYAxisLabel() {
@@ -894,18 +896,18 @@ var Axis = function () {
 		return this.getLabelText("y2");
 	}, Axis.prototype.xForAxisLabel = function xForAxisLabel(forHorizontal, position) {
 		var $$ = this.owner,
-		    x = void 0;
+		    x = position.isMiddle ? -$$.height / 2 : 0;
 
 
-		return x = forHorizontal ? position.isLeft ? 0 : position.isCenter ? $$.width / 2 : $$.width : position.isBottom ? -$$.height : position.isMiddle ? -$$.height / 2 : 0, x;
+		return forHorizontal ? x = position.isLeft ? 0 : position.isCenter ? $$.width / 2 : $$.width : position.isBottom && (x = -$$.height), x;
 	}, Axis.prototype.dxForAxisLabel = function dxForAxisLabel(forHorizontal, position) {
-		var dx = void 0;
+		var dx = position.isBottom ? "0.5em" : "0";
 
-		return dx = forHorizontal ? position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop ? "-0.5em" : position.isBottom ? "0.5em" : "0", dx;
+		return forHorizontal ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
 	}, Axis.prototype.textAnchorForAxisLabel = function textAnchorForAxisLabel(forHorizontal, position) {
-		var anchor = void 0;
+		var anchor = position.isMiddle ? "middle" : "end";
 
-		return anchor = forHorizontal ? position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom ? "start" : position.isMiddle ? "middle" : "end", anchor;
+		return forHorizontal ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
 	}, Axis.prototype.xForXAxisLabel = function xForXAxisLabel() {
 		return this.xForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
 	}, Axis.prototype.xForYAxisLabel = function xForYAxisLabel() {
@@ -921,28 +923,29 @@ var Axis = function () {
 	}, Axis.prototype.dyForXAxisLabel = function dyForXAxisLabel() {
 		var $$ = this.owner,
 		    config = $$.config,
-		    position = this.getXAxisLabelPosition();
-		return config.axis_rotated ? position.isInner ? "1.2em" : -25 - this.getMaxTickWidth("x") : position.isInner ? "-0.5em" : config.axis_x_height ? config.axis_x_height - 10 : "3em";
+		    isInner = this.getXAxisLabelPosition().isInner,
+		    xHeight = config.axis_x_height;
+		return config.axis_rotated ? isInner ? "1.2em" : -25 - this.getMaxTickWidth("x") : isInner ? "-0.5em" : xHeight ? xHeight - 10 : "3em";
 	}, Axis.prototype.dyForYAxisLabel = function dyForYAxisLabel() {
 		var $$ = this.owner,
-		    position = this.getYAxisLabelPosition();
-		return $$.config.axis_rotated ? position.isInner ? "-0.5em" : "3em" : position.isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : this.getMaxTickWidth("y") + 10);
+		    isInner = this.getYAxisLabelPosition().isInner;
+		return $$.config.axis_rotated ? isInner ? "-0.5em" : "3em" : isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : this.getMaxTickWidth("y") + 10);
 	}, Axis.prototype.dyForY2AxisLabel = function dyForY2AxisLabel() {
 		var $$ = this.owner,
-		    position = this.getY2AxisLabelPosition();
-		return $$.config.axis_rotated ? position.isInner ? "1.2em" : "-2.2em" : position.isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : this.getMaxTickWidth("y2") + 15);
+		    isInner = this.getY2AxisLabelPosition().isInner;
+		return $$.config.axis_rotated ? isInner ? "1.2em" : "-2.2em" : isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : this.getMaxTickWidth("y2") + 15);
 	}, Axis.prototype.textAnchorForXAxisLabel = function textAnchorForXAxisLabel() {
-		var $$ = this.owner;
+		var isRotated = this.owner.config.axis_rotated;
 
-		return this.textAnchorForAxisLabel(!$$.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.textAnchorForAxisLabel(!isRotated, this.getXAxisLabelPosition());
 	}, Axis.prototype.textAnchorForYAxisLabel = function textAnchorForYAxisLabel() {
-		var $$ = this.owner;
+		var isRotated = this.owner.config.axis_rotated;
 
-		return this.textAnchorForAxisLabel($$.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.textAnchorForAxisLabel(isRotated, this.getYAxisLabelPosition());
 	}, Axis.prototype.textAnchorForY2AxisLabel = function textAnchorForY2AxisLabel() {
-		var $$ = this.owner;
+		var isRotated = this.owner.config.axis_rotated;
 
-		return this.textAnchorForAxisLabel($$.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.textAnchorForAxisLabel(isRotated, this.getY2AxisLabelPosition());
 	}, Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -968,11 +971,19 @@ var Axis = function () {
 
 		return $$.currentMaxTickWidths[id] = maxWidth <= 0 ? $$.currentMaxTickWidths[id] : maxWidth, $$.currentMaxTickWidths[id];
 	}, Axis.prototype.updateLabels = function updateLabels(withTransition) {
-		var $$ = this.owner,
-		    axisXLabel = $$.main.select("." + _classes2.default.axisX + " ." + _classes2.default.axisXLabel),
-		    axisYLabel = $$.main.select("." + _classes2.default.axisY + " ." + _classes2.default.axisYLabel),
-		    axisY2Label = $$.main.select("." + _classes2.default.axisY2 + "  ." + _classes2.default.axisY2Label);
-		(withTransition ? axisXLabel.transition() : axisXLabel).attr("x", this.xForXAxisLabel.bind(this)).attr("dx", this.dxForXAxisLabel.bind(this)).attr("dy", this.dyForXAxisLabel.bind(this)).text(this.textForXAxisLabel.bind(this)), (withTransition ? axisYLabel.transition() : axisYLabel).attr("x", this.xForYAxisLabel.bind(this)).attr("dx", this.dxForYAxisLabel.bind(this)).attr("dy", this.dyForYAxisLabel.bind(this)).text(this.textForYAxisLabel.bind(this)), (withTransition ? axisY2Label.transition() : axisY2Label).attr("x", this.xForY2AxisLabel.bind(this)).attr("dx", this.dxForY2AxisLabel.bind(this)).attr("dy", this.dyForY2AxisLabel.bind(this)).text(this.textForY2AxisLabel.bind(this));
+		var _this = this,
+		    $$ = this.owner,
+		    labels = {
+			X: $$.main.select("." + _classes2.default.axisX + " ." + _classes2.default.axisXLabel),
+			Y: $$.main.select("." + _classes2.default.axisY + " ." + _classes2.default.axisYLabel),
+			Y2: $$.main.select("." + _classes2.default.axisY2 + " ." + _classes2.default.axisY2Label)
+		};
+
+		Object.keys(labels).forEach(function (axis) {
+			var node = labels[axis];
+
+			(withTransition ? node.transition() : node).attr("x", _this["xFor" + axis + "AxisLabel"].bind(_this)).attr("dx", _this["dxFor" + axis + "AxisLabel"].bind(_this)).attr("dy", _this["dyFor" + axis + "AxisLabel"].bind(_this)).text(_this["textFor" + axis + "AxisLabel"].bind(_this));
+		});
 	}, Axis.prototype.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
 		var p = (0, _util.isNumber)(padding) ? padding : padding[key];
 
@@ -1512,19 +1523,7 @@ exports.default = function () {
 				    subtext = void 0,
 				    spaceIndex = void 0,
 				    textWidth = void 0;
-				return (0, _util.isArray)(tickText) ? tickText : ((!maxWidth || maxWidth <= 0) && (maxWidth = isVertical ? 95 : params.isCategory ? Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12 : 110), split(splitted, tickText + ""));
-			}
-
-			function tspanDy(d, i) {
-				var dy = sizeFor1Char.h;
-
-				return i === 0 && (dy = orient === "left" || orient === "right" ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : ".71em"), dy;
-			}
-
-			function tickSize(d) {
-				var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
-
-				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
+				return (0, _util.isArray)(tickText) ? tickText : ((!maxWidth || maxWidth <= 0) && (maxWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12 : 110), split(splitted, tickText + ""));
 			}
 
 			var g = (0, _d3Selection.select)(this);
@@ -1551,7 +1550,6 @@ exports.default = function () {
 
 			tick = tickEnter.merge(tick);
 			var tickUpdate = transitionise(tick).style("opacity", "1"),
-			    tickTransform = void 0,
 			    tickX = void 0,
 			    tickY = void 0,
 			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent((params.orgXScale || scale).range()),
@@ -1569,39 +1567,64 @@ exports.default = function () {
 			    textEnter = tickEnter.select("text"),
 			    textUpdate = tickUpdate.select("text");
 			params.isCategory ? (tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2), tickX = tickCentered ? 0 : tickOffset, tickY = tickCentered ? tickOffset : 0) : (tickX = 0, tickOffset = tickX);
-			var tspan = void 0,
-			    sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
+			var sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
 			    counts = [],
 			    tickLength = Math.max(6, 0) + 3,
-			    isVertical = orient === "left" || orient === "right",
-			    text = tick.select("text");
-			tspan = text.selectAll("tspan").data(function (d, index) {
+			    isLeftRight = /^(left|right)$/.test(orient),
+			    isTopBottom = /^(top|bottom)$/.test(orient),
+			    tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
 				var split = params.tickMultiline ? splitTickText(d, params.tickWidth) : (0, _util.isArray)(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
 
 				return counts[index] = split.length, split.map(function (splitted) {
-					return {
-						index: index,
-						splitted: splitted
-					};
+					return { index: index, splitted: splitted };
 				});
-			}), tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
+			});
+			tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
 				return d.splitted;
 			});
 
 
-			var rotate = params.tickTextRotate;
+			// line/text enter and path update
+			var tickTransform = isTopBottom ? axisX : axisY,
+			    sign = /^(top|left)$/.test(orient) ? -1 : 1,
+			    axisPx = tickTransform === axisX ? "y" : "x";
+			lineEnter.attr(axisPx + "2", 6 * sign), textEnter.attr("" + axisPx, 9 * sign), pathUpdate.attr("d", function () {
+				var outerTickSized = outerTickSize * sign;
 
-			if (orient === "bottom" ? (tickTransform = axisX, lineEnter.attr("y2", 6), textEnter.attr("y", 9), lineUpdate.attr("x1", tickX).attr("x2", tickX).attr("y2", tickSize), textUpdate.attr("x", 0).attr("y", function (r) {
+				return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
+			});
+
+			// tick text helpers
+			var rotate = params.tickTextRotate,
+			    tickSize = function tickSize(d) {
+				var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
+
+				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
+			},
+			    axisType = getAxisByOrient(orient, rotate),
+			    tickTextPos = axisType ? params.config["axis_" + axisType + "_tick_text_position"] : { x: 0, y: 0 };
+
+			// Get axis.tick.text.position option value
+
+
+			if (tspan.attr("x", isTopBottom ? 0 : 9 * sign).attr("dx", function () {
+				var dx = 0;
+
+				return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
+			}()).attr("dy", function (d, i) {
+				var dy = 0;
+
+
+				return orient !== "top" && (i === 0 ? dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0 : dy = sizeFor1Char.h), (0, _util.isNumber)(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
+			}), orient === "bottom" ? (lineUpdate.attr("x1", tickX).attr("x2", tickX).attr("y2", tickSize), textUpdate.attr("x", 0).attr("y", function yForText(r) {
 				return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : 9;
-			}(rotate)).style("text-anchor", function (r) {
+			}(rotate)).style("text-anchor", function textAnchorForText(r) {
 				return r ? r > 0 ? "start" : "end" : "middle";
-			}(rotate)).attr("transform", function (r) {
-				return r ? "rotate(" + r + ")" : "";
-			}(rotate)), tspan.attr("x", 0).attr("dy", tspanDy).attr("dx", function (r) {
-				return r ? 8 * Math.sin(Math.PI * (r / 180)) : 0;
-			}(rotate)), pathUpdate.attr("d", "M" + range[0] + "," + outerTickSize + "V0H" + range[1] + "V" + outerTickSize)) : orient === "top" ? (tickTransform = axisX, lineEnter.attr("y2", -6), textEnter.attr("y", -9), lineUpdate.attr("x2", 0).attr("y2", -6), textUpdate.attr("x", 0).attr("y", -9), text.style("text-anchor", "middle"), tspan.attr("x", 0).attr("dy", "0em"), pathUpdate.attr("d", "M" + range[0] + "," + -outerTickSize + "V0H" + range[1] + "V" + -outerTickSize)) : orient === "left" ? (tickTransform = axisY, lineEnter.attr("x2", -6), textEnter.attr("x", -9), lineUpdate.attr("x2", -6).attr("y1", tickY).attr("y2", tickY), textUpdate.attr("x", -9).attr("y", tickOffset), text.style("text-anchor", "end"), tspan.attr("x", -9).attr("dy", tspanDy), pathUpdate.attr("d", "M" + -outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + -outerTickSize)) : orient === "right" ? (tickTransform = axisY, lineEnter.attr("x2", 6), textEnter.attr("x", 9), lineUpdate.attr("x2", 6).attr("y2", 0), textUpdate.attr("x", 9).attr("y", 0), text.style("text-anchor", "start"), tspan.attr("x", 9).attr("dy", tspanDy), pathUpdate.attr("d", "M" + outerTickSize + "," + range[0] + "H0V" + range[1] + "H" + outerTickSize)) : void 0, params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
+			}(rotate)).attr("transform", function textTransform(r) {
+				return r ? "rotate(" + r + ")" : null;
+			}(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -6), textUpdate.attr("x", 0).attr("y", -9).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -6).attr("y1", tickY).attr("y2", tickY), textUpdate.attr("x", -9).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", 6).attr("y2", 0), textUpdate.attr("x", 9).attr("y", 0).style("text-anchor", "start")) : void 0, (params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
 				(0, _d3Selection.select)(this).text(params.tickTitle[index]);
-			}), scale1.bandwidth) {
+			}), scale1.bandwidth)) {
 				var x = scale1,
 				    dx = x.bandwidth() / 2;
 				scale0 = function scale0(d) {
@@ -1666,9 +1689,10 @@ exports.default = function () {
 			tickValues = x;
 		}
 
-		return this;
+		return axis;
 	}, axis.setTransition = function (t) {
-		return transition = t, this;
+
+		return transition = t, axis;
 	}, axis;
 };
 
@@ -1688,6 +1712,17 @@ var _d3Scale = __webpack_require__(64),
 		    w = box.width;
 		h && w && (size.h = h, size.w = w), el.text("");
 	}), getSizeFor1Char.size = size;
+},
+    getAxisByOrient = function getAxisByOrient(orient, isRotate) {
+	return (isRotate ? {
+		left: "x",
+		bottom: "y",
+		top: "y2"
+	} : {
+		bottom: "x",
+		left: "y",
+		right: "y2"
+	})[orient];
 };
 
 // Features:
@@ -1703,6 +1738,13 @@ var _d3Scale = __webpack_require__(64),
  */
 
 
+/**
+ * Get axis string by orient
+ * @param {String} orient Orientation string - top|bottom|left|right
+ * @param {Boolean} isRotate Whether chart is rotated
+ * @return {String} x|y|y2
+ * @private
+ */
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3125,6 +3167,28 @@ var Options = function Options() {
 																				axis_x_tick_count: undefined,
 
 																				/**
+                     * Set the x Axis tick text's position relatively its original position
+                     * @name axis․x․tick․text․position
+                     * @memberOf Options
+                     * @type {Object}
+                     * @default {x: 0, y:0}
+                     * @example
+                     * axis: {
+                     *   x: {
+                     *     tick: {
+                     *       text: {
+                     *         position: {
+                     *           x: 10,
+                     *           y: 10
+                     *         }
+                     *       }
+                     *     }
+                     *   }
+                     * }
+                     */
+																				axis_x_tick_text_position: { x: 0, y: 0 },
+
+																				/**
                      * Fit x axis ticks.<br><br>
                      * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
                      * @name axis․x․tick․fit
@@ -3608,6 +3672,28 @@ var Options = function Options() {
 																				axis_y_tick_count: undefined,
 
 																				/**
+                     * Set the y Axis tick text's position relatively its original position
+                     * @name axis․y․tick․text․position
+                     * @memberOf Options
+                     * @type {Object}
+                     * @default {x: 0, y:0}
+                     * @example
+                     * axis: {
+                     *   y: {
+                     *     tick: {
+                     *       text: {
+                     *         position: {
+                     *           x: 10,
+                     *           y: 10
+                     *         }
+                     *       }
+                     *     }
+                     *   }
+                     * }
+                     */
+																				axis_y_tick_text_position: { x: 0, y: 0 },
+
+																				/**
                      * Set the number of y axis ticks.<br><br>
                      * **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
                      * @name axis․y․tick․time
@@ -3855,6 +3941,28 @@ var Options = function Options() {
                      * }
                      */
 																				axis_y2_tick_count: undefined,
+
+																				/**
+                     * Set the y2 Axis tick text's position relatively its original position
+                     * @name axis․y2․tick․text․position
+                     * @memberOf Options
+                     * @type {Object}
+                     * @default {x: 0, y:0}
+                     * @example
+                     * axis: {
+                     *   y2: {
+                     *     tick: {
+                     *       text: {
+                     *         position: {
+                     *           x: 10,
+                     *           y: 10
+                     *         }
+                     *       }
+                     *     }
+                     *   }
+                     * }
+                     */
+																				axis_y2_tick_text_position: { x: 0, y: 0 },
 
 																				/**
                      * Set the number of y2 axis ticks.
@@ -12006,8 +12114,9 @@ var b64EncodeUnicode = function (str) {
 (0, _util.extend)(_Chart2.default.prototype, {
 	/**
   * Export chart as an image.
-  * - **NOTE:** IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
-  *
+  * - **NOTE:**
+  *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
+  *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
   * @method export
   * @instance
   * @memberOf Chart
