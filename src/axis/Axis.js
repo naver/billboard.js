@@ -15,6 +15,7 @@ export default class Axis {
 	init() {
 		const $$ = this.owner;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const main = $$.main;
 
 		$$.axes.x = main.append("g")
@@ -25,7 +26,7 @@ export default class Axis {
 
 		$$.axes.x.append("text")
 			.attr("class", CLASS.axisXLabel)
-			.attr("transform", config.axis_rotated ? "rotate(-90)" : "")
+			.attr("transform", isRotated ? "rotate(-90)" : "")
 			.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
 
 		$$.axes.y = main.append("g")
@@ -36,7 +37,7 @@ export default class Axis {
 
 		$$.axes.y.append("text")
 			.attr("class", CLASS.axisYLabel)
-			.attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+			.attr("transform", isRotated ? "" : "rotate(-90)")
 			.style("text-anchor", this.textAnchorForYAxisLabel.bind(this));
 
 		$$.axes.y2 = main.append("g")
@@ -46,7 +47,7 @@ export default class Axis {
 
 		$$.axes.y2.append("text")
 			.attr("class", CLASS.axisY2Label)
-			.attr("transform", config.axis_rotated ? "" : "rotate(-90)")
+			.attr("transform", isRotated ? "" : "rotate(-90)")
 			.style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
 	}
 
@@ -58,11 +59,12 @@ export default class Axis {
 		const axisParams = {
 			isCategory,
 			withOuterTick,
+			withoutTransition,
+			config,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
 			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
-			withoutTransition,
 			orgXScale: $$.x
 		};
 
@@ -90,15 +92,39 @@ export default class Axis {
 		return axis;
 	}
 
+	getYAxis(scale, orient, tickFormat, tickValues,
+		withOuterTick, withoutTransition, withoutRotateTickText) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const axisParams = {
+			withOuterTick,
+			withoutTransition,
+			config,
+			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
+		};
+		const axis = bbAxis(axisParams)
+			.scale(scale)
+			.orient(orient)
+			.tickFormat(tickFormat);
+
+		$$.isTimeSeriesY() ?
+			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+			axis.ticks(config.axis_y_tick_time_value) :
+			axis.tickValues(tickValues);
+
+		return axis;
+	}
+
 	updateXAxisTickValues(targets, axis) {
 		const $$ = this.owner;
 		const config = $$.config;
+		const xTickCount = config.axis_x_tick_count;
 		let tickValues;
 
-		if (config.axis_x_tick_fit || config.axis_x_tick_count) {
+		if (config.axis_x_tick_fit || xTickCount) {
 			tickValues = this.generateTickValues(
 				$$.mapTargetsToUniqueXs(targets),
-				config.axis_x_tick_count,
+				xTickCount,
 				$$.isTimeSeries()
 			);
 		}
@@ -111,30 +137,6 @@ export default class Axis {
 		}
 
 		return tickValues;
-	}
-
-	getYAxis(scale, orient, tickFormat, tickValues,
-		withOuterTick, withoutTransition, withoutRotateTickText) {
-		const $$ = this.owner;
-		const config = $$.config;
-		const axisParams = {
-			withOuterTick,
-			withoutTransition,
-			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
-		};
-		const axis = bbAxis(axisParams)
-			.scale(scale)
-			.orient(orient)
-			.tickFormat(tickFormat);
-
-		if ($$.isTimeSeriesY()) {
-			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
-			axis.ticks(config.axis_y_tick_time_value);
-		} else {
-			axis.tickValues(tickValues);
-		}
-
-		return axis;
 	}
 
 	getId(id) {
@@ -158,12 +160,10 @@ export default class Axis {
 				format = date => (date ? $$.axisTimeFormat(tickFormat)(date) : "");
 			}
 		} else {
-			if (isTimeSeries) {
-				format = $$.defaultAxisTimeFormat;
-			} else {
-				format = isCategorized ?
-					$$.categoryName : v => (v < 0 ? v.toFixed(0) : v);
-			}
+			format = isTimeSeries ? $$.defaultAxisTimeFormat : (
+				isCategorized ?
+					$$.categoryName : v => (v < 0 ? v.toFixed(0) : v)
+			);
 		}
 
 		return isFunction(format) ? v =>
@@ -196,15 +196,10 @@ export default class Axis {
 
 	getLabelText(axisId) {
 		const option = this.getLabelOptionByAxisId(axisId);
-		let text;
 
-		if (isString(option)) {
-			text = option;
-		} else {
-			text = option ? option.text : null;
-		}
-
-		return text;
+		return isString(option) ? option : (
+			option ? option.text : null
+		);
 	}
 
 	setLabelText(axisId, text) {
@@ -249,15 +244,7 @@ export default class Axis {
 	}
 
 	getLabelPositionById(id) {
-		let label;
-
-		if (id === "y2") {
-			label = this.getY2AxisLabelPosition();
-		} else {
-			label = id === "y" ? this.getYAxisLabelPosition() : this.getXAxisLabelPosition();
-		}
-
-		return label;
+		return this[`get${id.toUpperCase()}AxisLabelPosition`]();
 	}
 
 	textForXAxisLabel() {
@@ -274,54 +261,42 @@ export default class Axis {
 
 	xForAxisLabel(forHorizontal, position) {
 		const $$ = this.owner;
-		let x;
+		let x = position.isMiddle ? -$$.height / 2 : 0;
 
 		if (forHorizontal) {
-			if (position.isLeft) {
-				x = 0;
-			} else {
-				x = position.isCenter ? $$.width / 2 : $$.width;
-			}
+			x = position.isLeft ? 0 : (
+				position.isCenter ? $$.width / 2 : $$.width
+			);
 		} else if (position.isBottom) {
 			x = -$$.height;
-		} else {
-			x = position.isMiddle ? -$$.height / 2 : 0;
 		}
 
 		return x;
 	}
 
 	dxForAxisLabel(forHorizontal, position) {
-		let dx;
+		let dx = position.isBottom ? "0.5em" : "0";
 
 		if (forHorizontal) {
-			if (position.isLeft) {
-				dx = "0.5em";
-			} else {
-				dx = position.isRight ? "-0.5em" : "0";
-			}
+			dx = position.isLeft ? "0.5em" : (
+				position.isRight ? "-0.5em" : "0"
+			);
 		} else if (position.isTop) {
 			dx = "-0.5em";
-		} else {
-			dx = position.isBottom ? "0.5em" : "0";
 		}
 
 		return dx;
 	}
 
 	textAnchorForAxisLabel(forHorizontal, position) {
-		let anchor;
+		let anchor = position.isMiddle ? "middle" : "end";
 
 		if (forHorizontal) {
-			if (position.isLeft) {
-				anchor = "start";
-			} else {
-				anchor = position.isCenter ? "middle" : "end";
-			}
+			anchor = position.isLeft ? "start" : (
+				position.isCenter ? "middle" : "end"
+			);
 		} else if (position.isBottom) {
 			anchor = "start";
-		} else {
-			anchor = position.isMiddle ? "middle" : "end";
 		}
 
 		return anchor;
@@ -354,14 +329,15 @@ export default class Axis {
 	dyForXAxisLabel() {
 		const $$ = this.owner;
 		const config = $$.config;
-		const position = this.getXAxisLabelPosition();
+		const isInner = this.getXAxisLabelPosition().isInner;
+		const xHeight = config.axis_x_height;
 
 		if (config.axis_rotated) {
-			return position.isInner ? "1.2em" : -25 - this.getMaxTickWidth("x");
-		} else if (position.isInner) {
+			return isInner ? "1.2em" : -25 - this.getMaxTickWidth("x");
+		} else if (isInner) {
 			return "-0.5em";
-		} else if (config.axis_x_height) {
-			return config.axis_x_height - 10;
+		} else if (xHeight) {
+			return xHeight - 10;
 		} else {
 			return "3em";
 		}
@@ -369,42 +345,42 @@ export default class Axis {
 
 	dyForYAxisLabel() {
 		const $$ = this.owner;
-		const position = this.getYAxisLabelPosition();
+		const isInner = this.getYAxisLabelPosition().isInner;
 
 		if ($$.config.axis_rotated) {
-			return position.isInner ? "-0.5em" : "3em";
+			return isInner ? "-0.5em" : "3em";
 		} else {
-			return position.isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth("y") + 10));
+			return isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : (this.getMaxTickWidth("y") + 10));
 		}
 	}
 
 	dyForY2AxisLabel() {
 		const $$ = this.owner;
-		const position = this.getY2AxisLabelPosition();
+		const isInner = this.getY2AxisLabelPosition().isInner;
 
 		if ($$.config.axis_rotated) {
-			return position.isInner ? "1.2em" : "-2.2em";
+			return isInner ? "1.2em" : "-2.2em";
 		} else {
-			return position.isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth("y2") + 15));
+			return isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : (this.getMaxTickWidth("y2") + 15));
 		}
 	}
 
 	textAnchorForXAxisLabel() {
-		const $$ = this.owner;
+		const isRotated = this.owner.config.axis_rotated;
 
-		return this.textAnchorForAxisLabel(!$$.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.textAnchorForAxisLabel(!isRotated, this.getXAxisLabelPosition());
 	}
 
 	textAnchorForYAxisLabel() {
-		const $$ = this.owner;
+		const isRotated = this.owner.config.axis_rotated;
 
-		return this.textAnchorForAxisLabel($$.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.textAnchorForAxisLabel(isRotated, this.getYAxisLabelPosition());
 	}
 
 	textAnchorForY2AxisLabel() {
-		const $$ = this.owner;
+		const isRotated = this.owner.config.axis_rotated;
 
-		return this.textAnchorForAxisLabel($$.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.textAnchorForAxisLabel(isRotated, this.getY2AxisLabelPosition());
 	}
 
 	getMaxTickWidth(id, withoutRecompute) {
@@ -458,7 +434,6 @@ export default class Axis {
 				.style("top", "0px")
 				.style("left", "0px");
 
-
 			svg.append("g").call(axis)
 				.each(function() {
 					d3Select(this).selectAll("text")
@@ -480,27 +455,21 @@ export default class Axis {
 
 	updateLabels(withTransition) {
 		const $$ = this.owner;
-		const axisXLabel = $$.main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`);
-		const axisYLabel = $$.main.select(`.${CLASS.axisY} .${CLASS.axisYLabel}`);
-		const axisY2Label = $$.main.select(`.${CLASS.axisY2}  .${CLASS.axisY2Label}`);
+		const labels = {
+			X: $$.main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
+			Y: $$.main.select(`.${CLASS.axisY} .${CLASS.axisYLabel}`),
+			Y2: $$.main.select(`.${CLASS.axisY2} .${CLASS.axisY2Label}`)
+		};
 
-		(withTransition ? axisXLabel.transition() : axisXLabel)
-			.attr("x", this.xForXAxisLabel.bind(this))
-			.attr("dx", this.dxForXAxisLabel.bind(this))
-			.attr("dy", this.dyForXAxisLabel.bind(this))
-			.text(this.textForXAxisLabel.bind(this));
+		Object.keys(labels).forEach(axis => {
+			const node = labels[axis];
 
-		(withTransition ? axisYLabel.transition() : axisYLabel)
-			.attr("x", this.xForYAxisLabel.bind(this))
-			.attr("dx", this.dxForYAxisLabel.bind(this))
-			.attr("dy", this.dyForYAxisLabel.bind(this))
-			.text(this.textForYAxisLabel.bind(this));
-
-		(withTransition ? axisY2Label.transition() : axisY2Label)
-			.attr("x", this.xForY2AxisLabel.bind(this))
-			.attr("dx", this.dxForY2AxisLabel.bind(this))
-			.attr("dy", this.dyForY2AxisLabel.bind(this))
-			.text(this.textForY2AxisLabel.bind(this));
+			(withTransition ? node.transition() : node)
+				.attr("x", this[`xFor${axis}AxisLabel`].bind(this))
+				.attr("dx", this[`dxFor${axis}AxisLabel`].bind(this))
+				.attr("dy", this[`dyFor${axis}AxisLabel`].bind(this))
+				.text(this[`textFor${axis}AxisLabel`].bind(this));
+		});
 	}
 
 	getPadding(padding, key, defaultValue, domainLength) {

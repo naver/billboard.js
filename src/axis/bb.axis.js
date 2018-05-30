@@ -43,6 +43,25 @@ const getSizeFor1Char = node => {
 	return (getSizeFor1Char.size = size);
 };
 
+/**
+ * Get axis string by orient
+ * @param {String} orient Orientation string - top|bottom|left|right
+ * @param {Boolean} isRotate Whether chart is rotated
+ * @return {String} x|y|y2
+ * @private
+ */
+const getAxisByOrient = (orient, isRotate) => (
+	isRotate ? {
+		left: "x",
+		bottom: "y",
+		top: "y2",
+	} : {
+		bottom: "x",
+		left: "y",
+		right: "y2"
+	}
+)[orient];
+
 export default function(params = {}) {
 	let scale = d3ScaleLinear();
 	let orient = "bottom";
@@ -158,7 +177,6 @@ export default function(params = {}) {
 			tick = tickEnter.merge(tick);
 
 			const tickUpdate = transitionise(tick).style("opacity", "1");
-			let tickTransform;
 			let tickX;
 			let tickY;
 
@@ -192,11 +210,12 @@ export default function(params = {}) {
 				tickOffset = tickX;
 			}
 
-			let tspan;
 			const sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick"));
 			const counts = [];
 			const tickLength = Math.max(innerTickSize, 0) + tickPadding;
-			const isVertical = orient === "left" || orient === "right";
+
+			const isLeftRight = /^(left|right)$/.test(orient);
+			const isTopBottom = /^(top|bottom)$/.test(orient);
 
 			// this should be called only when category axis
 			function splitTickText(d, maxWidthValue) {
@@ -218,9 +237,10 @@ export default function(params = {}) {
 				}
 
 				if (!maxWidth || maxWidth <= 0) {
-					maxWidth = isVertical ?
-						95 : params.isCategory ?
-							(Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12) : 110;
+					maxWidth = isLeftRight ? 95 : (
+						params.isCategory ?
+							(Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12) : 110
+					);
 				}
 
 				function split(splitted, text) {
@@ -230,6 +250,7 @@ export default function(params = {}) {
 						if (text.charAt(i) === " ") {
 							spaceIndex = i;
 						}
+
 						subtext = text.substr(0, i + 1);
 						textWidth = sizeFor1Char.w * subtext.length;
 
@@ -248,28 +269,8 @@ export default function(params = {}) {
 				return split(splitted, String(tickText));
 			}
 
-			function tspanDy(d, i) {
-				let dy = sizeFor1Char.h;
-
-				if (i === 0) {
-					dy = (orient === "left" || orient === "right") ?
-						-((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) :
-						".71em";
-				}
-
-				return dy;
-			}
-
-			function tickSize(d) {
-				const tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
-
-				return range[0] < tickPosition && tickPosition < range[1] ?
-					innerTickSize : 0;
-			}
-
-			const text = tick.select("text");
-
-			tspan = text.selectAll("tspan")
+			let tspan = tick.select("text")
+				.selectAll("tspan")
 				.data((d, index) => {
 					const split = params.tickMultiline ?
 						splitTickText(d, params.tickWidth) : (
@@ -279,10 +280,7 @@ export default function(params = {}) {
 
 					counts[index] = split.length;
 
-					return split.map(splitted => ({
-						index,
-						splitted
-					}));
+					return split.map(splitted => ({index, splitted}));
 				});
 
 			tspan.exit().remove();
@@ -293,120 +291,109 @@ export default function(params = {}) {
 				.merge(tspan)
 				.text(d => d.splitted);
 
+			// line/text enter and path update
+			const tickTransform = isTopBottom ? axisX : axisY;
+			const sign = /^(top|left)$/.test(orient) ? -1 : 1;
+			const axisPx = tickTransform === axisX ? "y" : "x";
+
+			lineEnter.attr(`${axisPx}2`, innerTickSize * sign);
+			textEnter.attr(`${axisPx}`, tickLength * sign);
+
+			pathUpdate.attr("d", () => {
+				const outerTickSized = outerTickSize * sign;
+
+				return isTopBottom ?
+					`M${range[0]},${outerTickSized}V0H${range[1]}V${outerTickSized}` :
+					`M${outerTickSized},${range[0]}H0V${range[1]}H${outerTickSized}`;
+			});
+
+			// tick text helpers
 			const rotate = params.tickTextRotate;
+			const tickSize = d => {
+				const tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
 
-			function textAnchorForText(r) {
-				if (!r) {
-					return "middle";
-				}
+				return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
+			};
+			const textAnchorForText = r => (!r ? "middle" : (r > 0 ? "start" : "end"));
+			const textTransform = r => (r ? `rotate(${r})` : null);
+			const yForText = r => (r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength);
 
-				return r > 0 ? "start" : "end";
-			}
+			// Get axis.tick.text.position option value
+			const axisType = getAxisByOrient(orient, rotate);
+			const tickTextPos = axisType ? params.config[`axis_${axisType}_tick_text_position`] : {x: 0, y: 0};
 
-			function textTransform(r) {
-				return r ? `rotate(${r})` : "";
-			}
+			// set <tspan>'s position
+			tspan
+				.attr("x", isTopBottom ? 0 : tickLength * sign)
+				.attr("dx", (() => {
+					let dx = 0;
 
-			function dxForText(r) {
-				if (!r) {
-					return 0;
-				}
+					if (orient === "bottom" && rotate) {
+						dx = 8 * Math.sin(Math.PI * (rotate / 180));
+					}
 
-				return 8 * Math.sin(Math.PI * (r / 180));
-			}
+					return dx + (tickTextPos.x || 0);
+				})())
+				.attr("dy", (d, i) => {
+					const defValue = ".71em";
+					let dy = 0;
 
-			function yForText(r) {
-				if (!r) {
-					return tickLength;
-				}
+					if (orient !== "top") {
+						if (i === 0) {
+							dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) :
+								(tickTextPos.y === 0 ? defValue : 0);
+						} else {
+							dy = sizeFor1Char.h;
+						}
+					}
 
-				return 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1);
-			}
+					return isNumber(dy) && tickTextPos.y ?
+						dy + tickTextPos.y : dy || defValue;
+				});
 
 			switch (orient) {
 				case "bottom":
-					tickTransform = axisX;
-					lineEnter.attr("y2", innerTickSize);
-					textEnter.attr("y", tickLength);
-
-					lineUpdate.attr("x1", tickX)
+					lineUpdate
+						.attr("x1", tickX)
 						.attr("x2", tickX)
 						.attr("y2", tickSize);
 
-					textUpdate.attr("x", 0)
+					textUpdate
+						.attr("x", 0)
 						.attr("y", yForText(rotate))
 						.style("text-anchor", textAnchorForText(rotate))
 						.attr("transform", textTransform(rotate));
-
-					tspan.attr("x", 0)
-						.attr("dy", tspanDy)
-						.attr("dx", dxForText(rotate));
-
-					pathUpdate.attr("d", `M${range[0]},${outerTickSize}V0H${range[1]}V${outerTickSize}`);
 					break;
 				case "top":
-					// @TODO: rotated tick text
-					tickTransform = axisX;
-					lineEnter.attr("y2", -innerTickSize);
-					textEnter.attr("y", -tickLength);
-
 					lineUpdate
 						.attr("x2", 0)
 						.attr("y2", -innerTickSize);
 
 					textUpdate
 						.attr("x", 0)
-						.attr("y", -tickLength);
-
-					text.style("text-anchor", "middle");
-
-					tspan
-						.attr("x", 0)
-						.attr("dy", "0em");
-
-					pathUpdate.attr("d", `M${range[0]},${-outerTickSize}V0H${range[1]}V${-outerTickSize}`);
+						.attr("y", -tickLength)
+						.style("text-anchor", "middle");
 					break;
 				case "left":
-					tickTransform = axisY;
-					lineEnter.attr("x2", -innerTickSize);
-					textEnter.attr("x", -tickLength);
-
-					lineUpdate.attr("x2", -innerTickSize)
+					lineUpdate
+						.attr("x2", -innerTickSize)
 						.attr("y1", tickY)
 						.attr("y2", tickY);
 
 					textUpdate
 						.attr("x", -tickLength)
-						.attr("y", tickOffset);
-
-					text.style("text-anchor", "end");
-
-					tspan
-						.attr("x", -tickLength)
-						.attr("dy", tspanDy);
-
-					pathUpdate.attr("d", `M${-outerTickSize},${range[0]}H0V${range[1]}H${-outerTickSize}`);
+						.attr("y", tickOffset)
+						.style("text-anchor", "end");
 					break;
 				case "right":
-					tickTransform = axisY;
-					lineEnter.attr("x2", innerTickSize);
-					textEnter.attr("x", tickLength);
-
 					lineUpdate
 						.attr("x2", innerTickSize)
 						.attr("y2", 0);
 
 					textUpdate
 						.attr("x", tickLength)
-						.attr("y", 0);
-
-					text.style("text-anchor", "start");
-
-					tspan
-						.attr("x", tickLength)
-						.attr("dy", tspanDy);
-
-					pathUpdate.attr("d", `M${outerTickSize},${range[0]}H0V${range[1]}H${outerTickSize}`);
+						.attr("y", 0)
+						.style("text-anchor", "start");
 			}
 
 			// Append <title> for tooltip display
@@ -419,9 +406,7 @@ export default function(params = {}) {
 				const x = scale1;
 				const dx = x.bandwidth() / 2;
 
-				scale0 = function(d) {
-					return x(d) + dx;
-				};
+				scale0 = d => x(d) + dx;
 				scale1 = scale0;
 			} else if (scale0.bandwidth) {
 				scale0 = scale1;
@@ -479,9 +464,7 @@ export default function(params = {}) {
 		return axis;
 	};
 
-	axis.tickOffset = function() {
-		return tickOffset;
-	};
+	axis.tickOffset = () => tickOffset;
 
 	/**
 	 * Get tick interval count
@@ -538,12 +521,13 @@ export default function(params = {}) {
 			tickValues = x;
 		}
 
-		return this;
+		return axis;
 	};
 
-	axis.setTransition = function(t) {
+	axis.setTransition = t => {
 		transition = t;
-		return this;
+
+		return axis;
 	};
 
 	return axis;

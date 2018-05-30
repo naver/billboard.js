@@ -1346,6 +1346,28 @@ export default class Options {
 			axis_x_tick_count: undefined,
 
 			/**
+			 * Set the x Axis tick text's position relatively its original position
+			 * @name axis․x․tick․text․position
+			 * @memberOf Options
+			 * @type {Object}
+			 * @default {x: 0, y:0}
+			 * @example
+			 * axis: {
+			 *   x: {
+			 *     tick: {
+			 *       text: {
+			 *         position: {
+			 *           x: 10,
+			 *           y: 10
+			 *         }
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_x_tick_text_position: {x: 0, y: 0},
+
+			/**
 			 * Fit x axis ticks.<br><br>
 			 * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
 			 * @name axis․x․tick․fit
@@ -1830,6 +1852,28 @@ export default class Options {
 			axis_y_tick_count: undefined,
 
 			/**
+			 * Set the y Axis tick text's position relatively its original position
+			 * @name axis․y․tick․text․position
+			 * @memberOf Options
+			 * @type {Object}
+			 * @default {x: 0, y:0}
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       text: {
+			 *         position: {
+			 *           x: 10,
+			 *           y: 10
+			 *         }
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_text_position: {x: 0, y: 0},
+
+			/**
 			 * Set the number of y axis ticks.<br><br>
 			 * **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 			 * @name axis․y․tick․time
@@ -2077,6 +2121,28 @@ export default class Options {
 			 * }
 			 */
 			axis_y2_tick_count: undefined,
+
+			/**
+			 * Set the y2 Axis tick text's position relatively its original position
+			 * @name axis․y2․tick․text․position
+			 * @memberOf Options
+			 * @type {Object}
+			 * @default {x: 0, y:0}
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       text: {
+			 *         position: {
+			 *           x: 10,
+			 *           y: 10
+			 *         }
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_text_position: {x: 0, y: 0},
 
 			/**
 			 * Set the number of y2 axis ticks.
