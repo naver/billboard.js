@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180530114610
+ * @version 1.4.1-nightly-20180531190822
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -115,7 +115,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180530114610
+ * @version 1.4.1-nightly-20180531190822
  */
 var bb = {
 	/**
@@ -125,7 +125,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180530114610",
+	version: "1.4.1-nightly-20180531190822",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -466,8 +466,6 @@ var ChartInternal = function () {
 		    areaIndices = $$.getShapeIndices($$.isAreaType),
 		    barIndices = $$.getShapeIndices($$.isBarType),
 		    lineIndices = $$.getShapeIndices($$.isLineType),
-		    waitForDraw = void 0,
-		    flow = void 0,
 		    hideAxis = $$.hasArcType(),
 		    targetsToShow = $$.filterTargetsToShow($$.data.targets),
 		    xv = $$.xv.bind($$),
@@ -519,8 +517,8 @@ var ChartInternal = function () {
 
 		// generate circle x/y functions depending on updated params
 		var cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$),
-		    cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
-		options.flow && (flow = $$.generateFlow({
+		    cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$),
+		    flow = options.flow && $$.generateFlow({
 			targets: targetsToShow,
 			flow: options.flow,
 			duration: options.flow.duration,
@@ -532,17 +530,39 @@ var ChartInternal = function () {
 			xv: xv,
 			xForText: xForText,
 			yForText: yForText
-		})), (duration || flow) && $$.isTabVisible() ? (0, _d3Transition.transition)().duration(duration).each(function () {
-			waitForDraw = $$.generateWait(), [$$.redrawBar(drawBar, !0), $$.redrawLine(drawLine, !0), $$.redrawArea(drawArea, !0), $$.redrawCircle(cx, cy, !0, flow), $$.redrawText(xForText, yForText, options.flow, !0), $$.redrawRegion(!0), $$.redrawGrid(!0)].reduce(function (acc, t1) {
-				return t1.forEach(function (t2) {
-					acc.push(t2);
-				}), acc;
-			}, []).forEach(function (t) {
-				waitForDraw.add(t);
-			});
-		}).call(waitForDraw, function () {
+		}),
+		    isTransition = (duration || flow) && $$.isTabVisible(),
+		    redrawList = [$$.redrawBar(drawBar, isTransition), $$.redrawLine(drawLine, isTransition), $$.redrawArea(drawArea, isTransition), $$.redrawCircle(cx, cy, isTransition, flow), $$.redrawText(xForText, yForText, options.flow, isTransition), $$.redrawRegion(isTransition), $$.redrawGrid(isTransition)],
+		    afterRedraw = flow || config.onrendered ? function () {
 			flow && flow(), config.onrendered && config.onrendered.call($$);
-		}) : ($$.redrawBar(drawBar), $$.redrawLine(drawLine), $$.redrawArea(drawArea), $$.redrawCircle(cx, cy), $$.redrawText(xForText, yForText, options.flow), $$.redrawRegion(), $$.redrawGrid(), config.onrendered && config.onrendered.call($$)), $$.mapToIds($$.data.targets).forEach(function (id) {
+		} : null;
+
+		// generate flow
+
+
+		// redraw list
+
+
+		// callback function after redraw ends
+
+		if (afterRedraw)
+			// Only use transition when current tab is visible.
+			if (isTransition) {
+				// Wait for end of transitions for callback
+				var waitForDraw = $$.generateWait();
+
+				// transition should be derived from one transition
+				(0, _d3Transition.transition)().duration(duration).each(function () {
+					redrawList.reduce(function (acc, t1) {
+						return acc.concat(t1);
+					}, []).forEach(function (t) {
+						return waitForDraw.add(t);
+					});
+				}).call(waitForDraw, afterRedraw);
+			} else afterRedraw();
+
+		// update fadein condition
+		$$.mapToIds($$.data.targets).forEach(function (id) {
 			$$.withoutFadeIn[id] = !0;
 		});
 	}, ChartInternal.prototype.updateAndRedraw = function updateAndRedraw() {
@@ -573,11 +593,12 @@ var ChartInternal = function () {
 	}, ChartInternal.prototype.getTranslate = function getTranslate(target) {
 		var $$ = this,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
 		    x = void 0,
 		    y = void 0;
 
 
-		return target === "main" ? (x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top)) : target === "context" ? (x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top)) : target === "legend" ? (x = $$.margin3.left, y = $$.margin3.top) : target === "x" ? (x = 0, y = config.axis_rotated ? 0 : $$.height) : target === "y" ? (x = 0, y = config.axis_rotated ? $$.height : 0) : target === "y2" ? (x = config.axis_rotated ? 0 : $$.width, y = config.axis_rotated ? 1 : 0) : target === "subx" ? (x = 0, y = config.axis_rotated ? 0 : $$.height2) : target === "arc" && (x = $$.arcWidth / 2, y = $$.arcHeight / 2), "translate(" + x + ", " + y + ")";
+		return target === "main" ? (x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top)) : target === "context" ? (x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top)) : target === "legend" ? (x = $$.margin3.left, y = $$.margin3.top) : target === "x" ? (x = 0, y = isRotated ? 0 : $$.height) : target === "y" ? (x = 0, y = isRotated ? $$.height : 0) : target === "y2" ? (x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0) : target === "subx" ? (x = 0, y = isRotated ? 0 : $$.height2) : target === "arc" && (x = $$.arcWidth / 2, y = $$.arcHeight / 2), "translate(" + x + ", " + y + ")";
 	}, ChartInternal.prototype.initialOpacity = function initialOpacity(d) {
 		return d.value !== null && this.withoutFadeIn[d.id] ? "1" : "0";
 	}, ChartInternal.prototype.initialOpacityForCircle = function initialOpacityForCircle(d) {
@@ -589,7 +610,9 @@ var ChartInternal = function () {
 	}, ChartInternal.prototype.opacityForText = function opacityForText() {
 		return this.hasDataLabel() ? "1" : "0";
 	}, ChartInternal.prototype.xx = function xx(d) {
-		return this.config.zoom_enabled && this.zoomScale ? d ? this.zoomScale(d.x) : null : d ? this.x(d.x) : null;
+		var fn = this.config.zoom_enabled && this.zoomScale ? this.zoomScale : this.x;
+
+		return d ? fn(d.x) : null;
 	}, ChartInternal.prototype.xv = function xv(d) {
 		var $$ = this,
 		    value = d.value;
@@ -652,13 +675,13 @@ var ChartInternal = function () {
 		var $$ = this,
 		    config = $$.config;
 		$$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
-			config.onresize.call($$);
+			return config.onresize.call($$);
 		}), config.resize_auto && $$.resizeFunction.add(function () {
 			(0, _util.isDefined)($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = window.setTimeout(function () {
 				delete $$.resizeTimeout, $$.api.flush();
 			}, 100);
 		}), $$.resizeFunction.add(function () {
-			config.onresized.call($$);
+			return config.onresized.call($$);
 		}), (0, _d3Selection.select)(window).on("resize", $$.resizeFunction);
 	}, ChartInternal.prototype.generateResize = function generateResize() {
 
@@ -673,7 +696,7 @@ var ChartInternal = function () {
 		return callResizeFunctions.add = function (f) {
 			resizeFunctions.push(f);
 		}, callResizeFunctions.remove = function (f) {
-			for (var i = 0; i < resizeFunctions.length; i++) if (resizeFunctions[i] === f) {
+			for (var i = 0, len = resizeFunctions.length; i < len; i++) if (resizeFunctions[i] === f) {
 				resizeFunctions.splice(i, 1);
 
 				break;
@@ -697,21 +720,21 @@ var ChartInternal = function () {
 				var done = 0;
 
 				transitionsToWait.forEach(function (t) {
-					if (t.empty()) return void (done += 1);
+					if (t.empty()) return void done++;
 
 					try {
 						t.transition();
 					} catch (e) {
-						done += 1;
+						done++;
 					}
-				}), done === transitionsToWait.length ? (clearTimeout(timer), callback && callback()) : timer = setTimeout(loop, 20);
+				}), timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
 			}
 
 			var timer = void 0;loop();
 		};
 
 		return f.add = function (transition) {
-			Array.isArray(transition) ? transitionsToWait = [].concat(transitionsToWait, transition) : transitionsToWait.push(transition);
+			(0, _util.isArray)(transition) ? transitionsToWait = transitionsToWait.concat(transition) : transitionsToWait.push(transition);
 		}, f;
 	}, ChartInternal.prototype.parseDate = function parseDate(date) {
 		var $$ = this,
@@ -720,9 +743,9 @@ var ChartInternal = function () {
 
 		return date instanceof Date ? parsedDate = date : (0, _util.isString)(date) ? parsedDate = $$.dataTimeFormat($$.config.data_xFormat)(date) : (0, _util.isNumber)(date) && !isNaN(date) && (parsedDate = new Date(+date)), (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
 	}, ChartInternal.prototype.isTabVisible = function isTabVisible() {
-		var hidden = void 0;
-
-		return (0, _util.isDefined)(document.hidden) ? hidden = "hidden" : (0, _util.isDefined)(document.mozHidden) ? hidden = "mozHidden" : (0, _util.isDefined)(document.msHidden) ? hidden = "msHidden" : (0, _util.isDefined)(document.webkitHidden) && (hidden = "webkitHidden"), !document[hidden];
+		return !document[["hidden", "mozHidden", "msHidden", "webkitHidden"].filter(function (v) {
+			return v in document;
+		})[0]];
 	}, ChartInternal.prototype.convertInputType = function convertInputType() {
 		var $$ = this,
 		    config = $$.config,
@@ -2122,13 +2145,13 @@ var Options = function Options() {
                      * @name onrendered
                      * @memberOf Options
                      * @type {Function}
-                     * @default function(){}
+                     * @default undefined
                      * @example
                      * onrendered: function() {
                      *   ...
                      * }
                      */
-																				onrendered: function onrendered() {},
+																				onrendered: undefined,
 
 																				/**
                      * Set duration of transition (in milliseconds) for chart animation.<br><br>
