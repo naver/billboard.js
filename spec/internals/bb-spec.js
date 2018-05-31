@@ -29,6 +29,9 @@ describe("Interface & initialization", () => {
 		expect(internal.convertInputType()).to.be.equal(internal.inputType);
 
 		expect(chart).to.be.equal(bb.instance[0]);
+
+		// onrendered value should be undefined for default
+		expect(chart.internal.config.onrendered).to.be.undefined;
 	});
 
 	it("should return version string", () => {

@@ -18,7 +18,7 @@ import {transition as d3Transition} from "d3-transition";
 
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {notEmpty, asHalfPixel, isValue, getOption, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";
 
 /**
  * Internal chart class.
@@ -537,9 +537,6 @@ export default class ChartInternal {
 		const barIndices = $$.getShapeIndices($$.isBarType);
 		const lineIndices = $$.getShapeIndices($$.isLineType);
 
-		let waitForDraw;
-		let flow;
-
 		const hideAxis = $$.hasArcType();
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 		const xv = $$.xv.bind($$);
@@ -737,62 +734,57 @@ export default class ChartInternal {
 		const cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$);
 		const cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
 
-		if (options.flow) {
-			flow = $$.generateFlow({
-				targets: targetsToShow,
-				flow: options.flow,
-				duration: options.flow.duration,
-				drawBar: drawBar,
-				drawLine: drawLine,
-				drawArea: drawArea,
-				cx: cx,
-				cy: cy,
-				xv: xv,
-				xForText: xForText,
-				yForText: yForText
-			});
-		}
+		// generate flow
+		const flow = options.flow && $$.generateFlow({
+			targets: targetsToShow,
+			flow: options.flow,
+			duration: options.flow.duration,
+			drawBar,
+			drawLine,
+			drawArea,
+			cx,
+			cy,
+			xv,
+			xForText,
+			yForText
+		});
 
-		if ((duration || flow) && $$.isTabVisible()) { // Only use transition if tab visible. See #938.
-			// transition should be derived from one transition
-			d3Transition().duration(duration)
-				.each(() => {
-					// Wait for end of transitions to call flow and onrendered callback
-					waitForDraw = $$.generateWait();
+		const isTransition = (duration || flow) && $$.isTabVisible();
 
-					// redraw and gather transitions
-					[
-						$$.redrawBar(drawBar, true),
-						$$.redrawLine(drawLine, true),
-						$$.redrawArea(drawArea, true),
-						$$.redrawCircle(cx, cy, true, flow),
-						$$.redrawText(xForText, yForText, options.flow, true),
-						$$.redrawRegion(true),
-						$$.redrawGrid(true)
-					].reduce((acc, t1) => {
-						t1.forEach(t2 => {
-							acc.push(t2);
-						});
-						return acc;
-					}, []).forEach(t => {
-						waitForDraw.add(t);
-					});
-				})
-				.call(waitForDraw, () => {
-					flow && flow();
-					config.onrendered && config.onrendered.call($$);
-				});
-		} else {
-			$$.redrawBar(drawBar);
-			$$.redrawLine(drawLine);
-			$$.redrawArea(drawArea);
-			$$.redrawCircle(cx, cy);
-			$$.redrawText(xForText, yForText, options.flow);
-			$$.redrawRegion();
-			$$.redrawGrid();
+		// redraw list
+		const redrawList = [
+			$$.redrawBar(drawBar, isTransition),
+			$$.redrawLine(drawLine, isTransition),
+			$$.redrawArea(drawArea, isTransition),
+			$$.redrawCircle(cx, cy, isTransition, flow),
+			$$.redrawText(xForText, yForText, options.flow, isTransition),
+			$$.redrawRegion(isTransition),
+			$$.redrawGrid(isTransition)
+		];
 
-			config.onrendered &&
-				config.onrendered.call($$);
+		// callback function after redraw ends
+		const afterRedraw = flow || config.onrendered ? () => {
+			flow && flow();
+			config.onrendered && config.onrendered.call($$);
+		} : null;
+
+		if (afterRedraw) {
+			// Only use transition when current tab is visible.
+			if (isTransition) {
+				// Wait for end of transitions for callback
+				const waitForDraw = $$.generateWait();
+
+				// transition should be derived from one transition
+				d3Transition().duration(duration)
+					.each(() => {
+						redrawList
+							.reduce((acc, t1) => acc.concat(t1), [])
+							.forEach(t => waitForDraw.add(t));
+					})
+					.call(waitForDraw, afterRedraw);
+			} else {
+				afterRedraw();
+			}
 		}
 
 		// update fadein condition
@@ -869,6 +861,7 @@ export default class ChartInternal {
 	getTranslate(target) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 
 		let x;
 		let y;
@@ -884,16 +877,16 @@ export default class ChartInternal {
 			y = $$.margin3.top;
 		} else if (target === "x") {
 			x = 0;
-			y = config.axis_rotated ? 0 : $$.height;
+			y = isRotated ? 0 : $$.height;
 		} else if (target === "y") {
 			x = 0;
-			y = config.axis_rotated ? $$.height : 0;
+			y = isRotated ? $$.height : 0;
 		} else if (target === "y2") {
-			x = config.axis_rotated ? 0 : $$.width;
-			y = config.axis_rotated ? 1 : 0;
+			x = isRotated ? 0 : $$.width;
+			y = isRotated ? 1 : 0;
 		} else if (target === "subx") {
 			x = 0;
-			y = config.axis_rotated ? 0 : $$.height2;
+			y = isRotated ? 0 : $$.height2;
 		} else if (target === "arc") {
 			x = $$.arcWidth / 2;
 			y = $$.arcHeight / 2;
@@ -923,11 +916,10 @@ export default class ChartInternal {
 	}
 
 	xx(d) {
-		if (this.config.zoom_enabled && this.zoomScale) {
-			return d ? this.zoomScale(d.x) : null;
-		} else {
-			return d ? this.x(d.x) : null;
-		}
+		const fn = this.config.zoom_enabled && this.zoomScale ?
+			this.zoomScale : this.x;
+
+		return d ? fn(d.x) : null;
 	}
 
 	xv(d) {
@@ -979,6 +971,7 @@ export default class ChartInternal {
 				yAxis = yAxis.transition();
 			}
 		}
+
 		if (transitions && transitions.axisY2) {
 			y2Axis = transitions.axisY2;
 		} else {
@@ -1127,10 +1120,7 @@ export default class ChartInternal {
 		const config = $$.config;
 
 		$$.resizeFunction = $$.generateResize();
-
-		$$.resizeFunction.add(() => {
-			config.onresize.call($$);
-		});
+		$$.resizeFunction.add(() => config.onresize.call($$));
 
 		if (config.resize_auto) {
 			$$.resizeFunction.add(() => {
@@ -1144,10 +1134,9 @@ export default class ChartInternal {
 			});
 		}
 
-		$$.resizeFunction.add(() => {
-			config.onresized.call($$);
-		});
+		$$.resizeFunction.add(() => config.onresized.call($$));
 
+		// attach resize event
 		d3Select(window).on("resize", $$.resizeFunction);
 	}
 
@@ -1163,7 +1152,7 @@ export default class ChartInternal {
 		};
 
 		callResizeFunctions.remove = function(f) {
-			for (let i = 0; i < resizeFunctions.length; i++) {
+			for (let i = 0, len = resizeFunctions.length; i < len; i++) {
 				if (resizeFunctions[i] === f) {
 					resizeFunctions.splice(i, 1);
 					break;
@@ -1194,22 +1183,23 @@ export default class ChartInternal {
 
 				transitionsToWait.forEach(t => {
 					if (t.empty()) {
-						done += 1;
+						done++;
 						return;
 					}
 
 					try {
 						t.transition();
 					} catch (e) {
-						done += 1;
+						done++;
 					}
 				});
 
+				timer && clearTimeout(timer);
+
 				if (done === transitionsToWait.length) {
-					clearTimeout(timer);
 					callback && callback();
 				} else {
-					timer = setTimeout(loop, 20);
+					timer = setTimeout(loop, 50);
 				}
 			}
 
@@ -1217,11 +1207,9 @@ export default class ChartInternal {
 		};
 
 		f.add = function(transition) {
-			if (Array.isArray(transition)) {
-				transitionsToWait = [...transitionsToWait, ...transition];
-			} else {
+			isArray(transition) ?
+				(transitionsToWait = transitionsToWait.concat(transition)) :
 				transitionsToWait.push(transition);
-			}
 		};
 
 		return f;
@@ -1238,6 +1226,7 @@ export default class ChartInternal {
 		} else if (isNumber(date) && !isNaN(date)) {
 			parsedDate = new Date(+date);
 		}
+
 		if (!parsedDate || isNaN(+parsedDate)) {
 			console && console.error &&
 				console.error(`Failed to parse x '${date}' to Date object`);
@@ -1247,19 +1236,10 @@ export default class ChartInternal {
 	}
 
 	isTabVisible() {
-		let hidden;
-
-		if (isDefined(document.hidden)) { // Opera 12.10 and Firefox 18 and later support
-			hidden = "hidden";
-		} else if (isDefined(document.mozHidden)) {
-			hidden = "mozHidden";
-		} else if (isDefined(document.msHidden)) {
-			hidden = "msHidden";
-		} else if (isDefined(document.webkitHidden)) {
-			hidden = "webkitHidden";
-		}
-
-		return !document[hidden];
+		return !document[
+			["hidden", "mozHidden", "msHidden", "webkitHidden"]
+				.filter(v => v in document)[0]
+		];
 	}
 
 	convertInputType() {
