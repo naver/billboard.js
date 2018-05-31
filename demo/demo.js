@@ -2127,6 +2127,56 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		ColorTiles3: {
+			options: {
+				data: {
+					columns: [
+						["data1", 0, 0, -35, 100, -50, -150]
+					],
+					type: "area"
+				},
+				color: {
+					pattern: ["red", "blue", "cyan"],
+					tiles: function() {
+						/* will add below <linearGradient> definition to be used for 'fill' attribute
+						<linearGradient patternUnits="userSpaceOnUse" x2="0" y2="80%">
+						  <stop offset="49%" stop-color="blue"></stop>
+						  <stop offset="50%" stop-color="grey"></stop>
+						  <stop offset="51%" stop-color="red"></stop>
+						</linearGradient>
+						 */
+						var gradient = d3.select(document.createElementNS(d3.namespaces.svg, "linearGradient"))
+							.attr("patternUnits", "userSpaceOnUse")
+							.attr("x2", "0")
+							.attr("y2", "80%");
+
+						gradient
+							.append("stop")
+							.attr("offset", "49%")
+							.attr("stop-color", "blue");
+
+						gradient
+							.append("stop")
+							.attr("offset", "50%")
+							.attr("stop-color", "grey");
+
+						gradient
+							.append("stop")
+							.attr("offset", "51%")
+							.attr("stop-color", "red");
+
+						// Should return an array of SVGPatternElement
+						return [
+							gradient.node()
+						];
+					}
+				},
+				onrendered: function() {
+	// set all data circles color to blue
+	d3.selectAll(".bb-circles-data1 circle").style("fill", "blue");
+				}
+			}
+		},
 		DurationOfTransition: {
 			options: {
 				data: {
