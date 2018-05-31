@@ -293,13 +293,13 @@ export default class Options {
 			 * @name onrendered
 			 * @memberOf Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
 			 * onrendered: function() {
 			 *   ...
 			 * }
 			 */
-			onrendered: () => {},
+			onrendered: undefined,
 
 			/**
 			 * Set duration of transition (in milliseconds) for chart animation.<br><br>
