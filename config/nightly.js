@@ -25,8 +25,8 @@ const version = pkg.version.replace(/snapshot/, `nightly-${getDatetime()}`);
 
 // build command
 const build = {
-	production: `npm run build:production -- --env.nightly=${version}`,
-	packaged: `npm run build:packaged -- --env.nightly=${version}`
+	production: `cross-env NIGHTLY=${version} npm run build:production`,
+	packaged: `cross-env NIGHTLY=${version} npm run build:packaged`
 };
 
 console.log(`${build.production} && ${build.packaged}`);
