@@ -69,6 +69,15 @@ You can download the compressed files for production
     - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
     - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
 
+### Nightly version
+
+Nightly version is the latest build from the master branch.
+With nightly, you can try upcoming changes prior the official release.
+
+- https://github.com/naver/billboard.js/tree/nightly/dist
+
+> The version info will be given as the build datetime: `x.x.x-nightly-yyyymmddhhmmss`
+
 
 ### Installation with npm
 
