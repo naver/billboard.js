@@ -19,11 +19,11 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 - [Who's using billboard.js](https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js)
 
 ## Playground
-Play with the diverse option generating on the fly!
+Play with the diverse options generating on the fly!
 - https://naver.github.io/billboard.js/playground/
 
 ## Questions?
-If you have any questions, checkout previous posts or post new one from:
+If you have any questions, checkout the previous posts or create a new one at:
 - [Stack Overflow: billboard.js tagged posts](https://stackoverflow.com/questions/tagged/billboard.js)
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
@@ -32,7 +32,7 @@ If you have any questions, checkout previous posts or post new one from:
 
 ## Download and Installation
 
-Download dist files from repo directly or install it via npm. 
+Download dist files from the repo directly or install it via npm. 
 
 ### For development (Uncompressed)
 
@@ -60,7 +60,7 @@ You can download the compressed files for production
 
 ### Packaged version (with D3.js inclusion)
 > Packaged version is not an official distribution.
-> Is just to provide for ease use of 'billboard.js' with dependency.
+> It's to provide an easy way to load 'billboard.js' with dependency.
 
  - **Latest**
     - https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js
@@ -87,7 +87,7 @@ $ npm install billboard.js
 
 ### Using CDN
 
-If you want use without installation, load files directly from one of the CDN providers.
+If you want to use 'billboard.js' without installation, load files directly from one of the CDN providers.
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
 - jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/ [![](https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded)](https://www.jsdelivr.com/package/npm/billboard.js)
@@ -95,7 +95,7 @@ If you want use without installation, load files directly from one of the CDN pr
 
 ## Supported Browsers
 
-> Basically will work on all browsers which has SVG support.
+> Basically will work on all SVG supported browsers.
 
 |Internet Explorer|Chrome|Firefox|Safari|iOS|Android|
 |---|---|---|---|---|---|
@@ -150,7 +150,7 @@ import bb from "billboard.js";
 var chart = bb.generate({
     bindto: "#chart",
     data: {
-    	type: "line",
+      type: "line",
         columns: [
             ["data1", 30, 200, 100, 400, 150, 250]
         ]
@@ -163,7 +163,7 @@ chart.load( ... );
 
 ## How to start developing billboard.js?
 
-For anyone interested to develop billboard.js, follow the instructions below.
+For anyone interested in developing billboard.js, follow the instructions below.
 
 ### Development Environment
 
@@ -172,7 +172,7 @@ For anyone interested to develop billboard.js, follow the instructions below.
 Clone the billboard.js repository and install the dependency modules.
 
 ```bash
-# Create and move a folder.
+# Create a folder and move.
 $ mkdir billboard.js && cd billboard.js
 
 # Clone the repository.
@@ -205,15 +205,15 @@ $ npm run build
 $ npm run jsdoc
 ```
 
-Two folders will be created after complete build is completed.
+Two folders will be created after the build is completed.
 
 - **dist** folder: Includes the **billboard.js** and **billboard.min.js** files.
 - **doc** folder: Includes API documentation. The home page for the documentation is **doc/index.html**.
 
 ### Linting
 
-To keep the same code style, we adopted [ESLint](https://eslint.org/) to maintain our code quality. The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are modified version based on [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript).
-Setup your editor for check or run below command for linting.
+To maintain the same code style and quality, we adopted [ESLint](https://eslint.org/). The [rules](https://github.com/naver/eslint-config-naver/tree/master/rules) are based on the [Airbnb JavaScript Style Guide](https://github.com/airbnb/javascript) with some modifications.
+Setup your editor for check or run the below command for linting.
 
 ```bash
 $ npm run lint
@@ -221,17 +221,17 @@ $ npm run lint
 
 ### Test
 
-Once you created a branch and done with development, you must perform a test running `npm test` command before you push code to a remote repository.
+Once you created a branch and finished the development, you must perform a test with `npm test` command before the push to a remote repository.
 
 ```bash
 $ npm test
 ```
-Running a `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
+Running the `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
 
 
 ## Bug Report
 
-If you find a bug, please report to us posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
+If you find a bug, please report to us by posting [issues](https://github.com/naver/billboard.js/issues) on GitHub.
 
 ## License
 billboard.js is released under the [MIT license](https://github.com/naver/billboard.js/blob/master/LICENSE).
