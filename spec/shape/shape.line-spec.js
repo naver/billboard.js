@@ -12,7 +12,7 @@ describe("SHAPE LINE", () => {
 	let args;
 	let skipEach = false;
 
-	beforeEach(function() {
+	beforeEach(() => {
 		if (skipEach) {
 			return;
 		}
@@ -68,7 +68,8 @@ describe("SHAPE LINE", () => {
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
 			chart.internal.main.selectAll(`.${CLASS.line}`).each(function() {
-				const style = d3.select(this).style("shape-rendering").toLowerCase();
+				const style = d3.select(this).style("shape-rendering")
+					.toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
 			});
@@ -175,9 +176,7 @@ describe("SHAPE LINE", () => {
 					x: "timestamps",
 					order: "asc",
 					type: "area",
-					groups: [
-						["data1", "data2", "data3"]
-					]
+					groups: [["data1", "data2", "data3"]]
 				},
 				line: {
 					connectNull: true
@@ -252,14 +251,16 @@ describe("SHAPE LINE", () => {
 				data: {
 					x: "timestamps",
 					columns: [
-						['timestamps', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-						['data1', [150, 140, 110], [155, 130, 115], [160, 135, 120], [135, 120, 110], [180, 150, 130], [199, 160, 125]],
-						['data2', {high: 155, low: 145, mid: 150},
+						["timestamps", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
+						["data1", [150, 140, 110], [155, 130, 115], [160, 135, 120], [135, 120, 110], [180, 150, 130], [199, 160, 125]],
+						[
+							"data2", {high: 155, low: 145, mid: 150},
 							{high: 200, mid: 190, low: 150},
 							{high: 230, mid: 215, low: 200},
 							{high: 210, mid: 200, low: 180},
 							{high: 220, mid: 210, low: 190},
-							{high: 200, mid: 180, low: 160}],
+							{high: 200, mid: 180, low: 160}
+						],
 					],
 					type: "area-spline-range",
 				},
@@ -289,7 +290,6 @@ describe("SHAPE LINE", () => {
 
 			expect(true).to.be.ok;
 		});
-
 	});
 
 	describe("step type generation", () => {
@@ -313,7 +313,7 @@ describe("SHAPE LINE", () => {
 
 		it("check line.step.type=step-after option", () => {
 			const generateChartWithStep = () => {
-				chart = util.generate(args)
+				chart = util.generate(args);
 			};
 
 			expect(generateChartWithStep).to.not.throw();
@@ -333,7 +333,7 @@ describe("SHAPE LINE", () => {
 
 		it("check line.step.type=step-before option", () => {
 			const generateChartWithStep = () => {
-				chart = util.generate(args)
+				chart = util.generate(args);
 			};
 
 			expect(generateChartWithStep).to.not.throw();
@@ -347,7 +347,7 @@ describe("SHAPE LINE", () => {
 
 		after(() => {
 			skipEach = false;
-		})
+		});
 	});
 
 	describe("line options", () => {
@@ -379,14 +379,14 @@ describe("SHAPE LINE", () => {
 		it("should define config.line_classes", () => {
 			chart = util.generate(args);
 
-			expect(chart.internal.config).to.have.property('line_classes');
+			expect(chart.internal.config).to.have.property("line_classes");
 		});
 
 		it("config.line_classes should be an array and include the specified classes", () => {
 			chart = util.generate(args);
 
-			expect(chart.internal.config.line_classes).to.include('line-class-1');
-			expect(chart.internal.config.line_classes).to.include('line-class-2');
+			expect(chart.internal.config.line_classes).to.include("line-class-1");
+			expect(chart.internal.config.line_classes).to.include("line-class-2");
 		});
 	});
 });

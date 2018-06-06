@@ -2,18 +2,17 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import util from "../assets/util";
 
 describe("SHAPE POINT", () => {
 	let chart;
 	let args;
-	let skipEach = false;
+	const skipEach = false;
 
-	beforeEach(function(){
-		if(skipEach){
-			return ;
+	beforeEach(() => {
+		if (skipEach) {
+			return;
 		}
 		chart = util.generate(args);
 	});
@@ -76,9 +75,7 @@ describe("SHAPE POINT", () => {
 					]
 				},
 				point: {
-					pattern: [
-						"<polygon points='5 2.5 2.5 5 7.5 5'></polygon>"
-					]
+					pattern: ["<polygon points='5 2.5 2.5 5 7.5 5'></polygon>"]
 				}
 			};
 		});
