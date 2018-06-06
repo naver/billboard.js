@@ -20,8 +20,8 @@ describe("SHAPE BUBBLE", () => {
 			args = {
 				data: {
 					columns: [
-						['data1', 30, 350, 200, 380, 150],
-						['data2', 130, 100, 10, 200, 80]
+						["data1", 30, 350, 200, 380, 150],
+						["data2", 130, 100, 10, 200, 80]
 					],
 					type: "bubble"
 				},
@@ -36,6 +36,7 @@ describe("SHAPE BUBBLE", () => {
 		it("check the radius: default", () => {
 			// check for the maximum
 			let r = +chart.internal.main.select(`.${CLASS.circles}-data1 .${CLASS.circle}-3`).attr("r");
+
 			expect(r).to.be.equal(35);
 
 			// check for the minimum
@@ -45,9 +46,7 @@ describe("SHAPE BUBBLE", () => {
 
 		it("bubble size should be updated", done => {
 			chart.load({
-				columns: [
-					['data1', 500, 350, 200, 380, 10]
-				]
+				columns: [["data1", 500, 350, 200, 380, 10]]
 			});
 
 			setTimeout(() => {
@@ -78,13 +77,13 @@ describe("SHAPE BUBBLE", () => {
 		});
 
 		it("set options data.labels", () => {
-			args.data.labels = true
+			args.data.labels = true;
 		});
 
 		it("check for the label text", () => {
 			args.data.columns.forEach((v, i) => {
-				chart.internal.main.selectAll(`.${CLASS.chartTexts}-data${i+1} text`).each(function(w, j) {
-					expect(+d3.select(this).text()).to.be.equal(v[j+1]);
+				chart.internal.main.selectAll(`.${CLASS.chartTexts}-data${i + 1} text`).each(function(w, j) {
+					expect(+d3.select(this).text()).to.be.equal(v[j + 1]);
 				});
 			});
 		});

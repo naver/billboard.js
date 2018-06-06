@@ -24,9 +24,7 @@ describe("SHAPE BAR", () => {
 							["data1", 30, 200, -100, 400, -150, 250],
 							["data2", 50, 20, 10, 40, 15, 25],
 						],
-						groups: [
-							["data1", "data2"],
-						],
+						groups: [["data1", "data2"]],
 						type: "bar"
 					},
 				};
@@ -56,9 +54,7 @@ describe("SHAPE BAR", () => {
 							["data1", 30, 200, -100, 400, -150, 250],
 							["data2", 50, 20, 10, 40, 15, 25],
 						],
-						groups: [
-							["data1", "data2"]
-						],
+						groups: [["data1", "data2"]],
 						type: "bar"
 					},
 					axis: {
@@ -109,9 +105,7 @@ describe("SHAPE BAR", () => {
 							["data1", 30, 200, -100, 400, -150, 250],
 							["data2", 50, 20, 10, 40, 15, 25],
 						],
-						groups: [
-							["data1", "data2"],
-						],
+						groups: [["data1", "data2"]],
 						type: "bar"
 					},
 					axis: {
@@ -315,7 +309,8 @@ describe("SHAPE BAR", () => {
 		it(`bar width should be ${width}px`, () => {
 			const internal = chart.internal;
 			const barWidth = internal.main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)
-				.node().getBBox().width;
+				.node()
+				.getBBox().width;
 
 			expect(barWidth).to.be.equal(width);
 		});
@@ -323,9 +318,11 @@ describe("SHAPE BAR", () => {
 		it(`bar padding should be ${padding}px`, () => {
 			const internal = chart.internal;
 			const bar1 = internal.main.select(`.${CLASS.chartBar}.${CLASS.target}-data1 path.${CLASS.shape}`)
-				.node().getBBox().x + width;
+				.node()
+				.getBBox().x + width;
 			const bar2 = internal.main.select(`.${CLASS.chartBar}.${CLASS.target}-data2 path.${CLASS.shape}`)
-				.node().getBBox().x;
+				.node()
+				.getBBox().x;
 
 			expect(bar2 - bar1).to.be.equal(padding);
 		});
