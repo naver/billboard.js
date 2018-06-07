@@ -223,12 +223,69 @@ const getCssRules = styleSheets => {
 	return rules;
 };
 
+// emulate event
+const emulateEvent = {
+	mouse: (() => {
+		const getParams = () => ({
+			bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+		});
+
+		try {
+			// eslint-disable-next-line no-new
+			new MouseEvent("t");
+
+			return (el, eventType, params = getParams()) => {
+				el.dispatchEvent(new MouseEvent(eventType, params));
+			};
+		} catch (e) {
+			// Polyfills DOM4 MouseEvent
+			return (el, eventType, params = getParams()) => {
+				const mouseEvent = document.createEvent("MouseEvent");
+
+				// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+				mouseEvent.initMouseEvent(
+					eventType,
+					params.bubbles,
+					params.cancelable,
+					window,
+					0, // the event's mouse click count
+					params.screenX, params.screenY,
+					params.clientX, params.clientY,
+					false, false, false, false, 0, null
+				);
+
+				el.dispatchEvent(mouseEvent);
+			};
+		}
+	})(),
+	touch: (el, eventType, params) => {
+		const touchObj = new Touch(Object.assign({
+			identifier: Date.now(),
+			target: el,
+			radiusX: 2.5,
+			radiusY: 2.5,
+			rotationAngle: 10,
+			force: 0.5
+		}, params));
+
+		el.dispatchEvent(new TouchEvent(eventType, {
+			cancelable: true,
+			bubbles: true,
+			shiftKey: true,
+			touches: [touchObj],
+			targetTouches: [],
+			changedTouches: [touchObj]
+		}));
+	}
+};
+
 export {
 	asHalfPixel,
 	brushEmpty,
 	capitalize,
 	ceil10,
 	diffDomain,
+	emulateEvent,
 	extend,
 	getBrushSelection,
 	getCssRules,

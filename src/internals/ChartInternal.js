@@ -532,6 +532,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const main = $$.main;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 
 		const areaIndices = $$.getShapeIndices($$.isAreaType);
 		const barIndices = $$.getShapeIndices($$.isBarType);
@@ -639,12 +640,10 @@ export default class ChartInternal {
 					const index = tickValues.indexOf(e);
 
 					index >= 0 &&
-						d3Select(this)
-							.style("display", index % intervalForCulling ? "none" : "block");
+						d3Select(this).style("display", index % intervalForCulling ? "none" : "block");
 				});
 			} else {
-				$$.svg.selectAll(`.${CLASS.axisX} .tick text`)
-					.style("display", "block");
+				$$.svg.selectAll(`.${CLASS.axisX} .tick text`).style("display", "block");
 			}
 		}
 
@@ -724,15 +723,15 @@ export default class ChartInternal {
 		// event rects will redrawn when flow called
 		if (config.interaction_enabled && !options.flow && withEventRect) {
 			$$.redrawEventRect();
-			$$.updateZoom && $$.updateZoom();
+			config.zoom_enabled && $$.bindZoomOnEventRect();
 		}
 
 		// update circleY based on updated parameters
 		$$.updateCircleY();
 
 		// generate circle x/y functions depending on updated params
-		const cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$);
-		const cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
+		const cx = (isRotated ? $$.circleY : $$.circleX).bind($$);
+		const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
 
 		// generate flow
 		const flow = options.flow && $$.generateFlow({

@@ -16,37 +16,57 @@ extend(ChartInternal.prototype, {
 		).range([min, max]);
 	},
 
-	getX(min, max, domain, offsetValue) {
+	/**
+	 * Get x Axis scale function
+	 * @param {Number} min
+	 * @param {Number} max
+	 * @param {Number} domain
+	 * @param {Function} offset The offset getter to be sum
+	 * @return {Function} scale
+	 * @private
+	 */
+	getX(min, max, domain, offset) {
 		const $$ = this;
-		let scale = $$.getScale(min, max, $$.isTimeSeries());
-		const _scale = domain ? scale.domain(domain) : scale;
-		let key;
-		let offset;
+		const scale = $$.zoomScale || $$.getScale(min, max, $$.isTimeSeries());
 
-		// Define customized scale if categorized axis
-		if ($$.isCategorized()) {
-			offset = offsetValue || function() { return 0; };
-			scale = function(d, raw) {
-				const v = _scale(d) + offset(d);
+		return $$.getCustomizedScale(
+			domain ? scale.domain(domain) : scale,
+			offset
+		);
+	},
 
-				return raw ? v : Math.ceil(v);
-			};
-		} else {
-			scale = function(d, raw) {
-				const v = _scale(d);
+	getY(min, max, domain) {
+		const scale = this.getScale(min, max, this.isTimeSeriesY());
 
-				return raw ? v : Math.ceil(v);
-			};
-		}
+		domain && scale.domain(domain);
 
-		// define functions
-		for (key in _scale) {
-			scale[key] = _scale[key];
-		}
+		return scale;
+	},
 
-		scale.orgDomain = function() {
-			return _scale.domain();
+	/**
+	 * Get customized scale
+	 * @param {d3.scaleLinear|d3.scaleTime} scaleValue
+	 * @param {Function} offsetValue Offset getter to be sum
+	 * @return {} scale
+	 * @private
+	 */
+	getCustomizedScale(scaleValue, offsetValue) {
+		const $$ = this;
+		const offset = offsetValue || (() => $$.xAxis.tickOffset());
+
+		const scale = function(d, raw) {
+			const v = scaleValue(d) + offset();
+
+			return raw ? v : Math.ceil(v);
 		};
+
+		// copy original scale methods
+		for (const key in scaleValue) {
+			scale[key] = scaleValue[key];
+		}
+
+		scale.orgDomain = () => scaleValue.domain();
+		scale.orgScale = () => scaleValue;
 
 		// define custom domain() for categorized axis
 		if ($$.isCategorized()) {
@@ -55,23 +75,14 @@ extend(ChartInternal.prototype, {
 
 				if (!arguments.length) {
 					domain = this.orgDomain();
+
 					return [domain[0], domain[1] + 1];
 				}
 
-				_scale.domain(domain);
+				scaleValue.domain(domain);
 
 				return scale;
 			};
-		}
-
-		return scale;
-	},
-
-	getY(min, max, domain) {
-		const scale = this.getScale(min, max, this.isTimeSeriesY());
-
-		if (domain) {
-			scale.domain(domain);
 		}
 
 		return scale;
@@ -93,27 +104,27 @@ extend(ChartInternal.prototype, {
 	updateScales(withoutTransitionAtInit) {
 		const $$ = this;
 		const config = $$.config;
-		const forInit = !$$.x;
+		const isRotated = config.axis_rotated;
+		const isInit = !$$.x;
 
 		// update edges
-		$$.xMin = config.axis_rotated ? 1 : 0;
-		$$.xMax = config.axis_rotated ? $$.height : $$.width;
-		$$.yMin = config.axis_rotated ? 0 : $$.height;
-		$$.yMax = config.axis_rotated ? $$.width : 1;
+		$$.xMin = isRotated ? 1 : 0;
+		$$.xMax = isRotated ? $$.height : $$.width;
+		$$.yMin = isRotated ? 0 : $$.height;
+		$$.yMax = isRotated ? $$.width : 1;
 		$$.subXMin = $$.xMin;
 		$$.subXMax = $$.xMax;
-		$$.subYMin = config.axis_rotated ? 0 : $$.height2;
-		$$.subYMax = config.axis_rotated ? $$.width2 : 1;
+		$$.subYMin = isRotated ? 0 : $$.height2;
+		$$.subYMax = isRotated ? $$.width2 : 1;
 
 		// update scales
 		$$.x = $$.getX($$.xMin, $$.xMax,
-			forInit ? undefined : $$.x.orgDomain(), () => $$.xAxis.tickOffset());
-
-		$$.y = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y_default : $$.y.domain());
-		$$.y2 = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y2_default : $$.y2.domain());
+			isInit ? undefined : $$.x.orgDomain(), () => $$.xAxis.tickOffset());
+		$$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain());
+		$$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain());
 		$$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
-		$$.subY = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y_default : $$.subY.domain());
-		$$.subY2 = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y2_default : $$.subY2.domain());
+		$$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain());
+		$$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain());
 
 		// update axes
 		$$.xAxisTickFormat = $$.axis.getXAxisTickFormat();

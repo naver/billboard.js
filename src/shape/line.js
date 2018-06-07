@@ -87,12 +87,7 @@ extend(ChartInternal.prototype, {
 
 		$$.mainLine = $$.mainLine.enter()
 			.append("path")
-			.attr("class", d => {
-				const extraLineClass = $$.extraLineClasses(d) ?
-					` ${$$.extraLineClasses(d)}` : "";
-
-				return $$.classLine.bind($$)(d) + extraLineClass;
-			})
+			.attr("class", d => `${$$.classLine.bind($$)(d)} ${$$.extraLineClasses(d) || ""}`)
 			.style("stroke", $$.color)
 			.merge($$.mainLine)
 			.style("opacity", $$.initialOpacity.bind($$))
@@ -113,18 +108,21 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const lineConnectNull = config.line_connectNull;
-		const axisRotated = config.axis_rotated;
+		const isRotated = config.axis_rotated;
+
 		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
+
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[0][1] :
-			$$.isAreaRangeType(d) ? yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "mid")) :
-				yScaleGetter.call($$, d.id)(d.value));
+			yScaleGetter.call($$, d.id)(
+				$$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "mid") : d.value
+			));
 
 		let line = d3Line();
 
-		line = axisRotated ?
+		line = isRotated ?
 			line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 
 		if (!lineConnectNull) {
@@ -155,7 +153,7 @@ extend(ChartInternal.prototype, {
 					y0 = y(values[0].value);
 				}
 
-				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+				path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
 
 			return path || "M 0 0";
@@ -271,13 +269,9 @@ extend(ChartInternal.prototype, {
 			};
 		} else {
 			sWithRegion = function(d0, d1, k, otherDiff) {
-				let points;
-
-				if (config.axis_rotated) {
-					points = [[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]];
-				} else {
-					points = [[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
-				}
+				const points = config.axis_rotated ?
+					[[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]] :
+					[[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
 
 				return generateM(points);
 			};
