@@ -200,8 +200,6 @@ extend(ChartInternal.prototype, {
 		const xPadding = config.axis_x_padding;
 		let maxDataCount;
 		let padding;
-		let paddingLeft;
-		let paddingRight;
 
 		if ($$.isCategorized()) {
 			padding = 0;
@@ -212,21 +210,18 @@ extend(ChartInternal.prototype, {
 			padding = diff * 0.01;
 		}
 
+		let left = padding;
+		let right = padding;
+
 		if (isObject(xPadding) && notEmpty(xPadding)) {
-			paddingLeft = isValue(xPadding.left) ? xPadding.left : padding;
-			paddingRight = isValue(xPadding.right) ? xPadding.right : padding;
+			left = isValue(xPadding.left) ? xPadding.left : padding;
+			right = isValue(xPadding.right) ? xPadding.right : padding;
 		} else if (isNumber(config.axis_x_padding)) {
-			paddingLeft = xPadding;
-			paddingRight = xPadding;
-		} else {
-			paddingLeft = padding;
-			paddingRight = padding;
+			left = xPadding;
+			right = xPadding;
 		}
 
-		return {
-			left: paddingLeft,
-			right: paddingRight
-		};
+		return {left, right};
 	},
 
 	getXDomain(targets) {

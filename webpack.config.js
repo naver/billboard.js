@@ -53,23 +53,22 @@ const config = {
 	mode: "none"
 };
 
-module.exports = env => {
+module.exports = () => {
+	const env = process.env;
 	let mode = "development";
 
-	if (env) {
-		if (env.mode) {
-			mode = env.mode;
-		}
+	if (env.NODE_ENV) {
+		mode = env.NODE_ENV;
+	}
 
-		env.monitor && config.plugins.push(
-			new WebpackMonitor({
-				launch: true
-			})
-		);
+	env.MONITOR && config.plugins.push(
+		new WebpackMonitor({
+			launch: true
+		})
+	);
 
-		if (env.nightly) {
-			pkg.version = env.nightly;
-		}
+	if (env.NIGHTLY) {
+		pkg.version = env.NIGHTLY;
 	}
 
 	mode === "packaged" && delete config.externals;

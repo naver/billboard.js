@@ -121,10 +121,8 @@ export default function(params = {}) {
 	function copyScale() {
 		const newScale = scale.copy();
 
-		if (params.isCategory || !newScale.domain().length) {
-			const domain = scale.domain();
-
-			newScale.domain([domain[0], domain[1] - 1]);
+		if (!newScale.domain().length) {
+			newScale.domain(scale.domain());
 		}
 
 		return newScale;
@@ -464,6 +462,12 @@ export default function(params = {}) {
 		return axis;
 	};
 
+	/**
+	 * Return tick's offset value.
+	 * The value will be set for 'category' axis type.
+	 * @return {number}
+	 * @private
+	 */
 	axis.tickOffset = () => tickOffset;
 
 	/**

@@ -39,6 +39,9 @@ extend(Chart.prototype, {
 	 * chart.flush();
 	 */
 	flush() {
+		// reset possible zoom scale
+		this.internal.zoomScale = null;
+
 		this.internal.updateAndRedraw({
 			withLegend: true,
 			withTransition: false,

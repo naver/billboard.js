@@ -19,44 +19,32 @@ extend(ChartInternal.prototype, {
 	 */
 	initZoom() {
 		const $$ = this;
-		const config = $$.config;
-		let startEvent;
 
 		$$.zoomScale = null;
-		$$.zoom = d3Zoom()
-			.duration(0)
-			.on("start", () => {
-				startEvent = d3Event.sourceEvent;
+		$$.generateZoom();
+	},
 
-				$$.zoom.altDomain = d3Event.sourceEvent.altKey ?
-					$$.x.orgDomain() : null;
+	/**
+	 * Generate zoom
+	 * @private
+	 */
+	generateZoom() {
+		const $$ = this;
+		const config = $$.config;
 
-				config.zoom_onzoomstart.call($$.api, d3Event.sourceEvent);
-			})
-			.on("zoom", () => {
-				$$.redrawForZoom.call($$);
-			})
-			.on("end", () => {
-				const event = d3Event.sourceEvent;
+		const zoom = d3Zoom().duration(0)
+			.on("start", $$.onStart.bind($$))
+			.on("zoom", $$.onZoom.bind($$))
+			.on("end", $$.onEnd.bind($$));
 
-				// if click, do nothing. otherwise, click interaction will be canceled.
-				if (event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY) {
-					return;
-				}
-
-				$$.redrawEventRect();
-				$$.updateZoom();
-
-				isFunction(config.zoom_onzoomend) && config.zoom_onzoomend.call($$.api, $$.x.orgDomain());
-			});
-
-		$$.zoom.orgScaleExtent = () => {
-			const extent = config.zoom_extent ? config.zoom_extent : [1, 10];
+		// get zoom extent
+		zoom.orgScaleExtent = () => {
+			const extent = config.zoom_extent || [1, 10];
 
 			return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
 		};
 
-		$$.zoom.updateScaleExtent = function() {
+		zoom.updateScaleExtent = function() {
 			const ratio = diffDomain($$.x.orgDomain()) / diffDomain($$.getZoomDomain());
 			const extent = this.orgScaleExtent();
 
@@ -65,14 +53,103 @@ extend(ChartInternal.prototype, {
 			return this;
 		};
 
-		$$.zoom.updateTransformScale = function(transform) {
-			const newScale = transform.rescaleX($$.x);
+		/**
+		 * Update scale according zoom transform value
+		 * @param {Object} transform
+		 * @private
+		 */
+		zoom.updateTransformScale = transform => {
+			// rescale from the original scale
+			const newScale = transform.rescaleX($$.x.orgScale());
 
 			newScale.domain($$.trimXDomain(newScale.domain()));
-			$$.zoomScale = newScale;
+
+			$$.zoomScale = $$.getCustomizedScale(newScale);
 			$$.xAxis.scale($$.zoomScale);
-			$$.main.select(`.${CLASS.eventRects}`).node().__zoom = transform;
 		};
+
+		$$.zoom = zoom;
+	},
+
+	/**
+	 * 'start' event listener
+	 * @private
+	 */
+	onStart() {
+		const $$ = this;
+		const event = d3Event.sourceEvent;
+		const onzoomstart = $$.config.zoom_onzoomstart;
+
+		$$.zoom.altDomain = event.altKey ?
+			$$.x.orgDomain() : null;
+
+		$$.zoom.startEvent = event;
+		isFunction(onzoomstart) && onzoomstart.call($$.api, event);
+	},
+
+	/**
+	 * 'zoom' event listener
+	 * @private
+	 */
+	onZoom() {
+		const $$ = this;
+		const config = $$.config;
+		const event = d3Event;
+
+		if (!config.zoom_enabled) {
+			return;
+		}
+
+		const isMousemove = event.sourceEvent.type === "mousemove";
+		const transform = event.transform;
+
+		$$.zoom.updateTransformScale(transform);
+
+		if ($$.filterTargetsToShow($$.data.targets).length === 0) {
+			return;
+		}
+
+		if (isMousemove && $$.zoom.altDomain) {
+			$$.x.domain($$.zoom.altDomain);
+			transform.scale($$.zoomScale).updateScaleExtent();
+			return;
+		}
+
+		if ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0]) {
+			$$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]);
+		}
+
+		$$.redraw({
+			withTransition: false,
+			withY: config.zoom_rescale,
+			withSubchart: false,
+			withEventRect: false,
+			withDimension: false
+		});
+
+		$$.cancelClick = isMousemove;
+		isFunction(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, $$.x.orgDomain());
+	},
+
+	/**
+	 * 'end' event listener
+	 * @private
+	 */
+	onEnd() {
+		const $$ = this;
+		const event = d3Event.sourceEvent;
+		const onzoomend = $$.config.zoom_onzoomend;
+		const startEvent = $$.zoom.startEvent;
+
+		// if click, do nothing. otherwise, click interaction will be canceled.
+		if (event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY) {
+			return;
+		}
+
+		$$.redrawEventRect();
+		$$.updateZoom();
+
+		isFunction(onzoomend) && onzoomend.call($$.api, $$.x.orgDomain());
 	},
 
 	/**
@@ -95,12 +172,6 @@ extend(ChartInternal.prototype, {
 	 */
 	updateZoom() {
 		const $$ = this;
-		const z = $$.config.zoom_enabled ? $$.zoom : () => {};
-
-		// bind zoom module
-		// $$.main.select(`.${CLASS.zoomRect}`)
-		// 	.call(z)
-		// 	.on("dblclick.zoom", null);
 
 		if ($$.zoomScale) {
 			const zoomDomain = $$.zoomScale.domain();
@@ -116,57 +187,17 @@ extend(ChartInternal.prototype, {
 				$$.zoomScale = null;
 			}
 		}
-
-		$$.main.select(`.${CLASS.eventRects}`)
-			.call(z)
-			.on("dblclick.zoom", null);
 	},
 
 	/**
-	 * Redraw the zoom.
+	 * Attach zoom event on <rect>
 	 * @private
 	 */
-	redrawForZoom() {
+	bindZoomOnEventRect() {
 		const $$ = this;
-		const config = $$.config;
 
-		if (!config.zoom_enabled) {
-			return;
-		}
-
-		const zoom = $$.zoom;
-		const x = $$.x;
-		const event = d3Event;
-		const transform = event.transform;
-
-		$$.zoom.updateTransformScale(transform);
-
-		if ($$.filterTargetsToShow($$.data.targets).length === 0) {
-			return;
-		}
-
-		if (event.sourceEvent.type === "mousemove" && zoom.altDomain) {
-			x.domain(zoom.altDomain);
-			transform.scale($$.zoomScale).updateScaleExtent();
-			return;
-		}
-
-		if ($$.isCategorized() && x.orgDomain()[0] === $$.orgXDomain[0]) {
-			x.domain([$$.orgXDomain[0] - 1e-10, x.orgDomain()[1]]);
-		}
-
-		$$.redraw({
-			withTransition: false,
-			withY: config.zoom_rescale,
-			withSubchart: false,
-			withEventRect: false,
-			withDimension: false
-		});
-
-		if (event.sourceEvent.type === "mousemove") {
-			$$.cancelClick = true;
-		}
-
-		isFunction(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, x.orgDomain());
-	},
+		$$.main.select(`.${CLASS.eventRects}`)
+			.call($$.zoom)
+			.on("dblclick.zoom", null);
+	}
 });

@@ -133,11 +133,11 @@ export default class Options {
 			 * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
 			 * @property {Number} [zoom.x.min] Set x Axis minimum zoom range
 			 * @property {Number} [zoom.x.max] Set x Axis maximum zoom range
-			 * @property {Function} [zoom.onzoom=function(){}] Set callback that is called when the chart is zooming.<br>
-			 *  Specified function receives the zoomed domain.
-			 * @property {Function} [zoom.onzoomstart=function(){}] Set callback that is called when zooming starts.<br>
+			 * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
 			 *  Specified function receives the zoom event.
-			 * @property {Function} [zoom.onzoomend=function(){}] Set callback that is called when zooming ends.<br>
+			 * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
+			 *  Specified function receives the zoomed domain.
+			 * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
 			 *  Specified function receives the zoomed domain.
 			 * @example
 			 *  zoom: {
@@ -148,8 +148,8 @@ export default class Options {
 			 *          min: -1,  // set min range
 			 *          max: 10  // set max range
 			 *      },
-			 *      onzoom: function(domain) { ... },
 			 *      onzoomstart: function(event) { ... },
+			 *      onzoom: function(domain) { ... },
 			 *      onzoomend: function(domain) { ... }
 			 *  }
 			 */
@@ -157,9 +157,9 @@ export default class Options {
 			zoom_extent: undefined,
 			zoom_privileged: false,
 			zoom_rescale: false,
-			zoom_onzoom: () => {},
-			zoom_onzoomstart: () => {},
-			zoom_onzoomend: () => {},
+			zoom_onzoom: undefined,
+			zoom_onzoomstart: undefined,
+			zoom_onzoomend: undefined,
 			zoom_x_min: undefined,
 			zoom_x_max: undefined,
 
