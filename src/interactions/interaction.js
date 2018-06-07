@@ -10,63 +10,7 @@ import {
 import {drag as d3Drag} from "d3-drag";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isBoolean} from "../internals/util";
-
-// emulate event
-const emulateEvent = {
-	mouse: (() => {
-		const getParams = () => ({
-			bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
-		});
-
-		try {
-			// eslint-disable-next-line no-new
-			new MouseEvent("t");
-
-			return (el, eventType, params = getParams()) => {
-				el.dispatchEvent(new MouseEvent(eventType, params));
-			};
-		} catch (e) {
-			// Polyfills DOM4 MouseEvent
-			return (el, eventType, params = getParams()) => {
-				const mouseEvent = document.createEvent("MouseEvent");
-
-				// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-				mouseEvent.initMouseEvent(
-					eventType,
-					params.bubbles,
-					params.cancelable,
-					window,
-					0, // the event's mouse click count
-					params.screenX, params.screenY,
-					params.clientX, params.clientY,
-					false, false, false, false, 0, null
-				);
-
-				el.dispatchEvent(mouseEvent);
-			};
-		}
-	})(),
-	touch: (el, eventType, params) => {
-		const touchObj = new Touch(Object.assign({
-			identifier: Date.now(),
-			target: el,
-			radiusX: 2.5,
-			radiusY: 2.5,
-			rotationAngle: 10,
-			force: 0.5
-		}, params));
-
-		el.dispatchEvent(new TouchEvent(eventType, {
-			cancelable: true,
-			bubbles: true,
-			shiftKey: true,
-			touches: [touchObj],
-			targetTouches: [],
-			changedTouches: [touchObj]
-		}));
-	}
-};
+import {emulateEvent, extend, isBoolean} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -91,14 +35,14 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const isMultipleX = $$.isMultipleX();
+
+		let eventRectUpdate;
 		const eventRects = $$.main.select(`.${CLASS.eventRects}`)
-			.style("cursor", config.zoom_enabled ? config.axis_rotated ? "ns-resize" : "ew-resize" : null)
+			.style("cursor", config.zoom_enabled ? (
+				config.axis_rotate ? "ns-resize" : "ew-resize"
+			) : null)
 			.classed(CLASS.eventRectsMultiple, isMultipleX)
 			.classed(CLASS.eventRectsSingle, !isMultipleX);
-
-		// rects for mouseover
-		let eventRectUpdate;
-		let maxDataCountTarget;
 
 		// clear old rects
 		eventRects.selectAll(`.${CLASS.eventRect}`).remove();
@@ -109,14 +53,14 @@ extend(ChartInternal.prototype, {
 		if (isMultipleX) {
 			eventRectUpdate = $$.eventRect.data([0]);
 			// update
-			// enter : only one rect will be added
+			// enter: only one rect will be added
+			// exit: not needed because always only one rect exists
 			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
-			$$.updateEventRect(eventRectUpdate);
-			// exit : not needed because always only one rect exists
 		} else {
 			// Set data and update $$.eventRect
-			maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
+			const maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
+
 			eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []);
 			$$.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
 			eventRectUpdate = $$.eventRect.data(d => d);
@@ -127,107 +71,115 @@ extend(ChartInternal.prototype, {
 			// update
 			eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
-
-			$$.updateEventRect(eventRectUpdate);
 		}
 
-		if ($$.inputType === "touch" && !$$.hasArcType()) {
-			const getEventRect = () => {
-				const touch = d3Event.changedTouches[0];
+		$$.updateEventRect(eventRectUpdate);
 
-				return d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
-			};
+		if ($$.inputType === "touch" && !$$.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
+			$$.bindTouchOnEventRect(isMultipleX);
+		}
+	},
 
-			const getIndex = eventRect => {
-				let index = eventRect && eventRect.attr("class") && eventRect.attr("class")
-					.replace(new RegExp(`(${CLASS.eventRect}-?|s)`, "g"), "") * 1;
+	bindTouchOnEventRect(isMultipleX) {
+		const $$ = this;
+		const config = $$.config;
 
-				if (isNaN(index) || index === null) {
-					index = -1;
+		const getEventRect = () => {
+			const touch = d3Event.changedTouches[0];
+
+			return d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
+		};
+
+		const getIndex = eventRect => {
+			let index = eventRect && eventRect.attr("class") && eventRect.attr("class")
+				.replace(new RegExp(`(${CLASS.eventRect}-?|s)`, "g"), "") * 1;
+
+			if (isNaN(index) || index === null) {
+				index = -1;
+			}
+
+			return index;
+		};
+
+		const selectRect = context => {
+			if (isMultipleX) {
+				$$.selectRectForMultipleXs(context);
+			} else {
+				const eventRect = getEventRect();
+				const index = getIndex(eventRect);
+
+				$$.setOver(index);
+
+				index === -1 ?
+					$$.unselectRect() :
+					$$.selectRectForSingle(context, eventRect, index);
+			}
+		};
+
+		// call event.preventDefault()
+		// according 'interaction.inputType.touch.preventDefault' option
+		const preventDefault = config.interaction_inputType_touch.preventDefault;
+		const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+		const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
+		let startPx;
+
+		const preventEvent = event => {
+			const eventType = event.type;
+			const touch = event.changedTouches[0];
+			const currentXY = touch[`client${config.axis_rotated ? "Y" : "X"}`];
+
+			// prevent document scrolling
+			if (eventType === "touchstart") {
+				if (isPrevented) {
+					event.preventDefault();
+				} else if (preventThreshold !== null) {
+					startPx = currentXY;
 				}
+			} else if (eventType === "touchmove") {
+				if (isPrevented || startPx === true || (
+					preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold
+				)) {
+					// once prevented, keep prevented during whole 'touchmove' context
+					startPx = true;
+					event.preventDefault();
+				}
+			}
+		};
 
-				return index;
-			};
+		// bind touch events
+		$$.svg
+			.on("touchstart.eventRect touchmove.eventRect", function() {
+				const eventRect = getEventRect();
 
-			const selectRect = context => {
-				if (isMultipleX) {
-					$$.selectRectForMultipleXs(context);
+				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+					if ($$.dragging || $$.flowing || $$.hasArcType()) {
+						return;
+					}
+
+					preventEvent(d3Event);
+					selectRect(this);
 				} else {
-					const eventRect = getEventRect();
+					$$.unselectRect();
+				}
+			})
+			.on("touchend.eventRect", () => {
+				const eventRect = getEventRect();
+
+				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
+					if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
+						$$.cancelClick && ($$.cancelClick = false);
+
+						return;
+					}
+
+					// Call event handler
 					const index = getIndex(eventRect);
 
-					$$.setOver(index);
-
-					index === -1 ?
-						$$.unselectRect() :
-						$$.selectRectForSingle(context, eventRect, index);
+					!isMultipleX && index !== -1 &&
+					$$.main.selectAll(`.${CLASS.shape}-${index}`)
+						.each(d2 => config.data_onout.call($$.api, d2));
 				}
-			};
-
-			// call event.preventDefault()
-			// according 'interaction.inputType.touch.preventDefault' option
-			const preventDefault = config.interaction_inputType_touch.preventDefault;
-			const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
-			const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
-			let startPx;
-
-			const preventEvent = event => {
-				const eventType = event.type;
-				const touch = event.changedTouches[0];
-				const currentXY = touch[`client${config.axis_rotated ? "Y" : "X"}`];
-
-				// prevent document scrolling
-				if (eventType === "touchstart") {
-					if (isPrevented) {
-						event.preventDefault();
-					} else if (preventThreshold !== null) {
-						startPx = currentXY;
-					}
-				} else if (eventType === "touchmove") {
-					if (isPrevented || startPx === true || (
-						preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold
-					)) {
-						// once prevented, keep prevented during whole 'touchmove' context
-						startPx = true;
-						event.preventDefault();
-					}
-				}
-			};
-
-			$$.svg
-				.on("touchstart touchmove", function() {
-					const eventRect = getEventRect();
-
-					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
-						if ($$.dragging || $$.flowing || $$.hasArcType()) {
-							return;
-						}
-
-						preventEvent(d3Event);
-						selectRect(this);
-					} else {
-						$$.unselectRect();
-					}
-				})
-				.on("touchend", () => {
-					const eventRect = getEventRect();
-
-					if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
-						if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
-							$$.cancelClick && ($$.cancelClick = false);
-
-							return;
-						}
-
-						// Call event handler
-						const index = getIndex(eventRect);
-
-						!isMultipleX && index !== -1 &&
-							$$.main.selectAll(`.${CLASS.shape}-${index}`)
-								.each(d2 => config.data_onout.call($$.api, d2));
-					}
-				});
-		}
+			});
 	},
 
 	/**
@@ -240,6 +192,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const xScale = $$.zoomScale || $$.x;
 		const eventRectData = eventRectUpdate || $$.eventRect.data();// set update selection if null
+		const isRotated = config.axis_rotated;
 		let x;
 		let y;
 		let w;
@@ -265,7 +218,7 @@ extend(ChartInternal.prototype, {
 
 					// if there this is a single data point make the eventRect full width (or height)
 					if (prevX === null && nextX === null) {
-						return config.axis_rotated ? $$.height : $$.width;
+						return isRotated ? $$.height : $$.width;
 					}
 
 					if (prevX === null) {
@@ -300,10 +253,10 @@ extend(ChartInternal.prototype, {
 				rectX = d => xScale(d.x) - (rectW / 2);
 			}
 
-			x = config.axis_rotated ? 0 : rectX;
-			y = config.axis_rotated ? rectX : 0;
-			w = config.axis_rotated ? $$.width : rectW;
-			h = config.axis_rotated ? rectW : $$.height;
+			x = isRotated ? 0 : rectX;
+			y = isRotated ? rectX : 0;
+			w = isRotated ? $$.width : rectW;
+			h = isRotated ? rectW : $$.height;
 		}
 
 		eventRectData.attr("class", $$.classEvent.bind($$))
@@ -316,13 +269,16 @@ extend(ChartInternal.prototype, {
 	selectRectForSingle(context, eventRect, index) {
 		const $$ = this;
 		const config = $$.config;
+		const isSelectionEnabled = config.data_selection_enabled;
+		const isSelectionGrouped = config.data_selection_grouped;
+		const isTooltipGrouped = config.tooltip_grouped;
 		const selectedData = $$.getAllValuesOnIndex(index);
 
-		if (config.tooltip_grouped) {
+		if (isTooltipGrouped) {
 			$$.showTooltip(selectedData, context);
 			$$.showXGridFocus(selectedData);
 
-			if (!config.data_selection_enabled || config.data_selection_grouped) {
+			if (!isSelectionEnabled || isSelectionGrouped) {
 				return;
 			}
 		}
@@ -331,28 +287,28 @@ extend(ChartInternal.prototype, {
 			.each(function() {
 				d3Select(this).classed(CLASS.EXPANDED, true);
 
-				if (config.data_selection_enabled) {
-					eventRect.style("cursor", config.data_selection_grouped ? "pointer" : null);
+				if (isSelectionEnabled) {
+					eventRect.style("cursor", isSelectionGrouped ? "pointer" : null);
 				}
 
-				if (!config.tooltip_grouped) {
+				if (!isTooltipGrouped) {
 					$$.hideXGridFocus();
 					$$.hideTooltip();
 
-					if (!config.data_selection_grouped) {
-						$$.expandCirclesBars(index);
-					}
+					!isSelectionGrouped && $$.expandCirclesBars(index);
 				}
 			})
-			.filter(function(d) { return $$.isWithinShape(this, d); })
+			.filter(function(d) {
+				return $$.isWithinShape(this, d);
+			})
 			.each(function(d) {
-				if (config.data_selection_enabled) {
-					if (config.data_selection_grouped || config.data_selection_isselectable(d)) {
+				if (isSelectionEnabled) {
+					if (isSelectionGrouped || config.data_selection_isselectable(d)) {
 						eventRect.style("cursor", "pointer");
 					}
 				}
 
-				if (!config.tooltip_grouped) {
+				if (!isTooltipGrouped) {
 					$$.showTooltip([d], this);
 					$$.showXGridFocus([d]);
 					$$.expandCirclesBars(index, d.id, true);
@@ -382,7 +338,6 @@ extend(ChartInternal.prototype, {
 
 		const mouse = d3Mouse(context);
 		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-		let sameXData;
 
 		if ($$.mouseover && (!closest || closest.id !== $$.mouseover.id)) {
 			config.data_onout.call($$.api, $$.mouseover);
@@ -394,11 +349,9 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		if ($$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped) {
-			sameXData = [closest];
-		} else {
-			sameXData = $$.filterByX(targetsToShow, closest.x);
-		}
+		const sameXData = (
+			$$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped
+		) ? [closest] : $$.filterByX(targetsToShow, closest.x);
 
 		// show tooltip when cursor is close to some point
 		const selectedData = sameXData.map(d => $$.addName(d));
@@ -470,12 +423,13 @@ extend(ChartInternal.prototype, {
 
 				const index = d.index;
 
-				$$.main.selectAll(`.${CLASS.shape}-${index}`).each(function(d2) {
-					if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-						$$.toggleShape(this, d2, index);
-						$$.config.data_onclick.call($$.api, d2, this);
-					}
-				});
+				$$.main.selectAll(`.${CLASS.shape}-${index}`)
+					.each(function(d2) {
+						if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
+							$$.toggleShape(this, d2, index);
+							$$.config.data_onclick.call($$.api, d2, this);
+						}
+					});
 			})
 			.call(
 				config.data_selection_draggable && $$.drag ?

@@ -185,8 +185,8 @@ extend(ChartInternal.prototype, {
 
 	getInterpolateType(d) {
 		const $$ = this;
-		const interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ?
-			$$.config.spline_interpolation_type : "cardinal";
+		const type = $$.config.spline_interpolation_type;
+		const interpolation = $$.isInterpolationType(type) ? type : "cardinal";
 
 		return $$.isSplineType(d) ?
 			interpolation : (

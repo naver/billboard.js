@@ -8,7 +8,7 @@ import {
 } from "d3-array";
 import {zoomIdentity as d3ZoomIdentity} from "d3-zoom";
 import Chart from "../internals/Chart";
-import {isDefined, isObject, extend} from "../internals/util";
+import {isDefined, isObject, isFunction, extend} from "../internals/util";
 
 /**
  * Zoom by giving x domain.
@@ -44,7 +44,7 @@ const zoom = function(domainValue) {
 			const orgDomain = $$.x.orgDomain();
 			const k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]);
 			const tx = isTimeSeries ?
-				(0 - k * $$.x(domain[0].getTime())) : domain[0] - k * $$.x(domain[0]);
+				(0 - k * $$.x(domain[0].getTime())) : domain[0] - k * ($$.x(domain[0]) - $$.xAxis.tickOffset());
 
 			$$.zoom.updateTransformScale(
 				d3ZoomIdentity.translate(tx, 0).scale(k)
@@ -59,7 +59,7 @@ const zoom = function(domainValue) {
 			withDimension: false
 		});
 
-		$$.config.zoom_onzoom.call(this, $$.x.orgDomain());
+		isFunction($$.config.zoom_onzoom) && $$.config.zoom_onzoom.call(this, $$.x.orgDomain());
 	} else {
 		resultDomain = ($$.zoomScale || $$.x).domain();
 	}

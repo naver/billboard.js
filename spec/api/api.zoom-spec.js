@@ -30,10 +30,10 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
-			const domain = chart.internal.zoomScale.domain();
+			const domain = chart.internal.zoomScale.domain().map(Math.round);
 
-			expect(Math.round(domain[0])).to.be.equal(target[0]);
-			expect(Math.round(domain[1])).to.be.equal(target[1]);
+			expect(domain[0]).to.be.equal(target[0]);
+			expect(domain[1]).to.be.equal(target[1]);
 		});
 
 		it("should be zoomed properly again", () => {
@@ -41,10 +41,10 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
-			const domain = chart.internal.zoomScale.domain();
+			const domain = chart.internal.zoomScale.domain().map(Math.round);
 
-			expect(Math.round(domain[0])).to.be.equal(target[0]);
-			expect(Math.round(domain[1])).to.be.equal(target[1]);
+			expect(domain[0]).to.be.equal(target[0]);
+			expect(domain[1]).to.be.equal(target[1]);
 		});
 
 		it("should be zoomed and showing focus grid properly when target contained minus value", () => {
@@ -57,11 +57,11 @@ describe("API zoom", function() {
 			// If target contained minus value should not be null
 			expect(zoomScale).to.not.be.null;
 
-			const domain = chart.internal.zoomScale.domain();
+			const domain = chart.internal.zoomScale.domain().map(Math.round);
 
 			// domain value must be above than target
-			expect(Math.round(domain[0])).to.be.above(target[0]);
-			expect(Math.round(domain[1])).to.be.above(target[1]);
+			expect(domain[0]).to.be.above(target[0]);
+			expect(domain[1]).to.be.above(target[1]);
 		});
 	});
 
@@ -126,6 +126,52 @@ describe("API zoom", function() {
 		});
 	});
 
+	describe("zoom category type", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			});
+		});
+
+		it("should be zoomed properly", done => {
+			const target = [1,2];
+
+			const internal = chart.internal;
+
+			chart.zoom(target);
+
+			setTimeout(() => {
+				const rectlist = internal.main.selectAll(`.${CLASS.eventRect}`)
+					.filter((v, i) => target.indexOf(i) !== -1);
+				const rectSize = rectlist.attr("width");
+				const domain = internal.zoomScale.domain().map(Math.round);
+
+				expect(domain[0]).to.be.equal(target[0]);
+				expect(domain[1] - 1).to.be.equal(target[1]);
+
+				rectlist.each(function(d, i) {
+					const x = +d3.select(this).attr("x");
+
+					expect(x * i).to.be.closeTo(rectSize * i, 5);
+				});
+
+				done();
+			}, 1000);
+		});
+	});
+
 	describe("zoom bar chart", () => {
 		before(() => {
 			chart = util.generate({
@@ -145,11 +191,14 @@ describe("API zoom", function() {
 
 		it("should be zoomed properly", done => {
 			const target = [3, 5];
-			const bars = d3.select(`.${CLASS.chartBars}`).node();
-			const rects = d3.select(`.${CLASS.eventRects}`).node();
-			const rectlist = d3.selectAll(`.${CLASS.eventRect}`).nodes();
+			const internal = chart.internal;
+			const main = internal.main;
+
+			const bars = main.select(`.${CLASS.chartBars}`).node();
+			const rects = main.select(`.${CLASS.eventRects}`).node();
+			const rectlist = main.selectAll(`.${CLASS.eventRect}`).nodes();
 			const orgWidth = bars.getBoundingClientRect().width;
-			const rectWidth = chart.internal.getEventRectWidth();
+			const rectWidth = internal.getEventRectWidth();
 
 			chart.zoom(target);
 
@@ -157,6 +206,7 @@ describe("API zoom", function() {
 				rectlist.forEach(v => {
 					expect(parseFloat(d3.select(v).attr("width"))).to.be.equal(rectWidth);
 				});
+
 				expect(bars.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
 				expect(rects.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
 
@@ -184,10 +234,10 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
-			domain = chart.internal.zoomScale.domain();
+			domain = chart.internal.zoomScale.domain().map(Math.round);
 
-			expect(Math.round(domain[0])).to.be.equal(target[0]);
-			expect(Math.round(domain[1])).to.be.equal(target[1]);
+			expect(domain[0]).to.be.equal(target[0]);
+			expect(domain[1]).to.be.equal(target[1]);
 
 			chart.unzoom();
 
@@ -226,8 +276,8 @@ describe("API zoom", function() {
 			});
 
 			// check the returned domain value
-			chart.zoom(domain).forEach((v, i) => {
-				expect(Math.round(v)).to.not.equal(domain[i]);
+			chart.zoom(domain).map(Math.round).forEach((v, i) => {
+				expect(v).to.not.equal(domain[i]);
 			});
 
 			expect(+main.select(selector).attr("x")).to.be.equal(xValue);
@@ -240,8 +290,8 @@ describe("API zoom", function() {
 			// when enable zoom
 			chart.zoom.enable(true);
 
-			chart.zoom(domain).forEach((v, i) => {
-				expect(Math.round(v)).to.equal(domain[i]);
+			chart.zoom(domain).map(Math.round).forEach((v, i) => {
+				expect(v).to.equal(domain[i]);
 			});
 
 			expect(+main.select(selector).attr("x")).to.below(xValue);
