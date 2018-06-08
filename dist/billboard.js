@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180531190822
+ * @version 1.4.1-nightly-20180607185131
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -55,17 +55,32 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// define getter function for harmony exports
 /******/ 	__webpack_require__.d = function(exports, name, getter) {
 /******/ 		if(!__webpack_require__.o(exports, name)) {
-/******/ 			Object.defineProperty(exports, name, {
-/******/ 				configurable: false,
-/******/ 				enumerable: true,
-/******/ 				get: getter
-/******/ 			});
+/******/ 			Object.defineProperty(exports, name, { enumerable: true, get: getter });
 /******/ 		}
 /******/ 	};
 /******/
 /******/ 	// define __esModule on exports
 /******/ 	__webpack_require__.r = function(exports) {
+/******/ 		if(typeof Symbol !== 'undefined' && Symbol.toStringTag) {
+/******/ 			Object.defineProperty(exports, Symbol.toStringTag, { value: 'Module' });
+/******/ 		}
 /******/ 		Object.defineProperty(exports, '__esModule', { value: true });
+/******/ 	};
+/******/
+/******/ 	// create a fake namespace object
+/******/ 	// mode & 1: value is a module id, require it
+/******/ 	// mode & 2: merge all properties of value into the ns
+/******/ 	// mode & 4: return value when already ns object
+/******/ 	// mode & 8|1: behave like require
+/******/ 	__webpack_require__.t = function(value, mode) {
+/******/ 		if(mode & 1) value = __webpack_require__(value);
+/******/ 		if(mode & 8) return value;
+/******/ 		if((mode & 4) && typeof value === 'object' && value && value.__esModule) return value;
+/******/ 		var ns = Object.create(null);
+/******/ 		__webpack_require__.r(ns);
+/******/ 		Object.defineProperty(ns, 'default', { enumerable: true, value: value });
+/******/ 		if(mode & 2 && typeof value != 'string') for(var key in value) __webpack_require__.d(ns, key, function(key) { return value[key]; }.bind(null, key));
+/******/ 		return ns;
 /******/ 	};
 /******/
 /******/ 	// getDefaultExport function for compatibility with non-harmony modules
@@ -115,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180531190822
+ * @version 1.4.1-nightly-20180607185131
  */
 var bb = {
 	/**
@@ -125,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180531190822",
+	version: "1.4.1-nightly-20180607185131",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -463,6 +478,7 @@ var ChartInternal = function () {
 		    $$ = this,
 		    main = $$.main,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
 		    areaIndices = $$.getShapeIndices($$.isAreaType),
 		    barIndices = $$.getShapeIndices($$.isBarType),
 		    lineIndices = $$.getShapeIndices($$.isLineType),
@@ -512,12 +528,12 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), $$.updateZoom && $$.updateZoom()), $$.updateCircleY();
+		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), config.zoom_enabled && $$.bindZoomOnEventRect()), $$.updateCircleY();
 
 
 		// generate circle x/y functions depending on updated params
-		var cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$),
-		    cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$),
+		var cx = (isRotated ? $$.circleY : $$.circleX).bind($$),
+		    cy = (isRotated ? $$.circleX : $$.circleY).bind($$),
 		    flow = options.flow && $$.generateFlow({
 			targets: targetsToShow,
 			flow: options.flow,
@@ -1077,7 +1093,7 @@ module.exports = exports["default"];
 
 
 exports.__esModule = !0;
-exports.toArray = exports.sanitise = exports.merge = exports.notEmpty = exports.isValue = exports.isUndefined = exports.isString = exports.isObjectType = exports.isObject = exports.isNumber = exports.isFunction = exports.isEmpty = exports.isDefined = exports.isBoolean = exports.isArray = exports.hasValue = exports.getRectSegList = exports.getPathBox = exports.getOption = exports.getCssRules = exports.getBrushSelection = exports.extend = exports.diffDomain = exports.ceil10 = exports.capitalize = exports.brushEmpty = exports.asHalfPixel = undefined;
+exports.toArray = exports.sanitise = exports.merge = exports.notEmpty = exports.isValue = exports.isUndefined = exports.isString = exports.isObjectType = exports.isObject = exports.isNumber = exports.isFunction = exports.isEmpty = exports.isDefined = exports.isBoolean = exports.isArray = exports.hasValue = exports.getRectSegList = exports.getPathBox = exports.getOption = exports.getCssRules = exports.getBrushSelection = exports.extend = exports.emulateEvent = exports.diffDomain = exports.ceil10 = exports.capitalize = exports.brushEmpty = exports.asHalfPixel = undefined;
 
 var _typeof2 = __webpack_require__(7),
     _typeof3 = _interopRequireDefault(_typeof2),
@@ -1280,6 +1296,50 @@ var capitalize = function (str) {
 			console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
 		}
 	}), rules;
+},
+    emulateEvent = {
+	mouse: function () {
+		var getParams = function () {
+			return {
+				bubbles: !1, cancelable: !1, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+			};
+		};
+
+		try {
+
+			return new MouseEvent("t"), function (el, eventType) {
+				var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams();
+				el.dispatchEvent(new MouseEvent(eventType, params));
+			};
+		} catch (e) {
+			// Polyfills DOM4 MouseEvent
+			return function (el, eventType) {
+				var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
+				    mouseEvent = document.createEvent("MouseEvent");
+				mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, window, 0, // the event's mouse click count
+				params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+			};
+		}
+	}(),
+	touch: function touch(el, eventType, params) {
+		var touchObj = new Touch(Object.assign({
+			identifier: Date.now(),
+			target: el,
+			radiusX: 2.5,
+			radiusY: 2.5,
+			rotationAngle: 10,
+			force: .5
+		}, params));
+
+		el.dispatchEvent(new TouchEvent(eventType, {
+			cancelable: !0,
+			bubbles: !0,
+			shiftKey: !0,
+			touches: [touchObj],
+			targetTouches: [],
+			changedTouches: [touchObj]
+		}));
+	}
 };
 
 /**
@@ -1311,11 +1371,15 @@ var capitalize = function (str) {
  */
 
 
+// emulate event
+
+
 exports.asHalfPixel = asHalfPixel;
 exports.brushEmpty = brushEmpty;
 exports.capitalize = capitalize;
 exports.ceil10 = ceil10;
 exports.diffDomain = diffDomain;
+exports.emulateEvent = emulateEvent;
 exports.extend = extend;
 exports.getBrushSelection = getBrushSelection;
 exports.getCssRules = getCssRules;
@@ -1499,13 +1563,7 @@ exports.default = function () {
 	function copyScale() {
 		var newScale = scale.copy();
 
-		if (params.isCategory || !newScale.domain().length) {
-			var domain = scale.domain();
-
-			newScale.domain([domain[0], domain[1] - 1]);
-		}
-
-		return newScale;
+		return newScale.domain().length || newScale.domain(scale.domain()), newScale;
 	}
 
 	function textFormatted(v) {
@@ -1985,11 +2043,11 @@ var Options = function Options() {
                      * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
                      * @property {Number} [zoom.x.min] Set x Axis minimum zoom range
                      * @property {Number} [zoom.x.max] Set x Axis maximum zoom range
-                     * @property {Function} [zoom.onzoom=function(){}] Set callback that is called when the chart is zooming.<br>
-                     *  Specified function receives the zoomed domain.
-                     * @property {Function} [zoom.onzoomstart=function(){}] Set callback that is called when zooming starts.<br>
+                     * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
                      *  Specified function receives the zoom event.
-                     * @property {Function} [zoom.onzoomend=function(){}] Set callback that is called when zooming ends.<br>
+                     * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
+                     *  Specified function receives the zoomed domain.
+                     * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
                      *  Specified function receives the zoomed domain.
                      * @example
                      *  zoom: {
@@ -2000,8 +2058,8 @@ var Options = function Options() {
                      *          min: -1,  // set min range
                      *          max: 10  // set max range
                      *      },
-                     *      onzoom: function(domain) { ... },
                      *      onzoomstart: function(event) { ... },
+                     *      onzoom: function(domain) { ... },
                      *      onzoomend: function(domain) { ... }
                      *  }
                      */
@@ -2009,9 +2067,9 @@ var Options = function Options() {
 																				zoom_extent: undefined,
 																				zoom_privileged: !1,
 																				zoom_rescale: !1,
-																				zoom_onzoom: function zoom_onzoom() {},
-																				zoom_onzoomstart: function zoom_onzoomstart() {},
-																				zoom_onzoomend: function zoom_onzoomend() {},
+																				zoom_onzoom: undefined,
+																				zoom_onzoomstart: undefined,
+																				zoom_onzoomend: undefined,
 																				zoom_x_min: undefined,
 																				zoom_x_max: undefined,
 
@@ -4604,41 +4662,61 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	getScale: function getScale(min, max, forTimeseries) {
 		return (forTimeseries ? (0, _d3Scale.scaleTime)() : (0, _d3Scale.scaleLinear)()).range([min, max]);
 	},
-	getX: function getX(min, max, domain, offsetValue) {
+
+
+	/**
+  * Get x Axis scale function
+  * @param {Number} min
+  * @param {Number} max
+  * @param {Number} domain
+  * @param {Function} offset The offset getter to be sum
+  * @return {Function} scale
+  * @private
+  */
+	getX: function getX(min, max, domain, offset) {
 		var $$ = this,
-		    scale = $$.getScale(min, max, $$.isTimeSeries()),
-		    _scale = domain ? scale.domain(domain) : scale,
-		    key = void 0,
-		    offset = void 0;
-
-		// Define customized scale if categorized axis
+		    scale = $$.zoomScale || $$.getScale(min, max, $$.isTimeSeries());
 
 
-		// define functions
-		for (key in $$.isCategorized() ? (offset = offsetValue || function () {
-			return 0;
-		}, scale = function (d, raw) {
-			var v = _scale(d) + offset(d);
-
-			return raw ? v : Math.ceil(v);
-		}) : scale = function (d, raw) {
-			var v = _scale(d);
-
-			return raw ? v : Math.ceil(v);
-		}, _scale) scale[key] = _scale[key];
-
-		return scale.orgDomain = function () {
-			return _scale.domain();
-		}, $$.isCategorized() && (scale.domain = function (domainValue) {
-			var domain = domainValue;
-
-			return arguments.length ? (_scale.domain(domain), scale) : (domain = this.orgDomain(), [domain[0], domain[1] + 1]);
-		}), scale;
+		return $$.getCustomizedScale(domain ? scale.domain(domain) : scale, offset);
 	},
 	getY: function getY(min, max, domain) {
 		var scale = this.getScale(min, max, this.isTimeSeriesY());
 
 		return domain && scale.domain(domain), scale;
+	},
+
+
+	/**
+  * Get customized scale
+  * @param {d3.scaleLinear|d3.scaleTime} scaleValue
+  * @param {Function} offsetValue Offset getter to be sum
+  * @return {} scale
+  * @private
+  */
+	getCustomizedScale: function getCustomizedScale(scaleValue, offsetValue) {
+		var $$ = this,
+		    offset = offsetValue || function () {
+			return $$.xAxis.tickOffset();
+		},
+		    scale = function (d, raw) {
+			var v = scaleValue(d) + offset();
+
+			return raw ? v : Math.ceil(v);
+		};
+
+		// copy original scale methods
+		for (var key in scaleValue) scale[key] = scaleValue[key];
+
+		return scale.orgDomain = function () {
+			return scaleValue.domain();
+		}, scale.orgScale = function () {
+			return scaleValue;
+		}, $$.isCategorized() && (scale.domain = function (domainValue) {
+			var domain = domainValue;
+
+			return arguments.length ? (scaleValue.domain(domain), scale) : (domain = this.orgDomain(), [domain[0], domain[1] + 1]);
+		}), scale;
 	},
 	getYScale: function getYScale(id) {
 		return this.axis.getId(id) === "y2" ? this.y2 : this.y;
@@ -4656,15 +4734,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	updateScales: function updateScales(withoutTransitionAtInit) {
 		var $$ = this,
 		    config = $$.config,
-		    forInit = !$$.x;
+		    isRotated = config.axis_rotated,
+		    isInit = !$$.x;
 
 
 		// update edges
-		$$.xMin = config.axis_rotated ? 1 : 0, $$.xMax = config.axis_rotated ? $$.height : $$.width, $$.yMin = config.axis_rotated ? 0 : $$.height, $$.yMax = config.axis_rotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = config.axis_rotated ? 0 : $$.height2, $$.subYMax = config.axis_rotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, forInit ? undefined : $$.x.orgDomain(), function () {
+		$$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, isInit ? undefined : $$.x.orgDomain(), function () {
 			return $$.xAxis.tickOffset();
-		}), $$.y = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y_default : $$.y.domain()), $$.y2 = $$.getY($$.yMin, $$.yMax, forInit ? config.axis_y2_default : $$.y2.domain()), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
+		}), $$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
 			return d % 1 ? 0 : $$.subXAxis.tickOffset();
-		}), $$.subY = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y_default : $$.subY.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, forInit ? config.axis_y2_default : $$.subY2.domain()), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.xAxis = $$.axis.getXAxis($$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis($$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer), $$.yAxis = $$.axis.getYAxis($$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), $$.y2Axis = $$.axis.getYAxis($$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer), $$.updateArc && $$.updateArc();
+		}), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.xAxis = $$.axis.getXAxis($$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis($$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer), $$.yAxis = $$.axis.getYAxis($$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), $$.y2Axis = $$.axis.getYAxis($$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer), $$.updateArc && $$.updateArc();
 	}
 }); /**
      * Copyright (c) 2017 NAVER Corp.
@@ -4810,15 +4889,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    diff = domain[1] - domain[0],
 		    xPadding = config.axis_x_padding,
 		    maxDataCount = void 0,
-		    padding = void 0,
-		    paddingLeft = void 0,
-		    paddingRight = void 0;
+		    padding = void 0;
+		$$.isCategorized() ? padding = 0 : $$.hasType("bar") ? (maxDataCount = $$.getMaxDataCount(), padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5) : padding = diff * .01;
+		var left = padding,
+		    right = padding;
 
 
-		return $$.isCategorized() ? padding = 0 : $$.hasType("bar") ? (maxDataCount = $$.getMaxDataCount(), padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5) : padding = diff * .01, (0, _util.isObject)(xPadding) && (0, _util.notEmpty)(xPadding) ? (paddingLeft = (0, _util.isValue)(xPadding.left) ? xPadding.left : padding, paddingRight = (0, _util.isValue)(xPadding.right) ? xPadding.right : padding) : (0, _util.isNumber)(config.axis_x_padding) ? (paddingLeft = xPadding, paddingRight = xPadding) : (paddingLeft = padding, paddingRight = padding), {
-			left: paddingLeft,
-			right: paddingRight
-		};
+		return (0, _util.isObject)(xPadding) && (0, _util.notEmpty)(xPadding) ? (left = (0, _util.isValue)(xPadding.left) ? xPadding.left : padding, right = (0, _util.isValue)(xPadding.right) ? xPadding.right : padding) : (0, _util.isNumber)(config.axis_x_padding) && (left = xPadding, right = xPadding), { left: left, right: right };
 	},
 	getXDomain: function getXDomain(targets) {
 		var $$ = this,
@@ -5786,54 +5863,6 @@ var _d3Selection = __webpack_require__(4),
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-// emulate event
-var emulateEvent = {
-	mouse: function () {
-		var getParams = function () {
-			return {
-				bubbles: !1, cancelable: !1, screenX: 0, screenY: 0, clientX: 0, clientY: 0
-			};
-		};
-
-		try {
-
-			return new MouseEvent("t"), function (el, eventType) {
-				var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams();
-				el.dispatchEvent(new MouseEvent(eventType, params));
-			};
-		} catch (e) {
-			// Polyfills DOM4 MouseEvent
-			return function (el, eventType) {
-				var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
-				    mouseEvent = document.createEvent("MouseEvent");
-				mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, window, 0, // the event's mouse click count
-				params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
-			};
-		}
-	}(),
-	touch: function touch(el, eventType, params) {
-		var touchObj = new Touch(Object.assign({
-			identifier: Date.now(),
-			target: el,
-			radiusX: 2.5,
-			radiusY: 2.5,
-			rotationAngle: 10,
-			force: .5
-		}, params));
-
-		el.dispatchEvent(new TouchEvent(eventType, {
-			cancelable: !0,
-			bubbles: !0,
-			shiftKey: !0,
-			touches: [touchObj],
-			targetTouches: [],
-			changedTouches: [touchObj]
-		}));
-	}
-}; /**
-    * Copyright (c) 2017 NAVER Corp.
-    * billboard.js project is licensed under the MIT license
-    */
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	/**
   * Initialize the area that detects the event.
@@ -5855,73 +5884,83 @@ var emulateEvent = {
 		var $$ = this,
 		    config = $$.config,
 		    isMultipleX = $$.isMultipleX(),
-		    eventRects = $$.main.select("." + _classes2.default.eventRects).style("cursor", config.zoom_enabled ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(_classes2.default.eventRectsMultiple, isMultipleX).classed(_classes2.default.eventRectsSingle, !isMultipleX),
 		    eventRectUpdate = void 0,
-		    maxDataCountTarget = void 0;
-
-		// rects for mouseover
-
+		    eventRects = $$.main.select("." + _classes2.default.eventRects).style("cursor", config.zoom_enabled ? config.axis_rotate ? "ns-resize" : "ew-resize" : null).classed(_classes2.default.eventRectsMultiple, isMultipleX).classed(_classes2.default.eventRectsSingle, !isMultipleX);
 
 		// clear old rects
 
-		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX ? (eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)) : (maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets), eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
-			return d;
-		}), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate), $$.updateEventRect(eventRectUpdate)), $$.inputType === "touch" && !$$.hasArcType()) {
-			var getEventRect = function () {
-				var touch = _d3Selection.event.changedTouches[0];
+		if (eventRects.selectAll("." + _classes2.default.eventRect).remove(), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
+			// Set data and update $$.eventRect
+			var maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
 
-				return (0, _d3Selection.select)(document.elementFromPoint(touch.clientX, touch.clientY));
-			},
-			    getIndex = function (eventRect) {
-				var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(" + _classes2.default.eventRect + "-?|s)", "g"), "") * 1;
-
-				return (isNaN(index) || index === null) && (index = -1), index;
-			},
-			    selectRect = function (context) {
-				if (isMultipleX) $$.selectRectForMultipleXs(context);else {
-					var eventRect = getEventRect(),
-					    index = getIndex(eventRect);
-					$$.setOver(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
-				}
-			},
-			    preventDefault = config.interaction_inputType_touch.preventDefault,
-			    isPrevented = (0, _util.isBoolean)(preventDefault) && preventDefault || !1,
-			    preventThreshold = !isNaN(preventDefault) && preventDefault || null,
-			    startPx = void 0,
-			    preventEvent = function (event) {
-				var eventType = event.type,
-				    touch = event.changedTouches[0],
-				    currentXY = touch["client" + (config.axis_rotated ? "Y" : "X")];
-				eventType === "touchstart" ? isPrevented ? event.preventDefault() : preventThreshold !== null && (startPx = currentXY) : eventType === "touchmove" && (isPrevented || startPx === !0 || preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold) && (startPx = !0, event.preventDefault());
-			};
-
-			// call event.preventDefault()
-			// according 'interaction.inputType.touch.preventDefault' option
-
-
-			$$.svg.on("touchstart touchmove", function () {
-				var eventRect = getEventRect();
-
-				if (!eventRect.empty() && eventRect.classed(_classes2.default.eventRect)) {
-					if ($$.dragging || $$.flowing || $$.hasArcType()) return;
-
-					preventEvent(_d3Selection.event), selectRect(this);
-				} else $$.unselectRect();
-			}).on("touchend", function () {
-				var eventRect = getEventRect();
-
-				if (!eventRect.empty() && eventRect.classed(_classes2.default.eventRect)) {
-					if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1));
-
-					// Call event handler
-					var index = getIndex(eventRect);
-
-					isMultipleX || index === -1 || $$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function (d2) {
-						return config.data_onout.call($$.api, d2);
-					});
-				}
-			});
+			eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll("." + _classes2.default.eventRect), eventRectUpdate = $$.eventRect.data(function (d) {
+				return d;
+			}), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
 		}
+
+		$$.updateEventRect(eventRectUpdate), $$.inputType !== "touch" || $$.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
+	},
+	bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
+		var $$ = this,
+		    config = $$.config,
+		    getEventRect = function () {
+			var touch = _d3Selection.event.changedTouches[0];
+
+			return (0, _d3Selection.select)(document.elementFromPoint(touch.clientX, touch.clientY));
+		},
+		    getIndex = function (eventRect) {
+			var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(" + _classes2.default.eventRect + "-?|s)", "g"), "") * 1;
+
+			return (isNaN(index) || index === null) && (index = -1), index;
+		},
+		    selectRect = function (context) {
+			if (isMultipleX) $$.selectRectForMultipleXs(context);else {
+				var eventRect = getEventRect(),
+				    index = getIndex(eventRect);
+				$$.setOver(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
+			}
+		},
+		    preventDefault = config.interaction_inputType_touch.preventDefault,
+		    isPrevented = (0, _util.isBoolean)(preventDefault) && preventDefault || !1,
+		    preventThreshold = !isNaN(preventDefault) && preventDefault || null,
+		    startPx = void 0,
+		    preventEvent = function (event) {
+			var eventType = event.type,
+			    touch = event.changedTouches[0],
+			    currentXY = touch["client" + (config.axis_rotated ? "Y" : "X")];
+
+
+			// prevent document scrolling
+			eventType === "touchstart" ? isPrevented ? event.preventDefault() : preventThreshold !== null && (startPx = currentXY) : eventType === "touchmove" && (isPrevented || startPx === !0 || preventThreshold !== null && Math.abs(startPx - currentXY) >= preventThreshold) && (startPx = !0, event.preventDefault());
+		};
+
+		// call event.preventDefault()
+		// according 'interaction.inputType.touch.preventDefault' option
+
+
+		// bind touch events
+		$$.svg.on("touchstart.eventRect touchmove.eventRect", function () {
+			var eventRect = getEventRect();
+
+			if (!eventRect.empty() && eventRect.classed(_classes2.default.eventRect)) {
+				if ($$.dragging || $$.flowing || $$.hasArcType()) return;
+
+				preventEvent(_d3Selection.event), selectRect(this);
+			} else $$.unselectRect();
+		}).on("touchend.eventRect", function () {
+			var eventRect = getEventRect();
+
+			if (!eventRect.empty() && eventRect.classed(_classes2.default.eventRect)) {
+				if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1));
+
+				// Call event handler
+				var index = getIndex(eventRect);
+
+				isMultipleX || index === -1 || $$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function (d2) {
+					return config.data_onout.call($$.api, d2);
+				});
+			}
+		});
 	},
 
 
@@ -5935,6 +5974,7 @@ var emulateEvent = {
 		    config = $$.config,
 		    xScale = $$.zoomScale || $$.x,
 		    eventRectData = eventRectUpdate || $$.eventRect.data(),
+		    isRotated = config.axis_rotated,
 		    x = void 0,
 		    y = void 0,
 		    w = void 0,
@@ -5949,7 +5989,7 @@ var emulateEvent = {
 
 
 				// if there this is a single data point make the eventRect full width (or height)
-				return prevX === null && nextX === null ? config.axis_rotated ? $$.height : $$.width : (prevX === null && (prevX = xScale.domain()[0]), nextX === null && (nextX = xScale.domain()[1]), Math.max(0, (xScale(nextX) - xScale(prevX)) / 2));
+				return prevX === null && nextX === null ? isRotated ? $$.height : $$.width : (prevX === null && (prevX = xScale.domain()[0]), nextX === null && (nextX = xScale.domain()[1]), Math.max(0, (xScale(nextX) - xScale(prevX)) / 2));
 			}, rectX = function (d) {
 				var nextX = $$.getNextX(d.index),
 				    thisX = $$.data.xs[d.id][d.index],
@@ -5960,7 +6000,7 @@ var emulateEvent = {
 				return prevX === null && nextX === null ? 0 : (prevX === null && (prevX = xScale.domain()[0]), (xScale(thisX) + xScale(prevX)) / 2);
 			}) : (rectW = $$.getEventRectWidth(), rectX = function (d) {
 				return xScale(d.x) - rectW / 2;
-			}), x = config.axis_rotated ? 0 : rectX, y = config.axis_rotated ? rectX : 0, w = config.axis_rotated ? $$.width : rectW, h = config.axis_rotated ? rectW : $$.height;
+			}), x = isRotated ? 0 : rectX, y = isRotated ? rectX : 0, w = isRotated ? $$.width : rectW, h = isRotated ? rectW : $$.height;
 		}
 
 		eventRectData.attr("class", $$.classEvent.bind($$)).attr("x", x).attr("y", y).attr("width", w).attr("height", h);
@@ -5968,13 +6008,16 @@ var emulateEvent = {
 	selectRectForSingle: function selectRectForSingle(context, eventRect, index) {
 		var $$ = this,
 		    config = $$.config,
+		    isSelectionEnabled = config.data_selection_enabled,
+		    isSelectionGrouped = config.data_selection_grouped,
+		    isTooltipGrouped = config.tooltip_grouped,
 		    selectedData = $$.getAllValuesOnIndex(index);
-		config.tooltip_grouped && ($$.showTooltip(selectedData, context), $$.showXGridFocus(selectedData), !config.data_selection_enabled || config.data_selection_grouped) || $$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function () {
-			(0, _d3Selection.select)(this).classed(_classes2.default.EXPANDED, !0), config.data_selection_enabled && eventRect.style("cursor", config.data_selection_grouped ? "pointer" : null), config.tooltip_grouped || ($$.hideXGridFocus(), $$.hideTooltip(), !config.data_selection_grouped && $$.expandCirclesBars(index));
+		isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showXGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || $$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function () {
+			(0, _d3Selection.select)(this).classed(_classes2.default.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideXGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
 		}).filter(function (d) {
 			return $$.isWithinShape(this, d);
 		}).each(function (d) {
-			config.data_selection_enabled && (config.data_selection_grouped || config.data_selection_isselectable(d)) && eventRect.style("cursor", "pointer"), config.tooltip_grouped || ($$.showTooltip([d], this), $$.showXGridFocus([d]), $$.expandCirclesBars(index, d.id, !0));
+			isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip([d], this), $$.showXGridFocus([d]), $$.expandCirclesBars(index, d.id, !0));
 		});
 	},
 	expandCirclesBars: function expandCirclesBars(index, id, reset) {
@@ -5991,19 +6034,17 @@ var emulateEvent = {
 		// do nothing when dragging
 		if (!($$.dragging || $$.hasArcType(targetsToShow))) {
 				var mouse = (0, _d3Selection.mouse)(context),
-				    closest = $$.findClosestFromTargets(targetsToShow, mouse),
-				    sameXData = void 0;
+				    closest = $$.findClosestFromTargets(targetsToShow, mouse);
 
 
 				if ($$.mouseover && (!closest || closest.id !== $$.mouseover.id) && (config.data_onout.call($$.api, $$.mouseover), $$.mouseover = undefined), !closest) return void $$.unselectRect();
 
-				sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x);
-
-
-				// show tooltip when cursor is close to some point
-				var selectedData = sameXData.map(function (d) {
+				var sameXData = $$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped ? [closest] : $$.filterByX(targetsToShow, closest.x),
+				    selectedData = sameXData.map(function (d) {
 					return $$.addName(d);
 				});
+
+				// show tooltip when cursor is close to some point
 
 				$$.showTooltip(selectedData, context), $$.expandCirclesBars(closest.index, closest.id, !0), $$.showXGridFocus(selectedData), ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && ($$.svg.select("." + _classes2.default.eventRect).style("cursor", "pointer"), !$$.mouseover && (config.data_onover.call($$.api, closest), $$.mouseover = closest));
 			}
@@ -6130,14 +6171,18 @@ var emulateEvent = {
 		    box = eventRect.getBoundingClientRect(),
 		    x = box.left + (mouse ? mouse[0] : 0) + box.width / 2,
 		    y = box.top + (mouse ? mouse[1] : 0);
-		emulateEvent[/^mouse/.test(type) ? "mouse" : "touch"](eventRect, type, {
+
+		_util.emulateEvent[/^mouse/.test(type) ? "mouse" : "touch"](eventRect, type, {
 			screenX: x,
 			screenY: y,
 			clientX: x,
 			clientY: y
 		});
 	}
-});
+}); /**
+     * Copyright (c) 2017 NAVER Corp.
+     * billboard.js project is licensed under the MIT license
+     */
 
 /***/ }),
 /* 21 */
@@ -6395,7 +6440,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	getInterpolateType: function getInterpolateType(d) {
 		var $$ = this,
-		    interpolation = $$.isInterpolationType($$.config.spline_interpolation_type) ? $$.config.spline_interpolation_type : "cardinal";
+		    type = $$.config.spline_interpolation_type,
+		    interpolation = $$.isInterpolationType(type) ? type : "cardinal";
 
 
 		return $$.isSplineType(d) ? interpolation : $$.isStepType(d) ? $$.config.line_step_type : "linear";
@@ -7083,9 +7129,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this;
 
 		$$.mainLine = $$.main.selectAll("." + _classes2.default.lines).selectAll("." + _classes2.default.line).data($$.lineData.bind($$)), $$.mainLine.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainLine = $$.mainLine.enter().append("path").attr("class", function (d) {
-			var extraLineClass = $$.extraLineClasses(d) ? " " + $$.extraLineClasses(d) : "";
-
-			return $$.classLine.bind($$)(d) + extraLineClass;
+			return $$.classLine.bind($$)(d) + " " + ($$.extraLineClasses(d) || "");
 		}).style("stroke", $$.color).merge($$.mainLine).style("opacity", $$.initialOpacity.bind($$)).style("shape-rendering", function (d) {
 			return $$.isStepType(d) ? "crispEdges" : "";
 		}).attr("transform", null);
@@ -7097,18 +7141,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    config = $$.config,
 		    lineConnectNull = config.line_connectNull,
-		    axisRotated = config.axis_rotated,
+		    isRotated = config.axis_rotated,
 		    getPoints = $$.generateGetLinePoints(lineIndices, isSub),
 		    yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
 		    xValue = function (d) {
 			return (isSub ? $$.subxx : $$.xx).call($$, d);
 		},
 		    yValue = function (d, i) {
-			return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : $$.isAreaRangeType(d) ? yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "mid")) : yScaleGetter.call($$, d.id)(d.value);
+			return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "mid") : d.value);
 		},
 		    line = (0, _d3Shape.line)();
 
-		return line = axisRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
+		return line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
 			return d.value !== null;
 		})), function (d) {
 			var x = isSub ? $$.x : $$.subX,
@@ -7119,7 +7163,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    path = void 0;
 
 
-			return $$.isLineType(d) ? config.data_regions[d.id] ? path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getInterpolate(d))(values)) : (values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = axisRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0), path || "M 0 0";
+			return $$.isLineType(d) ? config.data_regions[d.id] ? path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getInterpolate(d))(values)) : (values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0), path || "M 0 0";
 		};
 	},
 	generateGetLinePoints: function generateGetLinePoints(lineIndices, isSubValue) {
@@ -7208,9 +7252,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 			return points = config.axis_rotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]], generateM(points);
 		} : function (d0, d1, k, otherDiff) {
-			var points = void 0;
+			var points = config.axis_rotated ? [[y(yp(k), !0), x(xp(k))], [y(yp(k + otherDiff), !0), x(xp(k + otherDiff))]] : [[x(xp(k), !0), y(yp(k))], [x(xp(k + otherDiff), !0), y(yp(k + otherDiff))]];
 
-			return points = config.axis_rotated ? [[y(yp(k), !0), x(xp(k))], [y(yp(k + otherDiff), !0), x(xp(k + otherDiff))]] : [[x(xp(k), !0), y(yp(k))], [x(xp(k + otherDiff), !0), y(yp(k + otherDiff))]], generateM(points);
+			return generateM(points);
 		}, i = 0; i < d.length; i++)
 		// Draw as normal
 		if ((0, _util.isUndefined)(regions) || !isWithinRegions(d[i].x, regions)) s += " " + xValue(d[i]) + " " + yValue(d[i]);else for (xp = $$.getScale(d[i - 1].x + xOffset, d[i].x + xOffset, $$.isTimeSeries()), yp = $$.getScale(d[i - 1].value, d[i].value), dx = x(d[i].x) - x(d[i - 1].x), dy = y(d[i].value) - y(d[i - 1].value), dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)), diff = 2 / dd, diffx2 = diff * 2, j = diff; j <= 1; j += diffx2) s += sWithRegion(d[i - 1], d[i], j, diff);
@@ -9640,33 +9684,91 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @private
   */
 	initZoom: function initZoom() {
+		var $$ = this;
+
+		$$.zoomScale = null, $$.generateZoom();
+	},
+
+
+	/**
+  * Generate zoom
+  * @private
+  */
+	generateZoom: function generateZoom() {
 		var $$ = this,
 		    config = $$.config,
-		    startEvent = void 0;
-		$$.zoomScale = null, $$.zoom = (0, _d3Zoom.zoom)().duration(0).on("start", function () {
-			startEvent = _d3Selection.event.sourceEvent, $$.zoom.altDomain = _d3Selection.event.sourceEvent.altKey ? $$.x.orgDomain() : null, config.zoom_onzoomstart.call($$.api, _d3Selection.event.sourceEvent);
-		}).on("zoom", function () {
-			$$.redrawForZoom.call($$);
-		}).on("end", function () {
-			var event = _d3Selection.event.sourceEvent;
+		    zoom = (0, _d3Zoom.zoom)().duration(0).on("start", $$.onStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onEnd.bind($$));
 
-			// if click, do nothing. otherwise, click interaction will be canceled.
-			event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), (0, _util.isFunction)(config.zoom_onzoomend) && config.zoom_onzoomend.call($$.api, $$.x.orgDomain()));
-		}), $$.zoom.orgScaleExtent = function () {
-			var extent = config.zoom_extent ? config.zoom_extent : [1, 10];
+
+		// get zoom extent
+		zoom.orgScaleExtent = function () {
+			var extent = config.zoom_extent || [1, 10];
 
 			return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
-		}, $$.zoom.updateScaleExtent = function () {
+		}, zoom.updateScaleExtent = function () {
 			var ratio = (0, _util.diffDomain)($$.x.orgDomain()) / (0, _util.diffDomain)($$.getZoomDomain()),
 			    extent = this.orgScaleExtent();
 
 
 			return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
-		}, $$.zoom.updateTransformScale = function (transform) {
-			var newScale = transform.rescaleX($$.x);
+		}, zoom.updateTransformScale = function (transform) {
+			// rescale from the original scale
+			var newScale = transform.rescaleX($$.x.orgScale());
 
-			newScale.domain($$.trimXDomain(newScale.domain())), $$.zoomScale = newScale, $$.xAxis.scale($$.zoomScale), $$.main.select("." + _classes2.default.eventRects).node().__zoom = transform;
-		};
+			newScale.domain($$.trimXDomain(newScale.domain())), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale);
+		}, $$.zoom = zoom;
+	},
+
+
+	/**
+  * 'start' event listener
+  * @private
+  */
+	onStart: function onStart() {
+		var $$ = this,
+		    event = _d3Selection.event.sourceEvent,
+		    onzoomstart = $$.config.zoom_onzoomstart;
+		$$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, (0, _util.isFunction)(onzoomstart) && onzoomstart.call($$.api, event);
+	},
+
+
+	/**
+  * 'zoom' event listener
+  * @private
+  */
+	onZoom: function onZoom() {
+		var $$ = this,
+		    config = $$.config,
+		    event = _d3Selection.event;
+
+
+		if (config.zoom_enabled) {
+				var isMousemove = event.sourceEvent.type === "mousemove",
+				    transform = event.transform;
+				return $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 ? void 0 : isMousemove && $$.zoom.altDomain ? ($$.x.domain($$.zoom.altDomain), void transform.scale($$.zoomScale).updateScaleExtent()) : void ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
+					withTransition: !1,
+					withY: config.zoom_rescale,
+					withSubchart: !1,
+					withEventRect: !1,
+					withDimension: !1
+				}), $$.cancelClick = isMousemove, (0, _util.isFunction)(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, $$.x.orgDomain()));
+			}
+	},
+
+
+	/**
+  * 'end' event listener
+  * @private
+  */
+	onEnd: function onEnd() {
+		var $$ = this,
+		    event = _d3Selection.event.sourceEvent,
+		    onzoomend = $$.config.zoom_onzoomend,
+		    startEvent = $$.zoom.startEvent;
+
+
+		// if click, do nothing. otherwise, click interaction will be canceled.
+		event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), (0, _util.isFunction)(onzoomend) && onzoomend.call($$.api, $$.x.orgDomain()));
 	},
 
 
@@ -9691,14 +9793,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @private
   */
 	updateZoom: function updateZoom() {
-		var $$ = this,
-		    z = $$.config.zoom_enabled ? $$.zoom : function () {};
-
-
-		// bind zoom module
-		// $$.main.select(`.${CLASS.zoomRect}`)
-		// 	.call(z)
-		// 	.on("dblclick.zoom", null);
+		var $$ = this;
 
 		if ($$.zoomScale) {
 			var zoomDomain = $$.zoomScale.domain(),
@@ -9709,33 +9804,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
 			(zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta) && ($$.xAxis.scale($$.x), $$.zoomScale = null);
 		}
-
-		$$.main.select("." + _classes2.default.eventRects).call(z).on("dblclick.zoom", null);
 	},
 
 
 	/**
-  * Redraw the zoom.
+  * Attach zoom event on <rect>
   * @private
   */
-	redrawForZoom: function redrawForZoom() {
-		var $$ = this,
-		    config = $$.config;
+	bindZoomOnEventRect: function bindZoomOnEventRect() {
+		var $$ = this;
 
-
-		if (config.zoom_enabled) {
-				var zoom = $$.zoom,
-				    x = $$.x,
-				    event = _d3Selection.event,
-				    transform = event.transform;
-				return $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 ? void 0 : event.sourceEvent.type === "mousemove" && zoom.altDomain ? (x.domain(zoom.altDomain), void transform.scale($$.zoomScale).updateScaleExtent()) : void ($$.isCategorized() && x.orgDomain()[0] === $$.orgXDomain[0] && x.domain([$$.orgXDomain[0] - 1e-10, x.orgDomain()[1]]), $$.redraw({
-					withTransition: !1,
-					withY: config.zoom_rescale,
-					withSubchart: !1,
-					withEventRect: !1,
-					withDimension: !1
-				}), event.sourceEvent.type === "mousemove" && ($$.cancelClick = !0), (0, _util.isFunction)(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, x.orgDomain()));
-			}
+		$$.main.select("." + _classes2.default.eventRects).call($$.zoom).on("dblclick.zoom", null);
 	}
 });
 
@@ -10373,7 +10452,7 @@ var zoom = function (domainValue) {
 		} else {
 			var orgDomain = $$.x.orgDomain(),
 			    k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]),
-			    tx = isTimeSeries ? 0 - k * $$.x(domain[0].getTime()) : domain[0] - k * $$.x(domain[0]);
+			    tx = isTimeSeries ? 0 - k * $$.x(domain[0].getTime()) : domain[0] - k * ($$.x(domain[0]) - $$.xAxis.tickOffset());
 			$$.zoom.updateTransformScale(_d3Zoom.zoomIdentity.translate(tx, 0).scale(k)), resultDomain = $$.zoomScale.domain();
 		}
 
@@ -10381,7 +10460,7 @@ var zoom = function (domainValue) {
 			withTransition: !0,
 			withY: $$.config.zoom_rescale,
 			withDimension: !1
-		}), $$.config.zoom_onzoom.call(this, $$.x.orgDomain());
+		}), (0, _util.isFunction)($$.config.zoom_onzoom) && $$.config.zoom_onzoom.call(this, $$.x.orgDomain());
 	} else resultDomain = ($$.zoomScale || $$.x).domain();
 
 	return resultDomain;
@@ -11917,7 +11996,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * chart.flush();
   */
 	flush: function flush() {
-		this.internal.updateAndRedraw({
+		this.internal.zoomScale = null, this.internal.updateAndRedraw({
 			withLegend: !0,
 			withTransition: !1,
 			withTransitionForTransform: !1
