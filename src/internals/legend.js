@@ -260,6 +260,7 @@ extend(ChartInternal.prototype, {
 		if (!config.legend_show) {
 			config.legend_show = true;
 			$$.legend.style("visibility", "visible");
+
 			if (!$$.legendHasRendered) {
 				$$.updateLegendWithDefaults();
 			}
@@ -287,6 +288,7 @@ extend(ChartInternal.prototype, {
 			config.legend_show = false;
 			$$.legend.style("visibility", "hidden");
 		}
+
 		$$.addHiddenLegendIds(targetIds);
 		$$.legend.selectAll($$.selectorLegends(targetIds))
 			.style("opacity", "0")
@@ -312,7 +314,12 @@ extend(ChartInternal.prototype, {
 		const isTouch = $$.inputType === "touch";
 
 		item
-			.attr("class", id => $$.generateClass(CLASS.legendItem, id))
+			.attr("class", function(id) {
+				const node = d3Select(this);
+				const itemClass = (!node.empty() && node.attr("class")) || "";
+
+				return itemClass + $$.generateClass(CLASS.legendItem, id);
+			})
 			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
 			.style("cursor", "pointer")
 			.on("click", id => {
