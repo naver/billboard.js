@@ -312,7 +312,7 @@ extend(ChartInternal.prototype, {
 		const isTouch = $$.inputType === "touch";
 
 		item
-			.attr("class", id => $$.generateClass(CLASS.legendItem, id))
+			.attr("class", id => `${!!item.attr("class") && item.attr("class")}${$$.generateClass(CLASS.legendItem, id)}`)
 			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
 			.style("cursor", "pointer")
 			.on("click", id => {
