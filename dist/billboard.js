@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180607185131
+ * @version 1.4.1-nightly-20180612152822
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180607185131
+ * @version 1.4.1-nightly-20180612152822
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180607185131",
+	version: "1.4.1-nightly-20180612152822",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -8657,7 +8657,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    config = $$.config,
 		    isTouch = $$.inputType === "touch";
 		item.attr("class", function (id) {
-			return $$.generateClass(_classes2.default.legendItem, id);
+			var node = (0, _d3Selection.select)(this),
+			    itemClass = !node.empty() && node.attr("class") || "";
+
+
+			return itemClass + $$.generateClass(_classes2.default.legendItem, id);
 		}).style("visibility", function (id) {
 			return $$.isLegendToShow(id) ? "visible" : "hidden";
 		}).style("cursor", "pointer").on("click", function (id) {

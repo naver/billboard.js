@@ -16,3 +16,4 @@ Russell Shingleton <reshingleton@gmail.com>
 Matthias Komarek <matthias@mkomarek.de>
 Tony Quetano <tony.quetano@planttheidea.com>
 EunChan Park <pec9399@naver.com>
+Ina Ryu <ina.ryu@navercorp.com>

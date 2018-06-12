@@ -276,6 +276,8 @@ describe("LEGEND", () => {
 	});
 
 	describe("set legend using template", () => {
+		const itemClass = "abcd";
+
 		before(() => {
 			sandbox("legend-wrapper").innerHTML = "<ul id='legend'></ul>";
 
@@ -293,7 +295,7 @@ describe("LEGEND", () => {
 				legend: {
 					contents: {
 						bindto: "#legend",
-						template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
+						template: `<li style="background-color:{=COLOR}" class="${itemClass}">{=TITLE}</li>`
 					}
 				}
 			};
@@ -310,6 +312,9 @@ describe("LEGEND", () => {
 
 				expect(item.html()).to.be.equal(v);
 				expect(item.style("background-color")).to.be.equal(chart.color(v));
+
+				// should keep class value
+				expect(item.classed(itemClass)).to.be.true;
 
 				// check for event bind
 				expect(item.on("click")).not.be.null;
