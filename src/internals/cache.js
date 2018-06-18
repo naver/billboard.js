@@ -6,30 +6,38 @@ import ChartInternal from "./ChartInternal";
 import {extend} from "./util";
 
 extend(ChartInternal.prototype, {
-	hasCaches(ids) {
-		for (let i = 0, len = ids.length; i < len; i++) {
-			if (!(ids[i] in this.cache)) {
-				return false;
+	hasCaches(key, isDataType = false) {
+		if (isDataType) {
+			for (let i = 0, len = key.length; i < len; i++) {
+				if (!(key[i] in this.cache)) {
+					return false;
+				}
 			}
-		}
 
-		return true;
+			return true;
+		} else {
+			return key in this.cache;
+		}
 	},
 
-	addCache(id, target) {
-		this.cache[id] = this.cloneTarget(target);
+	addCache(key, target, isDataType = false) {
+		this.cache[key] = isDataType ? this.cloneTarget(target) : target;
 	},
 
-	getCaches(ids) {
-		const targets = [];
+	getCaches(key, isDataType = false) {
+		if (isDataType) {
+			const targets = [];
 
-		for (let i = 0, key; (key = ids[i]); i++) {
-			if (key in this.cache) {
-				targets.push(this.cloneTarget(this.cache[key]));
+			for (let i = 0, id; (id = key[i]); i++) {
+				if (id in this.cache) {
+					targets.push(this.cloneTarget(this.cache[id]));
+				}
 			}
-		}
 
-		return targets;
+			return targets;
+		} else {
+			return this.cache[key] || null;
+		}
 	},
 
 	/**

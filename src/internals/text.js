@@ -55,11 +55,11 @@ extend(ChartInternal.prototype, {
 	updateText(durationForExit) {
 		const $$ = this;
 		const config = $$.config;
-		const barLineBubbleData = $$.barLineBubbleData.bind($$);
+		const dataFn = $$.barLineBubbleData.bind($$);
 		const classText = $$.classText.bind($$);
 
 		$$.mainText = $$.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
-			.data(barLineBubbleData);
+			.data(d => (this.isRadarType(d) ? d.values : dataFn(d)));
 
 		$$.mainText.exit()
 			.transition()
@@ -69,12 +69,12 @@ extend(ChartInternal.prototype, {
 
 		$$.mainText = $$.mainText.enter()
 			.append("text")
+			.merge($$.mainText)
 			.attr("class", classText)
 			.attr("text-anchor", d => (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"))
 			.style("stroke", "none")
 			.style("fill", d => $$.color(d))
 			.style("fill-opacity", "0")
-			.merge($$.mainText)
 			.text((d, i, j) => $$.dataLabelFormat(d.id)(d.value, d.id, i, j));
 	},
 
@@ -148,11 +148,13 @@ extend(ChartInternal.prototype, {
 		const getAreaPoints = $$.generateGetAreaPoints(areaIndices, false);
 		const getBarPoints = $$.generateGetBarPoints(barIndices, false);
 		const getLinePoints = $$.generateGetLinePoints(lineIndices, false);
+		const getRadarPoints = $$.generateGetRadarPoints();
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
 		return function(d, i) {
 			const getPoints = ($$.isAreaType(d) && getAreaPoints) ||
 				($$.isBarType(d) && getBarPoints) ||
+				($$.isRadarType(d) && getRadarPoints) ||
 				getLinePoints;
 
 			return getter.call($$, getPoints(d, i), d, this);

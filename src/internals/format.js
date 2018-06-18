@@ -53,7 +53,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const dataLabels = $$.config.data_labels;
 		const defaultFormat = v => (isValue(v) ? +v : "");
-		let format;
+		let format = defaultFormat;
 
 		// find format according to axis id
 		if (isFunction(dataLabels.format)) {
@@ -64,8 +64,6 @@ extend(ChartInternal.prototype, {
 			} else {
 				format = () => "";
 			}
-		} else {
-			format = defaultFormat;
 		}
 
 		return format;

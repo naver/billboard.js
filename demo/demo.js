@@ -592,6 +592,29 @@ var demos = {
 				];
 			}
 		},
+		RadarChart: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
+						["data1", 330, 350, 200, 380, 150],
+						["data2", 130, 100, 30, 200, 80],
+						["data3", 230, 153, 85, 300, 250]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 400
+					},
+					level: {
+						depth: 4
+					}
+				}
+			}
+		},
 		CombinationChart: {
 			options: {
 				data: {
@@ -2404,6 +2427,78 @@ d3.select(".chart_area")
 				},
 				pie: {
 					padding: 3
+				}
+			}
+		}
+	},
+	RadarChartOptions: {
+		RadarAxis: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E", "Data F", "Data G"],
+						["data1", 330, 350, 200, 380, 150, 100, 230],
+						["data2", 130, 100, 30, 200, 80, 200, 130]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 330,
+						line: {
+							show: false
+						},
+						text: {
+							show: false
+						}
+					},
+					level: {
+						text: {
+							show: false
+						}
+					}
+				}
+			},
+			style: [
+				"#RadarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
+			]
+		},
+		RadarLevel: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E", "Data F", "Data G", "Data H", "Data I"],
+						["data1", 330, 350, 200, 400, 150, 100, 230, 30, 95],
+						["data2", 130, 100, 30, 200, 80, 200, 130, 210, 195]
+					],
+					type: "radar"
+				},
+				radar: {
+					level: {
+						depth: 4,
+						show: false,
+						text: {
+							format: function(x) { return x + "%"; }
+						}
+					}
+				}
+			}
+		},
+		RadarSize: {
+			options: {
+				data: {
+					columns: [
+						["data1", 330, 350, 220, 400, 150, 330, 230, 390, 95, 195, 220]
+					],
+					type: "radar"
+				},
+				radar: {
+					size: {
+						ratio: 0.75
+					}
 				}
 			}
 		}

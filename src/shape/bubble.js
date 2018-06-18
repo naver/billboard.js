@@ -33,17 +33,19 @@ extend(ChartInternal.prototype, {
 	 */
 	getBaseLength() {
 		const $$ = this;
+		const cacheKey = "$baseLength";
+		let baseLength = $$.getCaches(cacheKey);
 
-		if (!$$.cache.$baseLength) {
-			$$.cache.$baseLength = d3Min([
+		if (!baseLength) {
+			$$.addCache(cacheKey, baseLength = d3Min([
 				$$.axes.x.select("path").node()
 					.getTotalLength(),
 				$$.axes.y.select("path").node()
 					.getTotalLength()
-			]);
+			]));
 		}
 
-		return $$.cache.$baseLength;
+		return baseLength;
 	},
 
 	/**

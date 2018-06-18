@@ -304,7 +304,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		// cache as original id keyed
-		targets.forEach(d => $$.addCache(d.id_org, d));
+		targets.forEach(d => $$.addCache(d.id_org, d, true));
 
 		return targets;
 	}

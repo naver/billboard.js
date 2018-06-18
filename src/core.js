@@ -102,6 +102,7 @@ require("./shape/bar.js");
 require("./shape/bubble.js");
 require("./shape/line.js");
 require("./shape/point.js");
+require("./shape/radar.js");
 require("./internals/text.js");
 require("./internals/type.js");
 require("./internals/grid.js");

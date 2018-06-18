@@ -451,7 +451,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data($$.lineScatterBubbleData.bind($$));
+			.data($$.lineScatterBubbleRadarData.bind($$));
 
 		$$.mainCircle.exit().remove();
 

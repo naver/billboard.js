@@ -7,6 +7,12 @@ import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
 describe("ARC", () => {
+	const selector = {
+		arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
+		shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
+		shape: `path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}`
+	};
+
 	describe("show pie chart", () => {
 		const chart = util.generate({
 			data: {
@@ -21,16 +27,22 @@ describe("ARC", () => {
 
 		it("should have correct classes", () => {
 			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const selector = {
+				arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
+				shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
+				shape: `path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}`
+			}
+
 			const arcs = {
-				data1: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data1`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data1.${CLASS.arcs}.${CLASS.arcs}-data1`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data1`),
-				data2: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data2`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data2.${CLASS.arcs}.${CLASS.arcs}-data2`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data2`),
-				data3: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data3`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data3.${CLASS.arcs}.${CLASS.arcs}-data3`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data3`)
+				data1: chartArc.select(`${selector.arc}-data1`)
+					.select(`${selector.shapes}-data1`)
+					.select(`${selector.shape}-data1`),
+				data2: chartArc.select(`${selector.arc}-data2`)
+					.select(`${selector.shapes}-data2`)
+					.select(`${selector.shape}-data2`),
+				data3: chartArc.select(`${selector.arc}-data3`)
+					.select(`${selector.shapes}-data3`)
+					.select(`${selector.shape}-data3`)
 			};
 
 			expect(arcs.data1.size()).to.be.equal(1);
@@ -41,9 +53,14 @@ describe("ARC", () => {
 		it("should have correct d", () => {
 			const main = chart.internal.main;
 
-			expect(main.select(`.${CLASS.arc}-data1`).attr("d")).to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
-			expect(main.select(`.${CLASS.arc}-data2`).attr("d")).to.match(/M1\..+,-211\..+A211\..+,211\..+,0,0,1,1\..+,211\..+L0,0Z/);
-			expect(main.select(`.${CLASS.arc}-data3`).attr("d")).to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
+			expect(main.select(`.${CLASS.arc}-data1`).attr("d"))
+				.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
+
+			expect(main.select(`.${CLASS.arc}-data2`).attr("d"))
+				.to.match(/M1\..+,-211\..+A211\..+,211\..+,0,0,1,1\..+,211\..+L0,0Z/);
+
+			expect(main.select(`.${CLASS.arc}-data3`).attr("d"))
+				.to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
 		});
 
 		it("should have correct d even if data id can be converted to a color", done => {
@@ -82,15 +99,15 @@ describe("ARC", () => {
 		it("should have correct d attribute", () => {
 			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
 			const arcs = {
-				data1: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data1`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data1.${CLASS.arcs}.${CLASS.arcs}-data1`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data1`),
-				data2: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data2`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data2.${CLASS.arcs}.${CLASS.arcs}-data2`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data2`),
-				data3: chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data3`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data3.${CLASS.arcs}.${CLASS.arcs}-data3`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data3`)
+				data1: chartArc.select(`${selector.arc}-data1`)
+					.select(`${selector.shapes}-data1`)
+					.select(`${selector.shape}-data1`),
+				data2: chartArc.select(`${selector.arc}-data2`)
+					.select(`${selector.shapes}-data2`)
+					.select(`${selector.shape}-data2`),
+				data3: chartArc.select(`${selector.arc}-data3`)
+					.select(`${selector.shapes}-data3`)
+					.select(`${selector.shape}-data3`)
 			};
 
 			expect(arcs.data1.attr("d").indexOf("NaN")).to.be.equal(-1);
@@ -170,12 +187,14 @@ describe("ARC", () => {
 			});
 
 			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
-			const data = chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data.${CLASS.arcs}.${CLASS.arcs}-data`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data`);
+			const data = chartArc.select(`${selector.arc}-data`)
+					.select(`${selector.shapes}-data`)
+					.select(`${selector.shape}-data`);
 
 			setTimeout(() => {
-				expect(data.attr("d")).to.match(/M-304,-3\..+A304,304,0,0,1,245\..+,-178\..+L237\..+,-172\..+A294,294,0,0,0,-294,-3\..+Z/);
+				expect(data.attr("d"))
+					.to.match(/M-304,-3\..+A304,304,0,0,1,245\..+,-178\..+L237\..+,-172\..+A294,294,0,0,0,-294,-3\..+Z/);
+
 				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
 				done();
@@ -199,13 +218,15 @@ describe("ARC", () => {
 			});
 
 			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
-			const data = chartArc.select(`.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}-data`)
-					.select(`g.${CLASS.shapes}.${CLASS.shapes}-data.${CLASS.arcs}.${CLASS.arcs}-data`)
-					.select(`path.${CLASS.shape}.${CLASS.arc}.${CLASS.arc}-data`);
+			const data = chartArc.select(`${selector.arc}-data`)
+					.select(`${selector.shapes}-data`)
+					.select(`${selector.shape}-data`);
 
 			setTimeout(() => {
 				// This test has bee updated to make tests pass. @TODO double-check this test is accurate.
-				expect(data.attr("d")).to.match(/M-221.*?,-2\..+A221.*?,221.*?,0,1,1,-68.*?,210.*?L-65.*?,201.*?A211.*?,211.*?,0,1,0,-211.*?,-2.*?Z/);
+				expect(data.attr("d"))
+					.to.match(/M-221.*?,-2\..+A221.*?,221.*?,0,1,1,-68.*?,210.*?L-65.*?,201.*?A211.*?,211.*?,0,1,0,-211.*?,-2.*?Z/);
+
 				done();
 			}, 500);
 		});

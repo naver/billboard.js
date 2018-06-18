@@ -226,8 +226,10 @@ extend(ChartInternal.prototype, {
 	 */
 	getMinMaxData() {
 		const $$ = this;
+		const cacheKey = "$minMaxData";
+		let minMaxData = $$.getCaches(cacheKey);
 
-		if (!$$.cache.$minMaxData) {
+		if (!minMaxData) {
 			const data = $$.data.targets.map(t => t.values);
 			const minMax = $$.getMinMaxValue(data);
 
@@ -248,10 +250,10 @@ extend(ChartInternal.prototype, {
 			});
 
 			// update the cached data
-			$$.cache.$minMaxData = {min, max};
+			$$.addCache(cacheKey, minMaxData = {min, max});
 		}
 
-		return $$.cache.$minMaxData;
+		return minMaxData;
 	},
 
 	/**
@@ -261,8 +263,10 @@ extend(ChartInternal.prototype, {
 	 */
 	getTotalDataSum() {
 		const $$ = this;
+		const cacheKey = "$totalDataSum";
+		let totalDataSum = $$.getCaches(cacheKey);
 
-		if (!$$.cache.$totalDataSum) {
+		if (!totalDataSum) {
 			let total = 0;
 
 			$$.data.targets.map(t => t.values)
@@ -270,10 +274,10 @@ extend(ChartInternal.prototype, {
 					total += d3Sum(v, t => t.value);
 				});
 
-			$$.cache.$totalDataSum = total;
+			$$.addCache(cacheKey, totalDataSum = total);
 		}
 
-		return $$.cache.$totalDataSum;
+		return totalDataSum;
 	},
 
 	/**

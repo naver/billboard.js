@@ -100,6 +100,7 @@ export default class ChartInternal {
 		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
 		$$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid);
 		$$.clipPathForSubchart = $$.getClipPath($$.clipIdForSubchart);
+
 		$$.dragStart = null;
 		$$.dragging = false;
 		$$.flowing = false;
@@ -383,7 +384,7 @@ export default class ChartInternal {
 	}
 
 	initChartElements() {
-		["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Text"].forEach(v => {
+		["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Radar", "Text"].forEach(v => {
 			const method = `init${v}`;
 
 			this[method] && this[method]();
@@ -492,25 +493,31 @@ export default class ChartInternal {
 		}
 	}
 
+	/**
+	 * Update targeted element with given data
+	 * @param {Object} targets Data object formatted as 'target'
+	 * @private
+	 */
 	updateTargets(targets) {
 		const $$ = this;
 
-		// -- Main --
-
-		// -- Text -- //
+		// Text
 		$$.updateTargetsForText(targets);
 
-		// -- Bar -- //
+		// Bar
 		$$.updateTargetsForBar(targets);
 
-		// -- Line -- //
+		// Line
 		$$.updateTargetsForLine(targets);
 
-		// -- Arc -- //
-		$$.hasArcType() && $$.updateTargetsForArc &&
-			$$.updateTargetsForArc(targets);
+		// Arc & Radar
+		$$.hasArcType(targets) && (
+			$$.hasType("radar") ?
+				$$.updateTargetsForRadar(targets) :
+				$$.updateTargetsForArc(targets)
+		);
 
-		// -- Sub --
+		// Sub Chart
 		$$.updateTargetsForSubchart &&
 			$$.updateTargetsForSubchart(targets);
 
@@ -518,6 +525,10 @@ export default class ChartInternal {
 		$$.showTargets();
 	}
 
+	/**
+	 * Display targeted elements
+	 * @private
+	 */
 	showTargets() {
 		const $$ = this;
 
@@ -533,6 +544,7 @@ export default class ChartInternal {
 		const main = $$.main;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
+		const hasRadar = $$.hasType("radar");
 
 		const areaIndices = $$.getShapeIndices($$.isAreaType);
 		const barIndices = $$.getShapeIndices($$.isBarType);
@@ -698,8 +710,10 @@ export default class ChartInternal {
 		$$.redrawTitle && $$.redrawTitle();
 
 		// arc
-		$$.redrawArc &&
-			$$.redrawArc(duration, durationForExit, withTransform);
+		$$.hasArcType(null, ["radar"]) && $$.redrawArc(duration, durationForExit, withTransform);
+
+		// radar
+		hasRadar && $$.redrawRadar();
 
 		// subchart
 		config.subchart_show &&
@@ -730,8 +744,8 @@ export default class ChartInternal {
 		$$.updateCircleY();
 
 		// generate circle x/y functions depending on updated params
-		const cx = (isRotated ? $$.circleY : $$.circleX).bind($$);
-		const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
+		const cx = (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$);
+		const cy = (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$);
 
 		// generate flow
 		const flow = options.flow && $$.generateFlow({
@@ -843,7 +857,7 @@ export default class ChartInternal {
 	}
 
 	isCategorized() {
-		return this.config.axis_x_type.indexOf("category") >= 0;
+		return this.config.axis_x_type.indexOf("category") >= 0 || this.hasType("radar");
 	}
 
 	isCustomX() {
@@ -889,6 +903,9 @@ export default class ChartInternal {
 		} else if (target === "arc") {
 			x = $$.arcWidth / 2;
 			y = $$.arcHeight / 2;
+		} else if (target === "radar") {
+			x = ($$.width / 2) - ($$.arcHeight / 2);
+			y = asHalfPixel($$.margin.top);
 		}
 
 		return `translate(${x}, ${y})`;
