@@ -44,7 +44,7 @@ extend(ChartInternal.prototype, {
 
 			$$.tooltip.html(config.tooltip_contents.call($$,
 				$$.data.targets.map(d => $$.addName(d.values[config.tooltip_init_x])),
-				$$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType()), $$.color));
+				$$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color));
 
 			$$.tooltip.style("top", config.tooltip_init_position.top)
 				.style("left", config.tooltip_init_position.left)
@@ -168,52 +168,53 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const forArc = $$.hasArcType();
-		const isTouch = ($$.inputType === "touch");
+		const isTouch = $$.inputType === "touch";
 		const mouse = d3Mouse(element);
-		let svgLeft;
-		let tooltipLeft;
-		let tooltipRight;
-		let tooltipTop;
+
+		const svgLeft = $$.getSvgLeft(true);
 		let chartRight;
+
+		let left;
+		let right;
+		let top;
 
 		// Determine tooltip position
 		if (forArc) {
-			tooltipLeft = isTouch ? mouse[0] :
-				(($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2) + mouse[0];
-			tooltipTop = isTouch ? mouse[1] + 20 : ($$.height / 2) + mouse[1] + 20;
+			const raw = isTouch || $$.hasType("radar");
+
+			top = mouse[1] + (raw ? 0 : $$.height / 2) + 20;
+			left = mouse[0] + (raw ? 0 : ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2);
+
+			chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
+			right = left + tWidth;
 		} else {
-			svgLeft = $$.getSvgLeft(true);
-
 			if (config.axis_rotated) {
-				tooltipLeft = svgLeft + mouse[0] + 100;
-				tooltipRight = tooltipLeft + tWidth;
+				left = svgLeft + mouse[0] + 100;
+				right = left + tWidth;
 				chartRight = $$.currentWidth - $$.getCurrentPaddingRight();
-				tooltipTop = $$.x(dataToShow[0].x) + 20;
+				top = $$.x(dataToShow[0].x) + 20;
 			} else {
-				tooltipLeft = svgLeft + $$.getCurrentPaddingLeft(true) + $$.x(dataToShow[0].x) + 20;
-				tooltipRight = tooltipLeft + tWidth;
+				left = svgLeft + $$.getCurrentPaddingLeft(true) + $$.x(dataToShow[0].x) + 20;
+				right = left + tWidth;
 				chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
-				tooltipTop = mouse[1] + 15;
-			}
-
-			if (tooltipRight > chartRight) {
-				// 20 is needed for Firefox to keep tooltip width
-				tooltipLeft -= tooltipRight - chartRight + 20;
-			}
-
-			if (tooltipTop + tHeight > $$.currentHeight) {
-				tooltipTop -= tHeight + 30;
+				top = mouse[1] + 15;
 			}
 		}
 
-		if (tooltipTop < 0) {
-			tooltipTop = 0;
+		if (right > chartRight) {
+			// 20 is needed for Firefox to keep tooltip width
+			left -= right - chartRight + 20;
 		}
 
-		return {
-			top: tooltipTop,
-			left: tooltipLeft
-		};
+		if (top + tHeight > $$.currentHeight) {
+			top -= tHeight + 30;
+		}
+
+		if (top < 0) {
+			top = 0;
+		}
+
+		return {top, left};
 	},
 
 	/**
@@ -225,7 +226,7 @@ extend(ChartInternal.prototype, {
 	showTooltip(selectedData, element) {
 		const $$ = this;
 		const config = $$.config;
-		const forArc = $$.hasArcType();
+		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue(d.value));
 		const positionFunction = config.tooltip_position || $$.tooltipPosition;
 
