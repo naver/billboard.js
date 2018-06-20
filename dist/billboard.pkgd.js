@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180612152822
+ * @version 1.4.1-nightly-20180620183855
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.4.0
@@ -131,7 +131,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180612152822
+ * @version 1.4.1-nightly-20180620183855
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -145,7 +145,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180612152822",
+	version: "1.4.1-nightly-20180620183855",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -207,7 +207,7 @@ var bb = {
 
 for (var p in util) /^__/.test(p) || (_ChartInternal2.default.prototype[p] = util[p]);
 
-__webpack_require__(9), __webpack_require__(11), __webpack_require__(12), __webpack_require__(13), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(59), __webpack_require__(8), __webpack_require__(60), __webpack_require__(61);
+__webpack_require__(9), __webpack_require__(11), __webpack_require__(12), __webpack_require__(13), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(60), __webpack_require__(8), __webpack_require__(61), __webpack_require__(62);
 exports.bb = bb;
 exports.default = bb;
 
@@ -289,10 +289,10 @@ exports.__esModule = !0;
 
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
-    _d3TimeFormat = __webpack_require__(75),
-    _d3Selection = __webpack_require__(63),
-    _d3Array = __webpack_require__(65),
-    _d3Transition = __webpack_require__(66),
+    _d3TimeFormat = __webpack_require__(76),
+    _d3Selection = __webpack_require__(64),
+    _d3Array = __webpack_require__(66),
+    _d3Transition = __webpack_require__(67),
     _Axis = __webpack_require__(4),
     _Axis2 = _interopRequireDefault(_Axis),
     _classes = __webpack_require__(7),
@@ -409,7 +409,7 @@ var ChartInternal = function () {
 	}, ChartInternal.prototype.initChartElements = function initChartElements() {
 		var _this = this;
 
-		["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Text"].forEach(function (v) {
+		["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Radar", "Text"].forEach(function (v) {
 			var method = "init" + v;
 
 			_this[method] && _this[method]();
@@ -463,10 +463,8 @@ var ChartInternal = function () {
 	}, ChartInternal.prototype.updateTargets = function updateTargets(targets) {
 		var $$ = this;
 
-		// -- Main --
-
-		// -- Text -- //
-		$$.updateTargetsForText(targets), $$.updateTargetsForBar(targets), $$.updateTargetsForLine(targets), $$.hasArcType() && $$.updateTargetsForArc && $$.updateTargetsForArc(targets), $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets), $$.showTargets();
+		// Text
+		$$.updateTargetsForText(targets), $$.updateTargetsForBar(targets), $$.updateTargetsForLine(targets), $$.hasArcType(targets) && ($$.hasType("radar") ? $$.updateTargetsForRadar(targets) : $$.updateTargetsForArc(targets)), $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets), $$.showTargets();
 	}, ChartInternal.prototype.showTargets = function showTargets() {
 		var $$ = this;
 
@@ -480,6 +478,7 @@ var ChartInternal = function () {
 		    main = $$.main,
 		    config = $$.config,
 		    isRotated = config.axis_rotated,
+		    hasRadar = $$.hasType("radar"),
 		    areaIndices = $$.getShapeIndices($$.isAreaType),
 		    barIndices = $$.getShapeIndices($$.isBarType),
 		    lineIndices = $$.getShapeIndices($$.isLineType),
@@ -529,12 +528,12 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), config.zoom_enabled && $$.bindZoomOnEventRect()), $$.updateCircleY();
+		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.hasArcType(null, ["radar"]) && $$.redrawArc(duration, durationForExit, withTransform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), config.zoom_enabled && $$.bindZoomOnEventRect()), $$.updateCircleY();
 
 
 		// generate circle x/y functions depending on updated params
-		var cx = (isRotated ? $$.circleY : $$.circleX).bind($$),
-		    cy = (isRotated ? $$.circleX : $$.circleY).bind($$),
+		var cx = (hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX).bind($$),
+		    cy = (hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY).bind($$),
 		    flow = options.flow && $$.generateFlow({
 			targets: targetsToShow,
 			flow: options.flow,
@@ -598,7 +597,7 @@ var ChartInternal = function () {
 	}, ChartInternal.prototype.isTimeSeries = function isTimeSeries() {
 		return this.config.axis_x_type === "timeseries";
 	}, ChartInternal.prototype.isCategorized = function isCategorized() {
-		return this.config.axis_x_type.indexOf("category") >= 0;
+		return this.config.axis_x_type.indexOf("category") >= 0 || this.hasType("radar");
 	}, ChartInternal.prototype.isCustomX = function isCustomX() {
 		var $$ = this,
 		    config = $$.config;
@@ -615,7 +614,7 @@ var ChartInternal = function () {
 		    y = void 0;
 
 
-		return target === "main" ? (x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top)) : target === "context" ? (x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top)) : target === "legend" ? (x = $$.margin3.left, y = $$.margin3.top) : target === "x" ? (x = 0, y = isRotated ? 0 : $$.height) : target === "y" ? (x = 0, y = isRotated ? $$.height : 0) : target === "y2" ? (x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0) : target === "subx" ? (x = 0, y = isRotated ? 0 : $$.height2) : target === "arc" && (x = $$.arcWidth / 2, y = $$.arcHeight / 2), "translate(" + x + ", " + y + ")";
+		return target === "main" ? (x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top)) : target === "context" ? (x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top)) : target === "legend" ? (x = $$.margin3.left, y = $$.margin3.top) : target === "x" ? (x = 0, y = isRotated ? 0 : $$.height) : target === "y" ? (x = 0, y = isRotated ? $$.height : 0) : target === "y2" ? (x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0) : target === "subx" ? (x = 0, y = isRotated ? 0 : $$.height2) : target === "arc" ? (x = $$.arcWidth / 2, y = $$.arcHeight / 2) : target === "radar" && (x = $$.width / 2 - $$.arcHeight / 2, y = (0, _util.asHalfPixel)($$.margin.top)), "translate(" + x + ", " + y + ")";
 	}, ChartInternal.prototype.initialOpacity = function initialOpacity(d) {
 		return d.value !== null && this.withoutFadeIn[d.id] ? "1" : "0";
 	}, ChartInternal.prototype.initialOpacityForCircle = function initialOpacityForCircle(d) {
@@ -794,7 +793,7 @@ exports.__esModule = !0;
 
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
-    _d3Selection = __webpack_require__(63),
+    _d3Selection = __webpack_require__(64),
     _util = __webpack_require__(5),
     _bb = __webpack_require__(8),
     _bb2 = _interopRequireDefault(_bb),
@@ -1092,8 +1091,8 @@ exports.toArray = exports.sanitise = exports.merge = exports.notEmpty = exports.
 
 var _typeof2 = __webpack_require__(6),
     _typeof3 = _interopRequireDefault(_typeof2),
-    _d3Selection = __webpack_require__(63),
-    _d3Brush = __webpack_require__(74),
+    _d3Selection = __webpack_require__(64),
+    _d3Brush = __webpack_require__(75),
     _classes = __webpack_require__(7),
     _classes2 = _interopRequireDefault(_classes);
 
@@ -1445,6 +1444,8 @@ exports.default = {
 	chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
 	chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+	chartRadar: "bb-chart-radar",
+	chartRadars: "bb-chart-radars",
 	selectedCircle: "bb-selected-circle",
 	selectedCircles: "bb-selected-circles",
 	eventRect: "bb-event-rect",
@@ -1502,6 +1503,8 @@ exports.default = {
 	legendItemPoint: "bb-legend-item-point",
 	legendItemHidden: "bb-legend-item-hidden",
 	legendItemFocused: "bb-legend-item-focused",
+	level: "bb-level",
+	levels: "bb-levels",
 	dragarea: "bb-dragarea",
 	EXPANDED: "_expanded_",
 	SELECTED: "_selected_",
@@ -1777,8 +1780,8 @@ exports.default = function () {
 	}, axis;
 };
 
-var _d3Scale = __webpack_require__(64),
-    _d3Selection = __webpack_require__(63),
+var _d3Scale = __webpack_require__(65),
+    _d3Selection = __webpack_require__(64),
     _util = __webpack_require__(5),
     getSizeFor1Char = function getSizeFor1Char(node) {
 	// default size for one character
@@ -2367,6 +2370,7 @@ var Options = function Options() {
                      * - gauge
                      * - line
                      * - pie
+                     * - radar
                      * - scatter
                      * - spline
                      * - step
@@ -2384,6 +2388,7 @@ var Options = function Options() {
 																				/**
                      * Set chart type for each data.<br>
                      * This setting overwrites data.type setting.
+                     * - **NOTE:** `radar` type can't be combined with other types.
                      * @name data․types
                      * @memberOf Options
                      * @type {Object}
@@ -2403,8 +2408,8 @@ var Options = function Options() {
                      * @name data․labels
                      * @memberOf Options
                      * @type {Object}
-                     * @property {Boolean} [donut.labels=false] Show or hide labels on each data points
-                     * @property {Function} [donut.labels.format={}] Set formatter function for data labels.<br>
+                     * @property {Boolean} [data.labels=false] Show or hide labels on each data points
+                     * @property {Function} [data.labels.format={}] Set formatter function for data labels.<br>
                      * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
                      *  - `v` is the value of the data point where the label is shown.
                      *  - `id` is the id of the data where the label is shown.
@@ -4463,6 +4468,55 @@ var Options = function Options() {
 																				spline_interpolation_type: "cardinal",
 
 																				/**
+                     * Set radar options
+                     * @name radar
+                     * @memberOf Options
+                     * @type {Object}
+                     * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
+                     * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
+                     * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
+                     * @property {Number} [radar.level.depth=3] Set the level depth.
+                     * @property {Boolean} [radar.level.show=true] Show or hide level.
+                     * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
+                     * @property {Boolean} [radar.level.text.show=true] Show or hide level text.
+                     * @property {Number} [radar.size.ratio=0.87] Set size ratio.
+                     * @example
+                     *  radar: {
+                     *      axis: {
+                     *          max: 50,
+                     *          line: {
+                     *              show: false
+                     *          },
+                     *          text: {
+                     *              show: false
+                     *          }
+                     *      },
+                     *      level: {
+                     *          show: false,
+                     *          text: {
+                     *              format: function(x) {
+                     *                  return x + "%";
+                     *              },
+                     *              show: true
+                     *          }
+                     *      },
+                     *      size: {
+                     *          ratio: 0.7
+                     *      }
+                     *  }
+                     */
+																				radar_axis_max: undefined,
+																				radar_axis_line_show: !0,
+																				radar_axis_text_show: !0,
+																				radar_level_depth: 3,
+																				radar_level_show: !0,
+																				radar_level_text_format: function radar_level_text_format(x) {
+																														return x % 1 === 0 ? x : x.toFixed(2);
+																				},
+																				radar_level_text_show: !0,
+																				radar_size_ratio: .87,
+
+																				/**
                      * Show rectangles inside the chart.<br><br>
                      * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
                      * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
@@ -4639,7 +4693,7 @@ module.exports = exports["default"];
 "use strict";
 
 
-var _d3Scale = __webpack_require__(64),
+var _d3Scale = __webpack_require__(65),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _util = __webpack_require__(5);
@@ -4745,7 +4799,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Array = __webpack_require__(65),
+var _d3Array = __webpack_require__(66),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _util = __webpack_require__(5);
@@ -4936,8 +4990,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Array = __webpack_require__(65),
-    _d3Collection = __webpack_require__(70),
+var _d3Array = __webpack_require__(66),
+    _d3Collection = __webpack_require__(71),
     _classes = __webpack_require__(7),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
@@ -5116,9 +5170,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @return {{min: Array, max: Array}}
   */
 	getMinMaxData: function getMinMaxData() {
-		var $$ = this;
+		var $$ = this,
+		    minMaxData = $$.getCaches("$minMaxData");
 
-		if (!$$.cache.$minMaxData) {
+
+		if (!minMaxData) {
 			var data = $$.data.targets.map(function (t) {
 				return t.values;
 			}),
@@ -5129,10 +5185,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				var minData = $$.getFilteredDataByValue(v, minMax.min),
 				    maxData = $$.getFilteredDataByValue(v, minMax.max);
 				minData.length && (min = min.concat(minData)), maxData.length && (max = max.concat(maxData));
-			}), $$.cache.$minMaxData = { min: min, max: max };
+			}), $$.addCache("$minMaxData", minMaxData = { min: min, max: max });
 		}
 
-		return $$.cache.$minMaxData;
+		return minMaxData;
 	},
 
 
@@ -5142,9 +5198,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @return {Number}
   */
 	getTotalDataSum: function getTotalDataSum() {
-		var $$ = this;
+		var $$ = this,
+		    totalDataSum = $$.getCaches("$totalDataSum");
 
-		if (!$$.cache.$totalDataSum) {
+
+		if (!totalDataSum) {
 			var total = 0;
 
 			$$.data.targets.map(function (t) {
@@ -5153,10 +5211,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				total += (0, _d3Array.sum)(v, function (t) {
 					return t.value;
 				});
-			}), $$.cache.$totalDataSum = total;
+			}), $$.addCache("$totalDataSum", totalDataSum = total);
 		}
 
-		return $$.cache.$totalDataSum;
+		return totalDataSum;
 	},
 
 
@@ -5495,8 +5553,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Dsv = __webpack_require__(76),
-    _d3Collection = __webpack_require__(70),
+var _d3Dsv = __webpack_require__(77),
+    _d3Collection = __webpack_require__(71),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _util = __webpack_require__(5);
@@ -5732,7 +5790,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}), $$.hasNegativeValue = $$.hasNegativeValueInTargets(targets), $$.hasPositiveValue = $$.hasPositiveValueInTargets(targets), config.data_type && $$.setTargetType($$.mapToIds(targets).filter(function (id) {
 			return !(id in config.data_types);
 		}), config.data_type), targets.forEach(function (d) {
-			return $$.addCache(d.id_org, d);
+			return $$.addCache(d.id_org, d, !0);
 		}), targets;
 	}
 });
@@ -5841,8 +5899,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
-    _d3Drag = __webpack_require__(73),
+var _d3Selection = __webpack_require__(64),
+    _d3Drag = __webpack_require__(74),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -6314,8 +6372,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Shape = __webpack_require__(62),
-    _d3Selection = __webpack_require__(63),
+var _d3Shape = __webpack_require__(63),
+    _d3Selection = __webpack_require__(64),
     _classes = __webpack_require__(7),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
@@ -6446,10 +6504,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
-    _d3Shape = __webpack_require__(62),
-    _d3Array = __webpack_require__(65),
-    _d3Interpolate = __webpack_require__(67),
+var _d3Selection = __webpack_require__(64),
+    _d3Shape = __webpack_require__(63),
+    _d3Array = __webpack_require__(66),
+    _d3Interpolate = __webpack_require__(68),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -6870,7 +6928,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _classes = __webpack_require__(7),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
@@ -7009,7 +7067,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Array = __webpack_require__(65),
+var _d3Array = __webpack_require__(66),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _util = __webpack_require__(5);
@@ -7035,9 +7093,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @private
   */
 	getBaseLength: function getBaseLength() {
-		var $$ = this;
+		var $$ = this,
+		    baseLength = $$.getCaches("$baseLength");
 
-		return $$.cache.$baseLength || ($$.cache.$baseLength = (0, _d3Array.min)([$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), $$.cache.$baseLength;
+
+		return baseLength || $$.addCache("$baseLength", baseLength = (0, _d3Array.min)([$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
 	},
 
 
@@ -7072,8 +7132,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Shape = __webpack_require__(62),
-    _d3Selection = __webpack_require__(63),
+var _d3Shape = __webpack_require__(63),
+    _d3Selection = __webpack_require__(64),
     _classes = __webpack_require__(7),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
@@ -7338,7 +7398,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	updateCircle: function updateCircle() {
 		var $$ = this;
 
-		$$.config.point_show && ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineScatterBubbleData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
+		$$.config.point_show && ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineScatterBubbleRadarData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
 	},
 	redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
 		var $$ = this,
@@ -7463,7 +7523,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _util = __webpack_require__(5);
@@ -7621,7 +7681,237 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
+    _d3Array = __webpack_require__(66),
+    _ChartInternal = __webpack_require__(3),
+    _ChartInternal2 = _interopRequireDefault(_ChartInternal),
+    _classes = __webpack_require__(7),
+    _classes2 = _interopRequireDefault(_classes),
+    _util = __webpack_require__(5);
+
+function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+
+/**
+ * Get the position value
+ * @param {String} type Coordinate type 'x' or 'y'
+ * @param {Number} edge Number of edge
+ * @param {Number} pos The indexed position
+ * @param {Number} range
+ * @param {Number} ratio
+ * @return {number}
+ * @private
+ */
+function getPosition(type, edge, pos, range) {
+	var ratio = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1,
+	    r = 2 * Math.PI,
+	    func = type === "x" ? Math.sin : Math.cos;
+
+
+	return range * (1 - ratio * func(pos * r / edge));
+}
+
+// cache key
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var cacheKey = "$radarPoints";
+
+(0, _util.extend)(_ChartInternal2.default.prototype, {
+	initRadar: function initRadar() {
+		var $$ = this,
+		    config = $$.config;
+		$$.hasType("radar") && ($$.radars = $$.main.select("." + _classes2.default.chart).append("g").attr("class", _classes2.default.chartRadars), $$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value);
+	},
+	getRadarSize: function getRadarSize() {
+		var $$ = this,
+		    config = $$.config,
+		    padding = config.axis_x_categories.length < 4 ? -20 : 10,
+		    size = (this.arcHeight - padding) / 2;
+
+
+		return [size, size];
+	},
+	updateTargetsForRadar: function updateTargetsForRadar(targets) {
+		var $$ = this,
+		    config = $$.config;
+		(0, _util.isEmpty)(config.axis_x_categories) && (config.axis_x_categories = (0, _d3Array.range)(0, (0, _d3Array.max)(targets).values.length)), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape();
+	},
+
+
+	/**
+  * Generate data points
+  * @private
+  */
+	generateRadarPoints: function generateRadarPoints() {
+		var $$ = this,
+		    config = $$.config,
+		    targets = $$.data.targets,
+		    edge = config.axis_x_categories.length,
+		    _$$$getRadarSize = $$.getRadarSize(),
+		    width = _$$$getRadarSize[0],
+		    height = _$$$getRadarSize[1],
+		    points = {},
+		    getRatio = function (v) {
+			return parseFloat(Math.max(v, 0)) / $$.maxValue * config.radar_size_ratio;
+		};targets.forEach(function (d) {
+			var point = [];
+
+			d.values.forEach(function (v, i) {
+				point.push([getPosition("x", edge, i, width, getRatio(v.value)), getPosition("y", edge, i, height, getRatio(v.value))]);
+			}), points[d.id] = point;
+		}), $$.addCache(cacheKey, points);
+	},
+	redrawRadar: function redrawRadar() {
+		var $$ = this,
+		    translate = $$.getTranslate("radar");
+
+
+		// Adjust radar, circles and texts' position
+		translate && ($$.radars.attr("transform", translate), $$.main.selectAll("." + _classes2.default.circles).attr("transform", translate), $$.main.select("." + _classes2.default.chartTexts).attr("transform", translate));
+	},
+	generateGetRadarPoints: function generateGetRadarPoints() {
+		var $$ = this,
+		    points = $$.getCaches(cacheKey);
+
+
+		return function (d, i) {
+			var point = points[d.id][i];
+
+			return [point, point, point, point];
+		};
+	},
+	updateRadarLevel: function updateRadarLevel() {
+		var $$ = this,
+		    config = $$.config,
+		    _$$$getRadarSize2 = $$.getRadarSize(),
+		    width = _$$$getRadarSize2[0],
+		    height = _$$$getRadarSize2[1],
+		    depth = config.radar_level_depth,
+		    edge = config.axis_x_categories.length,
+		    levels = (0, _d3Array.range)(0, depth),
+		    radius = config.radar_size_ratio * Math.min(width, height),
+		    levelRatio = levels.map(function (l) {
+			return radius * ((l + 1) / depth);
+		}),
+		    levelTextFormat = config.radar_level_text_format,
+		    points = levels.map(function (v) {
+			var pos = [];
+
+			return (0, _d3Array.range)(0, edge).forEach(function (i) {
+				pos.push(getPosition("x", edge, i, levelRatio[v]) + "," + getPosition("y", edge, i, levelRatio[v]));
+			}), pos.join(" ");
+		}),
+		    radars = $$.radars.append("g").attr("class", _classes2.default.levels).selectAll("." + _classes2.default.level).data(levels),
+		    radarsEnter = radars.enter().append("g").attr("class", function (d, i) {
+			return _classes2.default.level + "-" + i;
+		}).merge(radars).attr("transform", function (d) {
+			return "translate(" + (width - levelRatio[d]) + ", " + (height - levelRatio[d]) + ")";
+		});
+
+		// Generate points
+		radarsEnter.append("polygon").attr("points", function (d) {
+			return points[d];
+		}).style("visibility", config.radar_level_show ? null : "hidden"), config.radar_level_text_show && ($$.radars.select("." + _classes2.default.levels).append("text").attr("x", width).attr("y", height).attr("dx", "-.5em").attr("dy", "-.7em").style("text-anchor", "end").text(function () {
+			return levelTextFormat(0);
+		}), radarsEnter.append("text").attr("x", function (d) {
+			return points[d].split(",")[0];
+		}).attr("y", 0).attr("dx", "-.5em").style("text-anchor", "end").text(function (d) {
+			return levelTextFormat($$.maxValue / levels.length * (d + 1));
+		}));
+	},
+	updateRadarAxes: function updateRadarAxes() {
+		var $$ = this,
+		    config = $$.config,
+		    _$$$getRadarSize3 = $$.getRadarSize(),
+		    width = _$$$getRadarSize3[0],
+		    height = _$$$getRadarSize3[1],
+		    ratio = config.radar_size_ratio,
+		    categories = config.axis_x_categories,
+		    edge = categories.length,
+		    axis = $$.radars.append("g").attr("class", _classes2.default.axis).selectAll(".axis").data(categories),
+		    newAxis = axis.enter().append("g");axis.exit().remove(), config.radar_axis_line_show && newAxis.append("line"), config.radar_axis_text_show && newAxis.append("text"), axis = axis.merge(newAxis).attr("class", function (d, i) {
+			return _classes2.default.axis + "-" + i;
+		}), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
+			return getPosition("x", edge, i, width, ratio);
+		}).attr("y2", function (d, i) {
+			return getPosition("y", edge, i, height, ratio);
+		}), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").text(function (d) {
+			return d;
+		}).datum(function (d, i) {
+			return { index: i };
+		}).attr("x", function (d, i) {
+			return getPosition("x", edge, i, width);
+		}).attr("y", function (d, i) {
+			return getPosition("y", edge, i, height);
+		}), $$.bindEvent();
+	},
+	bindEvent: function bindEvent() {
+		var _this = this,
+		    $$ = this,
+		    config = $$.config;
+
+		if (config.interaction_enabled) {
+			var isMouse = $$.inputType === "mouse";
+
+			$$.radars.select("." + _classes2.default.axis).on((isMouse ? "mouseover " : "") + "click", function () {
+				if (!$$.transiting) // skip while transiting
+					{
+						var target = (0, _d3Selection.select)(_d3Selection.event.target),
+						    index = target.datum().index;
+						$$.selectRectForSingle($$.svg.node(), null, index), $$.setOver(index);
+					}
+			}).on("mouseout", isMouse ? function () {
+				_this.hideTooltip(), _this.unexpandCircles();
+			} : null);
+		}
+	},
+	updateRadarShape: function updateRadarShape() {
+		var $$ = this,
+		    targets = $$.data.targets,
+		    points = $$.getCaches(cacheKey),
+		    areas = $$.radars.append("g").attr("class", _classes2.default.shapes).selectAll("polygon").data(targets),
+		    areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
+		areas.exit().remove(), areasEnter.append("polygon").merge(areas).style("fill", function (d) {
+			return $$.color(d);
+		}).style("stroke", function (d) {
+			return $$.color(d);
+		}).attr("points", function (d) {
+			return points[d.id].join(" ");
+		});
+	},
+
+
+	/**
+  * Get data point x coordinate
+  * @param {Object} d Data object
+  * @return {Number}
+  * @private
+  */
+	radarCircleX: function radarCircleX(d) {
+		return this.getCaches(cacheKey)[d.id][d.index][0];
+	},
+
+
+	/**
+  * Get data point y coordinate
+  * @param {Object} d Data object
+  * @return {Number}
+  * @private
+  */
+	radarCircleY: function radarCircleY(d) {
+		return this.getCaches(cacheKey)[d.id][d.index][1];
+	}
+});
+
+/***/ }),
+/* 26 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -7670,15 +7960,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @param {Number} Fade-out transition duration
   */
 	updateText: function updateText(durationForExit) {
-		var $$ = this,
+		var _this = this,
+		    $$ = this,
 		    config = $$.config,
-		    barLineBubbleData = $$.barLineBubbleData.bind($$),
+		    dataFn = $$.barLineBubbleData.bind($$),
 		    classText = $$.classText.bind($$);
-		$$.mainText = $$.main.selectAll("." + _classes2.default.texts).selectAll("." + _classes2.default.text).data(barLineBubbleData), $$.mainText.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $$.mainText = $$.mainText.enter().append("text").attr("class", classText).attr("text-anchor", function (d) {
+
+		$$.mainText = $$.main.selectAll("." + _classes2.default.texts).selectAll("." + _classes2.default.text).data(function (d) {
+			return _this.isRadarType(d) ? d.values : dataFn(d);
+		}), $$.mainText.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $$.mainText = $$.mainText.enter().append("text").merge($$.mainText).attr("class", classText).attr("text-anchor", function (d) {
 			return config.axis_rotated ? d.value < 0 ? "end" : "start" : "middle";
 		}).style("stroke", "none").style("fill", function (d) {
 			return $$.color(d);
-		}).style("fill-opacity", "0").merge($$.mainText).text(function (d, i, j) {
+		}).style("fill-opacity", "0").text(function (d, i, j) {
 			return $$.dataLabelFormat(d.id)(d.value, d.id, i, j);
 		});
 	},
@@ -7733,11 +8027,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    getAreaPoints = $$.generateGetAreaPoints(areaIndices, !1),
 		    getBarPoints = $$.generateGetBarPoints(barIndices, !1),
 		    getLinePoints = $$.generateGetLinePoints(lineIndices, !1),
+		    getRadarPoints = $$.generateGetRadarPoints(),
 		    getter = forX ? $$.getXForText : $$.getYForText;
 
 
 		return function (d, i) {
-			var getPoints = $$.isAreaType(d) && getAreaPoints || $$.isBarType(d) && getBarPoints || getLinePoints;
+			var getPoints = $$.isAreaType(d) && getAreaPoints || $$.isBarType(d) && getBarPoints || $$.isRadarType(d) && getRadarPoints || getLinePoints;
 
 			return getter.call($$, getPoints(d, i), d, this);
 		};
@@ -7794,7 +8089,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 26 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -7833,8 +8128,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			types[id] === type && (has = !0);
 		}) : has = $$.config.data_type === type, has;
 	},
+
+
+	/**
+  * Check if contains arc types chart
+  * @param {Object} targets
+  * @param {Array} exclude Excluded types
+  * @return {boolean}
+  * @private
+  */
 	hasArcType: function hasArcType(targets) {
-		return this.hasType("pie", targets) || this.hasType("donut", targets) || this.hasType("gauge", targets);
+		var _this = this,
+		    exclude = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [],
+		    types = ["pie", "donut", "gauge", "radar"].filter(function (v) {
+			return exclude.indexOf(v) === -1;
+		});
+
+		return !types.every(function (v) {
+			return !_this.hasType(v, targets);
+		});
 	},
 	isLineType: function isLineType(d) {
 		var id = (0, _util.isString)(d) ? d : d.id;
@@ -7878,8 +8190,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	isDonutType: function isDonutType(d) {
 		return this.isTypeOf(d, "donut");
 	},
+	isRadarType: function isRadarType(d) {
+		return this.isTypeOf(d, "radar");
+	},
 	isArcType: function isArcType(d) {
-		return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d);
+		return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d) || this.isRadarType(d);
 	},
 
 
@@ -7903,8 +8218,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 	// determine if data is line, scatter or bubble type
-	lineScatterBubbleData: function lineScatterBubbleData(d) {
-		return this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) ? d.values : [];
+	lineScatterBubbleRadarData: function lineScatterBubbleRadarData(d) {
+		return this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isRadarType(d) ? d.values : [];
 	},
 	barLineBubbleData: function barLineBubbleData(d) {
 		return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
@@ -7918,13 +8233,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 27 */
+/* 28 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -8149,13 +8464,13 @@ var getGridTextAnchor = function (d) {
 });
 
 /***/ }),
-/* 28 */
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -8193,7 +8508,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 			$$.tooltip.html(config.tooltip_contents.call($$, $$.data.targets.map(function (d) {
 				return $$.addName(d.values[config.tooltip_init_x]);
-			}), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType()), $$.color)), $$.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
+			}), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), $$.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
 		}
 	},
 
@@ -8281,18 +8596,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    forArc = $$.hasArcType(),
 		    isTouch = $$.inputType === "touch",
 		    mouse = (0, _d3Selection.mouse)(element),
-		    svgLeft = void 0,
-		    tooltipLeft = void 0,
-		    tooltipRight = void 0,
-		    tooltipTop = void 0,
-		    chartRight = void 0;
+		    svgLeft = $$.getSvgLeft(!0),
+		    chartRight = void 0,
+		    left = void 0,
+		    right = void 0,
+		    top = void 0;
+
 
 		// Determine tooltip position
+		if (forArc) {
+			var raw = isTouch || $$.hasType("radar");
 
-		return forArc ? (tooltipLeft = isTouch ? mouse[0] : ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2 + mouse[0], tooltipTop = isTouch ? mouse[1] + 20 : $$.height / 2 + mouse[1] + 20) : (svgLeft = $$.getSvgLeft(!0), config.axis_rotated ? (tooltipLeft = svgLeft + mouse[0] + 100, tooltipRight = tooltipLeft + tWidth, chartRight = $$.currentWidth - $$.getCurrentPaddingRight(), tooltipTop = $$.x(dataToShow[0].x) + 20) : (tooltipLeft = svgLeft + $$.getCurrentPaddingLeft(!0) + $$.x(dataToShow[0].x) + 20, tooltipRight = tooltipLeft + tWidth, chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(), tooltipTop = mouse[1] + 15), tooltipRight > chartRight && (tooltipLeft -= tooltipRight - chartRight + 20), tooltipTop + tHeight > $$.currentHeight && (tooltipTop -= tHeight + 30)), tooltipTop < 0 && (tooltipTop = 0), {
-			top: tooltipTop,
-			left: tooltipLeft
-		};
+			top = mouse[1] + (raw ? 0 : $$.height / 2) + 20, left = mouse[0] + (raw ? 0 : ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2), chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(), right = left + tWidth;
+		} else config.axis_rotated ? (left = svgLeft + mouse[0] + 100, right = left + tWidth, chartRight = $$.currentWidth - $$.getCurrentPaddingRight(), top = $$.x(dataToShow[0].x) + 20) : (left = svgLeft + $$.getCurrentPaddingLeft(!0) + $$.x(dataToShow[0].x) + 20, right = left + tWidth, chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(), top = mouse[1] + 15);
+
+		return right > chartRight && (left -= right - chartRight + 20), top + tHeight > $$.currentHeight && (top -= tHeight + 30), top < 0 && (top = 0), { top: top, left: left };
 	},
 
 
@@ -8305,7 +8623,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	showTooltip: function showTooltip(selectedData, element) {
 		var $$ = this,
 		    config = $$.config,
-		    forArc = $$.hasArcType(),
+		    forArc = $$.hasArcType(null, ["radar"]),
 		    dataToShow = selectedData.filter(function (d) {
 			return d && (0, _util.isValue)(d.value);
 		}),
@@ -8380,13 +8698,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 29 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -8866,7 +9184,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 30 */
+/* 31 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8946,7 +9264,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 31 */
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9036,13 +9354,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 32 */
+/* 33 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -9128,13 +9446,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 }); // selection
 
 /***/ }),
-/* 33 */
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -9222,14 +9540,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 34 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
-    _d3Color = __webpack_require__(72),
+var _d3Selection = __webpack_require__(64),
+    _d3Color = __webpack_require__(73),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -9384,14 +9702,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 35 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
-    _d3Brush = __webpack_require__(74),
+var _d3Selection = __webpack_require__(64),
+    _d3Brush = __webpack_require__(75),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -9649,15 +9967,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 36 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(65),
-    _d3Selection = __webpack_require__(63),
-    _d3Zoom = __webpack_require__(71),
+var _d3Array = __webpack_require__(66),
+    _d3Selection = __webpack_require__(64),
+    _d3Zoom = __webpack_require__(72),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _classes = __webpack_require__(7),
@@ -9811,14 +10129,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 37 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
-    _d3Scale = __webpack_require__(64),
+var _d3Selection = __webpack_require__(64),
+    _d3Scale = __webpack_require__(65),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _util = __webpack_require__(5);
@@ -9915,7 +10233,7 @@ var colorizePattern = function (pattern, color, id) {
 });
 
 /***/ }),
-/* 38 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9971,19 +10289,19 @@ var getFormat = function ($$, typeValue, v) {
 		    defaultFormat = function (v) {
 			return (0, _util.isValue)(v) ? +v : "";
 		},
-		    format = void 0;
+		    format = defaultFormat;
 
 		// find format according to axis id
 
 
-		return format = (0, _util.isFunction)(dataLabels.format) ? dataLabels.format : (0, _util.isObjectType)(dataLabels.format) ? dataLabels.format[targetId] ? dataLabels.format[targetId] === !0 ? defaultFormat : dataLabels.format[targetId] : function () {
+		return (0, _util.isFunction)(dataLabels.format) ? format = dataLabels.format : (0, _util.isObjectType)(dataLabels.format) && (dataLabels.format[targetId] ? format = dataLabels.format[targetId] === !0 ? defaultFormat : dataLabels.format[targetId] : format = function () {
 			return "";
-		} : defaultFormat, format;
+		}), format;
 	}
 });
 
 /***/ }),
-/* 39 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10000,20 +10318,33 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * billboard.js project is licensed under the MIT license
  */
 (0, _util.extend)(_ChartInternal2.default.prototype, {
-	hasCaches: function hasCaches(ids) {
-		for (var i = 0, len = ids.length; i < len; i++) if (!(ids[i] in this.cache)) return !1;
+	hasCaches: function hasCaches(key) {
+		var isDataType = !!(arguments.length > 1 && arguments[1] !== undefined) && arguments[1];
 
-		return !0;
+		if (isDataType) {
+			for (var i = 0, len = key.length; i < len; i++) if (!(key[i] in this.cache)) return !1;
+
+			return !0;
+		}
+
+		return key in this.cache;
 	},
-	addCache: function addCache(id, target) {
-		this.cache[id] = this.cloneTarget(target);
+	addCache: function addCache(key, target) {
+		var isDataType = !!(arguments.length > 2 && arguments[2] !== undefined) && arguments[2];
+		this.cache[key] = isDataType ? this.cloneTarget(target) : target;
 	},
-	getCaches: function getCaches(ids) {
-		var targets = [];
+	getCaches: function getCaches(key) {
+		var isDataType = !!(arguments.length > 1 && arguments[1] !== undefined) && arguments[1];
 
-		for (var key, i = 0; key = ids[i]; i++) key in this.cache && targets.push(this.cloneTarget(this.cache[key]));
+		if (isDataType) {
+			var targets = [];
 
-		return targets;
+			for (var id, i = 0; id = key[i]; i++) id in this.cache && targets.push(this.cloneTarget(this.cache[id]));
+
+			return targets;
+		}
+
+		return this.cache[key] || null;
 	},
 
 
@@ -10030,7 +10361,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 40 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10138,6 +10469,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	classChartArc: function classChartArc(d) {
 		return _classes2.default.chartArc + this.classTarget(d.data.id);
 	},
+	classChartRadar: function classChartRadar(d) {
+		return _classes2.default.chartRadar + this.classTarget(d.id);
+	},
 	getTargetSelectorSuffix: function getTargetSelectorSuffix(targetId) {
 		return targetId || targetId === 0 ? ("-" + targetId).replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
 	},
@@ -10169,13 +10503,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 41 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _classes = __webpack_require__(7),
@@ -10273,7 +10607,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 42 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10394,14 +10728,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 43 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(65),
-    _d3Zoom = __webpack_require__(71),
+var _d3Array = __webpack_require__(66),
+    _d3Zoom = __webpack_require__(72),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _util = __webpack_require__(5);
@@ -10563,7 +10897,7 @@ var zoom = function (domainValue) {
 });
 
 /***/ }),
-/* 44 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10627,7 +10961,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			config.data_axes[id] = args.axes[id];
 		}), "colors" in args && Object.keys(args.colors).forEach(function (id) {
 			config.data_colors[id] = args.colors[id];
-		}), "cacheIds" in args && $$.hasCaches(args.cacheIds) ? void $$.load($$.getCaches(args.cacheIds), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds((0, _util.isBoolean)(args.unload) && args.unload ? null : args.unload), function () {
+		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCaches(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds((0, _util.isBoolean)(args.unload) && args.unload ? null : args.unload), function () {
 			return $$.loadFromArgs(args);
 		}) : $$.loadFromArgs(args));
 
@@ -10667,15 +11001,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 45 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
-    _d3Ease = __webpack_require__(69),
-    _d3Transition = __webpack_require__(66),
+var _d3Selection = __webpack_require__(64),
+    _d3Ease = __webpack_require__(70),
+    _d3Transition = __webpack_require__(67),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
@@ -10919,13 +11253,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 46 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _util = __webpack_require__(5),
@@ -11046,7 +11380,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 47 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11103,7 +11437,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 48 */
+/* 49 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11140,7 +11474,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 49 */
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11295,7 +11629,7 @@ var ygrids = function (grids) {
 });
 
 /***/ }),
-/* 50 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11399,7 +11733,7 @@ var regions = function (_regions) {
 }), (0, _util.extend)(_Chart2.default.prototype, { regions: regions });
 
 /***/ }),
-/* 51 */
+/* 52 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11549,7 +11883,7 @@ var data = function (targetIds) {
 }), (0, _util.extend)(_Chart2.default.prototype, { data: data });
 
 /***/ }),
-/* 52 */
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11604,7 +11938,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 53 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11636,7 +11970,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 54 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11705,7 +12039,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 55 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11866,7 +12200,7 @@ var setMinMax = function ($$, type, value) {
 (0, _util.extend)(_Chart2.default.prototype, { axis: axis });
 
 /***/ }),
-/* 56 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11940,16 +12274,16 @@ var legend = (0, _util.extend)(function () {}, {
 (0, _util.extend)(_Chart2.default.prototype, { legend: legend });
 
 /***/ }),
-/* 57 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _browser = __webpack_require__(58),
+    _browser = __webpack_require__(59),
     _util = __webpack_require__(5);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -12017,7 +12351,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 58 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12048,7 +12382,7 @@ exports.window = win;
 exports.document = doc;
 
 /***/ }),
-/* 59 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12128,7 +12462,7 @@ var tooltip = (0, _util.extend)(function () {}, {
 (0, _util.extend)(_Chart2.default.prototype, { tooltip: tooltip });
 
 /***/ }),
-/* 60 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12160,13 +12494,13 @@ var ua = window.navigator.userAgent;
 });
 
 /***/ }),
-/* 61 */
+/* 62 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(63),
+var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _util = __webpack_require__(5);
@@ -12267,7 +12601,7 @@ var b64EncodeUnicode = function (str) {
 });
 
 /***/ }),
-/* 62 */
+/* 63 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14523,7 +14857,7 @@ function ascending_sum(series) {
 
 
 /***/ }),
-/* 63 */
+/* 64 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -15674,16 +16008,16 @@ Local.prototype = local.prototype = {
 
 
 /***/ }),
-/* 64 */
+/* 65 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-array/index.js + 31 modules
-var d3_array = __webpack_require__(65);
+var d3_array = __webpack_require__(66);
 
 // EXTERNAL MODULE: ./node_modules/d3-collection/index.js + 6 modules
-var d3_collection = __webpack_require__(70);
+var d3_collection = __webpack_require__(71);
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/array.js
 var array = Array.prototype;
@@ -15843,7 +16177,7 @@ function point() {
 }
 
 // EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
-var d3_interpolate = __webpack_require__(67);
+var d3_interpolate = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
 /* harmony default export */ var constant = (function(x) {
@@ -16782,10 +17116,10 @@ function threshold() {
 }
 
 // EXTERNAL MODULE: ./node_modules/d3-time/index.js + 16 modules
-var d3_time = __webpack_require__(68);
+var d3_time = __webpack_require__(69);
 
 // EXTERNAL MODULE: ./node_modules/d3-time-format/index.js + 4 modules
-var d3_time_format = __webpack_require__(75);
+var d3_time_format = __webpack_require__(76);
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
 
@@ -17007,7 +17341,7 @@ function sequential(interpolator) {
 
 
 /***/ }),
-/* 65 */
+/* 66 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -17695,16 +18029,16 @@ function transpose_length(d) {
 
 
 /***/ }),
-/* 66 */
+/* 67 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
-var d3_selection = __webpack_require__(63);
+var d3_selection = __webpack_require__(64);
 
 // EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
-var d3_dispatch = __webpack_require__(77);
+var d3_dispatch = __webpack_require__(78);
 
 // CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
 var timer_frame = 0, // is an animation frame pending?
@@ -18046,7 +18380,7 @@ function create(node, id, self) {
 });
 
 // EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
-var d3_interpolate = __webpack_require__(67);
+var d3_interpolate = __webpack_require__(68);
 
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
 
@@ -18132,7 +18466,7 @@ function tweenValue(transition, name, value) {
 }
 
 // EXTERNAL MODULE: ./node_modules/d3-color/index.js + 5 modules
-var d3_color = __webpack_require__(72);
+var d3_color = __webpack_require__(73);
 
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
 
@@ -18666,7 +19000,7 @@ Transition.prototype = src_transition_transition.prototype = {
 };
 
 // EXTERNAL MODULE: ./node_modules/d3-ease/index.js + 10 modules
-var d3_ease = __webpack_require__(69);
+var d3_ease = __webpack_require__(70);
 
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
 
@@ -18754,13 +19088,13 @@ var root = [null];
 
 
 /***/ }),
-/* 67 */
+/* 68 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-color/index.js + 5 modules
-var d3_color = __webpack_require__(72);
+var d3_color = __webpack_require__(73);
 
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
 function basis(t1, v0, v1, v2, v3) {
@@ -19391,7 +19725,7 @@ function piecewise(interpolate, values) {
 
 
 /***/ }),
-/* 68 */
+/* 69 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -19868,7 +20202,7 @@ var utcYears = utcYear.range;
 
 
 /***/ }),
-/* 69 */
+/* 70 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20154,7 +20488,7 @@ var elasticInOut = (function custom(a, p) {
 
 
 /***/ }),
-/* 70 */
+/* 71 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -20389,25 +20723,25 @@ function set(object, f) {
 
 
 /***/ }),
-/* 71 */
+/* 72 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
-var d3_dispatch = __webpack_require__(77);
+var d3_dispatch = __webpack_require__(78);
 
 // EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
-var d3_drag = __webpack_require__(73);
+var d3_drag = __webpack_require__(74);
 
 // EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
-var d3_interpolate = __webpack_require__(67);
+var d3_interpolate = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
-var d3_selection = __webpack_require__(63);
+var d3_selection = __webpack_require__(64);
 
 // EXTERNAL MODULE: ./node_modules/d3-transition/index.js + 29 modules
-var d3_transition = __webpack_require__(66);
+var d3_transition = __webpack_require__(67);
 
 // CONCATENATED MODULE: ./node_modules/d3-zoom/src/constant.js
 /* harmony default export */ var constant = (function(x) {
@@ -20923,7 +21257,7 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 
 /***/ }),
-/* 72 */
+/* 73 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21488,16 +21822,16 @@ define(Cubehelix, cubehelix, extend(Color, {
 
 
 /***/ }),
-/* 73 */
+/* 74 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
-var d3_dispatch = __webpack_require__(77);
+var d3_dispatch = __webpack_require__(78);
 
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
-var d3_selection = __webpack_require__(63);
+var d3_selection = __webpack_require__(64);
 
 // CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
 
@@ -21745,25 +22079,25 @@ function defaultTouchable() {
 
 
 /***/ }),
-/* 74 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
-var d3_dispatch = __webpack_require__(77);
+var d3_dispatch = __webpack_require__(78);
 
 // EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
-var d3_drag = __webpack_require__(73);
+var d3_drag = __webpack_require__(74);
 
 // EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
-var d3_interpolate = __webpack_require__(67);
+var d3_interpolate = __webpack_require__(68);
 
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
-var d3_selection = __webpack_require__(63);
+var d3_selection = __webpack_require__(64);
 
 // EXTERNAL MODULE: ./node_modules/d3-transition/index.js + 29 modules
-var d3_transition = __webpack_require__(66);
+var d3_transition = __webpack_require__(67);
 
 // CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
 /* harmony default export */ var constant = (function(x) {
@@ -22341,13 +22675,13 @@ function brush_brush(dim) {
 
 
 /***/ }),
-/* 75 */
+/* 76 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 
 // EXTERNAL MODULE: ./node_modules/d3-time/index.js + 16 modules
-var d3_time = __webpack_require__(68);
+var d3_time = __webpack_require__(69);
 
 // CONCATENATED MODULE: ./node_modules/d3-time-format/src/locale.js
 
@@ -23055,7 +23389,7 @@ var parseIso = +new Date("2000-01-01T00:00:00.000Z")
 
 
 /***/ }),
-/* 76 */
+/* 77 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23225,7 +23559,7 @@ var tsvFormatRows = tsv.formatRows;
 
 
 /***/ }),
-/* 77 */
+/* 78 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
