@@ -132,6 +132,10 @@ extend(ChartInternal.prototype, {
 		return CLASS.chartArc + this.classTarget(d.data.id);
 	},
 
+	classChartRadar(d) {
+		return CLASS.chartRadar + this.classTarget(d.id);
+	},
+
 	getTargetSelectorSuffix(targetId) {
 		return targetId || targetId === 0 ?
 			`-${targetId}`.replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";

@@ -47,10 +47,18 @@ extend(ChartInternal.prototype, {
 		return has;
 	},
 
-	hasArcType(targets) {
-		return this.hasType("pie", targets) ||
-			this.hasType("donut", targets) ||
-			this.hasType("gauge", targets);
+	/**
+	 * Check if contains arc types chart
+	 * @param {Object} targets
+	 * @param {Array} exclude Excluded types
+	 * @return {boolean}
+	 * @private
+	 */
+	hasArcType(targets, exclude = []) {
+		const types = ["pie", "donut", "gauge", "radar"]
+			.filter(v => exclude.indexOf(v) === -1);
+
+		return !types.every(v => !this.hasType(v, targets));
 	},
 
 	isLineType(d) {
@@ -108,10 +116,15 @@ extend(ChartInternal.prototype, {
 		return this.isTypeOf(d, "donut");
 	},
 
+	isRadarType(d) {
+		return this.isTypeOf(d, "radar");
+	},
+
 	isArcType(d) {
 		return this.isPieType(d) ||
 			this.isDonutType(d) ||
-			this.isGaugeType(d);
+			this.isGaugeType(d) ||
+			this.isRadarType(d);
 	},
 
 	// determine if is 'circle' data point
@@ -136,9 +149,11 @@ extend(ChartInternal.prototype, {
 	},
 
 	// determine if data is line, scatter or bubble type
-	lineScatterBubbleData(d) {
-		return this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) ?
-			d.values : [];
+	lineScatterBubbleRadarData(d) {
+		return this.isLineType(d) ||
+			this.isScatterType(d) ||
+			this.isBubbleType(d) ||
+			this.isRadarType(d) ? d.values : [];
 	},
 
 	barLineBubbleData(d) {

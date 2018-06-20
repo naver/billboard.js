@@ -467,6 +467,7 @@ export default class Options {
 			 * - gauge
 			 * - line
 			 * - pie
+			 * - radar
 			 * - scatter
 			 * - spline
 			 * - step
@@ -484,6 +485,7 @@ export default class Options {
 			/**
 			 * Set chart type for each data.<br>
 			 * This setting overwrites data.type setting.
+			 * - **NOTE:** `radar` type can't be combined with other types.
 			 * @name data․types
 			 * @memberOf Options
 			 * @type {Object}
@@ -503,8 +505,8 @@ export default class Options {
 			 * @name data․labels
 			 * @memberOf Options
 			 * @type {Object}
-			 * @property {Boolean} [donut.labels=false] Show or hide labels on each data points
-			 * @property {Function} [donut.labels.format={}] Set formatter function for data labels.<br>
+			 * @property {Boolean} [data.labels=false] Show or hide labels on each data points
+			 * @property {Function} [data.labels.format={}] Set formatter function for data labels.<br>
 			 * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
 			 *  - `v` is the value of the data point where the label is shown.
 			 *  - `id` is the id of the data where the label is shown.
@@ -2561,6 +2563,53 @@ export default class Options {
 			 *  }
 			 */
 			spline_interpolation_type: "cardinal",
+
+			/**
+			 * Set radar options
+			 * @name radar
+			 * @memberOf Options
+			 * @type {Object}
+			 * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
+			 * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
+			 * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
+			 * @property {Number} [radar.level.depth=3] Set the level depth.
+			 * @property {Boolean} [radar.level.show=true] Show or hide level.
+			 * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
+			 * @property {Boolean} [radar.level.text.show=true] Show or hide level text.
+			 * @property {Number} [radar.size.ratio=0.87] Set size ratio.
+			 * @example
+			 *  radar: {
+			 *      axis: {
+			 *          max: 50,
+			 *          line: {
+			 *              show: false
+			 *          },
+			 *          text: {
+			 *              show: false
+			 *          }
+			 *      },
+			 *      level: {
+			 *          show: false,
+			 *          text: {
+			 *              format: function(x) {
+			 *                  return x + "%";
+			 *              },
+			 *              show: true
+			 *          }
+			 *      },
+			 *      size: {
+			 *          ratio: 0.7
+			 *      }
+			 *  }
+			 */
+			radar_axis_max: undefined,
+			radar_axis_line_show: true,
+			radar_axis_text_show: true,
+			radar_level_depth: 3,
+			radar_level_show: true,
+			radar_level_text_format: x => (x % 1 === 0 ? x : x.toFixed(2)),
+			radar_level_text_show: true,
+			radar_size_ratio: 0.87,
 
 			/**
 			 * Show rectangles inside the chart.<br><br>
