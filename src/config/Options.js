@@ -170,7 +170,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
 			 *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
-			 * @property {Boolean} [interaction.brighten=true]
+			 * @property {Boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
 			 * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 			 * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
 			 * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
