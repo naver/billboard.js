@@ -44,7 +44,7 @@ export default class Options {
 			bindto: "#chart",
 
 			/**
-			 * Set clip-path property of chart element
+			 * Set 'clip-path' attribute for chart element
 			 * - **NOTE:**
 			 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
 			 *  > Is to make chart element positioned over axis element.
@@ -53,6 +53,7 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default true
 			 * @example
+			 * // don't set 'clip-path' attribute
 			 * clipPath: false
 			 */
 			clipPath: true,
@@ -1182,6 +1183,18 @@ export default class Options {
 			axis_rotated: false,
 
 			/**
+			 * Set clip-path attribute for x axis element
+			 * @name axis․x․clipPath
+			 * @memberOf Options
+			 * @type {Boolean}
+			 * @default true
+			 * @example
+			 * // don't set 'clip-path' attribute
+			 * clipPath: false
+			 */
+			axis_x_clipPath: true,
+
+			/**
 			 * Show or hide x axis.
 			 * @name axis․x․show
 			 * @memberOf Options
@@ -1641,6 +1654,18 @@ export default class Options {
 			 * }
 			 */
 			axis_x_label: {},
+
+			/**
+			 * Set clip-path attribute for y axis element
+			 * @name axis․y․clipPath
+			 * @memberOf Options
+			 * @type {Boolean}
+			 * @default true
+			 * @example
+			 * // don't set 'clip-path' attribute
+			 * clipPath: false
+			 */
+			axis_y_clipPath: true,
 
 			/**
 			 * Show or hide y axis.

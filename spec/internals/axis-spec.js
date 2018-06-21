@@ -1140,4 +1140,17 @@ describe("AXIS", function() {
 			});
 		});
 	});
+
+	describe("axis clipPath", () => {
+		it("set options axis.x.clipPath=false / axis.y.clipPath=false", () => {
+			args.axis.y.clipPath = args.axis.x.clipPath = false;
+		});
+
+		it("shouldn't be set 'clipPath' attribute", () => {
+			chart.internal.main
+				.selectAll(`.${CLASS.axisX},.${CLASS.axisY}`).each(function() {
+					expect(this.getAttribute("clip-path")).to.be.null;
+				});
+		});
+	});
 });
