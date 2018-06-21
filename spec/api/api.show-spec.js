@@ -29,8 +29,10 @@ describe("API show", () => {
 			chart.hide("data1");
 
 			setTimeout(() => {
-				expect(+main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`).style("opacity")).to.be.equal(0);
-				expect(+main.select(`.${CLASS.chartLine}.${CLASS.target}-data2`).style("opacity")).to.be.equal(1);
+				const selector = `.${CLASS.chartLine}.${CLASS.target}`;
+
+				expect(+main.select(`${selector}-data1`).style("opacity")).to.be.equal(0);
+				expect(+main.select(`${selector}-data2`).style("opacity")).to.be.equal(1);
 
 				expect(+internal.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
 
@@ -75,8 +77,10 @@ describe("API show", () => {
 			chart.show("data1");
 
 			setTimeout(() => {
-				expect(+main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`).style("opacity")).to.be.equal(1);
-				expect(+main.select(`.${CLASS.chartLine}.${CLASS.target}-data2`).style("opacity")).to.be.equal(0);
+				const selector = `.${CLASS.chartLine}.${CLASS.target}`;
+
+				expect(+main.select(`${selector}-data1`).style("opacity")).to.be.equal(1);
+				expect(+main.select(`${selector}-data2`).style("opacity")).to.be.equal(0);
 
 				expect(+internal.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
 
@@ -152,20 +156,22 @@ describe("API show", () => {
 			// hide data
 			chart.toggle();
 
-			main.selectAll(`.${CLASS.chartLine}`).each(function() {
-				expect(+this.style.opacity).to.be.below(1);
-			});
+			setTimeout(() => {
+				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+					expect(+this.style.opacity).to.be.below(1);
+				});
 
-			legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
 
-			expect(+legend.size()).to.be.equal(chart.data().length);
+				expect(+legend.size()).to.be.equal(chart.data().length);
 
-			legend.each(function() {
-				expect(+d3.select(this).style("opacity")).to.be.equal(0.15);
-			});
+				legend.each(function() {
+					expect(+d3.select(this).style("opacity")).to.be.equal(0.15);
+				});
 
-			// show data
-			chart.toggle();
+				// show data
+				chart.toggle();
+			}, 100);
 
 			setTimeout(() => {
 				main.selectAll(`.${CLASS.chartLine}`).each(function() {
@@ -179,6 +185,53 @@ describe("API show", () => {
 				legend.each(function() {
 					expect(+d3.select(this).style("opacity")).to.be.equal(1);
 				});
+
+				done();
+			}, 500);
+		});
+	});
+
+	describe("check toggle interaction", () => {
+		const ids = ["FirstPercentage", "SecondPercentage", "ThirdPercentage"];
+
+		it("set options", () => {
+			args = {
+				data: {
+					json: [{
+						Name: "Some Data",
+						FirstPercentage: 0.20,
+						SecondPercentage: 0.10,
+						ThirdPercentage: 0.15
+					}],
+					keys: {
+						x: "Name",
+						value: ids
+					},
+					type: "bar",
+					hide: [ids[2]]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				},
+				transition: {
+					duration: 10
+				}
+			};
+		});
+
+		it("should correctly rendered having same width", done => {
+			const main = chart.internal.main;
+			const barWidth = main.select(`.${CLASS.bars}-${ids[0]}`).node().getBBox().width;
+
+			chart.toggle(ids.concat().splice(1));
+
+			setTimeout(() => {
+				main.selectAll(`.${CLASS.bars}-${ids[0]}, .${CLASS.bars}-${ids[2]}`)
+					.each(function() {
+						expect(this.getBBox().width).to.be.equal(barWidth);
+					});
 
 				done();
 			}, 500);
