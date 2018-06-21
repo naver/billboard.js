@@ -51,7 +51,7 @@ export default class Axis {
 			.style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
 	}
 
-	getXAxis(scale, orient, tickFormat,
+	getXAxis(axisName, scale, orient, tickFormat,
 		tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		const $$ = this.owner;
 		const config = $$.config;
@@ -61,6 +61,7 @@ export default class Axis {
 			withOuterTick,
 			withoutTransition,
 			config,
+			axisName,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
@@ -92,7 +93,7 @@ export default class Axis {
 		return axis;
 	}
 
-	getYAxis(scale, orient, tickFormat, tickValues,
+	getYAxis(axisName, scale, orient, tickFormat, tickValues,
 		withOuterTick, withoutTransition, withoutRotateTickText) {
 		const $$ = this.owner;
 		const config = $$.config;
@@ -100,6 +101,7 @@ export default class Axis {
 			withOuterTick,
 			withoutTransition,
 			config,
+			axisName,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
 		};
 		const axis = bbAxis(axisParams)
@@ -402,6 +404,7 @@ export default class Axis {
 			if (/^y2?$/.test(id)) {
 				scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id));
 				axis = this.getYAxis(
+					id,
 					scale,
 					$$[`${id}Orient`],
 					config[`axis_${id}_tick_format`],
@@ -413,6 +416,7 @@ export default class Axis {
 			} else {
 				scale = $$.x.copy().domain($$.getXDomain(targetsToShow));
 				axis = this.getXAxis(
+					"x",
 					scale,
 					$$.xOrient,
 					$$.xAxisTickFormat,
@@ -421,6 +425,7 @@ export default class Axis {
 					true,
 					true
 				);
+
 				this.updateXAxisTickValues(targetsToShow, axis);
 			}
 

@@ -43,25 +43,6 @@ const getSizeFor1Char = node => {
 	return (getSizeFor1Char.size = size);
 };
 
-/**
- * Get axis string by orient
- * @param {String} orient Orientation string - top|bottom|left|right
- * @param {Boolean} isRotate Whether chart is rotated
- * @return {String} x|y|y2
- * @private
- */
-const getAxisByOrient = (orient, isRotate) => (
-	isRotate ? {
-		left: "x",
-		bottom: "y",
-		top: "y2",
-	} : {
-		bottom: "x",
-		left: "y",
-		right: "y2"
-	}
-)[orient];
-
 export default function(params = {}) {
 	let scale = d3ScaleLinear();
 	let orient = "bottom";
@@ -316,9 +297,9 @@ export default function(params = {}) {
 			const textTransform = r => (r ? `rotate(${r})` : null);
 			const yForText = r => (r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength);
 
-			// Get axis.tick.text.position option value
-			const axisType = getAxisByOrient(orient, rotate);
-			const tickTextPos = axisType ? params.config[`axis_${axisType}_tick_text_position`] : {x: 0, y: 0};
+			// get the axis' tick position configuration
+			const tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ?
+				params.config[`axis_${params.axisName}_tick_text_position`] : {x: 0, y: 0};
 
 			// set <tspan>'s position
 			tspan

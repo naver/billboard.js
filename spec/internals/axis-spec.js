@@ -1120,5 +1120,24 @@ describe("AXIS", function() {
 				});
 			});
 		});
+
+		it("set options axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("should be rounded tick text values", () => {
+			const main = chart.internal.main;
+
+			["x", "y", "y2"].forEach(v => {
+				const pos = args.axis[v].tick.text.position;
+
+				main.selectAll(`.${CLASS[`axis${v.toUpperCase()}`]} tspan`).each(function() {
+					const tspan = d3.select(this);
+
+					expect(+tspan.attr("dx")).to.be.equal(pos.x);
+					expect(+tspan.attr("dy")).to.be.equal(pos.y + (v === "x" ? 3 : 0));
+				});
+			});
+		});
 	});
 });
