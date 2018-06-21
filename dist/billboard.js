@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180620183855
+ * @version 1.4.1-nightly-20180621194751
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180620183855
+ * @version 1.4.1-nightly-20180621194751
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180620183855",
+	version: "1.4.1-nightly-20180621194751",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -379,15 +379,9 @@ var ChartInternal = function () {
 		// Define regions
 		var main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
 
-		$$.main = main, config.subchart_show && $$.initSubchart && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), main.append("text").attr("class", _classes2.default.text + " " + _classes2.default.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-		.attr("dominant-baseline", "middle"), $$.initRegion(), $$.initGrid(), config.clipPath || $$.axis.init();
-
-
-		// Define g for chart area
-		var g = main.append("g").attr("class", _classes2.default.chart);
-
 		// Draw with targets
-		if (config.clipPath && g.attr("clip-path", $$.clipPath), config.grid_lines_front && $$.initGridLines(), config.grid_front && $$.initXYFocusGrid(), $$.initEventRect(), $$.initChartElements(), main.insert("rect", config.zoom_privileged ? null : "g." + _classes2.default.regions).attr("class", _classes2.default.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), binding && ($$.updateDimension(), config.oninit.call($$), $$.redraw({
+		if ($$.main = main, config.subchart_show && $$.initSubchart && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), main.append("text").attr("class", _classes2.default.text + " " + _classes2.default.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+		.attr("dominant-baseline", "middle"), $$.initRegion(), $$.initGrid(), config.clipPath || $$.axis.init(), main.append("g").attr("class", _classes2.default.chart).attr("clip-path", $$.clipPath), config.grid_lines_front && $$.initGridLines(), config.grid_front && $$.initXYFocusGrid(), $$.initEventRect(), $$.initChartElements(), main.insert("rect", config.zoom_privileged ? null : "g." + _classes2.default.regions).attr("class", _classes2.default.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), binding && ($$.updateDimension(), config.oninit.call($$), $$.redraw({
 			withTransition: !1,
 			withTransform: !0,
 			withUpdateXDomain: !0,
@@ -822,7 +816,7 @@ var Axis = function () {
 		    isRotated = config.axis_rotated,
 		    main = $$.main;
 		$$.axes.x = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisX).attr("clip-path", $$.clipPathForXAxis).attr("transform", $$.getTranslate("x")).style("visibility", config.axis_x_show ? "visible" : "hidden"), $$.axes.x.append("text").attr("class", _classes2.default.axisXLabel).attr("transform", isRotated ? "rotate(-90)" : "").style("text-anchor", this.textAnchorForXAxisLabel.bind(this)), $$.axes.y = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY).attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis).attr("transform", $$.getTranslate("y")).style("visibility", config.axis_y_show ? "visible" : "hidden"), $$.axes.y.append("text").attr("class", _classes2.default.axisYLabel).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForYAxisLabel.bind(this)), $$.axes.y2 = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY2).attr("transform", $$.getTranslate("y2")).style("visibility", config.axis_y2_show ? "visible" : "hidden"), $$.axes.y2.append("text").attr("class", _classes2.default.axisY2Label).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
-	}, Axis.prototype.getXAxis = function getXAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+	}, Axis.prototype.getXAxis = function getXAxis(axisName, scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		var $$ = this.owner,
 		    config = $$.config,
 		    isCategory = $$.isCategorized(),
@@ -831,6 +825,7 @@ var Axis = function () {
 			withOuterTick: withOuterTick,
 			withoutTransition: withoutTransition,
 			config: config,
+			axisName: axisName,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
@@ -844,13 +839,14 @@ var Axis = function () {
 		return $$.isTimeSeries() && tickValues && !(0, _util.isFunction)(tickValues) && (newTickValues = tickValues.map(function (v) {
 			return $$.parseDate(v);
 		})), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), (0, _util.isEmpty)(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), axis;
-	}, Axis.prototype.getYAxis = function getYAxis(scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+	}, Axis.prototype.getYAxis = function getYAxis(axisName, scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		var $$ = this.owner,
 		    config = $$.config,
 		    axisParams = {
 			withOuterTick: withOuterTick,
 			withoutTransition: withoutTransition,
 			config: config,
+			axisName: axisName,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
 		},
 		    axis = (0, _bb2.default)(axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
@@ -1003,7 +999,7 @@ var Axis = function () {
 			var targetsToShow = $$.filterTargetsToShow($$.data.targets),
 			    scale = void 0,
 			    axis = void 0;
-			/^y2?$/.test(id) ? (scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id)), axis = this.getYAxis(scale, $$[id + "Orient"], config["axis_" + id + "_tick_format"], $$[id + "AxisTickValues"], !1, !0, !0)) : (scale = $$.x.copy().domain($$.getXDomain(targetsToShow)), axis = this.getXAxis(scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, !1, !0, !0), this.updateXAxisTickValues(targetsToShow, axis)), dummy = (0, _d3Selection.select)("body").append("div").classed("bb", !0), svg = dummy.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px"), svg.append("g").call(axis).each(function () {
+			/^y2?$/.test(id) ? (scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id)), axis = this.getYAxis(id, scale, $$[id + "Orient"], config["axis_" + id + "_tick_format"], $$[id + "AxisTickValues"], !1, !0, !0)) : (scale = $$.x.copy().domain($$.getXDomain(targetsToShow)), axis = this.getXAxis("x", scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, !1, !0, !0), this.updateXAxisTickValues(targetsToShow, axis)), dummy = (0, _d3Selection.select)("body").append("div").classed("bb", !0), svg = dummy.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px"), svg.append("g").call(axis).each(function () {
 				(0, _d3Selection.select)(this).selectAll("text").each(function () {
 					var boxWidth = this.getBoundingClientRect().width;
 
@@ -1690,10 +1686,9 @@ exports.default = function () {
 
 				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
 			},
-			    axisType = getAxisByOrient(orient, rotate),
-			    tickTextPos = axisType ? params.config["axis_" + axisType + "_tick_text_position"] : { x: 0, y: 0 };
+			    tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ? params.config["axis_" + params.axisName + "_tick_text_position"] : { x: 0, y: 0 };
 
-			// Get axis.tick.text.position option value
+			// get the axis' tick position configuration
 
 
 			if (tspan.attr("x", isTopBottom ? 0 : 9 * sign).attr("dx", function () {
@@ -1801,17 +1796,6 @@ var _d3Scale = __webpack_require__(4),
 		    w = box.width;
 		h && w && (size.h = h, size.w = w), el.text("");
 	}), getSizeFor1Char.size = size;
-},
-    getAxisByOrient = function getAxisByOrient(orient, isRotate) {
-	return (isRotate ? {
-		left: "x",
-		bottom: "y",
-		top: "y2"
-	} : {
-		bottom: "x",
-		left: "y",
-		right: "y2"
-	})[orient];
 };
 
 // Features:
@@ -1827,13 +1811,6 @@ var _d3Scale = __webpack_require__(4),
  */
 
 
-/**
- * Get axis string by orient
- * @param {String} orient Orientation string - top|bottom|left|right
- * @param {Boolean} isRotate Whether chart is rotated
- * @return {String} x|y|y2
- * @private
- */
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -1957,7 +1934,7 @@ var Options = function Options() {
 																				bindto: "#chart",
 
 																				/**
-                     * Set clip-path property of chart element
+                     * Set 'clip-path' attribute for chart element
                      * - **NOTE:**
                      *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
                      *  > Is to make chart element positioned over axis element.
@@ -1966,6 +1943,7 @@ var Options = function Options() {
                      * @type {Boolean}
                      * @default true
                      * @example
+                     * // don't set 'clip-path' attribute
                      * clipPath: false
                      */
 																				clipPath: !0,
@@ -2083,7 +2061,7 @@ var Options = function Options() {
                      * @type {Object}
                      * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
                      *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
-                     * @property {Boolean} [interaction.brighten=true]
+                     * @property {Boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
                      * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
                      * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
                      * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
@@ -3099,6 +3077,18 @@ var Options = function Options() {
 																				axis_rotated: !1,
 
 																				/**
+                     * Set clip-path attribute for x axis element
+                     * @name axis․x․clipPath
+                     * @memberOf Options
+                     * @type {Boolean}
+                     * @default true
+                     * @example
+                     * // don't set 'clip-path' attribute
+                     * clipPath: false
+                     */
+																				axis_x_clipPath: !0,
+
+																				/**
                      * Show or hide x axis.
                      * @name axis․x․show
                      * @memberOf Options
@@ -3557,6 +3547,18 @@ var Options = function Options() {
                      * }
                      */
 																				axis_x_label: {},
+
+																				/**
+                     * Set clip-path attribute for y axis element
+                     * @name axis․y․clipPath
+                     * @memberOf Options
+                     * @type {Boolean}
+                     * @default true
+                     * @example
+                     * // don't set 'clip-path' attribute
+                     * clipPath: false
+                     */
+																				axis_y_clipPath: !0,
 
 																				/**
                      * Show or hide y axis.
@@ -4797,7 +4799,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return $$.xAxis.tickOffset();
 		}), $$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
 			return d % 1 ? 0 : $$.subXAxis.tickOffset();
-		}), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.xAxis = $$.axis.getXAxis($$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis($$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer), $$.yAxis = $$.axis.getYAxis($$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), $$.y2Axis = $$.axis.getYAxis($$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer), $$.updateArc && $$.updateArc();
+		}), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer), $$.yAxis = $$.axis.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer), $$.updateArc && $$.updateArc();
 	}
 }); /**
      * Copyright (c) 2017 NAVER Corp.
@@ -9294,6 +9296,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	getClipPath: function getClipPath(id) {
+		var $$ = this,
+		    config = $$.config;
+
+
+		if (!config.clipPath && /-clip$/.test(id) || !config.axis_x_clipPath && /-clip-xaxis$/.test(id) || !config.axis_y_clipPath && /-clip-yaxis$/.test(id)) return null;
+
 		var isIE9 = window.navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
 
 		return "url(" + (isIE9 ? "" : document.URL.split("#")[0]) + "#" + id + ")";
@@ -9615,7 +9623,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @param {Number} index
   */
 	togglePoint: function togglePoint(selected, target, d, i) {
-		selected ? this.selectPoint(target, d, i) : this.unselectPoint(target, d, i);
+		var method = (selected ? "" : "un") + "selectPoint";
+
+		this[method](target, d, i);
 	},
 
 
@@ -9626,9 +9636,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @param {Object} data
   */
 	selectPath: function selectPath(target, d) {
-		var $$ = this;
-
-		$$.config.data_onselected.call($$, d, target.node()), $$.config.interaction_brighten && target.transition().duration(100).style("fill", function () {
+		var $$ = this,
+		    config = $$.config;
+		config.data_onselected.call($$, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
 			return (0, _d3Color.rgb)($$.color(d)).brighter(.75);
 		});
 	},
@@ -9641,9 +9651,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @param {Object} data
   */
 	unselectPath: function unselectPath(target, d) {
-		var $$ = this;
-
-		$$.config.data_onunselected.call($$, d, target.node()), $$.config.interaction_brighten && target.transition().duration(100).style("fill", function () {
+		var $$ = this,
+		    config = $$.config;
+		config.data_onunselected.call($$, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
 			return $$.color(d);
 		});
 	},
@@ -9658,7 +9668,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @param {Number} index
   */
 	togglePath: function togglePath(selected, target, d, i) {
-		selected ? this.selectPath(target, d, i) : this.unselectPath(target, d, i);
+		var method = (selected ? "" : "un") + "selectPath";
+
+		this[method](target, d, i);
 	},
 
 
@@ -9674,7 +9686,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    toggle = void 0;
 
 
-		return that.nodeName === "path" ? that.nodeName === "path" && (toggle = $$.togglePath) : $$.isStepType(d) ? toggle = function () {} : toggle = $$.togglePoint, toggle;
+		return that.nodeName === "path" ? that.nodeName === "path" && (toggle = $$.togglePath) : toggle = $$.isStepType(d) ? function () {} : // circle is hidden in step chart, so treat as within the click area
+		$$.togglePoint, toggle;
 	},
 
 
@@ -9696,9 +9709,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		if (config.data_selection_enabled && config.data_selection_isselectable(d)) {
 			if (!config.data_selection_multiple) {
-				var selecter = "." + _classes2.default.shapes;
+				var selector = "." + _classes2.default.shapes;
 
-				config.data_selection_grouped && (selecter = "." + selecter + $$.getTargetSelectorSuffix(d.id)), $$.main.selectAll("" + selecter).selectAll("." + _classes2.default.shape).each(function (d, i) {
+				config.data_selection_grouped && (selector += $$.getTargetSelectorSuffix(d.id)), $$.main.selectAll(selector).selectAll("." + _classes2.default.shape).each(function (d, i) {
 					var shape = (0, _d3Selection.select)(this);
 
 					shape.classed(_classes2.default.SELECTED) && (toggledShape = shape, toggle(!1, shape.classed(_classes2.default.SELECTED, !1), d, i));
@@ -10730,12 +10743,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * chart.toggle(["data1", "data3"]);
   */
 	toggle: function toggle(targetIds) {
-		var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-		    that = this,
-		    $$ = this.internal;
-		$$.mapToTargetIds(targetIds).forEach(function (targetId) {
-			$$.isTargetToShow(targetId) ? that.hide(targetId, options) : that.show(targetId, options);
-		});
+		var _this = this,
+		    options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
+		    $$ = this.internal,
+		    targets = { show: [], hide: [] };
+
+		// sort show & hide target ids
+		$$.mapToTargetIds(targetIds).forEach(function (id) {
+			return targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id);
+		}), targets.show.length && this.show(targets.show, options), targets.hide.length && setTimeout(function () {
+			return _this.hide(targets.hide, options);
+		}, 0);
 	}
 });
 
