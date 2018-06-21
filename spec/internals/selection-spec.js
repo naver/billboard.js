@@ -110,7 +110,36 @@ describe("SELECTION", () => {
 				expect(spySelected.calledOnce).to.be.true;
 				expect(spyUnSelected.calledOnce).to.be.true;
 			});
-		});
 
+			it("set options selection.grouped = true", () => {
+				args.data.selection.grouped = true;
+			});
+
+			it("grouped selections & onunselected callback", () => {
+				let circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
+				let rect = d3.select(`.${CLASS.eventRect}-3`).node();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(spySelected.calledTwice).to.be.true;
+
+				circle = d3.select(`.${CLASS.shape}-4`).node().getBBox();
+				rect = d3.select(`.${CLASS.eventRect}-4`).node();
+
+				util.fireEvent(rect, "click", {
+					clientX: circle.x,
+					clientY: circle.y
+				}, chart);
+
+				expect(spySelected.callCount).to.be.equal(4);
+				expect(spyUnSelected.calledTwice).to.be.true;
+
+				// should be selected 2 data points only
+				expect(d3.selectAll(`.${CLASS.SELECTED}`).size() === 2).to.be.true;
+			});
+		});
 	});
 });

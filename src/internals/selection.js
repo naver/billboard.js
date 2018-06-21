@@ -27,7 +27,8 @@ extend(ChartInternal.prototype, {
 			.call($$.api, d, target.node());
 
 		// add selected-circle on low layer g
-		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`).selectAll(`.${CLASS.selectedCircle}-${i}`)
+		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.data([d])
 			.enter()
 			.append("circle")
@@ -52,8 +53,10 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.config.data_onunselected.call($$.api, d, target.node());
+
 		// remove selected-circle from low layer g
-		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`).selectAll(`.${CLASS.selectedCircle}-${i}`)
+		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.transition()
 			.duration(100)
 			.attr("r", 0)
@@ -69,7 +72,9 @@ extend(ChartInternal.prototype, {
 	 * @param {Number} index
 	 */
 	togglePoint(selected, target, d, i) {
-		selected ? this.selectPoint(target, d, i) : this.unselectPoint(target, d, i);
+		const method = `${selected ? "" : "un"}selectPoint`;
+
+		this[method](target, d, i);
 	},
 
 	/**
@@ -80,9 +85,11 @@ extend(ChartInternal.prototype, {
 	 */
 	selectPath(target, d) {
 		const $$ = this;
+		const config = $$.config;
 
-		$$.config.data_onselected.call($$, d, target.node());
-		if ($$.config.interaction_brighten) {
+		config.data_onselected.call($$, d, target.node());
+
+		if (config.interaction_brighten) {
 			target.transition().duration(100)
 				.style("fill", () => d3Rgb($$.color(d)).brighter(0.75));
 		}
@@ -96,9 +103,11 @@ extend(ChartInternal.prototype, {
 	 */
 	unselectPath(target, d) {
 		const $$ = this;
+		const config = $$.config;
 
-		$$.config.data_onunselected.call($$, d, target.node());
-		if ($$.config.interaction_brighten) {
+		config.data_onunselected.call($$, d, target.node());
+
+		if (config.interaction_brighten) {
 			target.transition().duration(100)
 				.style("fill", () => $$.color(d));
 		}
@@ -113,7 +122,9 @@ extend(ChartInternal.prototype, {
 	 * @param {Number} index
 	 */
 	togglePath(selected, target, d, i) {
-		selected ? this.selectPath(target, d, i) : this.unselectPath(target, d, i);
+		const method = `${selected ? "" : "un"}selectPath`;
+
+		this[method](target, d, i);
 	},
 
 	/**
@@ -128,12 +139,9 @@ extend(ChartInternal.prototype, {
 		let toggle;
 
 		if (that.nodeName !== "path") {
-			if ($$.isStepType(d)) {
-				// circle is hidden in step chart, so treat as within the click area
-				toggle = () => {}; // TODO: how to select step chart?
-			} else {
-				toggle = $$.togglePoint;
-			}
+			toggle = $$.isStepType(d) ?
+				() => {} : // circle is hidden in step chart, so treat as within the click area
+				$$.togglePoint;
 		} else if (that.nodeName === "path") {
 			toggle = $$.togglePath;
 		}
@@ -158,13 +166,13 @@ extend(ChartInternal.prototype, {
 
 		if (config.data_selection_enabled && config.data_selection_isselectable(d)) {
 			if (!config.data_selection_multiple) {
-				let selecter = `.${CLASS.shapes}`;
+				let selector = `.${CLASS.shapes}`;
 
 				if (config.data_selection_grouped) {
-					selecter = `.${selecter}${$$.getTargetSelectorSuffix(d.id)}`;
+					selector += $$.getTargetSelectorSuffix(d.id);
 				}
 
-				$$.main.selectAll(`${selecter}`)
+				$$.main.selectAll(selector)
 					.selectAll(`.${CLASS.shape}`)
 					.each(function(d, i) {
 						const shape = d3Select(this);
