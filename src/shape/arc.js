@@ -552,9 +552,8 @@ extend(ChartInternal.prototype, {
 
 					if (updated) {
 						arcData = $$.convertToArcData(updated);
-						if ($$.toggleShape) {
-							$$.toggleShape(this, arcData, i);
-						}
+
+						$$.toggleShape && $$.toggleShape(this, arcData, i);
 						$$.config.data_onclick.call($$.api, arcData, this);
 					}
 				});
@@ -578,6 +577,7 @@ extend(ChartInternal.prototype, {
 						if ($$.transiting) { // skip while transiting
 							return;
 						}
+
 						const updated = $$.updateAngle(d);
 						const arcData = updated ? $$.convertToArcData(updated) : null;
 

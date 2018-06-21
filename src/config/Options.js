@@ -44,7 +44,7 @@ export default class Options {
 			bindto: "#chart",
 
 			/**
-			 * Set clip-path property of chart element
+			 * Set 'clip-path' attribute for chart element
 			 * - **NOTE:**
 			 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
 			 *  > Is to make chart element positioned over axis element.
@@ -53,6 +53,7 @@ export default class Options {
 			 * @type {Boolean}
 			 * @default true
 			 * @example
+			 * // don't set 'clip-path' attribute
 			 * clipPath: false
 			 */
 			clipPath: true,
@@ -170,7 +171,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
 			 *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
-			 * @property {Boolean} [interaction.brighten=true]
+			 * @property {Boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
 			 * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 			 * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
 			 * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
@@ -1182,6 +1183,18 @@ export default class Options {
 			axis_rotated: false,
 
 			/**
+			 * Set clip-path attribute for x axis element
+			 * @name axis․x․clipPath
+			 * @memberOf Options
+			 * @type {Boolean}
+			 * @default true
+			 * @example
+			 * // don't set 'clip-path' attribute
+			 * clipPath: false
+			 */
+			axis_x_clipPath: true,
+
+			/**
 			 * Show or hide x axis.
 			 * @name axis․x․show
 			 * @memberOf Options
@@ -1641,6 +1654,18 @@ export default class Options {
 			 * }
 			 */
 			axis_x_label: {},
+
+			/**
+			 * Set clip-path attribute for y axis element
+			 * @name axis․y․clipPath
+			 * @memberOf Options
+			 * @type {Boolean}
+			 * @default true
+			 * @example
+			 * // don't set 'clip-path' attribute
+			 * clipPath: false
+			 */
+			axis_y_clipPath: true,
 
 			/**
 			 * Show or hide y axis.

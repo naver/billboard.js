@@ -95,6 +95,8 @@ export default class ChartInternal {
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
 		$$.clipIdForGrid = `${$$.clipId}-grid`;
 		$$.clipIdForSubchart = `${$$.clipId}-subchart`;
+
+		// Define 'clip-path' attribute values
 		$$.clipPath = $$.getClipPath($$.clipId);
 		$$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis);
 		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
@@ -318,9 +320,8 @@ export default class ChartInternal {
 		!config.clipPath && $$.axis.init();
 
 		// Define g for chart area
-		const g = main.append("g").attr("class", CLASS.chart);
-
-		config.clipPath && g.attr("clip-path", $$.clipPath);
+		main.append("g").attr("class", CLASS.chart)
+			.attr("clip-path", $$.clipPath);
 
 		// Grid lines
 		config.grid_lines_front && $$.initGridLines();

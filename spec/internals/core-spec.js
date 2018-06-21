@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";
 
 describe("CORE", function() {
 	let chart;
@@ -172,7 +173,7 @@ describe("CORE", function() {
 		});
 
 		it("should generate a chart", () => {
-			const ticks = chart.internal.main.select(".bb-axis-x")
+			const ticks = chart.internal.main.select(`.${CLASS.axisX}`)
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
@@ -194,11 +195,12 @@ describe("CORE", function() {
 					}
 				}
 			};
+
 			expect(true).to.be.ok;
 		});
 
 		it("should generate a chart", () => {
-			const ticks = chart.internal.main.select(".bb-axis-x")
+			const ticks = chart.internal.main.select(`.${CLASS.axisX}`)
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
@@ -219,33 +221,33 @@ describe("CORE", function() {
 		});
 
 		it("chart should have clip-path property", () => {
-			const main = chart.internal.main.select(".bb-chart");
+			const main = chart.internal.main.select(`.${CLASS.chart}`);
 
 			expect(main.attr("clip-path")).to.not.be.null;
 		});
 
 		it("check for chart node's position", () => {
-			const next = chart.internal.main.select(".bb-axis-y2").node().nextSibling;
+			const next = chart.internal.main.select(`.${CLASS.axisY2}`).node().nextSibling;
 
 			// axis element should be the last positioned
 			expect(next).to.be.null;
 		});
 
-		it("set option clipPath=true", () => {
+		it("set option clipPath=false", () => {
 			args.clipPath = false;
 		});
 
 		it("clip-path property should be null", () => {
-			const main = chart.internal.main.select(".bb-chart");
+			const main = chart.internal.main.select(`.${CLASS.chart}`);
 
 			expect(main.attr("clip-path")).to.be.null;
 		});
 
 		it("check for chart node's position", () => {
-			const previous = chart.internal.main.select(".bb-chart").node().previousSibling;
+			const previous = chart.internal.main.select(`.${CLASS.chart}`).node().previousSibling;
 
 			// chart element should positioned after axis element
-			expect(d3.select(previous).classed("bb-axis-y2")).to.be.true;
+			expect(d3.select(previous).classed(CLASS.axisY2)).to.be.true;
 		});
 	});
 });

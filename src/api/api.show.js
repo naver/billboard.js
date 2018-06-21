@@ -108,13 +108,17 @@ extend(Chart.prototype, {
 	 * chart.toggle(["data1", "data3"]);
 	 */
 	toggle(targetIds, options = {}) {
-		const that = this;
 		const $$ = this.internal;
+		const targets = {show: [], hide: []};
 
-		$$.mapToTargetIds(targetIds).forEach(targetId => {
-			$$.isTargetToShow(targetId) ?
-				that.hide(targetId, options) : that.show(targetId, options);
-		});
+		// sort show & hide target ids
+		$$.mapToTargetIds(targetIds)
+			.forEach(id => targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id));
+
+		// perform show & hide task separately
+		// https://github.com/naver/billboard.js/issues/454
+		targets.show.length && this.show(targets.show, options);
+		targets.hide.length && setTimeout(() => this.hide(targets.hide, options), 0);
 	}
 });
 
