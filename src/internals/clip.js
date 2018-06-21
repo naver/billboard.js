@@ -7,6 +7,15 @@ import {extend} from "./util";
 
 extend(ChartInternal.prototype, {
 	getClipPath(id) {
+		const $$ = this;
+		const config = $$.config;
+
+		if ((!config.clipPath && /-clip$/.test(id)) ||
+			(!config.axis_x_clipPath && /-clip-xaxis$/.test(id)) ||
+			(!config.axis_y_clipPath && /-clip-yaxis$/.test(id))) {
+			return null;
+		}
+
 		const isIE9 = window.navigator.appVersion
 			.toLowerCase().indexOf("msie 9.") >= 0;
 

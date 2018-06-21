@@ -795,6 +795,43 @@ var demos = {
 				}
 			}
 		},
+		XAxisTickPosition: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Jhon", "Aron", "David", "Chris", "Tyler", "Mike"],
+						["data1", 130, 200, 320, 400, 530, 750],
+						["data2", 130, 10, 130, 200, 150, 250],
+						["data3", 130, 50, 10, 200, 250, 150]
+					],
+					type: "bar",
+					groups: [["data1", "data2", "data3"]]
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category",
+						clipPath: false,
+						inner: false,
+						tick: {
+							text: {
+								position: {
+									x: 35,
+									y: -23
+								}
+							}
+						}
+					},
+					y: {
+						show: false
+					}
+				}
+			},
+			style: [
+				"#XAxisTickPosition .bb-axis-x line, .bb-axis-x path { visibility: hidden; }"
+			]
+		},
 		XAxisTimezone: {
 			options: {
 				data: {
