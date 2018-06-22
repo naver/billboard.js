@@ -219,4 +219,4 @@ div.row {
 #RadarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }
 
 /* Style For tick position */
-#XAxisTickPosition .bb-axis-x line, .bb-axis-x path { visibility: hidden; }
+#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }

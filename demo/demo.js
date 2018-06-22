@@ -829,7 +829,7 @@ var demos = {
 				}
 			},
 			style: [
-				"#XAxisTickPosition .bb-axis-x line, .bb-axis-x path { visibility: hidden; }"
+				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
 			]
 		},
 		XAxisTimezone: {
