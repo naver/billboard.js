@@ -2664,7 +2664,7 @@ export default class Options {
 			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
 			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
-			 * @property {Boolean} [tooltip.linked.name] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
+			 * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
 			 * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
 			 *  Specified function receives x of the data point to show.
 			 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
