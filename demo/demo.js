@@ -1,166 +1,6 @@
 /* eslint-disable */
 var demos = {
 	Chart: {
-		LineChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					]
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data1", 230, 190, 300, 500, 300, 400]
-							]
-						});
-					}, 1000),
-
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data3", 130, 150, 200, 300, 200, 100]
-							]
-						});
-					}, 1500),
-
-					setTimeout(function() {
-						chart.unload({
-							ids: "data1"
-						});
-					}, 2000)
-				];
-			}
-		},
-		TimeseriesChart: {
-			options: {
-				data: {
-					x: "x",
-					//  xFormat: "%Y%m%d", // "xFormat" can be used as custom format of "x"
-					columns: [
-						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-						// ["x", "20130101", "20130102", "20130103", "20130104", "20130105", "20130106"],
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 340, 200, 500, 250, 350]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							format: '%Y-%m-%d'
-						}
-					}
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data3", 400, 500, 450, 700, 600, 500]
-							]
-						});
-					}, 1000)
-				];
-			}
-		},
-		SplineChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					type: "spline"
-				}
-			}
-		},
-		SimpleXYLineChart: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", 30, 50, 100, 230, 300, 310],
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 300, 200, 300, 250, 450]
-					]
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data1", 100, 250, 150, 200, 100, 350]
-							]
-						});
-					}, 1000),
-
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data3", 80, 150, 100, 180, 80, 150]
-							]
-						});
-					}, 1500),
-
-					setTimeout(function() {
-						chart.unload({
-							ids: "data2"
-						});
-					}, 2000)
-				];
-			}
-		},
-		MultipleXYLineChart: {
-			options: {
-				data: {
-					xs: {
-						"data1": "x1",
-						"data2": "x2",
-					},
-					columns: [
-						["x1", 10, 30, 45, 50, 70, 100],
-						["x2", 30, 50, 75, 100, 120],
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 20, 180, 240, 100, 190]
-					]
-				}
-			}
-		},
-		LineChartWithRegions: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					],
-					regions: {
-						"data1": [{"start": 1, "end": 2, "style": "dashed"}, {"start": 3}], // currently "dashed" style only
-						"data2": [{"end": 3}]
-					}
-				}
-			}
-		},
-		StepChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 300, 350, 300, 0, 0, 100],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					types: {
-						data1: "step",
-						data2: 'area-step'
-					}
-				}
-			}
-		},
 		AreaChart: {
 			options: {
 				data: {
@@ -240,24 +80,6 @@ var demos = {
 				];
 			}
 		},
-		StackedAreaChart: {
-			options: {
-				data: {
-					columns: [
-						["data1", 300, 350, 300, 0, 0, 120],
-						["data2", 130, 100, 140, 200, 150, 50]
-					],
-					types: {
-						data1: 'area-spline',
-						data2: 'area-spline'
-						// "line", "spline", "step", "area", 'area-step' are also available to stack
-					},
-					groups: [
-						["data1", "data2"]
-					]
-				}
-			}
-		},
 		BarChart: {
 			options: {
 				data: {
@@ -287,68 +109,26 @@ var demos = {
 				];
 			}
 		},
-		StackedBarChart: {
+		BubbleChart: {
 			options: {
 				data: {
 					columns: [
-						["data1", -30, 200, 200, 400, -150, 250],
-						["data2", 130, 100, -100, 200, -150, 50],
-						["data3", -230, 200, 200, -300, 250, 250]
+						["data1", 30, 350, 200, 380, 150, 250, 50, 80, 55, 220],
+						["data2", 130, 100, 10, 200, 80, 50, 200, 123, 185, 98],
+						["data3", 230, 153, 85, 300, 250, 120, 5, 84, 99, 289]
 					],
-					type: "bar",
-					groups: [
-						["data1", "data2"]
-					]
+					type: "bubble",
+					labels: true
 				},
-				grid: {
-					y: {
-						lines: [{value: 0}]
-					}
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.groups([["data1", "data2", "data3"]])
-					}, 1000),
-
-					setTimeout(function() {
-						chart.load({
-							columns: [["data4", 100, -50, 150, 200, -300, -100]]
-						});
-					}, 1500),
-
-					setTimeout(function() {
-						chart.groups([["data1", "data2", "data3", "data4"]])
-					}, 2000)
-				];
-			}
-		},
-		ScatterPlot: {
-			options: {
-				data: {
-					xs: {
-						setosa: "setosa_x",
-						versicolor: "versicolor_x",
-					},
-					// iris data from R
-					columns: [
-						["setosa_x", 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3.0, 3.0, 4.0, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3.0, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3.0, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3.0, 3.8, 3.2, 3.7, 3.3],
-						["versicolor_x", 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2.0, 3.0, 2.2, 2.9, 2.9, 3.1, 3.0, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3.0, 2.8, 3.0, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3.0, 3.4, 3.1, 2.3, 3.0, 2.5, 2.6, 3.0, 2.6, 2.3, 2.7, 3.0, 2.9, 2.9, 2.5, 2.8],
-						["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
-						["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
-					],
-					type: "scatter"
+				bubble: {
+					maxR: 50
 				},
 				axis: {
 					x: {
-						label: "Sepal.Width",
-						tick: {
-							fit: false
-						}
+						type: "category"
 					},
 					y: {
-						label: "Petal.Width"
+						max: 450
 					}
 				}
 			},
@@ -356,69 +136,53 @@ var demos = {
 				chart.timer = [
 					setTimeout(function() {
 						chart.load({
-							xs: {
-								virginica: "virginica_x"
-							},
 							columns: [
-								["virginica_x", 3.3, 2.7, 3.0, 2.9, 3.0, 3.0, 2.5, 2.9, 2.5, 3.6, 3.2, 2.7, 3.0, 2.5, 2.8, 3.2, 3.0, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2, 2.8, 3.0, 2.8, 3.0, 2.8, 3.8, 2.8, 2.8, 2.6, 3.0, 3.4, 3.1, 3.0, 3.1, 3.1, 3.1, 2.7, 3.2, 3.3, 3.0, 2.5, 3.0, 3.4, 3.0],
-								["virginica", 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5, 2.0, 1.9, 2.1, 2.0, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2.0, 2.0, 1.8, 2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2.0, 2.2, 1.5, 1.4, 2.3, 2.4, 1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2.0, 2.3, 1.8],
+								["data1", 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
 							]
 						});
 					}, 1000),
 
 					setTimeout(function() {
-						chart.unload({
-							ids: "setosa"
+						chart.load({
+							columns: [
+								["data2", 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
+							]
 						});
 					}, 2000),
 
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								["virginica", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+								["data3", 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
 							]
 						});
 					}, 3000)
 				];
 			}
 		},
-		PieChart: {
+		CombinationChart: {
 			options: {
 				data: {
-					// iris data from R
 					columns: [
-						["data1", 30],
-						["data2", 120],
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250],
+						["data4", 200, 130, 90, 240, 130, 220],
+						["data5", 130, 120, 150, 140, 160, 150],
+						["data6", 90, 70, 20, 50, 60, 120],
+						["data7", 283, 170, 275, 143, 220, 255]
 					],
-					type: "pie",
-					onclick: function(d, i) {
-						console.log("onclick", d, i);
+					type: "bar",
+					types: {
+						data3: "spline",
+						data4: "line",
+						data6: "area",
+						data7: "step"
 					},
-					onover: function(d, i) {
-						console.log("onover", d, i);
-					},
-					onout: function(d, i) {
-						console.log("onout", d, i);
-					}
+					groups: [
+						["data1", "data2"]
+					]
 				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.load({
-							columns: [
-								["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
-								["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
-								["virginica", 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5, 2.0, 1.9, 2.1, 2.0, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2.0, 2.0, 1.8, 2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2.0, 2.2, 1.5, 1.4, 2.3, 2.4, 1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2.0, 2.3, 1.8],
-							]
-						});
-					}, 1500),
-
-					setTimeout(function() {
-						chart.unload({ ids: "data1" });
-						chart.unload({ ids: "data2" });
-					}, 2500)
-				]
 			}
 		},
 		DonutChart: {
@@ -541,26 +305,88 @@ var demos = {
 				];
 			}
 		},
-		BubbleChart: {
+		LineChart: {
 			options: {
 				data: {
 					columns: [
-						["data1", 30, 350, 200, 380, 150, 250, 50, 80, 55, 220],
-						["data2", 130, 100, 10, 200, 80, 50, 200, 123, 185, 98],
-						["data3", 230, 153, 85, 300, 250, 120, 5, 84, 99, 289]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["data1", 230, 190, 300, 500, 300, 400]
+							]
+						});
+					}, 1000),
+
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["data3", 130, 150, 200, 300, 200, 100]
+							]
+						});
+					}, 1500),
+
+					setTimeout(function() {
+						chart.unload({
+							ids: "data1"
+						});
+					}, 2000)
+				];
+			}
+		},
+		LineChartWithRegions: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
 					],
-					type: "bubble",
-					labels: true
-				},
-				bubble: {
-					maxR: 50
-				},
-				axis: {
-					x: {
-						type: "category"
+					regions: {
+						"data1": [{"start": 1, "end": 2, "style": "dashed"}, {"start": 3}], // currently "dashed" style only
+						"data2": [{"end": 3}]
+					}
+				}
+			}
+		},
+		MultipleXYLineChart: {
+			options: {
+				data: {
+					xs: {
+						"data1": "x1",
+						"data2": "x2",
 					},
-					y: {
-						max: 450
+					columns: [
+						["x1", 10, 30, 45, 50, 70, 100],
+						["x2", 30, 50, 75, 100, 120],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 20, 180, 240, 100, 190]
+					]
+				}
+			}
+		},
+		PieChart: {
+			options: {
+				data: {
+					// iris data from R
+					columns: [
+						["data1", 30],
+						["data2", 120],
+					],
+					type: "pie",
+					onclick: function(d, i) {
+						console.log("onclick", d, i);
+					},
+					onover: function(d, i) {
+						console.log("onover", d, i);
+					},
+					onout: function(d, i) {
+						console.log("onout", d, i);
 					}
 				}
 			},
@@ -569,7 +395,118 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								["data1", 100, 50, 150, 200, 100, 350, 58, 210, 80, 126]
+								["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+								["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+								["virginica", 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5, 2.0, 1.9, 2.1, 2.0, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2.0, 2.0, 1.8, 2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2.0, 2.2, 1.5, 1.4, 2.3, 2.4, 1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2.0, 2.3, 1.8],
+							]
+						});
+					}, 1500),
+
+					setTimeout(function() {
+						chart.unload({ ids: "data1" });
+						chart.unload({ ids: "data2" });
+					}, 2500)
+				]
+			}
+		},
+		RadarChart: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
+						["data1", 330, 350, 200, 380, 150],
+						["data2", 130, 100, 30, 200, 80],
+						["data3", 230, 153, 85, 300, 250]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 400
+					},
+					level: {
+						depth: 4
+					}
+				}
+			}
+		},
+		ScatterPlot: {
+			options: {
+				data: {
+					xs: {
+						setosa: "setosa_x",
+						versicolor: "versicolor_x",
+					},
+					// iris data from R
+					columns: [
+						["setosa_x", 3.5, 3.0, 3.2, 3.1, 3.6, 3.9, 3.4, 3.4, 2.9, 3.1, 3.7, 3.4, 3.0, 3.0, 4.0, 4.4, 3.9, 3.5, 3.8, 3.8, 3.4, 3.7, 3.6, 3.3, 3.4, 3.0, 3.4, 3.5, 3.4, 3.2, 3.1, 3.4, 4.1, 4.2, 3.1, 3.2, 3.5, 3.6, 3.0, 3.4, 3.5, 2.3, 3.2, 3.5, 3.8, 3.0, 3.8, 3.2, 3.7, 3.3],
+						["versicolor_x", 3.2, 3.2, 3.1, 2.3, 2.8, 2.8, 3.3, 2.4, 2.9, 2.7, 2.0, 3.0, 2.2, 2.9, 2.9, 3.1, 3.0, 2.7, 2.2, 2.5, 3.2, 2.8, 2.5, 2.8, 2.9, 3.0, 2.8, 3.0, 2.9, 2.6, 2.4, 2.4, 2.7, 2.7, 3.0, 3.4, 3.1, 2.3, 3.0, 2.5, 2.6, 3.0, 2.6, 2.3, 2.7, 3.0, 2.9, 2.9, 2.5, 2.8],
+						["setosa", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+						["versicolor", 1.4, 1.5, 1.5, 1.3, 1.5, 1.3, 1.6, 1.0, 1.3, 1.4, 1.0, 1.5, 1.0, 1.4, 1.3, 1.4, 1.5, 1.0, 1.5, 1.1, 1.8, 1.3, 1.5, 1.2, 1.3, 1.4, 1.4, 1.7, 1.5, 1.0, 1.1, 1.0, 1.2, 1.6, 1.5, 1.6, 1.5, 1.3, 1.3, 1.3, 1.2, 1.4, 1.2, 1.0, 1.3, 1.2, 1.3, 1.3, 1.1, 1.3],
+					],
+					type: "scatter"
+				},
+				axis: {
+					x: {
+						label: "Sepal.Width",
+						tick: {
+							fit: false
+						}
+					},
+					y: {
+						label: "Petal.Width"
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							xs: {
+								virginica: "virginica_x"
+							},
+							columns: [
+								["virginica_x", 3.3, 2.7, 3.0, 2.9, 3.0, 3.0, 2.5, 2.9, 2.5, 3.6, 3.2, 2.7, 3.0, 2.5, 2.8, 3.2, 3.0, 3.8, 2.6, 2.2, 3.2, 2.8, 2.8, 2.7, 3.3, 3.2, 2.8, 3.0, 2.8, 3.0, 2.8, 3.8, 2.8, 2.8, 2.6, 3.0, 3.4, 3.1, 3.0, 3.1, 3.1, 3.1, 2.7, 3.2, 3.3, 3.0, 2.5, 3.0, 3.4, 3.0],
+								["virginica", 2.5, 1.9, 2.1, 1.8, 2.2, 2.1, 1.7, 1.8, 1.8, 2.5, 2.0, 1.9, 2.1, 2.0, 2.4, 2.3, 1.8, 2.2, 2.3, 1.5, 2.3, 2.0, 2.0, 1.8, 2.1, 1.8, 1.8, 1.8, 2.1, 1.6, 1.9, 2.0, 2.2, 1.5, 1.4, 2.3, 2.4, 1.8, 1.8, 2.1, 2.4, 2.3, 1.9, 2.3, 2.5, 2.3, 1.9, 2.0, 2.3, 1.8],
+							]
+						});
+					}, 1000),
+
+					setTimeout(function() {
+						chart.unload({
+							ids: "setosa"
+						});
+					}, 2000),
+
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["virginica", 0.2, 0.2, 0.2, 0.2, 0.2, 0.4, 0.3, 0.2, 0.2, 0.1, 0.2, 0.2, 0.1, 0.1, 0.2, 0.4, 0.4, 0.3, 0.3, 0.3, 0.2, 0.4, 0.2, 0.5, 0.2, 0.2, 0.4, 0.2, 0.2, 0.2, 0.2, 0.4, 0.1, 0.2, 0.2, 0.2, 0.2, 0.1, 0.2, 0.2, 0.3, 0.3, 0.2, 0.6, 0.4, 0.3, 0.2, 0.2, 0.2, 0.2],
+							]
+						});
+					}, 3000)
+				];
+			}
+		},
+		SimpleXYLineChart: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", 30, 50, 100, 230, 300, 310],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 300, 200, 300, 250, 450]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["data1", 100, 250, 150, 200, 100, 350]
 							]
 						});
 					}, 1000),
@@ -577,48 +514,133 @@ var demos = {
 					setTimeout(function() {
 						chart.load({
 							columns: [
-								["data2", 305, 350, 55, 25, 335, 29, 258, 310, 180, 226]
+								["data3", 80, 150, 100, 180, 80, 150]
 							]
 						});
-					}, 2000),
+					}, 1500),
 
 					setTimeout(function() {
-						chart.load({
-							columns: [
-								["data3", 223, 121, 259, 247, 53, 159, 95, 111, 307, 337]
-							]
+						chart.unload({
+							ids: "data2"
 						});
-					}, 3000)
+					}, 2000)
 				];
 			}
 		},
-		CombinationChart: {
+		SplineChart: {
 			options: {
 				data: {
 					columns: [
-						["data1", 30, 20, 50, 40, 60, 50],
-						["data2", 200, 130, 90, 240, 130, 220],
-						["data3", 300, 200, 160, 400, 250, 250],
-						["data4", 200, 130, 90, 240, 130, 220],
-						["data5", 130, 120, 150, 140, 160, 150],
-						["data6", 90, 70, 20, 50, 60, 120],
-						["data7", 283, 170, 275, 143, 220, 255]
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
 					],
-					type: "bar",
+					type: "spline"
+				}
+			}
+		},
+		StackedAreaChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 120],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
 					types: {
-						data3: "spline",
-						data4: "line",
-						data6: "area",
-						data7: "step"
+						data1: 'area-spline',
+						data2: 'area-spline'
+						// "line", "spline", "step", "area", 'area-step' are also available to stack
 					},
 					groups: [
 						["data1", "data2"]
 					]
 				}
 			}
+		},
+		StackedBarChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", -30, 200, 200, 400, -150, 250],
+						["data2", 130, 100, -100, 200, -150, 50],
+						["data3", -230, 200, 200, -300, 250, 250]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2"]
+					]
+				},
+				grid: {
+					y: {
+						lines: [{value: 0}]
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.groups([["data1", "data2", "data3"]])
+					}, 1000),
+
+					setTimeout(function() {
+						chart.load({
+							columns: [["data4", 100, -50, 150, 200, -300, -100]]
+						});
+					}, 1500),
+
+					setTimeout(function() {
+						chart.groups([["data1", "data2", "data3", "data4"]])
+					}, 2000)
+				];
+			}
+		},
+		StepChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 100],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					types: {
+						data1: "step",
+						data2: 'area-step'
+					}
+				}
+			}
+		},
+		TimeseriesChart: {
+			options: {
+				data: {
+					x: "x",
+					//  xFormat: "%Y%m%d", // "xFormat" can be used as custom format of "x"
+					columns: [
+						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
+						// ["x", "20130101", "20130102", "20130103", "20130104", "20130105", "20130106"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: '%Y-%m-%d'
+						}
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["data3", 400, 500, 450, 700, 600, 500]
+							]
+						});
+					}, 1000)
+				];
+			}
 		}
 	},
-
 	Axis: {
 		CategoryAxis: {
 			options: {
@@ -772,6 +794,43 @@ var demos = {
 					}
 				}
 			}
+		},
+		XAxisTickPosition: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "John", "Aron", "David", "Chris", "Tyler", "Mike"],
+						["data1", 130, 200, 320, 400, 530, 750],
+						["data2", 130, 10, 130, 200, 150, 250],
+						["data3", 130, 50, 10, 200, 250, 150]
+					],
+					type: "bar",
+					groups: [["data1", "data2", "data3"]]
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category",
+						clipPath: false,
+						inner: false,
+						tick: {
+							text: {
+								position: {
+									x: 35,
+									y: -23
+								}
+							}
+						}
+					},
+					y: {
+						show: false
+					}
+				}
+			},
+			style: [
+				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
+			]
 		},
 		XAxisTimezone: {
 			options: {
@@ -2404,6 +2463,78 @@ d3.select(".chart_area")
 				},
 				pie: {
 					padding: 3
+				}
+			}
+		}
+	},
+	RadarChartOptions: {
+		RadarAxis: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E", "Data F", "Data G"],
+						["data1", 330, 350, 200, 380, 150, 100, 230],
+						["data2", 130, 100, 30, 200, 80, 200, 130]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 330,
+						line: {
+							show: false
+						},
+						text: {
+							show: false
+						}
+					},
+					level: {
+						text: {
+							show: false
+						}
+					}
+				}
+			},
+			style: [
+				"#RadarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
+			]
+		},
+		RadarLevel: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E", "Data F", "Data G", "Data H", "Data I"],
+						["data1", 330, 350, 200, 400, 150, 100, 230, 30, 95],
+						["data2", 130, 100, 30, 200, 80, 200, 130, 210, 195]
+					],
+					type: "radar"
+				},
+				radar: {
+					level: {
+						depth: 4,
+						show: false,
+						text: {
+							format: function(x) { return x + "%"; }
+						}
+					}
+				}
+			}
+		},
+		RadarSize: {
+			options: {
+				data: {
+					columns: [
+						["data1", 330, 350, 220, 400, 150, 330, 230, 390, 95, 195, 220]
+					],
+					type: "radar"
+				},
+				radar: {
+					size: {
+						ratio: 0.75
+					}
 				}
 			}
 		}

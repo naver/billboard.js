@@ -185,6 +185,13 @@ div.row {
     color: white;
 }
 
+/* for IE10+ */
+@media all and (-ms-high-contrast:none) {
+    #sidebar-wrapper .link a.github {
+        background-position-x: -23px;
+    }
+}
+
 /* Style For Region */
 #StyleForRegion .bb-region-0 {fill:red;}
 #StyleForRegion .bb-region.foo {fill:green;}
@@ -207,3 +214,9 @@ div.row {
 /* Style For Lines */
 #StyleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }
 #StyleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }
+
+/* Style For Radars */
+#RadarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }
+
+/* Style For tick position */
+#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }
