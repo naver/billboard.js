@@ -64,6 +64,24 @@ describe("API chart", () => {
 
 			expect(pie.selectAll("path").size()).to.be.equal(chart.data().length);
 		});
+
+		it("should be transformed line -> pie -> line", done => {
+			const main = chart.internal.main;
+			const pie = main.select(`.${CLASS.chartArcs}`);
+
+			chart.transform("pie");
+
+			setTimeout(() => {
+				chart.transform("line");
+			}, 500);
+
+			setTimeout(() => {
+				// pie should be redrawn
+				expect(pie.selectAll("path").size()).to.be.equal(0);
+
+				done();
+			}, 1000);
+		});
 	});
 
 	describe("groups()", () => {

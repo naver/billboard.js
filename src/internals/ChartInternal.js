@@ -711,7 +711,7 @@ export default class ChartInternal {
 		$$.redrawTitle && $$.redrawTitle();
 
 		// arc
-		$$.hasArcType(null, ["radar"]) && $$.redrawArc(duration, durationForExit, withTransform);
+		$$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform);
 
 		// radar
 		hasRadar && $$.redrawRadar();
