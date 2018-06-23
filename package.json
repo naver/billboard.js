@@ -65,7 +65,7 @@
     "cross-env": "^5.1.6",
     "css-loader": "^0.28.11",
     "docdash": "^0.4.0",
-    "eslint": "^4.19.1",
+    "eslint": "^5.0.0",
     "eslint-config-naver": "^2.0.0",
     "eslint-loader": "^2.0.0",
     "eslint-plugin-import": "^2.12.0",
