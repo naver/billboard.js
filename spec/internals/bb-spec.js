@@ -56,89 +56,87 @@ describe("Interface & initialization", () => {
 		expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
 	});
 
-	describe("check for auto resize", () => {
-		it("should resize correctly in flex container", done => {
-			// set flex container
-			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
-			const chart = util.generate({
-				bindto: "#flex-container",
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400],
-						["data2", 500, 800, 500, 2000]
-					]
-				}
+	it("should resize correctly in flex container", done => {
+		// set flex container
+		document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
+		const chart = util.generate({
+			bindto: "#flex-container",
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 500, 800, 500, 2000]
+				]
+			}
+		});
+
+		const chartWidth = +chart.internal.svg.attr("width");
+		const diff = 50;
+
+		// shrink width & resize
+		document.body.style.width = `${document.body.offsetWidth - diff}px`;
+		chart.internal.resizeFunction();
+
+		setTimeout(() => {
+			expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
+
+			// reset the body
+			document.body.innerHTML = "";
+			done();
+		}, 300);
+	});
+
+	it("height shouldn't be increased on resize event", done => {
+		const body = document.body;
+		body.innerHTML = '<div id="chartResize"></div>';
+
+		const chart = bb.generate({
+			bindto: "#chartResize",
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 500, 800, 500, 2000]
+				]
+			}
+		});
+		const chartHeight = +chart.internal.svg.attr("height");
+
+		body.style.width = `${+body.style.width.replace("px", "") - 100}px`;
+		chart.internal.resizeFunction();
+
+		setTimeout(() => {
+			expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
+
+			// reset the body
+			body.removeAttribute("style");
+			body.innerHTML = "";
+
+			done();
+		}, 300);
+	});
+
+	it("should be resizing all generated chart elements", done => {
+		const width = 300;
+		const options = {
+			data: {
+				columns: [
+					["data1", 30]
+				]
+			}
+		};
+		const chart = [util.generate(options), util.generate(options)];
+
+		document.body.style.width = width + "px";
+		chart[chart.length - 1].internal.resizeFunction();
+
+		setTimeout(() => {
+			chart.forEach(inst => {
+				expect(+inst.internal.svg.attr("width")).to.be.equal(width);
 			});
 
-			const chartWidth = +chart.internal.svg.attr("width");
-			const diff = 50;
+			// should revert to not affect other tests
+			document.body.style.width = "";
 
-			// shrink width & resize
-			document.body.style.width = `${document.body.offsetWidth - diff}px`;
-			chart.internal.resizeFunction();
-
-			setTimeout(() => {
-				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
-
-				// reset the body
-				document.body.innerHTML = "";
-				done();
-			}, 100);
-		});
-
-		it("height shouldn't be increased on resize event", done => {
-			const body = document.body;
-			body.innerHTML = '<div id="chartResize"></div>';
-
-			const chart = bb.generate({
-				bindto: "#chartResize",
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400],
-						["data2", 500, 800, 500, 2000]
-					]
-				}
-			});
-			const chartHeight = +chart.internal.svg.attr("height");
-
-			body.style.width = `${+body.style.width.replace("px", "") - 100}px`;
-			chart.internal.resizeFunction();
-
-			setTimeout(() => {
-				expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
-
-				// reset the body
-				body.removeAttribute("style");
-				body.innerHTML = "";
-
-				done();
-			}, 500);
-		});
-
-		it("should be resizing all generated chart elements", done => {
-			const width = 300;
-			const options = {
-				data: {
-					columns: [
-						["data1", 30]
-					]
-				}
-			};
-			const chart = [util.generate(options), util.generate(options)];
-
-			document.body.style.width = width + "px";
-			chart[chart.length - 1].internal.resizeFunction();
-
-			setTimeout(() => {
-				chart.forEach(inst => {
-					expect(+inst.internal.svg.attr("width")).to.be.equal(width);
-				});
-
-				// should revert to not affect other tests
-				document.body.style.width = "";
-
-				done();
-			}, 100);
-		});
+			done();
+		}, 300);
 	});
 });
