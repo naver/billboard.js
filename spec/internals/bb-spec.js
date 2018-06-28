@@ -38,6 +38,24 @@ describe("Interface & initialization", () => {
 		expect(bb.version.length > 0).to.be.ok;
 	});
 
+	it("instantiate with different classname on wrapper element", () => {
+		const bindtoClassName = "billboard-js";
+		const chart = bb.generate({
+			bindto: {
+				element: "#chart",
+				classname: bindtoClassName
+			},
+			data: {
+				columns: [
+					["data1", 30, 200, 100, 400],
+					["data2", 500, 800, 500, 2000]
+				]
+			}
+		});
+
+		expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
+	});
+
 	it("should resize correctly in flex container", done => {
 		// set flex container
 		document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
@@ -118,24 +136,6 @@ describe("Interface & initialization", () => {
 			document.body.style.width = "";
 
 			done();
-		}, 300);
-	});
-
-	it("instantiate with different classname on wrapper element", () => {
-		const bindtoClassName = "billboard-js";
-		const chart = bb.generate({
-			bindto: {
-				element: "#chart",
-				classname: bindtoClassName
-			},
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400],
-					["data2", 500, 800, 500, 2000]
-				]
-			}
-		});
-
-		expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
+		}, 1000);
 	});
 });
