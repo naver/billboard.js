@@ -60,6 +60,7 @@ describe("Interface & initialization", () => {
 		it("should resize correctly in flex container", done => {
 			// set flex container
 			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
+
 			const chart = util.generate({
 				bindto: "#flex-container",
 				data: {
@@ -83,7 +84,7 @@ describe("Interface & initialization", () => {
 				// reset the body
 				document.body.innerHTML = "";
 				done();
-			}, 100);
+			}, 300);
 		});
 
 		it("height shouldn't be increased on resize event", done => {
@@ -111,7 +112,7 @@ describe("Interface & initialization", () => {
 				body.removeAttribute("style");
 				body.innerHTML = "";
 				done();
-			}, 300);
+			}, 500);
 		});
 
 		it("should be resizing all generated chart elements", done => {
@@ -124,8 +125,8 @@ describe("Interface & initialization", () => {
 					]
 				}
 			};
-			const chart1 = util.generate(options);
-			const chart2 = util.generate(options);
+			const chart1 = util.generate(options.bindto = "#chart1" && options);
+			const chart2 = util.generate(options.bindto = "#chart2" && options);
 
 			body.style("width", width + "px");
 
@@ -140,7 +141,7 @@ describe("Interface & initialization", () => {
 				body.style("width", null);
 
 				done();
-			}, 500);
+			}, 700);
 		});
 	});
 });
