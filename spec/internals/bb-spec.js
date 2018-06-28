@@ -57,6 +57,11 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
+		beforeEach(function(done) {
+			this.timeout(3000);
+			setTimeout(done, 2500);
+		});
+
 		it("should resize correctly in flex container", done => {
 			// set flex container
 			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
@@ -78,12 +83,10 @@ describe("Interface & initialization", () => {
 			d3.select(window).on("resize.bb")();
 
 			setTimeout(() => {
-				try {
-					expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
+				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
 
-					// reset the body
-					document.body.innerHTML = "";
-				} catch(e) {}
+				// reset the body
+				document.body.innerHTML = "";
 
 				done();
 			}, 500);
@@ -108,13 +111,11 @@ describe("Interface & initialization", () => {
 			d3.select(window).on("resize.bb")();
 
 			setTimeout(() => {
-				try {
-					expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
+				expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
 
-					// reset the body
-					body.removeAttribute("style");
-					body.innerHTML = "";
-				} catch(e) {}
+				// reset the body
+				body.removeAttribute("style");
+				body.innerHTML = "";
 
 				done();
 			}, 500);
@@ -139,13 +140,11 @@ describe("Interface & initialization", () => {
 			d3.select(window).on("resize.bb")();
 
 			setTimeout(() => {
-				try {
-					expect(+chart1.internal.svg.attr("width")).to.be.equal(width);
-					expect(+chart2.internal.svg.attr("width")).to.be.equal(width);
+				expect(+chart1.internal.svg.attr("width")).to.be.equal(width);
+				expect(+chart2.internal.svg.attr("width")).to.be.equal(width);
 
-					// should revert to not affect other tests
-					body.removeAttribute("style");
-				} catch(e) {}
+				// should revert to not affect other tests
+				body.removeAttribute("style");
 
 				done();
 			}, 500);
