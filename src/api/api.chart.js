@@ -67,7 +67,7 @@ extend(Chart.prototype, {
 			isDefined($$.intervalForObserveInserted) && window.clearInterval($$.intervalForObserveInserted);
 			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
-			d3Select(window).on("resize", null);
+			d3Select(window).on("resize.bb", null);
 			$$.selectChart.classed("bb", false).html("");
 
 			// releasing references
