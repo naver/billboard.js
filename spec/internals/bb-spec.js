@@ -57,14 +57,14 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
-		beforeEach(function(done) {
-			this.timeout(5000);
-			setTimeout(done, 2500);
-		});
+		it("should resize correctly in flex container", function(done) {
+			this.timeout(4000);
 
-		it("should resize correctly in flex container", done => {
+			const body = document.body;
+
 			// set flex container
-			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
+			body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
+
 			const chart = util.generate({
 				bindto: "#flex-container",
 				data: {
@@ -79,20 +79,22 @@ describe("Interface & initialization", () => {
 			const diff = 50;
 
 			// shrink width & resize
-			document.body.style.width = `${document.body.offsetWidth - diff}px`;
+			body.style.width = `${document.body.offsetWidth - diff}px`;
 			d3.select(window).on("resize.bb")();
 
 			setTimeout(() => {
 				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
 
 				// reset the body
-				document.body.innerHTML = "";
+				body.innerHTML = "";
 
 				done();
-			}, 500);
+			}, 200);
 		});
 
-		it("height shouldn't be increased on resize event", done => {
+		it("height shouldn't be increased on resize event", function(done) {
+			this.timeout(4000);
+
 			const body = document.body;
 			body.innerHTML = '<div id="chartResize"></div>';
 
@@ -121,7 +123,9 @@ describe("Interface & initialization", () => {
 			}, 500);
 		});
 
-		it("should be resizing all generated chart elements", done => {
+		it("should be resizing all generated chart elements", function(done) {
+			this.timeout(4000);
+
 			const width = 300;
 			const body = document.body;
 			const options = {
