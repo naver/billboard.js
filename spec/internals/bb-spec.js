@@ -6,7 +6,7 @@
 import bb from "../../src/core";
 import util from "../assets/util";
 
-describe.only("Interface & initialization", () => {
+describe("Interface & initialization", () => {
 	it("Check for billboard.js object", () => {
 		expect(bb).not.to.be.null;
 		expect(typeof bb).to.be.equal("object");
@@ -57,21 +57,28 @@ describe.only("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
-		const body = document.body;
-		const resetBody = done => {
-			body.removeAttribute("style");
-			body.innerHTML = "";
+		let container;
 
-			console.log("called rest", done)
+		beforeEach(() => {
+			container = document.getElementById("container");
 
-			done();
-		};
+			if (!container) {
+				container = document.createElement("div");
+				container.id = "container";
+				document.body.appendChild(container);
+			}
+		});
+
+		after(() => {
+			document.body.innerHTML = "";
+			document.body.removeAttribute("style");
+		});
 
 		it("should resize correctly in flex container", done => {
 			// set flex container
-			body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
+			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
 
-			const chart = util.generate({
+			const chart = bb.generate({
 				bindto: "#flex-container",
 				data: {
 					columns: [
@@ -85,18 +92,17 @@ describe.only("Interface & initialization", () => {
 			const diff = 50;
 
 			// shrink width & resize
-			body.style.width = `${document.body.offsetWidth - diff}px`;
+			document.body.style.width = `${document.body.offsetWidth - diff}px`;
 			chart.internal.resizeFunction();
 
 			setTimeout(() => {
 				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
-
-				resetBody(done);
+				done();
 			}, 200);
 		});
 
 		it("height shouldn't be increased on resize event", done => {
-			body.innerHTML = '<div id="chartResize"></div>';
+			container.innerHTML = '<div id="chartResize"></div>';
 
 			const chart = bb.generate({
 				bindto: "#chartResize",
@@ -109,18 +115,17 @@ describe.only("Interface & initialization", () => {
 			});
 			const chartHeight = +chart.internal.svg.attr("height");
 
-			body.style.width = `${+body.style.width.replace("px", "") - 100}px`;
+			container.style.width = `${+container.style.width.replace("px", "") - 100}px`;
 			chart.internal.resizeFunction();
 
 			setTimeout(() => {
 				expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
-
-				resetBody(done);
-			}, 500);
+				done();
+			}, 200);
 		});
 
 		it("should be resizing all generated chart elements", done => {
-			body.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
+			container.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
 
 			const width = 300;
 			const args = {
@@ -135,7 +140,7 @@ describe.only("Interface & initialization", () => {
 			const chart1 = bb.generate(args);
 			const chart2 = bb.generate((args.bindto = "#chartResize2") && args);
 
-			body.style.width = width + "px";
+			container.style.width = width + "px";
 
 			// run the resize handler
 			d3.select(window).on("resize.bb")();
@@ -143,9 +148,8 @@ describe.only("Interface & initialization", () => {
 			setTimeout(() => {
 				expect(+chart1.internal.svg.attr("width")).to.be.equal(width);
 				expect(+chart2.internal.svg.attr("width")).to.be.equal(width);
-
-				resetBody(done);
-			}, 500);
+				done();
+			}, 200);
 		});
 	});
 });
