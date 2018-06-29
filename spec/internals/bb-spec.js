@@ -57,11 +57,15 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("auto resize", () => {
-		it("should resize correctly in flex container", function(done) {
-			this.timeout(4000);
+		const body = document.body;
+		const resetBody = done => {
+			body.removeAttribute("style");
+			body.innerHTML = "";
 
-			const body = document.body;
+			done();
+		};
 
+		it("should resize correctly in flex container", done => {
 			// set flex container
 			body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
 
@@ -80,22 +84,16 @@ describe("Interface & initialization", () => {
 
 			// shrink width & resize
 			body.style.width = `${document.body.offsetWidth - diff}px`;
-			d3.select(window).on("resize.bb")();
+			chart.internal.resizeFunction();
 
 			setTimeout(() => {
 				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
 
-				// reset the body
-				body.innerHTML = "";
-
-				done();
+				resetBody(done);
 			}, 200);
 		});
 
-		it("height shouldn't be increased on resize event", function(done) {
-			this.timeout(4000);
-
-			const body = document.body;
+		it("height shouldn't be increased on resize event", done => {
 			body.innerHTML = '<div id="chartResize"></div>';
 
 			const chart = bb.generate({
@@ -110,33 +108,30 @@ describe("Interface & initialization", () => {
 			const chartHeight = +chart.internal.svg.attr("height");
 
 			body.style.width = `${+body.style.width.replace("px", "") - 100}px`;
-			d3.select(window).on("resize.bb")();
+			chart.internal.resizeFunction();
 
 			setTimeout(() => {
 				expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
 
-				// reset the body
-				body.removeAttribute("style");
-				body.innerHTML = "";
-
-				done();
+				resetBody(done);
 			}, 500);
 		});
 
-		it("should be resizing all generated chart elements", function(done) {
-			this.timeout(4000);
+		it("should be resizing all generated chart elements", done => {
+			body.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
 
 			const width = 300;
-			const body = document.body;
-			const options = {
+			const args = {
 				data: {
 					columns: [
 						["data1", 30]
 					]
-				}
+				},
+				bindto: "#chartResize1"
 			};
-			const chart1 = util.generate(options.bindto = "#chart1" && options);
-			const chart2 = util.generate(options.bindto = "#chart2" && options);
+
+			const chart1 = bb.generate(args);
+			const chart2 = bb.generate((args.bindto = "#chartResize2") && args);
 
 			body.style.width = width + "px";
 
@@ -147,10 +142,7 @@ describe("Interface & initialization", () => {
 				expect(+chart1.internal.svg.attr("width")).to.be.equal(width);
 				expect(+chart2.internal.svg.attr("width")).to.be.equal(width);
 
-				// should revert to not affect other tests
-				body.removeAttribute("style");
-
-				done();
+				resetBody(done);
 			}, 500);
 		});
 	});
