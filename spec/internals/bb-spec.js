@@ -6,7 +6,7 @@
 import bb from "../../src/core";
 import util from "../assets/util";
 
-describe("Interface & initialization", () => {
+describe.only("Interface & initialization", () => {
 	it("Check for billboard.js object", () => {
 		expect(bb).not.to.be.null;
 		expect(typeof bb).to.be.equal("object");
@@ -61,6 +61,8 @@ describe("Interface & initialization", () => {
 		const resetBody = done => {
 			body.removeAttribute("style");
 			body.innerHTML = "";
+
+			console.log("called rest", done)
 
 			done();
 		};
