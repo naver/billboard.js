@@ -58,7 +58,7 @@ describe("Interface & initialization", () => {
 
 	describe("auto resize", () => {
 		beforeEach(function(done) {
-			this.timeout(3000);
+			this.timeout(5000);
 			setTimeout(done, 2500);
 		});
 
