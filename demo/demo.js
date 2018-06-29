@@ -800,7 +800,7 @@ var demos = {
 				data: {
 					x: "x",
 					columns: [
-						["x", "Jhon", "Aron", "David", "Chris", "Tyler", "Mike"],
+						["x", "John", "Aron", "David", "Chris", "Tyler", "Mike"],
 						["data1", 130, 200, 320, 400, 530, 750],
 						["data2", 130, 10, 130, 200, 150, 250],
 						["data3", 130, 50, 10, 200, 250, 150]
@@ -829,7 +829,7 @@ var demos = {
 				}
 			},
 			style: [
-				"#XAxisTickPosition .bb-axis-x line, .bb-axis-x path { visibility: hidden; }"
+				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
 			]
 		},
 		XAxisTimezone: {

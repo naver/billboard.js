@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.4.1-nightly-20180621194751
+ * @version 1.5.1-nightly-20180629144157
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.4.1-nightly-20180621194751
+ * @version 1.5.1-nightly-20180629144157
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.4.1-nightly-20180621194751",
+	version: "1.5.1-nightly-20180629144157",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -521,7 +521,7 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.hasArcType(null, ["radar"]) && $$.redrawArc(duration, durationForExit, withTransform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), config.zoom_enabled && $$.bindZoomOnEventRect()), $$.updateCircleY();
+		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), config.zoom_enabled && $$.bindZoomOnEventRect()), $$.updateCircleY();
 
 
 		// generate circle x/y functions depending on updated params
@@ -691,7 +691,14 @@ var ChartInternal = function () {
 			}, 100);
 		}), $$.resizeFunction.add(function () {
 			return config.onresized.call($$);
-		}), (0, _d3Selection.select)(window).on("resize", $$.resizeFunction);
+		});
+
+
+		// attach resize event
+		// get the possible previous attached
+		var resizeEvents = (0, _d3Selection.select)(window).on("resize.bb");
+
+		resizeEvents && $$.resizeFunction.add(resizeEvents), (0, _d3Selection.select)(window).on("resize.bb", $$.resizeFunction);
 	}, ChartInternal.prototype.generateResize = function generateResize() {
 
 		function callResizeFunctions() {
@@ -4558,7 +4565,7 @@ var Options = function Options() {
                      * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
                      * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
                      * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
-                     * @property {Boolean} [tooltip.linked.name] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
+                     * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
                      * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
                      *  Specified function receives x of the data point to show.
                      * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
@@ -12372,7 +12379,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var _this = this,
 		    $$ = this.internal;
 
-		return (0, _util.notEmpty)($$) && ($$.charts.splice($$.charts.indexOf(this), 1), (0, _util.isDefined)($$.intervalForObserveInserted) && _browser.window.clearInterval($$.intervalForObserveInserted), (0, _util.isDefined)($$.resizeTimeout) && _browser.window.clearTimeout($$.resizeTimeout), (0, _d3Selection.select)(_browser.window).on("resize", null), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+		return (0, _util.notEmpty)($$) && ($$.charts.splice($$.charts.indexOf(this), 1), (0, _util.isDefined)($$.intervalForObserveInserted) && _browser.window.clearInterval($$.intervalForObserveInserted), (0, _util.isDefined)($$.resizeTimeout) && _browser.window.clearTimeout($$.resizeTimeout), (0, _d3Selection.select)(_browser.window).on("resize.bb", null), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
 			key === "internal" && Object.keys($$).forEach(function (k) {
 				$$[k] = null;
 			}), _this[key] = null, delete _this[key];

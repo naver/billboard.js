@@ -711,7 +711,7 @@ export default class ChartInternal {
 		$$.redrawTitle && $$.redrawTitle();
 
 		// arc
-		$$.hasArcType(null, ["radar"]) && $$.redrawArc(duration, durationForExit, withTransform);
+		$$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform);
 
 		// radar
 		hasRadar && $$.redrawRadar();
@@ -1154,7 +1154,11 @@ export default class ChartInternal {
 		$$.resizeFunction.add(() => config.onresized.call($$));
 
 		// attach resize event
-		d3Select(window).on("resize", $$.resizeFunction);
+		// get the possible previous attached
+		const resizeEvents = d3Select(window).on("resize.bb");
+
+		resizeEvents && $$.resizeFunction.add(resizeEvents);
+		d3Select(window).on("resize.bb", $$.resizeFunction);
 	}
 
 	generateResize() {
