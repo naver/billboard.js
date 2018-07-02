@@ -69,6 +69,10 @@ describe("Interface & initialization", () => {
 			}
 		});
 
+		afterEach(done => {
+			done();
+		});
+
 		after(() => {
 			document.body.innerHTML = "";
 			document.body.removeAttribute("style");
@@ -78,7 +82,7 @@ describe("Interface & initialization", () => {
 			// set flex container
 			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
 
-			const chart = bb.generate({
+			const chart = util.generate({
 				bindto: "#flex-container",
 				data: {
 					columns: [
@@ -104,7 +108,7 @@ describe("Interface & initialization", () => {
 		it("height shouldn't be increased on resize event", done => {
 			container.innerHTML = '<div id="chartResize"></div>';
 
-			const chart = bb.generate({
+			const chart = util.generate({
 				bindto: "#chartResize",
 				data: {
 					columns: [
@@ -137,8 +141,8 @@ describe("Interface & initialization", () => {
 				bindto: "#chartResize1"
 			};
 
-			const chart1 = bb.generate(args);
-			const chart2 = bb.generate((args.bindto = "#chartResize2") && args);
+			const chart1 = util.generate(args);
+			const chart2 = util.generate((args.bindto = "#chartResize2") && args);
 
 			container.style.width = width + "px";
 
