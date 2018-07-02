@@ -59,9 +59,7 @@ describe("Interface & initialization", () => {
 	describe("auto resize", () => {
 		let container;
 
-		beforeEach(function() {
-			this.timeout(5000);
-
+		beforeEach(() => {
 			container = document.getElementById("container");
 
 			if (!container) {
@@ -76,7 +74,9 @@ describe("Interface & initialization", () => {
 			document.body.removeAttribute("style");
 		});
 
-		it("should resize correctly in flex container", done => {
+		it("should resize correctly in flex container", function(done) {
+			this.timeout(5000);
+
 			// set flex container
 			document.body.innerHTML = '<div style="display:flex"><div style="display:block;flex-basis:0;flex-grow:1;flex-shrink:1"><div id="flex-container"></div></div></div>';
 
@@ -103,7 +103,9 @@ describe("Interface & initialization", () => {
 			}, 200);
 		});
 
-		it("height shouldn't be increased on resize event", done => {
+		it("height shouldn't be increased on resize event", function(done) {
+			this.timeout(5000);
+
 			container.innerHTML = '<div id="chartResize"></div>';
 
 			const chart = util.generate({
@@ -126,7 +128,8 @@ describe("Interface & initialization", () => {
 			}, 200);
 		});
 
-		it("should be resizing all generated chart elements", done => {
+		it("should be resizing all generated chart elements", function(done) {
+			this.timeout(5000);
 			container.innerHTML = '<div id="chartResize1"></div><div id="chartResize2"></div>';
 
 			const width = 300;
