@@ -59,7 +59,9 @@ describe("Interface & initialization", () => {
 	describe("auto resize", () => {
 		let container;
 
-		beforeEach(() => {
+		beforeEach(function() {
+			this.timeout(5000);
+
 			container = document.getElementById("container");
 
 			if (!container) {
@@ -67,10 +69,6 @@ describe("Interface & initialization", () => {
 				container.id = "container";
 				document.body.appendChild(container);
 			}
-		});
-
-		afterEach(done => {
-			done();
 		});
 
 		after(() => {
