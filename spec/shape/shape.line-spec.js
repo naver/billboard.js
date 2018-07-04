@@ -16,6 +16,7 @@ describe("SHAPE LINE", () => {
 		if (skipEach) {
 			return;
 		}
+
 		chart = util.generate(args);
 	});
 
@@ -53,18 +54,10 @@ describe("SHAPE LINE", () => {
 			});
 		});
 
-		it("should change to step chart", () => {
+		it("set options data.type='step' / line.step.type='step-after'", () => {
 			args.data.type = "step";
-
-			expect(true).to.be.ok;
-		});
-
-		it("should change line type to step-after", () => {
 			args.line.step.type = "step-after";
-
-			expect(true).to.be.ok;
 		});
-
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
 			chart.internal.main.selectAll(`.${CLASS.line}`).each(function() {
@@ -74,10 +67,8 @@ describe("SHAPE LINE", () => {
 			});
 		});
 
-		it("should change to spline chart", () => {
+		it("set options data.type='spline'", () => {
 			args.data.type = "spline";
-
-			expect(true).to.be.ok;
 		});
 
 		it("should use cardinal interpolation by default", () => {
@@ -149,10 +140,8 @@ describe("SHAPE LINE", () => {
 			expect(to).to.be.equal("monotone-x");
 		});
 
-		it("should not use a non-valid interpolation", () => {
+		it("set options spline.interpolation.type='foo'", () => {
 			args.spline.interpolation.type = "foo";
-
-			expect(true).to.be.ok;
 		});
 
 		it("should use cardinal interpolation when given option is not valid", () => {
@@ -248,6 +237,7 @@ describe("SHAPE LINE", () => {
 	describe("area-range type generation", () => {
 		before(() => {
 			skipEach = true;
+
 			args = {
 				data: {
 					x: "timestamps",
@@ -265,6 +255,8 @@ describe("SHAPE LINE", () => {
 				},
 			};
 		});
+
+		after(() => { skipEach = false; });
 
 		it("Should render the lines correctly when array data supplied", () => {
 			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
@@ -284,17 +276,76 @@ describe("SHAPE LINE", () => {
 			expect(chart.internal.config.spline_interpolation_type).to.be.equal("cardinal");
 		});
 
-		it("should change to area-line-range chart", () => {
+		it("set options data.type='area-line-range chart'", () => {
 			args.data.type = "area-line-range chart";
+		});
+	});
 
-			expect(true).to.be.ok;
+	describe("rotated step type", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "1", "2", "3", "4", "5", "6"],
+						["data1", 30, 200, 100, 170, 150, 250]
+					],
+					type: "area-step"
+				},
+				line: {
+					step: {}
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category"
+					}
+				}
+			};
 		});
 
+		function checkPath(pathData) {
+			const path = chart.internal.main.selectAll(`.${CLASS.target}-data1 path`);
+
+			path.each(function(v, i) {
+				expect(this.getAttribute("d")).to.be.equal(pathData[i ? "area" : "line"]);
+			});
+		}
+
+		it("check the correct path generation", () => {
+			checkPath({
+				line: "M64.36363636363636,-33L64.36363636363636,2L64.36363636363636,2L64.36363636363636,72.5L429.0909090909091,72.5L429.0909090909091,143.5L214.54545454545456,143.5L214.54545454545456,214L364.7272727272727,214L364.7272727272727,284.5L321.8181818181818,284.5L321.8181818181818,355.5L536.3636363636364,355.5L536.3636363636364,461.5L536.3636363636364,461.5L536.3636363636364,532",
+				area: "M64.36363636363636,-33L64.36363636363636,2L64.36363636363636,2L64.36363636363636,72.5L429.0909090909091,72.5L429.0909090909091,143.5L214.54545454545456,143.5L214.54545454545456,214L364.7272727272727,214L364.7272727272727,284.5L321.8181818181818,284.5L321.8181818181818,355.5L536.3636363636364,355.5L536.3636363636364,461.5L536.3636363636364,461.5L536.3636363636364,532L0,532L0,461.5L0,461.5L0,355.5L0,355.5L0,284.5L0,284.5L0,214L0,214L0,143.5L0,143.5L0,72.5L0,72.5L0,2L0,2L0,-33Z"
+			});
+		});
+
+		it("set options args.line.step.type='step-before'", () => {
+			args.line.step.type = "step-before";
+		});
+
+		it("check the correct path generation - step-before", () => {
+			checkPath({
+				line: "M64.36363636363636,-33L64.36363636363636,-33L64.36363636363636,-33L64.36363636363636,37L429.0909090909091,37L429.0909090909091,108L214.54545454545456,108L214.54545454545456,179L364.7272727272727,179L364.7272727272727,249L321.8181818181818,249L321.8181818181818,320L536.3636363636364,320L536.3636363636364,391L536.3636363636364,391L536.3636363636364,532L536.3636363636364,532",
+				area: "M64.36363636363636,-33L64.36363636363636,-33L64.36363636363636,-33L64.36363636363636,37L429.0909090909091,37L429.0909090909091,108L214.54545454545456,108L214.54545454545456,179L364.7272727272727,179L364.7272727272727,249L321.8181818181818,249L321.8181818181818,320L536.3636363636364,320L536.3636363636364,391L536.3636363636364,391L536.3636363636364,532L536.3636363636364,532L0,603L0,532L0,532L0,391L0,391L0,320L0,320L0,249L0,249L0,179L0,179L0,108L0,108L0,37L0,37L0,-33L0,-33Z"
+			});
+		});
+
+		it("set options args.line.step.type='step-after'", () => {
+			args.line.step.type = "step-after";
+		});
+
+		it("check the correct path generation - step-before", () => {
+			checkPath({
+				line: "M64.36363636363636,-104L64.36363636363636,-33L64.36363636363636,-33L64.36363636363636,37L64.36363636363636,37L64.36363636363636,108L429.0909090909091,108L429.0909090909091,179L214.54545454545456,179L214.54545454545456,249L364.7272727272727,249L364.7272727272727,320L321.8181818181818,320L321.8181818181818,391L536.3636363636364,391L536.3636363636364,603L536.3636363636364,603",
+				area: "M64.36363636363636,-104L64.36363636363636,-33L64.36363636363636,-33L64.36363636363636,37L64.36363636363636,37L64.36363636363636,108L429.0909090909091,108L429.0909090909091,179L214.54545454545456,179L214.54545454545456,249L364.7272727272727,249L364.7272727272727,320L321.8181818181818,320L321.8181818181818,391L536.3636363636364,391L536.3636363636364,603L536.3636363636364,603L0,603L0,603L0,603L0,391L0,391L0,320L0,320L0,249L0,249L0,179L0,179L0,108L0,108L0,37L0,37L0,-33L0,-33Z"
+			});
+		});
 	});
 
 	describe("step type generation", () => {
 		before(() => {
 			skipEach = true;
+
 			args = {
 				data: {
 					columns: [
@@ -311,9 +362,11 @@ describe("SHAPE LINE", () => {
 			};
 		});
 
+		after(() => { skipEach = false; });
+
 		it("check line.step.type=step-after option", () => {
 			const generateChartWithStep = () => {
-				chart = util.generate(args)
+				chart = util.generate(args);
 			};
 
 			expect(generateChartWithStep).to.not.throw();
@@ -325,10 +378,8 @@ describe("SHAPE LINE", () => {
 			expect(to).to.be.equal(d3.curveStepAfter);
 		});
 
-		it("should change to line.step.type option", () => {
+		it("set options line.step.type='step-before'", () => {
 			args.line.step.type = "step-before";
-
-			expect(true).to.be.ok;
 		});
 
 		it("check line.step.type=step-before option", () => {
@@ -344,10 +395,6 @@ describe("SHAPE LINE", () => {
 
 			expect(to).to.be.equal(d3.curveStepBefore);
 		});
-
-		after(() => {
-			skipEach = false;
-		})
 	});
 
 	describe("line options", () => {
