@@ -32,7 +32,7 @@ extend(ChartInternal.prototype, {
 		const dataKey = config.data_x && key === config.data_x;
 		const existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
 
-		return (dataKey) || (existValue);
+		return dataKey || existValue;
 	},
 
 	isNotX(key) {
@@ -57,6 +57,7 @@ extend(ChartInternal.prototype, {
 				xValues = $$.data.xs[id];
 			}
 		});
+
 		return xValues;
 	},
 
@@ -155,14 +156,12 @@ extend(ChartInternal.prototype, {
 
 	generateTargetX(rawX, id, index) {
 		const $$ = this;
-		let x;
+		let x = index;
 
 		if ($$.isTimeSeries()) {
 			x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index));
 		} else if ($$.isCustomX() && !$$.isCategorized()) {
 			x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
-		} else {
-			x = index;
 		}
 
 		return x;
@@ -533,14 +532,18 @@ extend(ChartInternal.prototype, {
 			if (targetX !== values[i].x) {
 				break;
 			}
+
 			sames.push(values[i]);
 		}
+
 		for (i = index; i < values.length; i++) {
 			if (targetX !== values[i].x) {
 				break;
 			}
+
 			sames.push(values[i]);
 		}
+
 		return sames;
 	},
 
@@ -601,21 +604,21 @@ extend(ChartInternal.prototype, {
 			return values;
 		}
 
-		for (let i = values.length + 1; i > 0; i--) {
-			converted[i] = converted[i - 1];
-		}
+		// insert & append cloning first/last value to be fully rendered covering on each gap sides
+		const id = converted[0].id;
+		const lastIndex = converted.length;
 
-		converted[0] = {
-			x: converted[0].x - 1,
+		converted.unshift({
+			x: -1,
 			value: converted[0].value,
-			id: converted[0].id
-		};
+			id
+		});
 
-		converted[values.length + 1] = {
-			x: converted[values.length].x + 1,
-			value: converted[values.length].value,
-			id: converted[values.length].id
-		};
+		converted.push({
+			x: lastIndex,
+			value: converted[lastIndex].value,
+			id
+		});
 
 		return converted;
 	},
@@ -672,4 +675,3 @@ extend(ChartInternal.prototype, {
 		return d.value[type];
 	}
 });
-
