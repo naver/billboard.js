@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180629144157
+ * @version 1.5.1-nightly-20180705151324
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.5.0
@@ -131,7 +131,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180629144157
+ * @version 1.5.1-nightly-20180705151324
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -145,7 +145,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180629144157",
+	version: "1.5.1-nightly-20180705151324",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -5034,6 +5034,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    ids = targets && (0, _util.notEmpty)(targets) ? $$.mapToIds(targets) : [],
 		    xValues = void 0;
 
+
 		return ids.forEach(function (id) {
 			$$.getXKey(id) === key && (xValues = $$.data.xs[id]);
 		}), xValues;
@@ -5117,10 +5118,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	generateTargetX: function generateTargetX(rawX, id, index) {
 		var $$ = this,
-		    x = void 0;
+		    x = index;
 
 
-		return x = $$.isTimeSeries() ? rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index)) : $$.isCustomX() && !$$.isCategorized() ? (0, _util.isValue)(rawX) ? +rawX : $$.getXValue(id, index) : index, x;
+		return $$.isTimeSeries() ? x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index)) : $$.isCustomX() && !$$.isCategorized() && (x = (0, _util.isValue)(rawX) ? +rawX : $$.getXValue(id, index)), x;
 	},
 	cloneTarget: function cloneTarget(target) {
 		return {
@@ -5452,7 +5453,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		for (i = index - 1; i >= 0 && !(targetX !== values[i].x); i--) sames.push(values[i]);
+
 		for (i = index; i < values.length && !(targetX !== values[i].x); i++) sames.push(values[i]);
+
 		return sames;
 	},
 	findClosestFromTargets: function findClosestFromTargets(targets, pos) {
@@ -5488,31 +5491,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	dist: function dist(data, pos) {
 		var $$ = this,
-		    config = $$.config,
-		    xIndex = config.axis_rotated ? 1 : 0,
-		    yIndex = config.axis_rotated ? 0 : 1,
+		    isRotated = $$.config.axis_rotated,
+		    xIndex = isRotated ? 1 : 0,
+		    yIndex = isRotated ? 0 : 1,
 		    y = $$.circleY(data, data.index),
 		    x = $$.x(data.x);
 
 
 		return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
 	},
+
+
+	/**
+  * Convert data for step type
+  * @param {Array} values Object data values
+  * @return {Array}
+  * @private
+  */
 	convertValuesToStep: function convertValuesToStep(values) {
-		var converted = (0, _util.isArray)(values) ? values.concat() : [values];
+		var $$ = this,
+		    config = $$.config,
+		    isRotated = config.axis_rotated,
+		    stepType = config.line_step_type,
+		    isCategorized = $$.isCategorized(),
+		    converted = (0, _util.isArray)(values) ? values.concat() : [values];
 
-		if (!this.isCategorized()) return values;
 
-		for (var i = values.length + 1; i > 0; i--) converted[i] = converted[i - 1];
+		if (!isRotated && !isCategorized) return values;
 
-		return converted[0] = {
-			x: converted[0].x - 1,
-			value: converted[0].value,
-			id: converted[0].id
-		}, converted[values.length + 1] = {
-			x: converted[values.length].x + 1,
-			value: converted[values.length].value,
-			id: converted[values.length].id
-		}, converted;
+		// insert & append cloning first/last value to be fully rendered covering on each gap sides
+		var id = converted[0].id,
+		    x = converted[0].x - 1,
+		    value = converted[0].value;
+
+		// insert
+
+		return isCategorized && converted.unshift({ x: x, value: value, id: id }), stepType === "step-after" && converted.unshift({ x: x - 1, value: value, id: id }), x = converted.length, value = converted[x - 1].value, isCategorized && converted.push({ x: x, value: value, id: id }), stepType === "step-before" && converted.push({ x: x + 1, value: value, id: id }), converted;
 	},
 	convertValuesToRange: function convertValuesToRange(values) {
 		var converted = (0, _util.isArray)(values) ? values.concat() : [values],
@@ -7194,6 +7208,39 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	redrawLine: function redrawLine(drawLine, withTransition) {
 		return [(withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine).attr("d", drawLine).style("stroke", this.color).style("opacity", "1")];
 	},
+
+
+	/**
+  * Get the curve interpolate
+  * @param {Array} d Data object
+  * @return {Function}
+  * @private
+  */
+	getCurve: function getCurve(d) {
+		var $$ = this,
+		    isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
+
+
+		// when is step & rotated, should be computed in different way
+		// https://github.com/naver/billboard.js/issues/471
+		return isRotatedStepType ? function (context) {
+			var step = $$.getInterpolate(d)(context);
+
+			// keep the original method
+
+
+			return step.orgPoint = step.point, step.pointRotated = function (x, y) {
+				this._point === 1 && (this._point = 2);
+
+
+				var y1 = this._y * (1 - this._t) + y * this._t;
+
+				this._context.lineTo(this._x, y1), this._context.lineTo(x, y1), this._x = x, this._y = y;
+			}, step.point = function (x, y) {
+				this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
+			}, step;
+		} : $$.getInterpolate(d);
+	},
 	generateDrawLine: function generateDrawLine(lineIndices, isSub) {
 		var $$ = this,
 		    config = $$.config,
@@ -7220,7 +7267,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			    path = void 0;
 
 
-			return $$.isLineType(d) ? config.data_regions[d.id] ? path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getInterpolate(d))(values)) : (values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0), path || "M 0 0";
+			return $$.isLineType(d) ? config.data_regions[d.id] ? path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getCurve(d))(values)) : (values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0), path || "M 0 0";
 		};
 	},
 	generateGetLinePoints: function generateGetLinePoints(lineIndices, isSubValue) {
@@ -7332,11 +7379,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return $$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity;
 		})];
 	},
+
+
+	/**
+  * Generate area path data
+  * @param areaIndices
+  * @param isSub
+  * @return {function(*=): (*|string)}
+  * @private
+  */
 	generateDrawArea: function generateDrawArea(areaIndices, isSub) {
 		var $$ = this,
 		    config = $$.config,
 		    lineConnectNull = config.line_connectNull,
-		    axisRotated = config.axis_rotated,
+		    isRotated = config.axis_rotated,
 		    getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
 		    yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
 		    xValue = function (d) {
@@ -7359,7 +7415,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			if ($$.isAreaType(d)) {
 				var isAreaRangeType = $$.isAreaRangeType(d),
 				    area = (0, _d3Shape.area)();
-				area = axisRotated ? isAreaRangeType ? area.x0(function (d) {
+				area = isRotated ? isAreaRangeType ? area.x0(function (d) {
 					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high"));
 				}).x1(function (d) {
 					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low"));
@@ -7369,8 +7425,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low"));
 				}) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1), lineConnectNull || (area = area.defined(function (d) {
 					return d.value !== null;
-				})), $$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = area.curve($$.getInterpolate(d))(values);
-			} else values[0] && (x0 = $$.x(values[0].x), y0 = $$.getYScale(d.id)(values[0].value)), path = axisRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+				})), $$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = area.curve($$.getCurve(d))(values);
+			} else values[0] && (x0 = $$.x(values[0].x), y0 = $$.getYScale(d.id)(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
 
 			return path || "M 0 0";
 		};
