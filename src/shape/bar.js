@@ -105,19 +105,50 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
+		const isRotated = config.axis_rotated;
+		const isGrouped = config.data_groups.length;
+
+		// get the bar radius
+		const getRadius = isNumber(config.bar_radius) && config.bar_radius > 0 ?
+			() => config.bar_radius : (
+				isNumber(config.bar_radius_ratio) ? w => w * config.bar_radius_ratio : null
+			);
 
 		return (d, i) => {
 			// 4 points that make a bar
 			const points = getPoints(d, i);
 
 			// switch points if axis is rotated, not applicable for sub chart
-			const indexX = config.axis_rotated ? 1 : 0;
+			const indexX = +isRotated;
 			const indexY = +!indexX;
 
-			return `M ${points[0][indexX]},${points[0][indexY]}
-				L ${points[1][indexX]},${points[1][indexY]}
-				L ${points[2][indexX]},${points[2][indexY]}
-				L ${points[3][indexX]},${points[3][indexY]} z`;
+			const isNegative = d.value < 0;
+			const pathRadius = ["", ""];
+			let radius = 0;
+
+			if (getRadius && !isGrouped) {
+				const index = isRotated ? indexY : indexX;
+				const barW = points[2][index] - points[0][index];
+
+				radius = getRadius(barW);
+
+				const arc = `a${radius},${radius} ${isNegative ? `1 0 0` : `0 0 1`} `;
+
+				pathRadius[+!isRotated] = `${arc}${radius},${radius}`;
+				pathRadius[+isRotated] = `${arc}${[-radius, radius][isRotated ? "sort" : "reverse"]()}`;
+
+				isNegative && pathRadius.reverse();
+			}
+
+			const path = isRotated ?
+				`H${points[1][indexX] - radius} ${pathRadius[0]}
+				 V${points[2][indexY] - radius} ${pathRadius[1]}
+				 H${points[3][indexX]}` :
+				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}
+				 H${points[2][indexX] - radius} ${pathRadius[1]}
+				 V${points[3][indexY]}`;
+
+			return `M${points[0][indexX]},${points[0][indexY]} ${path}z`;
 		};
 	},
 
