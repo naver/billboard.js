@@ -588,37 +588,56 @@ extend(ChartInternal.prototype, {
 
 	dist(data, pos) {
 		const $$ = this;
-		const config = $$.config;
-		const xIndex = config.axis_rotated ? 1 : 0;
-		const yIndex = config.axis_rotated ? 0 : 1;
+		const isRotated = $$.config.axis_rotated;
+
+		const xIndex = isRotated ? 1 : 0;
+		const yIndex = isRotated ? 0 : 1;
 		const y = $$.circleY(data, data.index);
 		const x = $$.x(data.x);
 
 		return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
 	},
 
+	/**
+	 * Convert data for step type
+	 * @param {Array} values Object data values
+	 * @return {Array}
+	 * @private
+	 */
 	convertValuesToStep(values) {
+		const $$ = this;
+		const config = $$.config;
+
+		const isRotated = config.axis_rotated;
+		const stepType = config.line_step_type;
+		const isCategorized = $$.isCategorized();
+
 		const converted = isArray(values) ? values.concat() : [values];
 
-		if (!this.isCategorized()) {
+		if (!isRotated && !isCategorized) {
 			return values;
 		}
 
 		// insert & append cloning first/last value to be fully rendered covering on each gap sides
 		const id = converted[0].id;
-		const lastIndex = converted.length;
 
-		converted.unshift({
-			x: -1,
-			value: converted[0].value,
-			id
-		});
+		// insert
+		let x = converted[0].x - 1;
+		let value = converted[0].value;
 
-		converted.push({
-			x: lastIndex,
-			value: converted[lastIndex].value,
-			id
-		});
+		isCategorized && converted.unshift({x, value, id});
+
+		stepType === "step-after" &&
+			converted.unshift({x: x - 1, value, id});
+
+		// append
+		x = converted.length;
+		value = converted[x - 1].value;
+
+		isCategorized && converted.push({x, value, id});
+
+		stepType === "step-before" &&
+			converted.push({x: x + 1, value, id});
 
 		return converted;
 	},

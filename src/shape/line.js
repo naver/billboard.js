@@ -104,6 +104,45 @@ extend(ChartInternal.prototype, {
 		];
 	},
 
+	/**
+	 * Get the curve interpolate
+	 * @param {Array} d Data object
+	 * @return {Function}
+	 * @private
+	 */
+	getCurve(d) {
+		const $$ = this;
+		const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
+
+		// when is step & rotated, should be computed in different way
+		// https://github.com/naver/billboard.js/issues/471
+		return isRotatedStepType ? context => {
+			const step = $$.getInterpolate(d)(context);
+
+			// keep the original method
+			step.orgPoint = step.point;
+
+			// to get rotated path data
+			step.pointRotated = function(x, y) {
+				this._point === 1 && (this._point = 2);
+
+				const y1 = this._y * (1 - this._t) + y * this._t;
+
+				this._context.lineTo(this._x, y1);
+				this._context.lineTo(x, y1);
+
+				this._x = x;
+				this._y = y;
+			};
+
+			step.point = function(x, y) {
+				this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
+			};
+
+			return step;
+		} : $$.getInterpolate(d);
+	},
+
 	generateDrawLine(lineIndices, isSub) {
 		const $$ = this;
 		const config = $$.config;
@@ -145,7 +184,7 @@ extend(ChartInternal.prototype, {
 						values = $$.convertValuesToStep(values);
 					}
 
-					path = line.curve($$.getInterpolate(d))(values);
+					path = line.curve($$.getCurve(d))(values);
 				}
 			} else {
 				if (values[0]) {
@@ -337,11 +376,18 @@ extend(ChartInternal.prototype, {
 		];
 	},
 
+	/**
+	 * Generate area path data
+	 * @param areaIndices
+	 * @param isSub
+	 * @return {function(*=): (*|string)}
+	 * @private
+	 */
 	generateDrawArea(areaIndices, isSub) {
 		const $$ = this;
 		const config = $$.config;
 		const lineConnectNull = config.line_connectNull;
-		const axisRotated = config.axis_rotated;
+		const isRotated = config.axis_rotated;
 		const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
@@ -362,7 +408,7 @@ extend(ChartInternal.prototype, {
 				const isAreaRangeType = $$.isAreaRangeType(d);
 				let area = d3Area();
 
-				if (axisRotated) {
+				if (isRotated) {
 					if (isAreaRangeType) {
 						area = area.x0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
 							.x1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")))
@@ -392,14 +438,14 @@ extend(ChartInternal.prototype, {
 					values = $$.convertValuesToStep(values);
 				}
 
-				path = area.curve($$.getInterpolate(d))(values);
+				path = area.curve($$.getCurve(d))(values);
 			} else {
 				if (values[0]) {
 					x0 = $$.x(values[0].x);
 					y0 = $$.getYScale(d.id)(values[0].value);
 				}
 
-				path = axisRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
+				path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
 			}
 
 			return path || "M 0 0";
