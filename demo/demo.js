@@ -2017,7 +2017,41 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
-		Width: {
+		BarPadding: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 250, 140, 200, 150, 50],
+						["data3", 100, 200, 340, 300, 250, 250],
+						["data4", 80, 230, 240, 100, 350, 150]
+					],
+					type: "bar"
+				},
+				bar: {
+					padding: 3
+				}
+			}
+		},
+		BarRadius: {
+			options: {
+				data: {
+					columns: [
+						["data1", 80, 250, -200, 200, 250, 150],
+						["data2", 170, -350, 240, 200, -250, 150],
+						["data3", -120, 100, 240, -300, 350, 350],
+						["data4", 180, 130, 340, 200, 250, -250]
+					],
+					type: "bar"
+				},
+				bar: {
+					radius: {
+						ratio: 0.5
+					}
+				}
+			}
+		},
+		BarWidth: {
 			options: {
 				data: {
 					columns: [
@@ -2032,22 +2066,6 @@ d3.select(".chart_area")
 						ratio: 0.9,
 						max: 30
 					}
-				}
-			}
-		},
-		Padding: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 250, 140, 200, 150, 50],
-						["data3", 100, 200, 340, 300, 250, 250],
-						["data4", 80, 230, 240, 100, 350, 150]
-					],
-					type: "bar"
-				},
-				bar: {
-					padding: 3
 				}
 			}
 		}
