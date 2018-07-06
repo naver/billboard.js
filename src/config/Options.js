@@ -721,7 +721,7 @@ export default class Options {
 			/**
 			 * Enable to select data points by dragging.<br><br>
 			 * If this option set true, data points can be selected by dragging.
-			 * **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
+			 * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
 			 * @name data․selection․draggable
 			 * @memberOf Options
 			 * @type {Boolean}
@@ -1029,7 +1029,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Array} [color.pattern] custom color pattern
 			 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
-			 *  - **Note:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
+			 *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
 			 *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
 			 *    - `bb-colorize-pattern-red`
 			 *    - `bb-colorize-pattern-fff`
@@ -1504,7 +1504,7 @@ export default class Options {
 
 			/**
 			 * Set to display system tooltip for tick text
-			 * - **Note:** Only available for category axis type (`axis.x.type='category'`)
+			 * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
 			 * @name axis․x․tick․tooltip
 			 * @memberOf Options
 			 * @type {Boolean}
@@ -1902,7 +1902,7 @@ export default class Options {
 
 			/**
 			 * Set the number of y axis ticks.<br><br>
-			 * **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
+			 * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 			 * @name axis․y․tick․time
 			 * @memberOf Options
 			 * @private
@@ -1929,7 +1929,7 @@ export default class Options {
 			 * You can set padding for y axis to create more space on the edge of the axis.
 			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
 			 *
-			 * **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+			 * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y․padding
 			 * @memberOf Options
 			 * @type {Object}
@@ -2268,20 +2268,20 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [point.show=true] Whether to show each point in line.
 			 * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
-			 *  - **Note:** Disabled for 'bubble' type
+			 *  - **NOTE:** Disabled for 'bubble' type
 			 * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
 			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
-			 *  - **Note:** For 'bubble' type, the default is `bubbleSize*1.15`
+			 *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
 			 * @property {String} [point.type="circle"] The type of point to be drawn<br>
-			 * - **Note:**
+			 * - **NOTE:**
 			 *  - If chart has 'bubble' type, only circle can be used.
 			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
 			 *  - circle
 			 *  - rectangle
 			 * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line<br>
-			 * - **Note:**
+			 * - **NOTE:**
 			 *  - This is an `experimental` feature and can have some unexpected behaviors.
 			 *  - If chart has 'bubble' type, only circle can be used.
 			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
@@ -2365,28 +2365,41 @@ export default class Options {
 			 * @name bar
 			 * @memberOf Options
 			 * @type {Object}
+			 * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
+			 * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
+			 * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 			 * @property {Number} [bar.width] Change the width of bar chart.
 			 * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 			 * @property {Number} [bar.width.max] The maximum width value for ratio.
 			 * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
-			 * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
 			 * @example
 			 *  bar: {
+			 *      padding: 1,
+			 *
+			 *      // the 'radius' option can be used only for non-stacking bars
+			 *      radius: 10,
+			 *      // or
+			 *      radius: {
+			 *          ratio: 0.5
+			 *      }
+			 *
 			 *      width: 10,
 			 *      // or
 			 *      width: {
 			 *          ratio: 0.2,
 			 *          max: 20
 			 *      },
-			 *      zerobased: false,
-			 *      padding: 1
+			 *
+			 *      zerobased: false
 			 *  }
 			 */
+			bar_padding: 0,
+			bar_radius: undefined,
+			bar_radius_ratio: undefined,
 			bar_width: undefined,
 			bar_width_ratio: 0.6,
 			bar_width_max: undefined,
 			bar_zerobased: true,
-			bar_padding: 0,
 
 			/**
 			 * Set bubble options
