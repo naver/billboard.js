@@ -63,7 +63,7 @@
     "clean-webpack-plugin": "^0.1.19",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
-    "css-loader": "^0.28.11",
+    "css-loader": "^1.0.0",
     "docdash": "^0.4.0",
     "eslint": "^5.0.1",
     "eslint-config-naver": "^2.0.0",
