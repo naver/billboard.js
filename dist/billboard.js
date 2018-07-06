@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180705151324
+ * @version 1.5.1-nightly-20180706171052
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180705151324
+ * @version 1.5.1-nightly-20180706171052
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180705151324",
+	version: "1.5.1-nightly-20180706171052",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -2622,7 +2622,7 @@ var Options = function Options() {
 																				/**
                      * Enable to select data points by dragging.<br><br>
                      * If this option set true, data points can be selected by dragging.
-                     * **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
+                     * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
                      * @name data․selection․draggable
                      * @memberOf Options
                      * @type {Boolean}
@@ -2930,7 +2930,7 @@ var Options = function Options() {
                      * @type {Object}
                      * @property {Array} [color.pattern] custom color pattern
                      * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
-                     *  - **Note:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
+                     *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
                      *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
                      *    - `bb-colorize-pattern-red`
                      *    - `bb-colorize-pattern-fff`
@@ -3404,7 +3404,7 @@ var Options = function Options() {
 
 																				/**
                      * Set to display system tooltip for tick text
-                     * - **Note:** Only available for category axis type (`axis.x.type='category'`)
+                     * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
                      * @name axis․x․tick․tooltip
                      * @memberOf Options
                      * @type {Boolean}
@@ -3802,7 +3802,7 @@ var Options = function Options() {
 
 																				/**
                      * Set the number of y axis ticks.<br><br>
-                     * **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
+                     * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
                      * @name axis․y․tick․time
                      * @memberOf Options
                      * @private
@@ -3829,7 +3829,7 @@ var Options = function Options() {
                      * You can set padding for y axis to create more space on the edge of the axis.
                      * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
                      *
-                     * **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+                     * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
                      * @name axis․y․padding
                      * @memberOf Options
                      * @type {Object}
@@ -4168,20 +4168,20 @@ var Options = function Options() {
                      * @type {Object}
                      * @property {Boolean} [point.show=true] Whether to show each point in line.
                      * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
-                     *  - **Note:** Disabled for 'bubble' type
+                     *  - **NOTE:** Disabled for 'bubble' type
                      * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
                      * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
-                     *  - **Note:** For 'bubble' type, the default is `bubbleSize*1.15`
+                     *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
                      * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
                      * @property {String} [point.type="circle"] The type of point to be drawn<br>
-                     * - **Note:**
+                     * - **NOTE:**
                      *  - If chart has 'bubble' type, only circle can be used.
                      *  - For IE, non circle point expansions are not supported due to lack of transform support.
                      * - **Available Values:**
                      *  - circle
                      *  - rectangle
                      * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line<br>
-                     * - **Note:**
+                     * - **NOTE:**
                      *  - This is an `experimental` feature and can have some unexpected behaviors.
                      *  - If chart has 'bubble' type, only circle can be used.
                      *  - For IE, non circle point expansions are not supported due to lack of transform support.
@@ -4265,28 +4265,41 @@ var Options = function Options() {
                      * @name bar
                      * @memberOf Options
                      * @type {Object}
+                     * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
+                     * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
+                     * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
                      * @property {Number} [bar.width] Change the width of bar chart.
                      * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
                      * @property {Number} [bar.width.max] The maximum width value for ratio.
                      * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
-                     * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
                      * @example
                      *  bar: {
+                     *      padding: 1,
+                     *
+                     *      // the 'radius' option can be used only for non-stacking bars
+                     *      radius: 10,
+                     *      // or
+                     *      radius: {
+                     *          ratio: 0.5
+                     *      }
+                     *
                      *      width: 10,
                      *      // or
                      *      width: {
                      *          ratio: 0.2,
                      *          max: 20
                      *      },
-                     *      zerobased: false,
-                     *      padding: 1
+                     *
+                     *      zerobased: false
                      *  }
                      */
+																				bar_padding: 0,
+																				bar_radius: undefined,
+																				bar_radius_ratio: undefined,
 																				bar_width: undefined,
 																				bar_width_ratio: .6,
 																				bar_width_max: undefined,
 																				bar_zerobased: !0,
-																				bar_padding: 0,
 
 																				/**
                      * Set bubble options
@@ -7041,18 +7054,42 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	generateDrawBar: function generateDrawBar(barIndices, isSub) {
 		var $$ = this,
 		    config = $$.config,
-		    getPoints = $$.generateGetBarPoints(barIndices, isSub);
+		    getPoints = $$.generateGetBarPoints(barIndices, isSub),
+		    isRotated = config.axis_rotated,
+		    isGrouped = config.data_groups.length,
+		    getRadius = (0, _util.isNumber)(config.bar_radius) && config.bar_radius > 0 ? function () {
+			return config.bar_radius;
+		} : (0, _util.isNumber)(config.bar_radius_ratio) ? function (w) {
+			return w * config.bar_radius_ratio;
+		} : null;
 
+		// get the bar radius
 
 		return function (d, i) {
 			// 4 points that make a bar
 			var points = getPoints(d, i),
-			    indexX = config.axis_rotated ? 1 : 0,
-			    indexY = +!indexX;
+			    indexX = +isRotated,
+			    indexY = +!indexX,
+			    isNegative = d.value < 0,
+			    pathRadius = ["", ""],
+			    radius = 0;
 
 			// switch points if axis is rotated, not applicable for sub chart
 
-			return "M " + points[0][indexX] + "," + points[0][indexY] + "\n\t\t\t\tL " + points[1][indexX] + "," + points[1][indexY] + "\n\t\t\t\tL " + points[2][indexX] + "," + points[2][indexY] + "\n\t\t\t\tL " + points[3][indexX] + "," + points[3][indexY] + " z";
+			if (getRadius && !isGrouped) {
+				var index = isRotated ? indexY : indexX,
+				    barW = points[2][index] - points[0][index];
+				radius = getRadius(barW);
+
+
+				var arc = "a" + radius + "," + radius + " " + (isNegative ? "1 0 0" : "0 0 1") + " ";
+
+				pathRadius[+!isRotated] = "" + arc + radius + "," + radius, pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"](), isNegative && pathRadius.reverse();
+			}
+
+			var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "\n\t\t\t\t V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "\n\t\t\t\t H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "\n\t\t\t\t H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "\n\t\t\t\t V" + points[3][indexY];
+
+			return "M" + points[0][indexX] + "," + points[0][indexY] + " " + path + "z";
 		};
 	},
 	generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
