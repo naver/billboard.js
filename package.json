@@ -103,7 +103,7 @@
     "webpack-common-shake": "^1.5.3",
     "webpack-merge": "^4.1.3",
     "webpack-monitor": "^1.0.14",
-    "webpack-serve": "^1.0.4",
+    "webpack-serve": "^2.0.0",
     "webpack-stylish": "^0.1.8",
     "webpackbar": "^2.6.1",
     "write-file-webpack-plugin": "^4.3.2",
