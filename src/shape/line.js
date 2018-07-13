@@ -155,9 +155,8 @@ extend(ChartInternal.prototype, {
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (config.data_groups.length > 0 ?
 			getPoints(d, i)[0][1] :
-			yScaleGetter.call($$, d.id)(
-				$$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "mid") : d.value
-			));
+			yScaleGetter.call($$, d.id)($$.getBaseValue(d))
+		);
 
 		let line = d3Line();
 
@@ -165,7 +164,7 @@ extend(ChartInternal.prototype, {
 			line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
 
 		if (!lineConnectNull) {
-			line = line.defined(d => d.value !== null);
+			line = line.defined(d => $$.getBaseValue(d) !== null);
 		}
 
 		return d => {
@@ -388,15 +387,24 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const lineConnectNull = config.line_connectNull;
 		const isRotated = config.axis_rotated;
+		const isGrouped = config.data_groups.length > 0;
+
 		const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
+
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
-		const value0 = (d, i) => (config.data_groups.length > 0 ?
+		const value0 = (d, i) => (isGrouped ?
 			getPoints(d, i)[0][1] :
-			yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id)));
-		const value1 = (d, i) => (config.data_groups.length > 0 ?
+			yScaleGetter.call($$, d.id)(
+				$$.isAreaRangeType(d) ?
+					$$.getAreaRangeData(d, "high") : $$.getAreaBaseValue(d.id)
+			));
+		const value1 = (d, i) => (isGrouped ?
 			getPoints(d, i)[1][1] :
-			yScaleGetter.call($$, d.id)(d.value));
+			yScaleGetter.call($$, d.id)(
+				$$.isAreaRangeType(d) ?
+					$$.getAreaRangeData(d, "low") : d.value
+			));
 
 		return d => {
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
@@ -405,33 +413,20 @@ extend(ChartInternal.prototype, {
 			let path;
 
 			if ($$.isAreaType(d)) {
-				const isAreaRangeType = $$.isAreaRangeType(d);
 				let area = d3Area();
 
 				if (isRotated) {
-					if (isAreaRangeType) {
-						area = area.x0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
-							.x1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")))
-							.y(xValue);
-					} else {
-						area = area.x0(value0)
-							.x1(value1)
-							.y(xValue);
-					}
+					area = area.y(xValue)
+						.x0(value0)
+						.x1(value1);
 				} else {
-					if (isAreaRangeType) {
-						area = area.x(xValue)
-							.y0(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high")))
-							.y1(d => yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low")));
-					} else {
-						area = area.x(xValue)
-							.y0(config.area_above ? 0 : value0)
-							.y1(value1);
-					}
+					area = area.x(xValue)
+						.y0(config.area_above ? 0 : value0)
+						.y1(value1);
 				}
 
 				if (!lineConnectNull) {
-					area = area.defined(d => d.value !== null);
+					area = area.defined(d => $$.getBaseValue(d) !== null);
 				}
 
 				if ($$.isStepType(d)) {
@@ -552,14 +547,9 @@ extend(ChartInternal.prototype, {
 			lineIndices = $$.getShapeIndices($$.isLineType);
 			getPoints = $$.generateGetLinePoints(lineIndices);
 
-			$$.circleY = function(d, i) {
-				return getPoints(d, i)[0][1];
-			};
+			$$.circleY = (d, i) => getPoints(d, i)[0][1];
 		} else {
-			$$.circleY = function(d) {
-				return $$.isAreaRangeType(d) ? $$.getYScale(d.id)($$.getAreaRangeData(d, "mid")) :
-					$$.getYScale(d.id)(d.value);
-			};
+			$$.circleY = d => $$.getYScale(d.id)($$.getBaseValue(d));
 		}
 	},
 

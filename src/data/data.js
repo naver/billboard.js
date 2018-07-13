@@ -200,19 +200,39 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Get base value isAreaRangeType
+	 * @param data Data object
+	 * @return {Number}
+	 * @private
+	 */
+	getBaseValue(data) {
+		const $$ = this;
+		let value = data.value;
+
+		// In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
+		// will take the 'mid' as the base value
+		if (value && $$.isAreaRangeType(data)) {
+			value = $$.getAreaRangeData(data, "mid");
+		}
+
+		return value;
+	},
+
+	/**
 	 * Get min/max value from the data
 	 * @private
 	 * @param {Array} data array data to be evaluated
 	 * @return {{min: {Number}, max: {Number}}}
 	 */
 	getMinMaxValue(data) {
+		const getBaseValue = this.getBaseValue.bind(this);
 		let min;
 		let max;
 
 		(data || this.data.targets.map(t => t.values))
 			.forEach(v => {
-				min = d3Min([min, d3Min(v, t => t.value)]);
-				max = d3Max([max, d3Max(v, t => t.value)]);
+				min = d3Min([min, d3Min(v, getBaseValue)]);
+				max = d3Max([max, d3Max(v, getBaseValue)]);
 			});
 
 		return {min, max};
@@ -287,7 +307,7 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 */
 	getFilteredDataByValue(data, value) {
-		return data.filter(t => t.value === value);
+		return data.filter(t => this.getBaseValue(t) === value);
 	},
 
 	/**
@@ -479,7 +499,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	filterRemoveNull(data) {
-		return data.filter(d => isValue(d.value));
+		return data.filter(d => isValue(this.getBaseValue(d)));
 	},
 
 	filterByXDomain(targets, xDomain) {
@@ -685,12 +705,14 @@ extend(ChartInternal.prototype, {
 	},
 
 	getAreaRangeData(d, type) {
-		if (isArray(d.value)) {
+		const value = d.value;
+
+		if (isArray(value)) {
 			const index = ["high", "mid", "low"].indexOf(type);
 
-			return index === -1 ? 0 : d.value[index];
+			return index === -1 ? null : value[index];
 		}
 
-		return d.value[type];
+		return value[type];
 	}
 });

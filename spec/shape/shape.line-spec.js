@@ -235,49 +235,74 @@ describe("SHAPE LINE", () => {
 	});
 
 	describe("area-range type generation", () => {
-		before(() => {
-			skipEach = true;
+		const min = 120;
+		const max = 220;
 
+		before(() => {
 			args = {
 				data: {
 					x: "timestamps",
 					columns: [
-						['timestamps', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06'],
-						['data1', [150, 140, 110], [155, 130, 115], [160, 135, 120], [135, 120, 110], [180, 150, 130], [199, 160, 125]],
-						['data2', {high: 155, low: 145, mid: 150},
-							{high: 200, mid: 190, low: 150},
-							{high: 230, mid: 215, low: 200},
+						["timestamps", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
+						["data1",
+							[null, null, null],
+							null,
+							[160, 135, 120],
+							[135, min, 110],
+							[180, 150, 130],
+							[199, 160, 125]
+						],
+						["data2",
+							null,
+							{high: null, mid: null, low: null},
+							{high: 230, mid: max, low: 200},
 							{high: 210, mid: 200, low: 180},
 							{high: 220, mid: 210, low: 190},
-							{high: 200, mid: 180, low: 160}],
+							{high: 200, mid: 180, low: 160}
+						],
+						["data3", 130, 140, 200, 150, 210, 150]
 					],
 					type: "area-spline-range",
+					types: {
+						data3: "bubble"
+					}
 				},
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				}
 			};
 		});
 
-		after(() => { skipEach = false; });
+		const checkLineLen = dataName => {
+			const internal = chart.internal;
+			const target = internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-${dataName}`);
+			const commands = target.select(`.${CLASS.line}-${dataName}`).attr("d").split("C");
+			const dataLen = internal.filterRemoveNull(chart.data(dataName)[0].values).length;
+
+			expect(commands.length).to.be.equal(dataLen);
+
+			// null data points, shouldn't be showing
+			internal.main.selectAll(`.${CLASS.circles}-${dataName} circle`).each(function(d, i) {
+				expect(+this.style.opacity).to.be.equal(i > 1 ? 1 : 0);
+			})
+		};
 
 		it("Should render the lines correctly when array data supplied", () => {
-			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
-			const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
-
-			expect(commands.length).to.be.equal(6);
-		});
-
-		it("Should render the lines correctly when array data supplied", () => {
-			const target = chart.internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-data2`);
-			const commands = parseSvgPath(target.select(`.${CLASS.line}-data2`).attr("d"));
-
-			expect(commands.length).to.be.equal(6);
+			checkLineLen("data1");
+			checkLineLen("data2");
 		});
 
 		it("should use cardinal interpolation by default", () => {
 			expect(chart.internal.config.spline_interpolation_type).to.be.equal("cardinal");
 		});
 
-		it("set options data.type='area-line-range chart'", () => {
-			args.data.type = "area-line-range chart";
+		it("should return correct min/max data", () => {
+			const minMax = chart.internal.getMinMaxValue();
+
+			expect(minMax.min).to.be.equal(min);
+			expect(minMax.max).to.be.equal(max);
 		});
 	});
 

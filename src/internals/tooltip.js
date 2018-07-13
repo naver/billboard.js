@@ -76,9 +76,7 @@ extend(ChartInternal.prototype, {
 		let name;
 		let bgcolor;
 
-		const getRowValue = function(row) {
-			return $$.isAreaRangeType(row) ? $$.getAreaRangeData(row, "mid") : row.value;
-		};
+		const getRowValue = row => $$.getBaseValue(row);
 
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
@@ -227,7 +225,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const forArc = $$.hasArcType(null, ["radar"]);
-		const dataToShow = selectedData.filter(d => d && isValue(d.value));
+		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 		const positionFunction = config.tooltip_position || $$.tooltipPosition;
 
 		if (dataToShow.length === 0 || !config.tooltip_show) {

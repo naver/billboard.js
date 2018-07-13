@@ -297,7 +297,8 @@ extend(ChartInternal.prototype, {
 	showXGridFocus(selectedData) {
 		const $$ = this;
 		const config = $$.config;
-		const dataToShow = selectedData.filter(d => d && isValue(d.value));
+		const isRotated = config.axis_rotated;
+		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 		const focusEl = $$.main.selectAll(`line.${CLASS.xgridFocus}`);
 		const xx = $$.xx.bind($$);
 
@@ -313,8 +314,8 @@ extend(ChartInternal.prototype, {
 		focusEl
 			.style("visibility", "visible")
 			.data([dataToShow[0]])
-			.attr(config.axis_rotated ? "y1" : "x1", xx)
-			.attr(config.axis_rotated ? "y2" : "x2", xx);
+			.attr(isRotated ? "y1" : "x1", xx)
+			.attr(isRotated ? "y2" : "x2", xx);
 
 		$$.smoothLines(focusEl, "grid");
 	},
