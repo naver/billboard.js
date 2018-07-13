@@ -813,6 +813,7 @@ export default class Options {
 
 			/**
 			 * Set a callback for minimum data
+			 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
 			 * @name data․onmin
 			 * @memberOf Options
 			 * @type {Function}
@@ -827,6 +828,7 @@ export default class Options {
 
 			/**
 			 * Set a callback for maximum data
+			 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
 			 * @name data․onmax
 			 * @memberOf Options
 			 * @type {Function}
