@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180706171052
+ * @version 1.5.1-nightly-20180713180408
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180706171052
+ * @version 1.5.1-nightly-20180713180408
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180706171052",
+	version: "1.5.1-nightly-20180713180408",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -609,13 +609,13 @@ var ChartInternal = function () {
 
 		return target === "main" ? (x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top)) : target === "context" ? (x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top)) : target === "legend" ? (x = $$.margin3.left, y = $$.margin3.top) : target === "x" ? (x = 0, y = isRotated ? 0 : $$.height) : target === "y" ? (x = 0, y = isRotated ? $$.height : 0) : target === "y2" ? (x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0) : target === "subx" ? (x = 0, y = isRotated ? 0 : $$.height2) : target === "arc" ? (x = $$.arcWidth / 2, y = $$.arcHeight / 2) : target === "radar" && (x = $$.width / 2 - $$.arcHeight / 2, y = (0, _util.asHalfPixel)($$.margin.top)), "translate(" + x + ", " + y + ")";
 	}, ChartInternal.prototype.initialOpacity = function initialOpacity(d) {
-		return d.value !== null && this.withoutFadeIn[d.id] ? "1" : "0";
+		return this.getBaseValue(d) !== null && this.withoutFadeIn[d.id] ? "1" : "0";
 	}, ChartInternal.prototype.initialOpacityForCircle = function initialOpacityForCircle(d) {
-		return d.value !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+		return this.getBaseValue(d) !== null && this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
 	}, ChartInternal.prototype.opacityForCircle = function opacityForCircle(d) {
 		var opacity = this.config.point_show ? "1" : "0";
 
-		return (0, _util.isValue)(d.value) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
+		return (0, _util.isValue)(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
 	}, ChartInternal.prototype.opacityForText = function opacityForText() {
 		return this.hasDataLabel() ? "1" : "0";
 	}, ChartInternal.prototype.xx = function xx(d) {
@@ -624,16 +624,16 @@ var ChartInternal = function () {
 		return d ? fn(d.x) : null;
 	}, ChartInternal.prototype.xv = function xv(d) {
 		var $$ = this,
-		    value = d.value;
+		    value = $$.getBaseValue(d);
 
 
-		return $$.isTimeSeries() ? value = $$.parseDate(d.value) : $$.isCategorized() && (0, _util.isString)(d.value) && (value = $$.config.axis_x_categories.indexOf(d.value)), Math.ceil($$.x(value));
+		return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && (0, _util.isString)(value) && (value = $$.config.axis_x_categories.indexOf(value)), Math.ceil($$.x(value));
 	}, ChartInternal.prototype.yv = function yv(d) {
 		var $$ = this,
 		    yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y;
 
 
-		return Math.ceil(yScale(d.value));
+		return Math.ceil(yScale($$.getBaseValue(d)));
 	}, ChartInternal.prototype.subxx = function subxx(d) {
 		return d ? this.subX(d.x) : null;
 	}, ChartInternal.prototype.transformMain = function transformMain(withTransition, transitions) {
@@ -2714,6 +2714,7 @@ var Options = function Options() {
 
 																				/**
                      * Set a callback for minimum data
+                     * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
                      * @name data․onmin
                      * @memberOf Options
                      * @type {Function}
@@ -2728,6 +2729,7 @@ var Options = function Options() {
 
 																				/**
                      * Set a callback for maximum data
+                     * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
                      * @name data․onmax
                      * @memberOf Options
                      * @type {Function}
@@ -5177,24 +5179,38 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 	/**
+  * Get base value isAreaRangeType
+  * @param data Data object
+  * @return {Number}
+  * @private
+  */
+	getBaseValue: function getBaseValue(data) {
+		var $$ = this,
+		    value = data.value;
+
+		// In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
+		// will take the 'mid' as the base value
+
+		return value && $$.isAreaRangeType(data) && (value = $$.getAreaRangeData(data, "mid")), value;
+	},
+
+
+	/**
   * Get min/max value from the data
   * @private
   * @param {Array} data array data to be evaluated
   * @return {{min: {Number}, max: {Number}}}
   */
 	getMinMaxValue: function getMinMaxValue(data) {
-		var min = void 0,
+		var getBaseValue = this.getBaseValue.bind(this),
+		    min = void 0,
 		    max = void 0;
 
 
 		return (data || this.data.targets.map(function (t) {
 			return t.values;
 		})).forEach(function (v) {
-			min = (0, _d3Array.min)([min, (0, _d3Array.min)(v, function (t) {
-				return t.value;
-			})]), max = (0, _d3Array.max)([max, (0, _d3Array.max)(v, function (t) {
-				return t.value;
-			})]);
+			min = (0, _d3Array.min)([min, (0, _d3Array.min)(v, getBaseValue)]), max = (0, _d3Array.max)([max, (0, _d3Array.max)(v, getBaseValue)]);
 		}), { min: min, max: max };
 	},
 
@@ -5261,8 +5277,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @private
   */
 	getFilteredDataByValue: function getFilteredDataByValue(data, value) {
+		var _this = this;
+
 		return data.filter(function (t) {
-			return t.value === value;
+			return _this.getBaseValue(t) === value;
 		});
 	},
 
@@ -5434,8 +5452,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		});
 	},
 	filterRemoveNull: function filterRemoveNull(data) {
+		var _this2 = this;
+
 		return data.filter(function (d) {
-			return (0, _util.isValue)(d.value);
+			return (0, _util.isValue)(_this2.getBaseValue(d));
 		});
 	},
 	filterByXDomain: function filterByXDomain(targets, xDomain) {
@@ -5581,13 +5601,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}), $$.redraw({ withLegend: !0 }), current);
 	},
 	getAreaRangeData: function getAreaRangeData(d, type) {
-		if ((0, _util.isArray)(d.value)) {
+		var value = d.value;
+
+		if ((0, _util.isArray)(value)) {
 			var index = ["high", "mid", "low"].indexOf(type);
 
-			return index === -1 ? 0 : d.value[index];
+			return index === -1 ? null : value[index];
 		}
 
-		return d.value[type];
+		return value[type];
 	}
 }); /**
      * Copyright (c) 2017 NAVER Corp.
@@ -7301,12 +7323,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return (isSub ? $$.subxx : $$.xx).call($$, d);
 		},
 		    yValue = function (d, i) {
-			return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "mid") : d.value);
+			return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getBaseValue(d));
 		},
 		    line = (0, _d3Shape.line)();
 
 		return line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
-			return d.value !== null;
+			return $$.getBaseValue(d) !== null;
 		})), function (d) {
 			var x = isSub ? $$.x : $$.subX,
 			    y = yScaleGetter.call($$, d.id),
@@ -7442,16 +7464,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    config = $$.config,
 		    lineConnectNull = config.line_connectNull,
 		    isRotated = config.axis_rotated,
+		    isGrouped = config.data_groups.length > 0,
 		    getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
 		    yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
 		    xValue = function (d) {
 			return (isSub ? $$.subxx : $$.xx).call($$, d);
 		},
 		    value0 = function (d, i) {
-			return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getAreaBaseValue(d.id));
+			return isGrouped ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : $$.getAreaBaseValue(d.id));
 		},
 		    value1 = function (d, i) {
-			return config.data_groups.length > 0 ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)(d.value);
+			return isGrouped ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "low") : d.value);
 		};
 
 		return function (d) {
@@ -7462,18 +7485,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 			if ($$.isAreaType(d)) {
-				var isAreaRangeType = $$.isAreaRangeType(d),
-				    area = (0, _d3Shape.area)();
-				area = isRotated ? isAreaRangeType ? area.x0(function (d) {
-					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high"));
-				}).x1(function (d) {
-					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low"));
-				}).y(xValue) : area.x0(value0).x1(value1).y(xValue) : isAreaRangeType ? area.x(xValue).y0(function (d) {
-					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "high"));
-				}).y1(function (d) {
-					return yScaleGetter.call($$, d.id)($$.getAreaRangeData(d, "low"));
-				}) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1), lineConnectNull || (area = area.defined(function (d) {
-					return d.value !== null;
+				var area = (0, _d3Shape.area)();
+
+				area = isRotated ? area.y(xValue).x0(value0).x1(value1) : area.x(xValue).y0(config.area_above ? 0 : value0).y1(value1), lineConnectNull || (area = area.defined(function (d) {
+					return $$.getBaseValue(d) !== null;
 				})), $$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = area.curve($$.getCurve(d))(values);
 			} else values[0] && (x0 = $$.x(values[0].x), y0 = $$.getYScale(d.id)(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
 
@@ -7548,7 +7563,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		$$.config.data_groups.length > 0 ? (lineIndices = $$.getShapeIndices($$.isLineType), getPoints = $$.generateGetLinePoints(lineIndices), $$.circleY = function (d, i) {
 			return getPoints(d, i)[0][1];
 		}) : $$.circleY = function (d) {
-			return $$.isAreaRangeType(d) ? $$.getYScale(d.id)($$.getAreaRangeData(d, "mid")) : $$.getYScale(d.id)(d.value);
+			return $$.getYScale(d.id)($$.getBaseValue(d));
 		};
 	},
 	getCircles: function getCircles(i, id) {
@@ -8513,12 +8528,13 @@ var getGridTextAnchor = function (d) {
 	showXGridFocus: function showXGridFocus(selectedData) {
 		var $$ = this,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
 		    dataToShow = selectedData.filter(function (d) {
-			return d && (0, _util.isValue)(d.value);
+			return d && (0, _util.isValue)($$.getBaseValue(d));
 		}),
 		    focusEl = $$.main.selectAll("line." + _classes2.default.xgridFocus),
 		    xx = $$.xx.bind($$);
-		!config.tooltip_show || $$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType() || (focusEl.style("visibility", "visible").data([dataToShow[0]]).attr(config.axis_rotated ? "y1" : "x1", xx).attr(config.axis_rotated ? "y2" : "x2", xx), $$.smoothLines(focusEl, "grid"));
+		!config.tooltip_show || $$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType() || (focusEl.style("visibility", "visible").data([dataToShow[0]]).attr(isRotated ? "y1" : "x1", xx).attr(isRotated ? "y2" : "x2", xx), $$.smoothLines(focusEl, "grid"));
 
 		// Hide when bubble/scatter plot exists
 	},
@@ -8653,7 +8669,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    name = void 0,
 		    bgcolor = void 0,
 		    getRowValue = function (row) {
-			return $$.isAreaRangeType(row) ? $$.getAreaRangeData(row, "mid") : row.value;
+			return $$.getBaseValue(row);
 		};
 
 		if (order === null && config.data_groups.length) {
@@ -8739,7 +8755,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    config = $$.config,
 		    forArc = $$.hasArcType(null, ["radar"]),
 		    dataToShow = selectedData.filter(function (d) {
-			return d && (0, _util.isValue)(d.value);
+			return d && (0, _util.isValue)($$.getBaseValue(d));
 		}),
 		    positionFunction = config.tooltip_position || $$.tooltipPosition;
 
