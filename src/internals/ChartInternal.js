@@ -913,19 +913,20 @@ export default class ChartInternal {
 	}
 
 	initialOpacity(d) {
-		return d.value !== null &&
+		return this.getBaseValue(d) !== null &&
 			this.withoutFadeIn[d.id] ? "1" : "0";
 	}
 
 	initialOpacityForCircle(d) {
-		return d.value !== null &&
+		return this.getBaseValue(d) !== null &&
 			this.withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
 	}
 
 	opacityForCircle(d) {
 		const opacity = this.config.point_show ? "1" : "0";
 
-		return isValue(d.value) ? (this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) : "0";
+		return isValue(this.getBaseValue(d)) ?
+			(this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) : "0";
 	}
 
 	opacityForText() {
@@ -941,12 +942,12 @@ export default class ChartInternal {
 
 	xv(d) {
 		const $$ = this;
-		let value = d.value;
+		let value = $$.getBaseValue(d);
 
 		if ($$.isTimeSeries()) {
-			value = $$.parseDate(d.value);
-		} else if ($$.isCategorized() && isString(d.value)) {
-			value = $$.config.axis_x_categories.indexOf(d.value);
+			value = $$.parseDate(value);
+		} else if ($$.isCategorized() && isString(value)) {
+			value = $$.config.axis_x_categories.indexOf(value);
 		}
 
 		return Math.ceil($$.x(value));
@@ -956,7 +957,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y;
 
-		return Math.ceil(yScale(d.value));
+		return Math.ceil(yScale($$.getBaseValue(d)));
 	}
 
 	subxx(d) {
