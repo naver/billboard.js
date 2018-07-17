@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180713180408
+ * @version 1.5.1-nightly-20180717171024
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.5.0
@@ -131,7 +131,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180713180408
+ * @version 1.5.1-nightly-20180717171024
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -145,7 +145,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180713180408",
+	version: "1.5.1-nightly-20180717171024",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -7515,7 +7515,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	updateCircle: function updateCircle() {
 		var $$ = this;
 
-		$$.config.point_show && ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data($$.lineScatterBubbleRadarData.bind($$)), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
+		$$.config.point_show && ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data(function (d) {
+			return !$$.isBarType(d) && $$.labelishData(d);
+		}), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
 	},
 	redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
 		var $$ = this,
@@ -8080,7 +8082,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var _this = this,
 		    $$ = this,
 		    config = $$.config,
-		    dataFn = $$.barLineBubbleData.bind($$),
+		    dataFn = $$.labelishData.bind($$),
 		    classText = $$.classText.bind($$);
 
 		$$.mainText = $$.main.selectAll("." + _classes2.default.texts).selectAll("." + _classes2.default.text).data(function (d) {
@@ -8186,14 +8188,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	getYForText: function getYForText(points, d, textElement) {
 		var $$ = this,
 		    config = $$.config,
+		    r = config.point_r,
+		    baseY = 3,
 		    yPos = void 0;
 
 
-		if (config.axis_rotated) yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * .6) / 2;else if (yPos = points[2][1], d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= 3 : !$$.isBarType(d) && $$.isChrome() && (yPos += 3);else {
-				var diff = -6;
+		if (config.axis_rotated) yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * .6) / 2;else if (yPos = points[2][1], (0, _util.isNumber)(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
+				var diff = -baseY * 2;
 
-				$$.isBarType(d) ? diff = -3 : $$.isBubbleType(d) && (diff = 3), yPos += diff;
+				$$.isBarType(d) ? diff = -baseY : $$.isBubbleType(d) && (diff = baseY), yPos += diff;
 			}
+
 		// show labels regardless of the domain if value is null
 		if (d.value === null && !config.axis_rotated) {
 			var boxHeight = textElement.getBoundingClientRect().height;
@@ -8334,9 +8339,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 
 
-	// determine if data is line, scatter or bubble type
-	lineScatterBubbleRadarData: function lineScatterBubbleRadarData(d) {
-		return this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isRadarType(d) ? d.values : [];
+	/**
+  * Get data adapt for data label showing
+  * @param {Object} d Data object
+  * @return {Array}
+  * @private
+  */
+	labelishData: function labelishData(d) {
+		return this.isBarType(d) || this.isLineType(d) || this.isScatterType(d) || this.isBubbleType(d) || this.isRadarType(d) ? d.values : [];
 	},
 	barLineBubbleData: function barLineBubbleData(d) {
 		return this.isBarType(d) || this.isLineType(d) || this.isBubbleType(d) ? d.values : [];
