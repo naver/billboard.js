@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180717171024
+ * @version 1.5.1-nightly-20180717181034
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.5.0
@@ -131,7 +131,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180717171024
+ * @version 1.5.1-nightly-20180717181034
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -145,7 +145,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180717171024",
+	version: "1.5.1-nightly-20180717181034",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -2608,7 +2608,7 @@ var Options = function Options() {
 																				data_selection_multiple: !0,
 
 																				/**
-                     * Enable to select data points by dragging.<br><br>
+                     * Enable to select data points by dragging.
                      * If this option set true, data points can be selected by dragging.
                      * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
                      * @name data․selection․draggable
@@ -6174,6 +6174,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 	/**
+  * Return draggable selection function
+  * @return {Function}
+  * @private
+  */
+	getDraggableSelection: function getDraggableSelection() {
+		var $$ = this,
+		    config = $$.config;
+
+
+		return config.interaction_enabled && config.data_selection_draggable && $$.drag ? (0, _d3Drag.drag)().on("drag", function () {
+			$$.drag((0, _d3Selection.mouse)(this));
+		}).on("start", function () {
+			$$.dragstart((0, _d3Selection.mouse)(this));
+		}).on("end", function () {
+			$$.dragend();
+		}) : function () {};
+	},
+
+
+	/**
   * Create eventRect for each data on the x-axis.
   * Register touch and drag events.
   * @private
@@ -6191,13 +6211,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			$$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function (d2) {
 				(config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape(this, d2, index), $$.config.data_onclick.call($$.api, d2, this));
 			});
-		}).call(config.data_selection_draggable && $$.drag ? (0, _d3Drag.drag)().origin(Object).on("drag", function () {
-			$$.drag((0, _d3Selection.mouse)(this));
-		}).on("dragstart", function () {
-			$$.dragstart((0, _d3Selection.mouse)(this));
-		}).on("dragend", function () {
-			$$.dragend();
-		}) : function () {});
+		}).call($$.getDraggableSelection());
 
 
 		return $$.inputType === "mouse" && rect.on("mouseover", function (d) {
@@ -6244,13 +6258,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						(config.data_selection_grouped || $$.isWithinShape(this, closest)) && ($$.toggleShape(this, closest, closest.index), $$.config.data_onclick.call($$.api, closest, this));
 					});
 				}
-		}).call(config.data_selection_draggable && $$.drag ? (0, _d3Drag.drag)().origin(Object).on("drag", function () {
-			$$.drag((0, _d3Selection.mouse)(this));
-		}).on("dragstart", function () {
-			$$.dragstart((0, _d3Selection.mouse)(this));
-		}).on("dragend", function () {
-			$$.dragend();
-		}) : function () {});
+		}).call($$.getDraggableSelection());
 
 
 		return $$.inputType === "mouse" && rect.on("mouseover mousemove", function () {
