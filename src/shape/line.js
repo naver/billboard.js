@@ -492,7 +492,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data($$.lineScatterBubbleRadarData.bind($$));
+			.data(d => !$$.isBarType(d) && $$.labelishData(d));
 
 		$$.mainCircle.exit().remove();
 
