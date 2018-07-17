@@ -148,9 +148,15 @@ extend(ChartInternal.prototype, {
 		return this.isBarType(d) ? d.values : [];
 	},
 
-	// determine if data is line, scatter or bubble type
-	lineScatterBubbleRadarData(d) {
-		return this.isLineType(d) ||
+	/**
+	 * Get data adapt for data label showing
+	 * @param {Object} d Data object
+	 * @return {Array}
+	 * @private
+	 */
+	labelishData(d) {
+		return this.isBarType(d) ||
+			this.isLineType(d) ||
 			this.isScatterType(d) ||
 			this.isBubbleType(d) ||
 			this.isRadarType(d) ? d.values : [];
