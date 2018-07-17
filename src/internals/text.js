@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend} from "./util";
+import {extend, isNumber} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -55,7 +55,7 @@ extend(ChartInternal.prototype, {
 	updateText(durationForExit) {
 		const $$ = this;
 		const config = $$.config;
-		const dataFn = $$.barLineBubbleData.bind($$);
+		const dataFn = $$.labelishData.bind($$);
 		const classText = $$.classText.bind($$);
 
 		$$.mainText = $$.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
@@ -204,6 +204,8 @@ extend(ChartInternal.prototype, {
 	getYForText(points, d, textElement) {
 		const $$ = this;
 		const config = $$.config;
+		const r = config.point_r;
+		let baseY = 3;
 		let yPos;
 
 		if (config.axis_rotated) {
@@ -211,26 +213,31 @@ extend(ChartInternal.prototype, {
 		} else {
 			yPos = points[2][1];
 
+			if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
+				baseY += config.point_r / 2.3;
+			}
+
 			if (d.value < 0 || (d.value === 0 && !$$.hasPositiveValue)) {
 				yPos += textElement.getBoundingClientRect().height;
 
 				if ($$.isBarType(d) && $$.isSafari()) {
-					yPos -= 3;
+					yPos -= baseY;
 				} else if (!$$.isBarType(d) && $$.isChrome()) {
-					yPos += 3;
+					yPos += baseY;
 				}
 			} else {
-				let diff = -6;
+				let diff = -baseY * 2;
 
 				if ($$.isBarType(d)) {
-					diff = -3;
+					diff = -baseY;
 				} else if ($$.isBubbleType(d)) {
-					diff = 3;
+					diff = baseY;
 				}
 
 				yPos += diff;
 			}
 		}
+
 		// show labels regardless of the domain if value is null
 		if (d.value === null && !config.axis_rotated) {
 			const boxHeight = textElement.getBoundingClientRect().height;
