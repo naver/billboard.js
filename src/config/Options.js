@@ -719,7 +719,7 @@ export default class Options {
 			data_selection_multiple: true,
 
 			/**
-			 * Enable to select data points by dragging.<br><br>
+			 * Enable to select data points by dragging.
 			 * If this option set true, data points can be selected by dragging.
 			 * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
 			 * @name data․selection․draggable
