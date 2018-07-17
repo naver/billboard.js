@@ -399,7 +399,7 @@ describe("INTERACTION", () => {
 				expect(svg.on("mouseenter")).to.not.be.null;
 				expect(svg.on("mouseleave")).to.not.be.null;
 
-				internal.main.selectAll(".bb-event-rect").each(function() {
+				internal.main.selectAll(`.${CLASS.eventRect}`).each(function() {
 					const el = d3.select(this);
 
 					expect(el.on("mouseenter")).to.not.be.null;
@@ -421,7 +421,7 @@ describe("INTERACTION", () => {
 				expect(svg.on("mouseenter")).to.be.undefined;
 				expect(svg.on("mouseleave")).to.be.undefined;
 
-				internal.main.selectAll(".bb-event-rect").each(function() {
+				internal.main.selectAll(`.${CLASS.eventRect}`).each(function() {
 					const el = d3.select(this);
 
 					expect(el.on("mouseenter")).to.be.undefined;
@@ -450,7 +450,7 @@ describe("INTERACTION", () => {
 				expect(svg.on("mouseenter")).to.be.undefined;
 				expect(svg.on("mouseleave")).to.be.undefined;
 
-				internal.main.selectAll(".bb-event-rect").each(function() {
+				internal.main.selectAll(`.${CLASS.eventRect}`).each(function() {
 					const el = d3.select(this);
 
 					expect(el.on("mouseenter")).to.be.undefined;
@@ -470,27 +470,29 @@ describe("INTERACTION", () => {
 							["data1", 30, 200, 100, 400, 150, 250]
 						],
 						selection: {
-							enabled: true
+							enabled: true,
+							draggable: true
 						}
 					}
 				};
 			});
 
 			it("data point circle should be selected and unselected", () => {
-				const circle = d3.select(".bb-shape-2").node();
-				const box = circle.getBBox();
+				const circle = d3.select(`.${CLASS.shape}-2`).node();
 				const rect = d3.select(`.${CLASS.eventRect}-2`).node();
 
+				const box = circle.getBBox();
+				const clientX = box.x;
+				const clientY = box.y;
+
 				util.fireEvent(rect, "click", {
-					clientX: box.x,
-					clientY: box.y
+					clientX, clientY
 				}, chart);
 
 				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.true;
 
 				util.fireEvent(rect, "click", {
-					clientX: box.x,
-					clientY: box.y
+					clientX, clientY
 				}, chart);
 
 				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.false;

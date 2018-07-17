@@ -401,6 +401,22 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Return draggable selection function
+	 * @return {Function}
+	 * @private
+	 */
+	getDraggableSelection() {
+		const $$ = this;
+		const config = $$.config;
+
+		return config.interaction_enabled && config.data_selection_draggable && $$.drag ?
+			d3Drag()
+				.on("drag", function() { $$.drag(d3Mouse(this)); })
+				.on("start", function() { $$.dragstart(d3Mouse(this)); })
+				.on("end", () => { $$.dragend(); }) : () => {};
+	},
+
+	/**
 	 * Create eventRect for each data on the x-axis.
 	 * Register touch and drag events.
 	 * @private
@@ -431,15 +447,7 @@ extend(ChartInternal.prototype, {
 						}
 					});
 			})
-			.call(
-				config.data_selection_draggable && $$.drag ?
-					(d3Drag()
-						.origin(Object)
-						.on("drag", function() { $$.drag(d3Mouse(this)); })
-						.on("dragstart", function() { $$.dragstart(d3Mouse(this)); })
-						.on("dragend", () => { $$.dragend(); })
-					) : () => {}
-			);
+			.call($$.getDraggableSelection());
 
 		if ($$.inputType === "mouse") {
 			rect
@@ -533,14 +541,7 @@ extend(ChartInternal.prototype, {
 						});
 				}
 			})
-			.call(
-				config.data_selection_draggable && $$.drag ?
-					(d3Drag().origin(Object)
-						.on("drag", function() { $$.drag(d3Mouse(this)); })
-						.on("dragstart", function() { $$.dragstart(d3Mouse(this)); })
-						.on("dragend", () => { $$.dragend(); })
-					) : () => {}
-			);
+			.call($$.getDraggableSelection());
 
 		if ($$.inputType === "mouse") {
 			rect
