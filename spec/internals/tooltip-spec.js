@@ -11,7 +11,9 @@ describe("TOOLTIP", function() {
 	let chart2;
 	let args = {
 		data: {
+			x: "x",
 			columns: [
+				['x', 2, 4, 6, 8, 10, 12],
 				["data1", 30, 200, 100, 400, 150, 250],
 				["data2", 50, 20, 10, 40, 15, 25],
 				["data3", 150, 120, 110, 140, 115, 125]
@@ -20,8 +22,11 @@ describe("TOOLTIP", function() {
 		tooltip: {}
 	};
 	let args2 = {
+		bindto: "#chart2",
 		data: {
+			x: "x",
 			columns: [
+				['x', 1, 3, 5, 7, 9, 11],
 				["data1-2", 30, 200, 100, 400, 150, 250],
 				["data2-2", 50, 20, 10, 40, 15, 25],
 				["data3-2", 150, 120, 110, 140, 115, 125]
@@ -29,6 +34,7 @@ describe("TOOLTIP", function() {
 		},
 		tooltip: {}
 	};
+
 	const spy1 = sinon.spy();
 	const spy2 = sinon.spy();
 
@@ -57,22 +63,39 @@ describe("TOOLTIP", function() {
 				expect(el.className).to.be.equal(expected[i - 1]);
 			}
 		}
-
 	};
 
 	// check for the tooltip's ordering
 	const checkLinkedTooltip = (chart1, chart2, expected) => {
 		hoverChart(chart1);
 
-		const tooltips = d3.select(chart2.element)
-			.selectAll(`.${CLASS.tooltip} tr`)
+		const tooltips = chart2.internal.tooltip
+			.selectAll("tr")
 			.nodes();
 
 		if (expected) {
 			for (let i = 1, el; (el = tooltips[i]); i++) {
-				expect(el.className).to.be.equal(expected[i - 1]);
+				expect(el.className).to.be.equal(`${CLASS.tooltipName}-${expected[i - 1]}`);
 			}
 		}
+	};
+
+	const tooltipPos = {
+		top: 37,
+		left: 79
+	};
+
+	const tooltipPosition = function(data, width, height, element) {
+		expect(data.length).to.be.equal(args.data.columns.length - 1);
+		expect(data[0].index).to.be.equal(2);
+		expect(data[0].value).to.be.equal(100);
+		expect(/^data1(\-2)?$/.test(data[0].id)).to.be.true;
+		expect(width).to.be.above(0);
+		expect(height).to.be.above(0);
+
+		expect(element).to.be.equal(this.main.select(`.${CLASS.eventRect}-2`).node());
+
+		return tooltipPos;
 	};
 
 	const checkCallback = (checkChart, doHide) => {
@@ -173,11 +196,13 @@ describe("TOOLTIP", function() {
 				const tooltipContainer = chart.internal.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
-				const topExpected = 115;
-				const leftExpected = 280;
+				const tooltipPos = {
+					top: 115,
+					left: 280
+				};
 
-				expect(top).to.be.equal(topExpected);
-				expect(left).to.be.above(leftExpected);
+				expect(top).to.be.equal(tooltipPos.top);
+				expect(left).to.be.above(tooltipPos.left);
 			});
 		});
 
@@ -197,35 +222,21 @@ describe("TOOLTIP", function() {
 				const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
-				const topExpected = 115;
-				const leftExpected = 280;
+				const tooltipPos = {
+					top: 115,
+					left: 280
+				};
 
-				expect(top).to.be.equal(topExpected);
-				expect(left).to.be.above(leftExpected);
+				expect(top).to.be.equal(tooltipPos.top);
+				expect(left).to.be.above(tooltipPos.left);
 			});
 		});
 	});
 
 	describe("tooltip positionFunction", () => {
-		const topExpected = 37;
-		const leftExpected = 79;
-
 		before(() => {
 			args.tooltip = {
-				position: (data, width, height, element) => {
-					expect(data.length).to.be.equal(args.data.columns.length);
-					expect(data[0].index).to.be.equal(2);
-					expect(data[0].value).to.be.equal(100);
-					expect(data[0].id).to.be.equal("data1");
-					expect(width).to.be.above(0);
-					expect(height).to.be.above(0);
-					expect(element).to.be.equal(chart.internal.main.select(`.${CLASS.eventRect}-2`).node());
-
-					return {
-						top: topExpected,
-						left: leftExpected
-					};
-				}
+				position: tooltipPosition
 			};
 		});
 
@@ -236,23 +247,15 @@ describe("TOOLTIP", function() {
 			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 
-			expect(top).to.be.equal(topExpected);
-			expect(left).to.be.equal(leftExpected);
+			expect(top).to.be.equal(tooltipPos.top);
+			expect(left).to.be.equal(tooltipPos.left);
 		});
 	});
 
 	describe("tooltip order", () => {
 		after(() => {
-			args = {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25],
-						["data3", 150, 120, 110, 140, 115, 125]
-					]
-				},
-				tooltip: {}
-			};
+			/*delete args.data.type;
+			delete args.data.groups;*/
 		});
 
 		it("should sort values in data display order", () => {
@@ -334,7 +337,7 @@ describe("TOOLTIP", function() {
 
 		it("data.order function should be called", () => {
 			checkTooltip(chart);
-			expect(args.tooltip.order.called).to.be.true;
+			expect(args.tooltip.order.called).to.be.true
 		});
 	});
 
@@ -356,8 +359,8 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set options tooltip.linked=false", () => {
-			args2.tooltip.linked = args.tooltip.linked = {name: "some"};
 			args.tooltip.order = spy1;
+			args2.tooltip.linked = args.tooltip.linked = {name: "some"};
 
 			chart2 = util.generate(args2);
 		});
@@ -371,128 +374,76 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("linked tooltip positionFunction", () => {
-		const topExpected = 37;
-		const leftExpected = 79;
-
-		const topExpected2 = 37;
-		const leftExpected2 = 79;
-
 		before(() => {
+			args2.tooltip.position = args.tooltip.position = tooltipPosition;
 			chart2 = util.generate(args2);
-
-			args.tooltip = {
-				position: (data, width, height, element) => {
-					expect(data.length).to.be.equal(args.data.columns.length);
-					expect(data[0].index).to.be.equal(2);
-					expect(data[0].value).to.be.equal(100);
-					expect(data[0].id).to.be.equal("data1");
-					expect(width).to.be.above(0);
-					expect(height).to.be.above(0);
-					expect(element).to.be.equal(chart.internal.main.select(`.${CLASS.eventRect}-2`).node());
-
-					return {
-						top: topExpected,
-						left: leftExpected
-					};
-				}
-			};
-
-			args2.tooltip = {
-				position: (data, width, height, element) => {
-					expect(data.length).to.be.equal(args.data.columns.length);
-					expect(data[0].index).to.be.equal(2);
-					expect(data[0].value).to.be.equal(100);
-					expect(data[0].id).to.be.equal("data1");
-					expect(width).to.be.above(0);
-					expect(height).to.be.above(0);
-					expect(element).to.be.equal(chart.internal.main.select(`.${CLASS.eventRect}-2`).node());
-
-					return {
-						top: topExpected2,
-						left: leftExpected2
-					};
-				}
-			};
 		});
 
 		it("linked tooltips should be set to the coordinate where the function returned", () => {
 			hoverChart(chart);
 
-			const tooltipContainer1 = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
-			const top1 = Math.floor(+tooltipContainer1.style("top").replace(/px/, ""));
-			const left1 = Math.floor(+tooltipContainer1.style("left").replace(/px/, ""));
+			[chart, chart2].forEach(v => {
+				const tooltipContainer = v.internal.tooltip;
+				const top = parseInt(tooltipContainer.style("top"));
+				const left = parseInt(tooltipContainer.style("left"));
 
-			expect(top1).to.be.equal(topExpected);
-			expect(left1).to.be.equal(leftExpected);
-
-			const tooltipContainer2 = d3.select(chart2.element).select(`.${CLASS.tooltipContainer}`);
-			const top2 = Math.floor(+tooltipContainer2.style("top").replace(/px/, ""));
-			const left2 = Math.floor(+tooltipContainer2.style("left").replace(/px/, ""));
-
-			expect(top2).to.be.equal(topExpected2);
-			expect(left2).to.be.equal(leftExpected2);
-
-			expect(top2).to.be.equal(topExpected);
-			expect(left2).to.be.equal(leftExpected);
+				expect(top).to.be.equal(tooltipPos.top);
+				expect(left).to.be.equal(tooltipPos.left);
+			});
 		});
 	});
 
 	describe("linked tooltip order", () => {
+		before(() => {
+			delete args.tooltip.position;
+			delete args2.tooltip.position;
+		});
+
+		beforeEach(() => {
+			chart2 = util.generate(args2);
+		});
+
 		it("chart 1 should sort values in data display order", () => {
 			checkLinkedTooltip(chart, chart2, [
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data3`
+				"data1-2", "data2-2", "data3-2"
 			]);
 		});
 
 		it("chart 2 should sort values in data display order", () => {
 			checkLinkedTooltip(chart2, chart, [
-				`${CLASS.tooltipName}-data1-2`,
-				`${CLASS.tooltipName}-data2-2`,
-				`${CLASS.tooltipName}-data3-2`
+				"data1", "data2", "data3"
 			]);
 		});
 
 		it("linked charts set options tooltip.order=asc", () => {
-			args.tooltip.order = "asc";
-			args2.tooltip.order = args.tooltip.order;
+			args2.tooltip.order = args.tooltip.order = "asc";
 		});
 
 		it("chart 1 should sort values ascending order", () => {
 			checkLinkedTooltip(chart, chart2, [
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data3`
+				"data2-2", "data1-2", "data3-2"
 			]);
 		});
 
 		it("chart 2 should sort values ascending order", () => {
 			checkLinkedTooltip(chart2, chart, [
-				`${CLASS.tooltipName}-data2-2`,
-				`${CLASS.tooltipName}-data1-2`,
-				`${CLASS.tooltipName}-data3-2`
+				"data2", "data1", "data3"
 			]);
 		});
 
 		it("linked charts set options tooltip.order=desc", () => {
-			args.tooltip.order = "desc";
-			args2.tooltip.order = args.tooltip.order;
+			args2.tooltip.order = args.tooltip.order = "desc";
 		});
 
 		it("chart 1 set options tooltip.order=desc", () => {
 			checkLinkedTooltip(chart, chart2, [
-				`${CLASS.tooltipName}-data3`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data2`
+				"data3-2", "data1-2", "data2-2"
 			]);
 		});
 
 		it("chart 2 set options tooltip.order=desc", () => {
 			checkLinkedTooltip(chart2, chart, [
-				`${CLASS.tooltipName}-data3-2`,
-				`${CLASS.tooltipName}-data1-2`,
-				`${CLASS.tooltipName}-data2-2`
+				"data3", "data1", "data2"
 			]);
 		});
 
@@ -503,66 +454,52 @@ describe("TOOLTIP", function() {
 			args.tooltip.order = args.data.order = "desc";
 
 			args2.data.type = args.data.type;
-			args2.data.groups = args.data.groups;
+			args2.data.groups = [["data1-2", "data2-2", "data3-2"]];
 			args2.tooltip.order = args.tooltip.order;
 
 		});
 
 		it("chart 1 stacked bar: should sort values in descending order", () => {
 			checkLinkedTooltip(chart, chart2, [
-				`${CLASS.tooltipName}-data3`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data2`
+				"data3-2", "data1-2", "data2-2"
 			]);
-		})
+		});
 
 		it("chart 2 stacked bar: should sort values in descending order", () => {
 			checkLinkedTooltip(chart2, chart, [
-				`${CLASS.tooltipName}-data3-2`,
-				`${CLASS.tooltipName}-data1-2`,
-				`${CLASS.tooltipName}-data2-2`
+				"data3", "data1", "data2"
 			]);
 		});
 
 		it("linked charts  set options tooltip.order=asc", () => {
-			args.tooltip.order = args.data.order = "asc";
-			args2.tooltip.order = args2.data.order = args.tooltip.order;
+			args2.tooltip.order = args2.data.order = args.tooltip.order = args.data.order = "asc";
 		});
 
 		it("chart 1 stacked bar: should sort values in ascending order", () => {
 			checkLinkedTooltip(chart, chart2, [
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data1`,
-				`${CLASS.tooltipName}-data3`
+				"data2-2", "data1-2", "data3-2"
 			]);
 		});
 
 		it("chart 2 stacked bar: should sort values in ascending order", () => {
 			checkLinkedTooltip(chart2, chart, [
-				`${CLASS.tooltipName}-data2-2`,
-				`${CLASS.tooltipName}-data1-2`,
-				`${CLASS.tooltipName}-data3-2`
+				"data2", "data1", "data3"
 			]);
 		});
 
 		it("linked charts set options tooltip.order=null", () => {
-			args.tooltip.order = args.data.order = null;
-			args2.tooltip.order = args2.data.order = args.tooltip.order;
+			args2.tooltip.order = args2.data.order = args.tooltip.order = args.data.order = null;
 		});
 
 		it("chart 1 stacked bar: should be ordered in data input order", () => {
 			checkLinkedTooltip(chart, chart2, [
-				`${CLASS.tooltipName}-data3`,
-				`${CLASS.tooltipName}-data2`,
-				`${CLASS.tooltipName}-data1`
+				"data3-2", "data2-2", "data1-2"
 			]);
 		});
 
 		it("chart 2 stacked bar: should be ordered in data input order", () => {
 			checkLinkedTooltip(chart2, chart, [
-				`${CLASS.tooltipName}-data3-2`,
-				`${CLASS.tooltipName}-data2-2`,
-				`${CLASS.tooltipName}-data1-2`
+				"data3", "data2", "data1"
 			]);
 		});
 
