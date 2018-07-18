@@ -16,7 +16,7 @@ const initDom = idValue => {
 	const id = idValue && idValue.replace && idValue.replace("#", "");
 
 	if (!document.getElementById(id)) {
-		sandbox("chart", {
+		sandbox(id, {
 			style: "width:640px;height:480px;"
 		});
 

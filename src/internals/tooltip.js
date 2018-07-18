@@ -257,7 +257,7 @@ extend(ChartInternal.prototype, {
 				});
 
 			isFunction(config.tooltip_onshown) && config.tooltip_onshown.call($$);
-			$$._handleLinkedCharts(true, selectedData[0].x);
+			$$._handleLinkedCharts(true, selectedData[0].index);
 		}
 
 		// Get tooltip dimensions
@@ -289,10 +289,10 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Toggle display for linked chart instances
 	 * @param {Boolean} show true: show, false: hide
-	 * @param {Number} x x Axis coordinate
+	 * @param {Number} index x Axis index
 	 * @private
 	 */
-	_handleLinkedCharts(show, x) {
+	_handleLinkedCharts(show, index) {
 		const $$ = this;
 
 		if ($$.config.tooltip_linked) {
@@ -308,8 +308,10 @@ extend(ChartInternal.prototype, {
 					if (isLinked && linkedName === name && isInDom) {
 						const isShowing = internal.tooltip.style("display") === "block";
 
-						isShowing ^ show &&
-							c.tooltip[isShowing ? "hide" : "show"]({x});
+						// prevent throwing error for non-paired linked indexes
+						try {
+							isShowing ^ show && c.tooltip[isShowing ? "hide" : "show"]({index});
+						} catch (e) {}
 					}
 				}
 			});
