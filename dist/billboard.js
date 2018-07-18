@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180717181034
+ * @version 1.5.1-nightly-20180718172231
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180717181034
+ * @version 1.5.1-nightly-20180718172231
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180717181034",
+	version: "1.5.1-nightly-20180718172231",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -8791,7 +8791,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 						current: JSON.stringify(selectedData),
 						width: width = $$.tooltip.property("offsetWidth"),
 						height: height = $$.tooltip.property("offsetHeight")
-					}), (0, _util.isFunction)(config.tooltip_onshown) && config.tooltip_onshown.call($$), $$._handleLinkedCharts(!0, selectedData[0].x);
+					}), (0, _util.isFunction)(config.tooltip_onshown) && config.tooltip_onshown.call($$), $$._handleLinkedCharts(!0, selectedData[0].index);
 				}
 
 				// Get tooltip dimensions
@@ -8817,10 +8817,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	/**
   * Toggle display for linked chart instances
   * @param {Boolean} show true: show, false: hide
-  * @param {Number} x x Axis coordinate
+  * @param {Number} index x Axis index
   * @private
   */
-	_handleLinkedCharts: function _handleLinkedCharts(show, x) {
+	_handleLinkedCharts: function _handleLinkedCharts(show, index) {
 		var $$ = this;
 
 		if ($$.config.tooltip_linked) {
@@ -8837,7 +8837,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					if (isLinked && linkedName === name && isInDom) {
 						var isShowing = internal.tooltip.style("display") === "block";
 
-						isShowing ^ show && c.tooltip[isShowing ? "hide" : "show"]({ x: x });
+						// prevent throwing error for non-paired linked indexes
+						try {
+							isShowing ^ show && c.tooltip[isShowing ? "hide" : "show"]({ index: index });
+						} catch (e) {}
 					}
 				}
 			});
