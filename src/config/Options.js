@@ -582,9 +582,13 @@ export default class Options {
 			data_order: "desc",
 
 			/**
-			 * Define regions for each data.<br><br>
-			 * The values must be an array for each data and it should include an object that has start, end, style. If start is not set, the start will be the first data point. If end is not set, the end will be the last data point.<br>
-			 * Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+			 * Define regions for each data.<br>
+			 * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
+			 * - The object type should be as:
+			 *   - start {Number}: Start data point number. If not set, the start will be the first data point.
+			 *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
+			 *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+			 * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
 			 * @name data․regions
 			 * @memberOf Options
 			 * @type {Object}
@@ -593,11 +597,13 @@ export default class Options {
 			 * data: {
 			 *   regions: {
 			 *     data1: [{
-			 *         "start": 1,
-			 *         "end": 2,
-			 *         "style": "dashed"
+			 *         start: 1,
+			 *         end: 2,
+			 *         style: {
+			 *             dasharray: "5 2"
+			 *         }
 			 *     }, {
-			 *         "start":3
+			 *         start: 3
 			 *     }],
 			 *     ...
 			 *   }
