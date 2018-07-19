@@ -6,6 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import {isNumber} from "../../src/internals/util";
 
 describe("DATA", () => {
 	let chart;
@@ -14,6 +15,25 @@ describe("DATA", () => {
 	beforeEach(() => {
 		chart = util.generate(args);
 	});
+
+	const checkXY = function(x, y, prefix = "c", delta = {x: 1, y: 1}) {
+		if (isNumber(delta)) {
+			delta = {x: delta, y: delta};
+		}
+
+		return function(d, i) {
+			const node = d3.select(this);
+
+			expect(+node.attr(`${prefix}x`)).to.be.closeTo(x[i], delta.x);
+			expect(+node.attr(`${prefix}y`)).to.be.closeTo(y[i], delta.y);
+		};
+	};
+
+	const checkDateVal = data => {
+		data.forEach((v, i) => {
+			expect(+v).to.be.equal(+new Date(2013, 0, i + 1, 0, 0, 0));
+		});
+	};
 
 	describe("load json #1", () => {
 		before(() => {
@@ -31,12 +51,8 @@ describe("DATA", () => {
 			const expectedCx = [6, 299, 593];
 			const expectedCy = [371, 391, 332];
 
-			chart.internal.main.selectAll(`.${CLASS.circles}-data1 .${CLASS.circle}`).each(function (d, i) {
-				const circle = d3.select(this);
-
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], +1);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[i], +1);
-			});
+			chart.internal.main.selectAll(`.${CLASS.circles}-data1 .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy));
 		});
 	});
 
@@ -74,19 +90,11 @@ describe("DATA", () => {
 			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
 			const main = chart.internal.main;
 
-			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`).each(function (d, i) {
-				const circle = d3.select(this);
+			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`)
+				.each(checkXY(expectedCx[443], expectedCy[443]));
 
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[443][i], 1);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
-			});
-
-			main.selectAll(`.${CLASS.circles}-995 .${CLASS.circle}`).each(function (d, i) {
-				const circle = d3.select(this);
-
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[995][i], 1);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
-			});
+			main.selectAll(`.${CLASS.circles}-995 .${CLASS.circle}`)
+				.each(checkXY(expectedCx[995], expectedCy[995]));
 		});
 	});
 
@@ -146,55 +154,26 @@ describe("DATA", () => {
 				"778.889": [347, 376, 340]
 			};
 
-			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`).each(function(d, i) {
-				const circle = d3.select(this);
+			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy[443]));
 
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 1);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[443][i], 1);
-			});
+			main.selectAll(`.${CLASS.circles}-995-996 .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy[995]));
 
-			main.selectAll(`.${CLASS.circles}-995-996 .${CLASS.circle}`).each(function(d, i) {
-				const circle = d3.select(this);
+			main.selectAll(`.${CLASS.circles}-112-0- .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy[112]));
 
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[995][i], 1);
-			});
+			main.selectAll(`.${CLASS.circles}-223-0--224 .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy[223]));
 
+			main.selectAll(`.${CLASS.circles}-334-1--0--335 .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy[334]));
 
-			main.selectAll(`.${CLASS.circles}-112-0- .${CLASS.circle}`).each(function(d, i) {
-				const circle = d3.select(this);
+			main.selectAll(`.${CLASS.circles}-556-557-558-0- .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy[556]));
 
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[112][i], 1);
-			});
-
-			main.selectAll(`.${CLASS.circles}-223-0--224 .${CLASS.circle}`).each(function(d, i) {
-				const circle = d3.select(this);
-
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[223][i], 1);
-			});
-
-			main.selectAll(`.${CLASS.circles}-334-1--0--335 .${CLASS.circle}`).each(function(d, i) {
-				const circle = d3.select(this);
-
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[334][i], 1);
-			});
-
-			main.selectAll(`.${CLASS.circles}-556-557-558-0- .${CLASS.circle}`).each(function(d, i) {
-				const circle = d3.select(this);
-
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy[556][i], 1);
-			});
-
-			main.selectAll(`.${CLASS.circles}-778-889 .${CLASS.circle}`).each(function (d, i) {
-				const circle = d3.select(this);
-
-				expect(+circle.attr("cx")).to.be.closeTo(expectedCx[i], 0);
-				expect(+circle.attr("cy")).to.be.closeTo(expectedCy["778.889"][i], 1);
-			});
+			main.selectAll(`.${CLASS.circles}-778-889 .${CLASS.circle}`)
+				.each(checkXY(expectedCx, expectedCy["778.889"]));
 		});
 	});
 
@@ -248,17 +227,21 @@ describe("DATA", () => {
 
 		describe("normal x", () => {
 			it("should have correct number of xs for each", () => {
-				expect(Object.keys(chart.internal.data.xs).length).to.be.equal(3);
-				expect(chart.internal.data.xs.data1.length).to.be.equal(6);
-				expect(chart.internal.data.xs.data2.length).to.be.equal(6);
-				expect(chart.internal.data.xs.data3.length).to.be.equal(6);
+				const xs = chart.internal.data.xs;
+
+				expect(Object.keys(xs).length).to.be.equal(3);
+				expect(xs.data1.length).to.be.equal(6);
+				expect(xs.data2.length).to.be.equal(6);
+				expect(xs.data3.length).to.be.equal(6);
 			});
 
 			it("should have integer index as x", () => {
-				for (let i = 0; i < chart.internal.data.xs.data3.length; i++) {
-					expect(chart.internal.data.xs.data1[i]).to.be.equal(i);
-					expect(chart.internal.data.xs.data2[i]).to.be.equal(i);
-					expect(chart.internal.data.xs.data3[i]).to.be.equal(i);
+				const xs = chart.internal.data.xs;
+
+				for (let i = 0; i < xs.data3.length; i++) {
+					expect(xs.data1[i]).to.be.equal(i);
+					expect(xs.data2[i]).to.be.equal(i);
+					expect(xs.data3[i]).to.be.equal(i);
 				}
 			});
 		});
@@ -284,20 +267,18 @@ describe("DATA", () => {
 				});
 
 				it("should have correct number of xs", () => {
-					expect(Object.keys(chart.internal.data.xs).length).to.be.equal(2);
-					expect(chart.internal.data.xs.data1.length).to.be.equal(3);
-					expect(chart.internal.data.xs.data2.length).to.be.equal(3);
+					const xs = chart.internal.data.xs;
+
+					expect(Object.keys(xs).length).to.be.equal(2);
+					expect(xs.data1.length).to.be.equal(3);
+					expect(xs.data2.length).to.be.equal(3);
 				});
 
 				it("should have Date object as x", () => {
 					const xs = chart.internal.data.xs;
 
-					expect(+xs.data1[0]).to.be.equal(+new Date(2013, 0, 1, 0, 0, 0));
-					expect(+xs.data1[1]).to.be.equal(+new Date(2013, 0, 2, 0, 0, 0));
-					expect(+xs.data1[2]).to.be.equal(+new Date(2013, 0, 3, 0, 0, 0));
-					expect(+xs.data2[0]).to.be.equal(+new Date(2013, 0, 1, 0, 0, 0));
-					expect(+xs.data2[1]).to.be.equal(+new Date(2013, 0, 2, 0, 0, 0));
-					expect(+xs.data2[2]).to.be.equal(+new Date(2013, 0, 3, 0, 0, 0));
+					checkDateVal(xs.data1);
+					checkDateVal(xs.data2);
 				});
 			});
 
@@ -323,20 +304,18 @@ describe("DATA", () => {
 					});
 
 					it("should have correct number of xs", () => {
-						expect(Object.keys(chart.internal.data.xs).length).to.be.equal(2);
-						expect(chart.internal.data.xs.data1.length).to.be.equal(3);
-						expect(chart.internal.data.xs.data2.length).to.be.equal(3);
+						const xs = chart.internal.data.xs;
+
+						expect(Object.keys(xs).length).to.be.equal(2);
+						expect(xs.data1.length).to.be.equal(3);
+						expect(xs.data2.length).to.be.equal(3);
 					});
 
 					it("should have Date object as x", () => {
 						const xs = chart.internal.data.xs;
 
-						expect(+xs.data1[0]).to.be.equal(+new Date(2013, 0, 1, 0, 0, 0));
-						expect(+xs.data1[1]).to.be.equal(+new Date(2013, 0, 2, 0, 0, 0));
-						expect(+xs.data1[2]).to.be.equal(+new Date(2013, 0, 3, 0, 0, 0));
-						expect(+xs.data2[0]).to.be.equal(+new Date(2013, 0, 1, 0, 0, 0));
-						expect(+xs.data2[1]).to.be.equal(+new Date(2013, 0, 2, 0, 0, 0));
-						expect(+xs.data2[2]).to.be.equal(+new Date(2013, 0, 3, 0, 0, 0));
+						checkDateVal(xs.data1);
+						checkDateVal(xs.data2);
 					});
 				});
 			});
@@ -368,9 +347,11 @@ describe("DATA", () => {
 				});
 
 				it("should have correct number of xs", () => {
-					expect(Object.keys(chart.internal.data.xs).length).to.be.equal(2);
-					expect(chart.internal.data.xs.data1.length).to.be.equal(2);
-					expect(chart.internal.data.xs.data2.length).to.be.equal(2);
+					const xs = chart.internal.data.xs;
+
+					expect(Object.keys(xs).length).to.be.equal(2);
+					expect(xs.data1.length).to.be.equal(2);
+					expect(xs.data2.length).to.be.equal(2);
 				});
 
 				it("should have Date object as x", () => {
@@ -414,9 +395,11 @@ describe("DATA", () => {
 				});
 
 				it("should have correct number of xs", () => {
-					expect(Object.keys(chart.internal.data.xs).length).to.be.equal(2);
-					expect(chart.internal.data.xs.data1.length).to.be.equal(2);
-					expect(chart.internal.data.xs.data2.length).to.be.equal(2);
+					const xs = chart.internal.data.xs;
+
+					expect(Object.keys(xs).length).to.be.equal(2);
+					expect(xs.data1.length).to.be.equal(2);
+					expect(xs.data2.length).to.be.equal(2);
 				});
 
 				it("should have Date object as x", () => {
@@ -467,12 +450,8 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
 
@@ -498,12 +477,8 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
 
@@ -575,12 +550,8 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
 
@@ -606,12 +577,8 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
 		});
@@ -650,12 +617,8 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 3);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
 
@@ -681,12 +644,8 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
 		});
@@ -841,19 +800,14 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [67, 49, 67, 423];
 					const expectedXs = [75, 225, 374, 524];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
-				it("set options data.type=line", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
 				});
 
@@ -865,16 +819,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [375, 40, 375, 422];
 					const expectedXs = [6, 202, 397, 593];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
 
@@ -896,21 +845,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [51, 145, 235, 327];
 					const expectedXs = [488.5, 514, 488.5, 4];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -921,16 +864,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [9, 130, 249, 370];
 					const expectedXs = [76, 526, 76, 4];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 			});
 		});
@@ -964,22 +902,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [385, 11, 385, 12];
 					const expectedXs = [74, 221, 368, 515];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -990,16 +921,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [394, 60, 394, 39];
 					const expectedXs = [6, 198, 391, 583];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 			});
 
@@ -1022,24 +948,17 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [57, 162, 269, 375];
 					const expectedXs = [80, 584, 80, 514];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 5);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 5}));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line' and padding", () => {
 					args.data.type = "line";
 					args.padding.left = 50;
 					args.padding.bottom = 0;
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1050,16 +969,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [69, 527, 69, 527]; // 72.50132230092231
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 			});
 		});
@@ -1090,22 +1004,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [392, 43, 52, 215];
 					const expectedXs = [74, 221, 368, 515];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 3}));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1116,16 +1023,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [395, 40, 49, 211];
 					const expectedXs = [6, 198, 391, 583];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 3}));
 				});
 			});
 
@@ -1145,21 +1047,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [72, 525, 513, 295];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1170,16 +1066,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [70, 527, 515, 297];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 4);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 			});
 		});
@@ -1209,22 +1100,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [385, 317, 370, 164];
 					const expectedXs = [74, 225, 374, 524];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1235,16 +1119,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [344, 284, 331, 144];
 					const expectedXs = [6, 202, 397, 593];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
 
@@ -1264,22 +1143,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [57, 150, 77, 362];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1290,16 +1162,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [107, 192, 125, 386];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
 		});
@@ -1329,22 +1196,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [50, 117, 64, 270];
 					const expectedXs = [74, 221, 368, 515];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 3);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 3, y: 10}));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1355,16 +1215,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [90, 151, 103, 290];
 					const expectedXs = [6, 198, 391, 583];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 4);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 10);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 10}));
 				});
 			});
 
@@ -1384,22 +1239,15 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [533, 441, 513, 232];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 3);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", {x: 2, y: 3}));
 				});
 
-				it("should update args", () => {
+				it("set options data.type='line'", () => {
 					args.data.type = "line";
-
-					expect(true).to.be.ok;
 				});
 
 				it("should have y domain with proper padding #2", () => {
@@ -1410,16 +1258,11 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const texts = chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`);
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [479, 397, 461, 206];
 
-					texts.each(function(d, i) {
-						const text = d3.select(this);
-
-						expect(+text.attr("y")).to.be.closeTo(expectedYs[i], 2);
-						expect(+text.attr("x")).to.be.closeTo(expectedXs[i], 2);
-					});
+					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
 		});
@@ -1448,8 +1291,9 @@ describe("DATA", () => {
 
 	describe("inner functions", () => {
 		it("should check returns of mapToTargetIds", () => {
+			const internal = chart.internal;
 			let data = [1, 2, 3];
-			let newData = chart.internal.mapToTargetIds(data);
+			let newData = internal.mapToTargetIds(data);
 
 			expect(newData).to.deep.equal(data);
 			expect(newData).to.not.equal(data);
@@ -1458,17 +1302,17 @@ describe("DATA", () => {
 			data = 1;
 
 			// When
-			newData = chart.internal.mapToTargetIds(data);
+			newData = internal.mapToTargetIds(data);
 
 			// Then
 			expect(newData).to.deep.equal([data]);
 			expect(newData).to.not.equal([data]);
 
 			// Given
-			data = chart.internal.data.targets.map(d => d.id);
+			data = internal.data.targets.map(d => d.id);
 
 			// When
-			newData = chart.internal.mapToTargetIds();
+			newData = internal.mapToTargetIds();
 
 			// Then
 			expect(newData).to.deep.equal(data);
@@ -1518,6 +1362,41 @@ describe("DATA", () => {
 
 				done();
 			}, 100);
+		});
+	});
+
+	describe("data.regions", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 200, 400, 150, 250]
+					],
+					regions: {
+						data1: [
+							{
+								start: 1,
+								end: 2,
+								style: {
+									dasharray: "5 3"
+								}
+							},
+							{
+								start: 3
+							}
+						]
+					}
+				}
+			};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			const line = chart.internal.main.select(`path.${CLASS.line}-data1`);
+			const path = line.attr("d");
+			const expected = {M: 118, L: 119};
+
+			expect(path.split("M").length).to.be.equal(expected.M);
+			expect(path.split("L").length).to.be.equal(expected.L);
 		});
 	});
 });

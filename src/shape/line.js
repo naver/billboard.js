@@ -236,114 +236,116 @@ extend(ChartInternal.prototype, {
 	lineWithRegions(d, x, y, _regions) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
+		const isTimeSeries = $$.isTimeSeries();
 		const xOffset = $$.isCategorized() ? 0.5 : 0;
 		const regions = [];
+		const dasharray = "2 2"; // default value
 
-		let i;
-		let j;
-		let s = "M";
-		let sWithRegion;
 		let xp;
 		let yp;
-		let dx;
-		let dy;
-		let dd;
 		let diff;
 		let diffx2;
 
-		function isWithinRegions(withinX, withinRegions) {
-			let idx;
-
-			for (idx = 0; idx < withinRegions.length; idx++) {
-				if (withinRegions[idx].start < withinX && withinX <= withinRegions[idx].end) {
-					return true;
+		// check weather data is within region
+		const isWithinRegions = (withinX, withinRegions) => {
+			for (let i = 0, reg; (reg = withinRegions[i]); i++) {
+				if (reg.start < withinX && withinX <= reg.end) {
+					return reg.style;
 				}
 			}
+
 			return false;
-		}
+		};
 
 		// Check start/end of regions
 		if (isDefined(_regions)) {
-			for (i = 0; i < _regions.length; i++) {
-				regions[i] = {};
+			const getValue = (v, def) => (
+				isUndefined(v) ? def : (isTimeSeries ? $$.parseDate(v) : v)
+			);
 
-				if (isUndefined(_regions[i].start)) {
-					regions[i].start = d[0].x;
-				} else {
-					regions[i].start = $$.isTimeSeries() ? $$.parseDate(_regions[i].start) : _regions[i].start;
-				}
+			for (let i = 0, reg; (reg = _regions[i]); i++) {
+				const start = getValue(reg.start, d[0].x);
+				const end = getValue(reg.end, d[d.length - 1].x);
+				const style = reg.style || {dasharray};
 
-				if (isUndefined(_regions[i].end)) {
-					regions[i].end = d[d.length - 1].x;
-				} else {
-					regions[i].end = $$.isTimeSeries() ? $$.parseDate(_regions[i].end) : _regions[i].end;
-				}
+				regions[i] = {start, end, style};
 			}
 		}
 
 		// Set scales
-		const xValue = config.axis_rotated ? dt => y(dt.value) : dt => x(dt.x);
-		const yValue = config.axis_rotated ? dt => x(dt.x) : dt => y(dt.value);
+		const xValue = isRotated ? dt => y(dt.value) : dt => x(dt.x);
+		const yValue = isRotated ? dt => x(dt.x) : dt => y(dt.value);
 
 		// Define svg generator function for region
-		function generateM(points) {
-			return `M${points[0][0]} ${points[0][1]} ${points[1][0]} ${points[1][1]}`;
-		}
+		const generateM = points => `M${points[0][0]},${points[0][1]}L${points[1][0]},${points[1][1]}`;
 
-		if ($$.isTimeSeries()) {
-			sWithRegion = (d0, d1, k, timeseriesDiff) => {
-				const x0 = d0.x.getTime();
-				const xDiff = d1.x - d0.x;
-				const xv0 = new Date(x0 + xDiff * k);
-				const xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
-				let points;
+		const sWithRegion = isTimeSeries ? (d0, d1, k, timeseriesDiff) => {
+			const x0 = d0.x.getTime();
+			const xDiff = d1.x - d0.x;
+			const xv0 = new Date(x0 + xDiff * k);
+			const xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
 
-				if (config.axis_rotated) {
-					points = [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]];
-				} else {
-					points = [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
-				}
-				return generateM(points);
-			};
-		} else {
-			sWithRegion = function(d0, d1, k, otherDiff) {
-				const points = config.axis_rotated ?
-					[[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]] :
-					[[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
+			const points = isRotated ?
+				[[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] :
+				[[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
 
-				return generateM(points);
-			};
-		}
+			return generateM(points);
+		} : (d0, d1, k, otherDiff) => {
+			const points = isRotated ?
+				[[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]] :
+				[[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
+
+			return generateM(points);
+		};
 
 		// Generate
-		for (i = 0; i < d.length; i++) {
+		let path = "M";
+
+		for (let i = 0, data; (data = d[i]); i++) {
+			const prevData = d[i - 1];
+			let style = isWithinRegions(data.x, regions);
+
 			// Draw as normal
-			if (isUndefined(regions) || !isWithinRegions(d[i].x, regions)) {
-				s += ` ${xValue(d[i])} ${yValue(d[i])}`;
+			if (isUndefined(regions) || !style) {
+				path += `${i ? "L" : ""}${xValue(data)},${yValue(data)}`;
 			} else {
+				try {
+					style = style.dasharray.split(" ");
+				} catch (e) {
+					style = dasharray.split(" ");
+				}
+
 				// Draw with region // TODO: Fix for horizotal charts
-				xp = $$.getScale(d[i - 1].x + xOffset, d[i].x + xOffset, $$.isTimeSeries());
-				yp = $$.getScale(d[i - 1].value, d[i].value);
+				xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries);
+				yp = $$.getScale(prevData.value, data.value);
 
-				dx = x(d[i].x) - x(d[i - 1].x);
-				dy = y(d[i].value) - y(d[i - 1].value);
-				dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-				diff = 2 / dd;
-				diffx2 = diff * 2;
+				const dx = x(data.x) - x(prevData.x);
+				const dy = y(data.value) - y(prevData.value);
+				const dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
 
-				for (j = diff; j <= 1; j += diffx2) {
-					s += sWithRegion(d[i - 1], d[i], j, diff);
+				diff = style[0] / dd;
+				diffx2 = diff * style[1];
+
+				for (let j = diff; j <= 1; j += diffx2) {
+					path += sWithRegion(prevData, data, j, diff);
+
+					// to make sure correct line drawing
+					if (j + diffx2 >= 1) {
+						path += sWithRegion(prevData, data, 1, 0);
+					}
 				}
 			}
 		}
 
-		return s;
+		return path;
 	},
 
 	updateArea(durationForExit) {
 		const $$ = this;
 
-		$$.mainArea = $$.main.selectAll(`.${CLASS.areas}`).selectAll(`.${CLASS.area}`)
+		$$.mainArea = $$.main.selectAll(`.${CLASS.areas}`)
+			.selectAll(`.${CLASS.area}`)
 			.data($$.lineData.bind($$));
 
 		$$.mainArea.exit().transition()
@@ -415,15 +417,13 @@ extend(ChartInternal.prototype, {
 			if ($$.isAreaType(d)) {
 				let area = d3Area();
 
-				if (isRotated) {
-					area = area.y(xValue)
+				area = isRotated ?
+					area.y(xValue)
 						.x0(value0)
-						.x1(value1);
-				} else {
-					area = area.x(xValue)
+						.x1(value1) :
+					area.x(xValue)
 						.y0(config.area_above ? 0 : value0)
 						.y1(value1);
-				}
 
 				if (!lineConnectNull) {
 					area = area.defined(d => $$.getBaseValue(d) !== null);
@@ -600,12 +600,10 @@ extend(ChartInternal.prototype, {
 			})
 			.classed(CLASS.EXPANDED, false);
 
-		const scale = r(circles) / $$.config.point_r;
-
 		circles.attr("r", r);
 
 		!$$.isCirclePoint() &&
-		circles.style("transform", `scale(${scale})`);
+			circles.style("transform", `scale(${r(circles) / $$.config.point_r})`);
 	},
 
 	pointR(d) {
