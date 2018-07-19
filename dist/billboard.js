@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180718172231
+ * @version 1.5.1-nightly-20180719181442
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180718172231
+ * @version 1.5.1-nightly-20180719181442
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180718172231",
+	version: "1.5.1-nightly-20180719181442",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -2481,9 +2481,13 @@ var Options = function Options() {
 																				data_order: "desc",
 
 																				/**
-                     * Define regions for each data.<br><br>
-                     * The values must be an array for each data and it should include an object that has start, end, style. If start is not set, the start will be the first data point. If end is not set, the end will be the last data point.<br>
-                     * Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+                     * Define regions for each data.<br>
+                     * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
+                     * - The object type should be as:
+                     *   - start {Number}: Start data point number. If not set, the start will be the first data point.
+                     *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
+                     *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+                     * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
                      * @name data․regions
                      * @memberOf Options
                      * @type {Object}
@@ -2492,11 +2496,13 @@ var Options = function Options() {
                      * data: {
                      *   regions: {
                      *     data1: [{
-                     *         "start": 1,
-                     *         "end": 2,
-                     *         "style": "dashed"
+                     *         start: 1,
+                     *         end: 2,
+                     *         style: {
+                     *             dasharray: "5 2"
+                     *         }
                      *     }, {
-                     *         "start":3
+                     *         start: 3
                      *     }],
                      *     ...
                      *   }
@@ -7379,70 +7385,102 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		};
 	},
 	lineWithRegions: function lineWithRegions(d, x, y, _regions) {
-
-		function isWithinRegions(withinX, withinRegions) {
-			var idx = void 0;
-
-			for (idx = 0; idx < withinRegions.length; idx++) if (withinRegions[idx].start < withinX && withinX <= withinRegions[idx].end) return !0;
-			return !1;
-		}
-
-		// Check start/end of regions
-
-
-		// Define svg generator function for region
-		function generateM(points) {
-			return "M" + points[0][0] + " " + points[0][1] + " " + points[1][0] + " " + points[1][1];
-		}
-
 		var $$ = this,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
+		    isTimeSeries = $$.isTimeSeries(),
 		    xOffset = $$.isCategorized() ? .5 : 0,
 		    regions = [],
-		    i = void 0,
-		    j = void 0,
-		    s = "M",
-		    sWithRegion = void 0,
 		    xp = void 0,
 		    yp = void 0,
-		    dx = void 0,
-		    dy = void 0,
-		    dd = void 0,
 		    diff = void 0,
-		    diffx2 = void 0;
-		if ((0, _util.isDefined)(_regions)) for (i = 0; i < _regions.length; i++) regions[i] = {}, regions[i].start = (0, _util.isUndefined)(_regions[i].start) ? d[0].x : $$.isTimeSeries() ? $$.parseDate(_regions[i].start) : _regions[i].start, regions[i].end = (0, _util.isUndefined)(_regions[i].end) ? d[d.length - 1].x : $$.isTimeSeries() ? $$.parseDate(_regions[i].end) : _regions[i].end;
+		    diffx2 = void 0,
+		    isWithinRegions = function (withinX, withinRegions) {
+			for (var reg, i = 0; reg = withinRegions[i]; i++) if (reg.start < withinX && withinX <= reg.end) return reg.style;
+
+			return !1;
+		}; // default value
+
+		// check weather data is within region
+
+
+		// Check start/end of regions
+		if ((0, _util.isDefined)(_regions)) {
+			var getValue = function (v, def) {
+				return (0, _util.isUndefined)(v) ? def : isTimeSeries ? $$.parseDate(v) : v;
+			};
+
+			for (var reg, i = 0; reg = _regions[i]; i++) {
+				var start = getValue(reg.start, d[0].x),
+				    end = getValue(reg.end, d[d.length - 1].x),
+				    style = reg.style || { dasharray: "2 2" };
+				regions[i] = { start: start, end: end, style: style };
+			}
+		}
 
 		// Set scales
-		var xValue = config.axis_rotated ? function (dt) {
+
+		var xValue = isRotated ? function (dt) {
 			return y(dt.value);
 		} : function (dt) {
 			return x(dt.x);
 		},
-		    yValue = config.axis_rotated ? function (dt) {
+		    yValue = isRotated ? function (dt) {
 			return x(dt.x);
 		} : function (dt) {
 			return y(dt.value);
-		};
-
-
-		// Generate
-		for (sWithRegion = $$.isTimeSeries() ? function (d0, d1, k, timeseriesDiff) {
+		},
+		    generateM = function (points) {
+			return "M" + points[0][0] + "," + points[0][1] + "L" + points[1][0] + "," + points[1][1];
+		},
+		    sWithRegion = isTimeSeries ? function (d0, d1, k, timeseriesDiff) {
 			var x0 = d0.x.getTime(),
 			    xDiff = d1.x - d0.x,
 			    xv0 = new Date(x0 + xDiff * k),
 			    xv1 = new Date(x0 + xDiff * (k + timeseriesDiff)),
-			    points = void 0;
+			    points = isRotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
 
-			return points = config.axis_rotated ? [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] : [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]], generateM(points);
-		} : function (d0, d1, k, otherDiff) {
-			var points = config.axis_rotated ? [[y(yp(k), !0), x(xp(k))], [y(yp(k + otherDiff), !0), x(xp(k + otherDiff))]] : [[x(xp(k), !0), y(yp(k))], [x(xp(k + otherDiff), !0), y(yp(k + otherDiff))]];
 
 			return generateM(points);
-		}, i = 0; i < d.length; i++)
-		// Draw as normal
-		if ((0, _util.isUndefined)(regions) || !isWithinRegions(d[i].x, regions)) s += " " + xValue(d[i]) + " " + yValue(d[i]);else for (xp = $$.getScale(d[i - 1].x + xOffset, d[i].x + xOffset, $$.isTimeSeries()), yp = $$.getScale(d[i - 1].value, d[i].value), dx = x(d[i].x) - x(d[i - 1].x), dy = y(d[i].value) - y(d[i - 1].value), dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2)), diff = 2 / dd, diffx2 = diff * 2, j = diff; j <= 1; j += diffx2) s += sWithRegion(d[i - 1], d[i], j, diff);
+		} : function (d0, d1, k, otherDiff) {
+			var points = isRotated ? [[y(yp(k), !0), x(xp(k))], [y(yp(k + otherDiff), !0), x(xp(k + otherDiff))]] : [[x(xp(k), !0), y(yp(k))], [x(xp(k + otherDiff), !0), y(yp(k + otherDiff))]];
 
-		return s;
+			return generateM(points);
+		},
+		    path = "M";
+
+		// Define svg generator function for region
+
+
+		// Generate
+
+
+		for (var data, _i = 0; data = d[_i]; _i++) {
+			var prevData = d[_i - 1],
+			    style = isWithinRegions(data.x, regions);
+
+
+			// Draw as normal
+			if ((0, _util.isUndefined)(regions) || !style) path += "" + (_i ? "L" : "") + xValue(data) + "," + yValue(data);else {
+				try {
+					style = style.dasharray.split(" ");
+				} catch (e) {
+					style = "2 2".split(" ");
+				}
+
+				// Draw with region // TODO: Fix for horizotal charts
+				xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries), yp = $$.getScale(prevData.value, data.value);
+				var dx = x(data.x) - x(prevData.x),
+				    dy = y(data.value) - y(prevData.value),
+				    dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+				diff = style[0] / dd, diffx2 = diff * style[1];
+
+
+				for (var j = diff; j <= 1; j += diffx2) path += sWithRegion(prevData, data, j, diff), j + diffx2 >= 1 && (path += sWithRegion(prevData, data, 1, 0));
+			}
+		}
+
+		return path;
 	},
 	updateArea: function updateArea(durationForExit) {
 		var $$ = this;
@@ -7602,9 +7640,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    r = $$.pointR.bind($$),
 		    circles = $$.getCircles(i).filter(function () {
 			return (0, _d3Selection.select)(this).classed(_classes2.default.EXPANDED);
-		}).classed(_classes2.default.EXPANDED, !1),
-		    scale = r(circles) / $$.config.point_r;
-		circles.attr("r", r), $$.isCirclePoint() || circles.style("transform", "scale(" + scale + ")");
+		}).classed(_classes2.default.EXPANDED, !1);
+		circles.attr("r", r), $$.isCirclePoint() || circles.style("transform", "scale(" + r(circles) / $$.config.point_r + ")");
 	},
 	pointR: function (d) {
 		var $$ = this,
