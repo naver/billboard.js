@@ -73,7 +73,7 @@ extend(Chart.prototype, {
 
 		// use cache if exists
 		if ("cacheIds" in args && $$.hasCaches(args.cacheIds, true)) {
-			$$.load($$.getCaches(args.cacheIds, true), args.done);
+			$$.load($$.getCache(args.cacheIds, true), args.done);
 			return;
 		}
 

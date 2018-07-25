@@ -8,7 +8,7 @@ const WebpackBar = require("webpackbar");
 
 const config = {
 	entry: {
-		billboard: "./src/core.js",
+		billboard: "./src/core.js"
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
@@ -37,7 +37,7 @@ const config = {
 				loader: StringReplacePlugin.replace({
 					replacements: [{
 						pattern: /#__VERSION__#/ig,
-						replacement: (match, p1, offset, string) => pkg.version
+						replacement: () => pkg.version
 					}]
 				})
 			}

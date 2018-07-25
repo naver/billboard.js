@@ -11,12 +11,12 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const config = {
 	entry: {
 		"billboard": "./src/core.js",
-		"billboard.min": "./src/core.js",
+		"billboard.min": "./src/core.js"
 	},
 	module: {
 		rules: [
 			{
-				test: /(\.js)$/,
+				test: /\.js$/,
 				loader: "eslint-loader",
 				include: path.resolve(process.cwd(), "src"),
 				exclude: /(node_modules)/,
