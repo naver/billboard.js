@@ -499,6 +499,7 @@ extend(ChartInternal.prototype, {
 		$$.mainCircle = $$.mainCircle.enter()
 			.append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color))
 			.merge($$.mainCircle)
+			.style("stroke", $$.color)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 

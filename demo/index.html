@@ -33,6 +33,13 @@
         !function() {
 	        var localPath = "../dist/";
 	        var remotePath = "../../gh-pages/release/latest/dist/";
+	        var cssFileName = localStorage.cssThemeName;
+
+	        if (cssFileName) {
+		        cssFileName = "theme/" + cssFileName;
+            } else {
+		        cssFileName = "billboard";
+	        }
 
 	        fallback.load({
 		        billboard_js: [
@@ -40,9 +47,27 @@
 			        remotePath + "billboard.js"
 		        ],
 		        billboard_css: [
-			        localPath + "billboard.css",
-			        remotePath + "billboard.css"
+			        localPath + cssFileName + ".css",
+			        remotePath + cssFileName + ".css"
 		        ]
+	        });
+
+	        $(function() {
+		        var $select = $("#theme select");
+
+		        $select.on("change", function() {
+			        var value = this[this.options.selectedIndex].value;
+
+			        if (value !== localStorage.cssThemeName) {
+				        localStorage.cssThemeName = value;
+				        location.reload();
+			        }
+		        });
+
+		        $select.children().toArray()
+			        .forEach(function(v) {
+				        v.selected = cssFileName.indexOf(v.value) > -1;
+			        });
 	        });
         }();
     </script>
@@ -64,6 +89,12 @@
             <a href="https://naver.github.io/billboard.js/release/latest/doc/" target="_new">API Docs</a> |
             <a href="https://github.com/naver/billboard.js" class="github" target="_new">GitHub</a>
         </p>
+        <form id="theme">
+            Theme: <select class="classic">
+                <option value="">default</option>
+                <option value="insight">insight</option>
+            </select>
+        </form>
         <ul class="sidebar-nav"></ul>
     </div>
     <!-- /#sidebar-wrapper -->

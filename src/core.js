@@ -6,7 +6,7 @@ import Chart from "./internals/Chart";
 import ChartInternal from "./internals/ChartInternal";
 import Axis from "./axis/Axis";
 import * as util from "./internals/util";
-import "./scss/main.scss";
+import "./scss/billboard.scss";
 
 /**
  * @namespace bb

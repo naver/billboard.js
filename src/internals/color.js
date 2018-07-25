@@ -5,6 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import ChartInternal from "./ChartInternal";
+import CLASS from "../config/classes";
 import {notEmpty, extend, isFunction} from "./util";
 
 /**
@@ -37,16 +38,55 @@ const colorizePattern = (pattern, color, id) => {
 const schemeCategory10 = ["#1f77b4", "#ff7f0e", "#2ca02c", "#d62728", "#9467bd", "#8c564b", "#e377c2", "#7f7f7f", "#bcbd22", "#17becf"];
 
 extend(ChartInternal.prototype, {
+	/**
+	 * Get color pattern from CSS file
+	 * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+	 * @return {Array}
+	 * @private
+	 */
+	getColorFromCss() {
+		const $$ = this;
+		const cacheKey = "colorPattern";
+		let pattern = $$.getCache(cacheKey);
+
+		if (!pattern) {
+			const delimiter = ";";
+			const span = document.createElement("span");
+
+			span.className = CLASS.colorPattern;
+			span.style.display = "none";
+			document.body.appendChild(span);
+
+			const content = window.getComputedStyle(span).backgroundImage;
+
+			span.parentNode.removeChild(span);
+
+			if (content.indexOf(delimiter) > -1) {
+				pattern = content
+					.replace(/url[^#]*|["'()]|(\s|%20)/g, "")
+					.split(delimiter)
+					.map(v => v.trim().replace(/[\"'\s]/g, ""))
+					.filter(Boolean);
+
+
+				$$.addCache(cacheKey, pattern);
+			}
+		}
+
+		return pattern;
+	},
+
 	generateColor() {
 		const $$ = this;
 		const config = $$.config;
 		const colors = config.data_colors;
 		const callback = config.data_color;
 		const ids = [];
-		let pattern = notEmpty(config.color_pattern) ?
-			config.color_pattern : d3ScaleOrdinal(schemeCategory10).range();
-		const originalColorPattern = pattern;
 
+		let pattern = notEmpty(config.color_pattern) ? config.color_pattern :
+			d3ScaleOrdinal($$.getColorFromCss() || schemeCategory10).range();
+
+		const originalColorPattern = pattern;
 
 		if (isFunction(config.color_tiles)) {
 			const tiles = config.color_tiles();

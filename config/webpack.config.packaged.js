@@ -17,7 +17,7 @@ const config = {
 				test: /(core\.js)$/,
 				loader: StringReplacePlugin.replace({
 					replacements: [{
-						pattern: /import \"\.\/scss\/main.scss\";/ig,
+						pattern: /import \"\.\/scss\/\w+\.scss\";/ig,
 						replacement: () => ""
 					}]
 				})

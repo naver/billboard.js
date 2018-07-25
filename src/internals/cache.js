@@ -20,11 +20,11 @@ extend(ChartInternal.prototype, {
 		}
 	},
 
-	addCache(key, target, isDataType = false) {
-		this.cache[key] = isDataType ? this.cloneTarget(target) : target;
+	addCache(key, value, isDataType = false) {
+		this.cache[key] = isDataType ? this.cloneTarget(value) : value;
 	},
 
-	getCaches(key, isDataType = false) {
+	getCache(key, isDataType = false) {
 		if (isDataType) {
 			const targets = [];
 

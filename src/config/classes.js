@@ -24,6 +24,7 @@ export default {
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
 	chartRadar: "bb-chart-radar",
 	chartRadars: "bb-chart-radars",
+	colorPattern: "bb-color-pattern",
 	selectedCircle: "bb-selected-circle",
 	selectedCircles: "bb-selected-circles",
 	eventRect: "bb-event-rect",

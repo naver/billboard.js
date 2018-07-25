@@ -246,7 +246,7 @@ extend(ChartInternal.prototype, {
 	getMinMaxData() {
 		const $$ = this;
 		const cacheKey = "$minMaxData";
-		let minMaxData = $$.getCaches(cacheKey);
+		let minMaxData = $$.getCache(cacheKey);
 
 		if (!minMaxData) {
 			const data = $$.data.targets.map(t => t.values);
@@ -283,7 +283,7 @@ extend(ChartInternal.prototype, {
 	getTotalDataSum() {
 		const $$ = this;
 		const cacheKey = "$totalDataSum";
-		let totalDataSum = $$.getCaches(cacheKey);
+		let totalDataSum = $$.getCache(cacheKey);
 
 		if (!totalDataSum) {
 			let total = 0;
