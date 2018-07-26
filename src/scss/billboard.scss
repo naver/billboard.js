@@ -1,0 +1,265 @@
+/*-- Chart --*/
+.bb {
+  svg {
+    font: 10px sans-serif;
+    -webkit-tap-highlight-color: rgba(0,0,0,0);
+  }
+
+  path, line {
+    fill: none;
+    stroke: #000;
+  }
+
+  text {
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+  }
+}
+
+.bb-legend-item-tile,
+.bb-xgrid-focus,
+.bb-ygrid,
+.bb-event-rect,
+.bb-bars path {
+  shape-rendering: crispEdges;
+}
+
+.bb-chart-arc {
+  path {
+    stroke: #fff;
+  }
+
+  text {
+    fill: #fff;
+    font-size: 13px;
+  }
+}
+
+/*-- Axis --*/
+.bb-axis-x .tick {}
+.bb-axis-x-label {}
+
+.bb-axis-y .tick {}
+.bb-axis-y-label {}
+
+.bb-axis-y2 .tick {}
+.bb-axis-y2-label {}
+
+/*-- Grid --*/
+.bb-grid {
+  line {
+    stroke: #aaa;
+  }
+
+  text {
+    fill: #aaa;
+  }
+}
+
+.bb-xgrid, .bb-ygrid {
+  stroke-dasharray: 3 3;
+}
+
+.bb-xgrid-focus {}
+
+/*-- Text on Chart --*/
+.bb-text {
+  &.bb-empty {
+    fill: #808080;
+    font-size: 2em;
+  }
+}
+
+/*-- Line --*/
+.bb-line {
+  stroke-width: 1px;
+}
+
+/*-- Point --*/
+.bb-circle._expanded_ {
+  stroke-width: 1px;
+  stroke: white;
+}
+
+.bb-selected-circle {
+  fill: white;
+  stroke-width: 2px;
+}
+
+/*-- Bar --*/
+.bb-bar {
+  stroke-width: 0;
+
+  &._expanded_ {
+    fill-opacity: 0.75;
+  }
+}
+
+/*-- Focus --*/
+.bb-target {
+  &.bb-focused {
+    opacity: 1;
+  }
+
+  &.bb-focused {
+    path.bb-line, path.bb-step {
+      stroke-width: 2px;
+    }
+  }
+
+  &.bb-defocused {
+    opacity: 0.3 !important;
+  }
+}
+
+/*-- Region --*/
+.bb-region {
+  fill: steelblue;
+  fill-opacity: .1;
+}
+
+/*-- Brush --*/
+.bb-brush .extent {
+  fill-opacity: .1;
+}
+
+/*-- Select - Drag --*/
+.bb-dragarea {}
+
+/*-- Legend --*/
+.bb-legend-item {
+  font-size: 12px;
+}
+
+.bb-legend-item-hidden {
+  opacity: 0.15;
+}
+
+.bb-legend-background {
+  opacity: 0.75;
+  fill: white;
+  stroke: lightgray;
+  stroke-width: 1;
+}
+
+/*-- Title --*/
+.bb-title {
+  font: 14px sans-serif;
+}
+
+/*-- Tooltip --*/
+.bb-tooltip-container {
+  z-index: 10;
+}
+
+.bb-tooltip {
+  border-collapse:collapse;
+  border-spacing:0;
+  background-color:#fff;
+  empty-cells:show;
+  opacity: 0.9;
+  -webkit-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+  -moz-box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+  box-shadow: 7px 7px 12px -9px rgb(119,119,119);
+
+  tr {
+    border:1px solid #CCC;
+  }
+
+  th {
+    background-color: #aaa;
+    font-size:14px;
+    padding:2px 5px;
+    text-align:left;
+    color:#FFF;
+  }
+
+  td {
+    font-size:13px;
+    padding: 3px 6px;
+    background-color:#fff;
+    border-left:1px dotted #999;
+
+    > span, > svg {
+      display: inline-block;
+      width: 10px;
+      height: 10px;
+      margin-right: 6px;
+    }
+
+    &.value {
+      text-align: right;
+    }
+  }
+}
+
+/*-- Area --*/
+.bb-area {
+  stroke-width: 0;
+  opacity: 0.2;
+}
+
+/*-- Arc --*/
+.bb-chart-arcs-title {
+  dominant-baseline: middle;
+  font-size: 1.3em;
+}
+
+.bb-chart-arcs {
+  .bb-chart-arcs-background {
+    fill: #e0e0e0;
+    stroke: none;
+  }
+
+  .bb-chart-arcs-gauge-unit {
+    fill: #000;
+    font-size: 16px;
+  }
+
+  .bb-chart-arcs-gauge-max {
+    fill: #777;
+  }
+
+  .bb-chart-arcs-gauge-min {
+    fill: #777;
+  }
+}
+
+.bb-chart-arc .bb-gauge-value {
+  fill: #000;
+}
+
+/*-- Radar --*/
+.bb-chart-radars {
+  .bb-levels {
+    polygon {
+      fill: none;
+      stroke: #848282;
+      stroke-width: .5px;
+    }
+
+    text {
+      fill: #848282;
+    }
+  }
+
+  .bb-axis {
+    line {
+      stroke: #848282;
+      stroke-width: .5px;
+    }
+
+    text {
+      font-size: 1.15em;
+      cursor: default;
+    }
+  }
+
+  .bb-shapes {
+    polygon {
+      fill-opacity: .2;
+      stroke-width: 1px;
+    }
+  }
+}
