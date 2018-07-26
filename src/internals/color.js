@@ -45,9 +45,9 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 */
 	getColorFromCss() {
-		const $$ = this;
-		const cacheKey = "colorPattern";
-		let pattern = $$.getCache(cacheKey);
+		const cacheKey = "__colorPattern__";
+		const body = document.body;
+		let pattern = body[cacheKey];
 
 		if (!pattern) {
 			const delimiter = ";";
@@ -55,7 +55,7 @@ extend(ChartInternal.prototype, {
 
 			span.className = CLASS.colorPattern;
 			span.style.display = "none";
-			document.body.appendChild(span);
+			body.appendChild(span);
 
 			const content = window.getComputedStyle(span).backgroundImage;
 
@@ -68,8 +68,7 @@ extend(ChartInternal.prototype, {
 					.map(v => v.trim().replace(/[\"'\s]/g, ""))
 					.filter(Boolean);
 
-
-				$$.addCache(cacheKey, pattern);
+				body[cacheKey] = pattern;
 			}
 		}
 
