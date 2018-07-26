@@ -48,7 +48,7 @@ describe("COLOR", () => {
 			expect(pttrn).to.deep.equal(pattern);
 
 			// check if pattern value are cached
-			expect(internal.getCache("colorPattern")).to.deep.equal(pattern);
+			expect(document.body["__colorPattern__"]).to.deep.equal(pattern);
 		});
 
 		it("check if color pattern applied to data elements", () => {
