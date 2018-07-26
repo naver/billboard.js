@@ -12,7 +12,7 @@ const srcPath = "./src/scss/theme/";
 const distPath = path.resolve(__dirname, "../dist/theme/");
 const tmpExt = "tmp";
 const rx = /\.scss$/;
-console.log(distPath)
+
 // construct entry point
 const entry = {};
 
