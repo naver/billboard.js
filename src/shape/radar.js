@@ -116,7 +116,7 @@ extend(ChartInternal.prototype, {
 
 	generateGetRadarPoints() {
 		const $$ = this;
-		const points = $$.getCaches(cacheKey);
+		const points = $$.getCache(cacheKey);
 
 		return (d, i) => {
 			const point = points[d.id][i];
@@ -265,7 +265,7 @@ extend(ChartInternal.prototype, {
 	updateRadarShape() {
 		const $$ = this;
 		const targets = $$.data.targets;
-		const points = $$.getCaches(cacheKey);
+		const points = $$.getCache(cacheKey);
 
 		const areas = $$.radars.append("g")
 			.attr("class", CLASS.shapes)
@@ -292,7 +292,7 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 */
 	radarCircleX(d) {
-		return this.getCaches(cacheKey)[d.id][d.index][0];
+		return this.getCache(cacheKey)[d.id][d.index][0];
 	},
 
 	/**
@@ -302,6 +302,6 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 */
 	radarCircleY(d) {
-		return this.getCaches(cacheKey)[d.id][d.index][1];
+		return this.getCache(cacheKey)[d.id][d.index][1];
 	}
 });

@@ -10,10 +10,53 @@ import {isString} from "../../src/internals/util";
 
 describe("COLOR", () => {
 	let chart;
-	let args;
+	let args = {
+		data: {
+			columns: [
+				["data1", 30, 20, 50],
+				["data2", 200, 130, 90],
+				["data3", 300, 200, 160],
+				["data4", 200, 130, 90],
+				["data5", 130, 120, 150],
+				["data6", 90, 70, 20],
+				["data7", 283, 170, 275],
+				["data8", 300, 200, 160],
+				["data9", 130, 120, 150],
+				["data10", 130, 120, 150]
+			],
+			type: "bar"
+		}
+	};
 
 	beforeEach(() => {
 		chart = util.generate(args);
+	});
+
+	describe("color pattern", () => {
+		const pattern = ["#00c73c", "#fa7171", "#2ad0ff", "#7294ce", "#e3e448", "#cc7e6e", "#fb6ccf", "#c98dff", "#4aea99", "#bbbbbb"];
+
+		before(() => {
+			document.styleSheets[0].insertRule(`.${CLASS.colorPattern} {
+				background-image: url("${pattern.join(";")}");
+			}`, 0);
+		});
+
+		it("should get and parse from the stylesheet", () => {
+			const internal = chart.internal;
+			const pttrn = internal.getColorFromCss();
+
+			expect(pttrn).to.deep.equal(pattern);
+
+			// check if pattern value are cached
+			expect(internal.getCache("colorPattern")).to.deep.equal(pattern);
+		});
+
+		it("check if color pattern applied to data elements", () => {
+			chart.internal.main.selectAll(`.${CLASS.chartBars} .${CLASS.target} path:first-child`)
+				.each(function(v, i) {
+					expect(this.style.stroke).to.be.equal(util.hexToRgb(pattern[i]));
+				});
+		});
 	});
 
 	describe("tiles", () => {

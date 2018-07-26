@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180719181442
+ * @version 1.5.1-nightly-20180726110747
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180719181442
+ * @version 1.5.1-nightly-20180726110747
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180719181442",
+	version: "1.5.1-nightly-20180726110747",
 	/**
   * generate charts
   * @param {Options} options chart options
@@ -1454,6 +1454,7 @@ exports.default = {
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
 	chartRadar: "bb-chart-radar",
 	chartRadars: "bb-chart-radars",
+	colorPattern: "bb-color-pattern",
 	selectedCircle: "bb-selected-circle",
 	selectedCircles: "bb-selected-circles",
 	eventRect: "bb-event-rect",
@@ -5228,7 +5229,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   */
 	getMinMaxData: function getMinMaxData() {
 		var $$ = this,
-		    minMaxData = $$.getCaches("$minMaxData");
+		    minMaxData = $$.getCache("$minMaxData");
 
 
 		if (!minMaxData) {
@@ -5256,7 +5257,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   */
 	getTotalDataSum: function getTotalDataSum() {
 		var $$ = this,
-		    totalDataSum = $$.getCaches("$totalDataSum");
+		    totalDataSum = $$.getCache("$totalDataSum");
 
 
 		if (!totalDataSum) {
@@ -7202,7 +7203,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   */
 	getBaseLength: function getBaseLength() {
 		var $$ = this,
-		    baseLength = $$.getCaches("$baseLength");
+		    baseLength = $$.getCache("$baseLength");
 
 
 		return baseLength || $$.addCache("$baseLength", baseLength = (0, _d3Array.min)([$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
@@ -7575,7 +7576,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		$$.config.point_show && ($$.mainCircle = $$.main.selectAll("." + _classes2.default.circles).selectAll("." + _classes2.default.circle).data(function (d) {
 			return !$$.isBarType(d) && $$.labelishData(d);
-		}), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("opacity", $$.initialOpacityForCircle.bind($$)));
+		}), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)));
 	},
 	redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
 		var $$ = this,
@@ -7948,7 +7949,7 @@ var cacheKey = "$radarPoints";
 	},
 	generateGetRadarPoints: function generateGetRadarPoints() {
 		var $$ = this,
-		    points = $$.getCaches(cacheKey);
+		    points = $$.getCache(cacheKey);
 
 
 		return function (d, i) {
@@ -8045,7 +8046,7 @@ var cacheKey = "$radarPoints";
 	updateRadarShape: function updateRadarShape() {
 		var $$ = this,
 		    targets = $$.data.targets,
-		    points = $$.getCaches(cacheKey),
+		    points = $$.getCache(cacheKey),
 		    areas = $$.radars.append("g").attr("class", _classes2.default.shapes).selectAll("polygon").data(targets),
 		    areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
 		areas.exit().remove(), areasEnter.append("polygon").merge(areas).style("fill", function (d) {
@@ -8065,7 +8066,7 @@ var cacheKey = "$radarPoints";
   * @private
   */
 	radarCircleX: function radarCircleX(d) {
-		return this.getCaches(cacheKey)[d.id][d.index][0];
+		return this.getCache(cacheKey)[d.id][d.index][0];
 	},
 
 
@@ -8076,7 +8077,7 @@ var cacheKey = "$radarPoints";
   * @private
   */
 	radarCircleY: function radarCircleY(d) {
-		return this.getCaches(cacheKey)[d.id][d.index][1];
+		return this.getCache(cacheKey)[d.id][d.index][1];
 	}
 });
 
@@ -10338,6 +10339,8 @@ var _d3Selection = __webpack_require__(4),
     _d3Scale = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
+    _classes = __webpack_require__(8),
+    _classes2 = _interopRequireDefault(_classes),
     _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -10351,10 +10354,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @return {{id: string, node: SVGPatternElement}}
  * @private
  */
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 var colorizePattern = function (pattern, color, id) {
 	var node = (0, _d3Selection.select)(pattern.cloneNode(!0));
 
@@ -10367,16 +10366,45 @@ var colorizePattern = function (pattern, color, id) {
 
 // Replacement of d3.schemeCategory10.
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 
 
 (0, _util.extend)(_ChartInternal2.default.prototype, {
+	/**
+  * Get color pattern from CSS file
+  * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
+  * @return {Array}
+  * @private
+  */
+	getColorFromCss: function getColorFromCss() {
+		var $$ = this,
+		    pattern = $$.getCache("colorPattern");
+
+
+		if (!pattern) {
+			var span = document.createElement("span");
+			span.className = _classes2.default.colorPattern, span.style.display = "none", document.body.appendChild(span);
+
+
+			var content = window.getComputedStyle(span).backgroundImage;
+
+			span.parentNode.removeChild(span), content.indexOf(";") > -1 && (pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
+				return v.trim().replace(/[\"'\s]/g, "");
+			}).filter(Boolean), $$.addCache("colorPattern", pattern));
+		}
+
+		return pattern;
+	},
 	generateColor: function generateColor() {
 		var $$ = this,
 		    config = $$.config,
 		    colors = config.data_colors,
 		    callback = config.data_color,
 		    ids = [],
-		    pattern = (0, _util.notEmpty)(config.color_pattern) ? config.color_pattern : (0, _d3Scale.scaleOrdinal)(schemeCategory10).range(),
+		    pattern = (0, _util.notEmpty)(config.color_pattern) ? config.color_pattern : (0, _d3Scale.scaleOrdinal)($$.getColorFromCss() || schemeCategory10).range(),
 		    originalColorPattern = pattern;
 
 
@@ -10528,11 +10556,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		return key in this.cache;
 	},
-	addCache: function addCache(key, target) {
+	addCache: function addCache(key, value) {
 		var isDataType = !!(arguments.length > 2 && arguments[2] !== undefined) && arguments[2];
-		this.cache[key] = isDataType ? this.cloneTarget(target) : target;
+		this.cache[key] = isDataType ? this.cloneTarget(value) : value;
 	},
-	getCaches: function getCaches(key) {
+	getCache: function getCache(key) {
 		var isDataType = !!(arguments.length > 1 && arguments[1] !== undefined) && arguments[1];
 
 		if (isDataType) {
@@ -11165,7 +11193,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			config.data_axes[id] = args.axes[id];
 		}), "colors" in args && Object.keys(args.colors).forEach(function (id) {
 			config.data_colors[id] = args.colors[id];
-		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCaches(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds((0, _util.isBoolean)(args.unload) && args.unload ? null : args.unload), function () {
+		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCache(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds((0, _util.isBoolean)(args.unload) && args.unload ? null : args.unload), function () {
 			return $$.loadFromArgs(args);
 		}) : $$.loadFromArgs(args));
 

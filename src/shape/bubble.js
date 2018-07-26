@@ -34,7 +34,7 @@ extend(ChartInternal.prototype, {
 	getBaseLength() {
 		const $$ = this;
 		const cacheKey = "$baseLength";
-		let baseLength = $$.getCaches(cacheKey);
+		let baseLength = $$.getCache(cacheKey);
 
 		if (!baseLength) {
 			$$.addCache(cacheKey, baseLength = d3Min([

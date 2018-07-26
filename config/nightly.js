@@ -22,12 +22,19 @@ function getDatetime() {
 
 // set version for nightly
 const version = pkg.version.replace(/snapshot/, `nightly-${getDatetime()}`);
+let cmd = `cross-env NIGHTLY=${version} npm run build:`;
 
 // build command
 const build = {
-	production: `cross-env NIGHTLY=${version} npm run build:production`,
-	packaged: `cross-env NIGHTLY=${version} npm run build:packaged`
+	production: `${cmd}production`,
+	packaged: `${cmd}packaged`,
+	theme: `${cmd}theme`
 };
 
-console.log(`${build.production} && ${build.packaged}`);
-exec(build.production, () => exec(build.packaged));
+cmd = Object.values(build);
+
+console.log(`***** Starting build v${version} *****\r\n> ${cmd.join("\r\n> ")}`);
+
+exec(cmd.join(" && "), () => {
+	console.log(`***** Finished successfully! *****`);
+});

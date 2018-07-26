@@ -151,9 +151,23 @@ const parseSvgPath = d => {
 	return commands;
 };
 
+// https://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+const hexToRgb = hex => {
+	// Expand shorthand form (e.g. "03F") to full form (e.g. "0033FF")
+	const rx = /^#?([a-f\d])([a-f\d])([a-f\d])$/i;
+	const parsed = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(
+		hex.replace(rx, (m, r, g, b) => r + r + g + g + b + b)
+	);
+
+	return parsed ?
+		`rgb(${parsed.splice(1).map(v => parseInt(v, 16)).join(", ")})`
+		: null;
+};
+
 export default {
 	fireEvent,
 	generate,
+	hexToRgb,
 	parseSvgPath,
 	simulator
 };
