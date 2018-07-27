@@ -60,6 +60,7 @@ const getMinMax = ($$, type) => {
 
 /**
  * Define axis
+ * @ignore
  */
 const axis = extend(() => {}, {
 	/**

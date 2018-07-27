@@ -7,6 +7,7 @@ import {extend} from "../internals/util";
 
 /**
  * Define legend
+ * @ignore
  */
 const legend = extend(() => {}, {
 	/**
