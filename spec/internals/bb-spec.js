@@ -7,6 +7,8 @@ import bb from "../../src/core";
 import util from "../assets/util";
 
 describe("Interface & initialization", () => {
+	let chart;
+
 	it("Check for billboard.js object", () => {
 		expect(bb).not.to.be.null;
 		expect(typeof bb).to.be.equal("object");
@@ -14,7 +16,7 @@ describe("Interface & initialization", () => {
 	});
 
 	it("Check for initialization", () => {
-		const chart = util.generate({
+		chart = util.generate({
 			data: {
 				columns: [
 					["data1", 30]
@@ -38,9 +40,25 @@ describe("Interface & initialization", () => {
 		expect(bb.version.length > 0).to.be.ok;
 	});
 
+	it("should be accessing node elements", () => {
+		const isD3Node = v => v && "node" in v || typeof v === "undefined";
+
+		Object.values(chart.$).forEach(v1 => {
+			const isNode = isD3Node(v1);
+
+			if (isNode) {
+				expect(isNode).to.be.true;
+			} else {
+				Object.values(v1).forEach(v2 => {
+					expect(isD3Node(v2)).to.be.true;
+				});
+			}
+		});
+	});
+
 	it("instantiate with different classname on wrapper element", () => {
 		const bindtoClassName = "billboard-js";
-		const chart = bb.generate({
+		chart = bb.generate({
 			bindto: {
 				element: "#chart",
 				classname: bindtoClassName
@@ -108,7 +126,7 @@ describe("Interface & initialization", () => {
 
 			container.innerHTML = '<div id="chartResize"></div>';
 
-			const chart = util.generate({
+			chart = util.generate({
 				bindto: "#chartResize",
 				data: {
 					columns: [

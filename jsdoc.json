@@ -4,9 +4,10 @@
   },
   "source": {
     "include": [
-      "dist/billboard.js",
+      "src",
       "./README.md"
     ],
+    "includePattern": ".+\\.js$",
     "excludePattern": "(node_modules/|doc/|theme/)"
   },
   "plugins": [

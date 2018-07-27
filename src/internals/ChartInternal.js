@@ -392,6 +392,33 @@ export default class ChartInternal {
 		});
 	}
 
+	getChartElements() {
+		const $$ = this;
+
+		return {
+			chart: $$.selectChart,
+			svg: $$.svg,
+			defs: $$.defs,
+			main: $$.main,
+			tooltip: $$.tooltip,
+			legend: $$.legend,
+			title: $$.title,
+			grid: $$.grid,
+			arc: $$.arcs,
+			bar: {
+				bars: $$.mainBar
+			},
+			line: {
+				lines: $$.mainLine,
+				areas: $$.mainArea,
+				circles: $$.mainCircle
+			},
+			text: {
+				texts: $$.texts
+			}
+		};
+	}
+
 	smoothLines(el, type) {
 		if (type === "grid") {
 			el.each(function() {
