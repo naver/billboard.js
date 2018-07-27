@@ -7,6 +7,7 @@ import {isValue, isDefined, extend} from "../internals/util";
 
 /**
  * Define tooltip
+ * @ignore
  */
 const tooltip = extend(() => {}, {
 	/**

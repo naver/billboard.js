@@ -19,7 +19,7 @@ COMMIT_MESSAGE="skip:$VERSION-release"
 rm -rf release && mkdir release && cd release && mkdir $VERSION latest && cd ..
 
 # build & copy to release path
-npm run jsdoc && cp -r doc dist release/latest/ && cp -r doc dist release/$VERSION/
+npm run build && npm run jsdoc && cp -r doc dist release/latest/ && cp -r doc dist release/$VERSION/
 
 # push
 npx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_BRANCH --message $COMMIT_MESSAGE

@@ -21,8 +21,9 @@ const bb = {
 	 * @memberOf bb
 	 */
 	version: "#__VERSION__#",
+
 	/**
-	 * generate charts
+	 * Generate chart
 	 * @param {Options} options chart options
 	 * @memberOf bb
 	 * @return {Chart}
@@ -51,11 +52,11 @@ const bb = {
 		const inst = new Chart(config);
 
 		inst.internal.charts = this.instance;
-
 		this.instance.push(inst);
 
 		return inst;
 	},
+
 	/**
 	 * An array containing instance created
 	 * @property {Array} instance instance array
@@ -68,6 +69,7 @@ const bb = {
 	 * @memberOf bb
 	 */
 	instance: [],
+
 	/**
 	 * Internal chart object
 	 * @private
