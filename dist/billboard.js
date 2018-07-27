@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180726110747
+ * @version 1.5.1-nightly-20180727154309
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180726110747
+ * @version 1.5.1-nightly-20180727154309
  */
 var bb = {
 	/**
@@ -140,9 +140,10 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180726110747",
+	version: "1.5.1-nightly-20180727154309",
+
 	/**
-  * generate charts
+  * Generate chart
   * @param {Options} options chart options
   * @memberOf bb
   * @return {Chart}
@@ -173,6 +174,7 @@ var bb = {
 		return inst.internal.charts = this.instance, this.instance.push(inst), inst;
 	},
 
+
 	/**
   * An array containing instance created
   * @property {Array} instance instance array
@@ -185,6 +187,7 @@ var bb = {
   * @memberOf bb
   */
 	instance: [],
+
 	/**
   * Internal chart object
   * @private
@@ -242,15 +245,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @see {@link bb.generate} for the initialization.
 */
 var Chart = function Chart(config) {
-  (0, _classCallCheck3.default)(this, Chart);
+	(0, _classCallCheck3.default)(this, Chart);
 
-  var $$ = new _ChartInternal2.default(this);
+	var $$ = new _ChartInternal2.default(this);
 
-  this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), $$.afterInit(config), function bindThis(fn, target, argThis) {
-    Object.keys(fn).forEach(function (key) {
-      target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
-    });
-  }(Chart.prototype, this, this);
+	this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
+		Object.keys(fn).forEach(function (key) {
+			target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
+		});
+	}(Chart.prototype, this, this);
 }; /**
     * Copyright (c) 2017 NAVER Corp.
     * billboard.js project is licensed under the MIT license
@@ -407,6 +410,31 @@ var ChartInternal = function () {
 
 			_this[method] && _this[method]();
 		});
+	}, ChartInternal.prototype.getChartElements = function getChartElements() {
+		var $$ = this;
+
+		return {
+			chart: $$.selectChart,
+			svg: $$.svg,
+			defs: $$.defs,
+			main: $$.main,
+			tooltip: $$.tooltip,
+			legend: $$.legend,
+			title: $$.title,
+			grid: $$.grid,
+			arc: $$.arcs,
+			bar: {
+				bars: $$.mainBar
+			},
+			line: {
+				lines: $$.mainLine,
+				areas: $$.mainArea,
+				circles: $$.mainCircle
+			},
+			text: {
+				texts: $$.texts
+			}
+		};
 	}, ChartInternal.prototype.smoothLines = function smoothLines(el, type) {
 		type === "grid" && el.each(function () {
 			var g = (0, _d3Selection.select)(this);
@@ -10380,20 +10408,20 @@ var colorizePattern = function (pattern, color, id) {
   * @private
   */
 	getColorFromCss: function getColorFromCss() {
-		var $$ = this,
-		    pattern = $$.getCache("colorPattern");
+		var body = document.body,
+		    pattern = body["__colorPattern__"];
 
 
 		if (!pattern) {
 			var span = document.createElement("span");
-			span.className = _classes2.default.colorPattern, span.style.display = "none", document.body.appendChild(span);
+			span.className = _classes2.default.colorPattern, span.style.display = "none", body.appendChild(span);
 
 
 			var content = window.getComputedStyle(span).backgroundImage;
 
 			span.parentNode.removeChild(span), content.indexOf(";") > -1 && (pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
 				return v.trim().replace(/[\"'\s]/g, "");
-			}).filter(Boolean), $$.addCache("colorPattern", pattern));
+			}).filter(Boolean), body["__colorPattern__"] = pattern);
 		}
 
 		return pattern;
@@ -12426,6 +12454,7 @@ var setMinMax = function ($$, type, value) {
 
 /**
  * Define axis
+ * @ignore
  */
 
 
@@ -12446,6 +12475,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * Define legend
+ * @ignore
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -12628,6 +12658,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * Define tooltip
+ * @ignore
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
