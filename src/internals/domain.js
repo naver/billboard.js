@@ -258,7 +258,7 @@ extend(ChartInternal.prototype, {
 	updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
 		const $$ = this;
 		const config = $$.config;
-		const zoomEnabled = config.zoom_enabled;
+		const zoomEnabled = config.zoom_enabled === true || config.zoom_enabled_type;
 
 		if (withUpdateOrgXDomain) {
 			$$.x.domain(domain || d3Extent($$.getXDomain(targets)));

@@ -6,7 +6,11 @@ import {
 	min as d3Min,
 	max as d3Max
 } from "d3-array";
-import {event as d3Event} from "d3-selection";
+import {
+	mouse as d3Mouse,
+	event as d3Event
+} from "d3-selection";
+import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
@@ -96,7 +100,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const event = d3Event;
 
-		if (!config.zoom_enabled) {
+		if (config.zoom_enabled !== true && !config.zoom_enabled_type) {
 			return;
 		}
 
@@ -199,5 +203,67 @@ extend(ChartInternal.prototype, {
 		$$.main.select(`.${CLASS.eventRects}`)
 			.call($$.zoom)
 			.on("dblclick.zoom", null);
+	},
+
+	/**
+	 * Initialize the drag behaviour used for zooming.
+	 * @private
+	 */
+	initZoomBehaviour() {
+		const $$ = this;
+		let start = 0;
+		let end = 0;
+		let zoomRect = null;
+
+		$$.zoomBehaviour = d3Drag()
+			.on("start", function() {
+				if (!zoomRect) {
+					zoomRect = $$.main.append("rect")
+						.attr("clip-path", $$.clipPath)
+						.attr("class", CLASS.zoomBrush)
+						.attr("x", 0)
+						.attr("y", 0)
+						.attr("width", $$.config.axis_rotated ? $$.width : 0)
+						.attr("height", $$.config.axis_rotated ? 0 : $$.height);
+				}
+
+				start = d3Mouse(this)[0];
+				end = start;
+				zoomRect
+					.attr("x", start)
+					.attr("width", 0);
+			})
+			.on("drag", function() {
+				end = d3Mouse(this)[0];
+
+				zoomRect
+					.attr("x", Math.min(start, end))
+					.attr("width", Math.abs(end - start));
+			})
+			.on("end", () => {
+				zoomRect
+					.attr("x", 0)
+					.attr("width", 0);
+
+				if (start > end) {
+					[start, end] = [end, start];
+				}
+
+				$$.x.domain([$$.x.invert(start), $$.x.invert(end)]);
+
+				$$.redraw();
+
+				isFunction($$.config.zoom_onzoom) && $$.config.zoom_onzoom.call($$.api, $$.x.orgDomain());
+			});
+	},
+
+	/**
+	 * Enable zooming by dragging using the zoombehaviour.
+	 * @private
+	 */
+	bindZoomOnDrag() {
+		const $$ = this;
+
+		$$.main.select(`.${CLASS.chart}`).call($$.zoomBehaviour);
 	}
 });

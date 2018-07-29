@@ -123,6 +123,8 @@ const getBrushSelection = function() {
 		// check from brush area selection
 	} else if (this.context && (selection = this.context.select(`.${CLASS.brush}`).node())) {
 		selection = d3BrushSelection(selection);
+	} else if (this.main && (selection = this.main.select(`.${CLASS.brush}`).node())) {
+		selection = d3BrushSelection(selection);
 	}
 
 	return selection;

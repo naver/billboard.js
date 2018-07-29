@@ -21,7 +21,7 @@ extend(ChartInternal.prototype, {
 
 		if ($$.hasArcType()) { return; }
 		if (!config.data_selection_enabled) { return; } // do nothing if not selectable
-		if (config.zoom_enabled && !$$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
+		if ((config.zoom_enabled === true || config.zoom_enabled_type) && !$$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
 		if (!config.data_selection_multiple) { return; } // skip when single selection because drag is used for multiple selection
 
 		const sx = $$.dragStart[0];

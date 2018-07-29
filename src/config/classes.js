@@ -33,6 +33,7 @@ export default {
 	eventRectsMultiple: "bb-event-rects-multiple",
 	zoomRect: "bb-zoom-rect",
 	brush: "bb-brush",
+	zoomBrush: "bb-zoom-brush",
 	focused: "bb-focused",
 	defocused: "bb-defocused",
 	region: "bb-region",

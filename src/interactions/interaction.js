@@ -38,7 +38,7 @@ extend(ChartInternal.prototype, {
 
 		let eventRectUpdate;
 		const eventRects = $$.main.select(`.${CLASS.eventRects}`)
-			.style("cursor", config.zoom_enabled ? (
+			.style("cursor", (config.zoom_enabled === true || config.zoom_enabled_type === "wheel") ? (
 				config.axis_rotate ? "ns-resize" : "ew-resize"
 			) : null)
 			.classed(CLASS.eventRectsMultiple, isMultipleX)

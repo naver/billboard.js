@@ -534,7 +534,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const hasValue = isValue(d.x);
 
-		return $$.config.zoom_enabled && $$.zoomScale ?
+		return ($$.config.zoom_enabled === true || $$.config.zoom_enabled_type) && $$.zoomScale ?
 			(hasValue ? $$.zoomScale(d.x) : null) :
 			(hasValue ? $$.x(d.x) : null);
 	},

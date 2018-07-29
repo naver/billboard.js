@@ -186,6 +186,7 @@ export default class ChartInternal {
 
 		$$.initBrush && $$.initBrush();
 		$$.initZoom && $$.initZoom();
+		$$.initZoomBehaviour && $$.initZoomBehaviour();
 
 		const bindto = {
 			element: config.bindto,
@@ -286,7 +287,7 @@ export default class ChartInternal {
 
 		// Set initialized scales to brush and zoom
 		// if ($$.brush) { $$.brush.scale($$.subX); }
-		// if (config.zoom_enabled) { $$.zoom.scale($$.x); }
+		// if (config.zoom_enabled === true || config.zoom_enabled_type) { $$.zoom.scale($$.x); }
 
 		// Define regions
 		const main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
@@ -765,7 +766,9 @@ export default class ChartInternal {
 		// event rects will redrawn when flow called
 		if (config.interaction_enabled && !options.flow && withEventRect) {
 			$$.redrawEventRect();
-			config.zoom_enabled && $$.bindZoomOnEventRect();
+
+			(config.zoom_enabled === true || config.zoom_enabled_type === "wheel") && $$.bindZoomOnEventRect();
+			config.zoom_enabled_type === "drag" && $$.bindZoomOnDrag();
 		}
 
 		// update circleY based on updated parameters
@@ -961,8 +964,8 @@ export default class ChartInternal {
 	}
 
 	xx(d) {
-		const fn = this.config.zoom_enabled && this.zoomScale ?
-			this.zoomScale : this.x;
+		const fn = (this.config.zoom_enabled === true || this.config.zoom_enabled_type) &&
+			this.zoomScale ? this.zoomScale : this.x;
 
 		return d ? fn(d.x) : null;
 	}

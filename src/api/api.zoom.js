@@ -30,7 +30,7 @@ const zoom = function(domainValue) {
 	let domain = domainValue;
 	let resultDomain;
 
-	if ($$.config.zoom_enabled && domain) {
+	if (($$.config.zoom_enabled === true || $$.config.zoom_enabled_type) && domain) {
 		if (isTimeSeries) {
 			domain = domain.map(x => $$.parseDate(x));
 		}
@@ -73,18 +73,34 @@ extend(zoom, {
 	 * @method zoom․enable
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Boolean} enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.<br>When set to false, the current zooming status will be reset.
+	 * @param {String|Boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
 	 * @example
-	 *  // Enable zooming
+	 *  // Enable zooming using the mouse wheel
 	 *  chart.zoom.enable(true);
+	 *  // Or
+	 *  chart.zoom.enable("wheel");
+	 *
+	 *  // Enable zooming by dragging
+	 *  chart.zoom.enable("drag");
 	 *
 	 *  // Disable zooming
 	 *  chart.zoom.enable(false);
 	 */
-	enable: function(enabled = false) {
+	enable: function(enabled = "wheel") {
+		let enableType;
+
+		if (enabled === true) {
+			enableType = "wheel";
+		} else if (enabled === false) {
+			enableType = "";
+		} else {
+			enableType = enabled;
+		}
+
 		const $$ = this.internal;
 
-		$$.config.zoom_enabled = enabled;
+		$$.config.zoom_enabled = undefined; // Disable legacy option.
+		$$.config.zoom_enabled_type = enableType;
 		$$.updateAndRedraw();
 	},
 

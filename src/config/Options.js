@@ -128,7 +128,7 @@ export default class Options {
 			 * @name zoom
 			 * @memberOf Options
 			 * @type {Object}
-			 * @property {Boolean} [zoom.enabled=false] Enable zooming.
+			 * @property {String} [zoom.enabled.type] Enable zooming.
 			 * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
 			 *  If true set, y domain will be updated according to the zoomed region.
 			 * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
@@ -142,7 +142,9 @@ export default class Options {
 			 *  Specified function receives the zoomed domain.
 			 * @example
 			 *  zoom: {
-			 *      enabled: true,
+			 *      enabled: {
+             *          type: "drag"
+             *      },
 			 *      rescale: true,
 			 *      extent: [1, 100]  // enable more zooming
 			 *      x: {
@@ -154,7 +156,8 @@ export default class Options {
 			 *      onzoomend: function(domain) { ... }
 			 *  }
 			 */
-			zoom_enabled: false,
+			zoom_enabled: undefined, // Legacy, use zoom_enabled_type instead
+			zoom_enabled_type: "",
 			zoom_extent: undefined,
 			zoom_privileged: false,
 			zoom_rescale: false,
