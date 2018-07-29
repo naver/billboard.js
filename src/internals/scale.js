@@ -53,7 +53,6 @@ extend(ChartInternal.prototype, {
 	getCustomizedScale(scaleValue, offsetValue) {
 		const $$ = this;
 		const offset = offsetValue || (() => $$.xAxis.tickOffset());
-
 		const scale = function(d, raw) {
 			const v = scaleValue(d) + offset();
 

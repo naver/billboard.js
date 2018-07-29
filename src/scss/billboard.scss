@@ -10,7 +10,7 @@
     stroke: #000;
   }
 
-  text {
+  text, .bb-button {
     -webkit-user-select: none;
     -moz-user-select: none;
     user-select: none;
@@ -116,6 +116,11 @@
 /*-- Region --*/
 .bb-region {
   fill: steelblue;
+  fill-opacity: .1;
+}
+
+/*-- Zoom region --*/
+.bb-zoom-brush {
   fill-opacity: .1;
 }
 
@@ -261,5 +266,21 @@
       fill-opacity: .2;
       stroke-width: 1px;
     }
+  }
+}
+
+/*-- Button --*/
+.bb-button {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+
+  .bb-zoom-reset {
+    font-size: 11px;
+    border: solid 1px #ccc;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer;
   }
 }

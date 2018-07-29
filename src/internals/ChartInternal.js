@@ -184,8 +184,12 @@ export default class ChartInternal {
 
 		$$.axis = new Axis($$);
 
-		$$.initBrush && $$.initBrush();
-		$$.initZoom && $$.initZoom();
+		config.subchart_show && $$.initBrush();
+
+		if (config.zoom_enabled) {
+			$$.initZoom();
+			$$.initZoomBehaviour();
+		}
 
 		const bindto = {
 			element: config.bindto,
@@ -286,7 +290,7 @@ export default class ChartInternal {
 
 		// Set initialized scales to brush and zoom
 		// if ($$.brush) { $$.brush.scale($$.subX); }
-		// if (config.zoom_enabled) { $$.zoom.scale($$.x); }
+		// if (config.zoom_enabled === true || config.zoom_enabled_type) { $$.zoom.scale($$.x); }
 
 		// Define regions
 		const main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
@@ -765,7 +769,7 @@ export default class ChartInternal {
 		// event rects will redrawn when flow called
 		if (config.interaction_enabled && !options.flow && withEventRect) {
 			$$.redrawEventRect();
-			config.zoom_enabled && $$.bindZoomOnEventRect();
+			$$.bindZoomEvent();
 		}
 
 		// update circleY based on updated parameters

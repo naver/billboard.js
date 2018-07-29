@@ -19,15 +19,17 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const main = $$.main;
 
-		if ($$.hasArcType()) { return; }
-		if (!config.data_selection_enabled) { return; } // do nothing if not selectable
-		if (config.zoom_enabled && !$$.zoom.altDomain) { return; } // skip if zoomable because of conflict drag dehavior
-		if (!config.data_selection_multiple) { return; } // skip when single selection because drag is used for multiple selection
+		if ($$.hasArcType() ||
+			!config.data_selection_enabled || // do nothing if not selectable
+			(config.zoom_enabled && !$$.zoom.altDomain) || // skip if zoomable because of conflict drag behavior
+			!config.data_selection_multiple // skip when single selection because drag is used for multiple selection
+		) {
+			return;
+		}
 
-		const sx = $$.dragStart[0];
-		const sy = $$.dragStart[1];
-		const mx = mouse[0];
-		const my = mouse[1];
+		const [sx, sy] = $$.dragStart;
+		const [mx, my] = mouse;
+
 		const minX = Math.min(sx, mx);
 		const maxX = Math.max(sx, mx);
 		const minY = config.data_selection_grouped ? $$.margin.top : Math.min(sy, my);
@@ -40,12 +42,14 @@ extend(ChartInternal.prototype, {
 			.attr("height", maxY - minY);
 
 		// TODO: binary search when multiple xs
-		main.selectAll(`.${CLASS.shapes}`).selectAll(`.${CLASS.shape}`)
+		main.selectAll(`.${CLASS.shapes}`)
+			.selectAll(`.${CLASS.shape}`)
 			.filter(d => config.data_selection_isselectable(d))
 			.each(function(d, i) {
 				const shape = d3Select(this);
 				const isSelected = shape.classed(CLASS.SELECTED);
 				const isIncluded = shape.classed(CLASS.INCLUDED);
+
 				let _x;
 				let	_y;
 				let	_w;
@@ -71,6 +75,7 @@ extend(ChartInternal.prototype, {
 					// line/area selection not supported yet
 					return;
 				}
+
 				if (isWithin ^ isIncluded) {
 					shape.classed(CLASS.INCLUDED, !isIncluded);
 					// TODO: included/unincluded callback here
@@ -90,14 +95,18 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		if ($$.hasArcType()) { return; }
-		if (!config.data_selection_enabled) { return; } // do nothing if not selectable
+		if ($$.hasArcType() || !config.data_selection_enabled) {
+			return;
+		}
+
 		$$.dragStart = mouse;
+
 		$$.main.select(`.${CLASS.chart}`)
 			.append("rect")
 			.attr("class", CLASS.dragarea)
 			.style("opacity", "0.1");
-		$$.dragging = true;
+
+		$$.setDragStatus(true);
 	},
 
 	/**
@@ -109,15 +118,23 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		if ($$.hasArcType()) { return; }
-		if (!config.data_selection_enabled) { return; } // do nothing if not selectable
+		if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
+			return;
+		}
+
 		$$.main.select(`.${CLASS.dragarea}`)
 			.transition()
 			.duration(100)
 			.style("opacity", "0")
 			.remove();
+
 		$$.main.selectAll(`.${CLASS.shape}`)
 			.classed(CLASS.INCLUDED, false);
-		$$.dragging = false;
+
+		$$.setDragStatus(false);
 	},
+
+	setDragStatus(isDragging) {
+		this.dragging = isDragging;
+	}
 });
