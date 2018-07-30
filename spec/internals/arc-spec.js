@@ -232,7 +232,7 @@ describe("ARC", () => {
 		});
 
 
-		it("should show custom min/max gauge labels", () => {
+		it("should show custom gauge labels", () => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -245,6 +245,9 @@ describe("ARC", () => {
 							}
 
 							return `Min: ${value}%`;
+						},
+						format: function(value) {
+							return value +"%\nTest\nValue";
 						}
 					}
 				},
@@ -256,12 +259,15 @@ describe("ARC", () => {
 				}
 			});
 
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.arc;
 			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
 			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
 
 			expect(min.text()).to.equal("Min: 0%");
 			expect(max.text()).to.equal("Max: 100%");
+
+			// gauge text should be multilined
+			expect(chartArc.selectAll(`.${CLASS.target}-data tspan`).size()).to.be.equal(3);
 		});
 
 		it("should not show gauge labels", () => {

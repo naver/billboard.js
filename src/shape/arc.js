@@ -217,8 +217,9 @@ extend(ChartInternal.prototype, {
 		});
 	},
 
-	textForArcLabel(d) {
+	textForArcLabel(val) {
 		const $$ = this;
+		const d = val.node ? val.datum() : val;
 
 		if (!$$.shouldShowArcLabel()) {
 			return "";
@@ -233,9 +234,27 @@ extend(ChartInternal.prototype, {
 			return "";
 		}
 
-		const format = $$.getArcLabelFormat();
+		const text = (
+			$$.getArcLabelFormat() || $$.defaultArcValueFormat
+		)(value, ratio, id).toString();
 
-		return format ? format(value, ratio, id) : $$.defaultArcValueFormat(value, ratio);
+		if (val.node) {
+			if (text.indexOf("\n") === -1) {
+				val.text(text);
+			} else {
+				const multiline = text.split("\n");
+				const len = multiline.length - 1;
+
+				multiline.forEach((v, i) => {
+					val.append("tspan")
+						.attr("x", 0)
+						.attr("dy", `${i === 0 ? -len : 1}em`)
+						.text(v);
+				});
+			}
+		}
+
+		return text;
 	},
 
 	textForGaugeMinMax(value, isMax) {
@@ -654,8 +673,11 @@ extend(ChartInternal.prototype, {
 
 		config.gauge_fullCircle && gaugeTextValue.attr("dy", `${Math.round($$.radius / 14)}`);
 
-		gaugeTextValue
-			.text($$.textForArcLabel.bind($$))
+		// to handle multiline text for gauge type
+		const textMethod = !gaugeTextValue.empty() &&
+			gaugeTextValue.classed(CLASS.gaugeValue) ? "call" : "text";
+
+		gaugeTextValue[textMethod]($$.textForArcLabel.bind($$))
 			.attr("transform", $$.transformForArcLabel.bind($$))
 			.style("font-size", d => ($$.isGaugeType(d.data) ? `${Math.round($$.radius / 5)}px` : ""))
 			.transition()
