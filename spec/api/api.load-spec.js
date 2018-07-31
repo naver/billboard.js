@@ -14,9 +14,6 @@ describe("API load", function() {
 				["data1", 30, 200, 100, 400, 150, 250],
 				["data2", 5000, 2000, 1000, 4000, 1500, 2500]
 			]
-		},
-		point: {
-			show: true
 		}
 	};
 
@@ -32,20 +29,74 @@ describe("API load", function() {
 			chart.load({
 				columns: [
 					["data3", 800, 500, 900, 500, 1000, 700]
-				]
+				],
+				done: () => {
+					const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
+					const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
+					const circles = main.selectAll(`.${CLASS.circles}.${CLASS.circles}-data3 circle`);
+
+					expect(target.size()).to.be.equal(1);
+					expect(legendItem.size()).to.be.equal(1);
+					expect(circles.size()).to.be.equal(6);
+
+					done();
+				}
 			});
+		});
+	});
 
-			setTimeout(() => {
-				const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-				const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-				const circles = main.selectAll(`.${CLASS.circles}.${CLASS.circles}-data3 circle`);
+	describe("timeseries data as column", () => {
+		let date = ["2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"];
 
-				expect(target.size()).to.be.equal(1);
-				expect(legendItem.size()).to.be.equal(1);
-				expect(circles.size()).to.be.equal(6);
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x"].concat(date),
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				},
+			};
+		});
 
-				done();
-			}, 500);
+		it("should load additional data", done => {
+			const main = chart.internal.main;
+			const legend = chart.internal.legend;
+
+			chart.load({
+				columns: [
+					["x"].concat(date.concat().splice(1, 3)),
+					["data3", 400, 500, 450]
+				],
+				done: () => {
+					const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
+					const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
+					const circles = main.selectAll(`.${CLASS.circles}.${CLASS.circles}-data3 circle`);
+					const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
+
+					expect(target.size()).to.be.equal(1);
+					expect(legendItem.size()).to.be.equal(1);
+					expect(circles.size()).to.be.equal(3);
+
+					tickTexts.each(function(d, i) {
+						const text = d3.select(this).select("tspan").text();
+
+						expect(text).to.be.equal(date[i]);
+					});
+
+					done();
+				}
+			});
 		});
 	});
 
@@ -64,44 +115,42 @@ describe("API load", function() {
 					x: {
 						type: "category"
 					}
-				},
-				point: {
-					show: false
 				}
 			};
 		});
 
 		describe("as column", () => {
-			it("should load additional data", done => {
+			it("should load additional data #1", done => {
 				const main = chart.internal.main;
 				const legend = chart.internal.legend;
 
 				chart.load({
 					columns: [
-						["data3", 800, 500, 900, 500, 1000, 700]
-					]
+						["x", "cat2", "cat3", "cat4"],
+						["data3", 800, 500, 900]
+					],
+					done: () => {
+						const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
+						const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
+						const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
+						const expected = ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"];
+
+						expect(target.size()).to.be.equal(1);
+						expect(target.selectAll("circle").size()).to.be.equal(3);
+						expect(legendItem.size()).to.be.equal(1);
+
+						tickTexts.each(function(d, i) {
+							const text = d3.select(this).select("tspan").text();
+
+							expect(text).to.be.equal(expected[i]);
+						});
+
+						done();
+					}
 				});
-
-				setTimeout(() => {
-					const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-					const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-					const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
-					const expected = ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"];
-
-					expect(target.size()).to.be.equal(1);
-					expect(legendItem.size()).to.be.equal(1);
-
-					tickTexts.each(function(d, i) {
-						const text = d3.select(this).select("tspan").text();
-
-						expect(text).to.be.equal(expected[i]);
-					});
-
-					done();
-				}, 500);
 			});
 
-			it("should load additional data", done => {
+			it("should load additional data #2", done => {
 				const main = chart.internal.main;
 				const legend = chart.internal.legend;
 
@@ -109,26 +158,25 @@ describe("API load", function() {
 					columns: [
 						["x", "new1", "new2", "new3", "new4", "new5", "new6"],
 						["data3", 800, 500, 900, 500, 1000, 700]
-					]
+					],
+					done: () => {
+						const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
+						const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
+						const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
+						const expected = ["new1", "new2", "new3", "new4", "new5", "new6"];
+
+						expect(target.size()).to.be.equal(1);
+						expect(legendItem.size()).to.be.equal(1);
+
+						tickTexts.each(function(d, i) {
+							const text = d3.select(this).select("tspan").text();
+
+							expect(text).to.be.equal(expected[i]);
+						});
+
+						done();
+					}
 				});
-
-				setTimeout(() => {
-					const target = main.select(`.${CLASS.chartLine}.${CLASS.target}.${CLASS.target}-data3`);
-					const legendItem = legend.select(`.${CLASS.legendItem}.${CLASS.legendItem}-data3`);
-					const tickTexts = main.selectAll(`.${CLASS.axisX} g.tick text`);
-					const expected = ["new1", "new2", "new3", "new4", "new5", "new6"];
-
-					expect(target.size()).to.be.equal(1);
-					expect(legendItem.size()).to.be.equal(1);
-
-					tickTexts.each(function(d, i) {
-						const text = d3.select(this).select("tspan").text();
-
-						expect(text).to.be.equal(expected[i]);
-					});
-
-					done();
-				}, 500);
 			});
 		});
 	});
@@ -157,21 +205,22 @@ describe("API load", function() {
 				{name: "www.site8.com", upload: 100, download: 500}
 			];
 
-			chart.load({json});
+			chart.load({
+				json,
+				done: () => {
+					const categories = chart.categories();
+					const upload = chart.data.values("upload");
+					const download = chart.data.values("download");
 
-			setTimeout(() => {
-				const categories = chart.categories();
-				const upload = chart.data.values("upload");
-				const download = chart.data.values("download");
+					json.forEach((v, i) => {
+						expect(v.name).to.be.equal(categories[i]);
+						expect(v.upload).to.be.equal(upload[i]);
+						expect(v.download).to.be.equal(download[i]);
+					});
 
-				json.forEach((v, i) => {
-					expect(v.name).to.be.equal(categories[i]);
-					expect(v.upload).to.be.equal(upload[i]);
-					expect(v.download).to.be.equal(download[i]);
-				});
-
-				done();
-			}, 1000);
+					done();
+				}
+			});
 		});
 	});
 });
