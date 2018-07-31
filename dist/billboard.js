@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180727154309
+ * @version 1.5.1-nightly-20180731105219
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180727154309
+ * @version 1.5.1-nightly-20180731105219
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180727154309",
+	version: "1.5.1-nightly-20180731105219",
 
 	/**
   * Generate chart
@@ -4429,7 +4429,7 @@ var Options = function Options() {
                      * @type {Object}
                      * @property {Boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
                      * @property {Boolean} [gauge.label.show=true] Show or hide label on gauge.
-                     * @property {Function} [gauge.label.format] Set formatter for the label on gauge.
+                     * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
                      * @property {Function} [gauge.label.extents] Set customized min/max label text.
                      * @property {Boolean} [gauge.expand=true] Enable or disable expanding gauge.
                      * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
@@ -4445,6 +4445,9 @@ var Options = function Options() {
                      *          show: false,
                      *          format: function(value, ratio) {
                      *              return value;
+                     *
+                     *              // to multiline, return with '\n' character
+                     *              // return value +"%\nLine1\n2Line2";
                      *          },
                      *          extents: function(value, isMax) {
                     	 *              return (isMax ? "Max:" : "Min:") + value;
@@ -6737,8 +6740,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			index: d.index
 		});
 	},
-	textForArcLabel: function textForArcLabel(d) {
-		var $$ = this;
+	textForArcLabel: function textForArcLabel(val) {
+		var $$ = this,
+		    d = val.node ? val.datum() : val;
+
 
 		if (!$$.shouldShowArcLabel()) return "";
 
@@ -6750,9 +6755,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		if (!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)) return "";
 
-		var format = $$.getArcLabelFormat();
+		var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
 
-		return format ? format(value, ratio, id) : $$.defaultArcValueFormat(value, ratio);
+		if (val.node) if (text.indexOf("\n") === -1) val.text(text);else {
+				var multiline = text.split("\n"),
+				    len = multiline.length - 1;
+				multiline.forEach(function (v, i) {
+					val.append("tspan").attr("x", 0).attr("dy", (i === 0 ? -len : 1) + "em").text(v);
+				});
+			}
+
+		return text;
 	},
 	textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
 		var format = this.getGaugeLabelExtents();
@@ -7002,7 +7015,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return $$.isGaugeType(d.data) ? _classes2.default.gaugeValue : "";
 		});
 
-		if (config.gauge_fullCircle && gaugeTextValue.attr("dy", "" + Math.round($$.radius / 14)), gaugeTextValue.text($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+		config.gauge_fullCircle && gaugeTextValue.attr("dy", "" + Math.round($$.radius / 14));
+
+
+		// to handle multiline text for gauge type
+		var textMethod = !gaugeTextValue.empty() && gaugeTextValue.classed(_classes2.default.gaugeValue) ? "call" : "text";
+
+		if (gaugeTextValue[textMethod]($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
 			return $$.isGaugeType(d.data) ? Math.round($$.radius / 5) + "px" : "";
 		}).transition().duration(duration).style("opacity", function (d) {
 			return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
