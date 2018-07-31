@@ -2500,7 +2500,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
 			 * @property {Boolean} [gauge.label.show=true] Show or hide label on gauge.
-			 * @property {Function} [gauge.label.format] Set formatter for the label on gauge.
+			 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
 			 * @property {Function} [gauge.label.extents] Set customized min/max label text.
 			 * @property {Boolean} [gauge.expand=true] Enable or disable expanding gauge.
 			 * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
@@ -2516,6 +2516,9 @@ export default class Options {
 			 *          show: false,
 			 *          format: function(value, ratio) {
 			 *              return value;
+			 *
+			 *              // to multiline, return with '\n' character
+			 *              // return value +"%\nLine1\n2Line2";
 			 *          },
 			 *          extents: function(value, isMax) {
 		 	 *              return (isMax ? "Max:" : "Min:") + value;
