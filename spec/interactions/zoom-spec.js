@@ -83,7 +83,9 @@ describe("ZOOM", function() {
 					]
 				},
 				zoom: {
-					enabled: true
+					enabled: {
+                        type: "wheel"
+                    }
 				}
 			};
 		});
@@ -129,5 +131,69 @@ describe("ZOOM", function() {
 			// check if chart react on resize
 			expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
 		});
-	});
+    });
+
+    describe("zoom type drag", () => {
+        before(() => {
+            args = {
+                size: {
+                    width: 300,
+                    height: 250
+                },
+                data: {
+                    columns: [
+                        ["data1", 30, 200, 100, 400, 3150, 250],
+                        ["data2", 50, 20, 10, 40, 15, 6025]
+                    ]
+                },
+                zoom: {
+                    enabled: {
+                        type: "drag"
+                    }
+                }
+            };
+        });
+
+        it("check for data zoom", () => {
+            const main = chart.internal.main;
+            const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
+
+            // when
+            chart.zoom([0, 3]);  // zoom in
+
+            expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
+        });
+
+        it("check for x axis resize after zoom", () => {
+            const main = chart.internal.main;
+            const rx = /H(\d+)/;
+
+            const domain = main.select(`.${CLASS.axisX} > .domain`);
+            const pathValue = +domain.attr("d").match(rx)[1];
+
+            chart.zoom([0, 4]);
+            chart.resize({ width: 400 });
+
+            expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
+        });
+
+        it("check for x axis resize after zoom in/out", () => {
+            const main = chart.internal.main;
+            const rx = /H(\d+)/;
+
+            const domain = main.select(`.${CLASS.axisX} > .domain`);
+            const pathValue = +domain.attr("d").match(rx)[1];
+
+            chart.zoom([0, 4]);  // zoom in
+            chart.zoom([0, 6]);  // zoom out
+
+            expect(+domain.attr("d").match(rx)[1]).to.be.equal(pathValue);
+
+            // resize
+            chart.resize({ width: 400 });
+
+            // check if chart react on resize
+            expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
+        });
+    });
 });
