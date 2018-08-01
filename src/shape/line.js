@@ -492,7 +492,8 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data(d => !$$.isBarType(d) && $$.labelishData(d));
+			.data(d => !$$.isBarType(d) && (!$$.isLineType(d) || $$.config.line_points) &&
+				$$.labelishData(d));
 
 		$$.mainCircle.exit().remove();
 

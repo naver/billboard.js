@@ -2352,6 +2352,7 @@ export default class Options {
 			 * - step
 			 * - step-before
 			 * - step-after
+			 * @property {Boolean} [line.points=true] Set to false to not draw points on linecharts.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
@@ -2361,12 +2362,14 @@ export default class Options {
 			 *      ],
 			 *      step: {
 			 *          type: "step-after"
-			 *      }
+			 *      },
+			 * 		points: true
 			 *  }
 			 */
 			line_connectNull: false,
 			line_step_type: "step",
 			line_classes: undefined,
+			line_points: true,
 
 			/**
 			 * Set bar options
