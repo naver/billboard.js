@@ -12,7 +12,7 @@ import {
 } from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isDefined, isFunction, isUndefined, isValue} from "../internals/util";
+import {extend, isArray, isDefined, isFunction, isUndefined, isValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initLine() {
@@ -492,7 +492,8 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data(d => !$$.isBarType(d) && $$.labelishData(d));
+			.data(d => !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) &&
+				$$.labelishData(d));
 
 		$$.mainCircle.exit().remove();
 
@@ -662,5 +663,12 @@ extend(ChartInternal.prototype, {
 
 	isWithinStep(that, y) {
 		return Math.abs(y - d3Mouse(that)[1]) < 30;
-	}
+	},
+
+	shouldDrawPointsForLine(d) {
+		const linePoint = this.config.line_point;
+
+		return linePoint === true ||
+			(isArray(linePoint) && linePoint.indexOf(d.id) !== -1);
+	},
 });

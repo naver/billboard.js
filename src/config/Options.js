@@ -2365,6 +2365,7 @@ export default class Options {
 			 * - step
 			 * - step-before
 			 * - step-after
+			 * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
@@ -2374,12 +2375,21 @@ export default class Options {
 			 *      ],
 			 *      step: {
 			 *          type: "step-after"
-			 *      }
+			 *      },
+			 *
+			 *      // hide all data points ('point.show=false' also has similar effect)
+			 *      point: false,
+			 *
+			 *      // show data points for only indicated datas
+			 *      point: [
+			 *          "data1", "data3"
+			 *      ]
 			 *  }
 			 */
 			line_connectNull: false,
 			line_step_type: "step",
 			line_classes: undefined,
+			line_point: true,
 
 			/**
 			 * Set bar options
