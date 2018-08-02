@@ -130,6 +130,9 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [zoom.enabled=false] Enable zooming.
 			 * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
+			 *  - **Available types:**
+			 *    - wheel
+			 *    - drag
 			 * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
 			 *  If true set, y domain will be updated according to the zoomed region.
 			 * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
