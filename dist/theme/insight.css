@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180731194315
+ * @version 1.5.1-nightly-20180802182218
  */
 /*-- Insight Theme --*/
 /*-- Default color pattern --*/
@@ -22,7 +22,7 @@
   fill: none;
   stroke: #c4c4c4; }
 
-.bb text {
+.bb text, .bb .bb-button {
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
@@ -105,6 +105,10 @@
   fill-opacity: 0.1; }
   .bb-region.selected rect {
     fill: #27c903; }
+
+/*-- Zoom region --*/
+.bb-zoom-brush {
+  fill-opacity: .1; }
 
 /*-- Brush --*/
 .bb-brush .extent {
@@ -238,4 +242,16 @@
 .bb-chart-radars .bb-shapes polygon {
   fill-opacity: .2;
   stroke-width: 1px; }
+
+/*-- Button --*/
+.bb-button {
+  position: absolute;
+  top: 10px;
+  right: 10px; }
+  .bb-button .bb-zoom-reset {
+    border: solid 1px #ccc;
+    background-color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    cursor: pointer; }
 

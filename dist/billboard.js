@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180731194315
+ * @version 1.5.1-nightly-20180802182218
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180731194315
+ * @version 1.5.1-nightly-20180802182218
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180731194315",
+	version: "1.5.1-nightly-20180802182218",
 
 	/**
   * Generate chart
@@ -350,7 +350,7 @@ var ChartInternal = function () {
 		var $$ = this,
 		    config = $$.config,
 		    binding = !0;
-		$$.axis = new _Axis2.default($$), $$.initBrush && $$.initBrush(), $$.initZoom && $$.initZoom();
+		$$.axis = new _Axis2.default($$), config.subchart_show && $$.initBrush(), config.zoom_enabled && ($$.initZoom(), $$.initZoomBehaviour());
 
 
 		var bindto = {
@@ -377,7 +377,7 @@ var ChartInternal = function () {
 
 		// Set initialized scales to brush and zoom
 		// if ($$.brush) { $$.brush.scale($$.subX); }
-		// if (config.zoom_enabled) { $$.zoom.scale($$.x); }
+		// if (config.zoom_enabled === true || config.zoom_enabled_type) { $$.zoom.scale($$.x); }
 
 		// Define regions
 		var main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
@@ -549,7 +549,7 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), config.zoom_enabled && $$.bindZoomOnEventRect()), $$.updateCircleY();
+		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.updateCircleY();
 
 
 		// generate circle x/y functions depending on updated params
@@ -1235,11 +1235,12 @@ var isValue = function (v) {
 },
     getBrushSelection = function () {
 	var selection = null,
-	    event = _d3Selection.event;
+	    event = _d3Selection.event,
+	    ctx = this.context || this.main;
 
 	// check from event
 
-	return event && event.constructor.name === "BrushEvent" ? selection = event.selection : this.context && (selection = this.context.select("." + _classes2.default.brush).node()) && (selection = (0, _d3Brush.brushSelection)(selection)), selection;
+	return event && event.constructor.name === "BrushEvent" ? selection = event.selection : ctx && (selection = ctx.select("." + _classes2.default.brush).node()) && (selection = (0, _d3Brush.brushSelection)(selection)), selection;
 },
     brushEmpty = function () {
 	var selection = this.getBrushSelection();
@@ -1465,84 +1466,87 @@ exports.__esModule = !0;
  * @private
  */
 exports.default = {
-	target: "bb-target",
-	chart: "bb-chart",
-	chartLine: "bb-chart-line",
-	chartLines: "bb-chart-lines",
-	chartBar: "bb-chart-bar",
-	chartBars: "bb-chart-bars",
-	chartText: "bb-chart-text",
-	chartTexts: "bb-chart-texts",
-	chartArc: "bb-chart-arc",
-	chartArcs: "bb-chart-arcs",
-	chartArcsTitle: "bb-chart-arcs-title",
-	chartArcsBackground: "bb-chart-arcs-background",
-	chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-	chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
-	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
-	chartRadar: "bb-chart-radar",
-	chartRadars: "bb-chart-radars",
-	colorPattern: "bb-color-pattern",
-	selectedCircle: "bb-selected-circle",
-	selectedCircles: "bb-selected-circles",
-	eventRect: "bb-event-rect",
-	eventRects: "bb-event-rects",
-	eventRectsSingle: "bb-event-rects-single",
-	eventRectsMultiple: "bb-event-rects-multiple",
-	zoomRect: "bb-zoom-rect",
-	brush: "bb-brush",
-	focused: "bb-focused",
-	defocused: "bb-defocused",
-	region: "bb-region",
-	regions: "bb-regions",
-	title: "bb-title",
-	tooltipContainer: "bb-tooltip-container",
-	tooltip: "bb-tooltip",
-	tooltipName: "bb-tooltip-name",
-	shape: "bb-shape",
-	shapes: "bb-shapes",
-	line: "bb-line",
-	lines: "bb-lines",
-	bar: "bb-bar",
-	bars: "bb-bars",
-	circle: "bb-circle",
-	circles: "bb-circles",
 	arc: "bb-arc",
 	arcs: "bb-arcs",
 	area: "bb-area",
 	areas: "bb-areas",
-	empty: "bb-empty",
-	text: "bb-text",
-	texts: "bb-texts",
-	gaugeValue: "bb-gauge-value",
-	grid: "bb-grid",
-	gridLines: "bb-grid-lines",
-	xgrid: "bb-xgrid",
-	xgrids: "bb-xgrids",
-	xgridLine: "bb-xgrid-line",
-	xgridLines: "bb-xgrid-lines",
-	xgridFocus: "bb-xgrid-focus",
-	ygrid: "bb-ygrid",
-	ygrids: "bb-ygrids",
-	ygridLine: "bb-ygrid-line",
-	ygridLines: "bb-ygrid-lines",
 	axis: "bb-axis",
 	axisX: "bb-axis-x",
 	axisXLabel: "bb-axis-x-label",
 	axisY: "bb-axis-y",
-	axisYLabel: "bb-axis-y-label",
 	axisY2: "bb-axis-y2",
 	axisY2Label: "bb-axis-y2-label",
+	axisYLabel: "bb-axis-y-label",
+	bar: "bb-bar",
+	bars: "bb-bars",
+	brush: "bb-brush",
+	button: "bb-button",
+	buttonZoomReset: "bb-zoom-reset",
+	chart: "bb-chart",
+	chartArc: "bb-chart-arc",
+	chartArcs: "bb-chart-arcs",
+	chartArcsBackground: "bb-chart-arcs-background",
+	chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
+	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+	chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
+	chartArcsTitle: "bb-chart-arcs-title",
+	chartBar: "bb-chart-bar",
+	chartBars: "bb-chart-bars",
+	chartLine: "bb-chart-line",
+	chartLines: "bb-chart-lines",
+	chartRadar: "bb-chart-radar",
+	chartRadars: "bb-chart-radars",
+	chartText: "bb-chart-text",
+	chartTexts: "bb-chart-texts",
+	circle: "bb-circle",
+	circles: "bb-circles",
+	colorPattern: "bb-color-pattern",
+	defocused: "bb-defocused",
+	dragarea: "bb-dragarea",
+	empty: "bb-empty",
+	eventRect: "bb-event-rect",
+	eventRects: "bb-event-rects",
+	eventRectsMultiple: "bb-event-rects-multiple",
+	eventRectsSingle: "bb-event-rects-single",
+	focused: "bb-focused",
+	gaugeValue: "bb-gauge-value",
+	grid: "bb-grid",
+	gridLines: "bb-grid-lines",
 	legendBackground: "bb-legend-background",
 	legendItem: "bb-legend-item",
 	legendItemEvent: "bb-legend-item-event",
-	legendItemTile: "bb-legend-item-tile",
-	legendItemPoint: "bb-legend-item-point",
-	legendItemHidden: "bb-legend-item-hidden",
 	legendItemFocused: "bb-legend-item-focused",
+	legendItemHidden: "bb-legend-item-hidden",
+	legendItemPoint: "bb-legend-item-point",
+	legendItemTile: "bb-legend-item-tile",
 	level: "bb-level",
 	levels: "bb-levels",
-	dragarea: "bb-dragarea",
+	line: "bb-line",
+	lines: "bb-lines",
+	region: "bb-region",
+	regions: "bb-regions",
+	selectedCircle: "bb-selected-circle",
+	selectedCircles: "bb-selected-circles",
+	shape: "bb-shape",
+	shapes: "bb-shapes",
+	target: "bb-target",
+	text: "bb-text",
+	texts: "bb-texts",
+	title: "bb-title",
+	tooltip: "bb-tooltip",
+	tooltipContainer: "bb-tooltip-container",
+	tooltipName: "bb-tooltip-name",
+	xgrid: "bb-xgrid",
+	xgridFocus: "bb-xgrid-focus",
+	xgridLine: "bb-xgrid-line",
+	xgridLines: "bb-xgrid-lines",
+	xgrids: "bb-xgrids",
+	ygrid: "bb-ygrid",
+	ygridLine: "bb-ygrid-line",
+	ygridLines: "bb-ygrid-lines",
+	ygrids: "bb-ygrids",
+	zoomBrush: "bb-zoom-brush",
+	zoomRect: "bb-zoom-rect",
 	EXPANDED: "_expanded_",
 	SELECTED: "_selected_",
 	INCLUDED: "_included_"
@@ -2055,6 +2059,10 @@ var Options = function Options() {
                      * @memberOf Options
                      * @type {Object}
                      * @property {Boolean} [zoom.enabled=false] Enable zooming.
+                     * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
+                     *  - **Available types:**
+                     *    - wheel
+                     *    - drag
                      * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
                      *  If true set, y domain will be updated according to the zoomed region.
                      * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
@@ -2066,9 +2074,13 @@ var Options = function Options() {
                      *  Specified function receives the zoomed domain.
                      * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
                      *  Specified function receives the zoomed domain.
+                     * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+                     * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
                      * @example
                      *  zoom: {
-                     *      enabled: true,
+                     *      enabled: {
+                              *          type: "drag"
+                              *      },
                      *      rescale: true,
                      *      extent: [1, 100]  // enable more zooming
                      *      x: {
@@ -2077,16 +2089,25 @@ var Options = function Options() {
                      *      },
                      *      onzoomstart: function(event) { ... },
                      *      onzoom: function(domain) { ... },
-                     *      onzoomend: function(domain) { ... }
+                     *      onzoomend: function(domain) { ... },
+                     *
+                     *      // show reset button when is zoomed-in
+                     *      resetButton: true,
+                     *
+                     *      // customized text value for reset zoom button
+                     *      resetButton: {
+                     *          text: "Unzoom"
+                     *      }
                      *  }
                      */
-																				zoom_enabled: !1,
+																				zoom_enabled: undefined,
 																				zoom_extent: undefined,
 																				zoom_privileged: !1,
 																				zoom_rescale: !1,
 																				zoom_onzoom: undefined,
 																				zoom_onzoomstart: undefined,
 																				zoom_onzoomend: undefined,
+																				zoom_resetButton: !0,
 																				zoom_x_min: undefined,
 																				zoom_x_max: undefined,
 
@@ -5838,39 +5859,46 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    $$ = this,
 		    config = $$.config,
 		    ids = (0, _d3Collection.keys)(data[0]).filter($$.isNotX, $$),
-		    xs = (0, _d3Collection.keys)(data[0]).filter($$.isX, $$);
+		    xs = (0, _d3Collection.keys)(data[0]).filter($$.isX, $$),
+		    xsData = void 0;
 
 		ids.forEach(function (id) {
 			var xKey = _this3.getXKey(id);
 
-			_this3.isCustomX() || _this3.isTimeSeries() ? xs.indexOf(xKey) >= 0 ? _this3.data.xs[id] = (appendXs && $$.data.xs[id] ? $$.data.xs[id] : []).concat(data.map(function (d) {
+			_this3.isCustomX() || _this3.isTimeSeries() ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
 				return d[xKey];
 			}).filter(_util.isValue).map(function (rawX, i) {
 				return $$.generateTargetX(rawX, id, i);
-			})) : config.data_x ? _this3.data.xs[id] = _this3.getOtherTargetXs() : (0, _util.notEmpty)(config.data_xs) && ($$.data.xs[id] = $$.getXValuesOfXKey(xKey, $$.data.targets)) : $$.data.xs[id] = data.map(function (d, i) {
+			})) : config.data_x ? xsData = _this3.getOtherTargetXs() : (0, _util.notEmpty)(config.data_xs) && (xsData = $$.getXValuesOfXKey(xKey, $$.data.targets)) : xsData = data.map(function (d, i) {
 				return i;
-			});
+			}), xsData && (_this3.data.xs[id] = xsData);
 		}), ids.forEach(function (id) {
-			if (!$$.data.xs[id]) throw new Error("x is not defined for id = \"" + id + "\".");
+			if (!xsData) throw new Error("x is not defined for id = \"" + id + "\".");
 		});
 
 
 		// convert to target
 		var targets = ids.map(function (id, index) {
-			var convertedId = config.data_idConverter(id);
+			var convertedId = config.data_idConverter(id),
+			    xKey = $$.getXKey(id),
+			    isCategorized = $$.isCustomX() && $$.isCategorized(),
+			    hasCategory = isCategorized && data.map(function (v) {
+				return v.x;
+			}).every(function (v) {
+				return config.axis_x_categories.indexOf(v) > -1;
+			});
+
 
 			return {
 				id: convertedId,
 				id_org: id,
 				values: data.map(function (d, i) {
-					var xKey = $$.getXKey(id),
-					    rawX = d[xKey],
-					    value = d[id] === null || isNaN(d[id]) ? (0, _util.isArray)(d[id]) || $$.isObject(d[id]) && d[id].high ? d[id] : null : +d[id],
+					var rawX = d[xKey],
+					    value = d[id],
 					    x = void 0;
 
-					// use x as categories if custom x and categorized
 
-					return $$.isCustomX() && $$.isCategorized() && index === 0 && !(0, _util.isUndefined)(rawX) ? (index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), ((0, _util.isUndefined)(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), { x: x, value: value, id: convertedId };
+					return value = value === null || isNaN(value) ? (0, _util.isArray)(value) || $$.isObject(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !(0, _util.isUndefined)(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), ((0, _util.isUndefined)(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), { x: x, value: value, id: convertedId };
 				}).filter(function (v) {
 					return (0, _util.isDefined)(v.x);
 				})
@@ -5881,17 +5909,20 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		return targets.forEach(function (t) {
-			var i = void 0;
-
-			// sort values by its x
 			config.data_xSort && (t.values = t.values.sort(function (v1, v2) {
 				var x1 = v1.x || v1.x === 0 ? v1.x : Infinity,
 				    x2 = v2.x || v2.x === 0 ? v2.x : Infinity;
 
 
 				return x1 - x2;
-			})), i = 0, t.values.forEach(function (v) {
-				v.index = i++;
+			}));
+
+
+			// indexing each value
+			var i = 0;
+
+			t.values.forEach(function (v) {
+				v.index = $$.data.targets ? $$.getIndexByX(v.x) : i++;
 			}), $$.data.xs[t.id].sort(function (v1, v2) {
 				return v1 - v2;
 			});
@@ -5923,7 +5954,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    targets = rawTargets;
 		targets && (args.filter && (targets = targets.filter(args.filter)), (args.type || args.types) && targets.forEach(function (t) {
-			var type = args.types && args.types[t.id] ? args.types[t.id] : args.type;
+			var type = args.types && args.types[t.id] || args.type;
 
 			$$.setTargetType(t.id, type);
 		}), $$.data.targets.forEach(function (d) {
@@ -5939,12 +5970,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}), args.done && args.done();
 	},
 	loadFromArgs: function loadFromArgs(args) {
-		var $$ = this;
+		var $$ = this,
+		    data = void 0;
+
 
 		// reset internally cached data
-		$$.resetCache(), args.data ? $$.load($$.convertDataToTargets(args.data), args) : args.url ? $$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, function (data) {
-			$$.load($$.convertDataToTargets(data), args);
-		}) : args.json ? $$.load($$.convertDataToTargets($$.convertJsonToData(args.json, args.keys)), args) : args.rows ? $$.load($$.convertDataToTargets($$.convertRowsToData(args.rows)), args) : args.columns ? $$.load($$.convertDataToTargets($$.convertColumnsToData(args.columns)), args) : $$.load(null, args);
+		$$.resetCache(), args.data ? data = args.data : args.url ? $$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, function (d) {
+			$$.load($$.convertDataToTargets(d), args);
+		}) : args.json ? data = $$.convertJsonToData(args.json, args.keys) : args.rows ? data = $$.convertRowsToData(args.rows) : args.columns && (data = $$.convertColumnsToData(args.columns)), $$.load(data ? $$.convertDataToTargets(data) : null, args);
 	},
 	unload: function unload(rawTargetIds, customDoneCb) {
 		var $$ = this,
@@ -6037,9 +6070,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	redrawEventRect: function redrawEventRect() {
 		var $$ = this,
 		    config = $$.config,
+		    zoomEnabled = config.zoom_enabled,
 		    isMultipleX = $$.isMultipleX(),
 		    eventRectUpdate = void 0,
-		    eventRects = $$.main.select("." + _classes2.default.eventRects).style("cursor", config.zoom_enabled ? config.axis_rotate ? "ns-resize" : "ew-resize" : null).classed(_classes2.default.eventRectsMultiple, isMultipleX).classed(_classes2.default.eventRectsSingle, !isMultipleX);
+		    eventRects = $$.main.select("." + _classes2.default.eventRects).style("cursor", zoomEnabled && (zoomEnabled === !0 || zoomEnabled.type === "wheel") ? config.axis_rotate ? "ns-resize" : "ew-resize" : null).classed(_classes2.default.eventRectsMultiple, isMultipleX).classed(_classes2.default.eventRectsSingle, !isMultipleX);
 
 		// clear old rects
 
@@ -7268,7 +7302,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    maxR = $$.config.bubble_maxR;
 		(0, _util.isFunction)(maxR) ? maxR = maxR(d) : !(0, _util.isNumber)(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
 		var max = (0, _d3Array.max)($$.getMinMaxData().max.map(function (d) {
-			return d.value;
+			return (0, _util.isObject)(d.value) ? d.value.mid : d.value;
 		})),
 		    maxArea = maxR * maxR * Math.PI,
 		    area = d.value * (maxArea / max);
@@ -9718,13 +9752,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    config = $$.config,
 		    main = $$.main;
-		// do nothing if not selectable
-		// skip when single selection because drag is used for multiple selection
 
-		if (!$$.hasArcType() && config.data_selection_enabled && (!config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple) // skip if zoomable because of conflict drag dehavior
-			{
-				var sx = $$.dragStart[0],
-				    sy = $$.dragStart[1],
+
+		if (!$$.hasArcType() && config.data_selection_enabled && ( // do nothing if not selectable
+		!config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
+		) {
+				var _$$$dragStart = $$.dragStart,
+				    sx = _$$$dragStart[0],
+				    sy = _$$$dragStart[1],
 				    mx = mouse[0],
 				    my = mouse[1],
 				    minX = Math.min(sx, mx),
@@ -9748,6 +9783,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					if (shape.classed(_classes2.default.circle)) _x = shape.attr("cx") * 1, _y = shape.attr("cy") * 1, toggle = $$.togglePoint, isWithin = minX < _x && _x < maxX && minY < _y && _y < maxY;else if (shape.classed(_classes2.default.bar)) box = (0, _util.getPathBox)(this), _x = box.x, _y = box.y, _w = box.width, _h = box.height, toggle = $$.togglePath, isWithin = !(maxX < _x || _x + _w < minX) && !(maxY < _y || _y + _h < minY);else
 						// line/area selection not supported yet
 						return;
+
 					isWithin ^ isIncluded && (shape.classed(_classes2.default.INCLUDED, !isIncluded), shape.classed(_classes2.default.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
 				});
 			}
@@ -9763,8 +9799,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	dragstart: function dragstart(mouse) {
 		var $$ = this,
 		    config = $$.config;
-		// do nothing if not selectable
-		$$.hasArcType() || !config.data_selection_enabled || ($$.dragStart = mouse, $$.main.select("." + _classes2.default.chart).append("rect").attr("class", _classes2.default.dragarea).style("opacity", "0.1"), $$.dragging = !0);
+		$$.hasArcType() || !config.data_selection_enabled || ($$.dragStart = mouse, $$.main.select("." + _classes2.default.chart).append("rect").attr("class", _classes2.default.dragarea).style("opacity", "0.1"), $$.setDragStatus(!0));
 	},
 
 
@@ -9776,8 +9811,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	dragend: function dragend() {
 		var $$ = this,
 		    config = $$.config;
-		// do nothing if not selectable
-		$$.hasArcType() || !config.data_selection_enabled || ($$.main.select("." + _classes2.default.dragarea).transition().duration(100).style("opacity", "0").remove(), $$.main.selectAll("." + _classes2.default.shape).classed(_classes2.default.INCLUDED, !1), $$.dragging = !1);
+		$$.hasArcType() || !config.data_selection_enabled || ($$.main.select("." + _classes2.default.dragarea).transition().duration(100).style("opacity", "0").remove(), $$.main.selectAll("." + _classes2.default.shape).classed(_classes2.default.INCLUDED, !1), $$.setDragStatus(!1));
+	},
+	setDragStatus: function setDragStatus(isDragging) {
+		this.dragging = isDragging;
 	}
 });
 
@@ -10222,6 +10259,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Array = __webpack_require__(4),
     _d3Selection = __webpack_require__(4),
+    _d3Drag = __webpack_require__(4),
     _d3Zoom = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
@@ -10231,10 +10269,6 @@ var _d3Array = __webpack_require__(4),
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	/**
   * Initialize zoom.
@@ -10248,13 +10282,26 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 	/**
+  * Bind zoom event
+  * @param {Boolean} bind Weather bind or unbound
+  * @private
+  */
+	bindZoomEvent: function bindZoomEvent() {
+		var bind = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0],
+		    $$ = this,
+		    zoomEnabled = $$.config.zoom_enabled;
+		$$.redrawEventRect(), zoomEnabled && bind ? zoomEnabled === !0 || zoomEnabled.type === "wheel" ? $$.bindZoomOnEventRect() : zoomEnabled.type === "drag" && $$.bindZoomOnDrag() : bind === !1 && ($$.api.unzoom(), $$.main.select("." + _classes2.default.eventRects).on(".zoom", null).on(".drag", null));
+	},
+
+
+	/**
   * Generate zoom
   * @private
   */
 	generateZoom: function generateZoom() {
 		var $$ = this,
 		    config = $$.config,
-		    zoom = (0, _d3Zoom.zoom)().duration(0).on("start", $$.onStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onEnd.bind($$));
+		    zoom = (0, _d3Zoom.zoom)().duration(0).on("start", $$.onZoomStart.bind($$)).on("zoom", $$.onZoom.bind($$)).on("end", $$.onZoomEnd.bind($$));
 
 
 		// get zoom extent
@@ -10270,9 +10317,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
 		}, zoom.updateTransformScale = function (transform) {
 			// rescale from the original scale
-			var newScale = transform.rescaleX($$.x.orgScale());
-
-			newScale.domain($$.trimXDomain(newScale.domain())), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale);
+			var newScale = transform.rescaleX($$.x.orgScale()),
+			    domain = $$.trimXDomain(newScale.domain());
+			newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale);
 		}, $$.zoom = zoom;
 	},
 
@@ -10281,7 +10328,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * 'start' event listener
   * @private
   */
-	onStart: function onStart() {
+	onZoomStart: function onZoomStart() {
 		var $$ = this,
 		    event = _d3Selection.event.sourceEvent,
 		    onzoomstart = $$.config.zoom_onzoomstart;
@@ -10317,9 +10364,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * 'end' event listener
   * @private
   */
-	onEnd: function onEnd() {
+	onZoomEnd: function onZoomEnd() {
 		var $$ = this,
-		    event = _d3Selection.event.sourceEvent,
 		    onzoomend = $$.config.zoom_onzoomend,
 		    startEvent = $$.zoom.startEvent;
 
@@ -10372,8 +10418,54 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this;
 
 		$$.main.select("." + _classes2.default.eventRects).call($$.zoom).on("dblclick.zoom", null);
+	},
+
+
+	/**
+  * Initialize the drag behaviour used for zooming.
+  * @private
+  */
+	initZoomBehaviour: function initZoomBehaviour() {
+		var $$ = this,
+		    config = $$.config,
+		    isRotated = config.axis_rotated,
+		    start = 0,
+		    end = 0,
+		    zoomRect = null;
+		$$.zoomBehaviour = (0, _d3Drag.drag)().on("start", function () {
+			$$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", _classes2.default.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = (0, _d3Selection.mouse)(this)[0], end = start, zoomRect.attr("x", start).attr("width", 0);
+		}).on("drag", function () {
+			end = (0, _d3Selection.mouse)(this)[0], zoomRect.attr("x", Math.min(start, end)).attr("width", Math.abs(end - start));
+		}).on("end", function () {
+			var _ref,
+			    scale = $$.zoomScale || $$.x;
+
+			$$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start !== end && $$.api.zoom([start, end].map(function (v) {
+				return scale.invert(v);
+			}));
+		});
+	},
+
+
+	/**
+  * Enable zooming by dragging using the zoombehaviour.
+  * @private
+  */
+	bindZoomOnDrag: function bindZoomOnDrag() {
+		var $$ = this;
+
+		$$.main.select("." + _classes2.default.eventRects).call($$.zoomBehaviour);
+	},
+	setZoomResetButton: function setZoomResetButton() {
+		var $$ = this,
+		    config = $$.config,
+		    resetButton = config.zoom_resetButton;
+		resetButton && config.zoom_enabled.type === "drag" && ($$.zoom.resetBtn ? $$.zoom.resetBtn.style("display", null) : $$.zoom.resetBtn = $$.selectChart.append("div").classed(_classes2.default.button, !0).append("span").on("click", $$.api.unzoom.bind($$)).classed(_classes2.default.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom"));
 	}
-});
+}); /**
+     * Copyright (c) 2017 NAVER Corp.
+     * billboard.js project is licensed under the MIT license
+     */
 
 /***/ }),
 /* 41 */
@@ -11041,12 +11133,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  */
 var zoom = function (domainValue) {
 	var $$ = this.internal,
-	    isTimeSeries = $$.isTimeSeries(),
 	    domain = domainValue,
 	    resultDomain = void 0;
 
 
 	if ($$.config.zoom_enabled && domain) {
+		var isTimeSeries = $$.isTimeSeries();
 
 		if (isTimeSeries && (domain = domain.map(function (x) {
 			return $$.parseDate(x);
@@ -11057,7 +11149,8 @@ var zoom = function (domainValue) {
 		} else {
 			var orgDomain = $$.x.orgDomain(),
 			    k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]),
-			    tx = isTimeSeries ? 0 - k * $$.x(domain[0].getTime()) : domain[0] - k * ($$.x(domain[0]) - $$.xAxis.tickOffset());
+			    gap = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
+			    tx = isTimeSeries ? 0 - k * $$.x(domain[0].getTime()) : domain[0] - k * ($$.x(domain[0]) - gap);
 			$$.zoom.updateTransformScale(_d3Zoom.zoomIdentity.translate(tx, 0).scale(k)), resultDomain = $$.zoomScale.domain();
 		}
 
@@ -11065,8 +11158,8 @@ var zoom = function (domainValue) {
 			withTransition: !0,
 			withY: $$.config.zoom_rescale,
 			withDimension: !1
-		}), (0, _util.isFunction)($$.config.zoom_onzoom) && $$.config.zoom_onzoom.call(this, $$.x.orgDomain());
-	} else resultDomain = ($$.zoomScale || $$.x).domain();
+		}), $$.setZoomResetButton(), (0, _util.isFunction)($$.config.zoom_onzoom) && $$.config.zoom_onzoom.call(this, $$.x.orgDomain());
+	} else resultDomain = $$.zoomScale ? $$.zoomScale.domain() : $$.x.orgDomain();
 
 	return resultDomain;
 };
@@ -11077,18 +11170,25 @@ var zoom = function (domainValue) {
   * @method zoom․enable
   * @instance
   * @memberOf Chart
-  * @param {Boolean} enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.<br>When set to false, the current zooming status will be reset.
+  * @param {String|Boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
   * @example
-  *  // Enable zooming
+  *  // Enable zooming using the mouse wheel
   *  chart.zoom.enable(true);
+  *  // Or
+  *  chart.zoom.enable("wheel");
+  *
+  *  // Enable zooming by dragging
+  *  chart.zoom.enable("drag");
   *
   *  // Disable zooming
   *  chart.zoom.enable(false);
   */
 	enable: function enable() {
-		var enabled = !!(arguments.length > 0 && arguments[0] !== undefined) && arguments[0],
-		    $$ = this.internal;
-		$$.config.zoom_enabled = enabled, $$.updateAndRedraw();
+		var enabled = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "wheel",
+		    $$ = this.internal,
+		    config = $$.config,
+		    enableType = enabled;
+		enabled && (enableType = (0, _util.isString)(enabled) && /^(drag|wheel)$/.test(enabled) ? { type: enabled } : enabled), config.zoom_enabled = enableType, $$.zoom ? enabled === !1 && $$.bindZoomEvent(!1) : ($$.initZoom(), $$.initZoomBehaviour(), $$.bindZoomEvent()), $$.updateAndRedraw();
 	},
 
 	/**
@@ -11166,12 +11266,12 @@ var zoom = function (domainValue) {
   *  chart.unzoom();
   */
 	unzoom: function unzoom() {
-		var $$ = this.internal;
-
-		$$.config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(_d3Zoom.zoomIdentity), $$.redraw({
+		var $$ = this.internal,
+		    config = $$.config;
+		$$.zoomScale && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(_d3Zoom.zoomIdentity), $$.updateZoom(), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none"), $$.redraw({
 			withTransition: !0,
-			withY: $$.config.zoom_rescale
-		});
+			withY: config.zoom_rescale
+		}));
 	}
 });
 
