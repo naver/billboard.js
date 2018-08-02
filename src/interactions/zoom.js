@@ -6,7 +6,11 @@ import {
 	min as d3Min,
 	max as d3Max
 } from "d3-array";
-import {event as d3Event} from "d3-selection";
+import {
+	mouse as d3Mouse,
+	event as d3Event
+} from "d3-selection";
+import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
@@ -25,6 +29,32 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Bind zoom event
+	 * @param {Boolean} bind Weather bind or unbound
+	 * @private
+	 */
+	bindZoomEvent(bind = true) {
+		const $$ = this;
+		const zoomEnabled = $$.config.zoom_enabled;
+
+		$$.redrawEventRect();
+
+		if (zoomEnabled && bind) {
+			if (zoomEnabled === true || zoomEnabled.type === "wheel") {
+				$$.bindZoomOnEventRect();
+			} else if (zoomEnabled.type === "drag") {
+				$$.bindZoomOnDrag();
+			}
+		} else if (bind === false) {
+			$$.api.unzoom();
+
+			$$.main.select(`.${CLASS.eventRects}`)
+				.on(".zoom", null)
+				.on(".drag", null);
+		}
+	},
+
+	/**
 	 * Generate zoom
 	 * @private
 	 */
@@ -33,9 +63,9 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 
 		const zoom = d3Zoom().duration(0)
-			.on("start", $$.onStart.bind($$))
+			.on("start", $$.onZoomStart.bind($$))
 			.on("zoom", $$.onZoom.bind($$))
-			.on("end", $$.onEnd.bind($$));
+			.on("end", $$.onZoomEnd.bind($$));
 
 		// get zoom extent
 		zoom.orgScaleExtent = () => {
@@ -61,8 +91,9 @@ extend(ChartInternal.prototype, {
 		zoom.updateTransformScale = transform => {
 			// rescale from the original scale
 			const newScale = transform.rescaleX($$.x.orgScale());
+			const domain = $$.trimXDomain(newScale.domain());
 
-			newScale.domain($$.trimXDomain(newScale.domain()));
+			newScale.domain(domain, $$.orgXDomain);
 
 			$$.zoomScale = $$.getCustomizedScale(newScale);
 			$$.xAxis.scale($$.zoomScale);
@@ -75,7 +106,7 @@ extend(ChartInternal.prototype, {
 	 * 'start' event listener
 	 * @private
 	 */
-	onStart() {
+	onZoomStart() {
 		const $$ = this;
 		const event = d3Event.sourceEvent;
 		const onzoomstart = $$.config.zoom_onzoomstart;
@@ -135,9 +166,8 @@ extend(ChartInternal.prototype, {
 	 * 'end' event listener
 	 * @private
 	 */
-	onEnd() {
+	onZoomEnd() {
 		const $$ = this;
-		const event = d3Event.sourceEvent;
 		const onzoomend = $$.config.zoom_onzoomend;
 		const startEvent = $$.zoom.startEvent;
 
@@ -199,5 +229,92 @@ extend(ChartInternal.prototype, {
 		$$.main.select(`.${CLASS.eventRects}`)
 			.call($$.zoom)
 			.on("dblclick.zoom", null);
+	},
+
+	/**
+	 * Initialize the drag behaviour used for zooming.
+	 * @private
+	 */
+	initZoomBehaviour() {
+		const $$ = this;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
+		let start = 0;
+		let end = 0;
+		let zoomRect = null;
+
+		$$.zoomBehaviour = d3Drag()
+			.on("start", function() {
+				$$.setDragStatus(true);
+
+				if (!zoomRect) {
+					zoomRect = $$.main.append("rect")
+						.attr("clip-path", $$.clipPath)
+						.attr("class", CLASS.zoomBrush)
+						.attr("width", isRotated ? $$.width : 0)
+						.attr("height", isRotated ? 0 : $$.height);
+				}
+
+				start = d3Mouse(this)[0];
+				end = start;
+
+				zoomRect
+					.attr("x", start)
+					.attr("width", 0);
+			})
+			.on("drag", function() {
+				end = d3Mouse(this)[0];
+
+				zoomRect
+					.attr("x", Math.min(start, end))
+					.attr("width", Math.abs(end - start));
+			})
+			.on("end", () => {
+				const scale = $$.zoomScale || $$.x;
+
+				$$.setDragStatus(false);
+
+				zoomRect
+					.attr("x", 0)
+					.attr("width", 0);
+
+				if (start > end) {
+					[start, end] = [end, start];
+				}
+
+				if (start !== end) {
+					$$.api.zoom([start, end].map(v => scale.invert(v)));
+				}
+			});
+	},
+
+	/**
+	 * Enable zooming by dragging using the zoombehaviour.
+	 * @private
+	 */
+	bindZoomOnDrag() {
+		const $$ = this;
+
+		$$.main.select(`.${CLASS.eventRects}`)
+			.call($$.zoomBehaviour);
+	},
+
+	setZoomResetButton() {
+		const $$ = this;
+		const config = $$.config;
+		const resetButton = config.zoom_resetButton;
+
+		if (resetButton && config.zoom_enabled.type === "drag") {
+			if (!$$.zoom.resetBtn) {
+				$$.zoom.resetBtn = $$.selectChart.append("div")
+					.classed(CLASS.button, true)
+					.append("span")
+					.on("click", $$.api.unzoom.bind($$))
+					.classed(CLASS.buttonZoomReset, true)
+					.text(resetButton.text || "Reset Zoom");
+			} else {
+				$$.zoom.resetBtn.style("display", null);
+			}
+		}
 	}
 });

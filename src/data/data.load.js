@@ -20,7 +20,7 @@ extend(ChartInternal.prototype, {
 			// set type if args.types || args.type specified
 			if (args.type || args.types) {
 				targets.forEach(t => {
-					const type = args.types && args.types[t.id] ? args.types[t.id] : args.type;
+					const type = (args.types && args.types[t.id]) || args.type;
 
 					$$.setTargetType(t.id, type);
 				});
@@ -55,25 +55,26 @@ extend(ChartInternal.prototype, {
 
 	loadFromArgs(args) {
 		const $$ = this;
+		let data;
 
 		// reset internally cached data
 		$$.resetCache();
 
 		if (args.data) {
-			$$.load($$.convertDataToTargets(args.data), args);
+			data = args.data;
 		} else if (args.url) {
-			$$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, data => {
-				$$.load($$.convertDataToTargets(data), args);
+			$$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, d => {
+				$$.load($$.convertDataToTargets(d), args);
 			});
 		} else if (args.json) {
-			$$.load($$.convertDataToTargets($$.convertJsonToData(args.json, args.keys)), args);
+			data = $$.convertJsonToData(args.json, args.keys);
 		} else if (args.rows) {
-			$$.load($$.convertDataToTargets($$.convertRowsToData(args.rows)), args);
+			data = $$.convertRowsToData(args.rows);
 		} else if (args.columns) {
-			$$.load($$.convertDataToTargets($$.convertColumnsToData(args.columns)), args);
-		} else {
-			$$.load(null, args);
+			data = $$.convertColumnsToData(args.columns);
 		}
+
+		$$.load(data ? $$.convertDataToTargets(data) : null, args);
 	},
 
 	unload(rawTargetIds, customDoneCb) {

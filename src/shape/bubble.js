@@ -7,7 +7,7 @@ import {
 	max as d3Max
 } from "d3-array";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isFunction, isNumber} from "../internals/util";
+import {extend, isFunction, isNumber, isObject} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -64,7 +64,7 @@ extend(ChartInternal.prototype, {
 			maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
 		}
 
-		const max = d3Max($$.getMinMaxData().max.map(d => d.value));
+		const max = d3Max($$.getMinMaxData().max.map(d => (isObject(d.value) ? d.value.mid : d.value)));
 		const maxArea = maxR * maxR * Math.PI;
 		const area = d.value * (maxArea / max);
 

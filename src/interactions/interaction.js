@@ -34,11 +34,12 @@ extend(ChartInternal.prototype, {
 	redrawEventRect() {
 		const $$ = this;
 		const config = $$.config;
+		const zoomEnabled = config.zoom_enabled;
 		const isMultipleX = $$.isMultipleX();
 
 		let eventRectUpdate;
 		const eventRects = $$.main.select(`.${CLASS.eventRects}`)
-			.style("cursor", config.zoom_enabled ? (
+			.style("cursor", zoomEnabled && (zoomEnabled === true || zoomEnabled.type === "wheel") ? (
 				config.axis_rotate ? "ns-resize" : "ew-resize"
 			) : null)
 			.classed(CLASS.eventRectsMultiple, isMultipleX)

@@ -129,6 +129,10 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Object}
 			 * @property {Boolean} [zoom.enabled=false] Enable zooming.
+			 * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
+			 *  - **Available types:**
+			 *    - wheel
+			 *    - drag
 			 * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
 			 *  If true set, y domain will be updated according to the zoomed region.
 			 * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
@@ -140,9 +144,13 @@ export default class Options {
 			 *  Specified function receives the zoomed domain.
 			 * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
 			 *  Specified function receives the zoomed domain.
+			 * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+			 * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
 			 * @example
 			 *  zoom: {
-			 *      enabled: true,
+			 *      enabled: {
+             *          type: "drag"
+             *      },
 			 *      rescale: true,
 			 *      extent: [1, 100]  // enable more zooming
 			 *      x: {
@@ -151,16 +159,25 @@ export default class Options {
 			 *      },
 			 *      onzoomstart: function(event) { ... },
 			 *      onzoom: function(domain) { ... },
-			 *      onzoomend: function(domain) { ... }
+			 *      onzoomend: function(domain) { ... },
+			 *
+			 *      // show reset button when is zoomed-in
+			 *      resetButton: true,
+			 *
+			 *      // customized text value for reset zoom button
+			 *      resetButton: {
+			 *          text: "Unzoom"
+			 *      }
 			 *  }
 			 */
-			zoom_enabled: false,
+			zoom_enabled: undefined,
 			zoom_extent: undefined,
 			zoom_privileged: false,
 			zoom_rescale: false,
 			zoom_onzoom: undefined,
 			zoom_onzoomstart: undefined,
 			zoom_onzoomend: undefined,
+			zoom_resetButton: true,
 			zoom_x_min: undefined,
 			zoom_x_max: undefined,
 

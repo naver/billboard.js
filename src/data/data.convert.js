@@ -192,6 +192,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const ids = d3Keys(data[0]).filter($$.isNotX, $$);
 		const xs = d3Keys(data[0]).filter($$.isX, $$);
+		let xsData;
 
 		// save x for update data by load when custom x and bb.x API
 		ids.forEach(id => {
@@ -200,29 +201,30 @@ extend(ChartInternal.prototype, {
 			if (this.isCustomX() || this.isTimeSeries()) {
 				// if included in input data
 				if (xs.indexOf(xKey) >= 0) {
-					this.data.xs[id] =
-						(appendXs && $$.data.xs[id] ? $$.data.xs[id] : [])
-							.concat(
-								data.map(d => d[xKey])
-									.filter(isValue)
-									.map((rawX, i) => $$.generateTargetX(rawX, id, i))
-							);
+					xsData = ((appendXs && $$.data.xs[id]) || [])
+						.concat(
+							data.map(d => d[xKey])
+								.filter(isValue)
+								.map((rawX, i) => $$.generateTargetX(rawX, id, i))
+						);
 				} else if (config.data_x) {
 					// if not included in input data, find from preloaded data of other id's x
-					this.data.xs[id] = this.getOtherTargetXs();
+					xsData = this.getOtherTargetXs();
 				} else if (notEmpty(config.data_xs)) {
 					// if not included in input data, find from preloaded data
-					$$.data.xs[id] = $$.getXValuesOfXKey(xKey, $$.data.targets);
+					xsData = $$.getXValuesOfXKey(xKey, $$.data.targets);
 				}
 				// MEMO: if no x included, use same x of current will be used
 			} else {
-				$$.data.xs[id] = data.map((d, i) => i);
+				xsData = data.map((d, i) => i);
 			}
+
+			xsData && (this.data.xs[id] = xsData);
 		});
 
 		// check x is defined
 		ids.forEach(id => {
-			if (!$$.data.xs[id]) {
+			if (!xsData) {
 				throw new Error(`x is not defined for id = "${id}".`);
 			}
 		});
@@ -230,21 +232,25 @@ extend(ChartInternal.prototype, {
 		// convert to target
 		const targets = ids.map((id, index) => {
 			const convertedId = config.data_idConverter(id);
+			const xKey = $$.getXKey(id);
+			const isCategorized = $$.isCustomX() && $$.isCategorized();
+			const hasCategory = isCategorized && data.map(v => v.x)
+				.every(v => config.axis_x_categories.indexOf(v) > -1);
 
 			return {
 				id: convertedId,
 				id_org: id,
 				values: data.map((d, i) => {
-					const xKey = $$.getXKey(id);
 					const rawX = d[xKey];
-					const value = d[id] !== null && !isNaN(d[id]) ?
-						+d[id] : (isArray(d[id]) || ($$.isObject(d[id]) && d[id].high) ? d[id] : null);
-
+					let value = d[id];
 					let x;
 
+					value = value !== null && !isNaN(value) ?
+						+d[id] : (isArray(value) || ($$.isObject(value) && value.high) ? value : null);
+
 					// use x as categories if custom x and categorized
-					if ($$.isCustomX() && $$.isCategorized() && index === 0 && !isUndefined(rawX)) {
-						if (index === 0 && i === 0) {
+					if (isCategorized && index === 0 && !isUndefined(rawX)) {
+						if (!hasCategory && index === 0 && i === 0) {
 							config.axis_x_categories = [];
 						}
 
@@ -270,8 +276,6 @@ extend(ChartInternal.prototype, {
 
 		// finish targets
 		targets.forEach(t => {
-			let i;
-
 			// sort values by its x
 			if (config.data_xSort) {
 				t.values = t.values.sort((v1, v2) => {
@@ -283,10 +287,10 @@ extend(ChartInternal.prototype, {
 			}
 
 			// indexing each value
-			i = 0;
+			let i = 0;
 
 			t.values.forEach(v => {
-				v.index = i++;
+				v.index = $$.data.targets ? $$.getIndexByX(v.x) : i++;
 			});
 
 			// this needs to be sorted because its index and value.index is identical

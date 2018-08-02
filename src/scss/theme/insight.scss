@@ -18,7 +18,7 @@
         fill: none; stroke: #c4c4c4;
     }
 
-    text {
+    text, .bb-button {
         -webkit-user-select: none;
         -moz-user-select: none;
         -ms-user-select: none;
@@ -134,6 +134,11 @@
     &.selected rect {
         fill: rgb(39, 201, 3);
     }
+}
+
+/*-- Zoom region --*/
+.bb-zoom-brush {
+    fill-opacity: .1;
 }
 
 /*-- Brush --*/
@@ -323,5 +328,20 @@
             fill-opacity: .2;
             stroke-width: 1px;
         }
+    }
+}
+
+/*-- Button --*/
+.bb-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    .bb-zoom-reset {
+        border: solid 1px #ccc;
+        background-color: #fff;
+        padding: 5px;
+        border-radius: 5px;
+        cursor: pointer;
     }
 }

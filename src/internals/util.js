@@ -116,12 +116,13 @@ const getPathBox = path => {
 const getBrushSelection = function() {
 	let selection = null;
 	const event = d3Event;
+	const ctx = this.context || this.main;
 
 	// check from event
 	if (event && event.constructor.name === "BrushEvent") {
 		selection = event.selection;
-		// check from brush area selection
-	} else if (this.context && (selection = this.context.select(`.${CLASS.brush}`).node())) {
+	// check from brush area selection
+	} else if (ctx && (selection = ctx.select(`.${CLASS.brush}`).node())) {
 		selection = d3BrushSelection(selection);
 	}
 
