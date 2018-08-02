@@ -1322,6 +1322,37 @@ describe("DATA", () => {
 				expect(points.size()).to.be.equal(0);
 			});
 		});
+
+		describe("on line with array points option", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 500],
+							["data2", 10, 100, 200, 400]
+						]
+					},
+					line: {
+						points: ["data1"]
+					}
+				}
+			});
+
+			it("should draw points for the first line", () => {
+				const id = "data1";
+				const data = chart.data.values(id);
+				const points = chart.internal.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+
+				expect(points.size()).to.be.equal(data.length);
+			});
+
+			it("should not draw points for the second line", () => {
+				const id = "data2";
+				const points = chart.internal.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+
+				expect(points.size()).to.be.equal(0);
+			});
+		});
 	});
 
 	describe("inner functions", () => {

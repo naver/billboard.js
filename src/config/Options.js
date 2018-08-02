@@ -2352,7 +2352,7 @@ export default class Options {
 			 * - step
 			 * - step-before
 			 * - step-after
-			 * @property {Boolean} [line.points=true] Set to false to not draw points on linecharts.
+			 * @property {Boolean|Array} [line.points=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
