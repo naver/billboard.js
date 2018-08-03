@@ -209,7 +209,10 @@ extend(ChartInternal.prototype, {
 			let rectW;
 			let rectX;
 
-			if (($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized()) {
+			if ($$.isCategorized()) {
+				rectW = $$.getEventRectWidth();
+				rectX = d => xScale(d.x) - (rectW / 2);
+			} else {
 				// update index for x that is used by prevX and nextX
 				$$.updateXs();
 
@@ -249,9 +252,6 @@ extend(ChartInternal.prototype, {
 
 					return (xScale(thisX) + xScale(prevX)) / 2;
 				};
-			} else {
-				rectW = $$.getEventRectWidth();
-				rectX = d => xScale(d.x) - (rectW / 2);
 			}
 
 			x = isRotated ? 0 : rectX;

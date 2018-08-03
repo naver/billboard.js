@@ -43,6 +43,7 @@ const isObject = obj => obj && !obj.nodeType && isObjectType(obj) && !isArray(ob
 const getOption = (options, key, defaultValue) => (
 	isDefined(options[key]) ? options[key] : defaultValue
 );
+
 const hasValue = (dict, value) => {
 	let found = false;
 
@@ -69,46 +70,25 @@ const getRectSegList = path => {
 	 * seg0 ---------- seg3
 	 * */
 	const bbox = path.getBBox();
-	const list = [];
+	const [x, y, width, height] = [bbox.x, bbox.y, bbox.width, bbox.height];
 
-	// seg0
-	list.push({
-		x: bbox.x,
-		y: bbox.y + bbox.height
-	});
-
-	// seg1
-	list.push({
-		x: bbox.x,
-		y: bbox.y
-	});
-
-	// seg2
-	list.push({
-		x: bbox.x + bbox.width,
-		y: bbox.y
-	});
-
-	// seg3
-	list.push({
-		x: bbox.x + bbox.width,
-		y: bbox.y + bbox.height
-	});
-
-	return list;
+	return [
+		{x, y: y + height}, // seg0
+		{x, y}, // seg1
+		{x: x + width, y}, // seg2
+		{x: x + width, y: y + height} // seg3
+	];
 };
 
 const getPathBox = path => {
 	const box = path.getBoundingClientRect();
+	const [width, height] = [box.width, box.height];
 	const items = getRectSegList(path);
-	const minX = items[0].x;
-	const minY = Math.min(items[0].y, items[1].y);
+	const x = items[0].x;
+	const y = Math.min(items[0].y, items[1].y);
 
 	return {
-		x: minX,
-		y: minY,
-		width: box.width,
-		height: box.height,
+		x, y, width, height
 	};
 };
 

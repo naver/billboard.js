@@ -38,7 +38,7 @@ describe("INTERACTION", () => {
 				const lefts = [69, 130, 198, 403];
 				const widths = [61, 68, 205, 197.5];
 
-				chart.internal.main.selectAll(`.${CLASS.eventRect}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
@@ -62,11 +62,11 @@ describe("INTERACTION", () => {
 			});
 
 			it("should have 1 event rects properly", () => {
-				const eventRects = chart.internal.main.selectAll(`.${CLASS.eventRect}`);
+				const eventRects = chart.$.main.selectAll(`.${CLASS.eventRect}`);
 
 				expect(eventRects.size()).to.be.equal(1);
 
-				eventRects.each(function() {
+				eventRects.each(function () {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(30.5, 10);
@@ -92,7 +92,7 @@ describe("INTERACTION", () => {
 				const lefts = [33.5, 185.5, 348, 497.5];
 				const widths = [152, 162.5, 149.5, 138.5];
 
-				chart.internal.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
+				chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
@@ -115,19 +115,48 @@ describe("INTERACTION", () => {
 			});
 
 			it("should have 1 event rects properly", () => {
-				const eventRects = chart.internal.main.selectAll(`.${CLASS.eventRect}`);
+				const eventRects = chart.$.main.selectAll(`.${CLASS.eventRect}`);
 
 				expect(eventRects.size()).to.be.equal(1);
 
-				eventRects.each(function() {
+				eventRects.each(function () {
 					const box = d3.select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(30.5, 10);
 					expect(box.width).to.be.closeTo(608, 10);
 				});
 			});
-		});
 
+			describe("indexed", () => {
+				before(() => {
+					args = {
+						data: {
+							columns: [
+								["data", 10, 20, 30, 40, 50]
+							]
+						}
+					};
+				});
+
+				it("rect elements should be positioned without gaps", () => {
+					const rect = [];
+
+					chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function(d, i) {
+						const x = +this.getAttribute("x");
+						const width = +this.getAttribute("width");
+
+						if (i > 0) {
+							expect(rect[i - 1]).to.be.equal(x);
+						}
+
+						rect.push(x + width);
+					});
+				});
+			});
+		});
+	});
+
+	describe("Different interactions", () => {
 		describe("check for data.onclick", () => {
 			let clicked = false;
 			let data;
@@ -153,7 +182,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for line", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
 				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
 
@@ -173,7 +202,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for rectangle data point", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data1 rect`).node().getBBox();
 
@@ -196,7 +225,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for polygon data point", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data2 use`).node().getBBox();
 
@@ -218,7 +247,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for area", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
 				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
 
@@ -238,7 +267,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for scatter", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
 
@@ -258,7 +287,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for bubble", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
 				const delta = 50;
@@ -279,7 +308,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for bar", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
 				const path = main.select(`.${CLASS.bars}-data1 path`).node().getBBox();
 
@@ -299,7 +328,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for pie", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const path = main.select(`.${CLASS.arcs}-data1 path`).node();
 				const box = path.getBBox();
 
@@ -319,7 +348,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for gauge", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const path = main.select(`.${CLASS.arcs}-data1 path`).node();
 				const box = path.getBBox();
 
@@ -358,7 +387,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("check for data click for multiple xs", () => {
-				const main = chart.internal.main;
+				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRects}.${CLASS.eventRectsMultiple} rect`).node();
 				const circle = main.select(`.${CLASS.circles}.${CLASS.circles}-data1 circle`).node().getBBox();
 
