@@ -190,25 +190,23 @@ describe("API zoom", function() {
 		});
 
 		it("should be zoomed properly", done => {
-			const target = [3, 5];
-			const internal = chart.internal;
-			const main = internal.main;
+			const rectlist = chart.$.main.selectAll(`.${CLASS.eventRect}`).nodes();
+			const rect = [];
 
-			const bars = main.select(`.${CLASS.chartBars}`).node();
-			const rects = main.select(`.${CLASS.eventRects}`).node();
-			const rectlist = main.selectAll(`.${CLASS.eventRect}`).nodes();
-			const orgWidth = bars.getBoundingClientRect().width;
-			const rectWidth = internal.getEventRectWidth();
-
-			chart.zoom(target);
+			// when
+			chart.zoom([3, 5]);
 
 			setTimeout(() => {
-				rectlist.forEach(v => {
-					expect(parseFloat(d3.select(v).attr("width"))).to.be.equal(rectWidth);
-				});
+				rectlist.forEach(function(el, i) {
+					const x = +el.getAttribute("x");
+					const width = +el.getAttribute("width");
 
-				expect(bars.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
-				expect(rects.getBoundingClientRect().width/orgWidth).to.be.above(2.5);
+					if (i > 0) {
+						expect(rect[i - 1]).to.be.equal(x);
+					}
+
+					rect.push(x + width);
+				});
 
 				done();
 			}, 500)
