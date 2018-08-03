@@ -59,6 +59,7 @@ export default class ChartInternal {
 	init() {
 		const $$ = this;
 		const config = $$.config;
+		let convertedData;
 
 		$$.initParams();
 
@@ -71,14 +72,16 @@ export default class ChartInternal {
 				$$.initWithData
 			);
 		} else if (config.data_json) {
-			$$.initWithData($$.convertJsonToData(config.data_json, config.data_keys));
+			convertedData = $$.convertJsonToData(config.data_json, config.data_keys);
 		} else if (config.data_rows) {
-			$$.initWithData($$.convertRowsToData(config.data_rows));
+			convertedData = $$.convertRowsToData(config.data_rows);
 		} else if (config.data_columns) {
-			$$.initWithData($$.convertColumnsToData(config.data_columns));
+			convertedData = $$.convertColumnsToData(config.data_columns);
 		} else {
 			throw Error("url or json or rows or columns is required.");
 		}
+
+		convertedData && $$.initWithData(convertedData);
 	}
 
 	initParams() {
@@ -119,7 +122,7 @@ export default class ChartInternal {
 		$$.dataTimeFormat = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 		$$.axisTimeFormat = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
-		$$.defaultAxisTimeFormat = function(d) {
+		$$.defaultAxisTimeFormat = d => {
 			const specifier = (d.getMilliseconds() && ".%L") ||
 				(d.getSeconds() && ".:%S") ||
 				(d.getMinutes() && "%I:%M") ||
@@ -138,20 +141,17 @@ export default class ChartInternal {
 		$$.defocusedTargetIds = [];
 
 		$$.xOrient = isRotated ? "left" : "bottom";
-
 		$$.yOrient = isRotated ?
 			(config.axis_y_inner ? "top" : "bottom") : (config.axis_y_inner ? "right" : "left");
-
 		$$.y2Orient = isRotated ?
 			(config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
-
 		$$.subXOrient = isRotated ? "left" : "bottom";
+
 		$$.isLegendRight = config.legend_position === "right";
 		$$.isLegendInset = config.legend_position === "inset";
 
 		$$.isLegendTop = config.legend_inset_anchor === "top-left" ||
 			config.legend_inset_anchor === "top-right";
-
 		$$.isLegendLeft = config.legend_inset_anchor === "top-left" ||
 			config.legend_inset_anchor === "bottom-left";
 
@@ -160,9 +160,7 @@ export default class ChartInternal {
 		$$.legendItemHeight = 0;
 
 		$$.currentMaxTickWidths = {
-			x: 0,
-			y: 0,
-			y2: 0
+			x: 0, y: 0, y2: 0
 		};
 
 		$$.rotated_padding_left = 30;
@@ -427,13 +425,10 @@ export default class ChartInternal {
 		if (type === "grid") {
 			el.each(function() {
 				const g = d3Select(this);
+				const [x1, x2, y1, y2] = ["x1", "x2", "y1", "y2"]
+					.map(v => Math.ceil(g.attr(v)));
 
-				g.attr({
-					"x1": Math.ceil(g.attr("x1")),
-					"x2": Math.ceil(g.attr("x2")),
-					"y1": Math.ceil(g.attr("y1")),
-					"y2": Math.ceil(g.attr("y2"))
-				});
+				g.attr({x1, x2, y1, y2});
 			});
 		}
 	}
@@ -441,11 +436,13 @@ export default class ChartInternal {
 	updateSizes() {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
+		const hasArc = $$.hasArcType();
+
 		const legendHeight = $$.legend ? $$.getLegendHeight() : 0;
 		const legendWidth = $$.legend ? $$.getLegendWidth() : 0;
 		const legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight;
-		const hasArc = $$.hasArcType();
-		const xAxisHeight = config.axis_rotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
+		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
 		const subchartHeight = config.subchart_show && !hasArc ?
 			(config.subchart_size_height + xAxisHeight) : 0;
 
@@ -453,7 +450,7 @@ export default class ChartInternal {
 		$$.currentHeight = $$.getCurrentHeight();
 
 		// for main
-		$$.margin = config.axis_rotated ? {
+		$$.margin = isRotated ? {
 			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
 			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
 			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
@@ -466,7 +463,7 @@ export default class ChartInternal {
 		};
 
 		// for subchart
-		$$.margin2 = config.axis_rotated ? {
+		$$.margin2 = isRotated ? {
 			top: $$.margin.top,
 			right: NaN,
 			bottom: 20 + legendHeightForBottom,
@@ -501,10 +498,10 @@ export default class ChartInternal {
 			$$.height = 0;
 		}
 
-		$$.width2 = config.axis_rotated ?
+		$$.width2 = isRotated ?
 			$$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width;
 
-		$$.height2 = config.axis_rotated ?
+		$$.height2 = isRotated ?
 			$$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom;
 
 		if ($$.width2 < 0) { $$.width2 = 0; }
@@ -571,6 +568,36 @@ export default class ChartInternal {
 			.style("opacity", "1");
 	}
 
+	getWithOption(options) {
+		const withOptions = {
+			Y: true,
+			SubChart: true,
+			Transition: true,
+			EventRect: true,
+			Dimension: true,
+			TrimXDomain: true,
+			Transform: false,
+			UpdateXDomain: false,
+			UpdateOrgXDomain: false,
+			Legend: false,
+			UpdateXAxis: "UpdateXDomain",
+			TransitionForExit: "Transition",
+			TransitionForAxis: "Transition"
+		};
+
+		Object.keys(withOptions).forEach(key => {
+			let defVal = withOptions[key];
+
+			if (isString(defVal)) {
+				defVal = withOptions[defVal];
+			}
+
+			withOptions[key] = getOption(options, `with${key}`, defVal);
+		});
+
+		return withOptions;
+	}
+
 	redraw(options = {}, transitionsValue) {
 		const $$ = this;
 		const main = $$.main;
@@ -590,23 +617,10 @@ export default class ChartInternal {
 		let intervalForCulling;
 		let xDomainForZoom;
 
-		const withY = getOption(options, "withY", true);
-		const withSubchart = getOption(options, "withSubchart", true);
-		const withTransition = getOption(options, "withTransition", true);
-		const withTransform = getOption(options, "withTransform", false);
-		const withUpdateXDomain = getOption(options, "withUpdateXDomain", false);
-		const withUpdateOrgXDomain = getOption(options, "withUpdateOrgXDomain", false);
-		const withTrimXDomain = getOption(options, "withTrimXDomain", true);
-		const withUpdateXAxis = getOption(options, "withUpdateXAxis", withUpdateXDomain);
-		const withLegend = getOption(options, "withLegend", false);
-		const withEventRect = getOption(options, "withEventRect", true);
-		const withDimension = getOption(options, "withDimension", true);
-		const withTransitionForExit = getOption(options, "withTransitionForExit", withTransition);
-		const withTransitionForAxis = getOption(options, "withTransitionForAxis", withTransition);
-
-		const duration = withTransition ? config.transition_duration : 0;
-		const durationForExit = withTransitionForExit ? duration : 0;
-		const durationForAxis = withTransitionForAxis ? duration : 0;
+		const wth = $$.getWithOption(options);
+		const duration = wth.Transition ? config.transition_duration : 0;
+		const durationForExit = wth.TransitionForExit ? duration : 0;
+		const durationForAxis = wth.TransitionForAxis ? duration : 0;
 
 		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
@@ -614,9 +628,9 @@ export default class ChartInternal {
 			$$.inputType === "touch" && $$.hideTooltip();
 
 		// update legend and transform each g
-		if (withLegend && config.legend_show && !config.legend_contents_bindto) {
+		if (wth.Legend && config.legend_show && !config.legend_contents_bindto) {
 			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
-		} else if (withDimension) {
+		} else if (wth.Dimension) {
 			// need to update dimension (e.g. axis.y.tick.values) because y tick values should change
 			// no need to update axis in it because they will be updated in redraw()
 			$$.updateDimension(true);
@@ -628,7 +642,7 @@ export default class ChartInternal {
 		}
 
 		if (targetsToShow.length) {
-			$$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain);
+			$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
 
 			if (!config.axis_x_tick_values) {
 				tickValues = $$.axis.updateXAxisTickValues(targetsToShow);
@@ -668,10 +682,10 @@ export default class ChartInternal {
 		$$.axis.redraw(transitions, hideAxis);
 
 		// Update axis label
-		$$.axis.updateLabels(withTransition);
+		$$.axis.updateLabels(wth.Transition);
 
 		// show/hide if manual culling needed
-		if ((withUpdateXDomain || withUpdateXAxis) && targetsToShow.length) {
+		if ((wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) {
 			if (config.axis_x_tick_culling && tickValues) {
 				for (let i = 1; i < tickValues.length; i++) {
 					if (tickValues.length / i < config.axis_x_tick_culling_max) {
@@ -705,7 +719,7 @@ export default class ChartInternal {
 		const yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, false);
 
 		// Update sub domain
-		if (withY) {
+		if (wth.Y) {
 			$$.subY.domain($$.getYDomain(targetsToShow, "y"));
 			$$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
 		}
@@ -742,7 +756,7 @@ export default class ChartInternal {
 		$$.redrawTitle && $$.redrawTitle();
 
 		// arc
-		$$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform);
+		$$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 		// radar
 		hasRadar && $$.redrawRadar();
@@ -751,7 +765,7 @@ export default class ChartInternal {
 		config.subchart_show &&
 			$$.redrawSubchart &&
 				$$.redrawSubchart(
-					withSubchart,
+					wth.Subchart,
 					transitions,
 					duration,
 					durationForExit,
@@ -767,7 +781,7 @@ export default class ChartInternal {
 			.remove();
 
 		// event rects will redrawn when flow called
-		if (config.interaction_enabled && !options.flow && withEventRect) {
+		if (config.interaction_enabled && !options.flow && wth.EventRect) {
 			$$.redrawEventRect();
 			$$.bindZoomEvent();
 		}
