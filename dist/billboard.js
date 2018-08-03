@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180802182218
+ * @version 1.5.1-nightly-20180803154011
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -130,7 +130,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180802182218
+ * @version 1.5.1-nightly-20180803154011
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180802182218",
+	version: "1.5.1-nightly-20180803154011",
 
 	/**
   * Generate chart
@@ -329,10 +329,13 @@ var ChartInternal = function () {
 		(0, _util.isFunction)(config.onafterinit) && config.onafterinit.call($$);
 	}, ChartInternal.prototype.init = function init() {
 		var $$ = this,
-		    config = $$.config;
+		    config = $$.config,
+		    convertedData = void 0;
 
 
-		if ($$.initParams(), config.data_url) $$.convertUrlToData(config.data_url, config.data_mimeType, config.data_headers, config.data_keys, $$.initWithData);else if (config.data_json) $$.initWithData($$.convertJsonToData(config.data_json, config.data_keys));else if (config.data_rows) $$.initWithData($$.convertRowsToData(config.data_rows));else if (config.data_columns) $$.initWithData($$.convertColumnsToData(config.data_columns));else throw Error("url or json or rows or columns is required.");
+		if ($$.initParams(), config.data_url) $$.convertUrlToData(config.data_url, config.data_mimeType, config.data_headers, config.data_keys, $$.initWithData);else if (config.data_json) convertedData = $$.convertJsonToData(config.data_json, config.data_keys);else if (config.data_rows) convertedData = $$.convertRowsToData(config.data_rows);else if (config.data_columns) convertedData = $$.convertColumnsToData(config.data_columns);else throw Error("url or json or rows or columns is required.");
+
+		convertedData && $$.initWithData(convertedData);
 	}, ChartInternal.prototype.initParams = function initParams() {
 		var $$ = this,
 		    config = $$.config,
@@ -342,9 +345,7 @@ var ChartInternal = function () {
 
 			return $$.axisTimeFormat(specifier)(d);
 		}, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.xOrient = isRotated ? "left" : "bottom", $$.yOrient = isRotated ? config.axis_y_inner ? "top" : "bottom" : config.axis_y_inner ? "right" : "left", $$.y2Orient = isRotated ? config.axis_y2_inner ? "bottom" : "top" : config.axis_y2_inner ? "left" : "right", $$.subXOrient = isRotated ? "left" : "bottom", $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
-			x: 0,
-			y: 0,
-			y2: 0
+			x: 0, y: 0, y2: 0
 		}, $$.rotated_padding_left = 30, $$.rotated_padding_right = isRotated && !config.axis_x_show ? 0 : 30, $$.rotated_padding_top = 5, $$.withoutFadeIn = {}, $$.intervalForObserveInserted = undefined, $$.inputType = $$.convertInputType(), $$.axes.subx = (0, _d3Selection.selectAll)([]);
 	}, ChartInternal.prototype.initWithData = function initWithData(data) {
 		var $$ = this,
@@ -437,25 +438,26 @@ var ChartInternal = function () {
 		};
 	}, ChartInternal.prototype.smoothLines = function smoothLines(el, type) {
 		type === "grid" && el.each(function () {
-			var g = (0, _d3Selection.select)(this);
-
-			g.attr({
-				"x1": Math.ceil(g.attr("x1")),
-				"x2": Math.ceil(g.attr("x2")),
-				"y1": Math.ceil(g.attr("y1")),
-				"y2": Math.ceil(g.attr("y2"))
-			});
+			var g = (0, _d3Selection.select)(this),
+			    _map = ["x1", "x2", "y1", "y2"].map(function (v) {
+				return Math.ceil(g.attr(v));
+			}),
+			    x1 = _map[0],
+			    x2 = _map[1],
+			    y1 = _map[2],
+			    y2 = _map[3];g.attr({ x1: x1, x2: x2, y1: y1, y2: y2 });
 		});
 	}, ChartInternal.prototype.updateSizes = function updateSizes() {
 		var $$ = this,
 		    config = $$.config,
+		    isRotated = config.axis_rotated,
+		    hasArc = $$.hasArcType(),
 		    legendHeight = $$.legend ? $$.getLegendHeight() : 0,
 		    legendWidth = $$.legend ? $$.getLegendWidth() : 0,
 		    legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight,
-		    hasArc = $$.hasArcType(),
-		    xAxisHeight = config.axis_rotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
+		    xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
 		    subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + xAxisHeight : 0;
-		$$.currentWidth = $$.getCurrentWidth(), $$.currentHeight = $$.getCurrentHeight(), $$.margin = config.axis_rotated ? {
+		$$.currentWidth = $$.getCurrentWidth(), $$.currentHeight = $$.getCurrentHeight(), $$.margin = isRotated ? {
 			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
 			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
 			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
@@ -465,7 +467,7 @@ var ChartInternal = function () {
 			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
 			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
 			left: hasArc ? 0 : $$.getCurrentPaddingLeft()
-		}, $$.margin2 = config.axis_rotated ? {
+		}, $$.margin2 = isRotated ? {
 			top: $$.margin.top,
 			right: NaN,
 			bottom: 20 + legendHeightForBottom,
@@ -480,7 +482,7 @@ var ChartInternal = function () {
 			right: NaN,
 			bottom: 0,
 			left: 0
-		}, $$.updateSizeForLegend && $$.updateSizeForLegend(legendHeight, legendWidth), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = config.axis_rotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = config.axis_rotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legendWidth + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
+		}, $$.updateSizeForLegend && $$.updateSizeForLegend(legendHeight, legendWidth), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legendWidth + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
 	}, ChartInternal.prototype.updateTargets = function updateTargets(targets) {
 		var $$ = this;
 
@@ -492,6 +494,28 @@ var ChartInternal = function () {
 		$$.svg.selectAll("." + _classes2.default.target).filter(function (d) {
 			return $$.isTargetToShow(d.id);
 		}).transition().duration($$.config.transition_duration).style("opacity", "1");
+	}, ChartInternal.prototype.getWithOption = function getWithOption(options) {
+		var withOptions = {
+			Y: !0,
+			SubChart: !0,
+			Transition: !0,
+			EventRect: !0,
+			Dimension: !0,
+			TrimXDomain: !0,
+			Transform: !1,
+			UpdateXDomain: !1,
+			UpdateOrgXDomain: !1,
+			Legend: !1,
+			UpdateXAxis: "UpdateXDomain",
+			TransitionForExit: "Transition",
+			TransitionForAxis: "Transition"
+		};
+
+		return Object.keys(withOptions).forEach(function (key) {
+			var defVal = withOptions[key];
+
+			(0, _util.isString)(defVal) && (defVal = withOptions[defVal]), withOptions[key] = (0, _util.getOption)(options, "with" + key, defVal);
+		}), withOptions;
 	}, ChartInternal.prototype.redraw = function redraw() {
 		var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
 		    transitionsValue = arguments[1],
@@ -509,27 +533,15 @@ var ChartInternal = function () {
 		    tickValues = void 0,
 		    intervalForCulling = void 0,
 		    xDomainForZoom = void 0,
-		    withY = (0, _util.getOption)(options, "withY", !0),
-		    withSubchart = (0, _util.getOption)(options, "withSubchart", !0),
-		    withTransition = (0, _util.getOption)(options, "withTransition", !0),
-		    withTransform = (0, _util.getOption)(options, "withTransform", !1),
-		    withUpdateXDomain = (0, _util.getOption)(options, "withUpdateXDomain", !1),
-		    withUpdateOrgXDomain = (0, _util.getOption)(options, "withUpdateOrgXDomain", !1),
-		    withTrimXDomain = (0, _util.getOption)(options, "withTrimXDomain", !0),
-		    withUpdateXAxis = (0, _util.getOption)(options, "withUpdateXAxis", withUpdateXDomain),
-		    withLegend = (0, _util.getOption)(options, "withLegend", !1),
-		    withEventRect = (0, _util.getOption)(options, "withEventRect", !0),
-		    withDimension = (0, _util.getOption)(options, "withDimension", !0),
-		    withTransitionForExit = (0, _util.getOption)(options, "withTransitionForExit", withTransition),
-		    withTransitionForAxis = (0, _util.getOption)(options, "withTransitionForAxis", withTransition),
-		    duration = withTransition ? config.transition_duration : 0,
-		    durationForExit = withTransitionForExit ? duration : 0,
-		    durationForAxis = withTransitionForAxis ? duration : 0,
+		    wth = $$.getWithOption(options),
+		    duration = wth.Transition ? config.transition_duration : 0,
+		    durationForExit = wth.TransitionForExit ? duration : 0,
+		    durationForAxis = wth.TransitionForAxis ? duration : 0,
 		    transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
 
 		// show/hide if manual culling needed
-		if (options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), withLegend && config.legend_show && !config.legend_contents_bindto ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : withDimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), targetsToShow.length ? ($$.updateXDomain(targetsToShow, withUpdateXDomain, withUpdateOrgXDomain, withTrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), $$.y.domain($$.getYDomain(targetsToShow, "y", xDomainForZoom)), $$.y2.domain($$.getYDomain(targetsToShow, "y2", xDomainForZoom)), !config.axis_y_tick_values && config.axis_y_tick_count && $$.yAxis.tickValues($$.axis.generateTickValues($$.y.domain(), config.axis_y_tick_count, $$.isTimeSeriesY())), !config.axis_y2_tick_values && config.axis_y2_tick_count && $$.y2Axis.tickValues($$.axis.generateTickValues($$.y2.domain(), config.axis_y2_tick_count)), $$.axis.redraw(transitions, hideAxis), $$.axis.updateLabels(withTransition), (withUpdateXDomain || withUpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
+		if (options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), wth.Legend && config.legend_show && !config.legend_contents_bindto ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), $$.y.domain($$.getYDomain(targetsToShow, "y", xDomainForZoom)), $$.y2.domain($$.getYDomain(targetsToShow, "y2", xDomainForZoom)), !config.axis_y_tick_values && config.axis_y_tick_count && $$.yAxis.tickValues($$.axis.generateTickValues($$.y.domain(), config.axis_y_tick_count, $$.isTimeSeriesY())), !config.axis_y2_tick_values && config.axis_y2_tick_count && $$.y2Axis.tickValues($$.axis.generateTickValues($$.y2.domain(), config.axis_y2_tick_count)), $$.axis.redraw(transitions, hideAxis), $$.axis.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
 				for (var _i = 1; _i < tickValues.length; _i++) if (tickValues.length / _i < config.axis_x_tick_culling_max) {
 					intervalForCulling = _i;
 
@@ -549,7 +561,7 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-		withY && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, withTransform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && withEventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.updateCircleY();
+		wth.Y && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(wth.Subchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.updateCircleY();
 
 
 		// generate circle x/y functions depending on updated params
@@ -1201,36 +1213,29 @@ var isValue = function (v) {
   * seg0 ---------- seg3
   * */
 	var bbox = path.getBBox(),
-	    list = [];
+	    _ref = [bbox.x, bbox.y, bbox.width, bbox.height],
+	    x = _ref[0],
+	    y = _ref[1],
+	    width = _ref[2],
+	    height = _ref[3];
 
-	// seg0
-
-	return list.push({
-		x: bbox.x,
-		y: bbox.y + bbox.height
-	}), list.push({
-		x: bbox.x,
-		y: bbox.y
-	}), list.push({
-		x: bbox.x + bbox.width,
-		y: bbox.y
-	}), list.push({
-		x: bbox.x + bbox.width,
-		y: bbox.y + bbox.height
-	}), list;
+	return [{ x: x, y: y + height }, // seg0
+	{ x: x, y: y }, // seg1
+	{ x: x + width, y: y }, // seg2
+	{ x: x + width, y: y + height // seg3
+	}];
 },
     getPathBox = function (path) {
 	var box = path.getBoundingClientRect(),
+	    _ref2 = [box.width, box.height],
+	    width = _ref2[0],
+	    height = _ref2[1],
 	    items = getRectSegList(path),
-	    minX = items[0].x,
-	    minY = Math.min(items[0].y, items[1].y);
-
+	    x = items[0].x,
+	    y = Math.min(items[0].y, items[1].y);
 
 	return {
-		x: minX,
-		y: minY,
-		width: box.width,
-		height: box.height
+		x: x, y: y, width: width, height: height
 	};
 },
     getBrushSelection = function () {
@@ -6171,7 +6176,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		if ($$.isMultipleX()) x = 0, y = 0, w = $$.width, h = $$.height;else {
 			var rectW = void 0,
 			    rectX = void 0;
-			($$.isCustomX() || $$.isTimeSeries()) && !$$.isCategorized() ? ($$.updateXs(), rectW = function (d) {
+			$$.isCategorized() ? (rectW = $$.getEventRectWidth(), rectX = function (d) {
+				return xScale(d.x) - rectW / 2;
+			}) : ($$.updateXs(), rectW = function (d) {
 				var prevX = $$.getPrevX(d.index),
 				    nextX = $$.getNextX(d.index);
 
@@ -6186,8 +6193,6 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 				// if there this is a single data point position the eventRect at 0
 				return prevX === null && nextX === null ? 0 : (prevX === null && (prevX = xScale.domain()[0]), (xScale(thisX) + xScale(prevX)) / 2);
-			}) : (rectW = $$.getEventRectWidth(), rectX = function (d) {
-				return xScale(d.x) - rectW / 2;
 			}), x = isRotated ? 0 : rectX, y = isRotated ? rectX : 0, w = isRotated ? $$.width : rectW, h = isRotated ? rectW : $$.height;
 		}
 
