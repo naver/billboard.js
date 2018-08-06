@@ -5,7 +5,7 @@
 import {mouse as d3Mouse} from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction, isString, isValue, sanitise} from "./util";
+import {extend, isFunction, isString, isValue, callFn, sanitise} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -245,7 +245,7 @@ extend(ChartInternal.prototype, {
 				$$.color
 			);
 
-			isFunction(config.tooltip_onshow) && config.tooltip_onshow.call($$);
+			callFn(config.tooltip_onshow, $$);
 
 			// set tooltip content
 			$$.tooltip.html(html)
@@ -256,7 +256,7 @@ extend(ChartInternal.prototype, {
 					height: height = $$.tooltip.property("offsetHeight")
 				});
 
-			isFunction(config.tooltip_onshown) && config.tooltip_onshown.call($$);
+			callFn(config.tooltip_onshown, $$);
 			$$._handleLinkedCharts(true, selectedData[0].index);
 		}
 
@@ -277,12 +277,12 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		isFunction(config.tooltip_onhide) && config.tooltip_onhide.call($$);
+		callFn(config.tooltip_onhide, $$);
 
 		// hide tooltip
 		this.tooltip.style("display", "none").datum(null);
 
-		isFunction(config.tooltip_onhidden) && config.tooltip_onhidden.call($$);
+		callFn(config.tooltip_onhidden, $$);
 		$$._handleLinkedCharts(false);
 	},
 

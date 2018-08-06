@@ -64,7 +64,6 @@ extend(Chart.prototype, {
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
 			// clear timers
-			isDefined($$.intervalForObserveInserted) && window.clearInterval($$.intervalForObserveInserted);
 			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
 			d3Select(window).on("resize.bb", null);

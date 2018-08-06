@@ -6,7 +6,7 @@ import {select as d3Select} from "d3-selection";
 import {rgb as d3Rgb} from "d3-color";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend} from "./util";
+import {extend, callFn} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -19,12 +19,12 @@ extend(ChartInternal.prototype, {
 	selectPoint(target, d, i) {
 		const $$ = this;
 		const config = $$.config;
-		const cx = (config.axis_rotated ? $$.circleY : $$.circleX).bind($$);
-		const cy = (config.axis_rotated ? $$.circleX : $$.circleY).bind($$);
+		const isRotated = config.axis_rotated;
+		const cx = (isRotated ? $$.circleY : $$.circleX).bind($$);
+		const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
 		const r = $$.pointSelectR.bind($$);
 
-		config.data_onselected
-			.call($$.api, d, target.node());
+		callFn(config.data_onselected, $$.api, d, target.node());
 
 		// add selected-circle on low layer g
 		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
@@ -52,7 +52,7 @@ extend(ChartInternal.prototype, {
 	unselectPoint(target, d, i) {
 		const $$ = this;
 
-		$$.config.data_onunselected.call($$.api, d, target.node());
+		callFn($$.config.data_onunselected, $$.api, d, target.node());
 
 		// remove selected-circle from low layer g
 		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
@@ -87,7 +87,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		config.data_onselected.call($$, d, target.node());
+		callFn(config.data_onselected, $$, d, target.node());
 
 		if (config.interaction_brighten) {
 			target.transition().duration(100)
@@ -105,7 +105,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		config.data_onunselected.call($$, d, target.node());
+		callFn(config.data_onunselected, $$, d, target.node());
 
 		if (config.interaction_brighten) {
 			target.transition().duration(100)
@@ -122,9 +122,9 @@ extend(ChartInternal.prototype, {
 	 * @param {Number} index
 	 */
 	togglePath(selected, target, d, i) {
-		const method = `${selected ? "" : "un"}selectPath`;
-
-		this[method](target, d, i);
+		this[
+			`${selected ? "" : "un"}selectPath`
+		](target, d, i);
 	},
 
 	/**
@@ -136,17 +136,13 @@ extend(ChartInternal.prototype, {
 	 */
 	getToggle(that, d) {
 		const $$ = this;
-		let toggle;
 
-		if (that.nodeName !== "path") {
-			toggle = $$.isStepType(d) ?
-				() => {} : // circle is hidden in step chart, so treat as within the click area
-				$$.togglePoint;
-		} else if (that.nodeName === "path") {
-			toggle = $$.togglePath;
-		}
-
-		return toggle;
+		return that.nodeName === "path" ?
+			$$.togglePath : (
+				$$.isStepType(d) ?
+					() => {} : // circle is hidden in step chart, so treat as within the click area
+					$$.togglePoint
+			);
 	},
 
 	/**

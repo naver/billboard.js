@@ -495,9 +495,7 @@ export default function(params = {}) {
 
 	axis.tickValues = function(x) {
 		if (isFunction(x)) {
-			tickValues = function() {
-				return x(scale.domain());
-			};
+			tickValues = () => x(scale.domain());
 		} else {
 			if (!arguments.length) {
 				return tickValues;

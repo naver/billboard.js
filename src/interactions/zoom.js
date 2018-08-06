@@ -14,7 +14,7 @@ import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, diffDomain, isFunction} from "../internals/util";
+import {extend, callFn, diffDomain} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -109,13 +109,12 @@ extend(ChartInternal.prototype, {
 	onZoomStart() {
 		const $$ = this;
 		const event = d3Event.sourceEvent;
-		const onzoomstart = $$.config.zoom_onzoomstart;
 
 		$$.zoom.altDomain = event.altKey ?
 			$$.x.orgDomain() : null;
 
 		$$.zoom.startEvent = event;
-		isFunction(onzoomstart) && onzoomstart.call($$.api, event);
+		callFn($$.config.zoom_onzoomstart, $$.api, event);
 	},
 
 	/**
@@ -159,7 +158,7 @@ extend(ChartInternal.prototype, {
 		});
 
 		$$.cancelClick = isMousemove;
-		isFunction(config.zoom_onzoom) && config.zoom_onzoom.call($$.api, $$.x.orgDomain());
+		callFn(config.zoom_onzoom, $$.api, $$.x.orgDomain());
 	},
 
 	/**
@@ -168,7 +167,6 @@ extend(ChartInternal.prototype, {
 	 */
 	onZoomEnd() {
 		const $$ = this;
-		const onzoomend = $$.config.zoom_onzoomend;
 		const startEvent = $$.zoom.startEvent;
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
@@ -179,7 +177,7 @@ extend(ChartInternal.prototype, {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
-		isFunction(onzoomend) && onzoomend.call($$.api, $$.x.orgDomain());
+		callFn($$.config.zoom_onzoomend, $$.api, $$.x.orgDomain());
 	},
 
 	/**

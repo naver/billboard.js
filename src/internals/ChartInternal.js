@@ -18,7 +18,7 @@ import {transition as d3Transition} from "d3-transition";
 
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isDefined, isUndefined, isString, isNumber, isObject} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isDefined, isString, isNumber, isObject, callFn} from "./util";
 
 /**
  * Internal chart class.
@@ -43,8 +43,7 @@ export default class ChartInternal {
 		const config = $$.config;
 
 		// can do something
-
-		isFunction(config.onbeforeinit) && config.onbeforeinit.call($$);
+		callFn(config.onbeforeinit, $$);
 	}
 
 	afterInit() {
@@ -52,8 +51,7 @@ export default class ChartInternal {
 		const config = $$.config;
 
 		// can do something
-
-		isFunction(config.onafterinit) && config.onafterinit.call($$);
+		callFn(config.onafterinit, $$);
 	}
 
 	init() {
@@ -168,8 +166,6 @@ export default class ChartInternal {
 		$$.rotated_padding_top = 5;
 
 		$$.withoutFadeIn = {};
-		$$.intervalForObserveInserted = undefined;
-
 		$$.inputType = $$.convertInputType();
 
 		$$.axes.subx = d3SelectAll([]); // needs when excluding subchart.js
@@ -178,7 +174,6 @@ export default class ChartInternal {
 	initWithData(data) {
 		const $$ = this;
 		const config = $$.config;
-		let binding = true;
 
 		$$.axis = new Axis($$);
 
@@ -202,12 +197,6 @@ export default class ChartInternal {
 		// select bind element
 		$$.selectChart = isFunction(bindto.element.node) ?
 			config.bindto.element : d3Select(!bindto.element ? [] : bindto.element);
-
-		if ($$.selectChart.empty()) {
-			$$.selectChart = d3Select(document.createElement("div")).style("opacity", "0");
-			$$.observeInserted($$.selectChart);
-			binding = false;
-		}
 
 		$$.selectChart.html("").classed(bindto.classname, true);
 
@@ -254,7 +243,6 @@ export default class ChartInternal {
 		$$.orgXDomain = $$.x.domain();
 
 		// -- Basic Elements --
-
 		$$.svg = $$.selectChart.append("svg")
 			.style("overflow", "hidden")
 			.style("display", "block");
@@ -263,8 +251,8 @@ export default class ChartInternal {
 			const isTouch = $$.inputType === "touch";
 
 			$$.svg
-				.on(isTouch ? "touchstart" : "mouseenter", () => config.onover.call($$))
-				.on(isTouch ? "touchend" : "mouseleave", () => config.onout.call($$));
+				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$))
+				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$));
 		}
 
 		config.svg_classname &&
@@ -285,10 +273,6 @@ export default class ChartInternal {
 		}
 
 		$$.updateSvgSize();
-
-		// Set initialized scales to brush and zoom
-		// if ($$.brush) { $$.brush.scale($$.subX); }
-		// if (config.zoom_enabled === true || config.zoom_enabled_type) { $$.zoom.scale($$.x); }
 
 		// Define regions
 		const main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
@@ -355,28 +339,26 @@ export default class ChartInternal {
 		$$.updateTargets($$.data.targets);
 
 		// Draw with targets
-		if (binding) {
-			$$.updateDimension();
+		$$.updateDimension();
 
-			// oninit callback
-			config.oninit.call($$);
+		// oninit callback
+		config.oninit.call($$);
 
-			$$.redraw({
-				withTransition: false,
-				withTransform: true,
-				withUpdateXDomain: true,
-				withUpdateOrgXDomain: true,
-				withTransitionForAxis: false,
-				initializing: true
-			});
+		$$.redraw({
+			withTransition: false,
+			withTransform: true,
+			withUpdateXDomain: true,
+			withUpdateOrgXDomain: true,
+			withTransitionForAxis: false,
+			initializing: true
+		});
 
-			// data.onmin/max callback
-			if (config.data_onmin || config.data_onmax) {
-				const minMax = $$.getMinMaxData();
+		// data.onmin/max callback
+		if (config.data_onmin || config.data_onmax) {
+			const minMax = $$.getMinMaxData();
 
-				isFunction(config.data_onmin) && config.data_onmin.call($$, minMax.min);
-				isFunction(config.data_onmax) && config.data_onmax.call($$, minMax.max);
-			}
+			callFn(config.data_onmin, $$, minMax.min);
+			callFn(config.data_onmax, $$, minMax.max);
 		}
 
 		// Bind resize event
@@ -483,9 +465,8 @@ export default class ChartInternal {
 			left: 0
 		};
 
-		if ($$.updateSizeForLegend) {
+		$$.updateSizeForLegend &&
 			$$.updateSizeForLegend(legendHeight, legendWidth);
-		}
 
 		$$.width = $$.currentWidth - $$.margin.left - $$.margin.right;
 		$$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom;
@@ -504,8 +485,13 @@ export default class ChartInternal {
 		$$.height2 = isRotated ?
 			$$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom;
 
-		if ($$.width2 < 0) { $$.width2 = 0; }
-		if ($$.height2 < 0) { $$.height2 = 0; }
+		if ($$.width2 < 0) {
+			$$.width2 = 0;
+		}
+
+		if ($$.height2 < 0) {
+			$$.height2 = 0;
+		}
 
 		// for arc
 		$$.arcWidth = $$.width - ($$.isLegendRight ? legendWidth + 10 : 0);
@@ -1128,54 +1114,6 @@ export default class ChartInternal {
 
 		$$.updateSvgSize();
 		$$.transformAll(false);
-	}
-
-	observeInserted(selection) {
-		const $$ = this;
-
-		if (isUndefined(MutationObserver)) {
-			console && console.error &&
-				console.error("MutationObserver not defined.");
-
-			return;
-		}
-
-		const observer = new MutationObserver(mutations => {
-			mutations.forEach(mutation => {
-				if (mutation.type === "childList" && mutation.previousSibling) {
-					observer.disconnect();
-
-					// need to wait for completion of load because size calculation requires the actual sizes determined after that completion
-					$$.intervalForObserveInserted = window.setInterval(() => {
-						// parentNode will NOT be null when completed
-						if (selection.node().parentNode) {
-							window.clearInterval($$.intervalForObserveInserted);
-							$$.updateDimension();
-
-							$$.brush && $$.brush.update();
-							$$.config.oninit.call($$);
-
-							$$.redraw({
-								withTransform: true,
-								withUpdateXDomain: true,
-								withUpdateOrgXDomain: true,
-								withTransition: false,
-								withTransitionForTransform: false,
-								withLegend: true
-							});
-
-							selection.transition().style("opacity", "1");
-						}
-					}, 10);
-				}
-			});
-		});
-
-		observer.observe(selection.node(), {
-			attributes: true,
-			childList: true,
-			characterData: true
-		});
 	}
 
 	bindResize() {
