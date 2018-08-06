@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {extend, isString, isBoolean} from "../internals/util";
+import {extend, isString, isArray, isBoolean} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
@@ -110,7 +110,7 @@ extend(Chart.prototype, {
 		const $$ = this.internal;
 		let args = argsValue || {};
 
-		if (args instanceof Array) {
+		if (isArray(args)) {
 			args = {ids: args};
 		} else if (isString(args)) {
 			args = {ids: [args]};

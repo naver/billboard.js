@@ -53,6 +53,20 @@ const hasValue = (dict, value) => {
 };
 
 /**
+ * Call function with arguments
+ * @param {Function} fn Function to be called
+ * @param {*} args Arguments
+ * @return {Boolean} true: fn is function, false: fn is not function
+ * @private
+ */
+const callFn = (fn, ...args) => {
+	const isFn = isFunction(fn);
+
+	isFn && fn.call(...args);
+	return isFn;
+};
+
+/**
  * Replace tag sign to html entity
  * @param {String} str
  * @return {String}
@@ -263,6 +277,7 @@ const emulateEvent = {
 export {
 	asHalfPixel,
 	brushEmpty,
+	callFn,
 	capitalize,
 	ceil10,
 	diffDomain,

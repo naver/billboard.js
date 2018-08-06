@@ -20,34 +20,33 @@ extend(ChartInternal.prototype, {
 	initPie() {
 		const $$ = this;
 		const config = $$.config;
+		const padding = config.pie_padding;
 
-		const padAngle = $$.hasType("pie") && config.pie_padding ?
-			config.pie_padding * 0.01 : config[`${config.data_type}_padAngle`] ?
+		const padAngle = $$.hasType("pie") && padding ?
+			padding * 0.01 : config[`${config.data_type}_padAngle`] ?
 				config[`${config.data_type}_padAngle`] : 0;
 
 		$$.pie = d3Pie()
 			.padAngle(padAngle)
 			.value(d => d.values.reduce((a, b) => a + b.value, 0));
 
-		if (!config.data_order) {
-			$$.pie.sort(null);
-		}
+		!config.data_order && $$.pie.sort(null);
 	},
 
 	updateRadius() {
 		const $$ = this;
 		const config = $$.config;
+		const radius = config.pie_innerRadius;
+		const padding = config.pie_padding;
 		const w = config.gauge_width || config.donut_width;
 
 		$$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2;
 		$$.radius = $$.radiusExpanded * 0.95;
 		$$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
 
-		const innerRadius = config.pie_innerRadius ?
-			config.pie_innerRadius : (
-				config.pie_padding ?
-					config.pie_padding * ($$.innerRadiusRatio + 0.1) : 0
-			);
+		const innerRadius = radius || (
+			padding ? padding * ($$.innerRadiusRatio + 0.1) : 0
+		);
 
 		$$.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?
 			$$.radius * $$.innerRadiusRatio : innerRadius;
@@ -115,7 +114,7 @@ extend(ChartInternal.prototype, {
 			.outerRadius($$.radius)
 			.innerRadius($$.innerRadius);
 
-		const newArc = function(d, withoutUpdate) {
+		const newArc = (d, withoutUpdate) => {
 			if (withoutUpdate) {
 				return arc(d);
 			} // for interpolate
@@ -152,25 +151,19 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const updated = $$.updateAngle(d);
-		let c;
-		let x;
-		let y;
-		let h;
-		let ratio;
 		let translate = "";
 
 		if (updated && !$$.hasType("gauge")) {
-			c = this.svgArc.centroid(updated);
-			x = isNaN(c[0]) ? 0 : c[0];
-			y = isNaN(c[1]) ? 0 : c[1];
-			h = Math.sqrt(x * x + y * y);
+			const c = this.svgArc.centroid(updated);
+			const x = isNaN(c[0]) ? 0 : c[0];
+			const y = isNaN(c[1]) ? 0 : c[1];
+			const h = Math.sqrt(x * x + y * y);
 
-			if ($$.hasType("donut") && config.donut_label_ratio) {
-				ratio = isFunction(config.donut_label_ratio) ?
-					config.donut_label_ratio(d, $$.radius, h) : config.donut_label_ratio;
-			} else if ($$.hasType("pie") && config.pie_label_ratio) {
-				ratio = isFunction(config.pie_label_ratio) ?
-					config.pie_label_ratio(d, $$.radius, h) : config.pie_label_ratio;
+			let ratio = ($$.hasType("donut") && config.donut_label_ratio) ||
+				($$.hasType("pie") && config.pie_label_ratio);
+
+			if (ratio) {
+				ratio = isFunction(ratio) ? ratio(d, $$.radius, h) : ratio;
 			} else {
 				ratio = $$.radius &&
 					(h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0);
@@ -178,6 +171,7 @@ extend(ChartInternal.prototype, {
 
 			translate = `translate(${x * ratio},${y * ratio})`;
 		}
+
 		return translate;
 	},
 

@@ -95,15 +95,16 @@ extend(ChartInternal.prototype, {
 	regionY(d) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const yScale = d.axis === "y" ? $$.y : $$.y2;
 		let yPos;
 
 		if (d.axis === "y" || d.axis === "y2") {
-			yPos = config.axis_rotated ? 0 : (
+			yPos = isRotated ? 0 : (
 				"end" in d ? yScale(d.end) : 0
 			);
 		} else {
-			yPos = config.axis_rotated ? (
+			yPos = isRotated ? (
 				"start" in d ? $$.x(
 					$$.isTimeSeries() ? $$.parseDate(d.start) : d.start
 				) : 0
@@ -116,16 +117,17 @@ extend(ChartInternal.prototype, {
 	regionWidth(d) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const yScale = d.axis === "y" ? $$.y : $$.y2;
 		const start = $$.regionX(d);
 		let end;
 
 		if (d.axis === "y" || d.axis === "y2") {
-			end = config.axis_rotated ? (
+			end = isRotated ? (
 				"end" in d ? yScale(d.end) : $$.width
 			) : $$.width;
 		} else {
-			end = config.axis_rotated ?
+			end = isRotated ?
 				$$.width : "end" in d ?
 					$$.x($$.isTimeSeries() ? $$.parseDate(d.end) : d.end) :
 					$$.width;
@@ -137,17 +139,18 @@ extend(ChartInternal.prototype, {
 	regionHeight(d) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const start = this.regionY(d);
 		let end;
 		const yScale = d.axis === "y" ? $$.y : $$.y2;
 
 		if (d.axis === "y" || d.axis === "y2") {
-			end = config.axis_rotated ?
+			end = isRotated ?
 				$$.height : (
 					"start" in d ? yScale(d.start) : $$.height
 				);
 		} else {
-			end = config.axis_rotated ? (
+			end = isRotated ? (
 				"end" in d ? $$.x(
 					$$.isTimeSeries() ? $$.parseDate(d.end) : d.end
 				) : $$.height

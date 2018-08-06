@@ -278,13 +278,11 @@ extend(ChartInternal.prototype, {
 			.attr("clip-path", $$.clipPathForGrid)
 			.attr("class", CLASS.grid);
 
-		if (config.grid_x_show) {
+		config.grid_x_show &&
 			$$.grid.append("g").attr("class", CLASS.xgrids);
-		}
 
-		if (config.grid_y_show) {
+		config.grid_y_show &&
 			$$.grid.append("g").attr("class", CLASS.ygrids);
-		}
 
 		if (config.grid_focus_show) {
 			$$.grid.append("g")
@@ -362,7 +360,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	getGridFilterToRemove(params) {
-		return params ? function(line) {
+		return params ? line => {
 			let found = false;
 
 			(isArray(params) ? params.concat() : [params]).forEach(param => {
@@ -372,7 +370,7 @@ extend(ChartInternal.prototype, {
 			});
 
 			return found;
-		} : function() { return true; };
+		} : () => true;
 	},
 
 	removeGridLines(params, forX) {

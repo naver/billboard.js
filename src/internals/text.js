@@ -100,12 +100,15 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Gets the getBoundingClientRect value of the element
 	 * @private
-	 * @param {String} text
-	 * @param {String} class
-	 * @param {HTMLElement} element
+	 * @param {HTMLElement|d3.selection} textVal
+	 * @param {String} className
+	 * @param {HTMLElement|d3.selection} elementVal
 	 * @returns {Object} value of element.getBoundingClientRect()
 	 */
-	getTextRect(text, cls, element) {
+	getTextRect(textVal, className, elementVal) {
+		const text = (textVal.node ? textVal.node() : textVal).textContent;
+		const element = elementVal.node ? elementVal.node() : elementVal;
+
 		const dummy = d3Select("body").append("div")
 			.classed("bb", true);
 
@@ -122,7 +125,7 @@ extend(ChartInternal.prototype, {
 			.data([text])
 			.enter()
 			.append("text")
-			.classed(!cls ? "" : cls, true)
+			.classed(className, !!className)
 			.style("font", font)
 			.text(text)
 			.each(function() {

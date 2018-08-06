@@ -15,10 +15,6 @@ export default class Options {
 			 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
 			 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
 			 * If this option is not specified, the chart will be generated but not be set. Instead, we can access the element by chart.element and set it by ourselves.<br>
-			 * - **NOTE:**
-			 *  > When chart is not bound, it'll start observing if `chart.element` is bound by MutationObserver.<br>
-			 *  > In this case, polyfill is required in IE9 and IE10 because they do not support MutationObserver.<br>
-			 *  > On the other hand, if chart always will be bound, polyfill will not be required because MutationObserver will never be called.
 			 * @name bindto
 			 * @memberOf Options
 			 * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.

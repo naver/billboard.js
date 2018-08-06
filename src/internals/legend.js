@@ -9,7 +9,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isDefined, getOption, isEmpty, isFunction, notEmpty} from "./util";
+import {extend, callFn, isDefined, getOption, isEmpty, isFunction, notEmpty} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -323,9 +323,7 @@ extend(ChartInternal.prototype, {
 			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
 			.style("cursor", "pointer")
 			.on("click", id => {
-				if (isFunction(config.legend_item_onclick)) {
-					config.legend_item_onclick.call($$, id);
-				} else {
+				if (!callFn(config.legend_item_onclick, $$, id)) {
 					if (d3Event.altKey) {
 						$$.api.hide();
 						$$.api.show(id);
@@ -341,17 +339,13 @@ extend(ChartInternal.prototype, {
 		if (!isTouch) {
 			item
 				.on("mouseout", function(id) {
-					if (isFunction(config.legend_item_onout)) {
-						config.legend_item_onout.call($$, id);
-					} else {
+					if (!callFn(config.legend_item_onout, $$, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, false);
 						$$.api.revert();
 					}
 				})
 				.on("mouseover", function(id) {
-					if (isFunction(config.legend_item_onover)) {
-						config.legend_item_onover.call($$, id);
-					} else {
+					if (!callFn(config.legend_item_onover, $$, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, true);
 
 						if (!$$.transiting && $$.isTargetToShow(id)) {
@@ -400,7 +394,7 @@ extend(ChartInternal.prototype, {
 		const getTextBox = function(textElement, id) {
 			if (!$$.legendItemTextBox[id]) {
 				$$.legendItemTextBox[id] =
-					$$.getTextRect(textElement.textContent, CLASS.legendItem, textElement);
+					$$.getTextRect(textElement, CLASS.legendItem, textElement);
 			}
 
 			return $$.legendItemTextBox[id];
@@ -498,12 +492,14 @@ extend(ChartInternal.prototype, {
 		}
 
 		const xForLegendText = (id, i) => xForLegend(id, i) + 4 + config.legend_item_tile_width;
-		const yForLegendText = (id, i) => yForLegend(id, i) + 9;
 		const xForLegendRect = (id, i) => xForLegend(id, i);
-		const yForLegendRect = (id, i) => yForLegend(id, i) - 5;
 		const x1ForLegendTile = (id, i) => xForLegend(id, i) - 2;
 		const x2ForLegendTile = (id, i) => xForLegend(id, i) - 2 + config.legend_item_tile_width;
+
+		const yForLegendText = (id, i) => yForLegend(id, i) + 9;
+		const yForLegendRect = (id, i) => yForLegend(id, i) - 5;
 		const yForLegendTile = (id, i) => yForLegend(id, i) + 4;
+
 		const pos = -200;
 
 		// Define g for legend area
