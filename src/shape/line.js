@@ -492,7 +492,8 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data(d => !$$.isBarType(d) && $$.labelishData(d));
+			.data(d => !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) &&
+				$$.labelishData(d));
 
 		$$.mainCircle.exit().remove();
 
@@ -662,5 +663,10 @@ extend(ChartInternal.prototype, {
 
 	isWithinStep(that, y) {
 		return Math.abs(y - d3Mouse(that)[1]) < 30;
-	}
+	},
+
+	shouldDrawPointsForLine(d) {
+		return this.config.line_points === true ||
+			(Array.isArray(this.config.line_points) && this.config.line_points.includes(d.id));
+	},
 });
