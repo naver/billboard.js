@@ -108,7 +108,7 @@ extend(ChartInternal.prototype, {
 			let color;
 
 			// if callback function is provided
-			if (colors[id] instanceof Function) {
+			if (isFunction(colors[id])) {
 				color = colors[id](d);
 
 			// if specified, choose that color
@@ -127,7 +127,7 @@ extend(ChartInternal.prototype, {
 				colors[id] = color;
 			}
 
-			return callback instanceof Function ?
+			return isFunction(callback) ?
 				callback(color, d) : color;
 		};
 	},
@@ -148,6 +148,7 @@ extend(ChartInternal.prototype, {
 
 			for (let i = 0, v; i < values.length; i++) {
 				v = asValue ? value : (value * 100 / max);
+
 				if (v < values[i]) {
 					color = colors[i];
 					break;

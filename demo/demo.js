@@ -2413,6 +2413,24 @@ d3.select(".chart_area")
 					show: false
 				}
 			}
+		},
+		LinePoint: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 170, 250, 210, 190, 175, 225],
+						["data4", 283, 170, 275, 143, 220, 255]
+					],
+					types: {
+						data2: "scatter"
+					}
+				},
+				line: {
+					point: ["data1", "data3"]
+				}
+			}
 		}
 	},
 	PieChartOptions: {

@@ -42,11 +42,11 @@ extend(ChartInternal.prototype, {
 
 		if (position.indexOf("right") >= 0) {
 			x = $$.currentWidth -
-				$$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width -
+				$$.getTextRect($$.title, $$.CLASS.title, $$.title).width -
 				config.title_padding.right;
 		} else if (position.indexOf("center") >= 0) {
 			x = ($$.currentWidth -
-				$$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).width) / 2;
+				$$.getTextRect($$.title, $$.CLASS.title, $$.title).width) / 2;
 		} else { // left
 			x = config.title_padding.left;
 		}
@@ -63,7 +63,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return $$.config.title_padding.top +
-			$$.getTextRect($$.title.node().textContent, $$.CLASS.title, $$.title.node()).height;
+			$$.getTextRect($$.title, $$.CLASS.title, $$.title).height;
 	},
 
 	/**

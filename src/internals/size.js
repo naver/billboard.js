@@ -9,16 +9,14 @@ import {isValue, ceil10, extend, capitalize} from "./util";
 extend(ChartInternal.prototype, {
 	getCurrentWidth() {
 		const $$ = this;
-		const config = $$.config;
 
-		return config.size_width ? config.size_width : $$.getParentWidth();
+		return $$.config.size_width || $$.getParentWidth();
 	},
 
 	getCurrentHeight() {
 		const $$ = this;
 		const config = $$.config;
-		const h = config.size_height ?
-			config.size_height : $$.getParentHeight();
+		const h = config.size_height || $$.getParentHeight();
 
 		return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
 	},

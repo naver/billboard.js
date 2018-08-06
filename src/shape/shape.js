@@ -34,24 +34,25 @@ extend(ChartInternal.prototype, {
 		const indices = {};
 		let i = 0;
 
-		$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(d => {
-			for (let j = 0; j < config.data_groups.length; j++) {
-				if (config.data_groups[j].indexOf(d.id) < 0) {
-					continue;
-				}
+		$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
+			.forEach(d => {
+				for (let j = 0, groups; (groups = config.data_groups[j]); j++) {
+					if (groups.indexOf(d.id) < 0) {
+						continue;
+					}
 
-				for (let k = 0; k < config.data_groups[j].length; k++) {
-					if (config.data_groups[j][k] in indices) {
-						indices[d.id] = indices[config.data_groups[j][k]];
-						break;
+					for (let k = 0, row; (row = groups[k]); k++) {
+						if (row in indices) {
+							indices[d.id] = indices[row];
+							break;
+						}
 					}
 				}
-			}
 
-			if (isUndefined(indices[d.id])) {
-				indices[d.id] = i++;
-			}
-		});
+				if (isUndefined(indices[d.id])) {
+					indices[d.id] = i++;
+				}
+			});
 
 		indices.__max__ = i - 1;
 
@@ -60,7 +61,7 @@ extend(ChartInternal.prototype, {
 
 	getShapeX(offset, targetsNum, indices, isSub) {
 		const $$ = this;
-		const scale = isSub ? $$.subX : ($$.zoomScale ? $$.zoomScale : $$.x);
+		const scale = isSub ? $$.subX : ($$.zoomScale || $$.x);
 		const barPadding = $$.config.bar_padding;
 
 		return d => {

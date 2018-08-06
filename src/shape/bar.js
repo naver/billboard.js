@@ -91,14 +91,12 @@ extend(ChartInternal.prototype, {
 	expandBars(i, id, reset) {
 		const $$ = this;
 
-		if (reset) { $$.unexpandBars(); }
+		reset && $$.unexpandBars();
 		$$.getBars(i, id).classed(CLASS.EXPANDED, true);
 	},
 
 	unexpandBars(i) {
-		const $$ = this;
-
-		$$.getBars(i).classed(CLASS.EXPANDED, false);
+		this.getBars(i).classed(CLASS.EXPANDED, false);
 	},
 
 	generateDrawBar(barIndices, isSub) {
@@ -107,11 +105,13 @@ extend(ChartInternal.prototype, {
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
 		const isRotated = config.axis_rotated;
 		const isGrouped = config.data_groups.length;
+		const barRadius = config.bar_radius;
+		const barRadiusRatio = config.bar_radius_ratio;
 
 		// get the bar radius
-		const getRadius = isNumber(config.bar_radius) && config.bar_radius > 0 ?
-			() => config.bar_radius : (
-				isNumber(config.bar_radius_ratio) ? w => w * config.bar_radius_ratio : null
+		const getRadius = isNumber(barRadius) && barRadius > 0 ?
+			() => barRadius : (
+				isNumber(barRadiusRatio) ? w => w * barRadiusRatio : null
 			);
 
 		return (d, i) => {

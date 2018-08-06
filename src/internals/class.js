@@ -41,6 +41,7 @@ extend(ChartInternal.prototype, {
 			if (ids.indexOf(id) < 0) {
 				ids.push(id);
 			}
+
 			return classes[ids.indexOf(id) % classes.length];
 		};
 	},

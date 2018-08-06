@@ -8,7 +8,7 @@ import {
 } from "d3-array";
 import {zoomIdentity as d3ZoomIdentity} from "d3-zoom";
 import Chart from "../internals/Chart";
-import {isDefined, isObject, isFunction, isString, extend} from "../internals/util";
+import {callFn, isDefined, isObject, isString, extend} from "../internals/util";
 
 /**
  * Zoom by giving x domain.
@@ -62,9 +62,7 @@ const zoom = function(domainValue) {
 		});
 
 		$$.setZoomResetButton();
-
-		isFunction($$.config.zoom_onzoom) &&
-			$$.config.zoom_onzoom.call(this, $$.x.orgDomain());
+		callFn($$.config.zoom_onzoom, this, $$.x.orgDomain());
 	} else {
 		resultDomain = $$.zoomScale ?
 			$$.zoomScale.domain() : $$.x.orgDomain();
