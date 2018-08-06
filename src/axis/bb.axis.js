@@ -28,16 +28,18 @@ const getSizeFor1Char = node => {
 	!node.empty() && node.select("text")
 		.text("0")
 		.call(el => {
-			const box = el.node().getBBox();
-			const h = box.height;
-			const w = box.width;
+			try {
+				const box = el.node().getBBox();
+				const h = box.height;
+				const w = box.width;
 
-			if (h && w) {
-				size.h = h;
-				size.w = w;
-			}
+				if (h && w) {
+					size.h = h;
+					size.w = w;
+				}
 
-			el.text("");
+				el.text("");
+			} catch (e) {}
 		});
 
 	return (getSizeFor1Char.size = size);
