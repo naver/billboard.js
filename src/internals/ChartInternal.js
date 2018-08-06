@@ -557,7 +557,7 @@ export default class ChartInternal {
 	getWithOption(options) {
 		const withOptions = {
 			Y: true,
-			SubChart: true,
+			Subchart: true,
 			Transition: true,
 			EventRect: true,
 			Dimension: true,
@@ -748,17 +748,16 @@ export default class ChartInternal {
 		hasRadar && $$.redrawRadar();
 
 		// subchart
-		config.subchart_show &&
-			$$.redrawSubchart &&
-				$$.redrawSubchart(
-					wth.Subchart,
-					transitions,
-					duration,
-					durationForExit,
-					areaIndices,
-					barIndices,
-					lineIndices
-				);
+		config.subchart_show && $$.redrawSubchart &&
+			$$.redrawSubchart(
+				wth.Subchart,
+				transitions,
+				duration,
+				durationForExit,
+				areaIndices,
+				barIndices,
+				lineIndices
+			);
 
 		// circles for select
 		main.selectAll(`.${CLASS.selectedCircles}`)
