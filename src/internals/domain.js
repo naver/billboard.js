@@ -8,7 +8,7 @@ import {
 	extent as d3Extent
 } from "d3-array"; // selection
 import ChartInternal from "./ChartInternal";
-import {extend, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
+import {extend, brushEmpty, getBrushSelection, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
 
 extend(ChartInternal.prototype, {
 	getYDomainMinMax(targets, type) {
@@ -271,8 +271,8 @@ extend(ChartInternal.prototype, {
 		}
 
 		if (withUpdateXDomain) {
-			const domainValue = domain || (!$$.brush || $$.brushEmpty()) ?
-				$$.orgXDomain : $$.getBrushSelection().map(v => $$.subX.invert(v));
+			const domainValue = domain || (!$$.brush || brushEmpty($$)) ?
+				$$.orgXDomain : getBrushSelection($$).map($$.subX.invert);
 
 			$$.x.domain(domainValue);
 			zoomEnabled && $$.zoom.updateScaleExtent();
