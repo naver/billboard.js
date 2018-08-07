@@ -5,7 +5,6 @@
 import Chart from "./internals/Chart";
 import ChartInternal from "./internals/ChartInternal";
 import Axis from "./axis/Axis";
-import * as util from "./internals/util";
 import "./scss/billboard.scss";
 
 /**
@@ -84,10 +83,6 @@ const bb = {
 		}
 	}
 };
-
-for (const p in util) {
-	!/^__/.test(p) && (ChartInternal.prototype[p] = util[p]);
-}
 
 require("./config/config.js");
 require("./internals/scale.js");

@@ -10,7 +10,7 @@ import {
 } from "d3-dsv";
 import {keys as d3Keys} from "d3-collection";
 import ChartInternal from "../internals/ChartInternal";
-import {isUndefined, isDefined, isValue, notEmpty, extend, isArray, capitalize} from "../internals/util";
+import {isUndefined, isDefined, isObject, isValue, notEmpty, extend, isArray, capitalize} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
@@ -246,7 +246,7 @@ extend(ChartInternal.prototype, {
 					let x;
 
 					value = value !== null && !isNaN(value) ?
-						+d[id] : (isArray(value) || ($$.isObject(value) && value.high) ? value : null);
+						+d[id] : (isArray(value) || (isObject(value) && value.high) ? value : null);
 
 					// use x as categories if custom x and categorized
 					if (isCategorized && index === 0 && !isUndefined(rawX)) {

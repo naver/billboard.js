@@ -107,24 +107,24 @@ const getPathBox = path => {
 };
 
 // return brush selection array
-const getBrushSelection = function() {
+const getBrushSelection = ctx => {
 	let selection = null;
 	const event = d3Event;
-	const ctx = this.context || this.main;
+	const main = ctx.context || ctx.main;
 
 	// check from event
 	if (event && event.constructor.name === "BrushEvent") {
 		selection = event.selection;
 	// check from brush area selection
-	} else if (ctx && (selection = ctx.select(`.${CLASS.brush}`).node())) {
+	} else if (main && (selection = main.select(`.${CLASS.brush}`).node())) {
 		selection = d3BrushSelection(selection);
 	}
 
 	return selection;
 };
 
-const brushEmpty = function() {
-	const selection = this.getBrushSelection();
+const brushEmpty = ctx => {
+	const selection = getBrushSelection(ctx);
 
 	if (selection) {
 		// brush selected area
@@ -136,13 +136,13 @@ const brushEmpty = function() {
 	return true;
 };
 
-function extend(target = {}, source) {
+const extend = (target = {}, source) => {
 	for (const p in source) {
 		target[p] = source[p];
 	}
 
 	return target;
-}
+};
 
 /**
  * Return first letter capitalized
