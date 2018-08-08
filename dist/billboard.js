@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180806154448
+ * @version 1.5.1-nightly-20180808174525
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -118,19 +118,19 @@ var _Chart = __webpack_require__(1),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
     _Axis = __webpack_require__(5),
-    _Axis2 = _interopRequireDefault(_Axis),
-    _util = __webpack_require__(6),
-    util = _interopRequireWildcard(_util);
+    _Axis2 = _interopRequireDefault(_Axis);
 
 __webpack_require__(10);
-
-function _interopRequireWildcard(obj) { if (obj && obj.__esModule) return obj; var newObj = {}; if (obj != null) for (var key in obj) Object.prototype.hasOwnProperty.call(obj, key) && (newObj[key] = obj[key]); return newObj.default = obj, newObj; }
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180806154448
+ * @version 1.5.1-nightly-20180808174525
+ */
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
  */
 var bb = {
 	/**
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180806154448",
+	version: "1.5.1-nightly-20180808174525",
 
 	/**
   * Generate chart
@@ -201,13 +201,7 @@ var bb = {
 			}
 		}
 	}
-}; /**
-    * Copyright (c) 2017 NAVER Corp.
-    * billboard.js project is licensed under the MIT license
-    */
-
-
-for (var p in util) /^__/.test(p) || (_ChartInternal2.default.prototype[p] = util[p]);
+};
 
 __webpack_require__(12), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(63), __webpack_require__(9), __webpack_require__(64), __webpack_require__(65);
 exports.bb = bb;
@@ -1212,81 +1206,29 @@ var isValue = function (v) {
 		x: x, y: y, width: width, height: height
 	};
 },
-    getBrushSelection = function () {
+    getBrushSelection = function (ctx) {
 	var selection = null,
 	    event = _d3Selection.event,
-	    ctx = this.context || this.main;
+	    main = ctx.context || ctx.main;
 
 	// check from event
 
-	return event && event.constructor.name === "BrushEvent" ? selection = event.selection : ctx && (selection = ctx.select("." + _classes2.default.brush).node()) && (selection = (0, _d3Brush.brushSelection)(selection)), selection;
+	return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select("." + _classes2.default.brush).node()) && (selection = (0, _d3Brush.brushSelection)(selection)), selection;
 },
-    brushEmpty = function () {
-	var selection = this.getBrushSelection();
+    brushEmpty = function (ctx) {
+	var selection = getBrushSelection(ctx);
 
 	return !selection || selection[0] === selection[1];
-};
-
-/**
- * Check if is array
- * @param {Array} arr
- * @returns {Boolean}
- * @private
- */
-
-
-/**
- * Check if is object
- * @param {Object} obj
- * @returns {Boolean}
- * @private
- */
-
-
-/**
- * Call function with arguments
- * @param {Function} fn Function to be called
- * @param {*} args Arguments
- * @return {Boolean} true: fn is function, false: fn is not function
- * @private
- */
-
-
-/**
- * Replace tag sign to html entity
- * @param {String} str
- * @return {String}
- * @private
- */
-
-
-// substitution of SVGPathSeg API polyfill
-
-
-// return brush selection array
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-function extend() {
+},
+    extend = function () {
 	var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
 	    source = arguments[1];
 
 	for (var p in source) target[p] = source[p];
 
 	return target;
-}
-
-/**
- * Return first letter capitalized
- * @param {String} str
- * @return {String} capitalized string
- * @private
- */
-
-var capitalize = function (str) {
+},
+    capitalize = function (str) {
 	return str.charAt(0).toUpperCase() + str.slice(1);
 },
     merge = function (target) {
@@ -1362,6 +1304,53 @@ var capitalize = function (str) {
 };
 
 /**
+ * Check if is array
+ * @param {Array} arr
+ * @returns {Boolean}
+ * @private
+ */
+
+
+/**
+ * Check if is object
+ * @param {Object} obj
+ * @returns {Boolean}
+ * @private
+ */
+
+
+/**
+ * Call function with arguments
+ * @param {Function} fn Function to be called
+ * @param {*} args Arguments
+ * @return {Boolean} true: fn is function, false: fn is not function
+ * @private
+ */
+
+
+/**
+ * Replace tag sign to html entity
+ * @param {String} str
+ * @return {String}
+ * @private
+ */
+
+
+// substitution of SVGPathSeg API polyfill
+
+
+// return brush selection array
+
+
+/**
+ * Return first letter capitalized
+ * @param {String} str
+ * @return {String} capitalized string
+ * @private
+ */
+
+
+/**
  * Merge object returning new object
  * @param {Object} target
  * @param {Object} objectN
@@ -1391,6 +1380,10 @@ var capitalize = function (str) {
 
 
 // emulate event
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 
 
 exports.asHalfPixel = asHalfPixel;
@@ -5050,9 +5043,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		if (withUpdateOrgXDomain && ($$.x.domain(domain || (0, _d3Array.extent)($$.getXDomain(targets))), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
-			var domainValue = domain || !$$.brush || $$.brushEmpty() ? $$.orgXDomain : $$.getBrushSelection().map(function (v) {
-				return $$.subX.invert(v);
-			});
+			var domainValue = domain || !$$.brush || (0, _util.brushEmpty)($$) ? $$.orgXDomain : (0, _util.getBrushSelection)($$).map($$.subX.invert);
 
 			$$.x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
 		}
@@ -5425,9 +5416,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		});
 	},
 	getValuesAsIdKeyed: function getValuesAsIdKeyed(targets) {
-		var $$ = this,
-		    ys = {};
-
+		var ys = {};
 
 		return targets.forEach(function (t) {
 			var data = [];
@@ -5435,7 +5424,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			t.values.forEach(function (v) {
 				var value = v.value;
 
-				(0, _util.isArray)(value) ? data.push.apply(data, value) : $$.isObject(value) && "high" in value ? data.push.apply(data, Object.values(value)) : data.push(value);
+				(0, _util.isArray)(value) ? data.push.apply(data, value) : (0, _util.isObject)(value) && "high" in value ? data.push.apply(data, Object.values(value)) : data.push(value);
 			}), ys[t.id] = data;
 		}), ys;
 	},
@@ -5895,7 +5884,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					    x = void 0;
 
 
-					return value = value === null || isNaN(value) ? (0, _util.isArray)(value) || $$.isObject(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !(0, _util.isUndefined)(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), ((0, _util.isUndefined)(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), { x: x, value: value, id: convertedId };
+					return value = value === null || isNaN(value) ? (0, _util.isArray)(value) || (0, _util.isObject)(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !(0, _util.isUndefined)(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), ((0, _util.isUndefined)(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), { x: x, value: value, id: convertedId };
 				}).filter(function (v) {
 					return (0, _util.isDefined)(v.x);
 				})
@@ -7208,9 +7197,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				pathRadius[+!isRotated] = "" + arc + radius + "," + radius, pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"](), isNegative && pathRadius.reverse();
 			}
 
-			var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "\n\t\t\t\t V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "\n\t\t\t\t H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "\n\t\t\t\t H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "\n\t\t\t\t V" + points[3][indexY];
+			// path string data shouldn't be containing new line chars
+			// https://github.com/naver/billboard.js/issues/530
+			var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
 
-			return "M" + points[0][indexX] + "," + points[0][indexY] + " " + path + "z";
+			return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
 		};
 	},
 	generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
@@ -10201,7 +10192,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 			// update subchart elements if needed
 			{
-				$$.brushEmpty() || $$.brush.update();
+				(0, _util.brushEmpty)($$) || $$.brush.update();
 
 
 				// setup drawer - MEMO: this must be called after axis updated
