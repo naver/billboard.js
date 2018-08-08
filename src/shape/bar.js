@@ -140,15 +140,13 @@ extend(ChartInternal.prototype, {
 				isNegative && pathRadius.reverse();
 			}
 
+			// path string data shouldn't be containing new line chars
+			// https://github.com/naver/billboard.js/issues/530
 			const path = isRotated ?
-				`H${points[1][indexX] - radius} ${pathRadius[0]}
-				 V${points[2][indexY] - radius} ${pathRadius[1]}
-				 H${points[3][indexX]}` :
-				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}
-				 H${points[2][indexX] - radius} ${pathRadius[1]}
-				 V${points[3][indexY]}`;
+				`H${points[1][indexX] - radius} ${pathRadius[0]}V${points[2][indexY] - radius} ${pathRadius[1]}H${points[3][indexX]}` :
+				`V${points[1][indexY] + (isNegative ? -radius : radius)} ${pathRadius[0]}H${points[2][indexX] - radius} ${pathRadius[1]}V${points[3][indexY]}`;
 
-			return `M${points[0][indexX]},${points[0][indexY]} ${path}z`;
+			return `M${points[0][indexX]},${points[0][indexY]}${path}z`;
 		};
 	},
 
