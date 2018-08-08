@@ -12,7 +12,7 @@ import {
 } from "d3-brush";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction} from "../internals/util";
+import {extend, brushEmpty, isFunction} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -69,9 +69,9 @@ extend(ChartInternal.prototype, {
 			this.update();
 		};
 
-		$$.brush.getSelection = function() {
-			return $$.context ? $$.context.select(`.${CLASS.brush}`) : d3Select([]);
-		};
+		$$.brush.getSelection = () => (
+			$$.context ? $$.context.select(`.${CLASS.brush}`) : d3Select([])
+		);
 	},
 
 	/**
@@ -349,9 +349,7 @@ extend(ChartInternal.prototype, {
 			// update subchart elements if needed
 			if (withSubchart) {
 				// extent rect
-				if (!$$.brushEmpty()) {
-					$$.brush.update();
-				}
+				!brushEmpty($$) && $$.brush.update();
 
 				// setup drawer - MEMO: this must be called after axis updated
 				const drawAreaOnSub = $$.generateDrawArea(areaIndices, true);

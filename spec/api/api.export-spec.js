@@ -14,7 +14,11 @@ describe("API export", () => {
 				columns: [
 					["data1", 30, 200, 100, 400, 150, 250],
 					["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-				]
+				],
+				types: {
+					data1: "bar",
+					data2: "area"
+				}
 			}
 		});
 	});

@@ -18,6 +18,7 @@ import {
 	isBoolean,
 	isDefined,
 	isFunction,
+	isObject,
 	isObjectType,
 	isString,
 	isUndefined,
@@ -402,7 +403,6 @@ extend(ChartInternal.prototype, {
 	},
 
 	getValuesAsIdKeyed(targets) {
-		const $$ = this;
 		const ys = {};
 
 		targets.forEach(t => {
@@ -413,7 +413,7 @@ extend(ChartInternal.prototype, {
 
 				if (isArray(value)) {
 					data.push(...value);
-				} else if ($$.isObject(value) && "high" in value) {
+				} else if (isObject(value) && "high" in value) {
 					data.push(...Object.values(value));
 				} else {
 					data.push(value);
