@@ -2,10 +2,15 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3-selection";
-import {isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
 import bbAxis from "./bb.axis";
 import CLASS from "../config/classes";
+import {capitalize, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
+
+const isHorizontal = ($$, forHorizontal) => {
+	const isRotated = $$.config.axis_rotated;
+
+	return forHorizontal ? isRotated : !isRotated;
+};
 
 export default class Axis {
 	constructor(owner) {
@@ -18,37 +23,34 @@ export default class Axis {
 		const isRotated = config.axis_rotated;
 		const main = $$.main;
 
-		$$.axes.x = main.append("g")
-			.attr("class", `${CLASS.axis} ${CLASS.axisX}`)
-			.attr("clip-path", $$.clipPathForXAxis)
-			.attr("transform", $$.getTranslate("x"))
-			.style("visibility", config.axis_x_show ? "visible" : "hidden");
+		["x", "y", "y2"].forEach(v => {
+			const axisStr = `axis${capitalize(v)}`;
+			const classAxis = `${CLASS.axis} ${CLASS[axisStr]}`;
+			const classLabel = CLASS[`${axisStr}Label`];
 
-		$$.axes.x.append("text")
-			.attr("class", CLASS.axisXLabel)
-			.attr("transform", isRotated ? "rotate(-90)" : "")
-			.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+			$$.axes[v] = main.append("g")
+				.attr("class", classAxis)
+				.attr("clip-path", () => {
+					let res = null;
 
-		$$.axes.y = main.append("g")
-			.attr("class", `${CLASS.axis} ${CLASS.axisY}`)
-			.attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis)
-			.attr("transform", $$.getTranslate("y"))
-			.style("visibility", config.axis_y_show ? "visible" : "hidden");
+					if (v === "x") {
+						res = $$.clipPathForXAxis;
+					} else if (v === "y" && config.axis_y_inner) {
+						res = $$.clipPathForYAxis;
+					}
 
-		$$.axes.y.append("text")
-			.attr("class", CLASS.axisYLabel)
-			.attr("transform", isRotated ? "" : "rotate(-90)")
-			.style("text-anchor", this.textAnchorForYAxisLabel.bind(this));
+					return res;
+				})
+				.attr("transform", $$.getTranslate(v))
+				.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
 
-		$$.axes.y2 = main.append("g")
-			.attr("class", `${CLASS.axis} ${CLASS.axisY2}`)
-			.attr("transform", $$.getTranslate("y2"))
-			.style("visibility", config.axis_y2_show ? "visible" : "hidden");
-
-		$$.axes.y2.append("text")
-			.attr("class", CLASS.axisY2Label)
-			.attr("transform", isRotated ? "" : "rotate(-90)")
-			.style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
+			$$.axes[v].append("text")
+				.attr("class", classLabel)
+				.attr("transform", ["rotate(-90)", null][
+					v === "x" ? +!isRotated : +isRotated
+				])
+				.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+		});
 	}
 
 	getXAxis(axisName, scale, orient, tickFormat,
@@ -174,26 +176,28 @@ export default class Axis {
 			) : format;
 	}
 
-	getTickValues(tickValues, axis) {
+	getTickValues(type) {
+		const $$ = this.owner;
+		const tickValues = $$.config[`axis_${type}_tick_values`];
+		const axis = $$[`${type}Axis`];
+
 		return tickValues || (axis ? axis.tickValues() : undefined);
 	}
 
 	getXAxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_x_tick_values, this.owner.xAxis);
+		return this.getTickValues("x");
 	}
 
 	getYAxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_y_tick_values, this.owner.yAxis);
+		return this.getTickValues("y");
 	}
 
 	getY2AxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_y2_tick_values, this.owner.y2Axis);
+		return this.getTickValues("y2");
 	}
 
 	getLabelOptionByAxisId(axisId) {
-		const $$ = this.owner;
-
-		return $$.config[`axis_${axisId}_label`];
+		return this.owner.config[`axis_${axisId}_label`];
 	}
 
 	getLabelText(axisId) {
@@ -217,32 +221,35 @@ export default class Axis {
 	}
 
 	getLabelPosition(axisId, defaultPosition) {
+		const isRotated = this.owner.config.axis_rotated;
 		const option = this.getLabelOptionByAxisId(axisId);
 		const position = (isObjectType(option) && option.position) ?
-			option.position : defaultPosition;
+			option.position : defaultPosition[+!isRotated];
+
+		const has = v => !!~position.indexOf(v);
 
 		return {
-			isInner: !!~position.indexOf("inner"),
-			isOuter: !!~position.indexOf("outer"),
-			isLeft: !!~position.indexOf("left"),
-			isCenter: !!~position.indexOf("center"),
-			isRight: !!~position.indexOf("right"),
-			isTop: !!~position.indexOf("top"),
-			isMiddle: !!~position.indexOf("middle"),
-			isBottom: !!~position.indexOf("bottom"),
+			isInner: has("inner"),
+			isOuter: has("outer"),
+			isLeft: has("left"),
+			isCenter: has("center"),
+			isRight: has("right"),
+			isTop: has("top"),
+			isMiddle: has("middle"),
+			isBottom: has("bottom")
 		};
 	}
 
 	getXAxisLabelPosition() {
-		return this.getLabelPosition("x", this.owner.config.axis_rotated ? "inner-top" : "inner-right");
+		return this.getLabelPosition("x", ["inner-top", "inner-right"]);
 	}
 
 	getYAxisLabelPosition() {
-		return this.getLabelPosition("y", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
+		return this.getLabelPosition("y", ["inner-right", "inner-top"]);
 	}
 
 	getY2AxisLabelPosition() {
-		return this.getLabelPosition("y2", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
+		return this.getLabelPosition("y2", ["inner-right", "inner-top"]);
 	}
 
 	getLabelPositionById(id) {
@@ -261,11 +268,11 @@ export default class Axis {
 		return this.getLabelText("y2");
 	}
 
-	xForAxisLabel(forHorizontal, position) {
+	xForAxisLabel(position, forHorizontal = true) {
 		const $$ = this.owner;
 		let x = position.isMiddle ? -$$.height / 2 : 0;
 
-		if (forHorizontal) {
+		if (isHorizontal($$, forHorizontal)) {
 			x = position.isLeft ? 0 : (
 				position.isCenter ? $$.width / 2 : $$.width
 			);
@@ -276,10 +283,11 @@ export default class Axis {
 		return x;
 	}
 
-	dxForAxisLabel(forHorizontal, position) {
+	dxForAxisLabel(position, forHorizontal = true) {
+		const $$ = this.owner;
 		let dx = position.isBottom ? "0.5em" : "0";
 
-		if (forHorizontal) {
+		if (isHorizontal($$, forHorizontal)) {
 			dx = position.isLeft ? "0.5em" : (
 				position.isRight ? "-0.5em" : "0"
 			);
@@ -290,10 +298,11 @@ export default class Axis {
 		return dx;
 	}
 
-	textAnchorForAxisLabel(forHorizontal, position) {
+	textAnchorForAxisLabel(position, forHorizontal = true) {
+		const $$ = this.owner;
 		let anchor = position.isMiddle ? "middle" : "end";
 
-		if (forHorizontal) {
+		if (isHorizontal($$, forHorizontal)) {
 			anchor = position.isLeft ? "start" : (
 				position.isCenter ? "middle" : "end"
 			);
@@ -305,27 +314,27 @@ export default class Axis {
 	}
 
 	xForXAxisLabel() {
-		return this.xForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.xForAxisLabel(this.getXAxisLabelPosition(), false);
 	}
 
 	xForYAxisLabel() {
-		return this.xForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.xForAxisLabel(this.getYAxisLabelPosition());
 	}
 
 	xForY2AxisLabel() {
-		return this.xForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.xForAxisLabel(this.getY2AxisLabelPosition());
 	}
 
 	dxForXAxisLabel() {
-		return this.dxForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.dxForAxisLabel(this.getXAxisLabelPosition(), false);
 	}
 
 	dxForYAxisLabel() {
-		return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.dxForAxisLabel(this.getYAxisLabelPosition());
 	}
 
 	dxForY2AxisLabel() {
-		return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.dxForAxisLabel(this.getY2AxisLabelPosition());
 	}
 
 	dyForXAxisLabel() {
@@ -368,94 +377,62 @@ export default class Axis {
 	}
 
 	textAnchorForXAxisLabel() {
-		const isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(!isRotated, this.getXAxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getXAxisLabelPosition(), false);
 	}
 
 	textAnchorForYAxisLabel() {
-		const isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(isRotated, this.getYAxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getYAxisLabelPosition());
 	}
 
 	textAnchorForY2AxisLabel() {
-		const isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(isRotated, this.getY2AxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getY2AxisLabelPosition());
 	}
 
 	getMaxTickWidth(id, withoutRecompute) {
 		const $$ = this.owner;
 		const config = $$.config;
+		const currentTickMax = $$.currentMaxTickWidths;
 		let maxWidth = 0;
-		let dummy;
-		let svg;
 
-		if (withoutRecompute && $$.currentMaxTickWidths[id]) {
-			return $$.currentMaxTickWidths[id];
+		if (withoutRecompute && currentTickMax[id]) {
+			return currentTickMax[id];
 		}
 
 		if ($$.svg) {
+			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-			let scale;
-			let axis;
+			const getFrom = isYAxis ? "getY" : "getX";
 
-			if (/^y2?$/.test(id)) {
-				scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id));
-				axis = this.getYAxis(
-					id,
-					scale,
-					$$[`${id}Orient`],
-					config[`axis_${id}_tick_format`],
-					$$[`${id}AxisTickValues`],
-					false,
-					true,
-					true
-				);
-			} else {
-				scale = $$.x.copy().domain($$.getXDomain(targetsToShow));
-				axis = this.getXAxis(
-					"x",
-					scale,
-					$$.xOrient,
-					$$.xAxisTickFormat,
-					$$.xAxisTickValues,
-					false,
-					true,
-					true
-				);
+			const scale = $$[id].copy().domain($$[`${getFrom}Domain`](targetsToShow, id));
+			const axis = this[`${getFrom}Axis`](
+				id,
+				scale,
+				$$[`${id}Orient`],
+				isYAxis ? config[`axis_${id}_tick_format`] : $$.xAxisTickFormat,
+				null,
+				false,
+				true,
+				true
+			);
 
-				this.updateXAxisTickValues(targetsToShow, axis);
-			}
+			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 
-			dummy = d3Select("body")
-				.append("div")
-				.classed("bb", true);
+			const dummy = $$.selectChart.append("svg")
+				.style("visibility", "hidden");
 
-			svg = dummy.append("svg")
-				.style("visibility", "hidden")
-				.style("position", "fixed")
-				.style("top", "0px")
-				.style("left", "0px");
-
-			svg.append("g").call(axis)
+			dummy.call(axis).selectAll("text")
 				.each(function() {
-					d3Select(this).selectAll("text")
-						.each(function() {
-							const boxWidth = this.getBoundingClientRect().width;
-
-							maxWidth < boxWidth && (maxWidth = boxWidth);
-						});
-
-					dummy.remove();
+					maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
 				});
+
+			dummy.remove();
 		}
 
-		$$.currentMaxTickWidths[id] = maxWidth <= 0 ?
-			$$.currentMaxTickWidths[id] : maxWidth;
+		if (maxWidth > 0) {
+			currentTickMax[id] = maxWidth;
+		}
 
-		return $$.currentMaxTickWidths[id];
+		return currentTickMax[id];
 	}
 
 	updateLabels(withTransition) {
@@ -466,14 +443,15 @@ export default class Axis {
 			Y2: $$.main.select(`.${CLASS.axisY2} .${CLASS.axisY2Label}`)
 		};
 
-		Object.keys(labels).forEach(axis => {
-			const node = labels[axis];
+		Object.keys(labels).forEach(v => {
+			const node = labels[v];
+			const axisLabel = `${v}AxisLabel`;
 
 			(withTransition ? node.transition() : node)
-				.attr("x", this[`xFor${axis}AxisLabel`].bind(this))
-				.attr("dx", this[`dxFor${axis}AxisLabel`].bind(this))
-				.attr("dy", this[`dyFor${axis}AxisLabel`].bind(this))
-				.text(this[`textFor${axis}AxisLabel`].bind(this));
+				.attr("x", this[`xFor${axisLabel}`].bind(this))
+				.attr("dx", this[`dxFor${axisLabel}`].bind(this))
+				.attr("dy", this[`dyFor${axisLabel}`].bind(this))
+				.text(this[`textFor${axisLabel}`].bind(this));
 		});
 	}
 
@@ -545,22 +523,19 @@ export default class Axis {
 		const $$ = this.owner;
 		const axes = $$.axes;
 
-		return {
-			axisX: duration ? axes.x.transition().duration(duration) : axes.x,
-			axisY: duration ? axes.y.transition().duration(duration) : axes.y,
-			axisY2: duration ? axes.y2.transition().duration(duration) : axes.y2,
-			axisSubX: duration ? axes.subx.transition().duration(duration) : axes.subx,
-		};
+		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subx"]
+			.map(v => (duration ? axes[v].transition().duration(duration) : axes[v]));
+
+		return {axisX, axisY, axisY2, axisSubX};
 	}
 
 	redraw(transitions, isHidden) {
 		const $$ = this.owner;
 		const opacity = isHidden ? "0" : "1";
 
-		$$.axes.x.style("opacity", opacity);
-		$$.axes.y.style("opacity", opacity);
-		$$.axes.y2.style("opacity", opacity);
-		$$.axes.subx.style("opacity", opacity);
+		["x", "y", "y2", "subx"].forEach(v => {
+			$$.axes[v].style("opacity", opacity);
+		});
 
 		transitions.axisX.call($$.xAxis);
 		transitions.axisY.call($$.yAxis);

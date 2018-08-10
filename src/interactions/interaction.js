@@ -216,41 +216,48 @@ extend(ChartInternal.prototype, {
 				// update index for x that is used by prevX and nextX
 				$$.updateXs();
 
+				const getPrevNextX = d => {
+					const index = d.index;
+
+					return {
+						prev: $$.getPrevX(index),
+						next: $$.getNextX(index)
+					};
+				};
+
 				rectW = d => {
-					let prevX = $$.getPrevX(d.index);
-					let nextX = $$.getNextX(d.index);
+					const x = getPrevNextX(d);
 
 					// if there this is a single data point make the eventRect full width (or height)
-					if (prevX === null && nextX === null) {
+					if (x.prev === null && x.next === null) {
 						return isRotated ? $$.height : $$.width;
 					}
 
-					if (prevX === null) {
-						prevX = xScale.domain()[0];
+					if (x.prev === null) {
+						x.prev = xScale.domain()[0];
 					}
 
-					if (nextX === null) {
-						nextX = xScale.domain()[1];
+					if (x.next === null) {
+						x.next = xScale.domain()[1];
 					}
 
-					return Math.max(0, (xScale(nextX) - xScale(prevX)) / 2);
+					return Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2);
 				};
 
 				rectX = d => {
-					const nextX = $$.getNextX(d.index);
+					const x = getPrevNextX(d);
 					const thisX = $$.data.xs[d.id][d.index];
-					let prevX = $$.getPrevX(d.index);
 
 					// if there this is a single data point position the eventRect at 0
-					if (prevX === null && nextX === null) {
+					if (x.prev === null && x.next === null) {
 						return 0;
 					}
 
-					if (prevX === null) {
-						prevX = xScale.domain()[0];
+					if (x.prev === null) {
+						x.prev = xScale.domain()[0];
 					}
 
-					return (xScale(thisX) + xScale(prevX)) / 2;
+					return (xScale(thisX) + xScale(x.prev)) / 2;
 				};
 			}
 
