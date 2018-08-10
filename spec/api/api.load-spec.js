@@ -223,4 +223,59 @@ describe("API load", function() {
 			});
 		});
 	});
+
+	describe("y Axis Label", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						['data1', 30, 200, 100, 400, 150],
+						['data2', 45, 423, 356, 478, 166]
+					],
+					axes: {
+						data1: "y",
+						data2: "y2"
+					}
+				},
+				axis: {
+					y: {
+						label: {
+							text: "Y Label",
+								position: "outer-middle"
+						},
+						tick: {
+							count: 5,
+							format: d3.format("$,")
+						}
+					},
+					y2:{
+						show:true,
+							label: {
+							text: "Y2 Label",
+							position: "outer-middle"
+						}
+					}
+				}
+			}
+		});
+
+		it("should be updated the axis label position ", done => {
+			const axisLabel = chart.$.main.select(`.${CLASS.axisYLabel}`);
+			const dy = +axisLabel.attr("dy");
+
+			chart.load({
+				columns: [
+					["data5", 2300000, 1900000, 3000000, 5000000, 3000000]
+				],
+				unload: ["data1"],
+				done: () => {
+					setTimeout(() => {
+						expect(+axisLabel.attr("dy")).to.be.below(dy);
+						done();
+					}, 500);
+				}
+			});
+
+		})
+	});
 });

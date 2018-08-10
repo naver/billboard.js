@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {extend, isString, isArray, isBoolean} from "../internals/util";
+import {extend, isString, isArray} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
@@ -80,7 +80,7 @@ extend(Chart.prototype, {
 		// unload if needed
 		if ("unload" in args && args.unload !== false) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
-			$$.unload($$.mapToTargetIds(isBoolean(args.unload) && args.unload ? null : args.unload), () =>
+			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () =>
 				$$.loadFromArgs(args)
 			);
 		} else {
