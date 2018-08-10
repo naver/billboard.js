@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180808174525
+ * @version 1.5.1-nightly-20180810194346
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180808174525
+ * @version 1.5.1-nightly-20180810194346
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180808174525",
+	version: "1.5.1-nightly-20180810194346",
 
 	/**
   * Generate chart
@@ -203,7 +203,7 @@ var bb = {
 	}
 };
 
-__webpack_require__(12), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(63), __webpack_require__(9), __webpack_require__(64), __webpack_require__(65);
+__webpack_require__(12), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(63), __webpack_require__(6), __webpack_require__(64), __webpack_require__(65);
 exports.bb = bb;
 exports.default = bb;
 
@@ -291,9 +291,9 @@ var _classCallCheck2 = __webpack_require__(2),
     _d3Transition = __webpack_require__(4),
     _Axis = __webpack_require__(5),
     _Axis2 = _interopRequireDefault(_Axis),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -800,30 +800,45 @@ exports.__esModule = !0;
 
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
-    _d3Selection = __webpack_require__(4),
-    _util = __webpack_require__(6),
-    _bb = __webpack_require__(9),
+    _bb = __webpack_require__(6),
     _bb2 = _interopRequireDefault(_bb),
-    _classes = __webpack_require__(8),
-    _classes2 = _interopRequireDefault(_classes);
+    _classes = __webpack_require__(9),
+    _classes2 = _interopRequireDefault(_classes),
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
+var isHorizontal = function ($$, forHorizontal) {
+	var isRotated = $$.config.axis_rotated;
+
+	return forHorizontal ? isRotated : !isRotated;
+}; /**
+    * Copyright (c) 2017 NAVER Corp.
+    * billboard.js project is licensed under the MIT license
+    */
+
 var Axis = function () {
 	function Axis(owner) {
 		(0, _classCallCheck3.default)(this, Axis), this.owner = owner;
 	}
 
 	return Axis.prototype.init = function init() {
-		var $$ = this.owner,
+		var _this = this,
+		    $$ = this.owner,
 		    config = $$.config,
 		    isRotated = config.axis_rotated,
 		    main = $$.main;
-		$$.axes.x = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisX).attr("clip-path", $$.clipPathForXAxis).attr("transform", $$.getTranslate("x")).style("visibility", config.axis_x_show ? "visible" : "hidden"), $$.axes.x.append("text").attr("class", _classes2.default.axisXLabel).attr("transform", isRotated ? "rotate(-90)" : "").style("text-anchor", this.textAnchorForXAxisLabel.bind(this)), $$.axes.y = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY).attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis).attr("transform", $$.getTranslate("y")).style("visibility", config.axis_y_show ? "visible" : "hidden"), $$.axes.y.append("text").attr("class", _classes2.default.axisYLabel).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForYAxisLabel.bind(this)), $$.axes.y2 = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY2).attr("transform", $$.getTranslate("y2")).style("visibility", config.axis_y2_show ? "visible" : "hidden"), $$.axes.y2.append("text").attr("class", _classes2.default.axisY2Label).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
+
+		["x", "y", "y2"].forEach(function (v) {
+			var axisStr = "axis" + (0, _util.capitalize)(v),
+			    classAxis = _classes2.default.axis + " " + _classes2.default[axisStr],
+			    classLabel = _classes2.default[axisStr + "Label"];
+			$$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
+				var res = null;
+
+				return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
+			}).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this));
+		});
 	}, Axis.prototype.getXAxis = function getXAxis(axisName, scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -891,18 +906,21 @@ var Axis = function () {
 		}, (0, _util.isFunction)(format) ? function (v) {
 			return format.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
 		} : format;
-	}, Axis.prototype.getTickValues = function getTickValues(tickValues, axis) {
+	}, Axis.prototype.getTickValues = function getTickValues(type) {
+		var $$ = this.owner,
+		    tickValues = $$.config["axis_" + type + "_tick_values"],
+		    axis = $$[type + "Axis"];
+
+
 		return tickValues || (axis ? axis.tickValues() : undefined);
 	}, Axis.prototype.getXAxisTickValues = function getXAxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_x_tick_values, this.owner.xAxis);
+		return this.getTickValues("x");
 	}, Axis.prototype.getYAxisTickValues = function getYAxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_y_tick_values, this.owner.yAxis);
+		return this.getTickValues("y");
 	}, Axis.prototype.getY2AxisTickValues = function getY2AxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_y2_tick_values, this.owner.y2Axis);
+		return this.getTickValues("y2");
 	}, Axis.prototype.getLabelOptionByAxisId = function getLabelOptionByAxisId(axisId) {
-		var $$ = this.owner;
-
-		return $$.config["axis_" + axisId + "_label"];
+		return this.owner.config["axis_" + axisId + "_label"];
 	}, Axis.prototype.getLabelText = function getLabelText(axisId) {
 		var option = this.getLabelOptionByAxisId(axisId);
 
@@ -913,26 +931,29 @@ var Axis = function () {
 		    option = this.getLabelOptionByAxisId(axisId);
 		(0, _util.isString)(option) ? config["axis_" + axisId + "_label"] = text : option && (option.text = text);
 	}, Axis.prototype.getLabelPosition = function getLabelPosition(axisId, defaultPosition) {
-		var option = this.getLabelOptionByAxisId(axisId),
-		    position = (0, _util.isObjectType)(option) && option.position ? option.position : defaultPosition;
-
+		var isRotated = this.owner.config.axis_rotated,
+		    option = this.getLabelOptionByAxisId(axisId),
+		    position = (0, _util.isObjectType)(option) && option.position ? option.position : defaultPosition[+!isRotated],
+		    has = function (v) {
+			return !!~position.indexOf(v);
+		};
 
 		return {
-			isInner: !!~position.indexOf("inner"),
-			isOuter: !!~position.indexOf("outer"),
-			isLeft: !!~position.indexOf("left"),
-			isCenter: !!~position.indexOf("center"),
-			isRight: !!~position.indexOf("right"),
-			isTop: !!~position.indexOf("top"),
-			isMiddle: !!~position.indexOf("middle"),
-			isBottom: !!~position.indexOf("bottom")
+			isInner: has("inner"),
+			isOuter: has("outer"),
+			isLeft: has("left"),
+			isCenter: has("center"),
+			isRight: has("right"),
+			isTop: has("top"),
+			isMiddle: has("middle"),
+			isBottom: has("bottom")
 		};
 	}, Axis.prototype.getXAxisLabelPosition = function getXAxisLabelPosition() {
-		return this.getLabelPosition("x", this.owner.config.axis_rotated ? "inner-top" : "inner-right");
+		return this.getLabelPosition("x", ["inner-top", "inner-right"]);
 	}, Axis.prototype.getYAxisLabelPosition = function getYAxisLabelPosition() {
-		return this.getLabelPosition("y", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
+		return this.getLabelPosition("y", ["inner-right", "inner-top"]);
 	}, Axis.prototype.getY2AxisLabelPosition = function getY2AxisLabelPosition() {
-		return this.getLabelPosition("y2", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
+		return this.getLabelPosition("y2", ["inner-right", "inner-top"]);
 	}, Axis.prototype.getLabelPositionById = function getLabelPositionById(id) {
 		return this["get" + id.toUpperCase() + "AxisLabelPosition"]();
 	}, Axis.prototype.textForXAxisLabel = function textForXAxisLabel() {
@@ -941,32 +962,39 @@ var Axis = function () {
 		return this.getLabelText("y");
 	}, Axis.prototype.textForY2AxisLabel = function textForY2AxisLabel() {
 		return this.getLabelText("y2");
-	}, Axis.prototype.xForAxisLabel = function xForAxisLabel(forHorizontal, position) {
-		var $$ = this.owner,
+	}, Axis.prototype.xForAxisLabel = function xForAxisLabel(position) {
+		var forHorizontal = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+		    $$ = this.owner,
 		    x = position.isMiddle ? -$$.height / 2 : 0;
 
 
-		return forHorizontal ? x = position.isLeft ? 0 : position.isCenter ? $$.width / 2 : $$.width : position.isBottom && (x = -$$.height), x;
-	}, Axis.prototype.dxForAxisLabel = function dxForAxisLabel(forHorizontal, position) {
-		var dx = position.isBottom ? "0.5em" : "0";
+		return isHorizontal($$, forHorizontal) ? x = position.isLeft ? 0 : position.isCenter ? $$.width / 2 : $$.width : position.isBottom && (x = -$$.height), x;
+	}, Axis.prototype.dxForAxisLabel = function dxForAxisLabel(position) {
+		var forHorizontal = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+		    $$ = this.owner,
+		    dx = position.isBottom ? "0.5em" : "0";
 
-		return forHorizontal ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
-	}, Axis.prototype.textAnchorForAxisLabel = function textAnchorForAxisLabel(forHorizontal, position) {
-		var anchor = position.isMiddle ? "middle" : "end";
 
-		return forHorizontal ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
+		return isHorizontal($$, forHorizontal) ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
+	}, Axis.prototype.textAnchorForAxisLabel = function textAnchorForAxisLabel(position) {
+		var forHorizontal = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+		    $$ = this.owner,
+		    anchor = position.isMiddle ? "middle" : "end";
+
+
+		return isHorizontal($$, forHorizontal) ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
 	}, Axis.prototype.xForXAxisLabel = function xForXAxisLabel() {
-		return this.xForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.xForAxisLabel(this.getXAxisLabelPosition(), !1);
 	}, Axis.prototype.xForYAxisLabel = function xForYAxisLabel() {
-		return this.xForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.xForAxisLabel(this.getYAxisLabelPosition());
 	}, Axis.prototype.xForY2AxisLabel = function xForY2AxisLabel() {
-		return this.xForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.xForAxisLabel(this.getY2AxisLabelPosition());
 	}, Axis.prototype.dxForXAxisLabel = function dxForXAxisLabel() {
-		return this.dxForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.dxForAxisLabel(this.getXAxisLabelPosition(), !1);
 	}, Axis.prototype.dxForYAxisLabel = function dxForYAxisLabel() {
-		return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.dxForAxisLabel(this.getYAxisLabelPosition());
 	}, Axis.prototype.dxForY2AxisLabel = function dxForY2AxisLabel() {
-		return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.dxForAxisLabel(this.getY2AxisLabelPosition());
 	}, Axis.prototype.dyForXAxisLabel = function dyForXAxisLabel() {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -982,43 +1010,39 @@ var Axis = function () {
 		    isInner = this.getY2AxisLabelPosition().isInner;
 		return $$.config.axis_rotated ? isInner ? "1.2em" : "-2.2em" : isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : this.getMaxTickWidth("y2") + 15);
 	}, Axis.prototype.textAnchorForXAxisLabel = function textAnchorForXAxisLabel() {
-		var isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(!isRotated, this.getXAxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getXAxisLabelPosition(), !1);
 	}, Axis.prototype.textAnchorForYAxisLabel = function textAnchorForYAxisLabel() {
-		var isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(isRotated, this.getYAxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getYAxisLabelPosition());
 	}, Axis.prototype.textAnchorForY2AxisLabel = function textAnchorForY2AxisLabel() {
-		var isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(isRotated, this.getY2AxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getY2AxisLabelPosition());
 	}, Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
 		var $$ = this.owner,
 		    config = $$.config,
-		    maxWidth = 0,
-		    dummy = void 0,
-		    svg = void 0;
+		    currentTickMax = $$.currentMaxTickWidths,
+		    maxWidth = 0;
 
 
-		if (withoutRecompute && $$.currentMaxTickWidths[id]) return $$.currentMaxTickWidths[id];
+		if (withoutRecompute && currentTickMax[id]) return currentTickMax[id];
 
 		if ($$.svg) {
-			var targetsToShow = $$.filterTargetsToShow($$.data.targets),
-			    scale = void 0,
-			    axis = void 0;
-			/^y2?$/.test(id) ? (scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id)), axis = this.getYAxis(id, scale, $$[id + "Orient"], config["axis_" + id + "_tick_format"], $$[id + "AxisTickValues"], !1, !0, !0)) : (scale = $$.x.copy().domain($$.getXDomain(targetsToShow)), axis = this.getXAxis("x", scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, !1, !0, !0), this.updateXAxisTickValues(targetsToShow, axis)), dummy = (0, _d3Selection.select)("body").append("div").classed("bb", !0), svg = dummy.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px"), svg.append("g").call(axis).each(function () {
-				(0, _d3Selection.select)(this).selectAll("text").each(function () {
-					var boxWidth = this.getBoundingClientRect().width;
+			var isYAxis = /^y2?$/.test(id),
+			    targetsToShow = $$.filterTargetsToShow($$.data.targets),
+			    getFrom = isYAxis ? "getY" : "getX",
+			    scale = $$[id].copy().domain($$[getFrom + "Domain"](targetsToShow, id)),
+			    axis = this[getFrom + "Axis"](id, scale, $$[id + "Orient"], isYAxis ? config["axis_" + id + "_tick_format"] : $$.xAxisTickFormat, null, !1, !0, !0);
+			isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
 
-					maxWidth < boxWidth && (maxWidth = boxWidth);
-				}), dummy.remove();
-			});
+
+			var dummy = $$.selectChart.append("svg").style("visibility", "hidden");
+
+			dummy.call(axis).selectAll("text").each(function () {
+				maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+			}), dummy.remove();
 		}
 
-		return $$.currentMaxTickWidths[id] = maxWidth <= 0 ? $$.currentMaxTickWidths[id] : maxWidth, $$.currentMaxTickWidths[id];
+		return maxWidth > 0 && (currentTickMax[id] = maxWidth), currentTickMax[id];
 	}, Axis.prototype.updateLabels = function updateLabels(withTransition) {
-		var _this = this,
+		var _this2 = this,
 		    $$ = this.owner,
 		    labels = {
 			X: $$.main.select("." + _classes2.default.axisX + " ." + _classes2.default.axisXLabel),
@@ -1026,10 +1050,10 @@ var Axis = function () {
 			Y2: $$.main.select("." + _classes2.default.axisY2 + " ." + _classes2.default.axisY2Label)
 		};
 
-		Object.keys(labels).forEach(function (axis) {
-			var node = labels[axis];
-
-			(withTransition ? node.transition() : node).attr("x", _this["xFor" + axis + "AxisLabel"].bind(_this)).attr("dx", _this["dxFor" + axis + "AxisLabel"].bind(_this)).attr("dy", _this["dyFor" + axis + "AxisLabel"].bind(_this)).text(_this["textFor" + axis + "AxisLabel"].bind(_this));
+		Object.keys(labels).forEach(function (v) {
+			var node = labels[v],
+			    axisLabel = v + "AxisLabel";
+			(withTransition ? node.transition() : node).attr("x", _this2["xFor" + axisLabel].bind(_this2)).attr("dx", _this2["dxFor" + axisLabel].bind(_this2)).attr("dy", _this2["dyFor" + axisLabel].bind(_this2)).text(_this2["textFor" + axisLabel].bind(_this2));
 		});
 	}, Axis.prototype.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
 		var p = (0, _util.isNumber)(padding) ? padding : padding[key];
@@ -1069,19 +1093,22 @@ var Axis = function () {
 		})), tickValues;
 	}, Axis.prototype.generateTransitions = function generateTransitions(duration) {
 		var $$ = this.owner,
-		    axes = $$.axes;
+		    axes = $$.axes,
+		    _map = ["x", "y", "y2", "subx"].map(function (v) {
+			return duration ? axes[v].transition().duration(duration) : axes[v];
+		}),
+		    axisX = _map[0],
+		    axisY = _map[1],
+		    axisY2 = _map[2],
+		    axisSubX = _map[3];
 
-
-		return {
-			axisX: duration ? axes.x.transition().duration(duration) : axes.x,
-			axisY: duration ? axes.y.transition().duration(duration) : axes.y,
-			axisY2: duration ? axes.y2.transition().duration(duration) : axes.y2,
-			axisSubX: duration ? axes.subx.transition().duration(duration) : axes.subx
-		};
+		return { axisX: axisX, axisY: axisY, axisY2: axisY2, axisSubX: axisSubX };
 	}, Axis.prototype.redraw = function redraw(transitions, isHidden) {
 		var $$ = this.owner,
 		    opacity = isHidden ? "0" : "1";
-		$$.axes.x.style("opacity", opacity), $$.axes.y.style("opacity", opacity), $$.axes.y2.style("opacity", opacity), $$.axes.subx.style("opacity", opacity), transitions.axisX.call($$.xAxis), transitions.axisY.call($$.yAxis), transitions.axisY2.call($$.y2Axis), transitions.axisSubX.call($$.subXAxis);
+		["x", "y", "y2", "subx"].forEach(function (v) {
+			$$.axes[v].style("opacity", opacity);
+		}), transitions.axisX.call($$.xAxis), transitions.axisY.call($$.yAxis), transitions.axisY2.call($$.y2Axis), transitions.axisSubX.call($$.subXAxis);
 	}, Axis;
 }();
 
@@ -1096,13 +1123,320 @@ module.exports = exports["default"];
 
 
 exports.__esModule = !0;
+
+exports.default = function () {
+
+	function axisX(selection, x) {
+		selection.attr("transform", function (d) {
+			return "translate(" + Math.ceil(x(d) + tickOffset) + ", 0)";
+		});
+	}
+
+	function axisY(selection, y) {
+		selection.attr("transform", function (d) {
+			return "translate(0," + Math.ceil(y(d)) + ")";
+		});
+	}
+
+	function scaleExtent(domain) {
+		var start = domain[0],
+		    stop = domain[domain.length - 1];
+
+
+		return start < stop ? [start, stop] : [stop, start];
+	}
+
+	function generateTicks(scale) {
+		var ticks = [];
+
+		if (scale.ticks) return scale.ticks.apply(scale, tickArguments ? (0, _util.toArray)(tickArguments) : []).map(function (v) {
+				return (
+					// round the tick value if is number
+					(0, _util.isString)(v) && (0, _util.isNumber)(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
+				);
+			});
+
+		for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
+
+		return ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0])), ticks;
+	}
+
+	function copyScale() {
+		var newScale = scale.copy();
+
+		return newScale.domain().length || newScale.domain(scale.domain()), newScale;
+	}
+
+	function textFormatted(v) {
+		// to round float numbers from 'binary floating point'
+		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
+		var value = /\d+\.\d+0{5,}\d$/.test(v) ? +(v + "").replace(/0+\d$/, "") : v,
+		    formatted = tickFormat ? tickFormat(value) : value;
+
+
+		return (0, _util.isDefined)(formatted) ? formatted : "";
+	}
+
+	function transitionise(selection) {
+		return params.withoutTransition ? selection.interrupt() : selection.transition(transition);
+	}
+
+	function axis(g) {
+		g.each(function () {
+
+			// this should be called only when category axis
+			function splitTickText(d, maxWidthValue) {
+
+				function split(splitted, text) {
+					spaceIndex = undefined;
+
+
+					for (var i = 1; i < text.length; i++)
+
+					// if text width gets over tick width, split by space index or current index
+					if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = sizeFor1Char.w * subtext.length, maxWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+
+					return splitted.concat(text);
+				}
+
+				var tickText = textFormatted(d),
+				    splitted = (0, _util.isString)(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
+
+
+				if (splitted.length) return splitted;
+
+				var maxWidth = maxWidthValue,
+				    subtext = void 0,
+				    spaceIndex = void 0,
+				    textWidth = void 0;
+				return (0, _util.isArray)(tickText) ? tickText : ((!maxWidth || maxWidth <= 0) && (maxWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12 : 110), split(splitted, tickText + ""));
+			}
+
+			var g = (0, _d3Selection.select)(this);
+
+			axis.g = g;
+			var scale0 = this.__chart__ || scale,
+			    scale1 = copyScale();
+			this.__chart__ = scale1;
+
+
+			// count of tick data in array
+			var ticks = tickValues || generateTicks(scale1),
+			    tick = g.selectAll(".tick").data(ticks, scale1),
+			    tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
+			    tickExit = tick.exit().remove();
+
+			// update selection
+
+
+			// enter selection
+
+
+			// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
+
+			tick = tickEnter.merge(tick);
+			var tickUpdate = transitionise(tick).style("opacity", "1"),
+			    tickX = void 0,
+			    tickY = void 0,
+			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent((params.orgXScale || scale).range()),
+			    path = g.selectAll(".domain").data([0]),
+			    pathUpdate = path.enter().append("path").attr("class", "domain").merge(transitionise(path));
+
+			// update selection - data join
+
+
+			// enter + update selection
+
+			tickEnter.append("line"), tickEnter.append("text");
+			var lineEnter = tickEnter.select("line"),
+			    lineUpdate = tickUpdate.select("line"),
+			    textEnter = tickEnter.select("text"),
+			    textUpdate = tickUpdate.select("text");
+			params.isCategory ? (tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2), tickX = tickCentered ? 0 : tickOffset, tickY = tickCentered ? tickOffset : 0) : (tickX = 0, tickOffset = tickX);
+			var sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
+			    counts = [],
+			    tickLength = Math.max(6, 0) + 3,
+			    isLeftRight = /^(left|right)$/.test(orient),
+			    isTopBottom = /^(top|bottom)$/.test(orient),
+			    tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+				var split = params.tickMultiline ? splitTickText(d, params.tickWidth) : (0, _util.isArray)(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
+
+				return counts[index] = split.length, split.map(function (splitted) {
+					return { index: index, splitted: splitted };
+				});
+			});
+			tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
+				return d.splitted;
+			});
+
+
+			// line/text enter and path update
+			var tickTransform = isTopBottom ? axisX : axisY,
+			    sign = /^(top|left)$/.test(orient) ? -1 : 1,
+			    axisPx = tickTransform === axisX ? "y" : "x";
+			lineEnter.attr(axisPx + "2", 6 * sign), textEnter.attr("" + axisPx, 9 * sign), pathUpdate.attr("d", function () {
+				var outerTickSized = outerTickSize * sign;
+
+				return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
+			});
+
+			// tick text helpers
+			var rotate = params.tickTextRotate,
+			    tickSize = function tickSize(d) {
+				var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
+
+				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
+			},
+			    tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ? params.config["axis_" + params.axisName + "_tick_text_position"] : { x: 0, y: 0 };
+
+			// get the axis' tick position configuration
+
+
+			if (tspan.attr("x", isTopBottom ? 0 : 9 * sign).attr("dx", function () {
+				var dx = 0;
+
+				return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
+			}()).attr("dy", function (d, i) {
+				var dy = 0;
+
+
+				return orient !== "top" && (i === 0 ? dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0 : dy = sizeFor1Char.h), (0, _util.isNumber)(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
+			}), orient === "bottom" ? (lineUpdate.attr("x1", tickX).attr("x2", tickX).attr("y2", tickSize), textUpdate.attr("x", 0).attr("y", function yForText(r) {
+				return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : 9;
+			}(rotate)).style("text-anchor", function textAnchorForText(r) {
+				return r ? r > 0 ? "start" : "end" : "middle";
+			}(rotate)).attr("transform", function textTransform(r) {
+				return r ? "rotate(" + r + ")" : null;
+			}(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -6), textUpdate.attr("x", 0).attr("y", -9).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -6).attr("y1", tickY).attr("y2", tickY), textUpdate.attr("x", -9).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", 6).attr("y2", 0), textUpdate.attr("x", 9).attr("y", 0).style("text-anchor", "start")) : void 0, (params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
+				(0, _d3Selection.select)(this).text(params.tickTitle[index]);
+			}), scale1.bandwidth)) {
+				var x = scale1,
+				    dx = x.bandwidth() / 2;
+				scale0 = function scale0(d) {
+					return x(d) + dx;
+				}, scale1 = scale0;
+			} else scale0.bandwidth ? scale0 = scale1 : tickExit.call(tickTransform, scale1);
+
+			tickEnter.call(tickTransform, scale0), tickUpdate.call(tickTransform, scale1);
+		});
+	}
+
+	var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+	    scale = (0, _d3Scale.scaleLinear)(),
+	    orient = "bottom",
+	    outerTickSize = params.withOuterTick ? 6 : 0,
+	    tickValues = null,
+	    tickFormat = void 0,
+	    tickArguments = void 0,
+	    tickOffset = 0,
+	    tickCulling = !0,
+	    tickCentered = void 0,
+	    transition = void 0;
+
+
+	return axis.scale = function (x) {
+		return arguments.length ? (scale = x, axis) : scale;
+	}, axis.orient = function (x) {
+		return arguments.length ? (orient = x in {
+			top: 1,
+			right: 1,
+			bottom: 1,
+			left: 1
+		} ? x + "" : "bottom", axis) : orient;
+	}, axis.tickFormat = function (format) {
+		return arguments.length ? (tickFormat = format, axis) : tickFormat;
+	}, axis.tickCentered = function (isCentered) {
+		return arguments.length ? (tickCentered = isCentered, axis) : tickCentered;
+	}, axis.tickOffset = function () {
+		return tickOffset;
+	}, axis.tickInterval = function (size) {
+		var interval = void 0;
+
+		if (params.isCategory) interval = tickOffset * 2;else {
+			var length = axis.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
+
+			interval = length / (size || axis.g.selectAll("line").size());
+		}
+
+		return interval === Infinity ? 0 : interval;
+	}, axis.ticks = function () {
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
+
+		return args.length ? (tickArguments = (0, _util.toArray)(args), axis) : tickArguments;
+	}, axis.tickCulling = function (culling) {
+		return arguments.length ? (tickCulling = culling, axis) : tickCulling;
+	}, axis.tickValues = function (x) {
+		if ((0, _util.isFunction)(x)) tickValues = function tickValues() {
+				return x(scale.domain());
+			};else {
+			if (!arguments.length) return tickValues;
+
+			tickValues = x;
+		}
+
+		return axis;
+	}, axis.setTransition = function (t) {
+
+		return transition = t, axis;
+	}, axis;
+};
+
+var _d3Scale = __webpack_require__(4),
+    _d3Selection = __webpack_require__(4),
+    _util = __webpack_require__(7),
+    getSizeFor1Char = function getSizeFor1Char(node) {
+	// default size for one character
+	var size = {
+		w: 5.5,
+		h: 11.5
+	};
+
+	return node.empty() || node.select("text").text("0").call(function (el) {
+		try {
+			var box = el.node().getBBox(),
+			    h = box.height,
+			    w = box.width;
+			h && w && (size.h = h, size.w = w), el.text("");
+		} catch (e) {}
+	}), getSizeFor1Char.size = size;
+};
+
+// Features:
+// 1. category axis
+// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
+// 3. multiline tick text
+
+/**
+ * Compute a character dimension
+ * @param {d3.selection} node
+ * @return {{w: number, h: number}}
+ * @private
+ */
+
+
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+module.exports = exports["default"];
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = !0;
 exports.toArray = exports.sanitise = exports.merge = exports.notEmpty = exports.isValue = exports.isUndefined = exports.isString = exports.isObjectType = exports.isObject = exports.isNumber = exports.isFunction = exports.isEmpty = exports.isDefined = exports.isBoolean = exports.isArray = exports.hasValue = exports.getRectSegList = exports.getPathBox = exports.getOption = exports.getCssRules = exports.getBrushSelection = exports.extend = exports.emulateEvent = exports.diffDomain = exports.ceil10 = exports.capitalize = exports.callFn = exports.brushEmpty = exports.asHalfPixel = undefined;
 
-var _typeof2 = __webpack_require__(7),
+var _typeof2 = __webpack_require__(8),
     _typeof3 = _interopRequireDefault(_typeof2),
     _d3Selection = __webpack_require__(4),
     _d3Brush = __webpack_require__(4),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -1417,7 +1751,7 @@ exports.sanitise = sanitise;
 exports.toArray = toArray;
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1432,7 +1766,7 @@ exports.default = function (obj) {
 };
 
 /***/ }),
-/* 8 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1536,313 +1870,6 @@ exports.default = {
 module.exports = exports["default"];
 
 /***/ }),
-/* 9 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = !0;
-
-exports.default = function () {
-
-	function axisX(selection, x) {
-		selection.attr("transform", function (d) {
-			return "translate(" + Math.ceil(x(d) + tickOffset) + ", 0)";
-		});
-	}
-
-	function axisY(selection, y) {
-		selection.attr("transform", function (d) {
-			return "translate(0," + Math.ceil(y(d)) + ")";
-		});
-	}
-
-	function scaleExtent(domain) {
-		var start = domain[0],
-		    stop = domain[domain.length - 1];
-
-
-		return start < stop ? [start, stop] : [stop, start];
-	}
-
-	function generateTicks(scale) {
-		var ticks = [];
-
-		if (scale.ticks) return scale.ticks.apply(scale, tickArguments ? (0, _util.toArray)(tickArguments) : []).map(function (v) {
-				return (
-					// round the tick value if is number
-					(0, _util.isString)(v) && (0, _util.isNumber)(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
-				);
-			});
-
-		for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
-
-		return ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0])), ticks;
-	}
-
-	function copyScale() {
-		var newScale = scale.copy();
-
-		return newScale.domain().length || newScale.domain(scale.domain()), newScale;
-	}
-
-	function textFormatted(v) {
-		// to round float numbers from 'binary floating point'
-		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-		var value = /\d+\.\d+0{5,}\d$/.test(v) ? +(v + "").replace(/0+\d$/, "") : v,
-		    formatted = tickFormat ? tickFormat(value) : value;
-
-
-		return (0, _util.isDefined)(formatted) ? formatted : "";
-	}
-
-	function transitionise(selection) {
-		return params.withoutTransition ? selection.interrupt() : selection.transition(transition);
-	}
-
-	function axis(g) {
-		g.each(function () {
-
-			// this should be called only when category axis
-			function splitTickText(d, maxWidthValue) {
-
-				function split(splitted, text) {
-					spaceIndex = undefined;
-
-
-					for (var i = 1; i < text.length; i++)
-
-					// if text width gets over tick width, split by space index or current index
-					if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = sizeFor1Char.w * subtext.length, maxWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
-
-					return splitted.concat(text);
-				}
-
-				var tickText = textFormatted(d),
-				    splitted = (0, _util.isString)(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
-
-
-				if (splitted.length) return splitted;
-
-				var maxWidth = maxWidthValue,
-				    subtext = void 0,
-				    spaceIndex = void 0,
-				    textWidth = void 0;
-				return (0, _util.isArray)(tickText) ? tickText : ((!maxWidth || maxWidth <= 0) && (maxWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12 : 110), split(splitted, tickText + ""));
-			}
-
-			var g = (0, _d3Selection.select)(this);
-
-			axis.g = g;
-			var scale0 = this.__chart__ || scale,
-			    scale1 = copyScale();
-			this.__chart__ = scale1;
-
-
-			// count of tick data in array
-			var ticks = tickValues || generateTicks(scale1),
-			    tick = g.selectAll(".tick").data(ticks, scale1),
-			    tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
-			    tickExit = tick.exit().remove();
-
-			// update selection
-
-
-			// enter selection
-
-
-			// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
-
-			tick = tickEnter.merge(tick);
-			var tickUpdate = transitionise(tick).style("opacity", "1"),
-			    tickX = void 0,
-			    tickY = void 0,
-			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent((params.orgXScale || scale).range()),
-			    path = g.selectAll(".domain").data([0]),
-			    pathUpdate = path.enter().append("path").attr("class", "domain").merge(transitionise(path));
-
-			// update selection - data join
-
-
-			// enter + update selection
-
-			tickEnter.append("line"), tickEnter.append("text");
-			var lineEnter = tickEnter.select("line"),
-			    lineUpdate = tickUpdate.select("line"),
-			    textEnter = tickEnter.select("text"),
-			    textUpdate = tickUpdate.select("text");
-			params.isCategory ? (tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2), tickX = tickCentered ? 0 : tickOffset, tickY = tickCentered ? tickOffset : 0) : (tickX = 0, tickOffset = tickX);
-			var sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
-			    counts = [],
-			    tickLength = Math.max(6, 0) + 3,
-			    isLeftRight = /^(left|right)$/.test(orient),
-			    isTopBottom = /^(top|bottom)$/.test(orient),
-			    tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-				var split = params.tickMultiline ? splitTickText(d, params.tickWidth) : (0, _util.isArray)(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
-
-				return counts[index] = split.length, split.map(function (splitted) {
-					return { index: index, splitted: splitted };
-				});
-			});
-			tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
-				return d.splitted;
-			});
-
-
-			// line/text enter and path update
-			var tickTransform = isTopBottom ? axisX : axisY,
-			    sign = /^(top|left)$/.test(orient) ? -1 : 1,
-			    axisPx = tickTransform === axisX ? "y" : "x";
-			lineEnter.attr(axisPx + "2", 6 * sign), textEnter.attr("" + axisPx, 9 * sign), pathUpdate.attr("d", function () {
-				var outerTickSized = outerTickSize * sign;
-
-				return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
-			});
-
-			// tick text helpers
-			var rotate = params.tickTextRotate,
-			    tickSize = function tickSize(d) {
-				var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
-
-				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
-			},
-			    tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ? params.config["axis_" + params.axisName + "_tick_text_position"] : { x: 0, y: 0 };
-
-			// get the axis' tick position configuration
-
-
-			if (tspan.attr("x", isTopBottom ? 0 : 9 * sign).attr("dx", function () {
-				var dx = 0;
-
-				return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
-			}()).attr("dy", function (d, i) {
-				var dy = 0;
-
-
-				return orient !== "top" && (i === 0 ? dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0 : dy = sizeFor1Char.h), (0, _util.isNumber)(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
-			}), orient === "bottom" ? (lineUpdate.attr("x1", tickX).attr("x2", tickX).attr("y2", tickSize), textUpdate.attr("x", 0).attr("y", function yForText(r) {
-				return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : 9;
-			}(rotate)).style("text-anchor", function textAnchorForText(r) {
-				return r ? r > 0 ? "start" : "end" : "middle";
-			}(rotate)).attr("transform", function textTransform(r) {
-				return r ? "rotate(" + r + ")" : null;
-			}(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -6), textUpdate.attr("x", 0).attr("y", -9).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -6).attr("y1", tickY).attr("y2", tickY), textUpdate.attr("x", -9).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", 6).attr("y2", 0), textUpdate.attr("x", 9).attr("y", 0).style("text-anchor", "start")) : void 0, (params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
-				(0, _d3Selection.select)(this).text(params.tickTitle[index]);
-			}), scale1.bandwidth)) {
-				var x = scale1,
-				    dx = x.bandwidth() / 2;
-				scale0 = function scale0(d) {
-					return x(d) + dx;
-				}, scale1 = scale0;
-			} else scale0.bandwidth ? scale0 = scale1 : tickExit.call(tickTransform, scale1);
-
-			tickEnter.call(tickTransform, scale0), tickUpdate.call(tickTransform, scale1);
-		});
-	}
-
-	var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-	    scale = (0, _d3Scale.scaleLinear)(),
-	    orient = "bottom",
-	    outerTickSize = params.withOuterTick ? 6 : 0,
-	    tickValues = null,
-	    tickFormat = void 0,
-	    tickArguments = void 0,
-	    tickOffset = 0,
-	    tickCulling = !0,
-	    tickCentered = void 0,
-	    transition = void 0;
-
-
-	return axis.scale = function (x) {
-		return arguments.length ? (scale = x, axis) : scale;
-	}, axis.orient = function (x) {
-		return arguments.length ? (orient = x in {
-			top: 1,
-			right: 1,
-			bottom: 1,
-			left: 1
-		} ? x + "" : "bottom", axis) : orient;
-	}, axis.tickFormat = function (format) {
-		return arguments.length ? (tickFormat = format, axis) : tickFormat;
-	}, axis.tickCentered = function (isCentered) {
-		return arguments.length ? (tickCentered = isCentered, axis) : tickCentered;
-	}, axis.tickOffset = function () {
-		return tickOffset;
-	}, axis.tickInterval = function (size) {
-		var interval = void 0;
-
-		if (params.isCategory) interval = tickOffset * 2;else {
-			var length = axis.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
-
-			interval = length / (size || axis.g.selectAll("line").size());
-		}
-
-		return interval === Infinity ? 0 : interval;
-	}, axis.ticks = function () {
-		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
-
-		return args.length ? (tickArguments = (0, _util.toArray)(args), axis) : tickArguments;
-	}, axis.tickCulling = function (culling) {
-		return arguments.length ? (tickCulling = culling, axis) : tickCulling;
-	}, axis.tickValues = function (x) {
-		if ((0, _util.isFunction)(x)) tickValues = function tickValues() {
-				return x(scale.domain());
-			};else {
-			if (!arguments.length) return tickValues;
-
-			tickValues = x;
-		}
-
-		return axis;
-	}, axis.setTransition = function (t) {
-
-		return transition = t, axis;
-	}, axis;
-};
-
-var _d3Scale = __webpack_require__(4),
-    _d3Selection = __webpack_require__(4),
-    _util = __webpack_require__(6),
-    getSizeFor1Char = function getSizeFor1Char(node) {
-	// default size for one character
-	var size = {
-		w: 5.5,
-		h: 11.5
-	};
-
-	return node.empty() || node.select("text").text("0").call(function (el) {
-		try {
-			var box = el.node().getBBox(),
-			    h = box.height,
-			    w = box.width;
-			h && w && (size.h = h, size.w = w), el.text("");
-		} catch (e) {}
-	}), getSizeFor1Char.size = size;
-};
-
-// Features:
-// 1. category axis
-// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
-// 3. multiline tick text
-
-/**
- * Compute a character dimension
- * @param {d3.selection} node
- * @return {{w: number, h: number}}
- * @private
- */
-
-
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-module.exports = exports["default"];
-
-/***/ }),
 /* 10 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1860,7 +1887,7 @@ var _Options = __webpack_require__(13),
     _Options2 = _interopRequireDefault(_Options),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4781,7 +4808,7 @@ module.exports = exports["default"];
 var _d3Scale = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4887,7 +4914,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Array = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5075,11 +5102,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Array = __webpack_require__(4),
     _d3Collection = __webpack_require__(4),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5169,7 +5196,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	getValueOnIndex: function getValueOnIndex(values, index) {
 		var valueOnIndex = values.filter(function (v) {
-			return v.index === index;
+			return (v.index === null ? v.x : v.index) === index;
 		});
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
@@ -5672,7 +5699,7 @@ var _d3Dsv = __webpack_require__(4),
     _d3Collection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5901,14 +5928,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 				return x1 - x2;
-			}));
+			})), t.values.forEach(function (v, i) {
+				var index = $$.data.targets ? $$.getIndexByX(v.x) : null;
 
-
-			// indexing each value
-			var i = 0;
-
-			t.values.forEach(function (v) {
-				v.index = $$.data.targets ? $$.getIndexByX(v.x) : i++;
+				v.index = index === null ? i : index;
 			}), $$.data.xs[t.id].sort(function (v1, v2) {
 				return v1 - v2;
 			});
@@ -5927,11 +5950,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _classes = __webpack_require__(8),
+var _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5997,7 +6020,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6030,9 +6053,9 @@ var _d3Selection = __webpack_require__(4),
     _d3Drag = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6157,24 +6180,39 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		if ($$.isMultipleX()) x = 0, y = 0, w = $$.width, h = $$.height;else {
 			var rectW = void 0,
 			    rectX = void 0;
-			$$.isCategorized() ? (rectW = $$.getEventRectWidth(), rectX = function (d) {
-				return xScale(d.x) - rectW / 2;
-			}) : ($$.updateXs(), rectW = function (d) {
-				var prevX = $$.getPrevX(d.index),
-				    nextX = $$.getNextX(d.index);
 
 
-				// if there this is a single data point make the eventRect full width (or height)
-				return prevX === null && nextX === null ? isRotated ? $$.height : $$.width : (prevX === null && (prevX = xScale.domain()[0]), nextX === null && (nextX = xScale.domain()[1]), Math.max(0, (xScale(nextX) - xScale(prevX)) / 2));
-			}, rectX = function (d) {
-				var nextX = $$.getNextX(d.index),
-				    thisX = $$.data.xs[d.id][d.index],
-				    prevX = $$.getPrevX(d.index);
+			if ($$.isCategorized()) rectW = $$.getEventRectWidth(), rectX = function (d) {
+					return xScale(d.x) - rectW / 2;
+				};else {
+				$$.updateXs();
 
 
-				// if there this is a single data point position the eventRect at 0
-				return prevX === null && nextX === null ? 0 : (prevX === null && (prevX = xScale.domain()[0]), (xScale(thisX) + xScale(prevX)) / 2);
-			}), x = isRotated ? 0 : rectX, y = isRotated ? rectX : 0, w = isRotated ? $$.width : rectW, h = isRotated ? rectW : $$.height;
+				var getPrevNextX = function (d) {
+					var index = d.index;
+
+					return {
+						prev: $$.getPrevX(index),
+						next: $$.getNextX(index)
+					};
+				};
+
+				rectW = function (d) {
+					var x = getPrevNextX(d);
+
+					// if there this is a single data point make the eventRect full width (or height)
+					return x.prev === null && x.next === null ? isRotated ? $$.height : $$.width : (x.prev === null && (x.prev = xScale.domain()[0]), x.next === null && (x.next = xScale.domain()[1]), Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2));
+				}, rectX = function (d) {
+					var x = getPrevNextX(d),
+					    thisX = $$.data.xs[d.id][d.index];
+
+
+					// if there this is a single data point position the eventRect at 0
+					return x.prev === null && x.next === null ? 0 : (x.prev === null && (x.prev = xScale.domain()[0]), (xScale(thisX) + xScale(x.prev)) / 2);
+				};
+			}
+
+			x = isRotated ? 0 : rectX, y = isRotated ? rectX : 0, w = isRotated ? $$.width : rectW, h = isRotated ? rectW : $$.height;
 		}
 
 		eventRectData.attr("class", $$.classEvent.bind($$)).attr("x", x).attr("y", y).attr("width", w).attr("height", h);
@@ -6375,9 +6413,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6508,11 +6546,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Shape = __webpack_require__(4),
     _d3Selection = __webpack_require__(4),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6644,9 +6682,9 @@ var _d3Selection = __webpack_require__(4),
     _d3Interpolate = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7087,11 +7125,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 var _d3Selection = __webpack_require__(4),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7254,7 +7292,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Array = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7318,11 +7356,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Shape = __webpack_require__(4),
     _d3Selection = __webpack_require__(4),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7783,7 +7821,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7942,9 +7980,9 @@ var _d3Selection = __webpack_require__(4),
     _d3Array = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8171,9 +8209,9 @@ var cacheKey = "$radarPoints";
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8359,7 +8397,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8509,9 +8547,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8741,9 +8779,9 @@ var getGridTextAnchor = function (d) {
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8978,9 +9016,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9463,7 +9501,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9543,7 +9581,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9640,9 +9678,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9735,9 +9773,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9833,9 +9871,9 @@ var _d3Selection = __webpack_require__(4),
     _d3Color = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9997,9 +10035,9 @@ var _d3Selection = __webpack_require__(4),
     _d3Brush = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10264,9 +10302,9 @@ var _d3Array = __webpack_require__(4),
     _d3Zoom = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10477,9 +10515,9 @@ var _d3Selection = __webpack_require__(4),
     _d3Scale = __webpack_require__(4),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10606,7 +10644,7 @@ var colorizePattern = function (pattern, color, id) {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10674,7 +10712,7 @@ var getFormat = function ($$, typeValue, v) {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10734,9 +10772,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10877,9 +10915,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10980,7 +11018,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11108,7 +11146,7 @@ var _d3Array = __webpack_require__(4),
     _d3Zoom = __webpack_require__(4),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11283,7 +11321,7 @@ var zoom = function (domainValue) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11339,7 +11377,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			config.data_axes[id] = args.axes[id];
 		}), "colors" in args && Object.keys(args.colors).forEach(function (id) {
 			config.data_colors[id] = args.colors[id];
-		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCache(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds((0, _util.isBoolean)(args.unload) && args.unload ? null : args.unload), function () {
+		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCache(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
 			return $$.loadFromArgs(args);
 		}) : $$.loadFromArgs(args));
 
@@ -11392,8 +11430,8 @@ var _d3Selection = __webpack_require__(4),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6),
-    _classes = __webpack_require__(8),
+    _util = __webpack_require__(7),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -11640,8 +11678,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(4),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6),
-    _classes = __webpack_require__(8),
+    _util = __webpack_require__(7),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -11768,7 +11806,7 @@ var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11823,7 +11861,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11860,7 +11898,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12015,9 +12053,9 @@ var ygrids = function (grids) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _classes = __webpack_require__(8),
+    _classes = __webpack_require__(9),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12119,7 +12157,7 @@ var regions = function (_regions) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12269,7 +12307,7 @@ var data = function (targetIds) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12324,7 +12362,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12356,7 +12394,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12425,7 +12463,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12587,7 +12625,7 @@ var setMinMax = function ($$, type, value) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12664,7 +12702,7 @@ var _d3Selection = __webpack_require__(4),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _browser = __webpack_require__(62),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12740,7 +12778,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.__esModule = !0;
 exports.document = exports.window = undefined;
 
-var _util = __webpack_require__(6),
+var _util = __webpack_require__(7),
     win = (0, _util.isDefined)(window) && window.Math === Math ? window : (0, _util.isDefined)(self) && (self.Math === Math ? self : Function("return this")()),
     doc = win.document;
 
@@ -12770,7 +12808,7 @@ exports.document = doc;
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12851,7 +12889,7 @@ var tooltip = (0, _util.extend)(function () {}, {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12884,7 +12922,7 @@ var ua = window.navigator.userAgent;
 var _d3Selection = __webpack_require__(4),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(6);
+    _util = __webpack_require__(7);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 

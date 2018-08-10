@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180808174525
+ * @version 1.5.1-nightly-20180810194346
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.5.0
@@ -127,7 +127,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180808174525
+ * @version 1.5.1-nightly-20180810194346
  */
 var bb = {
 	/**
@@ -137,7 +137,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180808174525",
+	version: "1.5.1-nightly-20180810194346",
 
 	/**
   * Generate chart
@@ -202,7 +202,7 @@ var bb = {
     * Copyright (c) 2017 NAVER Corp.
     * billboard.js project is licensed under the MIT license
     */
-__webpack_require__(9), __webpack_require__(11), __webpack_require__(12), __webpack_require__(13), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(60), __webpack_require__(8), __webpack_require__(61), __webpack_require__(62);
+__webpack_require__(9), __webpack_require__(11), __webpack_require__(12), __webpack_require__(13), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(60), __webpack_require__(5), __webpack_require__(61), __webpack_require__(62);
 exports.bb = bb;
 exports.default = bb;
 
@@ -284,15 +284,15 @@ exports.__esModule = !0;
 
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
-    _d3TimeFormat = __webpack_require__(76),
+    _d3TimeFormat = __webpack_require__(75),
     _d3Selection = __webpack_require__(64),
     _d3Array = __webpack_require__(66),
     _d3Transition = __webpack_require__(67),
     _Axis = __webpack_require__(4),
     _Axis2 = _interopRequireDefault(_Axis),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -793,30 +793,45 @@ exports.__esModule = !0;
 
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
-    _d3Selection = __webpack_require__(64),
-    _util = __webpack_require__(5),
-    _bb = __webpack_require__(8),
+    _bb = __webpack_require__(5),
     _bb2 = _interopRequireDefault(_bb),
-    _classes = __webpack_require__(7),
-    _classes2 = _interopRequireDefault(_classes);
+    _classes = __webpack_require__(8),
+    _classes2 = _interopRequireDefault(_classes),
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
+var isHorizontal = function ($$, forHorizontal) {
+	var isRotated = $$.config.axis_rotated;
+
+	return forHorizontal ? isRotated : !isRotated;
+}; /**
+    * Copyright (c) 2017 NAVER Corp.
+    * billboard.js project is licensed under the MIT license
+    */
+
 var Axis = function () {
 	function Axis(owner) {
 		(0, _classCallCheck3.default)(this, Axis), this.owner = owner;
 	}
 
 	return Axis.prototype.init = function init() {
-		var $$ = this.owner,
+		var _this = this,
+		    $$ = this.owner,
 		    config = $$.config,
 		    isRotated = config.axis_rotated,
 		    main = $$.main;
-		$$.axes.x = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisX).attr("clip-path", $$.clipPathForXAxis).attr("transform", $$.getTranslate("x")).style("visibility", config.axis_x_show ? "visible" : "hidden"), $$.axes.x.append("text").attr("class", _classes2.default.axisXLabel).attr("transform", isRotated ? "rotate(-90)" : "").style("text-anchor", this.textAnchorForXAxisLabel.bind(this)), $$.axes.y = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY).attr("clip-path", config.axis_y_inner ? "" : $$.clipPathForYAxis).attr("transform", $$.getTranslate("y")).style("visibility", config.axis_y_show ? "visible" : "hidden"), $$.axes.y.append("text").attr("class", _classes2.default.axisYLabel).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForYAxisLabel.bind(this)), $$.axes.y2 = main.append("g").attr("class", _classes2.default.axis + " " + _classes2.default.axisY2).attr("transform", $$.getTranslate("y2")).style("visibility", config.axis_y2_show ? "visible" : "hidden"), $$.axes.y2.append("text").attr("class", _classes2.default.axisY2Label).attr("transform", isRotated ? "" : "rotate(-90)").style("text-anchor", this.textAnchorForY2AxisLabel.bind(this));
+
+		["x", "y", "y2"].forEach(function (v) {
+			var axisStr = "axis" + (0, _util.capitalize)(v),
+			    classAxis = _classes2.default.axis + " " + _classes2.default[axisStr],
+			    classLabel = _classes2.default[axisStr + "Label"];
+			$$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
+				var res = null;
+
+				return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
+			}).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this));
+		});
 	}, Axis.prototype.getXAxis = function getXAxis(axisName, scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -884,18 +899,21 @@ var Axis = function () {
 		}, (0, _util.isFunction)(format) ? function (v) {
 			return format.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
 		} : format;
-	}, Axis.prototype.getTickValues = function getTickValues(tickValues, axis) {
+	}, Axis.prototype.getTickValues = function getTickValues(type) {
+		var $$ = this.owner,
+		    tickValues = $$.config["axis_" + type + "_tick_values"],
+		    axis = $$[type + "Axis"];
+
+
 		return tickValues || (axis ? axis.tickValues() : undefined);
 	}, Axis.prototype.getXAxisTickValues = function getXAxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_x_tick_values, this.owner.xAxis);
+		return this.getTickValues("x");
 	}, Axis.prototype.getYAxisTickValues = function getYAxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_y_tick_values, this.owner.yAxis);
+		return this.getTickValues("y");
 	}, Axis.prototype.getY2AxisTickValues = function getY2AxisTickValues() {
-		return this.getTickValues(this.owner.config.axis_y2_tick_values, this.owner.y2Axis);
+		return this.getTickValues("y2");
 	}, Axis.prototype.getLabelOptionByAxisId = function getLabelOptionByAxisId(axisId) {
-		var $$ = this.owner;
-
-		return $$.config["axis_" + axisId + "_label"];
+		return this.owner.config["axis_" + axisId + "_label"];
 	}, Axis.prototype.getLabelText = function getLabelText(axisId) {
 		var option = this.getLabelOptionByAxisId(axisId);
 
@@ -906,26 +924,29 @@ var Axis = function () {
 		    option = this.getLabelOptionByAxisId(axisId);
 		(0, _util.isString)(option) ? config["axis_" + axisId + "_label"] = text : option && (option.text = text);
 	}, Axis.prototype.getLabelPosition = function getLabelPosition(axisId, defaultPosition) {
-		var option = this.getLabelOptionByAxisId(axisId),
-		    position = (0, _util.isObjectType)(option) && option.position ? option.position : defaultPosition;
-
+		var isRotated = this.owner.config.axis_rotated,
+		    option = this.getLabelOptionByAxisId(axisId),
+		    position = (0, _util.isObjectType)(option) && option.position ? option.position : defaultPosition[+!isRotated],
+		    has = function (v) {
+			return !!~position.indexOf(v);
+		};
 
 		return {
-			isInner: !!~position.indexOf("inner"),
-			isOuter: !!~position.indexOf("outer"),
-			isLeft: !!~position.indexOf("left"),
-			isCenter: !!~position.indexOf("center"),
-			isRight: !!~position.indexOf("right"),
-			isTop: !!~position.indexOf("top"),
-			isMiddle: !!~position.indexOf("middle"),
-			isBottom: !!~position.indexOf("bottom")
+			isInner: has("inner"),
+			isOuter: has("outer"),
+			isLeft: has("left"),
+			isCenter: has("center"),
+			isRight: has("right"),
+			isTop: has("top"),
+			isMiddle: has("middle"),
+			isBottom: has("bottom")
 		};
 	}, Axis.prototype.getXAxisLabelPosition = function getXAxisLabelPosition() {
-		return this.getLabelPosition("x", this.owner.config.axis_rotated ? "inner-top" : "inner-right");
+		return this.getLabelPosition("x", ["inner-top", "inner-right"]);
 	}, Axis.prototype.getYAxisLabelPosition = function getYAxisLabelPosition() {
-		return this.getLabelPosition("y", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
+		return this.getLabelPosition("y", ["inner-right", "inner-top"]);
 	}, Axis.prototype.getY2AxisLabelPosition = function getY2AxisLabelPosition() {
-		return this.getLabelPosition("y2", this.owner.config.axis_rotated ? "inner-right" : "inner-top");
+		return this.getLabelPosition("y2", ["inner-right", "inner-top"]);
 	}, Axis.prototype.getLabelPositionById = function getLabelPositionById(id) {
 		return this["get" + id.toUpperCase() + "AxisLabelPosition"]();
 	}, Axis.prototype.textForXAxisLabel = function textForXAxisLabel() {
@@ -934,32 +955,39 @@ var Axis = function () {
 		return this.getLabelText("y");
 	}, Axis.prototype.textForY2AxisLabel = function textForY2AxisLabel() {
 		return this.getLabelText("y2");
-	}, Axis.prototype.xForAxisLabel = function xForAxisLabel(forHorizontal, position) {
-		var $$ = this.owner,
+	}, Axis.prototype.xForAxisLabel = function xForAxisLabel(position) {
+		var forHorizontal = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+		    $$ = this.owner,
 		    x = position.isMiddle ? -$$.height / 2 : 0;
 
 
-		return forHorizontal ? x = position.isLeft ? 0 : position.isCenter ? $$.width / 2 : $$.width : position.isBottom && (x = -$$.height), x;
-	}, Axis.prototype.dxForAxisLabel = function dxForAxisLabel(forHorizontal, position) {
-		var dx = position.isBottom ? "0.5em" : "0";
+		return isHorizontal($$, forHorizontal) ? x = position.isLeft ? 0 : position.isCenter ? $$.width / 2 : $$.width : position.isBottom && (x = -$$.height), x;
+	}, Axis.prototype.dxForAxisLabel = function dxForAxisLabel(position) {
+		var forHorizontal = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+		    $$ = this.owner,
+		    dx = position.isBottom ? "0.5em" : "0";
 
-		return forHorizontal ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
-	}, Axis.prototype.textAnchorForAxisLabel = function textAnchorForAxisLabel(forHorizontal, position) {
-		var anchor = position.isMiddle ? "middle" : "end";
 
-		return forHorizontal ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
+		return isHorizontal($$, forHorizontal) ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
+	}, Axis.prototype.textAnchorForAxisLabel = function textAnchorForAxisLabel(position) {
+		var forHorizontal = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+		    $$ = this.owner,
+		    anchor = position.isMiddle ? "middle" : "end";
+
+
+		return isHorizontal($$, forHorizontal) ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
 	}, Axis.prototype.xForXAxisLabel = function xForXAxisLabel() {
-		return this.xForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.xForAxisLabel(this.getXAxisLabelPosition(), !1);
 	}, Axis.prototype.xForYAxisLabel = function xForYAxisLabel() {
-		return this.xForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.xForAxisLabel(this.getYAxisLabelPosition());
 	}, Axis.prototype.xForY2AxisLabel = function xForY2AxisLabel() {
-		return this.xForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.xForAxisLabel(this.getY2AxisLabelPosition());
 	}, Axis.prototype.dxForXAxisLabel = function dxForXAxisLabel() {
-		return this.dxForAxisLabel(!this.owner.config.axis_rotated, this.getXAxisLabelPosition());
+		return this.dxForAxisLabel(this.getXAxisLabelPosition(), !1);
 	}, Axis.prototype.dxForYAxisLabel = function dxForYAxisLabel() {
-		return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getYAxisLabelPosition());
+		return this.dxForAxisLabel(this.getYAxisLabelPosition());
 	}, Axis.prototype.dxForY2AxisLabel = function dxForY2AxisLabel() {
-		return this.dxForAxisLabel(this.owner.config.axis_rotated, this.getY2AxisLabelPosition());
+		return this.dxForAxisLabel(this.getY2AxisLabelPosition());
 	}, Axis.prototype.dyForXAxisLabel = function dyForXAxisLabel() {
 		var $$ = this.owner,
 		    config = $$.config,
@@ -975,43 +1003,39 @@ var Axis = function () {
 		    isInner = this.getY2AxisLabelPosition().isInner;
 		return $$.config.axis_rotated ? isInner ? "1.2em" : "-2.2em" : isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : this.getMaxTickWidth("y2") + 15);
 	}, Axis.prototype.textAnchorForXAxisLabel = function textAnchorForXAxisLabel() {
-		var isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(!isRotated, this.getXAxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getXAxisLabelPosition(), !1);
 	}, Axis.prototype.textAnchorForYAxisLabel = function textAnchorForYAxisLabel() {
-		var isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(isRotated, this.getYAxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getYAxisLabelPosition());
 	}, Axis.prototype.textAnchorForY2AxisLabel = function textAnchorForY2AxisLabel() {
-		var isRotated = this.owner.config.axis_rotated;
-
-		return this.textAnchorForAxisLabel(isRotated, this.getY2AxisLabelPosition());
+		return this.textAnchorForAxisLabel(this.getY2AxisLabelPosition());
 	}, Axis.prototype.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
 		var $$ = this.owner,
 		    config = $$.config,
-		    maxWidth = 0,
-		    dummy = void 0,
-		    svg = void 0;
+		    currentTickMax = $$.currentMaxTickWidths,
+		    maxWidth = 0;
 
 
-		if (withoutRecompute && $$.currentMaxTickWidths[id]) return $$.currentMaxTickWidths[id];
+		if (withoutRecompute && currentTickMax[id]) return currentTickMax[id];
 
 		if ($$.svg) {
-			var targetsToShow = $$.filterTargetsToShow($$.data.targets),
-			    scale = void 0,
-			    axis = void 0;
-			/^y2?$/.test(id) ? (scale = $$[id].copy().domain($$.getYDomain(targetsToShow, id)), axis = this.getYAxis(id, scale, $$[id + "Orient"], config["axis_" + id + "_tick_format"], $$[id + "AxisTickValues"], !1, !0, !0)) : (scale = $$.x.copy().domain($$.getXDomain(targetsToShow)), axis = this.getXAxis("x", scale, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, !1, !0, !0), this.updateXAxisTickValues(targetsToShow, axis)), dummy = (0, _d3Selection.select)("body").append("div").classed("bb", !0), svg = dummy.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px"), svg.append("g").call(axis).each(function () {
-				(0, _d3Selection.select)(this).selectAll("text").each(function () {
-					var boxWidth = this.getBoundingClientRect().width;
+			var isYAxis = /^y2?$/.test(id),
+			    targetsToShow = $$.filterTargetsToShow($$.data.targets),
+			    getFrom = isYAxis ? "getY" : "getX",
+			    scale = $$[id].copy().domain($$[getFrom + "Domain"](targetsToShow, id)),
+			    axis = this[getFrom + "Axis"](id, scale, $$[id + "Orient"], isYAxis ? config["axis_" + id + "_tick_format"] : $$.xAxisTickFormat, null, !1, !0, !0);
+			isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
 
-					maxWidth < boxWidth && (maxWidth = boxWidth);
-				}), dummy.remove();
-			});
+
+			var dummy = $$.selectChart.append("svg").style("visibility", "hidden");
+
+			dummy.call(axis).selectAll("text").each(function () {
+				maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+			}), dummy.remove();
 		}
 
-		return $$.currentMaxTickWidths[id] = maxWidth <= 0 ? $$.currentMaxTickWidths[id] : maxWidth, $$.currentMaxTickWidths[id];
+		return maxWidth > 0 && (currentTickMax[id] = maxWidth), currentTickMax[id];
 	}, Axis.prototype.updateLabels = function updateLabels(withTransition) {
-		var _this = this,
+		var _this2 = this,
 		    $$ = this.owner,
 		    labels = {
 			X: $$.main.select("." + _classes2.default.axisX + " ." + _classes2.default.axisXLabel),
@@ -1019,10 +1043,10 @@ var Axis = function () {
 			Y2: $$.main.select("." + _classes2.default.axisY2 + " ." + _classes2.default.axisY2Label)
 		};
 
-		Object.keys(labels).forEach(function (axis) {
-			var node = labels[axis];
-
-			(withTransition ? node.transition() : node).attr("x", _this["xFor" + axis + "AxisLabel"].bind(_this)).attr("dx", _this["dxFor" + axis + "AxisLabel"].bind(_this)).attr("dy", _this["dyFor" + axis + "AxisLabel"].bind(_this)).text(_this["textFor" + axis + "AxisLabel"].bind(_this));
+		Object.keys(labels).forEach(function (v) {
+			var node = labels[v],
+			    axisLabel = v + "AxisLabel";
+			(withTransition ? node.transition() : node).attr("x", _this2["xFor" + axisLabel].bind(_this2)).attr("dx", _this2["dxFor" + axisLabel].bind(_this2)).attr("dy", _this2["dyFor" + axisLabel].bind(_this2)).text(_this2["textFor" + axisLabel].bind(_this2));
 		});
 	}, Axis.prototype.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
 		var p = (0, _util.isNumber)(padding) ? padding : padding[key];
@@ -1062,19 +1086,22 @@ var Axis = function () {
 		})), tickValues;
 	}, Axis.prototype.generateTransitions = function generateTransitions(duration) {
 		var $$ = this.owner,
-		    axes = $$.axes;
+		    axes = $$.axes,
+		    _map = ["x", "y", "y2", "subx"].map(function (v) {
+			return duration ? axes[v].transition().duration(duration) : axes[v];
+		}),
+		    axisX = _map[0],
+		    axisY = _map[1],
+		    axisY2 = _map[2],
+		    axisSubX = _map[3];
 
-
-		return {
-			axisX: duration ? axes.x.transition().duration(duration) : axes.x,
-			axisY: duration ? axes.y.transition().duration(duration) : axes.y,
-			axisY2: duration ? axes.y2.transition().duration(duration) : axes.y2,
-			axisSubX: duration ? axes.subx.transition().duration(duration) : axes.subx
-		};
+		return { axisX: axisX, axisY: axisY, axisY2: axisY2, axisSubX: axisSubX };
 	}, Axis.prototype.redraw = function redraw(transitions, isHidden) {
 		var $$ = this.owner,
 		    opacity = isHidden ? "0" : "1";
-		$$.axes.x.style("opacity", opacity), $$.axes.y.style("opacity", opacity), $$.axes.y2.style("opacity", opacity), $$.axes.subx.style("opacity", opacity), transitions.axisX.call($$.xAxis), transitions.axisY.call($$.yAxis), transitions.axisY2.call($$.y2Axis), transitions.axisSubX.call($$.subXAxis);
+		["x", "y", "y2", "subx"].forEach(function (v) {
+			$$.axes[v].style("opacity", opacity);
+		}), transitions.axisX.call($$.xAxis), transitions.axisY.call($$.yAxis), transitions.axisY2.call($$.y2Axis), transitions.axisSubX.call($$.subXAxis);
 	}, Axis;
 }();
 
@@ -1089,13 +1116,320 @@ module.exports = exports["default"];
 
 
 exports.__esModule = !0;
+
+exports.default = function () {
+
+	function axisX(selection, x) {
+		selection.attr("transform", function (d) {
+			return "translate(" + Math.ceil(x(d) + tickOffset) + ", 0)";
+		});
+	}
+
+	function axisY(selection, y) {
+		selection.attr("transform", function (d) {
+			return "translate(0," + Math.ceil(y(d)) + ")";
+		});
+	}
+
+	function scaleExtent(domain) {
+		var start = domain[0],
+		    stop = domain[domain.length - 1];
+
+
+		return start < stop ? [start, stop] : [stop, start];
+	}
+
+	function generateTicks(scale) {
+		var ticks = [];
+
+		if (scale.ticks) return scale.ticks.apply(scale, tickArguments ? (0, _util.toArray)(tickArguments) : []).map(function (v) {
+				return (
+					// round the tick value if is number
+					(0, _util.isString)(v) && (0, _util.isNumber)(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
+				);
+			});
+
+		for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
+
+		return ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0])), ticks;
+	}
+
+	function copyScale() {
+		var newScale = scale.copy();
+
+		return newScale.domain().length || newScale.domain(scale.domain()), newScale;
+	}
+
+	function textFormatted(v) {
+		// to round float numbers from 'binary floating point'
+		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
+		var value = /\d+\.\d+0{5,}\d$/.test(v) ? +(v + "").replace(/0+\d$/, "") : v,
+		    formatted = tickFormat ? tickFormat(value) : value;
+
+
+		return (0, _util.isDefined)(formatted) ? formatted : "";
+	}
+
+	function transitionise(selection) {
+		return params.withoutTransition ? selection.interrupt() : selection.transition(transition);
+	}
+
+	function axis(g) {
+		g.each(function () {
+
+			// this should be called only when category axis
+			function splitTickText(d, maxWidthValue) {
+
+				function split(splitted, text) {
+					spaceIndex = undefined;
+
+
+					for (var i = 1; i < text.length; i++)
+
+					// if text width gets over tick width, split by space index or current index
+					if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = sizeFor1Char.w * subtext.length, maxWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+
+					return splitted.concat(text);
+				}
+
+				var tickText = textFormatted(d),
+				    splitted = (0, _util.isString)(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
+
+
+				if (splitted.length) return splitted;
+
+				var maxWidth = maxWidthValue,
+				    subtext = void 0,
+				    spaceIndex = void 0,
+				    textWidth = void 0;
+				return (0, _util.isArray)(tickText) ? tickText : ((!maxWidth || maxWidth <= 0) && (maxWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12 : 110), split(splitted, tickText + ""));
+			}
+
+			var g = (0, _d3Selection.select)(this);
+
+			axis.g = g;
+			var scale0 = this.__chart__ || scale,
+			    scale1 = copyScale();
+			this.__chart__ = scale1;
+
+
+			// count of tick data in array
+			var ticks = tickValues || generateTicks(scale1),
+			    tick = g.selectAll(".tick").data(ticks, scale1),
+			    tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
+			    tickExit = tick.exit().remove();
+
+			// update selection
+
+
+			// enter selection
+
+
+			// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
+
+			tick = tickEnter.merge(tick);
+			var tickUpdate = transitionise(tick).style("opacity", "1"),
+			    tickX = void 0,
+			    tickY = void 0,
+			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent((params.orgXScale || scale).range()),
+			    path = g.selectAll(".domain").data([0]),
+			    pathUpdate = path.enter().append("path").attr("class", "domain").merge(transitionise(path));
+
+			// update selection - data join
+
+
+			// enter + update selection
+
+			tickEnter.append("line"), tickEnter.append("text");
+			var lineEnter = tickEnter.select("line"),
+			    lineUpdate = tickUpdate.select("line"),
+			    textEnter = tickEnter.select("text"),
+			    textUpdate = tickUpdate.select("text");
+			params.isCategory ? (tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2), tickX = tickCentered ? 0 : tickOffset, tickY = tickCentered ? tickOffset : 0) : (tickX = 0, tickOffset = tickX);
+			var sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
+			    counts = [],
+			    tickLength = Math.max(6, 0) + 3,
+			    isLeftRight = /^(left|right)$/.test(orient),
+			    isTopBottom = /^(top|bottom)$/.test(orient),
+			    tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+				var split = params.tickMultiline ? splitTickText(d, params.tickWidth) : (0, _util.isArray)(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
+
+				return counts[index] = split.length, split.map(function (splitted) {
+					return { index: index, splitted: splitted };
+				});
+			});
+			tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
+				return d.splitted;
+			});
+
+
+			// line/text enter and path update
+			var tickTransform = isTopBottom ? axisX : axisY,
+			    sign = /^(top|left)$/.test(orient) ? -1 : 1,
+			    axisPx = tickTransform === axisX ? "y" : "x";
+			lineEnter.attr(axisPx + "2", 6 * sign), textEnter.attr("" + axisPx, 9 * sign), pathUpdate.attr("d", function () {
+				var outerTickSized = outerTickSize * sign;
+
+				return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
+			});
+
+			// tick text helpers
+			var rotate = params.tickTextRotate,
+			    tickSize = function tickSize(d) {
+				var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
+
+				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
+			},
+			    tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ? params.config["axis_" + params.axisName + "_tick_text_position"] : { x: 0, y: 0 };
+
+			// get the axis' tick position configuration
+
+
+			if (tspan.attr("x", isTopBottom ? 0 : 9 * sign).attr("dx", function () {
+				var dx = 0;
+
+				return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
+			}()).attr("dy", function (d, i) {
+				var dy = 0;
+
+
+				return orient !== "top" && (i === 0 ? dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0 : dy = sizeFor1Char.h), (0, _util.isNumber)(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
+			}), orient === "bottom" ? (lineUpdate.attr("x1", tickX).attr("x2", tickX).attr("y2", tickSize), textUpdate.attr("x", 0).attr("y", function yForText(r) {
+				return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : 9;
+			}(rotate)).style("text-anchor", function textAnchorForText(r) {
+				return r ? r > 0 ? "start" : "end" : "middle";
+			}(rotate)).attr("transform", function textTransform(r) {
+				return r ? "rotate(" + r + ")" : null;
+			}(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -6), textUpdate.attr("x", 0).attr("y", -9).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -6).attr("y1", tickY).attr("y2", tickY), textUpdate.attr("x", -9).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", 6).attr("y2", 0), textUpdate.attr("x", 9).attr("y", 0).style("text-anchor", "start")) : void 0, (params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
+				(0, _d3Selection.select)(this).text(params.tickTitle[index]);
+			}), scale1.bandwidth)) {
+				var x = scale1,
+				    dx = x.bandwidth() / 2;
+				scale0 = function scale0(d) {
+					return x(d) + dx;
+				}, scale1 = scale0;
+			} else scale0.bandwidth ? scale0 = scale1 : tickExit.call(tickTransform, scale1);
+
+			tickEnter.call(tickTransform, scale0), tickUpdate.call(tickTransform, scale1);
+		});
+	}
+
+	var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+	    scale = (0, _d3Scale.scaleLinear)(),
+	    orient = "bottom",
+	    outerTickSize = params.withOuterTick ? 6 : 0,
+	    tickValues = null,
+	    tickFormat = void 0,
+	    tickArguments = void 0,
+	    tickOffset = 0,
+	    tickCulling = !0,
+	    tickCentered = void 0,
+	    transition = void 0;
+
+
+	return axis.scale = function (x) {
+		return arguments.length ? (scale = x, axis) : scale;
+	}, axis.orient = function (x) {
+		return arguments.length ? (orient = x in {
+			top: 1,
+			right: 1,
+			bottom: 1,
+			left: 1
+		} ? x + "" : "bottom", axis) : orient;
+	}, axis.tickFormat = function (format) {
+		return arguments.length ? (tickFormat = format, axis) : tickFormat;
+	}, axis.tickCentered = function (isCentered) {
+		return arguments.length ? (tickCentered = isCentered, axis) : tickCentered;
+	}, axis.tickOffset = function () {
+		return tickOffset;
+	}, axis.tickInterval = function (size) {
+		var interval = void 0;
+
+		if (params.isCategory) interval = tickOffset * 2;else {
+			var length = axis.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
+
+			interval = length / (size || axis.g.selectAll("line").size());
+		}
+
+		return interval === Infinity ? 0 : interval;
+	}, axis.ticks = function () {
+		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
+
+		return args.length ? (tickArguments = (0, _util.toArray)(args), axis) : tickArguments;
+	}, axis.tickCulling = function (culling) {
+		return arguments.length ? (tickCulling = culling, axis) : tickCulling;
+	}, axis.tickValues = function (x) {
+		if ((0, _util.isFunction)(x)) tickValues = function tickValues() {
+				return x(scale.domain());
+			};else {
+			if (!arguments.length) return tickValues;
+
+			tickValues = x;
+		}
+
+		return axis;
+	}, axis.setTransition = function (t) {
+
+		return transition = t, axis;
+	}, axis;
+};
+
+var _d3Scale = __webpack_require__(65),
+    _d3Selection = __webpack_require__(64),
+    _util = __webpack_require__(6),
+    getSizeFor1Char = function getSizeFor1Char(node) {
+	// default size for one character
+	var size = {
+		w: 5.5,
+		h: 11.5
+	};
+
+	return node.empty() || node.select("text").text("0").call(function (el) {
+		try {
+			var box = el.node().getBBox(),
+			    h = box.height,
+			    w = box.width;
+			h && w && (size.h = h, size.w = w), el.text("");
+		} catch (e) {}
+	}), getSizeFor1Char.size = size;
+};
+
+// Features:
+// 1. category axis
+// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
+// 3. multiline tick text
+
+/**
+ * Compute a character dimension
+ * @param {d3.selection} node
+ * @return {{w: number, h: number}}
+ * @private
+ */
+
+
+/**
+ * Copyright (c) 2017 NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+module.exports = exports["default"];
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+"use strict";
+
+
+exports.__esModule = !0;
 exports.toArray = exports.sanitise = exports.merge = exports.notEmpty = exports.isValue = exports.isUndefined = exports.isString = exports.isObjectType = exports.isObject = exports.isNumber = exports.isFunction = exports.isEmpty = exports.isDefined = exports.isBoolean = exports.isArray = exports.hasValue = exports.getRectSegList = exports.getPathBox = exports.getOption = exports.getCssRules = exports.getBrushSelection = exports.extend = exports.emulateEvent = exports.diffDomain = exports.ceil10 = exports.capitalize = exports.callFn = exports.brushEmpty = exports.asHalfPixel = undefined;
 
-var _typeof2 = __webpack_require__(6),
+var _typeof2 = __webpack_require__(7),
     _typeof3 = _interopRequireDefault(_typeof2),
     _d3Selection = __webpack_require__(64),
-    _d3Brush = __webpack_require__(75),
-    _classes = __webpack_require__(7),
+    _d3Brush = __webpack_require__(76),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -1410,7 +1744,7 @@ exports.sanitise = sanitise;
 exports.toArray = toArray;
 
 /***/ }),
-/* 6 */
+/* 7 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1425,7 +1759,7 @@ exports.default = function (obj) {
 };
 
 /***/ }),
-/* 7 */
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1529,313 +1863,6 @@ exports.default = {
 module.exports = exports["default"];
 
 /***/ }),
-/* 8 */
-/***/ (function(module, exports, __webpack_require__) {
-
-"use strict";
-
-
-exports.__esModule = !0;
-
-exports.default = function () {
-
-	function axisX(selection, x) {
-		selection.attr("transform", function (d) {
-			return "translate(" + Math.ceil(x(d) + tickOffset) + ", 0)";
-		});
-	}
-
-	function axisY(selection, y) {
-		selection.attr("transform", function (d) {
-			return "translate(0," + Math.ceil(y(d)) + ")";
-		});
-	}
-
-	function scaleExtent(domain) {
-		var start = domain[0],
-		    stop = domain[domain.length - 1];
-
-
-		return start < stop ? [start, stop] : [stop, start];
-	}
-
-	function generateTicks(scale) {
-		var ticks = [];
-
-		if (scale.ticks) return scale.ticks.apply(scale, tickArguments ? (0, _util.toArray)(tickArguments) : []).map(function (v) {
-				return (
-					// round the tick value if is number
-					(0, _util.isString)(v) && (0, _util.isNumber)(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
-				);
-			});
-
-		for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
-
-		return ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0])), ticks;
-	}
-
-	function copyScale() {
-		var newScale = scale.copy();
-
-		return newScale.domain().length || newScale.domain(scale.domain()), newScale;
-	}
-
-	function textFormatted(v) {
-		// to round float numbers from 'binary floating point'
-		// https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-		// https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-		var value = /\d+\.\d+0{5,}\d$/.test(v) ? +(v + "").replace(/0+\d$/, "") : v,
-		    formatted = tickFormat ? tickFormat(value) : value;
-
-
-		return (0, _util.isDefined)(formatted) ? formatted : "";
-	}
-
-	function transitionise(selection) {
-		return params.withoutTransition ? selection.interrupt() : selection.transition(transition);
-	}
-
-	function axis(g) {
-		g.each(function () {
-
-			// this should be called only when category axis
-			function splitTickText(d, maxWidthValue) {
-
-				function split(splitted, text) {
-					spaceIndex = undefined;
-
-
-					for (var i = 1; i < text.length; i++)
-
-					// if text width gets over tick width, split by space index or current index
-					if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = sizeFor1Char.w * subtext.length, maxWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
-
-					return splitted.concat(text);
-				}
-
-				var tickText = textFormatted(d),
-				    splitted = (0, _util.isString)(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
-
-
-				if (splitted.length) return splitted;
-
-				var maxWidth = maxWidthValue,
-				    subtext = void 0,
-				    spaceIndex = void 0,
-				    textWidth = void 0;
-				return (0, _util.isArray)(tickText) ? tickText : ((!maxWidth || maxWidth <= 0) && (maxWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale1(ticks[1]) - scale1(ticks[0])) - 12 : 110), split(splitted, tickText + ""));
-			}
-
-			var g = (0, _d3Selection.select)(this);
-
-			axis.g = g;
-			var scale0 = this.__chart__ || scale,
-			    scale1 = copyScale();
-			this.__chart__ = scale1;
-
-
-			// count of tick data in array
-			var ticks = tickValues || generateTicks(scale1),
-			    tick = g.selectAll(".tick").data(ticks, scale1),
-			    tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
-			    tickExit = tick.exit().remove();
-
-			// update selection
-
-
-			// enter selection
-
-
-			// MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
-
-			tick = tickEnter.merge(tick);
-			var tickUpdate = transitionise(tick).style("opacity", "1"),
-			    tickX = void 0,
-			    tickY = void 0,
-			    range = scale.rangeExtent ? scale.rangeExtent() : scaleExtent((params.orgXScale || scale).range()),
-			    path = g.selectAll(".domain").data([0]),
-			    pathUpdate = path.enter().append("path").attr("class", "domain").merge(transitionise(path));
-
-			// update selection - data join
-
-
-			// enter + update selection
-
-			tickEnter.append("line"), tickEnter.append("text");
-			var lineEnter = tickEnter.select("line"),
-			    lineUpdate = tickUpdate.select("line"),
-			    textEnter = tickEnter.select("text"),
-			    textUpdate = tickUpdate.select("text");
-			params.isCategory ? (tickOffset = Math.ceil((scale1(1) - scale1(0)) / 2), tickX = tickCentered ? 0 : tickOffset, tickY = tickCentered ? tickOffset : 0) : (tickX = 0, tickOffset = tickX);
-			var sizeFor1Char = getSizeFor1Char.size || getSizeFor1Char(g.select(".tick")),
-			    counts = [],
-			    tickLength = Math.max(6, 0) + 3,
-			    isLeftRight = /^(left|right)$/.test(orient),
-			    isTopBottom = /^(top|bottom)$/.test(orient),
-			    tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-				var split = params.tickMultiline ? splitTickText(d, params.tickWidth) : (0, _util.isArray)(textFormatted(d)) ? textFormatted(d).concat() : [textFormatted(d)];
-
-				return counts[index] = split.length, split.map(function (splitted) {
-					return { index: index, splitted: splitted };
-				});
-			});
-			tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
-				return d.splitted;
-			});
-
-
-			// line/text enter and path update
-			var tickTransform = isTopBottom ? axisX : axisY,
-			    sign = /^(top|left)$/.test(orient) ? -1 : 1,
-			    axisPx = tickTransform === axisX ? "y" : "x";
-			lineEnter.attr(axisPx + "2", 6 * sign), textEnter.attr("" + axisPx, 9 * sign), pathUpdate.attr("d", function () {
-				var outerTickSized = outerTickSize * sign;
-
-				return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
-			});
-
-			// tick text helpers
-			var rotate = params.tickTextRotate,
-			    tickSize = function tickSize(d) {
-				var tickPosition = scale(d) + (tickCentered ? 0 : tickOffset);
-
-				return range[0] < tickPosition && tickPosition < range[1] ? 6 : 0;
-			},
-			    tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ? params.config["axis_" + params.axisName + "_tick_text_position"] : { x: 0, y: 0 };
-
-			// get the axis' tick position configuration
-
-
-			if (tspan.attr("x", isTopBottom ? 0 : 9 * sign).attr("dx", function () {
-				var dx = 0;
-
-				return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
-			}()).attr("dy", function (d, i) {
-				var dy = 0;
-
-
-				return orient !== "top" && (i === 0 ? dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0 : dy = sizeFor1Char.h), (0, _util.isNumber)(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
-			}), orient === "bottom" ? (lineUpdate.attr("x1", tickX).attr("x2", tickX).attr("y2", tickSize), textUpdate.attr("x", 0).attr("y", function yForText(r) {
-				return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : 9;
-			}(rotate)).style("text-anchor", function textAnchorForText(r) {
-				return r ? r > 0 ? "start" : "end" : "middle";
-			}(rotate)).attr("transform", function textTransform(r) {
-				return r ? "rotate(" + r + ")" : null;
-			}(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -6), textUpdate.attr("x", 0).attr("y", -9).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -6).attr("y1", tickY).attr("y2", tickY), textUpdate.attr("x", -9).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", 6).attr("y2", 0), textUpdate.attr("x", 9).attr("y", 0).style("text-anchor", "start")) : void 0, (params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
-				(0, _d3Selection.select)(this).text(params.tickTitle[index]);
-			}), scale1.bandwidth)) {
-				var x = scale1,
-				    dx = x.bandwidth() / 2;
-				scale0 = function scale0(d) {
-					return x(d) + dx;
-				}, scale1 = scale0;
-			} else scale0.bandwidth ? scale0 = scale1 : tickExit.call(tickTransform, scale1);
-
-			tickEnter.call(tickTransform, scale0), tickUpdate.call(tickTransform, scale1);
-		});
-	}
-
-	var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-	    scale = (0, _d3Scale.scaleLinear)(),
-	    orient = "bottom",
-	    outerTickSize = params.withOuterTick ? 6 : 0,
-	    tickValues = null,
-	    tickFormat = void 0,
-	    tickArguments = void 0,
-	    tickOffset = 0,
-	    tickCulling = !0,
-	    tickCentered = void 0,
-	    transition = void 0;
-
-
-	return axis.scale = function (x) {
-		return arguments.length ? (scale = x, axis) : scale;
-	}, axis.orient = function (x) {
-		return arguments.length ? (orient = x in {
-			top: 1,
-			right: 1,
-			bottom: 1,
-			left: 1
-		} ? x + "" : "bottom", axis) : orient;
-	}, axis.tickFormat = function (format) {
-		return arguments.length ? (tickFormat = format, axis) : tickFormat;
-	}, axis.tickCentered = function (isCentered) {
-		return arguments.length ? (tickCentered = isCentered, axis) : tickCentered;
-	}, axis.tickOffset = function () {
-		return tickOffset;
-	}, axis.tickInterval = function (size) {
-		var interval = void 0;
-
-		if (params.isCategory) interval = tickOffset * 2;else {
-			var length = axis.g.select("path.domain").node().getTotalLength() - outerTickSize * 2;
-
-			interval = length / (size || axis.g.selectAll("line").size());
-		}
-
-		return interval === Infinity ? 0 : interval;
-	}, axis.ticks = function () {
-		for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
-
-		return args.length ? (tickArguments = (0, _util.toArray)(args), axis) : tickArguments;
-	}, axis.tickCulling = function (culling) {
-		return arguments.length ? (tickCulling = culling, axis) : tickCulling;
-	}, axis.tickValues = function (x) {
-		if ((0, _util.isFunction)(x)) tickValues = function tickValues() {
-				return x(scale.domain());
-			};else {
-			if (!arguments.length) return tickValues;
-
-			tickValues = x;
-		}
-
-		return axis;
-	}, axis.setTransition = function (t) {
-
-		return transition = t, axis;
-	}, axis;
-};
-
-var _d3Scale = __webpack_require__(65),
-    _d3Selection = __webpack_require__(64),
-    _util = __webpack_require__(5),
-    getSizeFor1Char = function getSizeFor1Char(node) {
-	// default size for one character
-	var size = {
-		w: 5.5,
-		h: 11.5
-	};
-
-	return node.empty() || node.select("text").text("0").call(function (el) {
-		try {
-			var box = el.node().getBBox(),
-			    h = box.height,
-			    w = box.width;
-			h && w && (size.h = h, size.w = w), el.text("");
-		} catch (e) {}
-	}), getSizeFor1Char.size = size;
-};
-
-// Features:
-// 1. category axis
-// 2. ceil values of translate/x/y to int for half pixel anti-aliasing
-// 3. multiline tick text
-
-/**
- * Compute a character dimension
- * @param {d3.selection} node
- * @return {{w: number, h: number}}
- * @private
- */
-
-
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-module.exports = exports["default"];
-
-/***/ }),
 /* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
@@ -1846,7 +1873,7 @@ var _Options = __webpack_require__(10),
     _Options2 = _interopRequireDefault(_Options),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4767,7 +4794,7 @@ module.exports = exports["default"];
 var _d3Scale = __webpack_require__(65),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4873,7 +4900,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Array = __webpack_require__(66),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5061,11 +5088,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Array = __webpack_require__(66),
     _d3Collection = __webpack_require__(71),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5155,7 +5182,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	getValueOnIndex: function getValueOnIndex(values, index) {
 		var valueOnIndex = values.filter(function (v) {
-			return v.index === index;
+			return (v.index === null ? v.x : v.index) === index;
 		});
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
@@ -5658,7 +5685,7 @@ var _d3Dsv = __webpack_require__(77),
     _d3Collection = __webpack_require__(71),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5887,14 +5914,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 				return x1 - x2;
-			}));
+			})), t.values.forEach(function (v, i) {
+				var index = $$.data.targets ? $$.getIndexByX(v.x) : null;
 
-
-			// indexing each value
-			var i = 0;
-
-			t.values.forEach(function (v) {
-				v.index = $$.data.targets ? $$.getIndexByX(v.x) : i++;
+				v.index = index === null ? i : index;
 			}), $$.data.xs[t.id].sort(function (v1, v2) {
 				return v1 - v2;
 			});
@@ -5913,11 +5936,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 "use strict";
 
 
-var _classes = __webpack_require__(7),
+var _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5983,7 +6006,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6013,12 +6036,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 var _d3Selection = __webpack_require__(64),
-    _d3Drag = __webpack_require__(74),
+    _d3Drag = __webpack_require__(72),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6143,24 +6166,39 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		if ($$.isMultipleX()) x = 0, y = 0, w = $$.width, h = $$.height;else {
 			var rectW = void 0,
 			    rectX = void 0;
-			$$.isCategorized() ? (rectW = $$.getEventRectWidth(), rectX = function (d) {
-				return xScale(d.x) - rectW / 2;
-			}) : ($$.updateXs(), rectW = function (d) {
-				var prevX = $$.getPrevX(d.index),
-				    nextX = $$.getNextX(d.index);
 
 
-				// if there this is a single data point make the eventRect full width (or height)
-				return prevX === null && nextX === null ? isRotated ? $$.height : $$.width : (prevX === null && (prevX = xScale.domain()[0]), nextX === null && (nextX = xScale.domain()[1]), Math.max(0, (xScale(nextX) - xScale(prevX)) / 2));
-			}, rectX = function (d) {
-				var nextX = $$.getNextX(d.index),
-				    thisX = $$.data.xs[d.id][d.index],
-				    prevX = $$.getPrevX(d.index);
+			if ($$.isCategorized()) rectW = $$.getEventRectWidth(), rectX = function (d) {
+					return xScale(d.x) - rectW / 2;
+				};else {
+				$$.updateXs();
 
 
-				// if there this is a single data point position the eventRect at 0
-				return prevX === null && nextX === null ? 0 : (prevX === null && (prevX = xScale.domain()[0]), (xScale(thisX) + xScale(prevX)) / 2);
-			}), x = isRotated ? 0 : rectX, y = isRotated ? rectX : 0, w = isRotated ? $$.width : rectW, h = isRotated ? rectW : $$.height;
+				var getPrevNextX = function (d) {
+					var index = d.index;
+
+					return {
+						prev: $$.getPrevX(index),
+						next: $$.getNextX(index)
+					};
+				};
+
+				rectW = function (d) {
+					var x = getPrevNextX(d);
+
+					// if there this is a single data point make the eventRect full width (or height)
+					return x.prev === null && x.next === null ? isRotated ? $$.height : $$.width : (x.prev === null && (x.prev = xScale.domain()[0]), x.next === null && (x.next = xScale.domain()[1]), Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2));
+				}, rectX = function (d) {
+					var x = getPrevNextX(d),
+					    thisX = $$.data.xs[d.id][d.index];
+
+
+					// if there this is a single data point position the eventRect at 0
+					return x.prev === null && x.next === null ? 0 : (x.prev === null && (x.prev = xScale.domain()[0]), (xScale(thisX) + xScale(x.prev)) / 2);
+				};
+			}
+
+			x = isRotated ? 0 : rectX, y = isRotated ? rectX : 0, w = isRotated ? $$.width : rectW, h = isRotated ? rectW : $$.height;
 		}
 
 		eventRectData.attr("class", $$.classEvent.bind($$)).attr("x", x).attr("y", y).attr("width", w).attr("height", h);
@@ -6361,9 +6399,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6494,11 +6532,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Shape = __webpack_require__(63),
     _d3Selection = __webpack_require__(64),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6630,9 +6668,9 @@ var _d3Selection = __webpack_require__(64),
     _d3Interpolate = __webpack_require__(68),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7073,11 +7111,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 var _d3Selection = __webpack_require__(64),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7240,7 +7278,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Array = __webpack_require__(66),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7304,11 +7342,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Shape = __webpack_require__(63),
     _d3Selection = __webpack_require__(64),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7769,7 +7807,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7928,9 +7966,9 @@ var _d3Selection = __webpack_require__(64),
     _d3Array = __webpack_require__(66),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8157,9 +8195,9 @@ var cacheKey = "$radarPoints";
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8345,7 +8383,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8495,9 +8533,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8727,9 +8765,9 @@ var getGridTextAnchor = function (d) {
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8964,9 +9002,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9449,7 +9487,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9529,7 +9567,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9626,9 +9664,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9721,9 +9759,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9819,9 +9857,9 @@ var _d3Selection = __webpack_require__(64),
     _d3Color = __webpack_require__(73),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9980,12 +10018,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 var _d3Selection = __webpack_require__(64),
-    _d3Brush = __webpack_require__(75),
+    _d3Brush = __webpack_require__(76),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10246,13 +10284,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _d3Array = __webpack_require__(66),
     _d3Selection = __webpack_require__(64),
-    _d3Drag = __webpack_require__(74),
-    _d3Zoom = __webpack_require__(72),
+    _d3Drag = __webpack_require__(72),
+    _d3Zoom = __webpack_require__(74),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10463,9 +10501,9 @@ var _d3Selection = __webpack_require__(64),
     _d3Scale = __webpack_require__(65),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10592,7 +10630,7 @@ var colorizePattern = function (pattern, color, id) {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10660,7 +10698,7 @@ var getFormat = function ($$, typeValue, v) {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10720,9 +10758,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10863,9 +10901,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10966,7 +11004,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11091,10 +11129,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 var _d3Array = __webpack_require__(66),
-    _d3Zoom = __webpack_require__(72),
+    _d3Zoom = __webpack_require__(74),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11269,7 +11307,7 @@ var zoom = function (domainValue) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11325,7 +11363,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			config.data_axes[id] = args.axes[id];
 		}), "colors" in args && Object.keys(args.colors).forEach(function (id) {
 			config.data_colors[id] = args.colors[id];
-		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCache(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds((0, _util.isBoolean)(args.unload) && args.unload ? null : args.unload), function () {
+		}), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCache(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
 			return $$.loadFromArgs(args);
 		}) : $$.loadFromArgs(args));
 
@@ -11378,8 +11416,8 @@ var _d3Selection = __webpack_require__(64),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5),
-    _classes = __webpack_require__(7),
+    _util = __webpack_require__(6),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -11626,8 +11664,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5),
-    _classes = __webpack_require__(7),
+    _util = __webpack_require__(6),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -11754,7 +11792,7 @@ var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11809,7 +11847,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11846,7 +11884,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12001,9 +12039,9 @@ var ygrids = function (grids) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _classes = __webpack_require__(7),
+    _classes = __webpack_require__(8),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12105,7 +12143,7 @@ var regions = function (_regions) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12255,7 +12293,7 @@ var data = function (targetIds) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12310,7 +12348,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12342,7 +12380,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12411,7 +12449,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12573,7 +12611,7 @@ var setMinMax = function ($$, type, value) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12650,7 +12688,7 @@ var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _browser = __webpack_require__(59),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12726,7 +12764,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.__esModule = !0;
 exports.document = exports.window = undefined;
 
-var _util = __webpack_require__(5),
+var _util = __webpack_require__(6),
     win = (0, _util.isDefined)(window) && window.Math === Math ? window : (0, _util.isDefined)(self) && (self.Math === Math ? self : Function("return this")()),
     doc = win.document;
 
@@ -12756,7 +12794,7 @@ exports.document = doc;
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12837,7 +12875,7 @@ var tooltip = (0, _util.extend)(function () {}, {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12870,7 +12908,7 @@ var ua = window.navigator.userAgent;
 var _d3Selection = __webpack_require__(64),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(5);
+    _util = __webpack_require__(6);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -17486,7 +17524,7 @@ function threshold() {
 var d3_time = __webpack_require__(69);
 
 // EXTERNAL MODULE: ./node_modules/d3-time-format/index.js + 4 modules
-var d3_time_format = __webpack_require__(76);
+var d3_time_format = __webpack_require__(75);
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
 
@@ -21137,85 +21175,10 @@ function set(object, f) {
 // EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
 var d3_dispatch = __webpack_require__(78);
 
-// EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
-var d3_drag = __webpack_require__(74);
-
-// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
-var d3_interpolate = __webpack_require__(68);
-
 // EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
 var d3_selection = __webpack_require__(64);
 
-// EXTERNAL MODULE: ./node_modules/d3-transition/index.js + 29 modules
-var d3_transition = __webpack_require__(67);
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/src/constant.js
-/* harmony default export */ var constant = (function(x) {
-  return function() {
-    return x;
-  };
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/src/event.js
-function ZoomEvent(target, type, transform) {
-  this.target = target;
-  this.type = type;
-  this.transform = transform;
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/src/transform.js
-function Transform(k, x, y) {
-  this.k = k;
-  this.x = x;
-  this.y = y;
-}
-
-Transform.prototype = {
-  constructor: Transform,
-  scale: function(k) {
-    return k === 1 ? this : new Transform(this.k * k, this.x, this.y);
-  },
-  translate: function(x, y) {
-    return x === 0 & y === 0 ? this : new Transform(this.k, this.x + this.k * x, this.y + this.k * y);
-  },
-  apply: function(point) {
-    return [point[0] * this.k + this.x, point[1] * this.k + this.y];
-  },
-  applyX: function(x) {
-    return x * this.k + this.x;
-  },
-  applyY: function(y) {
-    return y * this.k + this.y;
-  },
-  invert: function(location) {
-    return [(location[0] - this.x) / this.k, (location[1] - this.y) / this.k];
-  },
-  invertX: function(x) {
-    return (x - this.x) / this.k;
-  },
-  invertY: function(y) {
-    return (y - this.y) / this.k;
-  },
-  rescaleX: function(x) {
-    return x.copy().domain(x.range().map(this.invertX, this).map(x.invert, x));
-  },
-  rescaleY: function(y) {
-    return y.copy().domain(y.range().map(this.invertY, this).map(y.invert, y));
-  },
-  toString: function() {
-    return "translate(" + this.x + "," + this.y + ") scale(" + this.k + ")";
-  }
-};
-
-var identity = new Transform(1, 0, 0);
-
-transform_transform.prototype = Transform.prototype;
-
-function transform_transform(node) {
-  return node.__zoom || identity;
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-zoom/src/noevent.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
 
 
 function nopropagation() {
@@ -21227,10 +21190,63 @@ function nopropagation() {
   d3_selection["event"].stopImmediatePropagation();
 });
 
-// CONCATENATED MODULE: ./node_modules/d3-zoom/src/zoom.js
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
 
 
 
+/* harmony default export */ var nodrag = (function(view) {
+  var root = view.document.documentElement,
+      selection = Object(d3_selection["select"])(view).on("dragstart.drag", noevent, true);
+  if ("onselectstart" in root) {
+    selection.on("selectstart.drag", noevent, true);
+  } else {
+    root.__noselect = root.style.MozUserSelect;
+    root.style.MozUserSelect = "none";
+  }
+});
+
+function yesdrag(view, noclick) {
+  var root = view.document.documentElement,
+      selection = Object(d3_selection["select"])(view).on("dragstart.drag", null);
+  if (noclick) {
+    selection.on("click.drag", noevent, true);
+    setTimeout(function() { selection.on("click.drag", null); }, 0);
+  }
+  if ("onselectstart" in root) {
+    selection.on("selectstart.drag", null);
+  } else {
+    root.style.MozUserSelect = root.__noselect;
+    delete root.__noselect;
+  }
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
+/* harmony default export */ var constant = (function(x) {
+  return function() {
+    return x;
+  };
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
+function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
+  this.target = target;
+  this.type = type;
+  this.subject = subject;
+  this.identifier = id;
+  this.active = active;
+  this.x = x;
+  this.y = y;
+  this.dx = dx;
+  this.dy = dy;
+  this._ = dispatch;
+}
+
+DragEvent.prototype.on = function() {
+  var value = this._.on.apply(this._, arguments);
+  return value === this._ ? this : value;
+};
+
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
 
 
 
@@ -21243,421 +21259,166 @@ function defaultFilter() {
   return !d3_selection["event"].button;
 }
 
-function defaultExtent() {
-  var e = this, w, h;
-  if (e instanceof SVGElement) {
-    e = e.ownerSVGElement || e;
-    w = e.width.baseVal.value;
-    h = e.height.baseVal.value;
-  } else {
-    w = e.clientWidth;
-    h = e.clientHeight;
-  }
-  return [[0, 0], [w, h]];
+function defaultContainer() {
+  return this.parentNode;
 }
 
-function defaultTransform() {
-  return this.__zoom || identity;
-}
-
-function defaultWheelDelta() {
-  return -d3_selection["event"].deltaY * (d3_selection["event"].deltaMode ? 120 : 1) / 500;
+function defaultSubject(d) {
+  return d == null ? {x: d3_selection["event"].x, y: d3_selection["event"].y} : d;
 }
 
 function defaultTouchable() {
   return "ontouchstart" in this;
 }
 
-function defaultConstrain(transform, extent, translateExtent) {
-  var dx0 = transform.invertX(extent[0][0]) - translateExtent[0][0],
-      dx1 = transform.invertX(extent[1][0]) - translateExtent[1][0],
-      dy0 = transform.invertY(extent[0][1]) - translateExtent[0][1],
-      dy1 = transform.invertY(extent[1][1]) - translateExtent[1][1];
-  return transform.translate(
-    dx1 > dx0 ? (dx0 + dx1) / 2 : Math.min(0, dx0) || Math.max(0, dx1),
-    dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1)
-  );
-}
-
-/* harmony default export */ var src_zoom = (function() {
+/* harmony default export */ var src_drag = (function() {
   var filter = defaultFilter,
-      extent = defaultExtent,
-      constrain = defaultConstrain,
-      wheelDelta = defaultWheelDelta,
+      container = defaultContainer,
+      subject = defaultSubject,
       touchable = defaultTouchable,
-      scaleExtent = [0, Infinity],
-      translateExtent = [[-Infinity, -Infinity], [Infinity, Infinity]],
-      duration = 250,
-      interpolate = d3_interpolate["interpolateZoom"],
-      gestures = [],
-      listeners = Object(d3_dispatch["dispatch"])("start", "zoom", "end"),
-      touchstarting,
+      gestures = {},
+      listeners = Object(d3_dispatch["dispatch"])("start", "drag", "end"),
+      active = 0,
+      mousedownx,
+      mousedowny,
+      mousemoving,
       touchending,
-      touchDelay = 500,
-      wheelDelay = 150,
       clickDistance2 = 0;
 
-  function zoom(selection) {
+  function drag(selection) {
     selection
-        .property("__zoom", defaultTransform)
-        .on("wheel.zoom", wheeled)
-        .on("mousedown.zoom", mousedowned)
-        .on("dblclick.zoom", dblclicked)
+        .on("mousedown.drag", mousedowned)
       .filter(touchable)
-        .on("touchstart.zoom", touchstarted)
-        .on("touchmove.zoom", touchmoved)
-        .on("touchend.zoom touchcancel.zoom", touchended)
+        .on("touchstart.drag", touchstarted)
+        .on("touchmove.drag", touchmoved)
+        .on("touchend.drag touchcancel.drag", touchended)
         .style("touch-action", "none")
         .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
-  zoom.transform = function(collection, transform) {
-    var selection = collection.selection ? collection.selection() : collection;
-    selection.property("__zoom", defaultTransform);
-    if (collection !== selection) {
-      schedule(collection, transform);
-    } else {
-      selection.interrupt().each(function() {
-        gesture(this, arguments)
-            .start()
-            .zoom(null, typeof transform === "function" ? transform.apply(this, arguments) : transform)
-            .end();
-      });
-    }
-  };
-
-  zoom.scaleBy = function(selection, k) {
-    zoom.scaleTo(selection, function() {
-      var k0 = this.__zoom.k,
-          k1 = typeof k === "function" ? k.apply(this, arguments) : k;
-      return k0 * k1;
-    });
-  };
-
-  zoom.scaleTo = function(selection, k) {
-    zoom.transform(selection, function() {
-      var e = extent.apply(this, arguments),
-          t0 = this.__zoom,
-          p0 = centroid(e),
-          p1 = t0.invert(p0),
-          k1 = typeof k === "function" ? k.apply(this, arguments) : k;
-      return constrain(translate(scale(t0, k1), p0, p1), e, translateExtent);
-    });
-  };
-
-  zoom.translateBy = function(selection, x, y) {
-    zoom.transform(selection, function() {
-      return constrain(this.__zoom.translate(
-        typeof x === "function" ? x.apply(this, arguments) : x,
-        typeof y === "function" ? y.apply(this, arguments) : y
-      ), extent.apply(this, arguments), translateExtent);
-    });
-  };
-
-  zoom.translateTo = function(selection, x, y) {
-    zoom.transform(selection, function() {
-      var e = extent.apply(this, arguments),
-          t = this.__zoom,
-          p = centroid(e);
-      return constrain(identity.translate(p[0], p[1]).scale(t.k).translate(
-        typeof x === "function" ? -x.apply(this, arguments) : -x,
-        typeof y === "function" ? -y.apply(this, arguments) : -y
-      ), e, translateExtent);
-    });
-  };
-
-  function scale(transform, k) {
-    k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], k));
-    return k === transform.k ? transform : new Transform(k, transform.x, transform.y);
-  }
-
-  function translate(transform, p0, p1) {
-    var x = p0[0] - p1[0] * transform.k, y = p0[1] - p1[1] * transform.k;
-    return x === transform.x && y === transform.y ? transform : new Transform(transform.k, x, y);
-  }
-
-  function centroid(extent) {
-    return [(+extent[0][0] + +extent[1][0]) / 2, (+extent[0][1] + +extent[1][1]) / 2];
-  }
-
-  function schedule(transition, transform, center) {
-    transition
-        .on("start.zoom", function() { gesture(this, arguments).start(); })
-        .on("interrupt.zoom end.zoom", function() { gesture(this, arguments).end(); })
-        .tween("zoom", function() {
-          var that = this,
-              args = arguments,
-              g = gesture(that, args),
-              e = extent.apply(that, args),
-              p = center || centroid(e),
-              w = Math.max(e[1][0] - e[0][0], e[1][1] - e[0][1]),
-              a = that.__zoom,
-              b = typeof transform === "function" ? transform.apply(that, args) : transform,
-              i = interpolate(a.invert(p).concat(w / a.k), b.invert(p).concat(w / b.k));
-          return function(t) {
-            if (t === 1) t = b; // Avoid rounding error on end.
-            else { var l = i(t), k = w / l[2]; t = new Transform(k, p[0] - l[0] * k, p[1] - l[1] * k); }
-            g.zoom(null, t);
-          };
-        });
-  }
-
-  function gesture(that, args) {
-    for (var i = 0, n = gestures.length, g; i < n; ++i) {
-      if ((g = gestures[i]).that === that) {
-        return g;
-      }
-    }
-    return new Gesture(that, args);
-  }
-
-  function Gesture(that, args) {
-    this.that = that;
-    this.args = args;
-    this.index = -1;
-    this.active = 0;
-    this.extent = extent.apply(that, args);
-  }
-
-  Gesture.prototype = {
-    start: function() {
-      if (++this.active === 1) {
-        this.index = gestures.push(this) - 1;
-        this.emit("start");
-      }
-      return this;
-    },
-    zoom: function(key, transform) {
-      if (this.mouse && key !== "mouse") this.mouse[1] = transform.invert(this.mouse[0]);
-      if (this.touch0 && key !== "touch") this.touch0[1] = transform.invert(this.touch0[0]);
-      if (this.touch1 && key !== "touch") this.touch1[1] = transform.invert(this.touch1[0]);
-      this.that.__zoom = transform;
-      this.emit("zoom");
-      return this;
-    },
-    end: function() {
-      if (--this.active === 0) {
-        gestures.splice(this.index, 1);
-        this.index = -1;
-        this.emit("end");
-      }
-      return this;
-    },
-    emit: function(type) {
-      Object(d3_selection["customEvent"])(new ZoomEvent(zoom, type, this.that.__zoom), listeners.apply, listeners, [type, this.that, this.args]);
-    }
-  };
-
-  function wheeled() {
-    if (!filter.apply(this, arguments)) return;
-    var g = gesture(this, arguments),
-        t = this.__zoom,
-        k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta.apply(this, arguments)))),
-        p = Object(d3_selection["mouse"])(this);
-
-    // If the mouse is in the same location as before, reuse it.
-    // If there were recent wheel events, reset the wheel idle timeout.
-    if (g.wheel) {
-      if (g.mouse[0][0] !== p[0] || g.mouse[0][1] !== p[1]) {
-        g.mouse[1] = t.invert(g.mouse[0] = p);
-      }
-      clearTimeout(g.wheel);
-    }
-
-    // If this wheel event won’t trigger a transform change, ignore it.
-    else if (t.k === k) return;
-
-    // Otherwise, capture the mouse point and location at the start.
-    else {
-      g.mouse = [p, t.invert(p)];
-      Object(d3_transition["interrupt"])(this);
-      g.start();
-    }
-
-    noevent();
-    g.wheel = setTimeout(wheelidled, wheelDelay);
-    g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
-
-    function wheelidled() {
-      g.wheel = null;
-      g.end();
-    }
-  }
-
   function mousedowned() {
     if (touchending || !filter.apply(this, arguments)) return;
-    var g = gesture(this, arguments),
-        v = Object(d3_selection["select"])(d3_selection["event"].view).on("mousemove.zoom", mousemoved, true).on("mouseup.zoom", mouseupped, true),
-        p = Object(d3_selection["mouse"])(this),
-        x0 = d3_selection["event"].clientX,
-        y0 = d3_selection["event"].clientY;
-
-    Object(d3_drag["dragDisable"])(d3_selection["event"].view);
+    var gesture = beforestart("mouse", container.apply(this, arguments), d3_selection["mouse"], this, arguments);
+    if (!gesture) return;
+    Object(d3_selection["select"])(d3_selection["event"].view).on("mousemove.drag", mousemoved, true).on("mouseup.drag", mouseupped, true);
+    nodrag(d3_selection["event"].view);
     nopropagation();
-    g.mouse = [p, this.__zoom.invert(p)];
-    Object(d3_transition["interrupt"])(this);
-    g.start();
-
-    function mousemoved() {
-      noevent();
-      if (!g.moved) {
-        var dx = d3_selection["event"].clientX - x0, dy = d3_selection["event"].clientY - y0;
-        g.moved = dx * dx + dy * dy > clickDistance2;
-      }
-      g.zoom("mouse", constrain(translate(g.that.__zoom, g.mouse[0] = Object(d3_selection["mouse"])(g.that), g.mouse[1]), g.extent, translateExtent));
-    }
-
-    function mouseupped() {
-      v.on("mousemove.zoom mouseup.zoom", null);
-      Object(d3_drag["dragEnable"])(d3_selection["event"].view, g.moved);
-      noevent();
-      g.end();
-    }
+    mousemoving = false;
+    mousedownx = d3_selection["event"].clientX;
+    mousedowny = d3_selection["event"].clientY;
+    gesture("start");
   }
 
-  function dblclicked() {
-    if (!filter.apply(this, arguments)) return;
-    var t0 = this.__zoom,
-        p0 = Object(d3_selection["mouse"])(this),
-        p1 = t0.invert(p0),
-        k1 = t0.k * (d3_selection["event"].shiftKey ? 0.5 : 2),
-        t1 = constrain(translate(scale(t0, k1), p0, p1), extent.apply(this, arguments), translateExtent);
-
+  function mousemoved() {
     noevent();
-    if (duration > 0) Object(d3_selection["select"])(this).transition().duration(duration).call(schedule, t1, p0);
-    else Object(d3_selection["select"])(this).call(zoom.transform, t1);
+    if (!mousemoving) {
+      var dx = d3_selection["event"].clientX - mousedownx, dy = d3_selection["event"].clientY - mousedowny;
+      mousemoving = dx * dx + dy * dy > clickDistance2;
+    }
+    gestures.mouse("drag");
+  }
+
+  function mouseupped() {
+    Object(d3_selection["select"])(d3_selection["event"].view).on("mousemove.drag mouseup.drag", null);
+    yesdrag(d3_selection["event"].view, mousemoving);
+    noevent();
+    gestures.mouse("end");
   }
 
   function touchstarted() {
     if (!filter.apply(this, arguments)) return;
-    var g = gesture(this, arguments),
-        touches = d3_selection["event"].changedTouches,
-        started,
-        n = touches.length, i, t, p;
+    var touches = d3_selection["event"].changedTouches,
+        c = container.apply(this, arguments),
+        n = touches.length, i, gesture;
 
-    nopropagation();
     for (i = 0; i < n; ++i) {
-      t = touches[i], p = Object(d3_selection["touch"])(this, touches, t.identifier);
-      p = [p, this.__zoom.invert(p), t.identifier];
-      if (!g.touch0) g.touch0 = p, started = true;
-      else if (!g.touch1) g.touch1 = p;
-    }
-
-    // If this is a dbltap, reroute to the (optional) dblclick.zoom handler.
-    if (touchstarting) {
-      touchstarting = clearTimeout(touchstarting);
-      if (!g.touch1) {
-        g.end();
-        p = Object(d3_selection["select"])(this).on("dblclick.zoom");
-        if (p) p.apply(this, arguments);
-        return;
+      if (gesture = beforestart(touches[i].identifier, c, d3_selection["touch"], this, arguments)) {
+        nopropagation();
+        gesture("start");
       }
-    }
-
-    if (started) {
-      touchstarting = setTimeout(function() { touchstarting = null; }, touchDelay);
-      Object(d3_transition["interrupt"])(this);
-      g.start();
     }
   }
 
   function touchmoved() {
-    var g = gesture(this, arguments),
-        touches = d3_selection["event"].changedTouches,
-        n = touches.length, i, t, p, l;
+    var touches = d3_selection["event"].changedTouches,
+        n = touches.length, i, gesture;
 
-    noevent();
-    if (touchstarting) touchstarting = clearTimeout(touchstarting);
     for (i = 0; i < n; ++i) {
-      t = touches[i], p = Object(d3_selection["touch"])(this, touches, t.identifier);
-      if (g.touch0 && g.touch0[2] === t.identifier) g.touch0[0] = p;
-      else if (g.touch1 && g.touch1[2] === t.identifier) g.touch1[0] = p;
+      if (gesture = gestures[touches[i].identifier]) {
+        noevent();
+        gesture("drag");
+      }
     }
-    t = g.that.__zoom;
-    if (g.touch1) {
-      var p0 = g.touch0[0], l0 = g.touch0[1],
-          p1 = g.touch1[0], l1 = g.touch1[1],
-          dp = (dp = p1[0] - p0[0]) * dp + (dp = p1[1] - p0[1]) * dp,
-          dl = (dl = l1[0] - l0[0]) * dl + (dl = l1[1] - l0[1]) * dl;
-      t = scale(t, Math.sqrt(dp / dl));
-      p = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
-      l = [(l0[0] + l1[0]) / 2, (l0[1] + l1[1]) / 2];
-    }
-    else if (g.touch0) p = g.touch0[0], l = g.touch0[1];
-    else return;
-    g.zoom("touch", constrain(translate(t, p, l), g.extent, translateExtent));
   }
 
   function touchended() {
-    var g = gesture(this, arguments),
-        touches = d3_selection["event"].changedTouches,
-        n = touches.length, i, t;
+    var touches = d3_selection["event"].changedTouches,
+        n = touches.length, i, gesture;
 
-    nopropagation();
     if (touchending) clearTimeout(touchending);
-    touchending = setTimeout(function() { touchending = null; }, touchDelay);
+    touchending = setTimeout(function() { touchending = null; }, 500); // Ghost clicks are delayed!
     for (i = 0; i < n; ++i) {
-      t = touches[i];
-      if (g.touch0 && g.touch0[2] === t.identifier) delete g.touch0;
-      else if (g.touch1 && g.touch1[2] === t.identifier) delete g.touch1;
+      if (gesture = gestures[touches[i].identifier]) {
+        nopropagation();
+        gesture("end");
+      }
     }
-    if (g.touch1 && !g.touch0) g.touch0 = g.touch1, delete g.touch1;
-    if (g.touch0) g.touch0[1] = this.__zoom.invert(g.touch0[0]);
-    else g.end();
   }
 
-  zoom.wheelDelta = function(_) {
-    return arguments.length ? (wheelDelta = typeof _ === "function" ? _ : constant(+_), zoom) : wheelDelta;
+  function beforestart(id, container, point, that, args) {
+    var p = point(container, id), s, dx, dy,
+        sublisteners = listeners.copy();
+
+    if (!Object(d3_selection["customEvent"])(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function() {
+      if ((d3_selection["event"].subject = s = subject.apply(that, args)) == null) return false;
+      dx = s.x - p[0] || 0;
+      dy = s.y - p[1] || 0;
+      return true;
+    })) return;
+
+    return function gesture(type) {
+      var p0 = p, n;
+      switch (type) {
+        case "start": gestures[id] = gesture, n = active++; break;
+        case "end": delete gestures[id], --active; // nobreak
+        case "drag": p = point(container, id), n = active; break;
+      }
+      Object(d3_selection["customEvent"])(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+    };
+  }
+
+  drag.filter = function(_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : constant(!!_), drag) : filter;
   };
 
-  zoom.filter = function(_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : constant(!!_), zoom) : filter;
+  drag.container = function(_) {
+    return arguments.length ? (container = typeof _ === "function" ? _ : constant(_), drag) : container;
   };
 
-  zoom.touchable = function(_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : constant(!!_), zoom) : touchable;
+  drag.subject = function(_) {
+    return arguments.length ? (subject = typeof _ === "function" ? _ : constant(_), drag) : subject;
   };
 
-  zoom.extent = function(_) {
-    return arguments.length ? (extent = typeof _ === "function" ? _ : constant([[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]]), zoom) : extent;
+  drag.touchable = function(_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : constant(!!_), drag) : touchable;
   };
 
-  zoom.scaleExtent = function(_) {
-    return arguments.length ? (scaleExtent[0] = +_[0], scaleExtent[1] = +_[1], zoom) : [scaleExtent[0], scaleExtent[1]];
-  };
-
-  zoom.translateExtent = function(_) {
-    return arguments.length ? (translateExtent[0][0] = +_[0][0], translateExtent[1][0] = +_[1][0], translateExtent[0][1] = +_[0][1], translateExtent[1][1] = +_[1][1], zoom) : [[translateExtent[0][0], translateExtent[0][1]], [translateExtent[1][0], translateExtent[1][1]]];
-  };
-
-  zoom.constrain = function(_) {
-    return arguments.length ? (constrain = _, zoom) : constrain;
-  };
-
-  zoom.duration = function(_) {
-    return arguments.length ? (duration = +_, zoom) : duration;
-  };
-
-  zoom.interpolate = function(_) {
-    return arguments.length ? (interpolate = _, zoom) : interpolate;
-  };
-
-  zoom.on = function() {
+  drag.on = function() {
     var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? zoom : value;
+    return value === listeners ? drag : value;
   };
 
-  zoom.clickDistance = function(_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, zoom) : Math.sqrt(clickDistance2);
+  drag.clickDistance = function(_) {
+    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
   };
 
-  return zoom;
+  return drag;
 });
 
-// CONCATENATED MODULE: ./node_modules/d3-zoom/index.js
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "zoom", function() { return src_zoom; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "zoomTransform", function() { return transform_transform; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "zoomIdentity", function() { return identity; });
+// CONCATENATED MODULE: ./node_modules/d3-drag/index.js
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "drag", function() { return src_drag; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "dragDisable", function() { return nodrag; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "dragEnable", function() { return yesdrag; });
 
 
 
@@ -22236,265 +21997,8 @@ define(Cubehelix, cubehelix, extend(Color, {
 // EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
 var d3_dispatch = __webpack_require__(78);
 
-// EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
-var d3_selection = __webpack_require__(64);
-
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
-
-
-function nopropagation() {
-  d3_selection["event"].stopImmediatePropagation();
-}
-
-/* harmony default export */ var noevent = (function() {
-  d3_selection["event"].preventDefault();
-  d3_selection["event"].stopImmediatePropagation();
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
-
-
-
-/* harmony default export */ var nodrag = (function(view) {
-  var root = view.document.documentElement,
-      selection = Object(d3_selection["select"])(view).on("dragstart.drag", noevent, true);
-  if ("onselectstart" in root) {
-    selection.on("selectstart.drag", noevent, true);
-  } else {
-    root.__noselect = root.style.MozUserSelect;
-    root.style.MozUserSelect = "none";
-  }
-});
-
-function yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = Object(d3_selection["select"])(view).on("dragstart.drag", null);
-  if (noclick) {
-    selection.on("click.drag", noevent, true);
-    setTimeout(function() { selection.on("click.drag", null); }, 0);
-  }
-  if ("onselectstart" in root) {
-    selection.on("selectstart.drag", null);
-  } else {
-    root.style.MozUserSelect = root.__noselect;
-    delete root.__noselect;
-  }
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
-/* harmony default export */ var constant = (function(x) {
-  return function() {
-    return x;
-  };
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
-function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
-  this.target = target;
-  this.type = type;
-  this.subject = subject;
-  this.identifier = id;
-  this.active = active;
-  this.x = x;
-  this.y = y;
-  this.dx = dx;
-  this.dy = dy;
-  this._ = dispatch;
-}
-
-DragEvent.prototype.on = function() {
-  var value = this._.on.apply(this._, arguments);
-  return value === this._ ? this : value;
-};
-
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
-
-
-
-
-
-
-
-// Ignore right-click, since that should open the context menu.
-function defaultFilter() {
-  return !d3_selection["event"].button;
-}
-
-function defaultContainer() {
-  return this.parentNode;
-}
-
-function defaultSubject(d) {
-  return d == null ? {x: d3_selection["event"].x, y: d3_selection["event"].y} : d;
-}
-
-function defaultTouchable() {
-  return "ontouchstart" in this;
-}
-
-/* harmony default export */ var src_drag = (function() {
-  var filter = defaultFilter,
-      container = defaultContainer,
-      subject = defaultSubject,
-      touchable = defaultTouchable,
-      gestures = {},
-      listeners = Object(d3_dispatch["dispatch"])("start", "drag", "end"),
-      active = 0,
-      mousedownx,
-      mousedowny,
-      mousemoving,
-      touchending,
-      clickDistance2 = 0;
-
-  function drag(selection) {
-    selection
-        .on("mousedown.drag", mousedowned)
-      .filter(touchable)
-        .on("touchstart.drag", touchstarted)
-        .on("touchmove.drag", touchmoved)
-        .on("touchend.drag touchcancel.drag", touchended)
-        .style("touch-action", "none")
-        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function mousedowned() {
-    if (touchending || !filter.apply(this, arguments)) return;
-    var gesture = beforestart("mouse", container.apply(this, arguments), d3_selection["mouse"], this, arguments);
-    if (!gesture) return;
-    Object(d3_selection["select"])(d3_selection["event"].view).on("mousemove.drag", mousemoved, true).on("mouseup.drag", mouseupped, true);
-    nodrag(d3_selection["event"].view);
-    nopropagation();
-    mousemoving = false;
-    mousedownx = d3_selection["event"].clientX;
-    mousedowny = d3_selection["event"].clientY;
-    gesture("start");
-  }
-
-  function mousemoved() {
-    noevent();
-    if (!mousemoving) {
-      var dx = d3_selection["event"].clientX - mousedownx, dy = d3_selection["event"].clientY - mousedowny;
-      mousemoving = dx * dx + dy * dy > clickDistance2;
-    }
-    gestures.mouse("drag");
-  }
-
-  function mouseupped() {
-    Object(d3_selection["select"])(d3_selection["event"].view).on("mousemove.drag mouseup.drag", null);
-    yesdrag(d3_selection["event"].view, mousemoving);
-    noevent();
-    gestures.mouse("end");
-  }
-
-  function touchstarted() {
-    if (!filter.apply(this, arguments)) return;
-    var touches = d3_selection["event"].changedTouches,
-        c = container.apply(this, arguments),
-        n = touches.length, i, gesture;
-
-    for (i = 0; i < n; ++i) {
-      if (gesture = beforestart(touches[i].identifier, c, d3_selection["touch"], this, arguments)) {
-        nopropagation();
-        gesture("start");
-      }
-    }
-  }
-
-  function touchmoved() {
-    var touches = d3_selection["event"].changedTouches,
-        n = touches.length, i, gesture;
-
-    for (i = 0; i < n; ++i) {
-      if (gesture = gestures[touches[i].identifier]) {
-        noevent();
-        gesture("drag");
-      }
-    }
-  }
-
-  function touchended() {
-    var touches = d3_selection["event"].changedTouches,
-        n = touches.length, i, gesture;
-
-    if (touchending) clearTimeout(touchending);
-    touchending = setTimeout(function() { touchending = null; }, 500); // Ghost clicks are delayed!
-    for (i = 0; i < n; ++i) {
-      if (gesture = gestures[touches[i].identifier]) {
-        nopropagation();
-        gesture("end");
-      }
-    }
-  }
-
-  function beforestart(id, container, point, that, args) {
-    var p = point(container, id), s, dx, dy,
-        sublisteners = listeners.copy();
-
-    if (!Object(d3_selection["customEvent"])(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function() {
-      if ((d3_selection["event"].subject = s = subject.apply(that, args)) == null) return false;
-      dx = s.x - p[0] || 0;
-      dy = s.y - p[1] || 0;
-      return true;
-    })) return;
-
-    return function gesture(type) {
-      var p0 = p, n;
-      switch (type) {
-        case "start": gestures[id] = gesture, n = active++; break;
-        case "end": delete gestures[id], --active; // nobreak
-        case "drag": p = point(container, id), n = active; break;
-      }
-      Object(d3_selection["customEvent"])(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
-    };
-  }
-
-  drag.filter = function(_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : constant(!!_), drag) : filter;
-  };
-
-  drag.container = function(_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : constant(_), drag) : container;
-  };
-
-  drag.subject = function(_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : constant(_), drag) : subject;
-  };
-
-  drag.touchable = function(_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : constant(!!_), drag) : touchable;
-  };
-
-  drag.on = function() {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? drag : value;
-  };
-
-  drag.clickDistance = function(_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
-  };
-
-  return drag;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-drag/index.js
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "drag", function() { return src_drag; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "dragDisable", function() { return nodrag; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "dragEnable", function() { return yesdrag; });
-
-
-
-
-/***/ }),
-/* 75 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-
-// EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
-var d3_dispatch = __webpack_require__(78);
-
 // EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
-var d3_drag = __webpack_require__(74);
+var d3_drag = __webpack_require__(72);
 
 // EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
 var d3_interpolate = __webpack_require__(68);
@@ -22505,21 +22009,73 @@ var d3_selection = __webpack_require__(64);
 // EXTERNAL MODULE: ./node_modules/d3-transition/index.js + 29 modules
 var d3_transition = __webpack_require__(67);
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
+// CONCATENATED MODULE: ./node_modules/d3-zoom/src/constant.js
 /* harmony default export */ var constant = (function(x) {
   return function() {
     return x;
   };
 });
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
-/* harmony default export */ var src_event = (function(target, type, selection) {
+// CONCATENATED MODULE: ./node_modules/d3-zoom/src/event.js
+function ZoomEvent(target, type, transform) {
   this.target = target;
   this.type = type;
-  this.selection = selection;
-});
+  this.transform = transform;
+}
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
+// CONCATENATED MODULE: ./node_modules/d3-zoom/src/transform.js
+function Transform(k, x, y) {
+  this.k = k;
+  this.x = x;
+  this.y = y;
+}
+
+Transform.prototype = {
+  constructor: Transform,
+  scale: function(k) {
+    return k === 1 ? this : new Transform(this.k * k, this.x, this.y);
+  },
+  translate: function(x, y) {
+    return x === 0 & y === 0 ? this : new Transform(this.k, this.x + this.k * x, this.y + this.k * y);
+  },
+  apply: function(point) {
+    return [point[0] * this.k + this.x, point[1] * this.k + this.y];
+  },
+  applyX: function(x) {
+    return x * this.k + this.x;
+  },
+  applyY: function(y) {
+    return y * this.k + this.y;
+  },
+  invert: function(location) {
+    return [(location[0] - this.x) / this.k, (location[1] - this.y) / this.k];
+  },
+  invertX: function(x) {
+    return (x - this.x) / this.k;
+  },
+  invertY: function(y) {
+    return (y - this.y) / this.k;
+  },
+  rescaleX: function(x) {
+    return x.copy().domain(x.range().map(this.invertX, this).map(x.invert, x));
+  },
+  rescaleY: function(y) {
+    return y.copy().domain(y.range().map(this.invertY, this).map(y.invert, y));
+  },
+  toString: function() {
+    return "translate(" + this.x + "," + this.y + ") scale(" + this.k + ")";
+  }
+};
+
+var identity = new Transform(1, 0, 0);
+
+transform_transform.prototype = Transform.prototype;
+
+function transform_transform(node) {
+  return node.__zoom || identity;
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-zoom/src/noevent.js
 
 
 function nopropagation() {
@@ -22531,7 +22087,7 @@ function nopropagation() {
   d3_selection["event"].stopImmediatePropagation();
 });
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
+// CONCATENATED MODULE: ./node_modules/d3-zoom/src/zoom.js
 
 
 
@@ -22541,92 +22097,6 @@ function nopropagation() {
 
 
 
-var MODE_DRAG = {name: "drag"},
-    MODE_SPACE = {name: "space"},
-    MODE_HANDLE = {name: "handle"},
-    MODE_CENTER = {name: "center"};
-
-var X = {
-  name: "x",
-  handles: ["e", "w"].map(brush_type),
-  input: function(x, e) { return x && [[x[0], e[0][1]], [x[1], e[1][1]]]; },
-  output: function(xy) { return xy && [xy[0][0], xy[1][0]]; }
-};
-
-var Y = {
-  name: "y",
-  handles: ["n", "s"].map(brush_type),
-  input: function(y, e) { return y && [[e[0][0], y[0]], [e[1][0], y[1]]]; },
-  output: function(xy) { return xy && [xy[0][1], xy[1][1]]; }
-};
-
-var XY = {
-  name: "xy",
-  handles: ["n", "e", "s", "w", "nw", "ne", "se", "sw"].map(brush_type),
-  input: function(xy) { return xy; },
-  output: function(xy) { return xy; }
-};
-
-var cursors = {
-  overlay: "crosshair",
-  selection: "move",
-  n: "ns-resize",
-  e: "ew-resize",
-  s: "ns-resize",
-  w: "ew-resize",
-  nw: "nwse-resize",
-  ne: "nesw-resize",
-  se: "nwse-resize",
-  sw: "nesw-resize"
-};
-
-var flipX = {
-  e: "w",
-  w: "e",
-  nw: "ne",
-  ne: "nw",
-  se: "sw",
-  sw: "se"
-};
-
-var flipY = {
-  n: "s",
-  s: "n",
-  nw: "sw",
-  ne: "se",
-  se: "ne",
-  sw: "nw"
-};
-
-var signsX = {
-  overlay: +1,
-  selection: +1,
-  n: null,
-  e: +1,
-  s: null,
-  w: -1,
-  nw: -1,
-  ne: +1,
-  se: +1,
-  sw: -1
-};
-
-var signsY = {
-  overlay: +1,
-  selection: +1,
-  n: -1,
-  e: null,
-  s: +1,
-  w: null,
-  nw: -1,
-  ne: -1,
-  se: +1,
-  sw: +1
-};
-
-function brush_type(t) {
-  return {type: t};
-}
 
 // Ignore right-click, since that should open the context menu.
 function defaultFilter() {
@@ -22634,454 +22104,426 @@ function defaultFilter() {
 }
 
 function defaultExtent() {
-  var svg = this.ownerSVGElement || this;
-  return [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
+  var e = this, w, h;
+  if (e instanceof SVGElement) {
+    e = e.ownerSVGElement || e;
+    w = e.width.baseVal.value;
+    h = e.height.baseVal.value;
+  } else {
+    w = e.clientWidth;
+    h = e.clientHeight;
+  }
+  return [[0, 0], [w, h]];
 }
 
-// Like d3.local, but with the name “__brush” rather than auto-generated.
-function local(node) {
-  while (!node.__brush) if (!(node = node.parentNode)) return;
-  return node.__brush;
+function defaultTransform() {
+  return this.__zoom || identity;
 }
 
-function empty(extent) {
-  return extent[0][0] === extent[1][0]
-      || extent[0][1] === extent[1][1];
+function defaultWheelDelta() {
+  return -d3_selection["event"].deltaY * (d3_selection["event"].deltaMode ? 120 : 1) / 500;
 }
 
-function brushSelection(node) {
-  var state = node.__brush;
-  return state ? state.dim.output(state.selection) : null;
+function defaultTouchable() {
+  return "ontouchstart" in this;
 }
 
-function brushX() {
-  return brush_brush(X);
+function defaultConstrain(transform, extent, translateExtent) {
+  var dx0 = transform.invertX(extent[0][0]) - translateExtent[0][0],
+      dx1 = transform.invertX(extent[1][0]) - translateExtent[1][0],
+      dy0 = transform.invertY(extent[0][1]) - translateExtent[0][1],
+      dy1 = transform.invertY(extent[1][1]) - translateExtent[1][1];
+  return transform.translate(
+    dx1 > dx0 ? (dx0 + dx1) / 2 : Math.min(0, dx0) || Math.max(0, dx1),
+    dy1 > dy0 ? (dy0 + dy1) / 2 : Math.min(0, dy0) || Math.max(0, dy1)
+  );
 }
 
-function brushY() {
-  return brush_brush(Y);
-}
+/* harmony default export */ var src_zoom = (function() {
+  var filter = defaultFilter,
+      extent = defaultExtent,
+      constrain = defaultConstrain,
+      wheelDelta = defaultWheelDelta,
+      touchable = defaultTouchable,
+      scaleExtent = [0, Infinity],
+      translateExtent = [[-Infinity, -Infinity], [Infinity, Infinity]],
+      duration = 250,
+      interpolate = d3_interpolate["interpolateZoom"],
+      gestures = [],
+      listeners = Object(d3_dispatch["dispatch"])("start", "zoom", "end"),
+      touchstarting,
+      touchending,
+      touchDelay = 500,
+      wheelDelay = 150,
+      clickDistance2 = 0;
 
-/* harmony default export */ var src_brush = (function() {
-  return brush_brush(XY);
-});
-
-function brush_brush(dim) {
-  var extent = defaultExtent,
-      filter = defaultFilter,
-      listeners = Object(d3_dispatch["dispatch"])(brush, "start", "brush", "end"),
-      handleSize = 6,
-      touchending;
-
-  function brush(group) {
-    var overlay = group
-        .property("__brush", initialize)
-      .selectAll(".overlay")
-      .data([brush_type("overlay")]);
-
-    overlay.enter().append("rect")
-        .attr("class", "overlay")
-        .attr("pointer-events", "all")
-        .attr("cursor", cursors.overlay)
-      .merge(overlay)
-        .each(function() {
-          var extent = local(this).extent;
-          Object(d3_selection["select"])(this)
-              .attr("x", extent[0][0])
-              .attr("y", extent[0][1])
-              .attr("width", extent[1][0] - extent[0][0])
-              .attr("height", extent[1][1] - extent[0][1]);
-        });
-
-    group.selectAll(".selection")
-      .data([brush_type("selection")])
-      .enter().append("rect")
-        .attr("class", "selection")
-        .attr("cursor", cursors.selection)
-        .attr("fill", "#777")
-        .attr("fill-opacity", 0.3)
-        .attr("stroke", "#fff")
-        .attr("shape-rendering", "crispEdges");
-
-    var handle = group.selectAll(".handle")
-      .data(dim.handles, function(d) { return d.type; });
-
-    handle.exit().remove();
-
-    handle.enter().append("rect")
-        .attr("class", function(d) { return "handle handle--" + d.type; })
-        .attr("cursor", function(d) { return cursors[d.type]; });
-
-    group
-        .each(redraw)
-        .attr("fill", "none")
-        .attr("pointer-events", "all")
-        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
-        .on("mousedown.brush touchstart.brush", started);
+  function zoom(selection) {
+    selection
+        .property("__zoom", defaultTransform)
+        .on("wheel.zoom", wheeled)
+        .on("mousedown.zoom", mousedowned)
+        .on("dblclick.zoom", dblclicked)
+      .filter(touchable)
+        .on("touchstart.zoom", touchstarted)
+        .on("touchmove.zoom", touchmoved)
+        .on("touchend.zoom touchcancel.zoom", touchended)
+        .style("touch-action", "none")
+        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
-  brush.move = function(group, selection) {
-    if (group.selection) {
-      group
-          .on("start.brush", function() { emitter(this, arguments).beforestart().start(); })
-          .on("interrupt.brush end.brush", function() { emitter(this, arguments).end(); })
-          .tween("brush", function() {
-            var that = this,
-                state = that.__brush,
-                emit = emitter(that, arguments),
-                selection0 = state.selection,
-                selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
-                i = Object(d3_interpolate["interpolate"])(selection0, selection1);
-
-            function tween(t) {
-              state.selection = t === 1 && empty(selection1) ? null : i(t);
-              redraw.call(that);
-              emit.brush();
-            }
-
-            return selection0 && selection1 ? tween : tween(1);
-          });
+  zoom.transform = function(collection, transform) {
+    var selection = collection.selection ? collection.selection() : collection;
+    selection.property("__zoom", defaultTransform);
+    if (collection !== selection) {
+      schedule(collection, transform);
     } else {
-      group
-          .each(function() {
-            var that = this,
-                args = arguments,
-                state = that.__brush,
-                selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
-                emit = emitter(that, args).beforestart();
-
-            Object(d3_transition["interrupt"])(that);
-            state.selection = selection1 == null || empty(selection1) ? null : selection1;
-            redraw.call(that);
-            emit.start().brush().end();
-          });
+      selection.interrupt().each(function() {
+        gesture(this, arguments)
+            .start()
+            .zoom(null, typeof transform === "function" ? transform.apply(this, arguments) : transform)
+            .end();
+      });
     }
   };
 
-  function redraw() {
-    var group = Object(d3_selection["select"])(this),
-        selection = local(this).selection;
+  zoom.scaleBy = function(selection, k) {
+    zoom.scaleTo(selection, function() {
+      var k0 = this.__zoom.k,
+          k1 = typeof k === "function" ? k.apply(this, arguments) : k;
+      return k0 * k1;
+    });
+  };
 
-    if (selection) {
-      group.selectAll(".selection")
-          .style("display", null)
-          .attr("x", selection[0][0])
-          .attr("y", selection[0][1])
-          .attr("width", selection[1][0] - selection[0][0])
-          .attr("height", selection[1][1] - selection[0][1]);
+  zoom.scaleTo = function(selection, k) {
+    zoom.transform(selection, function() {
+      var e = extent.apply(this, arguments),
+          t0 = this.__zoom,
+          p0 = centroid(e),
+          p1 = t0.invert(p0),
+          k1 = typeof k === "function" ? k.apply(this, arguments) : k;
+      return constrain(translate(scale(t0, k1), p0, p1), e, translateExtent);
+    });
+  };
 
-      group.selectAll(".handle")
-          .style("display", null)
-          .attr("x", function(d) { return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2; })
-          .attr("y", function(d) { return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2; })
-          .attr("width", function(d) { return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize; })
-          .attr("height", function(d) { return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize; });
-    }
+  zoom.translateBy = function(selection, x, y) {
+    zoom.transform(selection, function() {
+      return constrain(this.__zoom.translate(
+        typeof x === "function" ? x.apply(this, arguments) : x,
+        typeof y === "function" ? y.apply(this, arguments) : y
+      ), extent.apply(this, arguments), translateExtent);
+    });
+  };
 
-    else {
-      group.selectAll(".selection,.handle")
-          .style("display", "none")
-          .attr("x", null)
-          .attr("y", null)
-          .attr("width", null)
-          .attr("height", null);
-    }
+  zoom.translateTo = function(selection, x, y) {
+    zoom.transform(selection, function() {
+      var e = extent.apply(this, arguments),
+          t = this.__zoom,
+          p = centroid(e);
+      return constrain(identity.translate(p[0], p[1]).scale(t.k).translate(
+        typeof x === "function" ? -x.apply(this, arguments) : -x,
+        typeof y === "function" ? -y.apply(this, arguments) : -y
+      ), e, translateExtent);
+    });
+  };
+
+  function scale(transform, k) {
+    k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], k));
+    return k === transform.k ? transform : new Transform(k, transform.x, transform.y);
   }
 
-  function emitter(that, args) {
-    return that.__brush.emitter || new Emitter(that, args);
+  function translate(transform, p0, p1) {
+    var x = p0[0] - p1[0] * transform.k, y = p0[1] - p1[1] * transform.k;
+    return x === transform.x && y === transform.y ? transform : new Transform(transform.k, x, y);
   }
 
-  function Emitter(that, args) {
+  function centroid(extent) {
+    return [(+extent[0][0] + +extent[1][0]) / 2, (+extent[0][1] + +extent[1][1]) / 2];
+  }
+
+  function schedule(transition, transform, center) {
+    transition
+        .on("start.zoom", function() { gesture(this, arguments).start(); })
+        .on("interrupt.zoom end.zoom", function() { gesture(this, arguments).end(); })
+        .tween("zoom", function() {
+          var that = this,
+              args = arguments,
+              g = gesture(that, args),
+              e = extent.apply(that, args),
+              p = center || centroid(e),
+              w = Math.max(e[1][0] - e[0][0], e[1][1] - e[0][1]),
+              a = that.__zoom,
+              b = typeof transform === "function" ? transform.apply(that, args) : transform,
+              i = interpolate(a.invert(p).concat(w / a.k), b.invert(p).concat(w / b.k));
+          return function(t) {
+            if (t === 1) t = b; // Avoid rounding error on end.
+            else { var l = i(t), k = w / l[2]; t = new Transform(k, p[0] - l[0] * k, p[1] - l[1] * k); }
+            g.zoom(null, t);
+          };
+        });
+  }
+
+  function gesture(that, args) {
+    for (var i = 0, n = gestures.length, g; i < n; ++i) {
+      if ((g = gestures[i]).that === that) {
+        return g;
+      }
+    }
+    return new Gesture(that, args);
+  }
+
+  function Gesture(that, args) {
     this.that = that;
     this.args = args;
-    this.state = that.__brush;
+    this.index = -1;
     this.active = 0;
+    this.extent = extent.apply(that, args);
   }
 
-  Emitter.prototype = {
-    beforestart: function() {
-      if (++this.active === 1) this.state.emitter = this, this.starting = true;
-      return this;
-    },
+  Gesture.prototype = {
     start: function() {
-      if (this.starting) this.starting = false, this.emit("start");
+      if (++this.active === 1) {
+        this.index = gestures.push(this) - 1;
+        this.emit("start");
+      }
       return this;
     },
-    brush: function() {
-      this.emit("brush");
+    zoom: function(key, transform) {
+      if (this.mouse && key !== "mouse") this.mouse[1] = transform.invert(this.mouse[0]);
+      if (this.touch0 && key !== "touch") this.touch0[1] = transform.invert(this.touch0[0]);
+      if (this.touch1 && key !== "touch") this.touch1[1] = transform.invert(this.touch1[0]);
+      this.that.__zoom = transform;
+      this.emit("zoom");
       return this;
     },
     end: function() {
-      if (--this.active === 0) delete this.state.emitter, this.emit("end");
+      if (--this.active === 0) {
+        gestures.splice(this.index, 1);
+        this.index = -1;
+        this.emit("end");
+      }
       return this;
     },
     emit: function(type) {
-      Object(d3_selection["customEvent"])(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
+      Object(d3_selection["customEvent"])(new ZoomEvent(zoom, type, this.that.__zoom), listeners.apply, listeners, [type, this.that, this.args]);
     }
   };
 
-  function started() {
-    if (d3_selection["event"].touches) { if (d3_selection["event"].changedTouches.length < d3_selection["event"].touches.length) return noevent(); }
-    else if (touchending) return;
+  function wheeled() {
     if (!filter.apply(this, arguments)) return;
+    var g = gesture(this, arguments),
+        t = this.__zoom,
+        k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta.apply(this, arguments)))),
+        p = Object(d3_selection["mouse"])(this);
 
-    var that = this,
-        type = d3_selection["event"].target.__data__.type,
-        mode = (d3_selection["event"].metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : (d3_selection["event"].altKey ? MODE_CENTER : MODE_HANDLE),
-        signX = dim === Y ? null : signsX[type],
-        signY = dim === X ? null : signsY[type],
-        state = local(that),
-        extent = state.extent,
-        selection = state.selection,
-        W = extent[0][0], w0, w1,
-        N = extent[0][1], n0, n1,
-        E = extent[1][0], e0, e1,
-        S = extent[1][1], s0, s1,
-        dx,
-        dy,
-        moving,
-        shifting = signX && signY && d3_selection["event"].shiftKey,
-        lockX,
-        lockY,
-        point0 = Object(d3_selection["mouse"])(that),
-        point = point0,
-        emit = emitter(that, arguments).beforestart();
-
-    if (type === "overlay") {
-      state.selection = selection = [
-        [w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]],
-        [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]
-      ];
-    } else {
-      w0 = selection[0][0];
-      n0 = selection[0][1];
-      e0 = selection[1][0];
-      s0 = selection[1][1];
+    // If the mouse is in the same location as before, reuse it.
+    // If there were recent wheel events, reset the wheel idle timeout.
+    if (g.wheel) {
+      if (g.mouse[0][0] !== p[0] || g.mouse[0][1] !== p[1]) {
+        g.mouse[1] = t.invert(g.mouse[0] = p);
+      }
+      clearTimeout(g.wheel);
     }
 
-    w1 = w0;
-    n1 = n0;
-    e1 = e0;
-    s1 = s0;
+    // If this wheel event won’t trigger a transform change, ignore it.
+    else if (t.k === k) return;
 
-    var group = Object(d3_selection["select"])(that)
-        .attr("pointer-events", "none");
-
-    var overlay = group.selectAll(".overlay")
-        .attr("cursor", cursors[type]);
-
-    if (d3_selection["event"].touches) {
-      group
-          .on("touchmove.brush", moved, true)
-          .on("touchend.brush touchcancel.brush", ended, true);
-    } else {
-      var view = Object(d3_selection["select"])(d3_selection["event"].view)
-          .on("keydown.brush", keydowned, true)
-          .on("keyup.brush", keyupped, true)
-          .on("mousemove.brush", moved, true)
-          .on("mouseup.brush", ended, true);
-
-      Object(d3_drag["dragDisable"])(d3_selection["event"].view);
+    // Otherwise, capture the mouse point and location at the start.
+    else {
+      g.mouse = [p, t.invert(p)];
+      Object(d3_transition["interrupt"])(this);
+      g.start();
     }
+
+    noevent();
+    g.wheel = setTimeout(wheelidled, wheelDelay);
+    g.zoom("mouse", constrain(translate(scale(t, k), g.mouse[0], g.mouse[1]), g.extent, translateExtent));
+
+    function wheelidled() {
+      g.wheel = null;
+      g.end();
+    }
+  }
+
+  function mousedowned() {
+    if (touchending || !filter.apply(this, arguments)) return;
+    var g = gesture(this, arguments),
+        v = Object(d3_selection["select"])(d3_selection["event"].view).on("mousemove.zoom", mousemoved, true).on("mouseup.zoom", mouseupped, true),
+        p = Object(d3_selection["mouse"])(this),
+        x0 = d3_selection["event"].clientX,
+        y0 = d3_selection["event"].clientY;
+
+    Object(d3_drag["dragDisable"])(d3_selection["event"].view);
+    nopropagation();
+    g.mouse = [p, this.__zoom.invert(p)];
+    Object(d3_transition["interrupt"])(this);
+    g.start();
+
+    function mousemoved() {
+      noevent();
+      if (!g.moved) {
+        var dx = d3_selection["event"].clientX - x0, dy = d3_selection["event"].clientY - y0;
+        g.moved = dx * dx + dy * dy > clickDistance2;
+      }
+      g.zoom("mouse", constrain(translate(g.that.__zoom, g.mouse[0] = Object(d3_selection["mouse"])(g.that), g.mouse[1]), g.extent, translateExtent));
+    }
+
+    function mouseupped() {
+      v.on("mousemove.zoom mouseup.zoom", null);
+      Object(d3_drag["dragEnable"])(d3_selection["event"].view, g.moved);
+      noevent();
+      g.end();
+    }
+  }
+
+  function dblclicked() {
+    if (!filter.apply(this, arguments)) return;
+    var t0 = this.__zoom,
+        p0 = Object(d3_selection["mouse"])(this),
+        p1 = t0.invert(p0),
+        k1 = t0.k * (d3_selection["event"].shiftKey ? 0.5 : 2),
+        t1 = constrain(translate(scale(t0, k1), p0, p1), extent.apply(this, arguments), translateExtent);
+
+    noevent();
+    if (duration > 0) Object(d3_selection["select"])(this).transition().duration(duration).call(schedule, t1, p0);
+    else Object(d3_selection["select"])(this).call(zoom.transform, t1);
+  }
+
+  function touchstarted() {
+    if (!filter.apply(this, arguments)) return;
+    var g = gesture(this, arguments),
+        touches = d3_selection["event"].changedTouches,
+        started,
+        n = touches.length, i, t, p;
 
     nopropagation();
-    Object(d3_transition["interrupt"])(that);
-    redraw.call(that);
-    emit.start();
-
-    function moved() {
-      var point1 = Object(d3_selection["mouse"])(that);
-      if (shifting && !lockX && !lockY) {
-        if (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1])) lockY = true;
-        else lockX = true;
-      }
-      point = point1;
-      moving = true;
-      noevent();
-      move();
+    for (i = 0; i < n; ++i) {
+      t = touches[i], p = Object(d3_selection["touch"])(this, touches, t.identifier);
+      p = [p, this.__zoom.invert(p), t.identifier];
+      if (!g.touch0) g.touch0 = p, started = true;
+      else if (!g.touch1) g.touch1 = p;
     }
 
-    function move() {
-      var t;
-
-      dx = point[0] - point0[0];
-      dy = point[1] - point0[1];
-
-      switch (mode) {
-        case MODE_SPACE:
-        case MODE_DRAG: {
-          if (signX) dx = Math.max(W - w0, Math.min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
-          if (signY) dy = Math.max(N - n0, Math.min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
-          break;
-        }
-        case MODE_HANDLE: {
-          if (signX < 0) dx = Math.max(W - w0, Math.min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
-          else if (signX > 0) dx = Math.max(W - e0, Math.min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
-          if (signY < 0) dy = Math.max(N - n0, Math.min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
-          else if (signY > 0) dy = Math.max(N - s0, Math.min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
-          break;
-        }
-        case MODE_CENTER: {
-          if (signX) w1 = Math.max(W, Math.min(E, w0 - dx * signX)), e1 = Math.max(W, Math.min(E, e0 + dx * signX));
-          if (signY) n1 = Math.max(N, Math.min(S, n0 - dy * signY)), s1 = Math.max(N, Math.min(S, s0 + dy * signY));
-          break;
-        }
-      }
-
-      if (e1 < w1) {
-        signX *= -1;
-        t = w0, w0 = e0, e0 = t;
-        t = w1, w1 = e1, e1 = t;
-        if (type in flipX) overlay.attr("cursor", cursors[type = flipX[type]]);
-      }
-
-      if (s1 < n1) {
-        signY *= -1;
-        t = n0, n0 = s0, s0 = t;
-        t = n1, n1 = s1, s1 = t;
-        if (type in flipY) overlay.attr("cursor", cursors[type = flipY[type]]);
-      }
-
-      if (state.selection) selection = state.selection; // May be set by brush.move!
-      if (lockX) w1 = selection[0][0], e1 = selection[1][0];
-      if (lockY) n1 = selection[0][1], s1 = selection[1][1];
-
-      if (selection[0][0] !== w1
-          || selection[0][1] !== n1
-          || selection[1][0] !== e1
-          || selection[1][1] !== s1) {
-        state.selection = [[w1, n1], [e1, s1]];
-        redraw.call(that);
-        emit.brush();
+    // If this is a dbltap, reroute to the (optional) dblclick.zoom handler.
+    if (touchstarting) {
+      touchstarting = clearTimeout(touchstarting);
+      if (!g.touch1) {
+        g.end();
+        p = Object(d3_selection["select"])(this).on("dblclick.zoom");
+        if (p) p.apply(this, arguments);
+        return;
       }
     }
 
-    function ended() {
-      nopropagation();
-      if (d3_selection["event"].touches) {
-        if (d3_selection["event"].touches.length) return;
-        if (touchending) clearTimeout(touchending);
-        touchending = setTimeout(function() { touchending = null; }, 500); // Ghost clicks are delayed!
-        group.on("touchmove.brush touchend.brush touchcancel.brush", null);
-      } else {
-        Object(d3_drag["dragEnable"])(d3_selection["event"].view, moving);
-        view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
-      }
-      group.attr("pointer-events", "all");
-      overlay.attr("cursor", cursors.overlay);
-      if (state.selection) selection = state.selection; // May be set by brush.move (on start)!
-      if (empty(selection)) state.selection = null, redraw.call(that);
-      emit.end();
-    }
-
-    function keydowned() {
-      switch (d3_selection["event"].keyCode) {
-        case 16: { // SHIFT
-          shifting = signX && signY;
-          break;
-        }
-        case 18: { // ALT
-          if (mode === MODE_HANDLE) {
-            if (signX) e0 = e1 - dx * signX, w0 = w1 + dx * signX;
-            if (signY) s0 = s1 - dy * signY, n0 = n1 + dy * signY;
-            mode = MODE_CENTER;
-            move();
-          }
-          break;
-        }
-        case 32: { // SPACE; takes priority over ALT
-          if (mode === MODE_HANDLE || mode === MODE_CENTER) {
-            if (signX < 0) e0 = e1 - dx; else if (signX > 0) w0 = w1 - dx;
-            if (signY < 0) s0 = s1 - dy; else if (signY > 0) n0 = n1 - dy;
-            mode = MODE_SPACE;
-            overlay.attr("cursor", cursors.selection);
-            move();
-          }
-          break;
-        }
-        default: return;
-      }
-      noevent();
-    }
-
-    function keyupped() {
-      switch (d3_selection["event"].keyCode) {
-        case 16: { // SHIFT
-          if (shifting) {
-            lockX = lockY = shifting = false;
-            move();
-          }
-          break;
-        }
-        case 18: { // ALT
-          if (mode === MODE_CENTER) {
-            if (signX < 0) e0 = e1; else if (signX > 0) w0 = w1;
-            if (signY < 0) s0 = s1; else if (signY > 0) n0 = n1;
-            mode = MODE_HANDLE;
-            move();
-          }
-          break;
-        }
-        case 32: { // SPACE
-          if (mode === MODE_SPACE) {
-            if (d3_selection["event"].altKey) {
-              if (signX) e0 = e1 - dx * signX, w0 = w1 + dx * signX;
-              if (signY) s0 = s1 - dy * signY, n0 = n1 + dy * signY;
-              mode = MODE_CENTER;
-            } else {
-              if (signX < 0) e0 = e1; else if (signX > 0) w0 = w1;
-              if (signY < 0) s0 = s1; else if (signY > 0) n0 = n1;
-              mode = MODE_HANDLE;
-            }
-            overlay.attr("cursor", cursors[type]);
-            move();
-          }
-          break;
-        }
-        default: return;
-      }
-      noevent();
+    if (started) {
+      touchstarting = setTimeout(function() { touchstarting = null; }, touchDelay);
+      Object(d3_transition["interrupt"])(this);
+      g.start();
     }
   }
 
-  function initialize() {
-    var state = this.__brush || {selection: null};
-    state.extent = extent.apply(this, arguments);
-    state.dim = dim;
-    return state;
+  function touchmoved() {
+    var g = gesture(this, arguments),
+        touches = d3_selection["event"].changedTouches,
+        n = touches.length, i, t, p, l;
+
+    noevent();
+    if (touchstarting) touchstarting = clearTimeout(touchstarting);
+    for (i = 0; i < n; ++i) {
+      t = touches[i], p = Object(d3_selection["touch"])(this, touches, t.identifier);
+      if (g.touch0 && g.touch0[2] === t.identifier) g.touch0[0] = p;
+      else if (g.touch1 && g.touch1[2] === t.identifier) g.touch1[0] = p;
+    }
+    t = g.that.__zoom;
+    if (g.touch1) {
+      var p0 = g.touch0[0], l0 = g.touch0[1],
+          p1 = g.touch1[0], l1 = g.touch1[1],
+          dp = (dp = p1[0] - p0[0]) * dp + (dp = p1[1] - p0[1]) * dp,
+          dl = (dl = l1[0] - l0[0]) * dl + (dl = l1[1] - l0[1]) * dl;
+      t = scale(t, Math.sqrt(dp / dl));
+      p = [(p0[0] + p1[0]) / 2, (p0[1] + p1[1]) / 2];
+      l = [(l0[0] + l1[0]) / 2, (l0[1] + l1[1]) / 2];
+    }
+    else if (g.touch0) p = g.touch0[0], l = g.touch0[1];
+    else return;
+    g.zoom("touch", constrain(translate(t, p, l), g.extent, translateExtent));
   }
 
-  brush.extent = function(_) {
-    return arguments.length ? (extent = typeof _ === "function" ? _ : constant([[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]]), brush) : extent;
+  function touchended() {
+    var g = gesture(this, arguments),
+        touches = d3_selection["event"].changedTouches,
+        n = touches.length, i, t;
+
+    nopropagation();
+    if (touchending) clearTimeout(touchending);
+    touchending = setTimeout(function() { touchending = null; }, touchDelay);
+    for (i = 0; i < n; ++i) {
+      t = touches[i];
+      if (g.touch0 && g.touch0[2] === t.identifier) delete g.touch0;
+      else if (g.touch1 && g.touch1[2] === t.identifier) delete g.touch1;
+    }
+    if (g.touch1 && !g.touch0) g.touch0 = g.touch1, delete g.touch1;
+    if (g.touch0) g.touch0[1] = this.__zoom.invert(g.touch0[0]);
+    else g.end();
+  }
+
+  zoom.wheelDelta = function(_) {
+    return arguments.length ? (wheelDelta = typeof _ === "function" ? _ : constant(+_), zoom) : wheelDelta;
   };
 
-  brush.filter = function(_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : constant(!!_), brush) : filter;
+  zoom.filter = function(_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : constant(!!_), zoom) : filter;
   };
 
-  brush.handleSize = function(_) {
-    return arguments.length ? (handleSize = +_, brush) : handleSize;
+  zoom.touchable = function(_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : constant(!!_), zoom) : touchable;
   };
 
-  brush.on = function() {
+  zoom.extent = function(_) {
+    return arguments.length ? (extent = typeof _ === "function" ? _ : constant([[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]]), zoom) : extent;
+  };
+
+  zoom.scaleExtent = function(_) {
+    return arguments.length ? (scaleExtent[0] = +_[0], scaleExtent[1] = +_[1], zoom) : [scaleExtent[0], scaleExtent[1]];
+  };
+
+  zoom.translateExtent = function(_) {
+    return arguments.length ? (translateExtent[0][0] = +_[0][0], translateExtent[1][0] = +_[1][0], translateExtent[0][1] = +_[0][1], translateExtent[1][1] = +_[1][1], zoom) : [[translateExtent[0][0], translateExtent[0][1]], [translateExtent[1][0], translateExtent[1][1]]];
+  };
+
+  zoom.constrain = function(_) {
+    return arguments.length ? (constrain = _, zoom) : constrain;
+  };
+
+  zoom.duration = function(_) {
+    return arguments.length ? (duration = +_, zoom) : duration;
+  };
+
+  zoom.interpolate = function(_) {
+    return arguments.length ? (interpolate = _, zoom) : interpolate;
+  };
+
+  zoom.on = function() {
     var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? brush : value;
+    return value === listeners ? zoom : value;
   };
 
-  return brush;
-}
+  zoom.clickDistance = function(_) {
+    return arguments.length ? (clickDistance2 = (_ = +_) * _, zoom) : Math.sqrt(clickDistance2);
+  };
 
-// CONCATENATED MODULE: ./node_modules/d3-brush/index.js
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brush", function() { return src_brush; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brushX", function() { return brushX; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brushY", function() { return brushY; });
-/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brushSelection", function() { return brushSelection; });
+  return zoom;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-zoom/index.js
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "zoom", function() { return src_zoom; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "zoomTransform", function() { return transform_transform; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "zoomIdentity", function() { return identity; });
+
 
 
 
 /***/ }),
-/* 76 */
+/* 75 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -23791,6 +23233,602 @@ var parseIso = +new Date("2000-01-01T00:00:00.000Z")
 
 
 
+
+
+
+/***/ }),
+/* 76 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+
+// EXTERNAL MODULE: ./node_modules/d3-dispatch/index.js + 1 modules
+var d3_dispatch = __webpack_require__(78);
+
+// EXTERNAL MODULE: ./node_modules/d3-drag/index.js + 5 modules
+var d3_drag = __webpack_require__(72);
+
+// EXTERNAL MODULE: ./node_modules/d3-interpolate/index.js + 22 modules
+var d3_interpolate = __webpack_require__(68);
+
+// EXTERNAL MODULE: ./node_modules/d3-selection/index.js + 49 modules
+var d3_selection = __webpack_require__(64);
+
+// EXTERNAL MODULE: ./node_modules/d3-transition/index.js + 29 modules
+var d3_transition = __webpack_require__(67);
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
+/* harmony default export */ var constant = (function(x) {
+  return function() {
+    return x;
+  };
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
+/* harmony default export */ var src_event = (function(target, type, selection) {
+  this.target = target;
+  this.type = type;
+  this.selection = selection;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
+
+
+function nopropagation() {
+  d3_selection["event"].stopImmediatePropagation();
+}
+
+/* harmony default export */ var noevent = (function() {
+  d3_selection["event"].preventDefault();
+  d3_selection["event"].stopImmediatePropagation();
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
+
+
+
+
+
+
+
+
+
+var MODE_DRAG = {name: "drag"},
+    MODE_SPACE = {name: "space"},
+    MODE_HANDLE = {name: "handle"},
+    MODE_CENTER = {name: "center"};
+
+var X = {
+  name: "x",
+  handles: ["e", "w"].map(brush_type),
+  input: function(x, e) { return x && [[x[0], e[0][1]], [x[1], e[1][1]]]; },
+  output: function(xy) { return xy && [xy[0][0], xy[1][0]]; }
+};
+
+var Y = {
+  name: "y",
+  handles: ["n", "s"].map(brush_type),
+  input: function(y, e) { return y && [[e[0][0], y[0]], [e[1][0], y[1]]]; },
+  output: function(xy) { return xy && [xy[0][1], xy[1][1]]; }
+};
+
+var XY = {
+  name: "xy",
+  handles: ["n", "e", "s", "w", "nw", "ne", "se", "sw"].map(brush_type),
+  input: function(xy) { return xy; },
+  output: function(xy) { return xy; }
+};
+
+var cursors = {
+  overlay: "crosshair",
+  selection: "move",
+  n: "ns-resize",
+  e: "ew-resize",
+  s: "ns-resize",
+  w: "ew-resize",
+  nw: "nwse-resize",
+  ne: "nesw-resize",
+  se: "nwse-resize",
+  sw: "nesw-resize"
+};
+
+var flipX = {
+  e: "w",
+  w: "e",
+  nw: "ne",
+  ne: "nw",
+  se: "sw",
+  sw: "se"
+};
+
+var flipY = {
+  n: "s",
+  s: "n",
+  nw: "sw",
+  ne: "se",
+  se: "ne",
+  sw: "nw"
+};
+
+var signsX = {
+  overlay: +1,
+  selection: +1,
+  n: null,
+  e: +1,
+  s: null,
+  w: -1,
+  nw: -1,
+  ne: +1,
+  se: +1,
+  sw: -1
+};
+
+var signsY = {
+  overlay: +1,
+  selection: +1,
+  n: -1,
+  e: null,
+  s: +1,
+  w: null,
+  nw: -1,
+  ne: -1,
+  se: +1,
+  sw: +1
+};
+
+function brush_type(t) {
+  return {type: t};
+}
+
+// Ignore right-click, since that should open the context menu.
+function defaultFilter() {
+  return !d3_selection["event"].button;
+}
+
+function defaultExtent() {
+  var svg = this.ownerSVGElement || this;
+  return [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
+}
+
+// Like d3.local, but with the name “__brush” rather than auto-generated.
+function local(node) {
+  while (!node.__brush) if (!(node = node.parentNode)) return;
+  return node.__brush;
+}
+
+function empty(extent) {
+  return extent[0][0] === extent[1][0]
+      || extent[0][1] === extent[1][1];
+}
+
+function brushSelection(node) {
+  var state = node.__brush;
+  return state ? state.dim.output(state.selection) : null;
+}
+
+function brushX() {
+  return brush_brush(X);
+}
+
+function brushY() {
+  return brush_brush(Y);
+}
+
+/* harmony default export */ var src_brush = (function() {
+  return brush_brush(XY);
+});
+
+function brush_brush(dim) {
+  var extent = defaultExtent,
+      filter = defaultFilter,
+      listeners = Object(d3_dispatch["dispatch"])(brush, "start", "brush", "end"),
+      handleSize = 6,
+      touchending;
+
+  function brush(group) {
+    var overlay = group
+        .property("__brush", initialize)
+      .selectAll(".overlay")
+      .data([brush_type("overlay")]);
+
+    overlay.enter().append("rect")
+        .attr("class", "overlay")
+        .attr("pointer-events", "all")
+        .attr("cursor", cursors.overlay)
+      .merge(overlay)
+        .each(function() {
+          var extent = local(this).extent;
+          Object(d3_selection["select"])(this)
+              .attr("x", extent[0][0])
+              .attr("y", extent[0][1])
+              .attr("width", extent[1][0] - extent[0][0])
+              .attr("height", extent[1][1] - extent[0][1]);
+        });
+
+    group.selectAll(".selection")
+      .data([brush_type("selection")])
+      .enter().append("rect")
+        .attr("class", "selection")
+        .attr("cursor", cursors.selection)
+        .attr("fill", "#777")
+        .attr("fill-opacity", 0.3)
+        .attr("stroke", "#fff")
+        .attr("shape-rendering", "crispEdges");
+
+    var handle = group.selectAll(".handle")
+      .data(dim.handles, function(d) { return d.type; });
+
+    handle.exit().remove();
+
+    handle.enter().append("rect")
+        .attr("class", function(d) { return "handle handle--" + d.type; })
+        .attr("cursor", function(d) { return cursors[d.type]; });
+
+    group
+        .each(redraw)
+        .attr("fill", "none")
+        .attr("pointer-events", "all")
+        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
+        .on("mousedown.brush touchstart.brush", started);
+  }
+
+  brush.move = function(group, selection) {
+    if (group.selection) {
+      group
+          .on("start.brush", function() { emitter(this, arguments).beforestart().start(); })
+          .on("interrupt.brush end.brush", function() { emitter(this, arguments).end(); })
+          .tween("brush", function() {
+            var that = this,
+                state = that.__brush,
+                emit = emitter(that, arguments),
+                selection0 = state.selection,
+                selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
+                i = Object(d3_interpolate["interpolate"])(selection0, selection1);
+
+            function tween(t) {
+              state.selection = t === 1 && empty(selection1) ? null : i(t);
+              redraw.call(that);
+              emit.brush();
+            }
+
+            return selection0 && selection1 ? tween : tween(1);
+          });
+    } else {
+      group
+          .each(function() {
+            var that = this,
+                args = arguments,
+                state = that.__brush,
+                selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
+                emit = emitter(that, args).beforestart();
+
+            Object(d3_transition["interrupt"])(that);
+            state.selection = selection1 == null || empty(selection1) ? null : selection1;
+            redraw.call(that);
+            emit.start().brush().end();
+          });
+    }
+  };
+
+  function redraw() {
+    var group = Object(d3_selection["select"])(this),
+        selection = local(this).selection;
+
+    if (selection) {
+      group.selectAll(".selection")
+          .style("display", null)
+          .attr("x", selection[0][0])
+          .attr("y", selection[0][1])
+          .attr("width", selection[1][0] - selection[0][0])
+          .attr("height", selection[1][1] - selection[0][1]);
+
+      group.selectAll(".handle")
+          .style("display", null)
+          .attr("x", function(d) { return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2; })
+          .attr("y", function(d) { return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2; })
+          .attr("width", function(d) { return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize; })
+          .attr("height", function(d) { return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize; });
+    }
+
+    else {
+      group.selectAll(".selection,.handle")
+          .style("display", "none")
+          .attr("x", null)
+          .attr("y", null)
+          .attr("width", null)
+          .attr("height", null);
+    }
+  }
+
+  function emitter(that, args) {
+    return that.__brush.emitter || new Emitter(that, args);
+  }
+
+  function Emitter(that, args) {
+    this.that = that;
+    this.args = args;
+    this.state = that.__brush;
+    this.active = 0;
+  }
+
+  Emitter.prototype = {
+    beforestart: function() {
+      if (++this.active === 1) this.state.emitter = this, this.starting = true;
+      return this;
+    },
+    start: function() {
+      if (this.starting) this.starting = false, this.emit("start");
+      return this;
+    },
+    brush: function() {
+      this.emit("brush");
+      return this;
+    },
+    end: function() {
+      if (--this.active === 0) delete this.state.emitter, this.emit("end");
+      return this;
+    },
+    emit: function(type) {
+      Object(d3_selection["customEvent"])(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
+    }
+  };
+
+  function started() {
+    if (d3_selection["event"].touches) { if (d3_selection["event"].changedTouches.length < d3_selection["event"].touches.length) return noevent(); }
+    else if (touchending) return;
+    if (!filter.apply(this, arguments)) return;
+
+    var that = this,
+        type = d3_selection["event"].target.__data__.type,
+        mode = (d3_selection["event"].metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : (d3_selection["event"].altKey ? MODE_CENTER : MODE_HANDLE),
+        signX = dim === Y ? null : signsX[type],
+        signY = dim === X ? null : signsY[type],
+        state = local(that),
+        extent = state.extent,
+        selection = state.selection,
+        W = extent[0][0], w0, w1,
+        N = extent[0][1], n0, n1,
+        E = extent[1][0], e0, e1,
+        S = extent[1][1], s0, s1,
+        dx,
+        dy,
+        moving,
+        shifting = signX && signY && d3_selection["event"].shiftKey,
+        lockX,
+        lockY,
+        point0 = Object(d3_selection["mouse"])(that),
+        point = point0,
+        emit = emitter(that, arguments).beforestart();
+
+    if (type === "overlay") {
+      state.selection = selection = [
+        [w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]],
+        [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]
+      ];
+    } else {
+      w0 = selection[0][0];
+      n0 = selection[0][1];
+      e0 = selection[1][0];
+      s0 = selection[1][1];
+    }
+
+    w1 = w0;
+    n1 = n0;
+    e1 = e0;
+    s1 = s0;
+
+    var group = Object(d3_selection["select"])(that)
+        .attr("pointer-events", "none");
+
+    var overlay = group.selectAll(".overlay")
+        .attr("cursor", cursors[type]);
+
+    if (d3_selection["event"].touches) {
+      group
+          .on("touchmove.brush", moved, true)
+          .on("touchend.brush touchcancel.brush", ended, true);
+    } else {
+      var view = Object(d3_selection["select"])(d3_selection["event"].view)
+          .on("keydown.brush", keydowned, true)
+          .on("keyup.brush", keyupped, true)
+          .on("mousemove.brush", moved, true)
+          .on("mouseup.brush", ended, true);
+
+      Object(d3_drag["dragDisable"])(d3_selection["event"].view);
+    }
+
+    nopropagation();
+    Object(d3_transition["interrupt"])(that);
+    redraw.call(that);
+    emit.start();
+
+    function moved() {
+      var point1 = Object(d3_selection["mouse"])(that);
+      if (shifting && !lockX && !lockY) {
+        if (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1])) lockY = true;
+        else lockX = true;
+      }
+      point = point1;
+      moving = true;
+      noevent();
+      move();
+    }
+
+    function move() {
+      var t;
+
+      dx = point[0] - point0[0];
+      dy = point[1] - point0[1];
+
+      switch (mode) {
+        case MODE_SPACE:
+        case MODE_DRAG: {
+          if (signX) dx = Math.max(W - w0, Math.min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx;
+          if (signY) dy = Math.max(N - n0, Math.min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy;
+          break;
+        }
+        case MODE_HANDLE: {
+          if (signX < 0) dx = Math.max(W - w0, Math.min(E - w0, dx)), w1 = w0 + dx, e1 = e0;
+          else if (signX > 0) dx = Math.max(W - e0, Math.min(E - e0, dx)), w1 = w0, e1 = e0 + dx;
+          if (signY < 0) dy = Math.max(N - n0, Math.min(S - n0, dy)), n1 = n0 + dy, s1 = s0;
+          else if (signY > 0) dy = Math.max(N - s0, Math.min(S - s0, dy)), n1 = n0, s1 = s0 + dy;
+          break;
+        }
+        case MODE_CENTER: {
+          if (signX) w1 = Math.max(W, Math.min(E, w0 - dx * signX)), e1 = Math.max(W, Math.min(E, e0 + dx * signX));
+          if (signY) n1 = Math.max(N, Math.min(S, n0 - dy * signY)), s1 = Math.max(N, Math.min(S, s0 + dy * signY));
+          break;
+        }
+      }
+
+      if (e1 < w1) {
+        signX *= -1;
+        t = w0, w0 = e0, e0 = t;
+        t = w1, w1 = e1, e1 = t;
+        if (type in flipX) overlay.attr("cursor", cursors[type = flipX[type]]);
+      }
+
+      if (s1 < n1) {
+        signY *= -1;
+        t = n0, n0 = s0, s0 = t;
+        t = n1, n1 = s1, s1 = t;
+        if (type in flipY) overlay.attr("cursor", cursors[type = flipY[type]]);
+      }
+
+      if (state.selection) selection = state.selection; // May be set by brush.move!
+      if (lockX) w1 = selection[0][0], e1 = selection[1][0];
+      if (lockY) n1 = selection[0][1], s1 = selection[1][1];
+
+      if (selection[0][0] !== w1
+          || selection[0][1] !== n1
+          || selection[1][0] !== e1
+          || selection[1][1] !== s1) {
+        state.selection = [[w1, n1], [e1, s1]];
+        redraw.call(that);
+        emit.brush();
+      }
+    }
+
+    function ended() {
+      nopropagation();
+      if (d3_selection["event"].touches) {
+        if (d3_selection["event"].touches.length) return;
+        if (touchending) clearTimeout(touchending);
+        touchending = setTimeout(function() { touchending = null; }, 500); // Ghost clicks are delayed!
+        group.on("touchmove.brush touchend.brush touchcancel.brush", null);
+      } else {
+        Object(d3_drag["dragEnable"])(d3_selection["event"].view, moving);
+        view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
+      }
+      group.attr("pointer-events", "all");
+      overlay.attr("cursor", cursors.overlay);
+      if (state.selection) selection = state.selection; // May be set by brush.move (on start)!
+      if (empty(selection)) state.selection = null, redraw.call(that);
+      emit.end();
+    }
+
+    function keydowned() {
+      switch (d3_selection["event"].keyCode) {
+        case 16: { // SHIFT
+          shifting = signX && signY;
+          break;
+        }
+        case 18: { // ALT
+          if (mode === MODE_HANDLE) {
+            if (signX) e0 = e1 - dx * signX, w0 = w1 + dx * signX;
+            if (signY) s0 = s1 - dy * signY, n0 = n1 + dy * signY;
+            mode = MODE_CENTER;
+            move();
+          }
+          break;
+        }
+        case 32: { // SPACE; takes priority over ALT
+          if (mode === MODE_HANDLE || mode === MODE_CENTER) {
+            if (signX < 0) e0 = e1 - dx; else if (signX > 0) w0 = w1 - dx;
+            if (signY < 0) s0 = s1 - dy; else if (signY > 0) n0 = n1 - dy;
+            mode = MODE_SPACE;
+            overlay.attr("cursor", cursors.selection);
+            move();
+          }
+          break;
+        }
+        default: return;
+      }
+      noevent();
+    }
+
+    function keyupped() {
+      switch (d3_selection["event"].keyCode) {
+        case 16: { // SHIFT
+          if (shifting) {
+            lockX = lockY = shifting = false;
+            move();
+          }
+          break;
+        }
+        case 18: { // ALT
+          if (mode === MODE_CENTER) {
+            if (signX < 0) e0 = e1; else if (signX > 0) w0 = w1;
+            if (signY < 0) s0 = s1; else if (signY > 0) n0 = n1;
+            mode = MODE_HANDLE;
+            move();
+          }
+          break;
+        }
+        case 32: { // SPACE
+          if (mode === MODE_SPACE) {
+            if (d3_selection["event"].altKey) {
+              if (signX) e0 = e1 - dx * signX, w0 = w1 + dx * signX;
+              if (signY) s0 = s1 - dy * signY, n0 = n1 + dy * signY;
+              mode = MODE_CENTER;
+            } else {
+              if (signX < 0) e0 = e1; else if (signX > 0) w0 = w1;
+              if (signY < 0) s0 = s1; else if (signY > 0) n0 = n1;
+              mode = MODE_HANDLE;
+            }
+            overlay.attr("cursor", cursors[type]);
+            move();
+          }
+          break;
+        }
+        default: return;
+      }
+      noevent();
+    }
+  }
+
+  function initialize() {
+    var state = this.__brush || {selection: null};
+    state.extent = extent.apply(this, arguments);
+    state.dim = dim;
+    return state;
+  }
+
+  brush.extent = function(_) {
+    return arguments.length ? (extent = typeof _ === "function" ? _ : constant([[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]]), brush) : extent;
+  };
+
+  brush.filter = function(_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : constant(!!_), brush) : filter;
+  };
+
+  brush.handleSize = function(_) {
+    return arguments.length ? (handleSize = +_, brush) : handleSize;
+  };
+
+  brush.on = function() {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? brush : value;
+  };
+
+  return brush;
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/index.js
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brush", function() { return src_brush; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brushX", function() { return brushX; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brushY", function() { return brushY; });
+/* concated harmony reexport */__webpack_require__.d(__webpack_exports__, "brushSelection", function() { return brushSelection; });
 
 
 
