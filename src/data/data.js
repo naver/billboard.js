@@ -130,7 +130,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	getValueOnIndex(values, index) {
-		const valueOnIndex = values.filter(v => v.index === index);
+		const valueOnIndex = values.filter(v => (v.index === null ? v.x : v.index) === index);
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
 	},

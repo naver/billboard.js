@@ -287,10 +287,10 @@ extend(ChartInternal.prototype, {
 			}
 
 			// indexing each value
-			let i = 0;
+			t.values.forEach((v, i) => {
+				const index = $$.data.targets ? $$.getIndexByX(v.x) : null;
 
-			t.values.forEach(v => {
-				v.index = $$.data.targets ? $$.getIndexByX(v.x) : i++;
+				v.index = index === null ? i : index;
 			});
 
 			// this needs to be sorted because its index and value.index is identical
