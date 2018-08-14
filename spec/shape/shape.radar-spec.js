@@ -19,6 +19,7 @@ describe("SHAPE RADAR", () => {
 		before(() => {
 			args = {
 				data: {
+					x: "x",
 					columns: [
 						["x", "Design", "Price", "Brand"],
 						["data1", 30, 200, 100]
@@ -41,7 +42,7 @@ describe("SHAPE RADAR", () => {
 			expect(levels.size()).to.be.equal(dataLen);
 
 			// check levels and data points
-			radar.selectAll("polygon").each(function() {
+			levels.selectAll("polygon").each(function() {
 				const len = this.getAttribute("points").replace(/[^,]/g,"").length;
 
 				expect(len).to.be.equal(dataLen);
@@ -85,6 +86,30 @@ describe("SHAPE RADAR", () => {
 			// level should be hidden
 			level.each(function() {
 				expect(this.style.visibility).to.be.equal("hidden");
+			});
+		});
+
+		it("set  options: hidden elements to show", () => {
+			args.radar.axis.line.show = true;
+			args.radar.axis.text.show = true;
+			args.radar.level.show = true;
+		});
+
+		it("check for resize", () => {
+			const radars = chart.$.main.select(`.${CLASS.chartRadars}`);
+			const level = radars.select(`.${CLASS.levels}`);
+			const axis = radars.select(`.${CLASS.axis}`);
+
+			const old = [radars, level, axis].map(v => v.node().getBBox());
+
+			// when
+			chart.resize({width: 200,height: 200});
+
+			[radars, level, axis].forEach((v, i) => {
+				const resized = v.node().getBBox();
+
+				expect(old[i].width).to.be.above(resized.width);
+				expect(old[i].height).to.be.above(resized.height);
 			});
 		});
 	});
