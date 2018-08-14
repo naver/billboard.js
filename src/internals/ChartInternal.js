@@ -745,7 +745,7 @@ export default class ChartInternal {
 		$$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 		// radar
-		hasRadar && $$.redrawRadar();
+		hasRadar && $$.redrawRadar(duration, durationForExit);
 
 		// subchart
 		config.subchart_show && $$.redrawSubchart &&
@@ -935,8 +935,10 @@ export default class ChartInternal {
 			x = $$.arcWidth / 2;
 			y = $$.arcHeight / 2;
 		} else if (target === "radar") {
-			x = ($$.width / 2) - ($$.arcHeight / 2);
-			y = asHalfPixel($$.margin.top);
+			const diff = ($$.arcWidth - $$.arcHeight) / 2;
+
+			x = Math.max(diff, 0) + 4;
+			y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
 		}
 
 		return `translate(${x}, ${y})`;

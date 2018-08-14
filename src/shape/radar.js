@@ -43,6 +43,18 @@ extend(ChartInternal.prototype, {
 			$$.radars = $$.main.select(`.${CLASS.chart}`).append("g")
 				.attr("class", CLASS.chartRadars);
 
+			// level
+			$$.radars.levels = $$.radars.append("g")
+				.attr("class", CLASS.levels);
+
+			// axis
+			$$.radars.axes = $$.radars.append("g")
+				.attr("class", CLASS.axis);
+
+			// shapes
+			$$.radars.shapes = $$.radars.append("g")
+				.attr("class", CLASS.shapes);
+
 			$$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value;
 		}
 	},
@@ -52,7 +64,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 
 		const padding = config.axis_x_categories.length < 4 ? -20 : 10;
-		const size = (this.arcHeight - padding) / 2;
+		const size = (Math.min($$.arcWidth, $$.arcHeight) - padding) / 2;
 
 		return [size, size];
 	},
@@ -66,9 +78,6 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.generateRadarPoints();
-		$$.updateRadarLevel();
-		$$.updateRadarAxes();
-		$$.updateRadarShape();
 	},
 
 	/**
@@ -82,27 +91,32 @@ extend(ChartInternal.prototype, {
 
 		const edge = config.axis_x_categories.length;
 		const [width, height] = $$.getRadarSize();
+		const points = $$.getCache(cacheKey) || {};
+		const size = points.size;
 
-		const points = {};
-		const getRatio = v => (parseFloat(Math.max(v, 0)) / $$.maxValue) * config.radar_size_ratio;
+		// recalculate position only when the previous dimension has been changed
+		if (!size || (size.width !== width && size.height !== height)) {
+			const getRatio = v => (parseFloat(Math.max(v, 0)) / $$.maxValue) * config.radar_size_ratio;
 
-		targets.forEach(d => {
-			const point = [];
+			targets.forEach(d => {
+				const point = [];
 
-			d.values.forEach((v, i) => {
-				point.push([
-					getPosition("x", edge, i, width, getRatio(v.value)),
-					getPosition("y", edge, i, height, getRatio(v.value))
-				]);
+				d.values.forEach((v, i) => {
+					point.push([
+						getPosition("x", edge, i, width, getRatio(v.value)),
+						getPosition("y", edge, i, height, getRatio(v.value))
+					]);
+				});
+
+				points[d.id] = point;
 			});
 
-			points[d.id] = point;
-		});
-
-		$$.addCache(cacheKey, points);
+			points.size = {width, height};
+			$$.addCache(cacheKey, points);
+		}
 	},
 
-	redrawRadar() {
+	redrawRadar(duration, durationForExit) {
 		const $$ = this;
 		const translate = $$.getTranslate("radar");
 
@@ -111,6 +125,11 @@ extend(ChartInternal.prototype, {
 			$$.radars.attr("transform", translate);
 			$$.main.selectAll(`.${CLASS.circles}`).attr("transform", translate);
 			$$.main.select(`.${CLASS.chartTexts}`).attr("transform", translate);
+
+			$$.generateRadarPoints();
+			$$.updateRadarLevel();
+			$$.updateRadarAxes();
+			$$.updateRadarShape(duration, durationForExit);
 		}
 	},
 
@@ -136,15 +155,17 @@ extend(ChartInternal.prototype, {
 		const [width, height] = $$.getRadarSize();
 		const depth = config.radar_level_depth;
 		const edge = config.axis_x_categories.length;
+		const showText = config.radar_level_text_show;
 
-		const levels = d3Range(0, depth);
+		const radarLevels = $$.radars.levels;
+		const levelData = d3Range(0, depth);
 
 		const radius = config.radar_size_ratio * Math.min(width, height);
-		const levelRatio = levels.map(l => radius * ((l + 1) / depth));
+		const levelRatio = levelData.map(l => radius * ((l + 1) / depth));
 		const levelTextFormat = config.radar_level_text_format;
 
 		// Generate points
-		const points = levels.map(v => {
+		const points = levelData.map(v => {
 			const pos = [];
 
 			d3Range(0, edge).forEach(i => {
@@ -154,39 +175,52 @@ extend(ChartInternal.prototype, {
 			return pos.join(" ");
 		});
 
-		const radars = $$.radars.append("g")
-			.attr("class", CLASS.levels)
+		const level = radarLevels
 			.selectAll(`.${CLASS.level}`)
-			.data(levels);
+			.data(levelData);
 
-		const radarsEnter = radars.enter().append("g")
-			.attr("class", (d, i) => `${CLASS.level}-${i}`)
-			.merge(radars)
-			.attr("transform", d => `translate(${width - levelRatio[d]}, ${height - levelRatio[d]})`);
+		level.exit().remove();
 
-		radarsEnter.append("polygon")
-			.attr("points", d => points[d])
+		const levelEnter = level.enter().append("g")
+			.attr("class", (d, i) => `${CLASS.level} ${CLASS.level}-${i}`);
+
+		levelEnter.append("polygon")
 			.style("visibility", config.radar_level_show ? null : "hidden");
 
-		// level text
-		if (config.radar_level_text_show) {
-			$$.radars.select(`.${CLASS.levels}`)
-				.append("text")
-				.attr("x", width)
-				.attr("y", height)
-				.attr("dx", "-.5em")
-				.attr("dy", "-.7em")
-				.style("text-anchor", "end")
-				.text(() => levelTextFormat(0));
+		if (showText) {
+			if (radarLevels.select("text").empty()) {
+				radarLevels
+					.append("text")
+					.attr("dx", "-.5em")
+					.attr("dy", "-.7em")
+					.style("text-anchor", "end")
+					.text(() => levelTextFormat(0));
+			}
 
-			radarsEnter.append("text")
-				.attr("x", d => points[d].split(",")[0])
-				.attr("y", 0)
+			levelEnter.append("text")
 				.attr("dx", "-.5em")
 				.style("text-anchor", "end")
 				.text(d => levelTextFormat(
-					$$.maxValue / levels.length * (d + 1)
+					$$.maxValue / levelData.length * (d + 1)
 				));
+		}
+
+		levelEnter
+			.merge(level)
+			.attr("transform", d => `translate(${width - levelRatio[d]}, ${height - levelRatio[d]})`)
+			.selectAll("polygon")
+			.attr("points", d => points[d]);
+
+		// update level text position
+		if (showText) {
+			radarLevels.selectAll("text")
+				.attr("x", function(d) {
+					return +this.textContent === 0 ?
+						width : points[d].split(",")[0];
+				})
+				.attr("y", function() {
+					return +this.textContent === 0 ? height : 0;
+				});
 		}
 	},
 
@@ -198,20 +232,18 @@ extend(ChartInternal.prototype, {
 		const categories = config.axis_x_categories;
 		const edge = categories.length;
 
-		let axis = $$.radars.append("g")
-			.attr("class", CLASS.axis)
-			.selectAll(".axis")
+		let axis = $$.radars.axes.selectAll("g")
 			.data(categories);
-
-		const newAxis = axis.enter().append("g");
 
 		axis.exit().remove();
 
-		config.radar_axis_line_show && newAxis.append("line");
-		config.radar_axis_text_show && newAxis.append("text");
-
-		axis = axis.merge(newAxis)
+		const axisEnter = axis.enter().append("g")
 			.attr("class", (d, i) => `${CLASS.axis}-${i}`);
+
+		config.radar_axis_line_show && axisEnter.append("line");
+		config.radar_axis_text_show && axisEnter.append("text");
+
+		axis = axisEnter.merge(axis);
 
 		// axis line
 		if (config.radar_axis_line_show) {
@@ -262,24 +294,27 @@ extend(ChartInternal.prototype, {
 		}
 	},
 
-	updateRadarShape() {
+	updateRadarShape(duration, durationForExit) {
 		const $$ = this;
 		const targets = $$.data.targets;
 		const points = $$.getCache(cacheKey);
 
-		const areas = $$.radars.append("g")
-			.attr("class", CLASS.shapes)
+		const areas = $$.radars.shapes
 			.selectAll("polygon")
 			.data(targets);
 
 		const areasEnter = areas.enter().append("g")
 			.attr("class", $$.classChartRadar.bind($$));
 
-		areas.exit().remove();
+		areas.exit().transition()
+			.duration(durationForExit)
+			.remove();
 
 		areasEnter
 			.append("polygon")
 			.merge(areas)
+			.transition()
+			.duration(duration)
 			.style("fill", d => $$.color(d))
 			.style("stroke", d => $$.color(d))
 			.attr("points", d => points[d.id].join(" "));
