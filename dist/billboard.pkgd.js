@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180810194346
+ * @version 1.5.1-nightly-20180814175156
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.5.0
@@ -127,7 +127,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180810194346
+ * @version 1.5.1-nightly-20180814175156
  */
 var bb = {
 	/**
@@ -137,7 +137,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180810194346",
+	version: "1.5.1-nightly-20180814175156",
 
 	/**
   * Generate chart
@@ -546,7 +546,7 @@ var ChartInternal = function () {
 		    drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
 		    xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
 		    yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-		wth.Y && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform), hasRadar && $$.redrawRadar(), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(wth.Subchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.updateCircleY();
+		wth.Y && ($$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text." + _classes2.default.text + "." + _classes2.default.empty).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform), hasRadar && $$.redrawRadar(duration, durationForExit), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(wth.Subchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll("." + _classes2.default.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.updateCircleY();
 
 
 		// generate circle x/y functions depending on updated params
@@ -632,7 +632,13 @@ var ChartInternal = function () {
 		    y = void 0;
 
 
-		return target === "main" ? (x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top)) : target === "context" ? (x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top)) : target === "legend" ? (x = $$.margin3.left, y = $$.margin3.top) : target === "x" ? (x = 0, y = isRotated ? 0 : $$.height) : target === "y" ? (x = 0, y = isRotated ? $$.height : 0) : target === "y2" ? (x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0) : target === "subx" ? (x = 0, y = isRotated ? 0 : $$.height2) : target === "arc" ? (x = $$.arcWidth / 2, y = $$.arcHeight / 2) : target === "radar" && (x = $$.width / 2 - $$.arcHeight / 2, y = (0, _util.asHalfPixel)($$.margin.top)), "translate(" + x + ", " + y + ")";
+		if (target === "main") x = (0, _util.asHalfPixel)($$.margin.left), y = (0, _util.asHalfPixel)($$.margin.top);else if (target === "context") x = (0, _util.asHalfPixel)($$.margin2.left), y = (0, _util.asHalfPixel)($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = 0, y = isRotated ? 0 : $$.height;else if (target === "y") x = 0, y = isRotated ? $$.height : 0;else if (target === "y2") x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
+			var diff = ($$.arcWidth - $$.arcHeight) / 2;
+
+			x = Math.max(diff, 0) + 4, y = diff < 0 ? Math.abs(diff) : (0, _util.asHalfPixel)($$.margin.top);
+		}
+
+		return "translate(" + x + ", " + y + ")";
 	}, ChartInternal.prototype.initialOpacity = function initialOpacity(d) {
 		return this.getBaseValue(d) !== null && this.withoutFadeIn[d.id] ? "1" : "0";
 	}, ChartInternal.prototype.initialOpacityForCircle = function initialOpacityForCircle(d) {
@@ -5182,7 +5188,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	getValueOnIndex: function getValueOnIndex(values, index) {
 		var valueOnIndex = values.filter(function (v) {
-			return (v.index === null ? v.x : v.index) === index;
+			return v.index === index;
 		});
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
@@ -8002,13 +8008,13 @@ var cacheKey = "$radarPoints";
 	initRadar: function initRadar() {
 		var $$ = this,
 		    config = $$.config;
-		$$.hasType("radar") && ($$.radars = $$.main.select("." + _classes2.default.chart).append("g").attr("class", _classes2.default.chartRadars), $$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value);
+		$$.hasType("radar") && ($$.radars = $$.main.select("." + _classes2.default.chart).append("g").attr("class", _classes2.default.chartRadars), $$.radars.levels = $$.radars.append("g").attr("class", _classes2.default.levels), $$.radars.axes = $$.radars.append("g").attr("class", _classes2.default.axis), $$.radars.shapes = $$.radars.append("g").attr("class", _classes2.default.shapes), $$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value);
 	},
 	getRadarSize: function getRadarSize() {
 		var $$ = this,
 		    config = $$.config,
 		    padding = config.axis_x_categories.length < 4 ? -20 : 10,
-		    size = (this.arcHeight - padding) / 2;
+		    size = (Math.min($$.arcWidth, $$.arcHeight) - padding) / 2;
 
 
 		return [size, size];
@@ -8016,7 +8022,7 @@ var cacheKey = "$radarPoints";
 	updateTargetsForRadar: function updateTargetsForRadar(targets) {
 		var $$ = this,
 		    config = $$.config;
-		(0, _util.isEmpty)(config.axis_x_categories) && (config.axis_x_categories = (0, _d3Array.range)(0, (0, _d3Array.max)(targets).values.length)), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape();
+		(0, _util.isEmpty)(config.axis_x_categories) && (config.axis_x_categories = (0, _d3Array.range)(0, (0, _d3Array.max)(targets).values.length)), $$.generateRadarPoints();
 	},
 
 
@@ -8032,24 +8038,31 @@ var cacheKey = "$radarPoints";
 		    _$$$getRadarSize = $$.getRadarSize(),
 		    width = _$$$getRadarSize[0],
 		    height = _$$$getRadarSize[1],
-		    points = {},
-		    getRatio = function (v) {
-			return parseFloat(Math.max(v, 0)) / $$.maxValue * config.radar_size_ratio;
-		};targets.forEach(function (d) {
-			var point = [];
+		    points = $$.getCache(cacheKey) || {},
+		    size = points.size;
 
-			d.values.forEach(function (v, i) {
-				point.push([getPosition("x", edge, i, width, getRatio(v.value)), getPosition("y", edge, i, height, getRatio(v.value))]);
-			}), points[d.id] = point;
-		}), $$.addCache(cacheKey, points);
+		// recalculate position only when the previous dimension has been changed
+		if (!size || size.width !== width && size.height !== height) {
+			var getRatio = function (v) {
+				return parseFloat(Math.max(v, 0)) / $$.maxValue * config.radar_size_ratio;
+			};
+
+			targets.forEach(function (d) {
+				var point = [];
+
+				d.values.forEach(function (v, i) {
+					point.push([getPosition("x", edge, i, width, getRatio(v.value)), getPosition("y", edge, i, height, getRatio(v.value))]);
+				}), points[d.id] = point;
+			}), points.size = { width: width, height: height }, $$.addCache(cacheKey, points);
+		}
 	},
-	redrawRadar: function redrawRadar() {
+	redrawRadar: function redrawRadar(duration, durationForExit) {
 		var $$ = this,
 		    translate = $$.getTranslate("radar");
 
 
 		// Adjust radar, circles and texts' position
-		translate && ($$.radars.attr("transform", translate), $$.main.selectAll("." + _classes2.default.circles).attr("transform", translate), $$.main.select("." + _classes2.default.chartTexts).attr("transform", translate));
+		translate && ($$.radars.attr("transform", translate), $$.main.selectAll("." + _classes2.default.circles).attr("transform", translate), $$.main.select("." + _classes2.default.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(duration, durationForExit));
 	},
 	generateGetRadarPoints: function generateGetRadarPoints() {
 		var $$ = this,
@@ -8070,36 +8083,44 @@ var cacheKey = "$radarPoints";
 		    height = _$$$getRadarSize2[1],
 		    depth = config.radar_level_depth,
 		    edge = config.axis_x_categories.length,
-		    levels = (0, _d3Array.range)(0, depth),
+		    showText = config.radar_level_text_show,
+		    radarLevels = $$.radars.levels,
+		    levelData = (0, _d3Array.range)(0, depth),
 		    radius = config.radar_size_ratio * Math.min(width, height),
-		    levelRatio = levels.map(function (l) {
+		    levelRatio = levelData.map(function (l) {
 			return radius * ((l + 1) / depth);
 		}),
 		    levelTextFormat = config.radar_level_text_format,
-		    points = levels.map(function (v) {
+		    points = levelData.map(function (v) {
 			var pos = [];
 
 			return (0, _d3Array.range)(0, edge).forEach(function (i) {
 				pos.push(getPosition("x", edge, i, levelRatio[v]) + "," + getPosition("y", edge, i, levelRatio[v]));
 			}), pos.join(" ");
 		}),
-		    radars = $$.radars.append("g").attr("class", _classes2.default.levels).selectAll("." + _classes2.default.level).data(levels),
-		    radarsEnter = radars.enter().append("g").attr("class", function (d, i) {
-			return _classes2.default.level + "-" + i;
-		}).merge(radars).attr("transform", function (d) {
-			return "translate(" + (width - levelRatio[d]) + ", " + (height - levelRatio[d]) + ")";
-		});
+		    level = radarLevels.selectAll("." + _classes2.default.level).data(levelData);
 
 		// Generate points
-		radarsEnter.append("polygon").attr("points", function (d) {
-			return points[d];
-		}).style("visibility", config.radar_level_show ? null : "hidden"), config.radar_level_text_show && ($$.radars.select("." + _classes2.default.levels).append("text").attr("x", width).attr("y", height).attr("dx", "-.5em").attr("dy", "-.7em").style("text-anchor", "end").text(function () {
+		level.exit().remove();
+
+
+		var levelEnter = level.enter().append("g").attr("class", function (d, i) {
+			return _classes2.default.level + " " + _classes2.default.level + "-" + i;
+		});
+
+		levelEnter.append("polygon").style("visibility", config.radar_level_show ? null : "hidden"), showText && (radarLevels.select("text").empty() && radarLevels.append("text").attr("dx", "-.5em").attr("dy", "-.7em").style("text-anchor", "end").text(function () {
 			return levelTextFormat(0);
-		}), radarsEnter.append("text").attr("x", function (d) {
-			return points[d].split(",")[0];
-		}).attr("y", 0).attr("dx", "-.5em").style("text-anchor", "end").text(function (d) {
-			return levelTextFormat($$.maxValue / levels.length * (d + 1));
-		}));
+		}), levelEnter.append("text").attr("dx", "-.5em").style("text-anchor", "end").text(function (d) {
+			return levelTextFormat($$.maxValue / levelData.length * (d + 1));
+		})), levelEnter.merge(level).attr("transform", function (d) {
+			return "translate(" + (width - levelRatio[d]) + ", " + (height - levelRatio[d]) + ")";
+		}).selectAll("polygon").attr("points", function (d) {
+			return points[d];
+		}), showText && radarLevels.selectAll("text").attr("x", function (d) {
+			return +this.textContent === 0 ? width : points[d].split(",")[0];
+		}).attr("y", function () {
+			return +this.textContent === 0 ? height : 0;
+		});
 	},
 	updateRadarAxes: function updateRadarAxes() {
 		var $$ = this,
@@ -8110,10 +8131,14 @@ var cacheKey = "$radarPoints";
 		    ratio = config.radar_size_ratio,
 		    categories = config.axis_x_categories,
 		    edge = categories.length,
-		    axis = $$.radars.append("g").attr("class", _classes2.default.axis).selectAll(".axis").data(categories),
-		    newAxis = axis.enter().append("g");axis.exit().remove(), config.radar_axis_line_show && newAxis.append("line"), config.radar_axis_text_show && newAxis.append("text"), axis = axis.merge(newAxis).attr("class", function (d, i) {
+		    axis = $$.radars.axes.selectAll("g").data(categories);axis.exit().remove();
+
+
+		var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
 			return _classes2.default.axis + "-" + i;
-		}), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
+		});
+
+		config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
 			return getPosition("x", edge, i, width, ratio);
 		}).attr("y2", function (d, i) {
 			return getPosition("y", edge, i, height, ratio);
@@ -8147,13 +8172,13 @@ var cacheKey = "$radarPoints";
 			} : null);
 		}
 	},
-	updateRadarShape: function updateRadarShape() {
+	updateRadarShape: function updateRadarShape(duration, durationForExit) {
 		var $$ = this,
 		    targets = $$.data.targets,
 		    points = $$.getCache(cacheKey),
-		    areas = $$.radars.append("g").attr("class", _classes2.default.shapes).selectAll("polygon").data(targets),
+		    areas = $$.radars.shapes.selectAll("polygon").data(targets),
 		    areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
-		areas.exit().remove(), areasEnter.append("polygon").merge(areas).style("fill", function (d) {
+		areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).transition().duration(duration).style("fill", function (d) {
 			return $$.color(d);
 		}).style("stroke", function (d) {
 			return $$.color(d);
