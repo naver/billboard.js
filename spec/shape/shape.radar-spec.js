@@ -16,6 +16,8 @@ describe("SHAPE RADAR", () => {
 	});
 
 	describe("default radar", () => {
+		let points;
+
 		before(() => {
 			args = {
 				data: {
@@ -110,6 +112,30 @@ describe("SHAPE RADAR", () => {
 
 				expect(old[i].width).to.be.above(resized.width);
 				expect(old[i].height).to.be.above(resized.height);
+			});
+		});
+
+		it("set options radar.direction.clockwise=true", () => {
+			// retrieve point data for next the next test
+			points = [];
+
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+				.each(function() {
+					points.push([+this.getAttribute("x"), +this.getAttribute("y")]);
+				});
+
+			args.radar.direction = {
+				clockwise: true
+			};
+		});
+
+		it("check for direction", () => {
+			const texts = chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`);
+
+			texts.each(function(d, i) {
+				const newPoints = [+this.getAttribute("x"), +this.getAttribute("y")];
+
+				expect(points[i === 0 ? 0 : (points.length - i)]).to.deep.equal(newPoints);
 			});
 		});
 	});
