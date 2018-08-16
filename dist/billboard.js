@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180814175156
+ * @version 1.5.1-nightly-20180816173936
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180814175156
+ * @version 1.5.1-nightly-20180816173936
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180814175156",
+	version: "1.5.1-nightly-20180816173936",
 
 	/**
   * Generate chart
@@ -4593,6 +4593,7 @@ var Options = function Options() {
                      * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
                      * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
                      * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
+                     * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
                      * @property {Number} [radar.level.depth=3] Set the level depth.
                      * @property {Boolean} [radar.level.show=true] Show or hide level.
                      * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
@@ -4608,6 +4609,9 @@ var Options = function Options() {
                      *          text: {
                      *              show: false
                      *          }
+                     *      },
+                     *      direction: {
+                     *          clockwise: true
                      *      },
                      *      level: {
                      *          show: false,
@@ -4633,6 +4637,7 @@ var Options = function Options() {
 																				},
 																				radar_level_text_show: !0,
 																				radar_size_ratio: .87,
+																				radar_direction_clockwise: !1,
 
 																				/**
                      * Show rectangles inside the chart.<br><br>
@@ -7994,6 +7999,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * Get the position value
+ * @param {Boolean} isClockwise If the direction is clockwise
  * @param {String} type Coordinate type 'x' or 'y'
  * @param {Number} edge Number of edge
  * @param {Number} pos The indexed position
@@ -8002,13 +8008,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * @return {number}
  * @private
  */
-function getPosition(type, edge, pos, range) {
-	var ratio = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 1,
+function getPosition(isClockwise, type, edge, pos, range, ratio) {
+	var index = isClockwise && pos > 0 ? edge - pos : pos,
 	    r = 2 * Math.PI,
 	    func = type === "x" ? Math.sin : Math.cos;
 
 
-	return range * (1 - ratio * func(pos * r / edge));
+	return range * (1 - ratio * func(index * r / edge));
 }
 
 // cache key
@@ -8038,6 +8044,20 @@ var cacheKey = "$radarPoints";
 		    config = $$.config;
 		(0, _util.isEmpty)(config.axis_x_categories) && (config.axis_x_categories = (0, _d3Array.range)(0, (0, _d3Array.max)(targets).values.length)), $$.generateRadarPoints();
 	},
+	getRadarPosition: function getRadarPosition(type, index, range, ratio) {
+		var $$ = this,
+		    config = $$.config,
+		    _$$$getRadarSize = $$.getRadarSize(),
+		    width = _$$$getRadarSize[0],
+		    height = _$$$getRadarSize[1],
+		    edge = config.axis_x_categories.length,
+		    isClockwise = config.radar_direction_clockwise,
+		    pos = (0, _util.toArray)(type).map(function (v) {
+			return getPosition(isClockwise, v, edge, index, (0, _util.isDefined)(range) ? range : type === "x" ? width : height, ratio || config.radar_size_ratio);
+		});
+
+		return pos.length === 1 ? pos[0] : pos;
+	},
 
 
 	/**
@@ -8048,12 +8068,11 @@ var cacheKey = "$radarPoints";
 		var $$ = this,
 		    config = $$.config,
 		    targets = $$.data.targets,
-		    edge = config.axis_x_categories.length,
-		    _$$$getRadarSize = $$.getRadarSize(),
-		    width = _$$$getRadarSize[0],
-		    height = _$$$getRadarSize[1],
+		    _$$$getRadarSize2 = $$.getRadarSize(),
+		    width = _$$$getRadarSize2[0],
+		    height = _$$$getRadarSize2[1],
 		    points = $$.getCache(cacheKey) || {},
-		    size = points.size;
+		    size = points._size;
 
 		// recalculate position only when the previous dimension has been changed
 		if (!size || size.width !== width && size.height !== height) {
@@ -8062,12 +8081,10 @@ var cacheKey = "$radarPoints";
 			};
 
 			targets.forEach(function (d) {
-				var point = [];
-
-				d.values.forEach(function (v, i) {
-					point.push([getPosition("x", edge, i, width, getRatio(v.value)), getPosition("y", edge, i, height, getRatio(v.value))]);
-				}), points[d.id] = point;
-			}), points.size = { width: width, height: height }, $$.addCache(cacheKey, points);
+				points[d.id] = d.values.map(function (v, i) {
+					return $$.getRadarPosition(["x", "y"], i, undefined, getRatio(v.value));
+				});
+			}), points._size = { width: width, height: height }, $$.addCache(cacheKey, points);
 		}
 	},
 	redrawRadar: function redrawRadar(duration, durationForExit) {
@@ -8092,9 +8109,9 @@ var cacheKey = "$radarPoints";
 	updateRadarLevel: function updateRadarLevel() {
 		var $$ = this,
 		    config = $$.config,
-		    _$$$getRadarSize2 = $$.getRadarSize(),
-		    width = _$$$getRadarSize2[0],
-		    height = _$$$getRadarSize2[1],
+		    _$$$getRadarSize3 = $$.getRadarSize(),
+		    width = _$$$getRadarSize3[0],
+		    height = _$$$getRadarSize3[1],
 		    depth = config.radar_level_depth,
 		    edge = config.axis_x_categories.length,
 		    showText = config.radar_level_text_show,
@@ -8106,11 +8123,13 @@ var cacheKey = "$radarPoints";
 		}),
 		    levelTextFormat = config.radar_level_text_format,
 		    points = levelData.map(function (v) {
-			var pos = [];
+			var range = levelRatio[v],
+			    pos = (0, _d3Array.range)(0, edge).map(function (i) {
+				return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
+			});
 
-			return (0, _d3Array.range)(0, edge).forEach(function (i) {
-				pos.push(getPosition("x", edge, i, levelRatio[v]) + "," + getPosition("y", edge, i, levelRatio[v]));
-			}), pos.join(" ");
+
+			return pos.join(" ");
 		}),
 		    level = radarLevels.selectAll("." + _classes2.default.level).data(levelData);
 
@@ -8131,20 +8150,18 @@ var cacheKey = "$radarPoints";
 		}).selectAll("polygon").attr("points", function (d) {
 			return points[d];
 		}), showText && radarLevels.selectAll("text").attr("x", function (d) {
-			return +this.textContent === 0 ? width : points[d].split(",")[0];
-		}).attr("y", function () {
-			return +this.textContent === 0 ? height : 0;
+			return (0, _util.isUndefined)(d) ? width : points[d].split(",")[0];
+		}).attr("y", function (d) {
+			return (0, _util.isUndefined)(d) ? height : 0;
 		});
 	},
 	updateRadarAxes: function updateRadarAxes() {
 		var $$ = this,
 		    config = $$.config,
-		    _$$$getRadarSize3 = $$.getRadarSize(),
-		    width = _$$$getRadarSize3[0],
-		    height = _$$$getRadarSize3[1],
-		    ratio = config.radar_size_ratio,
+		    _$$$getRadarSize4 = $$.getRadarSize(),
+		    width = _$$$getRadarSize4[0],
+		    height = _$$$getRadarSize4[1],
 		    categories = config.axis_x_categories,
-		    edge = categories.length,
 		    axis = $$.radars.axes.selectAll("g").data(categories);axis.exit().remove();
 
 
@@ -8153,17 +8170,17 @@ var cacheKey = "$radarPoints";
 		});
 
 		config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
-			return getPosition("x", edge, i, width, ratio);
+			return $$.getRadarPosition("x", i);
 		}).attr("y2", function (d, i) {
-			return getPosition("y", edge, i, height, ratio);
+			return $$.getRadarPosition("y", i);
 		}), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").text(function (d) {
 			return d;
 		}).datum(function (d, i) {
 			return { index: i };
 		}).attr("x", function (d, i) {
-			return getPosition("x", edge, i, width);
+			return $$.getRadarPosition("x", i, undefined, 1);
 		}).attr("y", function (d, i) {
-			return getPosition("y", edge, i, height);
+			return $$.getRadarPosition("y", i, undefined, 1);
 		}), $$.bindEvent();
 	},
 	bindEvent: function bindEvent() {
