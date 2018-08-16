@@ -12,10 +12,11 @@ import {
 } from "d3-array";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isEmpty} from "../internals/util";
+import {extend, isDefined, isEmpty, isUndefined, toArray} from "../internals/util";
 
 /**
  * Get the position value
+ * @param {Boolean} isClockwise If the direction is clockwise
  * @param {String} type Coordinate type 'x' or 'y'
  * @param {Number} edge Number of edge
  * @param {Number} pos The indexed position
@@ -24,11 +25,12 @@ import {extend, isEmpty} from "../internals/util";
  * @return {number}
  * @private
  */
-function getPosition(type, edge, pos, range, ratio = 1) {
+function getPosition(isClockwise, type, edge, pos, range, ratio) {
+	const index = isClockwise && pos > 0 ? edge - pos : pos;
 	const r = 2 * Math.PI;
 	const func = type === "x" ? Math.sin : Math.cos;
 
-	return range * (1 - ratio * func(pos * r / edge));
+	return range * (1 - ratio * func(index * r / edge));
 }
 
 // cache key
@@ -80,6 +82,25 @@ extend(ChartInternal.prototype, {
 		$$.generateRadarPoints();
 	},
 
+	getRadarPosition(type, index, range, ratio) {
+		const $$ = this;
+		const config = $$.config;
+		const [width, height] = $$.getRadarSize();
+		const edge = config.axis_x_categories.length;
+		const isClockwise = config.radar_direction_clockwise;
+
+		const pos = toArray(type).map(v => getPosition(
+			isClockwise,
+			v,
+			edge,
+			index,
+			isDefined(range) ? range : (type === "x" ? width : height),
+			ratio || config.radar_size_ratio
+		));
+
+		return pos.length === 1 ? pos[0] : pos;
+	},
+
 	/**
 	 * Generate data points
 	 * @private
@@ -89,29 +110,21 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const targets = $$.data.targets;
 
-		const edge = config.axis_x_categories.length;
 		const [width, height] = $$.getRadarSize();
 		const points = $$.getCache(cacheKey) || {};
-		const size = points.size;
+		const size = points._size;
 
 		// recalculate position only when the previous dimension has been changed
 		if (!size || (size.width !== width && size.height !== height)) {
 			const getRatio = v => (parseFloat(Math.max(v, 0)) / $$.maxValue) * config.radar_size_ratio;
 
 			targets.forEach(d => {
-				const point = [];
-
-				d.values.forEach((v, i) => {
-					point.push([
-						getPosition("x", edge, i, width, getRatio(v.value)),
-						getPosition("y", edge, i, height, getRatio(v.value))
-					]);
-				});
-
-				points[d.id] = point;
+				points[d.id] = d.values.map((v, i) => (
+					$$.getRadarPosition(["x", "y"], i, undefined, getRatio(v.value))
+				));
 			});
 
-			points.size = {width, height};
+			points._size = {width, height};
 			$$.addCache(cacheKey, points);
 		}
 	},
@@ -166,11 +179,10 @@ extend(ChartInternal.prototype, {
 
 		// Generate points
 		const points = levelData.map(v => {
-			const pos = [];
-
-			d3Range(0, edge).forEach(i => {
-				pos.push(`${getPosition("x", edge, i, levelRatio[v])},${getPosition("y", edge, i, levelRatio[v])}`);
-			});
+			const range = levelRatio[v];
+			const pos = d3Range(0, edge).map(i => (
+				$$.getRadarPosition(["x", "y"], i, range, 1)).join(",")
+			);
 
 			return pos.join(" ");
 		});
@@ -214,13 +226,8 @@ extend(ChartInternal.prototype, {
 		// update level text position
 		if (showText) {
 			radarLevels.selectAll("text")
-				.attr("x", function(d) {
-					return +this.textContent === 0 ?
-						width : points[d].split(",")[0];
-				})
-				.attr("y", function() {
-					return +this.textContent === 0 ? height : 0;
-				});
+				.attr("x", d => (isUndefined(d) ? width : points[d].split(",")[0]))
+				.attr("y", d => (isUndefined(d) ? height : 0));
 		}
 	},
 
@@ -228,9 +235,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const [width, height] = $$.getRadarSize();
-		const ratio = config.radar_size_ratio;
 		const categories = config.axis_x_categories;
-		const edge = categories.length;
 
 		let axis = $$.radars.axes.selectAll("g")
 			.data(categories);
@@ -250,8 +255,8 @@ extend(ChartInternal.prototype, {
 			axis.select("line")
 				.attr("x1", width)
 				.attr("y1", height)
-				.attr("x2", (d, i) => getPosition("x", edge, i, width, ratio))
-				.attr("y2", (d, i) => getPosition("y", edge, i, height, ratio));
+				.attr("x2", (d, i) => $$.getRadarPosition("x", i))
+				.attr("y2", (d, i) => $$.getRadarPosition("y", i));
 		}
 
 		// axis text
@@ -261,8 +266,8 @@ extend(ChartInternal.prototype, {
 				.attr("dy", ".5em")
 				.text(d => d)
 				.datum((d, i) => ({index: i}))
-				.attr("x", (d, i) => getPosition("x", edge, i, width))
-				.attr("y", (d, i) => getPosition("y", edge, i, height));
+				.attr("x", (d, i) => $$.getRadarPosition("x", i, undefined, 1))
+				.attr("y", (d, i) => $$.getRadarPosition("y", i, undefined, 1));
 		}
 
 		$$.bindEvent();
