@@ -2644,6 +2644,7 @@ export default class Options {
 			 * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
 			 * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
 			 * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
+			 * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
 			 * @property {Number} [radar.level.depth=3] Set the level depth.
 			 * @property {Boolean} [radar.level.show=true] Show or hide level.
 			 * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
@@ -2659,6 +2660,9 @@ export default class Options {
 			 *          text: {
 			 *              show: false
 			 *          }
+			 *      },
+			 *      direction: {
+			 *          clockwise: true
 			 *      },
 			 *      level: {
 			 *          show: false,
@@ -2682,6 +2686,7 @@ export default class Options {
 			radar_level_text_format: x => (x % 1 === 0 ? x : x.toFixed(2)),
 			radar_level_text_show: true,
 			radar_size_ratio: 0.87,
+			radar_direction_clockwise: false,
 
 			/**
 			 * Show rectangles inside the chart.<br><br>

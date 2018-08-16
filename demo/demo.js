@@ -431,6 +431,9 @@ var demos = {
 					},
 					level: {
 						depth: 4
+					},
+					direction: {
+						clockwise: true
 					}
 				}
 			}
