@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180817135822
+ * @version 1.5.1-nightly-20180817175004
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180817135822
+ * @version 1.5.1-nightly-20180817175004
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180817135822",
+	version: "1.5.1-nightly-20180817175004",
 
 	/**
   * Generate chart
@@ -8845,11 +8845,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		if ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", _classes2.default.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none"), config.tooltip_init_show) {
 			if ($$.isTimeSeries() && (0, _util.isString)(config.tooltip_init_x)) {
 				var targets = $$.data.targets[0],
-				    len = targets.values.length,
-				    i = void 0;
+				    i = void 0,
+				    val = void 0;
 
 
-				for (config.tooltip_init_x = $$.parseDate(config.tooltip_init_x), i = 0; i < len && targets.values[i].x - config.tooltip_init_x !== 0; i++);
+				for (config.tooltip_init_x = $$.parseDate(config.tooltip_init_x), i = 0; (val = targets.values[i]) && val.x - config.tooltip_init_x !== 0; i++);
 
 				config.tooltip_init_x = i;
 			}
@@ -8879,15 +8879,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		},
 		    valueFormat = config.tooltip_format_value || defaultValueFormat,
 		    order = config.tooltip_order,
-		    text = void 0,
-		    title = void 0,
-		    hiValue = void 0,
-		    loValue = void 0,
-		    value = void 0,
-		    name = void 0,
-		    bgcolor = void 0,
 		    getRowValue = function (row) {
 			return $$.getBaseValue(row);
+		},
+		    getBgColor = $$.levelColor ? function (row) {
+			return $$.levelColor(row.value);
+		} : function (row) {
+			return color(row.id);
 		};
 
 		if (order === null && config.data_groups.length) {
@@ -8913,17 +8911,51 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		} else (0, _util.isFunction)(order) && d.sort(order);
 
-		for (var row, i = 0, len = d.length; i < len; i++) if ((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0)) {
+		var text = void 0;
 
-				var isAreaRangeType = $$.isAreaRangeType(row);
-
-				if (text || (title = (0, _util.sanitise)(titleFormat ? titleFormat(row.x) : row.x), text = title || title === 0 ? "<tr><th colspan=\"2\">" + title + "</th></tr>" : "", text = "<table class=\"" + $$.CLASS.tooltip + "\">" + text), isAreaRangeType && (hiValue = (0, _util.sanitise)(valueFormat($$.getAreaRangeData(row, "high"), row.ratio, row.id, row.index, d)), loValue = (0, _util.sanitise)(valueFormat($$.getAreaRangeData(row, "low"), row.ratio, row.id, row.index, d))), value = (0, _util.sanitise)(valueFormat(getRowValue(row), row.ratio, row.id, row.index, d)), value !== undefined) {
-					// Skip elements when their name is set to null
-					if (row.name === null) continue;
-
-					name = (0, _util.sanitise)(nameFormat(row.name, row.ratio, row.id, row.index)), bgcolor = $$.levelColor ? $$.levelColor(row.value) : color(row.id), text += "<tr class=\"" + $$.CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id) + "\"><td class=\"name\">", text += $$.patterns ? "<svg><rect style=\"fill:" + bgcolor + "\" width=\"10\" height=\"10\"></rect></svg>" : "<span style=\"background-color:" + bgcolor + "\"></span>", text += name + "</td><td class=\"value\">" + (isAreaRangeType ? "<b>Mid:</b> " + value + " <b>High:</b> " + hiValue + " <b>Low:</b> " + loValue : value) + "</td></tr>";
-				}
+		for (var _loop = function (i, _row, _rangeContent, _value) {
+			if (!((_row = d[i]) && (getRowValue(_row) || getRowValue(_row) === 0))) {
+				return "continue";
 			}
+
+			if (!text) {
+				const title = (0, _util.sanitise)(titleFormat ? titleFormat(_row.x) : _row.x);
+
+				text = title || title === 0 ? `<tr><th colspan="2">${title}</th></tr>` : "";
+				text = `<table class="${$$.CLASS.tooltip}">${text}`;
+			}
+
+			if ($$.isAreaRangeType(_row)) {
+				_rangeContent = ["high", "low"].map(v => (0, _util.sanitise)(valueFormat($$.getAreaRangeData(_row, v), _row.ratio, _row.id, _row.index, d)));
+
+				_rangeContent = `<b>Mid:</b> ${_value} <b>High:</b> ${_rangeContent[0]} <b>Low:</b> ${_rangeContent[1]}`;
+			} else {
+				_rangeContent = null;
+			}
+
+			_value = (0, _util.sanitise)(valueFormat(getRowValue(_row), _row.ratio, _row.id, _row.index, d));
+
+			if (_value !== undefined) {
+				// Skip elements when their name is set to null
+				if (_row.name === null) {
+					return "continue";
+				}
+
+				const name = (0, _util.sanitise)(nameFormat(_row.name, _row.ratio, _row.id, _row.index));
+				const bgcolor = getBgColor(_row);
+
+				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(_row.id)}"><td class="name">`;
+
+				text += $$.patterns ? `<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` : `<span style="background-color:${bgcolor}"></span>`;
+
+				text += `${name}</td><td class="value">${_rangeContent || _value}</td></tr>`;
+			}
+			row = _row;
+			rangeContent = _rangeContent;
+			value = _value;
+		}, row, rangeContent, value, i = 0, len = d.length; i < len; i++) {
+			var _ret = _loop(i, row, rangeContent, value, len);
+		}
 
 		return text + "</table>";
 	},
@@ -8941,22 +8973,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		var $$ = this,
 		    config = $$.config,
-		    forArc = $$.hasArcType(),
-		    isTouch = $$.inputType === "touch",
-		    mouse = (0, _d3Selection.mouse)(element),
+		    _d3Mouse = (0, _d3Selection.mouse)(element),
+		    left = _d3Mouse[0],
+		    top = _d3Mouse[1],
 		    svgLeft = $$.getSvgLeft(!0),
-		    chartRight = void 0,
-		    left = void 0,
-		    right = void 0,
-		    top = void 0;
-
+		    chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
 
 		// Determine tooltip position
-		if (forArc) {
-			var raw = isTouch || $$.hasType("radar");
+		if (top += 20, $$.hasArcType()) {
+			var raw = $$.inputType === "touch" || $$.hasType("radar");
 
-			top = mouse[1] + (raw ? 0 : $$.height / 2) + 20, left = mouse[0] + (raw ? 0 : ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2), chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(), right = left + tWidth;
-		} else config.axis_rotated ? (left = svgLeft + mouse[0] + 100, right = left + tWidth, chartRight = $$.currentWidth - $$.getCurrentPaddingRight(), top = $$.x(dataToShow[0].x) + 20) : (left = svgLeft + $$.getCurrentPaddingLeft(!0) + $$.x(dataToShow[0].x) + 20, right = left + tWidth, chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(), top = mouse[1] + 15);
+			raw || (top += $$.height / 2, left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2);
+		} else {
+			var dataScale = $$.x(dataToShow[0].x);
+
+			config.axis_rotated ? (top = dataScale + 20, left += svgLeft + 100, chartRight -= svgLeft) : (top -= 5, left = svgLeft + $$.getCurrentPaddingLeft(!0) + 20 + ($$.zoomScale ? left : dataScale));
+		}
+
+		var right = left + tWidth;
 
 		return right > chartRight && (left -= right - chartRight + 20), top + tHeight > $$.currentHeight && (top -= tHeight + 30), top < 0 && (top = 0), { top: top, left: left };
 	},
