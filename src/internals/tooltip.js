@@ -54,12 +54,12 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Returns the tooltip content(HTML string)
+	 * @param {Object} d data
+	 * @param {Function} defaultTitleFormat Default title format
+	 * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
+	 * @param {Function} color Color function
+	 * @returns {String} html
 	 * @private
-	 * @param {Object} data
-	 * @param {Function} default title format
-	 * @param {Function} default format for each data value in the tooltip.
-	 * @param {Object} $$.color(generateColor())
-	 * @returns {string} html
 	 */
 	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
 		const $$ = this;
@@ -153,12 +153,12 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Returns the position of the tooltip
-	 * @private
-	 * @param {Object} data
-	 * @param {String} width
-	 * @param {String} hHeight
+	 * @param {Object} dataToShow data
+	 * @param {String} tWidth Width value of tooltip element
+	 * @param {String} tHeight Height value of tooltip element
 	 * @param {HTMLElement} element
 	 * @returns {Object} top, left value
+	 * @private
 	 */
 	tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		const $$ = this;
