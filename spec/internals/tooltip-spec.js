@@ -40,7 +40,7 @@ describe("TOOLTIP", function() {
 
 	// hover chart
 	const hoverChart = (hoverChart, eventName = "mousemove") => {
-		const eventRect = hoverChart.internal.main
+		const eventRect = hoverChart.$.main
 			.select(`.${CLASS.eventRect}-2`)
 			.node();
 
@@ -54,8 +54,8 @@ describe("TOOLTIP", function() {
 	const checkTooltip = (checkChart, expected) => {
 		hoverChart(checkChart);
 
-		const tooltips = d3.select(checkChart.element)
-			.selectAll(`.${CLASS.tooltip} tr`)
+		const tooltips = checkChart.$.tooltip
+			.selectAll("tr")
 			.nodes();
 
 		if (expected) {
@@ -69,7 +69,7 @@ describe("TOOLTIP", function() {
 	const checkLinkedTooltip = (chart1, chart2, expected) => {
 		hoverChart(chart1);
 
-		const tooltips = chart2.internal.tooltip
+		const tooltips = chart2.$.tooltip
 			.selectAll("tr")
 			.nodes();
 
@@ -193,7 +193,7 @@ describe("TOOLTIP", function() {
 			it("should show tooltip on proper position", () => {
 				hoverChart(chart);
 
-				const tooltipContainer = chart.internal.tooltip;
+				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const tooltipPos = {
@@ -219,12 +219,35 @@ describe("TOOLTIP", function() {
 			it("should show tooltip on proper position", () => {
 				hoverChart(chart);
 
-				const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
+				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 				const tooltipPos = {
 					top: 115,
 					left: 280
+				};
+
+				expect(top).to.be.equal(tooltipPos.top);
+				expect(left).to.be.above(tooltipPos.left);
+			});
+		});
+
+		describe("when zoomed", () => {
+			before(() => {
+				args.zoom = {enabled: true};
+			});
+
+			it("should show tooltip on proper position", () => {
+				chart.zoom([4,7]);
+
+				hoverChart(chart);
+
+				const tooltipContainer = chart.$.tooltip;
+				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
+				const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
+				const tooltipPos = {
+					top: 115,
+					left: 150
 				};
 
 				expect(top).to.be.equal(tooltipPos.top);
@@ -243,7 +266,7 @@ describe("TOOLTIP", function() {
 		it("should be set to the coordinate where the function returned", () => {
 			hoverChart(chart);
 
-			const tooltipContainer = d3.select(chart.element).select(`.${CLASS.tooltipContainer}`);
+			const tooltipContainer = chart.$.tooltip;
 			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
 			const left = Math.floor(+tooltipContainer.style("left").replace(/px/, ""));
 
@@ -253,11 +276,6 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("tooltip order", () => {
-		after(() => {
-			/*delete args.data.type;
-			delete args.data.groups;*/
-		});
-
 		it("should sort values in data display order", () => {
 			checkTooltip(chart, [
 				`${CLASS.tooltipName}-data1`,
@@ -383,7 +401,7 @@ describe("TOOLTIP", function() {
 			hoverChart(chart);
 
 			[chart, chart2].forEach(v => {
-				const tooltipContainer = v.internal.tooltip;
+				const tooltipContainer = v.$.tooltip;
 				const top = parseInt(tooltipContainer.style("top"));
 				const left = parseInt(tooltipContainer.style("left"));
 
@@ -547,7 +565,7 @@ describe("TOOLTIP", function() {
 		});
 
 		it("tooltip should be displayed", () => {
-			const tooltip = chart.internal.tooltip;
+			const tooltip = chart.$.tooltip;
 			const pos = {
 				left: tooltip.style("left"),
 				top: tooltip.style("top")
