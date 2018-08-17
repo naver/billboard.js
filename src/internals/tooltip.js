@@ -28,13 +28,13 @@ extend(ChartInternal.prototype, {
 		if (config.tooltip_init_show) {
 			if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
 				const targets = $$.data.targets[0];
-				const len = targets.values.length;
 				let i;
+				let val;
 
 				config.tooltip_init_x = $$.parseDate(config.tooltip_init_x);
 
-				for (i = 0; i < len; i++) {
-					if ((targets.values[i].x - config.tooltip_init_x) === 0) {
+				for (i = 0; (val = targets.values[i]); i++) {
+					if ((val.x - config.tooltip_init_x) === 0) {
 						break;
 					}
 				}
@@ -68,15 +68,9 @@ extend(ChartInternal.prototype, {
 		const nameFormat = config.tooltip_format_name || (name => name);
 		const valueFormat = config.tooltip_format_value || defaultValueFormat;
 		const order = config.tooltip_order;
-		let text;
-		let title;
-		let hiValue;
-		let loValue;
-		let value;
-		let name;
-		let bgcolor;
 
 		const getRowValue = row => $$.getBaseValue(row);
+		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row.id);
 
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
@@ -108,22 +102,29 @@ extend(ChartInternal.prototype, {
 			d.sort(order);
 		}
 
-		for (let i = 0, row, len = d.length; i < len; i++) {
+		let text;
+
+		for (let i = 0, row, rangeContent, value, len = d.length; i < len; i++) {
 			if (!((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0))) {
 				continue;
 			}
 
-			const isAreaRangeType = $$.isAreaRangeType(row);
-
 			if (!text) {
-				title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+
 				text = (title || title === 0 ? `<tr><th colspan="2">${title}</th></tr>` : "");
 				text = `<table class="${$$.CLASS.tooltip}">${text}`;
 			}
 
-			if (isAreaRangeType) {
-				hiValue = sanitise(valueFormat($$.getAreaRangeData(row, "high"), row.ratio, row.id, row.index, d));
-				loValue = sanitise(valueFormat($$.getAreaRangeData(row, "low"), row.ratio, row.id, row.index, d));
+			if ($$.isAreaRangeType(row)) {
+				rangeContent = ["high", "low"]
+					.map(v => sanitise(
+						valueFormat($$.getAreaRangeData(row, v), row.ratio, row.id, row.index, d)
+					));
+
+				rangeContent = `<b>Mid:</b> ${value} <b>High:</b> ${rangeContent[0]} <b>Low:</b> ${rangeContent[1]}`;
+			} else {
+				rangeContent = null;
 			}
 
 			value = sanitise(valueFormat(getRowValue(row), row.ratio, row.id, row.index, d));
@@ -134,8 +135,8 @@ extend(ChartInternal.prototype, {
 					continue;
 				}
 
-				name = sanitise(nameFormat(row.name, row.ratio, row.id, row.index));
-				bgcolor = $$.levelColor ? $$.levelColor(row.value) : color(row.id);
+				const name = sanitise(nameFormat(row.name, row.ratio, row.id, row.index));
+				const bgcolor = getBgColor(row);
 
 				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}"><td class="name">`;
 
@@ -143,10 +144,7 @@ extend(ChartInternal.prototype, {
 					`<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :
 					`<span style="background-color:${bgcolor}"></span>`;
 
-
-				text += `${name}</td><td class="value">${
-					isAreaRangeType ? `<b>Mid:</b> ${value} <b>High:</b> ${hiValue} <b>Low:</b> ${loValue}` : value
-				}</td></tr>`;
+				text += `${name}</td><td class="value">${rangeContent || value}</td></tr>`;
 			}
 		}
 
@@ -165,39 +163,35 @@ extend(ChartInternal.prototype, {
 	tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		const $$ = this;
 		const config = $$.config;
-		const forArc = $$.hasArcType();
-		const isTouch = $$.inputType === "touch";
-		const mouse = d3Mouse(element);
+		let [left, top] = d3Mouse(element);
 
 		const svgLeft = $$.getSvgLeft(true);
-		let chartRight;
+		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
 
-		let left;
-		let right;
-		let top;
+		top += 20;
 
 		// Determine tooltip position
-		if (forArc) {
-			const raw = isTouch || $$.hasType("radar");
+		if ($$.hasArcType()) {
+			const raw = $$.inputType === "touch" || $$.hasType("radar");
 
-			top = mouse[1] + (raw ? 0 : $$.height / 2) + 20;
-			left = mouse[0] + (raw ? 0 : ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2);
-
-			chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
-			right = left + tWidth;
+			if (!raw) {
+				top += $$.height / 2;
+				left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2;
+			}
 		} else {
+			const dataScale = $$.x(dataToShow[0].x);
+
 			if (config.axis_rotated) {
-				left = svgLeft + mouse[0] + 100;
-				right = left + tWidth;
-				chartRight = $$.currentWidth - $$.getCurrentPaddingRight();
-				top = $$.x(dataToShow[0].x) + 20;
+				top = dataScale + 20;
+				left += svgLeft + 100;
+				chartRight -= svgLeft;
 			} else {
-				left = svgLeft + $$.getCurrentPaddingLeft(true) + $$.x(dataToShow[0].x) + 20;
-				right = left + tWidth;
-				chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
-				top = mouse[1] + 15;
+				top -= 5;
+				left = svgLeft + $$.getCurrentPaddingLeft(true) + 20 + ($$.zoomScale ? left : dataScale);
 			}
 		}
+
+		const right = left + tWidth;
 
 		if (right > chartRight) {
 			// 20 is needed for Firefox to keep tooltip width
