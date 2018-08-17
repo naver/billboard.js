@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180816173936
+ * @version 1.5.1-nightly-20180817135822
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180816173936
+ * @version 1.5.1-nightly-20180817135822
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180816173936",
+	version: "1.5.1-nightly-20180817135822",
 
 	/**
   * Generate chart
@@ -12778,11 +12778,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * @method flush
   * @instance
   * @memberOf Chart
+  * @param {Boolean} [soft] For soft redraw.
   * @example
   * chart.flush();
+  *
+  * // for soft redraw
+  * chart.flush(true);
   */
-	flush: function flush() {
-		this.internal.zoomScale = null, this.internal.updateAndRedraw({
+	flush: function flush(soft) {
+		var $$ = this.internal;
+
+		// reset possible zoom scale
+		$$.zoomScale = null, soft ? $$.redraw({
+			withTransform: !0,
+			withUpdateXDomain: !0,
+			withUpdateOrgXDomain: !0,
+			withLegend: !0
+		}) : $$.updateAndRedraw({
 			withLegend: !0,
 			withTransition: !1,
 			withTransitionForTransform: !1
@@ -12807,6 +12819,35 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				$$[k] = null;
 			}), _this[key] = null, delete _this[key];
 		})), null;
+	},
+
+
+	/**
+  * Get or set single config option value.
+  * @method config
+  * @instance
+  * @memberOf Chart
+  * @param {String} name The option key name.
+  * @param {*} [value] The value accepted for indicated option.
+  * @param {Boolean} [redraw] Set to redraw with the new option changes.
+  * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+  * @example
+  * // Getter
+  * chart.config("gauge.max");
+  *
+  * // Setter
+  * chart.config("gauge.max", 100);
+  *
+  * // Setter & redraw with the new option
+  * chart.config("gauge.max", 100, true);
+  */
+	config: function config(name, value, redraw) {
+		var $$ = this.internal,
+		    key = name && name.replace(/\./g, "_"),
+		    res = void 0;
+
+
+		return key in $$.config && ((res = value) ? ($$.config[key] = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
 	}
 });
 
