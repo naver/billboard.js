@@ -35,14 +35,25 @@ extend(Chart.prototype, {
 	 * @method flush
 	 * @instance
 	 * @memberOf Chart
+	 * @param {Boolean} [soft] For soft redraw.
 	 * @example
 	 * chart.flush();
+	 *
+	 * // for soft redraw
+	 * chart.flush(true);
 	 */
-	flush() {
-		// reset possible zoom scale
-		this.internal.zoomScale = null;
+	flush(soft) {
+		const $$ = this.internal;
 
-		this.internal.updateAndRedraw({
+		// reset possible zoom scale
+		$$.zoomScale = null;
+
+		soft ? $$.redraw({
+			withTransform: true,
+			withUpdateXDomain: true,
+			withUpdateOrgXDomain: true,
+			withLegend: true
+		}) : $$.updateAndRedraw({
 			withLegend: true,
 			withTransition: false,
 			withTransitionForTransform: false,
@@ -81,5 +92,41 @@ extend(Chart.prototype, {
 		}
 
 		return null;
+	},
+
+	/**
+	 * Get or set single config option value.
+	 * @method config
+	 * @instance
+	 * @memberOf Chart
+	 * @param {String} name The option key name.
+	 * @param {*} [value] The value accepted for indicated option.
+	 * @param {Boolean} [redraw] Set to redraw with the new option changes.
+	 * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+	 * @example
+	 * // Getter
+	 * chart.config("gauge.max");
+	 *
+	 * // Setter
+	 * chart.config("gauge.max", 100);
+	 *
+	 * // Setter & redraw with the new option
+	 * chart.config("gauge.max", 100, true);
+	 */
+	config(name, value, redraw) {
+		const $$ = this.internal;
+		const key = name && name.replace(/\./g, "_");
+		let res;
+
+		if (key in $$.config) {
+			if ((res = value)) {
+				$$.config[key] = value;
+				redraw && this.flush(true);
+			} else {
+				res = $$.config[key];
+			}
+		}
+
+		return res;
 	}
 });
