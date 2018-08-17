@@ -134,4 +134,42 @@ describe("API chart", () => {
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 		});
 	});
+
+	describe("config()", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data", 91.4]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					max: 1000
+				}
+			};
+		});
+
+		it("check for the getter/setter functionality", () => {
+			let expected;
+			let max;
+
+			// check for getter
+			expected = 1000;
+			max = +chart.config("gauge.max");
+			expect(max).to.be.equal(expected);
+
+			// check for setter
+			expected = 50;
+			max = +chart.config("gauge.max", expected);
+			expect(max).to.be.equal(expected);
+
+			// check for the setter and redraw
+			expected = 100;
+			max = +chart.config("gauge.max", expected, true);
+
+			expect(max).to.be.equal(expected);
+			expect(+chart.$.arc.select(`.${CLASS.chartArcsGaugeMax}`).text()).to.be.equal(expected);
+		});
+	});
 });
