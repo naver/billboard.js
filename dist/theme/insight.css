@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180820161432
+ * @version 1.5.1-nightly-20180820163946
  */
 /*-- Insight Theme --*/
 /*-- Default color pattern --*/
@@ -38,9 +38,6 @@
   shape-rendering: crispEdges; }
 
 /*-- Axis --*/
-.bb-axis-x line {
-  visibility: hidden; }
-
 .bb-axis-y text, .bb-axis-y2 text {
   fill: #737373; }
 
@@ -62,8 +59,7 @@
   stroke: #e9e9e9; }
 
 .bb-xgrid-focus line {
-  stroke: #ddd;
-  stroke-width: 2px; }
+  stroke: #ddd; }
 
 /*-- Text on Chart --*/
 .bb-text.bb-empty {

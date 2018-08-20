@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180820161432
+ * @version 1.5.1-nightly-20180820163946
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180820161432
+ * @version 1.5.1-nightly-20180820163946
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180820161432",
+	version: "1.5.1-nightly-20180820163946",
 
 	/**
   * Generate chart
