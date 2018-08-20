@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180817175004
+ * @version 1.5.1-nightly-20180820124734
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180817175004
+ * @version 1.5.1-nightly-20180820124734
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180817175004",
+	version: "1.5.1-nightly-20180820124734",
 
 	/**
   * Generate chart
@@ -7838,7 +7838,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 (0, _util.extend)(_ChartInternal2.default.prototype, {
 	hasValidPointType: function hasValidPointType(type) {
-		return (/^(circle|rect(angle)?|polygon|ellipse)$/i.test(type || this.config.point_type)
+		return (/^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type)
 		);
 	},
 	hasValidPointDrawMethods: function hasValidPointDrawMethods(type) {
@@ -7861,7 +7861,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			clone.setAttribute(name, node.getAttribute(name));
 		}
 
-		clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "none", $$.defs.node().appendChild(clone);
+		clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", $$.defs.node().appendChild(clone);
 	},
 	pointFromDefs: function pointFromDefs(id) {
 		return this.defs.select("#" + id);
@@ -8863,12 +8863,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 	/**
   * Returns the tooltip content(HTML string)
+  * @param {Object} d data
+  * @param {Function} defaultTitleFormat Default title format
+  * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
+  * @param {Function} color Color function
+  * @returns {String} html
   * @private
-  * @param {Object} data
-  * @param {Function} default title format
-  * @param {Function} default format for each data value in the tooltip.
-  * @param {Object} $$.color(generateColor())
-  * @returns {string} html
   */
 	getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
 		var $$ = this,
@@ -8963,12 +8963,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 	/**
   * Returns the position of the tooltip
-  * @private
-  * @param {Object} data
-  * @param {String} width
-  * @param {String} hHeight
+  * @param {Object} dataToShow data
+  * @param {String} tWidth Width value of tooltip element
+  * @param {String} tHeight Height value of tooltip element
   * @param {HTMLElement} element
   * @returns {Object} top, left value
+  * @private
   */
 	tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		var $$ = this,
