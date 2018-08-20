@@ -234,8 +234,8 @@ describe("INTERACTION", () => {
 					clientY: circle.y
 				}, chart);
 
-				expect(clicked).to.be.false;
-				expect(data).to.be.equal(null);
+				expect(clicked).to.be.true;
+				expect(data.value).to.be.equal(20);
 			});
 
 			it("set option data.type='area'", () => {

@@ -5,6 +5,7 @@
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";
 
 describe("SHAPE POINT", () => {
 	let chart;
@@ -32,8 +33,8 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg circle elements", () => {
-			const target = chart.internal.svg.select(".bb-chart-line.bb-target-data1");
-			const circlesEl = target.select(".bb-circles-data1").node();
+			const target = chart.internal.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
 			const circles = circlesEl.getElementsByTagName("circle");
 
 			expect(circles.length).to.be.equal(6);
@@ -57,8 +58,8 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg rect elements", () => {
-			const target = chart.internal.svg.select(".bb-chart-line.bb-target-data1");
-			const circlesEl = target.select(".bb-circles-data1").node();
+			const target = chart.internal.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
 			const rects = circlesEl.getElementsByTagName("rect");
 
 			expect(rects.length).to.be.equal(6);
@@ -84,8 +85,8 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg \"use\" elements", () => {
-			const target = chart.internal.svg.select(".bb-chart-line.bb-target-data1");
-			const circlesEl = target.select(".bb-circles-data1").node();
+			const target = chart.internal.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
 			const polygons = circlesEl.getElementsByTagName("use");
 
 			expect(polygons.length).to.be.equal(6);
