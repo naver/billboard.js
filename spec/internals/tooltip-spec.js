@@ -39,15 +39,12 @@ describe("TOOLTIP", function() {
 	const spy2 = sinon.spy();
 
 	// hover chart
-	const hoverChart = (hoverChart, eventName = "mousemove") => {
+	const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}) => {
 		const eventRect = hoverChart.$.main
 			.select(`.${CLASS.eventRect}-2`)
 			.node();
 
-		util.fireEvent(eventRect, eventName, {
-			clientX: 100,
-			clientY: 100
-		}, hoverChart);
+		util.fireEvent(eventRect, eventName, pos, hoverChart);
 	};
 
 	// check for the tooltip's ordering
@@ -575,6 +572,48 @@ describe("TOOLTIP", function() {
 
 			expect(pos.left).to.be.equal(args.tooltip.init.position.left);
 			expect(pos.top).to.be.equal(args.tooltip.init.position.top);
+		});
+	});
+
+	describe("tooltip grouped=false", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200],
+						["data3", 80, 350, 800, 450, 500],
+						["data4", 150, 240, 300, 700, 300]
+					]
+				},
+				tooltip: {
+					grouped: false
+				},
+				point: {
+					pattern: [
+						"circle",
+						"rectangle",
+						"<path d='m3.937502,2.348755c1.314192,-3.618047 6.463238,0 0,4.651779c-6.463238,-4.651779 -1.314192,-8.269826 0,-4.651779z' />",
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+					]
+				}
+			};
+		});
+
+		it("tooltip should be displayed", () => {
+			// check for custom point shape
+			hoverChart(chart, undefined, {clientX: 292, clientY: 107});
+
+			let value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data3 .value`).text();
+
+			expect(value).to.be.equal(800);
+
+			// check for circle point shape
+			hoverChart(chart, undefined, {clientX: 292, clientY: 34});
+
+			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
+
+			expect(value).to.be.equal(1000);
 		});
 	});
 });

@@ -11,7 +11,7 @@ import {isFunction, isObjectType, extend, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
-		return /^(circle|rect(angle)?|polygon|ellipse)$/i.test(type || this.config.point_type);
+		return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
 	},
 
 	hasValidPointDrawMethods(type) {
@@ -37,7 +37,7 @@ extend(ChartInternal.prototype, {
 
 		clone.id = id;
 		clone.style.fill = "inherit";
-		clone.style.stroke = "none";
+		clone.style.stroke = "inherit";
 
 		$$.defs.node().appendChild(clone);
 	},
