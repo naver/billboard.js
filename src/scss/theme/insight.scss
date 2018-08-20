@@ -1,6 +1,8 @@
 /*-- Insight Theme --*/
 @charset "UTF-8";
 
+$font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
+
 /*-- Default color pattern --*/
 .bb-color-pattern {
     background-image: url("#00c73c;#fa7171;#2ad0ff;#7294ce;#e3e448;#cc7e6e;#fb6ccf;#c98dff;#4aea99;#bbbbbb;");
@@ -10,7 +12,7 @@
 .bb {
     svg {
         font-size: 12px;
-        font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
+        font-family: $font-family;
         line-height: 1;
     }
 
@@ -167,6 +169,7 @@ rect.bb-circle, use.bb-circle {
 /*-- Tooltip --*/
 .bb-tooltip-container {
     z-index: 10;
+    font-family: $font-family;
     position: absolute;
 }
 

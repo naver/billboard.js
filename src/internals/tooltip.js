@@ -103,8 +103,11 @@ extend(ChartInternal.prototype, {
 		}
 
 		let text;
+		let row;
+		let param;
+		let value;
 
-		for (let i = 0, row, rangeContent, value, len = d.length; i < len; i++) {
+		for (let i = 0, len = d.length; i < len; i++) {
 			if (!((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0))) {
 				continue;
 			}
@@ -112,22 +115,22 @@ extend(ChartInternal.prototype, {
 			if (!text) {
 				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
 
-				text = (title || title === 0 ? `<tr><th colspan="2">${title}</th></tr>` : "");
-				text = `<table class="${$$.CLASS.tooltip}">${text}`;
+				text = `<table class="${$$.CLASS.tooltip}">${
+					isValue(title) ? `<tr><th colspan="2">${title}</th></tr>` : ""
+				}`;
 			}
+
+			param = [row.ratio, row.id, row.index, d];
 
 			if ($$.isAreaRangeType(row)) {
-				rangeContent = ["high", "low"]
-					.map(v => sanitise(
-						valueFormat($$.getAreaRangeData(row, v), row.ratio, row.id, row.index, d)
-					));
+				value = ["high", "low"].map(v => sanitise(
+					valueFormat($$.getAreaRangeData(row, v), ...param)
+				));
 
-				rangeContent = `<b>Mid:</b> ${value} <b>High:</b> ${rangeContent[0]} <b>Low:</b> ${rangeContent[1]}`;
+				value = `<b>Mid:</b> ${value} <b>High:</b> ${value[0]} <b>Low:</b> ${value[1]}`;
 			} else {
-				rangeContent = null;
+				value = sanitise(valueFormat(getRowValue(row), ...param));
 			}
-
-			value = sanitise(valueFormat(getRowValue(row), row.ratio, row.id, row.index, d));
 
 			if (value !== undefined) {
 				// Skip elements when their name is set to null
@@ -135,7 +138,7 @@ extend(ChartInternal.prototype, {
 					continue;
 				}
 
-				const name = sanitise(nameFormat(row.name, row.ratio, row.id, row.index));
+				const name = sanitise(nameFormat(row.name, ...param));
 				const bgcolor = getBgColor(row);
 
 				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}"><td class="name">`;
@@ -144,7 +147,7 @@ extend(ChartInternal.prototype, {
 					`<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :
 					`<span style="background-color:${bgcolor}"></span>`;
 
-				text += `${name}</td><td class="value">${rangeContent || value}</td></tr>`;
+				text += `${name}</td><td class="value">${value}</td></tr>`;
 			}
 		}
 
