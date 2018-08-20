@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180820163946
+ * @version 1.5.1-nightly-20180820185816
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180820163946
+ * @version 1.5.1-nightly-20180820185816
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180820163946",
+	version: "1.5.1-nightly-20180820185816",
 
 	/**
   * Generate chart
@@ -8911,51 +8911,31 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			});
 		} else (0, _util.isFunction)(order) && d.sort(order);
 
-		var text = void 0;
+		var text = void 0,
+		    row = void 0,
+		    param = void 0,
+		    value = void 0;
 
-		for (var _loop = function (i, _row, _rangeContent, _value) {
-			if (!((_row = d[i]) && (getRowValue(_row) || getRowValue(_row) === 0))) {
-				return "continue";
-			}
 
-			if (!text) {
-				const title = (0, _util.sanitise)(titleFormat ? titleFormat(_row.x) : _row.x);
+		for (var i = 0, len = d.length; i < len; i++) if ((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0)) {
 
-				text = title || title === 0 ? `<tr><th colspan="2">${title}</th></tr>` : "";
-				text = `<table class="${$$.CLASS.tooltip}">${text}`;
-			}
+				if (!text) {
+					var title = (0, _util.sanitise)(titleFormat ? titleFormat(row.x) : row.x);
 
-			if ($$.isAreaRangeType(_row)) {
-				_rangeContent = ["high", "low"].map(v => (0, _util.sanitise)(valueFormat($$.getAreaRangeData(_row, v), _row.ratio, _row.id, _row.index, d)));
-
-				_rangeContent = `<b>Mid:</b> ${_value} <b>High:</b> ${_rangeContent[0]} <b>Low:</b> ${_rangeContent[1]}`;
-			} else {
-				_rangeContent = null;
-			}
-
-			_value = (0, _util.sanitise)(valueFormat(getRowValue(_row), _row.ratio, _row.id, _row.index, d));
-
-			if (_value !== undefined) {
-				// Skip elements when their name is set to null
-				if (_row.name === null) {
-					return "continue";
+					text = "<table class=\"" + $$.CLASS.tooltip + "\">" + ((0, _util.isValue)(title) ? "<tr><th colspan=\"2\">" + title + "</th></tr>" : "");
 				}
 
-				const name = (0, _util.sanitise)(nameFormat(_row.name, _row.ratio, _row.id, _row.index));
-				const bgcolor = getBgColor(_row);
+				if (param = [row.ratio, row.id, row.index, d], $$.isAreaRangeType(row) ? (value = ["high", "low"].map(function (v) {
+					return (0, _util.sanitise)(valueFormat.apply(undefined, [$$.getAreaRangeData(row, v)].concat(param)));
+				}), value = "<b>Mid:</b> " + value + " <b>High:</b> " + value[0] + " <b>Low:</b> " + value[1]) : value = (0, _util.sanitise)(valueFormat.apply(undefined, [getRowValue(row)].concat(param))), value !== undefined) {
+					// Skip elements when their name is set to null
+					if (row.name === null) continue;
 
-				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(_row.id)}"><td class="name">`;
-
-				text += $$.patterns ? `<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` : `<span style="background-color:${bgcolor}"></span>`;
-
-				text += `${name}</td><td class="value">${_rangeContent || _value}</td></tr>`;
+					var name = (0, _util.sanitise)(nameFormat.apply(undefined, [row.name].concat(param))),
+					    bgcolor = getBgColor(row);
+					text += "<tr class=\"" + $$.CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id) + "\"><td class=\"name\">", text += $$.patterns ? "<svg><rect style=\"fill:" + bgcolor + "\" width=\"10\" height=\"10\"></rect></svg>" : "<span style=\"background-color:" + bgcolor + "\"></span>", text += name + "</td><td class=\"value\">" + value + "</td></tr>";
+				}
 			}
-			row = _row;
-			rangeContent = _rangeContent;
-			value = _value;
-		}, row, rangeContent, value, i = 0, len = d.length; i < len; i++) {
-			var _ret = _loop(i, row, rangeContent, value, len);
-		}
 
 		return text + "</table>";
 	},
