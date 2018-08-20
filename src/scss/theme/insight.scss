@@ -94,6 +94,12 @@
     }
 }
 
+rect.bb-circle, use.bb-circle {
+  &._expanded_ {
+    stroke-width: 1px;
+  }
+}
+
 /*-- Bar --*/
 .bb-bar {
     stroke-width: 0;
