@@ -37,9 +37,6 @@
 }
 
 /*-- Axis --*/
-.bb-axis-x line {
-    visibility: hidden;
-}
 .bb-axis-y text, .bb-axis-y2 text {
     fill: #737373;
 }
@@ -74,7 +71,6 @@
 
 .bb-xgrid-focus line {
     stroke: #ddd;
-    stroke-width: 2px;
 }
 
 /*-- Text on Chart --*/
