@@ -17,9 +17,14 @@ const config = {
 		umdNamedDefine: true,
 	},
 	externals: (context, request, callback) => {
-		// every 'd3-*' import, will be externally required as 'd3'
+		// every 'd3-*' import, will be externally required as their name except root as 'd3'
 		if (/^d3-/.test(request)) {
-			return callback(null, "d3");
+			return callback(null, {
+				commonjs: request,
+				commonjs2: request,
+				amd: request,
+				root: "d3"
+			});
 		}
 
 		callback();

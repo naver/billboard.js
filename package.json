@@ -3,7 +3,7 @@
   "version": "1.5.1-snapshot",
   "description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
   "homepage": "http://naver.github.io/billboard.js/",
-  "main": "src/core.js",
+  "main": "dist/billboard.js",
   "scripts": {
     "start": "webpack-serve --open",
     "build": "npm run build:production && npm run build:packaged && npm run build:theme",
