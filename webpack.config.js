@@ -16,14 +16,7 @@ const config = {
 		libraryTarget: "umd",
 		umdNamedDefine: true,
 	},
-	externals: (context, request, callback) => {
-		// every 'd3-*' import, will be externally required as 'd3'
-		if (/^d3-/.test(request)) {
-			return callback(null, "d3");
-		}
-
-		callback();
-	},
+	externals: /^d3-/,
 	devtool: "cheap-module-source-map",
 	module: {
 		rules: [
