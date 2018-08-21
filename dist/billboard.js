@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180820185816
+ * @version 1.5.1-nightly-20180821141854
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3"));
+		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-array"), require("d3-transition"), require("d3-scale"), require("d3-brush"), require("d3-collection"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3"], factory);
+		define(["d3-time-format", "d3-selection", "d3-array", "d3-transition", "d3-scale", "d3-brush", "d3-collection", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3")) : factory(root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-array"), require("d3-transition"), require("d3-scale"), require("d3-brush"), require("d3-collection"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE__4__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__28__, __WEBPACK_EXTERNAL_MODULE__31__, __WEBPACK_EXTERNAL_MODULE__33__, __WEBPACK_EXTERNAL_MODULE__49__, __WEBPACK_EXTERNAL_MODULE__52__, __WEBPACK_EXTERNAL_MODULE__62__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -117,16 +117,16 @@ var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _Axis = __webpack_require__(5),
+    _Axis = __webpack_require__(8),
     _Axis2 = _interopRequireDefault(_Axis);
 
-__webpack_require__(10);
+__webpack_require__(15);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180820185816
+ * @version 1.5.1-nightly-20180821141854
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180820185816",
+	version: "1.5.1-nightly-20180821141854",
 
 	/**
   * Generate chart
@@ -203,7 +203,7 @@ var bb = {
 	}
 };
 
-__webpack_require__(12), __webpack_require__(14), __webpack_require__(15), __webpack_require__(16), __webpack_require__(17), __webpack_require__(18), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(22), __webpack_require__(23), __webpack_require__(24), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(28), __webpack_require__(29), __webpack_require__(30), __webpack_require__(31), __webpack_require__(32), __webpack_require__(33), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(49), __webpack_require__(50), __webpack_require__(51), __webpack_require__(52), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(63), __webpack_require__(6), __webpack_require__(64), __webpack_require__(65);
+__webpack_require__(17), __webpack_require__(19), __webpack_require__(20), __webpack_require__(21), __webpack_require__(23), __webpack_require__(25), __webpack_require__(26), __webpack_require__(27), __webpack_require__(29), __webpack_require__(30), __webpack_require__(32), __webpack_require__(34), __webpack_require__(35), __webpack_require__(36), __webpack_require__(37), __webpack_require__(38), __webpack_require__(39), __webpack_require__(40), __webpack_require__(41), __webpack_require__(42), __webpack_require__(43), __webpack_require__(44), __webpack_require__(45), __webpack_require__(46), __webpack_require__(47), __webpack_require__(48), __webpack_require__(50), __webpack_require__(51), __webpack_require__(53), __webpack_require__(54), __webpack_require__(55), __webpack_require__(56), __webpack_require__(57), __webpack_require__(58), __webpack_require__(59), __webpack_require__(60), __webpack_require__(61), __webpack_require__(63), __webpack_require__(64), __webpack_require__(65), __webpack_require__(66), __webpack_require__(67), __webpack_require__(68), __webpack_require__(69), __webpack_require__(70), __webpack_require__(71), __webpack_require__(72), __webpack_require__(73), __webpack_require__(74), __webpack_require__(76), __webpack_require__(9), __webpack_require__(77), __webpack_require__(78);
 exports.bb = bb;
 exports.default = bb;
 
@@ -286,14 +286,14 @@ exports.__esModule = !0;
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
     _d3TimeFormat = __webpack_require__(4),
-    _d3Selection = __webpack_require__(4),
-    _d3Array = __webpack_require__(4),
-    _d3Transition = __webpack_require__(4),
-    _Axis = __webpack_require__(5),
+    _d3Selection = __webpack_require__(5),
+    _d3Array = __webpack_require__(6),
+    _d3Transition = __webpack_require__(7),
+    _Axis = __webpack_require__(8),
     _Axis2 = _interopRequireDefault(_Axis),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -797,6 +797,24 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
 
 /***/ }),
 /* 5 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
+
+/***/ }),
+/* 8 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -806,11 +824,11 @@ exports.__esModule = !0;
 
 var _classCallCheck2 = __webpack_require__(2),
     _classCallCheck3 = _interopRequireDefault(_classCallCheck2),
-    _bb = __webpack_require__(6),
+    _bb = __webpack_require__(9),
     _bb2 = _interopRequireDefault(_bb),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1122,7 +1140,7 @@ exports.default = Axis;
 module.exports = exports["default"];
 
 /***/ }),
-/* 6 */
+/* 9 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1388,9 +1406,9 @@ exports.default = function () {
 	}, axis;
 };
 
-var _d3Scale = __webpack_require__(4),
-    _d3Selection = __webpack_require__(4),
-    _util = __webpack_require__(7),
+var _d3Scale = __webpack_require__(10),
+    _d3Selection = __webpack_require__(5),
+    _util = __webpack_require__(11),
     getSizeFor1Char = function getSizeFor1Char(node) {
 	// default size for one character
 	var size = {
@@ -1429,7 +1447,13 @@ var _d3Scale = __webpack_require__(4),
 module.exports = exports["default"];
 
 /***/ }),
-/* 7 */
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
+
+/***/ }),
+/* 11 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1438,11 +1462,11 @@ module.exports = exports["default"];
 exports.__esModule = !0;
 exports.toArray = exports.sanitise = exports.merge = exports.notEmpty = exports.isValue = exports.isUndefined = exports.isString = exports.isObjectType = exports.isObject = exports.isNumber = exports.isFunction = exports.isEmpty = exports.isDefined = exports.isBoolean = exports.isArray = exports.hasValue = exports.getRectSegList = exports.getPathBox = exports.getOption = exports.getCssRules = exports.getBrushSelection = exports.extend = exports.emulateEvent = exports.diffDomain = exports.ceil10 = exports.capitalize = exports.callFn = exports.brushEmpty = exports.asHalfPixel = undefined;
 
-var _typeof2 = __webpack_require__(8),
+var _typeof2 = __webpack_require__(12),
     _typeof3 = _interopRequireDefault(_typeof2),
-    _d3Selection = __webpack_require__(4),
-    _d3Brush = __webpack_require__(4),
-    _classes = __webpack_require__(9),
+    _d3Selection = __webpack_require__(5),
+    _d3Brush = __webpack_require__(13),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -1757,7 +1781,7 @@ exports.sanitise = sanitise;
 exports.toArray = toArray;
 
 /***/ }),
-/* 8 */
+/* 12 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1772,7 +1796,13 @@ exports.default = function (obj) {
 };
 
 /***/ }),
-/* 9 */
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -1876,24 +1906,24 @@ exports.default = {
 module.exports = exports["default"];
 
 /***/ }),
-/* 10 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 11 */,
-/* 12 */
+/* 16 */,
+/* 17 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _Options = __webpack_require__(13),
+var _Options = __webpack_require__(18),
     _Options2 = _interopRequireDefault(_Options),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -1933,7 +1963,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 13 */
+/* 18 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -4810,16 +4840,16 @@ exports.default = Options;
 module.exports = exports["default"];
 
 /***/ }),
-/* 14 */
+/* 19 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Scale = __webpack_require__(4),
+var _d3Scale = __webpack_require__(10),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -4916,16 +4946,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 15 */
+/* 20 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(4),
+var _d3Array = __webpack_require__(6),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5105,19 +5135,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 16 */
+/* 21 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(4),
-    _d3Collection = __webpack_require__(4),
-    _classes = __webpack_require__(9),
+var _d3Array = __webpack_require__(6),
+    _d3Collection = __webpack_require__(22),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5700,17 +5730,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 17 */
+/* 22 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__22__;
+
+/***/ }),
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Dsv = __webpack_require__(4),
-    _d3Collection = __webpack_require__(4),
+var _d3Dsv = __webpack_require__(24),
+    _d3Collection = __webpack_require__(22),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -5955,17 +5991,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 18 */
+/* 24 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__24__;
+
+/***/ }),
+/* 25 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _classes = __webpack_require__(9),
+var _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6023,7 +6065,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 19 */
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6031,7 +6073,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6054,19 +6096,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 20 */
+/* 27 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Drag = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Drag = __webpack_require__(28),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6416,7 +6458,13 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 21 */
+/* 28 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__28__;
+
+/***/ }),
+/* 29 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -6424,9 +6472,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6549,19 +6597,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 22 */
+/* 30 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Shape = __webpack_require__(4),
-    _d3Selection = __webpack_require__(4),
-    _classes = __webpack_require__(9),
+var _d3Shape = __webpack_require__(31),
+    _d3Selection = __webpack_require__(5),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -6681,21 +6729,27 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 23 */
+/* 31 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__31__;
+
+/***/ }),
+/* 32 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Shape = __webpack_require__(4),
-    _d3Array = __webpack_require__(4),
-    _d3Interpolate = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Shape = __webpack_require__(31),
+    _d3Array = __webpack_require__(6),
+    _d3Interpolate = __webpack_require__(33),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7129,18 +7183,24 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 24 */
+/* 33 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__33__;
+
+/***/ }),
+/* 34 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _classes = __webpack_require__(9),
+var _d3Selection = __webpack_require__(5),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7294,16 +7354,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 25 */
+/* 35 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(4),
+var _d3Array = __webpack_require__(6),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7359,19 +7419,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 26 */
+/* 36 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Shape = __webpack_require__(4),
-    _d3Selection = __webpack_require__(4),
-    _classes = __webpack_require__(9),
+var _d3Shape = __webpack_require__(31),
+    _d3Selection = __webpack_require__(5),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7823,16 +7883,16 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 27 */
+/* 37 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -7981,19 +8041,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 28 */
+/* 38 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Array = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Array = __webpack_require__(6),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8242,18 +8302,18 @@ var cacheKey = "$radarPoints";
 });
 
 /***/ }),
-/* 29 */
+/* 39 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8431,7 +8491,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 30 */
+/* 40 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -8439,7 +8499,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8580,18 +8640,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 31 */
+/* 41 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -8812,18 +8872,18 @@ var getGridTextAnchor = function (d) {
 });
 
 /***/ }),
-/* 32 */
+/* 42 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9063,18 +9123,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 33 */
+/* 43 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9549,7 +9609,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 34 */
+/* 44 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9557,7 +9617,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9629,7 +9689,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 35 */
+/* 45 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -9637,7 +9697,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9725,18 +9785,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 36 */
+/* 46 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9820,18 +9880,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 }); // selection
 
 /***/ }),
-/* 37 */
+/* 47 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -9917,19 +9977,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 38 */
+/* 48 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Color = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Color = __webpack_require__(49),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10081,19 +10141,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 39 */
+/* 49 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__49__;
+
+/***/ }),
+/* 50 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Brush = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Brush = __webpack_require__(13),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10346,21 +10412,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 40 */
+/* 51 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(4),
-    _d3Selection = __webpack_require__(4),
-    _d3Drag = __webpack_require__(4),
-    _d3Zoom = __webpack_require__(4),
+var _d3Array = __webpack_require__(6),
+    _d3Selection = __webpack_require__(5),
+    _d3Drag = __webpack_require__(28),
+    _d3Zoom = __webpack_require__(52),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10561,19 +10627,25 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 41 */
+/* 52 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__52__;
+
+/***/ }),
+/* 53 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Scale = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Scale = __webpack_require__(10),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10692,7 +10764,7 @@ var colorizePattern = function (pattern, color, id) {
 });
 
 /***/ }),
-/* 42 */
+/* 54 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10700,7 +10772,7 @@ var colorizePattern = function (pattern, color, id) {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10760,7 +10832,7 @@ var getFormat = function ($$, typeValue, v) {
 });
 
 /***/ }),
-/* 43 */
+/* 55 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10768,7 +10840,7 @@ var getFormat = function ($$, typeValue, v) {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10820,7 +10892,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 44 */
+/* 56 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -10828,9 +10900,9 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -10962,18 +11034,18 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 45 */
+/* 57 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11066,7 +11138,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 46 */
+/* 58 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11074,7 +11146,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11192,17 +11264,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 47 */
+/* 59 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Array = __webpack_require__(4),
-    _d3Zoom = __webpack_require__(4),
+var _d3Array = __webpack_require__(6),
+    _d3Zoom = __webpack_require__(52),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11369,7 +11441,7 @@ var zoom = function (domainValue) {
 });
 
 /***/ }),
-/* 48 */
+/* 60 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11377,7 +11449,7 @@ var zoom = function (domainValue) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11473,21 +11545,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 49 */
+/* 61 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
-    _d3Ease = __webpack_require__(4),
-    _d3Transition = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
+    _d3Ease = __webpack_require__(62),
+    _d3Transition = __webpack_require__(7),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7),
-    _classes = __webpack_require__(9),
+    _util = __webpack_require__(11),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -11725,17 +11797,23 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 50 */
+/* 62 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__62__;
+
+/***/ }),
+/* 63 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7),
-    _classes = __webpack_require__(9),
+    _util = __webpack_require__(11),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
@@ -11852,7 +11930,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 51 */
+/* 64 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11862,7 +11940,7 @@ var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11909,7 +11987,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
      */
 
 /***/ }),
-/* 52 */
+/* 65 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11917,7 +11995,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -11946,7 +12024,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 53 */
+/* 66 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -11954,7 +12032,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12101,7 +12179,7 @@ var ygrids = function (grids) {
 });
 
 /***/ }),
-/* 54 */
+/* 67 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12109,9 +12187,9 @@ var ygrids = function (grids) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _classes = __webpack_require__(9),
+    _classes = __webpack_require__(14),
     _classes2 = _interopRequireDefault(_classes),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12205,7 +12283,7 @@ var regions = function (_regions) {
 }), (0, _util.extend)(_Chart2.default.prototype, { regions: regions });
 
 /***/ }),
-/* 55 */
+/* 68 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12213,7 +12291,7 @@ var regions = function (_regions) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12355,7 +12433,7 @@ var data = function (targetIds) {
 }), (0, _util.extend)(_Chart2.default.prototype, { data: data });
 
 /***/ }),
-/* 56 */
+/* 69 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12363,7 +12441,7 @@ var data = function (targetIds) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12410,7 +12488,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 57 */
+/* 70 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12418,7 +12496,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12442,7 +12520,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 58 */
+/* 71 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12450,7 +12528,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12511,7 +12589,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 59 */
+/* 72 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12519,7 +12597,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12673,7 +12751,7 @@ var setMinMax = function ($$, type, value) {
 (0, _util.extend)(_Chart2.default.prototype, { axis: axis });
 
 /***/ }),
-/* 60 */
+/* 73 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12681,7 +12759,7 @@ var setMinMax = function ($$, type, value) {
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12748,17 +12826,17 @@ var legend = (0, _util.extend)(function () {}, {
 (0, _util.extend)(_Chart2.default.prototype, { legend: legend });
 
 /***/ }),
-/* 61 */
+/* 74 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _browser = __webpack_require__(62),
-    _util = __webpack_require__(7);
+    _browser = __webpack_require__(75),
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12866,7 +12944,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 });
 
 /***/ }),
-/* 62 */
+/* 75 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12875,7 +12953,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 exports.__esModule = !0;
 exports.document = exports.window = undefined;
 
-var _util = __webpack_require__(7),
+var _util = __webpack_require__(11),
     win = (0, _util.isDefined)(window) && window.Math === Math ? window : (0, _util.isDefined)(self) && (self.Math === Math ? self : Function("return this")()),
     doc = win.document;
 
@@ -12897,7 +12975,7 @@ exports.window = win;
 exports.document = doc;
 
 /***/ }),
-/* 63 */
+/* 76 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12905,7 +12983,7 @@ exports.document = doc;
 
 var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -12978,7 +13056,7 @@ var tooltip = (0, _util.extend)(function () {}, {
 (0, _util.extend)(_Chart2.default.prototype, { tooltip: tooltip });
 
 /***/ }),
-/* 64 */
+/* 77 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
@@ -12986,7 +13064,7 @@ var tooltip = (0, _util.extend)(function () {}, {
 
 var _ChartInternal = __webpack_require__(3),
     _ChartInternal2 = _interopRequireDefault(_ChartInternal),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
@@ -13010,16 +13088,16 @@ var ua = window.navigator.userAgent;
 });
 
 /***/ }),
-/* 65 */
+/* 78 */
 /***/ (function(module, exports, __webpack_require__) {
 
 "use strict";
 
 
-var _d3Selection = __webpack_require__(4),
+var _d3Selection = __webpack_require__(5),
     _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
-    _util = __webpack_require__(7);
+    _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
