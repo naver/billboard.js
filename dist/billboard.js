@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180821141854
+ * @version 1.5.1-nightly-20180823153605
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180821141854
+ * @version 1.5.1-nightly-20180823153605
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180821141854",
+	version: "1.5.1-nightly-20180823153605",
 
 	/**
   * Generate chart
@@ -12939,7 +12939,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    res = void 0;
 
 
-		return key in $$.config && ((res = value) ? ($$.config[key] = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
+		return key in $$.config && ((0, _util.isDefined)(value) ? ($$.config[key] = value, res = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
 	}
 });
 
