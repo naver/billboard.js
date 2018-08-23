@@ -30,6 +30,27 @@
   },
   "docdash": {
     "static": true,
-    "sort": true
+    "sort": true,
+    "sectionOrder": [
+      "Namespaces",
+      "Classes"
+    ],
+    "meta": {
+      "title": "billboard.js API doc",
+      "description": "Re-usable, easy interface JavaScript chart library based on D3 v4+",
+      "keyword": "chart, SVG, D3, Data Visualization"
+    },
+    "search": true,
+    "typedefs": true,
+    "menu":{
+      "Examples": {
+        "href":"https://naver.github.io/billboard.js/demo/",
+        "target":"_blank"
+      },
+      "GitHub": {
+        "href":"https://github.com/naver/billboard.js",
+        "target":"_blank"
+      }
+    }
   }
 }

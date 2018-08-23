@@ -102,6 +102,11 @@ rect.bb-circle, use.bb-circle {
   }
 }
 
+.bb-selected-circle {
+    fill: white;
+    stroke-width: 2px;
+}
+
 /*-- Bar --*/
 .bb-bar {
     stroke-width: 0;
