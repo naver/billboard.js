@@ -119,8 +119,10 @@ extend(Chart.prototype, {
 		let res;
 
 		if (key in $$.config) {
-			if ((res = value)) {
+			if (isDefined(value)) {
 				$$.config[key] = value;
+				res = value;
+
 				redraw && this.flush(true);
 			} else {
 				res = $$.config[key];

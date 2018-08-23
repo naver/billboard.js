@@ -164,6 +164,10 @@ describe("API chart", () => {
 			max = +chart.config("gauge.max", expected);
 			expect(max).to.be.equal(expected);
 
+			expected = null;
+			max = chart.config("gauge.max", expected);
+			expect(max).to.be.equal(expected);
+
 			// check for the setter and redraw
 			expected = 100;
 			max = +chart.config("gauge.max", expected, true);
