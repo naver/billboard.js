@@ -226,4 +226,45 @@ describe("ZOOM", function() {
 		    expect(resetBtn.text()).to.be.equal("test");
 	    });
     });
+
+	describe("zoom on regions", () => {
+		before(() => {
+			args = {
+				zoom: {
+					enabled: {
+						type: "drag"
+					}
+				},
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				regions: [
+					{
+						start: "1",
+						end: "2"
+					}
+				],
+			};
+		});
+
+		it("region area should be resized on zoom", done => {
+			const regionRect = chart.$.main.select(`.${CLASS.region}-0 rect`);
+			const size = {
+				width: +regionRect.attr("width"),
+				x: +regionRect.attr("x")
+			};
+
+			// when
+			chart.zoom([1,3]);
+
+			setTimeout(() => {
+				expect(+regionRect.attr("width")).to.be.above(size.width);
+				expect(+regionRect.attr("x")).to.be.below(size.x);
+
+				done();
+			}, 500);
+		});
+	});
 });
