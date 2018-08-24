@@ -642,27 +642,25 @@ export default class ChartInternal {
 			xDomainForZoom = $$.x.orgDomain();
 		}
 
-		$$.y.domain($$.getYDomain(targetsToShow, "y", xDomainForZoom));
-		$$.y2.domain($$.getYDomain(targetsToShow, "y2", xDomainForZoom));
+		["y", "y2"].forEach(key => {
+			const axis = $$[key];
+			const tickValues = config[`axis_${key}_tick_values`];
+			const tickCount = config[`axis_${key}_tick_count`];
 
-		if (!config.axis_y_tick_values && config.axis_y_tick_count) {
-			$$.yAxis.tickValues(
-				$$.axis.generateTickValues(
-					$$.y.domain(),
-					config.axis_y_tick_count,
-					$$.isTimeSeriesY()
-				)
-			);
-		}
+			axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
-		if (!config.axis_y2_tick_values && config.axis_y2_tick_count) {
-			$$.y2Axis.tickValues(
-				$$.axis.generateTickValues(
-					$$.y2.domain(),
-					config.axis_y2_tick_count
-				)
-			);
-		}
+			if (!tickValues && tickCount) {
+				const domain = axis.domain();
+
+				$$[`${key}Axis`].tickValues(
+					$$.axis.generateTickValues(
+						domain,
+						domain.every(v => v === 0) ? 1 : tickCount,
+						$$.isTimeSeriesY()
+					)
+				);
+			}
+		});
 
 		// axes
 		$$.axis.redraw(transitions, hideAxis);
