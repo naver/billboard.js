@@ -46,18 +46,13 @@ extend(ChartInternal.prototype, {
 
 	redrawRegion(withTransition) {
 		const $$ = this;
-		const x = $$.regionX.bind($$);
-		const y = $$.regionY.bind($$);
-		const w = $$.regionWidth.bind($$);
-		const h = $$.regionHeight.bind($$);
-
 		let regions = $$.mainRegion.select("rect");
 
 		regions = (withTransition ? regions.transition() : regions)
-			.attr("x", x)
-			.attr("y", y)
-			.attr("width", w)
-			.attr("height", h);
+			.attr("x", $$.regionX.bind($$))
+			.attr("y", $$.regionY.bind($$))
+			.attr("width", $$.regionWidth.bind($$))
+			.attr("height", $$.regionHeight.bind($$));
 
 		return [
 			(withTransition ? regions.transition() : regions)
@@ -71,93 +66,73 @@ extend(ChartInternal.prototype, {
 		];
 	},
 
-	regionX(d) {
+	getRegionXY(type, d) {
 		const $$ = this;
 		const config = $$.config;
-		const yScale = d.axis === "y" ? $$.y : $$.y2;
-		let xPos;
+		const isRotated = config.axis_rotated;
+		const isX = type === "x";
+		let key = "start";
+		let scale;
+		let pos = 0;
 
 		if (d.axis === "y" || d.axis === "y2") {
-			xPos = config.axis_rotated ? (
-				"start" in d ? yScale(d.start) : 0
-			) : 0;
-		} else {
-			xPos = config.axis_rotated ? 0 : (
-				"start" in d ? $$.x(
-					$$.isTimeSeries() ? $$.parseDate(d.start) : d.start
-				) : 0
-			);
+			if (!isX) {
+				key = "end";
+			}
+
+			if ((isX ? isRotated : !isRotated) && key in d) {
+				scale = $$[d.axis];
+				pos = scale(d[key]);
+			}
+		} else if ((isX ? !isRotated : isRotated) && key in d) {
+			scale = $$.zoomScale || $$.x;
+			pos = scale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
 		}
 
-		return xPos;
+		return pos;
+	},
+
+	regionX(d) {
+		return this.getRegionXY("x", d);
 	},
 
 	regionY(d) {
+		return this.getRegionXY("y", d);
+	},
+
+	getRegionSize(type, d) {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
-		const yScale = d.axis === "y" ? $$.y : $$.y2;
-		let yPos;
+		const isWidth = type === "width";
+		const start = $$[isWidth ? "regionX" : "regionY"](d);
+		let scale;
+		let key = "end";
+		let end = $$[type];
 
 		if (d.axis === "y" || d.axis === "y2") {
-			yPos = isRotated ? 0 : (
-				"end" in d ? yScale(d.end) : 0
-			);
-		} else {
-			yPos = isRotated ? (
-				"start" in d ? $$.x(
-					$$.isTimeSeries() ? $$.parseDate(d.start) : d.start
-				) : 0
-			) : 0;
+			if (!isWidth) {
+				key = "start";
+			}
+
+			if ((isWidth ? isRotated : !isRotated) && key in d) {
+				scale = $$[d.axis];
+				end = scale(d[key]);
+			}
+		} else if ((isWidth ? !isRotated : isRotated) && key in d) {
+			scale = $$.zoomScale || $$.x;
+			end = scale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
 		}
 
-		return yPos;
+		return end < start ? 0 : end - start;
 	},
 
 	regionWidth(d) {
-		const $$ = this;
-		const config = $$.config;
-		const isRotated = config.axis_rotated;
-		const yScale = d.axis === "y" ? $$.y : $$.y2;
-		const start = $$.regionX(d);
-		let end;
-
-		if (d.axis === "y" || d.axis === "y2") {
-			end = isRotated ? (
-				"end" in d ? yScale(d.end) : $$.width
-			) : $$.width;
-		} else {
-			end = isRotated ?
-				$$.width : "end" in d ?
-					$$.x($$.isTimeSeries() ? $$.parseDate(d.end) : d.end) :
-					$$.width;
-		}
-
-		return end < start ? 0 : end - start;
+		return this.getRegionSize("width", d);
 	},
 
 	regionHeight(d) {
-		const $$ = this;
-		const config = $$.config;
-		const isRotated = config.axis_rotated;
-		const start = this.regionY(d);
-		let end;
-		const yScale = d.axis === "y" ? $$.y : $$.y2;
-
-		if (d.axis === "y" || d.axis === "y2") {
-			end = isRotated ?
-				$$.height : (
-					"start" in d ? yScale(d.start) : $$.height
-				);
-		} else {
-			end = isRotated ? (
-				"end" in d ? $$.x(
-					$$.isTimeSeries() ? $$.parseDate(d.end) : d.end
-				) : $$.height
-			) : $$.height;
-		}
-
-		return end < start ? 0 : end - start;
+		return this.getRegionSize("height", d);
 	},
 
 	isRegionOnX(d) {
