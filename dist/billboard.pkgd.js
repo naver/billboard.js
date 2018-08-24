@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180824130229
+ * @version 1.5.1-nightly-20180824163653
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.5.0
@@ -127,7 +127,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180824130229
+ * @version 1.5.1-nightly-20180824163653
  */
 var bb = {
 	/**
@@ -137,7 +137,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180824130229",
+	version: "1.5.1-nightly-20180824163653",
 
 	/**
   * Generate chart
@@ -9759,59 +9759,51 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 	},
 	redrawRegion: function redrawRegion(withTransition) {
 		var $$ = this,
-		    x = $$.regionX.bind($$),
-		    y = $$.regionY.bind($$),
-		    w = $$.regionWidth.bind($$),
-		    h = $$.regionHeight.bind($$),
 		    regions = $$.mainRegion.select("rect");
 
 
-		return regions = (withTransition ? regions.transition() : regions).attr("x", x).attr("y", y).attr("width", w).attr("height", h), [(withTransition ? regions.transition() : regions).style("fill-opacity", function (d) {
+		return regions = (withTransition ? regions.transition() : regions).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$)), [(withTransition ? regions.transition() : regions).style("fill-opacity", function (d) {
 			return (0, _util.isValue)(d.opacity) ? d.opacity : "0.1";
 		}).on("end", function () {
 			(0, _d3Selection.select)(this.parentNode).selectAll("rect:not([x])").remove();
 		})];
 	},
-	regionX: function regionX(d) {
+	getRegionXY: function getRegionXY(type, d) {
 		var $$ = this,
 		    config = $$.config,
-		    yScale = d.axis === "y" ? $$.y : $$.y2,
-		    xPos = void 0;
+		    isRotated = config.axis_rotated,
+		    isX = type === "x",
+		    key = "start",
+		    scale = void 0,
+		    pos = 0;
 
 
-		return xPos = d.axis === "y" || d.axis === "y2" ? config.axis_rotated ? "start" in d ? yScale(d.start) : 0 : 0 : config.axis_rotated ? 0 : "start" in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start) : d.start) : 0, xPos;
+		return d.axis === "y" || d.axis === "y2" ? (!isX && (key = "end"), (isX ? isRotated : !isRotated) && key in d && (scale = $$[d.axis], pos = scale(d[key]))) : (isX ? !isRotated : isRotated) && key in d && (scale = $$.zoomScale || $$.x, pos = scale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key])), pos;
+	},
+	regionX: function regionX(d) {
+		return this.getRegionXY("x", d);
 	},
 	regionY: function regionY(d) {
+		return this.getRegionXY("y", d);
+	},
+	getRegionSize: function getRegionSize(type, d) {
 		var $$ = this,
 		    config = $$.config,
 		    isRotated = config.axis_rotated,
-		    yScale = d.axis === "y" ? $$.y : $$.y2,
-		    yPos = void 0;
+		    isWidth = type === "width",
+		    start = $$[isWidth ? "regionX" : "regionY"](d),
+		    scale = void 0,
+		    key = "end",
+		    end = $$[type];
 
 
-		return yPos = d.axis === "y" || d.axis === "y2" ? isRotated ? 0 : "end" in d ? yScale(d.end) : 0 : isRotated ? "start" in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.start) : d.start) : 0 : 0, yPos;
+		return d.axis === "y" || d.axis === "y2" ? (!isWidth && (key = "start"), (isWidth ? isRotated : !isRotated) && key in d && (scale = $$[d.axis], end = scale(d[key]))) : (isWidth ? !isRotated : isRotated) && key in d && (scale = $$.zoomScale || $$.x, end = scale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key])), end < start ? 0 : end - start;
 	},
 	regionWidth: function regionWidth(d) {
-		var $$ = this,
-		    config = $$.config,
-		    isRotated = config.axis_rotated,
-		    yScale = d.axis === "y" ? $$.y : $$.y2,
-		    start = $$.regionX(d),
-		    end = void 0;
-
-
-		return end = d.axis === "y" || d.axis === "y2" ? isRotated ? "end" in d ? yScale(d.end) : $$.width : $$.width : isRotated ? $$.width : "end" in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end) : d.end) : $$.width, end < start ? 0 : end - start;
+		return this.getRegionSize("width", d);
 	},
 	regionHeight: function regionHeight(d) {
-		var $$ = this,
-		    config = $$.config,
-		    isRotated = config.axis_rotated,
-		    start = this.regionY(d),
-		    end = void 0,
-		    yScale = d.axis === "y" ? $$.y : $$.y2;
-
-
-		return end = d.axis === "y" || d.axis === "y2" ? isRotated ? $$.height : "start" in d ? yScale(d.start) : $$.height : isRotated ? "end" in d ? $$.x($$.isTimeSeries() ? $$.parseDate(d.end) : d.end) : $$.height : $$.height, end < start ? 0 : end - start;
+		return this.getRegionSize("height", d);
 	},
 	isRegionOnX: function isRegionOnX(d) {
 		return !d.axis || d.axis === "x";
