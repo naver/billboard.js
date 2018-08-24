@@ -1153,4 +1153,29 @@ describe("AXIS", function() {
 				});
 		});
 	});
+
+	describe("when data is zero, unnecessary tick shouldn't be showing", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 0]
+					]
+				},
+				axis: {
+					y: {
+						tick: {
+							count: 4
+						}
+					}
+				}
+			}
+		});
+
+		it("only one tick should be generated even counts are greater than 1", () => {
+			const ticks = chart.$.main.selectAll(`.${CLASS.axisY} .tick`);
+
+			expect(ticks.size()).to.be.equal(1);
+		});
+	});
 });
