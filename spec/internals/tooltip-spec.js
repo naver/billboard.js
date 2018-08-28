@@ -285,7 +285,7 @@ describe("TOOLTIP", function() {
 			args.tooltip.order = "asc";
 		});
 
-		it("should sort values ascending order", () => {
+		it("should sort values in ascending order", () => {
 			checkTooltip(chart, [
 				`${CLASS.tooltipName}-data2`,
 				`${CLASS.tooltipName}-data1`,
@@ -297,7 +297,7 @@ describe("TOOLTIP", function() {
 			args.tooltip.order = "desc";
 		});
 
-		it("set options tooltip.order=desc", () => {
+		it("should sort values in descending order", () => {
 			checkTooltip(chart, [
 				`${CLASS.tooltipName}-data3`,
 				`${CLASS.tooltipName}-data1`,
