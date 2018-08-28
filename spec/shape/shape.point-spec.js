@@ -10,12 +10,8 @@ import CLASS from "../../src/config/classes";
 describe("SHAPE POINT", () => {
 	let chart;
 	let args;
-	let skipEach = false;
 
-	beforeEach(function(){
-		if(skipEach){
-			return ;
-		}
+	beforeEach(() => {
 		chart = util.generate(args);
 	});
 
@@ -33,7 +29,7 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg circle elements", () => {
-			const target = chart.internal.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const target = chart.$.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
 			const circles = circlesEl.getElementsByTagName("circle");
 
@@ -58,7 +54,7 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg rect elements", () => {
-			const target = chart.internal.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const target = chart.$.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
 			const rects = circlesEl.getElementsByTagName("rect");
 
@@ -85,11 +81,26 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg \"use\" elements", () => {
-			const target = chart.internal.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const target = chart.$.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
 			const polygons = circlesEl.getElementsByTagName("use");
 
 			expect(polygons.length).to.be.equal(6);
+		});
+
+		it("set options point.pattern", () => {
+			args.point.pattern = [
+				"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+			];
+		});
+
+		it("should be allowing to set groping nodes", () => {
+			const innerHTML = chart.config("point.pattern")[0]
+				.replace(/<\/?g>/g, "").replace(/'/g, '"');
+
+			chart.$.defs.selectAll("g").each(function() {
+				expect(this.innerHTML).to.be.equal(innerHTML);
+			});
 		});
 	});
 });

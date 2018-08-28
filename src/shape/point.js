@@ -7,7 +7,7 @@ import {
 	select as d3Select
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
-import {isFunction, isObjectType, extend, notEmpty} from "../internals/util";
+import {isFunction, isObjectType, toArray, extend, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
@@ -29,15 +29,21 @@ extend(ChartInternal.prototype, {
 		const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
 		const attribs = node.attributes;
 
-		for (let i = 0, l = attribs.length; i < l; i++) {
-			const name = attribs[i].name;
-
+		for (let i = 0, name; (name = attribs[i]); i++) {
+			name = name.name;
 			clone.setAttribute(name, node.getAttribute(name));
 		}
 
 		clone.id = id;
 		clone.style.fill = "inherit";
 		clone.style.stroke = "inherit";
+
+		// when has child nodes
+		if (node.children.length) {
+			clone.innerHTML = toArray(node.children)
+				.map(v => v.outerHTML)
+				.join("");
+		}
 
 		$$.defs.node().appendChild(clone);
 	},
@@ -102,8 +108,12 @@ extend(ChartInternal.prototype, {
 			withTransition, flow, selectedCircles) {
 			const $$ = this;
 			const box = element.node().getBBox();
-			const xPosFn2 = d => xPosFn(d) - (box.width * 0.5);
-			const yPosFn2 = d => yPosFn(d) - (box.height * 0.5);
+
+			box.width /= 2;
+			box.height /= 2;
+
+			const xPosFn2 = d => xPosFn(d) - box.width;
+			const yPosFn2 = d => yPosFn(d) - box.height;
 			let mainCircles = element;
 
 			if (withTransition) {
