@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180828145751
+ * @version 1.5.1-nightly-20180828175041
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180828145751
+ * @version 1.5.1-nightly-20180828175041
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180828145751",
+	version: "1.5.1-nightly-20180828175041",
 
 	/**
   * Generate chart
@@ -582,7 +582,7 @@ var ChartInternal = function () {
 		    isTransition = (duration || flow) && $$.isTabVisible(),
 		    redrawList = [$$.redrawBar(drawBar, isTransition), $$.redrawLine(drawLine, isTransition), $$.redrawArea(drawArea, isTransition), $$.redrawCircle(cx, cy, isTransition, flow), $$.redrawText(xForText, yForText, options.flow, isTransition), $$.redrawRegion(isTransition), $$.redrawGrid(isTransition)],
 		    afterRedraw = flow || config.onrendered ? function () {
-			flow && flow(), config.onrendered && config.onrendered.call($$);
+			flow && flow(), (0, _util.callFn)(config.onrendered, $$);
 		} : null;
 
 		// generate flow
@@ -10483,9 +10483,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
 		}, zoom.updateTransformScale = function (transform) {
 			// rescale from the original scale
-			var newScale = transform.rescaleX($$.x.orgScale()),
-			    domain = $$.trimXDomain(newScale.domain());
-			newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale);
+			var newScale = transform.rescaleX($$.subX.orgScale()),
+			    domain = $$.trimXDomain(newScale.domain()),
+			    rescale = config.zoom_rescale;
+			newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && $$.x.domain($$.zoomScale.orgDomain());
 		}, $$.zoom = zoom;
 	},
 
@@ -11317,7 +11318,7 @@ var zoom = function (domainValue) {
 
 			$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]), resultDomain = domain;
 		} else {
-			var orgDomain = $$.x.orgDomain(),
+			var orgDomain = $$.subX.domain(),
 			    k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]),
 			    gap = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
 			    tx = isTimeSeries ? 0 - k * $$.x(domain[0].getTime()) : domain[0] - k * ($$.x(domain[0]) - gap);
