@@ -210,7 +210,7 @@ describe("ZOOM", function() {
 			expect(resetBtn.style("display")).to.be.equal("none");
         });
 
-        it("set options zoom.resetButton.text='test", () => {
+        it("set options zoom.resetButton.text='test'", () => {
 			args.zoom.resetButton = {
 				text: "test"
 			};
@@ -224,6 +224,28 @@ describe("ZOOM", function() {
 
 		    expect(resetBtn.empty()).to.be.false;
 		    expect(resetBtn.text()).to.be.equal("test");
+	    });
+
+	    it("set options zoom.rescale=true", () => {
+		    args.zoom.rescale = true;
+	    });
+
+	    it("check for the y axis rescale", () => {
+	    	const axisY = chart.$.main.select(`.${CLASS.axisY}`);
+
+		    // when
+		    chart.zoom([0, 2]);
+
+		    let tick = axisY.selectAll(".tick").nodes().pop();
+
+		    expect(+tick.textContent).to.be.equal(200);
+
+		    // when
+		    chart.zoom([2,4]);
+
+		    tick = axisY.selectAll(".tick").nodes().pop();
+
+		    expect(+tick.textContent).to.be.equal(6000);
 	    });
     });
 

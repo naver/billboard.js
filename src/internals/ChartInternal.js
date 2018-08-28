@@ -807,7 +807,7 @@ export default class ChartInternal {
 		// callback function after redraw ends
 		const afterRedraw = flow || config.onrendered ? () => {
 			flow && flow();
-			config.onrendered && config.onrendered.call($$);
+			callFn(config.onrendered, $$);
 		} : null;
 
 		if (afterRedraw) {

@@ -90,13 +90,16 @@ extend(ChartInternal.prototype, {
 		 */
 		zoom.updateTransformScale = transform => {
 			// rescale from the original scale
-			const newScale = transform.rescaleX($$.x.orgScale());
+			const newScale = transform.rescaleX($$.subX.orgScale());
 			const domain = $$.trimXDomain(newScale.domain());
+			const rescale = config.zoom_rescale;
 
 			newScale.domain(domain, $$.orgXDomain);
 
 			$$.zoomScale = $$.getCustomizedScale(newScale);
 			$$.xAxis.scale($$.zoomScale);
+
+			rescale && $$.x.domain($$.zoomScale.orgDomain());
 		};
 
 		$$.zoom = zoom;

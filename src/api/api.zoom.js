@@ -42,7 +42,7 @@ const zoom = function(domainValue) {
 			$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
 			resultDomain = domain;
 		} else {
-			const orgDomain = $$.x.orgDomain();
+			const orgDomain = $$.subX.domain();
 			const k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]);
 			const gap = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
 			const tx = isTimeSeries ?
