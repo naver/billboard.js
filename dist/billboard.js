@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180824163653
+ * @version 1.5.1-nightly-20180828145751
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180824163653
+ * @version 1.5.1-nightly-20180828145751
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180824163653",
+	version: "1.5.1-nightly-20180828145751",
 
 	/**
   * Generate chart
@@ -7928,13 +7928,11 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    attribs = node.attributes;
 
 
-		for (var i = 0, l = attribs.length; i < l; i++) {
-			var name = attribs[i].name;
+		for (var name, i = 0; name = attribs[i]; i++) name = name.name, clone.setAttribute(name, node.getAttribute(name));
 
-			clone.setAttribute(name, node.getAttribute(name));
-		}
-
-		clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", $$.defs.node().appendChild(clone);
+		clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", node.children.length && (clone.innerHTML = (0, _util.toArray)(node.children).map(function (v) {
+			return v.outerHTML;
+		}).join("")), $$.defs.node().appendChild(clone);
 	},
 	pointFromDefs: function pointFromDefs(id) {
 		return this.defs.select("#" + id);
@@ -7979,12 +7977,14 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		},
 		update: function update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
 			var $$ = this,
-			    box = element.node().getBBox(),
-			    xPosFn2 = function (d) {
-				return xPosFn(d) - box.width * .5;
+			    box = element.node().getBBox();
+			box.width /= 2, box.height /= 2;
+
+			var xPosFn2 = function (d) {
+				return xPosFn(d) - box.width;
 			},
 			    yPosFn2 = function (d) {
-				return yPosFn(d) - box.height * .5;
+				return yPosFn(d) - box.height;
 			},
 			    mainCircles = element;
 
