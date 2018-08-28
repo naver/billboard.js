@@ -1824,6 +1824,21 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		CustomPointsGrouped: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				},
+				point: {
+					pattern: [
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+					]
+				}
+			}
+		},
 		CombinationPoints: {
 			options: {
 				data: {
@@ -1831,7 +1846,8 @@ d3.select(".chart_area")
 						["data1", 100, 400, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200],
 						["data3", 80, 350, 800, 450, 500],
-						["data4", 150, 240, 300, 700, 300]
+						["data4", 150, 240, 300, 700, 300],
+						["data5", 280, 720, 160, 210, 115]
 					]
 				},
 				point: {
@@ -1839,7 +1855,8 @@ d3.select(".chart_area")
 						"circle",
 						"rectangle",
 						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
 					]
 				}
 			}
