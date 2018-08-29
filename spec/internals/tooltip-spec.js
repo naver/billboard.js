@@ -39,9 +39,9 @@ describe("TOOLTIP", function() {
 	const spy2 = sinon.spy();
 
 	// hover chart
-	const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}) => {
+	const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, dataIndex = 2) => {
 		const eventRect = hoverChart.$.main
-			.select(`.${CLASS.eventRect}-2`)
+			.select(`.${CLASS.eventRect}-${dataIndex}`)
 			.node();
 
 		util.fireEvent(eventRect, eventName, pos, hoverChart);
@@ -614,6 +614,24 @@ describe("TOOLTIP", function() {
 			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
 
 			expect(value).to.be.equal(1000);
+		});
+
+		it("check for overlapped data points", () => {
+			const expectedData = {
+				data1: 500,
+				data3: 500
+			};
+
+			// check for custom point shape
+			hoverChart(chart, undefined, {clientX: 581, clientY: 214}, 4);
+
+			chart.$.tooltip.selectAll(".name")
+				.each(function() {
+					const name = this.textContent;
+
+					expect(name in expectedData).to.be.true;
+					expect(+this.nextSibling.textContent).to.be.equal(expectedData[name]);
+				});
 		});
 	});
 });

@@ -309,17 +309,19 @@ extend(ChartInternal.prototype, {
 			.filter(function(d) {
 				return $$.isWithinShape(this, d);
 			})
-			.each(function(d) {
-				if (isSelectionEnabled) {
-					if (isSelectionGrouped || config.data_selection_isselectable(d)) {
-						eventRect.style("cursor", "pointer");
-					}
+			.call(selected => {
+				const d = selected.data();
+
+				if (isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d))) {
+					eventRect.style("cursor", "pointer");
 				}
 
 				if (!isTooltipGrouped) {
-					$$.showTooltip([d], this);
-					$$.showXGridFocus([d]);
-					$$.expandCirclesBars(index, d.id, true);
+					$$.showTooltip(d, context);
+					$$.showXGridFocus(d);
+
+					$$.unexpandCircles();
+					selected.each(d => $$.expandCirclesBars(index, d.id));
 				}
 			});
 	},
