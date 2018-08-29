@@ -1834,7 +1834,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -1856,7 +1856,7 @@ d3.select(".chart_area")
 						"rectangle",
 						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
 						"<polygon points='2.5 0 0 5 5 5'></polygon>",
-						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
