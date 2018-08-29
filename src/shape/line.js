@@ -576,7 +576,7 @@ extend(ChartInternal.prototype, {
 			circles.attr("r", r);
 		} else {
 			// transform must be applied to each node individually
-			circles.each(function(d) {
+			circles.each(function() {
 				const point = d3Select(this);
 
 				const box = this.getBBox();

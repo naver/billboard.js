@@ -2715,6 +2715,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
+			 *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
 			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
 			 * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
 			 * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
