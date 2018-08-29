@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180828175041
+ * @version 1.5.1-nightly-20180829153711
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180828175041
+ * @version 1.5.1-nightly-20180829153711
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180828175041",
+	version: "1.5.1-nightly-20180829153711",
 
 	/**
   * Generate chart
@@ -4709,6 +4709,7 @@ var Options = function Options() {
                      * @type {Object}
                      * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
                      * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
+                     *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
                      * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
                      * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
                      * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
@@ -6294,8 +6295,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			(0, _d3Selection.select)(this).classed(_classes2.default.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideXGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
 		}).filter(function (d) {
 			return $$.isWithinShape(this, d);
-		}).each(function (d) {
-			isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip([d], this), $$.showXGridFocus([d]), $$.expandCirclesBars(index, d.id, !0));
+		}).call(function (selected) {
+			var d = selected.data();
+
+			isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showXGridFocus(d), $$.unexpandCircles(), selected.each(function (d) {
+				return $$.expandCirclesBars(index, d.id);
+			}));
 		});
 	},
 	expandCirclesBars: function expandCirclesBars(index, id, reset) {
