@@ -69,6 +69,13 @@ You can download the compressed files for production
     - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js
     - https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js
 
+### Themes
+> If you want apply themes, simply load one of the theme css file provided instead of the default css file.
+
+#### insight
+- https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/insight.min.css
+
 ### Nightly version
 
 Nightly version is the latest build from the master branch.
