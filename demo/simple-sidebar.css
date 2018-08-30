@@ -70,7 +70,7 @@ body {
     position: absolute;
     top: 0;
     width: 230px;
-    margin: 80px 0 30px 0;
+    margin: 110px 0 30px 0;
     padding: 0;
     list-style: none;
     font-family:Raleway,sans-serif;
@@ -190,6 +190,16 @@ div.row {
     #sidebar-wrapper .link a.github {
         background-position-x: -23px;
     }
+}
+
+#theme {
+    text-align: center;
+    color: #fff;
+}
+
+#theme select {
+    padding: 0 3px;
+    color: #000;
 }
 
 /* Style For Region */
