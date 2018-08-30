@@ -348,8 +348,11 @@ var demos = {
 						["data2", 50, 20, 10, 40, 15, 25]
 					],
 					regions: {
-						"data1": [{"start": 1, "end": 2, "style": "dashed"}, {"start": 3}], // currently "dashed" style only
-						"data2": [{"end": 3}]
+						data1: [
+							{start: 1, end: 2, style: {dasharray: "6 2"}},
+							{start: 3, style: {dasharray: "2 3"}}
+						], // currently "dashed" style only
+						data2: [{end: 3}]
 					}
 				}
 			}
@@ -428,6 +431,9 @@ var demos = {
 					},
 					level: {
 						depth: 4
+					},
+					direction: {
+						clockwise: true
 					}
 				}
 			}
@@ -1581,6 +1587,20 @@ var demos = {
 					enabled: true
 				}
 			}
+		},
+		DragZoom: {
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
+					]
+				},
+				zoom: {
+					enabled: {
+						type: "drag"
+					}
+				}
+			}
 		}
 	},
 
@@ -1804,6 +1824,21 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		CustomPointsGrouped: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, -150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				},
+				point: {
+					pattern: [
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
+					]
+				}
+			}
+		},
 		CombinationPoints: {
 			options: {
 				data: {
@@ -1811,7 +1846,8 @@ d3.select(".chart_area")
 						["data1", 100, 400, 1000, 900, 500],
 						["data2", 20, 40, 500, 300, 200],
 						["data3", 80, 350, 800, 450, 500],
-						["data4", 150, 240, 300, 700, 300]
+						["data4", 150, 240, 300, 700, 300],
+						["data5", 280, 720, 160, 210, 115]
 					]
 				},
 				point: {
@@ -1819,7 +1855,8 @@ d3.select(".chart_area")
 						"circle",
 						"rectangle",
 						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
-						"<polygon points='2.5 0 0 5 5 5'></polygon>"
+						"<polygon points='2.5 0 0 5 5 5'></polygon>",
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -2017,7 +2054,41 @@ d3.select(".chart_area")
 		]
 	},
 	BarChartOptions: {
-		Width: {
+		BarPadding: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 250, 140, 200, 150, 50],
+						["data3", 100, 200, 340, 300, 250, 250],
+						["data4", 80, 230, 240, 100, 350, 150]
+					],
+					type: "bar"
+				},
+				bar: {
+					padding: 3
+				}
+			}
+		},
+		BarRadius: {
+			options: {
+				data: {
+					columns: [
+						["data1", 80, 250, -200, 200, 250, 150],
+						["data2", 170, -350, 240, 200, -250, 150],
+						["data3", -120, 100, 240, -300, 350, 350],
+						["data4", 180, 130, 340, 200, 250, -250]
+					],
+					type: "bar"
+				},
+				bar: {
+					radius: {
+						ratio: 0.5
+					}
+				}
+			}
+		},
+		BarWidth: {
 			options: {
 				data: {
 					columns: [
@@ -2032,22 +2103,6 @@ d3.select(".chart_area")
 						ratio: 0.9,
 						max: 30
 					}
-				}
-			}
-		},
-		Padding: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 250, 140, 200, 150, 50],
-						["data3", 100, 200, 340, 300, 250, 250],
-						["data4", 80, 230, 240, 100, 350, 150]
-					],
-					type: "bar"
-				},
-				bar: {
-					padding: 3
 				}
 			}
 		}
@@ -2378,6 +2433,24 @@ d3.select(".chart_area")
 					show: false
 				}
 			}
+		},
+		LinePoint: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25],
+						["data3", 170, 250, 210, 190, 175, 225],
+						["data4", 283, 170, 275, 143, 220, 255]
+					],
+					types: {
+						data2: "scatter"
+					}
+				},
+				line: {
+					point: ["data1", "data3"]
+				}
+			}
 		}
 	},
 	PieChartOptions: {
@@ -2540,140 +2613,6 @@ d3.select(".chart_area")
 		}
 	},
 	API: {
-		Flow: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", '2012-12-29', '2012-12-30', '2012-12-31'],
-						["data1", 230, 300, 330],
-						["data2", 190, 230, 200],
-						["data3", 90, 130, 180]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							format: '%m/%d',
-						}
-					}
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.flow({
-							columns: [
-								["x", '2013-01-11', '2013-01-21'],
-								["data1", 500, 200],
-								["data2", 100, 300],
-								["data3", 200, 120]
-							],
-							duration: 1500,
-							done: function() {
-								chart.flow({
-									columns: [
-   								            ["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-   								            ["data1", 200, 300, 100, 250],
-   								            ["data2", 100, 90, 40, 120],
-   								            ["data3", 100, 100, 300, 500]
-									],
-									length: 0,
-									duration: 1500,
-									done: function() {
-   								            chart.flow({
-   								                columns: [
-   								                    ["x", '2013-03-01', '2013-03-02'],
-   								                    ["data1", 200, 300],
-   								                    ["data2", 150, 250],
-   								                    ["data3", 100, 100]
-   								                ],
-   								                length: 2,
-   								                duration: 1500,
-   								                done: function() {
-   								                    chart.flow({
-   								                        columns: [
-   								                            ["x", '2013-03-21', '2013-04-01'],
-   								                            ["data1", 500, 200],
-   								                            ["data2", 100, 150],
-   								                            ["data3", 200, 400]
-   								                        ],
-   								                        to: '2013-03-01',
-   								                        duration: 1500
-   								                    });
-   								                }
-   								            });
-   								    }
-								});
-							},
-						});
-					}, 1000)
-				];
-			}
-		},
-		DataName: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					],
-					names: {
-						data1: 'Name 1',
-						data2: 'Name 2'
-					}
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.data.names({data1: 'New name for data1', data2: 'New name for data2'});
-					}, 1000),
-
-					setTimeout(function() {
-						chart.data.names({data1: 'New name for data1 again'});
-					}, 2000)
-				];
-			}
-		},
-		DataColor: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 20, 50, 40, 60, 50],
-						["data2", 200, 130, 90, 240, 130, 220],
-						["data3", 300, 200, 160, 400, 250, 250]
-					],
-					type: "bar",
-					colors: {
-						data1: '#ff0000',
-						data2: '#00ff00',
-						data3: '#0000ff'
-					},
-					labels: true
-				}
-			},
-			func: function(chart) {
-				chart.timer = [
-					setTimeout(function() {
-						chart.data.colors({
-							data1: d3.rgb('#ff0000').darker(1),
-							data2: d3.rgb('#00ff00').darker(1),
-							data3: d3.rgb('#0000ff').darker(1)
-						});
-					}, 1000),
-
-					setTimeout(function() {
-						chart.data.colors({
-							data1: d3.rgb('#ff0000').darker(2),
-							data2: d3.rgb('#00ff00').darker(2),
-							data3: d3.rgb('#0000ff').darker(2)
-						});
-					}, 2000)
-				];
-			}
-		},
 		AxisLabel: {
 			options: {
 				data: {
@@ -2766,32 +2705,69 @@ d3.select(".chart_area")
 				];
 			}
 		},
-		Resize: {
+		DataColor: {
 			options: {
 				data: {
 					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					]
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", 300, 200, 160, 400, 250, 250]
+					],
+					type: "bar",
+					colors: {
+						data1: '#ff0000',
+						data2: '#00ff00',
+						data3: '#0000ff'
+					},
+					labels: true
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.resize({height: 100, width: 300})
+						chart.data.colors({
+							data1: d3.rgb('#ff0000').darker(1),
+							data2: d3.rgb('#00ff00').darker(1),
+							data3: d3.rgb('#0000ff').darker(1)
+						});
 					}, 1000),
 
 					setTimeout(function() {
-						chart.resize({height: 200})
-					}, 2000),
-
-					setTimeout(function() {
-						chart.resize();
-					}, 3000)
+						chart.data.colors({
+							data1: d3.rgb('#ff0000').darker(2),
+							data2: d3.rgb('#00ff00').darker(2),
+							data3: d3.rgb('#0000ff').darker(2)
+						});
+					}, 2000)
 				];
 			}
 		},
-		XGrid: {
+		DataName: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					],
+					names: {
+						data1: 'Name 1',
+						data2: 'Name 2'
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.data.names({data1: 'New name for data1', data2: 'New name for data2'});
+					}, 1000),
+
+					setTimeout(function() {
+						chart.data.names({data1: 'New name for data1 again'});
+					}, 2000)
+				];
+			}
+		},
+		Export: {
 			options: {
 				data: {
 					columns: [
@@ -2802,32 +2778,93 @@ d3.select(".chart_area")
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.xgrids([{value: 1, text: 'Label 1'}, {value: 4, text: 'Label 4'}]);
-					}, 1000),
+						// crate a div element
+						var exported = document.createElement("div");
 
-					setTimeout(function() {
-						chart.xgrids([{value: 2, text: 'Label 2'}]);
-					}, 2000),
+						document.getElementById("Export")
+							.insertAdjacentElement("afterend", exported);
 
-					setTimeout(function() {
-						chart.xgrids.add([{value: 3, text: 'Label 3', class: "hoge"}]);
-					}, 3000),
+						// Call after the chart finished rendering
+						chart.export("image/png", function(dataUrl) {
+							// append an image element
+							var img = document.createElement("img");
 
+							img.src = dataUrl;
+							exported.appendChild(img);
+						});
+					}, 500)
+				]
+			}
+		},
+		Flow: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2012-12-29', '2012-12-30', '2012-12-31'],
+						["data1", 230, 300, 330],
+						["data2", 190, 230, 200],
+						["data3", 90, 130, 180]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: '%m/%d',
+						}
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
 					setTimeout(function() {
-						chart.xgrids.remove({value: 2});
-					}, 4000),
-
-					setTimeout(function() {
-						chart.xgrids.remove({class: "hoge"});
-					}, 5000),
-
-					setTimeout(function() {
-						chart.xgrids([{value: 1, text: 'Label 1'}, {value: 4, text: 'Label 4'}]);
-					}, 6000),
-
-					setTimeout(function() {
-						chart.xgrids.remove();
-					}, 7000)
+						chart.flow({
+							columns: [
+								["x", '2013-01-11', '2013-01-21'],
+								["data1", 500, 200],
+								["data2", 100, 300],
+								["data3", 200, 120]
+							],
+							duration: 1500,
+							done: function() {
+								chart.flow({
+									columns: [
+   											["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+   											["data1", 200, 300, 100, 250],
+   											["data2", 100, 90, 40, 120],
+   											["data3", 100, 100, 300, 500]
+									],
+									length: 0,
+									duration: 1500,
+									done: function() {
+   											chart.flow({
+   												columns: [
+   													["x", '2013-03-01', '2013-03-02'],
+   													["data1", 200, 300],
+   													["data2", 150, 250],
+   													["data3", 100, 100]
+   												],
+   												length: 2,
+   												duration: 1500,
+   												done: function() {
+   													chart.flow({
+   														columns: [
+   															["x", '2013-03-21', '2013-04-01'],
+   															["data1", 500, 200],
+   															["data2", 100, 150],
+   															["data3", 200, 400]
+   														],
+   														to: '2013-03-01',
+   														duration: 1500
+   													});
+   												}
+   											});
+   									}
+								});
+							},
+						});
+					}, 1000)
 				];
 			}
 		},
@@ -2878,7 +2915,53 @@ d3.select(".chart_area")
 				"#Regions .fill_red { fill: red; }"
 			]
 		},
-		Export: {
+		Resize: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.resize({height: 100, width: 300})
+					}, 1000),
+
+					setTimeout(function() {
+						chart.resize({height: 200})
+					}, 2000),
+
+					setTimeout(function() {
+						chart.resize();
+					}, 3000)
+				];
+			}
+		},
+		UpdateConfig: {
+			options: {
+				data: {
+					columns: [
+						["data", 91.4]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					max: 1000
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(() => {
+						// update gauge.max to 100, and redraw with changed option
+						chart.config("gauge.max", 100, true);
+					}, 1000)
+				];
+			}
+		},
+		XGrid: {
 			options: {
 				data: {
 					columns: [
@@ -2889,22 +2972,33 @@ d3.select(".chart_area")
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						// crate a div element
-						var exported = document.createElement("div");
+						chart.xgrids([{value: 1, text: 'Label 1'}, {value: 4, text: 'Label 4'}]);
+					}, 1000),
 
-						document.getElementById("Export")
-							.insertAdjacentElement("afterend", exported);
+					setTimeout(function() {
+						chart.xgrids([{value: 2, text: 'Label 2'}]);
+					}, 2000),
 
-						// Call after the chart finished rendering
-						chart.export("image/png", function(dataUrl) {
-							// append an image element
-							var img = document.createElement("img");
+					setTimeout(function() {
+						chart.xgrids.add([{value: 3, text: 'Label 3', class: "hoge"}]);
+					}, 3000),
 
-							img.src = dataUrl;
-							exported.appendChild(img);
-						});
-					}, 500)
-				]
+					setTimeout(function() {
+						chart.xgrids.remove({value: 2});
+					}, 4000),
+
+					setTimeout(function() {
+						chart.xgrids.remove({class: "hoge"});
+					}, 5000),
+
+					setTimeout(function() {
+						chart.xgrids([{value: 1, text: 'Label 1'}, {value: 4, text: 'Label 4'}]);
+					}, 6000),
+
+					setTimeout(function() {
+						chart.xgrids.remove();
+					}, 7000)
+				];
 			}
 		}
 	},

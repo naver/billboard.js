@@ -8,6 +8,8 @@
     <meta name="author" content="NAVER Corp.">
     <title>billboard.js - examples</title>
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.8/fallback.min.js"></script>
+
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
 
@@ -18,6 +20,7 @@
     <!-- Bootstrap Core CSS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 
+
     <!-- Custom CSS -->
     <link href="./simple-sidebar.css" rel="stylesheet">
 
@@ -25,13 +28,49 @@
     <link rel="stylesheet" type="text/css" href="./tomorrow.css" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/javascript.min.js"></script>
-
-    <!-- Load d3.js -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
+    <script>
+        !function() {
+	        var localPath = "../dist/";
+	        var remotePath = "../../gh-pages/release/latest/dist/";
+	        var cssFileName = localStorage.cssThemeName;
 
-    <!-- Load billboard.js -->
-    <link rel="stylesheet" type="text/css" href="../release/latest/dist/billboard.min.css" />
-    <script src="../release/latest/dist/billboard.min.js"></script>
+	        if (cssFileName) {
+		        cssFileName = "theme/" + cssFileName;
+            } else {
+		        cssFileName = "billboard";
+	        }
+
+	        fallback.load({
+		        billboard_js: [
+			        localPath + "billboard.js",
+			        remotePath + "billboard.js"
+		        ],
+		        billboard_css: [
+			        localPath + cssFileName + ".css",
+			        remotePath + cssFileName + ".css"
+		        ]
+	        });
+
+	        $(function() {
+		        var $select = $("#theme select");
+
+		        $select.on("change", function() {
+			        var value = this[this.options.selectedIndex].value;
+
+			        if (value !== localStorage.cssThemeName) {
+				        localStorage.cssThemeName = value;
+				        location.reload();
+			        }
+		        });
+
+		        $select.children().toArray()
+			        .forEach(function(v) {
+				        v.selected = cssFileName.indexOf(v.value) > -1;
+			        });
+	        });
+        }();
+    </script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -39,11 +78,8 @@
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
-
 </head>
-
 <body>
-
 <div id="wrapper">
 
     <!-- Sidebar -->
@@ -53,6 +89,12 @@
             <a href="https://naver.github.io/billboard.js/release/latest/doc/" target="_new">API Docs</a> |
             <a href="https://github.com/naver/billboard.js" class="github" target="_new">GitHub</a>
         </p>
+        <form id="theme">
+            Theme: <select class="classic">
+                <option value="">default</option>
+                <option value="insight">insight</option>
+            </select>
+        </form>
         <ul class="sidebar-nav"></ul>
     </div>
     <!-- /#sidebar-wrapper -->
@@ -104,7 +146,21 @@
 <script src="./demo.js"></script>
 <script src="./chart.js"></script>
 <script>
-    billboardDemo.init();
+!function() {
+	if (/Android [2-4]/.test(navigator.userAgent)) {
+		var interval = setInterval(function () {
+			if (bb && bb.generate) {
+				billboardDemo.init();
+				clearInterval(interval);
+			}
+
+		}, 1000);
+	} else {
+		fallback.ready(function() {
+			billboardDemo.init();
+		});
+	}
+}();
 </script>
 </body>
 </html>
