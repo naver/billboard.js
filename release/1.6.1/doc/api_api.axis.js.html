@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>internals/Chart.js - billboard.js API doc</title>
+    <title>api/api.axis.js - billboard.js API doc</title>
     
     <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
     
@@ -39,7 +39,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">internals/Chart.js</h1>
+    <h1 class="page-title">api/api.axis.js</h1>
     
 
     
@@ -52,81 +52,180 @@
             <pre class="prettyprint source linenums"><code>/**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
- * @license MIT
+ */
+import Chart from "../internals/Chart";
+import {isValue, isDefined, isObjectType, extend} from "../internals/util";
+
+/**
+ * Set the min/max value
+ * @param {Chart} $$
+ * @param {String} type
+ * @param {Object} value
+ * @return {undefined}
+ * @private
+ */
+const setMinMax = ($$, type, value) => {
+	const config = $$.config;
+	const axisX = `axis_x_${type}`;
+	const axisY = `axis_y_${type}`;
+	const axisY2 = `axis_y2_${type}`;
+
+	if (isDefined(value)) {
+		if (isObjectType(value)) {
+			isValue(value.x) &amp;&amp; (config[axisX] = value.x);
+			isValue(value.y) &amp;&amp; (config[axisY] = value.y);
+			isValue(value.y2) &amp;&amp; (config[axisY2] = value.y2);
+		} else {
+			config[axisY] = value;
+			config[axisY2] = value;
+		}
+
+		$$.redraw({
+			withUpdateOrgXDomain: true,
+			withUpdateXDomain: true
+		});
+	}
+
+	return undefined;
+};
+
+/**
+ * Get the min/max value
+ * @param {Chart} $$
+ * @param {String} type
+ * @return {{x, y, y2}}
+ * @private
+ */
+const getMinMax = ($$, type) => {
+	const config = $$.config;
+	const axisX = `axis_x_${type}`;
+	const axisY = `axis_y_${type}`;
+	const axisY2 = `axis_y2_${type}`;
+
+	return {
+		x: config[axisX],
+		y: config[axisY],
+		y2: config[axisY2]
+	};
+};
+
+/**
+ * Define axis
  * @ignore
  */
-import ChartInternal from "./ChartInternal";
+const axis = extend(() => {}, {
+	/**
+	 * Get and set axis labels.
+	 * @method axis․labels
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Object} labels specified axis' label to be updated.
+	 * @example
+	 * // Update axis' label
+	 * chart.axis.labels({
+	 *   x: "New X Axis Label",
+	 *   y: "New Y Axis Label"
+	 * });
+	 */
+	labels: function(labels) {
+		const $$ = this.internal;
 
-/**
- * Main chart class.
- * - Note: Instantiated via `bb.generate()`.
- * @class Chart
- * @example
- * var chart = bb.generate({
- *  data: {
- *    columns: [
- *	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
- * 	    ["count1", 11, 8, 7, 6, 5 ],
- *	    ["count2", 9, 3, 6, 2, 8 ]
- *   ]}
- * }
- * @see {@link bb.generate} for the initialization.
-*/
-/**
- * Access primary node elements
- * @name Chart#$
- * @type Object
- * @property {Object} $
- * @property {d3.selection} $.chart Wrapper element
- * @property {d3.selection} $.svg Main svg element
- * @property {d3.selection} $.defs Definition element
- * @property {d3.selection} $.main Main grouping element
- * @property {d3.selection} $.tooltip Tooltip element
- * @property {d3.selection} $.legend Legend element
- * @property {d3.selection} $.title Title element
- * @property {d3.selection} $.grid Grid element
- * @property {d3.selection} $.arc Arc element
- * @property {Object} $.bar
- * @property {d3.selection} $.bar.bars Bar elements
- * @property {Object} $.line
- * @property {d3.selection} $.line.lines Line elements
- * @property {d3.selection} $.line.areas Areas elements
- * @property {d3.selection} $.line.circles Data point circle elements
- * @property {Object} $.text
- * @property {d3.selection} $.text.texts Data label text elements
- * @instance
- * @memberOf Chart
- * @example
- * var chart = bb.generate({ ... });
- *
- * chart.$.chart; // wrapper element
- * chart.$.line.circles;  // all data point circle elements
- */
-export default class Chart {
-	constructor(config) {
-		const $$ = new ChartInternal(this);
-
-		this.internal = $$;
-
-		$$.loadConfig(config);
-		$$.beforeInit(config);
-		$$.init();
-
-		this.$ = $$.getChartElements();
-
-		$$.afterInit(config);
-
-		// bind "this" to nested API
-		(function bindThis(fn, target, argThis) {
-			Object.keys(fn).forEach(key => {
-				target[key] = fn[key].bind(argThis);
-
-				Object.keys(fn[key]).length &amp;&amp;
-					bindThis(fn[key], target[key], argThis);
+		if (arguments.length) {
+			Object.keys(labels).forEach(axisId => {
+				$$.axis.setLabelText(axisId, labels[axisId]);
 			});
-		})(Chart.prototype, this, this);
+
+			$$.axis.updateLabels();
+		}
+	},
+
+	/**
+	 * Get and set axis min value.
+	 * @method axis․min
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Object} min If min is given, specified axis' min value will be updated.&lt;br>
+	 *     If no argument is given, the min values set on generating option for each axis will be returned.
+	 *     If not set any min values on generation, it will return `undefined`.
+	 * @example
+	 * // Update axis' min
+	 * chart.axis.min({
+	 *   x: -10,
+	 *   y: 1000,
+	 *   y2: 100
+	 * });
+	 */
+	min: function(min) {
+		const $$ = this.internal;
+
+		return arguments.length ?
+			setMinMax($$, "min", min) :
+			getMinMax($$, "min");
+	},
+
+	/**
+	 * Get and set axis max value.
+	 * @method axis․max
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Object} max If max is given, specified axis' max value will be updated.&lt;br>
+	 *     If no argument is given, the max values set on generating option for each axis will be returned.
+	 *     If not set any max values on generation, it will return `undefined`.
+	 * @example
+	 * // Update axis' label
+	 * chart.axis.max({
+	 *    x: 100,
+	 *    y: 1000,
+	 *    y2: 10000
+	 * });
+	 */
+	max: function(max) {
+		const $$ = this.internal;
+
+		return arguments.length ?
+			setMinMax($$, "max", max) :
+			getMinMax($$, "max");
+	},
+
+	/**
+	 * Get and set axis min and max value.
+	 * @method axis․range
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+	 * @example
+	 * // Update axis' label
+	 * chart.axis.range({
+	 *   min: {
+	 *     x: -10,
+	 *     y: -1000,
+	 *     y2: -10000
+	 *   },
+	 *   max: {
+	 *     x: 100,
+	 *     y: 1000,
+	 *     y2: 10000
+	 *   },
+	 * });
+	 */
+	range: function(range) {
+		const axis = this.axis;
+
+		if (arguments.length) {
+			isDefined(range.max) &amp;&amp; axis.max(range.max);
+			isDefined(range.min) &amp;&amp; axis.min(range.min);
+		} else {
+			return {
+				max: axis.max(),
+				min: axis.min()
+			};
+		}
+
+		return undefined;
 	}
-}
+});
+
+extend(Chart.prototype, {axis});
 </code></pre>
         </article>
     </section>

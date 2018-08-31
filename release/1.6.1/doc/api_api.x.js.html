@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>internals/Chart.js - billboard.js API doc</title>
+    <title>api/api.x.js - billboard.js API doc</title>
     
     <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
     
@@ -39,7 +39,7 @@
 
 <div id="main">
     
-    <h1 class="page-title">internals/Chart.js</h1>
+    <h1 class="page-title">api/api.x.js</h1>
     
 
     
@@ -52,81 +52,72 @@
             <pre class="prettyprint source linenums"><code>/**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
- * @license MIT
- * @ignore
  */
-import ChartInternal from "./ChartInternal";
+import Chart from "../internals/Chart";
+import {extend} from "../internals/util";
 
-/**
- * Main chart class.
- * - Note: Instantiated via `bb.generate()`.
- * @class Chart
- * @example
- * var chart = bb.generate({
- *  data: {
- *    columns: [
- *	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
- * 	    ["count1", 11, 8, 7, 6, 5 ],
- *	    ["count2", 9, 3, 6, 2, 8 ]
- *   ]}
- * }
- * @see {@link bb.generate} for the initialization.
-*/
-/**
- * Access primary node elements
- * @name Chart#$
- * @type Object
- * @property {Object} $
- * @property {d3.selection} $.chart Wrapper element
- * @property {d3.selection} $.svg Main svg element
- * @property {d3.selection} $.defs Definition element
- * @property {d3.selection} $.main Main grouping element
- * @property {d3.selection} $.tooltip Tooltip element
- * @property {d3.selection} $.legend Legend element
- * @property {d3.selection} $.title Title element
- * @property {d3.selection} $.grid Grid element
- * @property {d3.selection} $.arc Arc element
- * @property {Object} $.bar
- * @property {d3.selection} $.bar.bars Bar elements
- * @property {Object} $.line
- * @property {d3.selection} $.line.lines Line elements
- * @property {d3.selection} $.line.areas Areas elements
- * @property {d3.selection} $.line.circles Data point circle elements
- * @property {Object} $.text
- * @property {d3.selection} $.text.texts Data label text elements
- * @instance
- * @memberOf Chart
- * @example
- * var chart = bb.generate({ ... });
- *
- * chart.$.chart; // wrapper element
- * chart.$.line.circles;  // all data point circle elements
- */
-export default class Chart {
-	constructor(config) {
-		const $$ = new ChartInternal(this);
+extend(Chart.prototype, {
+	/**
+	 * Get and set x values for the chart.
+	 * @method x
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Array} x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
+	 * @return {Object} xs
+	 * @example
+	 *  // Get current x values
+	 *  chart.x();
+	 *
+	 *  // Update x values for all targets
+	 *  chart.x([100, 200, 300, 400, ...]);
+	 */
+	x(x) {
+		const $$ = this.internal;
 
-		this.internal = $$;
+		if (arguments.length) {
+			$$.updateTargetX($$.data.targets, x);
 
-		$$.loadConfig(config);
-		$$.beforeInit(config);
-		$$.init();
-
-		this.$ = $$.getChartElements();
-
-		$$.afterInit(config);
-
-		// bind "this" to nested API
-		(function bindThis(fn, target, argThis) {
-			Object.keys(fn).forEach(key => {
-				target[key] = fn[key].bind(argThis);
-
-				Object.keys(fn[key]).length &amp;&amp;
-					bindThis(fn[key], target[key], argThis);
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true
 			});
-		})(Chart.prototype, this, this);
+		}
+
+		return $$.data.xs;
+	},
+
+	/**
+	 * Get and set x values for the chart.
+	 * @method xs
+	 * @instance
+	 * @memberOf Chart
+	 * @param {Array} xs If xs is given, specified target's x values will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
+	 * @return {Object} xs
+	 * @example
+	 *  // Get current x values
+	 *  chart.xs();
+	 *
+	 *  // Update x values for all targets
+	 *  chart.xs({
+	 *    data1: [10, 20, 30, 40, ...],
+	 *    data2: [100, 200, 300, 400, ...]
+	 *  });
+	 */
+	xs(xs) {
+		const $$ = this.internal;
+
+		if (arguments.length) {
+			$$.updateTargetXs($$.data.targets, xs);
+
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true
+			});
+		}
+
+		return $$.data.xs;
 	}
-}
+});
 </code></pre>
         </article>
     </section>
