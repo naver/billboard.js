@@ -418,7 +418,10 @@ export default class Axis {
 			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 
 			const dummy = $$.selectChart.append("svg")
-				.style("visibility", "hidden");
+				.style("visibility", "hidden")
+				.style("position", "fixed")
+				.style("top", "0px")
+				.style("left", "0px");
 
 			dummy.call(axis).selectAll("text")
 				.each(function() {

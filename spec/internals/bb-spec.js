@@ -166,7 +166,9 @@ describe("Interface & initialization", () => {
 			container.style.width = width + "px";
 
 			// run the resize handler
-			d3.select(window).on("resize.bb")();
+			chart.internal.api.internal.charts.forEach(c => {
+				c.internal.resizeFunction();
+			});
 
 			setTimeout(() => {
 				expect(+chart1.internal.svg.attr("width")).to.be.equal(width);
