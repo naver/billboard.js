@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>Home - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav>
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#transform">transform</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li></ul>
+</nav>
+
+<div id="main">
+    
+
+    
+
+
+
+    
+
+
+
+
+
+
+
+
+
+    
+
+
+    <section class="readme">
+        <article><p><img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"></p>
+<p><a href="https://www.npmjs.com/package/billboard.js"><img src="https://img.shields.io/npm/v/billboard.js.svg?style=flat" alt="version"></a> <a href="https://travis-ci.org/naver/billboard.js"><img src="https://travis-ci.org/naver/billboard.js.svg?branch=master" alt="Build Status"></a> <a href="https://coveralls.io/github/naver/billboard.js"><img src="https://coveralls.io/repos/github/naver/billboard.js/badge.svg" alt="Coverage Status"></a> <a href="https://npm-stat.com/charts.html?package=billboard.js&amp;from=2017-06-08"><img src="https://img.shields.io/npm/dm/billboard.js.svg?style=flat" alt="download"></a> <a href="https://greenkeeper.io/"><img src="https://badges.greenkeeper.io/naver/billboard.js.svg" alt="Greenkeeper"></a></p>
+<p>billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.</p>
+<blockquote>
+<p>The name &quot;billboard&quot; comes from the famous <code>billboard chart</code> which everybody knows.<br></p>
+</blockquote>
+<blockquote>
+<p>This project was forked from C3.js v0.4.11.</p>
+<ul>
+<li><a href="https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F">Why we decided to start billboard.js?</a><br></li>
+</ul>
+</blockquote>
+<h2>Documents</h2><ul>
+<li><a href="https://naver.github.io/billboard.js/release/latest/doc/">API Documentation</a></li>
+<li><a href="https://naver.github.io/billboard.js/demo/">Examples</a></li>
+<li><a href="https://github.com/naver/billboard.js/wiki/Roadmap">Roadmap</a></li>
+<li><a href="CONTRIBUTING.md">Contribution Guide</a></li>
+<li><a href="https://github.com/naver/billboard.js/wiki/Comparison-table">Comparison table with other libraries</a></li>
+<li><a href="https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F">Migration guide from C3.js</a></li>
+<li><a href="https://github.com/naver/billboard.js/wiki/Third-party-applications">Third Party Applications</a></li>
+<li><a href="https://github.com/naver/billboard.js/wiki/Who's-using-billboard.js">Who's using billboard.js</a></li>
+</ul>
+<h2>Playground</h2><p>Play with the diverse options generating on the fly!</p>
+<ul>
+<li>https://naver.github.io/billboard.js/playground/</li>
+</ul>
+<h2>Questions?</h2><p>If you have any questions, checkout the previous posts or create a new one at:</p>
+<ul>
+<li><a href="https://stackoverflow.com/questions/tagged/billboard.js">Stack Overflow: billboard.js tagged posts</a></li>
+<li><a href="https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&amp;q=label%3Aquestion">Issue with 'question' label</a></li>
+</ul>
+<h2>Supported chart types</h2><p><img src="https://naver.github.io/billboard.js/img/chart-types.png?v=3" alt="Chart Types"></p>
+<h2>Download and Installation</h2><p>Download dist files from the repo directly or install it via npm. </p>
+<h3>For development (Uncompressed)</h3><p>You can download the uncompressed files for development</p>
+<h4>Latest</h4><ul>
+<li>https://naver.github.io/billboard.js/release/latest/dist/billboard.js</li>
+<li>https://naver.github.io/billboard.js/release/latest/dist/billboard.css</li>
+</ul>
+<h4>Specific version</h4><ul>
+<li>https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.js</li>
+<li>https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.css</li>
+</ul>
+<h3>For production (Compressed)</h3><p>You can download the compressed files for production</p>
+<h4>Latest</h4><ul>
+<li>https://naver.github.io/billboard.js/release/latest/dist/billboard.min.js</li>
+<li>https://naver.github.io/billboard.js/release/latest/dist/billboard.min.css</li>
+</ul>
+<h4>Specific version</h4><ul>
+<li>https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.js</li>
+<li>https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.min.css</li>
+</ul>
+<h3>Packaged version (with D3.js inclusion)</h3><blockquote>
+<p>Packaged version is not an official distribution.
+It's to provide an easy way to load 'billboard.js' with dependency.</p>
+</blockquote>
+<ul>
+<li><strong>Latest</strong><ul>
+<li>https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.js</li>
+<li>https://naver.github.io/billboard.js/release/latest/dist/billboard.pkgd.min.js</li>
+</ul>
+</li>
+<li><strong>Specific version</strong><ul>
+<li>https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.js</li>
+<li>https://naver.github.io/billboard.js/release/[VERSION]/dist/billboard.pkgd.min.js</li>
+</ul>
+</li>
+</ul>
+<h3>Themes</h3><blockquote>
+<p>If you want apply themes, simply load one of the theme css file provided instead of the default css file.</p>
+</blockquote>
+<h4>insight</h4><ul>
+<li>https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css</li>
+<li>https://naver.github.io/billboard.js/release/latest/dist/theme/insight.min.css</li>
+</ul>
+<h3>Nightly version</h3><p>Nightly version is the latest build from the master branch.
+With nightly, you can try upcoming changes prior the official release.</p>
+<ul>
+<li>https://github.com/naver/billboard.js/tree/nightly/dist</li>
+</ul>
+<blockquote>
+<p>The version info will be given as the build datetime: <code>x.x.x-nightly-yyyymmddhhmmss</code></p>
+</blockquote>
+<h3>Installation with npm</h3><pre class="prettyprint source lang-bash"><code>$ npm install billboard.js</code></pre><h3>Using CDN</h3><p>If you want to use 'billboard.js' without installation, load files directly from one of the CDN providers.</p>
+<ul>
+<li>cdnjs: https://cdnjs.com/libraries/billboard.js</li>
+<li>jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/ <a href="https://www.jsdelivr.com/package/npm/billboard.js"><img src="https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded" alt=""></a></li>
+<li>unpkg: https://unpkg.com/billboard.js/dist/</li>
+</ul>
+<h2>Supported Browsers</h2><blockquote>
+<p>Basically will work on all SVG supported browsers.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Internet Explorer</th>
+<th>Chrome</th>
+<th>Firefox</th>
+<th>Safari</th>
+<th>iOS</th>
+<th>Android</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>9+</td>
+<td>Latest</td>
+<td>Latest</td>
+<td>Latest</td>
+<td>8+</td>
+<td>4+</td>
+</tr>
+</tbody>
+</table>
+<h2>Dependency</h2><table>
+<thead>
+<tr>
+<th><a href="https://d3js.org/">D3</a> (required)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>4+</td>
+</tr>
+</tbody>
+</table>
+<p>Load billboard.js after D3.js.</p>
+<pre class="prettyprint source lang-html"><code>&lt;!-- 1) Load D3.js and billboard.js separately -->
+    &lt;!-- Load D3 -->
+    &lt;script src=&quot;https://d3js.org/d3.v4.min.js&quot;>&lt;/script>
+
+    &lt;!-- Load billboard.js with base style -->
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;$YOUR_PATH/billboard.css&quot;>
+    &lt;script src=&quot;$YOUR_PATH/billboard.js&quot;>&lt;/script>
+
+&lt;!-- 2) or Load billboard.js packaged with D3.js -->
+    &lt;link rel=&quot;stylesheet&quot; href=&quot;$YOUR_PATH/billboard.css&quot;>
+    &lt;script src=&quot;$YOUR_PATH/billboard.pkgd.js&quot;>&lt;/script></code></pre><p>or use importing ESM.</p>
+<pre class="prettyprint source lang-js"><code>// as named import
+import {bb} from &quot;billboard.js&quot;;
+
+// or as importing default
+import bb from &quot;billboard.js&quot;;</code></pre><blockquote>
+<p><strong>Note</strong><br>For migration from C3.js, checkout the <a href="https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F">migration guide</a> </p>
+</blockquote>
+<h2>Basic usage example</h2><h4>1) Create chart holder element</h4><pre class="prettyprint source lang-html"><code>&lt;div id=&quot;chart&quot;>&lt;/div></code></pre><h4>2) Generate a chart with options</h4><pre class="prettyprint source lang-js"><code>// generate the chart
+var chart = bb.generate({
+    bindto: &quot;#chart&quot;,
+    data: {
+      type: &quot;line&quot;,
+        columns: [
+            [&quot;data1&quot;, 30, 200, 100, 400, 150, 250]
+        ]
+    }
+});
+
+// call some API
+chart.load( ... );</code></pre><h2>How to start developing billboard.js?</h2><p>For anyone interested in developing billboard.js, follow the instructions below.</p>
+<h3>Development Environment</h3><h4>1. Clone the repository</h4><p>Clone the billboard.js repository and install the dependency modules.</p>
+<pre class="prettyprint source lang-bash"><code># Create a folder and move.
+$ mkdir billboard.js && cd billboard.js
+
+# Clone the repository.
+$ git clone https://github.com/naver/billboard.js.git</code></pre><h4>2. Install dependencies</h4><p><code>npm</code> and <code>Yarn</code> are supported.</p>
+<pre class="prettyprint source"><code># Install the dependency modules.
+$ npm install
+
+# or
+$ yarn </code></pre><h4>3. Build</h4><p>Use npm script to build billboard.js</p>
+<pre class="prettyprint source lang-bash"><code># Run webpack-dev-server for development
+$ npm start
+
+# Build
+$ npm run build
+
+# Generate jsdoc
+$ npm run jsdoc</code></pre><p>Two folders will be created after the build is completed.</p>
+<ul>
+<li><strong>dist</strong> folder: Includes the <strong>billboard.js</strong> and <strong>billboard.min.js</strong> files.</li>
+<li><strong>doc</strong> folder: Includes API documentation. The home page for the documentation is <strong>doc/index.html</strong>.</li>
+</ul>
+<h3>Linting</h3><p>To maintain the same code style and quality, we adopted <a href="https://eslint.org/">ESLint</a>. The <a href="https://github.com/naver/eslint-config-naver/tree/master/rules">rules</a> are based on the <a href="https://github.com/airbnb/javascript">Airbnb JavaScript Style Guide</a> with some modifications.
+Setup your editor for check or run the below command for linting.</p>
+<pre class="prettyprint source lang-bash"><code>$ npm run lint</code></pre><h3>Test</h3><p>Once you created a branch and finished the development, you must perform a test with <code>npm test</code> command before the push to a remote repository.</p>
+<pre class="prettyprint source lang-bash"><code>$ npm test</code></pre><p>Running the <code>npm test</code> command will start <a href="https://mochajs.org/">Mocha</a> tests via <a href="https://karma-runner.github.io/">Karma-runner</a>.</p>
+<h2>Bug Report</h2><p>If you find a bug, please report to us by posting <a href="https://github.com/naver/billboard.js/issues">issues</a> on GitHub.</p>
+<h2>License</h2><p>billboard.js is released under the <a href="https://github.com/naver/billboard.js/blob/master/LICENSE">MIT license</a>.</p>
+<pre class="prettyprint source"><code>Copyright (c) 2017 NAVER Corp.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the &quot;Software&quot;), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.  IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</code></pre><!-- badges -->
+<!-- links --></article>
+    </section>
+
+
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.5.5</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/jquery-3.1.1.min.js"></script>
+
+<script src="scripts/search.js"></script>
+
+
+
+
+</body>
+</html>
