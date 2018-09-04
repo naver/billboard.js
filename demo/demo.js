@@ -712,8 +712,9 @@ var demos = {
 						type: "timeseries",
 						tick: {
 							format: function(x) {
-								// format: "%Y" // format string is also available for timeseries data
-								return x.getFullYear();
+							// format string is also available for timeseries data
+							// format: "%Y"
+							return x.getFullYear();
 							}
 						}
 					}
@@ -838,6 +839,22 @@ var demos = {
 				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
 			]
 		},
+		XAxisTickMultiline: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
+						["data", 30, 100, 400, 150]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
 		XAxisTimezone: {
 			options: {
 				data: {
@@ -896,9 +913,7 @@ var demos = {
 				axis: {
 					y: {
 						tick: {
-							format: function(x) {
-								return d3.format("$,")(x);
-							}
+							format: function(x) { return d3.format("$,")(x); }
 						}
 					}
 				}
@@ -2416,6 +2431,37 @@ d3.select(".chart_area")
 				donut: {
 					title: "Title Text",
 					padAngle: 0.1
+				}
+			}
+		}
+	},
+	GaugeChartOptions: {
+		GaugeFullCircle: {
+			options: {
+				data: {
+					columns: [
+						["data", 60]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					fullCircle: true
+				}
+			}
+		},
+		GaugeLabelMultiline: {
+			options: {
+				data: {
+					columns: [
+						["data", 60]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					label: {
+						format: function (value, ratio) { return value + "\nhours"; },
+						extents: function (value, isMax) { return (isMax ? "Max:" : "Min:") + value; }
+					}
 				}
 			}
 		}
