@@ -7,32 +7,39 @@ import util from "../assets/util";
 
 describe("API region", function() {
 	let chart;
+	let args;
+
+	beforeEach(() => {
+		chart = util.generate(args);
+	});
 
 	describe("regions()", () => {
-		chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400, 150, 250]
-				]
-			},
-			regions: [
-				{
-					axis: "y",
-					start: 300,
-					end: 400,
-					class: "green",
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
 				},
-				{
-					axis: "y",
-					start: 0,
-					end: 100,
-					class: "green",
-				}
-			]
+				regions: [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					}
+				]
+			}
 		});
 
 		it("should update regions", done => {
-			const main = chart.internal.main;
+			const main = chart.$.main;
 			const expectedRegions = [
 					{
 						axis: "y",
@@ -83,30 +90,32 @@ describe("API region", function() {
 	});
 
 	describe("Add regions using regions()", () => {
-		chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400, 150, 250],
-				]
-			},
-			regions: [
-				{
-					axis: "y",
-					start: 300,
-					end: 400,
-					class: "green",
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+					]
 				},
-				{
-					axis: "y",
-					start: 0,
-					end: 100,
-					class: "green",
-				}
-			]
+				regions: [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					}
+				]
+			}
 		});
 
 		it("should add regions", done => {
-			const main = chart.internal.main;
+			const main = chart.$.main;
 			const expectedRegions = [
 					{
 						axis: "y",
@@ -173,36 +182,37 @@ describe("API region", function() {
 	});
 
 	describe("Remove regions using regions()", () => {
-		chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400, 150, 250],
+		before(() =>
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+					]
+				},
+				regions: [
+					{
+						axis: "y",
+						start: 300,
+						end: 400,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 0,
+						end: 100,
+						class: "green",
+					},
+					{
+						axis: "y",
+						start: 250,
+						end: 350,
+						class: "red"
+					},
 				]
-			},
-			regions: [
-				{
-					axis: "y",
-					start: 300,
-					end: 400,
-					class: "green",
-				},
-				{
-					axis: "y",
-					start: 0,
-					end: 100,
-					class: "green",
-				},
-				{
-					axis: "y",
-					start: 250,
-					end: 350,
-					class: "red"
-				},
-			]
-		});
+			});
 
 		it("should remove regions", done => {
-			const main = chart.internal.main;
+			const main = chart.$.main;
 			const expectedRegions = [
 					{
 						axis: "y",
@@ -244,4 +254,49 @@ describe("API region", function() {
 	});
 
 	// regions.add / remove
+	describe("regions()", () => {
+		before(() =>
+			args ={
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				}
+			});
+
+		it(".add() / .remove()", () => {
+			const regions = [
+				{
+					axis: "y",
+					start: 300,
+					end: 400,
+					class: "class-a"
+				},
+				{
+					axis: "y",
+					start: 0,
+					end: 100,
+					class: "class-b"
+				}
+			];
+
+			// when
+			chart.regions.add(regions);
+
+			expect(chart.regions()).to.deep.equal(regions);
+
+			// when
+			const removed = chart.regions.remove({
+				classes: ["class-a"]
+			});
+
+			expect(chart.regions().length).to.be.equal(1);
+			expect(removed[0]).to.deep.equal(regions[1]);
+
+			// when remove all
+			chart.regions.remove();
+
+			expect(chart.regions().length).to.be.equal(0);
+		});
+	});
 });
