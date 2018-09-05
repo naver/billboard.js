@@ -4,7 +4,7 @@
  */
 import Chart from "../internals/Chart";
 import CLASS from "../config/classes";
-import {extend} from "../internals/util";
+import {getOption, extend} from "../internals/util";
 
 /**
  * Update regions.
@@ -31,7 +31,7 @@ const regions = function(regions) {
 	config.regions = regions;
 	$$.redrawWithoutRescale();
 
-	return config.regions;
+	return regions;
 };
 
 extend(regions, {
@@ -76,7 +76,7 @@ extend(regions, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {Object} regions This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
-	 * @return {Array} regions
+	 * @return {Array} regions Removed regions
 	 * @example
 	 * // regions that have 'region-A' or 'region-B' will be removed.
 	 * chart.regions.remove({
@@ -93,32 +93,40 @@ extend(regions, {
 		const config = $$.config;
 
 		const options = optionsValue || {};
-		const duration = $$.getOption(options, "duration", config.transition_duration);
-		const classes = $$.getOption(options, "classes", [CLASS.region]);
-		const regions = $$.main.select(`.${CLASS.regions}`)
+		const duration = getOption(options, "duration", config.transition_duration);
+		const classes = getOption(options, "classes", [CLASS.region]);
+		let regions = $$.main.select(`.${CLASS.regions}`)
 			.selectAll(classes.map(c => `.${c}`));
 
 		(duration ? regions.transition().duration(duration) : regions)
 			.style("opacity", "0")
 			.remove();
 
-		config.regions = config.regions.filter(region => {
-			let found = false;
+		regions = config.regions;
 
-			if (!region.class) {
-				return true;
-			}
+		if (Object.keys(options).length) {
+			regions = regions.filter(region => {
+				let found = false;
 
-			region.class.split(" ").forEach(c => {
-				if (classes.indexOf(c) >= 0) {
-					found = true;
+				if (!region.class) {
+					return true;
 				}
+
+				region.class.split(" ").forEach(c => {
+					if (classes.indexOf(c) >= 0) {
+						found = true;
+					}
+				});
+
+				return !found;
 			});
 
-			return !found;
-		});
+			config.regions = regions;
+		} else {
+			config.regions = [];
+		}
 
-		return config.regions;
+		return regions;
 	}
 });
 

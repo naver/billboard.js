@@ -18,7 +18,7 @@ import {transition as d3Transition} from "d3-transition";
 
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isDefined, isString, isNumber, isObject, callFn} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn} from "./util";
 
 /**
  * Internal chart class.
@@ -1124,24 +1124,19 @@ export default class ChartInternal {
 
 		if (config.resize_auto) {
 			$$.resizeFunction.add(() => {
-				isDefined($$.resizeTimeout) &&
+				if ($$.resizeTimeout) {
 					window.clearTimeout($$.resizeTimeout);
+					$$.resizeTimeout = null;
+				}
 
-				$$.resizeTimeout = window.setTimeout(() => {
-					delete $$.resizeTimeout;
-					$$.api.flush();
-				}, 100);
+				$$.resizeTimeout = window.setTimeout($$.api.flush, 100);
 			});
 		}
 
 		$$.resizeFunction.add(() => config.onresized.call($$));
 
 		// attach resize event
-		// get the possible previous attached
-		const resizeEvents = d3Select(window).on("resize.bb");
-
-		resizeEvents && $$.resizeFunction.add(resizeEvents);
-		d3Select(window).on("resize.bb", $$.resizeFunction);
+		window.addEventListener("resize", $$.resizeFunction);
 	}
 
 	generateResize() {
@@ -1151,18 +1146,8 @@ export default class ChartInternal {
 			resizeFunctions.forEach(f => f());
 		}
 
-		callResizeFunctions.add = function(f) {
-			resizeFunctions.push(f);
-		};
-
-		callResizeFunctions.remove = function(f) {
-			for (let i = 0, len = resizeFunctions.length; i < len; i++) {
-				if (resizeFunctions[i] === f) {
-					resizeFunctions.splice(i, 1);
-					break;
-				}
-			}
-		};
+		callResizeFunctions.add = f => resizeFunctions.push(f);
+		callResizeFunctions.remove = f => resizeFunctions.splice(resizeFunctions.indexOf(f), 1);
 
 		return callResizeFunctions;
 	}

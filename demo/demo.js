@@ -712,8 +712,9 @@ var demos = {
 						type: "timeseries",
 						tick: {
 							format: function(x) {
-								// format: "%Y" // format string is also available for timeseries data
-								return x.getFullYear();
+							// format string is also available for timeseries data
+							// format: "%Y"
+							return x.getFullYear();
 							}
 						}
 					}
@@ -838,6 +839,22 @@ var demos = {
 				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
 			]
 		},
+		XAxisTickMultiline: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
+						["data", 30, 100, 400, 150]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
 		XAxisTimezone: {
 			options: {
 				data: {
@@ -896,9 +913,7 @@ var demos = {
 				axis: {
 					y: {
 						tick: {
-							format: function(x) {
-								return d3.format("$,")(x);
-							}
+							format: function(x) { return d3.format("$,")(x); }
 						}
 					}
 				}
@@ -1834,7 +1849,7 @@ d3.select(".chart_area")
 				},
 				point: {
 					pattern: [
-						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -1856,7 +1871,7 @@ d3.select(".chart_area")
 						"rectangle",
 						"<polygon points='2.5 0 0 2.5 2.5 5 5 2.5 2.5 0'></polygon>",
 						"<polygon points='2.5 0 0 5 5 5'></polygon>",
-						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+						"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 					]
 				}
 			}
@@ -1959,7 +1974,7 @@ d3.select(".chart_area")
 					y: {
 						tick: {
 							format: function(x) {
-								return d3.format("s")(x);
+							return d3.format("s")(x);
 							}
 						}
 					},
@@ -1967,7 +1982,7 @@ d3.select(".chart_area")
 						show: true,
 						tick: {
 							format: function(x) {
-								return d3.format("$")(x);
+							return d3.format("$")(x);
 							}
 						}
 					}
@@ -1975,13 +1990,13 @@ d3.select(".chart_area")
 				tooltip: {
 					format: {
 						title: function(d) {
-							return 'Data ' + d;
-						},
+						  return 'Data ' + d;
+					      },
 						value: function(value, ratio, id) {
-							var format = id === "data1" ? d3.format(',') : d3.format('$');
+						  var format = id === "data1" ? d3.format(',') : d3.format('$');
 
-							return format(value);
-						}
+						  return format(value);
+					      }
 						// value: d3.format(',') // apply this format to both y and y2
 					}
 				}
@@ -2420,6 +2435,37 @@ d3.select(".chart_area")
 			}
 		}
 	},
+	GaugeChartOptions: {
+		GaugeFullCircle: {
+			options: {
+				data: {
+					columns: [
+						["data", 60]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					fullCircle: true
+				}
+			}
+		},
+		GaugeLabelMultiline: {
+			options: {
+				data: {
+					columns: [
+						["data", 60]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					label: {
+						format: function (value, ratio) { return value + "\nhours"; },
+						extents: function (value, isMax) { return (isMax ? "Max:" : "Min:") + value; }
+					}
+				}
+			}
+		}
+	},
 	LineChartOptions: {
 		HidePoints: {
 			options: {
@@ -2489,8 +2535,8 @@ d3.select(".chart_area")
 				pie: {
 					label: {
 						format: function(value, ratio, id) {
-							return d3.format('$')(value);
-						}
+						  return d3.format('$')(value);
+					      }
 					}
 				}
 			}
@@ -2830,36 +2876,36 @@ d3.select(".chart_area")
 							done: function() {
 								chart.flow({
 									columns: [
-   											["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-   											["data1", 200, 300, 100, 250],
-   											["data2", 100, 90, 40, 120],
-   											["data3", 100, 100, 300, 500]
+                                        ["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+                                        ["data1", 200, 300, 100, 250],
+                                        ["data2", 100, 90, 40, 120],
+                                        ["data3", 100, 100, 300, 500]
 									],
 									length: 0,
 									duration: 1500,
 									done: function() {
-   											chart.flow({
-   												columns: [
-   													["x", '2013-03-01', '2013-03-02'],
-   													["data1", 200, 300],
-   													["data2", 150, 250],
-   													["data3", 100, 100]
-   												],
-   												length: 2,
-   												duration: 1500,
-   												done: function() {
-   													chart.flow({
-   														columns: [
-   															["x", '2013-03-21', '2013-04-01'],
-   															["data1", 500, 200],
-   															["data2", 100, 150],
-   															["data3", 200, 400]
-   														],
-   														to: '2013-03-01',
-   														duration: 1500
-   													});
-   												}
-   											});
+                                        chart.flow({
+                                            columns: [
+                                                ["x", '2013-03-01', '2013-03-02'],
+                                                ["data1", 200, 300],
+                                                ["data2", 150, 250],
+                                                ["data3", 100, 100]
+                                            ],
+                                            length: 2,
+                                            duration: 1500,
+                                            done: function() {
+                                                chart.flow({
+                                                    columns: [
+                                                        ["x", '2013-03-21', '2013-04-01'],
+                                                        ["data1", 500, 200],
+                                                        ["data2", 100, 150],
+                                                        ["data3", 200, 400]
+                                                    ],
+                                                    to: '2013-03-01',
+                                                    duration: 1500
+                                                });
+                                            }
+                                        });
    									}
 								});
 							},

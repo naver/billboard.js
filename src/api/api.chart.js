@@ -2,7 +2,6 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {select as d3Select} from "d3-selection";
 import Chart from "../internals/Chart";
 import {window} from "../internals/browser";
 import {notEmpty, isDefined, extend} from "../internals/util";
@@ -77,7 +76,7 @@ extend(Chart.prototype, {
 			// clear timers
 			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
-			d3Select(window).on("resize.bb", null);
+			window.removeEventListener("resize", $$.resizeFunction);
 			$$.selectChart.classed("bb", false).html("");
 
 			// releasing references

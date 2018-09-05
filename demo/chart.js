@@ -215,8 +215,16 @@ var billboardDemo = {
 			.replace(/\\t/g, "\t")
 			.replace(/\t{5}/g, "")
 			.replace(/\\r/g, "\r")
-			.replace(/"(\w+)":/g, "$1:")
-			.replace(/\\n(?!T)/g, "\n") + ");";
+			.replace(/"(\w+)":/g, "$1:");
+
+			if (/multiline/i.test(key)) {
+				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
+					.replace(/\\n(?=[a-zA-Z0-9])/g, "n");
+			} else {
+				codeStr = codeStr.replace(/\\n(?!T)/g, "\n");
+			}
+
+			codeStr += ");";
 
 		// markup
 		if ((index && index === 1) || !index) {

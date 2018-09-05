@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
  */
 import {event as d3Event} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
