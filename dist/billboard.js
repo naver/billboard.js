@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.5.1-nightly-20180829153711
+ * @version 1.6.1-nightly-20180907162918
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.5.1-nightly-20180829153711
+ * @version 1.6.1-nightly-20180907162918
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.5.1-nightly-20180829153711",
+	version: "1.6.1-nightly-20180907162918",
 
 	/**
   * Generate chart
@@ -238,16 +238,46 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
  * }
  * @see {@link bb.generate} for the initialization.
 */
+/**
+ * Access primary node elements
+ * @name Chart#$
+ * @type Object
+ * @property {Object} $
+ * @property {d3.selection} $.chart Wrapper element
+ * @property {d3.selection} $.svg Main svg element
+ * @property {d3.selection} $.defs Definition element
+ * @property {d3.selection} $.main Main grouping element
+ * @property {d3.selection} $.tooltip Tooltip element
+ * @property {d3.selection} $.legend Legend element
+ * @property {d3.selection} $.title Title element
+ * @property {d3.selection} $.grid Grid element
+ * @property {d3.selection} $.arc Arc element
+ * @property {Object} $.bar
+ * @property {d3.selection} $.bar.bars Bar elements
+ * @property {Object} $.line
+ * @property {d3.selection} $.line.lines Line elements
+ * @property {d3.selection} $.line.areas Areas elements
+ * @property {d3.selection} $.line.circles Data point circle elements
+ * @property {Object} $.text
+ * @property {d3.selection} $.text.texts Data label text elements
+ * @instance
+ * @memberOf Chart
+ * @example
+ * var chart = bb.generate({ ... });
+ *
+ * chart.$.chart; // wrapper element
+ * chart.$.line.circles;  // all data point circle elements
+ */
 var Chart = function Chart(config) {
-	(0, _classCallCheck3.default)(this, Chart);
+  (0, _classCallCheck3.default)(this, Chart);
 
-	var $$ = new _ChartInternal2.default(this);
+  var $$ = new _ChartInternal2.default(this);
 
-	this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
-		Object.keys(fn).forEach(function (key) {
-			target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
-		});
-	}(Chart.prototype, this, this);
+  this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
+    Object.keys(fn).forEach(function (key) {
+      target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
+    });
+  }(Chart.prototype, this, this);
 }; /**
     * Copyright (c) 2017 NAVER Corp.
     * billboard.js project is licensed under the MIT license
@@ -706,19 +736,10 @@ var ChartInternal = function () {
 		$$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
 			return config.onresize.call($$);
 		}), config.resize_auto && $$.resizeFunction.add(function () {
-			(0, _util.isDefined)($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = window.setTimeout(function () {
-				delete $$.resizeTimeout, $$.api.flush();
-			}, 100);
+			$$.resizeTimeout && (window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = window.setTimeout($$.api.flush, 100);
 		}), $$.resizeFunction.add(function () {
 			return config.onresized.call($$);
-		});
-
-
-		// attach resize event
-		// get the possible previous attached
-		var resizeEvents = (0, _d3Selection.select)(window).on("resize.bb");
-
-		resizeEvents && $$.resizeFunction.add(resizeEvents), (0, _d3Selection.select)(window).on("resize.bb", $$.resizeFunction);
+		}), window.addEventListener("resize", $$.resizeFunction);
 	}, ChartInternal.prototype.generateResize = function generateResize() {
 
 		function callResizeFunctions() {
@@ -730,13 +751,9 @@ var ChartInternal = function () {
 		var resizeFunctions = [];
 
 		return callResizeFunctions.add = function (f) {
-			resizeFunctions.push(f);
+			return resizeFunctions.push(f);
 		}, callResizeFunctions.remove = function (f) {
-			for (var i = 0, len = resizeFunctions.length; i < len; i++) if (resizeFunctions[i] === f) {
-				resizeFunctions.splice(i, 1);
-
-				break;
-			}
+			return resizeFunctions.splice(resizeFunctions.indexOf(f), 1);
 		}, callResizeFunctions;
 	}, ChartInternal.prototype.endall = function endall(transition, callback) {
 		var n = 0;
@@ -1070,7 +1087,7 @@ var Axis = function () {
 			isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
 
 
-			var dummy = $$.selectChart.append("svg").style("visibility", "hidden");
+			var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
 
 			dummy.call(axis).selectAll("text").each(function () {
 				maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
@@ -1760,6 +1777,7 @@ var isValue = function (v) {
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
  */
 
 
@@ -10461,7 +10479,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var bind = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0],
 		    $$ = this,
 		    zoomEnabled = $$.config.zoom_enabled;
-		$$.redrawEventRect(), zoomEnabled && bind ? zoomEnabled === !0 || zoomEnabled.type === "wheel" ? $$.bindZoomOnEventRect() : zoomEnabled.type === "drag" && $$.bindZoomOnDrag() : bind === !1 && ($$.api.unzoom(), $$.main.select("." + _classes2.default.eventRects).on(".zoom", null).on(".drag", null));
+		$$.redrawEventRect(), zoomEnabled && bind ? $$.bindZoomOnEventRect(zoomEnabled.type) : bind === !1 && ($$.api.unzoom(), $$.main.select("." + _classes2.default.eventRects).on(".zoom", null).on(".drag", null));
 	},
 
 
@@ -10526,7 +10544,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 					withSubchart: !1,
 					withEventRect: !1,
 					withDimension: !1
-				}), $$.cancelClick = isMousemove, (0, _util.callFn)(config.zoom_onzoom, $$.api, $$.x.orgDomain()));
+				}), $$.cancelClick = isMousemove, (0, _util.callFn)(config.zoom_onzoom, $$.api, $$.subX.domain()));
 			}
 	},
 
@@ -10541,7 +10559,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
-		event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), (0, _util.callFn)($$.config.zoom_onzoomend, $$.api, $$.x.orgDomain()));
+		event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), (0, _util.callFn)($$.config.zoom_onzoomend, $$.api, $$.subX.domain()));
 	},
 
 
@@ -10570,12 +10588,12 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		if ($$.zoomScale) {
 			var zoomDomain = $$.zoomScale.domain(),
-			    xDomain = $$.x.domain(),
+			    xDomain = $$.subX.domain(),
 			    delta = .015;
 			// arbitrary value
 
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
-			(zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta) && ($$.xAxis.scale($$.x), $$.zoomScale = null);
+			(zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta) && ($$.xAxis.scale($$.subX), $$.x.domain($$.subX.orgDomain()), $$.zoomScale = null);
 		}
 	},
 
@@ -10584,10 +10602,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   * Attach zoom event on <rect>
   * @private
   */
-	bindZoomOnEventRect: function bindZoomOnEventRect() {
-		var $$ = this;
-
-		$$.main.select("." + _classes2.default.eventRects).call($$.zoom).on("dblclick.zoom", null);
+	bindZoomOnEventRect: function bindZoomOnEventRect(type) {
+		var $$ = this,
+		    behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
+		$$.main.select("." + _classes2.default.eventRects).call(behaviour).on("dblclick.zoom", null);
 	},
 
 
@@ -10603,28 +10621,17 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    end = 0,
 		    zoomRect = null;
 		$$.zoomBehaviour = (0, _d3Drag.drag)().on("start", function () {
-			$$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", _classes2.default.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = (0, _d3Selection.mouse)(this)[0], end = start, zoomRect.attr("x", start).attr("width", 0);
+			$$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", _classes2.default.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = (0, _d3Selection.mouse)(this)[0], end = start, zoomRect.attr("x", start).attr("width", 0), $$.onZoomStart();
 		}).on("drag", function () {
 			end = (0, _d3Selection.mouse)(this)[0], zoomRect.attr("x", Math.min(start, end)).attr("width", Math.abs(end - start));
 		}).on("end", function () {
 			var _ref,
 			    scale = $$.zoomScale || $$.x;
 
-			$$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start !== end && $$.api.zoom([start, end].map(function (v) {
+			$$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && ($$.api.zoom([start, end].map(function (v) {
 				return scale.invert(v);
-			}));
+			})), $$.onZoomEnd());
 		});
-	},
-
-
-	/**
-  * Enable zooming by dragging using the zoombehaviour.
-  * @private
-  */
-	bindZoomOnDrag: function bindZoomOnDrag() {
-		var $$ = this;
-
-		$$.main.select("." + _classes2.default.eventRects).call($$.zoomBehaviour);
 	},
 	setZoomResetButton: function setZoomResetButton() {
 		var $$ = this,
@@ -11322,13 +11329,7 @@ var zoom = function (domainValue) {
 			var xScale = $$.zoomScale || $$.x;
 
 			$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]), resultDomain = domain;
-		} else {
-			var orgDomain = $$.subX.domain(),
-			    k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]),
-			    gap = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
-			    tx = isTimeSeries ? 0 - k * $$.x(domain[0].getTime()) : domain[0] - k * ($$.x(domain[0]) - gap);
-			$$.zoom.updateTransformScale(_d3Zoom.zoomIdentity.translate(tx, 0).scale(k)), resultDomain = $$.zoomScale.domain();
-		}
+		} else $$.x.domain(domain), $$.zoomScale = $$.x, $$.xAxis.scale($$.zoomScale), resultDomain = $$.zoomScale.orgDomain();
 
 		$$.redraw({
 			withTransition: !0,
@@ -12221,7 +12222,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 var regions = function (_regions) {
 	var $$ = this.internal,
 	    config = $$.config;
-	return _regions ? (config.regions = _regions, $$.redrawWithoutRescale(), config.regions) : config.regions;
+	return _regions ? (config.regions = _regions, $$.redrawWithoutRescale(), _regions) : config.regions;
 }; /**
     * Copyright (c) 2017 NAVER Corp.
     * billboard.js project is licensed under the MIT license
@@ -12260,7 +12261,7 @@ var regions = function (_regions) {
   * @instance
   * @memberOf Chart
   * @param {Object} regions This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
-  * @return {Array} regions
+  * @return {Array} regions Removed regions
   * @example
   * // regions that have 'region-A' or 'region-B' will be removed.
   * chart.regions.remove({
@@ -12276,20 +12277,20 @@ var regions = function (_regions) {
 		var $$ = this.internal,
 		    config = $$.config,
 		    options = optionsValue || {},
-		    duration = $$.getOption(options, "duration", config.transition_duration),
-		    classes = $$.getOption(options, "classes", [_classes2.default.region]),
+		    duration = (0, _util.getOption)(options, "duration", config.transition_duration),
+		    classes = (0, _util.getOption)(options, "classes", [_classes2.default.region]),
 		    regions = $$.main.select("." + _classes2.default.regions).selectAll(classes.map(function (c) {
 			return "." + c;
 		}));
 
 
-		return (duration ? regions.transition().duration(duration) : regions).style("opacity", "0").remove(), config.regions = config.regions.filter(function (region) {
+		return (duration ? regions.transition().duration(duration) : regions).style("opacity", "0").remove(), regions = config.regions, Object.keys(options).length ? (regions = regions.filter(function (region) {
 			var found = !1;
 
 			return !region.class || (region.class.split(" ").forEach(function (c) {
 				classes.indexOf(c) >= 0 && (found = !0);
 			}), !found);
-		}), config.regions;
+		}), config.regions = regions) : config.regions = [], regions;
 	}
 }), (0, _util.extend)(_Chart2.default.prototype, { regions: regions });
 
@@ -12843,18 +12844,13 @@ var legend = (0, _util.extend)(function () {}, {
 "use strict";
 
 
-var _d3Selection = __webpack_require__(5),
-    _Chart = __webpack_require__(1),
+var _Chart = __webpack_require__(1),
     _Chart2 = _interopRequireDefault(_Chart),
     _browser = __webpack_require__(75),
     _util = __webpack_require__(11);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-/**
- * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
 (0, _util.extend)(_Chart2.default.prototype, {
 	/**
   * Resize the chart.
@@ -12917,7 +12913,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var _this = this,
 		    $$ = this.internal;
 
-		return (0, _util.notEmpty)($$) && ($$.charts.splice($$.charts.indexOf(this), 1), (0, _util.isDefined)($$.resizeTimeout) && _browser.window.clearTimeout($$.resizeTimeout), (0, _d3Selection.select)(_browser.window).on("resize.bb", null), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+		return (0, _util.notEmpty)($$) && ($$.charts.splice($$.charts.indexOf(this), 1), (0, _util.isDefined)($$.resizeTimeout) && _browser.window.clearTimeout($$.resizeTimeout), _browser.window.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
 			key === "internal" && Object.keys($$).forEach(function (k) {
 				$$[k] = null;
 			}), _this[key] = null, delete _this[key];
@@ -12952,7 +12948,10 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 		return key in $$.config && ((0, _util.isDefined)(value) ? ($$.config[key] = value, res = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
 	}
-});
+}); /**
+     * Copyright (c) 2017 NAVER Corp.
+     * billboard.js project is licensed under the MIT license
+     */
 
 /***/ }),
 /* 75 */
