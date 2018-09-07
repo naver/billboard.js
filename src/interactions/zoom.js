@@ -40,11 +40,7 @@ extend(ChartInternal.prototype, {
 		$$.redrawEventRect();
 
 		if (zoomEnabled && bind) {
-			if (zoomEnabled === true || zoomEnabled.type === "wheel") {
-				$$.bindZoomOnEventRect();
-			} else if (zoomEnabled.type === "drag") {
-				$$.bindZoomOnDrag();
-			}
+			$$.bindZoomOnEventRect(zoomEnabled.type);
 		} else if (bind === false) {
 			$$.api.unzoom();
 
@@ -161,7 +157,7 @@ extend(ChartInternal.prototype, {
 		});
 
 		$$.cancelClick = isMousemove;
-		callFn(config.zoom_onzoom, $$.api, $$.x.orgDomain());
+		callFn(config.zoom_onzoom, $$.api, $$.subX.domain());
 	},
 
 	/**
@@ -180,7 +176,7 @@ extend(ChartInternal.prototype, {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
-		callFn($$.config.zoom_onzoomend, $$.api, $$.x.orgDomain());
+		callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain());
 	},
 
 	/**
@@ -206,7 +202,7 @@ extend(ChartInternal.prototype, {
 
 		if ($$.zoomScale) {
 			const zoomDomain = $$.zoomScale.domain();
-			const xDomain = $$.x.domain();
+			const xDomain = $$.subX.domain();
 			const delta = 0.015; // arbitrary value
 
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
@@ -214,7 +210,8 @@ extend(ChartInternal.prototype, {
 				(zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]) &&
 				(xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta))
 			) {
-				$$.xAxis.scale($$.x);
+				$$.xAxis.scale($$.subX);
+				$$.x.domain($$.subX.orgDomain());
 				$$.zoomScale = null;
 			}
 		}
@@ -224,11 +221,12 @@ extend(ChartInternal.prototype, {
 	 * Attach zoom event on <rect>
 	 * @private
 	 */
-	bindZoomOnEventRect() {
+	bindZoomOnEventRect(type) {
 		const $$ = this;
+		const behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
 
 		$$.main.select(`.${CLASS.eventRects}`)
-			.call($$.zoom)
+			.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
 
@@ -262,6 +260,8 @@ extend(ChartInternal.prototype, {
 				zoomRect
 					.attr("x", start)
 					.attr("width", 0);
+
+				$$.onZoomStart();
 			})
 			.on("drag", function() {
 				end = d3Mouse(this)[0];
@@ -283,21 +283,16 @@ extend(ChartInternal.prototype, {
 					[start, end] = [end, start];
 				}
 
+				if (start < 0) {
+					end += Math.abs(start);
+					start = 0;
+				}
+
 				if (start !== end) {
 					$$.api.zoom([start, end].map(v => scale.invert(v)));
+					$$.onZoomEnd();
 				}
 			});
-	},
-
-	/**
-	 * Enable zooming by dragging using the zoombehaviour.
-	 * @private
-	 */
-	bindZoomOnDrag() {
-		const $$ = this;
-
-		$$.main.select(`.${CLASS.eventRects}`)
-			.call($$.zoomBehaviour);
 	},
 
 	setZoomResetButton() {
