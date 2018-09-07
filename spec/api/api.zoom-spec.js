@@ -214,25 +214,28 @@ describe("API zoom", function() {
 	});
 
 	describe("unzoom", () => {
-		chart = util.generate({
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400, 150, 250]
-				]
-			},
-			zoom: {
-				enabled: true
-			}
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				zoom: {
+					enabled: true
+				}
+			});
 		});
 
 		it("should be unzoomed properly", () => {
+			const internal = chart.internal;
 			const target = [1, 4];
-			const orginal = chart.internal.x.domain();
+			const original = internal.x.domain();
 			let domain;
 
 			chart.zoom(target);
 
-			domain = chart.internal.zoomScale.domain().map(Math.round);
+			domain = internal.zoomScale.domain().map(Math.round);
 
 			expect(domain[0]).to.be.equal(target[0]);
 			expect(domain[1]).to.be.equal(target[1]);
@@ -241,8 +244,8 @@ describe("API zoom", function() {
 
 			domain = chart.internal.x.domain();
 
-			expect(domain[0]).to.be.equal(orginal[0]);
-			expect(domain[1]).to.be.equal(orginal[1]);
+			expect(domain[0]).to.be.equal(original[0]);
+			expect(domain[1]).to.be.equal(original[1]);
 		});
 	});
 

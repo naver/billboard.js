@@ -42,17 +42,11 @@ const zoom = function(domainValue) {
 			$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
 			resultDomain = domain;
 		} else {
-			const orgDomain = $$.subX.domain();
-			const k = (orgDomain[1] - orgDomain[0]) / (domain[1] - domain[0]);
-			const gap = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
-			const tx = isTimeSeries ?
-				(0 - k * $$.x(domain[0].getTime())) : domain[0] - k * ($$.x(domain[0]) - gap);
+			$$.x.domain(domain);
+			$$.zoomScale = $$.x;
+			$$.xAxis.scale($$.zoomScale);
 
-			$$.zoom.updateTransformScale(
-				d3ZoomIdentity.translate(tx, 0).scale(k)
-			);
-
-			resultDomain = $$.zoomScale.domain();
+			resultDomain = $$.zoomScale.orgDomain();
 		}
 
 		$$.redraw({
