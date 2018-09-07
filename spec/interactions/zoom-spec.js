@@ -245,7 +245,7 @@ describe("ZOOM", function() {
 
 		    tick = axisY.selectAll(".tick").nodes().pop();
 
-		    expect(+tick.textContent).to.be.equal(6000);
+		    expect(+tick.textContent).to.be.equal(3000);
 	    });
     });
 
