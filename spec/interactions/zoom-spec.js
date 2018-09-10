@@ -134,87 +134,93 @@ describe("ZOOM", function() {
     });
 
     describe("zoom type drag", () => {
-        before(() => {
-            args = {
-                size: {
-                    width: 300,
-                    height: 250
-                },
-                data: {
-                    columns: [
-                        ["data1", 30, 200, 100, 400, 3150, 250],
-                        ["data2", 50, 20, 10, 40, 15, 6025]
-                    ]
-                },
-                zoom: {
-                    enabled: {
-                        type: "drag"
-                    }
-                }
-            };
-        });
+	    let clickedData;
 
-        it("check for data zoom", () => {
-            const main = chart.$.main;
-            const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
+	    before(() => {
+		    args = {
+			    size: {
+				    width: 300,
+				    height: 250
+			    },
+			    data: {
+				    columns: [
+					    ["data1", 30, 200, 100, 400, 3150, 250],
+					    ["data2", 50, 20, 10, 40, 15, 6025]
+				    ],
+				    onclick: d => {
+					    clickedData = d;
+				    }
 
-            // when
-            chart.zoom([0, 3]);  // zoom in
+			    },
+			    zoom: {
+				    enabled: {
+					    type: "drag"
+				    }
+			    }
+		    };
+	    });
 
-            expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
-        });
+	    it("check for data zoom", () => {
+		    const main = chart.$.main;
+		    const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
 
-        it("check for x axis resize after zoom", () => {
-            const main = chart.$.main;
-            const rx = /H(\d+)/;
+		    // when
+		    chart.zoom([0, 3]);  // zoom in
 
-            const domain = main.select(`.${CLASS.axisX} > .domain`);
-            const pathValue = +domain.attr("d").match(rx)[1];
+		    expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
+	    });
 
-            chart.zoom([0, 4]);
-            chart.resize({ width: 400 });
+	    it("check for x axis resize after zoom", () => {
+		    const main = chart.$.main;
+		    const rx = /H(\d+)/;
 
-            expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
-        });
+		    const domain = main.select(`.${CLASS.axisX} > .domain`);
+		    const pathValue = +domain.attr("d").match(rx)[1];
 
-        it("check for x axis resize after zoom in/out", () => {
-            const main = chart.$.main;
-            const rx = /H(\d+)/;
+		    chart.zoom([0, 4]);
+		    chart.resize({width: 400});
 
-            const domain = main.select(`.${CLASS.axisX} > .domain`);
-            const pathValue = +domain.attr("d").match(rx)[1];
+		    expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
+	    });
 
-            chart.zoom([0, 4]);  // zoom in
-            chart.zoom([0, 6]);  // zoom out
+	    it("check for x axis resize after zoom in/out", () => {
+		    const main = chart.$.main;
+		    const rx = /H(\d+)/;
 
-            expect(+domain.attr("d").match(rx)[1]).to.be.equal(pathValue);
+		    const domain = main.select(`.${CLASS.axisX} > .domain`);
+		    const pathValue = +domain.attr("d").match(rx)[1];
 
-            // resize
-            chart.resize({ width: 400 });
+		    chart.zoom([0, 4]);  // zoom in
+		    chart.zoom([0, 6]);  // zoom out
 
-            // check if chart react on resize
-            expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
-        });
+		    expect(+domain.attr("d").match(rx)[1]).to.be.equal(pathValue);
 
-        it("check for the reset zoom button", () => {
-        	// when
-	        chart.zoom([0, 4]);
+		    // resize
+		    chart.resize({width: 400});
 
-			const resetBtn = chart.$.chart.select(`.${CLASS.buttonZoomReset}`);
+		    // check if chart react on resize
+		    expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
+	    });
 
-			expect(resetBtn.empty()).to.be.false;
+	    it("check for the reset zoom button", () => {
+		    // when
+		    chart.zoom([0, 4]);
 
-	        // when button is clicked
-			resetBtn.node().click();
+		    const resetBtn = chart.$.chart.select(`.${CLASS.buttonZoomReset}`);
 
-			expect(resetBtn.style("display")).to.be.equal("none");
-        });
+		    expect(resetBtn.empty()).to.be.false;
 
-        it("set options zoom.resetButton.text='test'", () => {
-			args.zoom.resetButton = {
-				text: "test"
-			};
-        });
+		    // when button is clicked
+		    resetBtn.node().click();
+
+		    expect(resetBtn.style("display")).to.be.equal("none");
+	    });
+
+	    it("set options zoom.resetButton.text='test'", () => {
+		    args.zoom.resetButton = {
+			    text: "test"
+		    };
+	    });
 
 	    it("check for the custom reset zoom button text", () => {
 		    // when
@@ -231,7 +237,7 @@ describe("ZOOM", function() {
 	    });
 
 	    it("check for the y axis rescale", () => {
-	    	const axisY = chart.$.main.select(`.${CLASS.axisY}`);
+		    const axisY = chart.$.main.select(`.${CLASS.axisY}`);
 
 		    // when
 		    chart.zoom([0, 2]);
@@ -241,11 +247,24 @@ describe("ZOOM", function() {
 		    expect(+tick.textContent).to.be.equal(200);
 
 		    // when
-		    chart.zoom([2,4]);
+		    chart.zoom([2, 4]);
 
 		    tick = axisY.selectAll(".tick").nodes().pop();
 
 		    expect(+tick.textContent).to.be.equal(3000);
+	    });
+
+	    it("check for data.onclick", () => {
+		    const main = chart.$.main;
+		    const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
+		    const circle = chart.$.line.circles.node().getBBox();
+
+		    util.fireEvent(rect, "click", {
+			    clientX: circle.x,
+			    clientY: circle.y
+		    }, chart);
+
+		    expect(clickedData).to.not.be.undefined;
 	    });
     });
 
