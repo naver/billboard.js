@@ -8,7 +8,8 @@ import {
 } from "d3-array";
 import {
 	mouse as d3Mouse,
-	event as d3Event
+	event as d3Event,
+	select as d3Select
 } from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
@@ -243,6 +244,7 @@ extend(ChartInternal.prototype, {
 		let zoomRect = null;
 
 		$$.zoomBehaviour = d3Drag()
+			.clickDistance(4)
 			.on("start", function() {
 				$$.setDragStatus(true);
 
@@ -270,7 +272,7 @@ extend(ChartInternal.prototype, {
 					.attr("x", Math.min(start, end))
 					.attr("width", Math.abs(end - start));
 			})
-			.on("end", () => {
+			.on("end", function(d) {
 				const scale = $$.zoomScale || $$.x;
 
 				$$.setDragStatus(false);
@@ -291,6 +293,16 @@ extend(ChartInternal.prototype, {
 				if (start !== end) {
 					$$.api.zoom([start, end].map(v => scale.invert(v)));
 					$$.onZoomEnd();
+				} else {
+					if ($$.isMultipleX()) {
+						$$.clickHandlerForMultipleXS.bind(this)($$);
+					} else {
+						const event = d3Event.sourceEvent || d3Event;
+						const [x, y] = "clientX" in event ? [event.clientX, event.clientY] : [event.x, event.y];
+						const target = document.elementFromPoint(x, y);
+
+						$$.clickHandlerForSingleX.bind(target)(d3Select(target).datum(), $$);
+					}
 				}
 			});
 	},
