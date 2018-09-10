@@ -440,22 +440,8 @@ extend(ChartInternal.prototype, {
 		const rect = eventRectEnter.append("rect")
 			.attr("class", $$.classEvent.bind($$))
 			.style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null)
-			.on("click", d => {
-				if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
-					$$.cancelClick && ($$.cancelClick = false);
-
-					return;
-				}
-
-				const index = d.index;
-
-				$$.main.selectAll(`.${CLASS.shape}-${index}`)
-					.each(function(d2) {
-						if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
-							$$.toggleShape(this, d2, index);
-							$$.config.data_onclick.call($$.api, d2, this);
-						}
-					});
+			.on("click", function(d) {
+				$$.clickHandlerForSingleX.bind(this)(d, $$);
 			})
 			.call($$.getDraggableSelection());
 
@@ -507,6 +493,27 @@ extend(ChartInternal.prototype, {
 		return rect;
 	},
 
+	clickHandlerForSingleX(d, ctx) {
+		const $$ = ctx;
+		const config = $$.config;
+
+		if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) {
+			$$.cancelClick && ($$.cancelClick = false);
+
+			return;
+		}
+
+		const index = d.index;
+
+		$$.main.selectAll(`.${CLASS.shape}-${index}`)
+			.each(function(d2) {
+				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
+					$$.toggleShape(this, d2, index);
+					config.data_onclick.call($$.api, d2, this);
+				}
+			});
+	},
+
 	/**
 	 * Create an eventRect,
 	 * Register touch and drag events.
@@ -516,7 +523,6 @@ extend(ChartInternal.prototype, {
 	 */
 	generateEventRectsForMultipleXs(eventRectEnter) {
 		const $$ = this;
-		const config = $$.config;
 
 		const rect = eventRectEnter
 			.append("rect")
@@ -526,30 +532,7 @@ extend(ChartInternal.prototype, {
 			.attr("height", $$.height)
 			.attr("class", CLASS.eventRect)
 			.on("click", function() {
-				const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-
-				if ($$.hasArcType(targetsToShow)) {
-					return;
-				}
-
-				const mouse = d3Mouse(this);
-				const closest = $$.findClosestFromTargets(targetsToShow, mouse);
-
-				if (!closest) {
-					return;
-				}
-
-				// select if selection enabled
-				if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-					$$.main.selectAll(`.${CLASS.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
-						.selectAll(`.${CLASS.shape}-${closest.index}`)
-						.each(function() {
-							if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
-								$$.toggleShape(this, closest, closest.index);
-								$$.config.data_onclick.call($$.api, closest, this);
-							}
-						});
-				}
+				$$.clickHandlerForMultipleXS.bind(this)($$);
 			})
 			.call($$.getDraggableSelection());
 
@@ -569,6 +552,35 @@ extend(ChartInternal.prototype, {
 		}
 
 		return rect;
+	},
+
+	clickHandlerForMultipleXS(ctx) {
+		const $$ = ctx;
+		const config = $$.config;
+		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+		if ($$.hasArcType(targetsToShow)) {
+			return;
+		}
+
+		const mouse = d3Mouse(this);
+		const closest = $$.findClosestFromTargets(targetsToShow, mouse);
+
+		if (!closest) {
+			return;
+		}
+
+		// select if selection enabled
+		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
+			$$.main.selectAll(`.${CLASS.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
+				.selectAll(`.${CLASS.shape}-${closest.index}`)
+				.each(function() {
+					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
+						$$.toggleShape(this, closest, closest.index);
+						config.data_onclick.call($$.api, closest, this);
+					}
+				});
+		}
 	},
 
 	/**
@@ -595,6 +607,6 @@ extend(ChartInternal.prototype, {
 			clientY: y
 		};
 
-		emulateEvent[/^mouse/.test(type) ? "mouse" : "touch"](eventRect, type, params);
+		emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, params);
 	}
 });
