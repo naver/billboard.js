@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.1-nightly-20180907162918
+ * @version 1.6.2-nightly-20180910173815
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -126,7 +126,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 
 /**
  * @namespace bb
- * @version 1.6.1-nightly-20180907162918
+ * @version 1.6.2-nightly-20180910173815
  */
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -140,7 +140,7 @@ var bb = {
   *    bb.version;  // "1.0.0"
   * @memberOf bb
   */
-	version: "1.6.1-nightly-20180907162918",
+	version: "1.6.2-nightly-20180910173815",
 
 	/**
   * Generate chart
@@ -6401,13 +6401,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		var $$ = this,
 		    config = $$.config,
 		    rect = eventRectEnter.append("rect").attr("class", $$.classEvent.bind($$)).style("cursor", config.data_selection_enabled && config.data_selection_grouped ? "pointer" : null).on("click", function (d) {
-			if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1));
-
-			var index = d.index;
-
-			$$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function (d2) {
-				(config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape(this, d2, index), $$.config.data_onclick.call($$.api, d2, this));
-			});
+			$$.clickHandlerForSingleX.bind(this)(d, $$);
 		}).call($$.getDraggableSelection());
 
 
@@ -6432,6 +6426,19 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 				}
 		}), rect;
 	},
+	clickHandlerForSingleX: function clickHandlerForSingleX(d, ctx) {
+		var $$ = ctx,
+		    config = $$.config;
+
+
+		if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1));
+
+		var index = d.index;
+
+		$$.main.selectAll("." + _classes2.default.shape + "-" + index).each(function (d2) {
+			(config.data_selection_grouped || $$.isWithinShape(this, d2)) && ($$.toggleShape(this, d2, index), config.data_onclick.call($$.api, d2, this));
+		});
+	},
 
 
 	/**
@@ -6443,18 +6450,8 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
   */
 	generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
 		var $$ = this,
-		    config = $$.config,
 		    rect = eventRectEnter.append("rect").attr("x", 0).attr("y", 0).attr("width", $$.width).attr("height", $$.height).attr("class", _classes2.default.eventRect).on("click", function () {
-			var targetsToShow = $$.filterTargetsToShow($$.data.targets);
-
-			// select if selection enabled
-			if (!$$.hasArcType(targetsToShow)) {
-					var mouse = (0, _d3Selection.mouse)(this),
-					    closest = $$.findClosestFromTargets(targetsToShow, mouse);
-					!closest || ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && $$.main.selectAll("." + _classes2.default.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + _classes2.default.shape + "-" + closest.index).each(function () {
-						(config.data_selection_grouped || $$.isWithinShape(this, closest)) && ($$.toggleShape(this, closest, closest.index), $$.config.data_onclick.call($$.api, closest, this));
-					});
-				}
+			$$.clickHandlerForMultipleXS.bind(this)($$);
 		}).call($$.getDraggableSelection());
 
 
@@ -6463,6 +6460,21 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		}).on("mouseout", function () {
 			!$$.config || $$.hasArcType() || $$.unselectRect();
 		}), rect;
+	},
+	clickHandlerForMultipleXS: function clickHandlerForMultipleXS(ctx) {
+		var $$ = ctx,
+		    config = $$.config,
+		    targetsToShow = $$.filterTargetsToShow($$.data.targets);
+
+
+		// select if selection enabled
+		if (!$$.hasArcType(targetsToShow)) {
+				var mouse = (0, _d3Selection.mouse)(this),
+				    closest = $$.findClosestFromTargets(targetsToShow, mouse);
+				!closest || ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && $$.main.selectAll("." + _classes2.default.shapes + $$.getTargetSelectorSuffix(closest.id)).selectAll("." + _classes2.default.shape + "-" + closest.index).each(function () {
+					(config.data_selection_grouped || $$.isWithinShape(this, closest)) && ($$.toggleShape(this, closest, closest.index), config.data_onclick.call($$.api, closest, this));
+				});
+			}
 	},
 
 
@@ -6481,7 +6493,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    x = box.left + (mouse ? mouse[0] : 0) + box.width / 2,
 		    y = box.top + (mouse ? mouse[1] : 0);
 
-		_util.emulateEvent[/^mouse/.test(type) ? "mouse" : "touch"](eventRect, type, {
+		_util.emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, {
 			screenX: x,
 			screenY: y,
 			clientX: x,
@@ -10620,7 +10632,7 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 		    start = 0,
 		    end = 0,
 		    zoomRect = null;
-		$$.zoomBehaviour = (0, _d3Drag.drag)().on("start", function () {
+		$$.zoomBehaviour = (0, _d3Drag.drag)().clickDistance(4).on("start", function () {
 			$$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", _classes2.default.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = (0, _d3Selection.mouse)(this)[0], end = start, zoomRect.attr("x", start).attr("width", 0), $$.onZoomStart();
 		}).on("drag", function () {
 			end = (0, _d3Selection.mouse)(this)[0], zoomRect.attr("x", Math.min(start, end)).attr("width", Math.abs(end - start));
@@ -10628,9 +10640,15 @@ function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { de
 			var _ref,
 			    scale = $$.zoomScale || $$.x;
 
-			$$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end && ($$.api.zoom([start, end].map(function (v) {
-				return scale.invert(v);
-			})), $$.onZoomEnd());
+			if ($$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
+					return scale.invert(v);
+				})), $$.onZoomEnd();else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
+					var _event = _d3Selection.event.sourceEvent || _d3Selection.event,
+					    _ref2 = "clientX" in _event ? [_event.clientX, _event.clientY] : [_event.x, _event.y],
+					    x = _ref2[0],
+					    y = _ref2[1],
+					    target = document.elementFromPoint(x, y);$$.clickHandlerForSingleX.bind(target)((0, _d3Selection.select)(target).datum(), $$);
+				}
 		});
 	},
 	setZoomResetButton: function setZoomResetButton() {
