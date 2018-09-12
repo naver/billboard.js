@@ -1854,6 +1854,25 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		CustomPointsFontIcon: {
+			options: {
+				data: {
+					columns: [
+						["data1", 100, 400, 1000, 900, 500],
+						["data2", 20, 40, 500, 300, 200]
+					]
+				},
+				point: {
+					pattern: [
+						"<g><text x='-5' y='40' style='font-family:FontAwesome;font-size:40px'></text></g>"
+					]
+				},
+				onrendered: function() {
+					       // or set unicode value as
+					       // this.defs.selectAll("text").text(() => "\uf21c");
+				}
+			}
+		},
 		CombinationPoints: {
 			options: {
 				data: {
