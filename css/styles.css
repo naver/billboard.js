@@ -23,7 +23,7 @@ body {
 }
 
 hr {
-    max-width: 300px;
+    max-width: 350px;
     border-width: 3px;
     opacity: 0.09;
     margin-top: 15px;
@@ -561,11 +561,12 @@ img::-moz-selection {
 
 .download a {
     font-family: Raleway;
-    font-size: 16px;
+    font-size: 15px;
+    margin-right: 7px;
 }
 
-.download :first-child {
-    margin-right: 10px;
+.download :last-child{
+    margin-right: 0;
 }
 
 pre {
@@ -588,7 +589,7 @@ pre {
     stroke: #fff;
 }
 
-.bb-axis text, .bb-legend-item text {
+.bb-axis .tick text, g.bb-legend-item text {
     fill:#fff;
 }
 

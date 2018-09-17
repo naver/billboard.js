@@ -23,9 +23,9 @@
     <script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/javascript.min.js"></script>
 
     <!-- d3 & billboard.js -->
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     <script src="./release/latest/dist/billboard.min.js"></script>
-    <link rel="stylesheet" href="./release/latest/dist/billboard.min.css" />
+    <link rel="stylesheet" href="./release/latest/dist/theme/insight.min.css" />
 </head>
 <body>
 <nav id="topNav" class="navbar navbar-default navbar-fixed-top">
@@ -127,12 +127,18 @@
                 <p>
                     <h4>Step 1. Load billboard.js and D3.js</h4>
 
-                    <pre><code class="xml">&lt;!-- Load D3.js -->
-&lt;script src="https://d3js.org/d3.v4.min.js">&lt;/script>
+                    <pre><code class="xml">&lt;!-- Step 1) Load D3.js -->
+&lt;script src="https://d3js.org/d3.v5.min.js">&lt;/script>
 
-&lt;!-- Load billboard.js with style -->
-&lt;script src="billboard.js">&lt;/script>
-&lt;link rel="stylesheet" href="billboard.css"></code></pre>
+&lt;!-- Step 2) Load billboard.js with style -->
+&lt;script src="$YOUR_PATH/billboard.js">&lt;/script>
+
+&lt;!-- Load with base style -->
+&lt;link rel="stylesheet" href="$YOUR_PATH/billboard.css">
+
+&lt;!-- Or load different theme style -->
+&lt;link rel="stylesheet" href="$YOUR_PATH/theme/insight.css">
+                    </code></pre>
 
                     <h4>Step 2. Setup your chart holder</h4>
 
@@ -232,6 +238,13 @@
             <p class="download">
                 <a href="./release/latest/dist/billboard.min.js" download class="btn btn-default btn-lg wow flipInX">billboard.min.js</a>
                 <a href="./release/latest/dist/billboard.min.css" download class="btn btn-default btn-lg wow flipInX">billboard.min.css</a>
+            </p>
+
+            <h6 class="wide-space text-center">CSS Themes</h6>
+            <hr>
+            <p class="download">
+                <a href="./release/latest/dist/theme/insight.css" download class="btn btn-default btn-lg wow flipInX">insight.css</a>
+                <a href="./release/latest/dist/theme/insight.min.css" download class="btn btn-default btn-lg wow flipInX">insight.min.css</a>
             </p><br>
 
             <h6 class="wide-space text-center">or install from NPM</h6>
@@ -271,9 +284,6 @@ $(function() {
                 ["data1", 30, 200, 100, 400, 150, 250],
                 ["data2", 130, 100, 140, 200, 150, 50]
             ]
-        },
-        color: {
-            pattern: ["#FF6384", "#36A2EB"]
         },
         point: {
             r: 8
