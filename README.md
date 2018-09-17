@@ -120,12 +120,12 @@ Load billboard.js after D3.js.
 ```html
 <!-- 1) Load D3.js and billboard.js separately -->
     <!-- Load D3 -->
-    <script src="https://d3js.org/d3.v4.min.js"></script>
+    <script src="https://d3js.org/d3.v5.min.js"></script>
     
-    <!-- Load billboard.js with base style -->
+    <!-- Load billboard.js with base(or theme) style -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
     <script src="$YOUR_PATH/billboard.js"></script>
-
+    
 <!-- 2) or Load billboard.js packaged with D3.js -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
     <script src="$YOUR_PATH/billboard.pkgd.js"></script>
