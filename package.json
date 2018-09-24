@@ -53,7 +53,7 @@
     "babel-plugin-minify-dead-code-elimination": "^0.4.3",
     "babel-plugin-minify-guarded-expressions": "^0.4.3",
     "babel-plugin-minify-numeric-literals": "^0.4.3",
-    "babel-plugin-minify-simplify": "^0.4.3",
+    "babel-plugin-minify-simplify": "^0.5.0",
     "babel-plugin-minify-type-constructors": "^0.4.3",
     "babel-plugin-transform-helper-modules": "^6.1.0",
     "babel-plugin-transform-inline-consecutive-adds": "^0.4.3",
