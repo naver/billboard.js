@@ -121,15 +121,14 @@ extend(ChartInternal.prototype, {
 			}
 
 			param = [row.ratio, row.id, row.index, d];
+			value = sanitise(valueFormat(getRowValue(row), ...param));
 
 			if ($$.isAreaRangeType(row)) {
-				value = ["high", "low"].map(v => sanitise(
+				const [high, low] = ["high", "low"].map(v => sanitise(
 					valueFormat($$.getAreaRangeData(row, v), ...param)
 				));
 
-				value = `<b>Mid:</b> ${value} <b>High:</b> ${value[0]} <b>Low:</b> ${value[1]}`;
-			} else {
-				value = sanitise(valueFormat(getRowValue(row), ...param));
+				value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
 			}
 
 			if (value !== undefined) {
