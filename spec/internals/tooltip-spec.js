@@ -634,4 +634,49 @@ describe("TOOLTIP", function() {
 				});
 		});
 	});
+
+	describe("tooltip for area-range", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
+						["data1", [150, 140, 110],
+							[155, 130, 115],
+							[160, 135, 120],
+							[135, 120, 110],
+							[180, 150, 130],
+							[199, 160, 125]
+						],
+						["data2", 130, 340, 200, 500, 250, 350]
+					],
+					types: {
+						data1: "area-line-range"
+					}
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						}
+					}
+				}
+			};
+		});
+
+		it("area-ranged type tooltip should be displayed correctly", () => {
+			// check for custom point shape
+			hoverChart(chart, undefined, {clientX: 185, clientY: 107});
+
+			let value = chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
+
+			expect(value).to.be.equal("Mid: 135 High: 160 Low: 120");
+
+			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data2 .value`).text();
+
+			expect(value).to.be.equal(200);
+		});
+	});
 });
