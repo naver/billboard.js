@@ -23,26 +23,35 @@ extend(ChartInternal.prototype, {
 
 	insertPointInfoDefs(point, id) {
 		const $$ = this;
-		const parser = new DOMParser();
-		const doc = parser.parseFromString(point, "image/svg+xml");
-		const node = doc.firstChild;
-		const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
-		const attribs = node.attributes;
+		const copyAttr = (from, target) => {
+			const attribs = from.attributes;
 
-		for (let i = 0, name; (name = attribs[i]); i++) {
-			name = name.name;
-			clone.setAttribute(name, node.getAttribute(name));
-		}
+			for (let i = 0, name; (name = attribs[i]); i++) {
+				name = name.name;
+				target.setAttribute(name, from.getAttribute(name));
+			}
+		};
+
+		const doc = new DOMParser().parseFromString(point, "image/svg+xml");
+		const node = doc.documentElement;
+		const clone = document.createElementNS(d3Namespaces.svg, node.nodeName.toLowerCase());
 
 		clone.id = id;
 		clone.style.fill = "inherit";
 		clone.style.stroke = "inherit";
 
-		// when has child nodes
-		if (node.children.length) {
-			clone.innerHTML = toArray(node.children)
-				.map(v => v.outerHTML)
-				.join("");
+		copyAttr(node, clone);
+
+		if (node.childNodes && node.childNodes.length) {
+			const parent = d3Select(clone);
+
+			if ("innerHTML" in clone) {
+				parent.html(node.innerHTML);
+			} else {
+				toArray(node.childNodes).forEach(v => {
+					copyAttr(v, parent.append(v.tagName).node());
+				});
+			}
 		}
 
 		$$.defs.node().appendChild(clone);
@@ -109,11 +118,8 @@ extend(ChartInternal.prototype, {
 			const $$ = this;
 			const box = element.node().getBBox();
 
-			box.width /= 2;
-			box.height /= 2;
-
-			const xPosFn2 = d => xPosFn(d) - box.width;
-			const yPosFn2 = d => yPosFn(d) - box.height;
+			const xPosFn2 = d => xPosFn(d) - box.width / 2;
+			const yPosFn2 = d => yPosFn(d) - box.height / 2;
 			let mainCircles = element;
 
 			if (withTransition) {
