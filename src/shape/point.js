@@ -7,7 +7,7 @@ import {
 	select as d3Select
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
-import {isFunction, isObjectType, toArray, extend, notEmpty} from "../internals/util";
+import {isFunction, isObjectType, toArray, extend, notEmpty, isDefined} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
@@ -39,7 +39,7 @@ extend(ChartInternal.prototype, {
 		clone.style.stroke = "inherit";
 
 		// when has child nodes
-		if (node.children.length) {
+		if (isDefined(node.children) && node.children.length) {
 			clone.innerHTML = toArray(node.children)
 				.map(v => v.outerHTML)
 				.join("");
