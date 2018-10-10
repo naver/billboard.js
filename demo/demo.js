@@ -3019,7 +3019,7 @@ d3.select(".chart_area")
 			},
 			func: function(chart) {
 				chart.timer = [
-					setTimeout(() => {
+					setTimeout(function() {
 						// update gauge.max to 100, and redraw with changed option
 						chart.config("gauge.max", 100, true);
 					}, 1000)
