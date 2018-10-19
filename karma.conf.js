@@ -24,18 +24,19 @@ module.exports = function(config) {
 					{
 						test: /\.js$/,
 						exclude: /node_modules/,
-						loader: "babel-loader",
-						options: {
-							presets: [
-								[
-									"env",
-									{
-										loose: true,
-										modules: false
-									}
-								]
-							],
-							plugins: ["add-module-exports"]
+						use: {
+							loader: "babel-loader",
+							options: {
+								presets: [
+									[
+										"@babel/preset-env", {
+											loose: true,
+											modules: false
+										}
+									]
+								],
+								plugins: ["add-module-exports"]
+							}
 						}
 					},
 					{
@@ -79,7 +80,12 @@ module.exports = function(config) {
 		karmaConfig.webpack.module.rules.unshift({
 			test: /\.js$/,
 			exclude: /(node_modules|test)/,
-			loader: "istanbul-instrumenter-loader"
+			use: {
+				loader: "istanbul-instrumenter-loader",
+				query: {
+					esModules: true
+				}
+			}
 		});
 
 		karmaConfig.singleRun = true;

@@ -1,19 +1,23 @@
 {
-    "presets": [ 
+    "presets": [
         [
-            "env", {
+            "@babel/preset-env", {
                 "targets": {
-                    "browsers": ["last 2 versions", "ie >= 9", "iOS >= 8"]
+                    "browsers": [
+                        "last 2 versions",
+                        "ie >= 9",
+                        "iOS >= 8"
+                    ]
                 },
-                "module": false,
+                "modules": false,
                 "loose": true,
                 "useBuiltIns": false
             }
         ]
     ],
     "plugins": [
+        "@babel/plugin-transform-runtime",
         "add-module-exports",
-        "transform-helper-modules",
         "transform-inline-consecutive-adds",
         "transform-merge-sibling-variables",
         "transform-minify-booleans",
