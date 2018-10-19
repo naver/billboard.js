@@ -279,7 +279,6 @@ extend(ChartInternal.prototype, {
 		this.tooltip.style("display", "none").datum(null);
 
 		callFn(config.tooltip_onhidden, $$);
-		$$._handleLinkedCharts(false);
 	},
 
 	/**
@@ -294,19 +293,17 @@ extend(ChartInternal.prototype, {
 		if ($$.config.tooltip_linked) {
 			const linkedName = $$.config.tooltip_linked_name;
 
-			$$.api.internal.charts.forEach(c => {
+			($$.api.internal.charts || []).forEach(c => {
 				if (c !== $$.api) {
-					const internal = c.internal;
-					const isLinked = internal.config.tooltip_linked;
-					const name = internal.config.tooltip_linked_name;
+					const config = c.internal.config;
+					const isLinked = config.tooltip_linked;
+					const name = config.tooltip_linked_name;
 					const isInDom = document.body.contains(c.element);
 
 					if (isLinked && linkedName === name && isInDom) {
-						const isShowing = internal.tooltip.style("display") === "block";
-
 						// prevent throwing error for non-paired linked indexes
 						try {
-							isShowing ^ show && c.tooltip[isShowing ? "hide" : "show"]({index});
+							c.tooltip[show ? "show" : "hide"]({index});
 						} catch (e) {}
 					}
 				}

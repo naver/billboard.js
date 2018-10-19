@@ -362,6 +362,11 @@ describe("TOOLTIP", function() {
 			spy2.resetHistory();
 		});
 
+		it("should not be throwing error", () => {
+			chart.internal.charts = null;
+			expect(() => chart.internal._handleLinkedCharts()).to.not.throw();
+		});
+
 		it("set options tooltip.linked=false", () => {
 			args.tooltip.linked = false;
 			args2.tooltip.order = spy2;
