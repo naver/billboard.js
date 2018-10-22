@@ -64,7 +64,14 @@ module.exports = function(config) {
 		},
 
 		// https://github.com/karma-runner/karma/blob/master/docs/config/01-configuration-file.md#browsernoactivitytimeout
-		browserNoActivityTimeout: 50000
+		browserNoActivityTimeout: 50000,
+		/* browserDisconnectTimeout: 10000,
+		browserDisconnectTolerance: 3,
+		flags: [
+			"--disable-web-security",
+			"--disable-gpu",
+			"--no-sandbox"
+		] */
 	};
 
 	karmaConfig.browsers.push(config.chrome ? "Chrome" : "ChromeHeadless");

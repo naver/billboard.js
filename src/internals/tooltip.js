@@ -229,10 +229,12 @@ extend(ChartInternal.prototype, {
 		}
 
 		const datum = $$.tooltip.datum();
+		const dataStr = JSON.stringify(selectedData);
 		let width = (datum && datum.width) || 0;
 		let height = (datum && datum.height) || 0;
 
-		if (!datum || datum.current !== JSON.stringify(selectedData)) {
+		if (!datum || datum.current !== dataStr) {
+			const index = selectedData[0].index;
 			const html = config.tooltip_contents.call(
 				$$,
 				selectedData,
@@ -247,13 +249,14 @@ extend(ChartInternal.prototype, {
 			$$.tooltip.html(html)
 				.style("display", "block")
 				.datum({
-					current: JSON.stringify(selectedData),
+					index,
+					current: dataStr,
 					width: width = $$.tooltip.property("offsetWidth"),
 					height: height = $$.tooltip.property("offsetHeight")
 				});
 
 			callFn(config.tooltip_onshown, $$);
-			$$._handleLinkedCharts(true, selectedData[0].index);
+			$$._handleLinkedCharts(true, index);
 		}
 
 		// Get tooltip dimensions
@@ -301,9 +304,16 @@ extend(ChartInternal.prototype, {
 					const isInDom = document.body.contains(c.element);
 
 					if (isLinked && linkedName === name && isInDom) {
+						const data = c.internal.tooltip.data()[0];
+						const isNotSameIndex = index !== (data && data.index);
+
 						// prevent throwing error for non-paired linked indexes
 						try {
-							c.tooltip[show ? "show" : "hide"]({index});
+							if (show && isNotSameIndex) {
+								c.tooltip.show({index});
+							} else if (!show) {
+								c.tooltip.hide();
+							}
 						} catch (e) {}
 					}
 				}
