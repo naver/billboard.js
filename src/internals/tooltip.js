@@ -229,10 +229,12 @@ extend(ChartInternal.prototype, {
 		}
 
 		const datum = $$.tooltip.datum();
+		const dataStr = JSON.stringify(selectedData);
 		let width = (datum && datum.width) || 0;
 		let height = (datum && datum.height) || 0;
 
-		if (!datum || datum.current !== JSON.stringify(selectedData)) {
+		if (!datum || datum.current !== dataStr) {
+			const index = selectedData[0].index;
 			const html = config.tooltip_contents.call(
 				$$,
 				selectedData,
@@ -247,13 +249,14 @@ extend(ChartInternal.prototype, {
 			$$.tooltip.html(html)
 				.style("display", "block")
 				.datum({
-					current: JSON.stringify(selectedData),
+					index,
+					current: dataStr,
 					width: width = $$.tooltip.property("offsetWidth"),
 					height: height = $$.tooltip.property("offsetHeight")
 				});
 
 			callFn(config.tooltip_onshown, $$);
-			$$._handleLinkedCharts(true, selectedData[0].index);
+			$$._handleLinkedCharts(true, index);
 		}
 
 		// Get tooltip dimensions
@@ -279,7 +282,6 @@ extend(ChartInternal.prototype, {
 		this.tooltip.style("display", "none").datum(null);
 
 		callFn(config.tooltip_onhidden, $$);
-		$$._handleLinkedCharts(false);
 	},
 
 	/**
@@ -294,19 +296,24 @@ extend(ChartInternal.prototype, {
 		if ($$.config.tooltip_linked) {
 			const linkedName = $$.config.tooltip_linked_name;
 
-			$$.api.internal.charts.forEach(c => {
+			($$.api.internal.charts || []).forEach(c => {
 				if (c !== $$.api) {
-					const internal = c.internal;
-					const isLinked = internal.config.tooltip_linked;
-					const name = internal.config.tooltip_linked_name;
+					const config = c.internal.config;
+					const isLinked = config.tooltip_linked;
+					const name = config.tooltip_linked_name;
 					const isInDom = document.body.contains(c.element);
 
 					if (isLinked && linkedName === name && isInDom) {
-						const isShowing = internal.tooltip.style("display") === "block";
+						const data = c.internal.tooltip.data()[0];
+						const isNotSameIndex = index !== (data && data.index);
 
 						// prevent throwing error for non-paired linked indexes
 						try {
-							isShowing ^ show && c.tooltip[isShowing ? "hide" : "show"]({index});
+							if (show && isNotSameIndex) {
+								c.tooltip.show({index});
+							} else if (!show) {
+								c.tooltip.hide();
+							}
 						} catch (e) {}
 					}
 				}
