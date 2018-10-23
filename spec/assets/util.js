@@ -7,6 +7,7 @@
 import * as d3 from "d3";
 import simulant from "simulant";
 import bb from "../../src/core";
+import CLASS from "../../src/config/classes";
 
 /**
  * Create a DOM element
@@ -89,6 +90,21 @@ const simulator = (el, option = {}, callback) => {
 };
 
 /**
+ * Hover on chart element
+ * @param {Chart} hoverChart
+ * @param {String} [eventName=mousemove]
+ * @param {Object} [pos={clientX: 100, clientY: 100}]
+ * @param {Number} [dataIndex=2]
+ */
+const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, dataIndex = 2) => {
+	const eventRect = hoverChart.$.main
+		.select(`.${CLASS.eventRect}-${dataIndex}`)
+		.node();
+console.log(eventRect);
+	fireEvent(eventRect, eventName, pos, hoverChart);
+};
+
+/**
  * Parse the d property of an SVG path into an array of drawing commands.
  * @param  {String} d SvgPath d attribute.]
  * @return {Array} an array of drawing commands.
@@ -168,6 +184,7 @@ export default {
 	fireEvent,
 	generate,
 	hexToRgb,
+	hoverChart,
 	parseSvgPath,
 	simulator
 };

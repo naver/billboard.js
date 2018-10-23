@@ -6,7 +6,7 @@
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
-describe("ARC", () => {
+describe("SHAPE ARC", () => {
 	const selector = {
 		arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
 		shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
@@ -26,7 +26,7 @@ describe("ARC", () => {
 		});
 
 		it("should have correct classes", () => {
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const selector = {
 				arc: `.${CLASS.chartArc}.${CLASS.target}.${CLASS.target}`,
 				shapes: `g.${CLASS.shapes}.${CLASS.arcs}.${CLASS.arcs}`,
@@ -51,7 +51,7 @@ describe("ARC", () => {
 		});
 
 		it("should have correct d", () => {
-			const main = chart.internal.main;
+			const main = chart.$.main;
 
 			expect(main.select(`.${CLASS.arc}-data1`).attr("d"))
 				.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
@@ -76,7 +76,7 @@ describe("ARC", () => {
 			});
 
 			setTimeout(() => {
-				expect(chart.internal.main.select(`.${CLASS.arc}-black`).attr("d"))
+				expect(chart.$.main.select(`.${CLASS.arc}-black`).attr("d"))
 					.to.match(/M-124\..+,-171\..+A211\..+,211\..+,0,0,1,-3\..+,-211\..+L0,0Z/);
 
 				done();
@@ -97,7 +97,7 @@ describe("ARC", () => {
 		});
 
 		it("should have correct d attribute", () => {
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const arcs = {
 				data1: chartArc.select(`${selector.arc}-data1`)
 					.select(`${selector.shapes}-data1`)
@@ -132,7 +132,7 @@ describe("ARC", () => {
 			});
 
 			expect(chart.internal.pie.padAngle()()).to.be.equal(value);
-			expect(chart.internal.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
+			expect(chart.$.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
 
 			d3.selectAll(`.${CLASS.chartArc} text`).each(function(d) {
 				const value = parseInt(this.textContent);
@@ -186,7 +186,7 @@ describe("ARC", () => {
 				}
 			});
 
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const data = chartArc.select(`${selector.arc}-data`)
 					.select(`${selector.shapes}-data`)
 					.select(`${selector.shape}-data`);
@@ -217,7 +217,7 @@ describe("ARC", () => {
 				}
 			});
 
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const data = chartArc.select(`${selector.arc}-data`)
 					.select(`${selector.shapes}-data`)
 					.select(`${selector.shape}-data`);
@@ -285,7 +285,7 @@ describe("ARC", () => {
 				}
 			});
 
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
 			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`)
 
@@ -309,7 +309,7 @@ describe("ARC", () => {
 				}
 			});
 
-			const chartArc = chart.internal.main.select(`.${CLASS.chartArcs}`);
+			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
 			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`)
 
@@ -322,6 +322,54 @@ describe("ARC", () => {
 			// with fullCircle option, only min text is showed
 			expect(min.empty()).to.be.false;
 			expect(max.empty()).to.be.true;
+		});
+	});
+
+	describe("check for interaction", () => {
+		let chart;
+		const spyOver = sinon.spy();
+		const spyOut = sinon.spy();
+
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 150],
+						["data3", 120]
+					],
+					type: "pie",
+					onover: spyOver,
+					onout: spyOut
+				}
+			});
+		});
+
+		/*beforeEach(() => {
+			spyOver.resetHistory();
+			spyOut.resetHistory();
+		});*/
+
+		it("should interact properly for mouseover & mouseout", done => {
+			setTimeout(() => {
+				const path = chart.$.main.select(`path.${CLASS.arc}-data2`).node();
+
+				util.fireEvent(path, "mouseover", {
+					clientX: 500,
+					clientY: 200
+				}, chart);
+
+				util.fireEvent(path, "mouseout", {
+					clientX: 0,
+					clientY: 0
+				}, chart);
+
+				expect(spyOver.calledOnce).to.be.true;
+				expect(spyOut.calledOnce).to.be.true;
+
+				expect(chart.$.tooltip.select(".value").text()).to.be.equal("50.0%");
+				done();
+			}, 500);
 		});
 	});
 });
