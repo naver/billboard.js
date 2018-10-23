@@ -395,6 +395,7 @@ extend(ChartInternal.prototype, {
 		$$.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
 		$$.hideXGridFocus();
 		$$.hideTooltip();
+		$$._handleLinkedCharts(false);
 		$$.unexpandCircles();
 		$$.unexpandBars();
 	},
