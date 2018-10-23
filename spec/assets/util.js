@@ -100,7 +100,7 @@ const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, cl
 	const eventRect = hoverChart.$.main
 		.select(`.${CLASS.eventRect}-${dataIndex}`)
 		.node();
-console.log(eventRect);
+
 	fireEvent(eventRect, eventName, pos, hoverChart);
 };
 
