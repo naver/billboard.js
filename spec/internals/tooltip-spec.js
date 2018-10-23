@@ -38,18 +38,9 @@ describe("TOOLTIP", function() {
 	const spy1 = sinon.spy();
 	const spy2 = sinon.spy();
 
-	// hover chart
-	const hoverChart = (hoverChart, eventName = "mousemove", pos = {clientX: 100, clientY: 100}, dataIndex = 2) => {
-		const eventRect = hoverChart.$.main
-			.select(`.${CLASS.eventRect}-${dataIndex}`)
-			.node();
-
-		util.fireEvent(eventRect, eventName, pos, hoverChart);
-	};
-
 	// check for the tooltip's ordering
 	const checkTooltip = (checkChart, expected) => {
-		hoverChart(checkChart);
+		util.hoverChart(checkChart);
 
 		const tooltips = checkChart.$.tooltip
 			.selectAll("tr")
@@ -64,7 +55,7 @@ describe("TOOLTIP", function() {
 
 	// check for the tooltip's ordering
 	const checkLinkedTooltip = (chart1, chart2, expected) => {
-		hoverChart(chart1);
+		util.hoverChart(chart1);
 
 		const tooltips = chart2.$.tooltip
 			.selectAll("tr")
@@ -96,8 +87,8 @@ describe("TOOLTIP", function() {
 	};
 
 	const checkCallback = (checkChart, doHide) => {
-		hoverChart(checkChart);
-		doHide && hoverChart(checkChart, "mouseout");
+		util.hoverChart(checkChart);
+		doHide && util.hoverChart(checkChart, "mouseout");
 	};
 
 	beforeEach(() => {
@@ -188,7 +179,7 @@ describe("TOOLTIP", function() {
 	describe("tooltip position", () => {
 		describe("without left margin", () => {
 			it("should show tooltip on proper position", () => {
-				hoverChart(chart);
+				util.hoverChart(chart);
 
 				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
@@ -214,7 +205,7 @@ describe("TOOLTIP", function() {
 			});
 
 			it("should show tooltip on proper position", () => {
-				hoverChart(chart);
+				util.hoverChart(chart);
 
 				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
@@ -237,7 +228,7 @@ describe("TOOLTIP", function() {
 			it("should show tooltip on proper position", () => {
 				chart.zoom([4,7]);
 
-				hoverChart(chart);
+				util.hoverChart(chart);
 
 				const tooltipContainer = chart.$.tooltip;
 				const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
@@ -261,7 +252,7 @@ describe("TOOLTIP", function() {
 		});
 
 		it("should be set to the coordinate where the function returned", () => {
-			hoverChart(chart);
+			util.hoverChart(chart);
 
 			const tooltipContainer = chart.$.tooltip;
 			const top = Math.floor(+tooltipContainer.style("top").replace(/px/, ""));
@@ -373,7 +364,7 @@ describe("TOOLTIP", function() {
 		});
 
 		it("second chart tooltip shouldn't be called", () => {
-			hoverChart(chart);
+			util.hoverChart(chart);
 
 			expect(args2.tooltip.order.called).to.be.false;
 		});
@@ -386,7 +377,7 @@ describe("TOOLTIP", function() {
 		});
 
 		it("both charts should be called", () => {
-			hoverChart(chart2);
+			util.hoverChart(chart2);
 
 			expect(args.tooltip.order.called).to.be.true;
 			expect(args2.tooltip.order.called).to.be.true;
@@ -400,7 +391,7 @@ describe("TOOLTIP", function() {
 		});
 
 		it("linked tooltips should be set to the coordinate where the function returned", () => {
-			hoverChart(chart);
+			util.hoverChart(chart);
 
 			[chart, chart2].forEach(v => {
 				const tooltipContainer = v.$.tooltip;
@@ -607,14 +598,14 @@ describe("TOOLTIP", function() {
 
 		it("tooltip should be displayed", () => {
 			// check for custom point shape
-			hoverChart(chart, undefined, {clientX: 292, clientY: 107});
+			util.hoverChart(chart, undefined, {clientX: 292, clientY: 107});
 
 			let value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data3 .value`).text();
 
 			expect(value).to.be.equal(800);
 
 			// check for circle point shape
-			hoverChart(chart, undefined, {clientX: 292, clientY: 34});
+			util.hoverChart(chart, undefined, {clientX: 292, clientY: 34});
 
 			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
 
@@ -628,7 +619,7 @@ describe("TOOLTIP", function() {
 			};
 
 			// check for custom point shape
-			hoverChart(chart, undefined, {clientX: 581, clientY: 214}, 4);
+			util.hoverChart(chart, undefined, {clientX: 581, clientY: 214}, 4);
 
 			chart.$.tooltip.selectAll(".name")
 				.each(function() {
@@ -673,7 +664,7 @@ describe("TOOLTIP", function() {
 
 		it("area-ranged type tooltip should be displayed correctly", () => {
 			// check for custom point shape
-			hoverChart(chart, undefined, {clientX: 185, clientY: 107});
+			util.hoverChart(chart, undefined, {clientX: 185, clientY: 107});
 
 			let value = chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
 
