@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181019145916
+ * @version 1.6.2-nightly-20181023105710
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181019145916
+ * @version 1.6.2-nightly-20181023105710
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181019145916",
+  version: "1.6.2-nightly-20181023105710",
 
   /**
    * Generate chart
@@ -3518,7 +3518,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
    */
   unselectRect: function unselectRect() {
     var $$ = this;
-    $$.svg.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_3__["default"].eventRect)).style("cursor", null), $$.hideXGridFocus(), $$.hideTooltip(), $$.unexpandCircles(), $$.unexpandBars();
+    $$.svg.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_3__["default"].eventRect)).style("cursor", null), $$.hideXGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
   },
   setOver: function setOver(index) {
     var $$ = this,
@@ -5968,16 +5968,19 @@ Object(_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_ChartInternal__WEBPACK_IMP
 
     if (dataToShow.length !== 0 && config.tooltip_show) {
       var datum = $$.tooltip.datum(),
+          dataStr = JSON.stringify(selectedData),
           width = datum && datum.width || 0,
           height = datum && datum.height || 0;
 
-      if (!datum || datum.current !== JSON.stringify(selectedData)) {
-        var html = config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color);
+      if (!datum || datum.current !== dataStr) {
+        var index = selectedData[0].index,
+            html = config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color);
         Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onshow, $$), $$.tooltip.html(html).style("display", "block").datum({
-          current: JSON.stringify(selectedData),
+          index: index,
+          current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
           height: height = $$.tooltip.property("offsetHeight")
-        }), Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onshown, $$), $$._handleLinkedCharts(!0, selectedData[0].index);
+        }), Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onshown, $$), $$._handleLinkedCharts(!0, index);
       } // Get tooltip dimensions
 
 
@@ -5995,7 +5998,7 @@ Object(_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_ChartInternal__WEBPACK_IMP
     var $$ = this,
         config = $$.config;
     // hide tooltip
-    Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onhidden, $$), $$._handleLinkedCharts(!1);
+    Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onhidden, $$);
   },
 
   /**
@@ -6009,20 +6012,22 @@ Object(_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_ChartInternal__WEBPACK_IMP
 
     if ($$.config.tooltip_linked) {
       var linkedName = $$.config.tooltip_linked_name;
-      $$.api.internal.charts.forEach(function (c) {
+      ($$.api.internal.charts || []).forEach(function (c) {
         if (c !== $$.api) {
-          var internal = c.internal,
-              isLinked = internal.config.tooltip_linked,
-              name = internal.config.tooltip_linked_name,
+          var _config = c.internal.config,
+              isLinked = _config.tooltip_linked,
+              name = _config.tooltip_linked_name,
               isInDom = document.body.contains(c.element);
 
           if (isLinked && linkedName === name && isInDom) {
-            var isShowing = internal.tooltip.style("display") === "block"; // prevent throwing error for non-paired linked indexes
+            var data = c.internal.tooltip.data()[0],
+                isNotSameIndex = index !== (data && data.index);
 
+            // prevent throwing error for non-paired linked indexes
             try {
-              isShowing ^ show && c.tooltip[isShowing ? "hide" : "show"]({
+              show && isNotSameIndex ? c.tooltip.show({
                 index: index
-              });
+              }) : !show && c.tooltip.hide();
             } catch (e) {}
           }
         }
