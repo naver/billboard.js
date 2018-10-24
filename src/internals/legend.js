@@ -25,18 +25,39 @@ extend(ChartInternal.prototype, {
 		$$.legend = $$.svg.append("g");
 
 		if (config.legend_show) {
-			if (config.legend_contents_bindto && config.legend_contents_template) {
-				$$.updateLegendTemplate();
-			} else {
-				$$.legend.attr("transform", $$.getTranslate("legend"));
+			$$.legend.attr("transform", $$.getTranslate("legend"));
 
-				// MEMO: call here to update legend box and translate for all
-				// MEMO: translate will be updated by this, so transform not needed in updateLegend()
-				$$.updateLegendWithDefaults();
-			}
+			// MEMO: call here to update legend box and translate for all
+			// MEMO: translate will be updated by this, so transform not needed in updateLegend()
+			$$.updateLegend();
 		} else {
 			$$.legend.style("visibility", "hidden");
 			$$.hiddenLegendIds = $$.mapToIds($$.data.targets);
+		}
+	},
+
+	/**
+	 * Update legend element
+	 * @param targetIds
+	 * @param options
+	 * @param transitions
+	 * @private
+	 */
+	updateLegend(targetIds, options, transitions) {
+		const $$ = this;
+		const config = $$.config;
+
+		if (config.legend_contents_bindto && config.legend_contents_template) {
+			$$.updateLegendTemplate();
+		} else {
+			$$.updateLegendElement(
+				targetIds || $$.mapToIds($$.data.targets),
+				options || {
+					withTransform: false,
+					withTransitionForTransform: false,
+					withTransition: false
+				}, transitions
+			);
 		}
 	},
 
@@ -74,20 +95,6 @@ extend(ChartInternal.prototype, {
 
 			$$.setLegendItem(legendItem);
 		}
-	},
-
-	/**
-	 * Update the legend to its default value.
-	 * @private
-	 */
-	updateLegendWithDefaults() {
-		const $$ = this;
-
-		$$.updateLegend($$.mapToIds($$.data.targets), {
-			withTransform: false,
-			withTransitionForTransform: false,
-			withTransition: false
-		});
 	},
 
 	/**
@@ -261,9 +268,7 @@ extend(ChartInternal.prototype, {
 			config.legend_show = true;
 			$$.legend.style("visibility", "visible");
 
-			if (!$$.legendHasRendered) {
-				$$.updateLegendWithDefaults();
-			}
+			!$$.legendHasRendered && $$.updateLegend();
 		}
 		$$.removeHiddenLegendIds(targetIds);
 
@@ -359,11 +364,11 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Update the legend
 	 * @private
-	 * @param {Array} ID's of target
-	 * @param {Object} withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-	 * @param {Object} the return value of the generateTransitions
+	 * @param {Array} targetIds ID's of target
+	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+	 * @param {Object} transitions Return value of the generateTransitions
 	 */
-	updateLegend(targetIds, options, transitions) {
+	updateLegendElement(targetIds, options, transitions) {
 		const $$ = this;
 		const config = $$.config;
 		const paddingTop = 4;

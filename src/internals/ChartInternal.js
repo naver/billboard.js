@@ -614,7 +614,7 @@ export default class ChartInternal {
 			$$.inputType === "touch" && $$.hideTooltip();
 
 		// update legend and transform each g
-		if (wth.Legend && config.legend_show && !config.legend_contents_bindto) {
+		if (wth.Legend && config.legend_show) {
 			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
 		} else if (wth.Dimension) {
 			// need to update dimension (e.g. axis.y.tick.values) because y tick values should change

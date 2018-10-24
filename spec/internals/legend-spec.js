@@ -323,6 +323,24 @@ describe("LEGEND", () => {
 			expect(items.size()).to.be.equal(2);
 		});
 
+		it("check for template update on dynamic loading", d => {
+			setTimeout(function() {
+				chart.load({
+					columns: [
+						["data3", 200, 100, 300, 130, 20]
+					],
+					unload: true,
+					done: () => {
+						const legend = d3.select("#legend");
+
+						expect(legend.selectAll("li").size()).to.be.equal(1);
+						expect(legend.text()).to.be.equal("data3");
+						d();
+					}
+				});
+			}, 500);
+		});
+
 		it("set options legend.content.template as function", () => {
 			args.legend.contents.template = function(title, color, data) {
 				if (title !== "data1") {
