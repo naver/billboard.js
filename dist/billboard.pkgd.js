@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181023105710
+ * @version 1.6.2-nightly-20181024173002
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181023105710
+ * @version 1.6.2-nightly-20181024173002
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181023105710",
+  version: "1.6.2-nightly-20181024173002",
 
   /**
    * Generate chart
@@ -602,7 +602,7 @@ function () {
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
       // show/hide if manual culling needed
-      if (options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), wth.Legend && config.legend_show && !config.legend_contents_bindto ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+      if (options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
         var axis = $$[key],
             tickValues = config["axis_".concat(key, "_tick_values")],
             tickCount = config["axis_".concat(key, "_tick_count")];
@@ -5733,7 +5733,24 @@ Object(_util__WEBPACK_IMPORTED_MODULE_3__["extend"])(_ChartInternal__WEBPACK_IMP
   initLegend: function initLegend() {
     var $$ = this,
         config = $$.config;
-    $$.legendItemTextBox = {}, $$.legendHasRendered = !1, $$.legend = $$.svg.append("g"), config.legend_show ? config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : ($$.legend.attr("transform", $$.getTranslate("legend")), $$.updateLegendWithDefaults()) : ($$.legend.style("visibility", "hidden"), $$.hiddenLegendIds = $$.mapToIds($$.data.targets));
+    $$.legendItemTextBox = {}, $$.legendHasRendered = !1, $$.legend = $$.svg.append("g"), config.legend_show ? ($$.legend.attr("transform", $$.getTranslate("legend")), $$.updateLegend()) : ($$.legend.style("visibility", "hidden"), $$.hiddenLegendIds = $$.mapToIds($$.data.targets));
+  },
+
+  /**
+   * Update legend element
+   * @param targetIds
+   * @param options
+   * @param transitions
+   * @private
+   */
+  updateLegend: function updateLegend(targetIds, options, transitions) {
+    var $$ = this,
+        config = $$.config;
+    config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), options || {
+      withTransform: !1,
+      withTransitionForTransform: !1,
+      withTransition: !1
+    }, transitions);
   },
 
   /**
@@ -5759,19 +5776,6 @@ Object(_util__WEBPACK_IMPORTED_MODULE_3__["extend"])(_ChartInternal__WEBPACK_IMP
       }).data(ids);
       $$.setLegendItem(legendItem);
     }
-  },
-
-  /**
-   * Update the legend to its default value.
-   * @private
-   */
-  updateLegendWithDefaults: function updateLegendWithDefaults() {
-    var $$ = this;
-    $$.updateLegend($$.mapToIds($$.data.targets), {
-      withTransform: !1,
-      withTransitionForTransform: !1,
-      withTransition: !1
-    });
   },
 
   /**
@@ -5909,7 +5913,7 @@ Object(_util__WEBPACK_IMPORTED_MODULE_3__["extend"])(_ChartInternal__WEBPACK_IMP
   showLegend: function showLegend(targetIds) {
     var $$ = this,
         config = $$.config;
-    config.legend_show || (config.legend_show = !0, $$.legend.style("visibility", "visible"), !$$.legendHasRendered && $$.updateLegendWithDefaults()), $$.removeHiddenLegendIds(targetIds), $$.legend.selectAll($$.selectorLegends(targetIds)).style("visibility", "visible").transition().style("opacity", function () {
+    config.legend_show || (config.legend_show = !0, $$.legend.style("visibility", "visible"), !$$.legendHasRendered && $$.updateLegend()), $$.removeHiddenLegendIds(targetIds), $$.legend.selectAll($$.selectorLegends(targetIds)).style("visibility", "visible").transition().style("opacity", function () {
       return $$.opacityForLegend(Object(d3_selection__WEBPACK_IMPORTED_MODULE_0__["select"])(this));
     });
   },
@@ -5960,11 +5964,11 @@ Object(_util__WEBPACK_IMPORTED_MODULE_3__["extend"])(_ChartInternal__WEBPACK_IMP
   /**
    * Update the legend
    * @private
-   * @param {Array} ID's of target
-   * @param {Object} withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-   * @param {Object} the return value of the generateTransitions
+   * @param {Array} targetIds ID's of target
+   * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+   * @param {Object} transitions Return value of the generateTransitions
    */
-  updateLegend: function updateLegend(targetIds, options, transitions) {
+  updateLegendElement: function updateLegendElement(targetIds, options, transitions) {
     var xForLegend,
         yForLegend,
         background,
