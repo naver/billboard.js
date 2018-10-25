@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181024173002
+ * @version 1.6.2-nightly-20181025182407
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181024173002
+ * @version 1.6.2-nightly-20181025182407
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181024173002",
+  version: "1.6.2-nightly-20181025182407",
 
   /**
    * Generate chart
@@ -7235,21 +7235,38 @@ __webpack_require__.r(__webpack_exports__);
 
 
 Object(_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_ChartInternal__WEBPACK_IMPORTED_MODULE_0__["default"].prototype, {
-  hasCaches: function hasCaches(key) {
-    var isDataType = !!(arguments.length > 1 && arguments[1] !== undefined) && arguments[1];
-
-    if (isDataType) {
-      for (var i = 0, len = key.length; i < len; i++) if (!(key[i] in this.cache)) return !1;
-
-      return !0;
-    }
-
-    return key in this.cache;
-  },
+  /**
+   * Add cache
+   * @param {String} key
+   * @param {*} value
+   * @param {Boolean} isDataType
+   * @private
+   */
   addCache: function addCache(key, value) {
     var isDataType = !!(arguments.length > 2 && arguments[2] !== undefined) && arguments[2];
     this.cache[key] = isDataType ? this.cloneTarget(value) : value;
   },
+
+  /**
+   * Remove cache
+   * @param {String|Array} key
+   * @private
+   */
+  removeCache: function removeCache(key) {
+    var _this = this;
+
+    Object(_util__WEBPACK_IMPORTED_MODULE_1__["toArray"])(key).forEach(function (v) {
+      return delete _this.cache[v];
+    });
+  },
+
+  /**
+   * Get cahce
+   * @param {String|Array} key
+   * @param {Boolean} isDataType
+   * @return {*}
+   * @private
+   */
   getCache: function getCache(key) {
     var isDataType = !!(arguments.length > 1 && arguments[1] !== undefined) && arguments[1];
 
@@ -7846,16 +7863,20 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart_
   load: function load(args) {
     var $$ = this.internal,
         config = $$.config;
-    // use cache if exists
-    return args.xs && $$.addXs(args.xs), "names" in args && this.data.names(args.names), "classes" in args && Object.keys(args.classes).forEach(function (id) {
+    // update xs if specified
+    // update names if exists
+    // update classes if exists
+    // update axes if exists
+    // update colors if exists
+    args.xs && $$.addXs(args.xs), "names" in args && this.data.names(args.names), "classes" in args && Object.keys(args.classes).forEach(function (id) {
       config.data_classes[id] = args.classes[id];
     }), "categories" in args && $$.isCategorized() && (config.axis_x_categories = args.categories), "axes" in args && Object.keys(args.axes).forEach(function (id) {
       config.data_axes[id] = args.axes[id];
     }), "colors" in args && Object.keys(args.colors).forEach(function (id) {
       config.data_colors[id] = args.colors[id];
-    }), "cacheIds" in args && $$.hasCaches(args.cacheIds, !0) ? void $$.load($$.getCache(args.cacheIds, !0), args.done) : void ("unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
+    }), "unload" in args && args.unload !== !1 ? $$.unload($$.mapToTargetIds(args.unload === !0 ? null : args.unload), function () {
       return $$.loadFromArgs(args);
-    }) : $$.loadFromArgs(args)); // unload if needed
+    }) : $$.loadFromArgs(args);
   },
 
   /**
@@ -7868,12 +7889,17 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart_
    * @instance
    * @memberOf Chart
    * @param {Object} args
-   * - If ids given, the data that has specified target id will be unloaded. ids should be String or Array. If ids is not specified, all data will be unloaded.
-   * - If done given, the specified function will be called after data loded.
+   *  | key | Type | Description |
+   *  | --- | --- | --- |
+   *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
+   *  | done | Fuction | Callback after data is unloaded. |
    * @example
    *  // Unload data2 and data3
    *  chart.unload({
-   *    ids: ["data2", "data3"]
+   *    ids: ["data2", "data3"],
+   *    done: function() {
+   *       // called after the unloaded
+   *    }
    *  });
    */
   unload: function unload(argsValue) {
@@ -7883,12 +7909,14 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart_
       ids: args
     } : Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["isString"])(args) && (args = {
       ids: [args]
-    }), $$.unload($$.mapToTargetIds(args.ids), function () {
+    });
+    var ids = $$.mapToTargetIds(args.ids);
+    $$.unload(ids, function () {
       $$.redraw({
         withUpdateOrgXDomain: !0,
         withUpdateXDomain: !0,
         withLegend: !0
-      }), args.done && args.done();
+      }), $$.removeCache(ids), args.done && args.done();
     });
   }
 });
