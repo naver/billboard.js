@@ -275,7 +275,19 @@ describe("API load", function() {
 					}, 500);
 				}
 			});
+		});
 
-		})
+		it("check for .unload()", () => {
+			const target = "data2";
+
+			// when
+			chart.unload({
+				ids: target,
+				done: () => {
+					expect(chart.data(target).length).to.be.equal(0);
+					expect(chart.internal.getCache(target)).to.be.null;
+				}
+			});
+		});
 	});
 });

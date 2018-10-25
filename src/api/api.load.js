@@ -71,12 +71,6 @@ extend(Chart.prototype, {
 			config.data_colors[id] = args.colors[id];
 		});
 
-		// use cache if exists
-		if ("cacheIds" in args && $$.hasCaches(args.cacheIds, true)) {
-			$$.load($$.getCache(args.cacheIds, true), args.done);
-			return;
-		}
-
 		// unload if needed
 		if ("unload" in args && args.unload !== false) {
 			// TODO: do not unload if target will load (included in url/rows/columns)
@@ -98,12 +92,17 @@ extend(Chart.prototype, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {Object} args
-	 * - If ids given, the data that has specified target id will be unloaded. ids should be String or Array. If ids is not specified, all data will be unloaded.
-	 * - If done given, the specified function will be called after data loded.
+	 *  | key | Type | Description |
+	 *  | --- | --- | --- |
+	 *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
+	 *  | done | Fuction | Callback after data is unloaded. |
 	 * @example
 	 *  // Unload data2 and data3
 	 *  chart.unload({
-	 *    ids: ["data2", "data3"]
+	 *    ids: ["data2", "data3"],
+	 *    done: function() {
+	 *       // called after the unloaded
+	 *    }
 	 *  });
 	 */
 	unload(argsValue) {
@@ -116,13 +115,16 @@ extend(Chart.prototype, {
 			args = {ids: [args]};
 		}
 
-		$$.unload($$.mapToTargetIds(args.ids), () => {
+		const ids = $$.mapToTargetIds(args.ids);
+
+		$$.unload(ids, () => {
 			$$.redraw({
 				withUpdateOrgXDomain: true,
 				withUpdateXDomain: true,
 				withLegend: true
 			});
 
+			$$.removeCache(ids);
 			args.done && args.done();
 		});
 	}
