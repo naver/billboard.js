@@ -3,27 +3,36 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
-import {extend} from "./util";
+import {toArray, extend} from "./util";
 
 extend(ChartInternal.prototype, {
-	hasCaches(key, isDataType = false) {
-		if (isDataType) {
-			for (let i = 0, len = key.length; i < len; i++) {
-				if (!(key[i] in this.cache)) {
-					return false;
-				}
-			}
-
-			return true;
-		} else {
-			return key in this.cache;
-		}
-	},
-
+	/**
+	 * Add cache
+	 * @param {String} key
+	 * @param {*} value
+	 * @param {Boolean} isDataType
+	 * @private
+	 */
 	addCache(key, value, isDataType = false) {
 		this.cache[key] = isDataType ? this.cloneTarget(value) : value;
 	},
 
+	/**
+	 * Remove cache
+	 * @param {String|Array} key
+	 * @private
+	 */
+	removeCache(key) {
+		toArray(key).forEach(v => delete this.cache[v]);
+	},
+
+	/**
+	 * Get cahce
+	 * @param {String|Array} key
+	 * @param {Boolean} isDataType
+	 * @return {*}
+	 * @private
+	 */
 	getCache(key, isDataType = false) {
 		if (isDataType) {
 			const targets = [];
