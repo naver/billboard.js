@@ -1465,6 +1465,21 @@ var demos = {
 				}
 			}
 		},
+		DataSelection: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 230, 280, 320, 218, 250, 150]
+					],
+					selection: {
+						enabled: true,
+						draggable: true
+					}
+				}
+			},
+			description: "For selection, click data point or drag over data points"
+		},
 		OnMinMaxCallback: {
 			options: {
 				data: {
@@ -1589,7 +1604,8 @@ var demos = {
 				subchart: {
 					show: true
 				}
-			}
+			},
+			description: "Drag over subchart area to zoom main chart.<br>When is zoomed, try dragging zoom selection element or expand it dragging each edge(left/right)"
 		},
 		Zoom: {
 			options: {
@@ -1601,7 +1617,8 @@ var demos = {
 				zoom: {
 					enabled: true
 				}
-			}
+			},
+			description: "For zoom, move mouse wheel(desktop) or pinch(mobile) over chart area.<br>When is zoomed, navigate with dragging it."
 		},
 		DragZoom: {
 			options: {
@@ -1615,7 +1632,8 @@ var demos = {
 						type: "drag"
 					}
 				}
-			}
+			},
+			description: "Drag over chart area"
 		}
 	},
 
