@@ -8,6 +8,7 @@ var billboardDemo = {
 		this.$chartArea = document.querySelector(".chart_area");
 		this.$list = document.querySelector(".sidebar-nav");
 		this.$title = document.getElementById("title");
+		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
 		this.$code = document.querySelector("code");
 
@@ -93,6 +94,8 @@ var billboardDemo = {
 			.replace(/([A-Z][a-z])/g, " $1")
 			.replace(/([A-Z]+)/g, " $1");
 
+		// set description
+		this.$description.innerHTML = demos[type[0]][type[1]].description || "";
 		this.$codeArea.style.display = "block";
 
 		// remove selected class

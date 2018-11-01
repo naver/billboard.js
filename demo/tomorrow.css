@@ -52,3 +52,8 @@ pre code {
 .chart_area ul {
   font-size:1.1em;
 }
+
+#description {
+  font-size: 13px;
+  color: gray;
+}
