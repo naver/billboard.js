@@ -157,7 +157,7 @@ extend(ChartInternal.prototype, {
 
 	generateTargetX(rawX, id, index) {
 		const $$ = this;
-		let x = index;
+		let x = $$.isCategorized() ? index : (rawX || index);
 
 		if ($$.isTimeSeries()) {
 			x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index));
