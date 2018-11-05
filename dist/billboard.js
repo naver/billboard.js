@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181025182407
+ * @version 1.6.2-nightly-20181105182307
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181025182407
+ * @version 1.6.2-nightly-20181105182307
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181025182407",
+  version: "1.6.2-nightly-20181105182307",
 
   /**
    * Generate chart
@@ -2550,7 +2550,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
   },
   generateTargetX: function generateTargetX(rawX, id, index) {
     var $$ = this,
-        x = index;
+        x = $$.isCategorized() ? index : rawX || index;
     return $$.isTimeSeries() ? x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index)) : $$.isCustomX() && !$$.isCategorized() && (x = Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["isValue"])(rawX) ? +rawX : $$.getXValue(id, index)), x;
   },
   cloneTarget: function cloneTarget(target) {
@@ -9005,9 +9005,11 @@ __webpack_require__.r(__webpack_exports__);
  * @instance
  * @memberOf Chart
  * @param {String|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
+ * @return {Array} Data objects
  * @example
  * // Get only data1 data
  * chart.data("data1");
+ * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
  *
  * // Get data1 and data2 data
  * chart.data(["data1", "data2"]);
@@ -9030,9 +9032,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    * @instance
    * @memberOf Chart
    * @param {String|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
+   * @return {Array} Data objects
    * @example
    * // Get shown data by filtering to include only data1 data
    * chart.data.shown("data1");
+   * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
    *
    * // Get shown data by filtering to include data1 and data2 data
    * chart.data.shown(["data1", "data2"]);
@@ -9050,9 +9054,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    * @instance
    * @memberOf Chart
    * @param {String|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+   * @return {Array} Data values
    * @example
    * // Get data1 values
    * chart.data.values("data1");
+   * // --> [10, 20, 30, 40]
    */
   values: function (targetId) {
     var values = null;
@@ -9075,9 +9081,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    * @instance
    * @memberOf Chart
    * @param {Object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+   * @return {Object} Corresponding names according its key value, if specified names values.
    * @example
    * // Get current names
    * chart.data.names();
+   * // --> {data1: "test1", data2: "test2"}
    *
    * // Update names
    * chart.data.names({
@@ -9095,9 +9103,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    * @instance
    * @memberOf Chart
    * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as
+   * @return {Object} Corresponding data color value according its key value.
    * @example
    * // Get current colors
    * chart.data.colors();
+   * // --> {data1: "#00c73c", data2: "#fa7171"}
    *
    * // Update colors
    * chart.data.colors({
@@ -9115,9 +9125,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    * @instance
    * @memberOf Chart
    * @param {Object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
+   * @return {Object} Corresponding axes value for data, if specified axes value.
    * @example
    * // Get current axes
    * chart.data.axes();
+   * // --> {data1: "y"}
    *
    * // Update axes
    * chart.data.axes({
@@ -9127,6 +9139,36 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    */
   axes: function axes(_axes) {
     return this.internal.updateDataAttributes("axes", _axes);
+  },
+
+  /**
+   * Get the minimum data value bound to the chart
+   * @method data․min
+   * @instance
+   * @memberOf Chart
+   * @return {Array} Data objects
+   * @example
+   * // Get current axes
+   * chart.data.min();
+   * // --> [{x: 0, value: 30, id: "data1", index: 0}, ...]
+   */
+  min: function min() {
+    return this.internal.getMinMaxData().min;
+  },
+
+  /**
+   * Get the maximum data value bound to the chart
+   * @method data․max
+   * @instance
+   * @memberOf Chart
+   * @return {Array} Data objects
+   * @example
+   * // Get current axes
+   * chart.data.max();
+   * // --> [{x: 3, value: 400, id: "data1", index: 3}, ...]
+   */
+  max: function max() {
+    return this.internal.getMinMaxData().max;
   }
 }), Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart__WEBPACK_IMPORTED_MODULE_0__["default"].prototype, {
   data: data
@@ -9240,11 +9282,12 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart_
    *  chart.x([100, 200, 300, 400, ...]);
    */
   x: function x(_x) {
-    var $$ = this.internal;
-    return arguments.length && ($$.updateTargetX($$.data.targets, _x), $$.redraw({
+    var $$ = this.internal,
+        isCategorized = $$.isCustomX() && $$.isCategorized();
+    return Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["isArray"])(_x) && (isCategorized ? $$.api.categories(_x) : ($$.updateTargetX($$.data.targets, _x), $$.redraw({
       withUpdateOrgXDomain: !0,
       withUpdateXDomain: !0
-    })), $$.data.xs;
+    }))), isCategorized ? $$.api.categories() : $$.data.xs;
   },
 
   /**
@@ -9266,7 +9309,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart_
    */
   xs: function xs(_xs) {
     var $$ = this.internal;
-    return arguments.length && ($$.updateTargetXs($$.data.targets, _xs), $$.redraw({
+    return Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["isObject"])(_xs) && ($$.updateTargetXs($$.data.targets, _xs), $$.redraw({
       withUpdateOrgXDomain: !0,
       withUpdateXDomain: !0
     })), $$.data.xs;
