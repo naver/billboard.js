@@ -6,12 +6,14 @@
 import util from "../assets/util";
 
 describe("API data", function() {
+	const data = [
+		["data1", 30, 30, 100, 400, 150, 250],
+		["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+	];
+
 	const chart = util.generate({
 		data: {
-			columns: [
-				["data1", 30, 200, 100, 400, 150, 250],
-				["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-			],
+			columns: data,
 			names: {
 				data1: "Data Name 1",
 				data2: "Data Name 2"
@@ -90,8 +92,8 @@ describe("API data", function() {
 
 	describe("data.values()", () => {
 		it("should return values for specified target", () => {
-			const expectedValues1 = [30, 200, 100, 400, 150, 250];
-			const expectedValues2 = [5000, 2000, 1000, 4000, 1500, 2500];
+			const expectedValues1 = data[0].slice(1);
+			const expectedValues2 = data[1].slice(1);
 
 			// retrieve one data value
 			let values = chart.data.values("data1");
@@ -225,6 +227,26 @@ describe("API data", function() {
 
 				done();
 			}, 500);
+		});
+	});
+
+	describe("data.min/max()", () => {
+		it("should return min value", () => {
+			const min = Math.min(...data[0].slice(1));
+			const minData = chart.data.min();
+
+			minData.forEach(v => {
+				expect(v.value).to.be.equal(min);
+			});
+		});
+
+		it("should return max value", () => {
+			const max = Math.max(...data[1].slice(1));
+			const maxData = chart.data.max();
+
+			maxData.forEach(v => {
+				expect(v.value).to.be.equal(max);
+			});
 		});
 	});
 });
