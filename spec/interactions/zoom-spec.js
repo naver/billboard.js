@@ -97,50 +97,6 @@ describe("ZOOM", function() {
 			};
 		});
 
-		it("check for zoom event callbacks", done => {
-			const main = chart.internal.main;
-			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
-
-			setTimeout(() => {
-				util.fireEvent(eventRect, "mousedown", {
-					clientX: 100,
-					clientY: 150
-				}, chart);
-			}, 500);
-
-			new Promise((resolve, reject) => {
-				setTimeout(() => {
-					if (spyOnZoomStart.called) {
-						util.fireEvent(eventRect, "mousemove", {
-							clientX: 100,
-							clientY: 150
-						}, chart);
-
-						resolve("--> onzoomstart callback called!");
-					};
-				}, 500);
-			}).then((msg) => {
-				console.log(msg);
-
-				return new Promise((resolve, reject) => {
-					setTimeout(() => {
-						if (spyOnZoom.called) {
-							// call explicitly, due to mouseup isn't firing well programmatically.
-							chart.internal.onZoomEnd();
-
-							resolve("--> onzoom callback called!");
-						};
-					}, 500);
-				})
-			}).then((msg) => {
-				console.log(msg);
-				console.log("--> onzoomend callback called!");
-				expect(spyOnZoomEnd.called).to.be.true;
-
-				done();
-			});
-		});
-
 		it("check for data zoom", () => {
 			const main = chart.internal.main;
 			const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
@@ -149,6 +105,65 @@ describe("ZOOM", function() {
 			chart.zoom([0,3]);  // zoom in
 
 			expect(+main.select(`.${CLASS.eventRect}-2`).attr("x")).to.be.above(xValue);
+		});
+
+		it("check for zoom event callbacks", done => {
+			const main = chart.internal.main;
+			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
+
+			util.fireEvent(eventRect, "mousedown", {
+				clientX: 100,
+				clientY: 150
+			}, chart);
+
+			new Promise((resolve, reject) => {
+				util.fireEvent(eventRect, "mousedown", {
+					clientX: 100,
+					clientY: 150
+				}, chart);
+
+				resolve();
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						if (spyOnZoomStart.called) {
+							util.fireEvent(eventRect, "mousemove", {
+								clientX: 100,
+								clientY: 150
+							}, chart);
+
+							resolve("--> onzoomstart callback called!");
+						}
+					}, 500);
+				});
+			}).then((msg) => {
+				console.log(msg);
+
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						if (spyOnZoom.called) {
+							if (spyOnZoom.called) {
+								util.fireEvent(eventRect, "mouseup", {
+									clientX: 100,
+									clientY: 150
+								}, chart);
+
+								// call explicitly, due to mouseup isn't firing well programmatically.
+								chart.internal.onZoomEnd();
+
+								resolve("--> onzoom callback called!");
+							}
+						};
+					}, 500);
+				})
+			}).then((msg) => {
+				console.log(msg);
+				console.log("--> onzoomend callback called!");
+
+				expect(spyOnZoomEnd.called).to.be.true;
+
+				done();
+			});
 		});
 
 		it("check for data zoom", () => {
