@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import {extend} from "../internals/util";
+import {isArray, isObject, extend} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
@@ -22,17 +22,22 @@ extend(Chart.prototype, {
 	 */
 	x(x) {
 		const $$ = this.internal;
+		const isCategorized = $$.isCustomX() && $$.isCategorized();
 
-		if (arguments.length) {
-			$$.updateTargetX($$.data.targets, x);
+		if (isArray(x)) {
+			if (isCategorized) {
+				$$.api.categories(x);
+			} else {
+				$$.updateTargetX($$.data.targets, x);
 
-			$$.redraw({
-				withUpdateOrgXDomain: true,
-				withUpdateXDomain: true
-			});
+				$$.redraw({
+					withUpdateOrgXDomain: true,
+					withUpdateXDomain: true
+				});
+			}
 		}
 
-		return $$.data.xs;
+		return isCategorized ? $$.api.categories() : $$.data.xs;
 	},
 
 	/**
@@ -55,7 +60,7 @@ extend(Chart.prototype, {
 	xs(xs) {
 		const $$ = this.internal;
 
-		if (arguments.length) {
+		if (isObject(xs)) {
 			$$.updateTargetXs($$.data.targets, xs);
 
 			$$.redraw({
