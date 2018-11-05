@@ -11,9 +11,11 @@ import {extend, isUndefined, isArray} from "../internals/util";
  * @instance
  * @memberOf Chart
  * @param {String|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
+ * @return {Array} Data objects
  * @example
  * // Get only data1 data
  * chart.data("data1");
+ * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
  *
  * // Get data1 and data2 data
  * chart.data(["data1", "data2"]);
@@ -35,9 +37,11 @@ extend(data, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {String|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
+	 * @return {Array} Data objects
 	 * @example
 	 * // Get shown data by filtering to include only data1 data
 	 * chart.data.shown("data1");
+	 * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
 	 *
 	 * // Get shown data by filtering to include data1 and data2 data
 	 * chart.data.shown(["data1", "data2"]);
@@ -55,9 +59,11 @@ extend(data, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {String|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+	 * @return {Array} Data values
 	 * @example
 	 * // Get data1 values
 	 * chart.data.values("data1");
+	 * // --> [10, 20, 30, 40]
 	 */
 	values: function(targetId) {
 		let values = null;
@@ -83,9 +89,11 @@ extend(data, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {Object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+	 * @return {Object} Corresponding names according its key value, if specified names values.
 	 * @example
 	 * // Get current names
 	 * chart.data.names();
+	 * // --> {data1: "test1", data2: "test2"}
 	 *
 	 * // Update names
 	 * chart.data.names({
@@ -105,9 +113,11 @@ extend(data, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as
+	 * @return {Object} Corresponding data color value according its key value.
 	 * @example
 	 * // Get current colors
 	 * chart.data.colors();
+	 * // --> {data1: "#00c73c", data2: "#fa7171"}
 	 *
 	 * // Update colors
 	 * chart.data.colors({
@@ -125,9 +135,11 @@ extend(data, {
 	 * @instance
 	 * @memberOf Chart
 	 * @param {Object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
+	 * @return {Object} Corresponding axes value for data, if specified axes value.
 	 * @example
 	 * // Get current axes
 	 * chart.data.axes();
+	 * // --> {data1: "y"}
 	 *
 	 * // Update axes
 	 * chart.data.axes({
@@ -137,6 +149,36 @@ extend(data, {
 	 */
 	axes: function(axes) {
 		return this.internal.updateDataAttributes("axes", axes);
+	},
+
+	/**
+	 * Get the minimum data value bound to the chart
+	 * @method data․min
+	 * @instance
+	 * @memberOf Chart
+	 * @return {Array} Data objects
+	 * @example
+	 * // Get current axes
+	 * chart.data.min();
+	 * // --> [{x: 0, value: 30, id: "data1", index: 0}, ...]
+	 */
+	min: function() {
+		return this.internal.getMinMaxData().min;
+	},
+
+	/**
+	 * Get the maximum data value bound to the chart
+	 * @method data․max
+	 * @instance
+	 * @memberOf Chart
+	 * @return {Array} Data objects
+	 * @example
+	 * // Get current axes
+	 * chart.data.max();
+	 * // --> [{x: 3, value: 400, id: "data1", index: 3}, ...]
+	 */
+	max: function() {
+		return this.internal.getMinMaxData().max;
 	}
 });
 
