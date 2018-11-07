@@ -107,7 +107,7 @@
     "webpack-merge": "^4.1.4",
     "webpack-monitor": "^1.0.14",
     "webpack-stylish": "^0.1.8",
-    "webpackbar": "^2.6.3",
+    "webpackbar": "^3.0.0",
     "write-file-webpack-plugin": "^4.4.1",
     "xml2js": "^0.4.18"
   }
