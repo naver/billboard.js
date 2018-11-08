@@ -35,6 +35,14 @@ extend(ChartInternal.prototype, {
 		);
 	},
 
+	/**
+	 * Get y Axis scale function
+	 * @param {Number} min
+	 * @param {Number} max
+	 * @param {Number} domain
+	 * @return {Function} scale
+	 * @private
+	 */
 	getY(min, max, domain) {
 		const scale = this.getScale(min, max, this.isTimeSeriesY());
 

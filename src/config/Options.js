@@ -671,10 +671,48 @@ export default class Options {
 			 * }
 			 */
 			data_hide: false,
+
+			/**
+			 * Filter values to be shown
+			 * The data value is the same as the returned by `.data()`.
+			 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+			 * @name data․filter
+			 * @memberOf Options
+			 * @type {Function}
+			 * @default undefined
+			 * @example
+			 * data: {
+			 *   // filter for id value
+			 *   filter: function(v) {
+			 *      // v: [{id: "data1", id_org: "data1", values: [
+			 *      //      {x: 0, value: 130, id: "data2", index: 0}, ...]
+			 *      //    }, ...]
+			 *      return v.id !== "data1";
+			 *   }
+			 */
 			data_filter: undefined,
 
 			/**
-			 * Set data selection enabled.<br><br>
+			 * Set the stacking to be normalized
+			 * - **NOTE:**
+			 *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
+			 *   - y Axis will be set in percentage value (0 ~ 100%)
+			 *   - Must have postive values
+			 * @name data․stack․normalize
+			 * @memberOf Options
+			 * @type {Boolean}
+			 * @default false
+			 * @see {@link https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized|Example}
+			 * @example
+			 * data: {
+		     *   stack: {
+		     *      normalize: true
+		     *   }
+		     * }
+			 */
+			data_stack_normalize: false,
+			/**
+			 * Set data selection enabled<br><br>
 			 * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
 			 * @name data․selection․enabled
 			 * @memberOf Options
