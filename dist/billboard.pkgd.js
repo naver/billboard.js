@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181105182307
+ * @version 1.6.2-nightly-20181108144513
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181105182307
+ * @version 1.6.2-nightly-20181108144513
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181105182307",
+  version: "1.6.2-nightly-20181108144513",
 
   /**
    * Generate chart
@@ -1081,7 +1081,9 @@ function () {
         axisName: axisName,
         tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
       },
-          axis = Object(_bb_axis__WEBPACK_IMPORTED_MODULE_3__["default"])(axisParams).scale(scale).orient(orient).tickFormat(tickFormat);
+          axis = Object(_bb_axis__WEBPACK_IMPORTED_MODULE_3__["default"])(axisParams).scale(scale).orient(orient).tickFormat(tickFormat || $$.isStackNormalized() && function (x) {
+        return "".concat(x, "%");
+      });
       return $$.isTimeSeriesY() ? // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
       axis.ticks(config.axis_y_tick_time_value) : axis.tickValues(tickValues), axis;
     }
@@ -2154,6 +2156,15 @@ Object(_util__WEBPACK_IMPORTED_MODULE_2__["extend"])(_ChartInternal__WEBPACK_IMP
         scale = $$.zoomScale || $$.getScale(min, max, $$.isTimeSeries());
     return $$.getCustomizedScale(domain ? scale.domain(domain) : scale, offset);
   },
+
+  /**
+   * Get y Axis scale function
+   * @param {Number} min
+   * @param {Number} max
+   * @param {Number} domain
+   * @return {Function} scale
+   * @private
+   */
   getY: function getY(min, max, domain) {
     var scale = this.getScale(min, max, this.isTimeSeriesY());
     return domain && scale.domain(domain), scale;
@@ -2277,9 +2288,10 @@ Object(_util__WEBPACK_IMPORTED_MODULE_2__["extend"])(_ChartInternal__WEBPACK_IMP
     return this.getYDomainMinMax(targets, "max");
   },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
+    var $$ = this,
+        config = $$.config;
+    if ($$.isStackNormalized()) return [0, 100];
     var lengths,
-        $$ = this,
-        config = $$.config,
         targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
     }),
@@ -2416,6 +2428,10 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
   },
   isNotX: function isNotX(key) {
     return !this.isX(key);
+  },
+  isStackNormalized: function isStackNormalized() {
+    var config = this.config;
+    return config.data_stack_normalize && config.data_groups.length;
   },
   getXKey: function getXKey(id) {
     var $$ = this,
@@ -2588,6 +2604,21 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     }
 
     return minMaxData;
+  },
+
+  /**
+   * Get sum of data per index
+   * @private
+   * @return {Array}
+   */
+  getTotalPerIndex: function getTotalPerIndex() {
+    var $$ = this,
+        sum = $$.getCache("$totalPerIndex");
+    return $$.isStackNormalized() && !sum && (sum = [], $$.data.targets.forEach(function (row) {
+      row.values.forEach(function (v, i) {
+        sum[i] || (sum[i] = 0), sum[i] += v.value;
+      });
+    })), sum;
   },
 
   /**
@@ -2936,6 +2967,31 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     }
 
     return value[type];
+  },
+
+  /**
+   * Get ratio value
+   * @param {String} type Ratio for given type
+   * @param {Object} d Data value object
+   * @param {Boolean} asPercent Convert the return as percent or not
+   * @return {Number} Ratio value
+   * @private
+   */
+  getRatio: function getRatio(type, d, asPercent) {
+    var $$ = this,
+        config = $$.config,
+        ratio = d && (d.ratio || d.value);
+    if (type === "arc") {
+        // if has padAngle set, calculate rate based on value
+        if ($$.pie.padAngle()()) {
+          var total = $$.getTotalDataSum();
+          $$.hiddenTargetIds.length && (total -= Object(d3_array__WEBPACK_IMPORTED_MODULE_1__["sum"])($$.api.data.values.call($$.api, $$.hiddenTargetIds))), ratio = d.value / total;
+        } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
+    } else if (type === "index" && !d.ratio) {
+      var totalPerIndex = this.getTotalPerIndex();
+      totalPerIndex && d.value && (d.ratio = d.value / totalPerIndex[d.index]), ratio = d.ratio;
+    } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
+    return asPercent ? ratio * 100 : ratio;
   }
 });
 
@@ -3508,10 +3564,10 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
     };
   },
   getShapeY: function getShapeY(isSub) {
-    var $$ = this;
+    var $$ = this,
+        isStackNormalized = $$.isStackNormalized();
     return function (d) {
-      var scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
-      return scale(d.value);
+      return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(isStackNormalized ? $$.getRatio("index", d, !0) : d.value);
     };
   },
   getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
@@ -3526,12 +3582,15 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
           offset = y0,
           i = idx;
       return targets.forEach(function (t) {
-        var values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
-        t.id === d.id || indices[t.id] !== indices[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["isUndefined"])(values[i]) || +values[i].x !== +d.x) && (i = -1, values.forEach(function (v, j) {
+        var rowValues = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values,
+            values = rowValues.map(function (v) {
+          return $$.isStackNormalized() ? $$.getRatio("index", v, !0) : v.value;
+        });
+        t.id === d.id || indices[t.id] !== indices[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["isUndefined"])(rowValues[i]) || +rowValues[i].x !== +d.x) && (i = -1, rowValues.forEach(function (v, j) {
           var x1 = v.x.constructor === Date ? +v.x : v.x,
               x2 = d.x.constructor === Date ? +d.x : d.x;
           x1 === x2 && (i = j);
-        })), i in values && values[i].value * d.value >= 0 && (offset += scale(values[i].value) - y0));
+        })), i in rowValues && rowValues[i].value * d.value >= 0 && (offset += scale(values[i]) - y0));
       }), offset;
     };
   },
@@ -3581,11 +3640,10 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var d3_selection__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(68);
 /* harmony import */ var d3_shape__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(67);
-/* harmony import */ var d3_array__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(70);
-/* harmony import */ var d3_interpolate__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(72);
-/* harmony import */ var _internals_ChartInternal__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(3);
-/* harmony import */ var _config_classes__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(17);
-/* harmony import */ var _internals_util__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(15);
+/* harmony import */ var d3_interpolate__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(72);
+/* harmony import */ var _internals_ChartInternal__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
+/* harmony import */ var _config_classes__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(17);
+/* harmony import */ var _internals_util__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(15);
 /**
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -3596,8 +3654,7 @@ __webpack_require__.r(__webpack_exports__);
 
 
 
-
-Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartInternal__WEBPACK_IMPORTED_MODULE_4__["default"].prototype, {
+Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartInternal__WEBPACK_IMPORTED_MODULE_3__["default"].prototype, {
   initPie: function initPie() {
     var $$ = this,
         config = $$.config,
@@ -3672,27 +3729,16 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
           y = isNaN(c[1]) ? 0 : c[1],
           h = Math.sqrt(x * x + y * y),
           ratio = $$.hasType("donut") && config.donut_label_ratio || $$.hasType("pie") && config.pie_label_ratio;
-      ratio = ratio ? Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["isFunction"])(ratio) ? ratio(d, $$.radius, h) : ratio : $$.radius && (h ? (36 / $$.radius > .375 ? 1.175 - 36 / $$.radius : .8) * $$.radius / h : 0), translate = "translate(".concat(x * ratio, ",").concat(y * ratio, ")");
+      ratio = ratio ? Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["isFunction"])(ratio) ? ratio(d, $$.radius, h) : ratio : $$.radius && (h ? (36 / $$.radius > .375 ? 1.175 - 36 / $$.radius : .8) * $$.radius / h : 0), translate = "translate(".concat(x * ratio, ",").concat(y * ratio, ")");
     }
 
     return translate;
-  },
-  getArcRatio: function getArcRatio(d) {
-    var $$ = this,
-        config = $$.config,
-        val = null;
-    if (d) // if has padAngle set, calculate rate based on value
-      if ($$.pie.padAngle()()) {
-        var total = $$.getTotalDataSum();
-        $$.hiddenTargetIds.length && (total -= Object(d3_array__WEBPACK_IMPORTED_MODULE_2__["sum"])($$.api.data.values.call($$.api, $$.hiddenTargetIds))), val = d.value / total;
-      } else val = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
-    return val;
   },
   convertToArcData: function convertToArcData(d) {
     return this.addName({
       id: d.data.id,
       value: d.value,
-      ratio: this.getArcRatio(d),
+      ratio: this.getRatio("arc", d),
       index: d.index
     });
   },
@@ -3702,7 +3748,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
     if (!$$.shouldShowArcLabel()) return "";
     var updated = $$.updateAngle(d),
         value = updated ? updated.value : null,
-        ratio = $$.getArcRatio(updated),
+        ratio = $$.getRatio("arc", updated),
         id = d.data.id;
     if (!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)) return "";
     var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
@@ -3724,10 +3770,10 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
         $$ = this;
     // MEMO: avoid to cancel transition
     if ($$.transiting) return void (interval = window.setInterval(function () {
-      $$.transiting || (window.clearInterval(interval), $$.legend.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].legendItemFocused)).size() > 0 && $$.expandArc(targetIds));
+      $$.transiting || (window.clearInterval(interval), $$.legend.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].legendItemFocused)).size() > 0 && $$.expandArc(targetIds));
     }, 10));
     var newTargetIds = $$.mapToTargetIds(targetIds);
-    $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArc))).each(function (d) {
+    $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc))).each(function (d) {
       $$.shouldExpand(d.data.id) && Object(d3_selection__WEBPACK_IMPORTED_MODULE_0__["select"])(this).selectAll("path").transition().duration($$.expandDuration(d.data.id)).attr("d", $$.svgArcExpanded).transition().duration($$.expandDuration(d.data.id) * 2).attr("d", $$.svgArcExpandedSub);
     });
   },
@@ -3736,9 +3782,9 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
 
     if (!$$.transiting) {
       var newTargetIds = $$.mapToTargetIds(targetIds);
-      $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArc))).selectAll("path").transition().duration(function (d) {
+      $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc))).selectAll("path").transition().duration(function (d) {
         return $$.expandDuration(d.data.id);
-      }).attr("d", $$.svgArc), $$.svg.selectAll("".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].arc)).style("opacity", "1");
+      }).attr("d", $$.svgArc), $$.svg.selectAll("".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].arc)).style("opacity", "1");
     }
   },
   expandDuration: function expandDuration(id) {
@@ -3784,7 +3830,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
         classChartArc = $$.classChartArc.bind($$),
         classArcs = $$.classArcs.bind($$),
         classFocus = $$.classFocus.bind($$),
-        mainPieUpdate = main.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcs)).selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArc)).data($$.pie(targets)).attr("class", function (d) {
+        mainPieUpdate = main.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcs)).selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc)).data($$.pie(targets)).attr("class", function (d) {
       return classChartArc(d) + classFocus(d.data);
     }),
         mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
@@ -3792,7 +3838,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
   },
   initArc: function initArc() {
     var $$ = this;
-    $$.arcs = $$.main.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chart)).append("g").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcs).attr("transform", $$.getTranslate("arc")), $$.setArcTitle();
+    $$.arcs = $$.main.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chart)).append("g").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcs).attr("transform", $$.getTranslate("arc")), $$.setArcTitle();
   },
 
   /**
@@ -3805,7 +3851,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
 
     if (title) {
       var multiline = title.split("\n"),
-          text = $$.arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsTitle).style("text-anchor", "middle");
+          text = $$.arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsTitle).style("text-anchor", "middle");
 
       // if is multiline text
       if (multiline.length > 1) {
@@ -3832,7 +3878,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
         main = $$.main,
         isTouch = $$.inputType === "touch",
         isMouse = $$.inputType === "mouse",
-        mainArc = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].arcs)).selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].arc)).data($$.arcData.bind($$));
+        mainArc = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].arcs)).selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].arc)).data($$.arcData.bind($$));
 
     if (mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
       return $$.color(d.data);
@@ -3852,7 +3898,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
         return "M 0 0";
       };
       isNaN(this._current.startAngle) && (this._current.startAngle = 0), isNaN(this._current.endAngle) && (this._current.endAngle = this._current.startAngle);
-      var interpolate = Object(d3_interpolate__WEBPACK_IMPORTED_MODULE_3__["interpolate"])(this._current, updated);
+      var interpolate = Object(d3_interpolate__WEBPACK_IMPORTED_MODULE_2__["interpolate"])(this._current, updated);
       return this._current = interpolate(0), function (t) {
         var interpolated = interpolate(t);
         // data.id will be updated by interporator
@@ -3926,20 +3972,20 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
       });
     }
 
-    var gaugeTextValue = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
-      return $$.isGaugeType(d.data) ? _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].gaugeValue : "";
+    var gaugeTextValue = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
+      return $$.isGaugeType(d.data) ? _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].gaugeValue : "";
     });
     config.gauge_fullCircle && gaugeTextValue.attr("dy", "".concat(Math.round($$.radius / 14)));
     // to handle multiline text for gauge type
-    var textMethod = !gaugeTextValue.empty() && gaugeTextValue.classed(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].gaugeValue) ? "call" : "text";
+    var textMethod = !gaugeTextValue.empty() && gaugeTextValue.classed(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].gaugeValue) ? "call" : "text";
 
     if (gaugeTextValue[textMethod]($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
       return $$.isGaugeType(d.data) ? "".concat(Math.round($$.radius / 5), "px") : "";
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-    }), main.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsTitle)).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge")) {
+    }), main.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsTitle)).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge")) {
       var endAngle = (config.gauge_fullCircle ? -4 : -1) * config.gauge_startingAngle;
-      $$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsBackground)).attr("d", function () {
+      $$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsBackground)).attr("d", function () {
         var d = {
           data: [{
             value: config.gauge_max
@@ -3948,14 +3994,14 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_6__["extend"])(_internals_ChartI
           endAngle: endAngle
         };
         return $$.getArc(d, !0, !0);
-      }), $$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsGaugeUnit)).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsGaugeMin)).attr("dx", "".concat(-1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)), "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !config.gauge_fullCircle && $$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsGaugeMax)).attr("dx", "".concat($$.innerRadius + ($$.radius - $$.innerRadius) / 2, "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
+      }), $$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsGaugeUnit)).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsGaugeMin)).attr("dx", "".concat(-1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)), "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !config.gauge_fullCircle && $$.arcs.select(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsGaugeMax)).attr("dx", "".concat($$.innerRadius + ($$.radius - $$.innerRadius) / 2, "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
     }
   },
   initGauge: function initGauge() {
     var $$ = this,
         config = $$.config,
         arcs = $$.arcs;
-    $$.hasType("gauge") && (arcs.append("path").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsBackground), arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none"), config.gauge_label_show && (arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none"), !config.gauge_fullCircle && arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_5__["default"].chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none")));
+    $$.hasType("gauge") && (arcs.append("path").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsBackground), arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none"), config.gauge_label_show && (arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none"), !config.gauge_fullCircle && arcs.append("text").attr("class", _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none")));
   },
   getGaugeLabelHeight: function getGaugeLabelHeight() {
     return this.config.gauge_label_show ? 20 : 0;
@@ -4083,7 +4129,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_3__["extend"])(_internals_ChartI
           posX = barX(d),
           posY = barY(d);
       // 4 points that make a bar
-      return $$.config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), [[posX, offset], [posX, posY - (y0 - offset)], [posX + barW, posY - (y0 - offset)], [posX + barW, offset]];
+      return $$.config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset, [[posX, offset], [posX, posY], [posX + barW, posY], [posX + barW, offset]];
     };
   },
   isWithinBar: function isWithinBar(that) {
@@ -4788,7 +4834,6 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
    */
   generateRadarPoints: function generateRadarPoints() {
     var $$ = this,
-        config = $$.config,
         targets = $$.data.targets,
         _$$$getRadarSize3 = $$.getRadarSize(),
         _$$$getRadarSize4 = _babel_runtime_helpers_slicedToArray__WEBPACK_IMPORTED_MODULE_0___default()(_$$$getRadarSize3, 2),
@@ -4797,21 +4842,14 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
         points = $$.getCache(cacheKey) || {},
         size = points._size;
 
-    // recalculate position only when the previous dimension has been changed
-    if (!size || size.width !== width && size.height !== height) {
-      var getRatio = function (v) {
-        return parseFloat(Math.max(v, 0)) / $$.maxValue * config.radar_size_ratio;
-      };
-
-      targets.forEach(function (d) {
-        points[d.id] = d.values.map(function (v, i) {
-          return $$.getRadarPosition(["x", "y"], i, undefined, getRatio(v.value));
-        });
-      }), points._size = {
-        width: width,
-        height: height
-      }, $$.addCache(cacheKey, points);
-    }
+    size && (size.width === width || size.height === height) || (targets.forEach(function (d) {
+      points[d.id] = d.values.map(function (v, i) {
+        return $$.getRadarPosition(["x", "y"], i, undefined, $$.getRatio("radar", v));
+      });
+    }), points._size = {
+      width: width,
+      height: height
+    }, $$.addCache(cacheKey, points));
   },
   redrawRadar: function redrawRadar(duration, durationForExit) {
     var $$ = this,
@@ -5527,7 +5565,9 @@ Object(_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_ChartInternal__WEBPACK_IMP
         nameFormat = config.tooltip_format_name || function (name) {
       return name;
     },
-        valueFormat = config.tooltip_format_value || defaultValueFormat,
+        valueFormat = config.tooltip_format_value || ($$.isStackNormalized() ? function (v, ratio) {
+      return "".concat((ratio * 100).toFixed(2), "%");
+    } : defaultValueFormat),
         order = config.tooltip_order,
         getRowValue = function (row) {
       return $$.getBaseValue(row);
@@ -8348,6 +8388,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(_internals_Chart_
    * @instance
    * @memberOf Chart
    * @param {Array} groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
+   * @return {Array} Grouped data names array
    * @example
    *  // data1 and data2 will be a new group.
    *  chart.groups([
@@ -21304,10 +21345,49 @@ var Options_Options = function Options() {
      * }
      */
     data_hide: !1,
+
+    /**
+     * Filter values to be shown
+     * The data value is the same as the returned by `.data()`.
+     * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
+     * @name data․filter
+     * @memberOf Options
+     * @type {Function}
+     * @default undefined
+     * @example
+     * data: {
+     *   // filter for id value
+     *   filter: function(v) {
+     *      // v: [{id: "data1", id_org: "data1", values: [
+     *      //      {x: 0, value: 130, id: "data2", index: 0}, ...]
+     *      //    }, ...]
+     *      return v.id !== "data1";
+     *   }
+     */
     data_filter: undefined,
 
     /**
-     * Set data selection enabled.<br><br>
+     * Set the stacking to be normalized
+     * - **NOTE:**
+     *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
+     *   - y Axis will be set in percentage value (0 ~ 100%)
+     *   - Must have postive values
+     * @name data․stack․normalize
+     * @memberOf Options
+     * @type {Boolean}
+     * @default false
+     * @see {@link https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized|Example}
+     * @example
+     * data: {
+        *   stack: {
+        *      normalize: true
+        *   }
+        * }
+     */
+    data_stack_normalize: !1,
+
+    /**
+     * Set data selection enabled<br><br>
      * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
      * @name data․selection․enabled
      * @memberOf Options
