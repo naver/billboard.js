@@ -306,6 +306,39 @@ describe("SHAPE LINE", () => {
 		});
 	});
 
+	describe("combined area-range type with grouped data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 20, 50, 40, 60, 50],
+						["data2", 200, 130, 90, 240, 130, 220],
+						["data3", [130,120,110], [120,110,100], [150,140,130], [140,130,120],[160,150,140],[150,140,130]],
+					],
+					type: "bar",
+					types: {
+						data3: "area-line-range"
+					},
+					groups: [
+						["data1", "data2"]
+					]
+				}
+			}
+		});
+
+		it("check for correct generation", () => {
+			const d = chart.$.line.lines.attr("d");
+			const box = d3.select(`.${CLASS.chartLine}.${CLASS.target}-data3`).node().getBBox();;
+
+			// check for correct path data
+			expect(/NaN/.test(d)).to.be.false;
+
+			// check for correct pos
+			expect(Math.round(box.height)).to.be.equal(83);
+			expect(Math.round(box.y)).to.be.equal(205);
+		});
+	});
+
 	describe("rotated step type", () => {
 		before(() => {
 			args = {

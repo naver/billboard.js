@@ -153,7 +153,7 @@ extend(ChartInternal.prototype, {
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
-		const yValue = (d, i) => (config.data_groups.length > 0 ?
+		const yValue = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[0][1] :
 			yScaleGetter.call($$, d.id)($$.getBaseValue(d))
 		);
@@ -389,19 +389,18 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const lineConnectNull = config.line_connectNull;
 		const isRotated = config.axis_rotated;
-		const isGrouped = config.data_groups.length > 0;
 
 		const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
-		const value0 = (d, i) => (isGrouped ?
+		const value0 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[0][1] :
 			yScaleGetter.call($$, d.id)(
 				$$.isAreaRangeType(d) ?
 					$$.getAreaRangeData(d, "high") : $$.getAreaBaseValue(d.id)
 			));
-		const value1 = (d, i) => (isGrouped ?
+		const value1 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[1][1] :
 			yScaleGetter.call($$, d.id)(
 				$$.isAreaRangeType(d) ?
@@ -542,17 +541,14 @@ extend(ChartInternal.prototype, {
 
 	updateCircleY() {
 		const $$ = this;
-		let lineIndices;
-		let getPoints;
 
-		if ($$.config.data_groups.length > 0) {
-			lineIndices = $$.getShapeIndices($$.isLineType);
-			getPoints = $$.generateGetLinePoints(lineIndices);
+		$$.circleY = (d, i) => {
+			const id = d.id;
 
-			$$.circleY = (d, i) => getPoints(d, i)[0][1];
-		} else {
-			$$.circleY = d => $$.getYScale(d.id)($$.getBaseValue(d));
-		}
+			return $$.isGrouped(id) ?
+				$$.generateGetLinePoints($$.getShapeIndices($$.isLineType))(d, i)[0][1] :
+				$$.getYScale(id)($$.getBaseValue(d));
+		};
 	},
 
 	getCircles(i, id) {
