@@ -109,7 +109,9 @@ export default class Axis {
 		const axis = bbAxis(axisParams)
 			.scale(scale)
 			.orient(orient)
-			.tickFormat(tickFormat);
+			.tickFormat(
+				tickFormat || ($$.isStackNormalized() && (x => `${x}%`))
+			);
 
 		$$.isTimeSeriesY() ?
 			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time

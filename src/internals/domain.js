@@ -80,6 +80,11 @@ extend(ChartInternal.prototype, {
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
 		const config = $$.config;
+
+		if ($$.isStackNormalized()) {
+			return [0, 100];
+		}
+
 		const targetsByAxisId = targets.filter(t => $$.axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 		const yMin = axisId === "y2" ? config.axis_y2_min : config.axis_y_min;

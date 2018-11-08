@@ -10,7 +10,6 @@ import {
 	arc as d3Arc,
 	pie as d3Pie
 } from "d3-shape";
-import {sum as d3Sum} from "d3-array";
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
@@ -175,38 +174,11 @@ extend(ChartInternal.prototype, {
 		return translate;
 	},
 
-	getArcRatio(d) {
-		const $$ = this;
-		const config = $$.config;
-		let val = null;
-
-		if (d) {
-			// if has padAngle set, calculate rate based on value
-			if ($$.pie.padAngle()()) {
-				let total = $$.getTotalDataSum();
-
-				if ($$.hiddenTargetIds.length) {
-					total -= d3Sum($$.api.data.values.call($$.api, $$.hiddenTargetIds));
-				}
-
-				val = d.value / total;
-
-			// otherwise, based on the rendered angle value
-			} else {
-				val = (d.endAngle - d.startAngle) / (
-					Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
-				);
-			}
-		}
-
-		return val;
-	},
-
 	convertToArcData(d) {
 		return this.addName({
 			id: d.data.id,
 			value: d.value,
-			ratio: this.getArcRatio(d),
+			ratio: this.getRatio("arc", d),
 			index: d.index,
 		});
 	},
@@ -221,7 +193,7 @@ extend(ChartInternal.prototype, {
 
 		const updated = $$.updateAngle(d);
 		const value = updated ? updated.value : null;
-		const ratio = $$.getArcRatio(updated);
+		const ratio = $$.getRatio("arc", updated);
 		const id = d.data.id;
 
 		if (!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)) {
