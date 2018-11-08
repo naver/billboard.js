@@ -107,7 +107,6 @@ extend(ChartInternal.prototype, {
 	 */
 	generateRadarPoints() {
 		const $$ = this;
-		const config = $$.config;
 		const targets = $$.data.targets;
 
 		const [width, height] = $$.getRadarSize();
@@ -116,11 +115,9 @@ extend(ChartInternal.prototype, {
 
 		// recalculate position only when the previous dimension has been changed
 		if (!size || (size.width !== width && size.height !== height)) {
-			const getRatio = v => (parseFloat(Math.max(v, 0)) / $$.maxValue) * config.radar_size_ratio;
-
 			targets.forEach(d => {
 				points[d.id] = d.values.map((v, i) => (
-					$$.getRadarPosition(["x", "y"], i, undefined, getRatio(v.value))
+					$$.getRadarPosition(["x", "y"], i, undefined, $$.getRatio("radar", v))
 				));
 			});
 

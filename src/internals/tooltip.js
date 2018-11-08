@@ -66,9 +66,8 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const titleFormat = config.tooltip_format_title || defaultTitleFormat;
 		const nameFormat = config.tooltip_format_name || (name => name);
-		const valueFormat = config.tooltip_format_value || defaultValueFormat;
+		const valueFormat = config.tooltip_format_value || ($$.isStackNormalized() ? ((v, ratio) => `${(ratio * 100).toFixed(2)}%`) : defaultValueFormat);
 		const order = config.tooltip_order;
-
 		const getRowValue = row => $$.getBaseValue(row);
 		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row.id);
 

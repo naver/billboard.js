@@ -173,11 +173,13 @@ extend(ChartInternal.prototype, {
 				posY = y0;
 			}
 
+			posY -= (y0 - offset);
+
 			// 4 points that make a bar
 			return [
 				[posX, offset],
-				[posX, posY - (y0 - offset)],
-				[posX + barW, posY - (y0 - offset)],
+				[posX, posY],
+				[posX + barW, posY],
 				[posX + barW, offset]
 			];
 		};

@@ -34,7 +34,8 @@ extend(ChartInternal.prototype, {
 		const indices = {};
 		let i = 0;
 
-		$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
+		$$.filterTargetsToShow($$.data.targets
+			.filter(typeFilter, $$))
 			.forEach(d => {
 				for (let j = 0, groups; (groups = config.data_groups[j]); j++) {
 					if (groups.indexOf(d.id) < 0) {
@@ -88,12 +89,11 @@ extend(ChartInternal.prototype, {
 
 	getShapeY(isSub) {
 		const $$ = this;
+		const isStackNormalized = $$.isStackNormalized();
 
-		return d => {
-			const scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
-
-			return scale(d.value);
-		};
+		return d => (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(
+			isStackNormalized ? $$.getRatio("index", d, true) : d.value
+		);
 	},
 
 	getShapeOffset(typeFilter, indices, isSub) {
@@ -107,34 +107,36 @@ extend(ChartInternal.prototype, {
 			let offset = y0;
 			let i = idx;
 
-			targets.forEach(t => {
-				const values = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
+			targets
+				.forEach(t => {
+					const rowValues = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
+					const values = rowValues.map(v => ($$.isStackNormalized() ? $$.getRatio("index", v, true) : v.value));
 
-				if (t.id === d.id || indices[t.id] !== indices[d.id]) {
-					return;
-				}
-
-				if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
-					// check if the x values line up
-					if (isUndefined(values[i]) || +values[i].x !== +d.x) { // "+" for timeseries
-						// if not, try to find the value that does line up
-						i = -1;
-
-						values.forEach((v, j) => {
-							const x1 = v.x.constructor === Date ? +v.x : v.x;
-							const x2 = d.x.constructor === Date ? +d.x : d.x;
-
-							if (x1 === x2) {
-								i = j;
-							}
-						});
+					if (t.id === d.id || indices[t.id] !== indices[d.id]) {
+						return;
 					}
 
-					if (i in values && values[i].value * d.value >= 0) {
-						offset += scale(values[i].value) - y0;
+					if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
+						// check if the x values line up
+						if (isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) { // "+" for timeseries
+							// if not, try to find the value that does line up
+							i = -1;
+
+							rowValues.forEach((v, j) => {
+								const x1 = v.x.constructor === Date ? +v.x : v.x;
+								const x2 = d.x.constructor === Date ? +d.x : d.x;
+
+								if (x1 === x2) {
+									i = j;
+								}
+							});
+						}
+
+						if (i in rowValues && rowValues[i].value * d.value >= 0) {
+							offset += scale(values[i]) - y0;
+						}
 					}
-				}
-			});
+				});
 
 			return offset;
 		};

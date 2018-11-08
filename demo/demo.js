@@ -1480,6 +1480,31 @@ var demos = {
 			},
 			description: "For selection, click data point or drag over data points"
 		},
+		DataStackNormalized: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7"],
+						["data1", 30, 280, 951, 400, 150, 546, 4528],
+						["data2", 130, 357, 751, 400, 150, 250, 3957],
+						["data3", 30, 280, 320, 218, 150, 150, 5000]
+					],
+					type: "bar",
+					groups: [
+						["data1", "data2", "data3"]
+					],
+					stack: {
+						normalize: true
+					}
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
 		OnMinMaxCallback: {
 			options: {
 				data: {
