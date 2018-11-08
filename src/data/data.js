@@ -46,6 +46,11 @@ extend(ChartInternal.prototype, {
 		return config.data_stack_normalize && config.data_groups.length;
 	},
 
+	isGrouped(id) {
+		return this.config.data_groups
+			.map(v => v.indexOf(id) >= 0)[0];
+	},
+
 	getXKey(id) {
 		const $$ = this;
 		const config = $$.config;
