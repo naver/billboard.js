@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181108144513
+ * @version 1.6.2-nightly-20181109153759
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181108144513
+ * @version 1.6.2-nightly-20181109153759
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181108144513",
+  version: "1.6.2-nightly-20181109153759",
 
   /**
    * Generate chart
@@ -2487,6 +2487,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     var config = this.config;
     return config.data_stack_normalize && config.data_groups.length;
   },
+  isGrouped: function isGrouped(id) {
+    return this.config.data_groups.map(function (v) {
+      return v.indexOf(id) >= 0;
+    })[0];
+  },
   getXKey: function getXKey(id) {
     var $$ = this,
         config = $$.config;
@@ -3034,18 +3039,36 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
   getRatio: function getRatio(type, d, asPercent) {
     var $$ = this,
         config = $$.config,
-        ratio = d && (d.ratio || d.value);
-    if (type === "arc") {
-        // if has padAngle set, calculate rate based on value
-        if ($$.pie.padAngle()()) {
-          var total = $$.getTotalDataSum();
-          $$.hiddenTargetIds.length && (total -= Object(d3_array__WEBPACK_IMPORTED_MODULE_1__["sum"])($$.api.data.values.call($$.api, $$.hiddenTargetIds))), ratio = d.value / total;
-        } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
-    } else if (type === "index" && !d.ratio) {
-      var totalPerIndex = this.getTotalPerIndex();
-      totalPerIndex && d.value && (d.ratio = d.value / totalPerIndex[d.index]), ratio = d.ratio;
-    } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
-    return asPercent ? ratio * 100 : ratio;
+        api = $$.api,
+        ratio = 0;
+
+    if (d && api.data.shown.call(api).length) {
+      var dataValues = api.data.values.bind(api);
+      if (ratio = d.ratio || d.value, type === "arc") {
+          // if has padAngle set, calculate rate based on value
+          if ($$.pie.padAngle()()) {
+            var total = $$.getTotalDataSum();
+            $$.hiddenTargetIds.length && (total -= Object(d3_array__WEBPACK_IMPORTED_MODULE_1__["sum"])(dataValues($$.hiddenTargetIds))), ratio = d.value / total;
+          } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
+      } else if (type === "index") {
+        var _total = this.getTotalPerIndex();
+
+        if ($$.hiddenTargetIds.length) {
+          var hiddenSum = dataValues($$.hiddenTargetIds, !1).reduce(function (acc, curr) {
+            return acc.map(function (v, i) {
+              return v + curr[i];
+            });
+          });
+          _total = _total.map(function (v, i) {
+            return v - hiddenSum[i];
+          });
+        }
+
+        _total && d.value && (d.ratio = d.value / _total[d.index]), ratio = d.ratio;
+      } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
+    }
+
+    return asPercent && ratio ? ratio * 100 : ratio;
   }
 });
 
@@ -4624,7 +4647,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
       return (isSub ? $$.subxx : $$.xx).call($$, d);
     },
         yValue = function (d, i) {
-      return config.data_groups.length > 0 ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getBaseValue(d));
+      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getBaseValue(d));
     },
         line = Object(d3_shape__WEBPACK_IMPORTED_MODULE_0__["line"])();
 
@@ -4776,17 +4799,16 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
         config = $$.config,
         lineConnectNull = config.line_connectNull,
         isRotated = config.axis_rotated,
-        isGrouped = config.data_groups.length > 0,
         getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
         yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
         xValue = function (d) {
       return (isSub ? $$.subxx : $$.xx).call($$, d);
     },
         value0 = function (d, i) {
-      return isGrouped ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : $$.getAreaBaseValue(d.id));
+      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : $$.getAreaBaseValue(d.id));
     },
         value1 = function (d, i) {
-      return isGrouped ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "low") : d.value);
+      return $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "low") : d.value);
     };
 
     return function (d) {
@@ -4853,13 +4875,11 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_4__["extend"])(_internals_ChartI
     return $$.config.zoom_enabled && $$.zoomScale ? hasValue ? $$.zoomScale(d.x) : null : hasValue ? $$.x(d.x) : null;
   },
   updateCircleY: function updateCircleY() {
-    var lineIndices,
-        getPoints,
-        $$ = this;
-    $$.config.data_groups.length > 0 ? (lineIndices = $$.getShapeIndices($$.isLineType), getPoints = $$.generateGetLinePoints(lineIndices), $$.circleY = function (d, i) {
-      return getPoints(d, i)[0][1];
-    }) : $$.circleY = function (d) {
-      return $$.getYScale(d.id)($$.getBaseValue(d));
+    var $$ = this;
+
+    $$.circleY = function (d, i) {
+      var id = d.id;
+      return $$.isGrouped(id) ? $$.generateGetLinePoints($$.getShapeIndices($$.isLineType))(d, i)[0][1] : $$.getYScale(id)($$.getBaseValue(d));
     };
   },
   getCircles: function getCircles(i, id) {
@@ -9101,14 +9121,16 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["extend"])(data, {
    * // --> [10, 20, 30, 40]
    */
   values: function (targetId) {
-    var values = null;
+    var flat = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+        values = null;
 
     if (targetId) {
       var targets = this.data(targetId);
       targets && Object(_internals_util__WEBPACK_IMPORTED_MODULE_1__["isArray"])(targets) && (values = [], targets.forEach(function (v) {
-        values = values.concat(v.values.map(function (d) {
+        var dataValue = v.values.map(function (d) {
           return d.value;
-        }));
+        });
+        flat ? values = values.concat(dataValue) : values.push(dataValue);
       }));
     }
 
