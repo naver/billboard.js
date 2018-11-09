@@ -63,6 +63,19 @@ describe("SHAPE ARC", () => {
 				.to.match(/M1\..+,211\..+A211\..+,211\..+,0,0,1,-124\..+,-171\..+L0,0Z/);
 		});
 
+		it("check when hiding data", () => {
+			const arc = chart.$.arc;
+			let total = 0;
+
+			// when
+			chart.hide("data1");
+
+			chart.data.shown().map(v => v.id)
+				.forEach(id => total += parseFloat(arc.select(`.${CLASS.target}-${id} text`).text()));
+
+			expect(total).to.be.equal(100);
+		});
+
 		it("should have correct d even if data id can be converted to a color", done => {
 			const chart = util.generate({
 				data: {
