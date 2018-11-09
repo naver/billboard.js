@@ -1505,6 +1505,19 @@ describe("DATA", () => {
 			});
 		});
 
+		it("check when hiding data", done => {
+			// when
+			chart.hide("data1");
+
+			setTimeout(() => {
+				chart.$.main.selectAll(`.${CLASS.target}-data2 path`).each(function() {
+					expect(this.getBBox().height).to.be.equal(chartHeight);
+				});
+
+				done();
+			}, 300);
+		});
+
 		it("set options data.type='area'", () => {
 			args.data.type = "area";
 			args.data.columns = [

@@ -65,7 +65,7 @@ extend(data, {
 	 * chart.data.values("data1");
 	 * // --> [10, 20, 30, 40]
 	 */
-	values: function(targetId) {
+	values: function(targetId, flat = true) {
 		let values = null;
 
 		if (targetId) {
@@ -75,7 +75,9 @@ extend(data, {
 				values = [];
 
 				targets.forEach(v => {
-					values = values.concat(v.values.map(d => d.value));
+					const dataValue = v.values.map(d => d.value);
+
+					flat ? (values = values.concat(dataValue)) : values.push(dataValue);
 				});
 			}
 		}
