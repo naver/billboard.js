@@ -765,37 +765,51 @@ extend(ChartInternal.prototype, {
 	getRatio(type, d, asPercent) {
 		const $$ = this;
 		const config = $$.config;
-		let ratio = d && (d.ratio || d.value);
+		const api = $$.api;
+		let ratio = 0;
 
-		if (type === "arc") {
-			// if has padAngle set, calculate rate based on value
-			if ($$.pie.padAngle()()) {
-				let total = $$.getTotalDataSum();
+		if (d && api.data.shown.call(api).length) {
+			const dataValues = api.data.values.bind(api);
+
+			ratio = d.ratio || d.value;
+
+			if (type === "arc") {
+				// if has padAngle set, calculate rate based on value
+				if ($$.pie.padAngle()()) {
+					let total = $$.getTotalDataSum();
+
+					if ($$.hiddenTargetIds.length) {
+						total -= d3Sum(dataValues($$.hiddenTargetIds));
+					}
+
+					ratio = d.value / total;
+
+					// otherwise, based on the rendered angle value
+				} else {
+					ratio = (d.endAngle - d.startAngle) / (
+						Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
+					);
+				}
+			} else if (type === "index") {
+				let total = this.getTotalPerIndex();
 
 				if ($$.hiddenTargetIds.length) {
-					total -= d3Sum($$.api.data.values.call($$.api, $$.hiddenTargetIds));
+					const hiddenSum = dataValues($$.hiddenTargetIds, false)
+						.reduce((acc, curr) => acc.map((v, i) => v + curr[i]));
+
+					total = total.map((v, i) => v - hiddenSum[i]);
 				}
 
-				ratio = d.value / total;
+				if (total && d.value) {
+					d.ratio = d.value / total[d.index];
+				}
 
-			// otherwise, based on the rendered angle value
-			} else {
-				ratio = (d.endAngle - d.startAngle) / (
-					Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
-				);
+				ratio = d.ratio;
+			} else if (type === "radar") {
+				ratio = (parseFloat(Math.max(d.value, 0)) / $$.maxValue) * config.radar_size_ratio;
 			}
-		} else if (type === "index" && !d.ratio) {
-			const totalPerIndex = this.getTotalPerIndex();
-
-			if (totalPerIndex && d.value) {
-				d.ratio = d.value / totalPerIndex[d.index];
-			}
-
-			ratio = d.ratio;
-		} else if (type === "radar") {
-			ratio = (parseFloat(Math.max(d.value, 0)) / $$.maxValue) * config.radar_size_ratio;
 		}
 
-		return asPercent ? ratio * 100 : ratio;
+		return asPercent && ratio ? ratio * 100 : ratio;
 	}
 });
