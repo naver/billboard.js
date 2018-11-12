@@ -62,7 +62,7 @@
     "babel-plugin-transform-merge-sibling-variables": "^6.9.4",
     "babel-plugin-transform-minify-booleans": "^6.9.4",
     "chai": "^4.2.0",
-    "clean-webpack-plugin": "^0.1.19",
+    "clean-webpack-plugin": "^1.0.0",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.0",
