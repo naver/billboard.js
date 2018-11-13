@@ -18,6 +18,7 @@ import {
 	isBoolean,
 	isDefined,
 	isFunction,
+	isNumber,
 	isObject,
 	isObjectType,
 	isString,
@@ -306,7 +307,7 @@ extend(ChartInternal.prototype, {
 						sum[i] = 0;
 					}
 
-					sum[i] += v.value;
+					sum[i] += isNumber(v.value) ? v.value : 0;
 				});
 			});
 		}
@@ -795,12 +796,14 @@ extend(ChartInternal.prototype, {
 
 				if ($$.hiddenTargetIds.length) {
 					const hiddenSum = dataValues($$.hiddenTargetIds, false)
-						.reduce((acc, curr) => acc.map((v, i) => v + curr[i]));
+						.reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
 
 					total = total.map((v, i) => v - hiddenSum[i]);
 				}
 
-				if (total && d.value) {
+				d.ratio = 0;
+
+				if (isNumber(d.value) && total && total[d.index] > 0) {
 					d.ratio = d.value / total[d.index];
 				}
 
