@@ -1518,6 +1518,31 @@ describe("DATA", () => {
 			}, 300);
 		});
 
+		it("set options data.columns", () => {
+			args.data.columns = [
+				["data1", 230, null, 300],
+				["data2", 198, 87, null]
+			];
+		});
+
+		it("check for null data", done => {
+			const main = chart.$.main;
+			const data1Bar = main.select(`.${CLASS.bars}-data1 .${CLASS.bar}-2`).node();
+			const data2Bar = main.select(`.${CLASS.bars}-data2 .${CLASS.bar}-1`).node();
+
+			expect(data1Bar.getBBox().height).to.be.equal(chartHeight);
+			expect(data2Bar.getBBox().height).to.be.equal(chartHeight);
+
+			// when
+			chart.hide("data2");
+
+			setTimeout(() => {
+				expect(data2Bar.getBBox().height).to.be.equal(0);
+
+				done();
+			}, 500)
+		});
+
 		it("set options data.type='area'", () => {
 			args.data.type = "area";
 			args.data.columns = [
