@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181112154211
+ * @version 1.6.2-nightly-20181113175238
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181112154211
+ * @version 1.6.2-nightly-20181113175238
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181112154211",
+  version: "1.6.2-nightly-20181113175238",
 
   /**
    * Generate chart
@@ -2675,7 +2675,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
         sum = $$.getCache("$totalPerIndex");
     return $$.isStackNormalized() && !sum && (sum = [], $$.data.targets.forEach(function (row) {
       row.values.forEach(function (v, i) {
-        sum[i] || (sum[i] = 0), sum[i] += v.value;
+        sum[i] || (sum[i] = 0), sum[i] += Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["isNumber"])(v.value) ? v.value : 0;
       });
     })), sum;
   },
@@ -3056,7 +3056,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
         if ($$.hiddenTargetIds.length) {
           var hiddenSum = dataValues($$.hiddenTargetIds, !1).reduce(function (acc, curr) {
             return acc.map(function (v, i) {
-              return v + curr[i];
+              return (Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["isNumber"])(v) ? v : 0) + curr[i];
             });
           });
           _total = _total.map(function (v, i) {
@@ -3064,7 +3064,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
           });
         }
 
-        _total && d.value && (d.ratio = d.value / _total[d.index]), ratio = d.ratio;
+        d.ratio = 0, Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["isNumber"])(d.value) && _total && _total[d.index] > 0 && (d.ratio = d.value / _total[d.index]), ratio = d.ratio;
       } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
     }
 
