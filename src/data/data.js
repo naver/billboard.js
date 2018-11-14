@@ -795,17 +795,18 @@ extend(ChartInternal.prototype, {
 				let total = this.getTotalPerIndex();
 
 				if ($$.hiddenTargetIds.length) {
-					const hiddenSum = dataValues($$.hiddenTargetIds, false)
-						.reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
+					let hiddenSum = dataValues($$.hiddenTargetIds, false);
 
-					total = total.map((v, i) => v - hiddenSum[i]);
+					if (hiddenSum.length) {
+						hiddenSum = hiddenSum
+							.reduce((acc, curr) => acc.map((v, i) => (isNumber(v) ? v : 0) + curr[i]));
+
+						total = total.map((v, i) => v - hiddenSum[i]);
+					}
 				}
 
-				d.ratio = 0;
-
-				if (isNumber(d.value) && total && total[d.index] > 0) {
-					d.ratio = d.value / total[d.index];
-				}
+				d.ratio = isNumber(d.value) && total && total[d.index] > 0 ?
+					d.value / total[d.index] : 0;
 
 				ratio = d.ratio;
 			} else if (type === "radar") {
