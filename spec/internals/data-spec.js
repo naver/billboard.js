@@ -1523,6 +1523,8 @@ describe("DATA", () => {
 				["data1", 230, null, 300],
 				["data2", 198, 87, null]
 			];
+
+			args.data.hide = ["false-data"];
 		});
 
 		it("check for null data", done => {
