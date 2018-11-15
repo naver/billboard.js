@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181114145510
+ * @version 1.6.2-nightly-20181115172439
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181114145510
+ * @version 1.6.2-nightly-20181115172439
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181114145510",
+  version: "1.6.2-nightly-20181115172439",
 
   /**
    * Generate chart
@@ -3721,10 +3721,14 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     var $$ = this,
         arc = Object(d3_shape__WEBPACK_IMPORTED_MODULE_1__["arc"])().outerRadius($$.radius).innerRadius($$.innerRadius),
         newArc = function (d, withoutUpdate) {
-      if (withoutUpdate) return arc(d); // for interpolate
+      var path = "M 0 0";
 
-      var updated = $$.updateAngle(d);
-      return updated ? arc(updated) : "M 0 0";
+      if ("value" in d ? d.value > 0 : d.data) {
+        var updated = !withoutUpdate && $$.updateAngle(d);
+        withoutUpdate ? path = arc(d) : updated && (path = arc(updated));
+      }
+
+      return path;
     };
 
     return newArc.centroid = arc.centroid, newArc;
@@ -3789,15 +3793,21 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     return format ? format(value, isMax) : value;
   },
   expandArc: function expandArc(targetIds) {
-    var interval,
-        $$ = this;
-    // MEMO: avoid to cancel transition
-    if ($$.transiting) return void (interval = window.setInterval(function () {
-      $$.transiting || (window.clearInterval(interval), $$.legend.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].legendItemFocused)).size() > 0 && $$.expandArc(targetIds));
-    }, 10));
+    var $$ = this; // MEMO: avoid to cancel transition
+
+    if ($$.transiting) {
+      var interval = setInterval(function () {
+        $$.transiting || (clearInterval(interval), $$.legend.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].legendItemFocused)).size() > 0 && $$.expandArc(targetIds));
+      }, 10);
+      return;
+    }
+
     var newTargetIds = $$.mapToTargetIds(targetIds);
     $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc))).each(function (d) {
-      $$.shouldExpand(d.data.id) && Object(d3_selection__WEBPACK_IMPORTED_MODULE_0__["select"])(this).selectAll("path").transition().duration($$.expandDuration(d.data.id)).attr("d", $$.svgArcExpanded).transition().duration($$.expandDuration(d.data.id) * 2).attr("d", $$.svgArcExpandedSub);
+      if ($$.shouldExpand(d.data.id) && d.value !== 0) {
+        var expandDuration = $$.expandDuration(d.data.id);
+        Object(d3_selection__WEBPACK_IMPORTED_MODULE_0__["select"])(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", $$.svgArcExpandedSub);
+      }
     });
   },
   unexpandArc: function unexpandArc(targetIds) {
@@ -3811,9 +3821,10 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     }
   },
   expandDuration: function expandDuration(id) {
-    var $$ = this,
+    var type,
+        $$ = this,
         config = $$.config;
-    return $$.isDonutType(id) ? config.donut_expand_duration : $$.isGaugeType(id) ? config.gauge_expand_duration : $$.isPieType(id) ? config.pie_expand_duration : 50;
+    return $$.isDonutType(id) ? type = "donut" : $$.isGaugeType(id) ? type = "gauge" : $$.isPieType(id) && (type = "pie"), type ? config["".concat(type, "_expand_duration")] : 50;
   },
   shouldExpand: function shouldExpand(id) {
     var $$ = this,
@@ -3887,26 +3898,16 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
-    function selectArc(_this, arcData, id) {
-      $$.expandArc(id), $$.api.focus(id), $$.toggleFocusLegend(id, !0), $$.showTooltip([arcData], _this);
-    }
-
-    function unselectArc(arcData) {
-      var id = arcData && arcData.id || undefined;
-      $$.unexpandArc(id), $$.api.revert(), $$.revertLegend(), $$.hideTooltip();
-    }
-
     var $$ = this,
         config = $$.config,
         main = $$.main,
-        isTouch = $$.inputType === "touch",
-        isMouse = $$.inputType === "mouse",
+        hasInteraction = config.interaction_enabled,
         mainArc = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].arcs)).selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].arc)).data($$.arcData.bind($$));
-
-    if (mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
+    // bind arc events
+    mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
       return $$.color(d.data);
     }).style("cursor", function (d) {
-      return config.interaction_enabled && (config.data_selection_isselectable(d) ? "pointer" : null);
+      return hasInteraction && (config.data_selection_isselectable(d) ? "pointer" : null);
     }).style("opacity", "0").each(function (d) {
       $$.isGaugeType(d.data) && (d.startAngle = config.gauge_startingAngle, d.endAngle = config.gauge_startingAngle), this._current = d;
     }).merge(mainArc), mainArc.attr("transform", function (d) {
@@ -3932,11 +3933,28 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
     }) // Where gauge reading color would receive customization.
     .style("opacity", "1").call($$.endall, function () {
       $$.transiting = !1;
-    }), config.interaction_enabled && (mainArc.on("click", function (d, i) {
+    }), hasInteraction && $$.bindArcEvent(mainArc), $$.redrawArcText(duration);
+  },
+  bindArcEvent: function bindArcEvent(arc) {
+    function selectArc(_this, arcData, id) {
+      $$.expandArc(id), $$.api.focus(id), $$.toggleFocusLegend(id, !0), $$.showTooltip([arcData], _this);
+    }
+
+    function unselectArc(arcData) {
+      var id = arcData && arcData.id || undefined;
+      $$.unexpandArc(id), $$.api.revert(), $$.revertLegend(), $$.hideTooltip();
+    }
+
+    var $$ = this,
+        isTouch = $$.inputType === "touch",
+        isMouse = $$.inputType === "mouse";
+
+    // touch events
+    if (arc.on("click", function (d, i) {
       var arcData,
           updated = $$.updateAngle(d);
       updated && (arcData = $$.convertToArcData(updated), $$.toggleShape && $$.toggleShape(this, arcData, i), $$.config.data_onclick.call($$.api, arcData, this));
-    }), isMouse && mainArc.on("mouseover", function (d) {
+    }), isMouse && arc.on("mouseover", function (d) {
       if (!$$.transiting) // skip while transiting
         {
           var updated = $$.updateAngle(d),
@@ -3955,8 +3973,8 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
       var updated = $$.updateAngle(d),
           arcData = updated ? $$.convertToArcData(updated) : null;
       $$.showTooltip([arcData], this);
-    }), isTouch && $$.hasArcType())) {
-      var _getEventArc = function getEventArc() {
+    }), isTouch && $$.hasArcType()) {
+      var getEventArc = function () {
         var touch = d3_selection__WEBPACK_IMPORTED_MODULE_0__["event"].changedTouches[0],
             eventArc = Object(d3_selection__WEBPACK_IMPORTED_MODULE_0__["select"])(document.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
@@ -3965,37 +3983,38 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_internals_ChartI
       $$.svg.on("touchstart", function () {
         if (!$$.transiting) // skip while transiting
           {
-            var eventArc = _getEventArc(),
+            var eventArc = getEventArc(),
                 datum = eventArc.datum(),
                 updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
                 arcData = updated ? $$.convertToArcData(updated) : null,
                 id = arcData && arcData.id || undefined;
-
             id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onover(arcData, this);
           }
       }).on("touchend", function () {
         if (!$$.transiting) // skip while transiting
           {
-            var eventArc = _getEventArc(),
+            var eventArc = getEventArc(),
                 datum = eventArc.datum(),
                 updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
                 arcData = updated ? $$.convertToArcData(updated) : null,
                 id = arcData && arcData.id || undefined;
-
             id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onout(arcData, this);
           }
       }).on("touchmove", function () {
-        var eventArc = _getEventArc(),
+        var eventArc = getEventArc(),
             datum = eventArc.datum(),
             updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
             arcData = updated ? $$.convertToArcData(updated) : null,
             id = arcData && arcData.id || undefined;
-
         id === undefined ? unselectArc() : selectArc(this, arcData, id);
       });
     }
-
-    var gaugeTextValue = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
+  },
+  redrawArcText: function redrawArcText(duration) {
+    var $$ = this,
+        config = $$.config,
+        main = $$.main,
+        gaugeTextValue = main.selectAll(".".concat(_config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
       return $$.isGaugeType(d.data) ? _config_classes__WEBPACK_IMPORTED_MODULE_4__["default"].gaugeValue : "";
     });
     config.gauge_fullCircle && gaugeTextValue.attr("dy", "".concat(Math.round($$.radius / 14)));
