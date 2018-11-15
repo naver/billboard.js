@@ -324,7 +324,7 @@ describe("SHAPE ARC", () => {
 
 			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
 			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
-			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`)
+			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
 
 			// check if gauge value text is centered
 			expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
@@ -383,6 +383,31 @@ describe("SHAPE ARC", () => {
 				expect(chart.$.tooltip.select(".value").text()).to.be.equal("50.0%");
 				done();
 			}, 500);
+		});
+	});
+
+	describe("check for 0 or null value rendering", () => {
+		let chart;
+
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [["data1", 100], ["data2", 0], ["data3", null]],
+					type: "donut"
+				},
+				donut: {
+					title: "Iris Petal Width"
+				}
+			});
+		});
+
+		it("the dimension should be 0x0", () => {
+			["data1", "data2"].forEach(id => {
+				const rect = chart.$.arc.select(`.${CLASS.arc}-${id}`).node().getBBox();
+
+				expect(rect.width === 0).to.be.true;
+				expect(rect.height === 0).to.be.true;
+			});
 		});
 	});
 });

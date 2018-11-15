@@ -114,13 +114,19 @@ extend(ChartInternal.prototype, {
 			.innerRadius($$.innerRadius);
 
 		const newArc = (d, withoutUpdate) => {
-			if (withoutUpdate) {
-				return arc(d);
-			} // for interpolate
+			let path = "M 0 0";
 
-			const updated = $$.updateAngle(d);
+			if ("value" in d ? d.value > 0 : d.data) {
+				const updated = !withoutUpdate && $$.updateAngle(d);
 
-			return updated ? arc(updated) : "M 0 0";
+				if (withoutUpdate) {
+					path = arc(d);
+				} else if (updated) {
+					path = arc(updated);
+				}
+			}
+
+			return path;
 		};
 
 		// TODO: extends all function
@@ -231,13 +237,12 @@ extend(ChartInternal.prototype, {
 
 	expandArc(targetIds) {
 		const $$ = this;
-		let interval;
 
 		// MEMO: avoid to cancel transition
 		if ($$.transiting) {
-			interval = window.setInterval(() => {
+			const interval = setInterval(() => {
 				if (!$$.transiting) {
-					window.clearInterval(interval);
+					clearInterval(interval);
 
 					$$.legend.selectAll(`.${CLASS.legendItemFocused}`).size() > 0 &&
 						$$.expandArc(targetIds);
@@ -249,19 +254,22 @@ extend(ChartInternal.prototype, {
 
 		const newTargetIds = $$.mapToTargetIds(targetIds);
 
-		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`)).each(function(d) {
-			if (!$$.shouldExpand(d.data.id)) {
-				return;
-			}
+		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
+			.each(function(d) {
+				if (!$$.shouldExpand(d.data.id) || d.value === 0) {
+					return;
+				}
 
-			d3Select(this).selectAll("path")
-				.transition()
-				.duration($$.expandDuration(d.data.id))
-				.attr("d", $$.svgArcExpanded)
-				.transition()
-				.duration($$.expandDuration(d.data.id) * 2)
-				.attr("d", $$.svgArcExpandedSub);
-		});
+				const expandDuration = $$.expandDuration(d.data.id);
+
+				d3Select(this).selectAll("path")
+					.transition()
+					.duration(expandDuration)
+					.attr("d", $$.svgArcExpanded)
+					.transition()
+					.duration(expandDuration * 2)
+					.attr("d", $$.svgArcExpandedSub);
+			});
 	},
 
 	unexpandArc(targetIds) {
@@ -286,16 +294,17 @@ extend(ChartInternal.prototype, {
 	expandDuration(id) {
 		const $$ = this;
 		const config = $$.config;
+		let type;
 
 		if ($$.isDonutType(id)) {
-			return config.donut_expand_duration;
+			type = "donut";
 		} else if ($$.isGaugeType(id)) {
-			return config.gauge_expand_duration;
+			type = "gauge";
 		} else if ($$.isPieType(id)) {
-			return config.pie_expand_duration;
-		} else {
-			return 50;
+			type = "pie";
 		}
+
+		return type ? config[`${type}_expand_duration`] : 50;
 	},
 
 	shouldExpand(id) {
@@ -437,25 +446,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const main = $$.main;
-		const isTouch = $$.inputType === "touch";
-		const isMouse = $$.inputType === "mouse";
-
-		function selectArc(_this, arcData, id) {
-			// transitions
-			$$.expandArc(id);
-			$$.api.focus(id);
-			$$.toggleFocusLegend(id, true);
-			$$.showTooltip([arcData], _this);
-		}
-
-		function unselectArc(arcData) {
-			const id = (arcData && arcData.id) || undefined;
-
-			$$.unexpandArc(id);
-			$$.api.revert();
-			$$.revertLegend();
-			$$.hideTooltip();
-		}
+		const hasInteraction = config.interaction_enabled;
 
 		let mainArc = main.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arc}`)
@@ -469,7 +460,7 @@ extend(ChartInternal.prototype, {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.classArc.bind($$))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => config.interaction_enabled && (config.data_selection_isselectable(d) ? "pointer" : null))
+			.style("cursor", d => hasInteraction && (config.data_selection_isselectable(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {
@@ -495,9 +486,7 @@ extend(ChartInternal.prototype, {
 				const updated = $$.updateAngle(d);
 
 				if (!updated) {
-					return function() {
-						return "M 0 0";
-					};
+					return () => "M 0 0";
 				}
 
 				if (isNaN(this._current.startAngle)) {
@@ -529,108 +518,142 @@ extend(ChartInternal.prototype, {
 				$$.transiting = false;
 			});
 
-		if (config.interaction_enabled) {
-			mainArc
-				.on("click", function(d, i) {
-					const updated = $$.updateAngle(d);
-					let arcData;
+		// bind arc events
+		hasInteraction && $$.bindArcEvent(mainArc);
 
-					if (updated) {
-						arcData = $$.convertToArcData(updated);
+		$$.redrawArcText(duration);
+	},
 
-						$$.toggleShape && $$.toggleShape(this, arcData, i);
-						$$.config.data_onclick.call($$.api, arcData, this);
-					}
-				});
+	bindArcEvent(arc) {
+		const $$ = this;
+		const isTouch = $$.inputType === "touch";
+		const isMouse = $$.inputType === "mouse";
 
-			if (isMouse) {
-				mainArc
-					.on("mouseover", function(d) {
-						if ($$.transiting) { // skip while transiting
-							return;
-						}
-
-						const updated = $$.updateAngle(d);
-						const arcData = updated ? $$.convertToArcData(updated) : null;
-						const id = (arcData && arcData.id) || undefined;
-
-						selectArc(this, arcData, id);
-
-						$$.config.data_onover(arcData, this);
-					})
-					.on("mouseout", function(d) {
-						if ($$.transiting) { // skip while transiting
-							return;
-						}
-
-						const updated = $$.updateAngle(d);
-						const arcData = updated ? $$.convertToArcData(updated) : null;
-
-						unselectArc();
-
-						$$.config.data_onout(arcData, this);
-					})
-					.on("mousemove", function(d) {
-						const updated = $$.updateAngle(d);
-						const arcData = updated ? $$.convertToArcData(updated) : null;
-
-						$$.showTooltip([arcData], this);
-					});
-			}
-
-			if (isTouch && $$.hasArcType()) {
-				const getEventArc = () => {
-					const touch = d3Event.changedTouches[0];
-					const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
-
-					return eventArc;
-				};
-
-				$$.svg
-					.on("touchstart", function() {
-						if ($$.transiting) { // skip while transiting
-							return;
-						}
-
-						const eventArc = getEventArc();
-						const datum = eventArc.datum();
-						const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-						const arcData = updated ? $$.convertToArcData(updated) : null;
-						const id = (arcData && arcData.id) || undefined;
-
-						id === undefined ?
-							unselectArc() : selectArc(this, arcData, id);
-
-						$$.config.data_onover(arcData, this);
-					})
-					.on("touchend", function() {
-						if ($$.transiting) { // skip while transiting
-							return;
-						}
-
-						const eventArc = getEventArc();
-						const datum = eventArc.datum();
-						const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-						const arcData = updated ? $$.convertToArcData(updated) : null;
-						const id = (arcData && arcData.id) || undefined;
-
-						id === undefined ?
-							unselectArc() : selectArc(this, arcData, id);
-
-						$$.config.data_onout(arcData, this);
-					})
-					.on("touchmove", function() {
-						const eventArc = getEventArc();
-						const datum = eventArc.datum();
-						const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-						const arcData = updated ? $$.convertToArcData(updated) : null;
-						const id = (arcData && arcData.id) || undefined;
-
-						id === undefined ?
-							unselectArc() : selectArc(this, arcData, id);
-					});
-			}
+		function selectArc(_this, arcData, id) {
+			// transitions
+			$$.expandArc(id);
+			$$.api.focus(id);
+			$$.toggleFocusLegend(id, true);
+			$$.showTooltip([arcData], _this);
 		}
+
+		function unselectArc(arcData) {
+			const id = (arcData && arcData.id) || undefined;
+
+			$$.unexpandArc(id);
+			$$.api.revert();
+			$$.revertLegend();
+			$$.hideTooltip();
+		}
+
+		arc
+			.on("click", function(d, i) {
+				const updated = $$.updateAngle(d);
+				let arcData;
+
+				if (updated) {
+					arcData = $$.convertToArcData(updated);
+
+					$$.toggleShape && $$.toggleShape(this, arcData, i);
+					$$.config.data_onclick.call($$.api, arcData, this);
+				}
+			});
+
+		// mouse events
+		if (isMouse) {
+			arc
+				.on("mouseover", function(d) {
+					if ($$.transiting) { // skip while transiting
+						return;
+					}
+
+					const updated = $$.updateAngle(d);
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const id = (arcData && arcData.id) || undefined;
+
+					selectArc(this, arcData, id);
+
+					$$.config.data_onover(arcData, this);
+				})
+				.on("mouseout", function(d) {
+					if ($$.transiting) { // skip while transiting
+						return;
+					}
+
+					const updated = $$.updateAngle(d);
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+
+					unselectArc();
+
+					$$.config.data_onout(arcData, this);
+				})
+				.on("mousemove", function(d) {
+					const updated = $$.updateAngle(d);
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+
+					$$.showTooltip([arcData], this);
+				});
+		}
+
+		// touch events
+		if (isTouch && $$.hasArcType()) {
+			const getEventArc = () => {
+				const touch = d3Event.changedTouches[0];
+				const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
+
+				return eventArc;
+			};
+
+			$$.svg
+				.on("touchstart", function() {
+					if ($$.transiting) { // skip while transiting
+						return;
+					}
+
+					const eventArc = getEventArc();
+					const datum = eventArc.datum();
+					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const id = (arcData && arcData.id) || undefined;
+
+					id === undefined ?
+						unselectArc() : selectArc(this, arcData, id);
+
+					$$.config.data_onover(arcData, this);
+				})
+				.on("touchend", function() {
+					if ($$.transiting) { // skip while transiting
+						return;
+					}
+
+					const eventArc = getEventArc();
+					const datum = eventArc.datum();
+					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const id = (arcData && arcData.id) || undefined;
+
+					id === undefined ?
+						unselectArc() : selectArc(this, arcData, id);
+
+					$$.config.data_onout(arcData, this);
+				})
+				.on("touchmove", function() {
+					const eventArc = getEventArc();
+					const datum = eventArc.datum();
+					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
+					const arcData = updated ? $$.convertToArcData(updated) : null;
+					const id = (arcData && arcData.id) || undefined;
+
+					id === undefined ?
+						unselectArc() : selectArc(this, arcData, id);
+				});
+		}
+	},
+
+	redrawArcText(duration) {
+		const $$ = this;
+		const config = $$.config;
+		const main = $$.main;
 
 		const gaugeTextValue = main.selectAll(`.${CLASS.chartArc}`)
 			.select("text")
@@ -640,8 +663,7 @@ extend(ChartInternal.prototype, {
 		config.gauge_fullCircle && gaugeTextValue.attr("dy", `${Math.round($$.radius / 14)}`);
 
 		// to handle multiline text for gauge type
-		const textMethod = !gaugeTextValue.empty() &&
-			gaugeTextValue.classed(CLASS.gaugeValue) ? "call" : "text";
+		const textMethod = !gaugeTextValue.empty() && gaugeTextValue.classed(CLASS.gaugeValue) ? "call" : "text";
 
 		gaugeTextValue[textMethod]($$.textForArcLabel.bind($$))
 			.attr("transform", $$.transformForArcLabel.bind($$))
