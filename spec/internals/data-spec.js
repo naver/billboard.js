@@ -177,6 +177,51 @@ describe("DATA", () => {
 		});
 	});
 
+	describe("XHR data loading", () => {
+		const path = "/base/spec/assets/data/";
+
+		before(() => {
+			args = {
+				data: {
+					url: `${path}test.csv`
+				}
+			};
+		});
+
+		it("check for CSV file loading", done => {
+			setTimeout(() => {
+				const data = chart.data();
+
+				expect(data).to.not.be.null;
+				expect(data.length).to.be.equal(3);
+
+				done();
+			}, 300);
+		});
+
+		it("set options data.mimeType='json'", () => {
+			args = {
+				data: {
+					url: `${path}test.json`,
+					mimeType: "json"
+				}
+			}
+		});
+
+		it("check for JSON file loading", done => {
+			setTimeout(() => {
+				const data = chart.data();
+
+				expect(data).to.not.be.null;
+				expect(data.length).to.be.equal(3);
+				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
+
+				done();
+			}, 300);
+		});
+
+	});
+
 	describe("check data.order", () => {
 		before(() => {
 			args = {
