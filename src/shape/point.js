@@ -170,7 +170,7 @@ extend(ChartInternal.prototype, {
 					.attr("r", $$.pointR.bind($$));
 			}
 
-			if (withTransition) {
+			if (withTransition && element.attr("cx")) {
 				const transitionName = $$.getTransitionName();
 
 				if (flow) {
