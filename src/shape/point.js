@@ -178,11 +178,13 @@ extend(ChartInternal.prototype, {
 						.attr("cx", xPosFn);
 				}
 
-				mainCircles = mainCircles
-					.transition(transitionName)
-					.attr("cx", xPosFn)
-					.attr("cy", yPosFn)
-					.transition(transitionName);
+				mainCircles = element.attr("cx") ?
+					mainCircles.transition(transitionName)
+						.attr("cx", xPosFn)
+						.attr("cy", yPosFn)
+						.transition(transitionName) :
+					mainCircles.attr("cx", xPosFn)
+						.attr("cy", yPosFn);
 
 				selectedCircles.transition($$.getTransitionName());
 			} else {

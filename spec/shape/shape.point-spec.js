@@ -103,4 +103,48 @@ describe("SHAPE POINT", () => {
 			});
 		});
 	});
+
+	describe("point transition", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					]
+				}
+			};
+		});
+
+		it("newly added points shouldn't be transitioning from the top/left", done => {
+			const main = chart.$.main;
+			const pos = [];
+			let point;
+			let interval;
+
+			setTimeout(() => {
+				interval = setInterval(() => {
+					point = main.select(`.${CLASS.circles}-data2 .${CLASS.circle}-3`);
+					pos.push(+point.attr("cx"));
+				}, 20);
+
+				chart.load({
+					columns: [
+						["data2", 44, 134, 98, 170]
+					],
+					done: function () {
+						setTimeout(() => {
+							clearInterval(interval);
+							const currPos = +point.attr("cx");
+
+							expect(Math.round(pos[0])).to.not.equal(0);
+							expect(pos.every(v => v === currPos)).to.be.true;
+
+							done();
+						}, 500);
+					}
+				});
+			}, 500);
+		});
+	})
 });

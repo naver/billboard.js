@@ -233,7 +233,7 @@ extend(ChartInternal.prototype, {
 		let height = (datum && datum.height) || 0;
 
 		if (!datum || datum.current !== dataStr) {
-			const index = selectedData[0].index;
+			const index = selectedData.concat().sort()[0].index;
 			const html = config.tooltip_contents.call(
 				$$,
 				selectedData,
