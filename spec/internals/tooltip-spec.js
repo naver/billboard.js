@@ -675,4 +675,31 @@ describe("TOOLTIP", function() {
 			expect(value).to.be.equal(200);
 		});
 	});
+
+
+	describe("tooltip for dynamic loaded data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					]
+				}
+			};
+		});
+
+		it("load data to be adding more columns", () => {
+			setTimeout(() => {
+				chart.load({
+					columns: [
+						["data2", 44, 134, 98, 170]
+					],
+					done: () => {
+						expect(chart.tooltip.show({index: 3})).to.not.throw();
+					}
+				});
+			}, 500);
+		});
+	});
 });
