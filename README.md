@@ -134,11 +134,18 @@ Load billboard.js after D3.js.
 or use importing ESM.
 
 ```js
+// 1) import billboard.js
 // as named import
 import {bb} from "billboard.js";
 
 // or as importing default
 import bb from "billboard.js";
+
+// 2) import css if your dev-env supports. If don't, include them via <link>
+import "billboard.js/dist/billboard.css";
+
+// or theme style. Find more themes from 'theme' folder
+import "billboard.js/dist/theme/insight.css"
 ```
 
 > **Note**  
