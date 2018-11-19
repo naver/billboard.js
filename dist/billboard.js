@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181115172439
+ * @version 1.6.2-nightly-20181119161955
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -125,7 +125,7 @@ __webpack_require__.r(__webpack_exports__);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181115172439
+ * @version 1.6.2-nightly-20181119161955
  */
 
 var bb = {
@@ -136,7 +136,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181115172439",
+  version: "1.6.2-nightly-20181119161955",
 
   /**
    * Generate chart
@@ -5075,7 +5075,7 @@ Object(_internals_util__WEBPACK_IMPORTED_MODULE_2__["extend"])(_internals_ChartI
 
       if ($$.hasType("bubble") && (mainCircles = mainCircles.attr("r", $$.pointR.bind($$))), withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("cx", xPosFn)), mainCircles = mainCircles.transition(transitionName).attr("cx", xPosFn).attr("cy", yPosFn).transition(transitionName), selectedCircles.transition($$.getTransitionName());
+        flow && (mainCircles = mainCircles.attr("cx", xPosFn)), mainCircles = element.attr("cx") ? mainCircles.transition(transitionName).attr("cx", xPosFn).attr("cy", yPosFn).transition(transitionName) : mainCircles.attr("cx", xPosFn).attr("cy", yPosFn), selectedCircles.transition($$.getTransitionName());
       } else mainCircles = mainCircles.attr("cx", xPosFn).attr("cy", yPosFn);
 
       return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
@@ -6051,7 +6051,7 @@ Object(_util__WEBPACK_IMPORTED_MODULE_5__["extend"])(_ChartInternal__WEBPACK_IMP
           height = datum && datum.height || 0;
 
       if (!datum || datum.current !== dataStr) {
-        var index = selectedData[0].index,
+        var index = selectedData.concat().sort()[0].index,
             html = config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color);
         Object(_util__WEBPACK_IMPORTED_MODULE_5__["callFn"])(config.tooltip_onshow, $$), $$.tooltip.html(html).style("display", "block").datum({
           index: index,
