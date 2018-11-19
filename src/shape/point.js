@@ -170,7 +170,7 @@ extend(ChartInternal.prototype, {
 					.attr("r", $$.pointR.bind($$));
 			}
 
-			if (withTransition && element.attr("cx")) {
+			if (withTransition) {
 				const transitionName = $$.getTransitionName();
 
 				if (flow) {
@@ -178,11 +178,13 @@ extend(ChartInternal.prototype, {
 						.attr("cx", xPosFn);
 				}
 
-				mainCircles = mainCircles
-					.transition(transitionName)
-					.attr("cx", xPosFn)
-					.attr("cy", yPosFn)
-					.transition(transitionName);
+				mainCircles = element.attr("cx") ?
+					mainCircles.transition(transitionName)
+						.attr("cx", xPosFn)
+						.attr("cy", yPosFn)
+						.transition(transitionName) :
+					mainCircles.attr("cx", xPosFn)
+						.attr("cy", yPosFn);
 
 				selectedCircles.transition($$.getTransitionName());
 			} else {
