@@ -676,7 +676,6 @@ describe("TOOLTIP", function() {
 		});
 	});
 
-
 	describe("tooltip for dynamic loaded data", () => {
 		before(() => {
 			args = {
@@ -689,14 +688,21 @@ describe("TOOLTIP", function() {
 			};
 		});
 
-		it("load data to be adding more columns", () => {
+		it("load data to be adding more columns", done => {
 			setTimeout(() => {
 				chart.load({
 					columns: [
 						["data2", 44, 134, 98, 170]
 					],
 					done: () => {
-						expect(chart.tooltip.show({index: 3})).to.not.throw();
+						try {
+							chart.tooltip.show({index: 3});
+						} catch(e) {
+							expect(false).to.be.true;
+						}
+
+						expect(true).to.be.true;
+						done();
 					}
 				});
 			}, 500);
