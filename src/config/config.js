@@ -4,19 +4,12 @@
  */
 import Options from "./Options";
 import ChartInternal from "../internals/ChartInternal";
-import {isDefined, isObjectType, merge, extend} from "../internals/util";
+import {isDefined, isObjectType, extend} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	getOptions() {
-		const config = new Options();
-
-		return merge(
-			config.value,
-			this.additionalConfig
-		);
+		return new Options();
 	},
-
-	additionalConfig: {},
 
 	/**
 	 * Load configuration option
@@ -53,4 +46,3 @@ extend(ChartInternal.prototype, {
 		});
 	}
 });
-

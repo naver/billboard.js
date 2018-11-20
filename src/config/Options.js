@@ -10,7 +10,7 @@
  */
 export default class Options {
 	constructor() {
-		this.value = {
+		return {
 			/**
 			 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
 			 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
