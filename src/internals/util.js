@@ -84,8 +84,7 @@ const getRectSegList = path => {
 	 *   |               |
 	 * seg0 ---------- seg3
 	 * */
-	const bbox = path.getBBox();
-	const [x, y, width, height] = [bbox.x, bbox.y, bbox.width, bbox.height];
+	const {x, y, width, height} = path.getBBox();
 
 	return [
 		{x, y: y + height}, // seg0
@@ -96,8 +95,7 @@ const getRectSegList = path => {
 };
 
 const getPathBox = path => {
-	const box = path.getBoundingClientRect();
-	const [width, height] = [box.width, box.height];
+	const {width, height} = path.getBoundingClientRect();
 	const items = getRectSegList(path);
 	const x = items[0].x;
 	const y = Math.min(items[0].y, items[1].y);
@@ -152,42 +150,6 @@ const extend = (target = {}, source) => {
  * @private
  */
 const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
-
-/**
- * Merge object returning new object
- * @param {Object} target
- * @param {Object} objectN
- * @returns {Object} merged target object
- * @private
- * @example
- *  var target = { a: 1 };
- *  utils.extend(target, { b: 2, c: 3 });
- *  target;  // { a: 1, b: 2, c: 3 };
- */
-const merge = (target, ...objectN) => {
-	if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
-		return target;
-	}
-
-	const source = objectN.shift();
-
-	if (isObject(target) && isObject(source)) {
-		Object.keys(source).forEach(key => {
-			const value = source[key];
-
-			if (isObject(value)) {
-				!target[key] && (target[key] = {});
-
-				target[key] = merge(target[key], value);
-			} else {
-				target[key] = isArray(value) ?
-					value.concat() : value;
-			}
-		});
-	}
-
-	return extend(target, ...objectN);
-};
 
 /**
  * Convert to array
@@ -302,7 +264,6 @@ export {
 	isUndefined,
 	isValue,
 	notEmpty,
-	merge,
 	sanitise,
 	toArray
 };

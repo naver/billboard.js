@@ -10,7 +10,7 @@
  */
 export default class Options {
 	constructor() {
-		this.value = {
+		return {
 			/**
 			 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
 			 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
@@ -48,6 +48,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Boolean}
 			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
 			 * @example
 			 * // don't set 'clip-path' attribute
 			 * clipPath: false
@@ -75,6 +76,7 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Number} [size.width] width of the chart element
 			 * @property {Number} [size.height] height of the chart element
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.ChartSize)
 			 * @example
 			 * size: {
              *   width: 640,
@@ -142,6 +144,8 @@ export default class Options {
 			 *  Specified function receives the zoomed domain.
 			 * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
 			 * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
+			 * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
+			 * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
 			 * @example
 			 *  zoom: {
 			 *      enabled: {
@@ -188,9 +192,11 @@ export default class Options {
 			 * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
 			 * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
 			 * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+			 * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
 			 * @example
 			 * interaction: {
              *    enabled: false,
+             *    brighten: false,
              *    inputType: {
              *        mouse: true,
              *        touch: false
@@ -399,6 +405,26 @@ export default class Options {
 			 * }
 			 */
 			data_xSort: true,
+
+			/**
+			 * Converts data id value
+			 * @name data․idConverter
+			 * @memberOf Options
+			 * @type {Function}
+			 * @default function(id) { return id; }
+			 * @example
+			 * data: {
+             *    idConverter: function(id) {
+             *       // when id is 'data1', converts to be 'data2'
+             *       // 'data2' should be given as the initial data value
+             *       if (id === "data1") {
+             *          return "data2";
+             *       } else {
+             *          return id;
+             *       }
+             *    }
+			 * }
+			 */
 			data_idConverter: id => id,
 
 			/**
@@ -407,6 +433,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Object}
 			 * @default {}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
 			 * @example
 			 * data: {
              *   names: {
@@ -532,6 +559,9 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Object}
 			 * @default {}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+			 * @see [Demo: labels format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+			 * @see [Demo: labels position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
 			 * @example
 			 * data: {
 			 *   labels: true,
@@ -569,6 +599,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {String|Function|null}
 			 * @default desc
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
 			 * @example
 			 * data: {
 			 *   // in descending order (default)
@@ -631,6 +662,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Function}
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
 			 * @example
 			 * data: {
 			 *   color: function(color, d) { ... }
@@ -702,7 +734,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Boolean}
 			 * @default false
-			 * @see {@link https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized|Example}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
 			 * @example
 			 * data: {
 		     *   stack: {
@@ -718,6 +750,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Boolean}
 			 * @default false
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
 			 * @example
 			 * data: {
 			 *    selection: {
@@ -875,6 +908,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Function}
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
 			 * @example
 			 *  onmin: function(data) {
 			 *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
@@ -890,6 +924,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Function}
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
 			 * @example
 			 *  onmax: function(data) {
 			 *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
@@ -904,12 +939,31 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {String}
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
 			 * @example
 			 * data: {
 			 *     url: "/data/test.csv"
 			 * }
 			 */
 			data_url: undefined,
+
+			/**
+			 * XHR header value
+			 * - **NOTE:** Should be used with `data.url` option
+			 * @name data․headers
+			 * @memberOf Options
+			 * @type {String}
+			 * @default undefined
+			 * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
+			 * @example
+			 * data: {
+			 *     url: "/data/test.csv",
+			 *     headers: {
+			 *        "Content-Type": "text/xml",
+			 *        ...
+			 *     }
+			 * }
+			 */
 			data_headers: undefined,
 
 			/**
@@ -918,7 +972,8 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Object}
 			 * @default undefined
-			 * @see data․keys
+			 * @see [data․keys](#.data%25E2%2580%25A4keys)
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.JSONData)
 			 * @example
 			 * data: {
 			 *     json: [
@@ -941,6 +996,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Array}
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.RowOrientedData)
 			 * @example
 			 * data: {
 			 *   rows: [
@@ -981,6 +1037,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Array}
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.ColumnOrientedData)
 			 * @example
 			 * data: {
 			 *   columns: [
@@ -1067,6 +1124,7 @@ export default class Options {
 			 * @property {Boolean} [subchart.size.height] Change the height of the subchart.
 			 * @property {Boolean} [subchart.onbrush] Set callback for brush event.<br>
 			 *  Specified function receives the current zoomed x domain.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
 			 * @example
 			 *  subchart: {
 			 *      show: true,
@@ -1175,6 +1233,9 @@ export default class Options {
 			 * @property {Number} [legend.item.tile.width=10] Set width of item tile element
 			 * @property {Number} [legend.item.tile.height=10] Set height of item tile element
 			 * @property {Boolean} [legend.usePoint=false] Whether to use custom points in legend.
+			 * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
+			 * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
+			 * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
 			 * @example
 			 *  legend: {
 			 *      show: true,
@@ -1255,6 +1316,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Boolean}
 			 * @default true
+			 * @see [Demo]()
 			 * @example
 			 * // don't set 'clip-path' attribute
 			 * clipPath: false
@@ -1286,6 +1348,9 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {String}
 			 * @default indexed
+			 * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
+			 * @see [Demo: timeseries](https://naver.github.io/billboard.js/demo/#Chart.TimeseriesChart)
+			 * @see [Demo: category](https://naver.github.io/billboard.js/demo/#Data.CategoryData)
 			 * @example
 			 * axis: {
 			 *   x: {
@@ -1492,6 +1557,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Number}
 			 * @default 0
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
 			 * @example
 			 * axis: {
 			 *   x: {
@@ -1528,6 +1594,7 @@ export default class Options {
 			 * @memberOf Options
 			 * @type {Boolean}
 			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
 			 * @example
 			 * axis: {
 			 *   x: {
@@ -1570,7 +1637,7 @@ export default class Options {
 			axis_x_tick_width: null,
 
 			/**
-			 * Set to display system tooltip for tick text
+			 * Set to display system tooltip(via 'title' attribute) for tick text
 			 * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
 			 * @name axis․x․tick․tooltip
 			 * @memberOf Options
@@ -2290,6 +2357,9 @@ export default class Options {
 			 * @property {Boolean} [focus.show=true] Show grids when focus.
 			 * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
 			 * @default undefined
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
+			 * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
+			 * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
 			 * @example
 			 * grid: {
 			 *   x: {
@@ -2357,6 +2427,7 @@ export default class Options {
 			 *  - rectangle
 			 *  - svg shape tag interpreted as string<br>
 			 *    (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+			 * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
 			 * @example
 			 *  point: {
 			 *      show: false,
@@ -2449,6 +2520,9 @@ export default class Options {
 			 * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 			 * @property {Number} [bar.width.max] The maximum width value for ratio.
 			 * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+			 * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
+			 * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
+			 * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
 			 * @example
 			 *  bar: {
 			 *      padding: 1,
@@ -2525,7 +2599,8 @@ export default class Options {
 			 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
 			 * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
 			 * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
-			 * @property {Boolean} [pie.expand=true] Enable or disable expanding pie pieces.
+			 * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
+			 * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
 			 * @property {Number} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
 			 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
@@ -2546,7 +2621,15 @@ export default class Options {
 			 *          // or set ratio number
 			 *          ratio: 0.5
 			 *      },
+			 *
+			 *      // disable expand transition for interaction
 			 *      expand: false,
+			 *
+			 *      // set duration of expand transition to 500ms.
+			 *      expand: {
+			 *          duration: 500
+			 *      },
+			 *
 			 *      innerRadius: 0,
 			 *      padAngle: 0.1,
 			 *      padding: 0
@@ -2669,10 +2752,30 @@ export default class Options {
 
 			/**
 			 * Set spline options
+			 * - **Available interpolation type values:**
+			 *  - basis (d3.curveBasis)
+			 *  - basis-closed (d3.curveBasisClosed)
+			 *  - basis-open (d3.curveBasisOpen)
+			 *  - bundle (d3.curveBundle)
+			 *  - cardinal (d3.curveCardinal)
+			 *  - cardinal-closed (d3.curveCardinalClosed)
+			 *  - cardinal-open (d3.curveCardinalOpen)
+			 *  - catmull-rom (d3.curveCatmullRom)
+			 *  - catmull-rom-closed (d3.curveCatmullRomClosed)
+			 *  - catmull-rom-open (d3.curveCatmullRomOpen)
+			 *  - monotone-x (d3.curveMonotoneX)
+			 *  - monotone-y (d3.curveMonotoneY)
+			 *  - natural (d3.curveNatural)
+			 *  - linear-closed (d3.curveLinearClosed)
+			 *  - linear (d3.curveLinear)
+			 *  - step (d3.curveStep)
+			 *  - step-after (d3.curveStepAfter)
+			 *  - step-before (d3.curveStepBefore)
 			 * @name spline
 			 * @memberOf Options
 			 * @type {Object}
 			 * @property {String} [spline.interpolation.type=cardinal]
+			 * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
 			 * @example
 			 *  spline: {
 			 *      interpolation: {
@@ -2696,6 +2799,10 @@ export default class Options {
 			 * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
 			 * @property {Boolean} [radar.level.text.show=true] Show or hide level text.
 			 * @property {Number} [radar.size.ratio=0.87] Set size ratio.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
+			 * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
+			 * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
+			 * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
 			 * @example
 			 *  radar: {
 			 *      axis: {
