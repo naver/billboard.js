@@ -8,17 +8,79 @@ import util from "../assets/util";
 
 describe("API load", function() {
 	let chart;
-	let args = {
-		data: {
-			columns: [
-				["data1", 30, 200, 100, 400, 150, 250],
-				["data2", 5000, 2000, 1000, 4000, 1500, 2500]
-			]
-		}
-	};
+	let args;
 
 	beforeEach(() => {
 		chart = util.generate(args);
+	});
+
+	describe("check for load options", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, 20, 30, 40, 50],
+						["data2", 130, 100, 140, 35, 110]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					},
+					y2: {
+						show: true,
+						max: 1000
+					}
+				}
+			}
+		});
+
+		it("options has been updated properly?", done => {
+			const className = "abcd";
+			const color = "red";
+			const categories = ["cat1", "cat2", "cat3", "cat4", "cat5"];
+
+			setTimeout(() => {
+				chart.load({
+					columns: [
+						["data1", 130, 120, 150, 140, 160],
+						["data4", 30, 20, 50, 40, 60]
+					],
+					unload: ["data1"],
+					type: "bar",
+					classes: {
+						"data1": className
+					},
+					colors: {
+						"data2": color
+					},
+					categories,
+					axes: {
+						data2: "y2"
+					},
+					done: function() {
+						const main = chart.$.main;
+
+						// updated classname?
+						expect(main.select(`.${CLASS.target}-data1.${CLASS.target}-${className}`).empty()).to.be.false;
+
+						// updated category?
+						expect(chart.categories()).to.deep.equal(categories);
+
+						// updated color?
+						expect(chart.color("data2")).to.be.equal(color);
+
+						// updated type?
+						expect(chart.config("data.types")).deep.equal({data1: "bar", data4: "bar"});
+
+						// updated axes?
+						expect(+main.selectAll(".bb-axis-y2 .tick tspan").nodes().pop().textContent).to.be.equal(1000);
+
+						done();
+					}
+				});
+			}, 500);
+		});
 	});
 
 	describe("indexed data as column", () => {
@@ -249,8 +311,8 @@ describe("API load", function() {
 						}
 					},
 					y2:{
-						show:true,
-							label: {
+						show: true,
+						label: {
 							text: "Y2 Label",
 							position: "outer-middle"
 						}
