@@ -1,10 +1,66 @@
 /**
  * Copyright (c) 2017 NAVER Corp.
- * billboard.js project is licensed under the MIT license
+ * billboard project is licensed under the MIT license
  */
 import Chart from "./internals/Chart";
 import ChartInternal from "./internals/ChartInternal";
 import Axis from "./axis/Axis";
+
+import "./config/config";
+import "./internals/scale";
+import "./internals/domain";
+import "./data/data";
+import "./data/data.convert";
+import "./data/data.load";
+import "./internals/category";
+import "./interactions/interaction";
+import "./internals/size";
+import "./shape/shape";
+import "./shape/arc";
+import "./shape/bar";
+import "./shape/bubble";
+import "./shape/line";
+import "./shape/point";
+import "./shape/radar";
+import "./internals/text";
+import "./internals/type";
+import "./internals/grid";
+import "./internals/tooltip";
+import "./internals/legend";
+import "./internals/title";
+import "./internals/clip";
+import "./internals/region";
+import "./interactions/drag";
+import "./internals/selection";
+import "./interactions/subchart";
+import "./interactions/zoom";
+import "./internals/color";
+import "./internals/format";
+import "./internals/cache";
+import "./internals/class";
+import "./api/api.focus";
+import "./api/api.show";
+import "./api/api.zoom";
+import "./api/api.load";
+import "./api/api.flow";
+import "./api/api.selection";
+import "./api/api.transform";
+import "./api/api.group";
+import "./api/api.grid";
+import "./api/api.region";
+import "./api/api.data";
+import "./api/api.category";
+import "./api/api.color";
+import "./api/api.x";
+import "./api/api.axis";
+import "./api/api.legend";
+import "./api/api.chart";
+import "./api/api.tooltip";
+import "./axis/bb.axis";
+import "./internals/ua";
+import "./api/api.export";
+
+// base CSS
 import "./scss/billboard.scss";
 
 /**
@@ -83,60 +139,6 @@ const bb = {
 		}
 	}
 };
-
-require("./config/config.js");
-require("./internals/scale.js");
-require("./internals/domain.js");
-require("./data/data.js");
-require("./data/data.convert.js");
-require("./data/data.load.js");
-require("./internals/category.js");
-require("./interactions/interaction.js");
-require("./internals/size.js");
-require("./shape/shape.js");
-require("./shape/arc.js");
-require("./shape/bar.js");
-require("./shape/bubble.js");
-require("./shape/line.js");
-require("./shape/point.js");
-require("./shape/radar.js");
-require("./internals/text.js");
-require("./internals/type.js");
-require("./internals/grid.js");
-require("./internals/tooltip.js");
-require("./internals/legend.js");
-require("./internals/title.js");
-require("./internals/clip.js");
-require("./internals/region.js");
-require("./interactions/drag.js");
-require("./internals/selection.js");
-require("./interactions/subchart.js");
-require("./interactions/zoom.js");
-require("./internals/color.js");
-require("./internals/format.js");
-require("./internals/cache.js");
-require("./internals/class.js");
-require("./api/api.focus.js");
-require("./api/api.show.js");
-require("./api/api.zoom.js");
-require("./api/api.load.js");
-require("./api/api.flow.js");
-require("./api/api.selection.js");
-require("./api/api.transform.js");
-require("./api/api.group.js");
-require("./api/api.grid.js");
-require("./api/api.region.js");
-require("./api/api.data.js");
-require("./api/api.category.js");
-require("./api/api.color.js");
-require("./api/api.x.js");
-require("./api/api.axis.js");
-require("./api/api.legend.js");
-require("./api/api.chart.js");
-require("./api/api.tooltip.js");
-require("./axis/bb.axis.js");
-require("./internals/ua.js");
-require("./api/api.export.js");
 
 export {bb};
 export default bb;

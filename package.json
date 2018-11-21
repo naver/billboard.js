@@ -25,6 +25,7 @@
     "commitmsg": "node ./config/validate-commit-msg.js",
     "prepush": "npm run lint"
   },
+  "sideEffects": false,
   "repository": {
     "type": "git",
     "url": "https://github.com/naver/billboard.js"
