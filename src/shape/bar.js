@@ -188,17 +188,14 @@ extend(ChartInternal.prototype, {
 	isWithinBar(that) {
 		const mouse = d3Mouse(that);
 		const list = getRectSegList(that);
-		const box = that.getBBox();
-		const seg0 = list[0];
-		const seg1 = list[1];
+		const [seg0, seg1] = list;
 		const x = Math.min(seg0.x, seg1.x);
 		const y = Math.min(seg0.y, seg1.y);
-		const w = box.width;
-		const h = box.height;
 		const offset = 2;
+		const {width, height} = that.getBBox();
 		const sx = x - offset;
-		const ex = x + w + offset;
-		const sy = y + h + offset;
+		const ex = x + width + offset;
+		const sy = y + height + offset;
 		const ey = y - offset;
 
 		return sx < mouse[0] &&
