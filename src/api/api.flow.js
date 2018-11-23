@@ -309,7 +309,7 @@ extend(ChartInternal.prototype, {
 			wait.add([
 				$$.axes.x
 					.transition(gt)
-					.call($$.xAxis.setTransition(gt)),
+					.call(g => $$.xAxis.setTransition(gt).create(g)),
 
 				mainBar
 					.transition(gt)

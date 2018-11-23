@@ -575,9 +575,9 @@ extend(ChartInternal.prototype, {
 			circles.each(function() {
 				const point = d3Select(this);
 
-				const box = this.getBBox();
-				const x1 = box.x + (box.width * 0.5);
-				const y1 = box.y + (box.height * 0.5);
+				const {x, y, width, height} = this.getBBox();
+				const x1 = x + (width * 0.5);
+				const y1 = y + (height * 0.5);
 				const x2 = (1 - scale) * x1;
 				const y2 = (1 - scale) * y1;
 
@@ -648,10 +648,10 @@ extend(ChartInternal.prototype, {
 
 		// if node don't have cx/y or x/y attribute value
 		if (!(cx || cy) && node.nodeType === 1) {
-			const domRect = node.getBBox ? node.getBBox() : node.getBoundingClientRect();
+			const {x, y} = node.getBBox ? node.getBBox() : node.getBoundingClientRect();
 
-			cx = domRect.x;
-			cy = domRect.y;
+			cx = x;
+			cy = y;
 		}
 
 		return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < r;

@@ -2,9 +2,9 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import bbAxis from "./bb.axis";
 import CLASS from "../config/classes";
 import {capitalize, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
+import AxisRenderer from "./AxisRenderer";
 
 const isHorizontal = ($$, forHorizontal) => {
 	const isRotated = $$.config.axis_rotated;
@@ -71,7 +71,7 @@ export default class Axis {
 			orgXScale: $$.x
 		};
 
-		const axis = bbAxis(axisParams)
+		const axis = new AxisRenderer(axisParams)
 			.scale($$.zoomScale || scale)
 			.orient(orient);
 
@@ -106,7 +106,8 @@ export default class Axis {
 			axisName,
 			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
 		};
-		const axis = bbAxis(axisParams)
+
+		const axis = new AxisRenderer(axisParams)
 			.scale(scale)
 			.orient(orient)
 			.tickFormat(
@@ -425,7 +426,9 @@ export default class Axis {
 				.style("top", "0px")
 				.style("left", "0px");
 
-			dummy.call(axis).selectAll("text")
+			axis.create(dummy);
+
+			dummy.selectAll("text")
 				.each(function() {
 					maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
 				});
@@ -542,9 +545,9 @@ export default class Axis {
 			$$.axes[v].style("opacity", opacity);
 		});
 
-		transitions.axisX.call($$.xAxis);
-		transitions.axisY.call($$.yAxis);
-		transitions.axisY2.call($$.y2Axis);
-		transitions.axisSubX.call($$.subXAxis);
+		$$.xAxis.create(transitions.axisX);
+		$$.yAxis.create(transitions.axisY);
+		$$.y2Axis.create(transitions.axisY2);
+		$$.subXAxis.create(transitions.axisSubX);
 	}
 }

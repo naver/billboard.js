@@ -1098,11 +1098,11 @@ export default class ChartInternal {
 
 		if (!withoutAxis) {
 			if ($$.config.axis_rotated) {
-				$$.axes.x.call($$.xAxis);
-				$$.axes.subx.call($$.subXAxis);
+				$$.xAxis.create($$.axes.x);
+				$$.subXAxis.create($$.axes.subx);
 			} else {
-				$$.axes.y.call($$.yAxis);
-				$$.axes.y2.call($$.y2Axis);
+				$$.yAxis.create($$.axes.y);
+				$$.y2Axis.create($$.axes.y2);
 			}
 		}
 
