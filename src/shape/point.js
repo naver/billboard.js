@@ -116,10 +116,10 @@ extend(ChartInternal.prototype, {
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
 			const $$ = this;
-			const box = element.node().getBBox();
+			const {width, height} = element.node().getBBox();
 
-			const xPosFn2 = d => xPosFn(d) - box.width / 2;
-			const yPosFn2 = d => yPosFn(d) - box.height / 2;
+			const xPosFn2 = d => xPosFn(d) - width / 2;
+			const yPosFn2 = d => yPosFn(d) - height / 2;
 			let mainCircles = element;
 
 			if (withTransition) {
