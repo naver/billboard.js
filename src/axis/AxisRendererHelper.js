@@ -1,3 +1,8 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
 import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import {isDefined, isNumber, isString} from "../internals/util";
 

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
@@ -182,7 +182,7 @@ export default class AxisRenderer {
 			tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
 			tickEnter.select("text").attr(`${axisPx}`, tickLength * sign);
 
-			ctx.tickLineTextUpdate(lineUpdate, textUpdate, scale1);
+			ctx.setTickLineTextPosition(lineUpdate, textUpdate, scale1);
 
 			// Append <title> for tooltip display
 			params.tickTitle && textUpdate.append && textUpdate.append("title")
@@ -249,16 +249,16 @@ export default class AxisRenderer {
 	}
 
 	/**
-	 * Update tick's line & text
+	 * Set tick's line & text position
 	 * @param lineUpdate
 	 * @param textUpdate
 	 * @param scale
 	 * @private
 	 */
-	tickLineTextUpdate(lineUpdate, textUpdate, scale) {
+	setTickLineTextPosition(lineUpdate, textUpdate, scale) {
+		const tickPos = this.getTickXY(scale);
 		const {innerTickSize, orient, tickLength, tickOffset} = this.config;
 		const rotate = this.params.tickTextRotate;
-		const tickPos = this.getTickXY(scale);
 
 		const textAnchorForText = r => (!r ? "middle" : (r > 0 ? "start" : "end"));
 		const textTransform = r => (r ? `rotate(${r})` : null);
