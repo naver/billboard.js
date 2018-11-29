@@ -536,11 +536,22 @@ describe("AXIS", function() {
 					const ticks = chart.internal.main.select(`.${CLASS.axisX}`).selectAll("g.tick");
 
 					ticks.each(function(d, i) {
-						const tspans = d3.select(this).selectAll("tspan");
+						const texts = d3.select(this).selectAll("text");
+						const tspans = texts.selectAll("tspan");
+
 						const expectedX = "-9";
-						const expectedDy = "3";
+						const expectedY = "36";
+
+						texts.each(function() {
+							const text = d3.select(this);
+
+							expect(text.attr("x")).to.be.equal(expectedX);
+							expect(text.attr("y")).to.be.equal(expectedY);
+						});
 
 						if (i > 0) { // i === 0 should be checked in next test
+							const expectedDy = "3";
+
 							expect(tspans.size()).to.be.equal(1);
 
 							tspans.each(function() {
