@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181123191043
+ * @version 1.6.2-nightly-20181129154143
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -718,6 +718,12 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
 
 
 
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
 
 
 var AxisRendererHelper_AxisRendererHelper =
@@ -825,7 +831,7 @@ function () {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
@@ -936,7 +942,7 @@ function () {
         var lineUpdate = tickUpdate.select("line"),
             textUpdate = tickUpdate.select("text");
 
-        if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.tickLineTextUpdate(lineUpdate, textUpdate, scale1), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
+        if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate, scale1), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
           Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).text(params.tickTitle[index]);
         }), scale1.bandwidth) {
           var x = scale1,
@@ -984,7 +990,7 @@ function () {
       return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
     }
     /**
-     * Update tick's line & text
+     * Set tick's line & text position
      * @param lineUpdate
      * @param textUpdate
      * @param scale
@@ -992,15 +998,15 @@ function () {
      */
 
   }, {
-    key: "tickLineTextUpdate",
-    value: function tickLineTextUpdate(lineUpdate, textUpdate, scale) {
-      var _this$config = this.config,
+    key: "setTickLineTextPosition",
+    value: function setTickLineTextPosition(lineUpdate, textUpdate, scale) {
+      var tickPos = this.getTickXY(scale),
+          _this$config = this.config,
           innerTickSize = _this$config.innerTickSize,
           orient = _this$config.orient,
           tickLength = _this$config.tickLength,
           tickOffset = _this$config.tickOffset,
-          rotate = this.params.tickTextRotate,
-          tickPos = this.getTickXY(scale);
+          rotate = this.params.tickTextRotate;
       orient === "bottom" ? (lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this)), textUpdate.attr("x", 0).attr("y", function yForText(r) {
         return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength;
       }(rotate)).style("text-anchor", function textAnchorForText(r) {
@@ -12565,7 +12571,7 @@ var billboard = __webpack_require__(25);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181123191043
+ * @version 1.6.2-nightly-20181129154143
  */
 
 var bb = {
@@ -12576,7 +12582,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181123191043",
+  version: "1.6.2-nightly-20181129154143",
 
   /**
    * Generate chart
