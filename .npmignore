@@ -1,8 +1,12 @@
-node_modules/
 .idea/
 .github/
 config/
+coverage/
+demo/
+doc/
+node_modules/
 spec/
+src/
 *.txt
 *.log
 *.yml
@@ -10,8 +14,11 @@ spec/
 .babelrc
 .eslintrc
 .editorconfig
+.gitattributes
 .npmignore
+.travis.yml
 jsdoc.json
 karma.conf.js
+package-lock.json
 webpack.config.js
 yarn.lock

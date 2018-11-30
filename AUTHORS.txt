@@ -21,3 +21,4 @@ Lennert Claeys <lennert.claeys@coscale.com>
 Bogdan Iuga <bogdan.iuga@yardi.com>
 Chong Jaemyung <jm.chong@navercorp.com>
 Rex <rexebin@gmail.com>
+Alexandre Araujo <https://github.com/oliveiraaraujo>
