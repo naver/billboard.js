@@ -680,6 +680,9 @@ export default class Options {
 			 * data: {
 			 *   colors: {
 			 *     data1: "#ff0000",
+			 * 	   data2: function(d) {
+			 * 		  return "#000";
+			 *     }
 			 *     ...
 			 *   }
 			 * }
@@ -2347,13 +2350,13 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
 			 * @property {Boolean} [x.show=false] Show grids along x axis.
-			 * @property {Boolean} [x.lines=[]] Show additional grid lines along x axis.<br>
+			 * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
 			 *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
 			 *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
 			 * @property {Boolean} [y.show=false] Show grids along x axis.
-			 * @property {Boolean} [y.lines=[]] Show additional grid lines along y axis.<br>
+			 * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
 			 *  This option accepts array including object that has value, text, position and class.
-			 * @property {Boolean} [y.ticks=10] Number of y grids to be shown.
+			 * @property {Number} [y.ticks=10] Number of y grids to be shown.
 			 * @property {Boolean} [focus.show=true] Show grids when focus.
 			 * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
 			 * @default undefined
@@ -2513,7 +2516,7 @@ export default class Options {
 			 * @name bar
 			 * @memberOf Options
 			 * @type {Object}
-			 * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
+			 * @property {Number} [bar.padding=0] The padding pixel value between each bar.
 			 * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
 			 * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 			 * @property {Number} [bar.width] Change the width of bar chart.
@@ -2774,7 +2777,7 @@ export default class Options {
 			 * @name spline
 			 * @memberOf Options
 			 * @type {Object}
-			 * @property {String} [spline.interpolation.type=cardinal]
+			 * @property {String} [spline.interpolation.type="cardinal"]
 			 * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
 			 * @example
 			 *  spline: {

@@ -4,6 +4,7 @@
   "description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
   "homepage": "http://naver.github.io/billboard.js/",
   "main": "dist/billboard.js",
+  "types": "types/index.d.ts",
   "scripts": {
     "start": "webpack-dev-server --open",
     "build": "npm run build:production && npm run build:packaged && npm run build:theme",
@@ -16,6 +17,7 @@
     "build:nightly": "node ./config/nightly.js",
     "deploy": "bash ./config/deploy.sh",
     "lint": "eslint src",
+    "lint:dts": "dtslint types",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
     "test:chrome": "npm test -- --chrome",
     "coverage": "npm test -- --coverage",
@@ -68,6 +70,7 @@
     "cross-env": "^5.2.0",
     "css-loader": "^1.0.1",
     "docdash": "^1.0.0",
+    "dtslint": "^0.3.0",
     "eslint": "^5.9.0",
     "eslint-config-naver": "^2.0.0",
     "eslint-loader": "^2.1.1",

@@ -114,7 +114,7 @@ extend(data, {
 	 * @method data․colors
 	 * @instance
 	 * @memberOf Chart
-	 * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as
+	 * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
 	 * @return {Object} Corresponding data color value according its key value.
 	 * @example
 	 * // Get current colors
