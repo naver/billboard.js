@@ -15,3 +15,6 @@ jsdoc.json
 karma.conf.js
 webpack.config.js
 yarn.lock
+src/
+demo/
+doc/
