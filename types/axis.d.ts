@@ -11,6 +11,7 @@ export interface Axis {
 	y?: YAxisConfiguration;
 	y2?: YAxisConfiguration;
 }
+
 export interface XAxisConfiguration {
 	/**
 	 * Show or hide x axis.
@@ -84,7 +85,7 @@ export interface XAxisConfiguration {
 	/**
 	 * Set clip-path attribute for x axis element.
 	 */
-	clipPath: boolean;
+	clipPath?: boolean;
 }
 
 export interface YAxisConfiguration {
@@ -149,7 +150,7 @@ export interface YAxisConfiguration {
 	/**
 	 * Set clip-path attribute for x axis element.
 	 */
-	clipPath: boolean;
+	clipPath?: boolean;
 }
 
 export interface XTickConfiguration {

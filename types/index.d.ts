@@ -5,6 +5,7 @@
 import { Chart } from "./chart";
 import { Options } from "./options";
 import { d3Selection } from "./types";
+
 declare module "billboard.js" {
 	export namespace bb {
 		/**

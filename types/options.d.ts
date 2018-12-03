@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import { Axis } from "./axis";
-import { DataItem, PrimitiveArray, d3Selection } from "./types";
+import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
 
 export interface Options {
 	/**
@@ -1000,27 +1000,13 @@ export interface Data {
 	 * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.
 	 * - Available Values: area, area-line-range, area-spline, area-spline-range, area-step, bar, bubble, donut, gauge, line, pie, radar, scatter, spline, step
 	 */
-	type?: "area"
-		| "area-line-range"
-		| "area-spline"
-		| "area-spline-range"
-		| "area-step"
-		| "bar"
-		| "bubble"
-		| "donut"
-		| "gauge"
-		| "line"
-		| "pie"
-		| "radar"
-		| "scatter"
-		| "spline"
-		| "step";
+	type?: ChartTypes;
 
 	/**
 	 * Set chart type for each data.
 	 * This setting overwrites data.type setting.
 	 */
-	types?: { [key: string]: string };
+	types?: { [key: string]: ChartTypes };
 
 	/**
 	 * Show labels on each data points or set formatter function for data labels.
