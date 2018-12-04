@@ -5,7 +5,7 @@
 import { Axis } from "./axis";
 import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
 
-export interface Options {
+export interface ChartOptions {
 	/**
 	 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
 	 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).

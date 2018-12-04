@@ -78,10 +78,10 @@ const bb = {
 
 	/**
 	 * Generate chart
-	 * @param {Options} options chart options
+	 * @param {ChartOptions} options chart options
 	 * @memberOf bb
 	 * @return {Chart}
-	 * @see {@link Options} for different generation options
+	 * @see {@link ChartOptions} for different generation options
 	 * @see {@link Chart} for different methods API
 	 * @example
 	 *  <!-- chart holder -->

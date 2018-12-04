@@ -3,14 +3,14 @@
  * billboard.js project is licensed under the MIT license
  */
 import { Chart } from "./chart";
-import { Options } from "./options";
+import { ChartOptions } from "./options";
 
 export const bb: {
 	/**
 	 * Generate chart
 	 * @param options Chart generation options
 	 */
-	generate(options: Options): Chart;
+	generate(options: ChartOptions): Chart;
 
 	/**
 	 * Version information
