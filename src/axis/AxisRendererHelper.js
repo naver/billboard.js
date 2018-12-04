@@ -122,8 +122,6 @@ export default class AxisRendererHelper {
 		const config = this.config;
 
 		return config.withoutTransition ?
-			selection.interrupt() : (
-				config.transition ? selection.transition(config.transition) : selection
-			);
+			selection.interrupt() : selection.transition(config.transition);
 	}
 }
