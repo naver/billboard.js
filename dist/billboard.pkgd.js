@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181204152701
+ * @version 1.6.2-nightly-20181204182425
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -8593,8 +8593,8 @@ function () {
             tickExit = tick.exit().remove(); // update selection
 
         tick = tickEnter.merge(tick);
-        var tickUpdate = helperInst.transitionise(tick).style("opacity", "1"),
-            path = g.selectAll(".domain").data([0]); // update selection - data join
+        // update selection - data join
+        var path = g.selectAll(".domain").data([0]); // enter + update selection
 
         path.enter().append("path").attr("class", "domain").merge(helperInst.transitionise(path)).attr("d", function () {
           var outerTickSized = config.outerTickSize * sign;
@@ -8620,8 +8620,8 @@ function () {
           var dy = 0;
           return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
         });
-        var lineUpdate = tickUpdate.select("line"),
-            textUpdate = tickUpdate.select("text");
+        var lineUpdate = tick.select("line"),
+            textUpdate = tick.select("text");
 
         if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate, scale1), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
           src_select(this).text(params.tickTitle[index]);
@@ -8633,7 +8633,7 @@ function () {
           }, scale1 = scale0;
         } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
 
-        tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, tickUpdate, scale1);
+        tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
       }), this.g = $g;
     }
     /**
@@ -23094,7 +23094,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181204152701
+ * @version 1.6.2-nightly-20181204182425
  */
 
 var bb = {
@@ -23105,7 +23105,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181204152701",
+  version: "1.6.2-nightly-20181204182425",
 
   /**
    * Generate chart
