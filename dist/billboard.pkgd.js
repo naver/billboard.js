@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181129154143
+ * @version 1.6.2-nightly-20181204152701
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -10568,6 +10568,9 @@ var Options_Options = function Options() {
      * data: {
      *   colors: {
      *     data1: "#ff0000",
+     * 	   data2: function(d) {
+     * 		  return "#000";
+     *     }
      *     ...
      *   }
      * }
@@ -12246,13 +12249,13 @@ var Options_Options = function Options() {
      * @type {Object}
      * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
      * @property {Boolean} [x.show=false] Show grids along x axis.
-     * @property {Boolean} [x.lines=[]] Show additional grid lines along x axis.<br>
+     * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
      *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
      *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
      * @property {Boolean} [y.show=false] Show grids along x axis.
-     * @property {Boolean} [y.lines=[]] Show additional grid lines along y axis.<br>
+     * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
      *  This option accepts array including object that has value, text, position and class.
-     * @property {Boolean} [y.ticks=10] Number of y grids to be shown.
+     * @property {Number} [y.ticks=10] Number of y grids to be shown.
      * @property {Boolean} [focus.show=true] Show grids when focus.
      * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
      * @default undefined
@@ -12412,7 +12415,7 @@ var Options_Options = function Options() {
      * @name bar
      * @memberOf Options
      * @type {Object}
-     * @property {Boolean} [bar.padding=0] The padding pixel value between each bar.
+     * @property {Number} [bar.padding=0] The padding pixel value between each bar.
      * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
      * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
      * @property {Number} [bar.width] Change the width of bar chart.
@@ -12672,7 +12675,7 @@ var Options_Options = function Options() {
      * @name spline
      * @memberOf Options
      * @type {Object}
-     * @property {String} [spline.interpolation.type=cardinal]
+     * @property {String} [spline.interpolation.type="cardinal"]
      * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
      * @example
      *  spline: {
@@ -21479,8 +21482,10 @@ util_extend(Chart_Chart.prototype, {
    * Load data to the chart.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
    * - <b>Note:</b>
-   * unload should be used if some data needs to be unloaded simultaneously. If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
-   * done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering
+   *   - unload should be used if some data needs to be unloaded simultaneously.
+   *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
+   *   - done will be called after data loaded, but it's not after rendering.
+   *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
    * @method load
    * @instance
    * @memberOf Chart
@@ -21489,6 +21494,9 @@ util_extend(Chart_Chart.prototype, {
    *    | Key | Description |
    *    | --- | --- |
    *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+   *    | data | Data objects to be loaded |
+   *    | names | Same as data.names() |
+   *    | xs | Same as data.xs option  |
    *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
    *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
    *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
@@ -22324,7 +22332,7 @@ util_extend(api_data_data, {
    * @method data․colors
    * @instance
    * @memberOf Chart
-   * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as
+   * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
    * @return {Object} Corresponding data color value according its key value.
    * @example
    * // Get current colors
@@ -23086,7 +23094,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181129154143
+ * @version 1.6.2-nightly-20181204152701
  */
 
 var bb = {
@@ -23097,7 +23105,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181129154143",
+  version: "1.6.2-nightly-20181204152701",
 
   /**
    * Generate chart
