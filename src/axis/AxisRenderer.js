@@ -101,8 +101,6 @@ export default class AxisRenderer {
 			// enter + update selection
 			tick = tickEnter.merge(tick);
 
-			const tickUpdate = helperInst.transitionise(tick).style("opacity", "1");
-
 			// update selection - data join
 			const path = g.selectAll(".domain").data([0]);
 
@@ -176,8 +174,8 @@ export default class AxisRenderer {
 				});
 
 
-			const lineUpdate = tickUpdate.select("line");
-			const textUpdate = tickUpdate.select("text");
+			const lineUpdate = tick.select("line");
+			const textUpdate = tick.select("text");
 
 			tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
 			tickEnter.select("text").attr(`${axisPx}`, tickLength * sign);
@@ -203,7 +201,7 @@ export default class AxisRenderer {
 			}
 
 			tickTransform.call(helperInst, tickEnter, scale0);
-			tickTransform.call(helperInst, tickUpdate, scale1);
+			tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
 		});
 
 		this.g = $g;
