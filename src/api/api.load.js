@@ -10,8 +10,10 @@ extend(Chart.prototype, {
 	 * Load data to the chart.<br><br>
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
 	 * - <b>Note:</b>
-	 * unload should be used if some data needs to be unloaded simultaneously. If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
-	 * done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering
+	 *   - unload should be used if some data needs to be unloaded simultaneously.
+	 *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
+	 *   - done will be called after data loaded, but it's not after rendering.
+	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 * @method load
 	 * @instance
 	 * @memberOf Chart
@@ -20,6 +22,9 @@ extend(Chart.prototype, {
 	 *    | Key | Description |
 	 *    | --- | --- |
 	 *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | data | Data objects to be loaded |
+	 *    | names | Same as data.names() |
+	 *    | xs | Same as data.xs option  |
 	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
 	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
 	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
@@ -64,7 +69,6 @@ extend(Chart.prototype, {
 		"axes" in args && Object.keys(args.axes).forEach(id => {
 			config.data_axes[id] = args.axes[id];
 		});
-
 
 		// update colors if exists
 		"colors" in args && Object.keys(args.colors).forEach(id => {
