@@ -4,11 +4,11 @@
   },
   "source": {
     "include": [
-      "./dist/billboard.js",
+      "./src",
       "./README.md"
     ],
     "includePattern": ".+\\.js$",
-    "excludePattern": "(node_modules/|doc/|theme/)"
+    "excludePattern": "(node_modules|doc|theme|types)/"
   },
   "plugins": [
     "plugins/markdown"
