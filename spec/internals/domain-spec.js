@@ -140,4 +140,40 @@ describe("DOMAIN", function() {
 			expect(domain[1]).to.be.closeTo(69, 1);
 		});
 	});
+
+	describe("Multi xs with grouped data", () => {
+		before(() => {
+			args = {
+				data: {
+					xs: { "Buy": "xBuy", "Sell": "xSell" },
+					columns: [
+						["xBuy", "2018-07-05", "2018-07-11"],
+						["xSell","2018-07-02","2018-07-05"],
+						["Buy", 33, 3],
+						["Sell", 7, 33]
+					],
+					type: "bar",
+					groups: [[ "Buy", "Sell"]]
+				},
+				axis: {
+					x: {
+						type: 'timeseries',
+						tick: {
+							format: '%d/%m/%y'
+						}
+					},
+					y2: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("should set max y Axis properly", () => {
+			const lastTickText = +chart.$.main.selectAll(".bb-axis-y .tick tspan")
+				.nodes().pop().textContent;
+
+			expect(lastTickText).to.be.equal(70);
+		});
+	});
 });

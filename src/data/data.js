@@ -74,11 +74,33 @@ extend(ChartInternal.prototype, {
 		return xValues;
 	},
 
-	getIndexByX(x) {
+	/**
+	 * Get index number based on given x Axis value
+	 * @param {Date|Number|String} x x Axis to be compared
+	 * @param {Array} basedX x Axis list to be based on
+	 * @return {Number} index number
+	 * @private
+	 */
+	getIndexByX(x, basedX) {
 		const $$ = this;
-		const data = $$.filterByX($$.data.targets, x);
+		const targets = $$.data.targets;
+		let index;
 
-		return data.length ? data[0].index : null;
+		if (basedX) {
+			const len = basedX.length;
+
+			for (index = 0; index < len; index++) {
+				if (basedX[index] === +x) {
+					break;
+				}
+			}
+		} else {
+			const data = $$.filterByX(targets, x);
+
+			index = data.length ? data[0].index : null;
+		}
+
+		return index;
 	},
 
 	getXValue(id, i) {
@@ -442,7 +464,11 @@ extend(ChartInternal.prototype, {
 	},
 
 	getValuesAsIdKeyed(targets) {
+		const $$ = this;
 		const ys = {};
+		const isMultipleX = $$.isMultipleX();
+		const xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets)
+			.map(v => (isString(v) ? v : +v)) : null;
 
 		targets.forEach(t => {
 			const data = [];
@@ -455,7 +481,11 @@ extend(ChartInternal.prototype, {
 				} else if (isObject(value) && "high" in value) {
 					data.push(...Object.values(value));
 				} else {
-					data.push(value);
+					if (isMultipleX) {
+						data[$$.getIndexByX(v.x, xs)] = value;
+					} else {
+						data.push(value);
+					}
 				}
 			});
 
