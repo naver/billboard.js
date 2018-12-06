@@ -18,15 +18,14 @@ extend(ChartInternal.prototype, {
 
 		const dataGroups = config.data_groups;
 		const ids = $$.mapToIds(targets);
-		const ys = $$.getValuesAsIdKeyed(targets);
+
 		const f = isMin ? d3Min : d3Max;
+		const ys = $$.getValuesAsIdKeyed(targets);
 
 		if (dataGroups.length > 0) {
 			const hasValue = $$[`has${isMin ? "Negative" : "Positive"}ValueInTargets`](targets);
-			let baseId;
-			let idsInGroup;
 
-			for (let j = 0; (idsInGroup = dataGroups[j]); j++) {
+			for (let j = 0, idsInGroup; (idsInGroup = dataGroups[j]); j++) {
 				// Determine baseId
 				idsInGroup = idsInGroup.filter(v => ids.indexOf(v) >= 0);
 
@@ -34,31 +33,28 @@ extend(ChartInternal.prototype, {
 					continue;
 				}
 
-				baseId = idsInGroup[0];
+				const baseId = idsInGroup[0];
+				const baseAxisId = $$.axis.getId(baseId);
 
-				// Consider values
+				// Initialize base value. Set to 0 if not match with the condition
 				if (hasValue && ys[baseId]) {
-					const setter = isMin ? (v, i) => {
-						ys[baseId][i] = v < 0 ? v : 0;
-					} : (v, i) => {
-						ys[baseId][i] = v > 0 ? v : 0;
-					};
-
-					ys[baseId].forEach(setter);
+					ys[baseId] = ys[baseId].map(v => (
+						(isMin ? v < 0 : v > 0) ? v : 0
+					));
 				}
 
-				// Compute min
 				for (let k = 1, id; (id = idsInGroup[k]); k++) {
 					if (!ys[id]) {
 						continue;
 					}
 
+					const axisId = $$.axis.getId(id);
+
 					ys[id].forEach((v, i) => {
 						const val = +v;
 						const meetCondition = isMin ? val > 0 : val < 0;
 
-						if ($$.axis.getId(id) === $$.axis.getId(baseId) &&
-							ys[baseId] && !(hasValue && meetCondition)) {
+						if (axisId === baseAxisId && !(hasValue && meetCondition)) {
 							ys[baseId][i] += val;
 						}
 					});

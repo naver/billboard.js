@@ -22,7 +22,8 @@
     "test:chrome": "npm test -- --chrome",
     "coverage": "npm test -- --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
-    "jsdoc": "jsdoc -c jsdoc.json",
+    "jsdoc": "node ./config/jsdoc.js",
+    "jsdoc:cmd": "jsdoc -c jsdoc.json",
     "changelog": "node ./config/changelog.js",
     "commitmsg": "node ./config/validate-commit-msg.js",
     "prepush": "npm run lint"

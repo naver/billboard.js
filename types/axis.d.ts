@@ -129,6 +129,7 @@ export interface YAxisConfiguration {
 	 *   - inner-top, inner-middle, inner-bottom, outer-top, outer-middle, outer-bottom
 	 */
 	label?: string | { text: string; position: string };
+
 	tick?: YTickConfiguration;
 
 	/**

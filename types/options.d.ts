@@ -5,7 +5,7 @@
 import { Axis } from "./axis";
 import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
 
-export interface Options {
+export interface ChartOptions {
 	/**
 	 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
 	 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
@@ -32,6 +32,7 @@ export interface Options {
 		 * Note: This option should be specified if possible because it can improve its performance because some size calculations will be skipped by an explicit value.
 		 */
 		width?: number;
+
 		/**
 		 * The desired height of the chart element.
 		 * If this option is not specified, the height of the chart will be calculated by the size of the parent element it's appended to.
@@ -44,14 +45,18 @@ export interface Options {
 		 * The padding on the top of the chart.
 		 */
 		top?: number;
+
 		/**
 		 * The padding on the right of the chart.
 		 */
 		right?: number;
+
 		/**
 		 * The padding on the bottom of the chart.
 		 */
+
 		bottom?: number;
+
 		/**
 		 * The padding on the left of the chart.
 		 */
@@ -125,11 +130,11 @@ export interface Options {
 			 * enable or disable touch interaction
 			 */
 			touch?: boolean | {
-			/**
-			 * enable or disable to call event.preventDefault on touchstart & touchmove event.
-			 * It's usually used to prevent document scrolling.
-			 */
-			preventDefault?: boolean | number;
+				/**
+				 * enable or disable to call event.preventDefault on touchstart & touchmove event.
+				 * It's usually used to prevent document scrolling.
+				 */
+				preventDefault?: boolean | number;
 			};
 		}
 	};
@@ -151,8 +156,8 @@ export interface Options {
 	/**
 	 * Show rectangles inside the chart.
 	 * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
-	 * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and
-	 * unixtime integer can be used. If class is set, the region element will have it as class.
+	 * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used.
+	 * If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
 	 */
 	regions?: RegionOptions[];
 
@@ -169,7 +174,8 @@ export interface Options {
 	line?: {
 		/**
 		 * Set if null data point will be connected or not.
-		 * If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
+		 * If true set, the region of null data will be connected without any data point.
+		 * If false set, the region of null data will not be connected and get empty.
 		 */
 		connectNull?: boolean;
 
@@ -444,22 +450,22 @@ export interface Options {
 			 * Set custom spline interpolation
 			 */
 			type?: "basis"
-			| "basis-open"
-			| "bundle"
-			| "cardinal"
-			| "cardinal-closed"
-			| "cardinal-open"
-			| "catmull-rom"
-			| "catmull-rom-closed"
-			| "catmull-rom-open"
-			| "monotone-x"
-			| "monotone-y"
-			| "natural"
-			| "linear-closed"
-			| "linear"
-			| "step"
-			| "step-after"
-			| "step-before"
+				| "basis-open"
+				| "bundle"
+				| "cardinal"
+				| "cardinal-closed"
+				| "cardinal-open"
+				| "catmull-rom"
+				| "catmull-rom-closed"
+				| "catmull-rom-open"
+				| "monotone-x"
+				| "monotone-y"
+				| "natural"
+				| "linear-closed"
+				| "linear"
+				| "step"
+				| "step-after"
+				| "step-before"
 		};
 	};
 
@@ -535,12 +541,13 @@ export interface LegendOptions {
 	 * Currently bottom, right and inset are supported.
 	 */
 	position?: string;
+
 	/**
 	 * Change inset legend attributes.
 	 * This option accepts object that has the keys anchor, x, y and step.
-	 * anchor decides the position of the legend. These anchors are available: top-left, top-right, bottom-left, bottom-right
-	 * x and y set the position of the legend based on the anchor.
-	 * step defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
+	 * - anchor: decides the position of the legend. These anchors are available: top-left, top-right, bottom-left, bottom-right
+	 * - x and y: set the position of the legend based on the anchor.
+	 * - step: defines the max step the lagend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
 	 */
 	inset?: {
 		anchor?: string;
@@ -562,6 +569,7 @@ export interface LegendOptions {
 			 * Tile width.
 			 */
 			width?: number;
+
 			/**
 			 * Tile height
 			 */
@@ -571,10 +579,12 @@ export interface LegendOptions {
 		 * Set click event handler to the legend item.
 		 */
 		onclick?(id: DataItem): void;
+
 		/**
 		 * Set mouseover event handler to the legend item.
 		 */
 		onover?(id: DataItem): void;
+
 		/**
 		 * Set mouseout event handler to the legend item.
 		 */
@@ -614,6 +624,7 @@ export interface TooltipOptions {
 	 * Show or hide tooltip.
 	 */
 	show?: boolean;
+
 	/**
 	 * Set if tooltip is grouped or not for the data points.
 	 */
@@ -623,14 +634,18 @@ export interface TooltipOptions {
 		 * Set format for the title of tooltip. Specified function receives x of the data point to show.
 		 */
 		title?(x: any): string;
+
 		/**
-		 * Set format for the name of each data in tooltip. Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not
-		 * donut/pie/gauge.
+		 * Set format for the name of each data in tooltip.
+		 * Specified function receives name, ratio, id and index of the data point to show.
+		 * ratio will be undefined if the chart is not donut/pie/gauge.
 		 */
 		name?(name: string, ratio: number, id: string, index: number): string;
+
 		/**
 		 * Set format for the value of each data in tooltip.
-		 * Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
+		 * Specified function receives name, ratio, id and index of the data point to show.
+		 * ratio will be undefined if the chart is not donut/pie/gauge.
 		 * If undefined returned, the row of that value will be skipped.
 		 */
 		value?(value: any, ratio: number, id: string, index: number): string;
@@ -642,7 +657,8 @@ export interface TooltipOptions {
 	order?: string | any[] | ((data1: any, data2: any) => number) | null;
 
 	/**
-	 * Set custom position for the tooltip. This option can be used to modify the tooltip position by returning object that has top and left.
+	 * Set custom position for the tooltip.
+	 * This option can be used to modify the tooltip position by returning object that has top and left.
 	 */
 	position?(
 		data: any,
@@ -653,7 +669,8 @@ export interface TooltipOptions {
 
 	/**
 	 * Set custom HTML for the tooltip.
-	 * Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+	 * Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show.
+	 * If tooltip.grouped is true, data includes multiple data points.
 	 */
 	contents?(
 		data: any,
@@ -745,9 +762,11 @@ export interface ZoomOptions {
 	};
 
 	/**
-	 * Enable to rescale after zooming. If true set, y domain will be updated according to the zoomed region.
+	 * Enable to rescale after zooming.
+	 * If true set, y domain will be updated according to the zoomed region.
 	 */
 	rescale?: boolean;
+
 	/**
 	 * Change zoom extent.
 	 */
@@ -766,17 +785,20 @@ export interface ZoomOptions {
 	};
 
 	/**
-	 * Set callback that is called when zooming starts. Specified function receives the zoom event.
+	 * Set callback that is called when zooming starts.
+	 * Specified function receives the zoom event.
 	 */
 	onzoomstart?(event: Event): void;
 
 	/**
-	 * Set callback that is called when the chart is zooming. Specified function receives the zoomed domain.
+	 * Set callback that is called when the chart is zooming.
+	 * Specified function receives the zoomed domain.
 	 */
 	onzoom?(domain: any): void;
 
 	/**
-	 * Set callback that is called when zooming ends. Specified function receives the zoomed domain.
+	 * Set callback that is called when zooming ends.
+	 * Specified function receives the zoomed domain.
 	 */
 	onzoomend?(domain: any): void;
 
@@ -796,6 +818,7 @@ export interface PointOptions {
 	 * Whether to show each point in line.
 	 */
 	show?: boolean;
+
 	/**
 	 * The radius size of each point.
 	 */
@@ -807,6 +830,7 @@ export interface PointOptions {
 			 * Whether to expand each point on focus.
 			 */
 			enabled?: boolean;
+
 			/**
 			 * The radius size of each point on focus.
 			 */
@@ -872,10 +896,13 @@ export interface Grid {
 		 * Show grids along x axis.
 		 */
 		show?: boolean;
+
 		/**
 		 * Show additional grid lines along x axis.
-		 * This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
-		 * If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
+		 * This option accepts array including object that has value, text, position and class.
+		 * text, position and class are optional. For position, start, middle and end (default) are available.
+		 * If x axis is category axis, value can be category name.
+		 * If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
 		 */
 		lines?: LineOptions[];
 	};
@@ -885,6 +912,7 @@ export interface Grid {
 		 * Show grids along y axis.
 		 */
 		show?: boolean;
+
 		/**
 		 * Show additional grid lines along y axis.
 		 * This option accepts array including object that has value, text, position and class.
@@ -908,7 +936,8 @@ export interface LineOptions {
 
 export interface Data {
 	/**
-	 * Load a CSV or JSON file from a URL. Note that this will not work if loading via the "file://" protocol as most browsers with block XMLHTTPRequests.
+	 * Load a CSV or JSON file from a URL.
+	 * Note that this will not work if loading via the "file://" protocol as most browsers with block XMLHTTPRequests.
 	 */
 	url?: string;
 
@@ -956,7 +985,8 @@ export interface Data {
 
 	/**
 	 * Specify the key of x values in the data.
-	 * We can show the data with non-index x values by th is option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data
+	 * We can show the data with non-index x values by th is option. This option is required when the type of x axis is timeseries.
+	 * If this option is set on category axis, the values of the data
 	 * on the key will be used for category names.
 	 */
 	x?: string;
@@ -972,8 +1002,15 @@ export interface Data {
 	 * Default is %Y-%m-%d
 	 */
 	xFormat?: string;
-	// xLocaltime?: any;
-	// xSort?: any;
+	/**
+	 * Set localtime format to parse x axis.
+	 */
+	xLocaltime?: boolean;
+
+	/**
+	 * Sort on x axis.
+	 */
+	xSort?: boolean;
 
 	/**
 	 * Set custom data name.
@@ -1029,16 +1066,16 @@ export interface Data {
 
 	/**
 	 * Define the order of the data.
-	 * This option changes the order of stacking the data and pieces of pie/donut. If null specified, it will be the order the data loaded. If function specified, it will be used to sort the data
-	 * and it will recieve the data as argument.
+	 * This option changes the order of stacking the data and pieces of pie/donut. If null specified, it will be the order the data loaded.
+	 * If function specified, it will be used to sort the data and it will recieve the data as argument.
 	 * Available Values: desc, asc, function (data1, data2) { ... }, null
 	 */
 	order?: string | ((...data: string[]) => void) | null;
 
 	/**
 	 * Define regions for each data.
-	 * The values must be an array for each data and it should include an object that has start, end, style. If start is not set, the start will be the first data point. If end is not set, the
-	 * end will be the last data point.
+	 * The values must be an array for each data and it should include an object that has start, end, style.
+	 * If start is not set, the start will be the first data point. If end is not set, the end will be the last data point.
 	 * Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
 	 */
 	regions?: { [key: string]: Array<{
@@ -1051,8 +1088,8 @@ export interface Data {
 
 	/**
 	 * Set color converter function.
-	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that
-	 * represents color (e.g. '#00ff00').
+	 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc.
+	 * And it must return a string that represents color (e.g. '#00ff00').
 	 */
 	color?(color: string, d: DataItem): string;
 
@@ -1106,12 +1143,12 @@ export interface Data {
 		id: string;
 		id_org: string;
 		values: Array<{
-		x: number;
-		value: number;
-		id: string;
-		index: number;
-		}>
-	}>) => boolean;
+			x: number;
+			value: number;
+			id: string;
+			index: number;
+			}>
+		}>) => boolean;
 
 	stack?: {
 		/**
