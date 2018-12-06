@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181204182425
+ * @version 1.6.2-nightly-20181206170719
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5379,31 +5379,31 @@ extend(ChartInternal_ChartInternal.prototype, {
         isMin = type === "min",
         dataGroups = config.data_groups,
         ids = $$.mapToIds(targets),
-        ys = $$.getValuesAsIdKeyed(targets),
-        f = isMin ? external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"] : external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"];
+        f = isMin ? external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"] : external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"],
+        ys = $$.getValuesAsIdKeyed(targets);
     return dataGroups.length > 0 && function () {
-      for (var baseId, idsInGroup, hasValue = $$["has".concat(isMin ? "Negative" : "Positive", "ValueInTargets")](targets), j = 0; idsInGroup = dataGroups[j]; j++) if (idsInGroup = idsInGroup.filter(function (v) {
-        return ids.indexOf(v) >= 0;
-      }), idsInGroup.length !== 0) {
-        // Consider values
-        if (baseId = idsInGroup[0], hasValue && ys[baseId]) {
-          var setter = isMin ? function (v, i) {
-            ys[baseId][i] = v < 0 ? v : 0;
-          } : function (v, i) {
-            ys[baseId][i] = v > 0 ? v : 0;
-          };
-          ys[baseId].forEach(setter);
-        } // Compute min
+      for (var idsInGroup, _ret, hasValue = $$["has".concat(isMin ? "Negative" : "Positive", "ValueInTargets")](targets), _loop = function (j, _idsInGroup) {
+        if (_idsInGroup = _idsInGroup.filter(function (v) {
+          return ids.indexOf(v) >= 0;
+        }), _idsInGroup.length === 0) return idsInGroup = _idsInGroup, "continue";
+        var baseId = _idsInGroup[0],
+            baseAxisId = $$.axis.getId(baseId);
+        hasValue && ys[baseId] && (ys[baseId] = ys[baseId].map(function (v) {
+          return (isMin ? v < 0 : v > 0) ? v : 0;
+        }));
 
-
-        for (var id, _ret, _loop = function (k, id) {
-          return ys[id] ? void ys[id].forEach(function (v, i) {
+        for (var id, _ret2, _loop2 = function (k, id) {
+          if (!ys[id]) return "continue";
+          var axisId = $$.axis.getId(id);
+          ys[id].forEach(function (v, i) {
             var val = +v,
                 meetCondition = isMin ? val > 0 : val < 0;
-            $$.axis.getId(id) === $$.axis.getId(baseId) && ys[baseId] && !(hasValue && meetCondition) && (ys[baseId][i] += val);
-          }) : "continue";
-        }, k = 1; id = idsInGroup[k]; k++) _ret = _loop(k, id), _ret === "continue";
-      }
+            axisId !== baseAxisId || hasValue && meetCondition || (ys[baseId][i] += val);
+          });
+        }, k = 1; id = _idsInGroup[k]; k++) _ret2 = _loop2(k, id), _ret2 === "continue";
+
+        idsInGroup = _idsInGroup;
+      }, j = 0; idsInGroup = dataGroups[j]; j++) _ret = _loop(j, idsInGroup), _ret === "continue";
     }(), f(Object.keys(ys).map(function (key) {
       return f(ys[key]);
     }));
@@ -5568,10 +5568,29 @@ extend(ChartInternal_ChartInternal.prototype, {
       $$.getXKey(id) === key && (xValues = $$.data.xs[id]);
     }), xValues;
   },
-  getIndexByX: function getIndexByX(x) {
-    var $$ = this,
-        data = $$.filterByX($$.data.targets, x);
-    return data.length ? data[0].index : null;
+
+  /**
+   * Get index number based on given x Axis value
+   * @param {Date|Number|String} x x Axis to be compared
+   * @param {Array} basedX x Axis list to be based on
+   * @return {Number} index number
+   * @private
+   */
+  getIndexByX: function getIndexByX(x, basedX) {
+    var index,
+        $$ = this,
+        targets = $$.data.targets;
+
+    if (basedX) {
+      var len = basedX.length;
+
+      for (index = 0; index < len && !(basedX[index] === +x); index++);
+    } else {
+      var data = $$.filterByX(targets, x);
+      index = data.length ? data[0].index : null;
+    }
+
+    return index;
   },
   getXValue: function getXValue(id, i) {
     var $$ = this;
@@ -5860,12 +5879,17 @@ extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   getValuesAsIdKeyed: function getValuesAsIdKeyed(targets) {
-    var ys = {};
+    var $$ = this,
+        ys = {},
+        isMultipleX = $$.isMultipleX(),
+        xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets).map(function (v) {
+      return isString(v) ? v : +v;
+    }) : null;
     return targets.forEach(function (t) {
       var data = [];
       t.values.forEach(function (v) {
         var value = v.value;
-        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : data.push(value);
+        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },
@@ -6084,8 +6108,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     var value = d.value;
 
     if (isArray(value)) {
-      var index = ["high", "mid", "low"].indexOf(type);
-      return index === -1 ? null : value[index];
+      var _index = ["high", "mid", "low"].indexOf(type);
+
+      return _index === -1 ? null : value[_index];
     }
 
     return value[type];
@@ -12579,7 +12604,7 @@ var billboard = __webpack_require__(25);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181204182425
+ * @version 1.6.2-nightly-20181206170719
  */
 
 var bb = {
@@ -12590,7 +12615,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181204182425",
+  version: "1.6.2-nightly-20181206170719",
 
   /**
    * Generate chart
