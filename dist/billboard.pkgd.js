@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181206170719
+ * @version 1.6.2-nightly-20181207105051
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -13255,20 +13255,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getIndexByX: function getIndexByX(x, basedX) {
-    var index,
-        $$ = this,
-        targets = $$.data.targets;
-
-    if (basedX) {
-      var len = basedX.length;
-
-      for (index = 0; index < len && !(basedX[index] === +x); index++);
-    } else {
-      var data = $$.filterByX(targets, x);
-      index = data.length ? data[0].index : null;
-    }
-
-    return index;
+    var $$ = this;
+    return basedX ? basedX.indexOf(isString(x) ? x : +x) : ($$.filterByX($$.data.targets, x)[0] || {
+      index: null
+    }).index;
   },
   getXValue: function getXValue(id, i) {
     var $$ = this;
@@ -13786,9 +13776,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var value = d.value;
 
     if (isArray(value)) {
-      var _index = ["high", "mid", "low"].indexOf(type);
-
-      return _index === -1 ? null : value[_index];
+      var index = ["high", "mid", "low"].indexOf(type);
+      return index === -1 ? null : value[index];
     }
 
     return value[type];
@@ -23119,7 +23108,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181206170719
+ * @version 1.6.2-nightly-20181207105051
  */
 
 var bb = {
@@ -23130,7 +23119,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181206170719",
+  version: "1.6.2-nightly-20181207105051",
 
   /**
    * Generate chart
