@@ -83,11 +83,10 @@ extend(ChartInternal.prototype, {
 	 */
 	getIndexByX(x, basedX) {
 		const $$ = this;
-		const targets = $$.data.targets;
 
 		return basedX ?
 			basedX.indexOf(isString(x) ? x : +x) :
-			($$.filterByX(targets, x)[0] || {index: null}).index;
+			($$.filterByX($$.data.targets, x)[0] || {index: null}).index;
 	},
 
 	getXValue(id, i) {
