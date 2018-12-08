@@ -2549,9 +2549,9 @@ define-property@^2.0.2:
     is-descriptor "^1.0.2"
     isobject "^3.0.1"
 
-"definitelytyped-header-parser@github:Microsoft/definitelytyped-header-parser#production":
+definitelytyped-header-parser@Microsoft/definitelytyped-header-parser#production:
   version "0.0.0"
-  resolved "https://codeload.github.com/Microsoft/definitelytyped-header-parser/tar.gz/4941b70b7658d5238b619dcba694aee22f5b8f56"
+  resolved "https://codeload.github.com/Microsoft/definitelytyped-header-parser/tar.gz/e0561530379dfa01324a89936b75d90b20df9bd2"
   dependencies:
     "@types/parsimmon" "^1.3.0"
     parsimmon "^1.2.0"
@@ -5031,9 +5031,9 @@ mimic-fn@^1.0.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/mimic-fn/-/mimic-fn-1.2.0.tgz#820c86a39334640e99516928bd03fca88057d022"
 
-mini-css-extract-plugin@^0.4.5:
-  version "0.4.5"
-  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-0.4.5.tgz#c99e9e78d54f3fa775633aee5933aeaa4e80719a"
+mini-css-extract-plugin@^0.5.0:
+  version "0.5.0"
+  resolved "https://registry.yarnpkg.com/mini-css-extract-plugin/-/mini-css-extract-plugin-0.5.0.tgz#ac0059b02b9692515a637115b0cc9fed3a35c7b0"
   dependencies:
     loader-utils "^1.1.0"
     schema-utils "^1.0.0"
