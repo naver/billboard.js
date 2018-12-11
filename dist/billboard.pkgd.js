@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181207105051
+ * @version 1.6.2-nightly-20181211193444
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -5719,6 +5719,193 @@ var active_root = [null];
 
 
 
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/array.js
+var array_slice = Array.prototype.slice;
+
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
+/* harmony default export */ var src_identity = (function(x) {
+  return x;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/axis.js
+
+
+
+var axis_top = 1,
+    axis_right = 2,
+    axis_bottom = 3,
+    axis_left = 4,
+    epsilon = 1e-6;
+
+function axis_translateX(x) {
+  return "translate(" + (x + 0.5) + ",0)";
+}
+
+function translateY(y) {
+  return "translate(0," + (y + 0.5) + ")";
+}
+
+function axis_number(scale) {
+  return function(d) {
+    return +scale(d);
+  };
+}
+
+function axis_center(scale) {
+  var offset = Math.max(0, scale.bandwidth() - 1) / 2; // Adjust for 0.5px offset.
+  if (scale.round()) offset = Math.round(offset);
+  return function(d) {
+    return +scale(d) + offset;
+  };
+}
+
+function entering() {
+  return !this.__axis;
+}
+
+function axis_axis(orient, scale) {
+  var tickArguments = [],
+      tickValues = null,
+      tickFormat = null,
+      tickSizeInner = 6,
+      tickSizeOuter = 6,
+      tickPadding = 3,
+      k = orient === axis_top || orient === axis_left ? -1 : 1,
+      x = orient === axis_left || orient === axis_right ? "x" : "y",
+      transform = orient === axis_top || orient === axis_bottom ? axis_translateX : translateY;
+
+  function axis(context) {
+    var values = tickValues == null ? (scale.ticks ? scale.ticks.apply(scale, tickArguments) : scale.domain()) : tickValues,
+        format = tickFormat == null ? (scale.tickFormat ? scale.tickFormat.apply(scale, tickArguments) : src_identity) : tickFormat,
+        spacing = Math.max(tickSizeInner, 0) + tickPadding,
+        range = scale.range(),
+        range0 = +range[0] + 0.5,
+        range1 = +range[range.length - 1] + 0.5,
+        position = (scale.bandwidth ? axis_center : axis_number)(scale.copy()),
+        selection = context.selection ? context.selection() : context,
+        path = selection.selectAll(".domain").data([null]),
+        tick = selection.selectAll(".tick").data(values, scale).order(),
+        tickExit = tick.exit(),
+        tickEnter = tick.enter().append("g").attr("class", "tick"),
+        line = tick.select("line"),
+        text = tick.select("text");
+
+    path = path.merge(path.enter().insert("path", ".tick")
+        .attr("class", "domain")
+        .attr("stroke", "currentColor"));
+
+    tick = tick.merge(tickEnter);
+
+    line = line.merge(tickEnter.append("line")
+        .attr("stroke", "currentColor")
+        .attr(x + "2", k * tickSizeInner));
+
+    text = text.merge(tickEnter.append("text")
+        .attr("fill", "currentColor")
+        .attr(x, k * spacing)
+        .attr("dy", orient === axis_top ? "0em" : orient === axis_bottom ? "0.71em" : "0.32em"));
+
+    if (context !== selection) {
+      path = path.transition(context);
+      tick = tick.transition(context);
+      line = line.transition(context);
+      text = text.transition(context);
+
+      tickExit = tickExit.transition(context)
+          .attr("opacity", epsilon)
+          .attr("transform", function(d) { return isFinite(d = position(d)) ? transform(d) : this.getAttribute("transform"); });
+
+      tickEnter
+          .attr("opacity", epsilon)
+          .attr("transform", function(d) { var p = this.parentNode.__axis; return transform(p && isFinite(p = p(d)) ? p : position(d)); });
+    }
+
+    tickExit.remove();
+
+    path
+        .attr("d", orient === axis_left || orient == axis_right
+            ? (tickSizeOuter ? "M" + k * tickSizeOuter + "," + range0 + "H0.5V" + range1 + "H" + k * tickSizeOuter : "M0.5," + range0 + "V" + range1)
+            : (tickSizeOuter ? "M" + range0 + "," + k * tickSizeOuter + "V0.5H" + range1 + "V" + k * tickSizeOuter : "M" + range0 + ",0.5H" + range1));
+
+    tick
+        .attr("opacity", 1)
+        .attr("transform", function(d) { return transform(position(d)); });
+
+    line
+        .attr(x + "2", k * tickSizeInner);
+
+    text
+        .attr(x, k * spacing)
+        .text(format);
+
+    selection.filter(entering)
+        .attr("fill", "none")
+        .attr("font-size", 10)
+        .attr("font-family", "sans-serif")
+        .attr("text-anchor", orient === axis_right ? "start" : orient === axis_left ? "end" : "middle");
+
+    selection
+        .each(function() { this.__axis = position; });
+  }
+
+  axis.scale = function(_) {
+    return arguments.length ? (scale = _, axis) : scale;
+  };
+
+  axis.ticks = function() {
+    return tickArguments = array_slice.call(arguments), axis;
+  };
+
+  axis.tickArguments = function(_) {
+    return arguments.length ? (tickArguments = _ == null ? [] : array_slice.call(_), axis) : tickArguments.slice();
+  };
+
+  axis.tickValues = function(_) {
+    return arguments.length ? (tickValues = _ == null ? null : array_slice.call(_), axis) : tickValues && tickValues.slice();
+  };
+
+  axis.tickFormat = function(_) {
+    return arguments.length ? (tickFormat = _, axis) : tickFormat;
+  };
+
+  axis.tickSize = function(_) {
+    return arguments.length ? (tickSizeInner = tickSizeOuter = +_, axis) : tickSizeInner;
+  };
+
+  axis.tickSizeInner = function(_) {
+    return arguments.length ? (tickSizeInner = +_, axis) : tickSizeInner;
+  };
+
+  axis.tickSizeOuter = function(_) {
+    return arguments.length ? (tickSizeOuter = +_, axis) : tickSizeOuter;
+  };
+
+  axis.tickPadding = function(_) {
+    return arguments.length ? (tickPadding = +_, axis) : tickPadding;
+  };
+
+  return axis;
+}
+
+function axisTop(scale) {
+  return axis_axis(axis_top, scale);
+}
+
+function axisRight(scale) {
+  return axis_axis(axis_right, scale);
+}
+
+function axisBottom(scale) {
+  return axis_axis(axis_bottom, scale);
+}
+
+function axisLeft(scale) {
+  return axis_axis(axis_left, scale);
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-axis/src/index.js
+
+
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
  * Copyright (c) 2017 NAVER Corp.
@@ -7064,7 +7251,7 @@ function set_set(object, f) {
 var src_array_array = Array.prototype;
 
 var array_map = src_array_array.map;
-var array_slice = src_array_array.slice;
+var src_array_slice = src_array_array.slice;
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
 
@@ -7077,7 +7264,7 @@ function ordinal(range) {
       domain = [],
       unknown = implicit;
 
-  range = range == null ? [] : array_slice.call(range);
+  range = range == null ? [] : src_array_slice.call(range);
 
   function scale(d) {
     var key = d + "", i = index.get(key);
@@ -7097,7 +7284,7 @@ function ordinal(range) {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = array_slice.call(_), scale) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), scale) : range.slice();
   };
 
   scale.unknown = function(_) {
@@ -7326,11 +7513,11 @@ function continuous(deinterpolate, reinterpolate) {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = array_slice.call(_), rescale()) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
   };
 
   scale.rangeRound = function(_) {
-    return range = array_slice.call(_), interpolate = src_round, rescale();
+    return range = src_array_slice.call(_), interpolate = src_round, rescale();
   };
 
   scale.clamp = function(_) {
@@ -7499,7 +7686,7 @@ var prefixExponent;
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
-/* harmony default export */ var src_identity = (function(x) {
+/* harmony default export */ var d3_format_src_identity = (function(x) {
   return x;
 });
 
@@ -7516,10 +7703,10 @@ var prefixExponent;
 var prefixes = ["y","z","a","f","p","n","µ","m","","k","M","G","T","P","E","Z","Y"];
 
 /* harmony default export */ var src_locale = (function(locale) {
-  var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : src_identity,
+  var group = locale.grouping && locale.thousands ? formatGroup(locale.grouping, locale.thousands) : d3_format_src_identity,
       currency = locale.currency,
       decimal = locale.decimal,
-      numerals = locale.numerals ? formatNumerals(locale.numerals) : src_identity,
+      numerals = locale.numerals ? formatNumerals(locale.numerals) : d3_format_src_identity,
       percent = locale.percent || "%";
 
   function newFormat(specifier) {
@@ -8054,7 +8241,7 @@ function quantile_quantile() {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = array_slice.call(_), rescale()) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
   };
 
   scale.quantiles = function() {
@@ -8098,7 +8285,7 @@ function quantize_quantize() {
   };
 
   scale.range = function(_) {
-    return arguments.length ? (n = (range = array_slice.call(_)).length - 1, rescale()) : range.slice();
+    return arguments.length ? (n = (range = src_array_slice.call(_)).length - 1, rescale()) : range.slice();
   };
 
   scale.invertExtent = function(y) {
@@ -8132,11 +8319,11 @@ function threshold_threshold() {
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (domain = array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
+    return arguments.length ? (domain = src_array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
   };
 
   scale.range = function(_) {
-    return arguments.length ? (range = array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
   };
 
   scale.invertExtent = function(y) {
@@ -8694,7 +8881,7 @@ function () {
         return r ? r > 0 ? "start" : "end" : "middle";
       }(rotate)).attr("transform", function textTransform(r) {
         return r ? "rotate(".concat(r, ")") : null;
-      }(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -tickLength).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
+      }(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -tickLength * 2).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
     } // this should be called only when category axis
 
   }, {
@@ -8819,9 +9006,13 @@ function () {
 
 
 
+
 var isHorizontal = function ($$, forHorizontal) {
   var isRotated = $$.config.axis_rotated;
   return forHorizontal ? isRotated : !isRotated;
+},
+    getAxisClassName = function (id) {
+  return "".concat(config_classes.axis, " ").concat(config_classes["axis".concat(capitalize(id))]);
 };
 
 var Axis_Axis =
@@ -8840,14 +9031,54 @@ function () {
           isRotated = config.axis_rotated,
           main = $$.main;
 
-      ["x", "y", "y2"].forEach(function (v) {
-        var axisStr = "axis".concat(capitalize(v)),
-            classAxis = "".concat(config_classes.axis, " ").concat(config_classes[axisStr]),
-            classLabel = config_classes["".concat(axisStr, "Label")];
+      $$.axesList = {}, ["x", "y", "y2"].forEach(function (v) {
+        var classAxis = getAxisClassName(v),
+            classLabel = config_classes["axis".concat(capitalize(v), "Label")];
         $$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
           var res = null;
           return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
-        }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this));
+        }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this)), _this.generateAxes(v);
+      });
+    }
+    /**
+     * Generate axes
+     * It's used when axis' axes option is set
+     * @param {String} id Axis id
+     * @private
+     */
+
+  }, {
+    key: "generateAxes",
+    value: function generateAxes(id) {
+      var d3Axis,
+          $$ = this.owner,
+          config = $$.config,
+          axes = [],
+          axesConfig = config["axis_".concat(id, "_axes")],
+          isRotated = config.axis_rotated;
+      id === "x" ? d3Axis = isRotated ? axisLeft : axisBottom : id === "y" ? d3Axis = isRotated ? axisBottom : axisLeft : id === "y2" && (d3Axis = isRotated ? axisTop : axisRight), axesConfig.length && axesConfig.forEach(function (v) {
+        var tick = v.tick;
+        axes.push(d3Axis($$[id]).ticks(tick.count).tickFormat(tick.format || function (x) {
+          return x;
+        }).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
+      }), $$.axesList[id] = axes;
+    }
+    /**
+     * Update axes nodes
+     * @private
+     */
+
+  }, {
+    key: "updateAxes",
+    value: function updateAxes() {
+      var $$ = this.owner,
+          config = $$.config;
+      Object.keys($$.axesList).forEach(function (id) {
+        $$.axesList[id].forEach(function (v, i) {
+          var className = "".concat(getAxisClassName(id), "-").concat(i + 1),
+              g = $$.main.select(".".concat(className.replace(/\s/, ".")));
+          g.empty() ? g = $$.main.append("g").attr("class", className).style("visibility", config["axis_".concat(id, "_show")] ? "visible" : "hidden").call(v) : $$.xAxis.helper.transitionise(g).call(v.scale($$[id])), g.attr("transform", $$.getTranslate(id, i + 1));
+        });
       });
     }
   }, {
@@ -9221,7 +9452,7 @@ function () {
           opacity = isHidden ? "0" : "1";
       ["x", "y", "y2", "subx"].forEach(function (v) {
         $$.axes[v].style("opacity", opacity);
-      }), $$.xAxis.create(transitions.axisX), $$.yAxis.create(transitions.axisY), $$.y2Axis.create(transitions.axisY2), $$.subXAxis.create(transitions.axisSubX);
+      }), $$.xAxis.create(transitions.axisX), $$.yAxis.create(transitions.axisY), $$.y2Axis.create(transitions.axisY2), $$.subXAxis.create(transitions.axisSubX), this.updateAxes();
     }
   }]), Axis;
 }();
@@ -9632,10 +9863,12 @@ function () {
     value: function getTranslate(target) {
       var x,
           y,
+          index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0,
           $$ = this,
           config = $$.config,
-          isRotated = config.axis_rotated;
-      if (target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = 0, y = isRotated ? 0 : $$.height;else if (target === "y") x = 0, y = isRotated ? $$.height : 0;else if (target === "y2") x = isRotated ? 0 : $$.width, y = isRotated ? 1 : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
+          isRotated = config.axis_rotated,
+          padding = 0;
+      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
         var diff = ($$.arcWidth - $$.arcHeight) / 2;
         x = Math.max(diff, 0) + 4, y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
       }
@@ -9885,7 +10118,7 @@ var Chart_Chart = function Chart(config) {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9902,7 +10135,7 @@ var Options_Options = function Options() {
      * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
      * If this option is not specified, the chart will be generated but not be set. Instead, we can access the element by chart.element and set it by ourselves.<br>
      * @name bindto
-     * @memberOf Options
+     * @memberof Options
      * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.
      * @property {String|HTMLElement|d3.selection} bindto.element=#chart Specify the element where chart will be drawn.
      * @property {String} [bindto.classname=bb] Specify the class name of bind element.<br>
@@ -9931,7 +10164,7 @@ var Options_Options = function Options() {
      *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
      *  > Is to make chart element positioned over axis element.
      * @name clipPath
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
@@ -9944,7 +10177,7 @@ var Options_Options = function Options() {
     /**
      * Set svg element's class name
      * @name svg
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {String} [svg.classname] class name for svg element
      * @example
@@ -9958,7 +10191,7 @@ var Options_Options = function Options() {
      * The desired size of the chart element.
      * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
      * @name size
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Number} [size.width] width of the chart element
      * @property {Number} [size.height] height of the chart element
@@ -9975,7 +10208,7 @@ var Options_Options = function Options() {
     /**
      * The padding of the chart element.
      * @name padding
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Number} [padding.top] padding on the top of chart
      * @property {Number} [padding.right] padding on the right of chart
@@ -9997,7 +10230,7 @@ var Options_Options = function Options() {
     /**
      * Set chart resize options
      * @name resize
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
      * @example
@@ -10010,7 +10243,7 @@ var Options_Options = function Options() {
     /**
      * Set zoom options
      * @name zoom
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [zoom.enabled=false] Enable zooming.
      * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
@@ -10070,7 +10303,7 @@ var Options_Options = function Options() {
     /**
      * Interaction options
      * @name interaction
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
      *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
@@ -10106,7 +10339,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback to execute when mouse/touch enters the chart.
      * @name onover
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10119,7 +10352,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback to execute when mouse/touch leaves the chart.
      * @name onout
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10132,7 +10365,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback to execute when user resizes the screen.
      * @name onresize
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10145,7 +10378,7 @@ var Options_Options = function Options() {
     /**
      * SSet a callback to execute when screen resize finished.
      * @name onresized
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10158,7 +10391,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback to execute before the chart is initialized
      * @name onbeforeinit
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10171,7 +10404,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback to execute when the chart is initialized.
      * @name oninit
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10184,7 +10417,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback to execute after the chart is initialized
      * @name onafterinit
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(){}
      * @example
@@ -10197,7 +10430,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
      * @name onrendered
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @example
@@ -10211,7 +10444,7 @@ var Options_Options = function Options() {
      * Set duration of transition (in milliseconds) for chart animation.<br><br>
      * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
      * @name transition
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Number} [transition.duration=350] duration in milliseconds
      * @example
@@ -10225,7 +10458,7 @@ var Options_Options = function Options() {
      * Specify the key of x values in the data.<br><br>
      * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
      * @name data․x
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default undefined
      * @example
@@ -10239,7 +10472,7 @@ var Options_Options = function Options() {
      * Specify the keys of the x values for each data.<br><br>
      * This option can be used if we want to show the data that has different x values.
      * @name data․xs
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -10255,7 +10488,7 @@ var Options_Options = function Options() {
     /**
      * Set a format to parse string specifed as x.
      * @name data․xFormat
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default %Y-%m-%d
      * @example
@@ -10269,7 +10502,7 @@ var Options_Options = function Options() {
     /**
      * Set localtime format to parse x axis.
      * @name data․xLocaltime
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -10282,7 +10515,7 @@ var Options_Options = function Options() {
     /**
      * Sort on x axis.
      * @name data․xSort
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -10295,7 +10528,7 @@ var Options_Options = function Options() {
     /**
      * Converts data id value
      * @name data․idConverter
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function(id) { return id; }
      * @example
@@ -10318,7 +10551,7 @@ var Options_Options = function Options() {
     /**
      * Set custom data name.
      * @name data․names
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
@@ -10336,7 +10569,7 @@ var Options_Options = function Options() {
      * Set custom data class.<br><br>
      * If this option is specified, the element g for the data has an additional class that has the prefix 'bb-target-' (eg. bb-target-additional-data1-class).
      * @name data․classes
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -10352,7 +10585,7 @@ var Options_Options = function Options() {
     /**
      * Set groups for the data for stacking.
      * @name data․groups
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default []
      * @example
@@ -10368,7 +10601,7 @@ var Options_Options = function Options() {
     /**
      * Set y axis the data related to. y and y2 can be used.
      * @name data․axes
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -10401,7 +10634,7 @@ var Options_Options = function Options() {
      * - spline
      * - step
      * @name data․type
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default line
      * @example
@@ -10416,7 +10649,7 @@ var Options_Options = function Options() {
      * This setting overwrites data.type setting.
      * - **NOTE:** `radar` type can't be combined with other types.
      * @name data․types
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -10432,7 +10665,7 @@ var Options_Options = function Options() {
     /**
      * Set labels options
      * @name data․labels
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [data.labels=false] Show or hide labels on each data points
      * @property {Function} [data.labels.format={}] Set formatter function for data labels.<br>
@@ -10444,7 +10677,7 @@ var Options_Options = function Options() {
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
      * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
      * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
@@ -10484,7 +10717,7 @@ var Options_Options = function Options() {
      *  - `null`: It keeps the data load order
      *  - `function(data1, data2) { ... }`: Array.sort compareFunction
      * @name data․order
-     * @memberOf Options
+     * @memberof Options
      * @type {String|Function|null}
      * @default desc
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
@@ -10522,7 +10755,7 @@ var Options_Options = function Options() {
      *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
      * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
      * @name data․regions
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -10547,7 +10780,7 @@ var Options_Options = function Options() {
      * Set color converter function.<br><br>
      * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
      * @name data․color
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
@@ -10561,7 +10794,7 @@ var Options_Options = function Options() {
     /**
      * Set color for each data.
      * @name data․colors
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -10581,7 +10814,7 @@ var Options_Options = function Options() {
      * Hide each data when the chart appears.<br><br>
      * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
      * @name data․hide
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean|Array}
      * @default false
      * @example
@@ -10600,7 +10833,7 @@ var Options_Options = function Options() {
      * The data value is the same as the returned by `.data()`.
      * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
      * @name data․filter
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @example
@@ -10622,7 +10855,7 @@ var Options_Options = function Options() {
      *   - y Axis will be set in percentage value (0 ~ 100%)
      *   - Must have postive values
      * @name data․stack․normalize
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
@@ -10639,7 +10872,7 @@ var Options_Options = function Options() {
      * Set data selection enabled<br><br>
      * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
      * @name data․selection․enabled
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
@@ -10656,7 +10889,7 @@ var Options_Options = function Options() {
      * Set grouped selection enabled.<br><br>
      * If this option set true, multiple data points that have same x value will be selected by one selection.
      * @name data․selection․grouped
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -10672,7 +10905,7 @@ var Options_Options = function Options() {
      * Set a callback for each data point to determine if it's selectable or not.<br><br>
      * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
      * @name data․selection․isselectable
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function() { return true; }
      * @example
@@ -10690,7 +10923,7 @@ var Options_Options = function Options() {
      * Set multiple data points selection enabled.<br><br>
      * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
      * @name data․selection․multiple
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -10707,7 +10940,7 @@ var Options_Options = function Options() {
      * If this option set true, data points can be selected by dragging.
      * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
      * @name data․selection․draggable
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -10723,7 +10956,7 @@ var Options_Options = function Options() {
      * Set a callback for click event on each data point.<br><br>
      * This callback will be called when each data point clicked and will receive d and element as the arguments. d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
      * @name data․onclick
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
@@ -10737,7 +10970,7 @@ var Options_Options = function Options() {
      * Set a callback for mouse/touch over event on each data point.<br><br>
      * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument. d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
      * @name data․onover
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
@@ -10751,7 +10984,7 @@ var Options_Options = function Options() {
      * Set a callback for mouse/touch out event on each data point.<br><br>
      * This callback will be called when mouse cursor or via touch moves out each data point and will receive d as the argument. d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
      * @name data․onout
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
@@ -10764,7 +10997,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback for on data selection.
      * @name data․onselected
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
@@ -10781,7 +11014,7 @@ var Options_Options = function Options() {
     /**
      * Set a callback for on data un-selection.
      * @name data․onunselected
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
@@ -10799,7 +11032,7 @@ var Options_Options = function Options() {
      * Set a callback for minimum data
      * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
      * @name data․onmin
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
@@ -10815,7 +11048,7 @@ var Options_Options = function Options() {
      * Set a callback for maximum data
      * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
      * @name data․onmax
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
@@ -10830,7 +11063,7 @@ var Options_Options = function Options() {
     /**
      * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
      * @name data․url
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
@@ -10845,7 +11078,7 @@ var Options_Options = function Options() {
      * XHR header value
      * - **NOTE:** Should be used with `data.url` option
      * @name data․headers
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default undefined
      * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
@@ -10863,7 +11096,7 @@ var Options_Options = function Options() {
     /**
      * Parse a JSON object for data. See also data.keys.
      * @name data․json
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default undefined
      * @see [data․keys](#.data%25E2%2580%25A4keys)
@@ -10887,7 +11120,7 @@ var Options_Options = function Options() {
     /**
      * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
      * @name data․rows
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.RowOrientedData)
@@ -10928,7 +11161,7 @@ var Options_Options = function Options() {
     /**
      * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
      * @name data․columns
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.ColumnOrientedData)
@@ -10960,7 +11193,7 @@ var Options_Options = function Options() {
     /**
      * Used if loading JSON via data.url.
      * @name data․mimeType
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default undefined
      * @example
@@ -10973,7 +11206,7 @@ var Options_Options = function Options() {
     /**
      * Choose which JSON object keys correspond to desired data.
      * @name data․keys
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default undefined
      * @example
@@ -10995,7 +11228,7 @@ var Options_Options = function Options() {
     /**
      * Set text displayed when empty data.
      * @name data․empty․label․text
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default ""
      * @example
@@ -11012,7 +11245,7 @@ var Options_Options = function Options() {
     /**
      * Set subchart options
      * @name subchart
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
      * @property {Boolean} [subchart.size.height] Change the height of the subchart.
@@ -11036,7 +11269,7 @@ var Options_Options = function Options() {
     /**
      * Set color of the data values
      * @name color
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Array} [color.pattern] custom color pattern
      * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
@@ -11092,7 +11325,7 @@ var Options_Options = function Options() {
     /**
      * Legend options
      * @name legend
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [legend.show=true] Show or hide legend.
      * @property {Boolean} [legend.hide=false] Hide legend
@@ -11194,7 +11427,7 @@ var Options_Options = function Options() {
     /**
      * Switch x and y axis position.
      * @name axis․rotated
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -11207,7 +11440,7 @@ var Options_Options = function Options() {
     /**
      * Set clip-path attribute for x axis element
      * @name axis․x․clipPath
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @see [Demo]()
@@ -11220,7 +11453,7 @@ var Options_Options = function Options() {
     /**
      * Show or hide x axis.
      * @name axis․x․show
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11239,7 +11472,7 @@ var Options_Options = function Options() {
      * - category
      * - indexed
      * @name axis․x․type
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default indexed
      * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
@@ -11258,7 +11491,7 @@ var Options_Options = function Options() {
      * Set how to treat the timezone of x values.<br>
      * If true, treat x value as localtime. If false, convert to UTC internally.
      * @name axis․x․localtime
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11274,7 +11507,7 @@ var Options_Options = function Options() {
      * Set category names on category axis.
      * This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
      * @name axis․x․categories
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default []
      * @example
@@ -11289,7 +11522,7 @@ var Options_Options = function Options() {
     /**
      * Centerise ticks on category axis.
      * @name axis․x․tick․centered
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -11306,7 +11539,7 @@ var Options_Options = function Options() {
     /**
      * A function to format tick value. Format string is also available for timeseries data.
      * @name axis․x․tick․format
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @example
@@ -11333,7 +11566,7 @@ var Options_Options = function Options() {
      * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
      * We can change the number of ticks to be shown by axis.x.tick.culling.max.
      * @name axis․x․tick․culling
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default
      * - true for indexed axis and timeseries axis
@@ -11352,7 +11585,7 @@ var Options_Options = function Options() {
     /**
      * The number of tick texts will be adjusted to less than this value.
      * @name axis․x․tick․culling․max
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default 10
      * @example
@@ -11372,7 +11605,7 @@ var Options_Options = function Options() {
      * The number of x axis ticks to show.<br><br>
      * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
      * @name axis․x․tick․count
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11389,7 +11622,7 @@ var Options_Options = function Options() {
     /**
      * Set the x Axis tick text's position relatively its original position
      * @name axis․x․tick․text․position
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {x: 0, y:0}
      * @example
@@ -11415,7 +11648,7 @@ var Options_Options = function Options() {
      * Fit x axis ticks.<br><br>
      * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
      * @name axis․x․tick․fit
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11433,7 +11666,7 @@ var Options_Options = function Options() {
      * Set the x values of ticks manually.<br><br>
      * If this option is provided, the position of the ticks will be determined based on those values. This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
      * @name axis․x․tick․values
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default null
      * @example
@@ -11451,7 +11684,7 @@ var Options_Options = function Options() {
      * Rotate x axis tick text.<br>
      * If you set negative value, it will rotate to opposite direction.
      * @name axis․x․tick․rotate
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default 0
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
@@ -11469,7 +11702,7 @@ var Options_Options = function Options() {
     /**
      * Show x axis outer tick.
      * @name axis․x․tick․outer
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11488,7 +11721,7 @@ var Options_Options = function Options() {
      * - **NOTE:**
      *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
      * @name axis․x․tick․multiline
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
@@ -11518,7 +11751,7 @@ var Options_Options = function Options() {
      * - **NOTE:**
      *  > When x tick text contains `\n`, this option is ignored.
      * @name axis․x․tick․width
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default null
      * @example
@@ -11536,7 +11769,7 @@ var Options_Options = function Options() {
      * Set to display system tooltip(via 'title' attribute) for tick text
      * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
      * @name axis․x․tick․tooltip
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -11553,7 +11786,7 @@ var Options_Options = function Options() {
     /**
      * Set max value of x axis range.
      * @name axis․x․max
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11568,7 +11801,7 @@ var Options_Options = function Options() {
     /**
      * Set min value of x axis range.
      * @name axis․x․min
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11591,7 +11824,7 @@ var Options_Options = function Options() {
      *   - **timeseries:** Numeric time value
      *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
      * @name axis․x․padding
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -11615,7 +11848,7 @@ var Options_Options = function Options() {
      * Set height of x axis.<br><br>
      * The height of x axis can be set manually by this option. If you need more space for x axis, please use this option for that. The unit is pixel.
      * @name axis․x․height
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11630,7 +11863,7 @@ var Options_Options = function Options() {
     /**
      * Set default extent for subchart and zoom. This can be an array or function that returns an array.
      * @name axis․x․extent
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default undefined
      * @example
@@ -11664,7 +11897,7 @@ var Options_Options = function Options() {
      *    - outer-middle
      *    - outer-bottom
      * @name axis․x․label
-     * @memberOf Options
+     * @memberof Options
      * @type {String|Object}
      * @default undefined
      * @example
@@ -11686,9 +11919,44 @@ var Options_Options = function Options() {
     axis_x_label: {},
 
     /**
+     * Set additional axes for x Axis.
+     * - **NOTE:** Axis' scale is based on x Axis value
+     *
+     * Each axis object should consist with following options:
+     *
+     * | Name | Type | Default | Description |
+     * | --- | --- | --- | --- |
+     * | tick.outer | Boolean | true | Show outer tick |
+     * | tick.format | Function | - | Set formatter for tick text |
+     * | tick.count | Number | - | Set the number of y axis ticks |
+     * | tick.values | Array | - | Set tick values manually |
+     * @name axis․x․axes
+     * @memberof Options
+     * @type {Array}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @example
+     * x: {
+     *    axes: [
+     *      {
+     *        tick: {
+     *          outer: false,
+     *          format: function(x) {
+     *             return x + "%";
+     *          },
+     *          count: 2,
+     *          values: [10, 20, 30]
+     *        }
+     *      },
+     *      ...
+     *    ]
+     * }
+     */
+    axis_x_axes: [],
+
+    /**
      * Set clip-path attribute for y axis element
      * @name axis․y․clipPath
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11700,7 +11968,7 @@ var Options_Options = function Options() {
     /**
      * Show or hide y axis.
      * @name axis․y․show
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11719,7 +11987,7 @@ var Options_Options = function Options() {
      *   - category
      *   - indexed
      * @name axis․y․type
-     * @memberOf Options
+     * @memberof Options
      * @type {String}
      * @default undefined
      * @example
@@ -11735,7 +12003,7 @@ var Options_Options = function Options() {
      * Set max value of y axis.
      * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
      * @name axis․y․max
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11752,7 +12020,7 @@ var Options_Options = function Options() {
      * - **NOTE:**
      *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
      * @name axis․y․min
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11768,7 +12036,7 @@ var Options_Options = function Options() {
      * Change the direction of y axis.<br><br>
      * If true set, the direction will be from the top to the bottom.
      * @name axis․y․inverted
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -11783,7 +12051,7 @@ var Options_Options = function Options() {
     /**
      * Set center value of y axis.
      * @name axis․y․center
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11798,7 +12066,7 @@ var Options_Options = function Options() {
     /**
      * Show y axis inside of the chart.
      * @name axis․y․inner
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -11814,7 +12082,7 @@ var Options_Options = function Options() {
      * Set label on y axis.<br><br>
      * You can set y axis label and change its position by this option. This option works in the same way as axis.x.label.
      * @name axis․y․label
-     * @memberOf Options
+     * @memberof Options
      * @type {String|Object}
      * @default {}
      * @example
@@ -11839,7 +12107,7 @@ var Options_Options = function Options() {
      * Set formatter for y axis tick text.<br><br>
      * This option accepts d3.format object as well as a function you define.
      * @name axis․y․tick․format
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @example
@@ -11858,7 +12126,7 @@ var Options_Options = function Options() {
     /**
      * Show y axis outer tick.
      * @name axis․y․tick․outer
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -11875,7 +12143,7 @@ var Options_Options = function Options() {
     /**
      * Set y axis tick values manually.
      * @name axis․y․tick․values
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default null
      * @example
@@ -11894,7 +12162,7 @@ var Options_Options = function Options() {
      * Set the number of y axis ticks.<br><br>
      * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
      * @name axis․y․tick․count
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -11911,7 +12179,7 @@ var Options_Options = function Options() {
     /**
      * Set the y Axis tick text's position relatively its original position
      * @name axis․y․tick․text․position
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {x: 0, y:0}
      * @example
@@ -11937,7 +12205,7 @@ var Options_Options = function Options() {
      * Set the number of y axis ticks.<br><br>
      * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
      * @name axis․y․tick․time
-     * @memberOf Options
+     * @memberof Options
      * @private
      * @type {Object}
      * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
@@ -11964,7 +12232,7 @@ var Options_Options = function Options() {
      *
      * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
      * @name axis․y․padding
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -11983,7 +12251,7 @@ var Options_Options = function Options() {
      * Set default range of y axis.<br><br>
      * This option set the default value for y axis when there is no data on init.
      * @name axis․y․default
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default undefined
      * @example
@@ -11996,9 +12264,44 @@ var Options_Options = function Options() {
     axis_y_default: undefined,
 
     /**
+     * Set additional axes for y Axis.
+     * - **NOTE:** Axis' scale is based on y Axis value
+     *
+     * Each axis object should consist with following options:
+     *
+     * | Name | Type | Default | Description |
+     * | --- | --- | --- | --- |
+     * | tick.outer | Boolean | true | Show outer tick |
+     * | tick.format | Function | - | Set formatter for tick text |
+     * | tick.count | Number | - | Set the number of y axis ticks |
+     * | tick.values | Array | - | Set tick values manually |
+     * @name axis․y․axes
+     * @memberof Options
+     * @type {Array}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @example
+     * y: {
+     *    axes: [
+     *      {
+     *        tick: {
+     *          outer: false,
+     *          format: function(x) {
+     *             return x + "%";
+     *          },
+     *          count: 2,
+     *          values: [10, 20, 30]
+     *        }
+     *      },
+     *      ...
+     *    ]
+     * }
+     */
+    axis_y_axes: [],
+
+    /**
      * Show or hide y2 axis.
      * @name axis․y2․show
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -12013,7 +12316,7 @@ var Options_Options = function Options() {
     /**
      * Set max value of y2 axis.
      * @name axis․y2․max
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -12028,7 +12331,7 @@ var Options_Options = function Options() {
     /**
      * Set min value of y2 axis.
      * @name axis․y2․min
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -12044,7 +12347,7 @@ var Options_Options = function Options() {
      * Change the direction of y2 axis.<br><br>
      * If true set, the direction will be from the top to the bottom.
      * @name axis․y2․inverted
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -12059,7 +12362,7 @@ var Options_Options = function Options() {
     /**
      * Set center value of y2 axis.
      * @name axis․y2․center
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -12074,7 +12377,7 @@ var Options_Options = function Options() {
     /**
      * Show y2 axis inside of the chart.
      * @name axis․y2․inner
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default false
      * @example
@@ -12090,7 +12393,7 @@ var Options_Options = function Options() {
      * Set label on y2 axis.<br><br>
      * You can set y2 axis label and change its position by this option. This option works in the same way as axis.x.label.
      * @name axis․y2․label
-     * @memberOf Options
+     * @memberof Options
      * @type {String|Object}
      * @default {}
      * @example
@@ -12115,7 +12418,7 @@ var Options_Options = function Options() {
      * Set formatter for y2 axis tick text.<br><br>
      * This option works in the same way as axis.y.format.
      * @name axis․y2․tick․format
-     * @memberOf Options
+     * @memberof Options
      * @type {Function}
      * @default undefined
      * @example
@@ -12133,7 +12436,7 @@ var Options_Options = function Options() {
     /**
      * Show or hide y2 axis outer tick.
      * @name axis․y2․tick․outer
-     * @memberOf Options
+     * @memberof Options
      * @type {Boolean}
      * @default true
      * @example
@@ -12150,7 +12453,7 @@ var Options_Options = function Options() {
     /**
      * Set y2 axis tick values manually.
      * @name axis․y2․tick․values
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default null
      * @example
@@ -12168,7 +12471,7 @@ var Options_Options = function Options() {
      * Set the number of y2 axis ticks.
      * - **NOTE:** This works in the same way as axis.y.tick.count.
      * @name axis․y2․tick․count
-     * @memberOf Options
+     * @memberof Options
      * @type {Number}
      * @default undefined
      * @example
@@ -12185,7 +12488,7 @@ var Options_Options = function Options() {
     /**
      * Set the y2 Axis tick text's position relatively its original position
      * @name axis․y2․tick․text․position
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {x: 0, y:0}
      * @example
@@ -12211,7 +12514,7 @@ var Options_Options = function Options() {
      * Set the number of y2 axis ticks.
      * - **NOTE:** This works in the same way as axis.y.tick.count.
      * @name axis․y2․padding
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @default {}
      * @example
@@ -12230,7 +12533,7 @@ var Options_Options = function Options() {
      * Set default range of y2 axis.<br><br>
      * This option set the default value for y2 axis when there is no data on init.
      * @name axis․y2․default
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default undefined
      * @example
@@ -12243,9 +12546,44 @@ var Options_Options = function Options() {
     axis_y2_default: undefined,
 
     /**
+     * Set additional axes for y2 Axis.
+     * - **NOTE:** Axis' scale is based on y2 Axis value
+     *
+     * Each axis object should consist with following options:
+     *
+     * | Name | Type | Default | Description |
+     * | --- | --- | --- | --- |
+     * | tick.outer | Boolean | true | Show outer tick |
+     * | tick.format | Function | - | Set formatter for tick text |
+     * | tick.count | Number | - | Set the number of y axis ticks |
+     * | tick.values | Array | - | Set tick values manually |
+     * @name axis․y2․axes
+     * @memberof Options
+     * @type {Array}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @example
+     * y2: {
+     *    axes: [
+     *      {
+     *        tick: {
+     *          outer: false,
+     *          format: function(x) {
+     *             return x + "%";
+     *          },
+     *          count: 2,
+     *          values: [10, 20, 30]
+     *        }
+     *      },
+     *      ...
+     *    ]
+     * }
+     */
+    axis_y2_axes: [],
+
+    /**
      * Set related options
      * @name grid
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
      * @property {Boolean} [x.show=false] Show grids along x axis.
@@ -12303,7 +12641,7 @@ var Options_Options = function Options() {
     /**
      * Set point options
      * @name point
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [point.show=true] Whether to show each point in line.
      * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
@@ -12374,7 +12712,7 @@ var Options_Options = function Options() {
     /**
      * Set line options
      * @name line
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
      *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
@@ -12413,7 +12751,7 @@ var Options_Options = function Options() {
     /**
      * Set bar options
      * @name bar
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Number} [bar.padding=0] The padding pixel value between each bar.
      * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
@@ -12457,7 +12795,7 @@ var Options_Options = function Options() {
     /**
      * Set bubble options
      * @name bubble
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
      * @example
@@ -12479,7 +12817,7 @@ var Options_Options = function Options() {
     /**
      * Set area options
      * @name area
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
      * @property {Boolean} [area.above=false]
@@ -12495,7 +12833,7 @@ var Options_Options = function Options() {
     /**
      * Set pie options
      * @name pie
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
      * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
@@ -12550,7 +12888,7 @@ var Options_Options = function Options() {
     /**
      * Set gauge options
      * @name gauge
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
      * @property {Boolean} [gauge.label.show=true] Show or hide label on gauge.
@@ -12605,7 +12943,7 @@ var Options_Options = function Options() {
     /**
      * Set donut options
      * @name donut
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
      * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
@@ -12673,7 +13011,7 @@ var Options_Options = function Options() {
      *  - step-after (d3.curveStepAfter)
      *  - step-before (d3.curveStepBefore)
      * @name spline
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {String} [spline.interpolation.type="cardinal"]
      * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
@@ -12689,7 +13027,7 @@ var Options_Options = function Options() {
     /**
      * Set radar options
      * @name radar
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
      * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
@@ -12749,7 +13087,7 @@ var Options_Options = function Options() {
      * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
      * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
      * @name regions
-     * @memberOf Options
+     * @memberof Options
      * @type {Array}
      * @default []
      * @example
@@ -12767,7 +13105,7 @@ var Options_Options = function Options() {
     /**
      * Tooltip options
      * @name tooltip
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
      * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
@@ -12881,7 +13219,7 @@ var Options_Options = function Options() {
     /**
      * Set title options
      * @name title
-     * @memberOf Options
+     * @memberof Options
      * @type {Object}
      * @property {String} [title.text]
      * @property {Number} [title.padding.top=0]
@@ -14566,9 +14904,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         selector = ".".concat($$.isMultipleX() ? config_classes.eventRect : "".concat(config_classes.eventRect, "-").concat(index)),
         eventRect = $$.main.select(selector).node(),
-        box = eventRect.getBoundingClientRect(),
-        x = box.left + (mouse ? mouse[0] : 0) + box.width / 2,
-        y = box.top + (mouse ? mouse[1] : 0);
+        _eventRect$getBoundin = eventRect.getBoundingClientRect(),
+        width = _eventRect$getBoundin.width,
+        left = _eventRect$getBoundin.left,
+        top = _eventRect$getBoundin.top,
+        x = left + (mouse ? mouse[0] : 0) + width / 2,
+        y = top + (mouse ? mouse[1] : 0);
+
     emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, {
       screenX: x,
       screenY: y,
@@ -14596,28 +14938,54 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         h = config.size_height || $$.getParentHeight();
     return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
   },
+
+  /**
+   * Get Axis size according its position
+   * @param {String} id Axis id value - x, y or y2
+   * @return {number} size Axis size value
+   * @private
+   */
+  getAxisSize: function getAxisSize(id) {
+    var $$ = this,
+        config = $$.config,
+        isRotated = config.axis_rotated,
+        size = 0;
+    return size = isRotated ? id === "x" ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id) : /y2?/.test(id) ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id), size;
+  },
   getCurrentPaddingTop: function getCurrentPaddingTop() {
     var $$ = this,
         config = $$.config,
+        axesLen = config.axis_y2_axes.length,
         padding = isValue(config.padding_top) ? config.padding_top : 0;
-    return $$.title && $$.title.node() && (padding += $$.getTitlePadding()), padding;
+    return $$.title && $$.title.node() && (padding += $$.getTitlePadding()), axesLen && config.axis_rotated && (padding += $$.getHorizontalAxisHeight("y2") * axesLen), padding;
   },
   getCurrentPaddingBottom: function getCurrentPaddingBottom() {
-    var config = this.config;
-    return isValue(config.padding_bottom) ? config.padding_bottom : 0;
+    var $$ = this,
+        config = $$.config,
+        isRotated = config.axis_rotated,
+        axisId = isRotated ? "y" : "x",
+        axesLen = config["axis_".concat(axisId, "_axes")].length,
+        padding = isValue(config.padding_bottom) ? config.padding_bottom : 0;
+    return padding + (axesLen ? $$.getHorizontalAxisHeight(axisId) * axesLen : 0);
   },
   getCurrentPaddingLeft: function getCurrentPaddingLeft(withoutRecompute) {
-    var paddingLeft,
-        $$ = this,
-        config = $$.config;
-    return paddingLeft = isValue(config.padding_left) ? config.padding_left : config.axis_rotated ? config.axis_x_show ? Math.max(ceil10($$.getAxisWidthByAxisId("x", withoutRecompute)), 40) : 1 : !config.axis_y_show || config.axis_y_inner ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10($$.getAxisWidthByAxisId("y", withoutRecompute)), paddingLeft;
-  },
-  getCurrentPaddingRight: function getCurrentPaddingRight() {
-    var paddingRight,
+    var padding,
         $$ = this,
         config = $$.config,
-        legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
-    return paddingRight = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? 10 + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0) : ceil10($$.getAxisWidthByAxisId("y2")) + legendWidthOnRight, paddingRight;
+        isRotated = config.axis_rotated,
+        axisId = isRotated ? "x" : "y",
+        axesLen = config["axis_".concat(axisId, "_axes")].length,
+        axisWidth = $$.getAxisWidthByAxisId(axisId, withoutRecompute);
+    return padding = isValue(config.padding_left) ? config.padding_left : isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : !config.axis_y_show || config.axis_y_inner ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
+  },
+  getCurrentPaddingRight: function getCurrentPaddingRight() {
+    var padding,
+        $$ = this,
+        config = $$.config,
+        legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0,
+        axesLen = config.axis_y2_axes.length,
+        axisWidth = $$.getAxisWidthByAxisId("y2");
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? 10 + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
   },
 
   /**
@@ -14675,7 +15043,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         h = 30;
-    return axisId !== "x" || config.axis_x_show ? axisId === "x" && config.axis_x_height ? config.axis_x_height : axisId !== "y" || config.axis_y_show ? axisId !== "y2" || config.axis_y2_show ? (axisId === "x" && !config.axis_rotated && config.axis_x_tick_rotate && (h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180)), axisId === "y" && config.axis_rotated && config.axis_y_tick_rotate && (h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180)), h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId === "y2" ? -10 : 0)) : $$.rotated_padding_top : !config.legend_show || $$.isLegendRight || $$.isLegendInset ? 1 : 10 : 8; // Calculate x axis height when tick rotated
+    return axisId !== "x" || config.axis_x_show ? axisId === "x" && config.axis_x_height ? config.axis_x_height : axisId !== "y" || config.axis_y_show ? axisId !== "y2" || config.axis_y2_show ? (axisId === "x" && !config.axis_rotated && config.axis_x_tick_rotate && (h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180)), axisId === "y" && config.axis_rotated && config.axis_y_tick_rotate && (h = 30 + $$.axis.getMaxTickWidth(axisId) * Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180)), h + ($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) + (axisId !== "y2" || config.axis_rotated ? 0 : -10)) : $$.rotated_padding_top : !config.legend_show || $$.isLegendRight || $$.isLegendInset ? 1 : 10 : 8; // Calculate x axis height when tick rotated
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.xAxis.tickInterval());
@@ -14684,8 +15052,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 // CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
 var path_pi = Math.PI,
     path_tau = 2 * path_pi,
-    epsilon = 1e-6,
-    tauEpsilon = path_tau - epsilon;
+    path_epsilon = 1e-6,
+    tauEpsilon = path_tau - path_epsilon;
 
 function Path() {
   this._x0 = this._y0 = // start of current subpath
@@ -14736,12 +15104,12 @@ Path.prototype = path_path.prototype = {
     }
 
     // Or, is (x1,y1) coincident with (x0,y0)? Do nothing.
-    else if (!(l01_2 > epsilon));
+    else if (!(l01_2 > path_epsilon));
 
     // Or, are (x0,y0), (x1,y1) and (x2,y2) collinear?
     // Equivalently, is (x1,y1) coincident with (x2,y2)?
     // Or, is the radius zero? Line to (x1,y1).
-    else if (!(Math.abs(y01 * x21 - y21 * x01) > epsilon) || !r) {
+    else if (!(Math.abs(y01 * x21 - y21 * x01) > path_epsilon) || !r) {
       this._ += "L" + (this._x1 = x1) + "," + (this._y1 = y1);
     }
 
@@ -14758,7 +15126,7 @@ Path.prototype = path_path.prototype = {
           t21 = l / l21;
 
       // If the start tangent is not coincident with (x0,y0), line to.
-      if (Math.abs(t01 - 1) > epsilon) {
+      if (Math.abs(t01 - 1) > path_epsilon) {
         this._ += "L" + (x1 + t01 * x01) + "," + (y1 + t01 * y01);
       }
 
@@ -14783,7 +15151,7 @@ Path.prototype = path_path.prototype = {
     }
 
     // Or, is (x0,y0) not coincident with the previous point? Line to (x0,y0).
-    else if (Math.abs(this._x1 - x0) > epsilon || Math.abs(this._y1 - y0) > epsilon) {
+    else if (Math.abs(this._x1 - x0) > path_epsilon || Math.abs(this._y1 - y0) > path_epsilon) {
       this._ += "L" + x0 + "," + y0;
     }
 
@@ -14799,7 +15167,7 @@ Path.prototype = path_path.prototype = {
     }
 
     // Is this arc non-empty? Draw an arc!
-    else if (da > epsilon) {
+    else if (da > path_epsilon) {
       this._ += "A" + r + "," + r + ",0," + (+(da >= path_pi)) + "," + cw + "," + (this._x1 = x + r * Math.cos(a1)) + "," + (this._y1 = y + r * Math.sin(a1));
     }
   },
@@ -15503,7 +15871,7 @@ function lineRadial(l) {
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
-var src_array_slice = Array.prototype.slice;
+var d3_shape_src_array_slice = Array.prototype.slice;
 
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/link/index.js
 
@@ -15528,7 +15896,7 @@ function link_link(curve) {
       context = null;
 
   function link() {
-    var buffer, argv = src_array_slice.call(arguments), s = source.apply(this, argv), t = target.apply(this, argv);
+    var buffer, argv = d3_shape_src_array_slice.call(arguments), s = source.apply(this, argv), t = target.apply(this, argv);
     if (!context) context = buffer = src_path();
     curve(context, +x.apply(this, (argv[0] = s, argv)), +y.apply(this, argv), +x.apply(this, (argv[0] = t, argv)), +y.apply(this, argv));
     if (buffer) return context = null, buffer + "" || null;
@@ -16692,7 +17060,7 @@ function stackValue(d, key) {
   }
 
   stack.keys = function(_) {
-    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(src_array_slice.call(_)), stack) : keys;
+    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(d3_shape_src_array_slice.call(_)), stack) : keys;
   };
 
   stack.value = function(_) {
@@ -16700,7 +17068,7 @@ function stackValue(d, key) {
   };
 
   stack.order = function(_) {
-    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(src_array_slice.call(_)), stack) : order;
+    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(d3_shape_src_array_slice.call(_)), stack) : order;
   };
 
   stack.offset = function(_) {
@@ -17880,16 +18248,19 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         r = $$.pointExpandedR.bind($$);
     reset && $$.unexpandCircles();
     var circles = $$.getCircles(i, id).classed(config_classes.EXPANDED, !0),
-        scale = r(circles) / $$.config.point_r;
+        scale = r(circles) / $$.config.point_r,
+        ratio = 1 - scale;
     $$.isCirclePoint() ? circles.attr("r", r) : circles.each(function () {
-      var point = src_select(this),
-          _this$getBBox = this.getBBox(),
-          x = _this$getBBox.x,
-          y = _this$getBBox.y,
-          width = _this$getBBox.width,
-          height = _this$getBBox.height;
+      var point = src_select(this);
+      if (this.tagName === "circle") point.attr("r", r);else {
+        var _this$getBBox = this.getBBox(),
+            width = _this$getBBox.width,
+            height = _this$getBBox.height,
+            x = ratio * (+point.attr("x") + width / 2),
+            y = ratio * (+point.attr("y") + height / 2);
 
-      this.tagName === "circle" ? point.attr("r", r) : point.style("transform", "translate(".concat((1 - scale) * (x + width * .5), "px, ").concat((1 - scale) * (y + height * .5), "px) scale(").concat(scale, ")"));
+        point.style("transform", "translate(".concat(x, "px, ").concat(y, "px) scale(").concat(scale, ")"));
+      }
     });
   },
   unexpandCircles: function unexpandCircles(i) {
@@ -23108,7 +23479,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181207105051
+ * @version 1.6.2-nightly-20181211193444
  */
 
 var bb = {
@@ -23119,7 +23490,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181207105051",
+  version: "1.6.2-nightly-20181211193444",
 
   /**
    * Generate chart
