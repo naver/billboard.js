@@ -6,6 +6,7 @@
 import util from "../assets/util";
 import bb from "../../src/core";
 import CLASS from "../../src/config/classes";
+import AxisRendererHelper from "../../src/axis/AxisRendererHelper";
 //import getSizeFor1Char from "exports-loader?getSizeFor1Char!../../src/axis/bb.axis";
 
 describe("AXIS", function() {
@@ -80,12 +81,12 @@ describe("AXIS", function() {
 			args.axis.y.tick.values = values;
 		});
 
-		/*it("should compute char dimension", () => {
-			const size = getSizeFor1Char(d3.select(".tick"));
+		it("should compute char dimension", () => {
+			const size = AxisRendererHelper.getSizeFor1Char(d3.select(".tick"));
 
 			expect(size.w && size.h).to.be.ok;
-			expect(getSizeFor1Char.size).to.be.equal(size);
-		});*/
+			expect(AxisRendererHelper.getSizeFor1Char()).to.be.equal(size);
+		});
 
 		it("should have only 2 tick on y axis", () => {
 			const ticksSize = chart.$.main.select(`.${CLASS.axisY}`)
@@ -1198,6 +1199,151 @@ describe("AXIS", function() {
 			const ticks = chart.$.main.selectAll(`.${CLASS.axisY} .tick`);
 
 			expect(ticks.size()).to.be.equal(1);
+		});
+	});
+
+	describe("Multi axes", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15]
+					]
+				},
+				axis: {
+					x: {
+						axes: [
+							{
+								tick: {
+									outer: false,
+									count: 9
+								}
+							}
+						]
+					},
+					y: {
+						axes: [
+							{
+								tick: {
+									count: 5
+								}
+							},
+							{
+								tick: {
+									outer: false,
+									format: function(x) {
+									  return x + "%";
+									},
+									count: 2
+								}
+							}
+						]
+					},
+					y2: {
+						show: true,
+						axes: [
+							{
+								tick: {
+									values: [0.35, 0.75]
+								}
+							}
+						]
+					}
+				}
+			}
+		});
+
+		const checkXAxes = rotated => {
+			const main = chart.$.main;
+			const xAxisY = util.parseNum(main.select(`.${CLASS.axis}-x`).attr("transform"));
+			const axis1 = main.select(`.${CLASS.axis}-x-1`);
+
+			expect(util.parseNum(axis1.attr("transform"))).to.be[rotated ? "below" : "above"](xAxisY);
+
+			let tickValue = -0.5;
+			axis1.selectAll(".tick text").each(function() {
+				expect(+this.textContent).to.be.equal(tickValue += 0.5);
+			});
+		};
+
+		const checkYAxes = rotated => {
+			const main = chart.$.main;
+			const yAxisY = util.parseNum(main.select(`.${CLASS.axis}-y`).attr("transform"));
+			let yAxes = chart.internal.axesList.y;
+			const toBeMethod = rotated ? "above" : "below";
+
+			yAxes = yAxes.map((v, i) => main.select(`.${CLASS.axis}-y-${i + 1}`));
+
+			yAxes.map(v => util.parseNum(v.attr("transform")))
+				.reduce((p, curr) => {
+					expect(p).to.be[toBeMethod](yAxisY);
+					expect(curr).to.be[toBeMethod](p);
+				});
+
+			const expectedTickValue = [
+				["0", "100", "200", "300", "400"],
+				["0%", "200%", "400%"]
+			]
+
+			yAxes.forEach((v, i) => {
+				v.selectAll(".tick text").each(function(d, j) {
+					expect(this.textContent).to.be.equal(expectedTickValue[i][j]);
+				});
+			});
+		};
+
+		const checkY2Axes = rotated => {
+			const main = chart.$.main;
+			const yAxisY = util.parseNum(main.select(`.${CLASS.axis}-y2`).attr("transform"));
+			const axis1 = main.select(`.${CLASS.axis}-y2-1`);
+
+			expect(util.parseNum(axis1.attr("transform"))).to.be[rotated ? "below" : "above"](yAxisY);
+
+			const expectedTickValues = args.axis.y2.axes[0].tick.values;
+
+			axis1.selectAll(".tick text").each(function(d, i) {
+				expect(+this.textContent).to.be.equal(expectedTickValues[i]);
+			});
+		};
+
+		it("check for axes generation", () => {
+			const main = chart.$.main;
+			const axesList = chart.internal.axesList;
+
+			["x", "y", "y2"].forEach(id => {
+				axesList[id].forEach((v, i) => {
+					expect(main.select(`.${CLASS.axis}-${id}-${i + 1}`).empty()).to.be.false;
+				});
+			});
+		});
+
+		it("check for x Axes", () => {
+			checkXAxes();
+		});
+
+		it("check for y Axes", () => {
+			checkYAxes();
+		});
+
+		it("check for y2 Axes", () => {
+			checkY2Axes();
+		});
+
+		it("set options axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("check for rotated x Axes", () => {
+			checkXAxes(true);
+		});
+
+		it("check for rotated y Axes", () => {
+			checkYAxes(true);
+		});
+
+		it("check for rotated y2 Axes", () => {
+			checkY2Axes(true);
 		});
 	});
 });

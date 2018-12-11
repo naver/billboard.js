@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 /**
@@ -16,7 +16,7 @@ export default class Options {
 			 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
 			 * If this option is not specified, the chart will be generated but not be set. Instead, we can access the element by chart.element and set it by ourselves.<br>
 			 * @name bindto
-			 * @memberOf Options
+			 * @memberof Options
 			 * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.
 			 * @property {String|HTMLElement|d3.selection} bindto.element=#chart Specify the element where chart will be drawn.
 			 * @property {String} [bindto.classname=bb] Specify the class name of bind element.<br>
@@ -45,7 +45,7 @@ export default class Options {
 			 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
 			 *  > Is to make chart element positioned over axis element.
 			 * @name clipPath
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
@@ -58,7 +58,7 @@ export default class Options {
 			/**
 			 * Set svg element's class name
 			 * @name svg
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {String} [svg.classname] class name for svg element
 			 * @example
@@ -72,7 +72,7 @@ export default class Options {
 			 * The desired size of the chart element.
 			 * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
 			 * @name size
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number} [size.width] width of the chart element
 			 * @property {Number} [size.height] height of the chart element
@@ -89,7 +89,7 @@ export default class Options {
 			/**
 			 * The padding of the chart element.
 			 * @name padding
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number} [padding.top] padding on the top of chart
 			 * @property {Number} [padding.right] padding on the right of chart
@@ -111,7 +111,7 @@ export default class Options {
 			/**
 			 * Set chart resize options
 			 * @name resize
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
 			 * @example
@@ -124,7 +124,7 @@ export default class Options {
 			/**
 			 * Set zoom options
 			 * @name zoom
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [zoom.enabled=false] Enable zooming.
 			 * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
@@ -184,7 +184,7 @@ export default class Options {
 			/**
 			 * Interaction options
 			 * @name interaction
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
 			 *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
@@ -220,7 +220,7 @@ export default class Options {
 			/**
 			 * Set a callback to execute when mouse/touch enters the chart.
 			 * @name onover
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -233,7 +233,7 @@ export default class Options {
 			/**
 			 * Set a callback to execute when mouse/touch leaves the chart.
 			 * @name onout
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -246,7 +246,7 @@ export default class Options {
 			/**
 			 * Set a callback to execute when user resizes the screen.
 			 * @name onresize
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -259,7 +259,7 @@ export default class Options {
 			/**
 			 * SSet a callback to execute when screen resize finished.
 			 * @name onresized
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -272,7 +272,7 @@ export default class Options {
 			/**
 			 * Set a callback to execute before the chart is initialized
 			 * @name onbeforeinit
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -285,7 +285,7 @@ export default class Options {
 			/**
 			 * Set a callback to execute when the chart is initialized.
 			 * @name oninit
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -298,7 +298,7 @@ export default class Options {
 			/**
 			 * Set a callback to execute after the chart is initialized
 			 * @name onafterinit
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(){}
 			 * @example
@@ -311,7 +311,7 @@ export default class Options {
 			/**
 			 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
 			 * @name onrendered
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @example
@@ -325,7 +325,7 @@ export default class Options {
 			 * Set duration of transition (in milliseconds) for chart animation.<br><br>
 			 * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
 			 * @name transition
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number} [transition.duration=350] duration in milliseconds
 			 * @example
@@ -339,7 +339,7 @@ export default class Options {
 			 * Specify the key of x values in the data.<br><br>
 			 * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
 			 * @name data․x
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default undefined
 			 * @example
@@ -353,7 +353,7 @@ export default class Options {
 			 * Specify the keys of the x values for each data.<br><br>
 			 * This option can be used if we want to show the data that has different x values.
 			 * @name data․xs
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -369,7 +369,7 @@ export default class Options {
 			/**
 			 * Set a format to parse string specifed as x.
 			 * @name data․xFormat
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default %Y-%m-%d
 			 * @example
@@ -383,7 +383,7 @@ export default class Options {
 			/**
 			 * Set localtime format to parse x axis.
 			 * @name data․xLocaltime
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -396,7 +396,7 @@ export default class Options {
 			/**
 			 * Sort on x axis.
 			 * @name data․xSort
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -409,7 +409,7 @@ export default class Options {
 			/**
 			 * Converts data id value
 			 * @name data․idConverter
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function(id) { return id; }
 			 * @example
@@ -430,7 +430,7 @@ export default class Options {
 			/**
 			 * Set custom data name.
 			 * @name data․names
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
@@ -448,7 +448,7 @@ export default class Options {
 			 * Set custom data class.<br><br>
 			 * If this option is specified, the element g for the data has an additional class that has the prefix 'bb-target-' (eg. bb-target-additional-data1-class).
 			 * @name data․classes
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -464,7 +464,7 @@ export default class Options {
 			/**
 			 * Set groups for the data for stacking.
 			 * @name data․groups
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default []
 			 * @example
@@ -480,7 +480,7 @@ export default class Options {
 			/**
 			 * Set y axis the data related to. y and y2 can be used.
 			 * @name data․axes
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -513,7 +513,7 @@ export default class Options {
 			 * - spline
 			 * - step
 			 * @name data․type
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default line
 			 * @example
@@ -528,7 +528,7 @@ export default class Options {
 			 * This setting overwrites data.type setting.
 			 * - **NOTE:** `radar` type can't be combined with other types.
 			 * @name data․types
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -544,7 +544,7 @@ export default class Options {
 			/**
 			 * Set labels options
 			 * @name data․labels
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [data.labels=false] Show or hide labels on each data points
 			 * @property {Function} [data.labels.format={}] Set formatter function for data labels.<br>
@@ -556,7 +556,7 @@ export default class Options {
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
@@ -596,7 +596,7 @@ export default class Options {
 			 *  - `null`: It keeps the data load order
 			 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 			 * @name data․order
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String|Function|null}
 			 * @default desc
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
@@ -634,7 +634,7 @@ export default class Options {
 			 *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
 			 * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
 			 * @name data․regions
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -659,7 +659,7 @@ export default class Options {
 			 * Set color converter function.<br><br>
 			 * This option should a function and the specified function receives color (e.g. '#ff0000') and d that has data parameters like id, value, index, etc. And it must return a string that represents color (e.g. '#00ff00').
 			 * @name data․color
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataColor)
@@ -673,7 +673,7 @@ export default class Options {
 			/**
 			 * Set color for each data.
 			 * @name data․colors
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -693,7 +693,7 @@ export default class Options {
 			 * Hide each data when the chart appears.<br><br>
 			 * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
 			 * @name data․hide
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean|Array}
 			 * @default false
 			 * @example
@@ -712,7 +712,7 @@ export default class Options {
 			 * The data value is the same as the returned by `.data()`.
 			 * @see https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/filter
 			 * @name data․filter
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @example
@@ -734,7 +734,7 @@ export default class Options {
 			 *   - y Axis will be set in percentage value (0 ~ 100%)
 			 *   - Must have postive values
 			 * @name data․stack․normalize
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
@@ -750,7 +750,7 @@ export default class Options {
 			 * Set data selection enabled<br><br>
 			 * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
 			 * @name data․selection․enabled
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
@@ -767,7 +767,7 @@ export default class Options {
 			 * Set grouped selection enabled.<br><br>
 			 * If this option set true, multiple data points that have same x value will be selected by one selection.
 			 * @name data․selection․grouped
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -783,7 +783,7 @@ export default class Options {
 			 * Set a callback for each data point to determine if it's selectable or not.<br><br>
 			 * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
 			 * @name data․selection․isselectable
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function() { return true; }
 			 * @example
@@ -799,7 +799,7 @@ export default class Options {
 			 * Set multiple data points selection enabled.<br><br>
 			 * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
 			 * @name data․selection․multiple
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -816,7 +816,7 @@ export default class Options {
 			 * If this option set true, data points can be selected by dragging.
 			 * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
 			 * @name data․selection․draggable
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -832,7 +832,7 @@ export default class Options {
 			 * Set a callback for click event on each data point.<br><br>
 			 * This callback will be called when each data point clicked and will receive d and element as the arguments. d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
 			 * @name data․onclick
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
@@ -846,7 +846,7 @@ export default class Options {
 			 * Set a callback for mouse/touch over event on each data point.<br><br>
 			 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument. d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
 			 * @name data․onover
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
@@ -860,7 +860,7 @@ export default class Options {
 			 * Set a callback for mouse/touch out event on each data point.<br><br>
 			 * This callback will be called when mouse cursor or via touch moves out each data point and will receive d as the argument. d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
 			 * @name data․onout
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
@@ -873,7 +873,7 @@ export default class Options {
 			/**
 			 * Set a callback for on data selection.
 			 * @name data․onselected
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
@@ -890,7 +890,7 @@ export default class Options {
 			/**
 			 * Set a callback for on data un-selection.
 			 * @name data․onunselected
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
@@ -908,7 +908,7 @@ export default class Options {
 			 * Set a callback for minimum data
 			 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
 			 * @name data․onmin
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
@@ -924,7 +924,7 @@ export default class Options {
 			 * Set a callback for maximum data
 			 * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
 			 * @name data․onmax
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
@@ -939,7 +939,7 @@ export default class Options {
 			/**
 			 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
 			 * @name data․url
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
@@ -954,7 +954,7 @@ export default class Options {
 			 * XHR header value
 			 * - **NOTE:** Should be used with `data.url` option
 			 * @name data․headers
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default undefined
 			 * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
@@ -972,7 +972,7 @@ export default class Options {
 			/**
 			 * Parse a JSON object for data. See also data.keys.
 			 * @name data․json
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default undefined
 			 * @see [data․keys](#.data%25E2%2580%25A4keys)
@@ -996,7 +996,7 @@ export default class Options {
 			/**
 			 * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
 			 * @name data․rows
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.RowOrientedData)
@@ -1037,7 +1037,7 @@ export default class Options {
 			/**
 			 * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
 			 * @name data․columns
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.ColumnOrientedData)
@@ -1069,7 +1069,7 @@ export default class Options {
 			/**
 			 * Used if loading JSON via data.url.
 			 * @name data․mimeType
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default undefined
 			 * @example
@@ -1082,7 +1082,7 @@ export default class Options {
 			/**
 			 * Choose which JSON object keys correspond to desired data.
 			 * @name data․keys
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default undefined
 			 * @example
@@ -1104,7 +1104,7 @@ export default class Options {
 			/**
 			 * Set text displayed when empty data.
 			 * @name data․empty․label․text
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default ""
 			 * @example
@@ -1121,7 +1121,7 @@ export default class Options {
 			/**
 			 * Set subchart options
 			 * @name subchart
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
 			 * @property {Boolean} [subchart.size.height] Change the height of the subchart.
@@ -1145,7 +1145,7 @@ export default class Options {
 			/**
 			 * Set color of the data values
 			 * @name color
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Array} [color.pattern] custom color pattern
 			 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
@@ -1201,7 +1201,7 @@ export default class Options {
 			/**
 			 * Legend options
 			 * @name legend
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [legend.show=true] Show or hide legend.
 			 * @property {Boolean} [legend.hide=false] Hide legend
@@ -1303,7 +1303,7 @@ export default class Options {
 			/**
 			 * Switch x and y axis position.
 			 * @name axis․rotated
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -1316,7 +1316,7 @@ export default class Options {
 			/**
 			 * Set clip-path attribute for x axis element
 			 * @name axis․x․clipPath
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @see [Demo]()
@@ -1329,7 +1329,7 @@ export default class Options {
 			/**
 			 * Show or hide x axis.
 			 * @name axis․x․show
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1348,7 +1348,7 @@ export default class Options {
 			 * - category
 			 * - indexed
 			 * @name axis․x․type
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default indexed
 			 * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
@@ -1367,7 +1367,7 @@ export default class Options {
 			 * Set how to treat the timezone of x values.<br>
 			 * If true, treat x value as localtime. If false, convert to UTC internally.
 			 * @name axis․x․localtime
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1383,7 +1383,7 @@ export default class Options {
 			 * Set category names on category axis.
 			 * This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
 			 * @name axis․x․categories
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default []
 			 * @example
@@ -1398,7 +1398,7 @@ export default class Options {
 			/**
 			 * Centerise ticks on category axis.
 			 * @name axis․x․tick․centered
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -1415,7 +1415,7 @@ export default class Options {
 			/**
 			 * A function to format tick value. Format string is also available for timeseries data.
 			 * @name axis․x․tick․format
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @example
@@ -1442,7 +1442,7 @@ export default class Options {
 			 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
 			 * We can change the number of ticks to be shown by axis.x.tick.culling.max.
 			 * @name axis․x․tick․culling
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default
 			 * - true for indexed axis and timeseries axis
@@ -1461,7 +1461,7 @@ export default class Options {
 			/**
 			 * The number of tick texts will be adjusted to less than this value.
 			 * @name axis․x․tick․culling․max
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default 10
 			 * @example
@@ -1481,7 +1481,7 @@ export default class Options {
 			 * The number of x axis ticks to show.<br><br>
 			 * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
 			 * @name axis․x․tick․count
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1498,7 +1498,7 @@ export default class Options {
 			/**
 			 * Set the x Axis tick text's position relatively its original position
 			 * @name axis․x․tick․text․position
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {x: 0, y:0}
 			 * @example
@@ -1521,7 +1521,7 @@ export default class Options {
 			 * Fit x axis ticks.<br><br>
 			 * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
 			 * @name axis․x․tick․fit
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1539,7 +1539,7 @@ export default class Options {
 			 * Set the x values of ticks manually.<br><br>
 			 * If this option is provided, the position of the ticks will be determined based on those values. This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 			 * @name axis․x․tick․values
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default null
 			 * @example
@@ -1557,7 +1557,7 @@ export default class Options {
 			 * Rotate x axis tick text.<br>
 			 * If you set negative value, it will rotate to opposite direction.
 			 * @name axis․x․tick․rotate
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default 0
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
@@ -1575,7 +1575,7 @@ export default class Options {
 			/**
 			 * Show x axis outer tick.
 			 * @name axis․x․tick․outer
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1594,7 +1594,7 @@ export default class Options {
 			 * - **NOTE:**
 			 *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
 			 * @name axis․x․tick․multiline
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
@@ -1625,7 +1625,7 @@ export default class Options {
 			 * - **NOTE:**
 			 *  > When x tick text contains `\n`, this option is ignored.
 			 * @name axis․x․tick․width
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default null
 			 * @example
@@ -1643,7 +1643,7 @@ export default class Options {
 			 * Set to display system tooltip(via 'title' attribute) for tick text
 			 * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
 			 * @name axis․x․tick․tooltip
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -1660,7 +1660,7 @@ export default class Options {
 			/**
 			 * Set max value of x axis range.
 			 * @name axis․x․max
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1675,7 +1675,7 @@ export default class Options {
 			/**
 			 * Set min value of x axis range.
 			 * @name axis․x․min
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1698,7 +1698,7 @@ export default class Options {
 			 *   - **timeseries:** Numeric time value
 			 *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
 			 * @name axis․x․padding
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -1722,7 +1722,7 @@ export default class Options {
 			 * Set height of x axis.<br><br>
 			 * The height of x axis can be set manually by this option. If you need more space for x axis, please use this option for that. The unit is pixel.
 			 * @name axis․x․height
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1737,7 +1737,7 @@ export default class Options {
 			/**
 			 * Set default extent for subchart and zoom. This can be an array or function that returns an array.
 			 * @name axis․x․extent
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default undefined
 			 * @example
@@ -1771,7 +1771,7 @@ export default class Options {
 			 *    - outer-middle
 			 *    - outer-bottom
 			 * @name axis․x․label
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String|Object}
 			 * @default undefined
 			 * @example
@@ -1793,9 +1793,44 @@ export default class Options {
 			axis_x_label: {},
 
 			/**
+			 * Set additional axes for x Axis.
+			 * - **NOTE:** Axis' scale is based on x Axis value
+			 *
+			 * Each axis object should consist with following options:
+			 *
+			 * | Name | Type | Default | Description |
+			 * | --- | --- | --- | --- |
+			 * | tick.outer | Boolean | true | Show outer tick |
+			 * | tick.format | Function | - | Set formatter for tick text |
+			 * | tick.count | Number | - | Set the number of y axis ticks |
+			 * | tick.values | Array | - | Set tick values manually |
+			 * @name axis․x․axes
+			 * @memberof Options
+			 * @type {Array}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @example
+			 * x: {
+			 *    axes: [
+			 *      {
+			 *        tick: {
+			 *          outer: false,
+			 *          format: function(x) {
+			 *             return x + "%";
+			 *          },
+			 *          count: 2,
+			 *          values: [10, 20, 30]
+			 *        }
+			 *      },
+			 *      ...
+			 *    ]
+			 * }
+			 */
+			axis_x_axes: [],
+
+			/**
 			 * Set clip-path attribute for y axis element
 			 * @name axis․y․clipPath
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1807,7 +1842,7 @@ export default class Options {
 			/**
 			 * Show or hide y axis.
 			 * @name axis․y․show
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1826,7 +1861,7 @@ export default class Options {
 			 *   - category
 			 *   - indexed
 			 * @name axis․y․type
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String}
 			 * @default undefined
 			 * @example
@@ -1842,7 +1877,7 @@ export default class Options {
 			 * Set max value of y axis.
 			 * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
 			 * @name axis․y․max
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1859,7 +1894,7 @@ export default class Options {
 			 * - **NOTE:**
 			 *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
 			 * @name axis․y․min
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1875,7 +1910,7 @@ export default class Options {
 			 * Change the direction of y axis.<br><br>
 			 * If true set, the direction will be from the top to the bottom.
 			 * @name axis․y․inverted
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -1890,7 +1925,7 @@ export default class Options {
 			/**
 			 * Set center value of y axis.
 			 * @name axis․y․center
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -1905,7 +1940,7 @@ export default class Options {
 			/**
 			 * Show y axis inside of the chart.
 			 * @name axis․y․inner
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -1921,7 +1956,7 @@ export default class Options {
 			 * Set label on y axis.<br><br>
 			 * You can set y axis label and change its position by this option. This option works in the same way as axis.x.label.
 			 * @name axis․y․label
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String|Object}
 			 * @default {}
 			 * @example
@@ -1946,7 +1981,7 @@ export default class Options {
 			 * Set formatter for y axis tick text.<br><br>
 			 * This option accepts d3.format object as well as a function you define.
 			 * @name axis․y․tick․format
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @example
@@ -1965,7 +2000,7 @@ export default class Options {
 			/**
 			 * Show y axis outer tick.
 			 * @name axis․y․tick․outer
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -1982,7 +2017,7 @@ export default class Options {
 			/**
 			 * Set y axis tick values manually.
 			 * @name axis․y․tick․values
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default null
 			 * @example
@@ -2001,7 +2036,7 @@ export default class Options {
 			 * Set the number of y axis ticks.<br><br>
 			 * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 			 * @name axis․y․tick․count
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -2018,7 +2053,7 @@ export default class Options {
 			/**
 			 * Set the y Axis tick text's position relatively its original position
 			 * @name axis․y․tick․text․position
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {x: 0, y:0}
 			 * @example
@@ -2041,7 +2076,7 @@ export default class Options {
 			 * Set the number of y axis ticks.<br><br>
 			 * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 			 * @name axis․y․tick․time
-			 * @memberOf Options
+			 * @memberof Options
 			 * @private
 			 * @type {Object}
 			 * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
@@ -2068,7 +2103,7 @@ export default class Options {
 			 *
 			 * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y․padding
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -2087,7 +2122,7 @@ export default class Options {
 			 * Set default range of y axis.<br><br>
 			 * This option set the default value for y axis when there is no data on init.
 			 * @name axis․y․default
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default undefined
 			 * @example
@@ -2100,9 +2135,44 @@ export default class Options {
 			axis_y_default: undefined,
 
 			/**
+			 * Set additional axes for y Axis.
+			 * - **NOTE:** Axis' scale is based on y Axis value
+			 *
+			 * Each axis object should consist with following options:
+			 *
+			 * | Name | Type | Default | Description |
+			 * | --- | --- | --- | --- |
+			 * | tick.outer | Boolean | true | Show outer tick |
+			 * | tick.format | Function | - | Set formatter for tick text |
+			 * | tick.count | Number | - | Set the number of y axis ticks |
+			 * | tick.values | Array | - | Set tick values manually |
+			 * @name axis․y․axes
+			 * @memberof Options
+			 * @type {Array}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @example
+			 * y: {
+			 *    axes: [
+			 *      {
+			 *        tick: {
+			 *          outer: false,
+			 *          format: function(x) {
+			 *             return x + "%";
+			 *          },
+			 *          count: 2,
+			 *          values: [10, 20, 30]
+			 *        }
+			 *      },
+			 *      ...
+			 *    ]
+			 * }
+			 */
+			axis_y_axes: [],
+
+			/**
 			 * Show or hide y2 axis.
 			 * @name axis․y2․show
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -2117,7 +2187,7 @@ export default class Options {
 			/**
 			 * Set max value of y2 axis.
 			 * @name axis․y2․max
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -2132,7 +2202,7 @@ export default class Options {
 			/**
 			 * Set min value of y2 axis.
 			 * @name axis․y2․min
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -2148,7 +2218,7 @@ export default class Options {
 			 * Change the direction of y2 axis.<br><br>
 			 * If true set, the direction will be from the top to the bottom.
 			 * @name axis․y2․inverted
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -2163,7 +2233,7 @@ export default class Options {
 			/**
 			 * Set center value of y2 axis.
 			 * @name axis․y2․center
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -2178,7 +2248,7 @@ export default class Options {
 			/**
 			 * Show y2 axis inside of the chart.
 			 * @name axis․y2․inner
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
 			 * @example
@@ -2194,7 +2264,7 @@ export default class Options {
 			 * Set label on y2 axis.<br><br>
 			 * You can set y2 axis label and change its position by this option. This option works in the same way as axis.x.label.
 			 * @name axis․y2․label
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {String|Object}
 			 * @default {}
 			 * @example
@@ -2219,7 +2289,7 @@ export default class Options {
 			 * Set formatter for y2 axis tick text.<br><br>
 			 * This option works in the same way as axis.y.format.
 			 * @name axis․y2․tick․format
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Function}
 			 * @default undefined
 			 * @example
@@ -2237,7 +2307,7 @@ export default class Options {
 			/**
 			 * Show or hide y2 axis outer tick.
 			 * @name axis․y2․tick․outer
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
 			 * @example
@@ -2254,7 +2324,7 @@ export default class Options {
 			/**
 			 * Set y2 axis tick values manually.
 			 * @name axis․y2․tick․values
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default null
 			 * @example
@@ -2272,7 +2342,7 @@ export default class Options {
 			 * Set the number of y2 axis ticks.
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․tick․count
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Number}
 			 * @default undefined
 			 * @example
@@ -2289,7 +2359,7 @@ export default class Options {
 			/**
 			 * Set the y2 Axis tick text's position relatively its original position
 			 * @name axis․y2․tick․text․position
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {x: 0, y:0}
 			 * @example
@@ -2312,7 +2382,7 @@ export default class Options {
 			 * Set the number of y2 axis ticks.
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․padding
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @example
@@ -2331,7 +2401,7 @@ export default class Options {
 			 * Set default range of y2 axis.<br><br>
 			 * This option set the default value for y2 axis when there is no data on init.
 			 * @name axis․y2․default
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default undefined
 			 * @example
@@ -2344,9 +2414,44 @@ export default class Options {
 			axis_y2_default: undefined,
 
 			/**
+			 * Set additional axes for y2 Axis.
+			 * - **NOTE:** Axis' scale is based on y2 Axis value
+			 *
+			 * Each axis object should consist with following options:
+			 *
+			 * | Name | Type | Default | Description |
+			 * | --- | --- | --- | --- |
+			 * | tick.outer | Boolean | true | Show outer tick |
+			 * | tick.format | Function | - | Set formatter for tick text |
+			 * | tick.count | Number | - | Set the number of y axis ticks |
+			 * | tick.values | Array | - | Set tick values manually |
+			 * @name axis․y2․axes
+			 * @memberof Options
+			 * @type {Array}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @example
+			 * y2: {
+			 *    axes: [
+			 *      {
+			 *        tick: {
+			 *          outer: false,
+			 *          format: function(x) {
+			 *             return x + "%";
+			 *          },
+			 *          count: 2,
+			 *          values: [10, 20, 30]
+			 *        }
+			 *      },
+			 *      ...
+			 *    ]
+			 * }
+			 */
+			axis_y2_axes: [],
+
+			/**
 			 * Set related options
 			 * @name grid
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
 			 * @property {Boolean} [x.show=false] Show grids along x axis.
@@ -2404,7 +2509,7 @@ export default class Options {
 			/**
 			 * Set point options
 			 * @name point
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [point.show=true] Whether to show each point in line.
 			 * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
@@ -2475,7 +2580,7 @@ export default class Options {
 			/**
 			 * Set line options
 			 * @name line
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
 			 *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
@@ -2514,7 +2619,7 @@ export default class Options {
 			/**
 			 * Set bar options
 			 * @name bar
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number} [bar.padding=0] The padding pixel value between each bar.
 			 * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
@@ -2558,7 +2663,7 @@ export default class Options {
 			/**
 			 * Set bubble options
 			 * @name bubble
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
 			 * @example
@@ -2580,7 +2685,7 @@ export default class Options {
 			/**
 			 * Set area options
 			 * @name area
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
 			 * @property {Boolean} [area.above=false]
@@ -2596,7 +2701,7 @@ export default class Options {
 			/**
 			 * Set pie options
 			 * @name pie
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
 			 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
@@ -2651,7 +2756,7 @@ export default class Options {
 			/**
 			 * Set gauge options
 			 * @name gauge
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
 			 * @property {Boolean} [gauge.label.show=true] Show or hide label on gauge.
@@ -2707,7 +2812,7 @@ export default class Options {
 			/**
 			 * Set donut options
 			 * @name donut
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
 			 * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
@@ -2775,7 +2880,7 @@ export default class Options {
 			 *  - step-after (d3.curveStepAfter)
 			 *  - step-before (d3.curveStepBefore)
 			 * @name spline
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {String} [spline.interpolation.type="cardinal"]
 			 * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
@@ -2791,7 +2896,7 @@ export default class Options {
 			/**
 			 * Set radar options
 			 * @name radar
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
 			 * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
@@ -2849,7 +2954,7 @@ export default class Options {
 			 * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
 			 * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
 			 * @name regions
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Array}
 			 * @default []
 			 * @example
@@ -2867,7 +2972,7 @@ export default class Options {
 			/**
 			 * Tooltip options
 			 * @name tooltip
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
@@ -2982,7 +3087,7 @@ export default class Options {
 			/**
 			 * Set title options
 			 * @name title
-			 * @memberOf Options
+			 * @memberof Options
 			 * @type {Object}
 			 * @property {String} [title.text]
 			 * @property {Number} [title.padding.top=0]

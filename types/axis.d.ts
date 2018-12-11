@@ -86,6 +86,11 @@ export interface XAxisConfiguration {
 	 * Set clip-path attribute for x axis element.
 	 */
 	clipPath?: boolean;
+
+	/**
+	 * Set additional axes for Axis
+	 */
+	axes: AxesConfiguration[];
 }
 
 export interface YAxisConfiguration {
@@ -152,6 +157,11 @@ export interface YAxisConfiguration {
 	 * Set clip-path attribute for x axis element.
 	 */
 	clipPath?: boolean;
+
+	/**
+	 * Set additional axes for Axis
+	 */
+	axes: AxesConfiguration[];
 }
 
 export interface XTickConfiguration {
@@ -269,5 +279,29 @@ export interface YTickConfiguration {
 			x?: number;
 			y?: number;
 		}
+	};
+}
+
+export interface AxesConfiguration {
+	tick?: {
+		/**
+		 * Show outer tick
+		 */
+		outer?: boolean;
+
+		/**
+		 * Set formatter for tick text
+		 */
+		format?: (x: string) => string;
+
+		/**
+		 * Set the number of y axis ticks
+		 */
+		count?: number;
+
+		/**
+		 * Set tick values manually
+		 */
+		values?: number|string|Date[];
 	};
 }

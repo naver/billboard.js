@@ -4,7 +4,7 @@
  * @ignore
  */
 import {select as d3Select} from "d3-selection";
-import AxisRendererHelper from "./AxisRendererHelper";
+import Helper from "./AxisRendererHelper";
 import {isArray, toArray, isFunction, isString, isNumber} from "../internals/util";
 
 export default class AxisRenderer {
@@ -28,7 +28,7 @@ export default class AxisRenderer {
 
 		config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
 
-		this.helper = new AxisRendererHelper(config, params);
+		this.helper = new Helper(config, params);
 		this.config = config;
 		this.params = params;
 	}
@@ -119,7 +119,7 @@ export default class AxisRenderer {
 			tickEnter.append("line");
 			tickEnter.append("text");
 
-			const sizeFor1Char = AxisRendererHelper.getSizeFor1Char(tick);
+			const sizeFor1Char = Helper.getSizeFor1Char(tick);
 			const counts = [];
 
 			let tspan = tick.select("text")
@@ -282,7 +282,7 @@ export default class AxisRenderer {
 
 				textUpdate
 					.attr("x", 0)
-					.attr("y", -tickLength)
+					.attr("y", -tickLength * 2)
 					.style("text-anchor", "middle");
 				break;
 			case "left":

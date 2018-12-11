@@ -180,11 +180,14 @@ const hexToRgb = hex => {
 		: null;
 };
 
+const parseNum = val => +val.replace(/(\(0|[a-z,()\s])/ig,"");
+
 export default {
 	fireEvent,
 	generate,
 	hexToRgb,
 	hoverChart,
+	parseNum,
 	parseSvgPath,
 	simulator
 };

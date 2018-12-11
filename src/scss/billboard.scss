@@ -37,6 +37,10 @@
 }
 
 /*-- Axis --*/
+.bb-axis {
+  shape-rendering: crispEdges;
+}
+
 .bb-axis-x .tick {}
 .bb-axis-x-label {}
 

@@ -2,6 +2,12 @@
  * Copyright (c) 2017 NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {
+	axisTop as d3AxisTop,
+	axisBottom as d3AxisBottom,
+	axisLeft as d3AxisLeft,
+	axisRight as d3AxisRight
+} from "d3-axis";
 import CLASS from "../config/classes";
 import {capitalize, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
@@ -11,6 +17,8 @@ const isHorizontal = ($$, forHorizontal) => {
 
 	return forHorizontal ? isRotated : !isRotated;
 };
+
+const getAxisClassName = id => `${CLASS.axis} ${CLASS[`axis${capitalize(id)}`]}`;
 
 export default class Axis {
 	constructor(owner) {
@@ -23,10 +31,11 @@ export default class Axis {
 		const isRotated = config.axis_rotated;
 		const main = $$.main;
 
+		$$.axesList = {};
+
 		["x", "y", "y2"].forEach(v => {
-			const axisStr = `axis${capitalize(v)}`;
-			const classAxis = `${CLASS.axis} ${CLASS[axisStr]}`;
-			const classLabel = CLASS[`${axisStr}Label`];
+			const classAxis = getAxisClassName(v);
+			const classLabel = CLASS[`axis${capitalize(v)}Label`];
 
 			$$.axes[v] = main.append("g")
 				.attr("class", classAxis)
@@ -50,6 +59,75 @@ export default class Axis {
 					v === "x" ? +!isRotated : +isRotated
 				])
 				.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+
+			this.generateAxes(v);
+		});
+	}
+
+	/**
+	 * Generate axes
+	 * It's used when axis' axes option is set
+	 * @param {String} id Axis id
+	 * @private
+	 */
+	generateAxes(id) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const axes = [];
+		const axesConfig = config[`axis_${id}_axes`];
+		const isRotated = config.axis_rotated;
+		let d3Axis;
+
+		if (id === "x") {
+			d3Axis = isRotated ? d3AxisLeft : d3AxisBottom;
+		} else if (id === "y") {
+			d3Axis = isRotated ? d3AxisBottom : d3AxisLeft;
+		} else if (id === "y2") {
+			d3Axis = isRotated ? d3AxisTop : d3AxisRight;
+		}
+
+		if (axesConfig.length) {
+			axesConfig.forEach(v => {
+				const tick = v.tick;
+
+				axes.push(
+					d3Axis($$[id])
+						.ticks(tick.count)
+						.tickFormat(tick.format || (x => x))
+						.tickValues(tick.values)
+						.tickSizeOuter(tick.outer === false ? 0 : 6)
+				);
+			});
+		}
+
+		$$.axesList[id] = axes;
+	}
+
+	/**
+	 * Update axes nodes
+	 * @private
+	 */
+	updateAxes() {
+		const $$ = this.owner;
+		const config = $$.config;
+
+		Object.keys($$.axesList).forEach(id => {
+			$$.axesList[id].forEach((v, i) => {
+				const className = `${getAxisClassName(id)}-${i + 1}`;
+				let g = $$.main.select(`.${className.replace(/\s/, ".")}`);
+
+				if (g.empty()) {
+					g = $$.main.append("g")
+						.attr("class", className)
+						.style("visibility", config[`axis_${id}_show`] ? "visible" : "hidden")
+						.call(v);
+				} else {
+					$$.xAxis.helper.transitionise(g)
+						.call(v.scale($$[id]));
+				}
+
+				g.attr("transform", $$.getTranslate(id, i + 1));
+			});
 		});
 	}
 
@@ -549,5 +627,7 @@ export default class Axis {
 		$$.yAxis.create(transitions.axisY);
 		$$.y2Axis.create(transitions.axisY2);
 		$$.subXAxis.create(transitions.axisSubX);
+
+		this.updateAxes();
 	}
 }
