@@ -567,6 +567,7 @@ extend(ChartInternal.prototype, {
 
 		const circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
 		const scale = r(circles) / $$.config.point_r;
+		const ratio = 1 - scale;
 
 		if ($$.isCirclePoint()) {
 			circles.attr("r", r);
@@ -575,15 +576,15 @@ extend(ChartInternal.prototype, {
 			circles.each(function() {
 				const point = d3Select(this);
 
-				const {x, y, width, height} = this.getBBox();
-				const x1 = x + (width * 0.5);
-				const y1 = y + (height * 0.5);
-				const x2 = (1 - scale) * x1;
-				const y2 = (1 - scale) * y1;
+				if (this.tagName === "circle") {
+					point.attr("r", r);
+				} else {
+					const {width, height} = this.getBBox();
+					const x = ratio * (+point.attr("x") + width / 2);
+					const y = ratio * (+point.attr("y") + height / 2);
 
-				this.tagName === "circle" ?
-					point.attr("r", r) :
-					point.style("transform", `translate(${x2}px, ${y2}px) scale(${scale})`);
+					point.style("transform", `translate(${x}px, ${y}px) scale(${scale})`);
+				}
 			});
 		}
 	},
