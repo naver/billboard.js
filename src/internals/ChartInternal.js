@@ -900,13 +900,17 @@ export default class ChartInternal {
 		return this.config.axis_y_type === "timeseries";
 	}
 
-	getTranslate(target) {
+	getTranslate(target, index = 0) {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
-
+		let padding = 0;
 		let x;
 		let y;
+
+		if (index && /^(x|y2?)$/.test(target)) {
+			padding = $$.getAxisSize(target) * index;
+		}
 
 		if (target === "main") {
 			x = asHalfPixel($$.margin.left);
@@ -918,14 +922,14 @@ export default class ChartInternal {
 			x = $$.margin3.left;
 			y = $$.margin3.top;
 		} else if (target === "x") {
-			x = 0;
-			y = isRotated ? 0 : $$.height;
+			x = isRotated ? -padding : 0;
+			y = isRotated ? 0 : $$.height + padding;
 		} else if (target === "y") {
-			x = 0;
-			y = isRotated ? $$.height : 0;
+			x = isRotated ? 0 : -padding;
+			y = isRotated ? $$.height + padding : 0;
 		} else if (target === "y2") {
-			x = isRotated ? 0 : $$.width;
-			y = isRotated ? 1 : 0;
+			x = isRotated ? 0 : $$.width + padding;
+			y = isRotated ? 1 - padding : 0;
 		} else if (target === "subx") {
 			x = 0;
 			y = isRotated ? 0 : $$.height2;
