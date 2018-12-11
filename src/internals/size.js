@@ -21,9 +21,36 @@ extend(ChartInternal.prototype, {
 		return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
 	},
 
+	/**
+	 * Get Axis size according its position
+	 * @param {String} id Axis id value - x, y or y2
+	 * @return {number} size Axis size value
+	 * @private
+	 */
+	getAxisSize(id) {
+		const $$ = this;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
+		let size = 0;
+
+		if (isRotated) {
+			size = id === "x" ?
+				$$.getAxisWidthByAxisId(id, true) :
+				$$.getHorizontalAxisHeight(id);
+		} else {
+			size = /y2?/.test(id) ?
+				$$.getAxisWidthByAxisId(id, true) :
+				$$.getHorizontalAxisHeight(id);
+		}
+
+		return size;
+	},
+
 	getCurrentPaddingTop() {
 		const $$ = this;
 		const config = $$.config;
+		const axesLen = config.axis_y2_axes.length;
+
 		let padding = isValue(config.padding_top) ?
 			config.padding_top : 0;
 
@@ -31,56 +58,72 @@ extend(ChartInternal.prototype, {
 			padding += $$.getTitlePadding();
 		}
 
+		if (axesLen && config.axis_rotated) {
+			padding += $$.getHorizontalAxisHeight("y2") * axesLen;
+		}
+
 		return padding;
 	},
 
 	getCurrentPaddingBottom() {
-		const config = this.config;
-
-		return isValue(config.padding_bottom) ?
+		const $$ = this;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
+		const axisId = isRotated ? "y" : "x";
+		const axesLen = config[`axis_${axisId}_axes`].length;
+		const padding = isValue(config.padding_bottom) ?
 			config.padding_bottom : 0;
+
+		return padding + (
+			axesLen ? $$.getHorizontalAxisHeight(axisId) * axesLen : 0
+		);
 	},
 
 	getCurrentPaddingLeft(withoutRecompute) {
 		const $$ = this;
 		const config = $$.config;
-		let paddingLeft;
+		const isRotated = config.axis_rotated;
+		const axisId = isRotated ? "x" : "y";
+		const axesLen = config[`axis_${axisId}_axes`].length;
+		const axisWidth = $$.getAxisWidthByAxisId(axisId, withoutRecompute);
+		let padding;
 
 		if (isValue(config.padding_left)) {
-			paddingLeft = config.padding_left;
-		} else if (config.axis_rotated) {
-			paddingLeft = !config.axis_x_show ?
-				1 : Math.max(ceil10($$.getAxisWidthByAxisId("x", withoutRecompute)), 40);
+			padding = config.padding_left;
+		} else if (isRotated) {
+			padding = !config.axis_x_show ?
+				1 : Math.max(ceil10(axisWidth), 40);
 		} else if (!config.axis_y_show || config.axis_y_inner) { // && !config.axis_rotated
-			paddingLeft = $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
+			padding = $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
 		} else {
-			paddingLeft = ceil10($$.getAxisWidthByAxisId("y", withoutRecompute));
+			padding = ceil10(axisWidth);
 		}
 
-		return paddingLeft;
+		return padding + (axisWidth * axesLen);
 	},
 
 	getCurrentPaddingRight() {
 		const $$ = this;
 		const config = $$.config;
 		const defaultPadding = 10;
-		const legendWidthOnRight = $$.isLegendRight ?
-			$$.getLegendWidth() + 20 : 0;
-		let paddingRight;
+		const legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
+		const axesLen = config.axis_y2_axes.length;
+		const axisWidth = $$.getAxisWidthByAxisId("y2");
+		let padding;
 
 		if (isValue(config.padding_right)) {
-			paddingRight = config.padding_right + 1; // 1 is needed not to hide tick line
+			padding = config.padding_right + 1; // 1 is needed not to hide tick line
 		} else if (config.axis_rotated) {
-			paddingRight = defaultPadding + legendWidthOnRight;
+			padding = defaultPadding + legendWidthOnRight;
 		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
-			paddingRight = 2 +
+			padding = 2 +
 				legendWidthOnRight +
 				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
 		} else {
-			paddingRight = ceil10($$.getAxisWidthByAxisId("y2")) + legendWidthOnRight;
+			padding = ceil10(axisWidth) + legendWidthOnRight;
 		}
 
-		return paddingRight;
+		return padding + (axisWidth * axesLen);
 	},
 
 	/**
@@ -191,7 +234,7 @@ extend(ChartInternal.prototype, {
 
 		return h +
 			($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) +
-			(axisId === "y2" ? -10 : 0);
+			(axisId === "y2" && !config.axis_rotated ? -10 : 0);
 	},
 
 	getEventRectWidth() {

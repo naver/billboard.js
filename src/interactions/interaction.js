@@ -598,9 +598,9 @@ extend(ChartInternal.prototype, {
 		}`;
 
 		const eventRect = $$.main.select(selector).node();
-		const box = eventRect.getBoundingClientRect();
-		const x = box.left + (mouse ? mouse[0] : 0) + (box.width / 2);
-		const y = box.top + (mouse ? mouse[1] : 0);
+		const {width, left, top} = eventRect.getBoundingClientRect();
+		const x = left + (mouse ? mouse[0] : 0) + (width / 2);
+		const y = top + (mouse ? mouse[1] : 0);
 		const params = {
 			screenX: x,
 			screenY: y,

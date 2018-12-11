@@ -54,10 +54,10 @@ var billboardDemo = {
 	_createList: function() {
 		var html = [];
 
-		Object.keys(demos).forEach(function (key) {
+		Object.keys(demos).forEach(function(key) {
 			html.push("<li><h4>" + key + "</h4>");
 
-			Object.keys(demos[key]).forEach(function (v, i) {
+			Object.keys(demos[key]).sort().forEach(function (v, i) {
 				i === 0 && html.push("<ul>");
 				html.push("<li><a href='#"+ [key, v].join(".") + "'>" + v + "</a></li>");
 			});
