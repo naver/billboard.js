@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {
@@ -40,12 +40,14 @@ extend(ChartInternal.prototype, {
 
 		$$.redrawEventRect();
 
+		const eventRects = $$.main.select(`.${CLASS.eventRects}`);
+
 		if (zoomEnabled && bind) {
-			$$.bindZoomOnEventRect(zoomEnabled.type);
+			$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
 		} else if (bind === false) {
 			$$.api.unzoom();
 
-			$$.main.select(`.${CLASS.eventRects}`)
+			eventRects
 				.on(".zoom", null)
 				.on(".drag", null);
 		}
@@ -87,7 +89,7 @@ extend(ChartInternal.prototype, {
 		 */
 		zoom.updateTransformScale = transform => {
 			// rescale from the original scale
-			const newScale = transform.rescaleX($$.subX.orgScale());
+			const newScale = transform.rescaleX($$.x);
 			const domain = $$.trimXDomain(newScale.domain());
 			const rescale = config.zoom_rescale;
 
@@ -110,6 +112,10 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const event = d3Event.sourceEvent;
 
+		if (!event) {
+			return;
+		}
+
 		$$.zoom.altDomain = event.altKey ?
 			$$.x.orgDomain() : null;
 
@@ -126,7 +132,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const event = d3Event;
 
-		if (!config.zoom_enabled) {
+		if (!config.zoom_enabled || !event.sourceEvent) {
 			return;
 		}
 
@@ -170,7 +176,9 @@ extend(ChartInternal.prototype, {
 		const startEvent = $$.zoom.startEvent;
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
-		if (event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY) {
+		if (!startEvent ||
+			(event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY)
+		) {
 			return;
 		}
 
@@ -182,8 +190,8 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Get zoom domain
-	 * @private
 	 * @returns {Array} zoom domain
+ 	 * @private
 	 */
 	getZoomDomain() {
 		const $$ = this;
@@ -196,9 +204,10 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Update zoom
+	 * @param {Boolean} force Force unzoom
 	 * @private
 	 */
-	updateZoom() {
+	updateZoom(force) {
 		const $$ = this;
 
 		if ($$.zoomScale) {
@@ -206,11 +215,11 @@ extend(ChartInternal.prototype, {
 			const xDomain = $$.subX.domain();
 			const delta = 0.015; // arbitrary value
 
+			const isfullyShown = (zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]) &&
+				(xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta));
+
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
-			if (
-				(zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]) &&
-				(xDomain[1] <= zoomDomain[1] || xDomain[1] <= (zoomDomain[1] - delta))
-			) {
+			if (force || isfullyShown) {
 				$$.xAxis.scale($$.subX);
 				$$.x.domain($$.subX.orgDomain());
 				$$.zoomScale = null;
@@ -222,11 +231,11 @@ extend(ChartInternal.prototype, {
 	 * Attach zoom event on <rect>
 	 * @private
 	 */
-	bindZoomOnEventRect(type) {
+	bindZoomOnEventRect(eventRects, type) {
 		const $$ = this;
 		const behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
 
-		$$.main.select(`.${CLASS.eventRects}`)
+		eventRects
 			.call(behaviour)
 			.on("dblclick.zoom", null);
 	},
