@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -11,7 +11,7 @@ extend(Chart.prototype, {
 	 * Change the type of the chart.
 	 * @method transform
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String} type Specify the type to be transformed. The types listed in data.type can be used.
 	 * @param {String|Array} targetIds Specify targets to be transformed. If not given, all targets will be the candidate.
 	 * @example
@@ -43,8 +43,7 @@ extend(ChartInternal.prototype, {
 	 */
 	transformTo(targetIds, type, optionsForRedraw) {
 		const $$ = this;
-		const withTransitionForAxis = !$$.hasArcType();
-		const options = optionsForRedraw || {withTransitionForAxis: withTransitionForAxis};
+		const options = optionsForRedraw || {withTransitionForAxis: !$$.hasArcType()};
 
 		options.withTransitionForTransform = false;
 		$$.transiting = false;

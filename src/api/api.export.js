@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {namespaces as d3Namespaces} from "d3-selection";
@@ -25,7 +25,7 @@ const b64EncodeUnicode = str => btoa(
  * @private
  */
 const nodeToSvgDataUrl = node => {
-	const bounds = node.getBoundingClientRect();
+	const {width, height} = node.getBoundingClientRect();
 	const clone = node.cloneNode(true);
 	const styleSheets = toArray(document.styleSheets);
 	const cssRules = getCssRules(styleSheets);
@@ -37,7 +37,7 @@ const nodeToSvgDataUrl = node => {
 
 	// foreignObject not supported in IE11 and below
 	// https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${bounds.width}" height="${bounds.height}">
+	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${width}" height="${height}">
 			<foreignObject width="100%" height="100%">
 				<style>${cssText.join("\n")}</style>
 				${nodeXml}
@@ -56,7 +56,7 @@ extend(Chart.prototype, {
 	 *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
 	 * @method export
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
 	 * @param {Function} [callback] The callback to be invoked when export is ready.
 	 * @return {String} dataURI

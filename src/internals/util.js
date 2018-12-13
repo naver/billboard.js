@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
@@ -121,6 +121,9 @@ const getBrushSelection = ctx => {
 
 	return selection;
 };
+
+// retrun random number
+const getRandom = (asStr = true) => Math.random() + (asStr ? "" : 0);
 
 const brushEmpty = ctx => {
 	const selection = getBrushSelection(ctx);
@@ -250,6 +253,7 @@ export {
 	getCssRules,
 	getOption,
 	getPathBox,
+	getRandom,
 	getRectSegList,
 	hasValue,
 	isArray,

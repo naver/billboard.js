@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -7,10 +7,37 @@ import {extend} from "../internals/util";
 
 extend(Chart.prototype, {
 	/**
+	 * Show/Hide data series
+	 * @private
+	 */
+	_showHide(show, targetIdsValue, options) {
+		const $$ = this.internal;
+		const targetIds = $$.mapToTargetIds(targetIdsValue);
+
+		$$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
+		const targets = $$.svg.selectAll($$.selectorTargets(targetIds));
+		const opacity = show ? "1" : "0";
+
+		targets.transition()
+			.style("opacity", opacity, "important")
+			.call($$.endall, () => {
+				targets.style("opacity", null).style("opacity", opacity);
+			});
+
+		options.withLegend && $$[`${show ? "show" : "hide"}Legend`](targetIds);
+
+		$$.redraw({
+			withUpdateOrgXDomain: true,
+			withUpdateXDomain: true,
+			withLegend: true
+		});
+	},
+
+	/**
 	 * Show data series on chart
 	 * @method show
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} [targetIdsValue=all] The target id value.
 	 * @param {Object} [options] The object can consist with following members:<br>
 	 *
@@ -26,32 +53,14 @@ extend(Chart.prototype, {
 	 * chart.show(["data1", "data3"]);
 	 */
 	show(targetIdsValue, options = {}) {
-		const $$ = this.internal;
-		const targetIds = $$.mapToTargetIds(targetIdsValue);
-
-		$$.removeHiddenTargetIds(targetIds);
-		const targets = $$.svg.selectAll($$.selectorTargets(targetIds));
-
-		targets.transition()
-			.style("opacity", "1", "important")
-			.call($$.endall, () => {
-				targets.style("opacity", null).style("opacity", "1");
-			});
-
-		options.withLegend && $$.showLegend(targetIds);
-
-		$$.redraw({
-			withUpdateOrgXDomain: true,
-			withUpdateXDomain: true,
-			withLegend: true
-		});
+		this._showHide(true, targetIdsValue, options);
 	},
 
 	/**
 	 * Hide data series from chart
 	 * @method hide
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} [targetIdsValue=all] The target id value.
 	 * @param {Object} [options] The object can consist with following members:<br>
 	 *
@@ -67,32 +76,14 @@ extend(Chart.prototype, {
 	 * chart.hide(["data1", "data3"]);
 	 */
 	hide(targetIdsValue, options = {}) {
-		const $$ = this.internal;
-		const targetIds = $$.mapToTargetIds(targetIdsValue);
-
-		$$.addHiddenTargetIds(targetIds);
-		const targets = $$.svg.selectAll($$.selectorTargets(targetIds));
-
-		targets.transition()
-			.style("opacity", "0", "important")
-			.call($$.endall, () => {
-				targets.style("opacity", null).style("opacity", "0");
-			});
-
-		options.withLegend && $$.hideLegend(targetIds);
-
-		$$.redraw({
-			withUpdateOrgXDomain: true,
-			withUpdateXDomain: true,
-			withLegend: true
-		});
+		this._showHide(false, targetIdsValue, options);
 	},
 
 	/**
 	 * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
 	 * @method toggle
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} [targetIdsValue=all] The target id value.
 	 * @param {Object} [options] The object can consist with following members:<br>
 	 *

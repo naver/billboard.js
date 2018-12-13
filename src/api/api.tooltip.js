@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -14,7 +14,7 @@ const tooltip = extend(() => {}, {
 	 * Show tooltip
 	 * @method tooltip․show
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} args The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | Description |
@@ -83,7 +83,7 @@ const tooltip = extend(() => {}, {
 	 * Hide tooltip
 	 * @method tooltip․hide
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 */
 	hide: function() {
 		const $$ = this.internal;

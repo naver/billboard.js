@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -11,7 +11,7 @@ extend(Chart.prototype, {
 	 * Resize the chart.
 	 * @method resize
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} size This argument should include width and height in pixels.
 	 * @example
 	 * // Resize to 640x480
@@ -33,7 +33,7 @@ extend(Chart.prototype, {
 	 * Force to redraw.
 	 * @method flush
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Boolean} [soft] For soft redraw.
 	 * @example
 	 * chart.flush();
@@ -63,7 +63,7 @@ extend(Chart.prototype, {
 	 * Reset the chart object and remove element and events completely.
 	 * @method destroy
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @example
 	 * chart.destroy();
 	 */
@@ -97,7 +97,7 @@ extend(Chart.prototype, {
 	 * Get or set single config option value.
 	 * @method config
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String} name The option key name.
 	 * @param {*} [value] The value accepted for indicated option.
 	 * @param {Boolean} [redraw] Set to redraw with the new option changes.

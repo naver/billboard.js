@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
 import Chart from "./internals/Chart";
@@ -72,14 +72,14 @@ const bb = {
 	 * @property {String} version version
 	 * @example
 	 *    bb.version;  // "1.0.0"
-	 * @memberOf bb
+	 * @memberof bb
 	 */
 	version: "#__VERSION__#",
 
 	/**
 	 * Generate chart
 	 * @param {Options} options chart options
-	 * @memberOf bb
+	 * @memberof bb
 	 * @return {Chart}
 	 * @see {@link Options} for different generation options
 	 * @see {@link Chart} for different methods API
@@ -120,7 +120,7 @@ const bb = {
 	 *  var chart2 = bb.generate(...);
 	 *
 	 *  bb.instance;  // [ chart1, chart2, ... ]
-	 * @memberOf bb
+	 * @memberof bb
 	 */
 	instance: [],
 

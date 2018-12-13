@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
@@ -40,18 +40,16 @@ export default class ChartInternal {
 
 	beforeInit() {
 		const $$ = this;
-		const config = $$.config;
 
 		// can do something
-		callFn(config.onbeforeinit, $$);
+		callFn($$.config.onbeforeinit, $$);
 	}
 
 	afterInit() {
 		const $$ = this;
-		const config = $$.config;
 
 		// can do something
-		callFn(config.onafterinit, $$);
+		callFn($$.config.onafterinit, $$);
 	}
 
 	init() {
@@ -1124,7 +1122,7 @@ export default class ChartInternal {
 		const config = $$.config;
 
 		$$.resizeFunction = $$.generateResize();
-		$$.resizeFunction.add(() => config.onresize.call($$));
+		$$.resizeFunction.add(config.onresize.bind($$));
 
 		if (config.resize_auto) {
 			$$.resizeFunction.add(() => {
@@ -1137,7 +1135,7 @@ export default class ChartInternal {
 			});
 		}
 
-		$$.resizeFunction.add(() => config.onresized.call($$));
+		$$.resizeFunction.add(config.onresized.bind($$));
 
 		// attach resize event
 		window.addEventListener("resize", $$.resizeFunction);

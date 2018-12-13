@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
@@ -60,7 +60,8 @@ extend(ChartInternal.prototype, {
 			format = dataLabels.format;
 		} else if (isObjectType(dataLabels.format)) {
 			if (dataLabels.format[targetId]) {
-				format = dataLabels.format[targetId] === true ? defaultFormat : dataLabels.format[targetId];
+				format = dataLabels.format[targetId] === true ?
+					defaultFormat : dataLabels.format[targetId];
 			} else {
 				format = () => "";
 			}
