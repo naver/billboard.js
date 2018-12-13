@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @license MIT
  * @ignore
@@ -44,7 +44,7 @@ import ChartInternal from "./ChartInternal";
  * @property {Object} $.text
  * @property {d3.selection} $.text.texts Data label text elements
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @example
  * var chart = bb.generate({ ... });
  *

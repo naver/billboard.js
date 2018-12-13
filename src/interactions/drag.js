@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
@@ -49,28 +49,20 @@ extend(ChartInternal.prototype, {
 				const shape = d3Select(this);
 				const isSelected = shape.classed(CLASS.SELECTED);
 				const isIncluded = shape.classed(CLASS.INCLUDED);
-
-				let _x;
-				let	_y;
-				let	_w;
-				let _h;
 				let toggle;
 				let isWithin = false;
-				let box;
 
 				if (shape.classed(CLASS.circle)) {
-					_x = shape.attr("cx") * 1;
-					_y = shape.attr("cy") * 1;
+					const x = shape.attr("cx") * 1;
+					const y = shape.attr("cy") * 1;
+
 					toggle = $$.togglePoint;
-					isWithin = minX < _x && _x < maxX && minY < _y && _y < maxY;
+					isWithin = minX < x && x < maxX && minY < y && y < maxY;
 				} else if (shape.classed(CLASS.bar)) {
-					box = getPathBox(this);
-					_x = box.x;
-					_y = box.y;
-					_w = box.width;
-					_h = box.height;
+					const {x, y, width, height} = getPathBox(this);
+
 					toggle = $$.togglePath;
-					isWithin = !(maxX < _x || _x + _w < minX) && !(maxY < _y || _y + _h < minY);
+					isWithin = !(maxX < x || x + width < minX) && !(maxY < y || y + height < minY);
 				} else {
 					// line/area selection not supported yet
 					return;

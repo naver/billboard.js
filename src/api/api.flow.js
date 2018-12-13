@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {selectAll as d3SelectAll} from "d3-selection";
@@ -16,7 +16,7 @@ extend(Chart.prototype, {
 	 * By this API, you can append new data points to the chart.
 	 * @method flow
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} args The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | Description |
@@ -169,6 +169,7 @@ extend(Chart.prototype, {
 		if (isDefined(args.to)) {
 			length = 0;
 			to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to;
+
 			baseTarget.values.forEach(v => {
 				v.x < to && length++;
 			});
@@ -219,7 +220,7 @@ extend(Chart.prototype, {
 extend(ChartInternal.prototype, {
 	/**
 	 * Generate flow
-	 * @memberOf ChartInternal
+	 * @memberof ChartInternal
 	 * @private
 	 * @param {Object} args
 	 * @return {Function}

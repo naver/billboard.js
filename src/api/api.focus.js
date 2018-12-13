@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
@@ -13,7 +13,7 @@ extend(Chart.prototype, {
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
 	 * @method focus
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} targetIdsValue Target ids to be highlighted.
 	 * @example
 	 *  // data1 will be highlighted and the others will be faded out
@@ -37,9 +37,7 @@ extend(Chart.prototype, {
 
 		candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
 
-		$$.hasArcType() &&
-		$$.expandArc(targetIds);
-
+		$$.hasArcType() && $$.expandArc(targetIds);
 		$$.toggleFocusLegend(targetIds, true);
 
 		$$.focusedTargetIds = targetIds;
@@ -51,7 +49,7 @@ extend(Chart.prototype, {
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
 	 * @method defocus
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} Target ids to be faded out.
 	 * @example
 	 * // data1 will be faded out and the others will be reverted.
@@ -83,7 +81,7 @@ extend(Chart.prototype, {
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
 	 * @method revert
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} Target ids to be reverted
 	 * @example
 	 * // data1 will be reverted.

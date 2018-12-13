@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -9,7 +9,7 @@ import {extend, isUndefined, isArray} from "../internals/util";
  * Get data loaded in the chart.
  * @method data
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {String|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
  * @return {Array} Data objects
  * @example
@@ -35,7 +35,7 @@ extend(data, {
 	 * Get data shown in the chart.
 	 * @method data․shown
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
 	 * @return {Array} Data objects
 	 * @example
@@ -57,7 +57,7 @@ extend(data, {
 	 * Get values of the data loaded in the chart.
 	 * @method data․values
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
 	 * @return {Array} Data values
 	 * @example
@@ -89,7 +89,7 @@ extend(data, {
 	 * Get and set names of the data loaded in the chart.
 	 * @method data․names
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
 	 * @return {Object} Corresponding names according its key value, if specified names values.
 	 * @example
@@ -113,7 +113,7 @@ extend(data, {
 	 * Get and set colors of the data loaded in the chart.
 	 * @method data․colors
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
 	 * @return {Object} Corresponding data color value according its key value.
 	 * @example
@@ -135,7 +135,7 @@ extend(data, {
 	 * Get and set axes of the data loaded in the chart.
 	 * @method data․axes
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
 	 * @return {Object} Corresponding axes value for data, if specified axes value.
 	 * @example
@@ -157,7 +157,7 @@ extend(data, {
 	 * Get the minimum data value bound to the chart
 	 * @method data․min
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @return {Array} Data objects
 	 * @example
 	 * // Get current axes
@@ -172,7 +172,7 @@ extend(data, {
 	 * Get the maximum data value bound to the chart
 	 * @method data․max
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @return {Array} Data objects
 	 * @example
 	 * // Get current axes

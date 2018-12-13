@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {
@@ -7,7 +7,7 @@ import {
 	select as d3Select
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
-import {isFunction, isObjectType, toArray, extend, notEmpty} from "../internals/util";
+import {getRandom, isFunction, isObjectType, toArray, extend, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
@@ -101,7 +101,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	getTransitionName() {
-		return Math.random().toString();
+		return getRandom();
 	},
 
 	custom: {

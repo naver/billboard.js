@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {
@@ -722,8 +722,7 @@ extend(ChartInternal.prototype, {
 		const ranges = [];
 
 		converted.forEach(range => {
-			const x = range.x;
-			const id = range.id;
+			const {x, id} = range;
 
 			ranges.push({
 				x,

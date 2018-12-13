@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -10,7 +10,7 @@ import {getOption, extend} from "../internals/util";
  * Update regions.
  * @method regions
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
  * @return {Array} regions
  * @example
@@ -40,7 +40,7 @@ extend(regions, {
 	 * This API adds new region instead of replacing like regions.
 	 * @method regions․add
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Array|Object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
 	 * @return {Array} regions
 	 * @example
@@ -74,7 +74,7 @@ extend(regions, {
 	 * This API removes regions.
 	 * @method regions․remove
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} regions This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
 	 * @return {Array} regions Removed regions
 	 * @example
