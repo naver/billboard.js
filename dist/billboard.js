@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181211193444
+ * @version 1.6.2-nightly-20181213143628
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10273,7 +10273,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10302,7 +10302,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     var bind = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0],
         $$ = this,
         zoomEnabled = $$.config.zoom_enabled;
-    $$.redrawEventRect(), zoomEnabled && bind ? $$.bindZoomOnEventRect(zoomEnabled.type) : bind === !1 && ($$.api.unzoom(), $$.main.select(".".concat(config_classes.eventRects)).on(".zoom", null).on(".drag", null));
+    $$.redrawEventRect();
+    var eventRects = $$.main.select(".".concat(config_classes.eventRects));
+    zoomEnabled && bind ? $$.bindZoomOnEventRect(eventRects, zoomEnabled.type) : bind === !1 && ($$.api.unzoom(), eventRects.on(".zoom", null).on(".drag", null));
   },
 
   /**
@@ -10329,7 +10331,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
     }, zoom.updateTransformScale = function (transform) {
       // rescale from the original scale
-      var newScale = transform.rescaleX($$.subX.orgScale()),
+      var newScale = transform.rescaleX($$.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
       newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && $$.x.domain($$.zoomScale.orgDomain());
@@ -10343,7 +10345,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   onZoomStart: function onZoomStart() {
     var $$ = this,
         event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent;
-    $$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event);
+    event && ($$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
   /**
@@ -10355,7 +10357,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"];
 
-    if (config.zoom_enabled) {
+    if (config.zoom_enabled && event.sourceEvent) {
       var isMousemove = event.sourceEvent.type === "mousemove",
           transform = event.transform;
       return $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 ? void 0 : isMousemove && $$.zoom.altDomain ? ($$.x.domain($$.zoom.altDomain), void transform.scale($$.zoomScale).updateScaleExtent()) : void ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
@@ -10376,13 +10378,13 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         startEvent = $$.zoom.startEvent;
     // if click, do nothing. otherwise, click interaction will be canceled.
-    event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain()));
+    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain()));
   },
 
   /**
    * Get zoom domain
-   * @private
    * @returns {Array} zoom domain
+  	 * @private
    */
   getZoomDomain: function getZoomDomain() {
     var $$ = this,
@@ -10394,16 +10396,18 @@ extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Update zoom
+   * @param {Boolean} force Force unzoom
    * @private
    */
-  updateZoom: function updateZoom() {
+  updateZoom: function updateZoom(force) {
     var $$ = this;
 
     if ($$.zoomScale) {
       var zoomDomain = $$.zoomScale.domain(),
           xDomain = $$.subX.domain(),
-          delta = .015;
-      (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta) && ($$.xAxis.scale($$.subX), $$.x.domain($$.subX.orgDomain()), $$.zoomScale = null);
+          delta = .015,
+          isfullyShown = (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
+      (force || isfullyShown) && ($$.xAxis.scale($$.subX), $$.x.domain($$.subX.orgDomain()), $$.zoomScale = null);
     }
   },
 
@@ -10411,10 +10415,10 @@ extend(ChartInternal_ChartInternal.prototype, {
    * Attach zoom event on <rect>
    * @private
    */
-  bindZoomOnEventRect: function bindZoomOnEventRect(type) {
+  bindZoomOnEventRect: function bindZoomOnEventRect(eventRects, type) {
     var $$ = this,
         behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
-    $$.main.select(".".concat(config_classes.eventRects)).call(behaviour).on("dblclick.zoom", null);
+    eventRects.call(behaviour).on("dblclick.zoom", null);
   },
 
   /**
@@ -11001,18 +11005,21 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.zoom.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
 
 
+
 /**
  * Zoom by giving x domain.
+ * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
+ * To get the initial state, [.unzoom()](#unzoom) should be called.
  * @method zoom
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
  * @return {Array} domain value in array
  * @example
@@ -11053,7 +11060,7 @@ extend(api_zoom_zoom, {
    * Enable and disable zooming.
    * @method zoom․enable
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
    * @example
    *  // Enable zooming using the mouse wheel
@@ -11081,7 +11088,7 @@ extend(api_zoom_zoom, {
    * Set or get x Axis maximum zoom range value
    * @method zoom․max
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Number} [max] maximum value to set for zoom
    * @return {Number} zoom max value
    * @example
@@ -11098,7 +11105,7 @@ extend(api_zoom_zoom, {
    * Set or get x Axis minimum zoom range value
    * @method zoom․min
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Number} [min] minimum value tp set for zoom
    * @return {Number} zoom min value
    * @example
@@ -11115,7 +11122,7 @@ extend(api_zoom_zoom, {
    * Set zoom range
    * @method zoom․range
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} [range]
    * @return {Object} zoom range value
    * {
@@ -11142,17 +11149,23 @@ extend(api_zoom_zoom, {
    * Unzoom zoomed area
    * @method unzoom
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @example
    *  chart.unzoom();
    */
   unzoom: function unzoom() {
     var $$ = this.internal,
         config = $$.config;
-    $$.zoomScale && (config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"]), $$.updateZoom(), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none"), $$.redraw({
-      withTransition: !0,
-      withY: config.zoom_rescale
-    }));
+
+    if ($$.zoomScale) {
+      config.subchart_show ? $$.brush.getSelection().call($$.brush.move, null) : $$.zoom.updateTransformScale(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"]), $$.updateZoom(!0), $$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
+      // reset transform
+      var eventRects = $$.main.select(".".concat(config_classes.eventRects));
+      Object(external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomTransform"])(eventRects.node()) !== external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"] && $$.zoom.transform(eventRects, external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_["zoomIdentity"]), $$.redraw({
+        withTransition: !0,
+        withY: config.zoom_rescale
+      });
+    }
   }
 });
 // CONCATENATED MODULE: ./src/api/api.load.js
@@ -12786,7 +12799,7 @@ var billboard = __webpack_require__(26);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181211193444
+ * @version 1.6.2-nightly-20181213143628
  */
 
 var bb = {
@@ -12797,7 +12810,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberOf bb
    */
-  version: "1.6.2-nightly-20181211193444",
+  version: "1.6.2-nightly-20181213143628",
 
   /**
    * Generate chart
