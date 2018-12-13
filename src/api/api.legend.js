@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -14,7 +14,7 @@ const legend = extend(() => {}, {
 	 * Show legend for each target.
 	 * @method legend․show
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} targetIds
 	 * - If targetIds is given, specified target's legend will be shown.
 	 * - If only one target is the candidate, String can be passed.
@@ -40,7 +40,7 @@ const legend = extend(() => {}, {
 	 * Hide legend for each target.
 	 * @method legend․hide
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Array} targetIds
 	 * - If targetIds is given, specified target's legend will be hidden.
 	 * - If only one target is the candidate, String can be passed.

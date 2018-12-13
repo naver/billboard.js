@@ -1,11 +1,11 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {mouse as d3Mouse} from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isValue, isNumber, getRectSegList} from "../internals/util";
+import {extend, isValue, isNumber, getRandom, getRectSegList} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initBar() {
@@ -61,7 +61,7 @@ extend(ChartInternal.prototype, {
 
 	redrawBar(drawBar, withTransition) {
 		return [
-			(withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar)
+			(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar)
 				.attr("d", drawBar)
 				.style("fill", this.color)
 				.style("opacity", "1")

@@ -175,8 +175,10 @@ extend(zoom, {
 		const zoom = this.zoom;
 
 		if (isObject(range)) {
-			isDefined(range.min) && zoom.min(range.min);
-			isDefined(range.max) && zoom.max(range.max);
+			const {min, max} = range;
+
+			isDefined(min) && zoom.min(min);
+			isDefined(max) && zoom.max(max);
 		}
 
 		return {

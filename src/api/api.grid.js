@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -9,7 +9,7 @@ import {extend} from "../internals/util";
  * Update x grid lines.
  * @method xgrids
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} grids X grid lines will be replaced with this argument. The format of this argument is the same as grid.x.lines.
  * @example
  *  // Show 2 x grid lines
@@ -38,7 +38,7 @@ extend(xgrids, {
 	 * This API adds new x grid lines instead of replacing like xgrids.
 	 * @method xgrids․add
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Array|Object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
 	 * @example
 	 *  // Add a new x grid line
@@ -64,7 +64,7 @@ extend(xgrids, {
 	 * This API removes x grid lines.
 	 * @method xgrids․remove
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} params This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
 	 * @example
 	 * // x grid line on x = 2 will be removed
@@ -88,7 +88,7 @@ extend(xgrids, {
  * Update y grid lines.
  * @method ygrids
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} grids Y grid lines will be replaced with this argument. The format of this argument is the same as grid.y.lines.
  * @example
  *  // Show 2 y grid lines
@@ -117,7 +117,7 @@ extend(ygrids, {
 	 * This API adds new y grid lines instead of replacing like ygrids.
 	 * @method ygrids․add
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Array|Object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
 	 * @example
 	 *  // Add a new x grid line
@@ -143,7 +143,7 @@ extend(ygrids, {
 	 * This API removes x grid lines.
 	 * @method ygrids․remove
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
 	 * @example
 	 * // y grid line on y = 200 will be removed

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -16,7 +16,7 @@ extend(Chart.prototype, {
 	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
 	 * @method load
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} args The object can consist with following members:<br>
 	 *
 	 *    | Key | Description |
@@ -94,7 +94,7 @@ extend(Chart.prototype, {
 	 * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 * @method unload
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} args
 	 *  | key | Type | Description |
 	 *  | --- | --- | --- |

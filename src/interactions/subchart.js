@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {
@@ -12,7 +12,7 @@ import {
 } from "d3-brush";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, brushEmpty, isFunction} from "../internals/util";
+import {extend, brushEmpty, isFunction, getRandom} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -210,13 +210,9 @@ extend(ChartInternal.prototype, {
 	 * @param {Number} transition duration
 	 */
 	redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
-		let contextBar;
-
-		if (withTransition) {
-			contextBar = this.contextBar.transition(Math.random().toString()).duration(duration);
-		} else {
-			contextBar = this.contextBar;
-		}
+		const contextBar = withTransition ?
+			this.contextBar.transition(getRandom()).duration(duration) :
+			this.contextBar;
 
 		contextBar.attr("d", drawBarOnSub)
 			.style("opacity", "1");
@@ -230,7 +226,8 @@ extend(ChartInternal.prototype, {
 	updateLineForSubchart(durationForExit) {
 		const $$ = this;
 
-		$$.contextLine = $$.context.selectAll(`.${CLASS.lines}`).selectAll(`.${CLASS.line}`)
+		$$.contextLine = $$.context.selectAll(`.${CLASS.lines}`)
+			.selectAll(`.${CLASS.line}`)
 			.data($$.lineData.bind($$));
 
 		$$.contextLine
@@ -257,13 +254,9 @@ extend(ChartInternal.prototype, {
 	 * @param {Number} transition duration
 	 */
 	redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
-		let contextLine;
-
-		if (withTransition) {
-			contextLine = this.contextLine.transition(Math.random().toString()).duration(duration);
-		} else {
-			contextLine = this.contextLine;
-		}
+		const contextLine = withTransition ?
+			this.contextLine.transition(getRandom()).duration(duration) :
+			this.contextLine;
 
 		contextLine.attr("d", drawLineOnSub)
 			.style("opacity", "1");
@@ -308,13 +301,9 @@ extend(ChartInternal.prototype, {
 	 * @param {Number} transition duration
 	 */
 	redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
-		let contextArea;
-
-		if (withTransition) {
-			contextArea = this.contextArea.transition(Math.random().toString()).duration(duration);
-		} else {
-			contextArea = this.contextArea;
-		}
+		const contextArea = withTransition ?
+			this.contextArea.transition(getRandom()).duration(duration) :
+			this.contextArea;
 
 		contextArea.attr("d", drawAreaOnSub)
 			.style("fill", this.color)

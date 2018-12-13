@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
@@ -31,19 +31,10 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
-		let size = 0;
 
-		if (isRotated) {
-			size = id === "x" ?
-				$$.getAxisWidthByAxisId(id, true) :
-				$$.getHorizontalAxisHeight(id);
-		} else {
-			size = /y2?/.test(id) ?
-				$$.getAxisWidthByAxisId(id, true) :
-				$$.getHorizontalAxisHeight(id);
-		}
-
-		return size;
+		return (isRotated && id === "x") || (!isRotated && /y2?/.test(id)) ?
+			$$.getAxisWidthByAxisId(id, true) :
+			$$.getHorizontalAxisHeight(id);
 	},
 
 	getCurrentPaddingTop() {

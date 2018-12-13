@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
@@ -35,7 +35,7 @@ extend(ChartInternal.prototype, {
 			.attr("class", () => $$.generateClass(CLASS.selectedCircle, i))
 			.attr("cx", cx)
 			.attr("cy", cy)
-			.attr("stroke", () => $$.color(d))
+			.attr("stroke", $$.color)
 			.attr("r", d2 => $$.pointSelectR(d2) * 1.4)
 			.transition()
 			.duration(100)

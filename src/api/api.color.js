@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -10,7 +10,7 @@ extend(Chart.prototype, {
 	 * Get the color
 	 * @method color
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String} id id to get the color
 	 * @example
 	 * chart.color("data1");

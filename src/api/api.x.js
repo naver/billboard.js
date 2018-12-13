@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -10,7 +10,7 @@ extend(Chart.prototype, {
 	 * Get and set x values for the chart.
 	 * @method x
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Array} x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
 	 * @return {Object} xs
 	 * @example
@@ -44,7 +44,7 @@ extend(Chart.prototype, {
 	 * Get and set x values for the chart.
 	 * @method xs
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Array} xs If xs is given, specified target's x values will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
 	 * @return {Object} xs
 	 * @example

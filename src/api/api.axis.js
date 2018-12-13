@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
@@ -47,14 +47,11 @@ const setMinMax = ($$, type, value) => {
  */
 const getMinMax = ($$, type) => {
 	const config = $$.config;
-	const axisX = `axis_x_${type}`;
-	const axisY = `axis_y_${type}`;
-	const axisY2 = `axis_y2_${type}`;
 
 	return {
-		x: config[axisX],
-		y: config[axisY],
-		y2: config[axisY2]
+		x: config[`axis_x_${type}`],
+		y: config[`axis_y_${type}`],
+		y2: config[`axis_y2_${type}`]
 	};
 };
 
@@ -67,7 +64,7 @@ const axis = extend(() => {}, {
 	 * Get and set axis labels.
 	 * @method axis․labels
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} labels specified axis' label to be updated.
 	 * @example
 	 * // Update axis' label
@@ -92,7 +89,7 @@ const axis = extend(() => {}, {
 	 * Get and set axis min value.
 	 * @method axis․min
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} min If min is given, specified axis' min value will be updated.<br>
 	 *     If no argument is given, the min values set on generating option for each axis will be returned.
 	 *     If not set any min values on generation, it will return `undefined`.
@@ -116,7 +113,7 @@ const axis = extend(() => {}, {
 	 * Get and set axis max value.
 	 * @method axis․max
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} max If max is given, specified axis' max value will be updated.<br>
 	 *     If no argument is given, the max values set on generating option for each axis will be returned.
 	 *     If not set any max values on generation, it will return `undefined`.
@@ -140,7 +137,7 @@ const axis = extend(() => {}, {
 	 * Get and set axis min and max value.
 	 * @method axis․range
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
 	 * @example
 	 * // Update axis' label

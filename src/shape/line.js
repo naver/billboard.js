@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {
@@ -12,7 +12,7 @@ import {
 } from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isArray, isDefined, isFunction, isUndefined, isValue} from "../internals/util";
+import {extend, getRandom, isArray, isDefined, isFunction, isUndefined, isValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initLine() {
@@ -97,7 +97,7 @@ extend(ChartInternal.prototype, {
 
 	redrawLine(drawLine, withTransition) {
 		return [
-			(withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine)
+			(withTransition ? this.mainLine.transition(getRandom()) : this.mainLine)
 				.attr("d", drawLine)
 				.style("stroke", this.color)
 				.style("opacity", "1")
@@ -370,7 +370,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return [
-			(withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea)
+			(withTransition ? this.mainArea.transition(getRandom()) : this.mainArea)
 				.attr("d", drawArea)
 				.style("fill", this.color)
 				.style("opacity", d => ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity))
