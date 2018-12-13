@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.6.2-nightly-20181213143628
+ * @version 1.6.2-nightly-20181213192533
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -410,7 +410,7 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
 
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -515,7 +515,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
@@ -637,6 +637,10 @@ var isValue = function (v) {
       event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
       main = ctx.context || ctx.main;
   return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select(".".concat(config_classes.brush)).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
+},
+    getRandom = function () {
+  var asStr = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0];
+  return Math.random() + (asStr ? "" : 0);
 },
     brushEmpty = function (ctx) {
   var selection = getBrushSelection(ctx);
@@ -1140,7 +1144,7 @@ function () {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -1605,7 +1609,7 @@ function () {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
@@ -1637,16 +1641,16 @@ function () {
   return createClass_default()(ChartInternal, [{
     key: "beforeInit",
     value: function beforeInit() {
-      var $$ = this,
-          config = $$.config;
-      callFn(config.onbeforeinit, $$);
+      var $$ = this; // can do something
+
+      callFn($$.config.onbeforeinit, $$);
     }
   }, {
     key: "afterInit",
     value: function afterInit() {
-      var $$ = this,
-          config = $$.config;
-      callFn(config.onafterinit, $$);
+      var $$ = this; // can do something
+
+      callFn($$.config.onafterinit, $$);
     }
   }, {
     key: "init",
@@ -2095,13 +2099,9 @@ function () {
     value: function bindResize() {
       var $$ = this,
           config = $$.config;
-      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
-        return config.onresize.call($$);
-      }), config.resize_auto && $$.resizeFunction.add(function () {
+      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(config.onresize.bind($$)), config.resize_auto && $$.resizeFunction.add(function () {
         $$.resizeTimeout && (window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = window.setTimeout($$.api.flush, 100);
-      }), $$.resizeFunction.add(function () {
-        return config.onresized.call($$);
-      }), window.addEventListener("resize", $$.resizeFunction);
+      }), $$.resizeFunction.add(config.onresized.bind($$)), window.addEventListener("resize", $$.resizeFunction);
     }
   }, {
     key: "generateResize",
@@ -2189,7 +2189,7 @@ function () {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  * @license MIT
  * @ignore
@@ -2234,7 +2234,7 @@ function () {
  * @property {Object} $.text
  * @property {d3.selection} $.text.texts Data label text elements
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @example
  * var chart = bb.generate({ ... });
  *
@@ -5394,7 +5394,7 @@ var Options_Options = function Options() {
 
 // CONCATENATED MODULE: ./src/config/config.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -5427,7 +5427,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/scale.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -5525,7 +5525,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
  // selection
@@ -5687,7 +5687,7 @@ var external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_ro
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -6313,7 +6313,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 // CONCATENATED MODULE: ./src/data/data.convert.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -6528,7 +6528,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/data/data.load.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -6580,7 +6580,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/category.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -6602,7 +6602,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
 // CONCATENATED MODULE: ./src/interactions/interaction.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -6917,7 +6917,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/size.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -6944,9 +6944,8 @@ extend(ChartInternal_ChartInternal.prototype, {
   getAxisSize: function getAxisSize(id) {
     var $$ = this,
         config = $$.config,
-        isRotated = config.axis_rotated,
-        size = 0;
-    return size = isRotated ? id === "x" ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id) : /y2?/.test(id) ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id), size;
+        isRotated = config.axis_rotated;
+    return isRotated && id === "x" || !isRotated && /y2?/.test(id) ? $$.getAxisWidthByAxisId(id, !0) : $$.getHorizontalAxisHeight(id);
   },
   getCurrentPaddingTop: function getCurrentPaddingTop() {
     var $$ = this,
@@ -7050,7 +7049,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 // CONCATENATED MODULE: ./src/shape/shape.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -7156,7 +7155,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 // CONCATENATED MODULE: ./src/shape/arc.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -7541,7 +7540,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -7580,7 +7579,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.mainBar = $$.main.selectAll(".".concat(config_classes.bars)).selectAll(".".concat(config_classes.bar)).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("stroke", color).style("fill", color).merge($$.mainBar).style("opacity", initialOpacity);
   },
   redrawBar: function redrawBar(drawBar, withTransition) {
-    return [(withTransition ? this.mainBar.transition(Math.random().toString()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
+    return [(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
   },
   getBarW: function getBarW(axis, barTargetsNum) {
     var $$ = this,
@@ -7672,7 +7671,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/shape/bubble.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -7722,7 +7721,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/shape/line.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -7769,7 +7768,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     }).attr("transform", null);
   },
   redrawLine: function redrawLine(drawLine, withTransition) {
-    return [(withTransition ? this.mainLine.transition(Math.random().toString()) : this.mainLine).attr("d", drawLine).style("stroke", this.color).style("opacity", "1")];
+    return [(withTransition ? this.mainLine.transition(getRandom()) : this.mainLine).attr("d", drawLine).style("stroke", this.color).style("opacity", "1")];
   },
 
   /**
@@ -7941,7 +7940,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   redrawArea: function redrawArea(drawArea, withTransition) {
     var $$ = this;
-    return [(withTransition ? this.mainArea.transition(Math.random().toString()) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", function (d) {
+    return [(withTransition ? this.mainArea.transition(getRandom()) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", function (d) {
       return $$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity;
     })];
   },
@@ -8120,7 +8119,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/shape/point.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -8178,7 +8177,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     };
   },
   getTransitionName: function getTransitionName() {
-    return Math.random().toString();
+    return getRandom();
   },
   custom: {
     create: function create(element, id, cssClassFn, sizeFn, fillStyleFn) {
@@ -8255,7 +8254,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -8484,7 +8483,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/text.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -8641,7 +8640,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/type.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -8765,7 +8764,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/grid.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -8963,7 +8962,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9196,7 +9195,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/legend.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9614,7 +9613,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/title.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9673,7 +9672,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/clip.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9743,7 +9742,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/region.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
  // selection
@@ -9813,7 +9812,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9849,19 +9848,27 @@ extend(ChartInternal_ChartInternal.prototype, {
         main.select(".".concat(config_classes.dragarea)).attr("x", minX).attr("y", minY).attr("width", maxX - minX).attr("height", maxY - minY), main.selectAll(".".concat(config_classes.shapes)).selectAll(".".concat(config_classes.shape)).filter(function (d) {
           return config.data_selection_isselectable(d);
         }).each(function (d, i) {
-          var _x,
-              _y,
-              _w,
-              _h,
-              toggle,
-              box,
+          var toggle,
               shape = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
               isSelected = shape.classed(config_classes.SELECTED),
               isIncluded = shape.classed(config_classes.INCLUDED),
               isWithin = !1;
 
-          if (shape.classed(config_classes.circle)) _x = shape.attr("cx") * 1, _y = shape.attr("cy") * 1, toggle = $$.togglePoint, isWithin = minX < _x && _x < maxX && minY < _y && _y < maxY;else if (shape.classed(config_classes.bar)) box = getPathBox(this), _x = box.x, _y = box.y, _w = box.width, _h = box.height, toggle = $$.togglePath, isWithin = !(maxX < _x || _x + _w < minX) && !(maxY < _y || _y + _h < minY);else // line/area selection not supported yet
+          if (shape.classed(config_classes.circle)) {
+            var x = shape.attr("cx") * 1,
+                y = shape.attr("cy") * 1;
+            toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
+          } else if (shape.classed(config_classes.bar)) {
+            var _getPathBox = getPathBox(this),
+                _x = _getPathBox.x,
+                y = _getPathBox.y,
+                width = _getPathBox.width,
+                height = _getPathBox.height;
+
+            toggle = $$.togglePath, isWithin = !(maxX < _x || _x + width < minX) && !(maxY < y || y + height < minY);
+          } else // line/area selection not supported yet
             return;
+
           isWithin ^ isIncluded && (shape.classed(config_classes.INCLUDED, !isIncluded), shape.classed(config_classes.SELECTED, !isSelected), toggle.call($$, !isSelected, shape, d, i));
         });
       }
@@ -9898,7 +9905,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
 
 // CONCATENATED MODULE: ./src/internals/selection.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -9924,9 +9931,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     // add selected-circle on low layer g
     callFn(config.data_onselected, $$.api, d, target.node()), $$.main.select(".".concat(config_classes.selectedCircles).concat($$.getTargetSelectorSuffix(d.id))).selectAll(".".concat(config_classes.selectedCircle, "-").concat(i)).data([d]).enter().append("circle").attr("class", function () {
       return $$.generateClass(config_classes.selectedCircle, i);
-    }).attr("cx", cx).attr("cy", cy).attr("stroke", function () {
-      return $$.color(d);
-    }).attr("r", function (d2) {
+    }).attr("cx", cx).attr("cy", cy).attr("stroke", $$.color).attr("r", function (d2) {
       return $$.pointSelectR(d2) * 1.4;
     }).transition().duration(100).attr("r", r);
   },
@@ -10040,7 +10045,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/interactions/subchart.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10149,8 +10154,8 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @param {Number} transition duration
    */
   redrawBarForSubchart: function redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
-    var contextBar;
-    contextBar = withTransition ? this.contextBar.transition(Math.random().toString()).duration(duration) : this.contextBar, contextBar.attr("d", drawBarOnSub).style("opacity", "1");
+    var contextBar = withTransition ? this.contextBar.transition(getRandom()).duration(duration) : this.contextBar;
+    contextBar.attr("d", drawBarOnSub).style("opacity", "1");
   },
 
   /**
@@ -10171,8 +10176,8 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @param {Number} transition duration
    */
   redrawLineForSubchart: function redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
-    var contextLine;
-    contextLine = withTransition ? this.contextLine.transition(Math.random().toString()).duration(duration) : this.contextLine, contextLine.attr("d", drawLineOnSub).style("opacity", "1");
+    var contextLine = withTransition ? this.contextLine.transition(getRandom()).duration(duration) : this.contextLine;
+    contextLine.attr("d", drawLineOnSub).style("opacity", "1");
   },
 
   /**
@@ -10195,8 +10200,8 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @param {Number} transition duration
    */
   redrawAreaForSubchart: function redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
-    var contextArea;
-    contextArea = withTransition ? this.contextArea.transition(Math.random().toString()).duration(duration) : this.contextArea, contextArea.attr("d", drawAreaOnSub).style("fill", this.color).style("opacity", this.orgAreaOpacity);
+    var contextArea = withTransition ? this.contextArea.transition(getRandom()).duration(duration) : this.contextArea;
+    contextArea.attr("d", drawAreaOnSub).style("fill", this.color).style("opacity", this.orgAreaOpacity);
   },
 
   /**
@@ -10463,7 +10468,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/color.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10565,7 +10570,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/format.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10615,7 +10620,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/cache.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10680,7 +10685,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/class.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10802,7 +10807,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.focus.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -10815,7 +10820,7 @@ extend(Chart_Chart.prototype, {
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
    * @method focus
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} targetIdsValue Target ids to be highlighted.
    * @example
    *  // data1 will be highlighted and the others will be faded out
@@ -10841,7 +10846,7 @@ extend(Chart_Chart.prototype, {
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
    * @method defocus
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} Target ids to be faded out.
    * @example
    * // data1 will be faded out and the others will be reverted.
@@ -10867,7 +10872,7 @@ extend(Chart_Chart.prototype, {
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
    * @method revert
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} Target ids to be reverted
    * @example
    * // data1 will be reverted.
@@ -10891,17 +10896,36 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.show.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
 extend(Chart_Chart.prototype, {
   /**
+   * Show/Hide data series
+   * @private
+   */
+  _showHide: function _showHide(show, targetIdsValue, options) {
+    var $$ = this.internal,
+        targetIds = $$.mapToTargetIds(targetIdsValue);
+    $$["".concat(show ? "remove" : "add", "HiddenTargetIds")](targetIds);
+    var targets = $$.svg.selectAll($$.selectorTargets(targetIds)),
+        opacity = show ? "1" : "0";
+    targets.transition().style("opacity", opacity, "important").call($$.endall, function () {
+      targets.style("opacity", null).style("opacity", opacity);
+    }), options.withLegend && $$["".concat(show ? "show" : "hide", "Legend")](targetIds), $$.redraw({
+      withUpdateOrgXDomain: !0,
+      withUpdateXDomain: !0,
+      withLegend: !0
+    });
+  },
+
+  /**
    * Show data series on chart
    * @method show
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} [targetIdsValue=all] The target id value.
    * @param {Object} [options] The object can consist with following members:<br>
    *
@@ -10917,25 +10941,16 @@ extend(Chart_Chart.prototype, {
    * chart.show(["data1", "data3"]);
    */
   show: function show(targetIdsValue) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        $$ = this.internal,
-        targetIds = $$.mapToTargetIds(targetIdsValue);
-    $$.removeHiddenTargetIds(targetIds);
-    var targets = $$.svg.selectAll($$.selectorTargets(targetIds));
-    targets.transition().style("opacity", "1", "important").call($$.endall, function () {
-      targets.style("opacity", null).style("opacity", "1");
-    }), options.withLegend && $$.showLegend(targetIds), $$.redraw({
-      withUpdateOrgXDomain: !0,
-      withUpdateXDomain: !0,
-      withLegend: !0
-    });
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    this._showHide(!0, targetIdsValue, options);
   },
 
   /**
    * Hide data series from chart
    * @method hide
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} [targetIdsValue=all] The target id value.
    * @param {Object} [options] The object can consist with following members:<br>
    *
@@ -10951,25 +10966,16 @@ extend(Chart_Chart.prototype, {
    * chart.hide(["data1", "data3"]);
    */
   hide: function hide(targetIdsValue) {
-    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {},
-        $$ = this.internal,
-        targetIds = $$.mapToTargetIds(targetIdsValue);
-    $$.addHiddenTargetIds(targetIds);
-    var targets = $$.svg.selectAll($$.selectorTargets(targetIds));
-    targets.transition().style("opacity", "0", "important").call($$.endall, function () {
-      targets.style("opacity", null).style("opacity", "0");
-    }), options.withLegend && $$.hideLegend(targetIds), $$.redraw({
-      withUpdateOrgXDomain: !0,
-      withUpdateXDomain: !0,
-      withLegend: !0
-    });
+    var options = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : {};
+
+    this._showHide(!1, targetIdsValue, options);
   },
 
   /**
    * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
    * @method toggle
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} [targetIdsValue=all] The target id value.
    * @param {Object} [options] The object can consist with following members:<br>
    *
@@ -11137,7 +11143,14 @@ extend(api_zoom_zoom, {
    */
   range: function range(_range) {
     var zoom = this.zoom;
-    return isObject(_range) && (isDefined(_range.min) && zoom.min(_range.min), isDefined(_range.max) && zoom.max(_range.max)), {
+
+    if (isObject(_range)) {
+      var min = _range.min,
+          max = _range.max;
+      isDefined(min) && zoom.min(min), isDefined(max) && zoom.max(max);
+    }
+
+    return {
       min: zoom.min(),
       max: zoom.max()
     };
@@ -11170,7 +11183,7 @@ extend(api_zoom_zoom, {
 });
 // CONCATENATED MODULE: ./src/api/api.load.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11186,7 +11199,7 @@ extend(Chart_Chart.prototype, {
    *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
    * @method load
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} args The object can consist with following members:<br>
    *
    *    | Key | Description |
@@ -11242,7 +11255,7 @@ extend(Chart_Chart.prototype, {
    * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
    * @method unload
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} args
    *  | key | Type | Description |
    *  | --- | --- | --- |
@@ -11280,7 +11293,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
 // CONCATENATED MODULE: ./src/api/api.flow.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11296,7 +11309,7 @@ extend(Chart_Chart.prototype, {
    * By this API, you can append new data points to the chart.
    * @method flow
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} args The object can consist with following members:<br>
    *
    *    | Key | Type | Description |
@@ -11416,7 +11429,7 @@ extend(Chart_Chart.prototype, {
 }), extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Generate flow
-   * @memberOf ChartInternal
+   * @memberof ChartInternal
    * @private
    * @param {Object} args
    * @return {Function}
@@ -11498,7 +11511,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.selection.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11511,7 +11524,7 @@ extend(Chart_Chart.prototype, {
    * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
    * @method selected
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
    * @return {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
    * @example
@@ -11536,7 +11549,7 @@ extend(Chart_Chart.prototype, {
    * Set data points to be selected. (`[data.selection.enabled](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)`
    * @method select
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} [ids] id value to get selected.
    * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
    * @param {Boolean} [resetOther] Unselect already selected.
@@ -11575,7 +11588,7 @@ extend(Chart_Chart.prototype, {
    * Set data points to be un-selected.
    * @method unselect
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} [ids] id value to be unselected.
    * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
    * @example
@@ -11605,7 +11618,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.transform.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11616,7 +11629,7 @@ extend(Chart_Chart.prototype, {
    * Change the type of the chart.
    * @method transform
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String} type Specify the type to be transformed. The types listed in data.type can be used.
    * @param {String|Array} targetIds Specify targets to be transformed. If not given, all targets will be the candidate.
    * @example
@@ -11646,9 +11659,8 @@ extend(Chart_Chart.prototype, {
    */
   transformTo: function transformTo(targetIds, type, optionsForRedraw) {
     var $$ = this,
-        withTransitionForAxis = !$$.hasArcType(),
         options = optionsForRedraw || {
-      withTransitionForAxis: withTransitionForAxis
+      withTransitionForAxis: !$$.hasArcType()
     };
     // this is needed when transforming to arc
     options.withTransitionForTransform = !1, $$.transiting = !1, $$.setTargetType(targetIds, type), $$.updateTargets($$.data.targets), $$.updateAndRedraw(options);
@@ -11656,7 +11668,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.group.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11666,7 +11678,7 @@ extend(Chart_Chart.prototype, {
    * Update groups for the targets.
    * @method groups
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array} groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
    * @return {Array} Grouped data names array
    * @example
@@ -11683,7 +11695,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.grid.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11692,7 +11704,7 @@ extend(Chart_Chart.prototype, {
  * Update x grid lines.
  * @method xgrids
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} grids X grid lines will be replaced with this argument. The format of this argument is the same as grid.x.lines.
  * @example
  *  // Show 2 x grid lines
@@ -11714,7 +11726,7 @@ extend(xgrids, {
    * This API adds new x grid lines instead of replacing like xgrids.
    * @method xgrids․add
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array|Object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
    * @example
    *  // Add a new x grid line
@@ -11737,7 +11749,7 @@ extend(xgrids, {
    * This API removes x grid lines.
    * @method xgrids․remove
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} params This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
    * @example
    * // x grid line on x = 2 will be removed
@@ -11761,7 +11773,7 @@ extend(xgrids, {
  * Update y grid lines.
  * @method ygrids
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} grids Y grid lines will be replaced with this argument. The format of this argument is the same as grid.y.lines.
  * @example
  *  // Show 2 y grid lines
@@ -11782,7 +11794,7 @@ extend(ygrids, {
    * This API adds new y grid lines instead of replacing like ygrids.
    * @method ygrids․add
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array|Object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
    * @example
    *  // Add a new x grid line
@@ -11805,7 +11817,7 @@ extend(ygrids, {
    * This API removes x grid lines.
    * @method ygrids․remove
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
    * @example
    * // y grid line on y = 200 will be removed
@@ -11829,7 +11841,7 @@ extend(ygrids, {
 });
 // CONCATENATED MODULE: ./src/api/api.region.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11839,7 +11851,7 @@ extend(ygrids, {
  * Update regions.
  * @method regions
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
  * @return {Array} regions
  * @example
@@ -11862,7 +11874,7 @@ extend(api_region_regions, {
    * This API adds new region instead of replacing like regions.
    * @method regions․add
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array|Object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
    * @return {Array} regions
    * @example
@@ -11888,7 +11900,7 @@ extend(api_region_regions, {
    * This API removes regions.
    * @method regions․remove
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} regions This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
    * @return {Array} regions Removed regions
    * @example
@@ -11923,7 +11935,7 @@ extend(api_region_regions, {
 });
 // CONCATENATED MODULE: ./src/api/api.data.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -11932,7 +11944,7 @@ extend(api_region_regions, {
  * Get data loaded in the chart.
  * @method data
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {String|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
  * @return {Array} Data objects
  * @example
@@ -11959,7 +11971,7 @@ extend(api_data_data, {
    * Get data shown in the chart.
    * @method data․shown
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
    * @return {Array} Data objects
    * @example
@@ -11981,7 +11993,7 @@ extend(api_data_data, {
    * Get values of the data loaded in the chart.
    * @method data․values
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
    * @return {Array} Data values
    * @example
@@ -12010,7 +12022,7 @@ extend(api_data_data, {
    * Get and set names of the data loaded in the chart.
    * @method data․names
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
    * @return {Object} Corresponding names according its key value, if specified names values.
    * @example
@@ -12032,7 +12044,7 @@ extend(api_data_data, {
    * Get and set colors of the data loaded in the chart.
    * @method data․colors
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
    * @return {Object} Corresponding data color value according its key value.
    * @example
@@ -12054,7 +12066,7 @@ extend(api_data_data, {
    * Get and set axes of the data loaded in the chart.
    * @method data․axes
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
    * @return {Object} Corresponding axes value for data, if specified axes value.
    * @example
@@ -12076,7 +12088,7 @@ extend(api_data_data, {
    * Get the minimum data value bound to the chart
    * @method data․min
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @return {Array} Data objects
    * @example
    * // Get current axes
@@ -12091,7 +12103,7 @@ extend(api_data_data, {
    * Get the maximum data value bound to the chart
    * @method data․max
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @return {Array} Data objects
    * @example
    * // Get current axes
@@ -12106,7 +12118,7 @@ extend(api_data_data, {
 });
 // CONCATENATED MODULE: ./src/api/api.category.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12116,7 +12128,7 @@ extend(Chart_Chart.prototype, {
    * Set specified category name on category axis.
    * @method category
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Number} i index of category to be changed
    * @param {String} category category value to be changed
    * @example
@@ -12132,7 +12144,7 @@ extend(Chart_Chart.prototype, {
    * Set category names on category axis.
    * @method categories
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array} categories This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
    * @example
    * chart.categories([
@@ -12147,7 +12159,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.color.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12157,7 +12169,7 @@ extend(Chart_Chart.prototype, {
    * Get the color
    * @method color
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String} id id to get the color
    * @example
    * chart.color("data1");
@@ -12168,7 +12180,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.x.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12178,7 +12190,7 @@ extend(Chart_Chart.prototype, {
    * Get and set x values for the chart.
    * @method x
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array} x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
    * @return {Object} xs
    * @example
@@ -12201,7 +12213,7 @@ extend(Chart_Chart.prototype, {
    * Get and set x values for the chart.
    * @method xs
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Array} xs If xs is given, specified target's x values will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
    * @return {Object} xs
    * @example
@@ -12224,7 +12236,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.axis.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12249,14 +12261,11 @@ var setMinMax = function ($$, type, value) {
   })), undefined;
 },
     getMinMax = function ($$, type) {
-  var config = $$.config,
-      axisX = "axis_x_".concat(type),
-      axisY = "axis_y_".concat(type),
-      axisY2 = "axis_y2_".concat(type);
+  var config = $$.config;
   return {
-    x: config[axisX],
-    y: config[axisY],
-    y2: config[axisY2]
+    x: config["axis_x_".concat(type)],
+    y: config["axis_y_".concat(type)],
+    y2: config["axis_y2_".concat(type)]
   };
 },
     api_axis_axis = extend(function () {}, {
@@ -12264,7 +12273,7 @@ var setMinMax = function ($$, type, value) {
    * Get and set axis labels.
    * @method axis․labels
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} labels specified axis' label to be updated.
    * @example
    * // Update axis' label
@@ -12284,7 +12293,7 @@ var setMinMax = function ($$, type, value) {
    * Get and set axis min value.
    * @method axis․min
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} min If min is given, specified axis' min value will be updated.<br>
    *     If no argument is given, the min values set on generating option for each axis will be returned.
    *     If not set any min values on generation, it will return `undefined`.
@@ -12305,7 +12314,7 @@ var setMinMax = function ($$, type, value) {
    * Get and set axis max value.
    * @method axis․max
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} max If max is given, specified axis' max value will be updated.<br>
    *     If no argument is given, the max values set on generating option for each axis will be returned.
    *     If not set any max values on generation, it will return `undefined`.
@@ -12326,7 +12335,7 @@ var setMinMax = function ($$, type, value) {
    * Get and set axis min and max value.
    * @method axis․range
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
    * @example
    * // Update axis' label
@@ -12366,7 +12375,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.legend.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12381,7 +12390,7 @@ var legend = extend(function () {}, {
    * Show legend for each target.
    * @method legend․show
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} targetIds
    * - If targetIds is given, specified target's legend will be shown.
    * - If only one target is the candidate, String can be passed.
@@ -12407,7 +12416,7 @@ var legend = extend(function () {}, {
    * Hide legend for each target.
    * @method legend․hide
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String|Array} targetIds
    * - If targetIds is given, specified target's legend will be hidden.
    * - If only one target is the candidate, String can be passed.
@@ -12434,7 +12443,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/browser.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12453,7 +12462,7 @@ var win = isDefined(window) && window.Math === Math ? window : isDefined(self) &
 
 // CONCATENATED MODULE: ./src/api/api.chart.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12464,7 +12473,7 @@ extend(Chart_Chart.prototype, {
    * Resize the chart.
    * @method resize
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} size This argument should include width and height in pixels.
    * @example
    * // Resize to 640x480
@@ -12482,7 +12491,7 @@ extend(Chart_Chart.prototype, {
    * Force to redraw.
    * @method flush
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Boolean} [soft] For soft redraw.
    * @example
    * chart.flush();
@@ -12509,7 +12518,7 @@ extend(Chart_Chart.prototype, {
    * Reset the chart object and remove element and events completely.
    * @method destroy
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @example
    * chart.destroy();
    */
@@ -12528,7 +12537,7 @@ extend(Chart_Chart.prototype, {
    * Get or set single config option value.
    * @method config
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String} name The option key name.
    * @param {*} [value] The value accepted for indicated option.
    * @param {Boolean} [redraw] Set to redraw with the new option changes.
@@ -12552,7 +12561,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.tooltip.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12567,7 +12576,7 @@ var tooltip = extend(function () {}, {
    * Show tooltip
    * @method tooltip․show
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {Object} args The object can consist with following members:<br>
    *
    *    | Key | Type | Description |
@@ -12609,7 +12618,7 @@ var tooltip = extend(function () {}, {
    * Hide tooltip
    * @method tooltip․hide
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    */
   hide: function hide() {
     var $$ = this.internal;
@@ -12621,7 +12630,7 @@ extend(Chart_Chart.prototype, {
 });
 // CONCATENATED MODULE: ./src/internals/ua.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12641,7 +12650,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 });
 // CONCATENATED MODULE: ./src/api/api.export.js
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
@@ -12661,7 +12670,9 @@ var b64EncodeUnicode = function (str) {
   }));
 },
     nodeToSvgDataUrl = function (node) {
-  var bounds = node.getBoundingClientRect(),
+  var _node$getBoundingClie = node.getBoundingClientRect(),
+      width = _node$getBoundingClie.width,
+      height = _node$getBoundingClie.height,
       clone = node.cloneNode(!0),
       styleSheets = toArray(document.styleSheets),
       cssRules = getCssRules(styleSheets),
@@ -12670,9 +12681,10 @@ var b64EncodeUnicode = function (str) {
   }).map(function (r) {
     return r.cssText;
   });
+
   clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].xhtml);
   var nodeXml = new XMLSerializer().serializeToString(clone),
-      dataStr = "<svg xmlns=\"".concat(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, "\" width=\"").concat(bounds.width, "\" height=\"").concat(bounds.height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t<style>").concat(cssText.join("\n"), "</style>\n\t\t\t\t").concat(nodeXml, "\n\t\t\t</foreignObject></svg>").replace(/#/g, "%23").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
+      dataStr = "<svg xmlns=\"".concat(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, "\" width=\"").concat(width, "\" height=\"").concat(height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t<style>").concat(cssText.join("\n"), "</style>\n\t\t\t\t").concat(nodeXml, "\n\t\t\t</foreignObject></svg>").replace(/#/g, "%23").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
 
   return "data:image/svg+xml;base64,".concat(b64EncodeUnicode(dataStr));
@@ -12693,7 +12705,7 @@ extend(Chart_Chart.prototype, {
    *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
    * @method export
    * @instance
-   * @memberOf Chart
+   * @memberof Chart
    * @param {String} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
    * @param {Function} [callback] The callback to be invoked when export is ready.
    * @return {String} dataURI
@@ -12737,7 +12749,7 @@ var billboard = __webpack_require__(26);
 // CONCATENATED MODULE: ./src/core.js
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return bb; });
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
 
@@ -12799,7 +12811,7 @@ var billboard = __webpack_require__(26);
 
 /**
  * @namespace bb
- * @version 1.6.2-nightly-20181213143628
+ * @version 1.6.2-nightly-20181213192533
  */
 
 var bb = {
@@ -12808,14 +12820,14 @@ var bb = {
    * @property {String} version version
    * @example
    *    bb.version;  // "1.0.0"
-   * @memberOf bb
+   * @memberof bb
    */
-  version: "1.6.2-nightly-20181213143628",
+  version: "1.6.2-nightly-20181213192533",
 
   /**
    * Generate chart
    * @param {Options} options chart options
-   * @memberOf bb
+   * @memberof bb
    * @return {Chart}
    * @see {@link Options} for different generation options
    * @see {@link Chart} for different methods API
@@ -12852,7 +12864,7 @@ var bb = {
    *  var chart2 = bb.generate(...);
    *
    *  bb.instance;  // [ chart1, chart2, ... ]
-   * @memberOf bb
+   * @memberof bb
    */
   instance: [],
 
