@@ -1,20 +1,23 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 import {
 	min as d3Min,
 	max as d3Max
 } from "d3-array";
-import {zoomIdentity as d3ZoomIdentity} from "d3-zoom";
+import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
 import Chart from "../internals/Chart";
+import CLASS from "../config/classes";
 import {callFn, isDefined, isObject, isString, extend} from "../internals/util";
 
 /**
  * Zoom by giving x domain.
+ * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
+ * To get the initial state, [.unzoom()](#unzoom) should be called.
  * @method zoom
  * @instance
- * @memberOf Chart
+ * @memberof Chart
  * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
  * @return {Array} domain value in array
  * @example
@@ -70,7 +73,7 @@ extend(zoom, {
 	 * Enable and disable zooming.
 	 * @method zoom․enable
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {String|Boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
 	 * @example
 	 *  // Enable zooming using the mouse wheel
@@ -111,7 +114,7 @@ extend(zoom, {
 	 * Set or get x Axis maximum zoom range value
 	 * @method zoom․max
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Number} [max] maximum value to set for zoom
 	 * @return {Number} zoom max value
 	 * @example
@@ -133,7 +136,7 @@ extend(zoom, {
 	 * Set or get x Axis minimum zoom range value
 	 * @method zoom․min
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Number} [min] minimum value tp set for zoom
 	 * @return {Number} zoom min value
 	 * @example
@@ -155,7 +158,7 @@ extend(zoom, {
 	 * Set zoom range
 	 * @method zoom․range
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @param {Object} [range]
 	 * @return {Object} zoom range value
 	 * {
@@ -190,7 +193,7 @@ extend(Chart.prototype, {
 	 * Unzoom zoomed area
 	 * @method unzoom
 	 * @instance
-	 * @memberOf Chart
+	 * @memberof Chart
 	 * @example
 	 *  chart.unzoom();
 	 */
@@ -203,8 +206,15 @@ extend(Chart.prototype, {
 				$$.brush.getSelection().call($$.brush.move, null) :
 				$$.zoom.updateTransformScale(d3ZoomIdentity);
 
-			$$.updateZoom();
+			$$.updateZoom(true);
 			$$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
+
+			// reset transform
+			const eventRects = $$.main.select(`.${CLASS.eventRects}`);
+
+			if (d3ZoomTransform(eventRects.node()) !== d3ZoomIdentity) {
+				$$.zoom.transform(eventRects, d3ZoomIdentity);
+			}
 
 			$$.redraw({
 				withTransition: true,

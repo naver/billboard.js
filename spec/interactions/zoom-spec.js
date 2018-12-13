@@ -111,11 +111,6 @@ describe("ZOOM", function() {
 			const main = chart.internal.main;
 			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
 
-			util.fireEvent(eventRect, "mousedown", {
-				clientX: 100,
-				clientY: 150
-			}, chart);
-
 			new Promise((resolve, reject) => {
 				util.fireEvent(eventRect, "mousedown", {
 					clientX: 100,
@@ -382,6 +377,67 @@ describe("ZOOM", function() {
 
 				done();
 			}, 500);
+		});
+	});
+
+	describe ("zoom scale consistency for dragging", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 3150, 250],
+						["data2", 50, 20, 10, 40, 15, 6025]
+					]
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		it("zoom scale should maintained on dragging interaction", done => {
+			const internal = chart.internal;
+			const main = internal.main;
+			const zoomDomain = [0,2];
+
+			// when
+			chart.zoom(zoomDomain);
+
+			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
+			const zoomedDomain = internal.x.domain();
+
+			expect(zoomedDomain).to.be.deep.equal(zoomDomain);
+
+			new Promise((resolve, reject) => {
+				util.fireEvent(eventRect, "mousedown", {
+					clientX: 100,
+					clientY: 150
+				}, chart);
+
+				resolve();
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						util.fireEvent(eventRect, "mousemove", {
+							clientX: 130,
+							clientY: 150
+						}, chart);
+
+						resolve();
+					}, 500);
+				});
+			}).then(() => {
+				setTimeout(() => {
+					util.fireEvent(eventRect, "mouseup", {
+						clientX: 150,
+						clientY: 150
+					}, chart);
+
+					expect(internal.x.domain()).to.be.deep.equal(zoomedDomain);
+
+					done();
+				}, 500);
+			});
 		});
 	});
 });
