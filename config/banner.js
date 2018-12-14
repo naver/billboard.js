@@ -2,7 +2,7 @@ const pkg = require("../package.json");
 
 module.exports = {
 	production: [
-		`Copyright (c) 2017 ${pkg.author}`,
+		`Copyright (c) 2017 ~ present ${pkg.author}`,
 		`${pkg.name} project is licensed under the ${pkg.license} license`,
 		"",
 		`${pkg.name}, JavaScript chart library`,
