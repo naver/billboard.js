@@ -21,6 +21,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 ## Playground
 Play with the diverse options generating on the fly!
 - https://naver.github.io/billboard.js/playground/
+- https://beta.observablehq.com/@idris-maps/billboard-js-playground (by @idris-maps)
 
 ## Questions?
 If you have any questions, checkout the previous posts or create a new one at:
