@@ -1,3 +1,7 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /* eslint-disable */
 var demos = {
 	Chart: {
@@ -648,37 +652,6 @@ var demos = {
 		}
 	},
 	Axis: {
-		CategoryAxis: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250, 50, 100, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: "category",
-						categories: ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8", "cat9"]
-					}
-				}
-			}
-		},
-		RotatedAxis: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					],
-					types: {
-						data1: "bar",
-					}
-				},
-				axis: {
-					rotated: true
-				}
-			}
-		},
 		AdditionalYAxis: {
 			options: {
 				data: {
@@ -694,267 +667,6 @@ var demos = {
 				axis: {
 					y2: {
 						show: true
-					}
-				}
-			}
-		},
-		XAxisTickFormat: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
-						["sample", 30, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							format: function(x) {
-							// format string is also available for timeseries data
-							// format: "%Y"
-							return x.getFullYear();
-							}
-						}
-					}
-				}
-			}
-		},
-		XAxisTickCount: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
-						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							count: 4,
-							format: '%Y-%m-%d'
-						}
-					}
-				}
-			}
-		},
-		XAxisTickValues: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
-						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							// this also works for non timeseries data
-							values: ['2013-01-05', '2013-01-10']
-						}
-					}
-				}
-			}
-		},
-		XAxisTickCulling: {
-			options: {
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					x: {
-						type: "category",
-						tick: {
-							culling: {
-								max: 4 // the number of tick texts will be adjusted to less than this value
-							}
-							// for normal axis, default on
-							// for category axis, default off
-						}
-					}
-				}
-			}
-		},
-		XAxisTickFitting: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", '2013-10-31', '2013-12-31', '2014-01-31', '2014-02-28'],
-						["sample", 30, 100, 400, 150]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						tick: {
-							fit: true,
-							format: "%e %b %y"
-						}
-					}
-				}
-			}
-		},
-		XAxisTickPosition: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", "John", "Aron", "David", "Chris", "Tyler", "Mike"],
-						["data1", 130, 200, 320, 400, 530, 750],
-						["data2", 130, 10, 130, 200, 150, 250],
-						["data3", 130, 50, 10, 200, 250, 150]
-					],
-					type: "bar",
-					groups: [["data1", "data2", "data3"]]
-				},
-				axis: {
-					rotated: true,
-					x: {
-						type: "category",
-						clipPath: false,
-						inner: false,
-						tick: {
-							text: {
-								position: {
-									x: 35,
-									y: -23
-								}
-							}
-						}
-					},
-					y: {
-						show: false
-					}
-				}
-			},
-			style: [
-				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
-			]
-		},
-		XAxisTickMultiline: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
-						["data", 30, 100, 400, 150]
-					]
-				},
-				axis: {
-					x: {
-						type: "category"
-					}
-				}
-			}
-		},
-		XAxisTimezone: {
-			options: {
-				data: {
-					x: "x",
-					xFormat: "%Y",
-					columns: [
-//            ["x", '2012-12-31', '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05'],
-						["x", "2010", "2011", "2012", "2013", "2014", "2015"],
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 130, 340, 200, 500, 250, 350]
-					]
-				},
-				axis: {
-					x: {
-						type: "timeseries",
-						// if true, treat x value as localtime (Default)
-						// if false, convert to UTC internally
-						localtime: false,
-						tick: {
-							format: "%Y-%m-%d %H:%M:%S"
-						}
-					}
-				}
-			}
-		},
-		RotateXAxisTickText: {
-			options: {
-				data: {
-					x: "x",
-					columns: [
-						["x", "www.somesitename1.com", "www.somesitename2.com", "www.somesitename3.com", "www.somesitename4.com", "www.somesitename5.com", "www.somesitename6.com", "www.somesitename7.com", "www.somesitename8.com", "www.somesitename9.com", "www.somesitename10.com", "www.somesitename11.com", "www.somesitename12.com"],
-						["pv", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
-					],
-					type: "bar"
-				},
-				axis: {
-					x: {
-						type: "category",
-						tick: {
-							rotate: 75,
-							multiline: false,
-							tooltip: true
-						},
-						height: 130
-					}
-				}
-			}
-		},
-		YAxisTickFormat: {
-			options: {
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 2500]
-					]
-				},
-				axis: {
-					y: {
-						tick: {
-							format: function(x) { return d3.format("$,")(x); }
-						}
-					}
-				}
-			}
-		},
-		PaddingForYAxis: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, 200, 100, 400, 150, 250],
-						["data2", 50, 20, 10, 40, 15, 25]
-					],
-					axes: {
-						data1: "y",
-						data2: "y2"
-					}
-				},
-				axis: {
-					y: {
-						padding: {top: 200, bottom: 0}
-					},
-					y2: {
-						padding: {top: 100, bottom: 100},
-						show: true
-					}
-				}
-			}
-		},
-		RangeForYAxis: {
-			options: {
-				data: {
-					columns: [
-						["sample", 30, 200, 100, 400, 150, 250]
-					]
-				},
-				axis: {
-					y: {
-						max: 400,
-						min: -400
-						// Range includes padding, set 0 if no padding needed
-						// padding: {top:0, bottom:0}
 					}
 				}
 			}
@@ -1036,9 +748,373 @@ var demos = {
 					}
 				}
 			}
-		}
-	},
+		},
+		CategoryAxis: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 50, 100, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "category",
+						categories: ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6", "cat7", "cat8", "cat9"]
+					}
+				}
+			}
+		},
+		MultiAxes: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 50, 20, 10, 40, 15]
+						]
+					},
+					axis: {
+						//rotated: true,
+						x: {
+							axes: [
+								{
+									tick: {
+										outer: false,
+										count: 9
+									}
+								},
+								{
+									tick: {
+										values: [0.3, 1.4, 2.6, 3.1, 3.9]
+									}
+								}
+							]
+						},
+						y: {
+							axes: [
+								{
+									tick: {
+										format: function(x) { return x +"%"; },
+										count: 2
+									}
+								}
+							]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150],
+							["data2", 50, 20, 10, 40, 15]
+						],
+						type: "bar",
+						axes: {
+							data1: "y2",
+							data2: "y2",
+						}
+					},
+					axis: {
+						rotated: true,
+						y: {
+							show: false
+						},
+						y2: {
+							show: true,
+							axes: [
+								{
+									tick: {
+										outer: false,
+										format: function(x) { return x +"%"; },
+										count: 2
+									}
+								}
+							]
+						}
+					}
+				}
+			},
+		],
+		PaddingForYAxis: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					],
+					axes: {
+						data1: "y",
+						data2: "y2"
+					}
+				},
+				axis: {
+					y: {
+						padding: {top: 200, bottom: 0}
+					},
+					y2: {
+						padding: {top: 100, bottom: 100},
+						show: true
+					}
+				}
+			}
+		},
+		RangeForYAxis: {
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					y: {
+						max: 400,
+						min: -400
+						// Range includes padding, set 0 if no padding needed
+						// padding: {top:0, bottom:0}
+					}
+				}
+			}
+		},
+		RotatedAxis: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 50, 20, 10, 40, 15, 25]
+					],
+					types: {
+						data1: "bar",
+					}
+				},
+				axis: {
+					rotated: true
+				}
+			}
+		},
+		RotateXAxisTickText: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "www.somesitename1.com", "www.somesitename2.com", "www.somesitename3.com", "www.somesitename4.com", "www.somesitename5.com", "www.somesitename6.com", "www.somesitename7.com", "www.somesitename8.com", "www.somesitename9.com", "www.somesitename10.com", "www.somesitename11.com", "www.somesitename12.com"],
+						["pv", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400]
+					],
+					type: "bar"
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: 75,
+							multiline: false,
+							tooltip: true
+						},
+						height: 130
+					}
+				}
+			}
+		},
+		XAxisTickCount: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
+						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							count: 4,
+							format: '%Y-%m-%d'
+						}
+					}
+				}
+			}
+		},
+		XAxisTickCulling: {
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							culling: {
+								max: 4 // the number of tick texts will be adjusted to less than this value
+							}
+							// for normal axis, default on
+							// for category axis, default off
+						}
+					}
+				}
+			}
+		},
+		XAxisTickFitting: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2013-10-31', '2013-12-31', '2014-01-31', '2014-02-28'],
+						["sample", 30, 100, 400, 150]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							fit: true,
+							format: "%e %b %y"
+						}
+					}
+				}
+			}
+		},
+		XAxisTickFormat: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2010-01-01', '2011-01-01', '2012-01-01', '2013-01-01', '2014-01-01', '2015-01-01'],
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: function(x) {
+							// format string is also available for timeseries data
+							// format: "%Y"
+							return x.getFullYear();
+							}
+						}
+					}
+				}
+			}
+		},
+		XAxisTickMultiline: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "First Q\n2018", "Second\nQ 2018", "3Q\nYear\n2018", "Forth\nQuarter\n2018"],
+						["data", 30, 100, 400, 150]
+					]
+				},
+				axis: {
+					x: {
+						type: "category"
+					}
+				}
+			}
+		},
+		XAxisTickPosition: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", "John", "Aron", "David", "Chris", "Tyler", "Mike"],
+						["data1", 130, 200, 320, 400, 530, 750],
+						["data2", 130, 10, 130, 200, 150, 250],
+						["data3", 130, 50, 10, 200, 250, 150]
+					],
+					type: "bar",
+					groups: [["data1", "data2", "data3"]]
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category",
+						clipPath: false,
+						inner: false,
+						tick: {
+							text: {
+								position: {
+									x: 35,
+									y: -23
+								}
+							}
+						}
+					},
+					y: {
+						show: false
+					}
+				}
+			},
+			style: [
+				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
+			]
+		},
+		XAxisTickValues: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", '2013-01-01', '2013-01-02', '2013-01-03', '2013-01-04', '2013-01-05', '2013-01-06', '2013-01-07', '2013-01-08', '2013-01-09', '2013-01-10', '2013-01-11', '2013-01-12'],
+						["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							// this also works for non timeseries data
+							values: ['2013-01-05', '2013-01-10']
+						}
+					}
+				}
+			}
+		},
+		XAxisTimezone: {
+			options: {
+				data: {
+					x: "x",
+					xFormat: "%Y",
+					columns: [
+						["x", "2010", "2011", "2012", "2013", "2014", "2015"],
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 340, 200, 500, 250, 350]
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						// if true, treat x value as localtime (Default)
+						// if false, convert to UTC internally
+						localtime: false,
+						tick: {
+							format: "%Y-%m-%d %H:%M:%S"
+						}
+					}
+				}
+			}
+		},
+		YAxisTickFormat: {
+			options: {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 2500]
+					]
+				},
+				axis: {
+					y: {
+						tick: {
+							format: function(x) { return d3.format("$,")(x); }
+						}
+					}
+				}
+			}
+		},
 
+	},
 	Data: {
 		ColumnOrientedData: {
 			options: {
@@ -1480,6 +1556,52 @@ var demos = {
 			},
 			description: "For selection, click data point or drag over data points"
 		},
+		DataStackNormalized: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 280, 951, 400, 150, 546, 4528],
+							["data2", 130, 357, 751, 400, 150, 250, 3957],
+							["data3", 30, 280, 320, 218, 150, 150, 5000]
+						],
+						type: "area",
+						groups: [
+							["data1", "data2", "data3"]
+						],
+						stack: {
+							normalize: true
+						}
+					},
+					clipPath: false
+				}
+			},
+			{
+				options: {
+					data: {
+						x: "x",
+						columns: [
+							["x", "Item1", "Item2", "Item3", "Item4", "Item5", "Item6", "Item7"],
+							["data1", 30, 280, 951, 400, 150, 546, 4528],
+							["data2", 130, 357, 751, 400, 150, 250, 3957],
+							["data3", 30, 280, 320, 218, 150, 150, 5000]
+						],
+						type: "bar",
+						groups: [
+							["data1", "data2", "data3"]
+						],
+						stack: {
+							normalize: true
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
+						}
+					}
+				}
+			}
+		],
 		OnMinMaxCallback: {
 			options: {
 				data: {
