@@ -7,20 +7,20 @@
  * 
  * @version 1.7.0
  */
-/*-- Insight Theme --*/
+/*-- Graph Theme --*/
 /*-- Default color pattern --*/
 .bb-color-pattern {
-  background-image: url("#00c73c;#fa7171;#2ad0ff;#7294ce;#e3e448;#cc7e6e;#fb6ccf;#c98dff;#4aea99;#bbbbbb;"); }
+  background-image: url("#65CFC2;#D0A45F;#64A4F5;#EF65A2;#A377FE;#8AAEC7;#FF7E5A;#898EFE;#FFAC35;#70B0FF;"); }
 
 /*-- Chart --*/
 .bb svg {
   font-size: 12px;
-  font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
+  font-family: Helvetica, "Apple SD Gothic Neo", Arial, sans-serif, "nanumgothic", "Dotum";
   line-height: 1; }
 
 .bb path, .bb line {
   fill: none;
-  stroke: #c4c4c4; }
+  stroke: #8c8c8c; }
 
 .bb text, .bb .bb-button {
   -webkit-user-select: none;
@@ -28,7 +28,8 @@
   -ms-user-select: none;
   user-select: none;
   fill: #555;
-  font-size: 11px; }
+  font-size: 12px;
+  letter-spacing: -.3px; }
 
 .bb-legend-item-title,
 .bb-xgrid-focus,
@@ -42,7 +43,7 @@
   shape-rendering: crispEdges; }
 
 .bb-axis-y text, .bb-axis-y2 text {
-  fill: #737373; }
+  fill: #8c8c8c; }
 
 .bb-event-rects {
   fill-opacity: 1 !important; }
@@ -62,7 +63,8 @@
   stroke: #e9e9e9; }
 
 .bb-xgrid-focus line {
-  stroke: #ddd; }
+  stroke: #ffb6b6;
+  stroke-dasharray: 3px; }
 
 /*-- Text on Chart --*/
 .bb-text.bb-empty {
@@ -74,12 +76,10 @@
 
 /*-- Point --*/
 .bb-circle._expanded_ {
-  fill: #fff !important;
-  stroke-width: 2px;
-  stroke: red; }
+  stroke-width: 2px; }
 
 rect.bb-circle._expanded_, use.bb-circle._expanded_ {
-  stroke-width: 1px; }
+  stroke-width: 2px; }
 
 .bb-selected-circle {
   fill: white;
@@ -124,7 +124,10 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
   opacity: 0.75;
   fill: white;
   stroke: lightgray;
-  stroke-width: 1; }
+  stroke-width: 1px; }
+
+.bb-legend-item line {
+  stroke-dasharray: 1px; }
 
 /*-- Title --*/
 .bb-title {
@@ -133,47 +136,59 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 /*-- Tooltip --*/
 .bb-tooltip-container {
   z-index: 10;
-  font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
+  font-family: Helvetica, "Apple SD Gothic Neo", Arial, sans-serif, "nanumgothic", "Dotum";
   position: absolute; }
 
 .bb-tooltip {
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
   border-collapse: separate;
   border-spacing: 0;
   empty-cells: show;
   border: 1px solid #999;
+  border-radius: 2px;
   background-color: #fff;
   text-align: left;
-  font-size: 11px; }
+  font-size: 12px;
+  box-shadow: .5px .5px 1px #999; }
   .bb-tooltip th {
     font-size: 12px;
     padding: 4px 8px;
-    text-align: left;
-    border-bottom: solid 1px #eee; }
+    text-align: center;
+    border-bottom: dotted 1px #000;
+    background-color: #efefef;
+    color: #000; }
+  .bb-tooltip tr:last-child td {
+    border-bottom: none; }
   .bb-tooltip td {
-    padding: 4px 6px;
-    background-color: #fff; }
+    padding: 3px 6px;
+    background-color: #fff;
+    border-bottom: solid 1px #eee; }
     .bb-tooltip td:first-child {
-      padding-left: 8px; }
+      padding-left: 5px;
+      border-right: solid 1px #eee; }
     .bb-tooltip td:last-child {
-      padding-right: 8px; }
+      padding-right: 5px; }
     .bb-tooltip td > span, .bb-tooltip td > svg {
       display: inline-block;
-      width: 10px;
-      height: 10px;
+      width: 5px;
+      height: 12px;
       margin-right: 6px;
-      border-radius: 5px;
       vertical-align: middle; }
     .bb-tooltip td.value {
-      border-left: 1px solid transparent; }
+      border-left: 1px solid transparent;
+      text-align: right; }
   .bb-tooltip .bb-tooltip-title {
     display: inline-block;
     color: #aaa;
     line-height: 20px; }
   .bb-tooltip .bb-tooltip-detail table {
     border-collapse: collapse;
-    border-spacing: 0; }
+    border-spacing: 1px;
+    font-size: 12px; }
   .bb-tooltip .bb-tooltip-detail .bb-tooltip-name, .bb-tooltip .bb-tooltip-detail .bb-tooltip-value {
-    font-size: 11px;
     line-height: 13px;
     padding: 4px 0 3px;
     color: #444;
@@ -181,8 +196,7 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
     font-weight: normal; }
   .bb-tooltip .bb-tooltip-detail .bb-tooltip-value {
     padding-left: 5px;
-    font-weight: 800;
-    font-size: 12px; }
+    font-weight: 800; }
 
 /*-- Area --*/
 .bb-area {
@@ -207,38 +221,41 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 
 .bb-chart-arcs .bb-chart-arcs-title {
   font-size: 16px !important;
-  fill: #000;
-  font-weight: 600; }
+  fill: #8c8c8c;
+  font-style: italic; }
 
 .bb-chart-arcs path.empty {
   fill: #eaeaea;
   stroke-width: 0; }
 
 .bb-chart-arc .bb-gauge-value {
-  fill: #000; }
+  fill: #8c8c8c;
+  font-style: italic; }
 
 .bb-chart-arc path {
   stroke: #fff; }
 
 .bb-chart-arc text {
   fill: #fff;
-  font-size: 13px; }
+  font-size: 13px;
+  font-weight: bold; }
 
 /*-- Radar --*/
 .bb-chart-radars .bb-levels polygon {
   fill: none;
-  stroke: #848282;
+  stroke: #8c8c8c;
   stroke-width: .5px; }
 
 .bb-chart-radars .bb-levels text {
-  fill: #848282; }
+  fill: #8c8c8c; }
 
 .bb-chart-radars .bb-axis line {
-  stroke: #848282;
+  stroke: #8c8c8c;
   stroke-width: .5px; }
 
 .bb-chart-radars .bb-axis text {
   font-size: 1.15em;
+  font-weight: bold;
   cursor: default; }
 
 .bb-chart-radars .bb-shapes polygon {
@@ -255,5 +272,7 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
     background-color: #fff;
     padding: 5px;
     border-radius: 5px;
-    cursor: pointer; }
+    cursor: pointer;
+    opacity: .8;
+    box-shadow: 1px 1px 2px #ccc; }
 
