@@ -76,6 +76,10 @@ You can download the compressed files for production
 - https://naver.github.io/billboard.js/release/latest/dist/theme/insight.css
 - https://naver.github.io/billboard.js/release/latest/dist/theme/insight.min.css
 
+#### graph
+- https://naver.github.io/billboard.js/release/latest/dist/theme/graph.css
+- https://naver.github.io/billboard.js/release/latest/dist/theme/graph.min.css
+
 ### Nightly version
 
 Nightly version is the latest build from the master branch.
