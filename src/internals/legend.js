@@ -38,27 +38,42 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Update legend element
-	 * @param targetIds
-	 * @param options
-	 * @param transitions
+	 * @param {Array} targetIds ID's of target
+	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+	 * @param {Object} transitions Return value of the generateTransitions
 	 * @private
 	 */
 	updateLegend(targetIds, options, transitions) {
 		const $$ = this;
 		const config = $$.config;
+		const optionz = options || {
+			withTransform: false,
+			withTransitionForTransform: false,
+			withTransition: false
+		};
+
+		optionz.withTransition = getOption(optionz, "withTransition", true);
+		optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", true);
 
 		if (config.legend_contents_bindto && config.legend_contents_template) {
 			$$.updateLegendTemplate();
 		} else {
 			$$.updateLegendElement(
 				targetIds || $$.mapToIds($$.data.targets),
-				options || {
-					withTransform: false,
-					withTransitionForTransform: false,
-					withTransition: false
-				}, transitions
+				optionz,
+				transitions
 			);
 		}
+
+		// Update size and scale
+		$$.updateSizes();
+		$$.updateScales(!optionz.withTransition);
+		$$.updateSvgSize();
+
+		// Update g positions
+		$$.transformAll(optionz.withTransitionForTransform, transitions);
+
+		$$.legendHasRendered = true;
 	},
 
 	/**
@@ -363,12 +378,11 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Update the legend
-	 * @private
 	 * @param {Array} targetIds ID's of target
 	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-	 * @param {Object} transitions Return value of the generateTransitions
+ 	 * @private
 	 */
-	updateLegendElement(targetIds, options, transitions) {
+	updateLegendElement(targetIds, options) {
 		const $$ = this;
 		const config = $$.config;
 		const paddingTop = 4;
@@ -392,9 +406,8 @@ extend(ChartInternal.prototype, {
 		// Skip elements when their name is set to null
 		const targetIdz = targetIds
 			.filter(id => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
-		const optionz = options || {};
-		const withTransition = getOption(optionz, "withTransition", true);
-		const withTransitionForTransform = getOption(optionz, "withTransitionForTransform", true);
+
+		const withTransition = options.withTransition;
 
 		const getTextBox = function(textElement, id) {
 			if (!$$.legendItemTextBox[id]) {
@@ -665,14 +678,5 @@ extend(ChartInternal.prototype, {
 		$$.updateLegendItemWidth(maxWidth);
 		$$.updateLegendItemHeight(maxHeight);
 		$$.updateLegendStep(step);
-
-		// Update size and scale
-		$$.updateSizes();
-		$$.updateScales(!withTransition);
-		$$.updateSvgSize();
-
-		// Update g positions
-		$$.transformAll(withTransitionForTransform, transitions);
-		$$.legendHasRendered = true;
 	}
 });

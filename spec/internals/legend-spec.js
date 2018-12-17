@@ -367,6 +367,38 @@ describe("LEGEND", () => {
 
 			expect(items.size()).to.be.equal(1);
 		});
+
+		it("check for resizing", () => {
+			const newSize = {width: 1200, height: 1400};
+
+			chart.resize(newSize);
+
+			expect(chart.internal.getCurrentWidth()).to.be.equal(newSize.width);
+			expect(chart.internal.getCurrentHeight()).to.be.equal(newSize.height);
+
+			chart.destroy();
+		});
+
+		it("set options data.type='pie'", () => {
+			args.data.type = "pie";
+		});
+
+		it("check for resizing for pie type", () => {
+			const newSize = {width: 300, height: 300};
+			const transform1 = chart.$.arc.attr("transform").split(",").map(util.parseNum);
+
+			chart.resize(newSize);
+
+			const transform2 = chart.$.arc.attr("transform").split(",").map(util.parseNum);
+
+			expect(transform1).to.not.be.deep.equal(transform2);
+
+			transform1.forEach((v, i) => {
+				expect(v).to.be.above(transform2[i]);
+			});
+
+			chart.destroy();
+		});
 	});
 
 	describe("when using custom points", () => {
