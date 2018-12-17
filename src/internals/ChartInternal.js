@@ -1051,8 +1051,7 @@ export default class ChartInternal {
 		$$.config.subchart_show &&
 			$$.transformContext(withTransition, transitions);
 
-		$$.legend &&
-			$$.transformLegend(withTransition);
+		$$.legend && $$.transformLegend(withTransition);
 	}
 
 	updateSvgSize() {
