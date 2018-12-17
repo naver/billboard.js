@@ -367,6 +367,17 @@ describe("LEGEND", () => {
 
 			expect(items.size()).to.be.equal(1);
 		});
+
+		it("check for resizing", () => {
+			const newSize = {width: 1200, height: 1400};
+
+			chart.resize(newSize);
+
+			expect(chart.internal.getCurrentWidth()).to.be.equal(newSize.width);
+			expect(chart.internal.getCurrentHeight()).to.be.equal(newSize.height);
+
+			chart.destroy();
+		});
 	});
 
 	describe("when using custom points", () => {

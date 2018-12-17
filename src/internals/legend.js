@@ -46,19 +46,28 @@ extend(ChartInternal.prototype, {
 	updateLegend(targetIds, options, transitions) {
 		const $$ = this;
 		const config = $$.config;
+		const optionz = options || {
+			withTransform: false,
+			withTransitionForTransform: false,
+			withTransition: false
+		};
 
 		if (config.legend_contents_bindto && config.legend_contents_template) {
 			$$.updateLegendTemplate();
 		} else {
 			$$.updateLegendElement(
 				targetIds || $$.mapToIds($$.data.targets),
-				options || {
-					withTransform: false,
-					withTransitionForTransform: false,
-					withTransition: false
-				}, transitions
+				optionz,
+				transitions
 			);
 		}
+
+		// Update size and scale
+		$$.updateSizes();
+		$$.updateScales(!optionz.withTransform);
+		$$.updateSvgSize();
+
+		$$.legendHasRendered = true;
 	},
 
 	/**
@@ -392,9 +401,9 @@ extend(ChartInternal.prototype, {
 		// Skip elements when their name is set to null
 		const targetIdz = targetIds
 			.filter(id => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
-		const optionz = options || {};
-		const withTransition = getOption(optionz, "withTransition", true);
-		const withTransitionForTransform = getOption(optionz, "withTransitionForTransform", true);
+
+		const withTransition = getOption(options, "withTransition", true);
+		const withTransitionForTransform = getOption(options, "withTransitionForTransform", true);
 
 		const getTextBox = function(textElement, id) {
 			if (!$$.legendItemTextBox[id]) {
@@ -666,13 +675,7 @@ extend(ChartInternal.prototype, {
 		$$.updateLegendItemHeight(maxHeight);
 		$$.updateLegendStep(step);
 
-		// Update size and scale
-		$$.updateSizes();
-		$$.updateScales(!withTransition);
-		$$.updateSvgSize();
-
 		// Update g positions
 		$$.transformAll(withTransitionForTransform, transitions);
-		$$.legendHasRendered = true;
 	}
 });
