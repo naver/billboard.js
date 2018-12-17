@@ -5,7 +5,11 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
+<<<<<<< HEAD
  * @version 1.7.1-nightly-20181217171709
+=======
+ * @version 1.6.2-nightly-20181213192533
+>>>>>>> 8fc1bcf9e266c7a3ffb9dd7187f2571144b93b32
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -23504,7 +23508,11 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
+<<<<<<< HEAD
  * @version 1.7.1-nightly-20181217171709
+=======
+ * @version 1.6.2-nightly-20181213192533
+>>>>>>> 8fc1bcf9e266c7a3ffb9dd7187f2571144b93b32
  */
 
 var bb = {
@@ -23515,7 +23523,11 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
+<<<<<<< HEAD
   version: "1.7.1-nightly-20181217171709",
+=======
+  version: "1.6.2-nightly-20181213192533",
+>>>>>>> 8fc1bcf9e266c7a3ffb9dd7187f2571144b93b32
 
   /**
    * Generate chart
