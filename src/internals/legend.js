@@ -38,9 +38,9 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Update legend element
-	 * @param targetIds
-	 * @param options
-	 * @param transitions
+	 * @param {Array} targetIds ID's of target
+	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+	 * @param {Object} transitions Return value of the generateTransitions
 	 * @private
 	 */
 	updateLegend(targetIds, options, transitions) {
@@ -51,6 +51,9 @@ extend(ChartInternal.prototype, {
 			withTransitionForTransform: false,
 			withTransition: false
 		};
+
+		optionz.withTransition = getOption(optionz, "withTransition", true);
+		optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", true);
 
 		if (config.legend_contents_bindto && config.legend_contents_template) {
 			$$.updateLegendTemplate();
@@ -64,8 +67,11 @@ extend(ChartInternal.prototype, {
 
 		// Update size and scale
 		$$.updateSizes();
-		$$.updateScales(!optionz.withTransform);
+		$$.updateScales(!optionz.withTransition);
 		$$.updateSvgSize();
+
+		// Update g positions
+		$$.transformAll(optionz.withTransitionForTransform, transitions);
 
 		$$.legendHasRendered = true;
 	},
@@ -372,12 +378,11 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Update the legend
-	 * @private
 	 * @param {Array} targetIds ID's of target
 	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-	 * @param {Object} transitions Return value of the generateTransitions
+ 	 * @private
 	 */
-	updateLegendElement(targetIds, options, transitions) {
+	updateLegendElement(targetIds, options) {
 		const $$ = this;
 		const config = $$.config;
 		const paddingTop = 4;
@@ -402,8 +407,7 @@ extend(ChartInternal.prototype, {
 		const targetIdz = targetIds
 			.filter(id => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
 
-		const withTransition = getOption(options, "withTransition", true);
-		const withTransitionForTransform = getOption(options, "withTransitionForTransform", true);
+		const withTransition = options.withTransition;
 
 		const getTextBox = function(textElement, id) {
 			if (!$$.legendItemTextBox[id]) {
@@ -674,8 +678,5 @@ extend(ChartInternal.prototype, {
 		$$.updateLegendItemWidth(maxWidth);
 		$$.updateLegendItemHeight(maxHeight);
 		$$.updateLegendStep(step);
-
-		// Update g positions
-		$$.transformAll(withTransitionForTransform, transitions);
 	}
 });
