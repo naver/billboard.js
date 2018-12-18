@@ -4,9 +4,7 @@
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
-
-> This project was forked from C3.js v0.4.11.
-> - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)<br>
+> - [Why we decided to start billboard.js?](https://github.com/naver/billboard.js/wiki/Why-we-decided-to-start-billboard.js%3F)
 
 ## Documents
 - [API Documentation](https://naver.github.io/billboard.js/release/latest/doc/)
@@ -21,7 +19,7 @@ billboard.js is a re-usable, easy interface JavaScript chart library, based on D
 ## Playground
 Play with the diverse options generating on the fly!
 - https://naver.github.io/billboard.js/playground/
-- https://beta.observablehq.com/@idris-maps/billboard-js-playground (by @idris-maps)
+- https://beta.observablehq.com/@idris-maps/billboard-js-playground (by [@idris-maps](https://github.com/idris-maps))
 
 ## Questions?
 If you have any questions, checkout the previous posts or create a new one at:
@@ -29,7 +27,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=3)
+![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=4)
 
 ## Download and Installation
 
