@@ -3,6 +3,4 @@ node_modules
 *.log
 *.iml
 /.idea
-/dist
-/doc
 /coverage
