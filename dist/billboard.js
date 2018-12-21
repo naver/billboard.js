@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20181217172305
+ * @version 1.7.1-nightly-20181221143747
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-array"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-collection"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
+		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-time-format", "d3-selection", "d3-array", "d3-transition", "d3-axis", "d3-brush", "d3-scale", "d3-collection", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
+		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-brush", "d3-scale", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-array"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-collection"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__, __WEBPACK_EXTERNAL_MODULE__19__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__25__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__, __WEBPACK_EXTERNAL_MODULE__19__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -100,7 +100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 27);
+/******/ 	return __webpack_require__(__webpack_require__.s = 25);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -231,12 +231,58 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
 
 /***/ }),
 /* 10 */
-/***/ (function(module, exports) {
+/***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
+var arrayWithoutHoles = __webpack_require__(11);
+
+var iterableToArray = __webpack_require__(12);
+
+var nonIterableSpread = __webpack_require__(13);
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
 
 /***/ }),
 /* 11 */
+/***/ (function(module, exports) {
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+module.exports = _arrayWithoutHoles;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+module.exports = _nonIterableSpread;
+
+/***/ }),
+/* 14 */
 /***/ (function(module, exports) {
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
@@ -258,62 +304,16 @@ function _typeof(obj) {
 module.exports = _typeof;
 
 /***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithoutHoles = __webpack_require__(14);
-
-var iterableToArray = __webpack_require__(15);
-
-var nonIterableSpread = __webpack_require__(16);
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-module.exports = _arrayWithoutHoles;
-
-/***/ }),
 /* 15 */
 /***/ (function(module, exports) {
 
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
+module.exports = __WEBPACK_EXTERNAL_MODULE__15__;
 
 /***/ }),
 /* 16 */
 /***/ (function(module, exports) {
 
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-module.exports = _nonIterableSpread;
+module.exports = __WEBPACK_EXTERNAL_MODULE__16__;
 
 /***/ }),
 /* 17 */
@@ -359,24 +359,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__23__;
 
 /***/ }),
 /* 24 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__24__;
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__25__;
-
-/***/ }),
-/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 27 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -399,14 +387,11 @@ var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
 var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(7);
 
-// EXTERNAL MODULE: external {"commonjs":"d3-array","commonjs2":"d3-array","amd":"d3-array","root":"d3"}
-var external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_ = __webpack_require__(8);
-
 // EXTERNAL MODULE: external {"commonjs":"d3-transition","commonjs2":"d3-transition","amd":"d3-transition","root":"d3"}
-var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(9);
+var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(8);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(10);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(9);
 
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
@@ -504,14 +489,19 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
   SELECTED: "_selected_",
   INCLUDED: "_included_"
 });
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
+var toConsumableArray = __webpack_require__(10);
+var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(11);
+var helpers_typeof = __webpack_require__(14);
 var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(12);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(15);
 
 // CONCATENATED MODULE: ./src/internals/util.js
+
 
 
 /**
@@ -557,7 +547,7 @@ var isValue = function (v) {
   return typeof_default()(v) === "object";
 },
     isEmpty = function (o) {
-  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && Object.keys(o).length === 0;
+  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
 },
     notEmpty = function (o) {
   return !isEmpty(o);
@@ -670,6 +660,37 @@ var isValue = function (v) {
     }
   }), rules;
 },
+    getUnique = function (data) {
+  return data.filter(function (v, i, self) {
+    return self.indexOf(v) === i;
+  });
+},
+    mergeArray = function (arr) {
+  return arr && arr.length ? arr.reduce(function (p, c) {
+    return p.concat(c);
+  }) : [];
+},
+    getMinMax = function (type, data) {
+  var res = data.filter(function (v) {
+    return notEmpty(v);
+  });
+  if (!res.length) res = undefined;else if (isNumber(res[0])) res = Math[type].apply(Math, toConsumableArray_default()(res));else if (res[0] instanceof Date) {
+    var sortFn = type === "min" ? function (a, b) {
+      return a - b;
+    } : function (a, b) {
+      return b - a;
+    };
+    res = res.sort(sortFn)[0];
+  }
+  return res;
+},
+    getRange = function (start, end) {
+  var res = [];
+
+  for (var i = start; i < end; i++) res.push(i);
+
+  return res;
+},
     emulateEvent = {
   mouse: function () {
     var getParams = function () {
@@ -719,12 +740,8 @@ var isValue = function (v) {
 };
 
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
-var toConsumableArray = __webpack_require__(13);
-var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
-
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(17);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(16);
 
 // CONCATENATED MODULE: ./src/axis/AxisRendererHelper.js
 
@@ -1619,7 +1636,6 @@ function () {
 
 
 
-
 /**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
@@ -1687,7 +1703,7 @@ function () {
         classname: "bb"
       };
 
-      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain(Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["extent"])($$.getXDomain($$.data.targets))), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain($$.getXDomain($$.data.targets).sort()), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$);
@@ -5528,8 +5544,6 @@ extend(ChartInternal_ChartInternal.prototype, {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
- // selection
-
 
 
 extend(ChartInternal_ChartInternal.prototype, {
@@ -5539,7 +5553,6 @@ extend(ChartInternal_ChartInternal.prototype, {
         isMin = type === "min",
         dataGroups = config.data_groups,
         ids = $$.mapToIds(targets),
-        f = isMin ? external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"] : external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"],
         ys = $$.getValuesAsIdKeyed(targets);
     return dataGroups.length > 0 && function () {
       for (var idsInGroup, _ret, hasValue = $$["has".concat(isMin ? "Negative" : "Positive", "ValueInTargets")](targets), _loop = function (j, _idsInGroup) {
@@ -5564,8 +5577,8 @@ extend(ChartInternal_ChartInternal.prototype, {
 
         idsInGroup = _idsInGroup;
       }, j = 0; idsInGroup = dataGroups[j]; j++) _ret = _loop(j, idsInGroup), _ret === "continue";
-    }(), f(Object.keys(ys).map(function (key) {
-      return f(ys[key]);
+    }(), getMinMax(type, Object.keys(ys).map(function (key) {
+      return getMinMax(type, ys[key]);
     }));
   },
   getYDomainMin: function getYDomainMin(targets) {
@@ -5621,13 +5634,12 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
     var $$ = this,
-        value = $$.config["axis_x_".concat(type)],
-        f = type === "min" ? external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"] : external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"];
-    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : f(targets, function (t) {
-      return f(t.values, function (v) {
+        value = $$.config["axis_x_".concat(type)];
+    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : getMinMax(type, targets.map(function (t) {
+      return getMinMax(type, t.values.map(function (v) {
         return v.x;
-      });
-    });
+      }));
+    }));
   },
   getXDomainMin: function getXDomainMin(targets) {
     return this.getXDomainMinMax(targets, "min");
@@ -5665,7 +5677,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         zoomEnabled = config.zoom_enabled;
 
-    if (withUpdateOrgXDomain && ($$.x.domain(domain || Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["extent"])($$.getXDomain(targets))), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
+    if (withUpdateOrgXDomain && ($$.x.domain(domain || $$.getXDomain(targets).sort()), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
       var domainValue = domain || !$$.brush || brushEmpty($$) ? $$.orgXDomain : getBrushSelection($$).map($$.subX.invert);
       $$.x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
     } // Trim domain when too big by zoom mousemove event
@@ -5680,9 +5692,6 @@ extend(ChartInternal_ChartInternal.prototype, {
     return domain[0] <= min && (domain[1] = +domain[1] + (min - domain[0]), domain[0] = min), max <= domain[1] && (domain[0] = +domain[0] - (domain[1] - max), domain[1] = max), domain;
   }
 });
-// EXTERNAL MODULE: external {"commonjs":"d3-collection","commonjs2":"d3-collection","amd":"d3-collection","root":"d3"}
-var external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_root_d3_ = __webpack_require__(18);
-
 // CONCATENATED MODULE: ./src/data/data.js
 
 
@@ -5690,8 +5699,6 @@ var external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_ro
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
-
 
 
 
@@ -5762,10 +5769,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   hasMultipleX: function hasMultipleX(xs) {
-    // https://github.com/d3/d3-collection
-    return Object(external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_root_d3_["set"])(Object.keys(xs).map(function (id) {
+    return Object.keys(xs).map(function (id) {
       return xs[id];
-    })).size() > 1;
+    }).length > 1;
   },
   isMultipleX: function isMultipleX() {
     return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
@@ -5858,8 +5864,9 @@ extend(ChartInternal_ChartInternal.prototype, {
         getBaseValue = this.getBaseValue.bind(this);
     return (data || this.data.targets.map(function (t) {
       return t.values;
-    })).forEach(function (v) {
-      min = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"])([min, Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"])(v, getBaseValue)]), max = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])([max, Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])(v, getBaseValue)]);
+    })).forEach(function (v, i) {
+      var value = v.map(getBaseValue).filter(isNumber);
+      min = Math.min.apply(Math, [i ? min : Infinity].concat(toConsumableArray_default()(value))), max = Math.max.apply(Math, [i ? max : -Infinity].concat(toConsumableArray_default()(value)));
     }), {
       min: min,
       max: max
@@ -5923,14 +5930,14 @@ extend(ChartInternal_ChartInternal.prototype, {
         totalDataSum = $$.getCache(cacheKey);
 
     if (!totalDataSum) {
-      var total = 0;
-      $$.data.targets.map(function (t) {
+      var total = mergeArray($$.data.targets.map(function (t) {
         return t.values;
-      }).forEach(function (v) {
-        total += Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["sum"])(v, function (t) {
-          return t.value;
-        });
-      }), $$.addCache(cacheKey, totalDataSum = total);
+      })).map(function (v) {
+        return v.value;
+      }).reduce(function (p, c) {
+        return p + c;
+      });
+      $$.addCache(cacheKey, totalDataSum = total);
     }
 
     return totalDataSum;
@@ -5957,9 +5964,9 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getMaxDataCount: function getMaxDataCount() {
-    return Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])(this.data.targets, function (t) {
+    return Math.max.apply(Math, toConsumableArray_default()(this.data.targets.map(function (t) {
       return t.values.length;
-    });
+    })));
   },
   getMaxDataCountTarget: function getMaxDataCountTarget(targets) {
     var maxTarget,
@@ -5999,16 +6006,16 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   mapTargetsToUniqueXs: function mapTargetsToUniqueXs(targets) {
     var $$ = this,
-        xs = Object(external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_root_d3_["set"])(Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["merge"])(targets.map(function (t) {
+        xs = [];
+    return targets && targets.length && (xs = getUnique(mergeArray(targets.map(function (t) {
       return t.values.map(function (v) {
         return +v.x;
       });
-    }))).values();
-    return xs = $$.isTimeSeries() ? xs.map(function (x) {
+    }))), xs = $$.isTimeSeries() ? xs.map(function (x) {
       return new Date(+x);
     }) : xs.map(function (x) {
       return +x;
-    }), xs.sort(function (a, b) {
+    })), xs.sort(function (a, b) {
       return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
     });
   },
@@ -6101,7 +6108,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     }) : isFunction(config.data_order) && targets.sort(config.data_order), targets;
   },
   filterByX: function filterByX(targets, x) {
-    return Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["merge"])(targets.map(function (t) {
+    return mergeArray(targets.map(function (t) {
       return t.values;
     })).filter(function (v) {
       return v.x - x === 0;
@@ -6285,7 +6292,9 @@ extend(ChartInternal_ChartInternal.prototype, {
           // if has padAngle set, calculate rate based on value
           if ($$.pie.padAngle()()) {
             var total = $$.getTotalDataSum();
-            $$.hiddenTargetIds.length && (total -= Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["sum"])(dataValues($$.hiddenTargetIds))), ratio = d.value / total;
+            $$.hiddenTargetIds.length && (total -= dataValues($$.hiddenTargetIds).reduce(function (p, c) {
+              return p + c;
+            })), ratio = d.value / total;
           } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
       } else if (type === "index") {
         var _total = this.getTotalPerIndex();
@@ -6309,14 +6318,13 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
-var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(19);
+var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(17);
 
 // CONCATENATED MODULE: ./src/data/data.convert.js
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 
 
 
@@ -6464,8 +6472,9 @@ extend(ChartInternal_ChartInternal.prototype, {
         _this3 = this,
         $$ = this,
         config = $$.config,
-        ids = Object(external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_root_d3_["keys"])(data[0]).filter($$.isNotX, $$),
-        xs = Object(external_commonjs_d3_collection_commonjs2_d3_collection_amd_d3_collection_root_d3_["keys"])(data[0]).filter($$.isX, $$);
+        dataKeys = Object.keys(data[0] || {}),
+        ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [],
+        xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
 
     ids.forEach(function (id) {
       var xKey = _this3.getXKey(id);
@@ -6598,7 +6607,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(20);
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(18);
 
 // CONCATENATED MODULE: ./src/interactions/interaction.js
 /**
@@ -7045,7 +7054,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
-var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(21);
+var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(19);
 
 // CONCATENATED MODULE: ./src/shape/shape.js
 /**
@@ -7151,7 +7160,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(22);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(20);
 
 // CONCATENATED MODULE: ./src/shape/arc.js
 /**
@@ -7676,7 +7685,6 @@ extend(ChartInternal_ChartInternal.prototype, {
  */
 
 
-
 extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializer
@@ -7698,7 +7706,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         cacheKey = "$baseLength",
         baseLength = $$.getCache(cacheKey);
-    return baseLength || $$.addCache(cacheKey, baseLength = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"])([$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
+    return baseLength || $$.addCache(cacheKey, baseLength = getMinMax("min", [$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
   },
 
   /**
@@ -7711,7 +7719,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         maxR = $$.config.bubble_maxR;
     isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
-    var max = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])($$.getMinMaxData().max.map(function (d) {
+    var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
       return isObject(d.value) ? d.value.mid : d.value;
     })),
         maxArea = maxR * maxR * Math.PI,
@@ -8261,7 +8269,6 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
 
-
 /**
  * Get the position value
  * @param {Boolean} isClockwise If the direction is clockwise
@@ -8299,7 +8306,9 @@ extend(ChartInternal_ChartInternal.prototype, {
   updateTargetsForRadar: function updateTargetsForRadar(targets) {
     var $$ = this,
         config = $$.config;
-    isEmpty(config.axis_x_categories) && (config.axis_x_categories = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["range"])(0, Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])(targets).values.length)), $$.generateRadarPoints();
+    isEmpty(config.axis_x_categories) && (config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) {
+      return v.values.length;
+    })))), $$.generateRadarPoints();
   },
   getRadarPosition: function getRadarPosition(type, index, range, ratio) {
     var $$ = this,
@@ -8364,7 +8373,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         edge = config.axis_x_categories.length,
         showText = config.radar_level_text_show,
         radarLevels = $$.radars.levels,
-        levelData = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["range"])(0, depth),
+        levelData = getRange(0, depth),
         radius = config.radar_size_ratio * Math.min(width, height),
         levelRatio = levelData.map(function (l) {
       return radius * ((l + 1) / depth);
@@ -8372,7 +8381,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         levelTextFormat = config.radar_level_text_format,
         points = levelData.map(function (v) {
       var range = levelRatio[v],
-          pos = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["range"])(0, edge).map(function (i) {
+          pos = getRange(0, edge).map(function (i) {
         return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
       });
       return pos.join(" ");
@@ -9901,7 +9910,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(23);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(21);
 
 // CONCATENATED MODULE: ./src/internals/selection.js
 /**
@@ -10272,7 +10281,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(24);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(22);
 
 // CONCATENATED MODULE: ./src/interactions/zoom.js
 
@@ -10281,7 +10290,6 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
 
 
 
@@ -10394,9 +10402,11 @@ extend(ChartInternal_ChartInternal.prototype, {
   getZoomDomain: function getZoomDomain() {
     var $$ = this,
         config = $$.config,
-        min = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"])([$$.orgXDomain[0], config.zoom_x_min]),
-        max = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])([$$.orgXDomain[1], config.zoom_x_max]);
-    return [min, max];
+        _$$$orgXDomain = slicedToArray_default()($$.orgXDomain, 2),
+        min = _$$$orgXDomain[0],
+        max = _$$$orgXDomain[1];
+
+    return isDefined(config.zoom_x_min) && (min = getMinMax("min", [min, config.zoom_x_min])), isDefined(config.zoom_x_max) && (max = getMinMax("max", [max, config.zoom_x_max])), [min, max];
   },
 
   /**
@@ -11018,7 +11028,6 @@ extend(Chart_Chart.prototype, {
 
 
 
-
 /**
  * Zoom by giving x domain.
  * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
@@ -11104,7 +11113,7 @@ extend(api_zoom_zoom, {
   max: function max(_max) {
     var $$ = this.internal,
         config = $$.config;
-    return (_max === 0 || _max) && (config.zoom_x_max = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["max"])([$$.orgXDomain[1], _max])), config.zoom_x_max;
+    return (_max === 0 || _max) && (config.zoom_x_max = getMinMax("max", [$$.orgXDomain[1], _max])), config.zoom_x_max;
   },
 
   /**
@@ -11121,7 +11130,7 @@ extend(api_zoom_zoom, {
   min: function min(_min) {
     var $$ = this.internal,
         config = $$.config;
-    return (_min === 0 || _min) && (config.zoom_x_min = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["min"])([$$.orgXDomain[0], _min])), config.zoom_x_min;
+    return (_min === 0 || _min) && (config.zoom_x_min = getMinMax("min", [$$.orgXDomain[0], _min])), config.zoom_x_min;
   },
 
   /**
@@ -11289,7 +11298,7 @@ extend(Chart_Chart.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
-var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(25);
+var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(23);
 
 // CONCATENATED MODULE: ./src/api/api.flow.js
 /**
@@ -12260,7 +12269,7 @@ var setMinMax = function ($$, type, value) {
     withUpdateXDomain: !0
   })), undefined;
 },
-    getMinMax = function ($$, type) {
+    api_axis_getMinMax = function ($$, type) {
   var config = $$.config;
   return {
     x: config["axis_x_".concat(type)],
@@ -12307,7 +12316,7 @@ var setMinMax = function ($$, type, value) {
    */
   min: function min(_min) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "min", _min) : getMinMax($$, "min");
+    return arguments.length ? setMinMax($$, "min", _min) : api_axis_getMinMax($$, "min");
   },
 
   /**
@@ -12328,7 +12337,7 @@ var setMinMax = function ($$, type, value) {
    */
   max: function max(_max) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "max", _max) : getMinMax($$, "max");
+    return arguments.length ? setMinMax($$, "max", _max) : api_axis_getMinMax($$, "max");
   },
 
   /**
@@ -12744,7 +12753,7 @@ extend(Chart_Chart.prototype, {
   }
 });
 // EXTERNAL MODULE: ./src/scss/billboard.scss
-var billboard = __webpack_require__(26);
+var billboard = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./src/core.js
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return bb; });
@@ -12811,7 +12820,7 @@ var billboard = __webpack_require__(26);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20181217172305
+ * @version 1.7.1-nightly-20181221143747
  */
 
 var bb = {
@@ -12822,7 +12831,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20181217172305",
+  version: "1.7.1-nightly-20181221143747",
 
   /**
    * Generate chart

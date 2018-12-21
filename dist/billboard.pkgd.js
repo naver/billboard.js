@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20181217172305
+ * @version 1.7.1-nightly-20181221143747
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -210,6 +210,58 @@ module.exports = _createClass;
 
 /***/ }),
 /* 6 */
+/***/ (function(module, exports, __webpack_require__) {
+
+var arrayWithoutHoles = __webpack_require__(7);
+
+var iterableToArray = __webpack_require__(8);
+
+var nonIterableSpread = __webpack_require__(9);
+
+function _toConsumableArray(arr) {
+  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
+}
+
+module.exports = _toConsumableArray;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+
+module.exports = _arrayWithoutHoles;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+
+module.exports = _iterableToArray;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+
+module.exports = _nonIterableSpread;
+
+/***/ }),
+/* 10 */
 /***/ (function(module, exports) {
 
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
@@ -229,58 +281,6 @@ function _typeof(obj) {
 }
 
 module.exports = _typeof;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithoutHoles = __webpack_require__(8);
-
-var iterableToArray = __webpack_require__(9);
-
-var nonIterableSpread = __webpack_require__(10);
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-module.exports = _arrayWithoutHoles;
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-module.exports = _nonIterableSpread;
 
 /***/ }),
 /* 11 */
@@ -2530,656 +2530,6 @@ Local.prototype = local.prototype = {
 
 
 
-// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
-/* harmony default export */ var src_ascending = (function(a, b) {
-  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
-
-
-/* harmony default export */ var bisector = (function(compare) {
-  if (compare.length === 1) compare = ascendingComparator(compare);
-  return {
-    left: function(a, x, lo, hi) {
-      if (lo == null) lo = 0;
-      if (hi == null) hi = a.length;
-      while (lo < hi) {
-        var mid = lo + hi >>> 1;
-        if (compare(a[mid], x) < 0) lo = mid + 1;
-        else hi = mid;
-      }
-      return lo;
-    },
-    right: function(a, x, lo, hi) {
-      if (lo == null) lo = 0;
-      if (hi == null) hi = a.length;
-      while (lo < hi) {
-        var mid = lo + hi >>> 1;
-        if (compare(a[mid], x) > 0) hi = mid;
-        else lo = mid + 1;
-      }
-      return lo;
-    }
-  };
-});
-
-function ascendingComparator(f) {
-  return function(d, x) {
-    return src_ascending(f(d), x);
-  };
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/bisect.js
-
-
-
-var ascendingBisect = bisector(src_ascending);
-var bisectRight = ascendingBisect.right;
-var bisectLeft = ascendingBisect.left;
-/* harmony default export */ var bisect = (bisectRight);
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
-/* harmony default export */ var pairs = (function(array, f) {
-  if (f == null) f = pair;
-  var i = 0, n = array.length - 1, p = array[0], pairs = new Array(n < 0 ? 0 : n);
-  while (i < n) pairs[i] = f(p, p = array[++i]);
-  return pairs;
-});
-
-function pair(a, b) {
-  return [a, b];
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
-
-
-/* harmony default export */ var cross = (function(values0, values1, reduce) {
-  var n0 = values0.length,
-      n1 = values1.length,
-      values = new Array(n0 * n1),
-      i0,
-      i1,
-      i,
-      value0;
-
-  if (reduce == null) reduce = pair;
-
-  for (i0 = i = 0; i0 < n0; ++i0) {
-    for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) {
-      values[i] = reduce(value0, values1[i1]);
-    }
-  }
-
-  return values;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
-/* harmony default export */ var descending = (function(a, b) {
-  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
-/* harmony default export */ var number = (function(x) {
-  return x === null ? NaN : +x;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/variance.js
-
-
-/* harmony default export */ var variance = (function(values, valueof) {
-  var n = values.length,
-      m = 0,
-      i = -1,
-      mean = 0,
-      value,
-      delta,
-      sum = 0;
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (!isNaN(value = number(values[i]))) {
-        delta = value - mean;
-        mean += delta / ++m;
-        sum += delta * (value - mean);
-      }
-    }
-  }
-
-  else {
-    while (++i < n) {
-      if (!isNaN(value = number(valueof(values[i], i, values)))) {
-        delta = value - mean;
-        mean += delta / ++m;
-        sum += delta * (value - mean);
-      }
-    }
-  }
-
-  if (m > 1) return sum / (m - 1);
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/deviation.js
-
-
-/* harmony default export */ var deviation = (function(array, f) {
-  var v = variance(array, f);
-  return v ? Math.sqrt(v) : v;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
-/* harmony default export */ var src_extent = (function(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      min,
-      max;
-
-  if (valueof == null) {
-    while (++i < n) { // Find the first comparable value.
-      if ((value = values[i]) != null && value >= value) {
-        min = max = value;
-        while (++i < n) { // Compare the remaining values.
-          if ((value = values[i]) != null) {
-            if (min > value) min = value;
-            if (max < value) max = value;
-          }
-        }
-      }
-    }
-  }
-
-  else {
-    while (++i < n) { // Find the first comparable value.
-      if ((value = valueof(values[i], i, values)) != null && value >= value) {
-        min = max = value;
-        while (++i < n) { // Compare the remaining values.
-          if ((value = valueof(values[i], i, values)) != null) {
-            if (min > value) min = value;
-            if (max < value) max = value;
-          }
-        }
-      }
-    }
-  }
-
-  return [min, max];
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/array.js
-var array_array = Array.prototype;
-
-var slice = array_array.slice;
-var map = array_array.map;
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/constant.js
-/* harmony default export */ var src_constant = (function(x) {
-  return function() {
-    return x;
-  };
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
-/* harmony default export */ var identity = (function(x) {
-  return x;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/range.js
-/* harmony default export */ var src_range = (function(start, stop, step) {
-  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
-
-  var i = -1,
-      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
-      range = new Array(n);
-
-  while (++i < n) {
-    range[i] = start + i * step;
-  }
-
-  return range;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
-var e10 = Math.sqrt(50),
-    e5 = Math.sqrt(10),
-    e2 = Math.sqrt(2);
-
-/* harmony default export */ var src_ticks = (function(start, stop, count) {
-  var reverse,
-      i = -1,
-      n,
-      ticks,
-      step;
-
-  stop = +stop, start = +start, count = +count;
-  if (start === stop && count > 0) return [start];
-  if (reverse = stop < start) n = start, start = stop, stop = n;
-  if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
-
-  if (step > 0) {
-    start = Math.ceil(start / step);
-    stop = Math.floor(stop / step);
-    ticks = new Array(n = Math.ceil(stop - start + 1));
-    while (++i < n) ticks[i] = (start + i) * step;
-  } else {
-    start = Math.floor(start * step);
-    stop = Math.ceil(stop * step);
-    ticks = new Array(n = Math.ceil(start - stop + 1));
-    while (++i < n) ticks[i] = (start - i) / step;
-  }
-
-  if (reverse) ticks.reverse();
-
-  return ticks;
-});
-
-function tickIncrement(start, stop, count) {
-  var step = (stop - start) / Math.max(0, count),
-      power = Math.floor(Math.log(step) / Math.LN10),
-      error = step / Math.pow(10, power);
-  return power >= 0
-      ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
-      : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
-}
-
-function tickStep(start, stop, count) {
-  var step0 = Math.abs(stop - start) / Math.max(0, count),
-      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
-      error = step0 / step1;
-  if (error >= e10) step1 *= 10;
-  else if (error >= e5) step1 *= 5;
-  else if (error >= e2) step1 *= 2;
-  return stop < start ? -step1 : step1;
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/sturges.js
-/* harmony default export */ var sturges = (function(values) {
-  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/histogram.js
-
-
-
-
-
-
-
-
-
-/* harmony default export */ var src_histogram = (function() {
-  var value = identity,
-      domain = src_extent,
-      threshold = sturges;
-
-  function histogram(data) {
-    var i,
-        n = data.length,
-        x,
-        values = new Array(n);
-
-    for (i = 0; i < n; ++i) {
-      values[i] = value(data[i], i, data);
-    }
-
-    var xz = domain(values),
-        x0 = xz[0],
-        x1 = xz[1],
-        tz = threshold(values, x0, x1);
-
-    // Convert number of thresholds into uniform thresholds.
-    if (!Array.isArray(tz)) {
-      tz = tickStep(x0, x1, tz);
-      tz = src_range(Math.ceil(x0 / tz) * tz, x1, tz); // exclusive
-    }
-
-    // Remove any thresholds outside the domain.
-    var m = tz.length;
-    while (tz[0] <= x0) tz.shift(), --m;
-    while (tz[m - 1] > x1) tz.pop(), --m;
-
-    var bins = new Array(m + 1),
-        bin;
-
-    // Initialize bins.
-    for (i = 0; i <= m; ++i) {
-      bin = bins[i] = [];
-      bin.x0 = i > 0 ? tz[i - 1] : x0;
-      bin.x1 = i < m ? tz[i] : x1;
-    }
-
-    // Assign data to bins by value, ignoring any outside the domain.
-    for (i = 0; i < n; ++i) {
-      x = values[i];
-      if (x0 <= x && x <= x1) {
-        bins[bisect(tz, x, 0, m)].push(data[i]);
-      }
-    }
-
-    return bins;
-  }
-
-  histogram.value = function(_) {
-    return arguments.length ? (value = typeof _ === "function" ? _ : src_constant(_), histogram) : value;
-  };
-
-  histogram.domain = function(_) {
-    return arguments.length ? (domain = typeof _ === "function" ? _ : src_constant([_[0], _[1]]), histogram) : domain;
-  };
-
-  histogram.thresholds = function(_) {
-    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? src_constant(slice.call(_)) : src_constant(_), histogram) : threshold;
-  };
-
-  return histogram;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/quantile.js
-
-
-/* harmony default export */ var quantile = (function(values, p, valueof) {
-  if (valueof == null) valueof = number;
-  if (!(n = values.length)) return;
-  if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
-  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
-  var n,
-      i = (n - 1) * p,
-      i0 = Math.floor(i),
-      value0 = +valueof(values[i0], i0, values),
-      value1 = +valueof(values[i0 + 1], i0 + 1, values);
-  return value0 + (value1 - value0) * (i - i0);
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/freedmanDiaconis.js
-
-
-
-
-
-/* harmony default export */ var freedmanDiaconis = (function(values, min, max) {
-  values = map.call(values, number).sort(src_ascending);
-  return Math.ceil((max - min) / (2 * (quantile(values, 0.75) - quantile(values, 0.25)) * Math.pow(values.length, -1 / 3)));
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/scott.js
-
-
-/* harmony default export */ var scott = (function(values, min, max) {
-  return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(values.length, -1 / 3)));
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
-/* harmony default export */ var src_max = (function(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      max;
-
-  if (valueof == null) {
-    while (++i < n) { // Find the first comparable value.
-      if ((value = values[i]) != null && value >= value) {
-        max = value;
-        while (++i < n) { // Compare the remaining values.
-          if ((value = values[i]) != null && value > max) {
-            max = value;
-          }
-        }
-      }
-    }
-  }
-
-  else {
-    while (++i < n) { // Find the first comparable value.
-      if ((value = valueof(values[i], i, values)) != null && value >= value) {
-        max = value;
-        while (++i < n) { // Compare the remaining values.
-          if ((value = valueof(values[i], i, values)) != null && value > max) {
-            max = value;
-          }
-        }
-      }
-    }
-  }
-
-  return max;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/mean.js
-
-
-/* harmony default export */ var src_mean = (function(values, valueof) {
-  var n = values.length,
-      m = n,
-      i = -1,
-      value,
-      sum = 0;
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (!isNaN(value = number(values[i]))) sum += value;
-      else --m;
-    }
-  }
-
-  else {
-    while (++i < n) {
-      if (!isNaN(value = number(valueof(values[i], i, values)))) sum += value;
-      else --m;
-    }
-  }
-
-  if (m) return sum / m;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/median.js
-
-
-
-
-/* harmony default export */ var median = (function(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      numbers = [];
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (!isNaN(value = number(values[i]))) {
-        numbers.push(value);
-      }
-    }
-  }
-
-  else {
-    while (++i < n) {
-      if (!isNaN(value = number(valueof(values[i], i, values)))) {
-        numbers.push(value);
-      }
-    }
-  }
-
-  return quantile(numbers.sort(src_ascending), 0.5);
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/merge.js
-/* harmony default export */ var src_merge = (function(arrays) {
-  var n = arrays.length,
-      m,
-      i = -1,
-      j = 0,
-      merged,
-      array;
-
-  while (++i < n) j += arrays[i].length;
-  merged = new Array(j);
-
-  while (--n >= 0) {
-    array = arrays[n];
-    m = array.length;
-    while (--m >= 0) {
-      merged[--j] = array[m];
-    }
-  }
-
-  return merged;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
-/* harmony default export */ var src_min = (function(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      min;
-
-  if (valueof == null) {
-    while (++i < n) { // Find the first comparable value.
-      if ((value = values[i]) != null && value >= value) {
-        min = value;
-        while (++i < n) { // Compare the remaining values.
-          if ((value = values[i]) != null && min > value) {
-            min = value;
-          }
-        }
-      }
-    }
-  }
-
-  else {
-    while (++i < n) { // Find the first comparable value.
-      if ((value = valueof(values[i], i, values)) != null && value >= value) {
-        min = value;
-        while (++i < n) { // Compare the remaining values.
-          if ((value = valueof(values[i], i, values)) != null && min > value) {
-            min = value;
-          }
-        }
-      }
-    }
-  }
-
-  return min;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/permute.js
-/* harmony default export */ var permute = (function(array, indexes) {
-  var i = indexes.length, permutes = new Array(i);
-  while (i--) permutes[i] = array[indexes[i]];
-  return permutes;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/scan.js
-
-
-/* harmony default export */ var scan = (function(values, compare) {
-  if (!(n = values.length)) return;
-  var n,
-      i = 0,
-      j = 0,
-      xi,
-      xj = values[j];
-
-  if (compare == null) compare = src_ascending;
-
-  while (++i < n) {
-    if (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) {
-      xj = xi, j = i;
-    }
-  }
-
-  if (compare(xj, xj) === 0) return j;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/shuffle.js
-/* harmony default export */ var shuffle = (function(array, i0, i1) {
-  var m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0),
-      t,
-      i;
-
-  while (m) {
-    i = Math.random() * m-- | 0;
-    t = array[m + i0];
-    array[m + i0] = array[i + i0];
-    array[i + i0] = t;
-  }
-
-  return array;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/sum.js
-/* harmony default export */ var src_sum = (function(values, valueof) {
-  var n = values.length,
-      i = -1,
-      value,
-      sum = 0;
-
-  if (valueof == null) {
-    while (++i < n) {
-      if (value = +values[i]) sum += value; // Note: zero and null are equivalent.
-    }
-  }
-
-  else {
-    while (++i < n) {
-      if (value = +valueof(values[i], i, values)) sum += value;
-    }
-  }
-
-  return sum;
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/transpose.js
-
-
-/* harmony default export */ var src_transpose = (function(matrix) {
-  if (!(n = matrix.length)) return [];
-  for (var i = -1, m = src_min(matrix, transpose_length), transpose = new Array(m); ++i < m;) {
-    for (var j = -1, n, row = transpose[i] = new Array(n); ++j < n;) {
-      row[j] = matrix[j][i];
-    }
-  }
-  return transpose;
-});
-
-function transpose_length(d) {
-  return d.length;
-}
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/zip.js
-
-
-/* harmony default export */ var zip = (function() {
-  return src_transpose(arguments);
-});
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
 var noop = {value: function() {}};
 
@@ -4195,7 +3545,7 @@ function basis(t1, v0, v1, v2, v3) {
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
-/* harmony default export */ var d3_interpolate_src_constant = (function(x) {
+/* harmony default export */ var src_constant = (function(x) {
   return function() {
     return x;
   };
@@ -4218,18 +3568,18 @@ function exponential(a, b, y) {
 
 function color_hue(a, b) {
   var d = b - a;
-  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : d3_interpolate_src_constant(isNaN(a) ? b : a);
+  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : src_constant(isNaN(a) ? b : a);
 }
 
 function gamma(y) {
   return (y = +y) === 1 ? nogamma : function(a, b) {
-    return b - a ? exponential(a, b, y) : d3_interpolate_src_constant(isNaN(a) ? b : a);
+    return b - a ? exponential(a, b, y) : src_constant(isNaN(a) ? b : a);
   };
 }
 
 function nogamma(a, b) {
   var d = b - a;
-  return d ? linear(a, d) : d3_interpolate_src_constant(isNaN(a) ? b : a);
+  return d ? linear(a, d) : src_constant(isNaN(a) ? b : a);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
@@ -4317,7 +3667,7 @@ var rgbBasisClosed = rgbSpline(basisClosed);
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
-/* harmony default export */ var src_number = (function(a, b) {
+/* harmony default export */ var number = (function(a, b) {
   return a = +a, b -= a, function(t) {
     return a + b * t;
   };
@@ -4391,7 +3741,7 @@ function one(b) {
       else s[++i] = bm;
     } else { // interpolate non-matching numbers
       s[++i] = null;
-      q.push({i: i, x: src_number(am, bm)});
+      q.push({i: i, x: number(am, bm)});
     }
     bi = reB.lastIndex;
   }
@@ -4426,14 +3776,14 @@ function one(b) {
 
 /* harmony default export */ var src_value = (function(a, b) {
   var t = typeof b, c;
-  return b == null || t === "boolean" ? d3_interpolate_src_constant(b)
-      : (t === "number" ? src_number
+  return b == null || t === "boolean" ? src_constant(b)
+      : (t === "number" ? number
       : t === "string" ? ((c = color_color(b)) ? (b = c, src_rgb) : src_string)
       : b instanceof color_color ? src_rgb
       : b instanceof Date ? src_date
       : Array.isArray(b) ? src_array
       : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object
-      : src_number)(a, b);
+      : number)(a, b);
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/discrete.js
@@ -4465,7 +3815,7 @@ function one(b) {
 // CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
 var degrees = 180 / Math.PI;
 
-var decompose_identity = {
+var identity = {
   translateX: 0,
   translateY: 0,
   rotate: 0,
@@ -4499,7 +3849,7 @@ var cssNode,
     svgNode;
 
 function parseCss(value) {
-  if (value === "none") return decompose_identity;
+  if (value === "none") return identity;
   if (!cssNode) cssNode = document.createElement("DIV"), cssRoot = document.documentElement, cssView = document.defaultView;
   cssNode.style.transform = value;
   value = cssView.getComputedStyle(cssRoot.appendChild(cssNode), null).getPropertyValue("transform");
@@ -4509,10 +3859,10 @@ function parseCss(value) {
 }
 
 function parseSvg(value) {
-  if (value == null) return decompose_identity;
+  if (value == null) return identity;
   if (!svgNode) svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g");
   svgNode.setAttribute("transform", value);
-  if (!(value = svgNode.transform.baseVal.consolidate())) return decompose_identity;
+  if (!(value = svgNode.transform.baseVal.consolidate())) return identity;
   value = value.matrix;
   return decompose(value.a, value.b, value.c, value.d, value.e, value.f);
 }
@@ -4530,7 +3880,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
   function translate(xa, ya, xb, yb, s, q) {
     if (xa !== xb || ya !== yb) {
       var i = s.push("translate(", null, pxComma, null, pxParen);
-      q.push({i: i - 4, x: src_number(xa, xb)}, {i: i - 2, x: src_number(ya, yb)});
+      q.push({i: i - 4, x: number(xa, xb)}, {i: i - 2, x: number(ya, yb)});
     } else if (xb || yb) {
       s.push("translate(" + xb + pxComma + yb + pxParen);
     }
@@ -4539,7 +3889,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
   function rotate(a, b, s, q) {
     if (a !== b) {
       if (a - b > 180) b += 360; else if (b - a > 180) a += 360; // shortest path
-      q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: src_number(a, b)});
+      q.push({i: s.push(pop(s) + "rotate(", null, degParen) - 2, x: number(a, b)});
     } else if (b) {
       s.push(pop(s) + "rotate(" + b + degParen);
     }
@@ -4547,7 +3897,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
 
   function skewX(a, b, s, q) {
     if (a !== b) {
-      q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: src_number(a, b)});
+      q.push({i: s.push(pop(s) + "skewX(", null, degParen) - 2, x: number(a, b)});
     } else if (b) {
       s.push(pop(s) + "skewX(" + b + degParen);
     }
@@ -4556,7 +3906,7 @@ function interpolateTransform(parse, pxComma, pxParen, degParen) {
   function scale(xa, ya, xb, yb, s, q) {
     if (xa !== xb || ya !== yb) {
       var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-      q.push({i: i - 4, x: src_number(xa, xb)}, {i: i - 2, x: src_number(ya, yb)});
+      q.push({i: i - 4, x: number(xa, xb)}, {i: i - 2, x: number(ya, yb)});
     } else if (xb !== 1 || yb !== 1) {
       s.push(pop(s) + "scale(" + xb + "," + yb + ")");
     }
@@ -4871,7 +4221,7 @@ function tweenValue(transition, name, value) {
 
 /* harmony default export */ var transition_interpolate = (function(a, b) {
   var c;
-  return (typeof b === "number" ? src_number
+  return (typeof b === "number" ? number
       : b instanceof color_color ? src_rgb
       : (c = color_color(b)) ? (b = c, src_rgb)
       : src_string)(a, b);
@@ -5720,7 +5070,7 @@ var active_root = [null];
 
 
 // CONCATENATED MODULE: ./node_modules/d3-axis/src/array.js
-var array_slice = Array.prototype.slice;
+var slice = Array.prototype.slice;
 
 // CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
 /* harmony default export */ var src_identity = (function(x) {
@@ -5853,15 +5203,15 @@ function axis_axis(orient, scale) {
   };
 
   axis.ticks = function() {
-    return tickArguments = array_slice.call(arguments), axis;
+    return tickArguments = slice.call(arguments), axis;
   };
 
   axis.tickArguments = function(_) {
-    return arguments.length ? (tickArguments = _ == null ? [] : array_slice.call(_), axis) : tickArguments.slice();
+    return arguments.length ? (tickArguments = _ == null ? [] : slice.call(_), axis) : tickArguments.slice();
   };
 
   axis.tickValues = function(_) {
-    return arguments.length ? (tickValues = _ == null ? null : array_slice.call(_), axis) : tickValues && tickValues.slice();
+    return arguments.length ? (tickValues = _ == null ? null : slice.call(_), axis) : tickValues && tickValues.slice();
   };
 
   axis.tickFormat = function(_) {
@@ -6002,8 +5352,12 @@ function axisLeft(scale) {
   SELECTED: "_selected_",
   INCLUDED: "_included_"
 });
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
+var toConsumableArray = __webpack_require__(6);
+var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(6);
+var helpers_typeof = __webpack_require__(10);
 var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
 
 // CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
@@ -6820,6 +6174,7 @@ function brush_brush(dim) {
 // CONCATENATED MODULE: ./src/internals/util.js
 
 
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6863,7 +6218,7 @@ var isValue = function (v) {
   return typeof_default()(v) === "object";
 },
     isEmpty = function (o) {
-  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && Object.keys(o).length === 0;
+  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
 },
     notEmpty = function (o) {
   return !isEmpty(o);
@@ -6976,6 +6331,37 @@ var isValue = function (v) {
     }
   }), rules;
 },
+    getUnique = function (data) {
+  return data.filter(function (v, i, self) {
+    return self.indexOf(v) === i;
+  });
+},
+    mergeArray = function (arr) {
+  return arr && arr.length ? arr.reduce(function (p, c) {
+    return p.concat(c);
+  }) : [];
+},
+    getMinMax = function (type, data) {
+  var res = data.filter(function (v) {
+    return notEmpty(v);
+  });
+  if (!res.length) res = undefined;else if (isNumber(res[0])) res = Math[type].apply(Math, toConsumableArray_default()(res));else if (res[0] instanceof Date) {
+    var sortFn = type === "min" ? function (a, b) {
+      return a - b;
+    } : function (a, b) {
+      return b - a;
+    };
+    res = res.sort(sortFn)[0];
+  }
+  return res;
+},
+    getRange = function (start, end) {
+  var res = [];
+
+  for (var i = start; i < end; i++) res.push(i);
+
+  return res;
+},
     emulateEvent = {
   mouse: function () {
     var getParams = function () {
@@ -7025,9 +6411,655 @@ var isValue = function (v) {
 };
 
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
-var toConsumableArray = __webpack_require__(7);
-var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
+// CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
+/* harmony default export */ var src_ascending = (function(a, b) {
+  return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/bisector.js
+
+
+/* harmony default export */ var bisector = (function(compare) {
+  if (compare.length === 1) compare = ascendingComparator(compare);
+  return {
+    left: function(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      while (lo < hi) {
+        var mid = lo + hi >>> 1;
+        if (compare(a[mid], x) < 0) lo = mid + 1;
+        else hi = mid;
+      }
+      return lo;
+    },
+    right: function(a, x, lo, hi) {
+      if (lo == null) lo = 0;
+      if (hi == null) hi = a.length;
+      while (lo < hi) {
+        var mid = lo + hi >>> 1;
+        if (compare(a[mid], x) > 0) hi = mid;
+        else lo = mid + 1;
+      }
+      return lo;
+    }
+  };
+});
+
+function ascendingComparator(f) {
+  return function(d, x) {
+    return src_ascending(f(d), x);
+  };
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/bisect.js
+
+
+
+var ascendingBisect = bisector(src_ascending);
+var bisectRight = ascendingBisect.right;
+var bisectLeft = ascendingBisect.left;
+/* harmony default export */ var bisect = (bisectRight);
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
+/* harmony default export */ var pairs = (function(array, f) {
+  if (f == null) f = pair;
+  var i = 0, n = array.length - 1, p = array[0], pairs = new Array(n < 0 ? 0 : n);
+  while (i < n) pairs[i] = f(p, p = array[++i]);
+  return pairs;
+});
+
+function pair(a, b) {
+  return [a, b];
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
+
+
+/* harmony default export */ var cross = (function(values0, values1, reduce) {
+  var n0 = values0.length,
+      n1 = values1.length,
+      values = new Array(n0 * n1),
+      i0,
+      i1,
+      i,
+      value0;
+
+  if (reduce == null) reduce = pair;
+
+  for (i0 = i = 0; i0 < n0; ++i0) {
+    for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) {
+      values[i] = reduce(value0, values1[i1]);
+    }
+  }
+
+  return values;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
+/* harmony default export */ var descending = (function(a, b) {
+  return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
+/* harmony default export */ var src_number = (function(x) {
+  return x === null ? NaN : +x;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/variance.js
+
+
+/* harmony default export */ var variance = (function(values, valueof) {
+  var n = values.length,
+      m = 0,
+      i = -1,
+      mean = 0,
+      value,
+      delta,
+      sum = 0;
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = src_number(values[i]))) {
+        delta = value - mean;
+        mean += delta / ++m;
+        sum += delta * (value - mean);
+      }
+    }
+  }
+
+  else {
+    while (++i < n) {
+      if (!isNaN(value = src_number(valueof(values[i], i, values)))) {
+        delta = value - mean;
+        mean += delta / ++m;
+        sum += delta * (value - mean);
+      }
+    }
+  }
+
+  if (m > 1) return sum / (m - 1);
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/deviation.js
+
+
+/* harmony default export */ var deviation = (function(array, f) {
+  var v = variance(array, f);
+  return v ? Math.sqrt(v) : v;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
+/* harmony default export */ var src_extent = (function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min,
+      max;
+
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
+    }
+  }
+
+  else {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null) {
+            if (min > value) min = value;
+            if (max < value) max = value;
+          }
+        }
+      }
+    }
+  }
+
+  return [min, max];
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/array.js
+var array_array = Array.prototype;
+
+var array_slice = array_array.slice;
+var map = array_array.map;
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/constant.js
+/* harmony default export */ var d3_array_src_constant = (function(x) {
+  return function() {
+    return x;
+  };
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
+/* harmony default export */ var d3_array_src_identity = (function(x) {
+  return x;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/range.js
+/* harmony default export */ var src_range = (function(start, stop, step) {
+  start = +start, stop = +stop, step = (n = arguments.length) < 2 ? (stop = start, start = 0, 1) : n < 3 ? 1 : +step;
+
+  var i = -1,
+      n = Math.max(0, Math.ceil((stop - start) / step)) | 0,
+      range = new Array(n);
+
+  while (++i < n) {
+    range[i] = start + i * step;
+  }
+
+  return range;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/ticks.js
+var e10 = Math.sqrt(50),
+    e5 = Math.sqrt(10),
+    e2 = Math.sqrt(2);
+
+/* harmony default export */ var src_ticks = (function(start, stop, count) {
+  var reverse,
+      i = -1,
+      n,
+      ticks,
+      step;
+
+  stop = +stop, start = +start, count = +count;
+  if (start === stop && count > 0) return [start];
+  if (reverse = stop < start) n = start, start = stop, stop = n;
+  if ((step = tickIncrement(start, stop, count)) === 0 || !isFinite(step)) return [];
+
+  if (step > 0) {
+    start = Math.ceil(start / step);
+    stop = Math.floor(stop / step);
+    ticks = new Array(n = Math.ceil(stop - start + 1));
+    while (++i < n) ticks[i] = (start + i) * step;
+  } else {
+    start = Math.floor(start * step);
+    stop = Math.ceil(stop * step);
+    ticks = new Array(n = Math.ceil(start - stop + 1));
+    while (++i < n) ticks[i] = (start - i) / step;
+  }
+
+  if (reverse) ticks.reverse();
+
+  return ticks;
+});
+
+function tickIncrement(start, stop, count) {
+  var step = (stop - start) / Math.max(0, count),
+      power = Math.floor(Math.log(step) / Math.LN10),
+      error = step / Math.pow(10, power);
+  return power >= 0
+      ? (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1) * Math.pow(10, power)
+      : -Math.pow(10, -power) / (error >= e10 ? 10 : error >= e5 ? 5 : error >= e2 ? 2 : 1);
+}
+
+function tickStep(start, stop, count) {
+  var step0 = Math.abs(stop - start) / Math.max(0, count),
+      step1 = Math.pow(10, Math.floor(Math.log(step0) / Math.LN10)),
+      error = step0 / step1;
+  if (error >= e10) step1 *= 10;
+  else if (error >= e5) step1 *= 5;
+  else if (error >= e2) step1 *= 2;
+  return stop < start ? -step1 : step1;
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/sturges.js
+/* harmony default export */ var sturges = (function(values) {
+  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/histogram.js
+
+
+
+
+
+
+
+
+
+/* harmony default export */ var src_histogram = (function() {
+  var value = d3_array_src_identity,
+      domain = src_extent,
+      threshold = sturges;
+
+  function histogram(data) {
+    var i,
+        n = data.length,
+        x,
+        values = new Array(n);
+
+    for (i = 0; i < n; ++i) {
+      values[i] = value(data[i], i, data);
+    }
+
+    var xz = domain(values),
+        x0 = xz[0],
+        x1 = xz[1],
+        tz = threshold(values, x0, x1);
+
+    // Convert number of thresholds into uniform thresholds.
+    if (!Array.isArray(tz)) {
+      tz = tickStep(x0, x1, tz);
+      tz = src_range(Math.ceil(x0 / tz) * tz, x1, tz); // exclusive
+    }
+
+    // Remove any thresholds outside the domain.
+    var m = tz.length;
+    while (tz[0] <= x0) tz.shift(), --m;
+    while (tz[m - 1] > x1) tz.pop(), --m;
+
+    var bins = new Array(m + 1),
+        bin;
+
+    // Initialize bins.
+    for (i = 0; i <= m; ++i) {
+      bin = bins[i] = [];
+      bin.x0 = i > 0 ? tz[i - 1] : x0;
+      bin.x1 = i < m ? tz[i] : x1;
+    }
+
+    // Assign data to bins by value, ignoring any outside the domain.
+    for (i = 0; i < n; ++i) {
+      x = values[i];
+      if (x0 <= x && x <= x1) {
+        bins[bisect(tz, x, 0, m)].push(data[i]);
+      }
+    }
+
+    return bins;
+  }
+
+  histogram.value = function(_) {
+    return arguments.length ? (value = typeof _ === "function" ? _ : d3_array_src_constant(_), histogram) : value;
+  };
+
+  histogram.domain = function(_) {
+    return arguments.length ? (domain = typeof _ === "function" ? _ : d3_array_src_constant([_[0], _[1]]), histogram) : domain;
+  };
+
+  histogram.thresholds = function(_) {
+    return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? d3_array_src_constant(array_slice.call(_)) : d3_array_src_constant(_), histogram) : threshold;
+  };
+
+  return histogram;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/quantile.js
+
+
+/* harmony default export */ var quantile = (function(values, p, valueof) {
+  if (valueof == null) valueof = src_number;
+  if (!(n = values.length)) return;
+  if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
+  if (p >= 1) return +valueof(values[n - 1], n - 1, values);
+  var n,
+      i = (n - 1) * p,
+      i0 = Math.floor(i),
+      value0 = +valueof(values[i0], i0, values),
+      value1 = +valueof(values[i0 + 1], i0 + 1, values);
+  return value0 + (value1 - value0) * (i - i0);
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/freedmanDiaconis.js
+
+
+
+
+
+/* harmony default export */ var freedmanDiaconis = (function(values, min, max) {
+  values = map.call(values, src_number).sort(src_ascending);
+  return Math.ceil((max - min) / (2 * (quantile(values, 0.75) - quantile(values, 0.25)) * Math.pow(values.length, -1 / 3)));
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/scott.js
+
+
+/* harmony default export */ var scott = (function(values, min, max) {
+  return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(values.length, -1 / 3)));
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
+/* harmony default export */ var src_max = (function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      max;
+
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null && value > max) {
+            max = value;
+          }
+        }
+      }
+    }
+  }
+
+  else {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        max = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && value > max) {
+            max = value;
+          }
+        }
+      }
+    }
+  }
+
+  return max;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/mean.js
+
+
+/* harmony default export */ var src_mean = (function(values, valueof) {
+  var n = values.length,
+      m = n,
+      i = -1,
+      value,
+      sum = 0;
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = src_number(values[i]))) sum += value;
+      else --m;
+    }
+  }
+
+  else {
+    while (++i < n) {
+      if (!isNaN(value = src_number(valueof(values[i], i, values)))) sum += value;
+      else --m;
+    }
+  }
+
+  if (m) return sum / m;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/median.js
+
+
+
+
+/* harmony default export */ var median = (function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      numbers = [];
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (!isNaN(value = src_number(values[i]))) {
+        numbers.push(value);
+      }
+    }
+  }
+
+  else {
+    while (++i < n) {
+      if (!isNaN(value = src_number(valueof(values[i], i, values)))) {
+        numbers.push(value);
+      }
+    }
+  }
+
+  return quantile(numbers.sort(src_ascending), 0.5);
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/merge.js
+/* harmony default export */ var src_merge = (function(arrays) {
+  var n = arrays.length,
+      m,
+      i = -1,
+      j = 0,
+      merged,
+      array;
+
+  while (++i < n) j += arrays[i].length;
+  merged = new Array(j);
+
+  while (--n >= 0) {
+    array = arrays[n];
+    m = array.length;
+    while (--m >= 0) {
+      merged[--j] = array[m];
+    }
+  }
+
+  return merged;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
+/* harmony default export */ var src_min = (function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      min;
+
+  if (valueof == null) {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = values[i]) != null && value >= value) {
+        min = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = values[i]) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
+  }
+
+  else {
+    while (++i < n) { // Find the first comparable value.
+      if ((value = valueof(values[i], i, values)) != null && value >= value) {
+        min = value;
+        while (++i < n) { // Compare the remaining values.
+          if ((value = valueof(values[i], i, values)) != null && min > value) {
+            min = value;
+          }
+        }
+      }
+    }
+  }
+
+  return min;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/permute.js
+/* harmony default export */ var permute = (function(array, indexes) {
+  var i = indexes.length, permutes = new Array(i);
+  while (i--) permutes[i] = array[indexes[i]];
+  return permutes;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/scan.js
+
+
+/* harmony default export */ var scan = (function(values, compare) {
+  if (!(n = values.length)) return;
+  var n,
+      i = 0,
+      j = 0,
+      xi,
+      xj = values[j];
+
+  if (compare == null) compare = src_ascending;
+
+  while (++i < n) {
+    if (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) {
+      xj = xi, j = i;
+    }
+  }
+
+  if (compare(xj, xj) === 0) return j;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/shuffle.js
+/* harmony default export */ var shuffle = (function(array, i0, i1) {
+  var m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0),
+      t,
+      i;
+
+  while (m) {
+    i = Math.random() * m-- | 0;
+    t = array[m + i0];
+    array[m + i0] = array[i + i0];
+    array[i + i0] = t;
+  }
+
+  return array;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/sum.js
+/* harmony default export */ var src_sum = (function(values, valueof) {
+  var n = values.length,
+      i = -1,
+      value,
+      sum = 0;
+
+  if (valueof == null) {
+    while (++i < n) {
+      if (value = +values[i]) sum += value; // Note: zero and null are equivalent.
+    }
+  }
+
+  else {
+    while (++i < n) {
+      if (value = +valueof(values[i], i, values)) sum += value;
+    }
+  }
+
+  return sum;
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/transpose.js
+
+
+/* harmony default export */ var src_transpose = (function(matrix) {
+  if (!(n = matrix.length)) return [];
+  for (var i = -1, m = src_min(matrix, transpose_length), transpose = new Array(m); ++i < m;) {
+    for (var j = -1, n, row = transpose[i] = new Array(n); ++j < n;) {
+      row[j] = matrix[j][i];
+    }
+  }
+  return transpose;
+});
+
+function transpose_length(d) {
+  return d.length;
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/zip.js
+
+
+/* harmony default export */ var zip = (function() {
+  return src_transpose(arguments);
+});
+
+// CONCATENATED MODULE: ./node_modules/d3-array/src/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // CONCATENATED MODULE: ./node_modules/d3-collection/src/map.js
 var map_prefix = "$";
@@ -7984,7 +8016,7 @@ function linearish(scale) {
 }
 
 function src_linear_linear() {
-  var scale = continuous(deinterpolateLinear, src_number);
+  var scale = continuous(deinterpolateLinear, number);
 
   scale.copy = function() {
     return copy(scale, src_linear_linear());
@@ -8370,7 +8402,7 @@ function time_number(t) {
 }
 
 function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
-  var scale = continuous(deinterpolateLinear, src_number),
+  var scale = continuous(deinterpolateLinear, number),
       invert = scale.invert,
       domain = scale.domain;
 
@@ -9478,7 +9510,6 @@ function () {
 
 
 
-
 /**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
@@ -9546,7 +9577,7 @@ function () {
         classname: "bb"
       };
 
-      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain(src_extent($$.getXDomain($$.data.targets))), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain($$.getXDomain($$.data.targets).sort()), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$);
@@ -13387,8 +13418,6 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
- // selection
-
 
 
 util_extend(ChartInternal_ChartInternal.prototype, {
@@ -13398,7 +13427,6 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         isMin = type === "min",
         dataGroups = config.data_groups,
         ids = $$.mapToIds(targets),
-        f = isMin ? src_min : src_max,
         ys = $$.getValuesAsIdKeyed(targets);
     return dataGroups.length > 0 && function () {
       for (var idsInGroup, _ret, hasValue = $$["has".concat(isMin ? "Negative" : "Positive", "ValueInTargets")](targets), _loop = function (j, _idsInGroup) {
@@ -13423,8 +13451,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
         idsInGroup = _idsInGroup;
       }, j = 0; idsInGroup = dataGroups[j]; j++) _ret = _loop(j, idsInGroup), _ret === "continue";
-    }(), f(Object.keys(ys).map(function (key) {
-      return f(ys[key]);
+    }(), getMinMax(type, Object.keys(ys).map(function (key) {
+      return getMinMax(type, ys[key]);
     }));
   },
   getYDomainMin: function getYDomainMin(targets) {
@@ -13480,13 +13508,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
     var $$ = this,
-        value = $$.config["axis_x_".concat(type)],
-        f = type === "min" ? src_min : src_max;
-    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : f(targets, function (t) {
-      return f(t.values, function (v) {
+        value = $$.config["axis_x_".concat(type)];
+    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : getMinMax(type, targets.map(function (t) {
+      return getMinMax(type, t.values.map(function (v) {
         return v.x;
-      });
-    });
+      }));
+    }));
   },
   getXDomainMin: function getXDomainMin(targets) {
     return this.getXDomainMinMax(targets, "min");
@@ -13524,7 +13551,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         zoomEnabled = config.zoom_enabled;
 
-    if (withUpdateOrgXDomain && ($$.x.domain(domain || src_extent($$.getXDomain(targets))), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
+    if (withUpdateOrgXDomain && ($$.x.domain(domain || $$.getXDomain(targets).sort()), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
       var domainValue = domain || !$$.brush || brushEmpty($$) ? $$.orgXDomain : getBrushSelection($$).map($$.subX.invert);
       $$.x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
     } // Trim domain when too big by zoom mousemove event
@@ -13546,8 +13573,6 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
-
 
 
 
@@ -13618,10 +13643,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   hasMultipleX: function hasMultipleX(xs) {
-    // https://github.com/d3/d3-collection
-    return src_set(Object.keys(xs).map(function (id) {
+    return Object.keys(xs).map(function (id) {
       return xs[id];
-    })).size() > 1;
+    }).length > 1;
   },
   isMultipleX: function isMultipleX() {
     return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
@@ -13714,8 +13738,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         getBaseValue = this.getBaseValue.bind(this);
     return (data || this.data.targets.map(function (t) {
       return t.values;
-    })).forEach(function (v) {
-      min = src_min([min, src_min(v, getBaseValue)]), max = src_max([max, src_max(v, getBaseValue)]);
+    })).forEach(function (v, i) {
+      var value = v.map(getBaseValue).filter(isNumber);
+      min = Math.min.apply(Math, [i ? min : Infinity].concat(toConsumableArray_default()(value))), max = Math.max.apply(Math, [i ? max : -Infinity].concat(toConsumableArray_default()(value)));
     }), {
       min: min,
       max: max
@@ -13779,14 +13804,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         totalDataSum = $$.getCache(cacheKey);
 
     if (!totalDataSum) {
-      var total = 0;
-      $$.data.targets.map(function (t) {
+      var total = mergeArray($$.data.targets.map(function (t) {
         return t.values;
-      }).forEach(function (v) {
-        total += src_sum(v, function (t) {
-          return t.value;
-        });
-      }), $$.addCache(cacheKey, totalDataSum = total);
+      })).map(function (v) {
+        return v.value;
+      }).reduce(function (p, c) {
+        return p + c;
+      });
+      $$.addCache(cacheKey, totalDataSum = total);
     }
 
     return totalDataSum;
@@ -13813,9 +13838,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getMaxDataCount: function getMaxDataCount() {
-    return src_max(this.data.targets, function (t) {
+    return Math.max.apply(Math, toConsumableArray_default()(this.data.targets.map(function (t) {
       return t.values.length;
-    });
+    })));
   },
   getMaxDataCountTarget: function getMaxDataCountTarget(targets) {
     var maxTarget,
@@ -13855,16 +13880,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   mapTargetsToUniqueXs: function mapTargetsToUniqueXs(targets) {
     var $$ = this,
-        xs = src_set(src_merge(targets.map(function (t) {
+        xs = [];
+    return targets && targets.length && (xs = getUnique(mergeArray(targets.map(function (t) {
       return t.values.map(function (v) {
         return +v.x;
       });
-    }))).values();
-    return xs = $$.isTimeSeries() ? xs.map(function (x) {
+    }))), xs = $$.isTimeSeries() ? xs.map(function (x) {
       return new Date(+x);
     }) : xs.map(function (x) {
       return +x;
-    }), xs.sort(function (a, b) {
+    })), xs.sort(function (a, b) {
       return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
     });
   },
@@ -13957,7 +13982,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }) : isFunction(config.data_order) && targets.sort(config.data_order), targets;
   },
   filterByX: function filterByX(targets, x) {
-    return src_merge(targets.map(function (t) {
+    return mergeArray(targets.map(function (t) {
       return t.values;
     })).filter(function (v) {
       return v.x - x === 0;
@@ -14141,7 +14166,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           // if has padAngle set, calculate rate based on value
           if ($$.pie.padAngle()()) {
             var total = $$.getTotalDataSum();
-            $$.hiddenTargetIds.length && (total -= src_sum(dataValues($$.hiddenTargetIds))), ratio = d.value / total;
+            $$.hiddenTargetIds.length && (total -= dataValues($$.hiddenTargetIds).reduce(function (p, c) {
+              return p + c;
+            })), ratio = d.value / total;
           } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
       } else if (type === "index") {
         var _total = this.getTotalPerIndex();
@@ -14326,7 +14353,6 @@ var tsvFormatRows = tsv_tsv.formatRows;
 
 
 
-
 util_extend(ChartInternal_ChartInternal.prototype, {
   convertUrlToData: function convertUrlToData(url) {
     var _this = this,
@@ -14471,8 +14497,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         _this3 = this,
         $$ = this,
         config = $$.config,
-        ids = src_keys(data[0]).filter($$.isNotX, $$),
-        xs = src_keys(data[0]).filter($$.isX, $$);
+        dataKeys = Object.keys(data[0] || {}),
+        ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [],
+        xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
 
     ids.forEach(function (id) {
       var xKey = _this3.getXKey(id);
@@ -17873,7 +17900,6 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  */
 
 
-
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializer
@@ -17895,7 +17921,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         cacheKey = "$baseLength",
         baseLength = $$.getCache(cacheKey);
-    return baseLength || $$.addCache(cacheKey, baseLength = src_min([$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
+    return baseLength || $$.addCache(cacheKey, baseLength = getMinMax("min", [$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
   },
 
   /**
@@ -17908,7 +17934,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         maxR = $$.config.bubble_maxR;
     isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
-    var max = src_max($$.getMinMaxData().max.map(function (d) {
+    var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
       return isObject(d.value) ? d.value.mid : d.value;
     })),
         maxArea = maxR * maxR * Math.PI,
@@ -18458,7 +18484,6 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 
-
 /**
  * Get the position value
  * @param {Boolean} isClockwise If the direction is clockwise
@@ -18496,7 +18521,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   updateTargetsForRadar: function updateTargetsForRadar(targets) {
     var $$ = this,
         config = $$.config;
-    isEmpty(config.axis_x_categories) && (config.axis_x_categories = src_range(0, src_max(targets).values.length)), $$.generateRadarPoints();
+    isEmpty(config.axis_x_categories) && (config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) {
+      return v.values.length;
+    })))), $$.generateRadarPoints();
   },
   getRadarPosition: function getRadarPosition(type, index, range, ratio) {
     var $$ = this,
@@ -18561,7 +18588,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         edge = config.axis_x_categories.length,
         showText = config.radar_level_text_show,
         radarLevels = $$.radars.levels,
-        levelData = src_range(0, depth),
+        levelData = getRange(0, depth),
         radius = config.radar_size_ratio * Math.min(width, height),
         levelRatio = levelData.map(function (l) {
       return radius * ((l + 1) / depth);
@@ -18569,7 +18596,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         levelTextFormat = config.radar_level_text_format,
         points = levelData.map(function (v) {
       var range = levelRatio[v],
-          pos = src_range(0, edge).map(function (i) {
+          pos = getRange(0, edge).map(function (i) {
         return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
       });
       return pos.join(" ");
@@ -20987,7 +21014,6 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 
 
-
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize zoom.
@@ -21094,9 +21120,11 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   getZoomDomain: function getZoomDomain() {
     var $$ = this,
         config = $$.config,
-        min = src_min([$$.orgXDomain[0], config.zoom_x_min]),
-        max = src_max([$$.orgXDomain[1], config.zoom_x_max]);
-    return [min, max];
+        _$$$orgXDomain = slicedToArray_default()($$.orgXDomain, 2),
+        min = _$$$orgXDomain[0],
+        max = _$$$orgXDomain[1];
+
+    return isDefined(config.zoom_x_min) && (min = getMinMax("min", [min, config.zoom_x_min])), isDefined(config.zoom_x_max) && (max = getMinMax("max", [max, config.zoom_x_max])), [min, max];
   },
 
   /**
@@ -21718,7 +21746,6 @@ util_extend(Chart_Chart.prototype, {
 
 
 
-
 /**
  * Zoom by giving x domain.
  * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
@@ -21804,7 +21831,7 @@ util_extend(api_zoom_zoom, {
   max: function max(_max) {
     var $$ = this.internal,
         config = $$.config;
-    return (_max === 0 || _max) && (config.zoom_x_max = src_max([$$.orgXDomain[1], _max])), config.zoom_x_max;
+    return (_max === 0 || _max) && (config.zoom_x_max = getMinMax("max", [$$.orgXDomain[1], _max])), config.zoom_x_max;
   },
 
   /**
@@ -21821,7 +21848,7 @@ util_extend(api_zoom_zoom, {
   min: function min(_min) {
     var $$ = this.internal,
         config = $$.config;
-    return (_min === 0 || _min) && (config.zoom_x_min = src_min([$$.orgXDomain[0], _min])), config.zoom_x_min;
+    return (_min === 0 || _min) && (config.zoom_x_min = getMinMax("min", [$$.orgXDomain[0], _min])), config.zoom_x_min;
   },
 
   /**
@@ -22957,7 +22984,7 @@ var setMinMax = function ($$, type, value) {
     withUpdateXDomain: !0
   })), undefined;
 },
-    getMinMax = function ($$, type) {
+    api_axis_getMinMax = function ($$, type) {
   var config = $$.config;
   return {
     x: config["axis_x_".concat(type)],
@@ -23004,7 +23031,7 @@ var setMinMax = function ($$, type, value) {
    */
   min: function min(_min) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "min", _min) : getMinMax($$, "min");
+    return arguments.length ? setMinMax($$, "min", _min) : api_axis_getMinMax($$, "min");
   },
 
   /**
@@ -23025,7 +23052,7 @@ var setMinMax = function ($$, type, value) {
    */
   max: function max(_max) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "max", _max) : getMinMax($$, "max");
+    return arguments.length ? setMinMax($$, "max", _max) : api_axis_getMinMax($$, "max");
   },
 
   /**
@@ -23504,7 +23531,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20181217172305
+ * @version 1.7.1-nightly-20181221143747
  */
 
 var bb = {
@@ -23515,7 +23542,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20181217172305",
+  version: "1.7.1-nightly-20181221143747",
 
   /**
    * Generate chart
