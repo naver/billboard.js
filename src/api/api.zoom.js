@@ -2,14 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	min as d3Min,
-	max as d3Max
-} from "d3-array";
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
 import Chart from "../internals/Chart";
 import CLASS from "../config/classes";
-import {callFn, isDefined, isObject, isString, extend} from "../internals/util";
+import {callFn, extend, getMinMax, isDefined, isObject, isString} from "../internals/util";
 
 /**
  * Zoom by giving x domain.
@@ -126,7 +122,7 @@ extend(zoom, {
 		const config = $$.config;
 
 		if (max === 0 || max) {
-			config.zoom_x_max = d3Max([$$.orgXDomain[1], max]);
+			config.zoom_x_max = getMinMax("max", [$$.orgXDomain[1], max]);
 		}
 
 		return config.zoom_x_max;
@@ -148,7 +144,7 @@ extend(zoom, {
 		const config = $$.config;
 
 		if (min === 0 || min) {
-			config.zoom_x_min = d3Min([$$.orgXDomain[0], min]);
+			config.zoom_x_min = getMinMax("min", [$$.orgXDomain[0], min]);
 		}
 
 		return config.zoom_x_min;
