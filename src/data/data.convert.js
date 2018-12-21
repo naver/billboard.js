@@ -8,7 +8,6 @@ import {
 	csvParseRows as d3CsvParseRows,
 	tsvParseRows as d3TsvParseRows,
 } from "d3-dsv";
-import {keys as d3Keys} from "d3-collection";
 import ChartInternal from "../internals/ChartInternal";
 import {isUndefined, isDefined, isObject, isValue, notEmpty, extend, isArray, capitalize} from "../internals/util";
 
@@ -190,8 +189,9 @@ extend(ChartInternal.prototype, {
 	convertDataToTargets(data, appendXs) {
 		const $$ = this;
 		const config = $$.config;
-		const ids = d3Keys(data[0]).filter($$.isNotX, $$);
-		const xs = d3Keys(data[0]).filter($$.isX, $$);
+		const dataKeys = Object.keys(data[0] || {});
+		const ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
+		const xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
 		let xsData;
 
 		// save x for update data by load when custom x and bb.x API

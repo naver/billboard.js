@@ -6,13 +6,9 @@ import {
 	select as d3Select,
 	event as d3Event
 } from "d3-selection";
-import {
-	max as d3Max,
-	range as d3Range
-} from "d3-array";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isDefined, isEmpty, isUndefined, toArray} from "../internals/util";
+import {extend, getMinMax, getRange, isDefined, isEmpty, isUndefined, toArray} from "../internals/util";
 
 /**
  * Get the position value
@@ -76,7 +72,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 
 		if (isEmpty(config.axis_x_categories)) {
-			config.axis_x_categories = d3Range(0, d3Max(targets).values.length);
+			config.axis_x_categories = getRange(0, getMinMax("max", targets.map(v => v.values.length)));
 		}
 
 		$$.generateRadarPoints();
@@ -168,7 +164,7 @@ extend(ChartInternal.prototype, {
 		const showText = config.radar_level_text_show;
 
 		const radarLevels = $$.radars.levels;
-		const levelData = d3Range(0, depth);
+		const levelData = getRange(0, depth);
 
 		const radius = config.radar_size_ratio * Math.min(width, height);
 		const levelRatio = levelData.map(l => radius * ((l + 1) / depth));
@@ -177,7 +173,7 @@ extend(ChartInternal.prototype, {
 		// Generate points
 		const points = levelData.map(v => {
 			const range = levelRatio[v];
-			const pos = d3Range(0, edge).map(i => (
+			const pos = getRange(0, edge).map(i => (
 				$$.getRadarPosition(["x", "y"], i, range, 1)).join(",")
 			);
 

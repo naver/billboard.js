@@ -3,10 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 import {
-	min as d3Min,
-	max as d3Max
-} from "d3-array";
-import {
 	mouse as d3Mouse,
 	event as d3Event,
 	select as d3Select
@@ -15,7 +11,7 @@ import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, callFn, diffDomain} from "../internals/util";
+import {extend, callFn, diffDomain, getMinMax, isDefined} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -196,8 +192,15 @@ extend(ChartInternal.prototype, {
 	getZoomDomain() {
 		const $$ = this;
 		const config = $$.config;
-		const min = d3Min([$$.orgXDomain[0], config.zoom_x_min]);
-		const max = d3Max([$$.orgXDomain[1], config.zoom_x_max]);
+		let [min, max] = $$.orgXDomain;
+
+		if (isDefined(config.zoom_x_min)) {
+			min = getMinMax("min", [min, config.zoom_x_min]);
+		}
+
+		if (isDefined(config.zoom_x_max)) {
+			max = getMinMax("max", [max, config.zoom_x_max]);
+		}
 
 		return [min, max];
 	},

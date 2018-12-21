@@ -2,12 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	min as d3Min,
-	max as d3Max
-} from "d3-array";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isFunction, isNumber, isObject} from "../internals/util";
+import {extend, getMinMax, isFunction, isNumber, isObject} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -37,7 +33,7 @@ extend(ChartInternal.prototype, {
 		let baseLength = $$.getCache(cacheKey);
 
 		if (!baseLength) {
-			$$.addCache(cacheKey, baseLength = d3Min([
+			$$.addCache(cacheKey, baseLength = getMinMax("min", [
 				$$.axes.x.select("path").node()
 					.getTotalLength(),
 				$$.axes.y.select("path").node()
@@ -64,7 +60,7 @@ extend(ChartInternal.prototype, {
 			maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
 		}
 
-		const max = d3Max($$.getMinMaxData().max.map(d => (isObject(d.value) ? d.value.mid : d.value)));
+		const max = getMinMax("max", $$.getMinMaxData().max.map(d => (isObject(d.value) ? d.value.mid : d.value)));
 		const maxArea = maxR * maxR * Math.PI;
 		const area = d.value * (maxArea / max);
 
