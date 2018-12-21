@@ -2,17 +2,11 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	min as d3Min,
-	max as d3Max,
-	merge as d3Merge,
-	sum as d3Sum
-} from "d3-array";
-import {set as d3Set} from "d3-collection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
 import {
 	extend,
+	getUnique,
 	hasValue,
 	isArray,
 	isBoolean,
@@ -24,7 +18,8 @@ import {
 	isString,
 	isUndefined,
 	isValue,
-	notEmpty
+	notEmpty,
+	mergeArray
 } from "../internals/util";
 
 extend(ChartInternal.prototype, {
@@ -119,8 +114,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	hasMultipleX(xs) {
-		// https://github.com/d3/d3-collection
-		return d3Set(Object.keys(xs).map(id => xs[id])).size() > 1;
+		return Object.keys(xs).map(id => xs[id]).length > 1;
 	},
 
 	isMultipleX() {
@@ -251,9 +245,11 @@ extend(ChartInternal.prototype, {
 		let max;
 
 		(data || this.data.targets.map(t => t.values))
-			.forEach(v => {
-				min = d3Min([min, d3Min(v, getBaseValue)]);
-				max = d3Max([max, d3Max(v, getBaseValue)]);
+			.forEach((v, i) => {
+				const value = v.map(getBaseValue).filter(isNumber);
+
+				min = Math.min(i ? min : Infinity, ...value);
+				max = Math.max(i ? max : -Infinity, ...value);
 			});
 
 		return {min, max};
@@ -334,12 +330,9 @@ extend(ChartInternal.prototype, {
 		let totalDataSum = $$.getCache(cacheKey);
 
 		if (!totalDataSum) {
-			let total = 0;
-
-			$$.data.targets.map(t => t.values)
-				.forEach(v => {
-					total += d3Sum(v, t => t.value);
-				});
+			const total = mergeArray($$.data.targets.map(t => t.values))
+				.map(v => v.value)
+				.reduce((p, c) => p + c);
 
 			$$.addCache(cacheKey, totalDataSum = total);
 		}
@@ -364,7 +357,7 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 */
 	getMaxDataCount() {
-		return d3Max(this.data.targets, t => t.values.length);
+		return Math.max(...this.data.targets.map(t => t.values.length));
 	},
 
 	getMaxDataCountTarget(targets) {
@@ -424,11 +417,15 @@ extend(ChartInternal.prototype, {
 
 	mapTargetsToUniqueXs(targets) {
 		const $$ = this;
-		let xs = d3Set(d3Merge(
-			targets.map(t => t.values.map(v => +v.x))
-		)).values();
+		let xs = [];
 
-		xs = $$.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
+		if (targets && targets.length) {
+			xs = getUnique(
+				mergeArray(targets.map(t => t.values.map(v => +v.x)))
+			);
+
+			xs = $$.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
+		}
 
 		return xs.sort((a, b) => (a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN));
 	},
@@ -550,7 +547,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	filterByX(targets, x) {
-		return d3Merge(targets.map(t => t.values)).filter(v => v.x - x === 0);
+		return mergeArray(targets.map(t => t.values)).filter(v => v.x - x === 0);
 	},
 
 	filterRemoveNull(data) {
@@ -795,7 +792,7 @@ extend(ChartInternal.prototype, {
 					let total = $$.getTotalDataSum();
 
 					if ($$.hiddenTargetIds.length) {
-						total -= d3Sum(dataValues($$.hiddenTargetIds));
+						total -= dataValues($$.hiddenTargetIds).reduce((p, c) => p + c);
 					}
 
 					ratio = d.value / total;

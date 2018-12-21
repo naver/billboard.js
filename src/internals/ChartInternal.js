@@ -13,7 +13,6 @@ import {
 	select as d3Select,
 	selectAll as d3SelectAll
 } from "d3-selection";
-import {extent as d3Extent} from "d3-array";
 import {transition as d3Transition} from "d3-transition";
 
 import Axis from "../axis/Axis";
@@ -230,7 +229,7 @@ export default class ChartInternal {
 		$$.updateScales();
 
 		// Set domains for each scale
-		$$.x.domain(d3Extent($$.getXDomain($$.data.targets)));
+		$$.x.domain($$.getXDomain($$.data.targets).sort());
 		$$.y.domain($$.getYDomain($$.data.targets, "y"));
 		$$.y2.domain($$.getYDomain($$.data.targets, "y2"));
 		$$.subX.domain($$.x.domain());

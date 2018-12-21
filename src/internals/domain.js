@@ -2,13 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	min as d3Min,
-	max as d3Max,
-	extent as d3Extent
-} from "d3-array"; // selection
 import ChartInternal from "./ChartInternal";
-import {extend, brushEmpty, getBrushSelection, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
+import {extend, brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
 
 extend(ChartInternal.prototype, {
 	getYDomainMinMax(targets, type) {
@@ -18,8 +13,6 @@ extend(ChartInternal.prototype, {
 
 		const dataGroups = config.data_groups;
 		const ids = $$.mapToIds(targets);
-
-		const f = isMin ? d3Min : d3Max;
 		const ys = $$.getValuesAsIdKeyed(targets);
 
 		if (dataGroups.length > 0) {
@@ -62,7 +55,7 @@ extend(ChartInternal.prototype, {
 			}
 		}
 
-		return f(Object.keys(ys).map(key => f(ys[key])));
+		return getMinMax(type, Object.keys(ys).map(key => getMinMax(type, ys[key])));
 	},
 
 	getYDomainMin(targets) {
@@ -179,11 +172,10 @@ extend(ChartInternal.prototype, {
 	getXDomainMinMax(targets, type) {
 		const $$ = this;
 		const value = $$.config[`axis_x_${type}`];
-		const f = type === "min" ? d3Min : d3Max;
 
 		return isDefined(value) ?
 			($$.isTimeSeries() ? $$.parseDate(value) : value) :
-			f(targets, t => f(t.values, v => v.x));
+			getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
 	},
 
 	getXDomainMin(targets) {
@@ -262,7 +254,7 @@ extend(ChartInternal.prototype, {
 		const zoomEnabled = config.zoom_enabled;
 
 		if (withUpdateOrgXDomain) {
-			$$.x.domain(domain || d3Extent($$.getXDomain(targets)));
+			$$.x.domain(domain || $$.getXDomain(targets).sort());
 			$$.orgXDomain = $$.x.domain();
 
 			zoomEnabled && $$.zoom.updateScaleExtent();

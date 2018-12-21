@@ -20,8 +20,9 @@ const diffDomain = d => d[1] - d[0];
 const isObjectType = v => typeof v === "object";
 const isEmpty = o => (
 	isUndefined(o) || o === null ||
-		(isString(o) && o.length === 0) ||
-		(isObjectType(o) && Object.keys(o).length === 0)
+	(isString(o) && o.length === 0) ||
+	(isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
+	(isNumber(o) && isNaN(o))
 );
 const notEmpty = o => !isEmpty(o);
 
@@ -184,6 +185,64 @@ const getCssRules = styleSheets => {
 	return rules;
 };
 
+/**
+ * Get unique value from array
+ * @param {Array} data
+ * @return {Array} Unique array value
+ * @private
+ */
+const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
+
+/**
+ * Merge array
+ * @param {Array} arr
+ * @return {Array}
+ * @private
+ */
+const mergeArray = arr => (arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : []);
+
+/**
+ * Get min/max value
+ * @param {String} type 'min' or 'max'
+ * @param {Array} data Array data value
+ * @retun {Number|Date|undefined}
+ * @private
+ */
+const getMinMax = (type, data) => {
+	let res = data.filter(v => notEmpty(v));
+
+	if (res.length) {
+		if (isNumber(res[0])) {
+			res = Math[type](...res);
+		} else if (res[0] instanceof Date) {
+			const sortFn = type === "min" ? (a, b) => a - b : (a, b) => b - a;
+
+			res = res.sort(sortFn)[0];
+		}
+	} else {
+		res = undefined;
+	}
+
+	return res;
+};
+
+/**
+ * Get range
+ * @param {Number} start Start number
+ * @param {Number} end End number
+ * @return {Array}
+ * @private
+ */
+const getRange = (start, end) => {
+	const res = [];
+
+	for (let i = start; i < end; i++) {
+		res.push(i);
+	}
+
+	return res;
+};
+
 // emulate event
 const emulateEvent = {
 	mouse: (() => {
@@ -251,10 +310,13 @@ export {
 	extend,
 	getBrushSelection,
 	getCssRules,
+	getMinMax,
 	getOption,
 	getPathBox,
 	getRandom,
+	getRange,
 	getRectSegList,
+	getUnique,
 	hasValue,
 	isArray,
 	isBoolean,
@@ -267,6 +329,7 @@ export {
 	isString,
 	isUndefined,
 	isValue,
+	mergeArray,
 	notEmpty,
 	sanitise,
 	toArray
