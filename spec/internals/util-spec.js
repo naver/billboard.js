@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {toArray, getCssRules, isArray} from "../../src/internals/util";
+import {toArray, getCssRules, isArray, sortValue} from "../../src/internals/util";
 
 describe("UTIL", function() {
 	describe("toArray", () => {
@@ -25,6 +25,39 @@ describe("UTIL", function() {
 			const rules1 = getCssRules(toArray(document.styleSheets));
 
 			expect(isArray(rules1));
+		});
+	});
+
+
+	describe("sortValue", () => {
+		const value = [1362063600000, 1462063600000, 1562063600000];
+
+		it("sort number", () => {
+			// asc
+			expect(sortValue(value)).to.be.deep.equal(value);
+
+			// desc
+			expect(sortValue(value, false)).to.be.deep.equal(value.concat().reverse());
+		});
+
+		it("sort date", () => {
+			const data = value.map(v => new Date(v));
+
+			// asc
+			expect(sortValue(data)).to.be.deep.equal(data);
+
+			// desc
+			expect(sortValue(data, false)).to.be.deep.equal(data.reverse());
+		});
+
+		it("sort string", () => {
+			const data = ["a", "j", "z"];
+
+			// asc
+			expect(sortValue(data)).to.be.deep.equal(data);
+
+			// desc
+			expect(sortValue(data, false)).to.be.deep.equal(data.reverse());
 		});
 	});
 });
