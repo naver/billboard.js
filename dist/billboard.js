@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20181224173656
+ * @version 1.7.1-nightly-20181224175656
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-brush"), require("d3-zoom"), require("d3-ease"));
+		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-scale", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-brush", "d3-zoom", "d3-ease"], factory);
+		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-brush", "d3-scale", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-brush"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__14__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__, __WEBPACK_EXTERNAL_MODULE__19__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__, __WEBPACK_EXTERNAL_MODULE__19__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -100,7 +100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 24);
+/******/ 	return __webpack_require__(__webpack_require__.s = 25);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -285,7 +285,23 @@ module.exports = _nonIterableSpread;
 /* 14 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
+function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+    module.exports = _typeof = function _typeof(obj) {
+      return _typeof2(obj);
+    };
+  } else {
+    module.exports = _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+    };
+  }
+
+  return _typeof(obj);
+}
+
+module.exports = _typeof;
 
 /***/ }),
 /* 15 */
@@ -337,12 +353,18 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__22__;
 
 /***/ }),
 /* 23 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__23__;
+
+/***/ }),
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 24 */
+/* 25 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -471,11 +493,260 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
 var toConsumableArray = __webpack_require__(10);
 var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
 
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/typeof.js
+var helpers_typeof = __webpack_require__(14);
+var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
+
+// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(15);
+
+// CONCATENATED MODULE: ./src/internals/util.js
+
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+
+
+
+var isValue = function (v) {
+  return v || v === 0;
+},
+    isFunction = function (v) {
+  return typeof v === "function";
+},
+    isString = function (v) {
+  return typeof v === "string";
+},
+    isNumber = function (v) {
+  return typeof v === "number";
+},
+    isUndefined = function (v) {
+  return typeof v === "undefined";
+},
+    isDefined = function (v) {
+  return typeof v !== "undefined";
+},
+    isBoolean = function (v) {
+  return typeof v === "boolean";
+},
+    ceil10 = function (v) {
+  return Math.ceil(v / 10) * 10;
+},
+    asHalfPixel = function (n) {
+  return Math.ceil(n) + .5;
+},
+    diffDomain = function (d) {
+  return d[1] - d[0];
+},
+    isObjectType = function (v) {
+  return typeof_default()(v) === "object";
+},
+    isEmpty = function (o) {
+  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+},
+    notEmpty = function (o) {
+  return !isEmpty(o);
+},
+    isArray = function (arr) {
+  return arr && arr.constructor === Array;
+},
+    isObject = function (obj) {
+  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+},
+    getOption = function (options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+},
+    util_hasValue = function (dict, value) {
+  var found = !1;
+  return Object.keys(dict).forEach(function (key) {
+    return dict[key] === value && (found = !0);
+  }), found;
+},
+    callFn = function (fn) {
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+
+  return isFn && fn.call.apply(fn, args), isFn;
+},
+    sanitise = function (str) {
+  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+},
+    getRectSegList = function (path) {
+  /*
+   * seg1 ---------- seg2
+   *   |               |
+   *   |               |
+   *   |               |
+   * seg0 ---------- seg3
+   * */
+  var _path$getBBox = path.getBBox(),
+      x = _path$getBBox.x,
+      y = _path$getBBox.y,
+      width = _path$getBBox.width,
+      height = _path$getBBox.height;
+
+  return [{
+    x: x,
+    y: y + height
+  }, // seg0
+  {
+    x: x,
+    y: y
+  }, // seg1
+  {
+    x: x + width,
+    y: y
+  }, // seg2
+  {
+    x: x + width,
+    y: y + height // seg3
+
+  }];
+},
+    getPathBox = function (path) {
+  var _path$getBoundingClie = path.getBoundingClientRect(),
+      width = _path$getBoundingClie.width,
+      height = _path$getBoundingClie.height,
+      items = getRectSegList(path),
+      x = items[0].x,
+      y = Math.min(items[0].y, items[1].y);
+
+  return {
+    x: x,
+    y: y,
+    width: width,
+    height: height
+  };
+},
+    getBrushSelection = function (ctx) {
+  var selection = null,
+      event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
+      main = ctx.context || ctx.main;
+  return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select(".".concat(config_classes.brush)).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
+},
+    getRandom = function () {
+  var asStr = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0];
+  return Math.random() + (asStr ? "" : 0);
+},
+    brushEmpty = function (ctx) {
+  var selection = getBrushSelection(ctx);
+  return !selection || selection[0] === selection[1];
+},
+    extend = function () {
+  var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      source = arguments.length > 1 ? arguments[1] : undefined;
+
+  for (var p in source) target[p] = source[p];
+
+  return target;
+},
+    capitalize = function (str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+},
+    toArray = function (v) {
+  return [].slice.call(v);
+},
+    getCssRules = function (styleSheets) {
+  var rules = [];
+  return styleSheets.forEach(function (sheet) {
+    try {
+      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
+    } catch (e) {
+      console.error("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
+    }
+  }), rules;
+},
+    getUnique = function (data) {
+  return data.filter(function (v, i, self) {
+    return self.indexOf(v) === i;
+  });
+},
+    mergeArray = function (arr) {
+  return arr && arr.length ? arr.reduce(function (p, c) {
+    return p.concat(c);
+  }) : [];
+},
+    sortValue = function (data) {
+  var fn,
+      isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
+  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
+    return a - b;
+  } : function (a, b) {
+    return b - a;
+  } : !isAsc && (fn = function (a, b) {
+    return a > b && -1 || a < b && 1 || a === b && 0;
+  }), data.concat().sort(fn);
+},
+    getMinMax = function (type, data) {
+  var res = data.filter(function (v) {
+    return notEmpty(v);
+  });
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, toConsumableArray_default()(res)) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+},
+    getRange = function (start, end) {
+  var res = [];
+
+  for (var i = start; i < end; i++) res.push(i);
+
+  return res;
+},
+    emulateEvent = {
+  mouse: function () {
+    var getParams = function () {
+      return {
+        bubbles: !1,
+        cancelable: !1,
+        screenX: 0,
+        screenY: 0,
+        clientX: 0,
+        clientY: 0
+      };
+    };
+
+    try {
+      return new MouseEvent("t"), function (el, eventType) {
+        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams();
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      // Polyfills DOM4 MouseEvent
+      return function (el, eventType) {
+        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
+            mouseEvent = document.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, window, 0, // the event's mouse click count
+        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+      };
+    }
+  }(),
+  touch: function touch(el, eventType, params) {
+    var touchObj = new Touch(Object.assign({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: .5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: !0,
+      bubbles: !0,
+      shiftKey: !0,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+
+
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(14);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(16);
 
 // CONCATENATED MODULE: ./src/axis/AxisRendererHelper.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 
@@ -533,7 +804,7 @@ function () {
       var ticks = [];
       if (scale.ticks) return scale.ticks.apply(scale, toConsumableArray_default()(this.config.tickArguments || [])).map(function (v) {
         return (// round the tick value if is number
-          !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
+          isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
         );
       });
 
@@ -556,7 +827,7 @@ function () {
       // https://en.wikipedia.org/wiki/Double-precision_floating-point_format
       // https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
 
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(formatted) ? formatted : "";
+      return isDefined(formatted) ? formatted : "";
     }
   }, {
     key: "transitionise",
@@ -589,7 +860,6 @@ function () {
 
 
 // CONCATENATED MODULE: ./src/axis/AxisRenderer.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 
@@ -685,7 +955,7 @@ function () {
         var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
             counts = [],
             tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(helperInst.textFormatted(d)) ? helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)];
+          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helperInst.textFormatted(d)) ? helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)];
           return counts[index] = split.length, split.map(function (splitted) {
             return {
               index: index,
@@ -700,7 +970,7 @@ function () {
           return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
         }()).attr("dy", function (d, i) {
           var dy = 0;
-          return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
+          return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
         });
         var lineUpdate = tick.select("line"),
             textUpdate = tick.select("text");
@@ -791,9 +1061,9 @@ function () {
 
       var params = this.params,
           tickText = this.helper.textFormatted(d),
-          splitted = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
+          splitted = isString(tickText) && tickText.indexOf("\n") > -1 ? tickText.split("\n") : [];
       if (splitted.length) return splitted;
-      if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(tickText)) return tickText;
+      if (isArray(tickText)) return tickText;
       var tickWidth = params.tickWidth;
       return (!tickWidth || tickWidth <= 0) && (tickWidth = isLeftRight ? 95 : params.isCategory ? Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12 : 110), split(splitted, tickText + "");
     }
@@ -857,7 +1127,7 @@ function () {
     value: function ticks() {
       for (var config = this.config, _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
 
-      return args.length ? (config.tickArguments = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args), this) : config.tickArguments;
+      return args.length ? (config.tickArguments = toArray(args), this) : config.tickArguments;
     }
   }, {
     key: "tickCulling",
@@ -871,7 +1141,7 @@ function () {
       var _this = this,
           config = this.config;
 
-      if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(x)) config.tickValues = function () {
+      if (isFunction(x)) config.tickValues = function () {
         return x(_this.helper.scale.domain());
       };else {
         if (!arguments.length) return config.tickValues;
@@ -889,7 +1159,6 @@ function () {
 
 
 // CONCATENATED MODULE: ./src/axis/Axis.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 
@@ -908,7 +1177,7 @@ var isHorizontal = function ($$, forHorizontal) {
   return forHorizontal ? isRotated : !isRotated;
 },
     getAxisClassName = function (id) {
-  return "".concat(config_classes.axis, " ").concat(config_classes["axis".concat(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(id))]);
+  return "".concat(config_classes.axis, " ").concat(config_classes["axis".concat(capitalize(id))]);
 };
 
 var Axis_Axis =
@@ -929,7 +1198,7 @@ function () {
 
       $$.axesList = {}, ["x", "y", "y2"].forEach(function (v) {
         var classAxis = getAxisClassName(v),
-            classLabel = config_classes["axis".concat(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v), "Label")];
+            classLabel = config_classes["axis".concat(capitalize(v), "Label")];
         $$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
           var res = null;
           return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
@@ -997,9 +1266,9 @@ function () {
       },
           axis = new AxisRenderer_AxisRenderer(axisParams).scale($$.zoomScale || scale).orient(orient),
           newTickValues = tickValues;
-      return $$.isTimeSeries() && tickValues && !!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(tickValues) && (newTickValues = tickValues.map(function (v) {
+      return $$.isTimeSeries() && tickValues && !isFunction(tickValues) && (newTickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
-      })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), axis;
+      })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), axis;
     }
   }, {
     key: "getYAxis",
@@ -1043,11 +1312,11 @@ function () {
           tickFormat = config.axis_x_tick_format,
           isTimeSeries = $$.isTimeSeries(),
           isCategorized = $$.isCategorized();
-      return tickFormat ? !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(tickFormat) ? format = tickFormat : isTimeSeries && (format = function (date) {
+      return tickFormat ? isFunction(tickFormat) ? format = tickFormat : isTimeSeries && (format = function (date) {
         return date ? $$.axisTimeFormat(tickFormat)(date) : "";
       }) : format = isTimeSeries ? $$.defaultAxisTimeFormat : isCategorized ? $$.categoryName : function (v) {
         return v < 0 ? v.toFixed(0) : v;
-      }, !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(format) ? function (v) {
+      }, isFunction(format) ? function (v) {
         return format.apply($$, isCategorized ? [v, $$.categoryName(v)] : [v]);
       } : format;
     }
@@ -1083,7 +1352,7 @@ function () {
     key: "getLabelText",
     value: function getLabelText(axisId) {
       var option = this.getLabelOptionByAxisId(axisId);
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(option) ? option : option ? option.text : null;
+      return isString(option) ? option : option ? option.text : null;
     }
   }, {
     key: "setLabelText",
@@ -1091,14 +1360,14 @@ function () {
       var $$ = this.owner,
           config = $$.config,
           option = this.getLabelOptionByAxisId(axisId);
-      !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(option) ? config["axis_".concat(axisId, "_label")] = text : option && (option.text = text);
+      isString(option) ? config["axis_".concat(axisId, "_label")] = text : option && (option.text = text);
     }
   }, {
     key: "getLabelPosition",
     value: function getLabelPosition(axisId, defaultPosition) {
       var isRotated = this.owner.config.axis_rotated,
           option = this.getLabelOptionByAxisId(axisId),
-          position = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(option) && option.position ? option.position : defaultPosition[+!isRotated],
+          position = isObjectType(option) && option.position ? option.position : defaultPosition[+!isRotated],
           has = function (v) {
         return !!~position.indexOf(v);
       };
@@ -1285,8 +1554,8 @@ function () {
   }, {
     key: "getPadding",
     value: function getPadding(padding, key, defaultValue, domainLength) {
-      var p = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(padding) ? padding : padding[key];
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(p) ? padding.unit === "ratio" ? padding[key] * domainLength : this.convertPixelsToAxisPadding(p, domainLength) : defaultValue; // assume padding is pixels if unit is not specified
+      var p = isNumber(padding) ? padding : padding[key];
+      return isValue(p) ? padding.unit === "ratio" ? padding[key] * domainLength : this.convertPixelsToAxisPadding(p, domainLength) : defaultValue; // assume padding is pixels if unit is not specified
     }
   }, {
     key: "convertPixelsToAxisPadding",
@@ -1307,7 +1576,7 @@ function () {
           tickValues = values;
 
       if (tickCount) {
-        var targetCount = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
+        var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
 
         if (targetCount === 1) tickValues = [values[0]];else if (targetCount === 2) tickValues = [values[0], values[values.length - 1]];else if (targetCount > 2) {
           for (count = targetCount - 2, start = values[0], end = values[values.length - 1], interval = (end - start) / (count + 1), tickValues = [start], i = 0; i < count; i++) tickValue = +start + interval * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : tickValue);
@@ -1355,7 +1624,6 @@ function () {
 
 
 // CONCATENATED MODULE: ./src/internals/ChartInternal.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 
@@ -1394,14 +1662,14 @@ function () {
     value: function beforeInit() {
       var $$ = this; // can do something
 
-      !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.config.onbeforeinit, $$);
+      callFn($$.config.onbeforeinit, $$);
     }
   }, {
     key: "afterInit",
     value: function afterInit() {
       var $$ = this; // can do something
 
-      !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.config.onafterinit, $$);
+      callFn($$.config.onafterinit, $$);
     }
   }, {
     key: "init",
@@ -1438,16 +1706,16 @@ function () {
         classname: "bb"
       };
 
-      if (!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain(!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.getXDomain($$.data.targets))), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.y.domain($$.getYDomain($$.data.targets, "y")), $$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subX.domain($$.x.domain()), $$.subY.domain($$.y.domain()), $$.subY2.domain($$.y2.domain()), $$.orgXDomain = $$.x.domain(), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
-          return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.onover, $$);
+          return callFn(config.onover, $$);
         }).on(isTouch ? "touchend" : "mouseleave", function () {
-          return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.onout, $$);
+          return callFn(config.onout, $$);
         });
       }
 
-      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), $$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), $$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
         return $$.defs.append(function () {
           return p.node;
         });
@@ -1466,7 +1734,7 @@ function () {
         initializing: !0
       }), config.data_onmin || config.data_onmax) {
         var minMax = $$.getMinMaxData();
-        !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_onmin, $$, minMax.min), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_onmax, $$, minMax.max);
+        callFn(config.data_onmin, $$, minMax.min), callFn(config.data_onmax, $$, minMax.max);
       } // Bind resize event
 
 
@@ -1617,7 +1885,7 @@ function () {
       };
       return Object.keys(withOptions).forEach(function (key) {
         var defVal = withOptions[key];
-        !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(defVal) && (defVal = withOptions[defVal]), withOptions[key] = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "with".concat(key), defVal);
+        isString(defVal) && (defVal = withOptions[defVal]), withOptions[key] = getOption(options, "with".concat(key), defVal);
       }), withOptions;
     }
   }, {
@@ -1693,7 +1961,7 @@ function () {
           isTransition = (duration || flow) && $$.isTabVisible(),
           redrawList = [$$.redrawBar(drawBar, isTransition), $$.redrawLine(drawLine, isTransition), $$.redrawArea(drawArea, isTransition), $$.redrawCircle(cx, cy, isTransition, flow), $$.redrawText(xForText, yForText, options.flow, isTransition), $$.redrawRegion(isTransition), $$.redrawGrid(isTransition)],
           afterRedraw = flow || config.onrendered ? function () {
-        flow && flow(), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.onrendered, $$);
+        flow && flow(), callFn(config.onrendered, $$);
       } : null;
       if (afterRedraw) // Only use transition when current tab is visible.
         if (isTransition) {
@@ -1720,7 +1988,7 @@ function () {
           options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           $$ = this,
           config = $$.config;
-      options.withTransition = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "withTransition", !0), options.withTransform = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "withTransform", !1), options.withLegend = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "withTransitionForTransform", options.withTransition), $$.updateSizes(), options.withLegend && config.legend_show || (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
+      options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), $$.updateSizes(), options.withLegend && config.legend_show || (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
     }
   }, {
     key: "redrawWithoutRescale",
@@ -1747,7 +2015,7 @@ function () {
     value: function isCustomX() {
       var $$ = this,
           config = $$.config;
-      return !$$.isTimeSeries() && (config.data_x || !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_xs));
+      return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
     }
   }, {
     key: "isTimeSeriesY",
@@ -1764,9 +2032,9 @@ function () {
           config = $$.config,
           isRotated = config.axis_rotated,
           padding = 0;
-      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.margin.left), y = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.margin.top);else if (target === "context") x = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.margin2.left), y = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
+      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
         var diff = ($$.arcWidth - $$.arcHeight) / 2;
-        x = Math.max(diff, 0) + 4, y = diff < 0 ? Math.abs(diff) : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.margin.top);
+        x = Math.max(diff, 0) + 4, y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
       }
       return "translate(".concat(x, ", ").concat(y, ")");
     }
@@ -1784,7 +2052,7 @@ function () {
     key: "opacityForCircle",
     value: function opacityForCircle(d) {
       var opacity = this.config.point_show ? "1" : "0";
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
+      return isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
     }
   }, {
     key: "opacityForText",
@@ -1802,7 +2070,7 @@ function () {
     value: function xv(d) {
       var $$ = this,
           value = $$.getBaseValue(d);
-      return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) && (value = $$.config.axis_x_categories.indexOf(value)), Math.ceil($$.x(value));
+      return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && isString(value) && (value = $$.config.axis_x_categories.indexOf(value)), Math.ceil($$.x(value));
     }
   }, {
     key: "yv",
@@ -1905,7 +2173,7 @@ function () {
       };
 
       return f.add = function (transition) {
-        !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(transition) ? transitionsToWait = transitionsToWait.concat(transition) : transitionsToWait.push(transition);
+        isArray(transition) ? transitionsToWait = transitionsToWait.concat(transition) : transitionsToWait.push(transition);
       }, f;
     }
   }, {
@@ -1913,7 +2181,7 @@ function () {
     value: function parseDate(date) {
       var parsedDate,
           $$ = this;
-      return date instanceof Date ? parsedDate = date : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(date) ? parsedDate = $$.dataTimeFormat($$.config.data_xFormat)(date) : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(date) && !isNaN(date) && (parsedDate = new Date(+date)), (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '".concat(date, "' to Date object")), parsedDate;
+      return date instanceof Date ? parsedDate = date : isString(date) ? parsedDate = $$.dataTimeFormat($$.config.data_xFormat)(date) : isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date)), (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '".concat(date, "' to Date object")), parsedDate;
     }
   }, {
     key: "isTabVisible",
@@ -5144,7 +5412,6 @@ var Options_Options = function Options() {
 
 
 // CONCATENATED MODULE: ./src/config/config.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5152,7 +5419,7 @@ var Options_Options = function Options() {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getOptions: function getOptions() {
     return new Options_Options();
   },
@@ -5169,16 +5436,15 @@ var Options_Options = function Options() {
         thisConfig = this.config,
         find = function () {
       var key = keys.shift();
-      return key && target && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(target) && key in target ? (target = target[key], find()) : key ? undefined : target;
+      return key && target && isObjectType(target) && key in target ? (target = target[key], find()) : key ? undefined : target;
     };
 
     Object.keys(thisConfig).forEach(function (key) {
-      target = config, keys = key.split("_"), read = find(), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(read) && (thisConfig[key] = read);
+      target = config, keys = key.split("_"), read = find(), isDefined(read) && (thisConfig[key] = read);
     });
   }
 });
 // CONCATENATED MODULE: ./src/internals/scale.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -5186,7 +5452,7 @@ var Options_Options = function Options() {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getScale: function getScale(min, max, forTimeseries) {
     return (forTimeseries ? Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleTime"])() : Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])()).range([min, max]);
   },
@@ -5277,14 +5543,13 @@ var Options_Options = function Options() {
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getYDomainMinMax: function getYDomainMinMax(targets, type) {
     var $$ = this,
         config = $$.config,
@@ -5315,8 +5580,8 @@ var Options_Options = function Options() {
 
         idsInGroup = _idsInGroup;
       }, j = 0; idsInGroup = dataGroups[j]; j++) _ret = _loop(j, idsInGroup), _ret === "continue";
-    }(), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(type, Object.keys(ys).map(function (key) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(type, ys[key]);
+    }(), getMinMax(type, Object.keys(ys).map(function (key) {
+      return getMinMax(type, ys[key]);
     }));
   },
   getYDomainMin: function getYDomainMin(targets) {
@@ -5343,17 +5608,17 @@ var Options_Options = function Options() {
         isInverted = axisId === "y2" ? config.axis_y2_inverted : config.axis_y_inverted,
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
-    if (yDomainMin = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(yMin) ? yMin : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(yMax) ? yMax : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
+    if (yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
       return axisId === "y2" ? $$.y2.domain() : $$.y.domain();
     isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
     var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
         isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
-    (!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(yMin) && isAllPositive || !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
+    (isValue(yMin) && isAllPositive || isValue(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
     var domainLength = Math.abs(yDomainMax - yDomainMin),
         paddingTop = domainLength * .1,
         paddingBottom = domainLength * .1;
 
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(center)) {
+    if (isDefined(center)) {
       var yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
       yDomainMax = center + yDomainAbs, yDomainMin = center - yDomainAbs;
     } // add padding for data label
@@ -5361,20 +5626,20 @@ var Options_Options = function Options() {
 
     if (showHorizontalDataLabel) {
       lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "width");
-      var diff = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.y.range()),
+      var diff = diffDomain($$.y.range()),
           ratio = [lengths[0] / diff, lengths[1] / diff];
       paddingTop += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1])), paddingBottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
     } else showVerticalDataLabel && (lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height"), paddingTop += $$.axis.convertPixelsToAxisPadding(lengths[1], domainLength), paddingBottom += $$.axis.convertPixelsToAxisPadding(lengths[0], domainLength));
 
-    axisId === "y" && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.axis_y_padding) && (paddingTop = $$.axis.getPadding(config.axis_y_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y_padding, "bottom", paddingBottom, domainLength)), axisId === "y2" && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.axis_y2_padding) && (paddingTop = $$.axis.getPadding(config.axis_y2_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y2_padding, "bottom", paddingBottom, domainLength)), isZeroBased && (isAllPositive && (paddingBottom = yDomainMin), isAllNegative && (paddingTop = -yDomainMax));
+    axisId === "y" && notEmpty(config.axis_y_padding) && (paddingTop = $$.axis.getPadding(config.axis_y_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y_padding, "bottom", paddingBottom, domainLength)), axisId === "y2" && notEmpty(config.axis_y2_padding) && (paddingTop = $$.axis.getPadding(config.axis_y2_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y2_padding, "bottom", paddingBottom, domainLength)), isZeroBased && (isAllPositive && (paddingBottom = yDomainMin), isAllNegative && (paddingTop = -yDomainMax));
     var domain = [yDomainMin - paddingBottom, yDomainMax + paddingTop];
     return isInverted ? domain.reverse() : domain;
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
     var $$ = this,
         value = $$.config["axis_x_".concat(type)];
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(type, targets.map(function (t) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(type, t.values.map(function (v) {
+    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : getMinMax(type, targets.map(function (t) {
+      return getMinMax(type, t.values.map(function (v) {
         return v.x;
       }));
     }));
@@ -5395,7 +5660,7 @@ var Options_Options = function Options() {
     $$.isCategorized() ? padding = 0 : $$.hasType("bar") ? (maxDataCount = $$.getMaxDataCount(), padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5) : padding = diff * .01;
     var left = padding,
         right = padding;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(xPadding) && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(xPadding) ? (left = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(xPadding.left) ? xPadding.left : padding, right = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(xPadding.right) ? xPadding.right : padding) : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.axis_x_padding) && (left = xPadding, right = xPadding), {
+    return isObject(xPadding) && notEmpty(xPadding) ? (left = isValue(xPadding.left) ? xPadding.left : padding, right = isValue(xPadding.right) ? xPadding.right : padding) : isNumber(config.axis_x_padding) && (left = xPadding, right = xPadding), {
       left: left,
       right: right
     };
@@ -5415,8 +5680,8 @@ var Options_Options = function Options() {
         config = $$.config,
         zoomEnabled = config.zoom_enabled;
 
-    if (withUpdateOrgXDomain && ($$.x.domain(domain || !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.getXDomain(targets))), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
-      var domainValue = domain || !$$.brush || !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$) ? $$.orgXDomain : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$).map($$.subX.invert);
+    if (withUpdateOrgXDomain && ($$.x.domain(domain || sortValue($$.getXDomain(targets))), $$.orgXDomain = $$.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), $$.subX.domain($$.x.domain()), $$.brush && $$.brush.scale($$.subX)), withUpdateXDomain) {
+      var domainValue = domain || !$$.brush || brushEmpty($$) ? $$.orgXDomain : getBrushSelection($$).map($$.subX.invert);
       $$.x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
     } // Trim domain when too big by zoom mousemove event
 
@@ -5431,7 +5696,6 @@ var Options_Options = function Options() {
   }
 });
 // CONCATENATED MODULE: ./src/data/data.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /**
@@ -5441,12 +5705,12 @@ var Options_Options = function Options() {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   isX: function isX(key) {
     var $$ = this,
         config = $$.config,
         dataKey = config.data_x && key === config.data_x,
-        existValue = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_xs) && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_xs, key);
+        existValue = notEmpty(config.data_xs) && util_hasValue(config.data_xs, key);
     return dataKey || existValue;
   },
   isNotX: function isNotX(key) {
@@ -5464,12 +5728,12 @@ var Options_Options = function Options() {
   getXKey: function getXKey(id) {
     var $$ = this,
         config = $$.config;
-    return config.data_x ? config.data_x : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_xs) ? config.data_xs[id] : null;
+    return config.data_x ? config.data_x : notEmpty(config.data_xs) ? config.data_xs[id] : null;
   },
   getXValuesOfXKey: function getXValuesOfXKey(key, targets) {
     var xValues,
         $$ = this,
-        ids = targets && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(targets) ? $$.mapToIds(targets) : [];
+        ids = targets && notEmpty(targets) ? $$.mapToIds(targets) : [];
     return ids.forEach(function (id) {
       $$.getXKey(id) === key && (xValues = $$.data.xs[id]);
     }), xValues;
@@ -5484,13 +5748,13 @@ var Options_Options = function Options() {
    */
   getIndexByX: function getIndexByX(x, basedX) {
     var $$ = this;
-    return basedX ? basedX.indexOf(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(x) ? x : +x) : ($$.filterByX($$.data.targets, x)[0] || {
+    return basedX ? basedX.indexOf(isString(x) ? x : +x) : ($$.filterByX($$.data.targets, x)[0] || {
       index: null
     }).index;
   },
   getXValue: function getXValue(id, i) {
     var $$ = this;
-    return id in $$.data.xs && $$.data.xs[id] && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
+    return id in $$.data.xs && $$.data.xs[id] && isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
   },
   getOtherTargetXs: function getOtherTargetXs() {
     var $$ = this,
@@ -5513,7 +5777,7 @@ var Options_Options = function Options() {
     }).length > 1;
   },
   isMultipleX: function isMultipleX() {
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
+    return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
   },
   addName: function addName(data) {
     var name,
@@ -5549,7 +5813,7 @@ var Options_Options = function Options() {
   generateTargetX: function generateTargetX(rawX, id, index) {
     var $$ = this,
         x = $$.isCategorized() ? index : rawX || index;
-    return $$.isTimeSeries() ? x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index)) : $$.isCustomX() && !$$.isCategorized() && (x = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(rawX) ? +rawX : $$.getXValue(id, index)), x;
+    return $$.isTimeSeries() ? x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index)) : $$.isCustomX() && !$$.isCategorized() && (x = isValue(rawX) ? +rawX : $$.getXValue(id, index)), x;
   },
   cloneTarget: function cloneTarget(target) {
     return {
@@ -5572,11 +5836,11 @@ var Options_Options = function Options() {
   },
   getPrevX: function getPrevX(i) {
     var x = this.xs[i - 1];
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(x) ? x : null;
+    return isDefined(x) ? x : null;
   },
   getNextX: function getNextX(i) {
     var x = this.xs[i + 1];
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(x) ? x : null;
+    return isDefined(x) ? x : null;
   },
 
   /**
@@ -5604,7 +5868,7 @@ var Options_Options = function Options() {
     return (data || this.data.targets.map(function (t) {
       return t.values;
     })).forEach(function (v, i) {
-      var value = v.map(getBaseValue).filter(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }()));
+      var value = v.map(getBaseValue).filter(isNumber);
       min = Math.min.apply(Math, [i ? min : Infinity].concat(toConsumableArray_default()(value))), max = Math.max.apply(Math, [i ? max : -Infinity].concat(toConsumableArray_default()(value)));
     }), {
       min: min,
@@ -5653,7 +5917,7 @@ var Options_Options = function Options() {
         sum = $$.getCache("$totalPerIndex");
     return $$.isStackNormalized() && !sum && (sum = [], $$.data.targets.forEach(function (row) {
       row.values.forEach(function (v, i) {
-        sum[i] || (sum[i] = 0), sum[i] += !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v.value) ? v.value : 0;
+        sum[i] || (sum[i] = 0), sum[i] += isNumber(v.value) ? v.value : 0;
       });
     })), sum;
   },
@@ -5669,7 +5933,7 @@ var Options_Options = function Options() {
         totalDataSum = $$.getCache(cacheKey);
 
     if (!totalDataSum) {
-      var total = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.data.targets.map(function (t) {
+      var total = mergeArray($$.data.targets.map(function (t) {
         return t.values;
       })).map(function (v) {
         return v.value;
@@ -5722,7 +5986,7 @@ var Options_Options = function Options() {
   },
   mapToTargetIds: function mapToTargetIds(ids) {
     var $$ = this;
-    return ids ? !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ids) ? ids.concat() : [ids] : $$.mapToIds($$.data.targets);
+    return ids ? isArray(ids) ? ids.concat() : [ids] : $$.mapToIds($$.data.targets);
   },
   hasTarget: function hasTarget(targets, id) {
     var ids = this.mapToIds(targets);
@@ -5746,7 +6010,7 @@ var Options_Options = function Options() {
   mapTargetsToUniqueXs: function mapTargetsToUniqueXs(targets) {
     var $$ = this,
         xs = [];
-    return targets && targets.length && (xs = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(targets.map(function (t) {
+    return targets && targets.length && (xs = getUnique(mergeArray(targets.map(function (t) {
       return t.values.map(function (v) {
         return +v.x;
       });
@@ -5754,7 +6018,7 @@ var Options_Options = function Options() {
       return new Date(+x);
     }) : xs.map(function (x) {
       return +x;
-    })), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(xs);
+    })), sortValue(xs);
   },
   addHiddenTargetIds: function addHiddenTargetIds(targetIds) {
     this.hiddenTargetIds = this.hiddenTargetIds.concat(targetIds);
@@ -5777,13 +6041,13 @@ var Options_Options = function Options() {
         ys = {},
         isMultipleX = $$.isMultipleX(),
         xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets).map(function (v) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) ? v : +v;
+      return isString(v) ? v : +v;
     }) : null;
     return targets.forEach(function (t) {
       var data = [];
       t.values.forEach(function (v) {
         var value = v.value;
-        !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) ? data.push.apply(data, toConsumableArray_default()(value)) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
+        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },
@@ -5811,7 +6075,7 @@ var Options_Options = function Options() {
   },
   _checkOrder: function _checkOrder(type) {
     var config = this.config;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_order) && config.data_order.toLowerCase() === type;
+    return isString(config.data_order) && config.data_order.toLowerCase() === type;
   },
   isOrderDesc: function isOrderDesc() {
     return this._checkOrder("desc");
@@ -5842,10 +6106,10 @@ var Options_Options = function Options() {
           t2Sum = t2.values.reduce(reducer, 0);
 
       return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
-    }) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_order) && targets.sort(config.data_order), targets;
+    }) : isFunction(config.data_order) && targets.sort(config.data_order), targets;
   },
   filterByX: function filterByX(targets, x) {
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(targets.map(function (t) {
+    return mergeArray(targets.map(function (t) {
       return t.values;
     })).filter(function (v) {
       return v.x - x === 0;
@@ -5855,7 +6119,7 @@ var Options_Options = function Options() {
     var _this2 = this;
 
     return data.filter(function (d) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_this2.getBaseValue(d));
+      return isValue(_this2.getBaseValue(d));
     });
   },
   filterByXDomain: function filterByXDomain(targets, xDomain) {
@@ -5871,7 +6135,7 @@ var Options_Options = function Options() {
   },
   hasDataLabel: function hasDataLabel() {
     var dataLabels = this.config.data_labels;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(dataLabels) && dataLabels || !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(dataLabels) && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(dataLabels);
+    return isBoolean(dataLabels) && dataLabels || isObjectType(dataLabels) && notEmpty(dataLabels);
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
     var $$ = this,
@@ -5946,7 +6210,7 @@ var Options_Options = function Options() {
         isRotated = config.axis_rotated,
         stepType = config.line_step_type,
         isCategorized = $$.isCategorized(),
-        converted = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(values) ? values.concat() : [values];
+        converted = isArray(values) ? values.concat() : [values];
     if (!isRotated && !isCategorized) return values; // insert & append cloning first/last value to be fully rendered covering on each gap sides
 
     var id = converted[0].id,
@@ -5972,7 +6236,7 @@ var Options_Options = function Options() {
     }), converted;
   },
   convertValuesToRange: function convertValuesToRange(values) {
-    var converted = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(values) ? values.concat() : [values],
+    var converted = isArray(values) ? values.concat() : [values],
         ranges = [];
     return converted.forEach(function (range) {
       var x = range.x,
@@ -5992,7 +6256,7 @@ var Options_Options = function Options() {
     var $$ = this,
         config = $$.config,
         current = config["data_".concat(name)];
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(attrs) ? current : (Object.keys(attrs).forEach(function (id) {
+    return isUndefined(attrs) ? current : (Object.keys(attrs).forEach(function (id) {
       current[id] = attrs[id];
     }), $$.redraw({
       withLegend: !0
@@ -6001,7 +6265,7 @@ var Options_Options = function Options() {
   getAreaRangeData: function getAreaRangeData(d, type) {
     var value = d.value;
 
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value)) {
+    if (isArray(value)) {
       var index = ["high", "mid", "low"].indexOf(type);
       return index === -1 ? null : value[index];
     }
@@ -6040,14 +6304,14 @@ var Options_Options = function Options() {
           var hiddenSum = dataValues($$.hiddenTargetIds, !1);
           hiddenSum.length && (hiddenSum = hiddenSum.reduce(function (acc, curr) {
             return acc.map(function (v, i) {
-              return (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) ? v : 0) + curr[i];
+              return (isNumber(v) ? v : 0) + curr[i];
             });
           }), _total = _total.map(function (v, i) {
             return v - hiddenSum[i];
           }));
         }
 
-        d.ratio = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d.value) && _total && _total[d.index] > 0 ? d.value / _total[d.index] : 0, ratio = d.ratio;
+        d.ratio = isNumber(d.value) && _total && _total[d.index] > 0 ? d.value / _total[d.index] : 0, ratio = d.ratio;
       } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
     }
 
@@ -6055,10 +6319,9 @@ var Options_Options = function Options() {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
-var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(15);
+var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(17);
 
 // CONCATENATED MODULE: ./src/data/data.convert.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6066,7 +6329,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   convertUrlToData: function convertUrlToData(url) {
     var _this = this,
         mimeType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "csv",
@@ -6079,7 +6342,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     req.open("GET", url), req.onreadystatechange = function () {
       if (req.readyState === 4) if (req.status === 200) {
         var response = req.responseText;
-        response && done.call(_this, _this["convert".concat(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(mimeType), "ToData")](mimeType === "json" ? JSON.parse(response) : response, keys));
+        response && done.call(_this, _this["convert".concat(capitalize(mimeType), "ToData")](mimeType === "json" ? JSON.parse(response) : response, keys));
       } else throw new Error("".concat(url, ": Something went wrong loading!"));
     }, req.send();
   },
@@ -6109,7 +6372,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
         config = this.config,
         newRows = [];
 
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(json)) {
+    if (isArray(json)) {
       var keys = keysParam || config.data_keys;
       keys.x ? (targetKeys = keys.value.concat(keys.x), config.data_x = keys.x) : targetKeys = keys.value, newRows.push(targetKeys), json.forEach(function (o) {
         var newRow = [];
@@ -6123,7 +6386,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
             var key = _step.value,
                 v = _this2.findValueInJson(o, key);
 
-            !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) && (v = null), newRow.push(v);
+            isUndefined(v) && (v = null), newRow.push(v);
           }
         } catch (err) {
           _didIteratorError = !0, _iteratorError = err;
@@ -6182,7 +6445,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       var newRow = {};
 
       for (var j = 0, len2 = rows[i].length; j < len2; j++) {
-        if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(rows[i][j])) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
+        if (isUndefined(rows[i][j])) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
         newRow[keys[j]] = rows[i][j];
       }
 
@@ -6198,7 +6461,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
       var key = columns[i][0];
 
       for (var j = 1, len2 = columns[i].length; j < len2; j++) {
-        if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(newRows[j - 1]) && (newRows[j - 1] = {}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(columns[i][j])) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
+        if (isUndefined(newRows[j - 1]) && (newRows[j - 1] = {}), isUndefined(columns[i][j])) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
         newRows[j - 1][key] = columns[i][j];
       }
     }
@@ -6219,9 +6482,9 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
       _this3.isCustomX() || _this3.isTimeSeries() ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
         return d[xKey];
-      }).filter(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())).map(function (rawX, i) {
+      }).filter(isValue).map(function (rawX, i) {
         return $$.generateTargetX(rawX, id, i);
-      })) : config.data_x ? xsData = _this3.getOtherTargetXs() : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_xs) && (xsData = $$.getXValuesOfXKey(xKey, $$.data.targets)) : xsData = data.map(function (d, i) {
+      })) : config.data_x ? xsData = _this3.getOtherTargetXs() : notEmpty(config.data_xs) && (xsData = $$.getXValuesOfXKey(xKey, $$.data.targets)) : xsData = data.map(function (d, i) {
         return i;
       }), xsData && (_this3.data.xs[id] = xsData);
     }), ids.forEach(function (id) {
@@ -6244,13 +6507,13 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) ? !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) || !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) ? isArray(value) || isObject(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
           };
         }).filter(function (v) {
-          return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v.x);
+          return isDefined(v.x);
         })
       };
     }); // finish targets
@@ -6274,7 +6537,6 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   }
 });
 // CONCATENATED MODULE: ./src/data/data.load.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6282,7 +6544,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   load: function load(rawTargets, args) {
     var $$ = this,
         targets = rawTargets;
@@ -6327,14 +6589,13 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   }
 });
 // CONCATENATED MODULE: ./src/internals/category.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Category Name
    * @private
@@ -6347,10 +6608,9 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(16);
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(18);
 
 // CONCATENATED MODULE: ./src/interactions/interaction.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6360,7 +6620,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize the area that detects the event.
    * Add a container for the zone that detects the event.
@@ -6411,7 +6671,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
       }
     },
         preventDefault = config.interaction_inputType_touch.preventDefault,
-        isPrevented = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(preventDefault) && preventDefault || !1,
+        isPrevented = isBoolean(preventDefault) && preventDefault || !1,
         preventThreshold = !isNaN(preventDefault) && preventDefault || null,
         preventEvent = function (event) {
       var eventType = event.type,
@@ -6657,7 +6917,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         x = left + (mouse ? mouse[0] : 0) + width / 2,
         y = top + (mouse ? mouse[1] : 0);
 
-    !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, {
+    emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, {
       screenX: x,
       screenY: y,
       clientX: x,
@@ -6666,7 +6926,6 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   }
 });
 // CONCATENATED MODULE: ./src/internals/size.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6674,7 +6933,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getCurrentWidth: function getCurrentWidth() {
     var $$ = this;
     return $$.config.size_width || $$.getParentWidth();
@@ -6702,7 +6961,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
     var $$ = this,
         config = $$.config,
         axesLen = config.axis_y2_axes.length,
-        padding = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.padding_top) ? config.padding_top : 0;
+        padding = isValue(config.padding_top) ? config.padding_top : 0;
     return $$.title && $$.title.node() && (padding += $$.getTitlePadding()), axesLen && config.axis_rotated && (padding += $$.getHorizontalAxisHeight("y2") * axesLen), padding;
   },
   getCurrentPaddingBottom: function getCurrentPaddingBottom() {
@@ -6711,7 +6970,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         isRotated = config.axis_rotated,
         axisId = isRotated ? "y" : "x",
         axesLen = config["axis_".concat(axisId, "_axes")].length,
-        padding = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.padding_bottom) ? config.padding_bottom : 0;
+        padding = isValue(config.padding_bottom) ? config.padding_bottom : 0;
     return padding + (axesLen ? $$.getHorizontalAxisHeight(axisId) * axesLen : 0);
   },
   getCurrentPaddingLeft: function getCurrentPaddingLeft(withoutRecompute) {
@@ -6722,7 +6981,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         axisId = isRotated ? "x" : "y",
         axesLen = config["axis_".concat(axisId, "_axes")].length,
         axisWidth = $$.getAxisWidthByAxisId(axisId, withoutRecompute);
-    return padding = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.padding_left) ? config.padding_left : isRotated ? config.axis_x_show ? Math.max(!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(axisWidth), 40) : 1 : !config.axis_y_show || config.axis_y_inner ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(axisWidth), padding + axisWidth * axesLen;
+    return padding = isValue(config.padding_left) ? config.padding_left : isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : !config.axis_y_show || config.axis_y_inner ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
   },
   getCurrentPaddingRight: function getCurrentPaddingRight() {
     var padding,
@@ -6731,7 +6990,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
         legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = config.axis_y2_axes.length,
         axisWidth = $$.getAxisWidthByAxisId("y2");
-    return padding = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? 10 + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0) : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? 10 + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
   },
 
   /**
@@ -6740,7 +6999,7 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
    * @private
    */
   getParentRectValue: function getParentRectValue(key) {
-    for (var v, offsetName = "offset".concat(!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(key)), parent = this.selectChart.node(); !v && parent && parent.tagName !== "BODY";) {
+    for (var v, offsetName = "offset".concat(capitalize(key)), parent = this.selectChart.node(); !v && parent && parent.tagName !== "BODY";) {
       try {
         v = parent.getBoundingClientRect()[key];
       } catch (e) {
@@ -6796,10 +7055,9 @@ var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
-var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(17);
+var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(19);
 
 // CONCATENATED MODULE: ./src/shape/shape.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6809,7 +7067,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getShapeIndices: function getShapeIndices(typeFilter) {
     var $$ = this,
         config = $$.config,
@@ -6821,7 +7079,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
         break;
       }
 
-      !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(indices[d.id]) && (indices[d.id] = i++);
+      isUndefined(indices[d.id]) && (indices[d.id] = i++);
     }), indices.__max__ = i - 1, indices;
   },
   getShapeX: function getShapeX(offset, targetsNum, indices, isSub) {
@@ -6857,7 +7115,7 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
             values = rowValues.map(function (v) {
           return $$.isStackNormalized() ? $$.getRatio("index", v, !0) : v.value;
         });
-        t.id === d.id || indices[t.id] !== indices[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(rowValues[i]) || +rowValues[i].x !== +d.x) && (i = -1, rowValues.forEach(function (v, j) {
+        t.id === d.id || indices[t.id] !== indices[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) && (i = -1, rowValues.forEach(function (v, j) {
           var x1 = v.x.constructor === Date ? +v.x : v.x,
               x2 = d.x.constructor === Date ? +d.x : d.x;
           x1 === x2 && (i = j);
@@ -6903,10 +7161,9 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(18);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(20);
 
 // CONCATENATED MODULE: ./src/shape/arc.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6917,7 +7174,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   initPie: function initPie() {
     var $$ = this,
         config = $$.config,
@@ -6996,7 +7253,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
           y = isNaN(c[1]) ? 0 : c[1],
           h = Math.sqrt(x * x + y * y),
           ratio = $$.hasType("donut") && config.donut_label_ratio || $$.hasType("pie") && config.pie_label_ratio;
-      ratio = ratio ? !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ratio) ? ratio(d, $$.radius, h) : ratio : $$.radius && (h ? (36 / $$.radius > .375 ? 1.175 - 36 / $$.radius : .8) * $$.radius / h : 0), translate = "translate(".concat(x * ratio, ",").concat(y * ratio, ")");
+      ratio = ratio ? isFunction(ratio) ? ratio(d, $$.radius, h) : ratio : $$.radius && (h ? (36 / $$.radius > .375 ? 1.175 - 36 / $$.radius : .8) * $$.radius / h : 0), translate = "translate(".concat(x * ratio, ",").concat(y * ratio, ")");
     }
 
     return translate;
@@ -7290,7 +7547,6 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   }
 });
 // CONCATENATED MODULE: ./src/shape/bar.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /**
@@ -7301,7 +7557,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   initBar: function initBar() {
     var $$ = this;
     $$.main.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartBars);
@@ -7333,17 +7589,17 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     $$.mainBar = $$.main.selectAll(".".concat(config_classes.bars)).selectAll(".".concat(config_classes.bar)).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("stroke", color).style("fill", color).merge($$.mainBar).style("opacity", initialOpacity);
   },
   redrawBar: function redrawBar(drawBar, withTransition) {
-    return [(withTransition ? this.mainBar.transition(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
+    return [(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
   },
   getBarW: function getBarW(axis, barTargetsNum) {
     var $$ = this,
         config = $$.config,
-        w = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.bar_width) ? config.bar_width : barTargetsNum ? axis.tickInterval($$.getMaxDataCount()) * config.bar_width_ratio / barTargetsNum : 0;
+        w = isNumber(config.bar_width) ? config.bar_width : barTargetsNum ? axis.tickInterval($$.getMaxDataCount()) * config.bar_width_ratio / barTargetsNum : 0;
     return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
   },
   getBars: function getBars(i, id) {
     var $$ = this,
-        suffix = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(i) ? "-".concat(i) : "";
+        suffix = isValue(i) ? "-".concat(i) : "";
     return (id ? $$.main.selectAll(".".concat(config_classes.bars).concat($$.getTargetSelectorSuffix(id))) : $$.main).selectAll(".".concat(config_classes.bar).concat(suffix));
   },
   expandBars: function expandBars(i, id, reset) {
@@ -7361,9 +7617,9 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         isGrouped = config.data_groups.length,
         barRadius = config.bar_radius,
         barRadiusRatio = config.bar_radius_ratio,
-        getRadius = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(barRadius) && barRadius > 0 ? function () {
+        getRadius = isNumber(barRadius) && barRadius > 0 ? function () {
       return barRadius;
-    } : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(barRadiusRatio) ? function (w) {
+    } : isNumber(barRadiusRatio) ? function (w) {
       return w * barRadiusRatio;
     } : null;
     return function (d, i) {
@@ -7409,7 +7665,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   isWithinBar: function isWithinBar(that) {
     var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(that),
-        list = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(that),
+        list = getRectSegList(that),
         _list2 = slicedToArray_default()(list, 2),
         seg0 = _list2[0],
         seg1 = _list2[1],
@@ -7424,14 +7680,13 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   }
 });
 // CONCATENATED MODULE: ./src/shape/bubble.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializer
    * @private
@@ -7452,7 +7707,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         cacheKey = "$baseLength",
         baseLength = $$.getCache(cacheKey);
-    return baseLength || $$.addCache(cacheKey, baseLength = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("min", [$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
+    return baseLength || $$.addCache(cacheKey, baseLength = getMinMax("min", [$$.axes.x.select("path").node().getTotalLength(), $$.axes.y.select("path").node().getTotalLength()])), baseLength;
   },
 
   /**
@@ -7464,9 +7719,9 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   getBubbleR: function getBubbleR(d) {
     var $$ = this,
         maxR = $$.config.bubble_maxR;
-    !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(maxR) ? maxR = maxR(d) : !!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
-    var max = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("max", $$.getMinMaxData().max.map(function (d) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d.value) ? d.value.mid : d.value;
+    isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
+    var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
+      return isObject(d.value) ? d.value.mid : d.value;
     })),
         maxArea = maxR * maxR * Math.PI,
         area = d.value * (maxArea / max);
@@ -7474,7 +7729,6 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   }
 });
 // CONCATENATED MODULE: ./src/shape/line.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7484,7 +7738,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   initLine: function initLine() {
     var $$ = this;
     $$.main.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartLines);
@@ -7523,7 +7777,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     }).attr("transform", null);
   },
   redrawLine: function redrawLine(drawLine, withTransition) {
-    return [(withTransition ? this.mainLine.transition(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())()) : this.mainLine).attr("d", drawLine).style("stroke", this.color).style("opacity", "1")];
+    return [(withTransition ? this.mainLine.transition(getRandom()) : this.mainLine).attr("d", drawLine).style("stroke", this.color).style("opacity", "1")];
   },
 
   /**
@@ -7617,9 +7871,9 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     };
 
     // Check start/end of regions
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_regions)) {
+    if (isDefined(_regions)) {
       var getValue = function (v, def) {
-        return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) ? def : isTimeSeries ? $$.parseDate(v) : v;
+        return isUndefined(v) ? def : isTimeSeries ? $$.parseDate(v) : v;
       };
 
       for (var reg, i = 0; reg = _regions[i]; i++) {
@@ -7667,7 +7921,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
       var prevData = d[_i - 1],
           style = isWithinRegions(data.x, regions);
       // Draw as normal
-      if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(regions) || !style) path += "".concat(_i ? "L" : "").concat(xValue(data), ",").concat(yValue(data));else {
+      if (isUndefined(regions) || !style) path += "".concat(_i ? "L" : "").concat(xValue(data), ",").concat(yValue(data));else {
         try {
           style = style.dasharray.split(" ");
         } catch (e) {
@@ -7695,7 +7949,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   redrawArea: function redrawArea(drawArea, withTransition) {
     var $$ = this;
-    return [(withTransition ? this.mainArea.transition(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())()) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", function (d) {
+    return [(withTransition ? this.mainArea.transition(getRandom()) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", function (d) {
       return $$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity;
     })];
   },
@@ -7784,7 +8038,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   circleX: function circleX(d) {
     var $$ = this,
-        hasValue = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d.x);
+        hasValue = isValue(d.x);
     return $$.config.zoom_enabled && $$.zoomScale ? hasValue ? $$.zoomScale(d.x) : null : hasValue ? $$.x(d.x) : null;
   },
   updateCircleY: function updateCircleY() {
@@ -7797,7 +8051,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   getCircles: function getCircles(i, id) {
     var $$ = this,
-        suffix = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(i) ? "-".concat(i) : "";
+        suffix = isValue(i) ? "-".concat(i) : "";
     return (id ? $$.main.selectAll(".".concat(config_classes.circles).concat($$.getTargetSelectorSuffix(id))) : $$.main).selectAll(".".concat(config_classes.circle).concat(suffix));
   },
   expandCircles: function expandCircles(i, id, reset) {
@@ -7833,7 +8087,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
         config = $$.config,
         pointR = config.point_r,
         r = pointR;
-    return $$.isStepType(d) ? r = 0 : $$.isBubbleType(d) ? r = $$.getBubbleR(d) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(pointR) && (r = pointR(d)), r;
+    return $$.isStepType(d) ? r = 0 : $$.isBubbleType(d) ? r = $$.getBubbleR(d) : isFunction(pointR) && (r = pointR(d)), r;
   },
   pointExpandedR: function pointExpandedR(d) {
     var $$ = this,
@@ -7844,7 +8098,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   pointSelectR: function pointSelectR(d) {
     var $$ = this,
         selectR = $$.config.point_select_r;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
+    return isFunction(selectR) ? selectR(d) : selectR || $$.pointR(d) * 4;
   },
   isWithinCircle: function isWithinCircle(node, r) {
     var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(node),
@@ -7869,11 +8123,10 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   },
   shouldDrawPointsForLine: function shouldDrawPointsForLine(d) {
     var linePoint = this.config.line_point;
-    return linePoint === !0 || !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(linePoint) && linePoint.indexOf(d.id) !== -1;
+    return linePoint === !0 || isArray(linePoint) && linePoint.indexOf(d.id) !== -1;
   }
 });
 // CONCATENATED MODULE: ./src/shape/point.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -7881,13 +8134,13 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   hasValidPointType: function hasValidPointType(type) {
     return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
   },
   hasValidPointDrawMethods: function hasValidPointDrawMethods(type) {
     var pointType = type || this.config.point_type;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(pointType) && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(pointType.create) && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(pointType.update);
+    return isObjectType(pointType) && isFunction(pointType.create) && isFunction(pointType.update);
   },
   insertPointInfoDefs: function insertPointInfoDefs(point, id) {
     var $$ = this,
@@ -7900,7 +8153,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
 
     if (clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", copyAttr(node, clone), node.childNodes && node.childNodes.length) {
       var parent = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(clone);
-      "innerHTML" in clone ? parent.html(node.innerHTML) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(node.childNodes).forEach(function (v) {
+      "innerHTML" in clone ? parent.html(node.innerHTML) : toArray(node.childNodes).forEach(function (v) {
         copyAttr(v, parent.append(v.tagName).node());
       });
     }
@@ -7914,7 +8167,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     var $$ = this,
         config = $$.config,
         ids = [],
-        pattern = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.point_pattern) ? config.point_pattern : [config.point_type];
+        pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
     return function (method, context) {
       for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) args[_key - 2] = arguments[_key];
 
@@ -7933,7 +8186,7 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
     };
   },
   getTransitionName: function getTransitionName() {
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())();
+    return getRandom();
   },
   custom: {
     create: function create(element, id, cssClassFn, sizeFn, fillStyleFn) {
@@ -8007,7 +8260,6 @@ var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate
   }
 });
 // CONCATENATED MODULE: ./src/shape/radar.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /**
@@ -8038,8 +8290,8 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 } // cache key
 
 
-var cacheKey = "$radarPoints";
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+var radar_cacheKey = "$radarPoints";
+extend(ChartInternal_ChartInternal.prototype, {
   initRadar: function initRadar() {
     var $$ = this,
         config = $$.config;
@@ -8055,7 +8307,7 @@ var cacheKey = "$radarPoints";
   updateTargetsForRadar: function updateTargetsForRadar(targets) {
     var $$ = this,
         config = $$.config;
-    !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.axis_x_categories) && (config.axis_x_categories = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(0, !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("max", targets.map(function (v) {
+    isEmpty(config.axis_x_categories) && (config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) {
       return v.values.length;
     })))), $$.generateRadarPoints();
   },
@@ -8068,8 +8320,8 @@ var cacheKey = "$radarPoints";
         height = _$$$getRadarSize2[1],
         edge = config.axis_x_categories.length,
         isClockwise = config.radar_direction_clockwise,
-        pos = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(type).map(function (v) {
-      return getPosition(isClockwise, v, edge, index, !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(range) ? range : type === "x" ? width : height, ratio || config.radar_size_ratio);
+        pos = toArray(type).map(function (v) {
+      return getPosition(isClockwise, v, edge, index, isDefined(range) ? range : type === "x" ? width : height, ratio || config.radar_size_ratio);
     });
 
     return pos.length === 1 ? pos[0] : pos;
@@ -8086,7 +8338,7 @@ var cacheKey = "$radarPoints";
         _$$$getRadarSize4 = slicedToArray_default()(_$$$getRadarSize3, 2),
         width = _$$$getRadarSize4[0],
         height = _$$$getRadarSize4[1],
-        points = $$.getCache(cacheKey) || {},
+        points = $$.getCache(radar_cacheKey) || {},
         size = points._size;
 
     size && (size.width === width || size.height === height) || (targets.forEach(function (d) {
@@ -8096,7 +8348,7 @@ var cacheKey = "$radarPoints";
     }), points._size = {
       width: width,
       height: height
-    }, $$.addCache(cacheKey, points));
+    }, $$.addCache(radar_cacheKey, points));
   },
   redrawRadar: function redrawRadar(duration, durationForExit) {
     var $$ = this,
@@ -8105,7 +8357,7 @@ var cacheKey = "$radarPoints";
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
     var $$ = this,
-        points = $$.getCache(cacheKey);
+        points = $$.getCache(radar_cacheKey);
     return function (d, i) {
       var point = points[d.id][i];
       return [point, point, point, point];
@@ -8122,7 +8374,7 @@ var cacheKey = "$radarPoints";
         edge = config.axis_x_categories.length,
         showText = config.radar_level_text_show,
         radarLevels = $$.radars.levels,
-        levelData = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(0, depth),
+        levelData = getRange(0, depth),
         radius = config.radar_size_ratio * Math.min(width, height),
         levelRatio = levelData.map(function (l) {
       return radius * ((l + 1) / depth);
@@ -8130,7 +8382,7 @@ var cacheKey = "$radarPoints";
         levelTextFormat = config.radar_level_text_format,
         points = levelData.map(function (v) {
       var range = levelRatio[v],
-          pos = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(0, edge).map(function (i) {
+          pos = getRange(0, edge).map(function (i) {
         return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
       });
       return pos.join(" ");
@@ -8150,9 +8402,9 @@ var cacheKey = "$radarPoints";
     }).selectAll("polygon").attr("points", function (d) {
       return points[d];
     }), showText && radarLevels.selectAll("text").attr("x", function (d) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d) ? width : points[d].split(",")[0];
+      return isUndefined(d) ? width : points[d].split(",")[0];
     }).attr("y", function (d) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d) ? height : 0;
+      return isUndefined(d) ? height : 0;
     });
   },
   updateRadarAxes: function updateRadarAxes() {
@@ -8207,7 +8459,7 @@ var cacheKey = "$radarPoints";
   updateRadarShape: function updateRadarShape(duration, durationForExit) {
     var $$ = this,
         targets = $$.data.targets,
-        points = $$.getCache(cacheKey),
+        points = $$.getCache(radar_cacheKey),
         areas = $$.radars.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
     areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).transition().duration(duration).style("fill", function (d) {
@@ -8226,7 +8478,7 @@ var cacheKey = "$radarPoints";
    * @private
    */
   radarCircleX: function radarCircleX(d) {
-    return this.getCache(cacheKey)[d.id][d.index][0];
+    return this.getCache(radar_cacheKey)[d.id][d.index][0];
   },
 
   /**
@@ -8236,11 +8488,10 @@ var cacheKey = "$radarPoints";
    * @private
    */
   radarCircleY: function radarCircleY(d) {
-    return this.getCache(cacheKey)[d.id][d.index][1];
+    return this.getCache(radar_cacheKey)[d.id][d.index][1];
   }
 });
 // CONCATENATED MODULE: ./src/internals/text.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8249,7 +8500,7 @@ var cacheKey = "$radarPoints";
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializes the text
    * @private
@@ -8384,7 +8635,7 @@ var cacheKey = "$radarPoints";
         config = $$.config,
         r = config.point_r,
         baseY = 3;
-    if (config.axis_rotated) yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * .6) / 2;else if (yPos = points[2][1], !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
+    if (config.axis_rotated) yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
       var diff = -baseY * 2;
       $$.isBarType(d) ? diff = -baseY : $$.isBubbleType(d) && (diff = baseY), yPos += diff;
     } // show labels regardless of the domain if value is null
@@ -8398,14 +8649,13 @@ var cacheKey = "$radarPoints";
   }
 });
 // CONCATENATED MODULE: ./src/internals/type.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   setTargetType: function setTargetType(targetIds, type) {
     var $$ = this,
         config = $$.config;
@@ -8445,13 +8695,13 @@ var cacheKey = "$radarPoints";
     });
   },
   isLineType: function isLineType(d) {
-    var id = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d) ? d : d.id;
+    var id = isString(d) ? d : d.id;
     return !this.config.data_types[id] || this.isTypeOf(id, ["line", "spline", "area", "area-spline", "area-spline-range", "area-line-range", "step", "area-step"]);
   },
   isTypeOf: function isTypeOf(d, type) {
-    var id = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d) ? d : d.id,
+    var id = isString(d) ? d : d.id,
         dataType = this.config.data_types[id];
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(type) ? type.indexOf(dataType) >= 0 : dataType === type;
+    return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
   },
   isStepType: function isStepType(d) {
     return this.isTypeOf(d, ["step", "area-step"]);
@@ -8493,7 +8743,7 @@ var cacheKey = "$radarPoints";
   isCirclePoint: function isCirclePoint() {
     var config = this.config,
         pattern = config.point_pattern;
-    return config.point_type === "circle" && (!pattern || !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(pattern) && pattern.length === 0);
+    return config.point_type === "circle" && (!pattern || isArray(pattern) && pattern.length === 0);
   },
   lineData: function lineData(d) {
     return this.isLineType(d) ? [d] : [];
@@ -8523,7 +8773,6 @@ var cacheKey = "$radarPoints";
   }
 });
 // CONCATENATED MODULE: ./src/internals/grid.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8534,7 +8783,7 @@ var cacheKey = "$radarPoints";
  // Grid position and text anchor helpers
 
 var getGridTextAnchor = function (d) {
-  return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d.position) || "end";
+  return isValue(d.position) || "end";
 },
     getGridTextDx = function (d) {
   return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
@@ -8546,7 +8795,7 @@ var getGridTextAnchor = function (d) {
   };
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   initGrid: function initGrid() {
     var $$ = this,
         config = $$.config;
@@ -8664,7 +8913,7 @@ var getGridTextAnchor = function (d) {
         config = $$.config,
         isRotated = config.axis_rotated,
         dataToShow = selectedData.filter(function (d) {
-      return d && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.getBaseValue(d));
+      return d && isValue($$.getBaseValue(d));
     }),
         focusEl = $$.main.selectAll("line.".concat(config_classes.xgridFocus)),
         xx = $$.xx.bind($$);
@@ -8698,7 +8947,7 @@ var getGridTextAnchor = function (d) {
   getGridFilterToRemove: function getGridFilterToRemove(params) {
     return params ? function (line) {
       var found = !1;
-      return (!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(params) ? params.concat() : [params]).forEach(function (param) {
+      return (isArray(params) ? params.concat() : [params]).forEach(function (param) {
         ("value" in param && line.value === param.value || "class" in param && line.class === param.class) && (found = !0);
       }), found;
     } : function () {
@@ -8719,7 +8968,6 @@ var getGridTextAnchor = function (d) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/tooltip.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 
@@ -8731,7 +8979,7 @@ var getGridTextAnchor = function (d) {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializes the tooltip
    * @private
@@ -8742,7 +8990,7 @@ var getGridTextAnchor = function (d) {
 
     // Show tooltip if needed
     if ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none"), config.tooltip_init_show) {
-      if ($$.isTimeSeries() && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.tooltip_init_x)) {
+      if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
             targets = $$.data.targets[0];
@@ -8803,19 +9051,19 @@ var getGridTextAnchor = function (d) {
             v2 = b ? getRowValue(b) : null;
         return order === "asc" ? v1 - v2 : v2 - v1;
       });
-    } else !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(order) && d.sort(order);
+    } else isFunction(order) && d.sort(order);
 
     var text, row, param, value;
 
     for (var i = 0, len = d.length; i < len; i++) if ((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0)) {
       if (!text) {
-        var title = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(titleFormat ? titleFormat(row.x) : row.x);
-        text = "<table class=\"".concat($$.CLASS.tooltip, "\">").concat(!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(title) ? "<tr><th colspan=\"2\">".concat(title, "</th></tr>") : "");
+        var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+        text = "<table class=\"".concat($$.CLASS.tooltip, "\">").concat(isValue(title) ? "<tr><th colspan=\"2\">".concat(title, "</th></tr>") : "");
       }
 
-      if (param = [row.ratio, row.id, row.index, d], value = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(valueFormat.apply(void 0, [getRowValue(row)].concat(toConsumableArray_default()(param)))), $$.isAreaRangeType(row)) {
+      if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(toConsumableArray_default()(param)))), $$.isAreaRangeType(row)) {
         var _map = ["high", "low"].map(function (v) {
-          return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(toConsumableArray_default()(param))));
+          return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(toConsumableArray_default()(param))));
         }),
             _map2 = slicedToArray_default()(_map, 2),
             high = _map2[0],
@@ -8827,7 +9075,7 @@ var getGridTextAnchor = function (d) {
       if (value !== undefined) {
         // Skip elements when their name is set to null
         if (row.name === null) continue;
-        var name = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(nameFormat.apply(void 0, [row.name].concat(toConsumableArray_default()(param)))),
+        var name = sanitise(nameFormat.apply(void 0, [row.name].concat(toConsumableArray_default()(param)))),
             bgcolor = getBgColor(row);
         text += "<tr class=\"".concat($$.CLASS.tooltipName).concat($$.getTargetSelectorSuffix(row.id), "\"><td class=\"name\">"), text += $$.patterns ? "<svg><rect style=\"fill:".concat(bgcolor, "\" width=\"10\" height=\"10\"></rect></svg>") : "<span style=\"background-color:".concat(bgcolor, "\"></span>"), text += "".concat(name, "</td><td class=\"value\">").concat(value, "</td></tr>");
       }
@@ -8882,7 +9130,7 @@ var getGridTextAnchor = function (d) {
         config = $$.config,
         forArc = $$.hasArcType(null, ["radar"]),
         dataToShow = selectedData.filter(function (d) {
-      return d && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.getBaseValue(d));
+      return d && isValue($$.getBaseValue(d));
     }),
         positionFunction = config.tooltip_position || $$.tooltipPosition;
 
@@ -8895,12 +9143,12 @@ var getGridTextAnchor = function (d) {
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index,
             html = config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color);
-        !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.tooltip_onshow, $$), $$.tooltip.html(html).style("display", "block").datum({
+        callFn(config.tooltip_onshow, $$), $$.tooltip.html(html).style("display", "block").datum({
           index: index,
           current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
           height: height = $$.tooltip.property("offsetHeight")
-        }), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.tooltip_onshown, $$), $$._handleLinkedCharts(!0, index);
+        }), callFn(config.tooltip_onshown, $$), $$._handleLinkedCharts(!0, index);
       } // Get tooltip dimensions
 
 
@@ -8918,7 +9166,7 @@ var getGridTextAnchor = function (d) {
     var $$ = this,
         config = $$.config;
     // hide tooltip
-    !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.tooltip_onhidden, $$);
+    callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), callFn(config.tooltip_onhidden, $$);
   },
 
   /**
@@ -8956,7 +9204,6 @@ var getGridTextAnchor = function (d) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/legend.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -8965,7 +9212,7 @@ var getGridTextAnchor = function (d) {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize the legend.
    * @private
@@ -8993,7 +9240,7 @@ var getGridTextAnchor = function (d) {
     };
     // Update size and scale
     // Update g positions
-    optionz.withTransition = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(optionz, "withTransition", !0), optionz.withTransitionForTransform = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateSizes(), $$.updateScales(!optionz.withTransition), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
+    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateSizes(), $$.updateScales(!optionz.withTransition), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
   },
 
   /**
@@ -9011,7 +9258,7 @@ var getGridTextAnchor = function (d) {
           ids = [],
           html = "";
       $$.mapToIds(targets).forEach(function (v) {
-        var content = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(template) ? template.call($$, v, $$.color(v), $$.api.data(v)[0].values) : template.replace(/{=COLOR}/g, $$.color(v)).replace(/{=TITLE}/g, v);
+        var content = isFunction(template) ? template.call($$, v, $$.color(v), $$.api.data(v)[0].values) : template.replace(/{=COLOR}/g, $$.color(v)).replace(/{=TITLE}/g, v);
         content && (ids.push(v), html += content);
       });
       var legendItem = wrapper.html(html).selectAll(function () {
@@ -9169,7 +9416,7 @@ var getGridTextAnchor = function (d) {
   hideLegend: function hideLegend(targetIds) {
     var $$ = this,
         config = $$.config;
-    config.legend_show && !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(targetIds) && (config.legend_show = !1, $$.legend.style("visibility", "hidden")), $$.addHiddenLegendIds(targetIds), $$.legend.selectAll($$.selectorLegends(targetIds)).style("opacity", "0").style("visibility", "hidden");
+    config.legend_show && isEmpty(targetIds) && (config.legend_show = !1, $$.legend.style("visibility", "hidden")), $$.addHiddenLegendIds(targetIds), $$.legend.selectAll($$.selectorLegends(targetIds)).style("opacity", "0").style("visibility", "hidden");
   },
 
   /**
@@ -9196,11 +9443,11 @@ var getGridTextAnchor = function (d) {
     }).style("visibility", function (id) {
       return $$.isLegendToShow(id) ? "visible" : "hidden";
     }).style("cursor", "pointer").on("click", function (id) {
-      !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.legend_item_onclick, $$, id) || (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].altKey ? ($$.api.hide(), $$.api.show(id)) : ($$.api.toggle(id), !isTouch && $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert())), isTouch && $$.hideTooltip();
+      callFn(config.legend_item_onclick, $$, id) || (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].altKey ? ($$.api.hide(), $$.api.show(id)) : ($$.api.toggle(id), !isTouch && $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert())), isTouch && $$.hideTooltip();
     }), isTouch || item.on("mouseout", function (id) {
-      !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.legend_item_onout, $$, id) || (Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !1), $$.api.revert());
+      callFn(config.legend_item_onout, $$, id) || (Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !1), $$.api.revert());
     }).on("mouseover", function (id) {
-      !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.legend_item_onover, $$, id) || (Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !0), !$$.transiting && $$.isTargetToShow(id) && $$.api.focus(id));
+      callFn(config.legend_item_onover, $$, id) || (Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).classed(config_classes.legendItemFocused, !0), !$$.transiting && $$.isTargetToShow(id) && $$.api.focus(id));
     });
   },
 
@@ -9229,7 +9476,7 @@ var getGridTextAnchor = function (d) {
         step = 0,
         isLegendRightOrInset = $$.isLegendRight || $$.isLegendInset,
         targetIdz = targetIds.filter(function (id) {
-      return !!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_names[id]) || config.data_names[id] !== null;
+      return !isDefined(config.data_names[id]) || config.data_names[id] !== null;
     }),
         withTransition = options.withTransition,
         getTextBox = function (textElement, id) {
@@ -9298,7 +9545,7 @@ var getGridTextAnchor = function (d) {
         l = $$.legend.selectAll(".".concat(config_classes.legendItem)).data(targetIdz).enter().append("g");
 
     $$.setLegendItem(l), l.append("text").text(function (id) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_names[id]) ? config.data_names[id] : id;
+      return isDefined(config.data_names[id]) ? config.data_names[id] : id;
     }).each(function (id, i) {
       updatePositions(this, id, i);
     }).style("pointer-events", "none").attr("x", isLegendRightOrInset ? xForLegendText : pos).attr("y", isLegendRightOrInset ? pos : yForLegendText), l.append("rect").attr("class", config_classes.legendItemEvent).style("fill-opacity", "0").attr("x", isLegendRightOrInset ? xForLegendRect : pos).attr("y", isLegendRightOrInset ? pos : yForLegendRect);
@@ -9307,7 +9554,7 @@ var getGridTextAnchor = function (d) {
     if (usePoint) {
       var ids = [];
       l.append(function (d) {
-        var pattern = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.point_pattern) ? config.point_pattern : [config.point_type];
+        var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
         ids.indexOf(d) === -1 && ids.push(d);
         var point = pattern[ids.indexOf(d) % pattern.length];
         return point === "rectangle" && (point = "rect"), document.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, $$.hasValidPointType(point) ? point : "use");
@@ -9323,7 +9570,7 @@ var getGridTextAnchor = function (d) {
 
     background = $$.legend.select(".".concat(config_classes.legendBackground, " rect")), $$.isLegendInset && maxWidth > 0 && background.size() === 0 && (background = $$.legend.insert("g", ".".concat(config_classes.legendItem)).attr("class", config_classes.legendBackground).append("rect"));
     var texts = $$.legend.selectAll("text").data(targetIdz).text(function (id) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_names[id]) ? config.data_names[id] : id;
+      return isDefined(config.data_names[id]) ? config.data_names[id] : id;
     }) // MEMO: needed for update
     .each(function (id, i) {
       updatePositions(this, id, i);
@@ -9375,14 +9622,13 @@ var getGridTextAnchor = function (d) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/title.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializes the title
    * @private
@@ -9435,14 +9681,13 @@ var getGridTextAnchor = function (d) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/clip.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getClipPath: function getClipPath(id) {
     var $$ = this,
         config = $$.config;
@@ -9506,7 +9751,6 @@ var getGridTextAnchor = function (d) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/region.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9516,7 +9760,7 @@ var getGridTextAnchor = function (d) {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   initRegion: function initRegion() {
     var $$ = this;
     $$.region = $$.main.append("g").attr("clip-path", $$.clipPath).attr("class", config_classes.regions);
@@ -9532,7 +9776,7 @@ var getGridTextAnchor = function (d) {
     var $$ = this,
         regions = $$.mainRegion.select("rect");
     return regions = (withTransition ? regions.transition() : regions).attr("x", $$.regionX.bind($$)).attr("y", $$.regionY.bind($$)).attr("width", $$.regionWidth.bind($$)).attr("height", $$.regionHeight.bind($$)), [(withTransition ? regions.transition() : regions).style("fill-opacity", function (d) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(d.opacity) ? d.opacity : "0.1";
+      return isValue(d.opacity) ? d.opacity : "0.1";
     }).on("end", function () {
       Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this.parentNode).selectAll("rect:not([x])").remove();
     })];
@@ -9575,7 +9819,6 @@ var getGridTextAnchor = function (d) {
   }
 });
 // CONCATENATED MODULE: ./src/interactions/drag.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /**
@@ -9586,7 +9829,7 @@ var getGridTextAnchor = function (d) {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Called when dragging.
    * Data points can be selected.
@@ -9626,7 +9869,7 @@ var getGridTextAnchor = function (d) {
                 y = shape.attr("cy") * 1;
             toggle = $$.togglePoint, isWithin = minX < x && x < maxX && minY < y && y < maxY;
           } else if (shape.classed(config_classes.bar)) {
-            var _getPathBox = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(this),
+            var _getPathBox = getPathBox(this),
                 _x = _getPathBox.x,
                 y = _getPathBox.y,
                 width = _getPathBox.width,
@@ -9668,10 +9911,9 @@ var getGridTextAnchor = function (d) {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(19);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(21);
 
 // CONCATENATED MODULE: ./src/internals/selection.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9681,7 +9923,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Select a point
    * @private
@@ -9697,7 +9939,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
         cy = (isRotated ? $$.circleX : $$.circleY).bind($$),
         r = $$.pointSelectR.bind($$);
     // add selected-circle on low layer g
-    !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_onselected, $$.api, d, target.node()), $$.main.select(".".concat(config_classes.selectedCircles).concat($$.getTargetSelectorSuffix(d.id))).selectAll(".".concat(config_classes.selectedCircle, "-").concat(i)).data([d]).enter().append("circle").attr("class", function () {
+    callFn(config.data_onselected, $$.api, d, target.node()), $$.main.select(".".concat(config_classes.selectedCircles).concat($$.getTargetSelectorSuffix(d.id))).selectAll(".".concat(config_classes.selectedCircle, "-").concat(i)).data([d]).enter().append("circle").attr("class", function () {
       return $$.generateClass(config_classes.selectedCircle, i);
     }).attr("cx", cx).attr("cy", cy).attr("stroke", $$.color).attr("r", function (d2) {
       return $$.pointSelectR(d2) * 1.4;
@@ -9714,7 +9956,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
   unselectPoint: function unselectPoint(target, d, i) {
     var $$ = this;
     // remove selected-circle from low layer g
-    !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.config.data_onunselected, $$.api, d, target.node()), $$.main.select(".".concat(config_classes.selectedCircles).concat($$.getTargetSelectorSuffix(d.id))).selectAll(".".concat(config_classes.selectedCircle, "-").concat(i)).transition().duration(100).attr("r", 0).remove();
+    callFn($$.config.data_onunselected, $$.api, d, target.node()), $$.main.select(".".concat(config_classes.selectedCircles).concat($$.getTargetSelectorSuffix(d.id))).selectAll(".".concat(config_classes.selectedCircle, "-").concat(i)).transition().duration(100).attr("r", 0).remove();
   },
 
   /**
@@ -9739,7 +9981,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
   selectPath: function selectPath(target, d) {
     var $$ = this,
         config = $$.config;
-    !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_onselected, $$, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
+    callFn(config.data_onselected, $$, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
       return Object(external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_["rgb"])($$.color(d)).brighter(.75);
     });
   },
@@ -9753,7 +9995,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
   unselectPath: function unselectPath(target, d) {
     var $$ = this,
         config = $$.config;
-    !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.data_onunselected, $$, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
+    callFn(config.data_onunselected, $$, d, target.node()), config.interaction_brighten && target.transition().duration(100).style("fill", function () {
       return $$.color(d);
     });
   },
@@ -9811,11 +10053,7 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
     }
   }
 });
-// EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(20);
-
 // CONCATENATED MODULE: ./src/interactions/subchart.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9825,7 +10063,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize the brush.
    * @private
@@ -9926,7 +10164,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
    * @param {Number} transition duration
    */
   redrawBarForSubchart: function redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
-    var contextBar = withTransition ? this.contextBar.transition(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())()).duration(duration) : this.contextBar;
+    var contextBar = withTransition ? this.contextBar.transition(getRandom()).duration(duration) : this.contextBar;
     contextBar.attr("d", drawBarOnSub).style("opacity", "1");
   },
 
@@ -9948,7 +10186,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
    * @param {Number} transition duration
    */
   redrawLineForSubchart: function redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
-    var contextLine = withTransition ? this.contextLine.transition(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())()).duration(duration) : this.contextLine;
+    var contextLine = withTransition ? this.contextLine.transition(getRandom()).duration(duration) : this.contextLine;
     contextLine.attr("d", drawLineOnSub).style("opacity", "1");
   },
 
@@ -9972,7 +10210,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
    * @param {Number} transition duration
    */
   redrawAreaForSubchart: function redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
-    var contextArea = withTransition ? this.contextArea.transition(!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())()).duration(duration) : this.contextArea;
+    var contextArea = withTransition ? this.contextArea.transition(getRandom()).duration(duration) : this.contextArea;
     contextArea.attr("d", drawAreaOnSub).style("fill", this.color).style("opacity", this.orgAreaOpacity);
   },
 
@@ -9994,7 +10232,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
     // subchart
     if ($$.context.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"] && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].type === "zoom" && $$.brush.update(), withSubchart)) // update subchart elements if needed
       {
-        !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$) || $$.brush.update();
+        brushEmpty($$) || $$.brush.update();
         // setup drawer - MEMO: this must be called after axis updated
         var drawAreaOnSub = $$.generateDrawArea(areaIndices, !0),
             drawBarOnSub = $$.generateDrawBar(barIndices, !0),
@@ -10039,15 +10277,14 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
   getDefaultExtent: function getDefaultExtent() {
     var $$ = this,
         config = $$.config,
-        extent = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.axis_x_extent) ? config.axis_x_extent($$.getXDomain($$.data.targets)) : config.axis_x_extent;
+        extent = isFunction(config.axis_x_extent) ? config.axis_x_extent($$.getXDomain($$.data.targets)) : config.axis_x_extent;
     return $$.isTimeSeries() && (extent = [$$.parseDate(extent[0]), $$.parseDate(extent[1])]), extent;
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(21);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(22);
 
 // CONCATENATED MODULE: ./src/interactions/zoom.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 
 
 /**
@@ -10060,7 +10297,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize zoom.
    * @private
@@ -10103,7 +10340,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
       var extent = config.zoom_extent || [1, 10];
       return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
     }, zoom.updateScaleExtent = function () {
-      var ratio = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.x.orgDomain()) / !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.getZoomDomain()),
+      var ratio = diffDomain($$.x.orgDomain()) / diffDomain($$.getZoomDomain()),
           extent = this.orgScaleExtent();
       return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
     }, zoom.updateTransformScale = function (transform) {
@@ -10122,7 +10359,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
   onZoomStart: function onZoomStart() {
     var $$ = this,
         event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent;
-    event && ($$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.config.zoom_onzoomstart, $$.api, event));
+    event && ($$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
   /**
@@ -10143,7 +10380,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.cancelClick = isMousemove, !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.zoom_onzoom, $$.api, $$.subX.domain()));
+      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.subX.domain()));
     }
   },
 
@@ -10155,7 +10392,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
     var $$ = this,
         startEvent = $$.zoom.startEvent;
     // if click, do nothing. otherwise, click interaction will be canceled.
-    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.config.zoom_onzoomend, $$.api, $$.subX.domain()));
+    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain()));
   },
 
   /**
@@ -10170,7 +10407,7 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
         min = _$$$orgXDomain[0],
         max = _$$$orgXDomain[1];
 
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.zoom_x_min) && (min = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("min", [min, config.zoom_x_min])), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.zoom_x_max) && (max = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("max", [max, config.zoom_x_max])), [min, max];
+    return isDefined(config.zoom_x_min) && (min = getMinMax("min", [min, config.zoom_x_min])), isDefined(config.zoom_x_max) && (max = getMinMax("max", [max, config.zoom_x_max])), [min, max];
   },
 
   /**
@@ -10241,7 +10478,6 @@ var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack
   }
 });
 // CONCATENATED MODULE: ./src/internals/color.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10272,7 +10508,7 @@ var colorizePattern = function (pattern, color, id) {
 // Contained differently depend on d3 version: v4(d3-scale), v5(d3-scale-chromatic)
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Get color pattern from CSS file
    * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
@@ -10300,10 +10536,10 @@ var colorizePattern = function (pattern, color, id) {
         colors = config.data_colors,
         callback = config.data_color,
         ids = [],
-        pattern = !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.color_pattern) ? config.color_pattern : Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleOrdinal"])($$.getColorFromCss() || schemeCategory10).range(),
+        pattern = notEmpty(config.color_pattern) ? config.color_pattern : Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleOrdinal"])($$.getColorFromCss() || schemeCategory10).range(),
         originalColorPattern = pattern;
 
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(config.color_tiles)) {
+    if (isFunction(config.color_tiles)) {
       var tiles = config.color_tiles(),
           colorizedPatterns = pattern.map(function (p, index) {
         var color = p.replace(/[#\(\)\s,]/g, ""),
@@ -10320,7 +10556,7 @@ var colorizePattern = function (pattern, color, id) {
       var color,
           id = d.id || d.data && d.data.id || d,
           isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !$$.config.data_types[id];
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(colors[id]) ? color = colors[id](d) : colors[id] ? color = colors[id] : (ids.indexOf(id) < 0 && ids.push(id), color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] : pattern[ids.indexOf(id) % pattern.length], colors[id] = color), !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(callback) ? callback(color, d) : color;
+      return isFunction(colors[id]) ? color = colors[id](d) : colors[id] ? color = colors[id] : (ids.indexOf(id) < 0 && ids.push(id), color = isLine ? originalColorPattern[ids.indexOf(id) % originalColorPattern.length] : pattern[ids.indexOf(id) % pattern.length], colors[id] = color), isFunction(callback) ? callback(color, d) : color;
     };
   },
   generateLevelColor: function generateLevelColor() {
@@ -10331,7 +10567,7 @@ var colorizePattern = function (pattern, color, id) {
         asValue = threshold.unit === "value",
         max = threshold.max || 100,
         values = threshold.values && threshold.values.length ? threshold.values : [];
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(threshold) ? function (value) {
+    return notEmpty(threshold) ? function (value) {
       var color = colors[colors.length - 1];
 
       for (var v, i = 0; i < values.length; i++) if (v = asValue ? value : value * 100 / max, v < values[i]) {
@@ -10344,7 +10580,6 @@ var colorizePattern = function (pattern, color, id) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/format.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10359,7 +10594,7 @@ var getFormat = function ($$, typeValue, v) {
   return format(v);
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   getYFormat: function getYFormat(forArc) {
     var $$ = this,
         formatForY = $$.yFormat,
@@ -10376,7 +10611,7 @@ var getFormat = function ($$, typeValue, v) {
     return getFormat(this, "y2", v);
   },
   defaultValueFormat: function defaultValueFormat(v) {
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) ? +v : "";
+    return isValue(v) ? +v : "";
   },
   defaultArcValueFormat: function defaultArcValueFormat(v, ratio) {
     return "".concat((ratio * 100).toFixed(1), "%");
@@ -10385,24 +10620,23 @@ var getFormat = function ($$, typeValue, v) {
     var $$ = this,
         dataLabels = $$.config.data_labels,
         defaultFormat = function (v) {
-      return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(v) ? +v : "";
+      return isValue(v) ? +v : "";
     },
         format = defaultFormat;
 
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(dataLabels.format) ? format = dataLabels.format : !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(dataLabels.format) && (dataLabels.format[targetId] ? format = dataLabels.format[targetId] === !0 ? defaultFormat : dataLabels.format[targetId] : format = function () {
+    return isFunction(dataLabels.format) ? format = dataLabels.format : isObjectType(dataLabels.format) && (dataLabels.format[targetId] ? format = dataLabels.format[targetId] === !0 ? defaultFormat : dataLabels.format[targetId] : format = function () {
       return "";
     }), format;
   }
 });
 // CONCATENATED MODULE: ./src/internals/cache.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Add cache
    * @param {String} key
@@ -10423,7 +10657,7 @@ var getFormat = function ($$, typeValue, v) {
   removeCache: function removeCache(key) {
     var _this = this;
 
-    !(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(key).forEach(function (v) {
+    toArray(key).forEach(function (v) {
       return delete _this.cache[v];
     });
   },
@@ -10461,7 +10695,6 @@ var getFormat = function ($$, typeValue, v) {
   }
 });
 // CONCATENATED MODULE: ./src/internals/class.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10469,7 +10702,7 @@ var getFormat = function ($$, typeValue, v) {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   CLASS: config_classes,
   generateClass: function generateClass(prefix, targetId) {
     return " ".concat(prefix, " ").concat(prefix + this.getTargetSelectorSuffix(targetId));
@@ -10584,7 +10817,6 @@ var getFormat = function ($$, typeValue, v) {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.focus.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10593,7 +10825,7 @@ var getFormat = function ($$, typeValue, v) {
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * This API highlights specified targets and fade out the others.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
@@ -10674,14 +10906,13 @@ var getFormat = function ($$, typeValue, v) {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.show.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Show/Hide data series
    * @private
@@ -10790,7 +11021,6 @@ var getFormat = function ($$, typeValue, v) {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.zoom.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -10835,13 +11065,13 @@ var api_zoom_zoom = function (domainValue) {
       withTransition: !0,
       withY: $$.config.zoom_rescale,
       withDimension: !1
-    }), $$.setZoomResetButton(), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.config.zoom_onzoom, this, $$.x.orgDomain());
+    }), $$.setZoomResetButton(), callFn($$.config.zoom_onzoom, this, $$.x.orgDomain());
   } else resultDomain = $$.zoomScale ? $$.zoomScale.domain() : $$.x.orgDomain();
 
   return resultDomain;
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(api_zoom_zoom, {
+extend(api_zoom_zoom, {
   /**
    * Enable and disable zooming.
    * @method zoom․enable
@@ -10865,7 +11095,7 @@ var api_zoom_zoom = function (domainValue) {
         $$ = this.internal,
         config = $$.config,
         enableType = enabled;
-    enabled && (enableType = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(enabled) && /^(drag|wheel)$/.test(enabled) ? {
+    enabled && (enableType = isString(enabled) && /^(drag|wheel)$/.test(enabled) ? {
       type: enabled
     } : enabled), config.zoom_enabled = enableType, $$.zoom ? enabled === !1 && $$.bindZoomEvent(!1) : ($$.initZoom(), $$.initZoomBehaviour(), $$.bindZoomEvent()), $$.updateAndRedraw();
   },
@@ -10884,7 +11114,7 @@ var api_zoom_zoom = function (domainValue) {
   max: function max(_max) {
     var $$ = this.internal,
         config = $$.config;
-    return (_max === 0 || _max) && (config.zoom_x_max = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("max", [$$.orgXDomain[1], _max])), config.zoom_x_max;
+    return (_max === 0 || _max) && (config.zoom_x_max = getMinMax("max", [$$.orgXDomain[1], _max])), config.zoom_x_max;
   },
 
   /**
@@ -10901,7 +11131,7 @@ var api_zoom_zoom = function (domainValue) {
   min: function min(_min) {
     var $$ = this.internal,
         config = $$.config;
-    return (_min === 0 || _min) && (config.zoom_x_min = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())("min", [$$.orgXDomain[0], _min])), config.zoom_x_min;
+    return (_min === 0 || _min) && (config.zoom_x_min = getMinMax("min", [$$.orgXDomain[0], _min])), config.zoom_x_min;
   },
 
   /**
@@ -10924,10 +11154,10 @@ var api_zoom_zoom = function (domainValue) {
   range: function range(_range) {
     var zoom = this.zoom;
 
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_range)) {
+    if (isObject(_range)) {
       var min = _range.min,
           max = _range.max;
-      !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(min) && zoom.min(min), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(max) && zoom.max(max);
+      isDefined(min) && zoom.min(min), isDefined(max) && zoom.max(max);
     }
 
     return {
@@ -10935,7 +11165,7 @@ var api_zoom_zoom = function (domainValue) {
       max: zoom.max()
     };
   }
-}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+}), extend(Chart_Chart.prototype, {
   zoom: api_zoom_zoom,
 
   /**
@@ -10962,14 +11192,13 @@ var api_zoom_zoom = function (domainValue) {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.load.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Load data to the chart.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
@@ -11054,9 +11283,9 @@ var api_zoom_zoom = function (domainValue) {
   unload: function unload(argsValue) {
     var $$ = this.internal,
         args = argsValue || {};
-    !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args) ? args = {
+    isArray(args) ? args = {
       ids: args
-    } : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args) && (args = {
+    } : isString(args) && (args = {
       ids: [args]
     });
     var ids = $$.mapToTargetIds(args.ids);
@@ -11070,10 +11299,9 @@ var api_zoom_zoom = function (domainValue) {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
-var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(22);
+var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(23);
 
 // CONCATENATED MODULE: ./src/api/api.flow.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11085,7 +11313,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Flow data to the chart.<br><br>
    * By this API, you can append new data points to the chart.
@@ -11192,13 +11420,13 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
         baseValue = baseTarget.values[0];
     // Set targets
     // Redraw with new targets
-    !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args.to) ? (length = 0, to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to, baseTarget.values.forEach(function (v) {
+    isDefined(args.to) ? (length = 0, to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to, baseTarget.values.forEach(function (v) {
       v.x < to && length++;
-    })) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && $$.isTimeSeries() && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)], $$.updateXDomain(null, !0, !0, !1, domain)) : (diff = $$.isTimeSeries() ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x], $$.updateXDomain(null, !0, !0, !1, domain)), $$.updateTargets($$.data.targets), $$.redraw({
+    })) : isDefined(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && $$.isTimeSeries() && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)], $$.updateXDomain(null, !0, !0, !1, domain)) : (diff = $$.isTimeSeries() ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x], $$.updateXDomain(null, !0, !0, !1, domain)), $$.updateTargets($$.data.targets), $$.redraw({
       flow: {
         index: baseValue.index,
         length: length,
-        duration: !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args.duration) ? args.duration : $$.config.transition_duration,
+        duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
         done: args.done,
         orgDataCount: orgDataCount
       },
@@ -11208,7 +11436,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
       withUpdateXAxis: !0
     });
   }
-}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+}), extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Generate flow
    * @memberof ChartInternal
@@ -11256,7 +11484,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
       // update x domain to generate axis elements for flow
       var domain = $$.updateXDomain(targets, !0, !0); // update elements related to x scale
 
-      $$.updateXGrid && $$.updateXGrid(!0), flow.orgDataCount ? flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x) ? translateX = $$.x(orgDomain[0]) - $$.x(domain[0]) : $$.isTimeSeries() ? translateX = $$.x(orgDomain[0]) - $$.x(domain[0]) : translateX = $$.x(flowStart.x) - $$.x(flowEnd.x) : $$.data.targets[0].values.length === 1 ? $$.isTimeSeries() ? (flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0), flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1), translateX = $$.x(flowStart.x) - $$.x(flowEnd.x)) : translateX = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(domain) / 2 : translateX = $$.x(orgDomain[0]) - $$.x(domain[0]), scaleX = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(orgDomain) / !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(domain);
+      $$.updateXGrid && $$.updateXGrid(!0), flow.orgDataCount ? flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x) ? translateX = $$.x(orgDomain[0]) - $$.x(domain[0]) : $$.isTimeSeries() ? translateX = $$.x(orgDomain[0]) - $$.x(domain[0]) : translateX = $$.x(flowStart.x) - $$.x(flowEnd.x) : $$.data.targets[0].values.length === 1 ? $$.isTimeSeries() ? (flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0), flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1), translateX = $$.x(flowStart.x) - $$.x(flowEnd.x)) : translateX = diffDomain(domain) / 2 : translateX = $$.x(orgDomain[0]) - $$.x(domain[0]), scaleX = diffDomain(orgDomain) / diffDomain(domain);
       var transform = "translate(".concat(translateX, ",0) scale(").concat(scaleX, ",1)");
       $$.hideXGridFocus();
       var gt = Object(external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_["transition"])().ease(external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_["easeLinear"]).duration(durationForFlow);
@@ -11292,7 +11520,6 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   }
 });
 // CONCATENATED MODULE: ./src/api/api.selection.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11301,7 +11528,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Get selected data points.<br><br>
    * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
@@ -11363,7 +11590,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
           isTargetIndex = !indices || indices.indexOf(i) >= 0,
           isSelected = shape.classed(config_classes.SELECTED);
       // line/area selection not supported yet
-      shape.classed(config_classes.line) || shape.classed(config_classes.area) || (isTargetId && isTargetIndex ? config.data_selection_isselectable(d) && !isSelected && toggle(!0, shape.classed(config_classes.SELECTED, !0), d, i) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(resetOther) && resetOther && isSelected && toggle(!1, shape.classed(config_classes.SELECTED, !1), d, i));
+      shape.classed(config_classes.line) || shape.classed(config_classes.area) || (isTargetId && isTargetIndex ? config.data_selection_isselectable(d) && !isSelected && toggle(!0, shape.classed(config_classes.SELECTED, !0), d, i) : isDefined(resetOther) && resetOther && isSelected && toggle(!1, shape.classed(config_classes.SELECTED, !1), d, i));
     });
   },
 
@@ -11400,7 +11627,6 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   }
 });
 // CONCATENATED MODULE: ./src/api/api.transform.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11408,7 +11634,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Change the type of the chart.
    * @method transform
@@ -11433,7 +11659,7 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
     } : null;
     $$.transformTo(targetIds, type, options);
   }
-}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+}), extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Change the type of the chart.
    * @private
@@ -11451,14 +11677,13 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   }
 });
 // CONCATENATED MODULE: ./src/api/api.group.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Update groups for the targets.
    * @method groups
@@ -11475,11 +11700,10 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   groups: function groups(_groups) {
     var $$ = this.internal,
         config = $$.config;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_groups) ? config.data_groups : (config.data_groups = _groups, $$.redraw(), config.data_groups);
+    return isUndefined(_groups) ? config.data_groups : (config.data_groups = _groups, $$.redraw(), config.data_groups);
   }
 });
 // CONCATENATED MODULE: ./src/api/api.grid.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11506,7 +11730,7 @@ var xgrids = function (grids) {
   return grids ? (config.grid_x_lines = grids, $$.redrawWithoutRescale(), config.grid_x_lines) : config.grid_x_lines;
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(xgrids, {
+extend(xgrids, {
   /**
    * Add x grid lines.<br>
    * This API adds new x grid lines instead of replacing like xgrids.
@@ -11574,7 +11798,7 @@ var ygrids = function (grids) {
   return grids ? (config.grid_y_lines = grids, $$.redrawWithoutRescale(), config.grid_y_lines) : config.grid_y_lines;
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ygrids, {
+extend(ygrids, {
   /**
    * Add y grid lines.<br>
    * This API adds new y grid lines instead of replacing like ygrids.
@@ -11621,12 +11845,11 @@ var ygrids = function (grids) {
     // TODO: multiple
     this.internal.removeGridLines(params, !1);
   }
-}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+}), extend(Chart_Chart.prototype, {
   xgrids: xgrids,
   ygrids: ygrids
 });
 // CONCATENATED MODULE: ./src/api/api.region.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11655,7 +11878,7 @@ var api_region_regions = function (_regions) {
   return _regions ? (config.regions = _regions, $$.redrawWithoutRescale(), _regions) : config.regions;
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(api_region_regions, {
+extend(api_region_regions, {
   /**
    * Add new region.<br><br>
    * This API adds new region instead of replacing like regions.
@@ -11705,8 +11928,8 @@ var api_region_regions = function (_regions) {
     var $$ = this.internal,
         config = $$.config,
         options = optionsValue || {},
-        duration = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "duration", config.transition_duration),
-        classes = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(options, "classes", [config_classes.region]),
+        duration = getOption(options, "duration", config.transition_duration),
+        classes = getOption(options, "classes", [config_classes.region]),
         regions = $$.main.select(".".concat(config_classes.regions)).selectAll(classes.map(function (c) {
       return ".".concat(c);
     }));
@@ -11717,11 +11940,10 @@ var api_region_regions = function (_regions) {
       }), !found);
     }), config.regions = regions) : config.regions = [], regions;
   }
-}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+}), extend(Chart_Chart.prototype, {
   regions: api_region_regions
 });
 // CONCATENATED MODULE: ./src/api/api.data.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -11749,12 +11971,12 @@ var api_region_regions = function (_regions) {
 
 var api_data_data = function (targetIds) {
   var targets = this.internal.data.targets;
-  return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(targetIds) ? targets : targets.filter(function (t) {
+  return isUndefined(targetIds) ? targets : targets.filter(function (t) {
     return targetIds.indexOf(t.id) >= 0;
   });
 };
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(api_data_data, {
+extend(api_data_data, {
   /**
    * Get data shown in the chart.
    * @method data․shown
@@ -11795,7 +12017,7 @@ var api_data_data = function (targetIds) {
 
     if (targetId) {
       var targets = this.data(targetId);
-      targets && !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(targets) && (values = [], targets.forEach(function (v) {
+      targets && isArray(targets) && (values = [], targets.forEach(function (v) {
         var dataValue = v.values.map(function (d) {
           return d.value;
         });
@@ -11901,18 +12123,17 @@ var api_data_data = function (targetIds) {
   max: function max() {
     return this.internal.getMinMaxData().max;
   }
-}), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+}), extend(Chart_Chart.prototype, {
   data: api_data_data
 });
 // CONCATENATED MODULE: ./src/api/api.category.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Set specified category name on category axis.
    * @method category
@@ -11947,14 +12168,13 @@ var api_data_data = function (targetIds) {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.color.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Get the color
    * @method color
@@ -11969,14 +12189,13 @@ var api_data_data = function (targetIds) {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.x.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Get and set x values for the chart.
    * @method x
@@ -11994,7 +12213,7 @@ var api_data_data = function (targetIds) {
   x: function x(_x) {
     var $$ = this.internal,
         isCategorized = $$.isCustomX() && $$.isCategorized();
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_x) && (isCategorized ? $$.api.categories(_x) : ($$.updateTargetX($$.data.targets, _x), $$.redraw({
+    return isArray(_x) && (isCategorized ? $$.api.categories(_x) : ($$.updateTargetX($$.data.targets, _x), $$.redraw({
       withUpdateOrgXDomain: !0,
       withUpdateXDomain: !0
     }))), isCategorized ? $$.api.categories() : $$.data.xs;
@@ -12019,14 +12238,13 @@ var api_data_data = function (targetIds) {
    */
   xs: function xs(_xs) {
     var $$ = this.internal;
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_xs) && ($$.updateTargetXs($$.data.targets, _xs), $$.redraw({
+    return isObject(_xs) && ($$.updateTargetXs($$.data.targets, _xs), $$.redraw({
       withUpdateOrgXDomain: !0,
       withUpdateXDomain: !0
     })), $$.data.xs;
   }
 });
 // CONCATENATED MODULE: ./src/api/api.axis.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12047,12 +12265,12 @@ var setMinMax = function ($$, type, value) {
       axisX = "axis_x_".concat(type),
       axisY = "axis_y_".concat(type),
       axisY2 = "axis_y2_".concat(type);
-  return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) && (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) ? (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value.x) && (config[axisX] = value.x), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value.y) && (config[axisY] = value.y), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value.y2) && (config[axisY2] = value.y2)) : (config[axisY] = value, config[axisY2] = value), $$.redraw({
+  return isDefined(value) && (isObjectType(value) ? (isValue(value.x) && (config[axisX] = value.x), isValue(value.y) && (config[axisY] = value.y), isValue(value.y2) && (config[axisY2] = value.y2)) : (config[axisY] = value, config[axisY2] = value), $$.redraw({
     withUpdateOrgXDomain: !0,
     withUpdateXDomain: !0
   })), undefined;
 },
-    getMinMax = function ($$, type) {
+    api_axis_getMinMax = function ($$, type) {
   var config = $$.config;
   return {
     x: config["axis_x_".concat(type)],
@@ -12060,7 +12278,7 @@ var setMinMax = function ($$, type, value) {
     y2: config["axis_y2_".concat(type)]
   };
 },
-    api_axis_axis = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(function () {}, {
+    api_axis_axis = extend(function () {}, {
   /**
    * Get and set axis labels.
    * @method axis․labels
@@ -12099,7 +12317,7 @@ var setMinMax = function ($$, type, value) {
    */
   min: function min(_min) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "min", _min) : getMinMax($$, "min");
+    return arguments.length ? setMinMax($$, "min", _min) : api_axis_getMinMax($$, "min");
   },
 
   /**
@@ -12120,7 +12338,7 @@ var setMinMax = function ($$, type, value) {
    */
   max: function max(_max) {
     var $$ = this.internal;
-    return arguments.length ? setMinMax($$, "max", _max) : getMinMax($$, "max");
+    return arguments.length ? setMinMax($$, "max", _max) : api_axis_getMinMax($$, "max");
   },
 
   /**
@@ -12146,7 +12364,7 @@ var setMinMax = function ($$, type, value) {
    */
   range: function range(_range) {
     var axis = this.axis;
-    if (arguments.length) !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_range.max) && axis.max(_range.max), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(_range.min) && axis.min(_range.min);else return {
+    if (arguments.length) isDefined(_range.max) && axis.max(_range.max), isDefined(_range.min) && axis.min(_range.min);else return {
       max: axis.max(),
       min: axis.min()
     };
@@ -12162,11 +12380,10 @@ var setMinMax = function ($$, type, value) {
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   axis: api_axis_axis
 });
 // CONCATENATED MODULE: ./src/api/api.legend.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12178,7 +12395,7 @@ var setMinMax = function ($$, type, value) {
  * @ignore
  */
 
-var legend = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(function () {}, {
+var legend = extend(function () {}, {
   /**
    * Show legend for each target.
    * @method legend․show
@@ -12231,11 +12448,10 @@ var legend = !(function webpackMissingModule() { var e = new Error("Cannot find 
     });
   }
 });
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   legend: legend
 });
 // CONCATENATED MODULE: ./src/internals/browser.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12249,13 +12465,12 @@ var legend = !(function webpackMissingModule() { var e = new Error("Cannot find 
 
 /* eslint-disable no-new-func */
 
-var win = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(window) && window.Math === Math ? window : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(self) && (self.Math === Math ? self : Function("return this")()),
+var win = isDefined(window) && window.Math === Math ? window : isDefined(self) && (self.Math === Math ? self : Function("return this")()),
     browser_doc = win.document;
 /* eslint-enable no-new-func */
 
 
 // CONCATENATED MODULE: ./src/api/api.chart.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12263,7 +12478,7 @@ var win = !(function webpackMissingModule() { var e = new Error("Cannot find mod
 
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Resize the chart.
    * @method resize
@@ -12321,7 +12536,7 @@ var win = !(function webpackMissingModule() { var e = new Error("Cannot find mod
     var _this = this,
         $$ = this.internal;
 
-    return !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$) && ($$.charts.splice($$.charts.indexOf(this), 1), !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.charts.splice($$.charts.indexOf(this), 1), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -12351,11 +12566,10 @@ var win = !(function webpackMissingModule() { var e = new Error("Cannot find mod
     var res,
         $$ = this.internal,
         key = name && name.replace(/\./g, "_");
-    return key in $$.config && (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(value) ? ($$.config[key] = value, res = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
+    return key in $$.config && (isDefined(value) ? ($$.config[key] = value, res = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
   }
 });
 // CONCATENATED MODULE: ./src/api/api.tooltip.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12367,7 +12581,7 @@ var win = !(function webpackMissingModule() { var e = new Error("Cannot find mod
  * @ignore
  */
 
-var tooltip = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(function () {}, {
+var tooltip = extend(function () {}, {
   /**
    * Show tooltip
    * @method tooltip․show
@@ -12405,7 +12619,7 @@ var tooltip = !(function webpackMissingModule() { var e = new Error("Cannot find
         args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         $$ = this.internal;
     // emulate events to show
-    args.mouse && (mouse = args.mouse), args.data ? $$.isMultipleX() ? (mouse = [$$.x(args.data.x), $$.getYScale(args.data.id)(args.data.value)], index = null) : index = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args.x) ? index = $$.getIndexByX(args.x) : !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(args.index) && (index = args.index), ($$.inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
+    args.mouse && (mouse = args.mouse), args.data ? $$.isMultipleX() ? (mouse = [$$.x(args.data.x), $$.getYScale(args.data.id)(args.data.value)], index = null) : index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x) : isDefined(args.x) ? index = $$.getIndexByX(args.x) : isDefined(args.index) && (index = args.index), ($$.inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
       $$.dispatchEvent(eventName, index, mouse);
     });
   },
@@ -12421,11 +12635,10 @@ var tooltip = !(function webpackMissingModule() { var e = new Error("Cannot find
     $$.hideTooltip(), $$.hideXGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 });
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   tooltip: tooltip
 });
 // CONCATENATED MODULE: ./src/internals/ua.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12433,7 +12646,7 @@ var tooltip = !(function webpackMissingModule() { var e = new Error("Cannot find
 
 
 var ua = window.navigator.userAgent;
-!(function webpackMissingModule() { var e = new Error("Cannot find module './util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(ChartInternal_ChartInternal.prototype, {
+extend(ChartInternal_ChartInternal.prototype, {
   isSafari: function isSafari() {
     return ua.indexOf("Safari") > -1 && !this.isChrome();
   },
@@ -12446,7 +12659,6 @@ var ua = window.navigator.userAgent;
   }
 });
 // CONCATENATED MODULE: ./src/api/api.export.js
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }());
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -12472,8 +12684,8 @@ var b64EncodeUnicode = function (str) {
       width = _node$getBoundingClie.width,
       height = _node$getBoundingClie.height,
       clone = node.cloneNode(!0),
-      styleSheets = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(document.styleSheets),
-      cssRules = !(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(styleSheets),
+      styleSheets = toArray(document.styleSheets),
+      cssRules = getCssRules(styleSheets),
       cssText = cssRules.filter(function (r) {
     return r.cssText;
   }).map(function (r) {
@@ -12495,7 +12707,7 @@ var b64EncodeUnicode = function (str) {
  */
 
 
-!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(Chart_Chart.prototype, {
+extend(Chart_Chart.prototype, {
   /**
    * Export chart as an image.
    * - **NOTE:**
@@ -12527,7 +12739,7 @@ var b64EncodeUnicode = function (str) {
         callback = arguments.length > 1 ? arguments[1] : undefined,
         svgDataUrl = nodeToSvgDataUrl(this.element);
 
-    if (!(function webpackMissingModule() { var e = new Error("Cannot find module '../internals/util'"); e.code = 'MODULE_NOT_FOUND'; throw e; }())(callback)) {
+    if (isFunction(callback)) {
       var img = new Image();
       img.crosssOrigin = "Anonymous", img.onload = function () {
         var canvas = document.createElement("canvas"),
@@ -12542,7 +12754,7 @@ var b64EncodeUnicode = function (str) {
   }
 });
 // EXTERNAL MODULE: ./src/scss/billboard.scss
-var billboard = __webpack_require__(23);
+var billboard = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./src/core.js
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return bb; });
@@ -12609,7 +12821,7 @@ var billboard = __webpack_require__(23);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20181224173656
+ * @version 1.7.1-nightly-20181224175656
  */
 
 var bb = {
@@ -12620,7 +12832,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20181224173656",
+  version: "1.7.1-nightly-20181224175656",
 
   /**
    * Generate chart
