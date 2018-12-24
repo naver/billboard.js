@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
-import {extend, brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain} from "./util";
+import {extend, brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, sortValue} from "./util";
 
 extend(ChartInternal.prototype, {
 	getYDomainMinMax(targets, type) {
@@ -254,7 +254,7 @@ extend(ChartInternal.prototype, {
 		const zoomEnabled = config.zoom_enabled;
 
 		if (withUpdateOrgXDomain) {
-			$$.x.domain(domain || $$.getXDomain(targets).sort());
+			$$.x.domain(domain || sortValue($$.getXDomain(targets)));
 			$$.orgXDomain = $$.x.domain();
 
 			zoomEnabled && $$.zoom.updateScaleExtent();

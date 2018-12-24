@@ -19,7 +19,8 @@ import {
 	isUndefined,
 	isValue,
 	notEmpty,
-	mergeArray
+	mergeArray,
+	sortValue
 } from "../internals/util";
 
 extend(ChartInternal.prototype, {
@@ -427,7 +428,7 @@ extend(ChartInternal.prototype, {
 			xs = $$.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
 		}
 
-		return xs.sort((a, b) => (a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN));
+		return sortValue(xs);
 	},
 
 	addHiddenTargetIds(targetIds) {
