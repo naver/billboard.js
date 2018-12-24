@@ -202,6 +202,25 @@ const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
 const mergeArray = arr => (arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : []);
 
 /**
+ * Sort value
+ * @param {Array} data value to be sorted
+ * @param {Boolean} isAsc true: asc, false: desc
+ * @return {Number|String|Date} sorted date
+ * @private
+ */
+const sortValue = (data, isAsc = true) => {
+	let fn;
+
+	if (data[0] instanceof Date) {
+		fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+	} else if (!isAsc) {
+		fn = (a, b) => (a > b && -1) || (a < b && 1) || (a === b && 0);
+	}
+
+	return data.concat().sort(fn);
+};
+
+/**
  * Get min/max value
  * @param {String} type 'min' or 'max'
  * @param {Array} data Array data value
@@ -215,9 +234,7 @@ const getMinMax = (type, data) => {
 		if (isNumber(res[0])) {
 			res = Math[type](...res);
 		} else if (res[0] instanceof Date) {
-			const sortFn = type === "min" ? (a, b) => a - b : (a, b) => b - a;
-
-			res = res.sort(sortFn)[0];
+			res = sortValue(res, type === "min")[0];
 		}
 	} else {
 		res = undefined;
@@ -332,5 +349,6 @@ export {
 	mergeArray,
 	notEmpty,
 	sanitise,
+	sortValue,
 	toArray
 };

@@ -14,10 +14,9 @@ import {
 	selectAll as d3SelectAll
 } from "d3-selection";
 import {transition as d3Transition} from "d3-transition";
-
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -229,7 +228,7 @@ export default class ChartInternal {
 		$$.updateScales();
 
 		// Set domains for each scale
-		$$.x.domain($$.getXDomain($$.data.targets).sort());
+		$$.x.domain(sortValue($$.getXDomain($$.data.targets)));
 		$$.y.domain($$.getYDomain($$.data.targets, "y"));
 		$$.y2.domain($$.getYDomain($$.data.targets, "y2"));
 		$$.subX.domain($$.x.domain());
