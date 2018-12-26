@@ -49,6 +49,12 @@ describe("CORE", function() {
 			expect(svg.attr("class")).not.to.be.null;
 			expect(svg.attr("class")).to.be.equal("customclass");
 		});
+
+		it("y2 Axis shouldn't be generated", () => {
+			const y2 = chart.internal.main.select(`.${CLASS.axisY2}`);
+
+			expect(y2.empty()).to.be.true;
+		});
 	});
 
 	describe("init callbacks", () => {
@@ -224,6 +230,14 @@ describe("CORE", function() {
 			const main = chart.internal.main.select(`.${CLASS.chart}`);
 
 			expect(main.attr("clip-path")).to.not.be.null;
+		});
+
+		it("set option axis.y2.show=true", () => {
+			args.axis = {
+				y2: {
+					show: true
+				}
+			};
 		});
 
 		it("check for chart node's position", () => {
