@@ -1398,6 +1398,51 @@ describe("DATA", () => {
 				expect(points.size()).to.be.equal(0);
 			});
 		});
+
+		describe("text transition", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100],
+							["data2", 130, 100, 140]
+						],
+						labels: true
+					}
+				};
+			});
+
+			it("newly added text shouldn't be transitioning from the top/left", done => {
+				const main = chart.$.main;
+				const pos = [];
+				let text;
+				let interval;
+
+				setTimeout(() => {
+					interval = setInterval(() => {
+						text = main.select(`.${CLASS.texts}-data2 .${CLASS.text}-3`);
+						pos.push(+text.attr("x"));
+					}, 20);
+
+					chart.load({
+						columns: [
+							["data2", 44, 134, 98, 170]
+						],
+						done: function () {
+							setTimeout(() => {
+								clearInterval(interval);
+								const currPos = +text.attr("x");
+
+								expect(Math.round(pos[0])).to.not.equal(0);
+								expect(pos.every(v => v === currPos)).to.be.true;
+
+								done();
+							}, 500);
+						}
+					});
+				}, 500);
+			});
+		});
 	});
 
 	describe("inner functions", () => {
