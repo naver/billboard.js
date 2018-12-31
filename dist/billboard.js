@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20181231135045
+ * @version 1.7.1-nightly-20181231152016
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8570,7 +8570,14 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @returns {Object} $$.mainText
    */
   redrawText: function redrawText(xForText, yForText, forFlow, withTransition) {
-    return [(withTransition ? this.mainText.transition() : this.mainText).attr("x", xForText).attr("y", yForText).style("fill", this.color).style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))];
+    var $$ = this,
+        t = getRandom(),
+        opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+    return [this.mainText.each(function () {
+      var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this); // do not apply transition for newly added text elements
+
+      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", xForText).attr("y", yForText).style("fill", $$.color).style("fill-opacity", opacityForText);
+    })];
   },
 
   /**
@@ -12831,7 +12838,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20181231135045
+ * @version 1.7.1-nightly-20181231152016
  */
 
 var bb = {
@@ -12842,7 +12849,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20181231135045",
+  version: "1.7.1-nightly-20181231152016",
 
   /**
    * Generate chart
