@@ -33,35 +33,36 @@ export default class Axis {
 
 		$$.axesList = {};
 
-		["x", "y", "y2"].forEach(v => {
-			const classAxis = getAxisClassName(v);
-			const classLabel = CLASS[`axis${capitalize(v)}Label`];
+		["x", "y", "y2"].filter(id => config[`axis_${id}_show`])
+			.forEach(v => {
+				const classAxis = getAxisClassName(v);
+				const classLabel = CLASS[`axis${capitalize(v)}Label`];
 
-			$$.axes[v] = main.append("g")
-				.attr("class", classAxis)
-				.attr("clip-path", () => {
-					let res = null;
+				$$.axes[v] = main.append("g")
+					.attr("class", classAxis)
+					.attr("clip-path", () => {
+						let res = null;
 
-					if (v === "x") {
-						res = $$.clipPathForXAxis;
-					} else if (v === "y" && config.axis_y_inner) {
-						res = $$.clipPathForYAxis;
-					}
+						if (v === "x") {
+							res = $$.clipPathForXAxis;
+						} else if (v === "y" && config.axis_y_inner) {
+							res = $$.clipPathForYAxis;
+						}
 
-					return res;
-				})
-				.attr("transform", $$.getTranslate(v))
-				.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
+						return res;
+					})
+					.attr("transform", $$.getTranslate(v))
+					.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
 
-			$$.axes[v].append("text")
-				.attr("class", classLabel)
-				.attr("transform", ["rotate(-90)", null][
-					v === "x" ? +!isRotated : +isRotated
-				])
-				.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+				$$.axes[v].append("text")
+					.attr("class", classLabel)
+					.attr("transform", ["rotate(-90)", null][
+						v === "x" ? +!isRotated : +isRotated
+					])
+					.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
 
-			this.generateAxes(v);
-		});
+				this.generateAxes(v);
+			});
 	}
 
 	/**
@@ -216,7 +217,7 @@ export default class Axis {
 
 		if (axis) {
 			axis.tickValues(tickValues);
-		} else {
+		} else if ($$.xAxis) {
 			$$.xAxis.tickValues(tickValues);
 			$$.subXAxis.tickValues(tickValues);
 		}
@@ -475,7 +476,7 @@ export default class Axis {
 		const currentTickMax = $$.currentMaxTickWidths;
 		let maxWidth = 0;
 
-		if (withoutRecompute && currentTickMax[id]) {
+		if ((withoutRecompute && currentTickMax[id]) || !config[`axis_${id}_show`]) {
 			return currentTickMax[id];
 		}
 
@@ -529,16 +530,17 @@ export default class Axis {
 			Y2: $$.main.select(`.${CLASS.axisY2} .${CLASS.axisY2Label}`)
 		};
 
-		Object.keys(labels).forEach(v => {
-			const node = labels[v];
-			const axisLabel = `${v}AxisLabel`;
+		Object.keys(labels).filter(id => !labels[id].empty())
+			.forEach(v => {
+				const node = labels[v];
+				const axisLabel = `${v}AxisLabel`;
 
-			(withTransition ? node.transition() : node)
-				.attr("x", this[`xFor${axisLabel}`].bind(this))
-				.attr("dx", this[`dxFor${axisLabel}`].bind(this))
-				.attr("dy", this[`dyFor${axisLabel}`].bind(this))
-				.text(this[`textFor${axisLabel}`].bind(this));
-		});
+				(withTransition ? node.transition() : node)
+					.attr("x", this[`xFor${axisLabel}`].bind(this))
+					.attr("dx", this[`dxFor${axisLabel}`].bind(this))
+					.attr("dy", this[`dyFor${axisLabel}`].bind(this))
+					.text(this[`textFor${axisLabel}`].bind(this));
+			});
 	}
 
 	getPadding(padding, key, defaultValue, domainLength) {
@@ -610,7 +612,15 @@ export default class Axis {
 		const axes = $$.axes;
 
 		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subx"]
-			.map(v => (duration ? axes[v].transition().duration(duration) : axes[v]));
+			.map(v => {
+				let axis = axes[v];
+
+				if (axis && duration) {
+					axis = axis.transition().duration(duration);
+				}
+
+				return axis;
+			});
 
 		return {axisX, axisY, axisY2, axisSubX};
 	}
@@ -619,14 +629,14 @@ export default class Axis {
 		const $$ = this.owner;
 		const opacity = isHidden ? "0" : "1";
 
-		["x", "y", "y2", "subx"].forEach(v => {
-			$$.axes[v].style("opacity", opacity);
-		});
+		["x", "y", "y2", "subX"].forEach(id => {
+			const axis = $$[`${id}Axis`];
 
-		$$.xAxis.create(transitions.axisX);
-		$$.yAxis.create(transitions.axisY);
-		$$.y2Axis.create(transitions.axisY2);
-		$$.subXAxis.create(transitions.axisSubX);
+			if (axis) {
+				$$.axes[id.toLowerCase()].style("opacity", opacity);
+				axis.create(transitions[`axis${capitalize(id)}`]);
+			}
+		});
 
 		this.updateAxes();
 	}

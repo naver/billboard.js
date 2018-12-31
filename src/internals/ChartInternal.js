@@ -171,6 +171,9 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 
+		// for arc type, set axes to not be shown
+		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
+
 		$$.axis = new Axis($$);
 
 		config.subchart_show && $$.initBrush();
@@ -228,15 +231,23 @@ export default class ChartInternal {
 		$$.updateScales();
 
 		// Set domains for each scale
-		$$.x.domain(sortValue($$.getXDomain($$.data.targets)));
-		$$.y.domain($$.getYDomain($$.data.targets, "y"));
-		$$.y2.domain($$.getYDomain($$.data.targets, "y2"));
-		$$.subX.domain($$.x.domain());
-		$$.subY.domain($$.y.domain());
-		$$.subY2.domain($$.y2.domain());
+		if ($$.x) {
+			$$.x.domain(sortValue($$.getXDomain($$.data.targets)));
+			$$.subX.domain($$.x.domain());
 
-		// Save original x domain for zoom update
-		$$.orgXDomain = $$.x.domain();
+			// Save original x domain for zoom update
+			$$.orgXDomain = $$.x.domain();
+		}
+
+		if ($$.y) {
+			$$.y.domain($$.getYDomain($$.data.targets, "y"));
+			$$.subY.domain($$.y.domain());
+		}
+
+		if ($$.y2) {
+			$$.y2.domain($$.getYDomain($$.data.targets, "y2"));
+			$$.subY2 && $$.subY2.domain($$.y2.domain());
+		}
 
 		// -- Basic Elements --
 		$$.svg = $$.selectChart.append("svg")
@@ -586,12 +597,12 @@ export default class ChartInternal {
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const hasRadar = $$.hasType("radar");
+		const hasArcType = $$.hasArcType();
 
 		const areaIndices = $$.getShapeIndices($$.isAreaType);
 		const barIndices = $$.getShapeIndices($$.isBarType);
 		const lineIndices = $$.getShapeIndices($$.isLineType);
 
-		const hideAxis = $$.hasArcType();
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 		const xv = $$.xv.bind($$);
 
@@ -623,13 +634,13 @@ export default class ChartInternal {
 			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
 		}
 
-		if (targetsToShow.length) {
+		if ($$.x && targetsToShow.length) {
 			$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
 
 			if (!config.axis_x_tick_values) {
 				tickValues = $$.axis.updateXAxisTickValues(targetsToShow);
 			}
-		} else {
+		} else if ($$.xAxis) {
 			$$.xAxis.tickValues([]);
 			$$.subXAxis.tickValues([]);
 		}
@@ -640,26 +651,29 @@ export default class ChartInternal {
 
 		["y", "y2"].forEach(key => {
 			const axis = $$[key];
-			const tickValues = config[`axis_${key}_tick_values`];
-			const tickCount = config[`axis_${key}_tick_count`];
 
-			axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
+			if (axis) {
+				const tickValues = config[`axis_${key}_tick_values`];
+				const tickCount = config[`axis_${key}_tick_count`];
 
-			if (!tickValues && tickCount) {
-				const domain = axis.domain();
+				axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
-				$$[`${key}Axis`].tickValues(
-					$$.axis.generateTickValues(
-						domain,
-						domain.every(v => v === 0) ? 1 : tickCount,
-						$$.isTimeSeriesY()
-					)
-				);
+				if (!tickValues && tickCount) {
+					const domain = axis.domain();
+
+					$$[`${key}Axis`].tickValues(
+						$$.axis.generateTickValues(
+							domain,
+							domain.every(v => v === 0) ? 1 : tickCount,
+							$$.isTimeSeriesY()
+						)
+					);
+				}
 			}
 		});
 
 		// axes
-		$$.axis.redraw(transitions, hideAxis);
+		$$.axis.redraw(transitions, hasArcType);
 
 		// Update axis label
 		$$.axis.updateLabels(wth.Transition);
@@ -700,8 +714,8 @@ export default class ChartInternal {
 
 		// Update sub domain
 		if (wth.Y) {
-			$$.subY.domain($$.getYDomain(targetsToShow, "y"));
-			$$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+			$$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y"));
+			$$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
 		}
 
 		// xgrid focus
@@ -756,6 +770,7 @@ export default class ChartInternal {
 		// circles for select
 		main.selectAll(`.${CLASS.selectedCircles}`)
 			.filter($$.isBarType.bind($$))
+			.filter($$.isBarType.bind($$))
 			.selectAll("circle")
 			.remove();
 
@@ -790,15 +805,17 @@ export default class ChartInternal {
 		const isTransition = (duration || flow) && $$.isTabVisible();
 
 		// redraw list
-		const redrawList = [
+
+		const redrawList = hasArcType ? [] : [
 			$$.redrawBar(drawBar, isTransition),
 			$$.redrawLine(drawLine, isTransition),
 			$$.redrawArea(drawArea, isTransition),
-			$$.redrawCircle(cx, cy, isTransition, flow),
 			$$.redrawText(xForText, yForText, options.flow, isTransition),
 			$$.redrawRegion(isTransition),
 			$$.redrawGrid(isTransition)
 		];
+
+		(!hasArcType || hasRadar) && redrawList.push($$.redrawCircle(cx, cy, isTransition, flow));
 
 		// callback function after redraw ends
 		const afterRedraw = flow || config.onrendered ? () => {
@@ -1096,12 +1113,12 @@ export default class ChartInternal {
 		const $$ = this;
 
 		if (!withoutAxis) {
-			if ($$.config.axis_rotated) {
+			if ($$.xAxis && $$.config.axis_rotated) {
 				$$.xAxis.create($$.axes.x);
 				$$.subXAxis.create($$.axes.subx);
 			} else {
-				$$.yAxis.create($$.axes.y);
-				$$.y2Axis.create($$.axes.y2);
+				$$.yAxis && $$.yAxis.create($$.axes.y);
+				$$.y2Axis && $$.y2Axis.create($$.axes.y2);
 			}
 		}
 
