@@ -186,46 +186,41 @@ extend(ChartInternal.prototype, {
 			(position.isInner ? 20 : 40);
 	},
 
-	getHorizontalAxisHeight(axisId) {
+	getHorizontalAxisHeight(id) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		let h = 30;
 
-		if (axisId === "x" && !config.axis_x_show) {
+		if (id === "x" && !config.axis_x_show) {
 			return 8;
 		}
 
-		if (axisId === "x" && config.axis_x_height) {
+		if (id === "x" && config.axis_x_height) {
 			return config.axis_x_height;
 		}
 
-		if (axisId === "y" && !config.axis_y_show) {
+		if (id === "y" && !config.axis_y_show) {
 			return config.legend_show &&
 				!$$.isLegendRight &&
 				!$$.isLegendInset ? 10 : 1;
 		}
 
-		if (axisId === "y2" && !config.axis_y2_show) {
+		if (id === "y2" && !config.axis_y2_show) {
 			return $$.rotated_padding_top;
 		}
 
-		// Calculate x axis height when tick rotated
-		if (axisId === "x" && !config.axis_rotated && config.axis_x_tick_rotate) {
+		// Calculate x/y axis height when tick rotated
+		if ((id === "x" && !isRotated && config.axis_x_tick_rotate) ||
+			(id === "y" && isRotated && config.axis_y_tick_rotate)) {
 			h = 30 +
-				$$.axis.getMaxTickWidth(axisId) *
-				Math.cos(Math.PI * (90 - config.axis_x_tick_rotate) / 180);
-		}
-
-		// Calculate y axis height when tick rotated
-		if (axisId === "y" && config.axis_rotated && config.axis_y_tick_rotate) {
-			h = 30 +
-				$$.axis.getMaxTickWidth(axisId) *
-				Math.cos(Math.PI * (90 - config.axis_y_tick_rotate) / 180);
+				$$.axis.getMaxTickWidth(id) *
+				Math.cos(Math.PI * (90 - config[`axis_${id}_tick_rotate`]) / 180);
 		}
 
 		return h +
-			($$.axis.getLabelPositionById(axisId).isInner ? 0 : 10) +
-			(axisId === "y2" && !config.axis_rotated ? -10 : 0);
+			($$.axis.getLabelPositionById(id).isInner ? 0 : 10) +
+			(id === "y2" && !isRotated ? -10 : 0);
 	},
 
 	getEventRectWidth() {

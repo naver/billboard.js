@@ -125,35 +125,44 @@ extend(ChartInternal.prototype, {
 		$$.subYMax = isRotated ? $$.width2 : 1;
 
 		// update scales
-		$$.x = $$.getX($$.xMin, $$.xMax,
-			isInit ? undefined : $$.x.orgDomain(), () => $$.xAxis.tickOffset());
-		$$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain());
-		$$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain());
-		$$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
-		$$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain());
-		$$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain());
+		if (config.axis_x_show) {
+			$$.x = $$.getX($$.xMin, $$.xMax, isInit ? undefined : $$.x.orgDomain(),
+				() => $$.xAxis.tickOffset());
+			$$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
 
-		// update axes
-		$$.xAxisTickFormat = $$.axis.getXAxisTickFormat();
-		$$.xAxisTickValues = $$.axis.getXAxisTickValues();
-		$$.yAxisTickValues = $$.axis.getYAxisTickValues();
-		$$.y2AxisTickValues = $$.axis.getY2AxisTickValues();
+			$$.xAxisTickFormat = $$.axis.getXAxisTickFormat();
+			$$.xAxisTickValues = $$.axis.getXAxisTickValues();
 
-		$$.xAxis = $$.axis
-			.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat,
-				$$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit);
+			$$.xAxis = $$.axis
+				.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat,
+					$$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit);
 
-		$$.subXAxis = $$.axis
-			.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat,
-				$$.xAxisTickValues, config.axis_x_tick_outer);
+			$$.subXAxis = $$.axis
+				.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat,
+					$$.xAxisTickValues, config.axis_x_tick_outer);
+		}
 
-		$$.yAxis = $$.axis
-			.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format,
-				$$.yAxisTickValues, config.axis_y_tick_outer);
+		if (config.axis_y_show) {
+			$$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain());
+			$$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain());
 
-		$$.y2Axis = $$.axis
-			.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format,
-				$$.y2AxisTickValues, config.axis_y2_tick_outer);
+			$$.yAxisTickValues = $$.axis.getYAxisTickValues();
+
+			$$.yAxis = $$.axis
+				.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format,
+					$$.yAxisTickValues, config.axis_y_tick_outer);
+		}
+
+		if (config.axis_y2_show) {
+			$$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain());
+			$$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain());
+
+			$$.y2AxisTickValues = $$.axis.getY2AxisTickValues();
+
+			$$.y2Axis = $$.axis
+				.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format,
+					$$.y2AxisTickValues, config.axis_y2_tick_outer);
+		}
 
 		// update for arc
 		$$.updateArc && $$.updateArc();
