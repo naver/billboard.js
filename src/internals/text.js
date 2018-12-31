@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isNumber} from "./util";
+import {extend, getRandom, isNumber} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -88,12 +88,21 @@ extend(ChartInternal.prototype, {
 	 * @returns {Object} $$.mainText
 	 */
 	redrawText(xForText, yForText, forFlow, withTransition) {
+		const $$ = this;
+		const t = getRandom();
+		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+
 		return [
-			(withTransition ? this.mainText.transition() : this.mainText)
-				.attr("x", xForText)
-				.attr("y", yForText)
-				.style("fill", this.color)
-				.style("fill-opacity", forFlow ? 0 : this.opacityForText.bind(this))
+			this.mainText.each(function() {
+				const text = d3Select(this);
+
+				// do not apply transition for newly added text elements
+				(withTransition && text.attr("x") ? text.transition(t) : text)
+					.attr("x", xForText)
+					.attr("y", yForText)
+					.style("fill", $$.color)
+					.style("fill-opacity", opacityForText);
+			})
 		];
 	},
 
