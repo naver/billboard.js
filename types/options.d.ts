@@ -219,7 +219,17 @@ export interface ChartOptions {
 			 * Set max width of each bar
 			 */
 			max?: number;
+		} | {
+			/**
+			 * Set the width option for specific dataset
+			 */
+			[key: string]: {
+				ratio: number;
+				max: number;
+			}
 		};
+
+		headers?: Array<{ [key: string]: string; }>;
 
 		/**
 		 * Set if min or max value will be 0 on bar chart.

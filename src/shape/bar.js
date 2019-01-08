@@ -5,7 +5,7 @@
 import {mouse as d3Mouse} from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isValue, isNumber, getRandom, getRectSegList} from "../internals/util";
+import {extend, getRandom, getRectSegList, isNumber, isObjectType, isValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initBar() {
@@ -71,12 +71,35 @@ extend(ChartInternal.prototype, {
 	getBarW(axis, barTargetsNum) {
 		const $$ = this;
 		const config = $$.config;
-		const w = isNumber(config.bar_width) ?
-			config.bar_width : barTargetsNum ?
-				(axis.tickInterval($$.getMaxDataCount()) * config.bar_width_ratio) / barTargetsNum : 0;
+		const tickInterval = axis.tickInterval($$.getMaxDataCount());
+		const isGrouped = config.data_groups.length;
+		let result;
 
-		return config.bar_width_max && w > config.bar_width_max ?
-			config.bar_width_max : w;
+		const getWidth = id => {
+			const width = id ? config.bar_width[id] : config.bar_width;
+			const ratio = id ? width.ratio : config.bar_width_ratio;
+			const max = id ? width.max : config.bar_width_max;
+			const w = isNumber(width) ?
+				width : barTargetsNum ? (tickInterval * ratio) / barTargetsNum : 0;
+
+			return max && w > max ? max : w;
+		};
+
+		result = getWidth();
+
+		if (!isGrouped && isObjectType(config.bar_width)) {
+			result = {width: result, total: []};
+
+			$$.filterTargetsToShow($$.data.targets).forEach(v => {
+				if (config.bar_width[v.id]) {
+					result[v.id] = getWidth(v.id);
+				}
+
+				result.total.push(result[v.id] || result.width);
+			});
+		}
+
+		return result;
 	},
 
 	getBars(i, id) {
@@ -163,6 +186,7 @@ extend(ChartInternal.prototype, {
 		return (d, i) => {
 			const y0 = yScale.call($$, d.id)(0);
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
+			const width = isNumber(barW) ? barW : barW[d.id] || barW.width;
 			const posX = barX(d);
 			let posY = barY(d);
 
@@ -179,8 +203,8 @@ extend(ChartInternal.prototype, {
 			return [
 				[posX, offset],
 				[posX, posY],
-				[posX + barW, posY],
-				[posX + barW, offset]
+				[posX + width, posY],
+				[posX + width, offset]
 			];
 		};
 	},
