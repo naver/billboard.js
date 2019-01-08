@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20181231152016
+ * @version 1.7.1-nightly-20190108190108
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -12799,15 +12799,23 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {Number} [bar.padding=0] The padding pixel value between each bar.
-     * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
+     * @property {Number} [bar.radius] Set the radius of bar edge in pixel.
+     * - **NOTE:** Works only for non-stacked bar
      * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
      * @property {Number} [bar.width] Change the width of bar chart.
      * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
      * @property {Number} [bar.width.max] The maximum width value for ratio.
+     * @property {Number} [bar.width.dataname] Change the width of bar for indicated dataset only.
+     * - **NOTE:**
+     *   - Works only for non-stacked bar
+     *   - Bars are centered accoding its total width value
+     * @property {Number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+     * @property {Number} [bar.width.dataname.max] The maximum width value for ratio.
      * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
      * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
      * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
      * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
+     * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
      * @example
      *  bar: {
      *      padding: 1,
@@ -12820,10 +12828,20 @@ var Options_Options = function Options() {
      *      }
      *
      *      width: 10,
+     *
      *      // or
      *      width: {
      *          ratio: 0.2,
      *          max: 20
+     *      },
+     *
+     *      // or specify width per dataset
+     *      width: {
+     *          data1: 20,
+     *          data2: {
+     *              ratio: 0.2,
+     *              max: 20
+     *          }
      *      },
      *
      *      zerobased: false
@@ -17313,10 +17331,22 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   getShapeX: function getShapeX(offset, targetsNum, indices, isSub) {
     var $$ = this,
         scale = isSub ? $$.subX : $$.zoomScale || $$.x,
-        barPadding = $$.config.bar_padding;
+        barPadding = $$.config.bar_padding,
+        sum = function (p, c) {
+      return p + c;
+    },
+        halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
+
     return function (d) {
       var index = d.id in indices ? indices[d.id] : 0,
-          x = d.x || d.x === 0 ? scale(d.x) - offset * (targetsNum / 2 - index) : 0;
+          x = 0;
+
+      if (notEmpty(d.x)) {
+        var xPos = scale(d.x);
+        x = halfWidth ? xPos - (offset[d.id] || offset.width) + offset.total.slice(0, index + 1).reduce(sum) - halfWidth : xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+      } // adjust x position for bar.padding optionq
+
+
       return offset && x && targetsNum > 1 && barPadding && (index && (x += barPadding * index), targetsNum > 2 ? x -= (targetsNum - 1) * barPadding / 2 : targetsNum === 2 && (x -= barPadding / 2)), x;
     };
   },
@@ -17817,10 +17847,25 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     return [(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
   },
   getBarW: function getBarW(axis, barTargetsNum) {
-    var $$ = this,
+    var result,
+        $$ = this,
         config = $$.config,
-        w = isNumber(config.bar_width) ? config.bar_width : barTargetsNum ? axis.tickInterval($$.getMaxDataCount()) * config.bar_width_ratio / barTargetsNum : 0;
-    return config.bar_width_max && w > config.bar_width_max ? config.bar_width_max : w;
+        tickInterval = axis.tickInterval($$.getMaxDataCount()),
+        isGrouped = config.data_groups.length,
+        getWidth = function (id) {
+      var width = id ? config.bar_width[id] : config.bar_width,
+          ratio = id ? width.ratio : config.bar_width_ratio,
+          max = id ? width.max : config.bar_width_max,
+          w = isNumber(width) ? width : barTargetsNum ? tickInterval * ratio / barTargetsNum : 0;
+      return max && w > max ? max : w;
+    };
+
+    return result = getWidth(), !isGrouped && isObjectType(config.bar_width) && (result = {
+      width: result,
+      total: []
+    }, $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
+      config.bar_width[v.id] && (result[v.id] = getWidth(v.id)), result.total.push(result[v.id] || result.width);
+    })), result;
   },
   getBars: function getBars(i, id) {
     var $$ = this,
@@ -17882,10 +17927,11 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     return function (d, i) {
       var y0 = yScale.call($$, d.id)(0),
           offset = barOffset(d, i) || y0,
+          width = isNumber(barW) ? barW : barW[d.id] || barW.width,
           posX = barX(d),
           posY = barY(d);
       // 4 points that make a bar
-      return $$.config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset, [[posX, offset], [posX, posY], [posX + barW, posY], [posX + barW, offset]];
+      return $$.config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset, [[posX, offset], [posX, posY], [posX + width, posY], [posX + width, offset]];
     };
   },
   isWithinBar: function isWithinBar(that) {
@@ -23549,7 +23595,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20181231152016
+ * @version 1.7.1-nightly-20190108190108
  */
 
 var bb = {
@@ -23560,7 +23606,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20181231152016",
+  version: "1.7.1-nightly-20190108190108",
 
   /**
    * Generate chart
