@@ -375,5 +375,41 @@ describe("SHAPE BAR", () => {
 				"M246.5,331.55555555555554 V221 a7.5,7.5 0 0 1 7.5,-7.5 H254 a7.5,7.5 0 0 1 7.5,7.5 V331.55555555555554z"
 			]);
 		});
+
+		it("set options bar.width for each dataset", () => {
+			args.bar.width = {
+				data1: 20,
+				data2: 40
+			};
+		});
+
+		it("each data should be rendered with different width", () => {
+			chart.data().map(v => v.id).forEach(id => {
+				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
+					expect(Math.round(this.getBBox().width)).to.be.equal(args.bar.width[id]);
+				});	
+			});
+		});
+
+		it("set options bar.width's ratio", () => {
+			args.bar.width.data1 = {
+				ratio: 0.5
+			};
+
+			args.bar.width.data2 = {
+				ratio: 1,
+				max: 30
+			};
+		});
+
+		it("each data should be rendered with different width", () => {
+			const expected = [25, 30];
+
+			chart.data().map(v => v.id).forEach((id, i) => {
+				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
+					expect(Math.round(this.getBBox().width)).to.be.equal(expected[i]);
+				});	
+			});
+		});
 	});
 });

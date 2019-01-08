@@ -2279,6 +2279,28 @@ d3.select(".chart_area")
 					}
 				}
 			}
+		},
+		BarWidthVariant: {
+			options: {
+				data: {
+					columns: [
+						["data1", 378, 200, 175, 400, 150, 321],
+						["data2", 130, 100, 140, 200, 257, 294],
+						["data3", 190, 220, 340, 259, 368, 222]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						data1: 20,
+						data2: {
+							ratio: 1,
+							max: 30
+						},
+						data3: 40
+					}
+				}
+			}
 		}
 	},
 	ChartOptions: {

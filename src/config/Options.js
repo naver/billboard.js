@@ -2622,15 +2622,23 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number} [bar.padding=0] The padding pixel value between each bar.
-			 * @property {Number} [bar.radius] Set the radius of bar edge in pixel.<br>- **NOTE:** Only for non-stacking bars.
+			 * @property {Number} [bar.radius] Set the radius of bar edge in pixel.
+			 * - **NOTE:** Works only for non-stacked bar
 			 * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
 			 * @property {Number} [bar.width] Change the width of bar chart.
 			 * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 			 * @property {Number} [bar.width.max] The maximum width value for ratio.
+			 * @property {Number} [bar.width.dataname] Change the width of bar for indicated dataset only.
+			 * - **NOTE:**
+			 *   - Works only for non-stacked bar
+			 *   - Bars are centered accoding its total width value
+			 * @property {Number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+			 * @property {Number} [bar.width.dataname.max] The maximum width value for ratio.
 			 * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
 			 * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
 			 * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
 			 * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
+			 * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
 			 * @example
 			 *  bar: {
 			 *      padding: 1,
@@ -2643,10 +2651,20 @@ export default class Options {
 			 *      }
 			 *
 			 *      width: 10,
+			 *
 			 *      // or
 			 *      width: {
 			 *          ratio: 0.2,
 			 *          max: 20
+			 *      },
+			 *
+			 *      // or specify width per dataset
+			 *      width: {
+			 *          data1: 20,
+			 *          data2: {
+			 *              ratio: 0.2,
+			 *              max: 20
+			 *          }
 			 *      },
 			 *
 			 *      zerobased: false
