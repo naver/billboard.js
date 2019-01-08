@@ -25,7 +25,7 @@ import {
 import {select as d3Select} from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {isUndefined, extend} from "../internals/util";
+import {extend, isObjectType, isNumber, isUndefined, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	getShapeIndices(typeFilter) {
@@ -64,13 +64,26 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const scale = isSub ? $$.subX : ($$.zoomScale || $$.x);
 		const barPadding = $$.config.bar_padding;
+		const sum = (p, c) => p + c;
+		const halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
 
 		return d => {
 			const index = d.id in indices ? indices[d.id] : 0;
-			let x = d.x || d.x === 0 ?
-				scale(d.x) - offset * (targetsNum / 2 - index) : 0;
+			let x = 0;
 
-			// adjust x position for bar.padding option
+			if (notEmpty(d.x)) {
+				const xPos = scale(d.x);
+
+				if (halfWidth) {
+					x = xPos - (offset[d.id] || offset.width) +
+						offset.total.slice(0, index + 1).reduce(sum) -
+						halfWidth;
+				} else {
+					x = xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+				}
+			}
+
+			// adjust x position for bar.padding optionq
 			if (offset && x && targetsNum > 1 && barPadding) {
 				if (index) {
 					x += barPadding * index;

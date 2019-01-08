@@ -60,7 +60,11 @@ const config = {
 		new WebpackBar()
 	],
 	stats: "minimal",
-	mode: "none"
+	mode: "none",
+	devServer: {
+		// https://github.com/webpack/webpack-dev-server/issues/1604
+		disableHostCheck: true
+	}
 };
 
 module.exports = () => {
