@@ -33,26 +33,23 @@
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
         !function() {
-	        var localPath = "../dist/";
-	        var remotePath = "../release/latest/dist/";
-	        var cssFileName = localStorage.cssThemeName;
+            var path = ["../dist/", "../../gh-pages/release/latest/dist/"];
+            var cssFileName = localStorage.cssThemeName;
 
-	        if (cssFileName) {
-		        cssFileName = "theme/" + cssFileName;
-            } else {
-		        cssFileName = "billboard";
-	        }
+            cssFileName = cssFileName ? "theme/" + cssFileName : "billboard";
 
-	        fallback.load({
-		        billboard_js: [
-			        localPath + "billboard.js",
-			        remotePath + "billboard.js"
-		        ],
-		        billboard_css: [
-			        localPath + cssFileName + ".css",
-			        remotePath + cssFileName + ".css"
-		        ]
-	        });
+            /Edge/.test(navigator.userAgent) && /github.io/.test(location.hostname) && path.reverse();
+
+            fallback.load({
+                    billboard_js: [
+                        path[0] + "billboard.js",
+                        path[1] + "billboard.js"
+                    ],
+                    billboard_css: [
+                        path[0] + cssFileName + ".css",
+                        path[1] + cssFileName + ".css"
+                    ]
+            });
 
 	        $(function() {
 		        var $select = $("#theme select");
