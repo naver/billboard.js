@@ -20,6 +20,7 @@ function getDatetime() {
 	].join("");
 }
 
+// is deploy build? (The deploy is intended to be ran from Travis CI)
 const deploy = process.env.DEPLOY_NIGHTLY;
 
 // set version for nightly
