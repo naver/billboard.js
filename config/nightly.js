@@ -20,15 +20,19 @@ function getDatetime() {
 	].join("");
 }
 
+const deploy = process.env.DEPLOY_NIGHTLY;
+
 // set version for nightly
 const version = pkg.version.replace(/snapshot/, `nightly-${getDatetime()}`);
 let cmd = `cross-env NIGHTLY=${version} npm run build:`;
 
 // build command
 const build = {
+	merge_master: deploy ? "git fetch origin && git merge origin/master --no-verify" : "",
 	production: `${cmd}production`,
 	packaged: `${cmd}packaged`,
-	theme: `${cmd}theme`
+	theme: `${cmd}theme`,
+	push: deploy ? `git commit -a -m "skip: ${version} build" && git push origin nightly` : ""
 };
 
 cmd = Object.values(build);
