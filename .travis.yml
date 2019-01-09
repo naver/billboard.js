@@ -16,10 +16,12 @@ cache:
     - $HOME/.npm
 before_script:
   - npm run lint
+  - git config --global user.email 'travis@travis-ci.org' &&  git config --global user.name 'Travis CI'
+  - git fetch origin && git checkout nightly && git merge origin/master --no-verify
 script:
-  - npm run coverage
+  # - npm run coverage
   - npm run deploy:nightly
 after_success:
-  - git remote show origin
-  - git branch
-  - git push origin nightly
+  - git remote add upstream https://$GH_TOKEN@github.com/naver/billboard.js.git > /dev/null 2>&1
+  - git push upstream nightly
+  

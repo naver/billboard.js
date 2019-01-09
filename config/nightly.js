@@ -30,12 +30,10 @@ let cmd = `cross-env NIGHTLY=${version} npm run build:`;
 
 // build command
 const build = {
-	setup_github: deploy ? "git config --global user.email 'travis@travis-ci.org' &&  git config --global user.name 'Travis CI'" : "",
-	merge_master: deploy ? "git fetch origin && git checkout nightly && git merge origin/master --no-verify" : "",
 	production: `${cmd}production`,
 	packaged: `${cmd}packaged`,
 	theme: `${cmd}theme`,
-	push: deploy ? `git commit -a -m "skip: ${version} build [skip ci]" && git remote add upstream https://${token}@github.com/naver/billboard.js.git > /dev/null 2>&1 && git push upstream nightly` : ""
+	push: deploy ? `git commit -a -m "skip: ${version} build [skip ci]"` : ""
 };
 
 cmd = Object.values(build);
