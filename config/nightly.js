@@ -22,6 +22,7 @@ function getDatetime() {
 
 // is deploy build? (The deploy is intended to be ran from Travis CI)
 const deploy = process.env.DEPLOY_NIGHTLY;
+const token = process.env.GH_TOKEN;
 
 // set version for nightly
 const version = pkg.version.replace(/snapshot/, `nightly-${getDatetime()}`);
@@ -29,11 +30,12 @@ let cmd = `cross-env NIGHTLY=${version} npm run build:`;
 
 // build command
 const build = {
-	merge_master: deploy ? "git fetch origin && git merge origin/master --no-verify" : "",
+	setup_github: deploy ? "git config --global user.email 'travis@travis-ci.org' &&  git config --global user.name 'Travis CI'" : "",
+	merge_master: deploy ? "git fetch origin && git checkout nightly && git merge origin/master --no-verify" : "",
 	production: `${cmd}production`,
 	packaged: `${cmd}packaged`,
 	theme: `${cmd}theme`,
-	push: deploy ? `git commit -a -m "skip: ${version} build" && git push origin nightly` : ""
+	push: deploy ? `git commit -a -m "skip: ${version} build [skip ci]" && git remote add upstream https://${token}@github.com/naver/billboard.js.git > /dev/null 2>&1 && git push upstream nightly` : ""
 };
 
 cmd = Object.values(build);
