@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "7"
+  - "8"
 dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
 before_install:
@@ -19,4 +19,7 @@ before_script:
 script:
   - npm run coverage
   - npm run deploy:nightly
-    
+after_success:
+  - git remote show origin
+  - git branch
+  - git push origin nightly
