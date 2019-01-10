@@ -3,6 +3,10 @@
 
 # set nightly version
 VERSION="$(node -pe "require('./package.json').version")-`date '+%Y%m%d%H%M%S'`"
+echo $VERSION
+echo $(node -pe "require('./package.json').version")
+echo `date '+%Y%m%d%H%M%S'`
+
 VERSION="${VERSION/snapshot/nightly}"
 
 setup_git() {
