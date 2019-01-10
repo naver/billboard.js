@@ -16,7 +16,6 @@
     "build:packaged:monitor": "cross-env MONITOR=true npm run build:packaged",
     "build:nightly": "node ./config/nightly.js",
     "deploy": "bash ./config/deploy.sh",
-    "deploy:nightly": "cross-env DEPLOY_NIGHTLY=true node ./config/nightly.js",
     "lint": "eslint src",
     "lint:dts": "dtslint types",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
