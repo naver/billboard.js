@@ -221,7 +221,6 @@ describe("ZOOM", function() {
 				    onclick: d => {
 					    clickedData = d;
 				    }
-
 			    },
 			    zoom: {
 				    enabled: {
@@ -350,7 +349,16 @@ describe("ZOOM", function() {
 				data: {
 					columns: [
 						["sample", 30, 200, 100, 400, 150, 250]
-					]
+					],
+					regions: {
+						sample: [{
+							start: 1,
+							end: 2,
+							style: {
+								dasharray: "5 2"
+							}
+						}]
+					}
 				},
 				regions: [
 					{
@@ -362,7 +370,10 @@ describe("ZOOM", function() {
 		});
 
 		it("region area should be resized on zoom", done => {
-			const regionRect = chart.$.main.select(`.${CLASS.region}-0 rect`);
+		    const main = chart.$.main;
+			const regionRect = main.select(`.${CLASS.region}-0 rect`);
+			const lineWidth = chart.$.line.lines.node().getBBox().width;
+
 			const size = {
 				width: +regionRect.attr("width"),
 				x: +regionRect.attr("x")
@@ -374,6 +385,7 @@ describe("ZOOM", function() {
 			setTimeout(() => {
 				expect(+regionRect.attr("width")).to.be.above(size.width);
 				expect(+regionRect.attr("x")).to.be.below(size.x);
+				expect(+chart.$.line.lines.node().getBBox().width).to.be.above(lineWidth);
 
 				done();
 			}, 500);
