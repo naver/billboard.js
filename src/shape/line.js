@@ -167,8 +167,9 @@ extend(ChartInternal.prototype, {
 			line = line.defined(d => $$.getBaseValue(d) !== null);
 		}
 
+		const x = isSub ? $$.subX : $$.x;
+
 		return d => {
-			const x = isSub ? $$.x : $$.subX;
 			const y = yScaleGetter.call($$, d.id);
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
 			let x0 = 0;
@@ -176,8 +177,10 @@ extend(ChartInternal.prototype, {
 			let path;
 
 			if ($$.isLineType(d)) {
-				if (config.data_regions[d.id]) {
-					path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]);
+				const regions = config.data_regions[d.id];
+
+				if (regions) {
+					path = $$.lineWithRegions(values, x, y, regions);
 				} else {
 					if ($$.isStepType(d)) {
 						values = $$.convertValuesToStep(values);
