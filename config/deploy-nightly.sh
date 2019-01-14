@@ -16,10 +16,6 @@ build_nightly() {
 }
 
 build_and_commit() {
-  git checkout nightly
-  git fetch origin
-  git merge origin/master --no-verify
-
   build_nightly
   git commit -a -m "skip: $VERSION build [skip ci]"
 }

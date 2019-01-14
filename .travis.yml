@@ -15,6 +15,9 @@ cache:
   directories:
     - $HOME/.npm
 before_script:
+  - git fetch origin
+  - git checkout nightly
+  - git merge master
   - npm run lint
 script:
   - npm run coverage
