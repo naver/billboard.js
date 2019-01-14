@@ -15,7 +15,8 @@ cache:
   directories:
     - $HOME/.npm
 before_script:
-  - git fetch master
+  - git fetch
+  - git checkout master
   - git pull
   - git checkout nightly
   - git merge origin/master
