@@ -7,6 +7,18 @@ VERSION="$(node -pe "require('./package.json').version.replace('snapshot', 'nigh
 setup_git() {
   git config --global user.email "travis@travis-ci.org"
   git config --global user.name "Travis CI"
+
+  # Remove existing "origin"
+  git remote rm origin
+
+  # Add new "origin" with access token in the git URL for authentication
+  git remote add origin https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
+
+  git fetch
+  git checkout master
+  git pull
+  git checkout nightly
+  git merge master
 }
 
 build_nightly() {
@@ -21,14 +33,12 @@ build_and_commit() {
 }
 
 push() {
-  # Remove existing "origin"
-  git remote rm origin
-
-  # Add new "origin" with access token in the git URL for authentication
-  git remote add origin https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
   git push origin nightly
 }
 
-setup_git
-build_and_commit
-push
+if [ "$1" = "setup" ]; then
+  setup_git
+elif [ "$1" = "build" ]; then
+  build_and_commit
+  push
+fi

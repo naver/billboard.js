@@ -15,14 +15,10 @@ cache:
   directories:
     - $HOME/.npm
 before_script:
-  - git fetch origin
-  - git checkout origin/master
-  - git pull
-  - git checkout nightly
-  - git merge origin/master
+  - sh ./config/deploy-nightly.sh setup
   - npm run lint
 script:
   - npm run coverage
 after_success:
-  - sh ./config/deploy-nightly.sh
+  - sh ./config/deploy-nightly.sh build
   
