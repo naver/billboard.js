@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190113093514
+ * @version 1.7.1-nightly-20190114021653
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -18089,16 +18089,23 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     },
         line = src_line();
 
-    return line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
+    line = isRotated ? line.x(yValue).y(xValue) : line.x(xValue).y(yValue), lineConnectNull || (line = line.defined(function (d) {
       return $$.getBaseValue(d) !== null;
-    })), function (d) {
+    }));
+    var x = isSub ? $$.subX : $$.x;
+    return function (d) {
       var path,
-          x = isSub ? $$.x : $$.subX,
           y = yScaleGetter.call($$, d.id),
           values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
           x0 = 0,
           y0 = 0;
-      return $$.isLineType(d) ? config.data_regions[d.id] ? path = $$.lineWithRegions(values, x, y, config.data_regions[d.id]) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getCurve(d))(values)) : (values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = isRotated ? "M ".concat(y0, " ").concat(x0) : "M ".concat(x0, " ").concat(y0)), path || "M 0 0";
+
+      if ($$.isLineType(d)) {
+        var regions = config.data_regions[d.id];
+        regions ? path = $$.lineWithRegions(values, x, y, regions) : ($$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = line.curve($$.getCurve(d))(values));
+      } else values[0] && (x0 = x(values[0].x), y0 = y(values[0].value)), path = isRotated ? "M ".concat(y0, " ").concat(x0) : "M ".concat(x0, " ").concat(y0);
+
+      return path || "M 0 0";
     };
   },
   generateGetLinePoints: function generateGetLinePoints(lineIndices, isSubValue) {
@@ -23595,7 +23602,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190113093514
+ * @version 1.7.1-nightly-20190114021653
  */
 
 var bb = {
@@ -23606,7 +23613,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190113093514",
+  version: "1.7.1-nightly-20190114021653",
 
   /**
    * Generate chart
