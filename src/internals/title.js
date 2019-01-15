@@ -3,7 +3,29 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
-import {extend} from "./util";
+import {extend, isNumber} from "./util";
+
+/**
+ * Get the text position
+ * @param {String} pos right, left or center
+ * @param {Number} width chart width
+ * @return {String|Number} text-anchor value or position in pixel
+ * @private
+ */
+const getTextPos = (pos = "left", width) => {
+	let position;
+	const isNum = isNumber(width);
+
+	if (pos.indexOf("center") > -1) {
+		position = isNum ? width / 2 : "middle";
+	} else if (pos.indexOf("right") > -1) {
+		position = isNum ? width : "end";
+	} else {
+		position = isNum ? 0 : "start";
+	}
+
+	return position;
+};
 
 extend(ChartInternal.prototype, {
 	/**
@@ -13,9 +35,21 @@ extend(ChartInternal.prototype, {
 	initTitle() {
 		const $$ = this;
 
-		$$.title = $$.svg.append("text")
-			.text($$.config.title_text)
-			.attr("class", $$.CLASS.title);
+		if ($$.config.title_text) {
+			$$.title = $$.svg.append("g");
+
+			const text = $$.title
+				.append("text")
+				.style("text-anchor", getTextPos($$.config.title_position))
+				.attr("class", $$.CLASS.title);
+
+			$$.config.title_text.split("\n").forEach((v, i) => {
+				text.append("tspan")
+					.attr("x", 0)
+					.attr("dy", `${i ? "1.5" : ".3"}em`)
+					.text(v);
+			});
+		}
 	},
 
 	/**
@@ -25,8 +59,15 @@ extend(ChartInternal.prototype, {
 	redrawTitle() {
 		const $$ = this;
 
-		$$.title.attr("x", $$.xForTitle.bind($$))
-			.attr("y", $$.yForTitle.bind($$));
+		if ($$.title) {
+			const y = $$.yForTitle.call($$);
+
+			if (/g/i.test($$.title.node().tagName)) {
+				$$.title.attr("transform", `translate(${getTextPos($$.config.title_position, $$.currentWidth)}, ${y})`);
+			} else {
+				$$.title.attr("x", $$.xForTitle.call($$)).attr("y", y);
+			}
+		}
 	},
 
 	/**
@@ -40,15 +81,16 @@ extend(ChartInternal.prototype, {
 		const position = config.title_position || "left";
 		let x;
 
-		if (position.indexOf("right") >= 0) {
-			x = $$.currentWidth -
-				$$.getTextRect($$.title, $$.CLASS.title, $$.title).width -
-				config.title_padding.right;
-		} else if (position.indexOf("center") >= 0) {
-			x = ($$.currentWidth -
-				$$.getTextRect($$.title, $$.CLASS.title, $$.title).width) / 2;
+		if (/(right|center)/.test(position)) {
+			x = $$.currentWidth - $$.getTextRect($$.title, $$.CLASS.title).width;
+
+			if (position.indexOf("right") >= 0) {
+				x -= (config.title_padding.right || 0);
+			} else if (position.indexOf("center") >= 0) {
+				x /= 2;
+			}
 		} else { // left
-			x = config.title_padding.left;
+			x = (config.title_padding.left || 0);
 		}
 
 		return x;
@@ -62,8 +104,8 @@ extend(ChartInternal.prototype, {
 	yForTitle() {
 		const $$ = this;
 
-		return $$.config.title_padding.top +
-			$$.getTextRect($$.title, $$.CLASS.title, $$.title).height;
+		return ($$.config.title_padding.top || 0) +
+			$$.getTextRect($$.title, $$.CLASS.title).height;
 	},
 
 	/**
@@ -74,6 +116,6 @@ extend(ChartInternal.prototype, {
 	getTitlePadding() {
 		const $$ = this;
 
-		return $$.yForTitle() + $$.config.title_padding.bottom;
+		return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
 	},
 });

@@ -109,39 +109,35 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Gets the getBoundingClientRect value of the element
 	 * @private
-	 * @param {HTMLElement|d3.selection} textVal
+	 * @param {HTMLElement|d3.selection} element
 	 * @param {String} className
-	 * @param {HTMLElement|d3.selection} elementVal
 	 * @returns {Object} value of element.getBoundingClientRect()
 	 */
-	getTextRect(textVal, className, elementVal) {
-		const text = (textVal.node ? textVal.node() : textVal).textContent;
-		const element = elementVal.node ? elementVal.node() : elementVal;
+	getTextRect(element, className) {
+		const $$ = this;
+		let base = (element.node ? element.node() : element);
 
-		const dummy = d3Select("body").append("div")
-			.classed("bb", true);
+		if (!/text/i.test(base.tagName)) {
+			base = base.querySelector("text");
+		}
 
-		const svg = dummy.append("svg")
-			.style("visibility", "hidden")
-			.style("position", "fixed")
-			.style("top", "0px")
-			.style("left", "0px");
+		const text = base.textContent;
+		const cacheKey = `$${text.replace(/\W/g, "_")}`;
+		let rect = $$.getCache(cacheKey);
 
-		const font = d3Select(element).style("font");
-		let rect;
+		if (!rect) {
+			$$.svg.append("text")
+				.style("visibility", "hidden")
+				.style("font", d3Select(base).style("font"))
+				.classed(className, true)
+				.text(text)
+				.call(v => {
+					rect = v.node().getBoundingClientRect();
+				})
+				.remove();
 
-		svg.selectAll(".dummy")
-			.data([text])
-			.enter()
-			.append("text")
-			.classed(className, !!className)
-			.style("font", font)
-			.text(text)
-			.each(function() {
-				rect = this.getBoundingClientRect();
-			});
-
-		dummy.remove();
+			$$.addCache(cacheKey, rect);
+		}
 
 		return rect;
 	},

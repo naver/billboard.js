@@ -412,7 +412,7 @@ extend(ChartInternal.prototype, {
 		const getTextBox = function(textElement, id) {
 			if (!$$.legendItemTextBox[id]) {
 				$$.legendItemTextBox[id] =
-					$$.getTextRect(textElement, CLASS.legendItem, textElement);
+					$$.getTextRect(textElement, CLASS.legendItem);
 			}
 
 			return $$.legendItemTextBox[id];
