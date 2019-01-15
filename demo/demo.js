@@ -2090,6 +2090,58 @@ d3.select(".chart_area")
 		}
 	},
 
+	Title: {
+		MultilinedTitle: {
+			options: {
+				title: {
+					text: "Temperature History by Region, 2017-2018\nSource: community weather center"
+				},
+				data: {
+					x: "x",
+					json: {
+						Temperature: [
+							"29.39",
+							"29.7",
+							"29.37",
+							"28.87",
+							"28.62",
+							"27.72",
+							"27.61",
+							"27.82",
+							"27.48",
+							"26.78"
+						],
+						x: [
+							"01-10-2019 00:00",
+							"01-10-2019 00:30",
+							"01-10-2019 01:00",
+							"01-10-2019 01:30",
+							"01-10-2019 02:00",
+							"01-10-2019 02:30",	
+							"01-10-2019 03:00",
+							"01-10-2019 03:30",
+							"01-10-2019 04:00",
+							"01-10-2019 04:30"
+						]
+					},
+					type: "area",
+					xFormat: "%m-%d-%Y %H:%M"
+				},
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				},
+				point: {
+					show: false
+				}
+			},
+			style: [
+				"#MultilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }"
+			]
+		}
+	},
+
 	Tooltip: {
 		HideTooltip: {
 			options: {

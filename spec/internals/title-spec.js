@@ -34,14 +34,18 @@ describe("TITLE", () => {
 	describe("when given a title config option", () => {
 		describe("with no padding and no position", () => {
 			it("renders the title at the default config position", () => {
-				const titleEl = chart.internal.svg.select(".bb-title");
+				const title = chart.$.svg.select(".bb-title").node();
+				const [x, y] = title.parentNode
+					.getAttribute("transform")
+					.split(",")
+					.map(v => util.parseNum(v));
 
-				expect(+titleEl.attr("x") + titleEl.node().getBBox().width / 2).to.be.closeTo(320, 1);
-				expect(+titleEl.attr("y")).to.equal(titleEl.node().getBBox().height);
+				expect(x).to.be.equal(chart.internal.currentWidth / 2);
+				expect(y).to.be.equal(title.getBBox().height);
 			});
 
 			it("renders the title text", () => {
-				const titleEl = chart.internal.svg.select(".bb-title");
+				const titleEl = chart.$.svg.select(".bb-title");
 
 				expect(titleEl.node().textContent).to.equal("new title");
 			});
@@ -63,51 +67,63 @@ describe("TITLE", () => {
 							bottom: 40,
 							left: 50
 						},
-						position: "top-center"
+						position: "center"
 					}
 				};
 			});
 
 			describe("and position center", () => {
 				it("renders the title at the default config position", () => {
-					const titleEl = chart.internal.svg.select(".bb-title");
-
-					expect(+titleEl.attr("x") + titleEl.node().getBBox().width / 2).to.be.closeTo(320, 1);
-					expect(+titleEl.attr("y")).to.be.closeTo(37, 2);
+					const title = chart.$.svg.select(".bb-title").node();
+					const [x, y] = title.parentNode
+						.getAttribute("transform")
+						.split(",")
+						.map(v => util.parseNum(v));
+	
+					expect(x).to.be.equal(chart.internal.currentWidth / 2);
+					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 
 				it("adds the correct amount of padding to fit the title", () => {
+					const height = chart.$.svg.select(".bb-title").node().getBBox().height;
+
 					expect(chart.internal.getCurrentPaddingTop()).to.equal(
-						args.title.padding.top +
-						chart.internal.svg.select(".bb-title").node().getBBox().height +
-						args.title.padding.bottom
+						args.title.padding.top + height + args.title.padding.bottom
 					);
 				});
 			});
 
 			describe("and position left", () => {
 				before(() => {
-					args.title.position = "top-left";
+					args.title.position = "left";
 				});
 
 				it("renders the title at the default config position", () => {
-					const titleEl = chart.internal.svg.select(".bb-title");
+					const title = chart.$.svg.select(".bb-title").node();
+					const [x, y] = title.parentNode
+						.getAttribute("transform")
+						.split(",")
+						.map(v => util.parseNum(v));
 
-					expect(+titleEl.attr("x")).to.be.closeTo(50, 2);
-					expect(+titleEl.attr("y")).to.be.closeTo(36, 2); // org : 34
+					expect(x).to.be.equal(0);
+					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 			});
 
 			describe("and position right", () => {
 				before(() => {
-					args.title.position = "top-right";
+					args.title.position = "right";
 				});
 
 				it("renders the title at the default config position", () => {
-					const titleEl = chart.internal.svg.select(".bb-title");
+					const title = chart.$.svg.select(".bb-title").node();
+					const [x, y] = title.parentNode
+						.getAttribute("transform")
+						.split(",")
+						.map(v => util.parseNum(v));
 
-					expect(+titleEl.attr("x") + titleEl.node().getBBox().width).to.be.closeTo(610, 1);
-					expect(+titleEl.attr("y")).to.be.closeTo(36, 2);
+					expect(x).to.be.equal(chart.internal.currentWidth);
+					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 			});
 		});
