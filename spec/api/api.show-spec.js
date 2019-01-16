@@ -40,31 +40,42 @@ describe("API show", () => {
 			}, 500);
 		});
 
-		it("Hide all data", () => {
-			const internal = chart.internal;
-			const main = internal.main;
+		it("Hide all data", done => {
+			const main = chart.internal.main;
 
 			// hide all data
 			chart.hide();
 
-			main.selectAll(`.${CLASS.chartLine}`).each(function() {
-				expect(+this.style.opacity).to.be.equal(0);
-			});
+			setTimeout(() => {
+				main.selectAll(`.${CLASS.chartLine}`).each(function() {
+					expect(+this.style.opacity).to.be.equal(0);
+				});
 
-			const legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				const legend = chart.$.svg.selectAll(`.${CLASS.legendItemHidden}`);
 
-			expect(+legend.size()).to.be.equal(chart.data().length);
+				expect(+legend.size()).to.be.equal(chart.data().length);
 
-			legend.each(function() {
-				expect(+d3.select(this).style("opacity")).to.be.equal(0.15);
-			});
+				legend.each(function() {
+					expect(+d3.select(this).style("opacity")).to.be.equal(0.15);
+				});
 
+				done();
+			}, 500);
+		});
+
+		it("Hide all data with legend", done => {
 			// hide legend
 			chart.hide(null, {withLegend:true});
 
-			legend.each(function() {
-				expect(+d3.select(this).style("opacity")).to.be.equal(0);
-			});
+			setTimeout(() => {
+				chart.$.svg
+					.selectAll(`.${CLASS.legendItemHidden}`)
+					.each(function() {
+						expect(+d3.select(this).style("opacity")).to.be.equal(0);
+					});
+
+				done();
+			}, 500);
 		});
 	});
 
