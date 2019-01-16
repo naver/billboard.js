@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190114094251
+ * @version 1.7.1-nightly-20190116005713
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5410,22 +5410,27 @@ var Options_Options = function Options() {
      * @name title
      * @memberof Options
      * @type {Object}
-     * @property {String} [title.text]
-     * @property {Number} [title.padding.top=0]
-     * @property {Number} [title.padding.right=0]
-     * @property {Number} [title.padding.bottom=0]
-     * @property {Number} [title.padding.left=0]
-     * @property {String} [title.position=top-center]
+     * @property {String} [title.text] Title text. If contains `\n`, it's used as line break allowing multiline title.
+     * @property {Number} [title.padding.top=0] Top padding value.
+     * @property {Number} [title.padding.right=0] Right padding value.
+     * @property {Number} [title.padding.bottom=0] Bottom padding value.
+     * @property {Number} [title.padding.left=0] Left padding value.
+     * @property {String} [title.position=center] Available values are: 'center', 'right' and 'left'.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Title.MultilinedTitle)
      * @example
      *  title: {
      *      text: "Title Text",
+     *
+     *      // or Multiline title text
+     *      text: "Main title text\nSub title text",
+     *
      *      padding: {
      *          top: 10,
      *          right: 10,
      *          bottom: 10,
      *          left: 10
      *      },
-     *      position: "top-center"
+     *      position: "center"
      *  }
      */
     title_text: undefined,
@@ -5435,7 +5440,7 @@ var Options_Options = function Options() {
       bottom: 0,
       left: 0
     },
-    title_position: "top-center"
+    title_position: "center"
   };
 };
 
@@ -8636,21 +8641,20 @@ extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Gets the getBoundingClientRect value of the element
    * @private
-   * @param {HTMLElement|d3.selection} textVal
+   * @param {HTMLElement|d3.selection} element
    * @param {String} className
-   * @param {HTMLElement|d3.selection} elementVal
    * @returns {Object} value of element.getBoundingClientRect()
    */
-  getTextRect: function getTextRect(textVal, className, elementVal) {
-    var rect,
-        text = (textVal.node ? textVal.node() : textVal).textContent,
-        element = elementVal.node ? elementVal.node() : elementVal,
-        dummy = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])("body").append("div").classed("bb", !0),
-        svg = dummy.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px"),
-        font = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(element).style("font");
-    return svg.selectAll(".dummy").data([text]).enter().append("text").classed(className, !!className).style("font", font).text(text).each(function () {
-      rect = this.getBoundingClientRect();
-    }), dummy.remove(), rect;
+  getTextRect: function getTextRect(element, className) {
+    var $$ = this,
+        base = element.node ? element.node() : element;
+    /text/i.test(base.tagName) || (base = base.querySelector("text"));
+    var text = base.textContent,
+        cacheKey = "$".concat(text.replace(/\W/g, "_")),
+        rect = $$.getCache(cacheKey);
+    return rect || ($$.svg.append("text").style("visibility", "hidden").style("font", Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(base).style("font")).classed(className, !0).text(text).call(function (v) {
+      rect = v.node().getBoundingClientRect();
+    }).remove(), $$.addCache(cacheKey, rect)), rect;
   },
 
   /**
@@ -9550,7 +9554,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     }),
         withTransition = options.withTransition,
         getTextBox = function (textElement, id) {
-      return $$.legendItemTextBox[id] || ($$.legendItemTextBox[id] = $$.getTextRect(textElement, config_classes.legendItem, textElement)), $$.legendItemTextBox[id];
+      return $$.legendItemTextBox[id] || ($$.legendItemTextBox[id] = $$.getTextRect(textElement, config_classes.legendItem)), $$.legendItemTextBox[id];
     },
         updatePositions = function (textElement, id, index) {
       var margin,
@@ -9698,6 +9702,22 @@ extend(ChartInternal_ChartInternal.prototype, {
  */
 
 
+/**
+ * Get the text position
+ * @param {String} pos right, left or center
+ * @param {Number} width chart width
+ * @return {String|Number} text-anchor value or position in pixel
+ * @private
+ */
+
+var getTextPos = function () {
+  var position,
+      pos = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "left",
+      width = arguments.length > 1 ? arguments[1] : undefined,
+      isNum = isNumber(width);
+  return position = pos.indexOf("center") > -1 ? isNum ? width / 2 : "middle" : pos.indexOf("right") > -1 ? isNum ? width : "end" : isNum ? 0 : "start", position;
+};
+
 extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializes the title
@@ -9705,7 +9725,14 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   initTitle: function initTitle() {
     var $$ = this;
-    $$.title = $$.svg.append("text").text($$.config.title_text).attr("class", $$.CLASS.title);
+
+    if ($$.config.title_text) {
+      $$.title = $$.svg.append("g");
+      var text = $$.title.append("text").style("text-anchor", getTextPos($$.config.title_position)).attr("class", $$.CLASS.title);
+      $$.config.title_text.split("\n").forEach(function (v, i) {
+        text.append("tspan").attr("x", 0).attr("dy", "".concat(i ? "1.5" : ".3", "em")).text(v);
+      });
+    }
   },
 
   /**
@@ -9714,7 +9741,11 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   redrawTitle: function redrawTitle() {
     var $$ = this;
-    $$.title.attr("x", $$.xForTitle.bind($$)).attr("y", $$.yForTitle.bind($$));
+
+    if ($$.title) {
+      var y = $$.yForTitle.call($$);
+      /g/i.test($$.title.node().tagName) ? $$.title.attr("transform", "translate(".concat(getTextPos($$.config.title_position, $$.currentWidth), ", ").concat(y, ")")) : $$.title.attr("x", $$.xForTitle.call($$)).attr("y", y);
+    }
   },
 
   /**
@@ -9727,7 +9758,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         $$ = this,
         config = $$.config,
         position = config.title_position || "left";
-    return x = position.indexOf("right") >= 0 ? $$.currentWidth - $$.getTextRect($$.title, $$.CLASS.title, $$.title).width - config.title_padding.right : position.indexOf("center") >= 0 ? ($$.currentWidth - $$.getTextRect($$.title, $$.CLASS.title, $$.title).width) / 2 : config.title_padding.left, x;
+    return /(right|center)/.test(position) ? (x = $$.currentWidth - $$.getTextRect($$.title, $$.CLASS.title).width, position.indexOf("right") >= 0 ? x -= config.title_padding.right || 0 : position.indexOf("center") >= 0 && (x /= 2)) : x = config.title_padding.left || 0, x;
   },
 
   /**
@@ -9737,7 +9768,7 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   yForTitle: function yForTitle() {
     var $$ = this;
-    return $$.config.title_padding.top + $$.getTextRect($$.title, $$.CLASS.title, $$.title).height;
+    return ($$.config.title_padding.top || 0) + $$.getTextRect($$.title, $$.CLASS.title).height;
   },
 
   /**
@@ -9747,7 +9778,7 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   getTitlePadding: function getTitlePadding() {
     var $$ = this;
-    return $$.yForTitle() + $$.config.title_padding.bottom;
+    return $$.yForTitle() + ($$.config.title_padding.bottom || 0);
   }
 });
 // CONCATENATED MODULE: ./src/internals/clip.js
@@ -12891,7 +12922,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190114094251
+ * @version 1.7.1-nightly-20190116005713
  */
 
 var bb = {
@@ -12902,7 +12933,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190114094251",
+  version: "1.7.1-nightly-20190116005713",
 
   /**
    * Generate chart
