@@ -3107,22 +3107,27 @@ export default class Options {
 			 * @name title
 			 * @memberof Options
 			 * @type {Object}
-			 * @property {String} [title.text]
-			 * @property {Number} [title.padding.top=0]
-			 * @property {Number} [title.padding.right=0]
-			 * @property {Number} [title.padding.bottom=0]
-			 * @property {Number} [title.padding.left=0]
-			 * @property {String} [title.position=top-center]
+			 * @property {String} [title.text] Title text. If contains `\n`, it's used as line break allowing multiline title.
+			 * @property {Number} [title.padding.top=0] Top padding value.
+			 * @property {Number} [title.padding.right=0] Right padding value.
+			 * @property {Number} [title.padding.bottom=0] Bottom padding value.
+			 * @property {Number} [title.padding.left=0] Left padding value.
+			 * @property {String} [title.position=center] Available values are: 'center', 'right' and 'left'.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Title.MultilinedTitle)
 			 * @example
 			 *  title: {
 			 *      text: "Title Text",
+			 *
+			 *      // or Multiline title text
+			 *      text: "Main title text\nSub title text",
+			 *
 			 *      padding: {
 			 *          top: 10,
 			 *          right: 10,
 			 *          bottom: 10,
 			 *          left: 10
 			 *      },
-			 *      position: "top-center"
+			 *      position: "center"
 			 *  }
 			 */
 			title_text: undefined,
@@ -3132,7 +3137,7 @@ export default class Options {
 				bottom: 0,
 				left: 0
 			},
-			title_position: "top-center"
+			title_position: "center"
 		};
 	}
 }
