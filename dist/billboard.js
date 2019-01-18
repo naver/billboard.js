@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190117093627
+ * @version 1.7.1-nightly-20190118093731
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8389,7 +8389,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         edge = config.axis_x_categories.length,
         isClockwise = config.radar_direction_clockwise,
         pos = toArray(type).map(function (v) {
-      return getPosition(isClockwise, v, edge, index, isDefined(range) ? range : type === "x" ? width : height, ratio || config.radar_size_ratio);
+      return getPosition(isClockwise, v, edge, index, isDefined(range) ? range : type === "x" ? width : height, isNumber(ratio) ? ratio : config.radar_size_ratio);
     });
 
     return pos.length === 1 ? pos[0] : pos;
@@ -12922,7 +12922,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190117093627
+ * @version 1.7.1-nightly-20190118093731
  */
 
 var bb = {
@@ -12933,7 +12933,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190117093627",
+  version: "1.7.1-nightly-20190118093731",
 
   /**
    * Generate chart
