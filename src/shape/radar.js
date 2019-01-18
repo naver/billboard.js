@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, getMinMax, getRange, isDefined, isEmpty, isUndefined, toArray} from "../internals/util";
+import {extend, getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, toArray} from "../internals/util";
 
 /**
  * Get the position value
@@ -91,7 +91,7 @@ extend(ChartInternal.prototype, {
 			edge,
 			index,
 			isDefined(range) ? range : (type === "x" ? width : height),
-			ratio || config.radar_size_ratio
+			isNumber(ratio) ? ratio : config.radar_size_ratio
 		));
 
 		return pos.length === 1 ? pos[0] : pos;

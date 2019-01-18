@@ -24,7 +24,7 @@ describe("SHAPE RADAR", () => {
 					x: "x",
 					columns: [
 						["x", "Design", "Price", "Brand"],
-						["data1", 30, 200, 100]
+						["data1", 230, 0, 100]
 					],
 					type: "radar"
 				},
@@ -32,8 +32,19 @@ describe("SHAPE RADAR", () => {
 			};
 		});
 
+		it("check for shape rendering", done => {
+			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
+			const expectedPoints = "233,30.290000000000003 233,233 309.32696069614934,277.06739130434784";
+
+			setTimeout(() => {
+				expect(radar.select(".bb-shapes polygon").attr("points")).to.be.equal(expectedPoints);
+				
+				done();
+			}, 200)
+		});
+
 		it("Should render level, axes and data edges", () => {
-			const radar = chart.internal.main.select(`.${CLASS.chartRadars}`);
+			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
 			const data = chart.data();
 			const dataLen = data[0].values.length;
 
@@ -63,7 +74,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for axis options", () => {
-			const radar = chart.internal.main.select(`.${CLASS.chartRadars}`);
+			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
 			const axis = radar.selectAll(`.${CLASS.axis}`);
 
 			expect(axis.selectAll("line").empty()).to.be.true;
@@ -78,7 +89,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for level options", () => {
-			const radar = chart.internal.main.select(`.${CLASS.chartRadars}`);
+			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
 			const levels = radar.select(`.${CLASS.levels}`);
 			const level = levels.selectAll("polygon");
 
