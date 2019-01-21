@@ -30,39 +30,41 @@ export default class Axis {
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const main = $$.main;
+		const target = ["x", "y"];
+
+		config.axis_y2_show && target.push("y2");
 
 		$$.axesList = {};
 
-		["x", "y", "y2"].filter(id => config[`axis_${id}_show`])
-			.forEach(v => {
-				const classAxis = getAxisClassName(v);
-				const classLabel = CLASS[`axis${capitalize(v)}Label`];
+		target.forEach(v => {
+			const classAxis = getAxisClassName(v);
+			const classLabel = CLASS[`axis${capitalize(v)}Label`];
 
-				$$.axes[v] = main.append("g")
-					.attr("class", classAxis)
-					.attr("clip-path", () => {
-						let res = null;
+			$$.axes[v] = main.append("g")
+				.attr("class", classAxis)
+				.attr("clip-path", () => {
+					let res = null;
 
-						if (v === "x") {
-							res = $$.clipPathForXAxis;
-						} else if (v === "y" && config.axis_y_inner) {
-							res = $$.clipPathForYAxis;
-						}
+					if (v === "x") {
+						res = $$.clipPathForXAxis;
+					} else if (v === "y" && config.axis_y_inner) {
+						res = $$.clipPathForYAxis;
+					}
 
-						return res;
-					})
-					.attr("transform", $$.getTranslate(v))
-					.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
+					return res;
+				})
+				.attr("transform", $$.getTranslate(v))
+				.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
 
-				$$.axes[v].append("text")
-					.attr("class", classLabel)
-					.attr("transform", ["rotate(-90)", null][
-						v === "x" ? +!isRotated : +isRotated
-					])
-					.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+			$$.axes[v].append("text")
+				.attr("class", classLabel)
+				.attr("transform", ["rotate(-90)", null][
+					v === "x" ? +!isRotated : +isRotated
+				])
+				.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
 
-				this.generateAxes(v);
-			});
+			this.generateAxes(v);
+		});
 	}
 
 	/**

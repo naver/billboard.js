@@ -24,8 +24,7 @@ const b64EncodeUnicode = str => btoa(
  * @return {String}
  * @private
  */
-const nodeToSvgDataUrl = node => {
-	const {width, height} = node.getBoundingClientRect();
+const nodeToSvgDataUrl = (node, size) => {
 	const clone = node.cloneNode(true);
 	const styleSheets = toArray(document.styleSheets);
 	const cssRules = getCssRules(styleSheets);
@@ -37,12 +36,11 @@ const nodeToSvgDataUrl = node => {
 
 	// foreignObject not supported in IE11 and below
 	// https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${width}" height="${height}">
+	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${size.width}" height="${size.height}">
 			<foreignObject width="100%" height="100%">
 				<style>${cssText.join("\n")}</style>
-				${nodeXml}
+				${nodeXml.replace(/(url\()[^#]+/g, "$1")}
 			</foreignObject></svg>`
-		.replace(/#/g, "%23")
 		.replace("/\n/g", "%0A");
 
 	return `data:image/svg+xml;base64,${b64EncodeUnicode(dataStr)}`;
@@ -75,8 +73,10 @@ extend(Chart.prototype, {
 	 *     document.body.appendChild(link);
 	 *  });
 	 */
-	export(mimeType = "image/png", callback) {
-		const svgDataUrl = nodeToSvgDataUrl(this.element);
+	export(mimeType, callback) {
+		const $$ = this.internal;
+		const size = {width: $$.currentWidth, height: $$.currentHeight};
+		const svgDataUrl = nodeToSvgDataUrl(this.element, size);
 
 		if (isFunction(callback)) {
 			const img = new Image();
@@ -86,13 +86,11 @@ extend(Chart.prototype, {
 				const canvas = document.createElement("canvas");
 				const ctx = canvas.getContext("2d");
 
-				canvas.width = img.width;
-				canvas.height = img.height;
+				canvas.width = size.width;
+				canvas.height = size.height;
 				ctx.drawImage(img, 0, 0);
 
-				canvas.toBlob(blob => {
-					callback(window.URL.createObjectURL(blob));
-				}, mimeType);
+				callback(canvas.toDataURL(mimeType));
 			};
 
 			img.src = svgDataUrl;
