@@ -1202,6 +1202,38 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("Axis show", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15]
+					]
+				},
+				axis: {
+					x: {
+						show: false
+					},
+					y: {
+						show: false
+					}
+				}
+			};
+		});
+
+		it("x and y axis should be hidden", () => {
+			const main = chart.$.main;
+			const internal = chart.internal;
+
+			expect(internal.x && internal.y).to.be.ok;
+
+			["x", "y"].forEach(v => {
+				expect(main.select(`.bb-axis-${v}`).style("visibility")).to.be.equal("hidden");
+			});
+		});
+	});
+
 	describe("Multi axes", () => {
 		before(() => {
 			args = {
