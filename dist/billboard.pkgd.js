@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190120093915
+ * @version 1.7.1-nightly-20190121093907
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -9068,11 +9068,10 @@ function () {
           $$ = this.owner,
           config = $$.config,
           isRotated = config.axis_rotated,
-          main = $$.main;
+          main = $$.main,
+          target = ["x", "y"];
 
-      $$.axesList = {}, ["x", "y", "y2"].filter(function (id) {
-        return config["axis_".concat(id, "_show")];
-      }).forEach(function (v) {
+      config.axis_y2_show && target.push("y2"), $$.axesList = {}, target.forEach(function (v) {
         var classAxis = getAxisClassName(v),
             classLabel = config_classes["axis".concat(capitalize(v), "Label")];
         $$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
@@ -13440,12 +13439,15 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         isRotated = config.axis_rotated,
         isInit = !$$.x;
     // update edges
+    // update scales
+    // x Axis
+    // y Axis
     // update for arc
-    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, config.axis_x_show && ($$.x = $$.getX($$.xMin, $$.xMax, isInit ? undefined : $$.x.orgDomain(), function () {
+    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, isInit ? undefined : $$.x.orgDomain(), function () {
       return $$.xAxis.tickOffset();
     }), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
-    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer)), config.axis_y_show && ($$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer)), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer)), $$.updateArc && $$.updateArc();
+    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer), $$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer)), $$.updateArc && $$.updateArc();
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
@@ -23495,11 +23497,8 @@ var b64EncodeUnicode = function (str) {
     return String.fromCharCode("0x".concat(p));
   }));
 },
-    nodeToSvgDataUrl = function (node) {
-  var _node$getBoundingClie = node.getBoundingClientRect(),
-      width = _node$getBoundingClie.width,
-      height = _node$getBoundingClie.height,
-      clone = node.cloneNode(!0),
+    nodeToSvgDataUrl = function (node, size) {
+  var clone = node.cloneNode(!0),
       styleSheets = toArray(document.styleSheets),
       cssRules = getCssRules(styleSheets),
       cssText = cssRules.filter(function (r) {
@@ -23507,10 +23506,9 @@ var b64EncodeUnicode = function (str) {
   }).map(function (r) {
     return r.cssText;
   });
-
   clone.setAttribute("xmlns", namespaces.xhtml);
   var nodeXml = new XMLSerializer().serializeToString(clone),
-      dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(width, "\" height=\"").concat(height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t<style>").concat(cssText.join("\n"), "</style>\n\t\t\t\t").concat(nodeXml, "\n\t\t\t</foreignObject></svg>").replace(/#/g, "%23").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
+      dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(size.width, "\" height=\"").concat(size.height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t<style>").concat(cssText.join("\n"), "</style>\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
 
   return "data:image/svg+xml;base64,".concat(b64EncodeUnicode(dataStr));
@@ -23550,19 +23548,20 @@ util_extend(Chart_Chart.prototype, {
    *     document.body.appendChild(link);
    *  });
    */
-  export: function _export() {
-    var mimeType = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : "image/png",
-        callback = arguments.length > 1 ? arguments[1] : undefined,
-        svgDataUrl = nodeToSvgDataUrl(this.element);
+  export: function _export(mimeType, callback) {
+    var $$ = this.internal,
+        size = {
+      width: $$.currentWidth,
+      height: $$.currentHeight
+    },
+        svgDataUrl = nodeToSvgDataUrl(this.element, size);
 
     if (isFunction(callback)) {
       var img = new Image();
       img.crosssOrigin = "Anonymous", img.onload = function () {
         var canvas = document.createElement("canvas"),
             ctx = canvas.getContext("2d");
-        canvas.width = img.width, canvas.height = img.height, ctx.drawImage(img, 0, 0), canvas.toBlob(function (blob) {
-          callback(window.URL.createObjectURL(blob));
-        }, mimeType);
+        canvas.width = size.width, canvas.height = size.height, ctx.drawImage(img, 0, 0), callback(canvas.toDataURL(mimeType));
       }, img.src = svgDataUrl;
     }
 
@@ -23633,7 +23632,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190120093915
+ * @version 1.7.1-nightly-20190121093907
  */
 
 var bb = {
@@ -23644,7 +23643,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190120093915",
+  version: "1.7.1-nightly-20190121093907",
 
   /**
    * Generate chart
