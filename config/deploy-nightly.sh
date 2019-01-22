@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # Credit: https://www.vinaygopinath.me/blog/tech/commit-to-master-branch-on-github-using-travis-ci/
 
 # set nightly version

@@ -15,10 +15,10 @@ cache:
   directories:
     - $HOME/.npm
 before_script:
-  - sh ./config/deploy-nightly.sh setup
+  - bash ./config/deploy-nightly.sh setup
   - npm run lint
 script:
   - npm run coverage
 after_success:
-  - sh ./config/deploy-nightly.sh build
+  - bash ./config/deploy-nightly.sh build
   
