@@ -16,9 +16,9 @@ extend(ChartInternal.prototype, {
 		const req = new XMLHttpRequest();
 
 		if (headers) {
-			for (const header of Object.keys(headers)) {
-				req.setRequestHeader(header, headers[header]);
-			}
+			Object.keys(headers).forEach(key => {
+				req.setRequestHeader(key, headers[key]);
+			});
 		}
 
 		req.open("GET", url);
@@ -91,9 +91,7 @@ extend(ChartInternal.prototype, {
 			newRows.push(targetKeys);
 
 			json.forEach(o => {
-				const newRow = [];
-
-				for (const key of targetKeys) {
+				const newRow = targetKeys.map(key => {
 					// convert undefined to null because undefined data will be removed in convertDataToTargets()
 					let v = this.findValueInJson(o, key);
 
@@ -101,8 +99,8 @@ extend(ChartInternal.prototype, {
 						v = null;
 					}
 
-					newRow.push(v);
-				}
+					return v;
+				});
 
 				newRows.push(newRow);
 			});
@@ -131,14 +129,10 @@ extend(ChartInternal.prototype, {
 		const pathArray = convertedPath.replace(/^\./, "").split("."); // strip a leading dot
 		let target = object;
 
-		for (const k of pathArray) {
-			if (k in target) {
-				target = target[k];
-			} else {
-				target = undefined;
-				break;
-			}
-		}
+		pathArray.some(k => !(
+			target = target && k in target ?
+				target[k] : undefined
+		));
 
 		return target;
 	},
