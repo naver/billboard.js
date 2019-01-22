@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190121094447
+ * @version 1.7.1-nightly-20190122054328
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -14397,8 +14397,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         done = arguments.length > 4 ? arguments[4] : undefined,
         req = new XMLHttpRequest();
 
-    if (headers) for (var header, _arr = Object.keys(headers), _i = 0; _i < _arr.length; _i++) header = _arr[_i], req.setRequestHeader(header, headers[header]);
-    req.open("GET", url), req.onreadystatechange = function () {
+    headers && Object.keys(headers).forEach(function (key) {
+      req.setRequestHeader(key, headers[key]);
+    }), req.open("GET", url), req.onreadystatechange = function () {
       if (req.readyState === 4) if (req.status === 200) {
         var response = req.responseText;
         response && done.call(_this, _this["convert".concat(capitalize(mimeType), "ToData")](mimeType === "json" ? JSON.parse(response) : response, keys));
@@ -14434,29 +14435,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     if (isArray(json)) {
       var keys = keysParam || config.data_keys;
       keys.x ? (targetKeys = keys.value.concat(keys.x), config.data_x = keys.x) : targetKeys = keys.value, newRows.push(targetKeys), json.forEach(function (o) {
-        var newRow = [];
+        var newRow = targetKeys.map(function (key) {
+          // convert undefined to null because undefined data will be removed in convertDataToTargets()
+          var v = _this2.findValueInJson(o, key);
 
-        var _iteratorNormalCompletion = !0,
-            _didIteratorError = !1,
-            _iteratorError = undefined;
-
-        try {
-          for (var _step, _iterator = targetKeys[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
-            var key = _step.value,
-                v = _this2.findValueInJson(o, key);
-
-            isUndefined(v) && (v = null), newRow.push(v);
-          }
-        } catch (err) {
-          _didIteratorError = !0, _iteratorError = err;
-        } finally {
-          try {
-            _iteratorNormalCompletion || _iterator.return == null || _iterator.return();
-          } finally {
-            if (_didIteratorError) throw _iteratorError;
-          }
-        }
-
+          return isUndefined(v) && (v = null), v;
+        });
         newRows.push(newRow);
       }), data = this.convertRowsToData(newRows);
     } else Object.keys(json).forEach(function (key) {
@@ -14472,29 +14456,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         pathArray = convertedPath.replace(/^\./, "").split("."),
         target = object; // convert indexes to properties (replace [] with .)
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
-
-    try {
-      for (var _step2, _iterator2 = pathArray[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
-        var k = _step2.value;
-        if (k in target) target = target[k];else {
-          target = undefined;
-          break;
-        }
-      }
-    } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
-    } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2.return == null || _iterator2.return();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
-    }
-
-    return target;
+    return pathArray.some(function (k) {
+      return !(target = target && k in target ? target[k] : undefined);
+    }), target;
   },
   convertRowsToData: function convertRowsToData(rows) {
     var keys = rows[0],
@@ -23632,7 +23596,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190121094447
+ * @version 1.7.1-nightly-20190122054328
  */
 
 var bb = {
@@ -23643,7 +23607,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190121094447",
+  version: "1.7.1-nightly-20190122054328",
 
   /**
    * Generate chart
