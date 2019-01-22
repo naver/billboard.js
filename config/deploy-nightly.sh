@@ -39,6 +39,9 @@ push() {
 if [ "$1" = "setup" ]; then
   setup_git
 elif [ "$1" = "build" ]; then
-  build_and_commit
-  push
+  # Avoid unnecessary build
+  if [[ `git log -1 --pretty=%B` != *"[skip ci]" ]]; then
+    build_and_commit
+    push
+  fi
 fi
