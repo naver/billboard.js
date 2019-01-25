@@ -1124,12 +1124,26 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
-			 * @property {Boolean} [subchart.size.height] Change the height of the subchart.
-			 * @property {Boolean} [subchart.onbrush] Set callback for brush event.<br>
+			 * @property {Boolean} [subchart.axis.x.show=true] Show or hide x axis.
+			 * @property {Boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+			 * @property {Boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+			 * @property {Number} [subchart.size.height] Change the height of the subchart.
+			 * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
 			 *  Specified function receives the current zoomed x domain.
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
 			 * @example
 			 *  subchart: {
+			 * 		axis: {
+			 * 			x: {
+			 * 				show: true,
+			 * 				tick: {
+			 * 					show: true,
+			 * 					text: {
+			 * 						show: false
+			 * 					}
+			 * 				}
+			 * 			}
+			 * 		},
 			 *      show: true,
 			 *      size: {
 			 *          height: 20
@@ -1140,6 +1154,8 @@ export default class Options {
 			subchart_show: false,
 			subchart_size_height: 60,
 			subchart_axis_x_show: true,
+			subchart_axis_x_tick_show: true,
+			subchart_axis_x_tick_text_show: true,
 			subchart_onbrush: () => {},
 
 			/**
@@ -1494,6 +1510,44 @@ export default class Options {
 			 * }
 			 */
 			axis_x_tick_count: undefined,
+
+			/**
+			 * Show or hide x axis tick line.
+			 * @name axis․x․tick․show
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+			 * @example
+			 * axis: {
+			 *   x: {
+			 *     tick: {
+			 *       show: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_x_tick_show: true,
+
+			/**
+			 * Show or hide x axis tick text.
+			 * @name axis․x․tick․text․show
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+			 * @example
+			 * axis: {
+			 *   x: {
+			 *     tick: {
+			 *       text: {
+			 *           show: false
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_x_tick_text_show: true,
 
 			/**
 			 * Set the x Axis tick text's position relatively its original position
@@ -2051,6 +2105,44 @@ export default class Options {
 			axis_y_tick_count: undefined,
 
 			/**
+			 * Show or hide y axis tick line.
+			 * @name axis․y․tick․show
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       show: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_show: true,
+
+			/**
+			* Show or hide y axis tick text.
+			* @name axis․y․tick․text․show
+			* @memberof Options
+			* @type {Boolean}
+			* @default true
+			* @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+			* @example
+			* axis: {
+			*   y: {
+			*     tick: {
+			*       text: {
+			*           show: false
+			*       }
+			*     }
+			*   }
+			* }
+			*/
+			axis_y_tick_text_show: true,
+
+			/**
 			 * Set the y Axis tick text's position relatively its original position
 			 * @name axis․y․tick․text․position
 			 * @memberof Options
@@ -2355,6 +2447,44 @@ export default class Options {
 			 * }
 			 */
 			axis_y2_tick_count: undefined,
+
+			/**
+			 * Show or hide y2 axis tick line.
+			 * @name axis․y2․tick․show
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       show: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_show: true,
+
+			/**
+			 * Show or hide y2 axis tick text.
+			 * @name axis․y2․tick․text․show
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       text: {
+			 *           show: false
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_text_show: true,
 
 			/**
 			 * Set the y2 Axis tick text's position relatively its original position

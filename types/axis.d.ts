@@ -236,6 +236,11 @@ export interface XTickConfiguration {
 	 */
 	tooltip?: boolean;
 
+	/**
+	 * Show or hide tick line.
+	 */
+	show?: boolean;
+
 	text?: {
 		/**
 		 * Set the x Axis tick text's position relatively its original position
@@ -243,7 +248,12 @@ export interface XTickConfiguration {
 		position?: {
 			x?: number;
 			y?: number;
-		}
+		};
+
+		/**
+		 * Show or hide tick text
+		 */
+		show?: boolean;
 	};
 }
 

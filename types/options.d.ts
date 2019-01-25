@@ -753,6 +753,27 @@ export interface SubchartOptions {
 		height: number;
 	};
 
+	axis?: {
+		x?: {
+			/**
+			 * Show or hide x axis.
+			 */
+			show?: boolean;
+			tick?: {
+				/**
+				 * Show or hide x axis tick line.
+				 */
+				show?: boolean;
+				text?: {
+					/**
+					 * Show or hide x axis tick text.
+					 */
+					show?: boolean;
+				};
+			};
+		};
+	};
+
 	/**
 	 * Set callback for brush event.
 	 * Specified function receives the current zoomed x domain.

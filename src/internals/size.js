@@ -159,7 +159,7 @@ extend(ChartInternal.prototype, {
 	getParentHeight() {
 		const h = this.selectChart.style("height");
 
-		return h.indexOf("px") > 0 ? +h.replace("px", "") : 0;
+		return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
 	},
 
 	getSvgLeft(withoutRecompute) {
