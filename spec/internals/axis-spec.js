@@ -1052,6 +1052,91 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis tick visiblity", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "www.somesitename1.com", "www.somesitename2.com", "www.somesitename3.com"],
+						["data1", 90, 100, 140],
+						["data2", 130, 40, 200]
+					],
+					types: {
+						data1: "bar",
+						data2: "area-spline"
+				}
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: 75,
+							multiline: false,
+							tooltip: true,
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					}
+				}
+			};
+		});
+
+		it("axes tick shouldn't be shown", () => {
+			["x", "y", "y2"].forEach(id => {
+				const axis = chart.$.main.select(`.${CLASS.axis}-${id}`);
+
+				expect(axis.select(".tick").empty()).to.be.true;
+			});
+		});
+
+		it("set options tick.show=true", () => {
+			args.axis.x.tick.show = args.axis.y.tick.show = args.axis.y2.tick.show = true;
+		});
+
+		it("axes tick line should be shown", () => {
+			["x", "y", "y2"].forEach(id => {
+				const axis = chart.$.main.select(`.${CLASS.axis}-${id}`);
+
+				expect(axis.selectAll(".tick line").empty()).to.be.false;
+				expect(axis.selectAll(".tick text").size()).to.be.equal(0);
+			});
+		});
+
+		it("set options tick.text.show=true", () => {
+			args.axis.x.tick.show = args.axis.y.tick.show = args.axis.y2.tick.show = false;
+			args.axis.x.tick.text = args.axis.y.tick.text = args.axis.y2.tick.text = {show: true};
+		});
+
+		it("axes tick text should be shown", () => {
+			["x", "y", "y2"].forEach(id => {
+				const axis = chart.$.main.select(`.${CLASS.axis}-${id}`);
+
+				expect(axis.selectAll(".tick text").empty()).to.be.false;
+				expect(axis.selectAll(".tick line").size()).to.be.equal(0);
+			});
+		});
+	});
+
 	describe("axis text on 'binary floating point'", () => {
 		before(() => {
 			args = {

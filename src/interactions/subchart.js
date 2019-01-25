@@ -21,9 +21,11 @@ extend(ChartInternal.prototype, {
 	 */
 	initBrush() {
 		const $$ = this;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
 
 		// set the brush
-		$$.brush = $$.config.axis_rotated ? d3BrushY() : d3BrushX();
+		$$.brush = isRotated ? d3BrushY() : d3BrushX();
 
 		// set "brush" event
 		const brushHandler = () => {
@@ -49,20 +51,20 @@ extend(ChartInternal.prototype, {
 
 		// set the brush extent
 		$$.brush.scale = function(scale, height) {
-			const overlay = $$.svg.select(".bb-brush .overlay");
 			const extent = [[0, 0]];
 
 			if (scale.range) {
 				extent.push([
 					scale.range()[1],
-					((height || !overlay.empty()) && ~~overlay.attr("height")) || 60
+					height || config.subchart_size_height
 				]);
 			} else if (scale.constructor === Array) {
 				extent.push(scale);
 			}
 
-			$$.config.axis_rotated && extent.reverse();
-			this.extent($$.config.axis_x_extent || extent);
+			// [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
+			isRotated && extent[1].reverse();
+			this.extent(config.axis_x_extent || extent);
 
 			// when extent updates, brush selection also be re-applied
 			// https://github.com/d3/d3/issues/2918
@@ -95,7 +97,7 @@ extend(ChartInternal.prototype, {
 			.attr("class", CLASS.chart);
 
 		// Define g for bar chart area
-		context.select(`.${CLASS.chart}`)
+		$$.hasType("bar") && context.select(`.${CLASS.chart}`)
 			.append("g")
 			.attr("class", CLASS.chartBars);
 
@@ -106,7 +108,7 @@ extend(ChartInternal.prototype, {
 
 		// Add extent rect for Brush
 		context.append("g")
-			.attr("clip-path", $$.clipPath)
+			.attr("clip-path", $$.clipPathForSubchart)
 			.attr("class", CLASS.brush)
 			.call($$.brush);
 
@@ -165,7 +167,7 @@ extend(ChartInternal.prototype, {
 				.attr("class", classLines);
 
 			// Area
-			contextLineEnter.append("g")
+			$$.hasType("area") && contextLineEnter.append("g")
 				.attr("class", classAreas);
 
 			// -- Brush --//
@@ -355,6 +357,7 @@ extend(ChartInternal.prototype, {
 			}
 		}
 	},
+
 	/**
 	 * Redraw the brush.
 	 * @private
@@ -411,5 +414,5 @@ extend(ChartInternal.prototype, {
 		}
 
 		return extent;
-	},
+	}
 });

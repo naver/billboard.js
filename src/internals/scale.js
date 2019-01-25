@@ -139,7 +139,7 @@ extend(ChartInternal.prototype, {
 
 		$$.subXAxis = $$.axis
 			.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat,
-				$$.xAxisTickValues, config.axis_x_tick_outer);
+				$$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit);
 
 		// y Axis
 		$$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain());
