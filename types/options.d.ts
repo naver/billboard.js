@@ -9,8 +9,7 @@ export interface ChartOptions {
 	/**
 	 * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
 	 * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
-	 * If this option is not specified, the chart will be generated but not be set.
-	 * Instead, we can access the element by chart.element and set it by ourselves.
+	 * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
 	 */
 	bindto?: string | HTMLElement | d3Selection | null | {
 		/**

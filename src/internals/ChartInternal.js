@@ -195,7 +195,11 @@ export default class ChartInternal {
 
 		// select bind element
 		$$.selectChart = isFunction(bindto.element.node) ?
-			config.bindto.element : d3Select(!bindto.element ? [] : bindto.element);
+			config.bindto.element : d3Select(bindto.element || []);
+
+		if ($$.selectChart.empty()) {
+			$$.selectChart = d3Select(document.body.appendChild(document.createElement("div")));
+		}
 
 		$$.selectChart.html("").classed(bindto.classname, true);
 
