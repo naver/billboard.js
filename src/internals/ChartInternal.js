@@ -195,7 +195,11 @@ export default class ChartInternal {
 
 		// select bind element
 		$$.selectChart = isFunction(bindto.element.node) ?
-			config.bindto.element : d3Select(!bindto.element ? [] : bindto.element);
+			config.bindto.element : d3Select(bindto.element || []);
+
+		if ($$.selectChart.empty()) {
+			$$.selectChart = d3Select(document.body.appendChild(document.createElement("div")));
+		}
 
 		$$.selectChart.html("").classed(bindto.classname, true);
 
@@ -428,12 +432,18 @@ export default class ChartInternal {
 		const isRotated = config.axis_rotated;
 		const hasArc = $$.hasArcType();
 
-		const legendHeight = $$.legend ? $$.getLegendHeight() : 0;
-		const legendWidth = $$.legend ? $$.getLegendWidth() : 0;
-		const legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight;
+		const legend = {
+			width: $$.legned ? $$.getLegendWidth() : 0,
+			height: $$.legend ? $$.getLegendHeight() : 0
+		};
+
+		const legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legend.height;
 		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
+
+		const subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
+			xAxisHeight : 30;
 		const subchartHeight = config.subchart_show && !hasArc ?
-			(config.subchart_size_height + xAxisHeight) : 0;
+			(config.subchart_size_height + subchartXAxisHeight) : 0;
 
 		$$.currentWidth = $$.getCurrentWidth();
 		$$.currentHeight = $$.getCurrentHeight();
@@ -460,7 +470,7 @@ export default class ChartInternal {
 		} : {
 			top: $$.currentHeight - subchartHeight - legendHeightForBottom,
 			right: NaN,
-			bottom: xAxisHeight + legendHeightForBottom,
+			bottom: subchartXAxisHeight + legendHeightForBottom,
 			left: $$.margin.left
 		};
 
@@ -473,7 +483,7 @@ export default class ChartInternal {
 		};
 
 		$$.updateSizeForLegend &&
-			$$.updateSizeForLegend(legendHeight, legendWidth);
+			$$.updateSizeForLegend(legend.height, legend.width);
 
 		$$.width = $$.currentWidth - $$.margin.left - $$.margin.right;
 		$$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom;
@@ -501,7 +511,7 @@ export default class ChartInternal {
 		}
 
 		// for arc
-		$$.arcWidth = $$.width - ($$.isLegendRight ? legendWidth + 10 : 0);
+		$$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0);
 		$$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10);
 
 		if ($$.hasType("gauge") && !config.gauge_fullCircle) {
@@ -1071,8 +1081,14 @@ export default class ChartInternal {
 
 	updateSvgSize() {
 		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
 		const brush = $$.svg.select(`.${CLASS.brush} .overlay`);
-		const brushHeight = brush.size() ? brush.attr("height") : 0;
+		const brushSize = {width: 0, height: 0};
+
+		if (brush.size()) {
+			brushSize.width = +brush.attr("width");
+			brushSize.height = +brush.attr("height");
+		}
 
 		$$.svg
 			.attr("width", $$.currentWidth)
@@ -1100,13 +1116,13 @@ export default class ChartInternal {
 		$$.svg.select(`#${$$.clipIdForSubchart}`)
 			.select("rect")
 			.attr("width", $$.width)
-			.attr("height", brushHeight);
+			.attr("height", brushSize.height);
 
 		$$.svg.select(`.${CLASS.zoomRect}`)
 			.attr("width", $$.width)
 			.attr("height", $$.height);
 
-		$$.brush && $$.brush.scale($$.subX, brushHeight);
+		$$.brush && $$.brush.scale($$.subX, brushSize[isRotated ? "width" : "height"]);
 	}
 
 	updateDimension(withoutAxis) {

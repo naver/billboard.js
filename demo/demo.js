@@ -764,6 +764,47 @@ var demos = {
 				}
 			}
 		},
+		HideTickLineText: {
+			options: {
+				data: {
+					columns: [
+						["data1", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400],
+						["data2", 130, 40, 200, 310, 230, 325, 163, 230, 222, 240, 160, 310]
+					],
+					types: {
+						data1: "bar",
+						data2: "area-spline"
+					}
+				},
+				axis: {
+					x: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					}
+				}
+			}
+		},
 		MultiAxes: [
 			{
 				options: {

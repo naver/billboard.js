@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2017 NAVER Corp.
+ * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
@@ -54,6 +54,19 @@ describe("Interface & initialization", () => {
 				});
 			}
 		});
+	});
+
+	it("instantiate with non-existing element", () => {
+		chart = util.generate({
+			bindto: "#no-exist-element",
+			data: {
+				columns: [
+					["data1", 30]
+				]
+			}
+		});
+
+		expect(chart.element.classList.contains("bb")).to.be.true;
 	});
 
 	it("instantiate with different classname on wrapper element", () => {

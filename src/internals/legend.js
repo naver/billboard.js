@@ -200,16 +200,11 @@ extend(ChartInternal.prototype, {
 	 */
 	getLegendHeight() {
 		const $$ = this;
-		let h = 0;
 
-		if ($$.config.legend_show) {
-			if ($$.isLegendRight) {
-				h = $$.currentHeight;
-			} else {
-				h = Math.max(20, $$.legendItemHeight) * ($$.legendStep + 1);
-			}
-		}
-		return h;
+		return $$.config.legend_show ? (
+			$$.isLegendRight ?
+				$$.currentHeight : Math.max(20, $$.legendItemHeight) * ($$.legendStep + 1)
+		) : 0;
 	},
 
 	/**
