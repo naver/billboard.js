@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190122054328
+ * @version 1.7.1-nightly-20190125094135
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -926,84 +926,90 @@ function () {
           innerTickSize = _config.innerTickSize,
           tickLength = _config.tickLength,
           range = _config.range,
-          tickTextPos = params.axisName && /^(x|y|y2)$/.test(params.axisName) ? params.config["axis_".concat(params.axisName, "_tick_text_position")] : {
+          axisName = params.axisName,
+          tickTextPos = axisName && /^(x|y|y2)$/.test(axisName) ? params.config["axis_".concat(axisName, "_tick_text_position")] : {
         x: 0,
         y: 0
+      },
+          prefix = axisName === "subx" ? "subchart_axis_x" : "axis_".concat(axisName),
+          axisShow = params.config["".concat(prefix, "_show")],
+          tickShow = {
+        tick: !!axisShow && params.config["".concat(prefix, "_tick_show")],
+        text: !!axisShow && params.config["".concat(prefix, "_tick_text_show")]
       },
           $g = null; // get the axis' tick position configuration
 
       g.each(function () {
-        var g = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
-        $g = g;
-        var scale0 = this.__chart__ || scale,
+        var g = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+            scale0 = this.__chart__ || scale,
             scale1 = helperInst.copyScale();
-        this.__chart__ = scale1;
-        // count of tick data in array
-        var ticks = config.tickValues || helperInst.generateTicks(scale1),
-            tick = g.selectAll(".tick").data(ticks, scale1),
-            tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
-            tickExit = tick.exit().remove(); // update selection
-
-        tick = tickEnter.merge(tick);
+        $g = g, this.__chart__ = scale1, config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
         // update selection - data join
         var path = g.selectAll(".domain").data([0]); // enter + update selection
 
-        path.enter().append("path").attr("class", "domain").merge(helperInst.transitionise(path)).attr("d", function () {
+        if (path.enter().append("path").attr("class", "domain").merge(helperInst.transitionise(path)).attr("d", function () {
           var outerTickSized = config.outerTickSize * sign;
           return isTopBottom ? "M".concat(range[0], ",").concat(outerTickSized, "V0H").concat(range[1], "V").concat(outerTickSized) : "M".concat(outerTickSized, ",").concat(range[0], "H0V").concat(range[1], "H").concat(outerTickSized);
-        }), tickEnter.append("line"), tickEnter.append("text");
-        var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
-            counts = [],
-            tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helperInst.textFormatted(d)) ? helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)];
-          return counts[index] = split.length, split.map(function (splitted) {
-            return {
-              index: index,
-              splitted: splitted
-            };
+        }), tickShow.tick || tickShow.text) {
+          // count of tick data in array
+          var ticks = config.tickValues || helperInst.generateTicks(scale1),
+              tick = g.selectAll(".tick").data(ticks, scale1),
+              tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
+              tickExit = tick.exit().remove(); // update selection
+
+          tick = tickEnter.merge(tick), tickShow.tick && tickEnter.append("line"), tickShow.text && tickEnter.append("text");
+          var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
+              counts = [],
+              tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
+            var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helperInst.textFormatted(d)) ? helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)];
+            return counts[index] = split.length, split.map(function (splitted) {
+              return {
+                index: index,
+                splitted: splitted
+              };
+            });
           });
-        });
-        tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
-          return d.splitted;
-        }), tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", function () {
-          var dx = 0;
-          return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
-        }()).attr("dy", function (d, i) {
-          var dy = 0;
-          return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
-        });
-        var lineUpdate = tick.select("line"),
-            textUpdate = tick.select("text");
+          tspan.exit().remove(), tspan = tspan.enter().append("tspan").merge(tspan).text(function (d) {
+            return d.splitted;
+          }), tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", function () {
+            var dx = 0;
+            return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
+          }()).attr("dy", function (d, i) {
+            var dy = 0;
+            return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
+          });
+          var lineUpdate = tick.select("line"),
+              textUpdate = tick.select("text");
 
-        if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate, scale1), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
-          Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).text(params.tickTitle[index]);
-        }), scale1.bandwidth) {
-          var x = scale1,
-              dx = x.bandwidth() / 2;
-          scale0 = function (d) {
-            return x(d) + dx;
-          }, scale1 = scale0;
-        } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
+          if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
+            Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).text(params.tickTitle[index]);
+          }), scale1.bandwidth) {
+            var x = scale1,
+                dx = x.bandwidth() / 2;
+            scale0 = function (d) {
+              return x(d) + dx;
+            }, scale1 = scale0;
+          } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
 
-        tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
+          tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
+        }
       }), this.g = $g;
     }
     /**
      * Get tick x/y coordinate
-     * @param scale
      * @return {{x: number, y: number}}
      * @private
      */
 
   }, {
     key: "getTickXY",
-    value: function getTickXY(scale) {
+    value: function getTickXY() {
       var config = this.config,
           pos = {
         x: 0,
         y: 0
       };
-      return this.params.isCategory ? (config.tickOffset = Math.ceil((scale(1) - scale(0)) / 2), pos.x = config.tickCentered ? 0 : config.tickOffset, pos.y = config.tickCentered ? config.tickOffset : 0) : config.tickOffset = pos.x, pos;
+      return this.params.isCategory && (pos.x = config.tickCentered ? 0 : config.tickOffset, pos.y = config.tickCentered ? config.tickOffset : 0), pos;
     }
     /**
      * Get tick size
@@ -1032,8 +1038,8 @@ function () {
 
   }, {
     key: "setTickLineTextPosition",
-    value: function setTickLineTextPosition(lineUpdate, textUpdate, scale) {
-      var tickPos = this.getTickXY(scale),
+    value: function setTickLineTextPosition(lineUpdate, textUpdate) {
+      var tickPos = this.getTickXY(),
           _this$config = this.config,
           innerTickSize = _this$config.innerTickSize,
           orient = _this$config.orient,
@@ -1711,7 +1717,7 @@ function () {
         classname: "bb"
       };
 
-      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element ? bindto.element : []), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(document.body.appendChild(document.createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$);
@@ -1811,11 +1817,14 @@ function () {
           config = $$.config,
           isRotated = config.axis_rotated,
           hasArc = $$.hasArcType(),
-          legendHeight = $$.legend ? $$.getLegendHeight() : 0,
-          legendWidth = $$.legend ? $$.getLegendWidth() : 0,
-          legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legendHeight,
+          legend = {
+        width: $$.legned ? $$.getLegendWidth() : 0,
+        height: $$.legend ? $$.getLegendHeight() : 0
+      },
+          legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legend.height,
           xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
-          subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + xAxisHeight : 0;
+          subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
+          subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
       $$.currentWidth = $$.getCurrentWidth(), $$.currentHeight = $$.getCurrentHeight(), $$.margin = isRotated ? {
         top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
         right: hasArc ? 0 : $$.getCurrentPaddingRight(),
@@ -1835,14 +1844,14 @@ function () {
       } : {
         top: $$.currentHeight - subchartHeight - legendHeightForBottom,
         right: NaN,
-        bottom: xAxisHeight + legendHeightForBottom,
+        bottom: subchartXAxisHeight + legendHeightForBottom,
         left: $$.margin.left
       }, $$.margin3 = {
         top: 0,
         right: NaN,
         bottom: 0,
         left: 0
-      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legendHeight, legendWidth), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legendWidth + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
+      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend.height, legend.width), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
     }
     /**
      * Update targeted element with given data
@@ -2113,9 +2122,13 @@ function () {
     key: "updateSvgSize",
     value: function updateSvgSize() {
       var $$ = this,
+          isRotated = $$.config.axis_rotated,
           brush = $$.svg.select(".".concat(config_classes.brush, " .overlay")),
-          brushHeight = brush.size() ? brush.attr("height") : 0;
-      $$.svg.attr("width", $$.currentWidth).attr("height", $$.currentHeight), $$.svg.selectAll(["#".concat($$.clipId), "#".concat($$.clipIdForGrid)]).select("rect").attr("width", $$.width).attr("height", $$.height), $$.svg.select("#".concat($$.clipIdForXAxis)).select("rect").attr("x", $$.getXAxisClipX.bind($$)).attr("y", $$.getXAxisClipY.bind($$)).attr("width", $$.getXAxisClipWidth.bind($$)).attr("height", $$.getXAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForYAxis)).select("rect").attr("x", $$.getYAxisClipX.bind($$)).attr("y", $$.getYAxisClipY.bind($$)).attr("width", $$.getYAxisClipWidth.bind($$)).attr("height", $$.getYAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForSubchart)).select("rect").attr("width", $$.width).attr("height", brushHeight), $$.svg.select(".".concat(config_classes.zoomRect)).attr("width", $$.width).attr("height", $$.height), $$.brush && $$.brush.scale($$.subX, brushHeight);
+          brushSize = {
+        width: 0,
+        height: 0
+      };
+      brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), $$.svg.attr("width", $$.currentWidth).attr("height", $$.currentHeight), $$.svg.selectAll(["#".concat($$.clipId), "#".concat($$.clipIdForGrid)]).select("rect").attr("width", $$.width).attr("height", $$.height), $$.svg.select("#".concat($$.clipIdForXAxis)).select("rect").attr("x", $$.getXAxisClipX.bind($$)).attr("y", $$.getXAxisClipY.bind($$)).attr("width", $$.getXAxisClipWidth.bind($$)).attr("height", $$.getXAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForYAxis)).select("rect").attr("x", $$.getYAxisClipX.bind($$)).attr("y", $$.getYAxisClipY.bind($$)).attr("width", $$.getYAxisClipWidth.bind($$)).attr("height", $$.getYAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForSubchart)).select("rect").attr("width", $$.width).attr("height", brushSize.height), $$.svg.select(".".concat(config_classes.zoomRect)).attr("width", $$.width).attr("height", $$.height), $$.brush && $$.brush.scale($$.subX, brushSize[isRotated ? "width" : "height"]);
     }
   }, {
     key: "updateDimension",
@@ -2301,9 +2314,9 @@ var Chart_Chart = function Chart(config) {
 var Options_Options = function Options() {
   return classCallCheck_default()(this, Options), {
     /**
-     * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.
-     * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).<br><br>
-     * If this option is not specified, the chart will be generated but not be set. Instead, we can access the element by chart.element and set it by ourselves.<br>
+     * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
+     * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
+     * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
      * @name bindto
      * @memberof Options
      * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.
@@ -3418,12 +3431,26 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {Boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
-     * @property {Boolean} [subchart.size.height] Change the height of the subchart.
-     * @property {Boolean} [subchart.onbrush] Set callback for brush event.<br>
+     * @property {Boolean} [subchart.axis.x.show=true] Show or hide x axis.
+     * @property {Boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+     * @property {Boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+     * @property {Number} [subchart.size.height] Change the height of the subchart.
+     * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
      *  Specified function receives the current zoomed x domain.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
      * @example
      *  subchart: {
+     * 		axis: {
+     * 			x: {
+     * 				show: true,
+     * 				tick: {
+     * 					show: true,
+     * 					text: {
+     * 						show: false
+     * 					}
+     * 				}
+     * 			}
+     * 		},
      *      show: true,
      *      size: {
      *          height: 20
@@ -3434,6 +3461,8 @@ var Options_Options = function Options() {
     subchart_show: !1,
     subchart_size_height: 60,
     subchart_axis_x_show: !0,
+    subchart_axis_x_tick_show: !0,
+    subchart_axis_x_tick_text_show: !0,
     subchart_onbrush: function subchart_onbrush() {},
 
     /**
@@ -3788,6 +3817,44 @@ var Options_Options = function Options() {
      * }
      */
     axis_x_tick_count: undefined,
+
+    /**
+     * Show or hide x axis tick line.
+     * @name axis․x․tick․show
+     * @memberof Options
+     * @type {Boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       show: false
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_show: !0,
+
+    /**
+     * Show or hide x axis tick text.
+     * @name axis․x․tick․text․show
+     * @memberof Options
+     * @type {Boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       text: {
+     *           show: false
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_text_show: !0,
 
     /**
      * Set the x Axis tick text's position relatively its original position
@@ -4347,6 +4414,44 @@ var Options_Options = function Options() {
     axis_y_tick_count: undefined,
 
     /**
+     * Show or hide y axis tick line.
+     * @name axis․y․tick․show
+     * @memberof Options
+     * @type {Boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       show: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_show: !0,
+
+    /**
+    * Show or hide y axis tick text.
+    * @name axis․y․tick․text․show
+    * @memberof Options
+    * @type {Boolean}
+    * @default true
+    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+    * @example
+    * axis: {
+    *   y: {
+    *     tick: {
+    *       text: {
+    *           show: false
+    *       }
+    *     }
+    *   }
+    * }
+    */
+    axis_y_tick_text_show: !0,
+
+    /**
      * Set the y Axis tick text's position relatively its original position
      * @name axis․y․tick․text․position
      * @memberof Options
@@ -4654,6 +4759,44 @@ var Options_Options = function Options() {
      * }
      */
     axis_y2_tick_count: undefined,
+
+    /**
+     * Show or hide y2 axis tick line.
+     * @name axis․y2․tick․show
+     * @memberof Options
+     * @type {Boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       show: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_show: !0,
+
+    /**
+     * Show or hide y2 axis tick text.
+     * @name axis․y2․tick․text․show
+     * @memberof Options
+     * @type {Boolean}
+     * @default true
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       text: {
+     *           show: false
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_text_show: !0,
 
     /**
      * Set the y2 Axis tick text's position relatively its original position
@@ -5573,7 +5716,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.xAxis.tickOffset();
     }), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
-    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer), $$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer)), $$.updateArc && $$.updateArc();
+    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer)), $$.updateArc && $$.updateArc();
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
@@ -7021,7 +7164,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   getParentHeight: function getParentHeight() {
     var h = this.selectChart.style("height");
-    return h.indexOf("px") > 0 ? +h.replace("px", "") : 0;
+    return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
   },
   getSvgLeft: function getSvgLeft(withoutRecompute) {
     var $$ = this,
@@ -9382,9 +9525,8 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @param {Number} height
    */
   getLegendHeight: function getLegendHeight() {
-    var $$ = this,
-        h = 0;
-    return $$.config.legend_show && ($$.isLegendRight ? h = $$.currentHeight : h = Math.max(20, $$.legendItemHeight) * ($$.legendStep + 1)), h;
+    var $$ = this;
+    return $$.config.legend_show ? $$.isLegendRight ? $$.currentHeight : Math.max(20, $$.legendItemHeight) * ($$.legendStep + 1) : 0;
   },
 
   /**
@@ -10136,9 +10278,10 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   initBrush: function initBrush() {
-    var $$ = this; // set the brush
-
-    $$.brush = $$.config.axis_rotated ? Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushY"])() : Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushX"])();
+    var $$ = this,
+        config = $$.config,
+        isRotated = config.axis_rotated;
+    $$.brush = isRotated ? Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushY"])() : Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushX"])();
 
     // set "brush" event
     var brushHandler = function () {
@@ -10154,11 +10297,11 @@ extend(ChartInternal_ChartInternal.prototype, {
         return isNaN(v);
       }).length === 0 && $$.context && $$.context.select(".".concat(config_classes.brush)).call(this), this;
     }, $$.brush.scale = function (scale, height) {
-      var overlay = $$.svg.select(".bb-brush .overlay"),
-          extent = [[0, 0]];
+      var extent = [[0, 0]];
+      // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
       // when extent updates, brush selection also be re-applied
       // https://github.com/d3/d3/issues/2918
-      scale.range ? extent.push([scale.range()[1], (height || !overlay.empty()) && ~~overlay.attr("height") || 60]) : scale.constructor === Array && extent.push(scale), $$.config.axis_rotated && extent.reverse(), this.extent($$.config.axis_x_extent || extent), this.update();
+      scale.range ? extent.push([scale.range()[1], height || config.subchart_size_height]) : scale.constructor === Array && extent.push(scale), isRotated && extent[1].reverse(), this.extent(config.axis_x_extent || extent), this.update();
     }, $$.brush.getSelection = function () {
       return $$.context ? $$.context.select(".".concat(config_classes.brush)) : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])([]);
     };
@@ -10180,7 +10323,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     // Add extent rect for Brush
     // ATTENTION: This must be called AFTER chart added
     // Add Axis
-    context.style("visibility", visibility), context.append("g").attr("clip-path", $$.clipPathForSubchart).attr("class", config_classes.chart), context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartBars), context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartLines), context.append("g").attr("clip-path", $$.clipPath).attr("class", config_classes.brush).call($$.brush), $$.axes.subx = context.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subx")).attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+    context.style("visibility", visibility), context.append("g").attr("clip-path", $$.clipPathForSubchart).attr("class", config_classes.chart), $$.hasType("bar") && context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartBars), context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartLines), context.append("g").attr("clip-path", $$.clipPathForSubchart).attr("class", config_classes.brush).call($$.brush), $$.axes.subx = context.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subx")).attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
   },
 
   /**
@@ -10209,7 +10352,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       // Lines for each data
       // Area
       // -- Brush --//
-      contextLineEnter.append("g").attr("class", classLines), contextLineEnter.append("g").attr("class", classAreas), context.selectAll(".".concat(config_classes.brush, " rect")).attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? $$.width2 : $$.height2);
+      contextLineEnter.append("g").attr("class", classLines), $$.hasType("area") && contextLineEnter.append("g").attr("class", classAreas), context.selectAll(".".concat(config_classes.brush, " rect")).attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? $$.width2 : $$.height2);
     }
   },
 
@@ -12885,7 +13028,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190122054328
+ * @version 1.7.1-nightly-20190125094135
  */
 
 var bb = {
@@ -12896,7 +13039,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190122054328",
+  version: "1.7.1-nightly-20190125094135",
 
   /**
    * Generate chart
