@@ -28,25 +28,27 @@ const getGridTextX = (isX, width, height) => d => {
 extend(ChartInternal.prototype, {
 	initGrid() {
 		const $$ = this;
-		const config = $$.config;
 
 		$$.xgrid = d3SelectAll([]);
 
-		!config.grid_lines_front && $$.initGridLines();
-		!config.grid_front && $$.initXYFocusGrid();
+		$$.initGridLines();
+		$$.initXYFocusGrid();
 	},
 
 	initGridLines() {
 		const $$ = this;
+		const config = $$.config;
 
-		$$.gridLines = $$.main.append("g")
-			.attr("clip-path", $$.clipPathForGrid)
-			.attr("class", `${CLASS.grid} ${CLASS.gridLines}`);
+		if (config.grid_x_lines.length || config.grid_y_lines.length) {
+			$$.gridLines = $$.main.insert("g", `.${CLASS.chart}${config.grid_lines_front ? " + *" : ""}`)
+				.attr("clip-path", $$.clipPathForGrid)
+				.attr("class", `${CLASS.grid} ${CLASS.gridLines}`);
 
-		$$.gridLines.append("g").attr("class", CLASS.xgridLines);
-		$$.gridLines.append("g").attr("class", CLASS.ygridLines);
+			$$.gridLines.append("g").attr("class", CLASS.xgridLines);
+			$$.gridLines.append("g").attr("class", CLASS.ygridLines);
 
-		$$.xgridLines = d3SelectAll([]);
+			$$.xgridLines = d3SelectAll([]);
+		}
 	},
 
 	updateXGrid(withoutUpdate) {
@@ -55,15 +57,16 @@ extend(ChartInternal.prototype, {
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, $$.x);
 		const tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
+		const pos = d => $$.x(d) + (tickOffset * isRotated ? -1 : 1);
 
 		$$.xgridAttr = isRotated ? {
 			"x1": 0,
 			"x2": $$.width,
-			"y1": d => $$.x(d) - tickOffset,
-			"y2": d => $$.x(d) - tickOffset,
+			"y1": pos,
+			"y2": pos,
 		} : {
-			"x1": d => $$.x(d) + tickOffset,
-			"x2": d => $$.x(d) + tickOffset,
+			"x1": pos,
+			"x2": pos,
 			"y1": 0,
 			"y2": $$.height,
 		};
@@ -122,6 +125,8 @@ extend(ChartInternal.prototype, {
 
 	updateGrid(duration) {
 		const $$ = this;
+
+		!$$.gridLines && $$.initGridLines();
 
 		// hide if arc type
 		$$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible");
@@ -273,8 +278,10 @@ extend(ChartInternal.prototype, {
 	initXYFocusGrid() {
 		const $$ = this;
 		const config = $$.config;
+		const isFront = config.grid_front;
+		const className = `.${CLASS[isFront && $$.gridLines ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
 
-		$$.grid = $$.main.append("g")
+		$$.grid = $$.main.insert("g", className)
 			.attr("clip-path", $$.clipPathForGrid)
 			.attr("class", CLASS.grid);
 

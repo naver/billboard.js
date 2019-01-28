@@ -1666,4 +1666,35 @@ describe("DATA", () => {
 			expect(tooltipValue).to.be.equal(100);
 		});
 	});
+
+	describe("data.empty.label.text", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [],
+					empty: {
+						label: {
+							text: "No Data"
+						}
+					}
+				}
+			};
+		});
+
+		it("check for empty label text", () => {
+			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
+
+			expect(+emptyLabelText.style("opacity")).to.be.equal(1);
+		});
+
+		it("set options empty.label.text=''", () => {
+			args.data.empty.label.text = "";
+		});
+
+		it("shouldn't be generating empty label text node", () => {
+			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
+
+			expect(emptyLabelText.empty()).to.be.true;
+		});
+	});
 });

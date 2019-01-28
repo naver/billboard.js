@@ -176,8 +176,6 @@ export default class ChartInternal {
 
 		$$.axis = new Axis($$);
 
-		config.subchart_show && $$.initBrush();
-
 		if (config.zoom_enabled) {
 			$$.initZoom();
 			$$.initZoomBehaviour();
@@ -266,8 +264,7 @@ export default class ChartInternal {
 				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$));
 		}
 
-		config.svg_classname &&
-			$$.svg.attr("class", config.svg_classname);
+		config.svg_classname && $$.svg.attr("class", config.svg_classname);
 
 		// Define defs
 		$$.defs = $$.svg.append("defs");
@@ -276,7 +273,6 @@ export default class ChartInternal {
 		$$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis);
 		$$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis);
 		$$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid);
-		$$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart);
 
 		// set color patterns
 		if (isFunction(config.color_tiles) && $$.patterns) {
@@ -291,9 +287,12 @@ export default class ChartInternal {
 		$$.main = main;
 
 		// initialize subchart when subchart show option is set
-		config.subchart_show &&
-			$$.initSubchart &&
-				$$.initSubchart();
+		if (config.subchart_show) {
+			$$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart);
+
+			$$.initBrush();
+			$$.initSubchart();
+		}
 
 		$$.initTooltip && $$.initTooltip();
 		$$.initLegend && $$.initLegend();
@@ -302,16 +301,15 @@ export default class ChartInternal {
 		// -- Main Region --
 
 		// text when empty
-		main.append("text")
-			.attr("class", `${CLASS.text} ${CLASS.empty}`)
-			.attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-			.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
+		if (config.data_empty_label_text) {
+			main.append("text")
+				.attr("class", `${CLASS.text} ${CLASS.empty}`)
+				.attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+				.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
+		}
 
 		// Regions
 		$$.initRegion();
-
-		// Grids
-		$$.initGrid();
 
 		// Add Axis here, when clipPath is 'false'
 		!config.clipPath && $$.axis.init();
@@ -320,15 +318,14 @@ export default class ChartInternal {
 		main.append("g").attr("class", CLASS.chart)
 			.attr("clip-path", $$.clipPath);
 
-		// Grid lines
-		config.grid_lines_front && $$.initGridLines();
-		config.grid_front && $$.initXYFocusGrid();
-
 		// Cover whole with rects for events
 		$$.initEventRect();
 
 		// Define g for chart
 		$$.initChartElements();
+
+		// Grids
+		$$.initGrid();
 
 		// if zoom privileged, insert rect to forefront
 		// TODO: is this needed?
