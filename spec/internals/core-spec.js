@@ -261,7 +261,7 @@ describe("CORE", function() {
 			const previous = chart.internal.main.select(`.${CLASS.chart}`).node().previousSibling;
 
 			// chart element should positioned after axis element
-			expect(d3.select(previous).classed(CLASS.axisY2)).to.be.true;
+			expect(d3.select(previous).classed(CLASS.grid)).to.be.true;
 		});
 	});
 });

@@ -118,5 +118,18 @@ describe("SUBCHART", () => {
 			expect(axis.length).to.be.equal(1);
 			expect(axis[0].classList.contains("domain")).to.be.true;
 		});
+
+		it("set options subchart.show=false", () => {
+			args.subchart.show = false;
+		});
+
+		it("shouldn't be generating subchart's nodes", () => {
+			const subchart = chart.$.svg.selectAll("[clip-path]").filter(function() {
+				return /subchart/.test(this.getAttribute("clip-path"))
+			});
+
+			expect(subchart.empty()).to.be.true;
+			expect(chart.internal.clipSubchart).to.be.undefined;
+		})
 	});
 });
