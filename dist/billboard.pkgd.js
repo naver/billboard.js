@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190125094135
+ * @version 1.7.1-nightly-20190128094343
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -9585,7 +9585,7 @@ function () {
     value: function initWithData(data) {
       var $$ = this,
           config = $$.config;
-      $$.axis = new Axis_Axis($$), config.subchart_show && $$.initBrush(), config.zoom_enabled && ($$.initZoom(), $$.initZoomBehaviour());
+      $$.axis = new Axis_Axis($$), config.zoom_enabled && ($$.initZoom(), $$.initZoomBehaviour());
       var bindto = {
         element: config.bindto,
         classname: "bb"
@@ -9600,7 +9600,7 @@ function () {
         });
       }
 
-      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), $$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
         return $$.defs.append(function () {
           return p.node;
         });
@@ -9609,8 +9609,8 @@ function () {
       var main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
 
       // data.onmin/max callback
-      if ($$.main = main, config.subchart_show && $$.initSubchart && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-      .attr("dominant-baseline", "middle"), $$.initRegion(), $$.initGrid(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), config.grid_lines_front && $$.initGridLines(), config.grid_front && $$.initXYFocusGrid(), $$.initEventRect(), $$.initChartElements(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
+      if ($$.main = main, config.subchart_show && ($$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart), $$.initBrush(), $$.initSubchart()), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
         withTransition: !1,
         withTransform: !0,
         withUpdateXDomain: !0,
@@ -19195,36 +19195,32 @@ var getGridTextAnchor = function (d) {
 
 util_extend(ChartInternal_ChartInternal.prototype, {
   initGrid: function initGrid() {
-    var $$ = this,
-        config = $$.config;
-    $$.xgrid = src_selectAll([]), config.grid_lines_front || $$.initGridLines(), config.grid_front || $$.initXYFocusGrid();
+    var $$ = this;
+    $$.xgrid = src_selectAll([]), $$.initGridLines(), $$.initXYFocusGrid();
   },
   initGridLines: function initGridLines() {
-    var $$ = this;
-    $$.gridLines = $$.main.append("g").attr("clip-path", $$.clipPathForGrid).attr("class", "".concat(config_classes.grid, " ").concat(config_classes.gridLines)), $$.gridLines.append("g").attr("class", config_classes.xgridLines), $$.gridLines.append("g").attr("class", config_classes.ygridLines), $$.xgridLines = src_selectAll([]);
+    var $$ = this,
+        config = $$.config;
+    (config.grid_x_lines.length || config.grid_y_lines.length) && ($$.gridLines = $$.main.insert("g", ".".concat(config_classes.chart).concat(config.grid_lines_front ? " + *" : "")).attr("clip-path", $$.clipPathForGrid).attr("class", "".concat(config_classes.grid, " ").concat(config_classes.gridLines)), $$.gridLines.append("g").attr("class", config_classes.xgridLines), $$.gridLines.append("g").attr("class", config_classes.ygridLines), $$.xgridLines = src_selectAll([]));
   },
   updateXGrid: function updateXGrid(withoutUpdate) {
     var $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated,
         xgridData = $$.generateGridData(config.grid_x_type, $$.x),
-        tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
+        tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
+        pos = function (d) {
+      return $$.x(d) + (tickOffset * isRotated ? -1 : 1);
+    };
+
     $$.xgridAttr = isRotated ? {
       "x1": 0,
       "x2": $$.width,
-      "y1": function y1(d) {
-        return $$.x(d) - tickOffset;
-      },
-      "y2": function y2(d) {
-        return $$.x(d) - tickOffset;
-      }
+      "y1": pos,
+      "y2": pos
     } : {
-      "x1": function x1(d) {
-        return $$.x(d) + tickOffset;
-      },
-      "x2": function x2(d) {
-        return $$.x(d) + tickOffset;
-      },
+      "x1": pos,
+      "x2": pos,
       "y1": 0,
       "y2": $$.height
     }, $$.xgrid = $$.main.select(".".concat(config_classes.xgrids)).selectAll(".".concat(config_classes.xgrid)).data(xgridData), $$.xgrid.exit().remove(), $$.xgrid = $$.xgrid.enter().append("line").attr("class", config_classes.xgrid).merge($$.xgrid), withoutUpdate || $$.xgrid.each(function () {
@@ -19244,9 +19240,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     $$.ygrid = $$.main.select(".".concat(config_classes.ygrids)).selectAll(".".concat(config_classes.ygrid)).data(gridValues), $$.ygrid.exit().remove(), $$.ygrid = $$.ygrid.enter().append("line").attr("class", config_classes.ygrid).merge($$.ygrid), $$.ygrid.attr("x1", isRotated ? $$.y : 0).attr("x2", isRotated ? $$.y : $$.width).attr("y1", isRotated ? 0 : $$.y).attr("y2", isRotated ? $$.height : $$.y), $$.smoothLines($$.ygrid, "grid");
   },
   updateGrid: function updateGrid(duration) {
-    var $$ = this; // hide if arc type
-
-    $$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.main.select("line.".concat(config_classes.xgridFocus)).style("visibility", "hidden"), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
+    var $$ = this;
+    // hide if arc type
+    $$.gridLines || $$.initGridLines(), $$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.main.select("line.".concat(config_classes.xgridFocus)).style("visibility", "hidden"), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
   },
 
   /**
@@ -19303,8 +19299,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   initXYFocusGrid: function initXYFocusGrid() {
     var $$ = this,
-        config = $$.config;
-    $$.grid = $$.main.append("g").attr("clip-path", $$.clipPathForGrid).attr("class", config_classes.grid), config.grid_x_show && $$.grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && $$.grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && $$.grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus);
+        config = $$.config,
+        isFront = config.grid_front,
+        className = ".".concat(config_classes[isFront && $$.gridLines ? "gridLines" : "chart"]).concat(isFront ? " + *" : "");
+    $$.grid = $$.main.insert("g", className).attr("clip-path", $$.clipPathForGrid).attr("class", config_classes.grid), config.grid_x_show && $$.grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && $$.grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && $$.grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus);
   },
   showXGridFocus: function showXGridFocus(selectedData) {
     var $$ = this,
@@ -23739,7 +23737,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190125094135
+ * @version 1.7.1-nightly-20190128094343
  */
 
 var bb = {
@@ -23750,7 +23748,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190125094135",
+  version: "1.7.1-nightly-20190128094343",
 
   /**
    * Generate chart
