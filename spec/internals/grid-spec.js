@@ -29,7 +29,10 @@ describe("GRID", function() {
 				},
 				grid: {
 					y: {
-						show: false
+						show: false,
+						lines: [
+							{value: 2, text: "Label on 2"}
+						]
 					}
 				}
 			};
@@ -108,8 +111,18 @@ describe("GRID", function() {
 		});
 	});
 
+	describe("check node generation", () => {
+		it("set options args.grid.y.lines = []", () => {
+			args.grid.y.lines = [];
+		});
+
+		it("shouldn't be generating grid elements", () => {
+			expect(chart.$.main.select(`.${CLASS.grid}.${CLASS.gridLines}`).empty()).to.be.true;
+		});
+	});
+
 	describe("y grid lines", () => {
-		describe("position #1", () => {
+		describe("position #1", () => {7
 			before(() => {
 				args = {
 					data: {
