@@ -3,8 +3,26 @@
  * billboard.js project is licensed under the MIT license
  */
 import Chart from "../internals/Chart";
-import ChartInternal from "../internals/ChartInternal";
 import {extend} from "../internals/util";
+
+/**
+ * Change the type of the chart.
+ * @private
+ * @param {String|Array} targetIds
+ * @param {String} type
+ * @param {Object} optionsForRedraw
+ */
+function transformTo(targetIds, type, optionsForRedraw) {
+	const $$ = this;
+	const options = optionsForRedraw || {withTransitionForAxis: !$$.hasArcType()};
+
+	options.withTransitionForTransform = false;
+	$$.transiting = false;
+
+	$$.setTargetType(targetIds, type);
+	$$.updateTargets($$.data.targets); // this is needed when transforming to arc
+	$$.updateAndRedraw(options);
+}
 
 extend(Chart.prototype, {
 	/**
@@ -29,27 +47,6 @@ extend(Chart.prototype, {
 		const options = ["pie", "donut"]
 			.indexOf(type) >= 0 ? {withTransform: true} : null;
 
-		$$.transformTo(targetIds, type, options);
-	}
-});
-
-extend(ChartInternal.prototype, {
-	/**
-	 * Change the type of the chart.
-	 * @private
-	 * @param {String|Array} targetIds
-	 * @param {String} type
-	 * @param {Object} optionsForRedraw
-	 */
-	transformTo(targetIds, type, optionsForRedraw) {
-		const $$ = this;
-		const options = optionsForRedraw || {withTransitionForAxis: !$$.hasArcType()};
-
-		options.withTransitionForTransform = false;
-		$$.transiting = false;
-
-		$$.setTargetType(targetIds, type);
-		$$.updateTargets($$.data.targets); // this is needed when transforming to arc
-		$$.updateAndRedraw(options);
+		transformTo.bind($$)(targetIds, type, options);
 	}
 });

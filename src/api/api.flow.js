@@ -232,14 +232,10 @@ extend(ChartInternal.prototype, {
 		return function() {
 			const targets = args.targets;
 			const flow = args.flow;
-			const drawBar = args.drawBar;
-			const drawLine = args.drawLine;
-			const drawArea = args.drawArea;
-			const cx = args.cx;
-			const cy = args.cy;
+
+			const {bar: drawBar, line: drawLine, area: drawArea} = args.shape.type;
+			const {cx, cy, xForText, yForText} = args.shape.pos;
 			const xv = args.xv;
-			const xForText = args.xForText;
-			const yForText = args.yForText;
 			const duration = args.duration;
 
 			let translateX;
