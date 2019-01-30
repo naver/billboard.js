@@ -88,17 +88,16 @@ export default class ChartInternal {
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
 		$$.clipId = `${$$.datetimeId}-clip`;
+
 		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
 		$$.clipIdForGrid = `${$$.clipId}-grid`;
-		$$.clipIdForSubchart = `${$$.clipId}-subchart`;
 
 		// Define 'clip-path' attribute values
 		$$.clipPath = $$.getClipPath($$.clipId);
 		$$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis);
 		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
 		$$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid);
-		$$.clipPathForSubchart = $$.getClipPath($$.clipIdForSubchart);
 
 		$$.dragStart = null;
 		$$.dragging = false;
@@ -287,12 +286,7 @@ export default class ChartInternal {
 		$$.main = main;
 
 		// initialize subchart when subchart show option is set
-		if (config.subchart_show) {
-			$$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart);
-
-			$$.initBrush();
-			$$.initSubchart();
-		}
+		config.subchart_show && $$.initSubchart();
 
 		$$.initTooltip && $$.initTooltip();
 		$$.initLegend && $$.initLegend();
@@ -377,11 +371,13 @@ export default class ChartInternal {
 	}
 
 	initChartElements() {
-		["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Radar", "Text"].forEach(v => {
-			const method = `init${v}`;
+		const $$ = this;
 
-			this[method] && this[method]();
+		["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(v => {
+			$$[`init${v}`]();
 		});
+
+		notEmpty($$.config.data_labels) && $$.initText();
 	}
 
 	getChartElements() {
@@ -430,7 +426,7 @@ export default class ChartInternal {
 		const hasArc = $$.hasArcType();
 
 		const legend = {
-			width: $$.legned ? $$.getLegendWidth() : 0,
+			width: $$.legend ? $$.getLegendWidth() : 0,
 			height: $$.legend ? $$.getLegendHeight() : 0
 		};
 
@@ -479,8 +475,7 @@ export default class ChartInternal {
 			left: 0
 		};
 
-		$$.updateSizeForLegend &&
-			$$.updateSizeForLegend(legend.height, legend.width);
+		$$.updateSizeForLegend && $$.updateSizeForLegend(legend);
 
 		$$.width = $$.currentWidth - $$.margin.left - $$.margin.right;
 		$$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom;
@@ -602,26 +597,13 @@ export default class ChartInternal {
 		const $$ = this;
 		const main = $$.main;
 		const config = $$.config;
-		const isRotated = config.axis_rotated;
-		const hasRadar = $$.hasType("radar");
-		const hasArcType = $$.hasArcType();
-
-		const areaIndices = $$.getShapeIndices($$.isAreaType);
-		const barIndices = $$.getShapeIndices($$.isBarType);
-		const lineIndices = $$.getShapeIndices($$.isLineType);
-
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-		const xv = $$.xv.bind($$);
 
-		let tickValues;
-		let intervalForCulling;
-		let xDomainForZoom;
-
+		const flow = options.flow;
 		const wth = $$.getWithOption(options);
 		const duration = wth.Transition ? config.transition_duration : 0;
 		const durationForExit = wth.TransitionForExit ? duration : 0;
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
-
 		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
 		!(options.initializing && config.tooltip_init_show) &&
@@ -636,7 +618,80 @@ export default class ChartInternal {
 			$$.updateDimension(true);
 		}
 
-		// MEMO: needed for grids calculation
+		// update axis
+		$$.redrawAxis(targetsToShow, wth, transitions, flow);
+
+		// update circleY based on updated parameters
+		$$.updateCircleY();
+
+		// xgrid focus
+		$$.updateXgridFocus();
+
+		// Data empty label positioning and text.
+		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
+			.attr("x", $$.width / 2)
+			.attr("y", $$.height / 2)
+			.text(config.data_empty_label_text)
+			.transition()
+			.style("opacity", targetsToShow.length ? 0 : 1);
+
+		// grid
+		$$.updateGrid(duration);
+
+		// rect for regions
+		$$.updateRegion(duration);
+
+		// bars
+		$$.updateBar(durationForExit);
+
+		// lines, areas and circles
+		$$.updateLine(durationForExit);
+		$$.updateArea(durationForExit);
+		$$.updateCircle();
+
+		// text
+		$$.hasDataLabel() && $$.updateText(durationForExit);
+
+		// title
+		$$.redrawTitle && $$.redrawTitle();
+
+		// arc
+		$$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
+
+		// radar
+		$$.radars && $$.redrawRadar(duration, durationForExit);
+
+		// circles for select
+		$$.mainText && main.selectAll(`.${CLASS.selectedCircles}`)
+			.filter($$.isBarType.bind($$))
+			.selectAll("circle")
+			.remove();
+
+		// event rects will redrawn when flow called
+		if (config.interaction_enabled && !flow && wth.EventRect) {
+			$$.redrawEventRect();
+			$$.bindZoomEvent();
+		}
+
+		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+	}
+
+	/**
+	 * Redraw axis
+	 * @param {Object} targetsToShow targets data to be shown
+	 * @param {Object} wth
+	 * @param {Ojbect} transitions
+	 * @param {Object} flow
+	 * @private
+	 */
+	redrawAxis(targetsToShow, wth, transitions, flow) {
+		const $$ = this;
+		const config = $$.config;
+		const hasArcType = $$.hasArcType();
+		let tickValues;
+		let intervalForCulling;
+		let xDomainForZoom;
+
 		if ($$.isCategorized() && targetsToShow.length === 0) {
 			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
 		}
@@ -652,7 +707,7 @@ export default class ChartInternal {
 			$$.subXAxis.tickValues([]);
 		}
 
-		if (config.zoom_rescale && !options.flow) {
+		if (config.zoom_rescale && !flow) {
 			xDomainForZoom = $$.x.orgDomain();
 		}
 
@@ -706,127 +761,45 @@ export default class ChartInternal {
 			}
 		}
 
-		// setup drawer - MEMO: these must be called after axis updated
-		const drawArea = $$.generateDrawArea ?
-			$$.generateDrawArea(areaIndices, false) : undefined;
-
-		const drawBar = $$.generateDrawBar ?
-			$$.generateDrawBar(barIndices) : undefined;
-
-		const drawLine = $$.generateDrawLine ?
-			$$.generateDrawLine(lineIndices, false) : undefined;
-
-		const xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, true);
-		const yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, false);
-
 		// Update sub domain
 		if (wth.Y) {
 			$$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y"));
 			$$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
 		}
+	}
 
-		// xgrid focus
-		$$.updateXgridFocus();
-
-		// Data empty label positioning and text.
-		main.select(`text.${CLASS.text}.${CLASS.empty}`)
-			.attr("x", $$.width / 2)
-			.attr("y", $$.height / 2)
-			.text(config.data_empty_label_text)
-			.transition()
-			.style("opacity", targetsToShow.length ? 0 : 1);
-
-		// grid
-		$$.updateGrid(duration);
-
-		// rect for regions
-		$$.updateRegion(duration);
-
-		// bars
-		$$.updateBar(durationForExit);
-
-		// lines, areas and circles
-		$$.updateLine(durationForExit);
-		$$.updateArea(durationForExit);
-		$$.updateCircle();
-
-		// text
-		$$.hasDataLabel() && $$.updateText(durationForExit);
-
-		// title
-		$$.redrawTitle && $$.redrawTitle();
-
-		// arc
-		$$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform);
-
-		// radar
-		hasRadar && $$.redrawRadar(duration, durationForExit);
+	/**
+	 * Generate redraw list
+	 * @param {Object} targetsToShow targets data to be shown
+	 * @param {Object} flow
+	 * @param {Object} duration
+	 * @param {Boolean} withSubchart whether or not to show subchart
+	 * @private
+	 */
+	generateRedrawList(targetsToShow, flow, duration, withSubchart) {
+		const $$ = this;
+		const config = $$.config;
+		const shape = $$.getDrawShape();
 
 		// subchart
-		config.subchart_show && $$.redrawSubchart &&
-			$$.redrawSubchart(
-				wth.Subchart,
-				transitions,
-				duration,
-				durationForExit,
-				areaIndices,
-				barIndices,
-				lineIndices
-			);
-
-		// circles for select
-		main.selectAll(`.${CLASS.selectedCircles}`)
-			.filter($$.isBarType.bind($$))
-			.filter($$.isBarType.bind($$))
-			.selectAll("circle")
-			.remove();
-
-		// event rects will redrawn when flow called
-		if (config.interaction_enabled && !options.flow && wth.EventRect) {
-			$$.redrawEventRect();
-			$$.bindZoomEvent();
-		}
-
-		// update circleY based on updated parameters
-		$$.updateCircleY();
-
-		// generate circle x/y functions depending on updated params
-		const cx = (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$);
-		const cy = (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$);
+		config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 
 		// generate flow
-		const flow = options.flow && $$.generateFlow({
+		const flowFn = flow && $$.generateFlow({
 			targets: targetsToShow,
-			flow: options.flow,
-			duration: options.flow.duration,
-			drawBar,
-			drawLine,
-			drawArea,
-			cx,
-			cy,
-			xv,
-			xForText,
-			yForText
+			flow: flow,
+			duration: flow.duration,
+			shape,
+			xv: $$.xv.bind($$)
 		});
-
-		const isTransition = (duration || flow) && $$.isTabVisible();
+		const isTransition = (duration || flowFn) && $$.isTabVisible();
 
 		// redraw list
-
-		const redrawList = hasArcType ? [] : [
-			$$.redrawBar(drawBar, isTransition),
-			$$.redrawLine(drawLine, isTransition),
-			$$.redrawArea(drawArea, isTransition),
-			$$.redrawText(xForText, yForText, options.flow, isTransition),
-			$$.redrawRegion(isTransition),
-			$$.redrawGrid(isTransition)
-		];
-
-		(!hasArcType || hasRadar) && redrawList.push($$.redrawCircle(cx, cy, isTransition, flow));
+		const redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
 
 		// callback function after redraw ends
 		const afterRedraw = flow || config.onrendered ? () => {
-			flow && flow();
+			flowFn && flowFn();
 			callFn(config.onrendered, $$);
 		} : null;
 
@@ -853,6 +826,85 @@ export default class ChartInternal {
 		$$.mapToIds($$.data.targets).forEach(id => {
 			$$.withoutFadeIn[id] = true;
 		});
+	}
+
+	/**
+	 * Get the shape draw function
+	 * @return {Object}
+	 * @private
+	 */
+	getDrawShape() {
+		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
+		const hasRadar = $$.hasType("radar");
+		const shape = {type: {}, indices: {}};
+
+		// setup drawer - MEMO: these must be called after axis updated
+		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+			const indices = $$.getShapeIndices($$.isLineType);
+
+			shape.indices.line = indices;
+			shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
+
+			if ($$.hasTypeOf("Area")) {
+				const indices = $$.getShapeIndices($$.isAreaType);
+
+				shape.indices.area = indices;
+				shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices, false) : undefined;
+			}
+		}
+
+		if ($$.hasType("bar")) {
+			const indices = $$.getShapeIndices($$.isBarType);
+
+			shape.indices.bar = indices;
+			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
+		}
+
+		shape.pos = {
+			xForText: $$.generateXYForText(shape.indices, true),
+			yForText: $$.generateXYForText(shape.indices, false),
+
+			// generate circle x/y functions depending on updated params
+			cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
+			cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
+		};
+
+		return shape;
+	}
+
+	getRedrawList(shape, flow, flowFn, isTransition) {
+		const $$ = this;
+		const config = $$.config;
+		const hasArcType = $$.hasArcType();
+		const {cx, cy, xForText, yForText} = shape.pos;
+		const list = [];
+
+		if (!hasArcType) {
+			const {area, bar, line} = shape.type;
+
+			if (config.grid_x_lines.length || config.grid_y_lines.length) {
+				list.push($$.redrawGrid(isTransition));
+			}
+
+			if (config.regions.length) {
+				list.push($$.redrawRegion(isTransition));
+			}
+
+			if ($$.hasTypeOf("Line")) {
+				list.push($$.redrawLine(line, isTransition));
+				$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
+			}
+
+			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+
+			notEmpty(config.data_labels) &&
+				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+		}
+
+		(!hasArcType || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+
+		return list;
 	}
 
 	updateAndRedraw(options = {}) {

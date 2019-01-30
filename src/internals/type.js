@@ -5,6 +5,16 @@
 import ChartInternal from "./ChartInternal";
 import {isString, isArray, extend} from "./util";
 
+// defined chart types as category
+const TYPES = {
+	Area: ["area", "area-spline", "area-spline-range", "area-line-range", "area-step"],
+	AreaRange: ["area-spline-range", "area-line-range"],
+	Arc: ["pie", "donut", "gauge", "radar"],
+	Line: ["line", "spline", "area", "area-spline", "area-spline-range", "area-line-range", "step", "area-step"],
+	Step: ["step", "area-step"],
+	Spline: ["spline", "area-spline", "area-spline-range"]
+};
+
 extend(ChartInternal.prototype, {
 	setTargetType(targetIds, type) {
 		const $$ = this;
@@ -48,26 +58,26 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
-	 * Check if contains arc types chart
+	 * Check if contains given chart types
+	 * @parma {String} type Type key
 	 * @param {Object} targets
 	 * @param {Array} exclude Excluded types
 	 * @return {boolean}
 	 * @private
 	 */
-	hasArcType(targets, exclude = []) {
-		const types = ["pie", "donut", "gauge", "radar"]
-			.filter(v => exclude.indexOf(v) === -1);
-
-		return !types.every(v => !this.hasType(v, targets));
+	hasTypeOf(type, targets, exclude = []) {
+		return !TYPES[type]
+			.filter(v => exclude.indexOf(v) === -1)
+			.every(v => !this.hasType(v, targets));
 	},
 
-	isLineType(d) {
-		const id = isString(d) ? d : d.id;
-
-		return !this.config.data_types[id] ||
-			this.isTypeOf(id, ["line", "spline", "area", "area-spline", "area-spline-range", "area-line-range", "step", "area-step"]);
-	},
-
+	/**
+	 * Check if given data is certain chart type
+	 * @param {Object} d Data object
+	 * @param {String} type chart type
+	 * @return {Boolean}
+	 * @private
+	 */
 	isTypeOf(d, type) {
 		const id = isString(d) ? d : d.id;
 		const dataType = this.config.data_types[id];
@@ -76,20 +86,38 @@ extend(ChartInternal.prototype, {
 			type.indexOf(dataType) >= 0 : dataType === type;
 	},
 
+	/**
+	 * Check if contains arc types chart
+	 * @param {Object} targets
+	 * @param {Array} exclude Excluded types
+	 * @return {boolean}
+	 * @private
+	 */
+	hasArcType(targets, exclude) {
+		return this.hasTypeOf("Arc", targets, exclude);
+	},
+
+	isLineType(d) {
+		const id = isString(d) ? d : d.id;
+
+		return !this.config.data_types[id] ||
+			this.isTypeOf(id, TYPES.Line);
+	},
+
 	isStepType(d) {
-		return this.isTypeOf(d, ["step", "area-step"]);
+		return this.isTypeOf(d, TYPES.Step);
 	},
 
 	isSplineType(d) {
-		return this.isTypeOf(d, ["spline", "area-spline", "area-spline-range"]);
+		return this.isTypeOf(d, TYPES.Spline);
 	},
 
 	isAreaType(d) {
-		return this.isTypeOf(d, ["area", "area-spline", "area-spline-range", "area-line-range", "area-step"]);
+		return this.isTypeOf(d, TYPES.Area);
 	},
 
 	isAreaRangeType(d) {
-		return this.isTypeOf(d, ["area-spline-range", "area-line-range"]);
+		return this.isTypeOf(d, TYPES.AreaRange);
 	},
 
 	isBarType(d) {
