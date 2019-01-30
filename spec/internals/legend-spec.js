@@ -61,6 +61,18 @@ describe("LEGEND", () => {
 
 			expect(box.left + box.right).to.be.equal(638); // org : 640
 		});
+
+		it("set option legend.position='right'", () => {
+			args.legend = {
+				position: "right"
+			};
+		});
+
+		it("should be located on the right of chart", () => {
+			const x = util.parseNum(chart.$.legend.attr("transform"));
+
+			expect(x).to.be.closeTo(584, 1);
+		});
 	});
 
 	describe("legend as inset", () => {
