@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, getRandom, isNumber} from "./util";
+import {extend, getRandom, isNumber, capitalize} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -144,28 +144,27 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Gets the x or y coordinate of the text
-	 * @private
-	 * @param {Object} area Indices
-	 * @param {Object} bar Indices
-	 * @param {Object} line Indices
-	 * @param {Boolean} whether or not to x
+	 * @param {Object} indices Indices values
+	 * @param {Boolean} forX whether or not to x
 	 * @returns {Number} coordinates
+	 * @private
 	 */
-	generateXYForText(areaIndices, barIndices, lineIndices, forX) {
+	generateXYForText(indices, forX) {
 		const $$ = this;
-		const getAreaPoints = $$.generateGetAreaPoints(areaIndices, false);
-		const getBarPoints = $$.generateGetBarPoints(barIndices, false);
-		const getLinePoints = $$.generateGetLinePoints(lineIndices, false);
-		const getRadarPoints = $$.generateGetRadarPoints();
+		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
-		return function(d, i) {
-			const getPoints = ($$.isAreaType(d) && getAreaPoints) ||
-				($$.isBarType(d) && getBarPoints) ||
-				($$.isRadarType(d) && getRadarPoints) ||
-				getLinePoints;
+		Object.keys(indices).concat("radar")
+			.forEach(v => {
+				points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
+			});
 
-			return getter.call($$, getPoints(d, i), d, this);
+		return function(d, i) {
+			const type = ($$.isAreaType(d) && "area") ||
+				($$.isBarType(d) && "bar") ||
+				($$.isRadarType(d) && "radar") || "line";
+
+			return getter.call($$, points[type](d, i), d, this);
 		};
 	},
 

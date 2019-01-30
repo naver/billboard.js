@@ -12,7 +12,7 @@ import {
 } from "d3-brush";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, brushEmpty, isFunction, getRandom} from "../internals/util";
+import {extend, brushEmpty, capitalize, isFunction, getRandom} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -84,6 +84,12 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const visibility = config.subchart_show ? "visible" : "hidden";
+		const clipId = `${$$.clipId}-subchart`;
+		const clipPath = $$.getClipPath(clipId);
+
+		$$.clipIdForSubchart = clipId;
+		$$.appendClip($$.defs, clipId);
+		$$.initBrush();
 
 		$$.context = $$.svg.append("g").attr("transform", $$.getTranslate("context"));
 
@@ -93,7 +99,7 @@ extend(ChartInternal.prototype, {
 
 		// Define g for chart area
 		context.append("g")
-			.attr("clip-path", $$.clipPathForSubchart)
+			.attr("clip-path", clipPath)
 			.attr("class", CLASS.chart);
 
 		// Define g for bar chart area
@@ -108,7 +114,7 @@ extend(ChartInternal.prototype, {
 
 		// Add extent rect for Brush
 		context.append("g")
-			.attr("clip-path", $$.clipPathForSubchart)
+			.attr("clip-path", clipPath)
 			.attr("class", CLASS.brush)
 			.call($$.brush);
 
@@ -315,16 +321,11 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Redraw subchart.
 	 * @private
-	 * @param {Boolean} whether or not to show subchart
-	 * @param Do not use.
-	 * @param {Number} transition duration
-	 * @param Do not use.
-	 * @param {Object} area Indices
-	 * @param {Object} bar Indices
-	 * @param {Object} line Indices
+	 * @param {Boolean} withSubchart whether or not to show subchart
+	 * @param {Number} duration duration
+	 * @param {Object} shape Shape's info
 	 */
-	redrawSubchart(withSubchart, transitions, duration,
-		durationForExit, areaIndices, barIndices, lineIndices) {
+	redrawSubchart(withSubchart, duration, shape) {
 		const $$ = this;
 		const config = $$.config;
 
@@ -342,18 +343,13 @@ extend(ChartInternal.prototype, {
 				// extent rect
 				!brushEmpty($$) && $$.brush.update();
 
-				// setup drawer - MEMO: this must be called after axis updated
-				const drawAreaOnSub = $$.generateDrawArea(areaIndices, true);
-				const drawBarOnSub = $$.generateDrawBar(barIndices, true);
-				const drawLineOnSub = $$.generateDrawLine(lineIndices, true);
+				Object.keys(shape.type).forEach(v => {
+					const name = capitalize(v);
+					const draw = $$[`generateDraw${name}`](shape.indices[v], true);
 
-				$$.updateBarForSubchart(duration);
-				$$.updateLineForSubchart(duration);
-				$$.updateAreaForSubchart(duration);
-
-				$$.redrawBarForSubchart(drawBarOnSub, duration, duration);
-				$$.redrawLineForSubchart(drawLineOnSub, duration, duration);
-				$$.redrawAreaForSubchart(drawAreaOnSub, duration, duration);
+					$$[`update${name}ForSubchart`](duration);
+					$$[`redraw${name}ForSubchart`](draw, duration, duration);
+				});
 			}
 		}
 	},
