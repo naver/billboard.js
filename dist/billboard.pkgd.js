@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190128094343
+ * @version 1.7.1-nightly-20190130094503
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.7.0
@@ -9571,7 +9571,7 @@ function () {
       var $$ = this,
           config = $$.config,
           isRotated = config.axis_rotated;
-      $$.datetimeId = "bb-".concat(+new Date()), $$.clipId = "".concat($$.datetimeId, "-clip"), $$.clipIdForXAxis = "".concat($$.clipId, "-xaxis"), $$.clipIdForYAxis = "".concat($$.clipId, "-yaxis"), $$.clipIdForGrid = "".concat($$.clipId, "-grid"), $$.clipIdForSubchart = "".concat($$.clipId, "-subchart"), $$.clipPath = $$.getClipPath($$.clipId), $$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis), $$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis), $$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid), $$.clipPathForSubchart = $$.getClipPath($$.clipIdForSubchart), $$.dragStart = null, $$.dragging = !1, $$.flowing = !1, $$.cancelClick = !1, $$.mouseover = !1, $$.transiting = !1, $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.point = $$.generatePoint(), $$.extraLineClasses = $$.generateExtraLineClass(), $$.dataTimeFormat = config.data_xLocaltime ? timeParse : utcParse, $$.axisTimeFormat = config.axis_x_localtime ? timeFormat : utcFormat, $$.defaultAxisTimeFormat = function (d) {
+      $$.datetimeId = "bb-".concat(+new Date()), $$.clipId = "".concat($$.datetimeId, "-clip"), $$.clipIdForXAxis = "".concat($$.clipId, "-xaxis"), $$.clipIdForYAxis = "".concat($$.clipId, "-yaxis"), $$.clipIdForGrid = "".concat($$.clipId, "-grid"), $$.clipPath = $$.getClipPath($$.clipId), $$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis), $$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis), $$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid), $$.dragStart = null, $$.dragging = !1, $$.flowing = !1, $$.cancelClick = !1, $$.mouseover = !1, $$.transiting = !1, $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.point = $$.generatePoint(), $$.extraLineClasses = $$.generateExtraLineClass(), $$.dataTimeFormat = config.data_xLocaltime ? timeParse : utcParse, $$.axisTimeFormat = config.axis_x_localtime ? timeFormat : utcFormat, $$.defaultAxisTimeFormat = function (d) {
         var specifier = d.getMilliseconds() && ".%L" || d.getSeconds() && ".:%S" || d.getMinutes() && "%I:%M" || d.getHours() && "%I %p" || d.getDay() && d.getDate() !== 1 && "%-m/%-d" || d.getDate() !== 1 && "%b %d" || d.getMonth() && "%-m/%-d" || "%Y/%-m/%-d";
         return $$.axisTimeFormat(specifier)(d);
       }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.xOrient = isRotated ? "left" : "bottom", $$.yOrient = isRotated ? config.axis_y_inner ? "top" : "bottom" : config.axis_y_inner ? "right" : "left", $$.y2Orient = isRotated ? config.axis_y2_inner ? "bottom" : "top" : config.axis_y2_inner ? "left" : "right", $$.subXOrient = isRotated ? "left" : "bottom", $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
@@ -9609,7 +9609,7 @@ function () {
       var main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
 
       // data.onmin/max callback
-      if ($$.main = main, config.subchart_show && ($$.clipSubchart = $$.appendClip($$.defs, $$.clipIdForSubchart), $$.initBrush(), $$.initSubchart()), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+      if ($$.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
       .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
         withTransition: !1,
         withTransform: !0,
@@ -9628,12 +9628,10 @@ function () {
   }, {
     key: "initChartElements",
     value: function initChartElements() {
-      var _this = this;
-
-      ["Pie", "Bar", "Line", "Arc", "Gauge", "Bubble", "Radar", "Text"].forEach(function (v) {
-        var method = "init".concat(v);
-        _this[method] && _this[method]();
-      });
+      var $$ = this;
+      ["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(function (v) {
+        $$["init".concat(v)]();
+      }), notEmpty($$.config.data_labels) && $$.initText();
     }
   }, {
     key: "getChartElements",
@@ -9692,7 +9690,7 @@ function () {
           isRotated = config.axis_rotated,
           hasArc = $$.hasArcType(),
           legend = {
-        width: $$.legned ? $$.getLegendWidth() : 0,
+        width: $$.legend ? $$.getLegendWidth() : 0,
         height: $$.legend ? $$.getLegendHeight() : 0
       },
           legendHeightForBottom = $$.isLegendRight || $$.isLegendInset ? 0 : legend.height,
@@ -9725,7 +9723,7 @@ function () {
         right: NaN,
         bottom: 0,
         left: 0
-      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend.height, legend.width), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
+      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
     }
     /**
      * Update targeted element with given data
@@ -9779,29 +9777,40 @@ function () {
   }, {
     key: "redraw",
     value: function redraw() {
-      var tickValues,
-          intervalForCulling,
-          xDomainForZoom,
-          options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           transitionsValue = arguments.length > 1 ? arguments[1] : undefined,
           $$ = this,
           main = $$.main,
           config = $$.config,
-          isRotated = config.axis_rotated,
-          hasRadar = $$.hasType("radar"),
-          hasArcType = $$.hasArcType(),
-          areaIndices = $$.getShapeIndices($$.isAreaType),
-          barIndices = $$.getShapeIndices($$.isBarType),
-          lineIndices = $$.getShapeIndices($$.isLineType),
           targetsToShow = $$.filterTargetsToShow($$.data.targets),
-          xv = $$.xv.bind($$),
+          flow = options.flow,
           wth = $$.getWithOption(options),
           duration = wth.Transition ? config.transition_duration : 0,
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
+      options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+    }
+    /**
+     * Redraw axis
+     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} wth
+     * @param {Ojbect} transitions
+     * @param {Object} flow
+     * @private
+     */
+
+  }, {
+    key: "redrawAxis",
+    value: function redrawAxis(targetsToShow, wth, transitions, flow) {
+      var tickValues,
+          intervalForCulling,
+          xDomainForZoom,
+          $$ = this,
+          config = $$.config,
+          hasArcType = $$.hasArcType();
       // show/hide if manual culling needed
-      if (options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !options.flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+      if ($$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
         var axis = $$[key];
 
         if (axis) {
@@ -9825,36 +9834,38 @@ function () {
           var index = tickValues.indexOf(e);
           index >= 0 && src_select(this).style("display", index % intervalForCulling ? "none" : "block");
         });
-      } else $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).style("display", "block"); // setup drawer - MEMO: these must be called after axis updated
+      } else $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).style("display", "block"); // Update sub domain
 
-      var drawArea = $$.generateDrawArea ? $$.generateDrawArea(areaIndices, !1) : undefined,
-          drawBar = $$.generateDrawBar ? $$.generateDrawBar(barIndices) : undefined,
-          drawLine = $$.generateDrawLine ? $$.generateDrawLine(lineIndices, !1) : undefined,
-          xForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !0),
-          yForText = $$.generateXYForText(areaIndices, barIndices, lineIndices, !1);
-      wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"))), $$.updateXgridFocus(), main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.redrawArc && $$.redrawArc(duration, durationForExit, wth.Transform), hasRadar && $$.redrawRadar(duration, durationForExit), config.subchart_show && $$.redrawSubchart && $$.redrawSubchart(wth.Subchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices), main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !options.flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.updateCircleY();
-      // generate circle x/y functions depending on updated params
-      var cx = (hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX).bind($$),
-          cy = (hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY).bind($$),
-          flow = options.flow && $$.generateFlow({
+      wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+    }
+    /**
+     * Generate redraw list
+     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} flow
+     * @param {Object} duration
+     * @param {Boolean} withSubchart whether or not to show subchart
+     * @private
+     */
+
+  }, {
+    key: "generateRedrawList",
+    value: function generateRedrawList(targetsToShow, flow, duration, withSubchart) {
+      var $$ = this,
+          config = $$.config,
+          shape = $$.getDrawShape();
+      config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
+      // generate flow
+      var flowFn = flow && $$.generateFlow({
         targets: targetsToShow,
-        flow: options.flow,
-        duration: options.flow.duration,
-        drawBar: drawBar,
-        drawLine: drawLine,
-        drawArea: drawArea,
-        cx: cx,
-        cy: cy,
-        xv: xv,
-        xForText: xForText,
-        yForText: yForText
+        flow: flow,
+        duration: flow.duration,
+        shape: shape,
+        xv: $$.xv.bind($$)
       }),
-          isTransition = (duration || flow) && $$.isTabVisible(),
-          redrawList = hasArcType ? [] : [$$.redrawBar(drawBar, isTransition), $$.redrawLine(drawLine, isTransition), $$.redrawArea(drawArea, isTransition), $$.redrawText(xForText, yForText, options.flow, isTransition), $$.redrawRegion(isTransition), $$.redrawGrid(isTransition)];
-      (!hasArcType || hasRadar) && redrawList.push($$.redrawCircle(cx, cy, isTransition, flow));
-      // callback function after redraw ends
-      var afterRedraw = flow || config.onrendered ? function () {
-        flow && flow(), callFn(config.onrendered, $$);
+          isTransition = (duration || flowFn) && $$.isTabVisible(),
+          redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
+          afterRedraw = flow || config.onrendered ? function () {
+        flowFn && flowFn(), callFn(config.onrendered, $$);
       } : null;
       if (afterRedraw) // Only use transition when current tab is visible.
         if (isTransition) {
@@ -9873,6 +9884,71 @@ function () {
       $$.mapToIds($$.data.targets).forEach(function (id) {
         $$.withoutFadeIn[id] = !0;
       });
+    }
+    /**
+     * Get the shape draw function
+     * @return {Object}
+     * @private
+     */
+
+  }, {
+    key: "getDrawShape",
+    value: function getDrawShape() {
+      var $$ = this,
+          isRotated = $$.config.axis_rotated,
+          hasRadar = $$.hasType("radar"),
+          shape = {
+        type: {},
+        indices: {}
+      };
+
+      // setup drawer - MEMO: these must be called after axis updated
+      if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+        var indices = $$.getShapeIndices($$.isLineType);
+
+        if (shape.indices.line = indices, shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, !1) : undefined, $$.hasTypeOf("Area")) {
+          var _indices = $$.getShapeIndices($$.isAreaType);
+
+          shape.indices.area = _indices, shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(_indices, !1) : undefined;
+        }
+      }
+
+      if ($$.hasType("bar")) {
+        var _indices2 = $$.getShapeIndices($$.isBarType);
+
+        shape.indices.bar = _indices2, shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(_indices2) : undefined;
+      }
+
+      return shape.pos = {
+        xForText: $$.generateXYForText(shape.indices, !0),
+        yForText: $$.generateXYForText(shape.indices, !1),
+        // generate circle x/y functions depending on updated params
+        cx: (hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX).bind($$),
+        cy: (hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY).bind($$)
+      }, shape;
+    }
+  }, {
+    key: "getRedrawList",
+    value: function getRedrawList(shape, flow, flowFn, isTransition) {
+      var $$ = this,
+          config = $$.config,
+          hasArcType = $$.hasArcType(),
+          _shape$pos = shape.pos,
+          cx = _shape$pos.cx,
+          cy = _shape$pos.cy,
+          xForText = _shape$pos.xForText,
+          yForText = _shape$pos.yForText,
+          list = [];
+
+      if (!hasArcType) {
+        var _shape$type = shape.type,
+            area = _shape$type.area,
+            bar = _shape$type.bar,
+            line = _shape$type.line;
+        (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && (list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition))), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition));
+      }
+
+      return (!hasArcType || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
     }
   }, {
     key: "updateAndRedraw",
@@ -18983,23 +19059,20 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Gets the x or y coordinate of the text
-   * @private
-   * @param {Object} area Indices
-   * @param {Object} bar Indices
-   * @param {Object} line Indices
-   * @param {Boolean} whether or not to x
+   * @param {Object} indices Indices values
+   * @param {Boolean} forX whether or not to x
    * @returns {Number} coordinates
+   * @private
    */
-  generateXYForText: function generateXYForText(areaIndices, barIndices, lineIndices, forX) {
+  generateXYForText: function generateXYForText(indices, forX) {
     var $$ = this,
-        getAreaPoints = $$.generateGetAreaPoints(areaIndices, !1),
-        getBarPoints = $$.generateGetBarPoints(barIndices, !1),
-        getLinePoints = $$.generateGetLinePoints(lineIndices, !1),
-        getRadarPoints = $$.generateGetRadarPoints(),
+        points = {},
         getter = forX ? $$.getXForText : $$.getYForText;
-    return function (d, i) {
-      var getPoints = $$.isAreaType(d) && getAreaPoints || $$.isBarType(d) && getBarPoints || $$.isRadarType(d) && getRadarPoints || getLinePoints;
-      return getter.call($$, getPoints(d, i), d, this);
+    return Object.keys(indices).concat("radar").forEach(function (v) {
+      points[v] = $$["generateGet".concat(capitalize(v), "Points")](indices[v], !1);
+    }), function (d, i) {
+      var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isRadarType(d) && "radar" || "line";
+      return getter.call($$, points[type](d, i), d, this);
     };
   },
 
@@ -19052,7 +19125,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  * billboard.js project is licensed under the MIT license
  */
 
+ // defined chart types as category
 
+var TYPES = {
+  Area: ["area", "area-spline", "area-spline-range", "area-line-range", "area-step"],
+  AreaRange: ["area-spline-range", "area-line-range"],
+  Arc: ["pie", "donut", "gauge", "radar"],
+  Line: ["line", "spline", "area", "area-spline", "area-spline-range", "area-line-range", "step", "area-step"],
+  Step: ["step", "area-step"],
+  Spline: ["spline", "area-spline", "area-spline-range"]
+};
 util_extend(ChartInternal_ChartInternal.prototype, {
   setTargetType: function setTargetType(targetIds, type) {
     var $$ = this,
@@ -19075,43 +19157,62 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
+   * Check if contains given chart types
+   * @parma {String} type Type key
+   * @param {Object} targets
+   * @param {Array} exclude Excluded types
+   * @return {boolean}
+   * @private
+   */
+  hasTypeOf: function hasTypeOf(type, targets) {
+    var _this = this,
+        exclude = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [];
+
+    return !TYPES[type].filter(function (v) {
+      return exclude.indexOf(v) === -1;
+    }).every(function (v) {
+      return !_this.hasType(v, targets);
+    });
+  },
+
+  /**
+   * Check if given data is certain chart type
+   * @param {Object} d Data object
+   * @param {String} type chart type
+   * @return {Boolean}
+   * @private
+   */
+  isTypeOf: function isTypeOf(d, type) {
+    var id = isString(d) ? d : d.id,
+        dataType = this.config.data_types[id];
+    return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
+  },
+
+  /**
    * Check if contains arc types chart
    * @param {Object} targets
    * @param {Array} exclude Excluded types
    * @return {boolean}
    * @private
    */
-  hasArcType: function hasArcType(targets) {
-    var _this = this,
-        exclude = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : [],
-        types = ["pie", "donut", "gauge", "radar"].filter(function (v) {
-      return exclude.indexOf(v) === -1;
-    });
-
-    return !types.every(function (v) {
-      return !_this.hasType(v, targets);
-    });
+  hasArcType: function hasArcType(targets, exclude) {
+    return this.hasTypeOf("Arc", targets, exclude);
   },
   isLineType: function isLineType(d) {
     var id = isString(d) ? d : d.id;
-    return !this.config.data_types[id] || this.isTypeOf(id, ["line", "spline", "area", "area-spline", "area-spline-range", "area-line-range", "step", "area-step"]);
-  },
-  isTypeOf: function isTypeOf(d, type) {
-    var id = isString(d) ? d : d.id,
-        dataType = this.config.data_types[id];
-    return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
+    return !this.config.data_types[id] || this.isTypeOf(id, TYPES.Line);
   },
   isStepType: function isStepType(d) {
-    return this.isTypeOf(d, ["step", "area-step"]);
+    return this.isTypeOf(d, TYPES.Step);
   },
   isSplineType: function isSplineType(d) {
-    return this.isTypeOf(d, ["spline", "area-spline", "area-spline-range"]);
+    return this.isTypeOf(d, TYPES.Spline);
   },
   isAreaType: function isAreaType(d) {
-    return this.isTypeOf(d, ["area", "area-spline", "area-spline-range", "area-line-range", "area-step"]);
+    return this.isTypeOf(d, TYPES.Area);
   },
   isAreaRangeType: function isAreaRangeType(d) {
-    return this.isTypeOf(d, ["area-spline-range", "area-line-range"]);
+    return this.isTypeOf(d, TYPES.AreaRange);
   },
   isBarType: function isBarType(d) {
     return this.isTypeOf(d, "bar");
@@ -19667,21 +19768,22 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Update the size of the legend.
    * @private
-   * @param {Number} height
-   * @param {Number} width
+   * @param {Obejct} size S
    */
-  updateSizeForLegend: function updateSizeForLegend(legendHeight, legendWidth) {
+  updateSizeForLegend: function updateSizeForLegend(size) {
     var $$ = this,
         config = $$.config,
+        width = size.width,
+        height = size.height,
         insetLegendPosition = {
-      top: $$.isLegendTop ? $$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 : $$.currentHeight - legendHeight - $$.getCurrentPaddingBottom() - config.legend_inset_y,
-      left: $$.isLegendLeft ? $$.getCurrentPaddingLeft() + config.legend_inset_x + .5 : $$.currentWidth - legendWidth - $$.getCurrentPaddingRight() - config.legend_inset_x + .5
+      top: $$.isLegendTop ? $$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 : $$.currentHeight - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+      left: $$.isLegendLeft ? $$.getCurrentPaddingLeft() + config.legend_inset_x + .5 : $$.currentWidth - width - $$.getCurrentPaddingRight() - config.legend_inset_x + .5
     };
     $$.margin3 = {
-      top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
+      top: $$.isLegendRight ? 0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - height,
       right: NaN,
       bottom: 0,
-      left: $$.isLegendRight ? $$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
+      left: $$.isLegendRight ? $$.currentWidth - width : $$.isLegendInset ? insetLegendPosition.left : 0
     };
   },
 
@@ -19725,7 +19827,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Get the width of the legend
    * @private
-   * @param {Number} width
+   * @return {Number} width
    */
   getLegendWidth: function getLegendWidth() {
     var $$ = this;
@@ -19734,8 +19836,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Get the height of the legend
+   * @return {Number} height
    * @private
-   * @param {Number} height
    */
   getLegendHeight: function getLegendHeight() {
     var $$ = this;
@@ -20524,8 +20626,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   initSubchart: function initSubchart() {
     var $$ = this,
         config = $$.config,
-        visibility = config.subchart_show ? "visible" : "hidden";
-    $$.context = $$.svg.append("g").attr("transform", $$.getTranslate("context"));
+        visibility = config.subchart_show ? "visible" : "hidden",
+        clipId = "".concat($$.clipId, "-subchart"),
+        clipPath = $$.getClipPath(clipId);
+    $$.clipIdForSubchart = clipId, $$.appendClip($$.defs, clipId), $$.initBrush(), $$.context = $$.svg.append("g").attr("transform", $$.getTranslate("context"));
     var context = $$.context;
     // Define g for chart area
     // Define g for bar chart area
@@ -20533,7 +20637,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     // Add extent rect for Brush
     // ATTENTION: This must be called AFTER chart added
     // Add Axis
-    context.style("visibility", visibility), context.append("g").attr("clip-path", $$.clipPathForSubchart).attr("class", config_classes.chart), $$.hasType("bar") && context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartBars), context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartLines), context.append("g").attr("clip-path", $$.clipPathForSubchart).attr("class", config_classes.brush).call($$.brush), $$.axes.subx = context.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subx")).attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
+    context.style("visibility", visibility), context.append("g").attr("clip-path", clipPath).attr("class", config_classes.chart), $$.hasType("bar") && context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartBars), context.select(".".concat(config_classes.chart)).append("g").attr("class", config_classes.chartLines), context.append("g").attr("clip-path", clipPath).attr("class", config_classes.brush).call($$.brush), $$.axes.subx = context.append("g").attr("class", config_classes.axisX).attr("transform", $$.getTranslate("subx")).attr("clip-path", config.axis_rotated ? "" : $$.clipPathForXAxis).style("visibility", config.subchart_axis_x_show ? visibility : "hidden");
   },
 
   /**
@@ -20637,28 +20741,18 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Redraw subchart.
    * @private
-   * @param {Boolean} whether or not to show subchart
-   * @param Do not use.
-   * @param {Number} transition duration
-   * @param Do not use.
-   * @param {Object} area Indices
-   * @param {Object} bar Indices
-   * @param {Object} line Indices
+   * @param {Boolean} withSubchart whether or not to show subchart
+   * @param {Number} duration duration
+   * @param {Object} shape Shape's info
    */
-  redrawSubchart: function redrawSubchart(withSubchart, transitions, duration, durationForExit, areaIndices, barIndices, lineIndices) {
+  redrawSubchart: function redrawSubchart(withSubchart, duration, shape) {
     var $$ = this,
         config = $$.config;
-
-    // subchart
-    if ($$.context.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (on_event && on_event.type === "zoom" && $$.brush.update(), withSubchart)) // update subchart elements if needed
-      {
-        brushEmpty($$) || $$.brush.update();
-        // setup drawer - MEMO: this must be called after axis updated
-        var drawAreaOnSub = $$.generateDrawArea(areaIndices, !0),
-            drawBarOnSub = $$.generateDrawBar(barIndices, !0),
-            drawLineOnSub = $$.generateDrawLine(lineIndices, !0);
-        $$.updateBarForSubchart(duration), $$.updateLineForSubchart(duration), $$.updateAreaForSubchart(duration), $$.redrawBarForSubchart(drawBarOnSub, duration, duration), $$.redrawLineForSubchart(drawLineOnSub, duration, duration), $$.redrawAreaForSubchart(drawAreaOnSub, duration, duration);
-      }
+    $$.context.style("visibility", config.subchart_show ? "visible" : "hidden"), config.subchart_show && (on_event && on_event.type === "zoom" && $$.brush.update(), withSubchart && (!brushEmpty($$) && $$.brush.update(), Object.keys(shape.type).forEach(function (v) {
+      var name = capitalize(v),
+          draw = $$["generateDraw".concat(name)](shape.indices[v], !0);
+      $$["update".concat(name, "ForSubchart")](duration), $$["redraw".concat(name, "ForSubchart")](draw, duration, duration);
+    })));
   },
 
   /**
@@ -22374,14 +22468,16 @@ util_extend(Chart_Chart.prototype, {
       var translateX,
           targets = args.targets,
           flow = args.flow,
-          drawBar = args.drawBar,
-          drawLine = args.drawLine,
-          drawArea = args.drawArea,
-          cx = args.cx,
-          cy = args.cy,
+          _args$shape$type = args.shape.type,
+          drawBar = _args$shape$type.bar,
+          drawLine = _args$shape$type.line,
+          drawArea = _args$shape$type.area,
+          _args$shape$pos = args.shape.pos,
+          cx = _args$shape$pos.cx,
+          cy = _args$shape$pos.cy,
+          xForText = _args$shape$pos.xForText,
+          yForText = _args$shape$pos.yForText,
           xv = args.xv,
-          xForText = args.xForText,
-          yForText = args.yForText,
           duration = args.duration,
           scaleX = 1,
           flowIndex = flow.index,
@@ -22556,6 +22652,22 @@ util_extend(Chart_Chart.prototype, {
  */
 
 
+/**
+ * Change the type of the chart.
+ * @private
+ * @param {String|Array} targetIds
+ * @param {String} type
+ * @param {Object} optionsForRedraw
+ */
+
+function transformTo(targetIds, type, optionsForRedraw) {
+  var $$ = this,
+      options = optionsForRedraw || {
+    withTransitionForAxis: !$$.hasArcType()
+  };
+  // this is needed when transforming to arc
+  options.withTransitionForTransform = !1, $$.transiting = !1, $$.setTargetType(targetIds, type), $$.updateTargets($$.data.targets), $$.updateAndRedraw(options);
+}
 
 util_extend(Chart_Chart.prototype, {
   /**
@@ -22580,23 +22692,7 @@ util_extend(Chart_Chart.prototype, {
         options = ["pie", "donut"].indexOf(type) >= 0 ? {
       withTransform: !0
     } : null;
-    $$.transformTo(targetIds, type, options);
-  }
-}), util_extend(ChartInternal_ChartInternal.prototype, {
-  /**
-   * Change the type of the chart.
-   * @private
-   * @param {String|Array} targetIds
-   * @param {String} type
-   * @param {Object} optionsForRedraw
-   */
-  transformTo: function transformTo(targetIds, type, optionsForRedraw) {
-    var $$ = this,
-        options = optionsForRedraw || {
-      withTransitionForAxis: !$$.hasArcType()
-    };
-    // this is needed when transforming to arc
-    options.withTransitionForTransform = !1, $$.transiting = !1, $$.setTargetType(targetIds, type), $$.updateTargets($$.data.targets), $$.updateAndRedraw(options);
+    transformTo.bind($$)(targetIds, type, options);
   }
 });
 // CONCATENATED MODULE: ./src/api/api.group.js
@@ -23737,7 +23833,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190128094343
+ * @version 1.7.1-nightly-20190130094503
  */
 
 var bb = {
@@ -23748,7 +23844,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190128094343",
+  version: "1.7.1-nightly-20190130094503",
 
   /**
    * Generate chart
