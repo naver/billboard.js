@@ -115,29 +115,29 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Update the size of the legend.
 	 * @private
-	 * @param {Number} height
-	 * @param {Number} width
+	 * @param {Obejct} size S
 	 */
-	updateSizeForLegend(legendHeight, legendWidth) {
+	updateSizeForLegend(size) {
 		const $$ = this;
 		const config = $$.config;
+		const {width, height} = size;
 
 		const insetLegendPosition = {
 			top: $$.isLegendTop ?
 				$$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 :
-				$$.currentHeight - legendHeight - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+				$$.currentHeight - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
 			left: $$.isLegendLeft ?
 				$$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 :
-				$$.currentWidth - legendWidth - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
+				$$.currentWidth - width - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
 		};
 
 		$$.margin3 = {
 			top: $$.isLegendRight ?
-				0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - legendHeight,
+				0 : $$.isLegendInset ? insetLegendPosition.top : $$.currentHeight - height,
 			right: NaN,
 			bottom: 0,
 			left: $$.isLegendRight ?
-				$$.currentWidth - legendWidth : $$.isLegendInset ? insetLegendPosition.left : 0
+				$$.currentWidth - width : $$.isLegendInset ? insetLegendPosition.left : 0
 		};
 	},
 
@@ -183,20 +183,21 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Get the width of the legend
 	 * @private
-	 * @param {Number} width
+	 * @return {Number} width
 	 */
 	getLegendWidth() {
 		const $$ = this;
 
-		return $$.config.legend_show ?
-			$$.isLegendRight ||
-			$$.isLegendInset ? $$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth : 0;
+		return $$.config.legend_show ? (
+			$$.isLegendRight || $$.isLegendInset ?
+				$$.legendItemWidth * ($$.legendStep + 1) : $$.currentWidth
+		) : 0;
 	},
 
 	/**
 	 * Get the height of the legend
+	 * @return {Number} height
 	 * @private
-	 * @param {Number} height
 	 */
 	getLegendHeight() {
 		const $$ = this;

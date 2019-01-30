@@ -88,6 +88,7 @@ export default class ChartInternal {
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
 		$$.clipId = `${$$.datetimeId}-clip`;
+
 		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
 		$$.clipIdForGrid = `${$$.clipId}-grid`;
@@ -425,7 +426,7 @@ export default class ChartInternal {
 		const hasArc = $$.hasArcType();
 
 		const legend = {
-			width: $$.legned ? $$.getLegendWidth() : 0,
+			width: $$.legend ? $$.getLegendWidth() : 0,
 			height: $$.legend ? $$.getLegendHeight() : 0
 		};
 
@@ -474,8 +475,7 @@ export default class ChartInternal {
 			left: 0
 		};
 
-		$$.updateSizeForLegend &&
-			$$.updateSizeForLegend(legend.height, legend.width);
+		$$.updateSizeForLegend && $$.updateSizeForLegend(legend);
 
 		$$.width = $$.currentWidth - $$.margin.left - $$.margin.right;
 		$$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom;
