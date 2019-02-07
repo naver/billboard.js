@@ -5,6 +5,7 @@ const StringReplacePlugin = require("string-replace-webpack-plugin");
 const Stylish = require("webpack-stylish");
 const WebpackMonitor = require("webpack-monitor");
 const WebpackBar = require("webpackbar");
+const CopyWebpackPlugin = require("copy-webpack-plugin");
 
 const config = {
 	entry: {
@@ -57,7 +58,8 @@ const config = {
 		new StringReplacePlugin(),
 		new webpack.optimize.ModuleConcatenationPlugin(),
 		new Stylish(),
-		new WebpackBar()
+		new WebpackBar(),
+		new CopyWebpackPlugin([{from: path.resolve(__dirname, "src", "scss"), to: path.resolve(__dirname, "dist", "scss")}])
 	],
 	stats: "minimal",
 	mode: "none",

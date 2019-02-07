@@ -70,6 +70,7 @@
     "babel-plugin-transform-minify-booleans": "^6.9.4",
     "chai": "^4.2.0",
     "clean-webpack-plugin": "^1.0.1",
+    "copy-webpack-plugin": "^4.6.0",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "css-loader": "^2.1.0",
