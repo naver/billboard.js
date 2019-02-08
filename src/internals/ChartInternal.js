@@ -153,7 +153,9 @@ export default class ChartInternal {
 		$$.legendItemHeight = 0;
 
 		$$.currentMaxTickWidths = {
-			x: 0, y: 0, y2: 0
+			x: {size: 0, domain: ""},
+			y: {size: 0, domain: ""},
+			y2: {size: 0, domain: ""}
 		};
 
 		$$.rotated_padding_left = 30;
