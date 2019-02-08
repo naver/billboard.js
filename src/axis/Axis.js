@@ -134,20 +134,24 @@ export default class Axis {
 		});
 	}
 
-	getXAxis(axisName, scale, orient, tickFormat,
-		tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+	// called from : updateScales() & getMaxTickWidth()
+	getXAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
 		const $$ = this.owner;
 		const config = $$.config;
 		const isCategory = $$.isCategorized();
+		const orient = $$[`${name}Orient`];
+		const tickFormat = $$.xAxisTickFormat;
+		const tickValues = $$.xAxisTickValues;
+
 		const axisParams = {
 			isCategory,
-			withOuterTick,
-			withoutTransition,
+			outerTick,
+			noTransition,
 			config,
-			axisName,
+			name,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
-			tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
+			tickTextRotate: noTickTextRotate ? 0 : config.axis_x_tick_rotate,
 			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
 			orgXScale: $$.x
 		};
@@ -176,16 +180,20 @@ export default class Axis {
 		return axis;
 	}
 
-	getYAxis(axisName, scale, orient, tickFormat, tickValues,
-		withOuterTick, withoutTransition, withoutRotateTickText) {
+	// called from : updateScales() & getMaxTickWidth()
+	getYAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
 		const $$ = this.owner;
 		const config = $$.config;
+		const orient = $$[`${name}Orient`];
+		const tickFormat = config[`axis_${name}_tick_format`];
+		const tickValues = $$[`${name}AxisTickValues`];
+
 		const axisParams = {
-			withOuterTick,
-			withoutTransition,
+			outerTick,
+			noTransition,
 			config,
-			axisName,
-			tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
+			name,
+			tickTextRotate: noTickTextRotate ? 0 : config.axis_y_tick_rotate
 		};
 
 		const axis = new AxisRenderer(axisParams)
@@ -260,10 +268,10 @@ export default class Axis {
 			) : format;
 	}
 
-	getTickValues(type) {
+	getTickValues(id) {
 		const $$ = this.owner;
-		const tickValues = $$.config[`axis_${type}_tick_values`];
-		const axis = $$[`${type}Axis`];
+		const tickValues = $$.config[`axis_${id}_tick_values`];
+		const axis = $$[`${id}Axis`];
 
 		return tickValues || (axis ? axis.tickValues() : undefined);
 	}
@@ -280,33 +288,33 @@ export default class Axis {
 		return this.getTickValues("y2");
 	}
 
-	getLabelOptionByAxisId(axisId) {
-		return this.owner.config[`axis_${axisId}_label`];
+	getLabelOptionByAxisId(id) {
+		return this.owner.config[`axis_${id}_label`];
 	}
 
-	getLabelText(axisId) {
-		const option = this.getLabelOptionByAxisId(axisId);
+	getLabelText(id) {
+		const option = this.getLabelOptionByAxisId(id);
 
 		return isString(option) ? option : (
 			option ? option.text : null
 		);
 	}
 
-	setLabelText(axisId, text) {
+	setLabelText(id, text) {
 		const $$ = this.owner;
 		const config = $$.config;
-		const option = this.getLabelOptionByAxisId(axisId);
+		const option = this.getLabelOptionByAxisId(id);
 
 		if (isString(option)) {
-			config[`axis_${axisId}_label`] = text;
+			config[`axis_${id}_label`] = text;
 		} else if (option) {
 			option.text = text;
 		}
 	}
 
-	getLabelPosition(axisId, defaultPosition) {
+	getLabelPosition(id, defaultPosition) {
 		const isRotated = this.owner.config.axis_rotated;
-		const option = this.getLabelOptionByAxisId(axisId);
+		const option = this.getLabelOptionByAxisId(id);
 		const position = (isObjectType(option) && option.position) ?
 			option.position : defaultPosition[+!isRotated];
 
@@ -475,11 +483,11 @@ export default class Axis {
 	getMaxTickWidth(id, withoutRecompute) {
 		const $$ = this.owner;
 		const config = $$.config;
-		const currentTickMax = $$.currentMaxTickWidths;
+		const currentTickMax = $$.currentMaxTickWidths[id];
 		let maxWidth = 0;
 
-		if ((withoutRecompute && currentTickMax[id]) || !config[`axis_${id}_show`]) {
-			return currentTickMax[id];
+		if (withoutRecompute || !config[`axis_${id}_show`]) {
+			return currentTickMax.size;
 		}
 
 		if ($$.svg) {
@@ -488,16 +496,16 @@ export default class Axis {
 			const getFrom = isYAxis ? "getY" : "getX";
 
 			const scale = $$[id].copy().domain($$[`${getFrom}Domain`](targetsToShow, id));
-			const axis = this[`${getFrom}Axis`](
-				id,
-				scale,
-				$$[`${id}Orient`],
-				isYAxis ? config[`axis_${id}_tick_format`] : $$.xAxisTickFormat,
-				null,
-				false,
-				true,
-				true
-			);
+			const domain = scale.domain().toString();
+
+			// do not compute if domain is same
+			if (currentTickMax.domain === domain) {
+				return currentTickMax.size;
+			} else {
+				currentTickMax.domain = domain;
+			}
+
+			const axis = this[`${getFrom}Axis`](id, scale, false, true, true);
 
 			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 
@@ -518,10 +526,10 @@ export default class Axis {
 		}
 
 		if (maxWidth > 0) {
-			currentTickMax[id] = maxWidth;
+			currentTickMax.size = maxWidth;
 		}
 
-		return currentTickMax[id];
+		return currentTickMax.size;
 	}
 
 	updateLabels(withTransition) {

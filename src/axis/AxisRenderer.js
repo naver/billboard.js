@@ -11,7 +11,7 @@ export default class AxisRenderer {
 	constructor(params = {}) {
 		const config = {
 			innerTickSize: 6,
-			outerTickSize: params.withOuterTick ? 6 : 0,
+			outerTickSize: params.outerTick ? 6 : 0,
 			orient: "bottom",
 			range: [],
 			tickArguments: null,
@@ -23,7 +23,7 @@ export default class AxisRenderer {
 			tickPadding: 3,
 			tickValues: null,
 			transition: null,
-			withoutTransition: params.withoutTransition
+			noTransition: params.noTransition
 		};
 
 		config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
@@ -65,13 +65,13 @@ export default class AxisRenderer {
 
 		const {innerTickSize, tickLength, range} = config;
 
-		// get the axis' tick position configuration
-		const axisName = params.axisName;
-		const tickTextPos = axisName && /^(x|y|y2)$/.test(axisName) ?
-			params.config[`axis_${axisName}_tick_text_position`] : {x: 0, y: 0};
+		// // get the axis' tick position configuration
+		const name = params.name;
+		const tickTextPos = name && /^(x|y|y2)$/.test(name) ?
+			params.config[`axis_${name}_tick_text_position`] : {x: 0, y: 0};
 
 		// tick visiblity
-		const prefix = axisName === "subx" ? `subchart_axis_x` : `axis_${axisName}`;
+		const prefix = name === "subX" ? `subchart_axis_x` : `axis_${name}`;
 		const axisShow = params.config[`${prefix}_show`];
 		const tickShow = {
 			tick: axisShow ? params.config[`${prefix}_tick_show`] : false,
