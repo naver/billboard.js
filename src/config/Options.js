@@ -680,8 +680,8 @@ export default class Options {
 			 * data: {
 			 *   colors: {
 			 *     data1: "#ff0000",
-			 * 	   data2: function(d) {
-			 * 		  return "#000";
+			 *     data2: function(d) {
+			 *        return "#000";
 			 *     }
 			 *     ...
 			 *   }

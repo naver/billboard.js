@@ -13,6 +13,10 @@ export default class AxisRendererHelper {
 		this.config = config;
 		this.scale = scale;
 
+		if (!params.config.transition_duration) {
+			config.noTransition = true;
+		}
+
 		// set range
 		config.range = scale.rangeExtent ?
 			scale.rangeExtent() :
@@ -121,7 +125,7 @@ export default class AxisRendererHelper {
 	transitionise(selection) {
 		const config = this.config;
 
-		return config.withoutTransition ?
+		return config.noTransition ?
 			selection.interrupt() : selection.transition(config.transition);
 	}
 }

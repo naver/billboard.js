@@ -106,13 +106,12 @@ extend(ChartInternal.prototype, {
 	/**
 	 * Update scale
 	 * @private
-	 * @param {Boolean} withoutTransitionAtInit - param is given at the init rendering
+	 * @param {Boolean} isInit - param is given at the init rendering
 	 */
-	updateScales(withoutTransitionAtInit) {
+	updateScales(isInit) {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
-		const isInit = !$$.x;
 
 		// update edges
 		$$.xMin = isRotated ? 1 : 0;
@@ -126,41 +125,37 @@ extend(ChartInternal.prototype, {
 
 		// update scales
 		// x Axis
-		$$.x = $$.getX($$.xMin, $$.xMax, isInit ? undefined : $$.x.orgDomain(),
-			() => $$.xAxis.tickOffset());
+		$$.x = $$.getX($$.xMin, $$.xMax, $$.x && $$.x.orgDomain(), () => $$.xAxis.tickOffset());
 		$$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
 
 		$$.xAxisTickFormat = $$.axis.getXAxisTickFormat();
 		$$.xAxisTickValues = $$.axis.getXAxisTickValues();
 
 		$$.xAxis = $$.axis
-			.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat,
-				$$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit);
+			.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit);
 
 		$$.subXAxis = $$.axis
-			.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat,
-				$$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit);
+			.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit);
 
 		// y Axis
-		$$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain());
-		$$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain());
+		$$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default);
+		$$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default);
 
 		$$.yAxisTickValues = $$.axis.getYAxisTickValues();
 
 		$$.yAxis = $$.axis
-			.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format,
-				$$.yAxisTickValues, config.axis_y_tick_outer);
+			.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit);
 
 		// y2 Axis
 		if (config.axis_y2_show) {
-			$$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain());
-			$$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain());
+			$$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default);
+			$$.subY2 = $$.getY($$.subYMin, $$.subYMax,
+				$$.subY2 ? $$.subY2.domain() : config.axis_y2_default);
 
 			$$.y2AxisTickValues = $$.axis.getY2AxisTickValues();
 
 			$$.y2Axis = $$.axis
-				.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format,
-					$$.y2AxisTickValues, config.axis_y2_tick_outer);
+				.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit);
 		}
 
 		// update for arc
