@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190130094503
+ * @version 1.7.1-nightly-20190208094816
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -766,7 +766,7 @@ function () {
     classCallCheck_default()(this, AxisRendererHelper);
 
     var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])();
-    this.config = config, this.scale = scale, config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
+    this.config = config, this.scale = scale, params.config.transition_duration || (config.noTransition = !0), config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
   }
   /**
    * Compute a character dimension
@@ -833,7 +833,7 @@ function () {
     key: "transitionise",
     value: function transitionise(selection) {
       var config = this.config;
-      return config.withoutTransition ? selection.interrupt() : selection.transition(config.transition);
+      return config.noTransition ? selection.interrupt() : selection.transition(config.transition);
     }
   }], [{
     key: "getSizeFor1Char",
@@ -882,7 +882,7 @@ function () {
 
     var config = {
       innerTickSize: 6,
-      outerTickSize: params.withOuterTick ? 6 : 0,
+      outerTickSize: params.outerTick ? 6 : 0,
       orient: "bottom",
       range: [],
       tickArguments: null,
@@ -894,7 +894,7 @@ function () {
       tickPadding: 3,
       tickValues: null,
       transition: null,
-      withoutTransition: params.withoutTransition
+      noTransition: params.noTransition
     };
     config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.helper = new AxisRendererHelper_AxisRendererHelper(config, params), this.config = config, this.params = params;
   }
@@ -926,18 +926,18 @@ function () {
           innerTickSize = _config.innerTickSize,
           tickLength = _config.tickLength,
           range = _config.range,
-          axisName = params.axisName,
-          tickTextPos = axisName && /^(x|y|y2)$/.test(axisName) ? params.config["axis_".concat(axisName, "_tick_text_position")] : {
+          name = params.name,
+          tickTextPos = name && /^(x|y|y2)$/.test(name) ? params.config["axis_".concat(name, "_tick_text_position")] : {
         x: 0,
         y: 0
       },
-          prefix = axisName === "subx" ? "subchart_axis_x" : "axis_".concat(axisName),
+          prefix = name === "subX" ? "subchart_axis_x" : "axis_".concat(name),
           axisShow = params.config["".concat(prefix, "_show")],
           tickShow = {
         tick: !!axisShow && params.config["".concat(prefix, "_tick_show")],
         text: !!axisShow && params.config["".concat(prefix, "_tick_text_show")]
       },
-          $g = null; // get the axis' tick position configuration
+          $g = null; // // get the axis' tick position configuration
 
       g.each(function () {
         var g = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
@@ -1252,22 +1252,26 @@ function () {
           g.empty() ? g = $$.main.append("g").attr("class", className).style("visibility", config["axis_".concat(id, "_show")] ? "visible" : "hidden").call(v) : $$.xAxis.helper.transitionise(g).call(v.scale($$[id])), g.attr("transform", $$.getTranslate(id, i + 1));
         });
       });
-    }
+    } // called from : updateScales() & getMaxTickWidth()
+
   }, {
     key: "getXAxis",
-    value: function getXAxis(axisName, scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+    value: function getXAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
       var $$ = this.owner,
           config = $$.config,
           isCategory = $$.isCategorized(),
+          orient = $$["".concat(name, "Orient")],
+          tickFormat = $$.xAxisTickFormat,
+          tickValues = $$.xAxisTickValues,
           axisParams = {
         isCategory: isCategory,
-        withOuterTick: withOuterTick,
-        withoutTransition: withoutTransition,
+        outerTick: outerTick,
+        noTransition: noTransition,
         config: config,
-        axisName: axisName,
+        name: name,
         tickMultiline: config.axis_x_tick_multiline,
         tickWidth: config.axis_x_tick_width,
-        tickTextRotate: withoutRotateTickText ? 0 : config.axis_x_tick_rotate,
+        tickTextRotate: noTickTextRotate ? 0 : config.axis_x_tick_rotate,
         tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
         orgXScale: $$.x
       },
@@ -1276,18 +1280,22 @@ function () {
       return $$.isTimeSeries() && tickValues && !isFunction(tickValues) && (newTickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
       })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), axis;
-    }
+    } // called from : updateScales() & getMaxTickWidth()
+
   }, {
     key: "getYAxis",
-    value: function getYAxis(axisName, scale, orient, tickFormat, tickValues, withOuterTick, withoutTransition, withoutRotateTickText) {
+    value: function getYAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
       var $$ = this.owner,
           config = $$.config,
+          orient = $$["".concat(name, "Orient")],
+          tickFormat = config["axis_".concat(name, "_tick_format")],
+          tickValues = $$["".concat(name, "AxisTickValues")],
           axisParams = {
-        withOuterTick: withOuterTick,
-        withoutTransition: withoutTransition,
+        outerTick: outerTick,
+        noTransition: noTransition,
         config: config,
-        axisName: axisName,
-        tickTextRotate: withoutRotateTickText ? 0 : config.axis_y_tick_rotate
+        name: name,
+        tickTextRotate: noTickTextRotate ? 0 : config.axis_y_tick_rotate
       },
           axis = new AxisRenderer_AxisRenderer(axisParams).scale(scale).orient(orient).tickFormat(tickFormat || $$.isStackNormalized() && function (x) {
         return "".concat(x, "%");
@@ -1329,10 +1337,10 @@ function () {
     }
   }, {
     key: "getTickValues",
-    value: function getTickValues(type) {
+    value: function getTickValues(id) {
       var $$ = this.owner,
-          tickValues = $$.config["axis_".concat(type, "_tick_values")],
-          axis = $$["".concat(type, "Axis")];
+          tickValues = $$.config["axis_".concat(id, "_tick_values")],
+          axis = $$["".concat(id, "Axis")];
       return tickValues || (axis ? axis.tickValues() : undefined);
     }
   }, {
@@ -1352,28 +1360,28 @@ function () {
     }
   }, {
     key: "getLabelOptionByAxisId",
-    value: function getLabelOptionByAxisId(axisId) {
-      return this.owner.config["axis_".concat(axisId, "_label")];
+    value: function getLabelOptionByAxisId(id) {
+      return this.owner.config["axis_".concat(id, "_label")];
     }
   }, {
     key: "getLabelText",
-    value: function getLabelText(axisId) {
-      var option = this.getLabelOptionByAxisId(axisId);
+    value: function getLabelText(id) {
+      var option = this.getLabelOptionByAxisId(id);
       return isString(option) ? option : option ? option.text : null;
     }
   }, {
     key: "setLabelText",
-    value: function setLabelText(axisId, text) {
+    value: function setLabelText(id, text) {
       var $$ = this.owner,
           config = $$.config,
-          option = this.getLabelOptionByAxisId(axisId);
-      isString(option) ? config["axis_".concat(axisId, "_label")] = text : option && (option.text = text);
+          option = this.getLabelOptionByAxisId(id);
+      isString(option) ? config["axis_".concat(id, "_label")] = text : option && (option.text = text);
     }
   }, {
     key: "getLabelPosition",
-    value: function getLabelPosition(axisId, defaultPosition) {
+    value: function getLabelPosition(id, defaultPosition) {
       var isRotated = this.owner.config.axis_rotated,
-          option = this.getLabelOptionByAxisId(axisId),
+          option = this.getLabelOptionByAxisId(id),
           position = isObjectType(option) && option.position ? option.position : defaultPosition[+!isRotated],
           has = function (v) {
         return !!~position.indexOf(v);
@@ -1522,16 +1530,20 @@ function () {
     value: function getMaxTickWidth(id, withoutRecompute) {
       var $$ = this.owner,
           config = $$.config,
-          currentTickMax = $$.currentMaxTickWidths,
+          currentTickMax = $$.currentMaxTickWidths[id],
           maxWidth = 0;
-      if (withoutRecompute && currentTickMax[id] || !config["axis_".concat(id, "_show")]) return currentTickMax[id];
+      if (withoutRecompute || !config["axis_".concat(id, "_show")]) return currentTickMax.size;
 
       if ($$.svg) {
         var isYAxis = /^y2?$/.test(id),
             targetsToShow = $$.filterTargetsToShow($$.data.targets),
             getFrom = isYAxis ? "getY" : "getX",
             scale = $$[id].copy().domain($$["".concat(getFrom, "Domain")](targetsToShow, id)),
-            axis = this["".concat(getFrom, "Axis")](id, scale, $$["".concat(id, "Orient")], isYAxis ? config["axis_".concat(id, "_tick_format")] : $$.xAxisTickFormat, null, !1, !0, !0);
+            domain = scale.domain().toString();
+        // do not compute if domain is same
+        if (currentTickMax.domain === domain) return currentTickMax.size;
+        currentTickMax.domain = domain;
+        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !0, !0);
         isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
         axis.create(dummy), dummy.selectAll("text").each(function () {
@@ -1539,7 +1551,7 @@ function () {
         }), dummy.remove();
       }
 
-      return maxWidth > 0 && (currentTickMax[id] = maxWidth), currentTickMax[id];
+      return maxWidth > 0 && (currentTickMax.size = maxWidth), currentTickMax.size;
     }
   }, {
     key: "updateLabels",
@@ -1701,9 +1713,18 @@ function () {
         var specifier = d.getMilliseconds() && ".%L" || d.getSeconds() && ".:%S" || d.getMinutes() && "%I:%M" || d.getHours() && "%I %p" || d.getDay() && d.getDate() !== 1 && "%-m/%-d" || d.getDate() !== 1 && "%b %d" || d.getMonth() && "%-m/%-d" || "%Y/%-m/%-d";
         return $$.axisTimeFormat(specifier)(d);
       }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.xOrient = isRotated ? "left" : "bottom", $$.yOrient = isRotated ? config.axis_y_inner ? "top" : "bottom" : config.axis_y_inner ? "right" : "left", $$.y2Orient = isRotated ? config.axis_y2_inner ? "bottom" : "top" : config.axis_y2_inner ? "left" : "right", $$.subXOrient = isRotated ? "left" : "bottom", $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
-        x: 0,
-        y: 0,
-        y2: 0
+        x: {
+          size: 0,
+          domain: ""
+        },
+        y: {
+          size: 0,
+          domain: ""
+        },
+        y2: {
+          size: 0,
+          domain: ""
+        }
       }, $$.rotated_padding_left = 30, $$.rotated_padding_right = isRotated && !config.axis_x_show ? 0 : 30, $$.rotated_padding_top = 5, $$.withoutFadeIn = {}, $$.inputType = $$.convertInputType(), $$.axes.subx = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["selectAll"])([]);
     }
   }, {
@@ -3060,8 +3081,8 @@ var Options_Options = function Options() {
      * data: {
      *   colors: {
      *     data1: "#ff0000",
-     * 	   data2: function(d) {
-     * 		  return "#000";
+     *     data2: function(d) {
+     *        return "#000";
      *     }
      *     ...
      *   }
@@ -5776,23 +5797,22 @@ extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Update scale
    * @private
-   * @param {Boolean} withoutTransitionAtInit - param is given at the init rendering
+   * @param {Boolean} isInit - param is given at the init rendering
    */
-  updateScales: function updateScales(withoutTransitionAtInit) {
+  updateScales: function updateScales(isInit) {
     var $$ = this,
         config = $$.config,
-        isRotated = config.axis_rotated,
-        isInit = !$$.x;
+        isRotated = config.axis_rotated;
     // update edges
     // update scales
     // x Axis
     // y Axis
     // update for arc
-    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, isInit ? undefined : $$.x.orgDomain(), function () {
+    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, $$.x && $$.x.orgDomain(), function () {
       return $$.xAxis.tickOffset();
     }), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
-    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, $$.xOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.subXAxis = $$.axis.getXAxis("subx", $$.subX, $$.subXOrient, $$.xAxisTickFormat, $$.xAxisTickValues, config.axis_x_tick_outer, withoutTransitionAtInit), $$.y = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y_default : $$.y.domain()), $$.subY = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y_default : $$.subY.domain()), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, $$.yOrient, config.axis_y_tick_format, $$.yAxisTickValues, config.axis_y_tick_outer), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, isInit ? config.axis_y2_default : $$.y2.domain()), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, isInit ? config.axis_y2_default : $$.subY2.domain()), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, $$.y2Orient, config.axis_y2_tick_format, $$.y2AxisTickValues, config.axis_y2_tick_outer)), $$.updateArc && $$.updateArc();
+    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
@@ -13122,7 +13142,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190130094503
+ * @version 1.7.1-nightly-20190208094816
  */
 
 var bb = {
@@ -13133,7 +13153,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190130094503",
+  version: "1.7.1-nightly-20190208094816",
 
   /**
    * Generate chart
