@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import CLASS from "../config/classes";
 import Chart from "../internals/Chart";
 import {window} from "../internals/browser";
 import {notEmpty, isDefined, extend} from "../internals/util";
@@ -74,6 +75,7 @@ extend(Chart.prototype, {
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
 			// clear timers
+			$$.svg.selectAll(`.${CLASS.target}`).transition();
 			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
 			window.removeEventListener("resize", $$.resizeFunction);

@@ -57,6 +57,10 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		let data;
 
+		if (!$$.config) {
+			return;
+		}
+
 		// reset internally cached data
 		$$.resetCache();
 
