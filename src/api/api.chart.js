@@ -73,7 +73,8 @@ extend(Chart.prototype, {
 		if (notEmpty($$)) {
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
-			// clear timers
+			// clear timers && pending transition
+			$$.svg.select("*").interrupt();
 			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
 			window.removeEventListener("resize", $$.resizeFunction);

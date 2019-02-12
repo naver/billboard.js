@@ -133,6 +133,24 @@ describe("API chart", () => {
 			expect(Object.keys(chart).length).to.be.equal(0);
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 		});
+
+		it("should be destroyed without throwing error", done => {
+			chart = util.generate({
+				data: {
+					columns: [["data1", 50, 20]]
+				}
+			});
+
+			setTimeout(() => {
+				chart.load({
+					columns: [["data1", 100, 150]],
+					unload: ["data1"]
+				});
+			
+				chart.destroy();
+				setTimeout(done, 500);
+			}, 500);
+		});
 	});
 
 	describe("config()", () => {

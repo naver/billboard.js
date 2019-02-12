@@ -24,3 +24,4 @@ Rex <rexebin@gmail.com>
 Alexandre Araujo <https://github.com/oliveiraaraujo>
 Jinwoo Oh <arkist@gmail.com>
 Nirmal Guna <gunaseelann@jfrog.com>
+Michael Yungerman <myungerman@lightricks.com>
