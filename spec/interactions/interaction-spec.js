@@ -568,7 +568,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("showed each data points tooltip?", done => {
-				util.simulator(chart.internal.svg.node(), {
+				util.simulator(chart.$.svg.node(), {
 					pos: [250,150],
 					deltaX: -200,
 					deltaY: 0,
@@ -577,6 +577,64 @@ describe("INTERACTION", () => {
 					expect(selection).to.deep.equal([5, 4, 3, 2, 1, 0]);
 					done();
 				});
+			});
+		});
+	});
+
+	describe("check for data.over/out", () => {
+		const spy1 = sinon.spy();
+		const spy2 = sinon.spy();
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, 20, 30],
+						["data2", 20, 10, 25]
+					],
+					type: "bar",
+					onover: spy1,
+					onout: spy2
+				},
+				interaction: {
+					inputType: {
+						mouse: true
+					}
+				}
+			};
+		});
+		
+		beforeEach(() => {
+			spy1.resetHistory();
+			spy2.resetHistory();
+		});
+
+		it("should be called callbacks for mouse events", () => {
+			const main = chart.$.main;
+			const eventRect = main.select(`.${CLASS.eventRect}-1`).node();
+
+			util.fireEvent(eventRect, "mouseover");
+			util.fireEvent(eventRect, "mouseout");
+
+			expect(spy1.calledTwice).to.be.true;
+			expect(spy2.calledTwice).to.be.true;
+		});
+
+		it("set options interaction.inputType.touch=true", () => {
+			args.interaction.inputType.touch = true;
+		});
+		
+		it("should be called callbacks for touch events", done => {
+			util.simulator(chart.$.svg.node(), {
+				pos: [250,150],
+				deltaX: -100,
+				deltaY: 0,
+				duration: 500,
+			}, () => {
+				expect(spy1.callCount).to.be.equal(4);
+				expect(spy2.calledTwice).to.be.true;
+
+				done();
 			});
 		});
 	});
