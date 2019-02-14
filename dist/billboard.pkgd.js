@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190212095017
+ * @version 1.7.1-nightly-20190214095108
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -287,6 +287,7 @@ module.exports = _typeof;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
 var classCallCheck = __webpack_require__(0);
@@ -410,7 +411,7 @@ var durationWeek = 6048e5;
 
 
 var second_second = newInterval(function(date) {
-  date.setTime(Math.floor(date / durationSecond) * durationSecond);
+  date.setTime(date - date.getMilliseconds());
 }, function(date, step) {
   date.setTime(+date + step * durationSecond);
 }, function(start, end) {
@@ -427,7 +428,7 @@ var seconds = second_second.range;
 
 
 var minute_minute = newInterval(function(date) {
-  date.setTime(Math.floor(date / durationMinute) * durationMinute);
+  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond);
 }, function(date, step) {
   date.setTime(+date + step * durationMinute);
 }, function(start, end) {
@@ -444,9 +445,7 @@ var minutes = minute_minute.range;
 
 
 var hour_hour = newInterval(function(date) {
-  var offset = date.getTimezoneOffset() * durationMinute % durationHour;
-  if (offset < 0) offset += durationHour;
-  date.setTime(Math.floor((+date - offset) / durationHour) * durationHour + offset);
+  date.setTime(date - date.getMilliseconds() - date.getSeconds() * durationSecond - date.getMinutes() * durationMinute);
 }, function(date, step) {
   date.setTime(+date + step * durationHour);
 }, function(start, end) {
@@ -1511,35 +1510,18 @@ function selectorAll_empty() {
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-selection/src/matcher.js
-var matcher = function(selector) {
+/* harmony default export */ var matcher = (function(selector) {
   return function() {
     return this.matches(selector);
   };
-};
-
-if (typeof document !== "undefined") {
-  var matcher_element = document.documentElement;
-  if (!matcher_element.matches) {
-    var vendorMatches = matcher_element.webkitMatchesSelector
-        || matcher_element.msMatchesSelector
-        || matcher_element.mozMatchesSelector
-        || matcher_element.oMatchesSelector;
-    matcher = function(selector) {
-      return function() {
-        return vendorMatches.call(this, selector);
-      };
-    };
-  }
-}
-
-/* harmony default export */ var src_matcher = (matcher);
+});
 
 // CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/filter.js
 
 
 
 /* harmony default export */ var selection_filter = (function(match) {
-  if (typeof match !== "function") match = src_matcher(match);
+  if (typeof match !== "function") match = matcher(match);
 
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
@@ -1716,6 +1698,15 @@ function bindKey(parent, group, enter, update, exit, data, key) {
   return new Selection(this._exit || this._groups.map(sparse), this._parents);
 });
 
+// CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/join.js
+/* harmony default export */ var join = (function(onenter, onupdate, onexit) {
+  var enter = this.enter(), update = this, exit = this.exit();
+  enter = typeof onenter === "function" ? onenter(enter) : enter.append(onenter + "");
+  if (onupdate != null) update = onupdate(update);
+  if (onexit == null) exit.remove(); else onexit(exit);
+  return enter && update ? enter.merge(update).order() : update;
+});
+
 // CONCATENATED MODULE: ./node_modules/d3-selection/src/selection/merge.js
 
 
@@ -1742,7 +1733,7 @@ function bindKey(parent, group, enter, update, exit, data, key) {
   for (var groups = this._groups, j = -1, m = groups.length; ++j < m;) {
     for (var group = groups[j], i = group.length - 1, next = group[i], node; --i >= 0;) {
       if (node = group[i]) {
-        if (next && next !== node.nextSibling) next.parentNode.insertBefore(node, next);
+        if (next && node.compareDocumentPosition(next) ^ 4) next.parentNode.insertBefore(node, next);
         next = node;
       }
     }
@@ -2244,7 +2235,7 @@ function onAdd(typename, value, capture) {
   };
 }
 
-/* harmony default export */ var on = (function(typename, value, capture) {
+/* harmony default export */ var selection_on = (function(typename, value, capture) {
   var typenames = parseTypenames(typename + ""), i, n = typenames.length, t;
 
   if (arguments.length < 2) {
@@ -2344,6 +2335,7 @@ function dispatchFunction(type, params) {
 
 
 
+
 var selection_root = [null];
 
 function Selection(groups, parents) {
@@ -2363,6 +2355,7 @@ Selection.prototype = selection_selection.prototype = {
   data: selection_data,
   enter: selection_enter,
   exit: selection_exit,
+  join: join,
   merge: selection_merge,
   order: selection_order,
   sort: selection_sort,
@@ -2385,7 +2378,7 @@ Selection.prototype = selection_selection.prototype = {
   remove: selection_remove,
   clone: selection_clone,
   datum: selection_datum,
-  on: on,
+  on: selection_on,
   dispatch: dispatch
 };
 
@@ -2770,7 +2763,7 @@ function sleep(time) {
 
 
 
-var emptyOn = src_dispatch("start", "end", "interrupt");
+var emptyOn = src_dispatch("start", "end", "cancel", "interrupt");
 var emptyTween = [];
 
 var CREATED = 0;
@@ -2808,7 +2801,7 @@ function schedule_init(node, id) {
 
 function schedule_set(node, id) {
   var schedule = schedule_get(node, id);
-  if (schedule.state > STARTING) throw new Error("too late; already started");
+  if (schedule.state > STARTED) throw new Error("too late; already running");
   return schedule;
 }
 
@@ -2851,7 +2844,6 @@ function schedule_create(node, id, self) {
       if (o.state === STARTED) return src_timeout(start);
 
       // Interrupt the active transition, if any.
-      // Dispatch the interrupt event.
       if (o.state === RUNNING) {
         o.state = ENDED;
         o.timer.stop();
@@ -2859,12 +2851,11 @@ function schedule_create(node, id, self) {
         delete schedules[i];
       }
 
-      // Cancel any pre-empted transitions. No interrupt event is dispatched
-      // because the cancelled transitions never started. Note that this also
-      // removes this transition from the pending list!
+      // Cancel any pre-empted transitions.
       else if (+i < id) {
         o.state = ENDED;
         o.timer.stop();
+        o.on.call("cancel", node, node.__data__, o.index, o.group);
         delete schedules[i];
       }
     }
@@ -2904,7 +2895,7 @@ function schedule_create(node, id, self) {
         n = tween.length;
 
     while (++i < n) {
-      tween[i].call(null, t);
+      tween[i].call(node, t);
     }
 
     // Dispatch the end event.
@@ -2942,7 +2933,7 @@ function schedule_create(node, id, self) {
     active = schedule.state > STARTING && schedule.state < ENDING;
     schedule.state = ENDED;
     schedule.timer.stop();
-    if (active) schedule.on.call("interrupt", node, node.__data__, schedule.index, schedule.group);
+    schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group);
     delete schedules[i];
   }
 
@@ -3329,7 +3320,7 @@ var K = 18,
     Zn = 0.82521,
     lab_t0 = 4 / 29,
     lab_t1 = 6 / 29,
-    t2 = 3 * lab_t1 * lab_t1,
+    lab_t2 = 3 * lab_t1 * lab_t1,
     t3 = lab_t1 * lab_t1 * lab_t1;
 
 function labConvert(o) {
@@ -3390,11 +3381,11 @@ define(Lab, lab, extend(Color, {
 }));
 
 function xyz2lab(t) {
-  return t > t3 ? Math.pow(t, 1 / 3) : t / t2 + lab_t0;
+  return t > t3 ? Math.pow(t, 1 / 3) : t / lab_t2 + lab_t0;
 }
 
 function lab2xyz(t) {
-  return t > lab_t1 ? t * t * t : t2 * (t - lab_t0);
+  return t > lab_t1 ? t * t * t : lab_t2 * (t - lab_t0);
 }
 
 function lrgb2rgb(x) {
@@ -4246,52 +4237,56 @@ function attr_attrRemoveNS(fullname) {
 }
 
 function attr_attrConstant(name, interpolate, value1) {
-  var value00,
+  var string00,
+      string1 = value1 + "",
       interpolate0;
   return function() {
-    var value0 = this.getAttribute(name);
-    return value0 === value1 ? null
-        : value0 === value00 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value1);
+    var string0 = this.getAttribute(name);
+    return string0 === string1 ? null
+        : string0 === string00 ? interpolate0
+        : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
 
 function attr_attrConstantNS(fullname, interpolate, value1) {
-  var value00,
+  var string00,
+      string1 = value1 + "",
       interpolate0;
   return function() {
-    var value0 = this.getAttributeNS(fullname.space, fullname.local);
-    return value0 === value1 ? null
-        : value0 === value00 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value1);
+    var string0 = this.getAttributeNS(fullname.space, fullname.local);
+    return string0 === string1 ? null
+        : string0 === string00 ? interpolate0
+        : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
 
 function attr_attrFunction(name, interpolate, value) {
-  var value00,
-      value10,
+  var string00,
+      string10,
       interpolate0;
   return function() {
-    var value0, value1 = value(this);
+    var string0, value1 = value(this), string1;
     if (value1 == null) return void this.removeAttribute(name);
-    value0 = this.getAttribute(name);
-    return value0 === value1 ? null
-        : value0 === value00 && value1 === value10 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value10 = value1);
+    string0 = this.getAttribute(name);
+    string1 = value1 + "";
+    return string0 === string1 ? null
+        : string0 === string00 && string1 === string10 ? interpolate0
+        : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
   };
 }
 
 function attr_attrFunctionNS(fullname, interpolate, value) {
-  var value00,
-      value10,
+  var string00,
+      string10,
       interpolate0;
   return function() {
-    var value0, value1 = value(this);
+    var string0, value1 = value(this), string1;
     if (value1 == null) return void this.removeAttributeNS(fullname.space, fullname.local);
-    value0 = this.getAttributeNS(fullname.space, fullname.local);
-    return value0 === value1 ? null
-        : value0 === value00 && value1 === value10 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value10 = value1);
+    string0 = this.getAttributeNS(fullname.space, fullname.local);
+    string1 = value1 + "";
+    return string0 === string1 ? null
+        : string0 === string00 && string1 === string10 ? interpolate0
+        : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
   };
 }
 
@@ -4300,29 +4295,41 @@ function attr_attrFunctionNS(fullname, interpolate, value) {
   return this.attrTween(name, typeof value === "function"
       ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value))
       : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname)
-      : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value + ""));
+      : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
 
 
+function attrInterpolate(name, i) {
+  return function(t) {
+    this.setAttribute(name, i(t));
+  };
+}
+
+function attrInterpolateNS(fullname, i) {
+  return function(t) {
+    this.setAttributeNS(fullname.space, fullname.local, i(t));
+  };
+}
+
 function attrTweenNS(fullname, value) {
+  var t0, i0;
   function tween() {
-    var node = this, i = value.apply(node, arguments);
-    return i && function(t) {
-      node.setAttributeNS(fullname.space, fullname.local, i(t));
-    };
+    var i = value.apply(this, arguments);
+    if (i !== i0) t0 = (i0 = i) && attrInterpolateNS(fullname, i);
+    return t0;
   }
   tween._value = value;
   return tween;
 }
 
 function attrTween(name, value) {
+  var t0, i0;
   function tween() {
-    var node = this, i = value.apply(node, arguments);
-    return i && function(t) {
-      node.setAttribute(name, i(t));
-    };
+    var i = value.apply(this, arguments);
+    if (i !== i0) t0 = (i0 = i) && attrInterpolate(name, i);
+    return t0;
   }
   tween._value = value;
   return tween;
@@ -4410,7 +4417,7 @@ function easeConstant(id, value) {
 
 
 /* harmony default export */ var transition_filter = (function(match) {
-  if (typeof match !== "function") match = src_matcher(match);
+  if (typeof match !== "function") match = matcher(match);
 
   for (var groups = this._groups, m = groups.length, subgroups = new Array(m), j = 0; j < m; ++j) {
     for (var group = groups[j], n = group.length, subgroup = subgroups[j] = [], node, i = 0; i < n; ++i) {
@@ -4558,67 +4565,95 @@ var selection_Selection = src_selection.prototype.constructor;
 
 
 
-function style_styleRemove(name, interpolate) {
-  var value00,
-      value10,
+
+function styleNull(name, interpolate) {
+  var string00,
+      string10,
       interpolate0;
   return function() {
-    var value0 = styleValue(this, name),
-        value1 = (this.style.removeProperty(name), styleValue(this, name));
-    return value0 === value1 ? null
-        : value0 === value00 && value1 === value10 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value10 = value1);
+    var string0 = styleValue(this, name),
+        string1 = (this.style.removeProperty(name), styleValue(this, name));
+    return string0 === string1 ? null
+        : string0 === string00 && string1 === string10 ? interpolate0
+        : interpolate0 = interpolate(string00 = string0, string10 = string1);
   };
 }
 
-function styleRemoveEnd(name) {
+function style_styleRemove(name) {
   return function() {
     this.style.removeProperty(name);
   };
 }
 
 function style_styleConstant(name, interpolate, value1) {
-  var value00,
+  var string00,
+      string1 = value1 + "",
       interpolate0;
   return function() {
-    var value0 = styleValue(this, name);
-    return value0 === value1 ? null
-        : value0 === value00 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value1);
+    var string0 = styleValue(this, name);
+    return string0 === string1 ? null
+        : string0 === string00 ? interpolate0
+        : interpolate0 = interpolate(string00 = string0, value1);
   };
 }
 
 function style_styleFunction(name, interpolate, value) {
-  var value00,
-      value10,
+  var string00,
+      string10,
       interpolate0;
   return function() {
-    var value0 = styleValue(this, name),
-        value1 = value(this);
-    if (value1 == null) value1 = (this.style.removeProperty(name), styleValue(this, name));
-    return value0 === value1 ? null
-        : value0 === value00 && value1 === value10 ? interpolate0
-        : interpolate0 = interpolate(value00 = value0, value10 = value1);
+    var string0 = styleValue(this, name),
+        value1 = value(this),
+        string1 = value1 + "";
+    if (value1 == null) string1 = value1 = (this.style.removeProperty(name), styleValue(this, name));
+    return string0 === string1 ? null
+        : string0 === string00 && string1 === string10 ? interpolate0
+        : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
+  };
+}
+
+function styleMaybeRemove(id, name) {
+  var on0, on1, listener0, key = "style." + name, event = "end." + key, remove;
+  return function() {
+    var schedule = schedule_set(this, id),
+        on = schedule.on,
+        listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : undefined;
+
+    // If this node shared a dispatch with the previous node,
+    // just assign the updated shared dispatch and we’re done!
+    // Otherwise, copy-on-write.
+    if (on !== on0 || listener0 !== listener) (on1 = (on0 = on).copy()).on(event, listener0 = listener);
+
+    schedule.on = on1;
   };
 }
 
 /* harmony default export */ var transition_style = (function(name, value, priority) {
   var i = (name += "") === "transform" ? interpolateTransformCss : transition_interpolate;
   return value == null ? this
-          .styleTween(name, style_styleRemove(name, i))
-          .on("end.style." + name, styleRemoveEnd(name))
-      : this.styleTween(name, typeof value === "function"
-          ? style_styleFunction(name, i, tweenValue(this, "style." + name, value))
-          : style_styleConstant(name, i, value + ""), priority);
+      .styleTween(name, styleNull(name, i))
+      .on("end.style." + name, style_styleRemove(name))
+    : typeof value === "function" ? this
+      .styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value)))
+      .each(styleMaybeRemove(this._id, name))
+    : this
+      .styleTween(name, style_styleConstant(name, i, value), priority)
+      .on("end.style." + name, null);
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
+function styleInterpolate(name, i, priority) {
+  return function(t) {
+    this.style.setProperty(name, i(t), priority);
+  };
+}
+
 function styleTween(name, value, priority) {
+  var t, i0;
   function tween() {
-    var node = this, i = value.apply(node, arguments);
-    return i && function(t) {
-      node.style.setProperty(name, i(t), priority);
-    };
+    var i = value.apply(this, arguments);
+    if (i !== i0) t = (i0 = i) && styleInterpolate(name, i, priority);
+    return t;
   }
   tween._value = value;
   return tween;
@@ -4680,7 +4715,36 @@ function text_textFunction(value) {
   return new Transition(groups, this._parents, name, id1);
 });
 
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
+
+
+/* harmony default export */ var transition_end = (function() {
+  var on0, on1, that = this, id = that._id, size = that.size();
+  return new Promise(function(resolve, reject) {
+    var cancel = {value: reject},
+        end = {value: function() { if (--size === 0) resolve(); }};
+
+    that.each(function() {
+      var schedule = schedule_set(this, id),
+          on = schedule.on;
+
+      // If this node shared a dispatch with the previous node,
+      // just assign the updated shared dispatch and we’re done!
+      // Otherwise, copy-on-write.
+      if (on !== on0) {
+        on1 = (on0 = on).copy();
+        on1._.cancel.push(cancel);
+        on1._.interrupt.push(cancel);
+        on1._.end.push(end);
+      }
+
+      schedule.on = on1;
+    });
+  });
+});
+
 // CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
+
 
 
 
@@ -4743,7 +4807,8 @@ Transition.prototype = src_transition_transition.prototype = {
   tween: transition_tween,
   delay: transition_delay,
   duration: transition_duration,
-  ease: ease
+  ease: ease,
+  end: transition_end
 };
 
 // CONCATENATED MODULE: ./node_modules/d3-ease/src/linear.js
@@ -7064,6 +7129,25 @@ function transpose_length(d) {
 
 
 
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/init.js
+function initRange(domain, range) {
+  switch (arguments.length) {
+    case 0: break;
+    case 1: this.range(domain); break;
+    default: this.range(range).domain(domain); break;
+  }
+  return this;
+}
+
+function initInterpolator(domain, interpolator) {
+  switch (arguments.length) {
+    case 0: break;
+    case 1: this.interpolator(domain); break;
+    default: this.interpolator(interpolator).domain(domain); break;
+  }
+  return this;
+}
+
 // CONCATENATED MODULE: ./node_modules/d3-collection/src/map.js
 var map_prefix = "$";
 
@@ -7296,14 +7380,14 @@ var src_array_slice = src_array_array.slice;
 
 
 
+
 var implicit = {name: "implicit"};
 
-function ordinal(range) {
+function ordinal() {
   var index = src_map(),
       domain = [],
+      range = [],
       unknown = implicit;
-
-  range = range == null ? [] : src_array_slice.call(range);
 
   function scale(d) {
     var key = d + "", i = index.get(key);
@@ -7331,16 +7415,16 @@ function ordinal(range) {
   };
 
   scale.copy = function() {
-    return ordinal()
-        .domain(domain)
-        .range(range)
-        .unknown(unknown);
+    return ordinal(domain, range).unknown(unknown);
   };
+
+  initRange.apply(scale, arguments);
 
   return scale;
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/band.js
+
 
 
 
@@ -7397,15 +7481,15 @@ function band() {
   };
 
   scale.padding = function(_) {
-    return arguments.length ? (paddingInner = paddingOuter = Math.max(0, Math.min(1, _)), rescale()) : paddingInner;
+    return arguments.length ? (paddingInner = Math.min(1, paddingOuter = +_), rescale()) : paddingInner;
   };
 
   scale.paddingInner = function(_) {
-    return arguments.length ? (paddingInner = Math.max(0, Math.min(1, _)), rescale()) : paddingInner;
+    return arguments.length ? (paddingInner = Math.min(1, _), rescale()) : paddingInner;
   };
 
   scale.paddingOuter = function(_) {
-    return arguments.length ? (paddingOuter = Math.max(0, Math.min(1, _)), rescale()) : paddingOuter;
+    return arguments.length ? (paddingOuter = +_, rescale()) : paddingOuter;
   };
 
   scale.align = function(_) {
@@ -7413,16 +7497,14 @@ function band() {
   };
 
   scale.copy = function() {
-    return band()
-        .domain(domain())
-        .range(range)
+    return band(domain(), range)
         .round(round)
         .paddingInner(paddingInner)
         .paddingOuter(paddingOuter)
         .align(align);
   };
 
-  return rescale();
+  return initRange.apply(rescale(), arguments);
 }
 
 function pointish(scale) {
@@ -7440,7 +7522,7 @@ function pointish(scale) {
 }
 
 function band_point() {
-  return pointish(band().paddingInner(1));
+  return pointish(band.apply(null, arguments).paddingInner(1));
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/constant.js
@@ -7464,34 +7546,32 @@ function band_point() {
 
 var unit = [0, 1];
 
-function deinterpolateLinear(a, b) {
+function continuous_identity(x) {
+  return x;
+}
+
+function normalize(a, b) {
   return (b -= (a = +a))
       ? function(x) { return (x - a) / b; }
-      : d3_scale_src_constant(b);
+      : d3_scale_src_constant(isNaN(b) ? NaN : 0.5);
 }
 
-function deinterpolateClamp(deinterpolate) {
-  return function(a, b) {
-    var d = deinterpolate(a = +a, b = +b);
-    return function(x) { return x <= a ? 0 : x >= b ? 1 : d(x); };
-  };
+function clamper(domain) {
+  var a = domain[0], b = domain[domain.length - 1], t;
+  if (a > b) t = a, a = b, b = t;
+  return function(x) { return Math.max(a, Math.min(b, x)); };
 }
 
-function reinterpolateClamp(reinterpolate) {
-  return function(a, b) {
-    var r = reinterpolate(a = +a, b = +b);
-    return function(t) { return t <= 0 ? a : t >= 1 ? b : r(t); };
-  };
-}
-
-function bimap(domain, range, deinterpolate, reinterpolate) {
+// normalize(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
+// interpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding range value x in [a,b].
+function bimap(domain, range, interpolate) {
   var d0 = domain[0], d1 = domain[1], r0 = range[0], r1 = range[1];
-  if (d1 < d0) d0 = deinterpolate(d1, d0), r0 = reinterpolate(r1, r0);
-  else d0 = deinterpolate(d0, d1), r0 = reinterpolate(r0, r1);
+  if (d1 < d0) d0 = normalize(d1, d0), r0 = interpolate(r1, r0);
+  else d0 = normalize(d0, d1), r0 = interpolate(r0, r1);
   return function(x) { return r0(d0(x)); };
 }
 
-function polymap(domain, range, deinterpolate, reinterpolate) {
+function polymap(domain, range, interpolate) {
   var j = Math.min(domain.length, range.length) - 1,
       d = new Array(j),
       r = new Array(j),
@@ -7504,8 +7584,8 @@ function polymap(domain, range, deinterpolate, reinterpolate) {
   }
 
   while (++i < j) {
-    d[i] = deinterpolate(domain[i], domain[i + 1]);
-    r[i] = reinterpolate(range[i], range[i + 1]);
+    d[i] = normalize(domain[i], domain[i + 1]);
+    r[i] = interpolate(range[i], range[i + 1]);
   }
 
   return function(x) {
@@ -7519,16 +7599,18 @@ function copy(source, target) {
       .domain(source.domain())
       .range(source.range())
       .interpolate(source.interpolate())
-      .clamp(source.clamp());
+      .clamp(source.clamp())
+      .unknown(source.unknown());
 }
 
-// deinterpolate(a, b)(x) takes a domain value x in [a,b] and returns the corresponding parameter t in [0,1].
-// reinterpolate(a, b)(t) takes a parameter t in [0,1] and returns the corresponding domain value x in [a,b].
-function continuous(deinterpolate, reinterpolate) {
+function transformer() {
   var domain = unit,
       range = unit,
       interpolate = src_value,
-      clamp = false,
+      transform,
+      untransform,
+      unknown,
+      clamp = continuous_identity,
       piecewise,
       output,
       input;
@@ -7540,15 +7622,15 @@ function continuous(deinterpolate, reinterpolate) {
   }
 
   function scale(x) {
-    return (output || (output = piecewise(domain, range, clamp ? deinterpolateClamp(deinterpolate) : deinterpolate, interpolate)))(+x);
+    return isNaN(x = +x) ? unknown : (output || (output = piecewise(domain.map(transform), range, interpolate)))(transform(clamp(x)));
   }
 
   scale.invert = function(y) {
-    return (input || (input = piecewise(range, domain, deinterpolateLinear, clamp ? reinterpolateClamp(reinterpolate) : reinterpolate)))(+y);
+    return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number)))(y)));
   };
 
   scale.domain = function(_) {
-    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), rescale()) : domain.slice();
+    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), clamp === continuous_identity || (clamp = clamper(domain)), rescale()) : domain.slice();
   };
 
   scale.range = function(_) {
@@ -7560,14 +7642,25 @@ function continuous(deinterpolate, reinterpolate) {
   };
 
   scale.clamp = function(_) {
-    return arguments.length ? (clamp = !!_, rescale()) : clamp;
+    return arguments.length ? (clamp = _ ? clamper(domain) : continuous_identity, scale) : clamp !== continuous_identity;
   };
 
   scale.interpolate = function(_) {
     return arguments.length ? (interpolate = _, rescale()) : interpolate;
   };
 
-  return rescale();
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
+  return function(t, u) {
+    transform = t, untransform = u;
+    return rescale();
+  };
+}
+
+function continuous(transform, untransform) {
+  return transformer()(transform, untransform);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
@@ -7928,10 +8021,8 @@ function defaultLocale_defaultLocale(definition) {
 
 
 
-/* harmony default export */ var src_tickFormat = (function(domain, count, specifier) {
-  var start = domain[0],
-      stop = domain[domain.length - 1],
-      step = tickStep(start, stop, count == null ? 10 : count),
+/* harmony default export */ var src_tickFormat = (function(start, stop, count, specifier) {
+  var step = tickStep(start, stop, count),
       precision;
   specifier = formatSpecifier(specifier == null ? ",f" : specifier);
   switch (specifier.type) {
@@ -7972,7 +8063,8 @@ function linearish(scale) {
   };
 
   scale.tickFormat = function(count, specifier) {
-    return src_tickFormat(domain(), count, specifier);
+    var d = domain();
+    return src_tickFormat(d[0], d[d.length - 1], count == null ? 10 : count, specifier);
   };
 
   scale.nice = function(count) {
@@ -8019,11 +8111,13 @@ function linearish(scale) {
 }
 
 function src_linear_linear() {
-  var scale = continuous(deinterpolateLinear, number);
+  var scale = continuous(continuous_identity, continuous_identity);
 
   scale.copy = function() {
     return copy(scale, src_linear_linear());
   };
+
+  initRange.apply(scale, arguments);
 
   return linearish(scale);
 }
@@ -8033,11 +8127,11 @@ function src_linear_linear() {
 
 
 
-function identity_identity() {
-  var domain = [0, 1];
+function identity_identity(domain) {
+  var unknown;
 
   function scale(x) {
-    return +x;
+    return isNaN(x = +x) ? unknown : x;
   }
 
   scale.invert = scale;
@@ -8046,9 +8140,15 @@ function identity_identity() {
     return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), scale) : domain.slice();
   };
 
-  scale.copy = function() {
-    return identity_identity().domain(domain);
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
   };
+
+  scale.copy = function() {
+    return identity_identity(domain).unknown(unknown);
+  };
+
+  domain = arguments.length ? array_map.call(domain, d3_scale_src_number) : [0, 1];
 
   return linearish(scale);
 }
@@ -8080,16 +8180,20 @@ function identity_identity() {
 
 
 
-function log_deinterpolate(a, b) {
-  return (b = Math.log(b / a))
-      ? function(x) { return Math.log(x / a) / b; }
-      : d3_scale_src_constant(b);
+function transformLog(x) {
+  return Math.log(x);
 }
 
-function log_reinterpolate(a, b) {
-  return a < 0
-      ? function(t) { return -Math.pow(-b, t) * Math.pow(-a, 1 - t); }
-      : function(t) { return Math.pow(b, t) * Math.pow(a, 1 - t); };
+function transformExp(x) {
+  return Math.exp(x);
+}
+
+function transformLogn(x) {
+  return -Math.log(-x);
+}
+
+function transformExpn(x) {
+  return -Math.exp(-x);
 }
 
 function pow10(x) {
@@ -8115,16 +8219,21 @@ function reflect(f) {
   };
 }
 
-function log() {
-  var scale = continuous(log_deinterpolate, log_reinterpolate).domain([1, 10]),
+function loggish(transform) {
+  var scale = transform(transformLog, transformExp),
       domain = scale.domain,
       base = 10,
-      logs = logp(10),
-      pows = powp(10);
+      logs,
+      pows;
 
   function rescale() {
     logs = logp(base), pows = powp(base);
-    if (domain()[0] < 0) logs = reflect(logs), pows = reflect(pows);
+    if (domain()[0] < 0) {
+      logs = reflect(logs), pows = reflect(pows);
+      transform(transformLogn, transformExpn);
+    } else {
+      transform(transformLog, transformExp);
+    }
     return scale;
   }
 
@@ -8196,11 +8305,56 @@ function log() {
     }));
   };
 
+  return scale;
+}
+
+function log() {
+  var scale = loggish(transformer()).domain([1, 10]);
+
   scale.copy = function() {
-    return copy(scale, log().base(base));
+    return copy(scale, log()).base(scale.base());
   };
 
+  initRange.apply(scale, arguments);
+
   return scale;
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/symlog.js
+
+
+
+
+function transformSymlog(c) {
+  return function(x) {
+    return Math.sign(x) * Math.log1p(Math.abs(x / c));
+  };
+}
+
+function transformSymexp(c) {
+  return function(x) {
+    return Math.sign(x) * Math.expm1(Math.abs(x)) * c;
+  };
+}
+
+function symlogish(transform) {
+  var c = 1, scale = transform(transformSymlog(c), transformSymexp(c));
+
+  scale.constant = function(_) {
+    return arguments.length ? transform(transformSymlog(c = +_), transformSymexp(c)) : c;
+  };
+
+  return linearish(scale);
+}
+
+function symlog() {
+  var scale = symlogish(transformer());
+
+  scale.copy = function() {
+    return copy(scale, symlog()).constant(scale.constant());
+  };
+
+  return initRange.apply(scale, arguments);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/pow.js
@@ -8208,49 +8362,63 @@ function log() {
 
 
 
-function pow_raise(x, exponent) {
-  return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
+function transformPow(exponent) {
+  return function(x) {
+    return x < 0 ? -Math.pow(-x, exponent) : Math.pow(x, exponent);
+  };
 }
 
-function pow() {
-  var exponent = 1,
-      scale = continuous(deinterpolate, reinterpolate),
-      domain = scale.domain;
+function transformSqrt(x) {
+  return x < 0 ? -Math.sqrt(-x) : Math.sqrt(x);
+}
 
-  function deinterpolate(a, b) {
-    return (b = pow_raise(b, exponent) - (a = pow_raise(a, exponent)))
-        ? function(x) { return (pow_raise(x, exponent) - a) / b; }
-        : d3_scale_src_constant(b);
-  }
+function transformSquare(x) {
+  return x < 0 ? -x * x : x * x;
+}
 
-  function reinterpolate(a, b) {
-    b = pow_raise(b, exponent) - (a = pow_raise(a, exponent));
-    return function(t) { return pow_raise(a + b * t, 1 / exponent); };
+function powish(transform) {
+  var scale = transform(continuous_identity, continuous_identity),
+      exponent = 1;
+
+  function rescale() {
+    return exponent === 1 ? transform(continuous_identity, continuous_identity)
+        : exponent === 0.5 ? transform(transformSqrt, transformSquare)
+        : transform(transformPow(exponent), transformPow(1 / exponent));
   }
 
   scale.exponent = function(_) {
-    return arguments.length ? (exponent = +_, domain(domain())) : exponent;
-  };
-
-  scale.copy = function() {
-    return copy(scale, pow().exponent(exponent));
+    return arguments.length ? (exponent = +_, rescale()) : exponent;
   };
 
   return linearish(scale);
 }
 
+function pow() {
+  var scale = powish(transformer());
+
+  scale.copy = function() {
+    return copy(scale, pow()).exponent(scale.exponent());
+  };
+
+  initRange.apply(scale, arguments);
+
+  return scale;
+}
+
 function sqrt() {
-  return pow().exponent(0.5);
+  return pow.apply(null, arguments).exponent(0.5);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/quantile.js
 
 
 
+
 function quantile_quantile() {
   var domain = [],
       range = [],
-      thresholds = [];
+      thresholds = [],
+      unknown;
 
   function rescale() {
     var i = 0, n = Math.max(1, range.length);
@@ -8260,7 +8428,7 @@ function quantile_quantile() {
   }
 
   function scale(x) {
-    if (!isNaN(x = +x)) return range[bisect(thresholds, x)];
+    return isNaN(x = +x) ? unknown : range[bisect(thresholds, x)];
   }
 
   scale.invertExtent = function(y) {
@@ -8283,6 +8451,10 @@ function quantile_quantile() {
     return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
   };
 
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
   scale.quantiles = function() {
     return thresholds.slice();
   };
@@ -8290,13 +8462,15 @@ function quantile_quantile() {
   scale.copy = function() {
     return quantile_quantile()
         .domain(domain)
-        .range(range);
+        .range(range)
+        .unknown(unknown);
   };
 
-  return scale;
+  return initRange.apply(scale, arguments);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/quantize.js
+
 
 
 
@@ -8306,10 +8480,11 @@ function quantize_quantize() {
       x1 = 1,
       n = 1,
       domain = [0.5],
-      range = [0, 1];
+      range = [0, 1],
+      unknown;
 
   function scale(x) {
-    if (x <= x) return range[bisect(domain, x, 0, n)];
+    return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
   }
 
   function rescale() {
@@ -8335,26 +8510,37 @@ function quantize_quantize() {
         : [domain[i - 1], domain[i]];
   };
 
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : scale;
+  };
+
+  scale.thresholds = function() {
+    return domain.slice();
+  };
+
   scale.copy = function() {
     return quantize_quantize()
         .domain([x0, x1])
-        .range(range);
+        .range(range)
+        .unknown(unknown);
   };
 
-  return linearish(scale);
+  return initRange.apply(linearish(scale), arguments);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/threshold.js
 
 
 
+
 function threshold_threshold() {
   var domain = [0.5],
       range = [0, 1],
+      unknown,
       n = 1;
 
   function scale(x) {
-    if (x <= x) return range[bisect(domain, x, 0, n)];
+    return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
   }
 
   scale.domain = function(_) {
@@ -8370,13 +8556,18 @@ function threshold_threshold() {
     return [domain[i - 1], domain[i]];
   };
 
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
   scale.copy = function() {
     return threshold_threshold()
         .domain(domain)
-        .range(range);
+        .range(range)
+        .unknown(unknown);
   };
 
-  return scale;
+  return initRange.apply(scale, arguments);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
@@ -8405,7 +8596,7 @@ function time_number(t) {
 }
 
 function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
-  var scale = continuous(deinterpolateLinear, number),
+  var scale = continuous(continuous_identity, continuous_identity),
       invert = scale.invert,
       domain = scale.domain;
 
@@ -8513,7 +8704,7 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
 }
 
 /* harmony default export */ var src_time = (function() {
-  return calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]);
+  return initRange.apply(calendar(src_year, src_month, sunday, src_day, src_hour, src_minute, src_second, src_millisecond, timeFormat).domain([new Date(2000, 0, 1), new Date(2000, 0, 2)]), arguments);
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/utcTime.js
@@ -8521,26 +8712,36 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
 
 
 
+
 /* harmony default export */ var utcTime = (function() {
-  return calendar(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, src_millisecond, utcFormat).domain([Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 2)]);
+  return initRange.apply(calendar(src_utcYear, src_utcMonth, utcSunday, src_utcDay, src_utcHour, src_utcMinute, src_second, src_millisecond, utcFormat).domain([Date.UTC(2000, 0, 1), Date.UTC(2000, 0, 2)]), arguments);
 });
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/sequential.js
 
 
-function sequential(interpolator) {
+
+
+
+
+
+function sequential_transformer() {
   var x0 = 0,
       x1 = 1,
-      k10 = 1,
-      clamp = false;
+      t0,
+      t1,
+      k10,
+      transform,
+      interpolator = continuous_identity,
+      clamp = false,
+      unknown;
 
   function scale(x) {
-    var t = (x - x0) * k10;
-    return interpolator(clamp ? Math.max(0, Math.min(1, t)) : t);
+    return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? 0.5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (x0 = +_[0], x1 = +_[1], k10 = x0 === x1 ? 0 : 1 / (x1 - x0), scale) : [x0, x1];
+    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
   };
 
   scale.clamp = function(_) {
@@ -8551,31 +8752,129 @@ function sequential(interpolator) {
     return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
-  scale.copy = function() {
-    return sequential(interpolator).domain([x0, x1]).clamp(clamp);
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
   };
 
-  return linearish(scale);
+  return function(t) {
+    transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0);
+    return scale;
+  };
+}
+
+function sequential_copy(source, target) {
+  return target
+      .domain(source.domain())
+      .interpolator(source.interpolator())
+      .clamp(source.clamp())
+      .unknown(source.unknown());
+}
+
+function sequential() {
+  var scale = linearish(sequential_transformer()(continuous_identity));
+
+  scale.copy = function() {
+    return sequential_copy(scale, sequential());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function sequentialLog() {
+  var scale = loggish(sequential_transformer()).domain([1, 10]);
+
+  scale.copy = function() {
+    return sequential_copy(scale, sequentialLog()).base(scale.base());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function sequentialSymlog() {
+  var scale = symlogish(sequential_transformer());
+
+  scale.copy = function() {
+    return sequential_copy(scale, sequentialSymlog()).constant(scale.constant());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function sequentialPow() {
+  var scale = powish(sequential_transformer());
+
+  scale.copy = function() {
+    return sequential_copy(scale, sequentialPow()).exponent(scale.exponent());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function sequentialSqrt() {
+  return sequentialPow.apply(null, arguments).exponent(0.5);
+}
+
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/sequentialQuantile.js
+
+
+
+
+function sequentialQuantile() {
+  var domain = [],
+      interpolator = continuous_identity;
+
+  function scale(x) {
+    if (!isNaN(x = +x)) return interpolator((bisect(domain, x) - 1) / (domain.length - 1));
+  }
+
+  scale.domain = function(_) {
+    if (!arguments.length) return domain.slice();
+    domain = [];
+    for (var i = 0, n = _.length, d; i < n; ++i) if (d = _[i], d != null && !isNaN(d = +d)) domain.push(d);
+    domain.sort(src_ascending);
+    return scale;
+  };
+
+  scale.interpolator = function(_) {
+    return arguments.length ? (interpolator = _, scale) : interpolator;
+  };
+
+  scale.copy = function() {
+    return sequentialQuantile(interpolator).domain(domain);
+  };
+
+  return initInterpolator.apply(scale, arguments);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/diverging.js
 
 
-function diverging(interpolator) {
+
+
+
+
+
+
+function diverging_transformer() {
   var x0 = 0,
       x1 = 0.5,
       x2 = 1,
-      k10 = 1,
-      k21 = 1,
-      clamp = false;
+      t0,
+      t1,
+      t2,
+      k10,
+      k21,
+      interpolator = continuous_identity,
+      transform,
+      clamp = false,
+      unknown;
 
   function scale(x) {
-    var t = 0.5 + ((x = +x) - x1) * (x < x1 ? k10 : k21);
-    return interpolator(clamp ? Math.max(0, Math.min(1, t)) : t);
+    return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
   scale.domain = function(_) {
-    return arguments.length ? (x0 = +_[0], x1 = +_[1], x2 = +_[2], k10 = x0 === x1 ? 0 : 0.5 / (x1 - x0), k21 = x1 === x2 ? 0 : 0.5 / (x2 - x1), scale) : [x0, x1, x2];
+    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), t2 = transform(x2 = +_[2]), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), scale) : [x0, x1, x2];
   };
 
   scale.clamp = function(_) {
@@ -8586,14 +8885,67 @@ function diverging(interpolator) {
     return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
-  scale.copy = function() {
-    return diverging(interpolator).domain([x0, x1, x2]).clamp(clamp);
+  scale.unknown = function(_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
   };
 
-  return linearish(scale);
+  return function(t) {
+    transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1);
+    return scale;
+  };
+}
+
+function diverging() {
+  var scale = linearish(diverging_transformer()(continuous_identity));
+
+  scale.copy = function() {
+    return sequential_copy(scale, diverging());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function divergingLog() {
+  var scale = loggish(diverging_transformer()).domain([0.1, 1, 10]);
+
+  scale.copy = function() {
+    return sequential_copy(scale, divergingLog()).base(scale.base());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function divergingSymlog() {
+  var scale = symlogish(diverging_transformer());
+
+  scale.copy = function() {
+    return sequential_copy(scale, divergingSymlog()).constant(scale.constant());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function divergingPow() {
+  var scale = powish(diverging_transformer());
+
+  scale.copy = function() {
+    return sequential_copy(scale, divergingPow()).exponent(scale.exponent());
+  };
+
+  return initInterpolator.apply(scale, arguments);
+}
+
+function divergingSqrt() {
+  return divergingPow.apply(null, arguments).exponent(0.5);
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/index.js
+
+
+
+
+
+
 
 
 
@@ -14501,6 +14853,30 @@ function inferColumns(rows) {
   return columns;
 }
 
+function dsv_pad(value, width) {
+  var s = value + "", length = s.length;
+  return length < width ? new Array(width - length + 1).join(0) + s : s;
+}
+
+function dsv_formatYear(year) {
+  return year < 0 ? "-" + dsv_pad(-year, 6)
+    : year > 9999 ? "+" + dsv_pad(year, 6)
+    : dsv_pad(year, 4);
+}
+
+function formatDate(date) {
+  var hours = date.getUTCHours(),
+      minutes = date.getUTCMinutes(),
+      seconds = date.getUTCSeconds(),
+      milliseconds = date.getUTCMilliseconds();
+  return isNaN(date) ? "Invalid Date"
+      : dsv_formatYear(date.getUTCFullYear(), 4) + "-" + dsv_pad(date.getUTCMonth() + 1, 2) + "-" + dsv_pad(date.getUTCDate(), 2)
+      + (milliseconds ? "T" + dsv_pad(hours, 2) + ":" + dsv_pad(minutes, 2) + ":" + dsv_pad(seconds, 2) + "." + dsv_pad(milliseconds, 3) + "Z"
+      : seconds ? "T" + dsv_pad(hours, 2) + ":" + dsv_pad(minutes, 2) + ":" + dsv_pad(seconds, 2) + "Z"
+      : minutes || hours ? "T" + dsv_pad(hours, 2) + ":" + dsv_pad(minutes, 2) + "Z"
+      : "");
+}
+
 /* harmony default export */ var dsv = (function(delimiter) {
   var reFormat = new RegExp("[\"" + delimiter + "\n\r]"),
       DELIMITER = delimiter.charCodeAt(0);
@@ -14563,13 +14939,22 @@ function inferColumns(rows) {
     return rows;
   }
 
-  function format(rows, columns) {
-    if (columns == null) columns = inferColumns(rows);
-    return [columns.map(formatValue).join(delimiter)].concat(rows.map(function(row) {
+  function preformatBody(rows, columns) {
+    return rows.map(function(row) {
       return columns.map(function(column) {
         return formatValue(row[column]);
       }).join(delimiter);
-    })).join("\n");
+    });
+  }
+
+  function format(rows, columns) {
+    if (columns == null) columns = inferColumns(rows);
+    return [columns.map(formatValue).join(delimiter)].concat(preformatBody(rows, columns)).join("\n");
+  }
+
+  function formatBody(rows, columns) {
+    if (columns == null) columns = inferColumns(rows);
+    return preformatBody(rows, columns).join("\n");
   }
 
   function formatRows(rows) {
@@ -14580,16 +14965,18 @@ function inferColumns(rows) {
     return row.map(formatValue).join(delimiter);
   }
 
-  function formatValue(text) {
-    return text == null ? ""
-        : reFormat.test(text += "") ? "\"" + text.replace(/"/g, "\"\"") + "\""
-        : text;
+  function formatValue(value) {
+    return value == null ? ""
+        : value instanceof Date ? formatDate(value)
+        : reFormat.test(value += "") ? "\"" + value.replace(/"/g, "\"\"") + "\""
+        : value;
   }
 
   return {
     parse: parse,
     parseRows: parseRows,
     format: format,
+    formatBody: formatBody,
     formatRows: formatRows
   };
 });
@@ -14602,6 +14989,7 @@ var csv = dsv(",");
 var csvParse = csv.parse;
 var csvParseRows = csv.parseRows;
 var csvFormat = csv.format;
+var csvFormatBody = csv.formatBody;
 var csvFormatRows = csv.formatRows;
 
 // CONCATENATED MODULE: ./node_modules/d3-dsv/src/tsv.js
@@ -14612,9 +15000,27 @@ var tsv_tsv = dsv("\t");
 var tsvParse = tsv_tsv.parse;
 var tsvParseRows = tsv_tsv.parseRows;
 var tsvFormat = tsv_tsv.format;
+var tsvFormatBody = tsv_tsv.formatBody;
 var tsvFormatRows = tsv_tsv.formatRows;
 
+// CONCATENATED MODULE: ./node_modules/d3-dsv/src/autoType.js
+function autoType(object) {
+  for (var key in object) {
+    var value = object[key].trim(), number;
+    if (!value) value = null;
+    else if (value === "true") value = true;
+    else if (value === "false") value = false;
+    else if (value === "NaN") value = NaN;
+    else if (!isNaN(number = +value)) value = number;
+    else if (/^([-+]\d{2})?\d{4}(-\d{2}(-\d{2})?)?(T\d{2}:\d{2}(:\d{2}(\.\d{3})?)?(Z|[-+]\d{2}:\d{2})?)?$/.test(value)) value = new Date(value);
+    else continue;
+    object[key] = value;
+  }
+  return object;
+}
+
 // CONCATENATED MODULE: ./node_modules/d3-dsv/src/index.js
+
 
 
 
@@ -14911,7 +15317,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     $$.updateEventRect(eventRectUpdate), $$.inputType !== "touch" || $$.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
   },
   bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
-    var startPx,
+    var lastRectIndex,
+        startPx,
         $$ = this,
         config = $$.config,
         getEventRect = function () {
@@ -14922,11 +15329,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(".concat(config_classes.eventRect, "-?|s)"), "g"), "") * 1;
       return (isNaN(index) || index === null) && (index = -1), index;
     },
+        callOverOut = function (index) {
+      index !== lastRectIndex && (isNumber(lastRectIndex) && $$.setOverOut(lastRectIndex, !1), isNumber(index) && $$.setOverOut(index, !0), lastRectIndex = index);
+    },
         selectRect = function (context) {
       if (isMultipleX) $$.selectRectForMultipleXs(context);else {
         var eventRect = getEventRect(),
             index = getIndex(eventRect);
-        $$.setOver(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
+        callOverOut(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
     },
         preventDefault = config.interaction_inputType_touch.preventDefault,
@@ -14946,18 +15356,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         if ($$.dragging || $$.flowing || $$.hasArcType()) return;
         preventEvent(on_event), selectRect(this);
-      } else $$.unselectRect();
+      } else $$.unselectRect(), callOverOut();
     }).on("touchend.eventRect", function () {
       var eventRect = getEventRect();
-
-      if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
-        if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1)); // Call event handler
-
-        var index = getIndex(eventRect);
-        isMultipleX || index === -1 || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function (d2) {
-          return config.data_onout.call($$.api, d2);
-        });
-      }
+      !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) && $$.cancelClick && ($$.cancelClick = !1);
     });
   },
 
@@ -15057,13 +15459,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this;
     $$.svg.select(".".concat(config_classes.eventRect)).style("cursor", null), $$.hideXGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
   },
-  setOver: function setOver(index) {
+  setOverOut: function setOverOut(index, isOver) {
     var $$ = this,
         config = $$.config;
+
     // Call event handler
-    $$.expandCirclesBars(index, null, !0), index !== -1 && $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function (d2) {
-      return config.data_onover.call($$.api, d2);
-    });
+    if (index !== -1) {
+      isOver && $$.expandCirclesBars(index, null, !0);
+      var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
+      $$.isMultipleX() || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(callback);
+    }
   },
 
   /**
@@ -15097,7 +15502,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     }).call($$.getDraggableSelection());
     return $$.inputType === "mouse" && rect.on("mouseover", function (d) {
-      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOver(d.index);
+      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOverOut(d.index, !0);
     }).on("mousemove", function (d) {
       // do nothing while dragging/flowing
       if (!($$.dragging || $$.flowing || $$.hasArcType())) {
@@ -15106,13 +15511,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         $$.isStepType(d) && $$.config.line_step_type === "step-after" && src_mouse(this)[0] < $$.x($$.getXValue(d.id, index)) && (index -= 1), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
       }
     }).on("mouseout", function (d) {
-      // chart is destroyed
-      if ($$.config && !$$.hasArcType()) {
-        var index = d.index;
-        $$.unselectRect(), $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function (d2) {
-          return config.data_onout.call($$.api, d2);
-        });
-      }
+      !$$.config || $$.hasArcType() || ($$.unselectRect(), $$.setOverOut(d.index, !1));
     }), rect;
   },
   clickHandlerForSingleX: function clickHandlerForSingleX(d, ctx) {
@@ -15506,7 +15905,9 @@ function arcPadAngle(d) {
 function intersect(x0, y0, x1, y1, x2, y2, x3, y3) {
   var x10 = x1 - x0, y10 = y1 - y0,
       x32 = x3 - x2, y32 = y3 - y2,
-      t = (x32 * (y0 - y2) - y32 * (x0 - x2)) / (y32 * x10 - x32 * y10);
+      t = y32 * x10 - x32 * y10;
+  if (t * t < math_epsilon) return;
+  t = (x32 * (y0 - y2) - y32 * (x0 - x2)) / t;
   return [x0 + t * x10, y0 + t * y10];
 }
 
@@ -15627,12 +16028,12 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
         var x11 = r1 * cos(a11),
             y11 = r1 * sin(a11),
             x00 = r0 * cos(a00),
-            y00 = r0 * sin(a00);
+            y00 = r0 * sin(a00),
+            oc;
 
         // Restrict the corner radius according to the sector angle.
-        if (da < math_pi) {
-          var oc = da0 > math_epsilon ? intersect(x01, y01, x00, y00, x11, y11, x10, y10) : [x10, y10],
-              ax = x01 - oc[0],
+        if (da < math_pi && (oc = intersect(x01, y01, x00, y00, x11, y11, x10, y10))) {
+          var ax = x01 - oc[0],
               ay = y01 - oc[1],
               bx = x11 - oc[0],
               by = y11 - oc[1],
@@ -17409,6 +17810,20 @@ function stackValue(d, key) {
   offset_none(series, order);
 });
 
+// CONCATENATED MODULE: ./node_modules/d3-shape/src/order/appearance.js
+
+
+/* harmony default export */ var appearance = (function(series) {
+  var peaks = series.map(peak);
+  return order_none(series).sort(function(a, b) { return peaks[a] - peaks[b]; });
+});
+
+function peak(series) {
+  var i = -1, j = 0, n = series.length, vi, vj = -Infinity;
+  while (++i < n) if ((vi = +series[i][1]) > vj) vj = vi, j = i;
+  return j;
+}
+
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/order/ascending.js
 
 
@@ -17439,7 +17854,7 @@ function ascending_sum(series) {
       i,
       j,
       sums = series.map(ascending_sum),
-      order = order_none(series).sort(function(a, b) { return sums[b] - sums[a]; }),
+      order = appearance(series),
       top = 0,
       bottom = 0,
       tops = [],
@@ -17473,6 +17888,7 @@ function ascending_sum(series) {
 
  // Note: radialArea is deprecated!
  // Note: radialLine is deprecated!
+
 
 
 
@@ -23853,7 +24269,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190212095017
+ * @version 1.7.1-nightly-20190214095108
  */
 
 var bb = {
@@ -23864,7 +24280,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190212095017",
+  version: "1.7.1-nightly-20190214095108",
 
   /**
    * Generate chart

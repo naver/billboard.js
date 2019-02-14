@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190212095017
+ * @version 1.7.1-nightly-20190214095108
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -368,6 +368,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__23__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+__webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
 var classCallCheck = __webpack_require__(0);
@@ -6889,7 +6890,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.updateEventRect(eventRectUpdate), $$.inputType !== "touch" || $$.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
   },
   bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
-    var startPx,
+    var lastRectIndex,
+        startPx,
         $$ = this,
         config = $$.config,
         getEventRect = function () {
@@ -6900,11 +6902,14 @@ extend(ChartInternal_ChartInternal.prototype, {
       var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(".concat(config_classes.eventRect, "-?|s)"), "g"), "") * 1;
       return (isNaN(index) || index === null) && (index = -1), index;
     },
+        callOverOut = function (index) {
+      index !== lastRectIndex && (isNumber(lastRectIndex) && $$.setOverOut(lastRectIndex, !1), isNumber(index) && $$.setOverOut(index, !0), lastRectIndex = index);
+    },
         selectRect = function (context) {
       if (isMultipleX) $$.selectRectForMultipleXs(context);else {
         var eventRect = getEventRect(),
             index = getIndex(eventRect);
-        $$.setOver(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
+        callOverOut(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
     },
         preventDefault = config.interaction_inputType_touch.preventDefault,
@@ -6924,18 +6929,10 @@ extend(ChartInternal_ChartInternal.prototype, {
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         if ($$.dragging || $$.flowing || $$.hasArcType()) return;
         preventEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"]), selectRect(this);
-      } else $$.unselectRect();
+      } else $$.unselectRect(), callOverOut();
     }).on("touchend.eventRect", function () {
       var eventRect = getEventRect();
-
-      if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
-        if ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) return void ($$.cancelClick && ($$.cancelClick = !1)); // Call event handler
-
-        var index = getIndex(eventRect);
-        isMultipleX || index === -1 || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function (d2) {
-          return config.data_onout.call($$.api, d2);
-        });
-      }
+      !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) && $$.cancelClick && ($$.cancelClick = !1);
     });
   },
 
@@ -7035,13 +7032,16 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this;
     $$.svg.select(".".concat(config_classes.eventRect)).style("cursor", null), $$.hideXGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
   },
-  setOver: function setOver(index) {
+  setOverOut: function setOverOut(index, isOver) {
     var $$ = this,
         config = $$.config;
+
     // Call event handler
-    $$.expandCirclesBars(index, null, !0), index !== -1 && $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function (d2) {
-      return config.data_onover.call($$.api, d2);
-    });
+    if (index !== -1) {
+      isOver && $$.expandCirclesBars(index, null, !0);
+      var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
+      $$.isMultipleX() || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(callback);
+    }
   },
 
   /**
@@ -7075,7 +7075,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     }).call($$.getDraggableSelection());
     return $$.inputType === "mouse" && rect.on("mouseover", function (d) {
-      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOver(d.index);
+      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOverOut(d.index, !0);
     }).on("mousemove", function (d) {
       // do nothing while dragging/flowing
       if (!($$.dragging || $$.flowing || $$.hasArcType())) {
@@ -7084,13 +7084,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         $$.isStepType(d) && $$.config.line_step_type === "step-after" && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[0] < $$.x($$.getXValue(d.id, index)) && (index -= 1), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
       }
     }).on("mouseout", function (d) {
-      // chart is destroyed
-      if ($$.config && !$$.hasArcType()) {
-        var index = d.index;
-        $$.unselectRect(), $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function (d2) {
-          return config.data_onout.call($$.api, d2);
-        });
-      }
+      !$$.config || $$.hasArcType() || ($$.unselectRect(), $$.setOverOut(d.index, !1));
     }), rect;
   },
   clickHandlerForSingleX: function clickHandlerForSingleX(d, ctx) {
@@ -13142,7 +13136,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190212095017
+ * @version 1.7.1-nightly-20190214095108
  */
 
 var bb = {
@@ -13153,7 +13147,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190212095017",
+  version: "1.7.1-nightly-20190214095108",
 
   /**
    * Generate chart
