@@ -6,7 +6,7 @@ import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {notEmpty, extend, isFunction} from "./util";
+import {notEmpty, extend, isFunction, isObject, isString} from "./util";
 
 /**
  * Set pattern's background color
@@ -157,5 +157,43 @@ extend(ChartInternal.prototype, {
 
 			return color;
 		} : null;
+	},
+
+	/**
+	 * Set the data over color.
+	 * When is out, will restore in its previous color value
+	 * @param {Boolean} isOver true: set overed color, false: restore
+	 * @param {Number|Object} d target index or data object for Arc type
+	 * @private
+	 */
+	setOverColor(isOver, d) {
+		const $$ = this;
+		const config = $$.config;
+		const onover = config.color_onover;
+		let color = isOver ? onover : $$.color;
+
+		if (isObject(color)) {
+			color = d => {
+				const id = d.id;
+
+				return id in onover ? onover[id] : $$.color(id);
+			};
+		} else if (isString(color)) {
+			color = () => onover;
+		}
+
+		// when is Arc type
+		if (isObject(d)) {
+			$$.main.selectAll(`.${CLASS.arc}-${d.id}`)
+				.style("fill", color(d));
+		} else {
+			$$.main.selectAll(`.${CLASS.shape}-${d}`)
+				.each(function(d) {
+					const val = color(d);
+
+					this.style.stroke = val;
+					this.style.fill = val;
+				});
+		}
 	}
 });
