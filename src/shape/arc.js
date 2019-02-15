@@ -594,7 +594,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		// touch events
-		if (isTouch && $$.hasArcType()) {
+		if (isTouch && $$.hasArcType() && !$$.radars) {
 			const getEventArc = () => {
 				const touch = d3Event.changedTouches[0];
 				const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));

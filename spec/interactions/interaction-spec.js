@@ -614,14 +614,14 @@ describe("INTERACTION", () => {
 			const eventRect = main.select(`.${CLASS.eventRect}-1`).node();
 
 			util.fireEvent(eventRect, "mouseover");
+			expect(spy1.calledTwice).to.be.true;
+
 			util.fireEvent(eventRect, "mouseout");
+			expect(spy2.calledTwice).to.be.true;
 		});
 
 		it("set options interaction.inputType.touch=true", () => {
 			args.interaction.inputType.touch = true;
-
-			spy1.resetHistory();
-			spy2.resetHistory();
 		});
 		
 		it("should be called callbacks for touch events", done => {
@@ -638,6 +638,28 @@ describe("INTERACTION", () => {
 
 				done();
 			});
+		});
+
+		it("set options data.type=radar", () => {
+			args.data.type = "radar";
+			args.interaction.inputType.touch = false;
+		});
+
+		it("should be called callbacks for mouse events", () => {
+			const index = 2;
+			const main = chart.$.main;
+			const text = main.select(`.${CLASS.axis}-${index} text`).node();
+
+			util.fireEvent(text, "mouseover");
+			expect(spy1.calledTwice).to.be.true;
+
+			main.selectAll(`.${CLASS.EXPANDED}`).each(d => {
+				expect(d.index).to.be.equal(index);
+			});
+
+			util.fireEvent(text, "mouseout");
+			expect(spy2.calledTwice).to.be.true;
+			expect(main.selectAll(`.${CLASS.EXPANDED}`).size()).to.be.equal(0);
 		});
 	});
 });
