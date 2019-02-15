@@ -6,7 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
-import {isString} from "../../src/internals/util";
+import {isFunction, isObject, isString} from "../../src/internals/util";
 
 describe("COLOR", () => {
 	let chart;
@@ -223,6 +223,125 @@ describe("COLOR", () => {
 			});
 
 			it("check for stroke", checkStroke);
+		});
+	});
+
+	describe("color.onover", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, 20, 30],
+						["data2", 20, 10, 25]
+					],
+					types: {
+						data2: "bar"
+					},
+				},
+				color: {
+					onover: "yellow"
+				}
+			}
+		});
+
+		// check color.onover
+		const checkColor = (chart, colorOnover) => {
+			const main = chart.$.main;
+			const eventRect = main.select(`.${CLASS.eventRect}-1`).node();
+			const shape = main.selectAll(`.${CLASS.shape}-1`);
+			const originalColor = [];
+
+			shape.each(function() {
+				originalColor.push({
+					stroke: this.style.stroke,
+					fill: this.style.fill
+				});
+			});
+
+			util.fireEvent(eventRect, "mouseover");
+
+			shape.each(function(d) {
+				let color = colorOnover;
+
+				if (isObject(color)) {
+					color = color[d.id];
+				} else if (isFunction(color)) {
+					color = color();
+				}
+
+				expect(this.style.stroke).to.be.equal(color);
+				expect(this.style.fill).to.be.equal(color);
+			});
+
+			// check for restoration
+			util.fireEvent(eventRect, "mouseout");
+
+			shape.each(function(d, i) {
+				expect(this.style.stroke).to.be.equal(originalColor[i].stroke);
+				expect(this.style.fill).to.be.equal(originalColor[i].fill);
+		   });
+		};
+
+		it("check the onover color when string value is given", () => {
+			checkColor(chart, args.color.onover);
+		});
+
+		it("set options color.onover={ ... }", () => {
+			args.data.types.data1 = "bar";
+			args.data.gropus = [["data1", "data2"]];
+
+			args.color.onover = {
+				data1: "red",
+				data2: "yellow"
+			};
+		});
+
+		it("check the onover color when object value is given", () => {
+			checkColor(chart, args.color.onover);
+		});
+
+		it("set options color.onover=function(){}", () => {
+			args.color.onover = function() {
+				return "green";
+			};
+		});
+
+		it("check the onover color when function value is given", () => {
+			checkColor(chart, args.color.onover);
+		});
+
+		it("set options data.type=pie", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10],
+						["data2", 20]
+					],
+					type: "pie"
+				},
+				color: {
+					onover: "red"
+				},
+				transition: {
+					duration: 0
+				}
+			};
+		});
+
+		it("check for the arc type", done => {
+			setTimeout(() => {
+				const main = chart.$.main;			
+				const arc = main.select(`.${CLASS.arc}-data1`).node();
+				const originalColor = arc.style.fill;
+
+				util.fireEvent(arc, "mouseover");
+				expect(arc.style.fill).to.be.equal(args.color.onover);
+
+				util.fireEvent(arc, "mouseout");
+				expect(arc.style.fill).to.be.equal(originalColor);
+
+				done();
+			}, 500);
 		});
 	});
 });

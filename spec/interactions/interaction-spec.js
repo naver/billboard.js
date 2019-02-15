@@ -615,16 +615,18 @@ describe("INTERACTION", () => {
 
 			util.fireEvent(eventRect, "mouseover");
 			util.fireEvent(eventRect, "mouseout");
-
-			expect(spy1.calledTwice).to.be.true;
-			expect(spy2.calledTwice).to.be.true;
 		});
 
 		it("set options interaction.inputType.touch=true", () => {
 			args.interaction.inputType.touch = true;
+
+			spy1.resetHistory();
+			spy2.resetHistory();
 		});
 		
 		it("should be called callbacks for touch events", done => {
+			chart.internal.callOverOutForTouch.last = null;
+
 			util.simulator(chart.$.svg.node(), {
 				pos: [250,150],
 				deltaX: -100,
