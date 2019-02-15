@@ -1163,6 +1163,7 @@ export default class Options {
 			 * @name color
 			 * @memberof Options
 			 * @type {Object}
+			 * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
 			 * @property {Array} [color.pattern] custom color pattern
 			 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
 			 *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
@@ -1207,12 +1208,27 @@ export default class Options {
 			 *          unit: "value",
 			 *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
 			 *          max: 30  // the equation for max is: value*100/30
+			 *      },
+			 *
+			 *      // set all data to 'red'
+			 *      onover: "red",
+			 *
+			 *      // set different color for data
+			 *      onover: {
+			 *          data1: "red",
+			 *          data2: "yellow"
+			 *      },
+			 *
+			 *      // will pass data object to the callback
+			 *      onover: function(d) {
+			 *          return d.id === "data1" ? "red" : "green";
 			 *      }
 			 *  }
 			 */
 			color_pattern: [],
 			color_tiles: undefined,
 			color_threshold: {},
+			color_onover: undefined,
 
 			/**
 			 * Legend options

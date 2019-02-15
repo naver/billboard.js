@@ -105,6 +105,11 @@ export interface ChartOptions {
 		 *   - bb-colorize-pattern-fff
 		 */
 		tiles?: () => SVGPathElement[];
+
+		/**
+		 * Set the color value for each data point when mouse/touch onover event occurs.
+		 */
+		onover: string | object | ((d: DataItem) => string);
 	};
 
 	interaction?: {

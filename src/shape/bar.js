@@ -41,7 +41,6 @@ extend(ChartInternal.prototype, {
 		const barData = $$.barData.bind($$);
 		const classBar = $$.classBar.bind($$);
 		const initialOpacity = $$.initialOpacity.bind($$);
-		const color = d => $$.color(d.id);
 
 		$$.mainBar = $$.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
 			.data(barData);
@@ -53,8 +52,8 @@ extend(ChartInternal.prototype, {
 
 		$$.mainBar = $$.mainBar.enter().append("path")
 			.attr("class", classBar)
-			.style("stroke", color)
-			.style("fill", color)
+			.style("stroke", $$.color)
+			.style("fill", $$.color)
 			.merge($$.mainBar)
 			.style("opacity", initialOpacity);
 	},

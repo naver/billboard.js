@@ -272,23 +272,43 @@ extend(ChartInternal.prototype, {
 
 		if (config.interaction_enabled) {
 			const isMouse = $$.inputType === "mouse";
+			const getIndex = () => {
+				const d = d3Select(d3Event.target).datum();
+
+				return d && Object.keys(d).length === 1 ? d.index : undefined;
+			};
+			const hide = () => {
+				const index = getIndex();
+				const noIndex = isUndefined(index);
+
+				if (isMouse || noIndex) {
+					this.hideTooltip();
+					this.unexpandCircles();
+
+					if (isMouse) {
+						$$.setOverOut(false, index);
+					} else if (noIndex) {
+						$$.callOverOutForTouch();
+					}
+				}
+			};
 
 			$$.radars.select(`.${CLASS.axis}`)
-				.on(`${isMouse ? "mouseover " : ""}click`, () => {
+				.on(isMouse ? "mouseover " : "touchstart", () => {
 					if ($$.transiting) { // skip while transiting
 						return;
 					}
 
-					const target = d3Select(d3Event.target);
-					const index = target.datum().index;
+					const index = getIndex();
 
 					$$.selectRectForSingle($$.svg.node(), null, index);
-					$$.setOver(index);
+					isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
 				})
-				.on("mouseout", isMouse ? () => {
-					this.hideTooltip();
-					this.unexpandCircles();
-				} : null);
+				.on("mouseout", isMouse ? hide : null);
+
+			if (!isMouse) {
+				$$.svg.on("touchstart", hide);
+			}
 		}
 	},
 

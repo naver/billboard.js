@@ -10,7 +10,7 @@ import {
 import {drag as d3Drag} from "d3-drag";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {emulateEvent, extend, isBoolean, isNumber} from "../internals/util";
+import {emulateEvent, extend, isBoolean, isNumber, isObject} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -84,7 +84,6 @@ extend(ChartInternal.prototype, {
 	bindTouchOnEventRect(isMultipleX) {
 		const $$ = this;
 		const config = $$.config;
-		let lastRectIndex;
 
 		const getEventRect = () => {
 			const touch = d3Event.changedTouches[0];
@@ -103,16 +102,6 @@ extend(ChartInternal.prototype, {
 			return index;
 		};
 
-		// call onover/onout callback for touch event
-		const callOverOut = index => {
-			if (index !== lastRectIndex) {
-				isNumber(lastRectIndex) && $$.setOverOut(lastRectIndex, false);
-				isNumber(index) && $$.setOverOut(index, true);
-
-				lastRectIndex = index;
-			}
-		};
-
 		const selectRect = context => {
 			if (isMultipleX) {
 				$$.selectRectForMultipleXs(context);
@@ -120,7 +109,7 @@ extend(ChartInternal.prototype, {
 				const eventRect = getEventRect();
 				const index = getIndex(eventRect);
 
-				callOverOut(index);
+				$$.callOverOutForTouch(index);
 
 				index === -1 ?
 					$$.unselectRect() :
@@ -172,7 +161,7 @@ extend(ChartInternal.prototype, {
 					selectRect(this);
 				} else {
 					$$.unselectRect();
-					callOverOut();
+					$$.callOverOutForTouch();
 				}
 			})
 			.on("touchend.eventRect", () => {
@@ -403,16 +392,47 @@ extend(ChartInternal.prototype, {
 		$$.unexpandBars();
 	},
 
-	setOverOut(index, isOver) {
+	/**
+	 * Handle data.onover/out callback options
+	 * @param {Boolean} isOver
+	 * @param {Number|Object} d
+	 * @private
+	 */
+	setOverOut(isOver, d) {
 		const $$ = this;
 		const config = $$.config;
+		const isArc = isObject(d);
 
 		// Call event handler
-		if (index !== -1) {
-			isOver && $$.expandCirclesBars(index, null, true);
+		if (isArc || d !== -1) {
 			const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
 
-			!$$.isMultipleX() && $$.main.selectAll(`.${CLASS.shape}-${index}`).each(callback);
+			config.color_onover && $$.setOverColor(isOver, d, isArc);
+
+			if (isArc) {
+				callback(d);
+			} else {
+				isOver && $$.expandCirclesBars(d, null, true);
+				!$$.isMultipleX() && $$.main.selectAll(`.${CLASS.shape}-${d}`).each(callback);
+			}
+		}
+	},
+
+	/**
+	 * Call data.onover/out callback for touch event
+	 * @param {Number|Object} d target index or data object for Arc type
+	 * @private
+	 */
+	callOverOutForTouch(d) {
+		const $$ = this;
+		const callee = $$.callOverOutForTouch;
+		const last = callee.last;
+
+		if (isObject(d) && last ? d.id !== last.id : (d !== last)) {
+			(last || isNumber(last)) && $$.setOverOut(false, last);
+			(d || isNumber(d)) && $$.setOverOut(true, d);
+
+			callee.last = d;
 		}
 	},
 
@@ -459,7 +479,7 @@ extend(ChartInternal.prototype, {
 						return;
 					}
 
-					$$.setOverOut(d.index, true);
+					$$.setOverOut(true, d.index);
 				})
 				.on("mousemove", function(d) {
 					// do nothing while dragging/flowing
@@ -487,7 +507,7 @@ extend(ChartInternal.prototype, {
 					}
 
 					$$.unselectRect();
-					$$.setOverOut(d.index, false);
+					$$.setOverOut(false, d.index);
 				});
 		}
 

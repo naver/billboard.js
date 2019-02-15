@@ -13,7 +13,7 @@ import {
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction} from "../internals/util";
+import {extend, isFunction, isUndefined} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initPie() {
@@ -572,10 +572,9 @@ extend(ChartInternal.prototype, {
 					const id = (arcData && arcData.id) || undefined;
 
 					selectArc(this, arcData, id);
-
-					$$.config.data_onover(arcData, this);
+					$$.setOverOut(true, arcData);
 				})
-				.on("mouseout", function(d) {
+				.on("mouseout", d => {
 					if ($$.transiting) { // skip while transiting
 						return;
 					}
@@ -584,8 +583,7 @@ extend(ChartInternal.prototype, {
 					const arcData = updated ? $$.convertToArcData(updated) : null;
 
 					unselectArc();
-
-					$$.config.data_onout(arcData, this);
+					$$.setOverOut(false, arcData);
 				})
 				.on("mousemove", function(d) {
 					const updated = $$.updateAngle(d);
@@ -596,7 +594,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		// touch events
-		if (isTouch && $$.hasArcType()) {
+		if (isTouch && $$.hasArcType() && !$$.radars) {
 			const getEventArc = () => {
 				const touch = d3Event.changedTouches[0];
 				const eventArc = d3Select(document.elementFromPoint(touch.clientX, touch.clientY));
@@ -604,49 +602,26 @@ extend(ChartInternal.prototype, {
 				return eventArc;
 			};
 
+			const handler = function() {
+				if ($$.transiting) { // skip while transiting
+					return;
+				}
+
+				const eventArc = getEventArc();
+				const datum = eventArc.datum();
+				const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
+				const arcData = updated ? $$.convertToArcData(updated) : null;
+				const id = (arcData && arcData.id) || undefined;
+
+				$$.callOverOutForTouch(arcData);
+
+				isUndefined(id) ?
+					unselectArc() : selectArc(this, arcData, id);
+			};
+
 			$$.svg
-				.on("touchstart", function() {
-					if ($$.transiting) { // skip while transiting
-						return;
-					}
-
-					const eventArc = getEventArc();
-					const datum = eventArc.datum();
-					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-					const arcData = updated ? $$.convertToArcData(updated) : null;
-					const id = (arcData && arcData.id) || undefined;
-
-					id === undefined ?
-						unselectArc() : selectArc(this, arcData, id);
-
-					$$.config.data_onover(arcData, this);
-				})
-				.on("touchend", function() {
-					if ($$.transiting) { // skip while transiting
-						return;
-					}
-
-					const eventArc = getEventArc();
-					const datum = eventArc.datum();
-					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-					const arcData = updated ? $$.convertToArcData(updated) : null;
-					const id = (arcData && arcData.id) || undefined;
-
-					id === undefined ?
-						unselectArc() : selectArc(this, arcData, id);
-
-					$$.config.data_onout(arcData, this);
-				})
-				.on("touchmove", function() {
-					const eventArc = getEventArc();
-					const datum = eventArc.datum();
-					const updated = (datum && datum.data && datum.data.id) ? $$.updateAngle(datum) : null;
-					const arcData = updated ? $$.convertToArcData(updated) : null;
-					const id = (arcData && arcData.id) || undefined;
-
-					id === undefined ?
-						unselectArc() : selectArc(this, arcData, id);
-				});
+				.on("touchstart", handler)
+				.on("touchmove", handler);
 		}
 	},
 
