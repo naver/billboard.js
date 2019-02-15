@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190214095108
+ * @version 1.7.1-nightly-20190215095106
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3568,6 +3568,7 @@ var Options_Options = function Options() {
      * @name color
      * @memberof Options
      * @type {Object}
+     * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
      * @property {Array} [color.pattern] custom color pattern
      * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
      *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
@@ -3612,12 +3613,27 @@ var Options_Options = function Options() {
      *          unit: "value",
      *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
      *          max: 30  // the equation for max is: value*100/30
+     *      },
+     *
+     *      // set all data to 'red'
+     *      onover: "red",
+     *
+     *      // set different color for data
+     *      onover: {
+     *          data1: "red",
+     *          data2: "yellow"
+     *      },
+     *
+     *      // will pass data object to the callback
+     *      onover: function(d) {
+     *          return d.id === "data1" ? "red" : "green";
      *      }
      *  }
      */
     color_pattern: [],
     color_tiles: undefined,
     color_threshold: {},
+    color_onover: undefined,
 
     /**
      * Legend options
@@ -6890,8 +6906,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.updateEventRect(eventRectUpdate), $$.inputType !== "touch" || $$.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
   },
   bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
-    var lastRectIndex,
-        startPx,
+    var startPx,
         $$ = this,
         config = $$.config,
         getEventRect = function () {
@@ -6902,14 +6917,11 @@ extend(ChartInternal_ChartInternal.prototype, {
       var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(".concat(config_classes.eventRect, "-?|s)"), "g"), "") * 1;
       return (isNaN(index) || index === null) && (index = -1), index;
     },
-        callOverOut = function (index) {
-      index !== lastRectIndex && (isNumber(lastRectIndex) && $$.setOverOut(lastRectIndex, !1), isNumber(index) && $$.setOverOut(index, !0), lastRectIndex = index);
-    },
         selectRect = function (context) {
       if (isMultipleX) $$.selectRectForMultipleXs(context);else {
         var eventRect = getEventRect(),
             index = getIndex(eventRect);
-        callOverOut(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
+        $$.callOverOutForTouch(index), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(context, eventRect, index);
       }
     },
         preventDefault = config.interaction_inputType_touch.preventDefault,
@@ -6929,7 +6941,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
         if ($$.dragging || $$.flowing || $$.hasArcType()) return;
         preventEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"]), selectRect(this);
-      } else $$.unselectRect(), callOverOut();
+      } else $$.unselectRect(), $$.callOverOutForTouch();
     }).on("touchend.eventRect", function () {
       var eventRect = getEventRect();
       !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) && $$.cancelClick && ($$.cancelClick = !1);
@@ -7032,16 +7044,35 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this;
     $$.svg.select(".".concat(config_classes.eventRect)).style("cursor", null), $$.hideXGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
   },
-  setOverOut: function setOverOut(index, isOver) {
+
+  /**
+   * Handle data.onover/out callback options
+   * @param {Boolean} isOver
+   * @param {Number|Object} d
+   * @private
+   */
+  setOverOut: function setOverOut(isOver, d) {
     var $$ = this,
-        config = $$.config;
+        config = $$.config,
+        isArc = isObject(d);
 
     // Call event handler
-    if (index !== -1) {
-      isOver && $$.expandCirclesBars(index, null, !0);
+    if (isArc || d !== -1) {
       var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
-      $$.isMultipleX() || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(callback);
+      config.color_onover && $$.setOverColor(isOver, d, isArc), isArc ? callback(d) : (isOver && $$.expandCirclesBars(d, null, !0), !$$.isMultipleX() && $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).each(callback));
     }
+  },
+
+  /**
+   * Call data.onover/out callback for touch event
+   * @param {Number|Object} d target index or data object for Arc type
+   * @private
+   */
+  callOverOutForTouch: function callOverOutForTouch(d) {
+    var $$ = this,
+        callee = $$.callOverOutForTouch,
+        last = callee.last;
+    (isObject(d) && last ? d.id !== last.id : d !== last) && ((last || isNumber(last)) && $$.setOverOut(!1, last), (d || isNumber(d)) && $$.setOverOut(!0, d), callee.last = d);
   },
 
   /**
@@ -7075,7 +7106,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     }).call($$.getDraggableSelection());
     return $$.inputType === "mouse" && rect.on("mouseover", function (d) {
-      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOverOut(d.index, !0);
+      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOverOut(!0, d.index);
     }).on("mousemove", function (d) {
       // do nothing while dragging/flowing
       if (!($$.dragging || $$.flowing || $$.hasArcType())) {
@@ -7084,7 +7115,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         $$.isStepType(d) && $$.config.line_step_type === "step-after" && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[0] < $$.x($$.getXValue(d.id, index)) && (index -= 1), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
       }
     }).on("mouseout", function (d) {
-      !$$.config || $$.hasArcType() || ($$.unselectRect(), $$.setOverOut(d.index, !1));
+      !$$.config || $$.hasArcType() || ($$.unselectRect(), $$.setOverOut(!1, d.index));
     }), rect;
   },
   clickHandlerForSingleX: function clickHandlerForSingleX(d, ctx) {
@@ -7701,54 +7732,38 @@ extend(ChartInternal_ChartInternal.prototype, {
           var updated = $$.updateAngle(d),
               arcData = updated ? $$.convertToArcData(updated) : null,
               id = arcData && arcData.id || undefined;
-          selectArc(this, arcData, id), $$.config.data_onover(arcData, this);
+          selectArc(this, arcData, id), $$.setOverOut(!0, arcData);
         }
     }).on("mouseout", function (d) {
       if (!$$.transiting) // skip while transiting
         {
           var updated = $$.updateAngle(d),
               arcData = updated ? $$.convertToArcData(updated) : null;
-          unselectArc(), $$.config.data_onout(arcData, this);
+          unselectArc(), $$.setOverOut(!1, arcData);
         }
     }).on("mousemove", function (d) {
       var updated = $$.updateAngle(d),
           arcData = updated ? $$.convertToArcData(updated) : null;
       $$.showTooltip([arcData], this);
-    }), isTouch && $$.hasArcType()) {
+    }), isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function () {
         var touch = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].changedTouches[0],
             eventArc = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(document.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
+      },
+          handler = function () {
+        if (!$$.transiting) // skip while transiting
+          {
+            var eventArc = getEventArc(),
+                datum = eventArc.datum(),
+                updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
+                arcData = updated ? $$.convertToArcData(updated) : null,
+                id = arcData && arcData.id || undefined;
+            $$.callOverOutForTouch(arcData), isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
+          }
       };
 
-      $$.svg.on("touchstart", function () {
-        if (!$$.transiting) // skip while transiting
-          {
-            var eventArc = getEventArc(),
-                datum = eventArc.datum(),
-                updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
-                arcData = updated ? $$.convertToArcData(updated) : null,
-                id = arcData && arcData.id || undefined;
-            id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onover(arcData, this);
-          }
-      }).on("touchend", function () {
-        if (!$$.transiting) // skip while transiting
-          {
-            var eventArc = getEventArc(),
-                datum = eventArc.datum(),
-                updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
-                arcData = updated ? $$.convertToArcData(updated) : null,
-                id = arcData && arcData.id || undefined;
-            id === undefined ? unselectArc() : selectArc(this, arcData, id), $$.config.data_onout(arcData, this);
-          }
-      }).on("touchmove", function () {
-        var eventArc = getEventArc(),
-            datum = eventArc.datum(),
-            updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
-            arcData = updated ? $$.convertToArcData(updated) : null,
-            id = arcData && arcData.id || undefined;
-        id === undefined ? unselectArc() : selectArc(this, arcData, id);
-      });
+      $$.svg.on("touchstart", handler).on("touchmove", handler);
     }
   },
   redrawArcText: function redrawArcText(duration) {
@@ -7825,12 +7840,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         barData = $$.barData.bind($$),
         classBar = $$.classBar.bind($$),
-        initialOpacity = $$.initialOpacity.bind($$),
-        color = function (d) {
-      return $$.color(d.id);
-    };
-
-    $$.mainBar = $$.main.selectAll(".".concat(config_classes.bars)).selectAll(".".concat(config_classes.bar)).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("stroke", color).style("fill", color).merge($$.mainBar).style("opacity", initialOpacity);
+        initialOpacity = $$.initialOpacity.bind($$);
+    $$.mainBar = $$.main.selectAll(".".concat(config_classes.bars)).selectAll(".".concat(config_classes.bar)).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("stroke", $$.color).style("fill", $$.color).merge($$.mainBar).style("opacity", initialOpacity);
   },
   redrawBar: function redrawBar(drawBar, withTransition) {
     return [(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
@@ -8710,17 +8721,24 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config;
 
     if (config.interaction_enabled) {
-      var isMouse = $$.inputType === "mouse";
-      $$.radars.select(".".concat(config_classes.axis)).on("".concat(isMouse ? "mouseover " : "", "click"), function () {
+      var isMouse = $$.inputType === "mouse",
+          getIndex = function () {
+        var d = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target).datum();
+        return d && Object.keys(d).length === 1 ? d.index : undefined;
+      },
+          hide = function () {
+        var index = getIndex(),
+            noIndex = isUndefined(index);
+        (isMouse || noIndex) && (_this.hideTooltip(), _this.unexpandCircles(), isMouse ? $$.setOverOut(!1, index) : noIndex && $$.callOverOutForTouch());
+      };
+
+      $$.radars.select(".".concat(config_classes.axis)).on(isMouse ? "mouseover " : "touchstart", function () {
         if (!$$.transiting) // skip while transiting
           {
-            var target = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target),
-                index = target.datum().index;
-            $$.selectRectForSingle($$.svg.node(), null, index), $$.setOver(index);
+            var index = getIndex();
+            $$.selectRectForSingle($$.svg.node(), null, index), isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
           }
-      }).on("mouseout", isMouse ? function () {
-        _this.hideTooltip(), _this.unexpandCircles();
-      } : null);
+      }).on("mouseout", isMouse ? hide : null), isMouse || $$.svg.on("touchstart", hide);
     }
   },
   updateRadarShape: function updateRadarShape(duration, durationForExit) {
@@ -10893,6 +10911,29 @@ extend(ChartInternal_ChartInternal.prototype, {
 
       return color;
     } : null;
+  },
+
+  /**
+   * Set the data over color.
+   * When is out, will restore in its previous color value
+   * @param {Boolean} isOver true: set overed color, false: restore
+   * @param {Number|Object} d target index or data object for Arc type
+   * @private
+   */
+  setOverColor: function setOverColor(isOver, d) {
+    var $$ = this,
+        config = $$.config,
+        onover = config.color_onover,
+        color = isOver ? onover : $$.color;
+    isObject(color) ? color = function (d) {
+      var id = d.id;
+      return id in onover ? onover[id] : $$.color(id);
+    } : isString(color) && (color = function () {
+      return onover;
+    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc, "-").concat(d.id)).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).each(function (d) {
+      var val = color(d);
+      this.style.stroke = val, this.style.fill = val;
+    });
   }
 });
 // CONCATENATED MODULE: ./src/internals/format.js
@@ -13136,7 +13177,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190214095108
+ * @version 1.7.1-nightly-20190215095106
  */
 
 var bb = {
@@ -13147,7 +13188,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190214095108",
+  version: "1.7.1-nightly-20190215095106",
 
   /**
    * Generate chart
