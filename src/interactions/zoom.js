@@ -160,7 +160,7 @@ extend(ChartInternal.prototype, {
 		});
 
 		$$.cancelClick = isMousemove;
-		callFn(config.zoom_onzoom, $$.api, $$.subX.domain());
+		callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain());
 	},
 
 	/**
@@ -170,6 +170,9 @@ extend(ChartInternal.prototype, {
 	onZoomEnd() {
 		const $$ = this;
 		const startEvent = $$.zoom.startEvent;
+		const orgDomain = $$.subX.domain();
+		const scaledDomain = $$.zoomScale.domain();
+		const domain = (orgDomain === scaledDomain) ? orgDomain : scaledDomain;
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
 		if (!startEvent ||
@@ -181,7 +184,7 @@ extend(ChartInternal.prototype, {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
-		callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain());
+		callFn($$.config.zoom_onzoomend, $$.api, domain);
 	},
 
 	/**
