@@ -23,3 +23,4 @@ Chong Jaemyung <jm.chong@navercorp.com>
 Rex <rexebin@gmail.com>
 Alexandre Araujo <https://github.com/oliveiraaraujo>
 Jinwoo Oh <arkist@gmail.com>
+Nirmal Guna <gunaseelann@jfrog.com>

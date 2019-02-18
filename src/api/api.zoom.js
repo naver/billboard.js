@@ -55,7 +55,7 @@ const zoom = function(domainValue) {
 		});
 
 		$$.setZoomResetButton();
-		callFn($$.config.zoom_onzoom, this, $$.x.orgDomain());
+		callFn($$.config.zoom_onzoom, resultDomain);
 	} else {
 		resultDomain = $$.zoomScale ?
 			$$.zoomScale.domain() : $$.x.orgDomain();
