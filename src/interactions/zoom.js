@@ -171,7 +171,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const startEvent = $$.zoom.startEvent;
 		const orgDomain = $$.subX.domain();
-		const scaledDomain = $$.zoomScale.domain();
+		const scaledDomain = $$.zoomScale ? $$.zoomScale.domain() : null;
 		const domain = (orgDomain === scaledDomain) ? orgDomain : scaledDomain;
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
