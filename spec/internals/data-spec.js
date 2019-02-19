@@ -559,6 +559,13 @@ describe("DATA", () => {
 					});
 				});
 			});
+
+			it("text property shouldn't be empty", () => {
+				const texts = chart.$.text.texts;
+
+				expect(texts.empty()).to.be.false;
+				expect(texts.size() > 0).to.be.true;
+			});
 		});
 
 		describe("on area chart", () => {
