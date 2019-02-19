@@ -17,10 +17,17 @@ describe("Interface & initialization", () => {
 
 	it("Check for initialization", () => {
 		chart = util.generate({
+			title: {
+				text: "test"
+			},
 			data: {
 				columns: [
 					["data1", 30]
-				]
+				],
+				labels: {
+					show: true
+				},
+				type: "bar"
 			}
 		});
 		const internal = chart.internal;
@@ -41,7 +48,7 @@ describe("Interface & initialization", () => {
 	});
 
 	it("should be accessing node elements", () => {
-		const isD3Node = v => v && "node" in v || typeof v === "undefined";
+		const isD3Node = v => v && "node" in v || false;
 
 		Object.values(chart.$).forEach(v1 => {
 			const isNode = isD3Node(v1);

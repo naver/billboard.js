@@ -404,7 +404,7 @@ export default class ChartInternal {
 				circles: $$.mainCircle
 			},
 			text: {
-				texts: $$.texts
+				texts: $$.mainText
 			}
 		};
 	}
