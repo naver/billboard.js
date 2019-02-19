@@ -202,6 +202,29 @@ describe("ZOOM", function() {
 			// check if chart react on resize
 			expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
 		});
+
+		it("check for updated domain on zoomScale after zoom in", () => {
+			const zoomValue = [1, 3];
+
+			chart.zoom(zoomValue); // zoom in
+			expect(chart.internal.zoomScale.domain()).to.eql(zoomValue); // zoomScale value is updated on zoom in
+
+			chart.unzoom(); // zoom set to initial
+			expect(chart.internal.zoomScale).to.be.null; // zoomScale null on zoom out to initial
+
+		});
+
+		it("check for subX domain values after zoom", () => {
+			const zoomValue = [1, 3];
+
+			chart.zoom(zoomValue); // zoom in
+			expect(chart.internal.subX.domain()).to.not.eql(zoomValue); // subX value not updated on zoom in
+
+			chart.unzoom(); // zoom set to initial
+			expect(chart.internal.subX.domain()).to.eql(chart.internal.x.orgDomain()); // subX value not updated on zoom in
+
+		});
+
     });
 
     describe("zoom type drag", () => {
