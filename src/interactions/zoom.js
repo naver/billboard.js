@@ -160,7 +160,7 @@ extend(ChartInternal.prototype, {
 		});
 
 		$$.cancelClick = isMousemove;
-		callFn(config.zoom_onzoom, $$.api, $$.subX.domain());
+		callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain());
 	},
 
 	/**
@@ -181,7 +181,7 @@ extend(ChartInternal.prototype, {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
-		callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain());
+		callFn($$.config.zoom_onzoomend, $$.api, $$[$$.zoomScale ? "zoomScale" : "subX"].domain());
 	},
 
 	/**
