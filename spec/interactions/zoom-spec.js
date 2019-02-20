@@ -70,9 +70,10 @@ describe("ZOOM", function() {
 	});
 
 	describe("zoom event", () => {
+		let zoomDomain;
 		const spyOnZoomStart = sinon.spy();
-		const spyOnZoom = sinon.spy();
-		const spyOnZoomEnd = sinon.spy();
+		const spyOnZoom = sinon.spy(domain => (zoomDomain = domain));
+		const spyOnZoomEnd = sinon.spy(domain => (zoomDomain = domain));
 
 		before(() => {
 			args = {
@@ -202,6 +203,29 @@ describe("ZOOM", function() {
 			// check if chart react on resize
 			expect(+domain.attr("d").match(rx)[1]).to.be.above(pathValue);
 		});
+
+		it("check for updated domain on zoomScale after zoom in", () => {
+			const zoomValue = [1, 3];
+
+			chart.zoom(zoomValue); // zoom in
+			expect(chart.internal.zoomScale.domain()).to.be.deep.equal(zoomValue); // zoomScale value is updated on zoom in
+
+			chart.unzoom(); // zoom set to initial
+			expect(chart.internal.zoomScale).to.be.null; // zoomScale null on zoom out to initial
+
+		});
+
+		it("check for subX domain values after zoom", () => {
+			const zoomValue = [1, 3];
+			const subX = chart.internal.subX;
+
+			chart.zoom(zoomValue); // zoom in
+			expect(subX.domain()).to.not.deep.equal(zoomValue); // subX value not updated on zoom in
+
+			chart.unzoom(); // zoom set to initial
+			expect(subX.domain()).to.be.deep.equal(chart.internal.x.orgDomain()); // subX value not updated on zoom in
+		});
+
     });
 
     describe("zoom type drag", () => {
