@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190219095233
+ * @version 1.7.1-nightly-20190220095315
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -21854,7 +21854,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.subX.domain()));
+      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain()));
     }
   },
 
@@ -21866,7 +21866,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         startEvent = $$.zoom.startEvent;
     // if click, do nothing. otherwise, click interaction will be canceled.
-    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$.subX.domain()));
+    !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$[$$.zoomScale ? "zoomScale" : "subX"].domain()));
   },
 
   /**
@@ -22562,7 +22562,7 @@ var api_zoom_zoom = function (domainValue) {
       withTransition: !0,
       withY: $$.config.zoom_rescale,
       withDimension: !1
-    }), $$.setZoomResetButton(), callFn($$.config.zoom_onzoom, this, $$.x.orgDomain());
+    }), $$.setZoomResetButton(), callFn($$.config.zoom_onzoom, resultDomain);
   } else resultDomain = $$.zoomScale ? $$.zoomScale.domain() : $$.x.orgDomain();
 
   return resultDomain;
@@ -24310,7 +24310,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190219095233
+ * @version 1.7.1-nightly-20190220095315
  */
 
 var bb = {
@@ -24321,7 +24321,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190219095233",
+  version: "1.7.1-nightly-20190220095315",
 
   /**
    * Generate chart
