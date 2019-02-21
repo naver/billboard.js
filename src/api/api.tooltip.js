@@ -21,8 +21,8 @@ const tooltip = extend(() => {}, {
 	 *    | --- | --- | --- |
 	 *    | index | Number | Determine focus by index |
 	 *    | x | Number &vert; Date | Determine focus by x Axis index |
-	 *    | data | Object | Determine focus data with following keys: `x` or `index`.<br>When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is set, the target is determined by mouse position and needs specify `x`, `id` and `value`. |
 	 *    | mouse | Array | Determine x and y coordinate value relative the targeted x Axis element.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
+	 *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: Axis id. 'y' or 'y2'(default 'y')<br>- value {Number}: The corresponding value for tooltip. |
 	 *
 	 * @example
 	 *  // show the 2nd x Axis coordinate tooltip
@@ -40,6 +40,24 @@ const tooltip = extend(() => {}, {
 	 *  chart.tooltip.show({
 	 *    x: new Date("2018-01-02 00:00")
 	 *  });
+	 *
+	 *  // when data.xs is used
+	 *  chart.tooltip.show({
+	 *    data: {
+	 *        x: 3,  // x Axis value
+	 *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+	 *        value: 500  // data value
+	 *    }
+	 *  });
+	 *
+	 *  // when data.xs isn't used, but tooltip.grouped=false is set
+	 *  chart.tooltip.show({
+	 *    data: {
+	 *        index: 3,  // or 'x' key value
+	 *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+	 *        value: 500  // data value
+	 *    }
+	 *  });
 	 */
 	show: function(args = {}) {
 		const $$ = this.internal;
@@ -53,16 +71,16 @@ const tooltip = extend(() => {}, {
 
 		// determine focus data
 		if (args.data) {
+			const y = $$.getYScale(args.data.id)(args.data.value);
+
 			if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
-				mouse = [
-					$$.x(args.data.x),
-					$$.getYScale(args.data.id)(args.data.value)
-				];
-
-				index = null;
+				mouse = [$$.x(args.data.x), y];
 			} else {
-				// TODO: when tooltip_grouped = false
+				if (!$$.config.tooltip_grouped) {
+					mouse = [0, y];
+				}
+
 				index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x);
 			}
 		} else if (isDefined(args.x)) {
