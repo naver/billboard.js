@@ -613,13 +613,11 @@ extend(ChartInternal.prototype, {
 	 */
 	dispatchEvent(type, index, mouse) {
 		const $$ = this;
-		const selector = `.${
-			$$.isMultipleX() ? CLASS.eventRect : `${CLASS.eventRect}-${index}`
-		}`;
-
+		const isMultipleX = $$.isMultipleX();
+		const selector = `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
 		const eventRect = $$.main.select(selector).node();
 		const {width, left, top} = eventRect.getBoundingClientRect();
-		const x = left + (mouse ? mouse[0] : 0) + (width / 2);
+		const x = left + (mouse ? mouse[0] : 0) + (isMultipleX ? 0 : (width / 2));
 		const y = top + (mouse ? mouse[1] : 0);
 		const params = {
 			screenX: x,
