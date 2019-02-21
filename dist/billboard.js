@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190220095315
+ * @version 1.7.1-nightly-20190221095347
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7170,13 +7170,14 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   dispatchEvent: function dispatchEvent(type, index, mouse) {
     var $$ = this,
-        selector = ".".concat($$.isMultipleX() ? config_classes.eventRect : "".concat(config_classes.eventRect, "-").concat(index)),
+        isMultipleX = $$.isMultipleX(),
+        selector = ".".concat(isMultipleX ? config_classes.eventRect : "".concat(config_classes.eventRect, "-").concat(index)),
         eventRect = $$.main.select(selector).node(),
         _eventRect$getBoundin = eventRect.getBoundingClientRect(),
         width = _eventRect$getBoundin.width,
         left = _eventRect$getBoundin.left,
         top = _eventRect$getBoundin.top,
-        x = left + (mouse ? mouse[0] : 0) + width / 2,
+        x = left + (mouse ? mouse[0] : 0) + (isMultipleX ? 0 : width / 2),
         y = top + (mouse ? mouse[1] : 0);
 
     emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, {
@@ -12952,8 +12953,8 @@ var tooltip = extend(function () {}, {
    *    | --- | --- | --- |
    *    | index | Number | Determine focus by index |
    *    | x | Number &vert; Date | Determine focus by x Axis index |
-   *    | data | Object | Determine focus data with following keys: `x` or `index`.<br>When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is set, the target is determined by mouse position and needs specify `x`, `id` and `value`. |
    *    | mouse | Array | Determine x and y coordinate value relative the targeted x Axis element.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
+   *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: Axis id. 'y' or 'y2'(default 'y')<br>- value {Number}: The corresponding value for tooltip. |
    *
    * @example
    *  // show the 2nd x Axis coordinate tooltip
@@ -12971,14 +12972,39 @@ var tooltip = extend(function () {}, {
    *  chart.tooltip.show({
    *    x: new Date("2018-01-02 00:00")
    *  });
+   *
+   *  // when data.xs is used
+   *  chart.tooltip.show({
+   *    data: {
+   *        x: 3,  // x Axis value
+   *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+   *        value: 500  // data value
+   *    }
+   *  });
+   *
+   *  // when data.xs isn't used, but tooltip.grouped=false is set
+   *  chart.tooltip.show({
+   *    data: {
+   *        index: 3,  // or 'x' key value
+   *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+   *        value: 500  // data value
+   *    }
+   *  });
    */
   show: function show() {
     var index,
         mouse,
         args = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
         $$ = this.internal;
-    // emulate events to show
-    args.mouse && (mouse = args.mouse), args.data ? $$.isMultipleX() ? (mouse = [$$.x(args.data.x), $$.getYScale(args.data.id)(args.data.value)], index = null) : index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x) : isDefined(args.x) ? index = $$.getIndexByX(args.x) : isDefined(args.index) && (index = args.index), ($$.inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
+
+    // determine focus data
+    if (args.mouse && (mouse = args.mouse), args.data) {
+      var y = $$.getYScale(args.data.id)(args.data.value);
+      $$.isMultipleX() ? mouse = [$$.x(args.data.x), y] : (!$$.config.tooltip_grouped && (mouse = [0, y]), index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x));
+    } else isDefined(args.x) ? index = $$.getIndexByX(args.x) : isDefined(args.index) && (index = args.index); // emulate events to show
+
+
+    ($$.inputType === "mouse" ? ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
       $$.dispatchEvent(eventName, index, mouse);
     });
   },
@@ -13177,7 +13203,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190220095315
+ * @version 1.7.1-nightly-20190221095347
  */
 
 var bb = {
@@ -13188,7 +13214,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190220095315",
+  version: "1.7.1-nightly-20190221095347",
 
   /**
    * Generate chart
