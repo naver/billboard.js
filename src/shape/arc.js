@@ -189,44 +189,41 @@ extend(ChartInternal.prototype, {
 		});
 	},
 
-	textForArcLabel(val) {
+	textForArcLabel(selection) {
 		const $$ = this;
-		const d = val.node ? val.datum() : val;
 
-		if (!$$.shouldShowArcLabel()) {
-			return "";
+		if ($$.shouldShowArcLabel()) {
+			selection.each(function(d) {
+				const node = d3Select(this);
+				const updated = $$.updateAngle(d);
+				const value = updated ? updated.value : null;
+				const ratio = $$.getRatio("arc", updated);
+				const id = d.data.id;
+				const isUnderThreshold = !(
+					!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)
+				);
+
+				if (isUnderThreshold) {
+					const text = (
+						$$.getArcLabelFormat() || $$.defaultArcValueFormat
+					)(value, ratio, id).toString();
+
+					if (text.indexOf("\n") === -1) {
+						node.text(text);
+					} else {
+						const multiline = text.split("\n");
+						const len = multiline.length - 1;
+
+						multiline.forEach((v, i) => {
+							node.append("tspan")
+								.attr("x", 0)
+								.attr("dy", `${i === 0 ? -len : 1}em`)
+								.text(v);
+						});
+					}
+				}
+			});
 		}
-
-		const updated = $$.updateAngle(d);
-		const value = updated ? updated.value : null;
-		const ratio = $$.getRatio("arc", updated);
-		const id = d.data.id;
-
-		if (!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)) {
-			return "";
-		}
-
-		const text = (
-			$$.getArcLabelFormat() || $$.defaultArcValueFormat
-		)(value, ratio, id).toString();
-
-		if (val.node) {
-			if (text.indexOf("\n") === -1) {
-				val.text(text);
-			} else {
-				const multiline = text.split("\n");
-				const len = multiline.length - 1;
-
-				multiline.forEach((v, i) => {
-					val.append("tspan")
-						.attr("x", 0)
-						.attr("dy", `${i === 0 ? -len : 1}em`)
-						.text(v);
-				});
-			}
-		}
-
-		return text;
 	},
 
 	textForGaugeMinMax(value, isMax) {
@@ -630,17 +627,14 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const main = $$.main;
 
-		const gaugeTextValue = main.selectAll(`.${CLASS.chartArc}`)
+		const text = main.selectAll(`.${CLASS.chartArc}`)
 			.select("text")
 			.style("opacity", "0")
-			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : ""));
+			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null));
 
-		config.gauge_fullCircle && gaugeTextValue.attr("dy", `${Math.round($$.radius / 14)}`);
+		config.gauge_fullCircle && text.attr("dy", `${Math.round($$.radius / 14)}`);
 
-		// to handle multiline text for gauge type
-		const textMethod = !gaugeTextValue.empty() && gaugeTextValue.classed(CLASS.gaugeValue) ? "call" : "text";
-
-		gaugeTextValue[textMethod]($$.textForArcLabel.bind($$))
+		text.call($$.textForArcLabel.bind($$))
 			.attr("transform", $$.transformForArcLabel.bind($$))
 			.style("font-size", d => ($$.isGaugeType(d.data) ? `${Math.round($$.radius / 5)}px` : ""))
 			.transition()

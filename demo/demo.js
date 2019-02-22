@@ -2724,6 +2724,25 @@ d3.select(".chart_area")
 				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
 			]
 		},
+		MultilineLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 45]
+					],
+					type: "donut"
+				},
+				donut: {
+					label: {
+						format: function(value, ratio, id) {
+						  return value +"\nHours";
+					      }
+					}
+				}
+			}
+		},
 		MultilneTitle: {
 			options: {
 				data: {
@@ -2857,6 +2876,25 @@ d3.select(".chart_area")
 					label: {
 						format: function(value, ratio, id) {
 						  return d3.format('$')(value);
+					      }
+					}
+				}
+			}
+		},
+		MultilineLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 45]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+						  return value +"\nHours";
 					      }
 					}
 				}

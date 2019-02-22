@@ -2882,6 +2882,9 @@ export default class Options {
 			 *          show: false,
 			 *          format: function(value, ratio, id) {
 			 *              return d3.format("$")(value);
+			 *
+			 *              // to multiline, return with '\n' character
+			 *              // return value +"%\nLine1\n2Line2";
 			 *          },
 			 *          threshold: 0.1,
 			 *
@@ -2992,6 +2995,9 @@ export default class Options {
 			 *          show: false,
 			 *          format: function(value, ratio, id) {
 			 *              return d3.format("$")(value);
+			 *
+			 *              // to multiline, return with '\n' character
+			 *              // return value +"%\nLine1\n2Line2";
 			 *          },
 			 *          threshold: 0.1,
 			 *

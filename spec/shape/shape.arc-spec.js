@@ -167,7 +167,8 @@ describe("SHAPE ARC", () => {
 				},
 				pie: {
 					padding,
-					innerRadius
+					innerRadius,
+					format: value => `$$\n${value}`
 				}
 			});
 			const internal = chart.internal;
@@ -408,6 +409,46 @@ describe("SHAPE ARC", () => {
 				expect(rect.width === 0).to.be.true;
 				expect(rect.height === 0).to.be.true;
 			});
+		});
+	});
+
+	describe("check for multiline label format", () => {
+		const labelFormat = {
+			label: { format: value => `$$\n${value}` }
+		};
+		let chart;
+		let args = {
+			data: {
+				columns: [
+					["data1", 60],
+					["data2", 40]
+				],
+				type: "pie"
+			},
+			pie: labelFormat,
+			donut: labelFormat
+		};
+
+		const checkMultiline = arc => {
+			arc.selectAll("text").each(function() {
+				expect(this.querySelectorAll("tspan").length).to.be.equal(2);
+			});
+		}
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		it("should be multilined in pie", () => {
+			checkMultiline(chart.$.arc);
+		});
+
+		it("set options data.type='donut'", () => {
+			args.data.type = "donut";
+		});
+
+		it("should be multilined in donut", () => {
+			checkMultiline(chart.$.arc);
 		});
 	});
 });
