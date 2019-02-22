@@ -57,6 +57,11 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		let data;
 
+		// prevent load when chart is already destroyed
+		if (!$$.config) {
+			return;
+		}
+
 		// reset internally cached data
 		$$.resetCache();
 

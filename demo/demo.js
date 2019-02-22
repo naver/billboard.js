@@ -2425,28 +2425,53 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		ColorOnover: {
-			options: {
-				data: {
-					columns: [
-						["data1", 230, 200, 100, 400, 150, 250],
-						["data2", 150, 320, 210, 240, 115, 125],
-						["data3", 130, 220, 140, 200, 250, 450]
-					],
-					groups: [
-						["data1", "data2", "data3"]
-					],
-					type: "bar"
-				},
-				color: {
-					onover: {
-						data1: "#868484",
-						data2: "black",
-						data3: "rgb(202, 202, 202)"
+		ColorOnover: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 200, 100, 400, 150, 250],
+							["data2", 150, 320, 210, 240, 115, 125],
+							["data3", 130, 220, 140, 200, 250, 450]
+						],
+						groups: [
+							["data1", "data2", "data3"]
+						],
+						type: "bar"
+					},
+					color: {
+						onover: {
+							data1: "#868484",
+							data2: "black",
+							data3: "rgb(202, 202, 202)"
+						}
 					}
 				}
+			},
+			{
+				options: {
+						data: {
+							columns: [
+								["data1", 241, 737, 78],
+								["data2", 245, 164, 628],
+								["data3", 990, 496, 638]
+							],
+							types: {
+								data1: "spline",
+								data2: "area",
+								data3: "bar"
+							}
+						},
+						color: {
+							onover: function(d) {
+						var pttr = ["red", "yellow", "cyan"];
+
+						return pttr[(Math.floor(Math.random() * pttr.length))];
+					 	}
+						}
+				}
 			}
-		},
+		],
 		ColorPattern: {
 			options: {
 				data: {
