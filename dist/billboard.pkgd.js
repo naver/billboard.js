@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190221095347
+ * @version 1.7.1-nightly-20190222095342
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -15251,10 +15251,11 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   loadFromArgs: function loadFromArgs(args) {
     var data,
         $$ = this;
-    // reset internally cached data
+    // prevent load when chart is already destroyed
+    $$.config && ( // reset internally cached data
     $$.resetCache(), args.data ? data = args.data : args.url ? $$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, function (d) {
       $$.load($$.convertDataToTargets(d), args);
-    }) : args.json ? data = $$.convertJsonToData(args.json, args.keys) : args.rows ? data = $$.convertRowsToData(args.rows) : args.columns && (data = $$.convertColumnsToData(args.columns)), $$.load(data ? $$.convertDataToTargets(data) : null, args);
+    }) : args.json ? data = $$.convertJsonToData(args.json, args.keys) : args.rows ? data = $$.convertRowsToData(args.rows) : args.columns && (data = $$.convertColumnsToData(args.columns)), $$.load(data ? $$.convertDataToTargets(data) : null, args));
   },
   unload: function unload(rawTargetIds, customDoneCb) {
     var $$ = this,
@@ -24033,7 +24034,7 @@ util_extend(Chart_Chart.prototype, {
     var _this = this,
         $$ = this.internal;
 
-    return notEmpty($$) && ($$.charts.splice($$.charts.indexOf(this), 1), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -24336,7 +24337,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190221095347
+ * @version 1.7.1-nightly-20190222095342
  */
 
 var bb = {
@@ -24347,7 +24348,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190221095347",
+  version: "1.7.1-nightly-20190222095342",
 
   /**
    * Generate chart
