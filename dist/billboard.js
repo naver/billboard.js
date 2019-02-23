@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190222095342
+ * @version 1.7.1-nightly-20190223095404
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5295,6 +5295,9 @@ var Options_Options = function Options() {
      *          show: false,
      *          format: function(value, ratio, id) {
      *              return d3.format("$")(value);
+     *
+     *              // to multiline, return with '\n' character
+     *              // return value +"%\nLine1\n2Line2";
      *          },
      *          threshold: 0.1,
      *
@@ -5404,6 +5407,9 @@ var Options_Options = function Options() {
      *          show: false,
      *          format: function(value, ratio, id) {
      *              return d3.format("$")(value);
+     *
+     *              // to multiline, return with '\n' character
+     *              // return value +"%\nLine1\n2Line2";
      *          },
      *          threshold: 0.1,
      *
@@ -7543,24 +7549,27 @@ extend(ChartInternal_ChartInternal.prototype, {
       index: d.index
     });
   },
-  textForArcLabel: function textForArcLabel(val) {
-    var $$ = this,
-        d = val.node ? val.datum() : val;
-    if (!$$.shouldShowArcLabel()) return "";
-    var updated = $$.updateAngle(d),
-        value = updated ? updated.value : null,
-        ratio = $$.getRatio("arc", updated),
-        id = d.data.id;
-    if (!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)) return "";
-    var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
-    if (val.node) if (text.indexOf("\n") === -1) val.text(text);else {
-      var multiline = text.split("\n"),
-          len = multiline.length - 1;
-      multiline.forEach(function (v, i) {
-        val.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? -len : 1, "em")).text(v);
-      });
-    }
-    return text;
+  textForArcLabel: function textForArcLabel(selection) {
+    var $$ = this;
+    $$.shouldShowArcLabel() && selection.each(function (d) {
+      var node = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+          updated = $$.updateAngle(d),
+          value = updated ? updated.value : null,
+          ratio = $$.getRatio("arc", updated),
+          id = d.data.id,
+          isUnderThreshold = $$.hasType("gauge") || $$.meetsArcLabelThreshold(ratio);
+
+      if (isUnderThreshold) {
+        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        if (text.indexOf("\n") === -1) node.text(text);else {
+          var multiline = text.split("\n"),
+              len = multiline.length - 1;
+          multiline.forEach(function (v, i) {
+            node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? -len : 1, "em")).text(v);
+          });
+        }
+      }
+    });
   },
   textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
     var format = this.getGaugeLabelExtents();
@@ -7772,14 +7781,11 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         main = $$.main,
-        gaugeTextValue = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
-      return $$.isGaugeType(d.data) ? config_classes.gaugeValue : "";
+        text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
+      return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
     });
-    config.gauge_fullCircle && gaugeTextValue.attr("dy", "".concat(Math.round($$.radius / 14)));
-    // to handle multiline text for gauge type
-    var textMethod = !gaugeTextValue.empty() && gaugeTextValue.classed(config_classes.gaugeValue) ? "call" : "text";
 
-    if (gaugeTextValue[textMethod]($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+    if (config.gauge_fullCircle && text.attr("dy", "".concat(Math.round($$.radius / 14))), text.call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
       return $$.isGaugeType(d.data) ? "".concat(Math.round($$.radius / 5), "px") : "";
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
@@ -13204,7 +13210,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190222095342
+ * @version 1.7.1-nightly-20190223095404
  */
 
 var bb = {
@@ -13215,7 +13221,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190222095342",
+  version: "1.7.1-nightly-20190223095404",
 
   /**
    * Generate chart
