@@ -6,6 +6,7 @@
 /* global describe, beforeEach, it, expect */
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import { doesNotReject } from "assert";
 
 describe("SUBCHART", () => {
 	let chart;
@@ -130,6 +131,56 @@ describe("SUBCHART", () => {
 
 			expect(subchart.empty()).to.be.true;
 			expect(chart.internal.clipSubchart).to.be.undefined;
+		})
+	});
+
+	describe("generate sbuchart", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["sample", 30, 200, 100, 400, 150, 250]
+					]
+				},
+				subchart: {
+					show: true
+				}
+			};
+		});
+
+
+		it("should be select subchart area", done => {
+			const selection = chart.$.svg.select(".selection");
+			const overlay = chart.$.svg.select(".overlay").node();
+			const baseWidth = 100;
+
+			// do mouse selection
+			util.fireEvent(overlay, "mousedown", {
+				clientX: 50,
+				clientY: 50
+			}, chart);
+
+			util.fireEvent(overlay, "mousemove", {
+				clientX: 150,
+				clientY: 150
+			}, chart);
+
+			util.fireEvent(overlay, "mouseup", {
+				clientX: 150,
+				clientY: 150
+			}, chart);
+
+			expect(+selection.attr("width")).to.be.equal(baseWidth);
+
+			// when
+			chart.resize({width:400});
+
+			// should be maintain zoom area after resize
+			setTimeout(() => {
+				expect(+selection.attr("width")).to.be.below(baseWidth);
+				expect(chart.internal.x.domain()).to.not.deep.equal(chart.internal.orgXDomain);
+				done();
+			}, 300);
 		})
 	});
 });

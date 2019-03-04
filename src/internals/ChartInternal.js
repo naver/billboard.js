@@ -231,7 +231,7 @@ export default class ChartInternal {
 
 		// Init sizes and scales
 		$$.updateSizes();
-		$$.updateScales();
+		$$.updateScales(true);
 
 		// Set domains for each scale
 		if ($$.x) {
@@ -1212,7 +1212,9 @@ export default class ChartInternal {
 					$$.resizeTimeout = null;
 				}
 
-				$$.resizeTimeout = window.setTimeout($$.api.flush, 100);
+				$$.resizeTimeout = window.setTimeout(() => {
+					$$.api.flush(false, true);
+				}, 200);
 			});
 		}
 
