@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190223095404
+ * @version 1.7.1-nightly-20190304095840
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1739,7 +1739,7 @@ function () {
         classname: "bb"
       };
 
-      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(document.body.appendChild(document.createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(document.body.appendChild(document.createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$);
@@ -2240,7 +2240,9 @@ function () {
       var $$ = this,
           config = $$.config;
       $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(config.onresize.bind($$)), config.resize_auto && $$.resizeFunction.add(function () {
-        $$.resizeTimeout && (window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = window.setTimeout($$.api.flush, 100);
+        $$.resizeTimeout && (window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = window.setTimeout(function () {
+          $$.api.flush(!1, !0);
+        }, 200);
       }), $$.resizeFunction.add(config.onresized.bind($$)), window.addEventListener("resize", $$.resizeFunction);
     }
   }, {
@@ -9562,7 +9564,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     };
     // Update size and scale
     // Update g positions
-    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateSizes(), $$.updateScales(!optionz.withTransition), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
+    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateSizes(), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
   },
 
   /**
@@ -10424,14 +10426,26 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.brush = isRotated ? Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushY"])() : Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushX"])();
 
     // set "brush" event
-    var brushHandler = function () {
+    var lastDomain,
+        timeout,
+        brushHandler = function () {
       $$.redrawForBrush();
     };
 
     // set the brush extent
     $$.brush.on("start", function () {
       $$.inputType === "touch" && $$.hideTooltip(), brushHandler();
-    }).on("brush", brushHandler), $$.brush.update = function () {
+    }).on("brush", brushHandler).on("end", function () {
+      lastDomain = $$.x.domain();
+    }), $$.brush.updateResize = function () {
+      var _this = this;
+
+      timeout && clearTimeout(timeout), timeout = setTimeout(function () {
+        var selection = _this.getSelection();
+
+        lastDomain && Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection.node()) && _this.move(selection, lastDomain.map($$.subX));
+      }, 0);
+    }, $$.brush.update = function () {
       var extent = this.extent()();
       return extent[1].filter(function (v) {
         return isNaN(v);
@@ -12861,7 +12875,7 @@ extend(Chart_Chart.prototype, {
    */
   resize: function resize(size) {
     var config = this.internal.config;
-    config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush();
+    config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0);
   },
 
   /**
@@ -12870,16 +12884,17 @@ extend(Chart_Chart.prototype, {
    * @instance
    * @memberof Chart
    * @param {Boolean} [soft] For soft redraw.
+   * @param {Boolean} [isFromResize] For soft redraw.
    * @example
    * chart.flush();
    *
    * // for soft redraw
    * chart.flush(true);
    */
-  flush: function flush(soft) {
+  flush: function flush(soft, isFromResize) {
     var $$ = this.internal; // reset possible zoom scale
 
-    $$.zoomScale = null, soft ? $$.redraw({
+    isFromResize && $$.brush && $$.brush.updateResize(), $$.zoomScale = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -13210,7 +13225,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190223095404
+ * @version 1.7.1-nightly-20190304095840
  */
 
 var bb = {
@@ -13221,7 +13236,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190223095404",
+  version: "1.7.1-nightly-20190304095840",
 
   /**
    * Generate chart
