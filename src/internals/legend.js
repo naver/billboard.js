@@ -67,7 +67,7 @@ extend(ChartInternal.prototype, {
 
 		// Update size and scale
 		$$.updateSizes();
-		$$.updateScales(!optionz.withTransition);
+		$$.updateScales();
 		$$.updateSvgSize();
 
 		// Update g positions

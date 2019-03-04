@@ -26,7 +26,7 @@ extend(Chart.prototype, {
 		config.size_width = size ? size.width : null;
 		config.size_height = size ? size.height : null;
 
-		this.flush();
+		this.flush(false, true);
 	},
 
 	/**
@@ -35,16 +35,21 @@ extend(Chart.prototype, {
 	 * @instance
 	 * @memberof Chart
 	 * @param {Boolean} [soft] For soft redraw.
+	 * @param {Boolean} [isFromResize] For soft redraw.
 	 * @example
 	 * chart.flush();
 	 *
 	 * // for soft redraw
 	 * chart.flush(true);
 	 */
-	flush(soft) {
+	flush(soft, isFromResize) {
 		const $$ = this.internal;
 
 		// reset possible zoom scale
+		if (isFromResize) {
+			$$.brush && $$.brush.updateResize();
+		}
+
 		$$.zoomScale = null;
 
 		soft ? $$.redraw({
