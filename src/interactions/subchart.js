@@ -8,7 +8,8 @@ import {
 } from "d3-selection";
 import {
 	brushX as d3BrushX,
-	brushY as d3BrushY
+	brushY as d3BrushY,
+	brushSelection as d3BrushSelection
 } from "d3-brush";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
@@ -32,12 +33,28 @@ extend(ChartInternal.prototype, {
 			$$.redrawForBrush();
 		};
 
+		let lastDomain;
+		let timeout;
+
 		$$.brush
 			.on("start", () => {
 				$$.inputType === "touch" && $$.hideTooltip();
 				brushHandler();
 			})
-			.on("brush", brushHandler);
+			.on("brush", brushHandler)
+			.on("end", () => {
+				lastDomain = $$.x.domain();
+			});
+
+		$$.brush.updateResize = function() {
+			timeout && clearTimeout(timeout);
+			timeout = setTimeout(() => {
+				const selection = this.getSelection();
+
+				lastDomain && d3BrushSelection(selection.node()) &&
+					this.move(selection, lastDomain.map($$.subX));
+			}, 0);
+		};
 
 		$$.brush.update = function() {
 			const extent = this.extent()();
