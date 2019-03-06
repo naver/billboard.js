@@ -16,7 +16,7 @@ describe("SUBCHART", () => {
 		chart = util.generate(args);
 	});
 
-	describe("generate sbuchart", () => {
+	describe("generate subchart", () => {
 		before(() => {
 			args = {
 				data: {
@@ -134,7 +134,7 @@ describe("SUBCHART", () => {
 		})
 	});
 
-	describe("generate sbuchart", () => {
+	describe("subchart selection", () => {
 		before(() => {
 			args = {
 				data: {
@@ -148,26 +148,25 @@ describe("SUBCHART", () => {
 			};
 		});
 
-
-		it("should be select subchart area", done => {
+		const checkSelection = done => {
 			const selection = chart.$.svg.select(".selection");
 			const overlay = chart.$.svg.select(".overlay").node();
 			const baseWidth = 100;
 
 			// do mouse selection
 			util.fireEvent(overlay, "mousedown", {
-				clientX: 50,
-				clientY: 50
+				clientX: 100,
+				clientY: 100
 			}, chart);
 
 			util.fireEvent(overlay, "mousemove", {
-				clientX: 150,
-				clientY: 150
+				clientX: 200,
+				clientY: 200
 			}, chart);
 
 			util.fireEvent(overlay, "mouseup", {
-				clientX: 150,
-				clientY: 150
+				clientX: 200,
+				clientY: 200
 			}, chart);
 
 			expect(+selection.attr("width")).to.be.equal(baseWidth);
@@ -181,6 +180,19 @@ describe("SUBCHART", () => {
 				expect(chart.internal.x.domain()).to.not.deep.equal(chart.internal.orgXDomain);
 				done();
 			}, 300);
-		})
+		};
+
+		it("should be select subchart area", checkSelection);
+
+		it("set options axis.x.type='category'", () => {
+			args.axis = {
+				x: {
+					type: "category",
+					categories: ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"]
+				}
+			};
+		});
+
+		it("should be select subchart area for category type x axis", checkSelection);
 	});
 });

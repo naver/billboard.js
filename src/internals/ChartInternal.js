@@ -115,15 +115,19 @@ export default class ChartInternal {
 		$$.dataTimeFormat = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
 		$$.axisTimeFormat = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
+		const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
+
 		$$.defaultAxisTimeFormat = d => {
+			const isZoomed = isDragZoom ? this.zoomScale :
+				this.zoomScale && $$.x.orgDomain().toString() !== this.zoomScale.domain().toString();
+
 			const specifier = (d.getMilliseconds() && ".%L") ||
 				(d.getSeconds() && ".:%S") ||
 				(d.getMinutes() && "%I:%M") ||
 				(d.getHours() && "%I %p") ||
-				((d.getDay() && d.getDate() !== 1) && "%-m/%-d") ||
 				(d.getDate() !== 1 && "%b %d") ||
-				(d.getMonth() && "%-m/%-d") ||
-				"%Y/%-m/%-d";
+				(isZoomed && d.getDate() === 1 && "%b\'%y") ||
+				(d.getMonth() && "%-m/%-d") || "%Y";
 
 			return $$.axisTimeFormat(specifier)(d);
 		};
@@ -752,8 +756,8 @@ export default class ChartInternal {
 					}
 				}
 
-				$$.svg.selectAll(`.${CLASS.axisX} .tick text`).each(function(e) {
-					const index = tickValues.indexOf(e);
+				$$.svg.selectAll(`.${CLASS.axisX} .tick text`).each(function(d) {
+					const index = tickValues.indexOf(d);
 
 					index >= 0 &&
 						d3Select(this).style("display", index % intervalForCulling ? "none" : "block");

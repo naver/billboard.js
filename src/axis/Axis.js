@@ -177,6 +177,8 @@ export default class Axis {
 			}
 		}
 
+		config.axis_x_tick_count && axis.ticks(config.axis_x_tick_count);
+
 		return axis;
 	}
 
@@ -214,25 +216,26 @@ export default class Axis {
 	updateXAxisTickValues(targets, axis) {
 		const $$ = this.owner;
 		const config = $$.config;
-		const xTickCount = config.axis_x_tick_count;
-		let tickValues;
+		const fit = config.axis_x_tick_fit;
+		const count = config.axis_x_tick_count;
+		let values;
 
-		if (config.axis_x_tick_fit || xTickCount) {
-			tickValues = this.generateTickValues(
+		if (fit || (count && fit)) {
+			values = this.generateTickValues(
 				$$.mapTargetsToUniqueXs(targets),
-				xTickCount,
+				count,
 				$$.isTimeSeries()
 			);
 		}
 
 		if (axis) {
-			axis.tickValues(tickValues);
+			axis.tickValues(values);
 		} else if ($$.xAxis) {
-			$$.xAxis.tickValues(tickValues);
-			$$.subXAxis.tickValues(tickValues);
+			$$.xAxis.tickValues(values);
+			$$.subXAxis.tickValues(values);
 		}
 
-		return tickValues;
+		return values;
 	}
 
 	getId(id) {

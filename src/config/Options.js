@@ -376,7 +376,7 @@ export default class Options {
 			 * data: {
              *   xFormat: "%Y-%m-%d %H:%M:%S"
 			 * }
-			 * @see [D3's time specifier](https://npm.runkit.com/d3-time-format)
+			 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
 			 */
 			data_xFormat: "%Y-%m-%d",
 
@@ -1448,8 +1448,9 @@ export default class Options {
 			 * A function to format tick value. Format string is also available for timeseries data.
 			 * @name axis․x․tick․format
 			 * @memberof Options
-			 * @type {Function}
+			 * @type {Function|String}
 			 * @default undefined
+			 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
 			 * @example
 			 * axis: {
 			 *   x: {
@@ -1462,7 +1463,10 @@ export default class Options {
 			 *       // for category, index(Number) and categoryName(String) are given as parameter
 			 *       format: function(index, categoryName) {
 			 *           return categoryName.substr(0, 10);
-			 *       }
+			 *       },
+			 *
+			 *        // for timeseries format specifier
+			 *        format: "%Y-%m-%d %H:%M:%S"
 			 *     }
 			 *   }
 			 * }
@@ -1588,12 +1592,15 @@ export default class Options {
 			axis_x_tick_text_position: {x: 0, y: 0},
 
 			/**
-			 * Fit x axis ticks.<br><br>
-			 * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
+			 * Fit x axis ticks.
+			 * - **true**: ticks will be positioned nicely to have same intervals.
+			 * - **false**: ticks will be positioned according to x value of the data points.
 			 * @name axis․x․tick․fit
 			 * @memberof Options
 			 * @type {Boolean}
 			 * @default true
+			 * @see [Demo](http://jindo.com/git/billboard.js/demo/#Axis.XAxisTickFitting)
+			 * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
 			 * @example
 			 * axis: {
 			 *   x: {
@@ -2661,7 +2668,7 @@ export default class Options {
 			 * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
 			 *  - **NOTE:** Disabled for 'bubble' type
 			 * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-			 * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
+			 * @property {Number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
 			 *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
 			 * @property {String} [point.type="circle"] The type of point to be drawn<br>

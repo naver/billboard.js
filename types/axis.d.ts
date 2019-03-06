@@ -90,7 +90,7 @@ export interface XAxisConfiguration {
 	/**
 	 * Set additional axes for Axis
 	 */
-	axes: AxesConfiguration[];
+	axes?: AxesConfiguration[];
 }
 
 export interface YAxisConfiguration {
@@ -161,7 +161,7 @@ export interface YAxisConfiguration {
 	/**
 	 * Set additional axes for Axis
 	 */
-	axes: AxesConfiguration[];
+	axes?: AxesConfiguration[];
 }
 
 export interface XTickConfiguration {
