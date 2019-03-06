@@ -476,4 +476,77 @@ describe("ZOOM", function() {
 			});
 		});
 	});
+
+	describe("zoom tick fit", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					json: {
+						"Temperature": [
+							"29.37",
+							"28.87",
+							"28.62",
+							"27.72",
+							"27.61",
+							"27.82",
+							"27.48",
+							"26.78",
+							"26.62",
+							"26.64",
+							"26.29",
+							"26.01"
+						],
+						"x": [
+							"01-01-2015 00:00",
+							"02-01-2015 00:00",
+							"03-01-2015 00:00",
+							"01-01-2016 00:00",
+							"02-01-2016 00:00",
+							"03-01-2016 00:00",
+							"01-01-2017 00:00",
+							"02-01-2017 00:00",
+							"03-01-2017 00:00",
+							"01-01-2018 00:00",
+							"02-01-2018 00:00",
+							"03-01-2018 00:00"
+						]
+					},
+					type: "area",
+					xFormat: "%m-%d-%Y %H:%M",
+				},
+				axis: {
+					x: {
+						tick: {
+							fit: false,
+							count: 5
+						},
+						type: "timeseries"
+					}
+				},
+				zoom: {
+					enabled: {
+						type: "drag"
+					}
+				}
+			  };
+		});
+
+		it("check zoom-in tick format for timeseries", () => {
+			const selector = `.${CLASS.axisX} .tick text`;
+
+			chart.$.main.selectAll(selector).each(function(d, i) {
+				expect(+this.textContent).to.be.equal(2015 + i);
+			});
+
+			// when
+			chart.zoom([new Date("01-01-2016 00:00"), new Date("02-01-2016 00:00")]);
+
+			const expected = ["Jan 03", "Jan 10", "Jan 17", "Jan 24", "Jan 31"];
+			
+			chart.$.main.selectAll(selector).each(function(d, i) {
+				expect(this.textContent).to.be.equal(expected[i]);
+			});
+		});
+	});
 });
