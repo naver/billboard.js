@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190305095917
+ * @version 1.7.1-nightly-20190306095950
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1280,7 +1280,7 @@ function () {
           newTickValues = tickValues;
       return $$.isTimeSeries() && tickValues && !isFunction(tickValues) && (newTickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
-      })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), axis;
+      })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config.axis_x_tick_count && axis.ticks(config.axis_x_tick_count), axis;
     } // called from : updateScales() & getMaxTickWidth()
 
   }, {
@@ -1307,11 +1307,12 @@ function () {
   }, {
     key: "updateXAxisTickValues",
     value: function updateXAxisTickValues(targets, axis) {
-      var tickValues,
+      var values,
           $$ = this.owner,
           config = $$.config,
-          xTickCount = config.axis_x_tick_count;
-      return (config.axis_x_tick_fit || xTickCount) && (tickValues = this.generateTickValues($$.mapTargetsToUniqueXs(targets), xTickCount, $$.isTimeSeries())), axis ? axis.tickValues(tickValues) : $$.xAxis && ($$.xAxis.tickValues(tickValues), $$.subXAxis.tickValues(tickValues)), tickValues;
+          fit = config.axis_x_tick_fit,
+          count = config.axis_x_tick_count;
+      return (fit || count && fit) && (values = this.generateTickValues($$.mapTargetsToUniqueXs(targets), count, $$.isTimeSeries())), axis ? axis.tickValues(values) : $$.xAxis && ($$.xAxis.tickValues(values), $$.subXAxis.tickValues(values)), values;
     }
   }, {
     key: "getId",
@@ -1707,11 +1708,16 @@ function () {
   }, {
     key: "initParams",
     value: function initParams() {
-      var $$ = this,
+      var _this = this,
+          $$ = this,
           config = $$.config,
           isRotated = config.axis_rotated;
-      $$.datetimeId = "bb-".concat(+new Date()), $$.clipId = "".concat($$.datetimeId, "-clip"), $$.clipIdForXAxis = "".concat($$.clipId, "-xaxis"), $$.clipIdForYAxis = "".concat($$.clipId, "-yaxis"), $$.clipIdForGrid = "".concat($$.clipId, "-grid"), $$.clipPath = $$.getClipPath($$.clipId), $$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis), $$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis), $$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid), $$.dragStart = null, $$.dragging = !1, $$.flowing = !1, $$.cancelClick = !1, $$.mouseover = !1, $$.transiting = !1, $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.point = $$.generatePoint(), $$.extraLineClasses = $$.generateExtraLineClass(), $$.dataTimeFormat = config.data_xLocaltime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["timeParse"] : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["utcParse"], $$.axisTimeFormat = config.axis_x_localtime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["timeFormat"] : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["utcFormat"], $$.defaultAxisTimeFormat = function (d) {
-        var specifier = d.getMilliseconds() && ".%L" || d.getSeconds() && ".:%S" || d.getMinutes() && "%I:%M" || d.getHours() && "%I %p" || d.getDay() && d.getDate() !== 1 && "%-m/%-d" || d.getDate() !== 1 && "%b %d" || d.getMonth() && "%-m/%-d" || "%Y/%-m/%-d";
+
+      $$.datetimeId = "bb-".concat(+new Date()), $$.clipId = "".concat($$.datetimeId, "-clip"), $$.clipIdForXAxis = "".concat($$.clipId, "-xaxis"), $$.clipIdForYAxis = "".concat($$.clipId, "-yaxis"), $$.clipIdForGrid = "".concat($$.clipId, "-grid"), $$.clipPath = $$.getClipPath($$.clipId), $$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis), $$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis), $$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid), $$.dragStart = null, $$.dragging = !1, $$.flowing = !1, $$.cancelClick = !1, $$.mouseover = !1, $$.transiting = !1, $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.point = $$.generatePoint(), $$.extraLineClasses = $$.generateExtraLineClass(), $$.dataTimeFormat = config.data_xLocaltime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["timeParse"] : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["utcParse"], $$.axisTimeFormat = config.axis_x_localtime ? external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["timeFormat"] : external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_["utcFormat"];
+      var isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
+      $$.defaultAxisTimeFormat = function (d) {
+        var isZoomed = isDragZoom ? _this.zoomScale : _this.zoomScale && $$.x.orgDomain().toString() !== _this.zoomScale.domain().toString(),
+            specifier = d.getMilliseconds() && ".%L" || d.getSeconds() && ".:%S" || d.getMinutes() && "%I:%M" || d.getHours() && "%I %p" || d.getDate() !== 1 && "%b %d" || isZoomed && d.getDate() === 1 && "%b\'%y" || d.getMonth() && "%-m/%-d" || "%Y";
         return $$.axisTimeFormat(specifier)(d);
       }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.xOrient = isRotated ? "left" : "bottom", $$.yOrient = isRotated ? config.axis_y_inner ? "top" : "bottom" : config.axis_y_inner ? "right" : "left", $$.y2Orient = isRotated ? config.axis_y2_inner ? "bottom" : "top" : config.axis_y2_inner ? "left" : "right", $$.subXOrient = isRotated ? "left" : "bottom", $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
         x: {
@@ -1978,8 +1984,8 @@ function () {
           break;
         }
 
-        $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).each(function (e) {
-          var index = tickValues.indexOf(e);
+        $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).each(function (d) {
+          var index = tickValues.indexOf(d);
           index >= 0 && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).style("display", index % intervalForCulling ? "none" : "block");
         });
       } else $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).style("display", "block"); // Update sub domain
@@ -2778,7 +2784,7 @@ var Options_Options = function Options() {
      * data: {
               *   xFormat: "%Y-%m-%d %H:%M:%S"
      * }
-     * @see [D3's time specifier](https://npm.runkit.com/d3-time-format)
+     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
      */
     data_xFormat: "%Y-%m-%d",
 
@@ -3855,8 +3861,9 @@ var Options_Options = function Options() {
      * A function to format tick value. Format string is also available for timeseries data.
      * @name axis․x․tick․format
      * @memberof Options
-     * @type {Function}
+     * @type {Function|String}
      * @default undefined
+     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
      * @example
      * axis: {
      *   x: {
@@ -3869,7 +3876,10 @@ var Options_Options = function Options() {
      *       // for category, index(Number) and categoryName(String) are given as parameter
      *       format: function(index, categoryName) {
      *           return categoryName.substr(0, 10);
-     *       }
+     *       },
+     *
+     *        // for timeseries format specifier
+     *        format: "%Y-%m-%d %H:%M:%S"
      *     }
      *   }
      * }
@@ -3998,12 +4008,15 @@ var Options_Options = function Options() {
     },
 
     /**
-     * Fit x axis ticks.<br><br>
-     * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
+     * Fit x axis ticks.
+     * - **true**: ticks will be positioned nicely to have same intervals.
+     * - **false**: ticks will be positioned according to x value of the data points.
      * @name axis․x․tick․fit
      * @memberof Options
      * @type {Boolean}
      * @default true
+     * @see [Demo](http://jindo.com/git/billboard.js/demo/#Axis.XAxisTickFitting)
+     * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
      * @example
      * axis: {
      *   x: {
@@ -5076,7 +5089,7 @@ var Options_Options = function Options() {
      * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
      *  - **NOTE:** Disabled for 'bubble' type
      * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-     * @property {Boolean} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
+     * @property {Number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
      *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
      * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
      * @property {String} [point.type="circle"] The type of point to be drawn<br>
@@ -10436,14 +10449,14 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.brush.on("start", function () {
       $$.inputType === "touch" && $$.hideTooltip(), brushHandler();
     }).on("brush", brushHandler).on("end", function () {
-      lastDomain = $$.x.domain();
+      lastDomain = $$.x.orgDomain();
     }), $$.brush.updateResize = function () {
       var _this = this;
 
       timeout && clearTimeout(timeout), timeout = setTimeout(function () {
         var selection = _this.getSelection();
 
-        lastDomain && Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection.node()) && _this.move(selection, lastDomain.map($$.subX));
+        lastDomain && Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection.node()) && _this.move(selection, lastDomain.map($$.subX.orgScale()));
       }, 0);
     }, $$.brush.update = function () {
       var extent = this.extent()();
@@ -10602,15 +10615,14 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   redrawForBrush: function redrawForBrush() {
-    var $$ = this,
-        x = $$.x;
+    var $$ = this;
     $$.redraw({
       withTransition: !1,
       withY: $$.config.zoom_rescale,
       withSubchart: !1,
       withUpdateXDomain: !0,
       withDimension: !1
-    }), $$.config.subchart_onbrush.call($$.api, x.orgDomain());
+    }), $$.config.subchart_onbrush.call($$.api, $$.x.orgDomain());
   },
 
   /**
@@ -13225,7 +13237,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190305095917
+ * @version 1.7.1-nightly-20190306095950
  */
 
 var bb = {
@@ -13236,7 +13248,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190305095917",
+  version: "1.7.1-nightly-20190306095950",
 
   /**
    * Generate chart
