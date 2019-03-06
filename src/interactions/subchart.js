@@ -43,7 +43,7 @@ extend(ChartInternal.prototype, {
 			})
 			.on("brush", brushHandler)
 			.on("end", () => {
-				lastDomain = $$.x.domain();
+				lastDomain = $$.x.orgDomain();
 			});
 
 		$$.brush.updateResize = function() {
@@ -52,7 +52,7 @@ extend(ChartInternal.prototype, {
 				const selection = this.getSelection();
 
 				lastDomain && d3BrushSelection(selection.node()) &&
-					this.move(selection, lastDomain.map($$.subX));
+					this.move(selection, lastDomain.map($$.subX.orgScale()));
 			}, 0);
 		};
 
@@ -377,7 +377,6 @@ extend(ChartInternal.prototype, {
 	 */
 	redrawForBrush() {
 		const $$ = this;
-		const x = $$.x;
 
 		$$.redraw({
 			withTransition: false,
@@ -387,7 +386,7 @@ extend(ChartInternal.prototype, {
 			withDimension: false
 		});
 
-		$$.config.subchart_onbrush.call($$.api, x.orgDomain());
+		$$.config.subchart_onbrush.call($$.api, $$.x.orgDomain());
 	},
 
 	/**
