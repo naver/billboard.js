@@ -46,8 +46,8 @@ const config = {
 	},
 	devtool: false,
 	plugins: [
-		new CleanWebpackPlugin([distPath], {
-			root: path.resolve(__dirname, "../"),
+		new CleanWebpackPlugin({
+			cleanOnceBeforeBuildPatterns: [distPath],
 			verbose: true,
 			dry: false,
 			beforeEmit: true

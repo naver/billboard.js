@@ -33,8 +33,8 @@ const config = {
 		],
 	},
 	plugins: [
-		new CleanWebpackPlugin([path.resolve(__dirname, "../dist")], {
-			root: path.resolve(__dirname, "../"),
+		new CleanWebpackPlugin({
+			cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "../dist")],
 			verbose: true,
 			dry: false
 		}),
