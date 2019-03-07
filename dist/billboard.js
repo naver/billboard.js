@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190306095950
+ * @version 1.7.1-nightly-20190307100007
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2542,8 +2542,8 @@ var Options_Options = function Options() {
      * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
      *  If true set, y domain will be updated according to the zoomed region.
      * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
-     * @property {Number} [zoom.x.min] Set x Axis minimum zoom range
-     * @property {Number} [zoom.x.max] Set x Axis maximum zoom range
+     * @property {Number|Date} [zoom.x.min] Set x Axis minimum zoom range
+     * @property {Number|Date} [zoom.x.max] Set x Axis maximum zoom range
      * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
      *  Specified function receives the zoom event.
      * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
@@ -13237,7 +13237,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190306095950
+ * @version 1.7.1-nightly-20190307100007
  */
 
 var bb = {
@@ -13248,7 +13248,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190306095950",
+  version: "1.7.1-nightly-20190307100007",
 
   /**
    * Generate chart
