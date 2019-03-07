@@ -811,12 +811,12 @@ export interface ZoomOptions {
 		/**
 		 * Set x Axis minimum zoom range
 		 */
-		min?: number;
+		min?: number | Date;
 
 		/**
 		 * Set x Axis maximum zoom range
 		 */
-		max?: number;
+		max?: number | Date;
 	};
 
 	/**

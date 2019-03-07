@@ -198,7 +198,8 @@ export interface XTickConfiguration {
 
 	/**
 	 * Fit x axis ticks.
-	 * If true set, the ticks will be positioned nicely. If false set, the ticks will be positioned according to x value of the data points.
+	 * - true: ticks will be positioned nicely to have same intervals.
+	 * - false: ticks will be positioned according to x value of the data points.
 	 */
 	fit?: boolean;
 
