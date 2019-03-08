@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190307100007
+ * @version 1.7.1-nightly-20190308100115
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -12240,7 +12240,7 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Boolean}
      * @default true
-     * @see [Demo](http://jindo.com/git/billboard.js/demo/#Axis.XAxisTickFitting)
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickFitting)
      * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
      * @example
      * axis: {
@@ -13505,15 +13505,49 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {Boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
-     * @property {Boolean} [area.above=false]
+     * @property {Boolean} [area.above=false] Set background area above the data chart line.
+     * @property {Boolean|Object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
+     * Or customize by giving below object value:
+     *  - x {Array}: `x1`, `x2` value
+     *  - y {Array}: `y1`, `y2` value
+     *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+     * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
+     * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+     * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
      * @example
      *  area: {
      *      zerobased: false,
-     *      above: true
+     *      above: true,
+     *
+     *      // will generate follwing linearGradient:
+     *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+     *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+     *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+     *      // </linearGradient>
+     *      linearGradient: true,
+     *
+     *      // Or customized gradient
+     *      linearGradient: {
+     *      	x: [0, 0],  // x1, x2 attributes
+     *      	y: [0, 0],  // y1, y2 attributes
+     *      	stops: [
+     *      		// offset, stop-color, stop-opacity
+     *      		[0, "#7cb5ec", 1],
+     *
+     *      		// setting 'null' for stop-color, will set its original data color
+     *      		[0.5, null, 0],
+     *
+     *      		// setting 'function' for stop-color, will pass data id as argument.
+     *      		// It should return color string or null value
+     *      		[1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+     *      	]
+     *      }
      *  }
      */
     area_zerobased: !0,
     area_above: !1,
+    area_linearGradient: !1,
 
     /**
      * Set pie options
@@ -18879,15 +18913,37 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
     return path;
   },
+  updateAreaGradient: function updateAreaGradient() {
+    var $$ = this;
+    $$.data.targets.forEach(function (d) {
+      var color = $$.color(d),
+          _$$$config$area_linea = $$.config.area_linearGradient,
+          _$$$config$area_linea2 = _$$$config$area_linea.x,
+          x = _$$$config$area_linea2 === void 0 ? [0, 0] : _$$$config$area_linea2,
+          _$$$config$area_linea3 = _$$$config$area_linea.y,
+          y = _$$$config$area_linea3 === void 0 ? [0, 1] : _$$$config$area_linea3,
+          _$$$config$area_linea4 = _$$$config$area_linea.stops,
+          stops = _$$$config$area_linea4 === void 0 ? [[0, color, 1], [1, color, 0]] : _$$$config$area_linea4,
+          linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient-").concat(d.id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
+      stops.forEach(function (v) {
+        var stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
+        linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
+      });
+    });
+  },
+  updateAreaColor: function updateAreaColor(d) {
+    var $$ = this;
+    return $$.config.area_linearGradient ? "url(#".concat($$.datetimeId, "-areaGradient-").concat(d.id, ")") : $$.color(d);
+  },
   updateArea: function updateArea(durationForExit) {
     var $$ = this;
-    $$.mainArea = $$.main.selectAll(".".concat(config_classes.areas)).selectAll(".".concat(config_classes.area)).data($$.lineData.bind($$)), $$.mainArea.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainArea = $$.mainArea.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.color).style("opacity", function () {
+    $$.config.area_linearGradient && !$$.mainArea && $$.updateAreaGradient(), $$.mainArea = $$.main.selectAll(".".concat(config_classes.areas)).selectAll(".".concat(config_classes.area)).data($$.lineData.bind($$)), $$.mainArea.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainArea = $$.mainArea.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
       return $$.orgAreaOpacity = src_select(this).style("opacity"), "0";
     }).merge($$.mainArea), $$.mainArea.style("opacity", $$.orgAreaOpacity);
   },
   redrawArea: function redrawArea(drawArea, withTransition) {
     var $$ = this;
-    return [(withTransition ? this.mainArea.transition(getRandom()) : this.mainArea).attr("d", drawArea).style("fill", this.color).style("opacity", function (d) {
+    return [(withTransition ? $$.mainArea.transition(getRandom()) : $$.mainArea).attr("d", drawArea).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function (d) {
       return $$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity;
     })];
   },
@@ -24370,7 +24426,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190307100007
+ * @version 1.7.1-nightly-20190308100115
  */
 
 var bb = {
@@ -24381,7 +24437,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190307100007",
+  version: "1.7.1-nightly-20190308100115",
 
   /**
    * Generate chart
