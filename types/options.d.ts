@@ -109,7 +109,7 @@ export interface ChartOptions {
 		/**
 		 * Set the color value for each data point when mouse/touch onover event occurs.
 		 */
-		onover: string | object | ((d: DataItem) => string);
+		onover: string | {[key: string]: string} | ((d: DataItem) => string);
 	};
 
 	interaction?: {
@@ -203,6 +203,20 @@ export interface ChartOptions {
 	};
 
 	area?: {
+		/**
+		 * Set background area above the data chart line.
+		 */
+		above?: boolean;
+
+		/**
+		 * Set the linear gradient on area.<br><br>
+		 * Or customize by giving below object value:
+		 *  - x {Array}: `x1`, `x2` value
+		 *  - y {Array}: `y1`, `y2` value
+		 *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+		 */
+		linearGradient?: boolean | AreaLinearGradientOptions;
+
 		/**
 		 * Set if min or max value will be 0 on area chart.
 		 */
@@ -529,6 +543,30 @@ export interface ChartOptions {
 	 * Is to make chart element positioned over axis element.
 	 */
 	clipPath?: boolean;
+}
+
+export interface AreaLinearGradientOptions {
+	/**
+	 * x1, x2 attributes
+	 */
+	x?: [number, number];
+
+	/**
+	 * y1, y2 attributes
+	 */
+	y?: [number, number];
+
+	/**
+	 * The ramp of colors to use on a gradient
+	 */
+	stops?: [
+		/**
+		 * offset, stop-color, stop-opacity
+		 * - setting 'null' for stop-color, will set its original data color
+		 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
+		 */
+		[number, string | null | ((id: string) => string), number]
+	];
 }
 
 export interface RegionOptions {
