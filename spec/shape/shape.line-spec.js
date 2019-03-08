@@ -494,4 +494,89 @@ describe("SHAPE LINE", () => {
 			expect(chart.internal.config.line_classes).to.include('line-class-2');
 		});
 	});
+
+	describe("area linear gradient", () => {
+		before(() => {
+			args = {
+				data: {
+				columns: [
+						["data1", 230, 280, 251, 400, 150, 546, 158],
+						["data2", 230, 280, 251, 400, 150, 546, 158]
+					],
+					type: "area",
+				},
+				area: {
+					linearGradient: true
+				}
+			}
+		});
+
+		it("should generate liearGradient element", () => {
+			const internal = chart.internal;
+			const expected = {
+				x: [0, 0],
+				y: [0, 1],
+				offset: [0, 1],
+				opacity: [1, 0]
+			};
+
+			chart.data().forEach(v => {
+				const color = chart.color(v.id);
+				const id = `#${internal.datetimeId}-areaGradient-${v.id}`;
+				const gradient = chart.$.svg.select(id);
+
+				expect(gradient.empty()).to.be.false;
+				expect([+gradient.attr("x1"), +gradient.attr("x2")]).to.be.deep.equal(expected.x);
+				expect([+gradient.attr("y1"), +gradient.attr("y2")]).to.be.deep.equal(expected.y);
+
+				gradient.selectAll("stop").each(function(d, i) {
+					const stop = d3.select(this);
+
+					expect(+stop.attr("offset")).to.be.equal(expected.offset[i]);
+					expect(stop.attr("stop-color")).to.be.equal(color);
+					expect(+stop.attr("stop-opacity")).to.be.equal(expected.opacity[i]);
+				});
+
+				expect(chart.$.line.areas.filter(`.${CLASS.area}-${v.id}`).style("fill")).to.be.equal(`url("${id}")`);
+			});
+		});
+
+		it("set options: customzied linearGradient", () => {
+			args.area.linearGradient = {
+				x: [1, 0],
+				y: [0, 1],
+				stops: [
+					[0, id => id == "data1" ? "red" : "yellow", 1],
+					[0.3, "orange", 0.5],
+					[0.6, "green", 0.7],
+					[0.8, "purple", 0.7],
+					[1, null, 1]
+				]
+			};
+		});
+
+		it("should generate customized liearGradient element", () => {
+			chart.data().forEach(v => {
+				const id = `#${chart.internal.datetimeId}-areaGradient-${v.id}`;
+				const gradient = chart.$.svg.select(id);
+
+				expect(gradient.empty()).to.be.false;
+				expect([+gradient.attr("x1"), +gradient.attr("x2")]).to.be.deep.equal(args.area.linearGradient.x);
+				expect([+gradient.attr("y1"), +gradient.attr("y2")]).to.be.deep.equal(args.area.linearGradient.y);
+
+				const stops = args.area.linearGradient.stops;
+
+				gradient.selectAll("stop").each(function(d, i) {
+					const color = i === 0 ? stops[i][1](v.id) : stops[i][1];
+					const stop = d3.select(this);
+
+					expect(+stop.attr("offset")).to.be.equal(stops[i][0]);
+					expect(stop.attr("stop-color")).to.be.equal(color || chart.color(v.id));
+					expect(+stop.attr("stop-opacity")).to.be.equal(stops[i][2]);
+				});
+
+				expect(chart.$.line.areas.filter(`.${CLASS.area}-${v.id}`).style("fill")).to.be.equal(`url("${id}")`);
+			});
+		});
+	});
 });

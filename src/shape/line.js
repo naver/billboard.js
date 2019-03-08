@@ -344,8 +344,47 @@ extend(ChartInternal.prototype, {
 		return path;
 	},
 
+	updateAreaGradient() {
+		const $$ = this;
+
+		$$.data.targets.forEach(d => {
+			const color = $$.color(d);
+			const {
+				x = [0, 0],
+				y = [0, 1],
+				stops = [[0, color, 1], [1, color, 0]]
+			} = $$.config.area_linearGradient;
+
+			const linearGradient = $$.defs.append("linearGradient")
+				.attr("id", `${$$.datetimeId}-areaGradient-${d.id}`)
+				.attr("x1", x[0])
+				.attr("x2", x[1])
+				.attr("y1", y[0])
+				.attr("y2", y[1]);
+
+			stops.forEach(v => {
+				const stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
+
+				linearGradient.append("stop")
+					.attr("offset", v[0])
+					.attr("stop-color", stopColor || color)
+					.attr("stop-opacity", v[2]);
+			});
+		});
+	},
+
+	updateAreaColor(d) {
+		const $$ = this;
+
+		return $$.config.area_linearGradient ?
+			`url(#${$$.datetimeId}-areaGradient-${d.id})` :
+			$$.color(d);
+	},
+
 	updateArea(durationForExit) {
 		const $$ = this;
+
+		$$.config.area_linearGradient && !$$.mainArea && $$.updateAreaGradient();
 
 		$$.mainArea = $$.main.selectAll(`.${CLASS.areas}`)
 			.selectAll(`.${CLASS.area}`)
@@ -358,7 +397,7 @@ extend(ChartInternal.prototype, {
 
 		$$.mainArea = $$.mainArea.enter().append("path")
 			.attr("class", $$.classArea.bind($$))
-			.style("fill", $$.color)
+			.style("fill", $$.updateAreaColor.bind($$))
 			.style("opacity", function() {
 				$$.orgAreaOpacity = d3Select(this).style("opacity");
 				return "0";
@@ -373,9 +412,9 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return [
-			(withTransition ? this.mainArea.transition(getRandom()) : this.mainArea)
+			(withTransition ? $$.mainArea.transition(getRandom()) : $$.mainArea)
 				.attr("d", drawArea)
-				.style("fill", this.color)
+				.style("fill", $$.updateAreaColor.bind($$))
 				.style("opacity", d => ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity))
 		];
 	},
