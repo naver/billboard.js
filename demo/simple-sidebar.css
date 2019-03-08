@@ -232,3 +232,5 @@ div.row {
 #XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }
 
 #MultilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }
+
+#RotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }
