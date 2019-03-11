@@ -137,13 +137,6 @@ export default class ChartInternal {
 		$$.focusedTargetIds = [];
 		$$.defocusedTargetIds = [];
 
-		$$.xOrient = isRotated ? "left" : "bottom";
-		$$.yOrient = isRotated ?
-			(config.axis_y_inner ? "top" : "bottom") : (config.axis_y_inner ? "right" : "left");
-		$$.y2Orient = isRotated ?
-			(config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
-		$$.subXOrient = isRotated ? "left" : "bottom";
-
 		$$.isLegendRight = config.legend_position === "right";
 		$$.isLegendInset = config.legend_position === "inset";
 

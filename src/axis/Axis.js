@@ -23,6 +23,7 @@ const getAxisClassName = id => `${CLASS.axis} ${CLASS[`axis${capitalize(id)}`]}`
 export default class Axis {
 	constructor(owner) {
 		this.owner = owner;
+		this.setOrient();
 	}
 
 	init() {
@@ -65,6 +66,23 @@ export default class Axis {
 
 			this.generateAxes(v);
 		});
+	}
+
+	/**
+	 * Set axis orient according option value
+	 * @private
+	 */
+	setOrient() {
+		const $$ = this.owner;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
+
+		$$.xOrient = isRotated ? "left" : "bottom";
+		$$.yOrient = isRotated ?
+			(config.axis_y_inner ? "top" : "bottom") : (config.axis_y_inner ? "right" : "left");
+		$$.y2Orient = isRotated ?
+			(config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
+		$$.subXOrient = isRotated ? "left" : "bottom";
 	}
 
 	/**
