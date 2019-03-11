@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190308100115
+ * @version 1.7.1-nightly-20190311100244
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -9416,7 +9416,7 @@ var Axis_Axis =
 /*#__PURE__*/
 function () {
   function Axis(owner) {
-    classCallCheck_default()(this, Axis), this.owner = owner;
+    classCallCheck_default()(this, Axis), this.owner = owner, this.setOrient();
   }
 
   return createClass_default()(Axis, [{
@@ -9437,6 +9437,19 @@ function () {
           return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
         }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this)), _this.generateAxes(v);
       });
+    }
+    /**
+     * Set axis orient according option value
+     * @private
+     */
+
+  }, {
+    key: "setOrient",
+    value: function setOrient() {
+      var $$ = this.owner,
+          config = $$.config,
+          isRotated = config.axis_rotated;
+      $$.xOrient = isRotated ? "left" : "bottom", $$.yOrient = isRotated ? config.axis_y_inner ? "top" : "bottom" : config.axis_y_inner ? "right" : "left", $$.y2Orient = isRotated ? config.axis_y2_inner ? "bottom" : "top" : config.axis_y2_inner ? "left" : "right", $$.subXOrient = isRotated ? "left" : "bottom";
     }
     /**
      * Generate axes
@@ -9944,7 +9957,7 @@ function () {
         var isZoomed = isDragZoom ? _this.zoomScale : _this.zoomScale && $$.x.orgDomain().toString() !== _this.zoomScale.domain().toString(),
             specifier = d.getMilliseconds() && ".%L" || d.getSeconds() && ".:%S" || d.getMinutes() && "%I:%M" || d.getHours() && "%I %p" || d.getDate() !== 1 && "%b %d" || isZoomed && d.getDate() === 1 && "%b\'%y" || d.getMonth() && "%-m/%-d" || "%Y";
         return $$.axisTimeFormat(specifier)(d);
-      }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.xOrient = isRotated ? "left" : "bottom", $$.yOrient = isRotated ? config.axis_y_inner ? "top" : "bottom" : config.axis_y_inner ? "right" : "left", $$.y2Orient = isRotated ? config.axis_y2_inner ? "bottom" : "top" : config.axis_y2_inner ? "left" : "right", $$.subXOrient = isRotated ? "left" : "bottom", $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
+      }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
         x: {
           size: 0,
           domain: ""
@@ -24099,7 +24112,7 @@ util_extend(Chart_Chart.prototype, {
   flush: function flush(soft, isFromResize) {
     var $$ = this.internal; // reset possible zoom scale
 
-    isFromResize && $$.brush && $$.brush.updateResize(), $$.zoomScale = null, soft ? $$.redraw({
+    isFromResize ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.zoomScale = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -24153,7 +24166,7 @@ util_extend(Chart_Chart.prototype, {
     var res,
         $$ = this.internal,
         key = name && name.replace(/\./g, "_");
-    return key in $$.config && (isDefined(value) ? ($$.config[key] = value, res = value, redraw && this.flush(!0)) : res = $$.config[key]), res;
+    return key in $$.config && (isDefined(value) ? ($$.config[key] = value, res = value, redraw && this.flush()) : res = $$.config[key]), res;
   }
 });
 // CONCATENATED MODULE: ./src/api/api.tooltip.js
@@ -24426,7 +24439,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190308100115
+ * @version 1.7.1-nightly-20190311100244
  */
 
 var bb = {
@@ -24437,7 +24450,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190308100115",
+  version: "1.7.1-nightly-20190311100244",
 
   /**
    * Generate chart
