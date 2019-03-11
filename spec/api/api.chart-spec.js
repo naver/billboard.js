@@ -193,5 +193,57 @@ describe("API chart", () => {
 			expect(max).to.be.equal(expected);
 			expect(+chart.$.arc.select(`.${CLASS.chartArcsGaugeMax}`).text()).to.be.equal(expected);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+							["data1", 30, 20, 50, 40, 60]
+					]
+				},
+				axis: {
+					y: {
+						tick: {
+							count: 3
+						}
+					}
+				}
+			};
+		});
+
+		it("check for the axis config update", () => {
+			const axisYTick = chart.$.main.selectAll(`.${CLASS.axisY} .tick`);
+			const expected = [];
+			
+			// axis y tick is outer
+			axisYTick.each(function() {
+				const line = this.querySelector("line");
+				const text = this.querySelector("text");
+				const tspan = text.querySelector("tspan");
+
+				expected.push({
+					line: +line.getAttribute("x2"),
+					text: +text.getAttribute("x"),
+					tspan: +tspan.getAttribute("x")
+				});
+
+				expect(text.style.textAnchor).to.be.equal("end");
+			});
+
+			// when
+			chart.config("axis.y.inner", true, true);
+
+			// axis y tick is inner
+			axisYTick.each(function(d, i) {
+				const line = this.querySelector("line");
+				const text = this.querySelector("text");
+				const tspan = text.querySelector("tspan");
+
+				expect(+line.getAttribute("x2")).to.be.equal(Math.abs(expected[i].line));
+				expect(+text.getAttribute("x")).to.be.equal(Math.abs(expected[i].text));
+				expect(text.style.textAnchor).to.be.equal("start");
+				expect(+tspan.getAttribute("x")).to.be.equal(Math.abs(expected[i].tspan));
+			});
+		});
 	});
 });

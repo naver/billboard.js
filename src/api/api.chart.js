@@ -48,6 +48,9 @@ extend(Chart.prototype, {
 		// reset possible zoom scale
 		if (isFromResize) {
 			$$.brush && $$.brush.updateResize();
+		} else {
+			// re-update config info
+			$$.axis && $$.axis.setOrient();
 		}
 
 		$$.zoomScale = null;
@@ -128,7 +131,7 @@ extend(Chart.prototype, {
 				$$.config[key] = value;
 				res = value;
 
-				redraw && this.flush(true);
+				redraw && this.flush();
 			} else {
 				res = $$.config[key];
 			}
