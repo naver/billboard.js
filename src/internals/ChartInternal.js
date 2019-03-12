@@ -52,28 +52,10 @@ export default class ChartInternal {
 
 	init() {
 		const $$ = this;
-		const config = $$.config;
-		let convertedData;
 
 		$$.initParams();
 
-		if (config.data_url) {
-			$$.convertUrlToData(
-				config.data_url,
-				config.data_mimeType,
-				config.data_headers,
-				config.data_keys,
-				$$.initWithData
-			);
-		} else if (config.data_json) {
-			convertedData = $$.convertJsonToData(config.data_json, config.data_keys);
-		} else if (config.data_rows) {
-			convertedData = $$.convertRowsToData(config.data_rows);
-		} else if (config.data_columns) {
-			convertedData = $$.convertColumnsToData(config.data_columns);
-		} else {
-			throw Error("url or json or rows or columns is required.");
-		}
+		const convertedData = $$.convertData($$.config, $$.initWithData);
 
 		convertedData && $$.initWithData(convertedData);
 	}
@@ -85,19 +67,7 @@ export default class ChartInternal {
 
 		// datetime to be used for uniqueness
 		$$.datetimeId = `bb-${+new Date()}`;
-
-		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
-		$$.clipId = `${$$.datetimeId}-clip`;
-
-		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
-		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
-		$$.clipIdForGrid = `${$$.clipId}-grid`;
-
-		// Define 'clip-path' attribute values
-		$$.clipPath = $$.getClipPath($$.clipId);
-		$$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis);
-		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
-		$$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid);
+		$$.initClip();
 
 		$$.dragStart = null;
 		$$.dragging = false;
@@ -173,11 +143,7 @@ export default class ChartInternal {
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
 
 		$$.axis = new Axis($$);
-
-		if (config.zoom_enabled) {
-			$$.initZoom();
-			$$.initZoomBehaviour();
-		}
+		config.zoom_enabled && $$.initZoom();
 
 		const bindto = {
 			element: config.bindto,

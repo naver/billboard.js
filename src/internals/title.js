@@ -4,6 +4,7 @@
  */
 import ChartInternal from "./ChartInternal";
 import {extend, isNumber} from "./util";
+import CLASS from "../config/classes";
 
 /**
  * Get the text position
@@ -41,7 +42,7 @@ extend(ChartInternal.prototype, {
 			const text = $$.title
 				.append("text")
 				.style("text-anchor", getTextPos($$.config.title_position))
-				.attr("class", $$.CLASS.title);
+				.attr("class", CLASS.title);
 
 			$$.config.title_text.split("\n").forEach((v, i) => {
 				text.append("tspan")
@@ -82,7 +83,7 @@ extend(ChartInternal.prototype, {
 		let x;
 
 		if (/(right|center)/.test(position)) {
-			x = $$.currentWidth - $$.getTextRect($$.title, $$.CLASS.title).width;
+			x = $$.currentWidth - $$.getTextRect($$.title, CLASS.title).width;
 
 			if (position.indexOf("right") >= 0) {
 				x -= (config.title_padding.right || 0);
@@ -105,7 +106,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return ($$.config.title_padding.top || 0) +
-			$$.getTextRect($$.title, $$.CLASS.title).height;
+			$$.getTextRect($$.title, CLASS.title).height;
 	},
 
 	/**

@@ -146,10 +146,10 @@ extend(ChartInternal.prototype, {
 		return notEmpty(threshold) ? function(value) {
 			let color = colors[colors.length - 1];
 
-			for (let i = 0, v; i < values.length; i++) {
+			for (let i = 0, v, val; (val = values[i]); i++) {
 				v = asValue ? value : (value * 100 / max);
 
-				if (v < values[i]) {
+				if (v < val) {
 					color = colors[i];
 					break;
 				}

@@ -6,10 +6,7 @@ import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {extend} from "./util";
 
-
 extend(ChartInternal.prototype, {
-	CLASS,
-
 	generateClass(prefix, targetId) {
 		return ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
 	},

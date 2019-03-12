@@ -97,7 +97,6 @@ extend(zoom, {
 
 		if (!$$.zoom) {
 			$$.initZoom();
-			$$.initZoomBehaviour();
 			$$.bindZoomEvent();
 		} else if (enabled === false) {
 			$$.bindZoomEvent(false);
