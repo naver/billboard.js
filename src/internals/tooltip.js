@@ -114,7 +114,7 @@ extend(ChartInternal.prototype, {
 			if (!text) {
 				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
 
-				text = `<table class="${$$.CLASS.tooltip}">${
+				text = `<table class="${CLASS.tooltip}">${
 					isValue(title) ? `<tr><th colspan="2">${title}</th></tr>` : ""
 				}`;
 			}
@@ -139,7 +139,7 @@ extend(ChartInternal.prototype, {
 				const name = sanitise(nameFormat(row.name, ...param));
 				const bgcolor = getBgColor(row);
 
-				text += `<tr class="${$$.CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}"><td class="name">`;
+				text += `<tr class="${CLASS.tooltipName}${$$.getTargetSelectorSuffix(row.id)}"><td class="name">`;
 
 				text += $$.patterns ?
 					`<svg><rect style="fill:${bgcolor}" width="10" height="10"></rect></svg>` :

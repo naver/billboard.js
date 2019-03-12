@@ -12,6 +12,47 @@ import ChartInternal from "../internals/ChartInternal";
 import {isUndefined, isDefined, isObject, isValue, notEmpty, extend, isArray, capitalize} from "../internals/util";
 
 extend(ChartInternal.prototype, {
+	/**
+	 * Convert data according its type
+	 * @param {Object} args data object
+	 * @param {Function} [callback] callback for url(XHR) type loading
+	 * @return {Object}
+	 * @private
+	 */
+	convertData(args, callback) {
+		const $$ = this;
+		let data;
+
+		if (args.bindto) {
+			data = {};
+
+			["url", "mimeType", "headers", "keys", "json", "keys", "rows", "columns"]
+				.forEach(v => {
+					const key = `data_${v}`;
+
+					if (key in args) {
+						data[v] = args[key];
+					}
+				});
+		} else {
+			data = args;
+		}
+
+		if (data.url && callback) {
+			$$.convertUrlToData(data.url, data.mimeType, data.headers, data.keys, callback);
+		} else if (data.json) {
+			data = $$.convertJsonToData(data.json, data.keys);
+		} else if (data.rows) {
+			data = $$.convertRowsToData(data.rows);
+		} else if (data.columns) {
+			data = $$.convertColumnsToData(data.columns);
+		} else if (args.bindto) {
+			throw Error("url or json or rows or columns is required.");
+		}
+
+		return data;
+	},
+
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
 		const req = new XMLHttpRequest();
 

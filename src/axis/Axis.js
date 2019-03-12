@@ -76,12 +76,12 @@ export default class Axis {
 		const $$ = this.owner;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
+		const yInner = config.axis_y_inner;
+		const y2Inner = config.axis_y2_inner;
 
 		$$.xOrient = isRotated ? "left" : "bottom";
-		$$.yOrient = isRotated ?
-			(config.axis_y_inner ? "top" : "bottom") : (config.axis_y_inner ? "right" : "left");
-		$$.y2Orient = isRotated ?
-			(config.axis_y2_inner ? "bottom" : "top") : (config.axis_y2_inner ? "left" : "right");
+		$$.yOrient = isRotated ? (yInner ? "top" : "bottom") : (yInner ? "right" : "left");
+		$$.y2Orient = isRotated ? (y2Inner ? "bottom" : "top") : (y2Inner ? "left" : "right");
 		$$.subXOrient = isRotated ? "left" : "bottom";
 	}
 

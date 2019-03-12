@@ -193,11 +193,12 @@ extend(ChartInternal.prototype, {
 
 	updateXs() {
 		const $$ = this;
+		const targets = $$.data.targets;
 
-		if ($$.data.targets.length) {
+		if (targets.length) {
 			$$.xs = [];
 
-			$$.data.targets[0].values.forEach(v => {
+			targets[0].values.forEach(v => {
 				$$.xs[v.index] = v.x;
 			});
 		}

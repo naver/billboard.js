@@ -22,7 +22,9 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.zoomScale = null;
+
 		$$.generateZoom();
+		$$.initZoomBehaviour();
 	},
 
 	/**
