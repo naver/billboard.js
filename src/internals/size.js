@@ -59,8 +59,7 @@ extend(ChartInternal.prototype, {
 	getCurrentPaddingBottom() {
 		const $$ = this;
 		const config = $$.config;
-		const isRotated = config.axis_rotated;
-		const axisId = isRotated ? "y" : "x";
+		const axisId = config.axis_rotated ? "y" : "x";
 		const axesLen = config[`axis_${axisId}_axes`].length;
 		const padding = isValue(config.padding_bottom) ?
 			config.padding_bottom : 0;

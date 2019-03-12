@@ -6,6 +6,23 @@ import ChartInternal from "./ChartInternal";
 import {extend} from "./util";
 
 extend(ChartInternal.prototype, {
+	initClip() {
+		const $$ = this;
+
+		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
+		$$.clipId = `${$$.datetimeId}-clip`;
+
+		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
+		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
+		$$.clipIdForGrid = `${$$.clipId}-grid`;
+
+		// Define 'clip-path' attribute values
+		$$.clipPath = $$.getClipPath($$.clipId);
+		$$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis);
+		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
+		$$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid);
+	},
+
 	getClipPath(id) {
 		const $$ = this;
 		const config = $$.config;

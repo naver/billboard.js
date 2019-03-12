@@ -71,12 +71,8 @@ extend(Chart.prototype, {
 		let diff;
 		let to;
 
-		if (args.json) {
-			data = $$.convertJsonToData(args.json, args.keys);
-		} else if (args.rows) {
-			data = $$.convertRowsToData(args.rows);
-		} else if (args.columns) {
-			data = $$.convertColumnsToData(args.columns);
+		if (args.json || args.rows || args.columns) {
+			data = $$.convertData(args);
 		} else {
 			return;
 		}

@@ -67,16 +67,8 @@ extend(ChartInternal.prototype, {
 
 		if (args.data) {
 			data = args.data;
-		} else if (args.url) {
-			$$.convertUrlToData(args.url, args.mimeType, args.headers, args.keys, d => {
-				$$.load($$.convertDataToTargets(d), args);
-			});
-		} else if (args.json) {
-			data = $$.convertJsonToData(args.json, args.keys);
-		} else if (args.rows) {
-			data = $$.convertRowsToData(args.rows);
-		} else if (args.columns) {
-			data = $$.convertColumnsToData(args.columns);
+		} else {
+			data = $$.convertData(args, d => $$.load($$.convertDataToTargets(d), args));
 		}
 
 		$$.load(data ? $$.convertDataToTargets(data) : null, args);
