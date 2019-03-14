@@ -66,7 +66,6 @@ extend(ChartInternal.prototype, {
 		}
 
 		// Update size and scale
-		$$.updateSizes();
 		$$.updateScales();
 		$$.updateSvgSize();
 
