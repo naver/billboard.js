@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190312100253
+ * @version 1.7.1-nightly-20190314100305
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -10003,7 +10003,7 @@ function () {
 
       // data.onmin/max callback
       if ($$.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.axis_x_extent && $$.brush.scale($$.getDefaultExtent()), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
+      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
         withTransition: !1,
         withTransform: !0,
         withUpdateXDomain: !0,
@@ -10075,9 +10075,15 @@ function () {
         });
       });
     }
+    /**
+     * Update size values
+     * @param {Boolean} isInit If is called at initialization
+     * @private
+     */
+
   }, {
     key: "updateSizes",
-    value: function updateSizes() {
+    value: function updateSizes(isInit) {
       var $$ = this,
           config = $$.config,
           isRotated = config.axis_rotated,
@@ -10090,7 +10096,7 @@ function () {
           xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
           subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
           subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
-      $$.currentWidth = $$.getCurrentWidth(), $$.currentHeight = $$.getCurrentHeight(), $$.margin = isRotated ? {
+      isInit || $$.setContainerSize(), $$.margin = isRotated ? {
         top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
         right: hasArc ? 0 : $$.getCurrentPaddingRight(),
         bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
@@ -10176,13 +10182,14 @@ function () {
           main = $$.main,
           config = $$.config,
           targetsToShow = $$.filterTargetsToShow($$.data.targets),
+          initializing = options.initializing,
           flow = options.flow,
           wth = $$.getWithOption(options),
           duration = wth.Transition ? config.transition_duration : 0,
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      options.initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
     }
     /**
      * Redraw axis
@@ -10350,7 +10357,7 @@ function () {
           options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
           $$ = this,
           config = $$.config;
-      options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), $$.updateSizes(), options.withLegend && config.legend_show || (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
+      options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), options.withLegend && config.legend_show || (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
     }
   }, {
     key: "redrawWithoutRescale",
@@ -10465,19 +10472,18 @@ function () {
     key: "updateSvgSize",
     value: function updateSvgSize() {
       var $$ = this,
-          isRotated = $$.config.axis_rotated,
           brush = $$.svg.select(".".concat(config_classes.brush, " .overlay")),
           brushSize = {
         width: 0,
         height: 0
       };
-      brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), $$.svg.attr("width", $$.currentWidth).attr("height", $$.currentHeight), $$.svg.selectAll(["#".concat($$.clipId), "#".concat($$.clipIdForGrid)]).select("rect").attr("width", $$.width).attr("height", $$.height), $$.svg.select("#".concat($$.clipIdForXAxis)).select("rect").attr("x", $$.getXAxisClipX.bind($$)).attr("y", $$.getXAxisClipY.bind($$)).attr("width", $$.getXAxisClipWidth.bind($$)).attr("height", $$.getXAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForYAxis)).select("rect").attr("x", $$.getYAxisClipX.bind($$)).attr("y", $$.getYAxisClipY.bind($$)).attr("width", $$.getYAxisClipWidth.bind($$)).attr("height", $$.getYAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForSubchart)).select("rect").attr("width", $$.width).attr("height", brushSize.height), $$.svg.select(".".concat(config_classes.zoomRect)).attr("width", $$.width).attr("height", $$.height), $$.brush && $$.brush.scale($$.subX, brushSize[isRotated ? "width" : "height"]);
+      brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), $$.svg.attr("width", $$.currentWidth).attr("height", $$.currentHeight), $$.svg.selectAll(["#".concat($$.clipId), "#".concat($$.clipIdForGrid)]).select("rect").attr("width", $$.width).attr("height", $$.height), $$.svg.select("#".concat($$.clipIdForXAxis)).select("rect").attr("x", $$.getXAxisClipX.bind($$)).attr("y", $$.getXAxisClipY.bind($$)).attr("width", $$.getXAxisClipWidth.bind($$)).attr("height", $$.getXAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForYAxis)).select("rect").attr("x", $$.getYAxisClipX.bind($$)).attr("y", $$.getYAxisClipY.bind($$)).attr("width", $$.getYAxisClipWidth.bind($$)).attr("height", $$.getYAxisClipHeight.bind($$)), $$.svg.select("#".concat($$.clipIdForSubchart)).select("rect").attr("width", $$.width).attr("height", brushSize.height), $$.svg.select(".".concat(config_classes.zoomRect)).attr("width", $$.width).attr("height", $$.height);
     }
   }, {
     key: "updateDimension",
     value: function updateDimension(withoutAxis) {
       var $$ = this;
-      withoutAxis || ($$.xAxis && $$.config.axis_rotated ? ($$.xAxis.create($$.axes.x), $$.subXAxis.create($$.axes.subx)) : ($$.yAxis && $$.yAxis.create($$.axes.y), $$.y2Axis && $$.y2Axis.create($$.axes.y2))), $$.updateSizes(), $$.updateScales(withoutAxis), $$.updateSvgSize(), $$.transformAll(!1);
+      withoutAxis || ($$.xAxis && $$.config.axis_rotated ? ($$.xAxis.create($$.axes.x), $$.subXAxis.create($$.axes.subx)) : ($$.yAxis && $$.yAxis.create($$.axes.y), $$.y2Axis && $$.y2Axis.create($$.axes.y2))), $$.updateScales(withoutAxis), $$.updateSvgSize(), $$.transformAll(!1);
     }
   }, {
     key: "bindResize",
@@ -12469,16 +12475,27 @@ var Options_Options = function Options() {
      * Set default extent for subchart and zoom. This can be an array or function that returns an array.
      * @name axis․x․extent
      * @memberof Options
-     * @type {Array}
+     * @type {Array|Function}
      * @default undefined
      * @example
      * axis: {
      *   x: {
-     *     // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
-     *     // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
-     *     extent: [
-     *         [0, 0], [200, 60]
-     *     ]
+     *     // extent range as a pixel value
+     *     extent: [0, 200],
+     *
+     *     // when axis is 'timeseries', parsable datetime string
+     *     extent: ["2019-03-01", "2019-03-05"],
+     *
+     *     // return extent value
+     *     extent: function(domain, scale) {
+     *    	 var extent = domain.map(function(v) {
+     *     	    return scale(v);
+     *     	 });
+     *
+     *   	 // it should return a format of array
+     *   	 // ex) [0, 584]
+     *     	 return extent;
+     *     }
      *   }
      * }
      */
@@ -15711,6 +15728,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 util_extend(ChartInternal_ChartInternal.prototype, {
+  /**
+   * Update container size
+   * @private
+   */
+  setContainerSize: function setContainerSize() {
+    var $$ = this;
+    $$.currentWidth = $$.getCurrentWidth(), $$.currentHeight = $$.getCurrentHeight();
+  },
   getCurrentWidth: function getCurrentWidth() {
     var $$ = this;
     return $$.config.size_width || $$.getParentWidth();
@@ -15775,14 +15800,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getParentRectValue: function getParentRectValue(key) {
-    for (var v, offsetName = "offset".concat(capitalize(key)), parent = this.selectChart.node(); !v && parent && parent.tagName !== "BODY";) {
-      try {
-        v = parent.getBoundingClientRect()[key];
-      } catch (e) {
-        offsetName in parent && (v = parent[offsetName]);
-      }
+    var v,
+        offsetName = "offset".concat(capitalize(key)),
+        container = this.selectChart.node();
 
-      parent = parent.parentNode;
+    try {
+      v = container.getBoundingClientRect()[key];
+    } catch (e) {
+      offsetName in container && (v = container[offsetName]);
     }
 
     if (key === "width") {
@@ -20297,7 +20322,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     };
     // Update size and scale
     // Update g positions
-    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateSizes(), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
+    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
   },
 
   /**
@@ -21167,6 +21192,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         timeout,
         brushHandler = function () {
       $$.redrawForBrush();
+    },
+        getBrushSize = function () {
+      var brush = $$.svg.select(".".concat(config_classes.brush, " .overlay")),
+          brushSize = {
+        width: 0,
+        height: 0
+      };
+      return brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), brushSize[isRotated ? "width" : "height"];
     };
 
     // set the brush extent
@@ -21187,12 +21220,15 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       return extent[1].filter(function (v) {
         return isNaN(v);
       }).length === 0 && $$.context && $$.context.select(".".concat(config_classes.brush)).call(this), this;
-    }, $$.brush.scale = function (scale, height) {
-      var extent = [[0, 0]];
+    }, $$.brush.scale = function (scale) {
+      var h = config.subchart_size_height || getBrushSize(),
+          extent = $$.getExtent();
       // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
       // when extent updates, brush selection also be re-applied
       // https://github.com/d3/d3/issues/2918
-      scale.range ? extent.push([scale.range()[1], height || config.subchart_size_height]) : scale.constructor === Array && extent.push(scale), isRotated && extent[1].reverse(), this.extent(config.axis_x_extent || extent), this.update();
+      !extent && scale.range ? extent = [[0, 0], [scale.range()[1], h]] : isArray(extent) && (extent = extent.map(function (v, i) {
+        return [v, i > 0 ? h : i];
+      })), isRotated && extent[1].reverse(), this.extent(extent), this.update();
     }, $$.brush.getSelection = function () {
       return $$.context ? $$.context.select(".".concat(config_classes.brush)) : src_select([]);
     };
@@ -21362,15 +21398,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
-   * Get default extent
+   * Get extent value
    * @private
    * @returns {Array} default extent
    */
-  getDefaultExtent: function getDefaultExtent() {
+  getExtent: function getExtent() {
     var $$ = this,
-        config = $$.config,
-        extent = isFunction(config.axis_x_extent) ? config.axis_x_extent($$.getXDomain($$.data.targets)) : config.axis_x_extent;
-    return $$.isTimeSeries() && (extent = [$$.parseDate(extent[0]), $$.parseDate(extent[1])]), extent;
+        extent = $$.config.axis_x_extent;
+    return extent && (isFunction(extent) ? extent = extent($$.getXDomain($$.data.targets), $$.subX) : $$.isTimeSeries() && extent.every(isNaN) && (extent = extent.map(function (v) {
+      return $$.subX($$.parseDate(v));
+    }))), extent;
   }
 });
 // CONCATENATED MODULE: ./node_modules/d3-zoom/src/constant.js
@@ -23039,7 +23076,7 @@ util_extend(Chart_Chart.prototype, {
     // Redraw with new targets
     isDefined(args.to) ? (length = 0, to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to, baseTarget.values.forEach(function (v) {
       v.x < to && length++;
-    })) : isDefined(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && $$.isTimeSeries() && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)], $$.updateXDomain(null, !0, !0, !1, domain)) : (diff = $$.isTimeSeries() ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x], $$.updateXDomain(null, !0, !0, !1, domain)), $$.updateTargets($$.data.targets), $$.redraw({
+    })) : isDefined(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && $$.isTimeSeries() && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)]) : (diff = $$.isTimeSeries() ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x]), domain && $$.updateXDomain(null, !0, !0, !1, domain), $$.updateTargets($$.data.targets), $$.redraw({
       flow: {
         index: baseValue.index,
         length: length,
@@ -24459,7 +24496,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190312100253
+ * @version 1.7.1-nightly-20190314100305
  */
 
 var bb = {
@@ -24470,7 +24507,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190312100253",
+  version: "1.7.1-nightly-20190314100305",
 
   /**
    * Generate chart
