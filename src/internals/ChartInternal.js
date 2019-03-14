@@ -295,10 +295,6 @@ export default class ChartInternal {
 			.style("opacity", "0")
 			.on("dblclick.zoom", null);
 
-		// Set default extent if defined
-		config.axis_x_extent &&
-			$$.brush.scale($$.getDefaultExtent());
-
 		// Add Axis here, when clipPath is 'true'
 		config.clipPath && $$.axis.init();
 
@@ -1095,7 +1091,6 @@ export default class ChartInternal {
 
 	updateSvgSize() {
 		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
 		const brush = $$.svg.select(`.${CLASS.brush} .overlay`);
 		const brushSize = {width: 0, height: 0};
 
@@ -1135,8 +1130,6 @@ export default class ChartInternal {
 		$$.svg.select(`.${CLASS.zoomRect}`)
 			.attr("width", $$.width)
 			.attr("height", $$.height);
-
-		$$.brush && $$.brush.scale($$.subX, brushSize[isRotated ? "width" : "height"]);
 	}
 
 	updateDimension(withoutAxis) {

@@ -1815,16 +1815,27 @@ export default class Options {
 			 * Set default extent for subchart and zoom. This can be an array or function that returns an array.
 			 * @name axis․x․extent
 			 * @memberof Options
-			 * @type {Array}
+			 * @type {Array|Function}
 			 * @default undefined
 			 * @example
 			 * axis: {
 			 *   x: {
-			 *     // [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
-			 *     // https://github.com/d3/d3-brush/blob/master/src/brush.js#L521
-			 *     extent: [
-			 *         [0, 0], [200, 60]
-			 *     ]
+			 *     // extent range as a pixel value
+			 *     extent: [0, 200],
+			 *
+			 *     // when axis is 'timeseries', parsable datetime string
+			 *     extent: ["2019-03-01", "2019-03-05"],
+			 *
+			 *     // return extent value
+			 *     extent: function(domain, scale) {
+			 *    	 var extent = domain.map(function(v) {
+			 *     	    return scale(v);
+			 *     	 });
+			 *
+			 *   	 // it should return a format of array
+			 *   	 // ex) [0, 584]
+			 *     	 return extent;
+			 *     }
 			 *   }
 			 * }
 			 */

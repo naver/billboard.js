@@ -13,7 +13,7 @@ import {
 } from "d3-brush";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, brushEmpty, capitalize, isFunction, getRandom} from "../internals/util";
+import {extend, brushEmpty, capitalize, isArray, isFunction, getRandom} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -31,6 +31,17 @@ extend(ChartInternal.prototype, {
 		// set "brush" event
 		const brushHandler = () => {
 			$$.redrawForBrush();
+		};
+		const getBrushSize = () => {
+			const brush = $$.svg.select(`.${CLASS.brush} .overlay`);
+			const brushSize = {width: 0, height: 0};
+
+			if (brush.size()) {
+				brushSize.width = +brush.attr("width");
+				brushSize.height = +brush.attr("height");
+			}
+
+			return brushSize[isRotated ? "width" : "height"];
 		};
 
 		let lastDomain;
@@ -67,21 +78,19 @@ extend(ChartInternal.prototype, {
 		};
 
 		// set the brush extent
-		$$.brush.scale = function(scale, height) {
-			const extent = [[0, 0]];
+		$$.brush.scale = function(scale) {
+			const h = config.subchart_size_height || getBrushSize();
+			let extent = $$.getExtent();
 
-			if (scale.range) {
-				extent.push([
-					scale.range()[1],
-					height || config.subchart_size_height
-				]);
-			} else if (scale.constructor === Array) {
-				extent.push(scale);
+			if (!extent && scale.range) {
+				extent = [[0, 0], [scale.range()[1], h]];
+			} else if (isArray(extent)) {
+				extent = extent.map((v, i) => [v, i > 0 ? h : i]);
 			}
 
 			// [[x0, y0], [x1, y1]], where [x0, y0] is the top-left corner and [x1, y1] is the bottom-right corner
 			isRotated && extent[1].reverse();
-			this.extent(config.axis_x_extent || extent);
+			this.extent(extent);
 
 			// when extent updates, brush selection also be re-applied
 			// https://github.com/d3/d3/issues/2918
@@ -411,18 +420,20 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
-	 * Get default extent
+	 * Get extent value
 	 * @private
 	 * @returns {Array} default extent
 	 */
-	getDefaultExtent() {
+	getExtent() {
 		const $$ = this;
-		const config = $$.config;
-		let extent = isFunction(config.axis_x_extent) ?
-			config.axis_x_extent($$.getXDomain($$.data.targets)) : config.axis_x_extent;
+		let extent = $$.config.axis_x_extent;
 
-		if ($$.isTimeSeries()) {
-			extent = [$$.parseDate(extent[0]), $$.parseDate(extent[1])];
+		if (extent) {
+			if (isFunction(extent)) {
+				extent = extent($$.getXDomain($$.data.targets), $$.subX);
+			} else if ($$.isTimeSeries() && extent.every(isNaN)) {
+				extent = extent.map(v => $$.subX($$.parseDate(v)));
+			}
 		}
 
 		return extent;

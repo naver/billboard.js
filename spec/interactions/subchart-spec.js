@@ -16,6 +16,15 @@ describe("SUBCHART", () => {
 		chart = util.generate(args);
 	});
 
+	// do mouse drag selection
+	const doDrag = (from = {clientX: 100, clientY: 100}, to = {clientX: 200, clientY: 200}) => {
+		const overlay = chart.$.svg.select(".overlay").node();
+
+		util.fireEvent(overlay, "mousedown", from, chart);
+		util.fireEvent(overlay, "mousemove", to, chart);
+		util.fireEvent(overlay, "mouseup", from, chart);
+	};
+
 	describe("generate subchart", () => {
 		before(() => {
 			args = {
@@ -150,24 +159,10 @@ describe("SUBCHART", () => {
 
 		const checkSelection = done => {
 			const selection = chart.$.svg.select(".selection");
-			const overlay = chart.$.svg.select(".overlay").node();
 			const baseWidth = 100;
 
-			// do mouse selection
-			util.fireEvent(overlay, "mousedown", {
-				clientX: 100,
-				clientY: 100
-			}, chart);
-
-			util.fireEvent(overlay, "mousemove", {
-				clientX: 200,
-				clientY: 200
-			}, chart);
-
-			util.fireEvent(overlay, "mouseup", {
-				clientX: 200,
-				clientY: 200
-			}, chart);
+			// mouse drag selection on subchart
+			doDrag();
 
 			expect(+selection.attr("width")).to.be.equal(baseWidth);
 
@@ -194,5 +189,72 @@ describe("SUBCHART", () => {
 		});
 
 		it("should be select subchart area for category type x axis", checkSelection);
+	});
+
+	describe("the extent", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						['x', '2019-01-01', '2019-01-02', '2019-01-03', '2019-01-04', '2019-01-05'],
+						["data1", 10, 5, 3, 8, 7]
+					]
+				},
+				subchart: {
+					show: true
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d"
+						},
+						extent: [0, 100]
+					}
+				}
+			};
+		});
+
+		it("should be limiting selection area", () => {
+			const selection = chart.$.svg.select(".selection");
+
+			// mouse drag selection on subchart
+			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+
+			// selection shouldn't over pass
+			expect(Math.floor(selection.attr("width"))).to.be.equal(args.axis.x.extent[1]);
+		});
+
+		it("set options axis.x.extent=datetime", () => {
+			args.axis.x.extent = ["2019-01-01", "2019-01-02"];
+		});
+
+		it("should be limiting selection area for datetime extent", () => {
+			const selection = chart.$.svg.select(".selection");			
+			const range = args.axis.x.extent
+				.map(v => chart.internal.subX(new Date(v)))
+				.reduce((a, c) => Math.abs(a - c));
+
+			// mouse drag selection on subchart
+			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+
+			// selection shouldn't over pass
+			expect(+selection.attr("width")).to.be.closeTo(range, 10);
+		});
+
+		it("set options axis.x.extent=[0, 100]", () => {
+			args.axis.x.extent = (domain, scale) => [0, 100];
+		});
+
+		it("should be limiting selection area", () => {
+			const selection = chart.$.svg.select(".selection");
+
+			// mouse drag selection on subchart
+			doDrag( {clientX: 0, clientY: 0}, {clientX: 300, clientY: 300});
+
+			// selection shouldn't over pass
+			expect(Math.floor(selection.attr("width"))).to.be.equal(args.axis.x.extent()[1]);
+		});
 	});
 });
