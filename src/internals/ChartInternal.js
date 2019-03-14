@@ -295,10 +295,6 @@ export default class ChartInternal {
 			.style("opacity", "0")
 			.on("dblclick.zoom", null);
 
-		// Set default extent if defined
-		config.axis_x_extent &&
-			$$.brush.scale($$.getDefaultExtent());
-
 		// Add Axis here, when clipPath is 'true'
 		config.clipPath && $$.axis.init();
 
@@ -384,7 +380,12 @@ export default class ChartInternal {
 		}
 	}
 
-	updateSizes() {
+	/**
+	 * Update size values
+	 * @param {Boolean} isInit If is called at initialization
+	 * @private
+	 */
+	updateSizes(isInit) {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
@@ -403,8 +404,7 @@ export default class ChartInternal {
 		const subchartHeight = config.subchart_show && !hasArc ?
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
 
-		$$.currentWidth = $$.getCurrentWidth();
-		$$.currentHeight = $$.getCurrentHeight();
+		!isInit && $$.setContainerSize();
 
 		// for main
 		$$.margin = isRotated ? {
@@ -564,6 +564,7 @@ export default class ChartInternal {
 		const config = $$.config;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
+		const initializing = options.initializing;
 		const flow = options.flow;
 		const wth = $$.getWithOption(options);
 		const duration = wth.Transition ? config.transition_duration : 0;
@@ -571,8 +572,10 @@ export default class ChartInternal {
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
 		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
-		!(options.initializing && config.tooltip_init_show) &&
+		!(initializing && config.tooltip_init_show) &&
 			$$.inputType === "touch" && $$.hideTooltip();
+
+		$$.updateSizes(initializing);
 
 		// update legend and transform each g
 		if (wth.Legend && config.legend_show) {
@@ -888,9 +891,6 @@ export default class ChartInternal {
 		options.withTransitionForExit = false;
 		options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition);
 
-		// MEMO: this needs to be called before updateLegend and it means this ALWAYS needs to be called)
-		$$.updateSizes();
-
 		// MEMO: called in updateLegend in redraw if withLegend
 		if (!(options.withLegend && config.legend_show)) {
 			transitions = $$.axis.generateTransitions(
@@ -1095,7 +1095,6 @@ export default class ChartInternal {
 
 	updateSvgSize() {
 		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
 		const brush = $$.svg.select(`.${CLASS.brush} .overlay`);
 		const brushSize = {width: 0, height: 0};
 
@@ -1135,8 +1134,6 @@ export default class ChartInternal {
 		$$.svg.select(`.${CLASS.zoomRect}`)
 			.attr("width", $$.width)
 			.attr("height", $$.height);
-
-		$$.brush && $$.brush.scale($$.subX, brushSize[isRotated ? "width" : "height"]);
 	}
 
 	updateDimension(withoutAxis) {
@@ -1152,11 +1149,8 @@ export default class ChartInternal {
 			}
 		}
 
-		$$.updateSizes();
-
 		// pass 'withoutAxis' param to not animate at the init rendering
 		$$.updateScales(withoutAxis);
-
 		$$.updateSvgSize();
 		$$.transformAll(false);
 	}

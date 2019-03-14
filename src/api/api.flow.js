@@ -184,14 +184,12 @@ extend(Chart.prototype, {
 			}
 
 			domain = [baseValue.x - diff, baseValue.x];
-			$$.updateXDomain(null, true, true, false, domain);
-		} else if (orgDataCount === 1) {
-			if ($$.isTimeSeries()) {
-				diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
-				domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
-				$$.updateXDomain(null, true, true, false, domain);
-			}
+		} else if (orgDataCount === 1 && $$.isTimeSeries()) {
+			diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+			domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
 		}
+
+		domain && $$.updateXDomain(null, true, true, false, domain);
 
 		// Set targets
 		$$.updateTargets($$.data.targets);

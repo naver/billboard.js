@@ -7,6 +7,17 @@ import CLASS from "../config/classes";
 import {isValue, ceil10, extend, capitalize} from "./util";
 
 extend(ChartInternal.prototype, {
+	/**
+	 * Update container size
+	 * @private
+	 */
+	setContainerSize() {
+		const $$ = this;
+
+		$$.currentWidth = $$.getCurrentWidth();
+		$$.currentHeight = $$.getCurrentHeight();
+	},
+
 	getCurrentWidth() {
 		const $$ = this;
 
@@ -123,21 +134,17 @@ extend(ChartInternal.prototype, {
 	 */
 	getParentRectValue(key) {
 		const offsetName = `offset${capitalize(key)}`;
-		let parent = this.selectChart.node();
+		const container = this.selectChart.node();
 		let v;
 
-		while (!v && parent && parent.tagName !== "BODY") {
-			try {
-				v = parent.getBoundingClientRect()[key];
-			} catch (e) {
-				if (offsetName in parent) {
-					// In IE in certain cases getBoundingClientRect
-					// will cause an "unspecified error"
-					v = parent[offsetName];
-				}
+		try {
+			v = container.getBoundingClientRect()[key];
+		} catch (e) {
+			if (offsetName in container) {
+				// In IE in certain cases getBoundingClientRect
+				// will cause an "unspecified error"
+				v = container[offsetName];
 			}
-
-			parent = parent.parentNode;
 		}
 
 		if (key === "width") {
