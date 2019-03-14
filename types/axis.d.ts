@@ -69,7 +69,12 @@ export interface XAxisConfiguration {
 	 * Set default extent for subchart and zoom.
 	 * This can be an array or function that returns an array.
 	 */
-	extent?: number[] | (() => number[]);
+	extent?: number[] | string[] | (
+		(
+			domain: Date|string|number[],
+			scale: (value: any) => number
+		) => number[]
+	);
 
 	/**
 	 * Set label on x axis.
