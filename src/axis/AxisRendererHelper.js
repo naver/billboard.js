@@ -13,8 +13,8 @@ export default class AxisRendererHelper {
 		this.config = config;
 		this.scale = scale;
 
-		if (!params.config.transition_duration) {
-			config.noTransition = true;
+		if (config.noTransition || !params.config.transition_duration) {
+			config.withoutTransition = true;
 		}
 
 		// set range
@@ -125,7 +125,7 @@ export default class AxisRendererHelper {
 	transitionise(selection) {
 		const config = this.config;
 
-		return config.noTransition ?
+		return config.withoutTransition ?
 			selection.interrupt() : selection.transition(config.transition);
 	}
 }

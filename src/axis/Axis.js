@@ -526,7 +526,7 @@ export default class Axis {
 				currentTickMax.domain = domain;
 			}
 
-			const axis = this[`${getFrom}Axis`](id, scale, false, true, true);
+			const axis = this[`${getFrom}Axis`](id, scale, false, false, true);
 
 			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 
@@ -656,7 +656,7 @@ export default class Axis {
 		return {axisX, axisY, axisY2, axisSubX};
 	}
 
-	redraw(transitions, isHidden) {
+	redraw(transitions, isHidden, isInit) {
 		const $$ = this.owner;
 		const opacity = isHidden ? "0" : "1";
 
@@ -664,6 +664,10 @@ export default class Axis {
 			const axis = $$[`${id}Axis`];
 
 			if (axis) {
+				if (!isInit) {
+					axis.config.withoutTransition = !$$.config.transition_duration;
+				}
+
 				$$.axes[id.toLowerCase()].style("opacity", opacity);
 				axis.create(transitions[`axis${capitalize(id)}`]);
 			}
