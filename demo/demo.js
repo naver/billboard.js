@@ -2637,20 +2637,20 @@ d3.select(".chart_area")
 			options: {
 				data: {
 					columns: [
-						["data1", 378, 200, 175, 400, 150, 321],
-						["data2", 130, 100, 140, 200, 257, 294],
-						["data3", 190, 220, 340, 259, 368, 222]
+						["data1", 378, 200, 175],
+						["data2", 130, 100, 140],
+						["data3", 190, 220, 340]
 					],
 					type: "bar"
 				},
 				bar: {
 					width: {
-						data1: 20,
+						data1: 10,
 						data2: {
 							ratio: 1,
-							max: 30
+							max: 20
 						},
-						data3: 40
+						data3: 30
 					}
 				}
 			}
@@ -3333,11 +3333,11 @@ d3.select(".chart_area")
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.axis.max(500);
+						chart.axis.max(500)
 					}, 1000),
 
 					setTimeout(function() {
-						chart.axis.min(-500);
+						chart.axis.min(-500)
 					}, 2000),
 
 					setTimeout(function() {
