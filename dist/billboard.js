@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.7.1-nightly-20190314100305
+ * @version 1.8.0-nightly-20190315100419
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -767,7 +767,7 @@ function () {
     classCallCheck_default()(this, AxisRendererHelper);
 
     var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])();
-    this.config = config, this.scale = scale, params.config.transition_duration || (config.noTransition = !0), config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
+    this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
   }
   /**
    * Compute a character dimension
@@ -834,7 +834,7 @@ function () {
     key: "transitionise",
     value: function transitionise(selection) {
       var config = this.config;
-      return config.noTransition ? selection.interrupt() : selection.transition(config.transition);
+      return config.withoutTransition ? selection.interrupt() : selection.transition(config.transition);
     }
   }], [{
     key: "getSizeFor1Char",
@@ -1560,7 +1560,7 @@ function () {
         // do not compute if domain is same
         if (currentTickMax.domain === domain) return currentTickMax.size;
         currentTickMax.domain = domain;
-        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !0, !0);
+        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0);
         isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
         axis.create(dummy), dummy.selectAll("text").each(function () {
@@ -1651,12 +1651,12 @@ function () {
     }
   }, {
     key: "redraw",
-    value: function redraw(transitions, isHidden) {
+    value: function redraw(transitions, isHidden, isInit) {
       var $$ = this.owner,
           opacity = isHidden ? "0" : "1";
       ["x", "y", "y2", "subX"].forEach(function (id) {
         var axis = $$["".concat(id, "Axis")];
-        axis && ($$.axes[id.toLowerCase()].style("opacity", opacity), axis.create(transitions["axis".concat(capitalize(id))]));
+        axis && (!isInit && (axis.config.withoutTransition = !$$.config.transition_duration), $$.axes[id.toLowerCase()].style("opacity", opacity), axis.create(transitions["axis".concat(capitalize(id))]));
       }), this.updateAxes();
     }
   }]), Axis;
@@ -1964,7 +1964,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
     }
     /**
      * Redraw axis
@@ -1977,7 +1977,7 @@ function () {
 
   }, {
     key: "redrawAxis",
-    value: function redrawAxis(targetsToShow, wth, transitions, flow) {
+    value: function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
       var tickValues,
           intervalForCulling,
           xDomainForZoom,
@@ -1999,7 +1999,7 @@ function () {
             }) ? 1 : tickCount, $$.isTimeSeriesY()));
           }
         }
-      }), $$.axis.redraw(transitions, hasArcType), $$.axis.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
+      }), $$.axis.redraw(transitions, hasArcType, isInit), $$.axis.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
         for (var i = 1; i < tickValues.length; i++) if (tickValues.length / i < config.axis_x_tick_culling_max) {
           intervalForCulling = i;
           break;
@@ -7373,14 +7373,14 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getParentRectValue: function getParentRectValue(key) {
-    var v,
-        offsetName = "offset".concat(capitalize(key)),
-        container = this.selectChart.node();
+    for (var v, offsetName = "offset".concat(capitalize(key)), parent = this.selectChart.node(); !v && parent && parent.tagName !== "BODY";) {
+      try {
+        v = parent.getBoundingClientRect()[key];
+      } catch (e) {
+        offsetName in parent && (v = parent[offsetName]);
+      }
 
-    try {
-      v = container.getBoundingClientRect()[key];
-    } catch (e) {
-      offsetName in container && (v = container[offsetName]);
+      parent = parent.parentNode;
     }
 
     if (key === "width") {
@@ -7664,13 +7664,21 @@ extend(ChartInternal_ChartInternal.prototype, {
           isUnderThreshold = $$.hasType("gauge") || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
-        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
-        if (text.indexOf("\n") === -1) node.text(text);else {
-          var multiline = text.split("\n"),
-              len = multiline.length - 1;
-          multiline.forEach(function (v, i) {
-            node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? -len : 1, "em")).text(v);
+        var nodeText = node.text(),
+            text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        if (text.indexOf("\n") === -1) nodeText !== text && node.text(text);else {
+          var diff = [nodeText, text].map(function (v) {
+            return v.replace(/[\s\n]/g, "");
           });
+
+          if (diff[0] !== diff[1]) {
+            var multiline = text.split("\n"),
+                len = multiline.length - 1;
+            // reset possible text
+            node.html(""), multiline.forEach(function (v, i) {
+              node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? -len : 1, "em")).text(v);
+            });
+          }
         }
       }
     });
@@ -13363,7 +13371,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.7.1-nightly-20190314100305
+ * @version 1.8.0-nightly-20190315100419
  */
 
 var bb = {
@@ -13374,7 +13382,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.7.1-nightly-20190314100305",
+  version: "1.8.0-nightly-20190315100419",
 
   /**
    * Generate chart
