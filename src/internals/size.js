@@ -134,17 +134,21 @@ extend(ChartInternal.prototype, {
 	 */
 	getParentRectValue(key) {
 		const offsetName = `offset${capitalize(key)}`;
-		const container = this.selectChart.node();
+		let parent = this.selectChart.node();
 		let v;
 
-		try {
-			v = container.getBoundingClientRect()[key];
-		} catch (e) {
-			if (offsetName in container) {
-				// In IE in certain cases getBoundingClientRect
-				// will cause an "unspecified error"
-				v = container[offsetName];
+		while (!v && parent && parent.tagName !== "BODY") {
+			try {
+				v = parent.getBoundingClientRect()[key];
+			} catch (e) {
+				if (offsetName in parent) {
+					// In IE in certain cases getBoundingClientRect
+					// will cause an "unspecified error"
+					v = parent[offsetName];
+				}
 			}
+
+			parent = parent.parentNode;
 		}
 
 		if (key === "width") {

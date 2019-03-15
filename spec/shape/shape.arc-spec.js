@@ -441,6 +441,11 @@ describe("SHAPE ARC", () => {
 
 		it("should be multilined in pie", () => {
 			checkMultiline(chart.$.arc);
+
+			chart.toggle("data1");
+			chart.toggle("data1");
+
+			checkMultiline(chart.$.arc);
 		});
 
 		it("set options data.type='donut'", () => {

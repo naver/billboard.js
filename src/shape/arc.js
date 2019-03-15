@@ -204,22 +204,30 @@ extend(ChartInternal.prototype, {
 				);
 
 				if (isUnderThreshold) {
+					const nodeText = node.text();
 					const text = (
 						$$.getArcLabelFormat() || $$.defaultArcValueFormat
 					)(value, ratio, id).toString();
 
 					if (text.indexOf("\n") === -1) {
-						node.text(text);
+						nodeText !== text && node.text(text);
 					} else {
-						const multiline = text.split("\n");
-						const len = multiline.length - 1;
+						const diff = [nodeText, text].map(v => v.replace(/[\s\n]/g, ""));
 
-						multiline.forEach((v, i) => {
-							node.append("tspan")
-								.attr("x", 0)
-								.attr("dy", `${i === 0 ? -len : 1}em`)
-								.text(v);
-						});
+						if (diff[0] !== diff[1]) {
+							const multiline = text.split("\n");
+							const len = multiline.length - 1;
+
+							// reset possible text
+							node.html("");
+
+							multiline.forEach((v, i) => {
+								node.append("tspan")
+									.attr("x", 0)
+									.attr("dy", `${i === 0 ? -len : 1}em`)
+									.text(v);
+							});
+						}
 					}
 				}
 			});

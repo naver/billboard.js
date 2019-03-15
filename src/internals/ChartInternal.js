@@ -587,7 +587,8 @@ export default class ChartInternal {
 		}
 
 		// update axis
-		$$.redrawAxis(targetsToShow, wth, transitions, flow);
+		// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
+		$$.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
 		// update circleY based on updated parameters
 		$$.updateCircleY();
@@ -652,7 +653,7 @@ export default class ChartInternal {
 	 * @param {Object} flow
 	 * @private
 	 */
-	redrawAxis(targetsToShow, wth, transitions, flow) {
+	redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
 		const $$ = this;
 		const config = $$.config;
 		const hasArcType = $$.hasArcType();
@@ -703,7 +704,7 @@ export default class ChartInternal {
 		});
 
 		// axes
-		$$.axis.redraw(transitions, hasArcType);
+		$$.axis.redraw(transitions, hasArcType, isInit);
 
 		// Update axis label
 		$$.axis.updateLabels(wth.Transition);
