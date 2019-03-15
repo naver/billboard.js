@@ -222,7 +222,7 @@ var billboardDemo = {
 
 			if (/multiline/i.test(key)) {
 				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
-					.replace(/\\n(?=[a-zA-Z0-9])/g, "n");
+				.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
 			} else {
 				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
 					.replace(/\\(u)/g, "\$1");

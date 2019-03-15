@@ -764,6 +764,47 @@ var demos = {
 				}
 			}
 		},
+		HideTickLineText: {
+			options: {
+				data: {
+					columns: [
+						["data1", 90, 100, 140, 200, 100, 400, 90, 100, 140, 200, 100, 400],
+						["data2", 130, 40, 200, 310, 230, 325, 163, 230, 222, 240, 160, 310]
+					],
+					types: {
+						data1: "bar",
+						data2: "area-spline"
+					}
+				},
+				axis: {
+					x: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y: {
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							show: false,
+							text: {
+								show: false
+							}
+						}
+					}
+				}
+			}
+		},
 		MultiAxes: [
 			{
 				options: {
@@ -892,6 +933,57 @@ var demos = {
 					rotated: true
 				}
 			}
+		},
+		RotatedAxisGroupedBar: {
+			options: {
+				data: {
+					columns: [
+						["Male", -83, -143, -100, -120, -150, -85],
+						["Female", 130, 100, 140, 175, 150, 50]
+					],
+					type: "bar",
+					groups: [["Male", "Female"]],
+					labels: {
+						format: function(v, id) {
+							return Math.abs(v);
+						}
+					}
+				},
+				axis: {
+					rotated: true,
+					x: {
+						show: false
+					},
+					y: {
+						tick: {
+							format: function(v) {
+								return Math.abs(v);
+							}
+						}
+					}
+				},
+				grid: {
+					y: {
+						show: true,
+						lines: [
+							{
+								value: 0,
+								class: "base-line"
+							},
+						]
+					}
+				},
+				tooltip: {
+					format: {
+						value: function(v) {
+							return Math.abs(v);
+						}
+					}
+				}
+			},
+			style: [
+				"#RotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }"
+			]
 		},
 		RotateXAxisTickText: {
 			options: {
@@ -1052,6 +1144,147 @@ var demos = {
 			style: [
 				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
 			]
+		},
+		XAxisTickTimeseries: {
+			description: "Drag over chart area and checkout the x Axis tick text label",
+			options: {
+				data: {
+					x: "x",
+					json: {
+						"Temperature": [
+						"29.39",
+							"29.7",
+							"29.37",
+							"28.87",
+							"28.62",
+							"27.72",
+							"27.61",
+							"27.82",
+							"27.48",
+							"26.78",
+							"26.62",
+							"26.64",
+							"26.29",
+							"26.01",
+							"25.84",
+							"25.07",
+							"24.85",
+							"24.01",
+							"23.83",
+							"22.8",
+							"23",
+							"22.64",
+							"22.77",
+							"22.64",
+							"22.64",
+							"22.62",
+							"22.51",
+							"21.42",
+							"21.18",
+							"20.93",
+							"20.66",
+							"20.48",
+							"20.7",
+							"21.24",
+							"22.14",
+							"22.78",
+							"23.43",
+							"23.16",
+							"27.48",
+							"26.78",
+							"26.62",
+							"26.64",
+							"26.29",
+							"26.01",
+							"25.84",
+							"25.07",
+							"24.85",
+							"24.01"
+						],
+						"x": [
+					"01-01-2015 00:00",
+					"02-01-2015 00:00",
+					"03-01-2015 00:00",
+					"04-01-2015 00:00",
+					"05-01-2015 00:00",
+					"06-01-2015 00:00",
+					"07-01-2015 00:00",
+					"08-01-2015 00:00",
+					"09-01-2015 00:00",
+					"10-01-2015 00:00",
+					"11-01-2015 00:00",
+					"12-01-2015 00:00",
+					"01-01-2016 00:00",
+					"02-01-2016 00:00",
+					"03-01-2016 00:00",
+					"04-01-2016 00:00",
+					"05-01-2016 00:00",
+					"06-01-2016 00:00",
+					"07-01-2016 00:00",
+					"08-01-2016 00:00",
+					"09-01-2016 00:00",
+					"10-01-2016 00:00",
+					"11-01-2016 00:00",
+					"12-01-2016 00:00",
+					"01-01-2017 00:00",
+					"02-01-2017 00:00",
+					"03-01-2017 00:00",
+					"04-01-2017 00:00",
+					"05-01-2017 00:00",
+					"06-01-2017 00:00",
+					"07-01-2017 00:00",
+					"08-01-2017 00:00",
+					"09-01-2017 00:00",
+					"10-01-2017 00:00",
+					"11-01-2017 00:00",
+					"12-01-2017 00:00",
+					"01-01-2018 00:00",
+					"02-01-2018 00:00",
+					"03-01-2018 00:00",
+					"04-01-2018 00:00",
+					"05-01-2018 00:00",
+					"06-01-2018 00:00",
+					"07-01-2018 00:00",
+					"08-01-2018 00:00",
+					"09-01-2018 00:00",
+					"10-01-2018 00:00",
+					"11-01-2018 00:00",
+					"12-01-2018 00:00"
+						]
+					},
+					type: "area",
+					xFormat: "%m-%d-%Y %H:%M",
+				},
+				axis: {
+					x: {
+						tick: {
+							fit: false,
+							count: 5,
+						},
+						type: "timeseries"
+					}
+				},
+				zoom: {
+					enabled: {
+						type: "drag"
+					}
+				},
+				tooltip: {
+					format: {
+						title: function(x) {
+							return d3.timeFormat("%Y-%m-%d")(x);
+						}
+					}
+				},
+				point: {
+					r: 0,
+					focus: {
+						expand: {
+							r: 5
+						}
+					}
+				}
+			}
 		},
 		XAxisTickValues: {
 			options: {
@@ -2090,6 +2323,58 @@ d3.select(".chart_area")
 		}
 	},
 
+	Title: {
+		MultilinedTitle: {
+			options: {
+				title: {
+					text: "Temperature History by Region, 2017-2018\nSource: community weather center"
+				},
+				data: {
+					x: "x",
+					json: {
+						Temperature: [
+							"29.39",
+							"29.7",
+							"29.37",
+							"28.87",
+							"28.62",
+							"27.72",
+							"27.61",
+							"27.82",
+							"27.48",
+							"26.78"
+						],
+						x: [
+							"01-10-2019 00:00",
+							"01-10-2019 00:30",
+							"01-10-2019 01:00",
+							"01-10-2019 01:30",
+							"01-10-2019 02:00",
+							"01-10-2019 02:30",	
+							"01-10-2019 03:00",
+							"01-10-2019 03:30",
+							"01-10-2019 04:00",
+							"01-10-2019 04:30"
+						]
+					},
+					type: "area",
+					xFormat: "%m-%d-%Y %H:%M"
+				},
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				},
+				point: {
+					show: false
+				}
+			},
+			style: [
+				"#MultilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }"
+			]
+		}
+	},
+
 	Tooltip: {
 		HideTooltip: {
 			options: {
@@ -2227,6 +2512,74 @@ d3.select(".chart_area")
 			}
 		]
 	},
+	AreaChartOptions: {
+		Above: {
+			options: {
+				data: {
+					columns: [
+						["data1", 230, 280, 251, 400, 150, 546, 158],
+						["data2", 130, 357, 151, 400, 250, 250, 395]
+					],
+					type: "area",
+					groups: [["data1", "data2"]]
+				},
+				area: {
+					above: true
+				}
+			}
+		},
+		LinearGradient: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 280, 251, 400, 150, 546, 158],
+							["data2", 130, 357, 151, 400, 250, 250, 395],
+							["data3", 330, 280, 320, 218, 450, 150, 500]
+						],
+						type: "area-spline",
+						groups: [["data1", "data2", "data3"]]
+					},
+					area: {
+						linearGradient: true
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 150, 250, 150, 200, 170, 240, 100, 150, 250, 150, 200, 170, 240, 30, 200, 100, 400, 150, 250, 150, 200, 170, 240, 350, 150, 100, 400, 350, 220, 250, 300, 270, 140, 150, 90, 150, 50, 120, 70, 40]
+						],
+						type: "area"
+					},
+					area: {
+						linearGradient: {
+							x: [1, 0],
+							y: [0, 1],
+							stops: [
+								[0, function(id) {
+             return id == "data1" ? "red" : "yellow";
+					          }, 1],
+								[0.3, "orange", 0.5],
+								[0.6, "green", 0.7],
+								[0.8, "purple", 0.7],
+								[1, null, 1],
+							]
+						}
+					},
+					point: {
+						r: 0,
+						focus: {
+							expand: {
+								r: 5
+							}
+						}
+					}
+				}
+			}
+		]
+	},
 	BarChartOptions: {
 		BarPadding: {
 			options: {
@@ -2279,6 +2632,28 @@ d3.select(".chart_area")
 					}
 				}
 			}
+		},
+		BarWidthVariant: {
+			options: {
+				data: {
+					columns: [
+						["data1", 378, 200, 175],
+						["data2", 130, 100, 140],
+						["data3", 190, 220, 340]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						data1: 10,
+						data2: {
+							ratio: 1,
+							max: 20
+						},
+						data3: 30
+					}
+				}
+			}
 		}
 	},
 	ChartOptions: {
@@ -2310,6 +2685,53 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		ColorOnover: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, 200, 100, 400, 150, 250],
+							["data2", 150, 320, 210, 240, 115, 125],
+							["data3", 130, 220, 140, 200, 250, 450]
+						],
+						groups: [
+							["data1", "data2", "data3"]
+						],
+						type: "bar"
+					},
+					color: {
+						onover: {
+							data1: "#868484",
+							data2: "black",
+							data3: "rgb(202, 202, 202)"
+						}
+					}
+				}
+			},
+			{
+				options: {
+						data: {
+							columns: [
+								["data1", 241, 737, 78],
+								["data2", 245, 164, 628],
+								["data3", 990, 496, 638]
+							],
+							types: {
+								data1: "spline",
+								data2: "area",
+								data3: "bar"
+							}
+						},
+						color: {
+							onover: function(d) {
+						var pttr = ["red", "yellow", "cyan"];
+
+						return pttr[(Math.floor(Math.random() * pttr.length))];
+					 	}
+						}
+				}
+			}
+		],
 		ColorPattern: {
 			options: {
 				data: {
@@ -2562,6 +2984,25 @@ d3.select(".chart_area")
 				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
 			]
 		},
+		MultilineLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 45]
+					],
+					type: "donut"
+				},
+				donut: {
+					label: {
+						format: function(value, ratio, id) {
+						  return value +"\nHours";
+					      }
+					}
+				}
+			}
+		},
 		MultilneTitle: {
 			options: {
 				data: {
@@ -2695,6 +3136,25 @@ d3.select(".chart_area")
 					label: {
 						format: function(value, ratio, id) {
 						  return d3.format('$')(value);
+					      }
+					}
+				}
+			}
+		},
+		MultilineLabel: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 45]
+					],
+					type: "pie"
+				},
+				pie: {
+					label: {
+						format: function(value, ratio, id) {
+						  return value +"\nHours";
 					      }
 					}
 				}
@@ -2873,11 +3333,11 @@ d3.select(".chart_area")
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						chart.axis.max(500);
+						chart.axis.max(500)
 					}, 1000),
 
 					setTimeout(function() {
-						chart.axis.min(-500);
+						chart.axis.min(-500)
 					}, 2000),
 
 					setTimeout(function() {
