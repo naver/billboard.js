@@ -708,4 +708,31 @@ describe("TOOLTIP", function() {
 			}, 500);
 		});
 	});
+
+	describe("tooltip display", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100],
+						["data2", 130, 100, 140]
+					]
+				},
+				tooltip: {
+					doNotHide: true
+				}
+			};
+		});
+
+		it("tooltip shouldn't be hiding", () => {
+			util.hoverChart(chart, "mousemove", {clientX: 185, clientY: 107});
+			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
+
+			expect(chart.$.tooltip.style("display")).to.be.equal("block");
+
+			// when is called .hide(), it should be hide
+			chart.tooltip.hide();
+			expect(chart.$.tooltip.style("display")).to.be.equal("none");
+		});
+	});
 });
