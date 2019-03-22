@@ -3196,7 +3196,8 @@ export default class Options {
 			 * @name tooltip
 			 * @memberof Options
 			 * @type {Object}
-			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
+			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
+			 * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
 			 *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
 			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
@@ -3230,6 +3231,7 @@ export default class Options {
 			 * @example
 			 *  tooltip: {
 			 *      show: true,
+			 *      doNotHide: true,
 			 *      grouped: false,
 			 *      format: {
 			 *          title: function(x) { return "Data " + x; },
@@ -3283,6 +3285,7 @@ export default class Options {
 			 *  }
 			 */
 			tooltip_show: true,
+			tooltip_doNotHide: false,
 			tooltip_grouped: true,
 			tooltip_format_title: undefined,
 			tooltip_format_name: undefined,

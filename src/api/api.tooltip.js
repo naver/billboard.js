@@ -106,7 +106,7 @@ const tooltip = extend(() => {}, {
 	hide: function() {
 		const $$ = this.internal;
 
-		$$.hideTooltip();
+		$$.hideTooltip(true);
 		$$.hideXGridFocus();
 		$$.unexpandCircles();
 		$$.unexpandBars();

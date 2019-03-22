@@ -269,18 +269,21 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Hide the tooltip
+	 * @param {Boolean} force Force to hide
 	 * @private
 	 */
-	hideTooltip() {
+	hideTooltip(force) {
 		const $$ = this;
 		const config = $$.config;
 
-		callFn(config.tooltip_onhide, $$);
+		if (!config.tooltip_doNotHide || force) {
+			callFn(config.tooltip_onhide, $$);
 
-		// hide tooltip
-		this.tooltip.style("display", "none").datum(null);
+			// hide tooltip
+			this.tooltip.style("display", "none").datum(null);
 
-		callFn(config.tooltip_onhidden, $$);
+			callFn(config.tooltip_onhidden, $$);
+		}
 	},
 
 	/**

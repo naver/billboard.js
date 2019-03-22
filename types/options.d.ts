@@ -678,6 +678,11 @@ export interface TooltipOptions {
 	show?: boolean;
 
 	/**
+	 * Make tooltip keep showing not hiding on interaction.
+	 */
+	doNotHide?: boolean;
+
+	/**
 	 * Set if tooltip is grouped or not for the data points.
 	 */
 	grouped?: boolean;
