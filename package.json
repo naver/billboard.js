@@ -18,7 +18,6 @@
     "deploy": "bash ./config/deploy.sh",
     "deploy:nightly": "cross-env DEPLOY_NIGHTLY=true node ./config/nightly.js",
     "lint": "eslint src",
-    "lint:dts": "dtslint types",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
     "test:chrome": "npm test -- --chrome",
     "coverage": "npm test -- --coverage",
