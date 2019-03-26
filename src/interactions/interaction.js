@@ -352,7 +352,10 @@ extend(ChartInternal.prototype, {
 		}
 
 		const sameXData = (
-			$$.isBubbleType(closest) || $$.isScatterType(closest) || !config.tooltip_grouped
+			$$.isBubbleType(closest) ||
+			$$.isScatterType(closest) ||
+			$$.isStanfordType(closest) ||
+			!config.tooltip_grouped
 		) ? [closest] : $$.filterByX(targetsToShow, closest.x);
 
 		// show tooltip when cursor is close to some point

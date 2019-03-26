@@ -225,9 +225,17 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const dataKeys = Object.keys(data[0] || {});
-		const ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
 		const xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
+		let ids;
 		let xsData;
+		let epochs;
+
+		if ($$.hasType("stanford")) {
+			ids = dataKeys.length ? dataKeys.filter($$.isNotXorEpochs, $$) : [];
+			epochs = dataKeys.length ? dataKeys.filter($$.isEpochs, $$) : [];
+		} else {
+			ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
+		}
 
 		// save x for update data by load when custom x and bb.x API
 		ids.forEach(id => {
@@ -304,7 +312,18 @@ extend(ChartInternal.prototype, {
 						x = undefined;
 					}
 
-					return {x, value, id: convertedId};
+					const returnData = {x, value, id: convertedId};
+
+					if ($$.hasType("stanford")) {
+						returnData.epochs = d[epochs];
+						// TODO STANFORD remove this???
+						returnData.minEpochs = undefined;
+						returnData.maxEpochs = undefined;
+						returnData.colors = undefined;
+						returnData.colorscale = undefined;
+					}
+
+					return returnData;
 				}).filter(v => isDefined(v.x))
 			};
 		});

@@ -132,6 +132,10 @@ extend(ChartInternal.prototype, {
 		return this.isTypeOf(d, "scatter");
 	},
 
+	isStanfordType(d) {
+		return this.isTypeOf(d, "stanford");
+	},
+
 	isPieType(d) {
 		return this.isTypeOf(d, "pie");
 	},
@@ -186,6 +190,7 @@ extend(ChartInternal.prototype, {
 		return this.isBarType(d) ||
 			this.isLineType(d) ||
 			this.isScatterType(d) ||
+			this.isStanfordType(d) ||
 			this.isBubbleType(d) ||
 			this.isRadarType(d) ? d.values : [];
 	},

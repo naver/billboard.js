@@ -220,7 +220,7 @@ extend(ChartInternal.prototype, {
 		} else {
 			yPos = points[2][1];
 
-			if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d))) {
+			if (isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d) || $$.isStanfordType(d))) {
 				baseY += config.point_r / 2.3;
 			}
 

@@ -37,6 +37,17 @@ extend(ChartInternal.prototype, {
 		return !this.isX(key);
 	},
 
+	isEpochs(key) {
+		const $$ = this;
+		const config = $$.config;
+
+		return config.data_epochs && key === config.data_epochs;
+	},
+
+	isNotXorEpochs(key) {
+		return !this.isEpochs(key) && !this.isX(key);
+	},
+
 	isStackNormalized() {
 		const config = this.config;
 
@@ -117,12 +128,13 @@ extend(ChartInternal.prototype, {
 	hasMultipleX(xs) {
 		return Object.keys(xs).map(id => xs[id]).length > 1;
 	},
-
+	// TODO STANFORD check if needed  this.hasType("stanford")
 	isMultipleX() {
 		return notEmpty(this.config.data_xs) ||
 			!this.config.data_xSort ||
 			this.hasType("bubble") ||
-			this.hasType("scatter");
+			this.hasType("scatter") ||
+			this.hasType("stanford");
 	},
 
 	addName(data) {

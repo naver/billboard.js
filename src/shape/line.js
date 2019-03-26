@@ -537,7 +537,7 @@ extend(ChartInternal.prototype, {
 		$$.mainCircle = $$.mainCircle.enter()
 			.append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color))
 			.merge($$.mainCircle)
-			.style("stroke", $$.color)
+			.style("stroke", $$.hasType("stanford") ? $$.getStanfordPointColor.bind($$) : $$.color)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 
@@ -552,7 +552,7 @@ extend(ChartInternal.prototype, {
 		const mainCircles = [];
 
 		$$.mainCircle.each(function(d) {
-			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
+			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.hasType("stanford") ? $$.getStanfordPointColor.bind($$) : $$.color, withTransition, flow, selectedCircles).bind(this);
 			const result = fn(d);
 
 			mainCircles.push(result);

@@ -142,13 +142,24 @@ extend(ChartInternal.prototype, {
 			}
 
 			if (i === 0) {
-				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+				let titleString;
+
+				if ($$.hasType("stanford")) {
+					// Custom tooltip title for stanford plots
+					titleString = tplStr ?
+						$$.getStanfordTooltipTitleValues(d[i]) :
+						$$.getStanfordTooltipTitle(d[i]);
+				} else {
+					const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+
+					titleString = isValue(title) ? (
+						tplStr ? title : `<tr><th colspan="2">${title}</th></tr>`
+					) : "";
+				}
 
 				text = tplProcess(tpl[0], {
 					CLASS_TOOLTIP: CLASS.tooltip,
-					TITLE: isValue(title) ? (
-						tplStr ? title : `<tr><th colspan="2">${title}</th></tr>`
-					) : ""
+					TITLE: titleString
 				});
 			}
 
@@ -169,8 +180,18 @@ extend(ChartInternal.prototype, {
 					continue;
 				}
 
-				const name = sanitise(nameFormat(row.name, ...param));
-				const color = getBgColor(row);
+				let name;
+				let color;
+
+				if ($$.hasType("stanford")) {
+					name = sanitise(config.data_epochs);
+					color = $$.getStanfordPointColor(row);
+					value = row.epochs;
+				} else {
+					name = sanitise(nameFormat(row.name, ...param));
+					color = getBgColor(row);
+				}
+
 				const contentValue = {
 					CLASS_TOOLTIP_NAME: CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id),
 					COLOR: tplStr ? color : (

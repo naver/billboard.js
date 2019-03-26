@@ -192,6 +192,10 @@ export default class ChartInternal {
 			config.legend_show = false;
 		}
 
+		if ($$.hasType("stanford")) {
+			$$.initStanfordData();
+		}
+
 		// Init sizes and scales
 		$$.updateSizes();
 		$$.updateScales(true);
@@ -256,6 +260,7 @@ export default class ChartInternal {
 		$$.initTooltip && $$.initTooltip();
 		$$.initLegend && $$.initLegend();
 		$$.initTitle && $$.initTitle();
+		$$.hasType("stanford") && $$.drawColorScale && $$.drawColorScale();
 
 		// -- Main Region --
 
@@ -276,6 +281,8 @@ export default class ChartInternal {
 		// Define g for chart area
 		main.append("g").attr("class", CLASS.chart)
 			.attr("clip-path", $$.clipPath);
+
+		$$.initStanfordElements();
 
 		// Cover whole with rects for events
 		$$.initEventRect();
@@ -607,6 +614,9 @@ export default class ChartInternal {
 		// grid
 		$$.updateGrid(duration);
 
+		// stanford elements
+		$$.updateStanfordElements(duration);
+
 		// rect for regions
 		$$.updateRegion(duration);
 
@@ -623,6 +633,9 @@ export default class ChartInternal {
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
+
+		// color scale
+		$$.hasType("stanford") && $$.drawColorScale() && $$.drawColorScale();
 
 		// arc
 		$$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
@@ -809,7 +822,7 @@ export default class ChartInternal {
 		const shape = {type: {}, indices: {}};
 
 		// setup drawer - MEMO: these must be called after axis updated
-		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter") || $$.hasType("stanford")) {
 			const indices = $$.getShapeIndices($$.isLineType);
 
 			shape.indices.line = indices;
@@ -998,7 +1011,8 @@ export default class ChartInternal {
 		const opacity = this.config.point_show ? "1" : "0";
 
 		return isValue(this.getBaseValue(d)) ?
-			(this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) : "0";
+			(this.isBubbleType(d) || this.isScatterType(d) ?
+				"0.5" : this.isStanfordType(d) ? "1" : opacity) : "0";
 	}
 
 	opacityForText() {
@@ -1010,6 +1024,28 @@ export default class ChartInternal {
 			this.zoomScale : this.x;
 
 		return d ? fn(d.x) : null;
+	}
+
+	xvCustom(d, xyValue) {
+		const $$ = this;
+
+		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+
+		if ($$.isTimeSeries()) {
+			value = $$.parseDate(value);
+		} else if ($$.isCategorized() && isString(value)) {
+			value = $$.config.axis_x_categories.indexOf(d.value);
+		}
+
+		return Math.ceil($$.x(value));
+	}
+
+	yvCustom(d, xyValue) {
+		const $$ = this;
+		const yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y;
+		const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
+
+		return Math.ceil(yScale(value));
 	}
 
 	xv(d) {

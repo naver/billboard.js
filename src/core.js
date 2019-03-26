@@ -58,6 +58,9 @@ import "./api/api.chart";
 import "./api/api.tooltip";
 import "./internals/ua";
 import "./api/api.export";
+import "./internals/colorscale";
+import "./internals/stanford";
+import "./internals/stanfordelements";
 
 // base CSS
 import "./scss/billboard.scss";

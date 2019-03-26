@@ -124,6 +124,10 @@ extend(ChartInternal.prototype, {
 			padding = ceil10(axisWidth) + legendWidthOnRight;
 		}
 
+		if ($$.colorScale && $$.colorScale.node()) {
+			padding += $$.getColorScalePadding();
+		}
+
 		return padding + (axisWidth * axesLen);
 	},
 
