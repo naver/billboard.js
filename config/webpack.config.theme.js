@@ -46,12 +46,15 @@ const config = {
 	},
 	devtool: false,
 	plugins: [
+		// clean before build
 		new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: [distPath],
 			verbose: true,
 			dry: false,
 			beforeEmit: true
 		}),
+
+		// clean after build
 		new WebpackCleanPlugin(Object.keys(entry).map(v => `${v}.${tmpExt}`), {
 			basePath: distPath
 		}),

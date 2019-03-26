@@ -1,5 +1,8 @@
 /* eslint-disable */
 var billboardDemo = {
+	replacer: {
+		plugin: "__PLUGIN__"
+	},
 	/**
 	 * Initializer
 	 */
@@ -43,8 +46,7 @@ var billboardDemo = {
 			if (window.innerWidth > WIDTH) {
 				$wrapper && ($wrapper.className = "");
 			}
-
-		})
+		});
 	},
 
 	/**
@@ -140,6 +142,8 @@ var billboardDemo = {
 			data: []
 		};
 
+		key = type +"."+ key;
+
 		// generate chart
 		isArray ? typeData.forEach(function(t, i) {
 			self._addChartInstance(t, key, i + 1, code);
@@ -162,8 +166,70 @@ var billboardDemo = {
 			str : str.charAt(0).toLowerCase() + str.slice(1);
 	},
 
-	_addChartInstance: function(type, key, index, code) {
-		key = this.getLowerFirstCase(key);
+	getPluginsCodeStr(val) {
+		var key = this.replacer.plugin;
+		var plugins = key;
+
+		val.forEach(function(p) {
+			Object.keys(p).forEach(function(key) {
+				plugins += "new bb.plugin."+ key +"(";
+				plugins += JSON.stringify(p[key], null, 5).replace(/}$/, "    }");
+				plugins += "),";
+			})
+		});
+
+		return plugins + key;
+	},
+
+	getCodeStr(options, key, index) {
+		var self = this;
+
+		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
+			JSON.stringify(options, function(k, v) {
+				if (typeof v === "function") {
+					return v.toString().replace(/\t+}$/, Array(/(format|data)/.test(k) ? 8 : 4).join(" ") + "}");
+				} else if (/(columns|rows|json)/.test(k)) {
+					var str = JSON.stringify(v)
+						.replace(/\[\[/g, "[\r\n\t[")
+						.replace(/\]\]/g, "]\r\n    ]")
+						.replace(/(],)/g, "$1\r\n\t")
+						.replace(/(\"|\d),/g, "$1, ");
+
+					return k === "json" ?
+						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
+				} else if (k === "_plugins") {
+					return [self.getPluginsCodeStr(v)];
+				}
+
+				return v;
+			}, 2)
+			.replace(/\"?(function|})\"?/g, "$1")
+			.replace(/\\"/g, "\"")
+			.replace(/</g, "&lt;")
+			.replace(/\\t/g, "\t")
+			.replace(/\t{5}/g, "")
+			.replace(/\\r/g, "\r")
+			.replace(/"(\w+)":/g, "$1:")
+			.replace("_plugins", "plugins")
+			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
+
+			if (/multiline/i.test(key)) {
+				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
+					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
+			} else {
+				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
+					.replace(/\\(u)/g, "\$1");
+			}
+
+			codeStr += ");";
+
+		return codeStr;
+	},
+
+	_addChartInstance: function(type, typeKey, index, code) {
+		typeKey = typeKey.split(".");
+
+		var key = this.getLowerFirstCase(typeKey[1]);
 
 		if (index) {
 			key += "_"+ index;
@@ -171,6 +237,7 @@ var billboardDemo = {
 
 		var $el = document.getElementById(key);
 		var template;
+		var plugins;
 
 		if (!$el) {
 			$el = document.createElement("div");
@@ -185,11 +252,16 @@ var billboardDemo = {
 			if (/^(legend|tooltip)Template/.test(key)) {
 				template = document.createElement("div");
 				template.id = this.getLowerFirstCase(RegExp.$1);
-				console.log(template.id)
 				template.style.textAlign = "center";
 
 				this.$chartArea.appendChild(template);
 				template = "&lt;div id=\""+ template.id +"\">&lt;/div>";
+			} else if (typeKey[0] === "Plugins") {
+				type.options._plugins.forEach(function(v) {
+					plugins = Object.keys(v).map(function(p) {
+						return new bb.plugin[p](v[p]);
+					});
+				});
 			}
 		}
 
@@ -199,44 +271,16 @@ var billboardDemo = {
 
 		options.bindto = "#" + key;
 
-		var inst = bb.generate(options);
+		if (plugins) {
+			options.plugins = plugins;
+		}
 
+		var inst = bb.generate(options, key, index);
+
+		delete options.plugins;
 		inst.timer = [];
 
-		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
-			JSON.stringify(options, function (k, v) {
-				if (typeof v === "function") {
-					return v.toString().replace(/\t+}$/, Array(/(format|data)/.test(k) ? 8 : 4).join(" ") + "}");
-				} else if (/(columns|rows|json)/.test(k)) {
-					var str = JSON.stringify(v)
-						.replace(/\[\[/g, "[\r\n\t[")
-						.replace(/\]\]/g, "]\r\n    ]")
-						.replace(/(],)/g, "$1\r\n\t")
-						.replace(/(\"|\d),/g, "$1, ");
-
-					return k === "json" ?
-						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
-				}
-
-				return v;
-			}, 2)
-			.replace(/\"?(function|})\"?/g, "$1")
-			.replace(/\\"/g, "\"")
-			.replace(/</g, "&lt;")
-			.replace(/\\t/g, "\t")
-			.replace(/\t{5}/g, "")
-			.replace(/\\r/g, "\r")
-			.replace(/"(\w+)":/g, "$1:");
-
-			if (/multiline/i.test(key)) {
-				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
-					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
-			} else {
-				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
-					.replace(/\\(u)/g, "\$1");
-			}
-
-			codeStr += ");";
+		var codeStr = this.getCodeStr(options);
 
 		// markup
 		if ((index && index === 1) || !index) {

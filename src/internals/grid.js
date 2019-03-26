@@ -312,7 +312,7 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		// Hide when bubble/scatter plot exists
+		// Hide when bubble/scatter/stanford plot exists
 		if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType()) {
 			return;
 		}

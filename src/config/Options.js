@@ -407,6 +407,19 @@ export default class Options {
 			data_xSort: true,
 
 			/**
+			 * Specify the key of epochs values in the data.
+			 * @name data․epochs
+			 * @memberof Options
+			 * @type {String}
+			 * @default epochs
+			 * @example
+			 * data: {
+			 *   epochs: "count"
+			 * }
+			 */
+			data_epochs: "epochs",
+
+			/**
 			 * Converts data id value
 			 * @name data․idConverter
 			 * @memberof Options
@@ -2980,6 +2993,20 @@ export default class Options {
 			pie_innerRadius: 0,
 			pie_padAngle: 0,
 			pie_padding: 0,
+
+			/**
+			 * Set plugins
+			 * @name plugins
+			 * @memberof Options
+			 * @type {Array}
+			 * @example
+			 *  plugins: [
+			 *    new bb.plugin.stanford({ ... }),
+			 *    new PluginA(),
+			 *    ...
+			 * ]
+			 */
+			plugins: [],
 
 			/**
 			 * Set gauge options

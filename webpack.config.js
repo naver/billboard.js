@@ -87,5 +87,5 @@ module.exports = () => {
 
 	mode === "packaged" && delete config.externals;
 
-	return require(`./config/webpack.config.${mode}.js`)(config);
+	return require(`./config/webpack.config.${mode}.js`)(config, env);
 };

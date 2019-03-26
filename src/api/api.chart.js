@@ -79,6 +79,7 @@ extend(Chart.prototype, {
 		const $$ = this.internal;
 
 		if (notEmpty($$)) {
+			$$.callPluginHook("$willDestroy");
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
 			// clear timers && pending transition

@@ -10,7 +10,7 @@
 
     <link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" />
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.8/fallback.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fallback/1.1.9/fallback.min.js"></script>
 
     <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-1.12.4.min.js"></script>
@@ -32,8 +32,9 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/javascript.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
     <script>
+        var path = ["../dist/", "../../gh-pages/release/latest/dist/"];
+
         !function() {
-            var path = ["../dist/", "../../gh-pages/release/latest/dist/"];
             var cssFileName = localStorage.cssThemeName;
 
             cssFileName = cssFileName ? "theme/" + cssFileName : "billboard";
@@ -41,14 +42,15 @@
             /Edge/.test(navigator.userAgent) && /github.io/.test(location.hostname) && path.reverse();
 
             fallback.load({
-                    billboard_js: [
-                        path[0] + "billboard.js",
-                        path[1] + "billboard.js"
-                    ],
-                    billboard_css: [
-                        path[0] + cssFileName + ".css",
-                        path[1] + cssFileName + ".css"
-                    ]
+                    billboard_js: path.map(function(p) {
+                        return p + "billboard.js"
+                    }),
+                    billboard_css: path.map(function(p) {
+                        return p + cssFileName + ".css"
+                    }),
+                    // plugins_stanford: path.map(function(p) {
+                    //     return p + "plugin/billboardjs-plugin-stanford.js"
+                    // })
             });
 
 	        $(function() {
@@ -147,21 +149,18 @@
 <script src="./demo.js"></script>
 <script src="./chart.js"></script>
 <script>
-!function() {
-	if (/Android [2-4]/.test(navigator.userAgent)) {
-		var interval = setInterval(function () {
-			if (bb && bb.generate) {
-				billboardDemo.init();
-				clearInterval(interval);
-			}
+fallback.ready(function(e) {
+    // load plugin
+    fallback.load({
+        plugins_stanford: path.map(function(p) {
+            return p + "plugin/billboardjs-plugin-stanford.js"
+        })
+    });
 
-		}, 1000);
-	} else {
-		fallback.ready(function() {
-			billboardDemo.init();
-		});
-	}
-}();
+    fallback.ready(function() {
+        billboardDemo.init();
+    })
+});
 </script>
 </body>
 </html>

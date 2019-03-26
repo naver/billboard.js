@@ -43,7 +43,6 @@ export default class AxisRenderer {
 		const config = this.config;
 		const params = this.params;
 		const helperInst = this.helper;
-
 		const scale = helperInst.scale;
 		const orient = config.orient;
 		const splitTickText = this.splitTickText.bind(this);

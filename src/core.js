@@ -59,6 +59,7 @@ import "./api/api.tooltip";
 import "./internals/ua";
 import "./api/api.export";
 
+
 // base CSS
 import "./scss/billboard.scss";
 
@@ -123,6 +124,16 @@ const bb = {
 	 * @memberof bb
 	 */
 	instance: [],
+
+	/**
+	 * Namespace for plugins
+	 * @property {Object} plugin plugin namespace
+	 * @example
+	 *  // Stanford diagram plugin
+	 *  bb.plugin.stanford;
+	 * @memberof bb
+	 */
+	plugin: {},
 
 	/**
 	 * Internal chart object

@@ -4,6 +4,7 @@
  */
 import { Axis } from "./axis";
 import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
+import Stanford from "./plugin/stanford/index";
 
 export interface ChartOptions {
 	/**
@@ -548,6 +549,11 @@ export interface ChartOptions {
 	 * Is to make chart element positioned over axis element.
 	 */
 	clipPath?: boolean;
+
+	/**
+	 * Set plugins
+	 */
+	plugins?: Stanford|any[];
 }
 
 export interface AreaLinearGradientOptions {

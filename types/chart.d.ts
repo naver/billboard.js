@@ -84,6 +84,11 @@ export interface Chart {
 		};
 	};
 
+	/**
+	 * Plugin instance array
+	 */
+	plugins: any[];
+
 	xgrids: GridOperations;
 	ygrids: GridOperations;
 
