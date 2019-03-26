@@ -3211,8 +3211,18 @@ export default class Options {
 			 *  If undefined returned, the row of that value will be skipped.
 			 * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
 			 *  This option can be used to modify the tooltip position by returning object that has top and left.
-			 * @property {Function} [tooltip.contents] Set custom HTML for the tooltip.<br>
+			 * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+			 * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
+			 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
+			 *  - **NOTE:** When is specified, will not be updating tooltip's position.
+			 *  - Within template, below syntax will be replaced using template-like syntax string:
+			 *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
+			 *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
+			 *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+			 *    - {=TITLE}: title value
+			 *    - {=COLOR}: data color
+			 *    - {=VALUE}: data value
 			 * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
 			 * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
 			 * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
@@ -3241,9 +3251,24 @@ export default class Options {
 			 *      position: function(data, width, height, element) {
 			 *          return {top: 0, left: 0}
   			 *      },
+			 *
   			 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
   			 *          return ... // formatted html as you want
     		 *      },
+			 *
+			 *       // specify tooltip contents using template
+			 *       // - example of HTML returned:
+			 *       // <ul class="bb-tooltip">
+			 *       //   <li class="bb-tooltip-name-data1"><span>250</span><br><span style="color:#00c73c">data1</span></li>
+			 *       //   <li class="bb-tooltip-name-data2"><span>50</span><br><span style="color:#fa7171">data2</span></li>
+			 *       // </ul>
+			 *       contents: {
+			 *      	bindto: "#tooltip",
+			 *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+			 *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
+			 *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
+			 *      		'}}</ul>'
+			 *      }
     		 *
     		 *      // sort tooltip data value display in ascending order
     		 *      order: "asc",
@@ -3291,10 +3316,7 @@ export default class Options {
 			tooltip_format_name: undefined,
 			tooltip_format_value: undefined,
 			tooltip_position: undefined,
-			tooltip_contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
-				return this.getTooltipContent ?
-					this.getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) : "";
-			},
+			tooltip_contents: {},
 			tooltip_init_show: false,
 			tooltip_init_x: 0,
 			tooltip_init_position: {

@@ -9,7 +9,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, callFn, isDefined, getOption, isEmpty, isFunction, notEmpty} from "./util";
+import {extend, callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -93,9 +93,10 @@ extend(ChartInternal.prototype, {
 			$$.mapToIds(targets).forEach(v => {
 				const content = isFunction(template) ?
 					template.call($$, v, $$.color(v), $$.api.data(v)[0].values) :
-					template
-						.replace(/{=COLOR}/g, $$.color(v))
-						.replace(/{=TITLE}/g, v);
+					tplProcess(template, {
+						COLOR: $$.color(v),
+						TITLE: v
+					});
 
 				if (content) {
 					ids.push(v);

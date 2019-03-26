@@ -711,12 +711,18 @@ describe("TOOLTIP", function() {
 
 	describe("tooltip display", () => {
 		before(() => {
+			sandbox("tooltip-wrapper").innerHTML = "<div id='tooltip'></div>";
+
 			args = {
 				data: {
 					columns: [
 						["data1", 30, 200, 100],
 						["data2", 130, 100, 140]
-					]
+					],
+					colors: {
+						data1: "#00c73c",
+						data2: "#fa7171"
+					}
 				},
 				tooltip: {
 					doNotHide: true
@@ -733,6 +739,25 @@ describe("TOOLTIP", function() {
 			// when is called .hide(), it should be hide
 			chart.tooltip.hide();
 			expect(chart.$.tooltip.style("display")).to.be.equal("none");
+		});
+
+		it("set options tooltip.contents", () => {
+			args.tooltip.contents = {
+				bindto: "#tooltip",
+				template: `<ul><li>Index<br>{=TITLE}</li>
+					{{<li class={=CLASS_TOOLTIP_NAME}>
+					<span>{=VALUE}</span><br>
+					<span style=color:{=COLOR}>{=NAME}</span></li>}}</ul>`
+			};
+		});
+
+		it("check for tooltip contents template", () => {
+			const html = `<ul><li>Index<br>2</li><li class="bb-tooltip-name-data1"><span>100</span><br><span style="color:#00c73c">data1</span></li><li class="bb-tooltip-name-data2"><span>140</span><br><span style="color:#fa7171">data2</span></li></ul>`;
+
+			util.hoverChart(chart, "mousemove", {clientX: 185, clientY: 107});
+			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
+
+			expect(d3.select("#tooltip").html()).to.be.equal(html);
 		});
 	});
 });

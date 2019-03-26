@@ -157,13 +157,19 @@ var billboardDemo = {
 		return false;
 	},
 
+	getLowerFirstCase(str) {
+		return str.charAt(0).toLowerCase() + str.slice(1);
+	},
+
 	_addChartInstance: function(type, key, index, code) {
+		key = this.getLowerFirstCase(key);
+
 		if (index) {
 			key += "_"+ index;
 		}
 
 		var $el = document.getElementById(key);
-		var legend;
+		var template;
 
 		if (!$el) {
 			$el = document.createElement("div");
@@ -175,13 +181,14 @@ var billboardDemo = {
 
 			this.$chartArea.appendChild($el);
 
-			if (key.indexOf("LegendTemplate") > -1) {
-				legend = document.createElement("div");
-				legend.id = "legend";
-				legend.style.textAlign = "center";
+			if (/^(legend|tooltip)Template/.test(key)) {
+				template = document.createElement("div");
+				template.id = this.getLowerFirstCase(RegExp.$1);
+				console.log(template.id)
+				template.style.textAlign = "center";
 
-				this.$chartArea.appendChild(legend);
-				legend = "&lt;div id=\"legend\">&lt;/div>";
+				this.$chartArea.appendChild(template);
+				template = "&lt;div id=\""+ template.id +"\">&lt;/div>";
 			}
 		}
 
@@ -232,9 +239,9 @@ var billboardDemo = {
 
 		// markup
 		if ((index && index === 1) || !index) {
-			code.markup.push("&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n");
+			code.markup.push("&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (template ? template + "\r\n" : "") + "\r\n");
 		} else if (index && index > 1) {
-			code.markup.push("&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (legend ? legend + "\r\n" : "") + "\r\n");
+			code.markup.push("&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (template ? template + "\r\n" : "") + "\r\n");
 		}
 
 		if (index && index > 1) {

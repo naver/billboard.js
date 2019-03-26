@@ -316,6 +316,23 @@ const emulateEvent = {
 	}
 };
 
+/**
+ * Process the template  & return bound string
+ * @param {String} tpl Template string
+ * @param {Object} data Data value to be replaced
+ * @return {String}
+ * @private
+ */
+const tplProcess = (tpl, data) => {
+	let res = tpl;
+
+	for (const x in data) {
+		res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
+	}
+
+	return res;
+};
+
 export {
 	asHalfPixel,
 	brushEmpty,
@@ -350,5 +367,6 @@ export {
 	notEmpty,
 	sanitise,
 	sortValue,
-	toArray
+	toArray,
+	tplProcess
 };

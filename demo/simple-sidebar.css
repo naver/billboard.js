@@ -234,3 +234,7 @@ div.row {
 #MultilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }
 
 #RotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }
+
+#tooltip {font-size: 13px;padding: 0;margin-bottom: 80px;}
+#tooltip li {list-style: none;float: left; padding: 0 10px;}
+#tooltip li span:first-child {font-size: 16px;}
