@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190315100419
+ * @version 1.8.0-nightly-20190327021737
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -741,6 +741,13 @@ var isValue = function (v) {
       changedTouches: [touchObj]
     }));
   }
+},
+    tplProcess = function (tpl, data) {
+  var res = tpl;
+
+  for (var x in data) res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
+
+  return res;
 };
 
 
@@ -5638,7 +5645,8 @@ var Options_Options = function Options() {
      * @name tooltip
      * @memberof Options
      * @type {Object}
-     * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
+     * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
+     * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
      * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
      *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
      * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
@@ -5652,8 +5660,18 @@ var Options_Options = function Options() {
      *  If undefined returned, the row of that value will be skipped.
      * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
      *  This option can be used to modify the tooltip position by returning object that has top and left.
-     * @property {Function} [tooltip.contents] Set custom HTML for the tooltip.<br>
+     * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
      *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+     * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
+     * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
+     *  - **NOTE:** When is specified, will not be updating tooltip's position.
+     *  - Within template, below syntax will be replaced using template-like syntax string:
+     *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
+     *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
+     *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+     *    - {=TITLE}: title value
+     *    - {=COLOR}: data color
+     *    - {=VALUE}: data value
      * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
      * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
      * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
@@ -5669,9 +5687,15 @@ var Options_Options = function Options() {
      *     **NOTE:** When `data.groups` is set, the order will follow as the stacked graph order.<br>
      *      If want to order as data bound, set any value rather than asc, desc or null. (ex. empty string "")
      *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
+     * @see [Demo: Hide Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.HideTooltip)
+     * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
+     * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
+     * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
+     * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
      * @example
      *  tooltip: {
      *      show: true,
+     *      doNotHide: true,
      *      grouped: false,
      *      format: {
      *          title: function(x) { return "Data " + x; },
@@ -5681,9 +5705,24 @@ var Options_Options = function Options() {
      *      position: function(data, width, height, element) {
      *          return {top: 0, left: 0}
     		 *      },
+     *
     		 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
     		 *          return ... // formatted html as you want
      		 *      },
+     *
+     *       // specify tooltip contents using template
+     *       // - example of HTML returned:
+     *       // <ul class="bb-tooltip">
+     *       //   <li class="bb-tooltip-name-data1"><span>250</span><br><span style="color:#00c73c">data1</span></li>
+     *       //   <li class="bb-tooltip-name-data2"><span>50</span><br><span style="color:#fa7171">data2</span></li>
+     *       // </ul>
+     *       contents: {
+     *      	bindto: "#tooltip",
+     *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+     *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
+     *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
+     *      		'}}</ul>'
+     *      }
      		 *
      		 *      // sort tooltip data value display in ascending order
      		 *      order: "asc",
@@ -5725,14 +5764,13 @@ var Options_Options = function Options() {
      *  }
      */
     tooltip_show: !0,
+    tooltip_doNotHide: !1,
     tooltip_grouped: !0,
     tooltip_format_title: undefined,
     tooltip_format_name: undefined,
     tooltip_format_value: undefined,
     tooltip_position: undefined,
-    tooltip_contents: function tooltip_contents(d, defaultTitleFormat, defaultValueFormat, color) {
-      return this.getTooltipContent ? this.getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) : "";
-    },
+    tooltip_contents: {},
     tooltip_init_show: !1,
     tooltip_init_x: 0,
     tooltip_init_position: {
@@ -9439,10 +9477,11 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   initTooltip: function initTooltip() {
     var $$ = this,
-        config = $$.config;
+        config = $$.config,
+        bindto = config.tooltip_contents.bindto;
 
     // Show tooltip if needed
-    if ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none"), config.tooltip_init_show) {
+    if ($$.tooltip = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto), $$.tooltip.empty() && ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
       if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
@@ -9453,10 +9492,22 @@ extend(ChartInternal_ChartInternal.prototype, {
         config.tooltip_init_x = i;
       }
 
-      $$.tooltip.html(config.tooltip_contents.call($$, $$.data.targets.map(function (d) {
+      $$.tooltip.html($$.getTooltipHTML($$.data.targets.map(function (d) {
         return $$.addName(d.values[config.tooltip_init_x]);
-      }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), $$.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
+      }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), bindto || $$.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
     }
+  },
+
+  /**
+   * Get the tooltip HTML string
+   * @param  {...any} args
+   * @private
+   * @return {String} Formatted HTML string
+   */
+  getTooltipHTML: function getTooltipHTML() {
+    for (var _config$tooltip_conte, _$$, $$ = this, config = $$.config, _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
+
+    return isFunction(config.tooltip_contents) ? (_config$tooltip_conte = config.tooltip_contents).call.apply(_config$tooltip_conte, [$$].concat(args)) : (_$$ = $$).getTooltipContent.apply(_$$, args);
   },
 
   /**
@@ -9486,7 +9537,8 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.levelColor(row.value);
     } : function (row) {
       return color(row.id);
-    };
+    },
+        tplStr = config.tooltip_contents.template;
 
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
@@ -9506,12 +9558,19 @@ extend(ChartInternal_ChartInternal.prototype, {
       });
     } else isFunction(order) && d.sort(order);
 
-    var text, row, param, value;
+    var text,
+        row,
+        param,
+        value,
+        tpl = $$.getTooltipContentTemplate(tplStr);
 
-    for (var i = 0, len = d.length; i < len; i++) if ((row = d[i]) && (getRowValue(row) || getRowValue(row) === 0)) {
-      if (!text) {
+    for (var i = 0; row = d[i]; i++) if (getRowValue(row) || getRowValue(row) === 0) {
+      if (i === 0) {
         var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
-        text = "<table class=\"".concat(config_classes.tooltip, "\">").concat(isValue(title) ? "<tr><th colspan=\"2\">".concat(title, "</th></tr>") : "");
+        text = tplProcess(tpl[0], {
+          CLASS_TOOLTIP: config_classes.tooltip,
+          TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>") : ""
+        });
       }
 
       if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(toConsumableArray_default()(param)))), $$.isAreaRangeType(row)) {
@@ -9528,13 +9587,30 @@ extend(ChartInternal_ChartInternal.prototype, {
       if (value !== undefined) {
         // Skip elements when their name is set to null
         if (row.name === null) continue;
+
         var name = sanitise(nameFormat.apply(void 0, [row.name].concat(toConsumableArray_default()(param)))),
-            bgcolor = getBgColor(row);
-        text += "<tr class=\"".concat(config_classes.tooltipName).concat($$.getTargetSelectorSuffix(row.id), "\"><td class=\"name\">"), text += $$.patterns ? "<svg><rect style=\"fill:".concat(bgcolor, "\" width=\"10\" height=\"10\"></rect></svg>") : "<span style=\"background-color:".concat(bgcolor, "\"></span>"), text += "".concat(name, "</td><td class=\"value\">").concat(value, "</td></tr>");
+            _color = getBgColor(row);
+
+        text += tplProcess(tpl[1], {
+          CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
+          COLOR: tplStr ? _color : $$.patterns ? "<svg><rect style=\"fill:".concat(_color, "\" width=\"10\" height=\"10\"></rect></svg>") : "<span style=\"background-color:".concat(_color, "\"></span>"),
+          "NAME": name,
+          VALUE: value
+        });
       }
     }
 
     return "".concat(text, "</table>");
+  },
+
+  /**
+   * Get the content template string
+   * @param {String} tplStr
+   * @return {String} Template string
+   * @private
+   */
+  getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
+    return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\">{=COLOR}{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
   },
 
   /**
@@ -9581,6 +9657,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   showTooltip: function showTooltip(selectedData, element) {
     var $$ = this,
         config = $$.config,
+        bindto = config.tooltip_contents.bindto,
         forArc = $$.hasArcType(null, ["radar"]),
         dataToShow = selectedData.filter(function (d) {
       return d && isValue($$.getBaseValue(d));
@@ -9594,32 +9671,33 @@ extend(ChartInternal_ChartInternal.prototype, {
           height = datum && datum.height || 0;
 
       if (!datum || datum.current !== dataStr) {
-        var index = selectedData.concat().sort()[0].index,
-            html = config.tooltip_contents.call($$, selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color);
-        callFn(config.tooltip_onshow, $$), $$.tooltip.html(html).style("display", "block").datum({
+        var index = selectedData.concat().sort()[0].index;
+        callFn(config.tooltip_onshow, $$), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", config.tooltip_doNotHide === !1 ? "block" : null).datum({
           index: index,
           current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
           height: height = $$.tooltip.property("offsetHeight")
         }), callFn(config.tooltip_onshown, $$), $$._handleLinkedCharts(!0, index);
-      } // Get tooltip dimensions
+      }
 
+      if (!bindto) {
+        // Get tooltip dimensions
+        var position = positionFunction.call(this, dataToShow, width, height, element); // Set tooltip position
 
-      var position = positionFunction.call(this, dataToShow, width, height, element); // Set tooltip position
-
-      $$.tooltip.style("top", "".concat(position.top, "px")).style("left", "".concat(position.left, "px"));
+        $$.tooltip.style("top", "".concat(position.top, "px")).style("left", "".concat(position.left, "px"));
+      }
     }
   },
 
   /**
    * Hide the tooltip
+   * @param {Boolean} force Force to hide
    * @private
    */
-  hideTooltip: function hideTooltip() {
+  hideTooltip: function hideTooltip(force) {
     var $$ = this,
         config = $$.config;
-    // hide tooltip
-    callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), callFn(config.tooltip_onhidden, $$);
+    (!config.tooltip_doNotHide || force) && (callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), callFn(config.tooltip_onhidden, $$));
   },
 
   /**
@@ -9711,7 +9789,10 @@ extend(ChartInternal_ChartInternal.prototype, {
           ids = [],
           html = "";
       $$.mapToIds(targets).forEach(function (v) {
-        var content = isFunction(template) ? template.call($$, v, $$.color(v), $$.api.data(v)[0].values) : template.replace(/{=COLOR}/g, $$.color(v)).replace(/{=TITLE}/g, v);
+        var content = isFunction(template) ? template.call($$, v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
+          COLOR: $$.color(v),
+          TITLE: v
+        });
         content && (ids.push(v), html += content);
       });
       var legendItem = wrapper.html(html).selectAll(function () {
@@ -13185,7 +13266,7 @@ var tooltip = extend(function () {}, {
    */
   hide: function hide() {
     var $$ = this.internal;
-    $$.hideTooltip(), $$.hideXGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    $$.hideTooltip(!0), $$.hideXGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 });
 extend(Chart_Chart.prototype, {
@@ -13371,7 +13452,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190315100419
+ * @version 1.8.0-nightly-20190327021737
  */
 
 var bb = {
@@ -13382,7 +13463,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190315100419",
+  version: "1.8.0-nightly-20190327021737",
 
   /**
    * Generate chart
