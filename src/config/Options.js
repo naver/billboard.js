@@ -3196,7 +3196,8 @@ export default class Options {
 			 * @name tooltip
 			 * @memberof Options
 			 * @type {Object}
-			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.<br>
+			 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
+			 * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
 			 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
 			 *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
 			 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
@@ -3210,8 +3211,18 @@ export default class Options {
 			 *  If undefined returned, the row of that value will be skipped.
 			 * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
 			 *  This option can be used to modify the tooltip position by returning object that has top and left.
-			 * @property {Function} [tooltip.contents] Set custom HTML for the tooltip.<br>
+			 * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+			 * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
+			 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
+			 *  - **NOTE:** When is specified, will not be updating tooltip's position.
+			 *  - Within template, below syntax will be replaced using template-like syntax string:
+			 *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
+			 *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
+			 *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+			 *    - {=TITLE}: title value
+			 *    - {=COLOR}: data color
+			 *    - {=VALUE}: data value
 			 * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
 			 * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
 			 * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
@@ -3227,9 +3238,15 @@ export default class Options {
 			 *     **NOTE:** When `data.groups` is set, the order will follow as the stacked graph order.<br>
 			 *      If want to order as data bound, set any value rather than asc, desc or null. (ex. empty string "")
 			 *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
+			 * @see [Demo: Hide Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.HideTooltip)
+			 * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
+			 * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
+			 * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
+			 * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
 			 * @example
 			 *  tooltip: {
 			 *      show: true,
+			 *      doNotHide: true,
 			 *      grouped: false,
 			 *      format: {
 			 *          title: function(x) { return "Data " + x; },
@@ -3239,9 +3256,24 @@ export default class Options {
 			 *      position: function(data, width, height, element) {
 			 *          return {top: 0, left: 0}
   			 *      },
+			 *
   			 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
   			 *          return ... // formatted html as you want
     		 *      },
+			 *
+			 *       // specify tooltip contents using template
+			 *       // - example of HTML returned:
+			 *       // <ul class="bb-tooltip">
+			 *       //   <li class="bb-tooltip-name-data1"><span>250</span><br><span style="color:#00c73c">data1</span></li>
+			 *       //   <li class="bb-tooltip-name-data2"><span>50</span><br><span style="color:#fa7171">data2</span></li>
+			 *       // </ul>
+			 *       contents: {
+			 *      	bindto: "#tooltip",
+			 *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+			 *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
+			 *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
+			 *      		'}}</ul>'
+			 *      }
     		 *
     		 *      // sort tooltip data value display in ascending order
     		 *      order: "asc",
@@ -3283,15 +3315,13 @@ export default class Options {
 			 *  }
 			 */
 			tooltip_show: true,
+			tooltip_doNotHide: false,
 			tooltip_grouped: true,
 			tooltip_format_title: undefined,
 			tooltip_format_name: undefined,
 			tooltip_format_value: undefined,
 			tooltip_position: undefined,
-			tooltip_contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
-				return this.getTooltipContent ?
-					this.getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) : "";
-			},
+			tooltip_contents: {},
 			tooltip_init_show: false,
 			tooltip_init_x: 0,
 			tooltip_init_position: {

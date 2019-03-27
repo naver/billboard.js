@@ -2465,6 +2465,35 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		TooltipTemplate: {
+			options: {
+				data: {
+					columns: [
+						["data1", 120, 200, 300, 100, 150, 250],
+						["data2", 250, 129, 217, 240, 315, 225],
+						["data3", 100, 320, 210, 340, 215, 125]
+					]
+				},
+				tooltip: {
+					init: {
+						show: true
+					},
+					doNotHide: true,
+					contents: {
+						bindto: "#tooltip",
+						template: "<ul><li>Index<br>{=TITLE}</li>" +
+								"{{<li class={=CLASS_TOOLTIP_NAME}>" +
+								"<span>{=VALUE}</span><br>" +
+								"<span style=color:{=COLOR}>{=NAME}</span></li>}}</ul>"
+					}
+				}
+			},
+			style: [
+				"#tooltip { font-size: 13px;padding: 0;margin-bottom: 80px; }",
+				"#tooltip li { list-style: none;float: left; padding: 0 10px; }",
+				"#tooltip li span:first-child { font-size: 16px; }"
+			]
+		},
 		LinkedTooltips: [
 			{
 				options: {

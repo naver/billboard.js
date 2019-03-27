@@ -678,6 +678,11 @@ export interface TooltipOptions {
 	show?: boolean;
 
 	/**
+	 * Make tooltip keep showing not hiding on interaction.
+	 */
+	doNotHide?: boolean;
+
+	/**
 	 * Set if tooltip is grouped or not for the data points.
 	 */
 	grouped?: boolean;
@@ -724,12 +729,28 @@ export interface TooltipOptions {
 	 * Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show.
 	 * If tooltip.grouped is true, data includes multiple data points.
 	 */
-	contents?(
-		data: any,
-		defaultTitleFormat: string,
-		defaultValueFormat: string,
-		color: any
-	): string;
+	contents?: (
+			data: any,
+			defaultTitleFormat: string,
+			defaultValueFormat: string,
+			color: any
+		) => string | {
+			/**
+			 * Set CSS selector or element reference to bind tooltip.
+			 */
+			bindto?: string | HTMLElement;
+
+			/**
+			 * Within template, below syntax will be replaced using template-like syntax string:
+			 *  - {{ ... }}: the doubly curly brackets indicate loop block for data rows
+			 *  - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
+			 *  - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+			 *  - {=TITLE}: title value
+			 *  - {=COLOR}: data color
+			 *  - {=VALUE}: data value
+			 */
+			template?: string;
+		};
 
 	init?: {
 	/**

@@ -17,7 +17,6 @@
     "build:nightly": "node ./config/nightly.js",
     "deploy": "bash ./config/deploy.sh",
     "lint": "eslint src",
-    "lint:dts": "dtslint types",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
     "test:chrome": "npm test -- --chrome",
     "coverage": "npm test -- --coverage",
