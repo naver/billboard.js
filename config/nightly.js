@@ -22,7 +22,7 @@ function getDatetime() {
 
 // is deploy build? (The deploy is intended to be ran from Travis CI)
 const deploy = process.env.DEPLOY_NIGHTLY;
-const token = process.env.GH_TOKEN;
+// const token = process.env.GH_TOKEN;
 
 // set version for nightly
 const version = pkg.version.replace(/snapshot/, `nightly-${getDatetime()}`);
@@ -40,6 +40,10 @@ cmd = Object.values(build);
 
 console.log(`***** Starting build v${version} *****\r\n> ${cmd.join("\r\n> ")}`);
 
-exec(cmd.join(" && "), () => {
-	console.log(`***** Finished successfully! *****`);
+exec(cmd.join(" && "), (error, stdout, stderr) => {
+	if (error || stderr) {
+		console.error(error, stderr);
+	} else {
+		console.log(`***** ${stdout} : Finished successfully! *****`);
+	}
 });

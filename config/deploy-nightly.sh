@@ -18,7 +18,7 @@ setup_git() {
     git checkout master
     git pull
     git checkout nightly
-    git merge master
+    git merge --strategy-option theirs master
 }
 
 build_nightly() {
