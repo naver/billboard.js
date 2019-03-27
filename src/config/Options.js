@@ -3238,6 +3238,11 @@ export default class Options {
 			 *     **NOTE:** When `data.groups` is set, the order will follow as the stacked graph order.<br>
 			 *      If want to order as data bound, set any value rather than asc, desc or null. (ex. empty string "")
 			 *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
+			 * @see [Demo: Hide Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.HideTooltip)
+			 * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
+			 * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
+			 * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
+			 * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
 			 * @example
 			 *  tooltip: {
 			 *      show: true,
