@@ -14,6 +14,52 @@ describe("GRID", function() {
 		chart = util.generate(args);
 	});
 
+	describe("check for default grid lines", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+					]
+				},
+				grid: {
+					x: {
+						show: true
+					},
+					y: {
+						show: true
+					}
+				},
+			};
+		});
+
+		it("should show 3 grid lines", () => {
+			// x grid
+			let grid = chart.$.grid.selectAll(`.${CLASS.xgrids} line`).nodes();
+
+			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
+				const x = util.parseNum(this.getAttribute("transform").split(",")[0]);
+				const node = grid[i];
+				const x1 = +node.getAttribute("x1")
+
+				expect(x1).to.be.equal(+node.getAttribute("x2"));
+				expect(x).to.be.equal(x1);
+			});
+
+			// y grid
+			grid = chart.$.grid.selectAll(`.${CLASS.ygrids} line`).nodes();
+
+			chart.$.main.selectAll(`.${CLASS.axisY} .tick`).each(function(d, i) {
+				const y = util.parseNum(this.getAttribute("transform").split(",")[1]);
+				const node = grid[i];
+				const y1 = +node.getAttribute("y1")
+
+				expect(y1).to.be.equal(+node.getAttribute("y2"));
+				expect(y).to.be.equal(y1);
+			});
+		});
+	});
+
 	describe("y grid show", () => {
 		before(() => {
 			args = {

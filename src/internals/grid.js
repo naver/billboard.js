@@ -57,7 +57,7 @@ extend(ChartInternal.prototype, {
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, $$.x);
 		const tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
-		const pos = d => $$.x(d) + (tickOffset * isRotated ? -1 : 1);
+		const pos = d => ($$.x(d) + tickOffset) * (isRotated ? -1 : 1);
 
 		$$.xgridAttr = isRotated ? {
 			"x1": 0,
@@ -102,6 +102,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
+		const pos = d => Math.ceil($$.y(d));
 
 		$$.ygrid = $$.main.select(`.${CLASS.ygrids}`)
 			.selectAll(`.${CLASS.ygrid}`)
@@ -115,10 +116,10 @@ extend(ChartInternal.prototype, {
 			.attr("class", CLASS.ygrid)
 			.merge($$.ygrid);
 
-		$$.ygrid.attr("x1", isRotated ? $$.y : 0)
-			.attr("x2", isRotated ? $$.y : $$.width)
-			.attr("y1", isRotated ? 0 : $$.y)
-			.attr("y2", isRotated ? $$.height : $$.y);
+		$$.ygrid.attr("x1", isRotated ? pos : 0)
+			.attr("x2", isRotated ? pos : $$.width)
+			.attr("y1", isRotated ? 0 : pos)
+			.attr("y2", isRotated ? $$.height : pos);
 
 		$$.smoothLines($$.ygrid, "grid");
 	},
