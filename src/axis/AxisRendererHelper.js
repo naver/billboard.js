@@ -57,9 +57,7 @@ export default class AxisRendererHelper {
 	}
 
 	axisX(selection, x) {
-		const tickOffset = this.config.tickOffset;
-
-		selection.attr("transform", d => `translate(${Math.ceil(x(d) + tickOffset)}, 0)`);
+		selection.attr("transform", d => `translate(${Math.ceil(x(d) + this.config.tickOffset)},0)`);
 	}
 
 	axisY(selection, y) {
