@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190329101102
+ * @version 1.8.0-nightly-20190401101118
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -9012,9 +9012,10 @@ function () {
   return createClass_default()(AxisRendererHelper, [{
     key: "axisX",
     value: function axisX(selection, x) {
-      var tickOffset = this.config.tickOffset;
+      var _this = this;
+
       selection.attr("transform", function (d) {
-        return "translate(".concat(Math.ceil(x(d) + tickOffset), ", 0)");
+        return "translate(".concat(Math.ceil(x(d) + _this.config.tickOffset), ",0)");
       });
     }
   }, {
@@ -19942,7 +19943,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         xgridData = $$.generateGridData(config.grid_x_type, $$.x),
         tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
         pos = function (d) {
-      return $$.x(d) + (tickOffset * isRotated ? -1 : 1);
+      return ($$.x(d) + tickOffset) * (isRotated ? -1 : 1);
     };
 
     $$.xgridAttr = isRotated ? {
@@ -19968,8 +19969,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated,
-        gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks);
-    $$.ygrid = $$.main.select(".".concat(config_classes.ygrids)).selectAll(".".concat(config_classes.ygrid)).data(gridValues), $$.ygrid.exit().remove(), $$.ygrid = $$.ygrid.enter().append("line").attr("class", config_classes.ygrid).merge($$.ygrid), $$.ygrid.attr("x1", isRotated ? $$.y : 0).attr("x2", isRotated ? $$.y : $$.width).attr("y1", isRotated ? 0 : $$.y).attr("y2", isRotated ? $$.height : $$.y), $$.smoothLines($$.ygrid, "grid");
+        gridValues = $$.yAxis.tickValues() || $$.y.ticks(config.grid_y_ticks),
+        pos = function (d) {
+      return Math.ceil($$.y(d));
+    };
+
+    $$.ygrid = $$.main.select(".".concat(config_classes.ygrids)).selectAll(".".concat(config_classes.ygrid)).data(gridValues), $$.ygrid.exit().remove(), $$.ygrid = $$.ygrid.enter().append("line").attr("class", config_classes.ygrid).merge($$.ygrid), $$.ygrid.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : $$.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? $$.height : pos), $$.smoothLines($$.ygrid, "grid");
   },
   updateGrid: function updateGrid(duration) {
     var $$ = this;
@@ -24585,7 +24590,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190329101102
+ * @version 1.8.0-nightly-20190401101118
  */
 
 var bb = {
@@ -24596,7 +24601,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190329101102",
+  version: "1.8.0-nightly-20190401101118",
 
   /**
    * Generate chart
