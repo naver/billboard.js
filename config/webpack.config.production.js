@@ -10,8 +10,7 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const config = {
 	entry: {
-		"billboard": "./src/core.js",
-		"billboard.min": "./src/core.js"
+		"billboard.min": ["./src/scss/billboard.scss", "./src/core.js"]
 	},
 	module: {
 		rules: [

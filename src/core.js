@@ -59,9 +59,6 @@ import "./api/api.chart";
 import "./api/api.tooltip";
 import "./api/api.export";
 
-// base CSS
-import "./scss/billboard.scss";
-
 let defaults = {};
 
 /**

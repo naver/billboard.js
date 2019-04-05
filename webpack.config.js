@@ -8,7 +8,7 @@ const WebpackBar = require("webpackbar");
 
 const config = {
 	entry: {
-		billboard: "./src/core.js"
+		billboard: ["./src/scss/billboard.scss", "./src/core.js"]
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
