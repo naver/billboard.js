@@ -41,6 +41,10 @@ describe("COLOR", () => {
 			}`, 0);
 		});
 
+		after(() => {
+			document.styleSheets[0].deleteRule(0);
+		});
+
 		it("should get and parse from the stylesheet", () => {
 			const internal = chart.internal;
 			const pttrn = internal.getColorFromCss();
@@ -125,9 +129,11 @@ describe("COLOR", () => {
 		it("check for legend color tiles", () => {
 			const colors = [chart.color("data1"), chart.color("data2")];
 
-			d3.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemTile}`)
+			chart.$.legend.selectAll(`.${CLASS.legendItemTile}`)
 				.each(function(v, i) {
 					const stroke = d3.select(this).style("stroke").replace(/\"/g, "");
+
+					console.log(this, stroke, colors, i)
 
 					expect(stroke).to.be.equal(colors[i]);
 			});
@@ -327,18 +333,19 @@ describe("COLOR", () => {
 
 		it("check for the arc type", done => {
 			setTimeout(() => {
-				const main = chart.$.main;			
+				const main = chart.$.main;
 				const arc = main.select(`.${CLASS.arc}-data1`).node();
 				const originalColor = arc.style.fill;
 
 				util.fireEvent(arc, "mouseover");
+
 				expect(arc.style.fill).to.be.equal(args.color.onover);
 
 				util.fireEvent(arc, "mouseout");
 				expect(arc.style.fill).to.be.equal(originalColor);
 
 				done();
-			}, 500);
+			}, 1000);
 		});
 	});
 });
