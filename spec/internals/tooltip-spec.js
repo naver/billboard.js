@@ -744,15 +744,18 @@ describe("TOOLTIP", function() {
 		it("set options tooltip.contents", () => {
 			args.tooltip.contents = {
 				bindto: "#tooltip",
+				text: {
+					VAR: ["!!comment", "test!!"]
+				},
 				template: `<ul><li>Index<br>{=TITLE}</li>
 					{{<li class={=CLASS_TOOLTIP_NAME}>
-					<span>{=VALUE}</span><br>
+					<span>{=VALUE}</span><br>{=VAR}
 					<span style=color:{=COLOR}>{=NAME}</span></li>}}</ul>`
 			};
 		});
 
 		it("check for tooltip contents template", () => {
-			const html = `<ul><li>Index<br>2</li><li class="bb-tooltip-name-data1"><span>100</span><br><span style="color:#00c73c">data1</span></li><li class="bb-tooltip-name-data2"><span>140</span><br><span style="color:#fa7171">data2</span></li></ul>`;
+			const html = `<ul><li>Index<br>2</li><li class="bb-tooltip-name-data1"><span>100</span><br>!!comment<span style="color:#00c73c">data1</span></li><li class="bb-tooltip-name-data2"><span>140</span><br>test!!<span style="color:#fa7171">data2</span></li></ul>`;
 
 			util.hoverChart(chart, "mousemove", {clientX: 185, clientY: 107});
 			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});

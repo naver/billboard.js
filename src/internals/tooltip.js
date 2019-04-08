@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction, isString, isValue, callFn, sanitise, tplProcess} from "./util";
+import {extend, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -97,7 +97,8 @@ extend(ChartInternal.prototype, {
 		const order = config.tooltip_order;
 		const getRowValue = row => $$.getBaseValue(row);
 		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row.id);
-		const tplStr = config.tooltip_contents.template;
+		const contents = config.tooltip_contents;
+		const tplStr = contents.template;
 
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
@@ -170,15 +171,22 @@ extend(ChartInternal.prototype, {
 
 				const name = sanitise(nameFormat(row.name, ...param));
 				const color = getBgColor(row);
-
-				text += tplProcess(tpl[1], {
+				const contentValue = {
 					CLASS_TOOLTIP_NAME: CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id),
 					COLOR: tplStr ? color : (
 						$$.patterns ? `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>` :
 							`<span style="background-color:${color}"></span>`),
 					"NAME": name,
 					VALUE: value
-				});
+				};
+
+				if (tplStr && isObject(contents.text)) {
+					Object.keys(contents.text).forEach(key => {
+						contentValue[key] = contents.text[key][i];
+					});
+				}
+
+				text += tplProcess(tpl[1], contentValue);
 			}
 		}
 

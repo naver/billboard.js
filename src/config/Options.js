@@ -3223,6 +3223,10 @@ export default class Options {
 			 *    - {=TITLE}: title value
 			 *    - {=COLOR}: data color
 			 *    - {=VALUE}: data value
+			 * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
+			 *  - **NOTE:** It should contain `{ key: Array, ... }` value
+			 *    - 'key' name is used as substitution within template as '{=KEY}'
+			 *    - The value array length should match with the data length
 			 * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
 			 * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
 			 * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
@@ -3272,6 +3276,26 @@ export default class Options {
 			 *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
 			 *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
 			 *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
+			 *      		'}}</ul>'
+			 *      }
+			 *
+			 *       // with additional text value
+			 *       // - example of HTML returned:
+			 *       // <ul class="bb-tooltip">
+			 *       //   <li class="bb-tooltip-name-data1"><span>250</span><br>comment1<span style="color:#00c73c">data1</span>text1</li>
+			 *       //   <li class="bb-tooltip-name-data2"><span>50</span><br>comment2<span style="color:#fa7171">data2</span>text2</li>
+			 *       // </ul>
+			 *       contents: {
+			 *      	bindto: "#tooltip",
+			 *      	text: {
+			 *      		// a) 'key' name is used as substitution within template as '{=KEY}'
+			 *      		// b) the length should match with the data length
+			 *      		VAR1: ["text1", "text2"],
+			 *      		VAR2: ["comment1", "comment2"],
+			 *      	},
+			 *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+			 *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span>{=VAR2}<br>' +
+			 *      			'<span style=color:{=COLOR}>{=NAME}</span>{=VAR1}</li>' +
 			 *      		'}}</ul>'
 			 *      }
     		 *
