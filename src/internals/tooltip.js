@@ -130,7 +130,7 @@ extend(ChartInternal.prototype, {
 			d.sort(order);
 		}
 
-		const tpl = $$.getTooltipContentTemplate(contents.template);
+		const tpl = $$.getTooltipContentTemplate(tplStr);
 		let text;
 		let row;
 		let param;
