@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190401101118
+ * @version 1.8.0-nightly-20190408101417
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5673,6 +5673,10 @@ var Options_Options = function Options() {
      *    - {=TITLE}: title value
      *    - {=COLOR}: data color
      *    - {=VALUE}: data value
+     * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
+     *  - **NOTE:** It should contain `{ key: Array, ... }` value
+     *    - 'key' name is used as substitution within template as '{=KEY}'
+     *    - The value array length should match with the data length
      * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
      * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
      * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
@@ -5722,6 +5726,26 @@ var Options_Options = function Options() {
      *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
      *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
      *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
+     *      		'}}</ul>'
+     *      }
+     *
+     *       // with additional text value
+     *       // - example of HTML returned:
+     *       // <ul class="bb-tooltip">
+     *       //   <li class="bb-tooltip-name-data1"><span>250</span><br>comment1<span style="color:#00c73c">data1</span>text1</li>
+     *       //   <li class="bb-tooltip-name-data2"><span>50</span><br>comment2<span style="color:#fa7171">data2</span>text2</li>
+     *       // </ul>
+     *       contents: {
+     *      	bindto: "#tooltip",
+     *      	text: {
+     *      		// a) 'key' name is used as substitution within template as '{=KEY}'
+     *      		// b) the length should match with the data length
+     *      		VAR1: ["text1", "text2"],
+     *      		VAR2: ["comment1", "comment2"],
+     *      	},
+     *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+     *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span>{=VAR2}<br>' +
+     *      			'<span style=color:{=COLOR}>{=NAME}</span>{=VAR1}</li>' +
      *      		'}}</ul>'
      *      }
      		 *
@@ -9466,7 +9490,6 @@ extend(ChartInternal_ChartInternal.prototype, {
 // CONCATENATED MODULE: ./src/internals/tooltip.js
 
 
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -9543,7 +9566,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     } : function (row) {
       return color(row.id);
     },
-        tplStr = config.tooltip_contents.template;
+        contents = config.tooltip_contents,
+        tplStr = contents.template;
 
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
@@ -9569,40 +9593,52 @@ extend(ChartInternal_ChartInternal.prototype, {
         value,
         tpl = $$.getTooltipContentTemplate(tplStr);
 
-    for (var i = 0; row = d[i]; i++) if (getRowValue(row) || getRowValue(row) === 0) {
+    for (var _loop = function (i) {
+      if (!(getRowValue(row) || getRowValue(row) === 0)) {
+        return "continue";
+      }
+
       if (i === 0) {
-        var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+        const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
           CLASS_TOOLTIP: config_classes.tooltip,
-          TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>") : ""
+          TITLE: isValue(title) ? tplStr ? title : `<tr><th colspan="2">${title}</th></tr>` : ""
         });
       }
 
-      if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(toConsumableArray_default()(param)))), $$.isAreaRangeType(row)) {
-        var _map = ["high", "low"].map(function (v) {
-          return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(toConsumableArray_default()(param))));
-        }),
-            _map2 = slicedToArray_default()(_map, 2),
-            high = _map2[0],
-            low = _map2[1];
+      param = [row.ratio, row.id, row.index, d];
+      value = sanitise(valueFormat(getRowValue(row), ...param));
 
-        value = "<b>Mid:</b> ".concat(value, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low);
+      if ($$.isAreaRangeType(row)) {
+        const [high, low] = ["high", "low"].map(v => sanitise(valueFormat($$.getAreaRangeData(row, v), ...param)));
+        value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
       }
 
       if (value !== undefined) {
         // Skip elements when their name is set to null
-        if (row.name === null) continue;
+        if (row.name === null) {
+          return "continue";
+        }
 
-        var name = sanitise(nameFormat.apply(void 0, [row.name].concat(toConsumableArray_default()(param)))),
-            _color = getBgColor(row);
-
-        text += tplProcess(tpl[1], {
+        const name = sanitise(nameFormat(row.name, ...param));
+        const color = getBgColor(row);
+        const contentValue = {
           CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
-          COLOR: tplStr ? _color : $$.patterns ? "<svg><rect style=\"fill:".concat(_color, "\" width=\"10\" height=\"10\"></rect></svg>") : "<span style=\"background-color:".concat(_color, "\"></span>"),
+          COLOR: tplStr ? color : $$.patterns ? `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>` : `<span style="background-color:${color}"></span>`,
           "NAME": name,
           VALUE: value
-        });
+        };
+
+        if (tplStr && isObject(contents.text)) {
+          Object.keys(contents.text).forEach(key => {
+            contentValue[key] = contents.text[key][i];
+          });
+        }
+
+        text += tplProcess(tpl[1], contentValue);
       }
+    }, i = 0; row = d[i]; i++) {
+      var _ret = _loop(i);
     }
 
     return "".concat(text, "</table>");
@@ -13457,7 +13493,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190401101118
+ * @version 1.8.0-nightly-20190408101417
  */
 
 var bb = {
@@ -13468,7 +13504,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190401101118",
+  version: "1.8.0-nightly-20190408101417",
 
   /**
    * Generate chart
