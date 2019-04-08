@@ -982,7 +982,7 @@ var demos = {
 				}
 			},
 			style: [
-				"#RotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }"
+				"#rotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }"
 			]
 		},
 		RotateXAxisTickText: {
@@ -1142,7 +1142,7 @@ var demos = {
 				}
 			},
 			style: [
-				"#XAxisTickPosition .bb-axis-x line, #XAxisTickPosition .bb-axis-x path { visibility: hidden; }"
+				"#xAxisTickPosition .bb-axis-x line, #xAxisTickPosition .bb-axis-x path { visibility: hidden; }"
 			]
 		},
 		XAxisTickTimeseries: {
@@ -2370,7 +2370,7 @@ d3.select(".chart_area")
 				}
 			},
 			style: [
-				"#MultilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }"
+				"#multilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }"
 			]
 		}
 	},
@@ -3010,7 +3010,7 @@ d3.select(".chart_area")
 				}
 			},
 			style: [
-				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+				"#labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
 			]
 		},
 		MultilineLabel: {
@@ -3149,7 +3149,7 @@ d3.select(".chart_area")
 				}
 			},
 			style: [
-				"#LabelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
+				"#labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}"
 			]
 		},
 		LabelFormat: {
@@ -3265,7 +3265,7 @@ d3.select(".chart_area")
 				}
 			},
 			style: [
-				"#RadarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
+				"#radarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
 			]
 		},
 		RadarLevel: {
@@ -3605,8 +3605,8 @@ d3.select(".chart_area")
 				];
 			},
 			style: [
-				"#Regions .fill_green { fill: green; }",
-				"#Regions .fill_red { fill: red; }"
+				"#regions .fill_green { fill: green; }",
+				"#regions .fill_red { fill: red; }"
 			]
 		},
 		Resize: {
@@ -3711,8 +3711,8 @@ d3.select(".chart_area")
 				]
 			},
 			style: [
-				"#StyleForRegion .bb-region-0 {fill:red;}",
-				"#StyleForRegion .bb-region.foo {fill:green;}"
+				"#styleForRegion .bb-region-0 {fill:red;}",
+				"#styleForRegion .bb-region.foo {fill:green;}"
 			]
 		},
 		StyleForGrid: {
@@ -3732,12 +3732,12 @@ d3.select(".chart_area")
 				}
 			},
 			style: [
-				"#StyleForGrid .bb-xgrid-line line {stroke: blue;}",
-				"#StyleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}",
-				"#StyleForGrid .bb-xgrid-line.grid4 text {fill: pink;}",
-				"#StyleForGrid .bb-ygrid-line line {stroke: red;}",
-				"#StyleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
-				"#StyleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
+				"#styleForGrid .bb-xgrid-line line {stroke: blue;}",
+				"#styleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}",
+				"#styleForGrid .bb-xgrid-line.grid4 text {fill: pink;}",
+				"#styleForGrid .bb-ygrid-line line {stroke: red;}",
+				"#styleForGrid .bb-ygrid-line.grid800 line {stroke: green;}",
+				"#styleForGrid .bb-ygrid-line.grid800 text {fill: green;}"
 			]
 		},
 		StyleForLines: {
@@ -3756,8 +3756,8 @@ d3.select(".chart_area")
 				}
 			},
 			style: [
-				"#StyleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }",
-				"#StyleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }"
+				"#styleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }",
+				"#styleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }"
 			]
 		}
 	},
