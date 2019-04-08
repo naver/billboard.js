@@ -750,6 +750,14 @@ export interface TooltipOptions {
 			 *  - {=VALUE}: data value
 			 */
 			template?: string;
+
+			/**
+			 * Set additional text content within data loop, using template syntax.
+			 *  - NOTE: It should contain `{ key: Array, ... }` value
+			 *    - 'key' name is used as substitution within template as '{=KEY}'
+			 *    - The value array length should match with the data length
+			 */
+			text?: { [key: string]: string[]|number[] }
 		};
 
 	init?: {
