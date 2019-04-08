@@ -2481,9 +2481,12 @@ d3.select(".chart_area")
 					doNotHide: true,
 					contents: {
 						bindto: "#tooltip",
+						text: {
+							VAR: ["A", "B", "TextA"]
+						},
 						template: "<ul><li>Index<br>{=TITLE}</li>" +
 								"{{<li class={=CLASS_TOOLTIP_NAME}>" +
-								"<span>{=VALUE}</span><br>" +
+								"<span>{=VALUE}:{=VAR}</span><br>" +
 								"<span style=color:{=COLOR}>{=NAME}</span></li>}}</ul>"
 					}
 				}
