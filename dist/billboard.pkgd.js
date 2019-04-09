@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190408101417
+ * @version 1.8.0-nightly-20190409101448
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.1
@@ -20127,6 +20127,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 // CONCATENATED MODULE: ./src/internals/tooltip.js
 
 
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -20228,54 +20229,48 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         row,
         param,
         value,
+        i,
         tpl = $$.getTooltipContentTemplate(tplStr);
 
-    for (var _loop = function (i) {
-      if (!(getRowValue(row) || getRowValue(row) === 0)) {
-        return "continue";
-      }
-
+    for (i = 0; row = d[i]; i++) if (getRowValue(row) || getRowValue(row) === 0) {
       if (i === 0) {
-        const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
+        var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
           CLASS_TOOLTIP: config_classes.tooltip,
-          TITLE: isValue(title) ? tplStr ? title : `<tr><th colspan="2">${title}</th></tr>` : ""
+          TITLE: isValue(title) ? tplStr ? title : "<tr><th colspan=\"2\">".concat(title, "</th></tr>") : ""
         });
       }
 
-      param = [row.ratio, row.id, row.index, d];
-      value = sanitise(valueFormat(getRowValue(row), ...param));
+      if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(toConsumableArray_default()(param)))), $$.isAreaRangeType(row)) {
+        var _map = ["high", "low"].map(function (v) {
+          return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(toConsumableArray_default()(param))));
+        }),
+            _map2 = slicedToArray_default()(_map, 2),
+            high = _map2[0],
+            low = _map2[1];
 
-      if ($$.isAreaRangeType(row)) {
-        const [high, low] = ["high", "low"].map(v => sanitise(valueFormat($$.getAreaRangeData(row, v), ...param)));
-        value = `<b>Mid:</b> ${value} <b>High:</b> ${high} <b>Low:</b> ${low}`;
+        value = "<b>Mid:</b> ".concat(value, " <b>High:</b> ").concat(high, " <b>Low:</b> ").concat(low);
       }
 
       if (value !== undefined) {
-        // Skip elements when their name is set to null
-        if (row.name === null) {
-          return "continue";
-        }
-
-        const name = sanitise(nameFormat(row.name, ...param));
-        const color = getBgColor(row);
-        const contentValue = {
-          CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
-          COLOR: tplStr ? color : $$.patterns ? `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>` : `<span style="background-color:${color}"></span>`,
-          "NAME": name,
-          VALUE: value
-        };
-
-        if (tplStr && isObject(contents.text)) {
-          Object.keys(contents.text).forEach(key => {
+        var _ret = function () {
+          // Skip elements when their name is set to null
+          if (row.name === null) return "continue";
+          var name = sanitise(nameFormat.apply(void 0, [row.name].concat(toConsumableArray_default()(param)))),
+              color = getBgColor(row),
+              contentValue = {
+            CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
+            COLOR: tplStr ? color : $$.patterns ? "<svg><rect style=\"fill:".concat(color, "\" width=\"10\" height=\"10\"></rect></svg>") : "<span style=\"background-color:".concat(color, "\"></span>"),
+            "NAME": name,
+            VALUE: value
+          };
+          tplStr && isObject(contents.text) && Object.keys(contents.text).forEach(function (key) {
             contentValue[key] = contents.text[key][i];
-          });
-        }
+          }), text += tplProcess(tpl[1], contentValue);
+        }();
 
-        text += tplProcess(tpl[1], contentValue);
+        if (_ret === "continue") continue;
       }
-    }, i = 0; row = d[i]; i++) {
-      var _ret = _loop(i);
     }
 
     return "".concat(text, "</table>");
@@ -24626,7 +24621,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190408101417
+ * @version 1.8.0-nightly-20190409101448
  */
 
 var bb = {
@@ -24637,7 +24632,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190408101417",
+  version: "1.8.0-nightly-20190409101448",
 
   /**
    * Generate chart
