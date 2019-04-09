@@ -135,8 +135,9 @@ extend(ChartInternal.prototype, {
 		let row;
 		let param;
 		let value;
+		let i;
 
-		for (let i = 0; (row = d[i]); i++) {
+		for (i = 0; (row = d[i]); i++) {
 			if (!(getRowValue(row) || getRowValue(row) === 0)) {
 				continue;
 			}
