@@ -92,9 +92,8 @@ extend(ChartInternal.prototype, {
 			$$.filterTargetsToShow($$.data.targets).forEach(v => {
 				if (config.bar_width[v.id]) {
 					result[v.id] = getWidth(v.id);
+					result.total.push(result[v.id] || result.width);
 				}
-
-				result.total.push(result[v.id] || result.width);
 			});
 		}
 
@@ -214,7 +213,7 @@ extend(ChartInternal.prototype, {
 		const [seg0, seg1] = list;
 		const x = Math.min(seg0.x, seg1.x);
 		const y = Math.min(seg0.y, seg1.y);
-		const offset = 2;
+		const offset = this.config.bar_sensitivity;
 		const {width, height} = that.getBBox();
 		const sx = x - offset;
 		const ex = x + width + offset;

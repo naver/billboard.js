@@ -1268,10 +1268,7 @@ export default class ChartInternal {
 	}
 
 	isTabVisible() {
-		return !document[
-			["hidden", "mozHidden", "msHidden", "webkitHidden"]
-				.filter(v => v in document)[0]
-		];
+		return !document.hidden;
 	}
 
 	convertInputType() {

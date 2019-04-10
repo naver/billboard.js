@@ -274,6 +274,11 @@ export interface ChartOptions {
 			 */
 			ratio?: number;
 		};
+
+		/**
+		 * The senstivity offset value for interaction boundary.
+		 */
+		sensitivity?: number;
 	};
 
 	bubble?: {
@@ -946,6 +951,11 @@ export interface PointOptions {
 		 */
 		r?: number;
 	};
+
+	/**
+	 * The senstivity value for interaction boundary.
+	 */
+	sensitivity?: number;
 
 	/**
 	 * The type of point to be drawn

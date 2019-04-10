@@ -147,4 +147,48 @@ describe("SHAPE POINT", () => {
 			}, 500);
 		});
 	});
+
+	describe("point sensitivity", () => {
+		before(() => {
+			args = {
+				size: {
+					width: 400,
+					height: 250
+				},
+				data: {
+					columns: [
+						["data1", 90, 40, 10],
+						["data2", 5, 5, 5],
+						["data3", 3, 3, 3]
+					],
+					groups: [["data1", "data2", "data3"]]
+				},
+				tooltip: {
+					grouped: false
+				}
+			};
+		});
+
+		it("default sensitivity", () => {
+			chart.tooltip.show({
+				data: {x: 1, value: 4}
+			});
+
+			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(2);
+		});
+
+		it("set options point.sensitivity=3", () => {
+			args.point = {
+				sensitivity: 3
+			};
+		});
+
+		it("lowered sensitivity", () => {
+			chart.tooltip.show({
+				data: {x: 1, value: 4}
+			});
+
+			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
+		});
+	});
 });
