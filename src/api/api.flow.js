@@ -30,10 +30,11 @@ extend(Chart.prototype, {
 	 *    | done | Function | The specified function will be called when flow ends |
 	 *
 	 * - **NOTE:**
-	 *   If json, rows and columns given, the data will be loaded.<br>
-	 *   If data that has the same target id is given, the chart will be appended.<br>
-	 *   Otherwise, new target will be added. One of these is required when calling.<br>
-	 *   If json specified, keys is required as well as data.json.
+	 *   - If json, rows and columns given, the data will be loaded.
+	 *   - If data that has the same target id is given, the chart will be appended.
+	 *   - Otherwise, new target will be added. One of these is required when calling.
+	 *   - If json specified, keys is required as well as data.json.
+	 * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
 	 * @example
 	 * // 2 data points will be apprended to the tail and popped from the head.
 	 * // After that, 4 data points will be appended and no data points will be poppoed.
@@ -61,9 +62,6 @@ extend(Chart.prototype, {
 	 */
 	flow(args) {
 		const $$ = this.internal;
-		const notfoundIds = [];
-		const orgDataCount = $$.getMaxDataCount();
-
 		let data;
 		let domain;
 		let length = 0;
@@ -73,10 +71,14 @@ extend(Chart.prototype, {
 
 		if (args.json || args.rows || args.columns) {
 			data = $$.convertData(args);
-		} else {
+		}
+
+		if (!data || !$$.isTabVisible()) {
 			return;
 		}
 
+		const notfoundIds = [];
+		const orgDataCount = $$.getMaxDataCount();
 		const targets = $$.convertDataToTargets(data, true);
 
 		// Update/Add data

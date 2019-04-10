@@ -300,12 +300,24 @@ export interface Chart {
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
-	 * If json, rows and columns given, the data will be loaded. If data that has the same target id is given, the chart will be appended. Otherwise, new target will be added. One of these is
-	 * required when calling. If json specified, keys is required as well as data.json
-	 * If to is given, the lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points.
-	 * If length is given, the lower x edge will move by the number of this argument.
-	 * If duration is given, the duration of the transition will be specified value. If not given, transition.duration will be used as default.
-	 * If done is given, the specified function will be called when flow ends.
+	 * 
+	 * The args object can consist with following members:
+	 *    | Key | Type | Description |
+	 *    | --- | --- | --- |
+	 *    | json | Object | Data as JSON format (@see [data․json](Options.html#.data%25E2%2580%25A4json)) |
+	 *    | rows | Array | Data in array as row format (@see [data․rows](Options.html#.data%25E2%2580%25A4json)) |
+	 *    | columns | Array | Data in array as column format (@see [data․columns](Options.html#.data%25E2%2580%25A4columns)) |
+	 *    | to | String | The lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points |
+	 *    | length | Number | The lower x edge will move by the number of this argument |
+	 *    | duration | Number | The duration of the transition will be specified value. If not given, transition.duration will be used as default |
+	 *    | done | Function | The specified function will be called when flow ends |
+	 *
+	 * - NOTE:
+	 *   - If json, rows and columns given, the data will be loaded.
+	 *   - If data that has the same target id is given, the chart will be appended.
+	 *   - Otherwise, new target will be added. One of these is required when calling.
+	 *   - If json specified, keys is required as well as data.json.
+	 * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
 	 */
 	flow(args: {
 		json?: {};
