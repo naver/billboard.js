@@ -693,7 +693,11 @@ extend(ChartInternal.prototype, {
 			cy = y;
 		}
 
-		return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < r;
+		const is = Math.sqrt(
+			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
+		) < (r || this.config.point_sensitivity);
+
+		return is;
 	},
 
 	isWithinStep(that, y) {

@@ -412,4 +412,49 @@ describe("SHAPE BAR", () => {
 			});
 		});
 	});
+
+	describe("bar sensitivity", () => {
+		before(() => {
+			args = {
+				size: {
+					width: 400,
+					height: 250
+				},
+				data: {
+					columns: [
+						["data1", 90, 40, 10],
+						["data2", 5, 5, 5],
+						["data3", 3, 3, 3],
+					],
+					groups: [["data1", "data2", "data3"]],
+					type: "bar"
+				},
+				tooltip: {
+					grouped: false
+				}
+			};
+		});
+
+		it("default sensitivity", () => {
+			chart.tooltip.show({
+				data: {x: 1, value: 3}
+			});
+
+			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(2);
+		});
+
+		it("set options point.sensitivity=3", () => {
+			args.bar = {
+				sensitivity: 0
+			};
+		});
+
+		it("lowered sensitivity", () => {
+			chart.tooltip.show({
+				data: {x: 1, value: 3}
+			});
+
+			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
+		});
+	});
 });
