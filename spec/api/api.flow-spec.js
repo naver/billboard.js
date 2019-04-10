@@ -38,7 +38,6 @@ describe("API flow", () => {
 				const lineSize = chart.internal.main.selectAll(`.${CLASS.chartLines} > g`).size();
 
 				expect(lineSize).to.be.equal(chart.data().length);
-
 				done();
 			}
 		});
@@ -66,8 +65,35 @@ describe("API flow", () => {
 			});
 
 			expect(spy.called).to.be.ok;
-
 			done();
 		}, duration);
 	});
+
+	it("check when is not visible", done => {
+		const spy = sinon.spy();
+		const isTabVisible = chart.internal.isTabVisible();
+
+		// emulate tab is not visible
+		chart.internal.isTabVisible = () => false;
+
+		chart.flow({
+			columns: [
+				["x", "2017-03-30"],
+				["data1", 500]
+			],
+			done: spy
+		});
+
+		setTimeout(() => {
+			const lastTickText = chart.$.main.selectAll(".bb-axis-x .tick tspan").nodes().pop().innerHTML;
+
+			// when tab is not visible, it shouldn't be executed
+			expect(spy.called).to.be.false;
+			expect(lastTickText).to.be.equal("03/21");
+
+			// restore
+			chart.internal.isTabVisible = isTabVisible;
+			done();
+		}, 500);
+	})
 });
