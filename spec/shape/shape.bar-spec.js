@@ -413,6 +413,39 @@ describe("SHAPE BAR", () => {
 		});
 	});
 
+	describe("bar position", () => {
+		before(() => {
+			args = {
+				data: {
+				  columns: [
+					["data1", 378, 200],
+					["data2", 130, 100]
+				  ],
+				  types: {
+					data1: "bar",
+					data2: "line"
+				  }
+				},
+				bar: {
+				  width: {
+					ratio: 0.5
+				  }
+				}
+			};
+		});
+
+		it("check for the correct bar width & position", () => {
+			const expectedPath = [
+				"M75.25,426V39.636363636363626 H224.75 V426z",
+				"M374.25,426V221.5747955747956 H523.75 V426z"
+			];
+
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+			});
+		});
+	});
+
 	describe("bar sensitivity", () => {
 		before(() => {
 			args = {

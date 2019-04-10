@@ -92,9 +92,8 @@ extend(ChartInternal.prototype, {
 			$$.filterTargetsToShow($$.data.targets).forEach(v => {
 				if (config.bar_width[v.id]) {
 					result[v.id] = getWidth(v.id);
+					result.total.push(result[v.id] || result.width);
 				}
-
-				result.total.push(result[v.id] || result.width);
 			});
 		}
 
