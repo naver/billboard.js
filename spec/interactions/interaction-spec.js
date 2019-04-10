@@ -291,7 +291,7 @@ describe("INTERACTION", () => {
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
 				const delta = 50;
-
+console.log(JSON.stringify(args))
 				util.fireEvent(rect, "click", {
 					clientX: circle.x + delta,
 					clientY: circle.y + delta

@@ -2676,20 +2676,21 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [point.show=true] Whether to show each point in line.
-			 * @property {Number|Function} [point.r=2.5] The radius size of each point.<br>
+			 * @property {Number|Function} [point.r=2.5] The radius size of each point.
 			 *  - **NOTE:** Disabled for 'bubble' type
 			 * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-			 * @property {Number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.<br>
+			 * @property {Number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
 			 *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+			 * @property {Number} [point.sensitivity=10] The senstivity value for interaction boundary.
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
-			 * @property {String} [point.type="circle"] The type of point to be drawn<br>
+			 * @property {String} [point.type="circle"] The type of point to be drawn
 			 * - **NOTE:**
 			 *  - If chart has 'bubble' type, only circle can be used.
 			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
 			 *  - circle
 			 *  - rectangle
-			 * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line<br>
+			 * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
 			 * - **NOTE:**
 			 *  - This is an `experimental` feature and can have some unexpected behaviors.
 			 *  - If chart has 'bubble' type, only circle can be used.
@@ -2720,6 +2721,9 @@ export default class Options {
 			 *      select: {
 			 *          r: 3
 			 *      },
+			 *
+			 *      // having lower value, means how closer to be for interaction
+			 *      sensitivity: 3,
 			 *
 			 *      // valid values are "circle" or "rectangle"
 			 *      type: "rectangle",
@@ -2789,6 +2793,7 @@ export default class Options {
 			 * @property {Number} [bar.radius] Set the radius of bar edge in pixel.
 			 * - **NOTE:** Works only for non-stacked bar
 			 * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
+ 			 * @property {Number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
 			 * @property {Number} [bar.width] Change the width of bar chart.
 			 * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
 			 * @property {Number} [bar.width.max] The maximum width value for ratio.
@@ -2814,6 +2819,9 @@ export default class Options {
 			 *          ratio: 0.5
 			 *      }
 			 *
+			 *      // will not have offset between each bar elements for interaction
+			 *      sensitivity: 0,
+			 *
 			 *      width: 10,
 			 *
 			 *      // or
@@ -2837,6 +2845,7 @@ export default class Options {
 			bar_padding: 0,
 			bar_radius: undefined,
 			bar_radius_ratio: undefined,
+			bar_sensitivity: 2,
 			bar_width: undefined,
 			bar_width_ratio: 0.6,
 			bar_width_max: undefined,
