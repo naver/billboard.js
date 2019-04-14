@@ -1436,7 +1436,7 @@ var demos = {
 				chart.timer = [
 					setTimeout(function() {
 						bb.generate({
-							bindto: "#DataFromURL-csv",
+							bindto: "#dataFromURL-csv",
 							data: {
 								url: './data/test.json',
 								mimeType: "json"
@@ -1644,9 +1644,9 @@ var demos = {
 					],
 					type: "bar",
 					colors: {
-						data1: '#ff0000',
-						data2: '#00ff00',
-						data3: '#0000ff'
+						data1: "#ff0000",
+						data2: "#00ff00",
+						data3: "#0000ff"
 					},
 					color: function(color, d) {
 						// d will be "id" when called for legends
@@ -3412,9 +3412,9 @@ d3.select(".chart_area")
 					],
 					type: "bar",
 					colors: {
-						data1: '#ff0000',
-						data2: '#00ff00',
-						data3: '#0000ff'
+						data1: "#ff0000",
+						data2: "#00ff00",
+						data3: "#0000ff"
 					},
 					labels: true
 				}
@@ -3423,17 +3423,17 @@ d3.select(".chart_area")
 				chart.timer = [
 					setTimeout(function() {
 						chart.data.colors({
-							data1: d3.rgb('#ff0000').darker(1),
-							data2: d3.rgb('#00ff00').darker(1),
-							data3: d3.rgb('#0000ff').darker(1)
+							data1: d3.rgb("#ff0000").darker(1),
+							data2: d3.rgb("#00ff00").darker(1),
+							data3: d3.rgb("#0000ff").darker(1)
 						});
 					}, 1000),
 
 					setTimeout(function() {
 						chart.data.colors({
-							data1: d3.rgb('#ff0000').darker(2),
-							data2: d3.rgb('#00ff00').darker(2),
-							data3: d3.rgb('#0000ff').darker(2)
+							data1: d3.rgb("#ff0000").darker(2),
+							data2: d3.rgb("#00ff00").darker(2),
+							data3: d3.rgb("#0000ff").darker(2)
 						});
 					}, 2000)
 				];
@@ -3478,7 +3478,7 @@ d3.select(".chart_area")
 						// crate a div element
 						var exported = document.createElement("div");
 
-						document.getElementById("Export")
+						document.getElementById("export")
 							.insertAdjacentElement("afterend", exported);
 
 						// Call after the chart finished rendering
