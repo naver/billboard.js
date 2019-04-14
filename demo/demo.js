@@ -1389,7 +1389,7 @@ var demos = {
 				chart.timer = [
 					setTimeout(function() {
 						chart = bb.generate({
-							bindto: "#JSONData",
+							bindto: "#jSONData",
 							data: {
 								json: [
 									{name: "www.site1.com", upload: 200, download: 200, total: 400},
@@ -1436,7 +1436,7 @@ var demos = {
 				chart.timer = [
 					setTimeout(function() {
 						bb.generate({
-							bindto: "#DataFromURL-csv",
+							bindto: "#dataFromURL-csv",
 							data: {
 								url: './data/test.json',
 								mimeType: "json"
@@ -3478,7 +3478,7 @@ d3.select(".chart_area")
 						// crate a div element
 						var exported = document.createElement("div");
 
-						document.getElementById("Export")
+						document.getElementById("export")
 							.insertAdjacentElement("afterend", exported);
 
 						// Call after the chart finished rendering
