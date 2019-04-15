@@ -101,4 +101,18 @@ describe("API export", () => {
 			});
 		}, 500);
 	});
+  
+	it("should export valid svg even with weird css", () => {
+		document.body.innerHTML += `<style>@font-face{src:url("#&<>'\0");}</style>`;
+
+		const dataURL = chart.export();
+
+		// test generated svg
+		const svg = atob(dataURL.split("base64,")[1]);
+		const oParser = new DOMParser();
+		const doc = oParser.parseFromString(svg, "image/svg+xml");
+
+		// check that it does not start with error message
+		expect(doc.documentElement.nodeName === "svg").to.be.true;
+	});
 });
