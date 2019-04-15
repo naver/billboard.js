@@ -158,7 +158,8 @@ var billboardDemo = {
 	},
 
 	getLowerFirstCase(str) {
-		return str.charAt(0).toLowerCase() + str.slice(1);
+		return /^(JSON)/.test(str) ?
+		str : str.charAt(0).toLowerCase() + str.slice(1);
 	},
 
 	_addChartInstance: function(type, key, index, code) {
