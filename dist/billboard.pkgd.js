@@ -5,10 +5,10 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190415101738
+ * @version 1.8.0-nightly-20190416101918
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
- * - d3 ^5.9.1
+ * - d3 ^5.9.2
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -24491,17 +24491,20 @@ var b64EncodeUnicode = function (str) {
   }));
 },
     nodeToSvgDataUrl = function (node, size) {
-  var clone = node.cloneNode(!0),
-      styleSheets = toArray(document.styleSheets),
-      cssRules = getCssRules(styleSheets),
-      cssText = cssRules.filter(function (r) {
+  var serializer = new XMLSerializer(),
+      clone = node.cloneNode(!0),
+      cssText = getCssRules(toArray(document.styleSheets)).filter(function (r) {
     return r.cssText;
   }).map(function (r) {
     return r.cssText;
   });
   clone.setAttribute("xmlns", namespaces.xhtml);
-  var nodeXml = new XMLSerializer().serializeToString(clone),
-      dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(size.width, "\" height=\"").concat(size.height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t<style>").concat(cssText.join("\n"), "</style>\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
+  var nodeXml = serializer.serializeToString(clone),
+      style = document.createElement("style"); // escape css for XML
+
+  style.appendChild(document.createTextNode(cssText.join("\n")));
+  var styleXml = serializer.serializeToString(style),
+      dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(size.width, "\" height=\"").concat(size.height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
 
   return "data:image/svg+xml;base64,".concat(b64EncodeUnicode(dataStr));
@@ -24625,7 +24628,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190415101738
+ * @version 1.8.0-nightly-20190416101918
  */
 
 var bb = {
@@ -24636,7 +24639,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190415101738",
+  version: "1.8.0-nightly-20190416101918",
 
   /**
    * Generate chart
