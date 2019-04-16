@@ -25,20 +25,28 @@ const b64EncodeUnicode = str => btoa(
  * @private
  */
 const nodeToSvgDataUrl = (node, size) => {
+	const serializer = new XMLSerializer();
 	const clone = node.cloneNode(true);
-	const styleSheets = toArray(document.styleSheets);
-	const cssRules = getCssRules(styleSheets);
-	const cssText = cssRules.filter(r => r.cssText).map(r => r.cssText);
+	const cssText = getCssRules(toArray(document.styleSheets))
+		.filter(r => r.cssText)
+		.map(r => r.cssText);
 
 	clone.setAttribute("xmlns", d3Namespaces.xhtml);
 
-	const nodeXml = new XMLSerializer().serializeToString(clone);
+	const nodeXml = serializer.serializeToString(clone);
+
+	// escape css for XML
+	const style = document.createElement("style");
+
+	style.appendChild(document.createTextNode(cssText.join("\n")));
+
+	const styleXml = serializer.serializeToString(style);
 
 	// foreignObject not supported in IE11 and below
 	// https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
 	const dataStr = `<svg xmlns="${d3Namespaces.svg}" width="${size.width}" height="${size.height}">
 			<foreignObject width="100%" height="100%">
-				<style>${cssText.join("\n")}</style>
+				${styleXml}
 				${nodeXml.replace(/(url\()[^#]+/g, "$1")}
 			</foreignObject></svg>`
 		.replace("/\n/g", "%0A");
