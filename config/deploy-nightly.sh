@@ -25,6 +25,7 @@ build_nightly() {
     ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:production
     ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:packaged
     ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:theme
+    ./node_modules/.bin/cross-env NIGHTLY=$VERSION npm run build:plugin
 }
 
 build_and_commit() {
