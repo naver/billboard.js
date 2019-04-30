@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190416101918
+ * @version 1.8.0-nightly-20190430012306
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -5367,6 +5367,7 @@ function axisLeft(scale) {
   circle: "bb-circle",
   circles: "bb-circles",
   colorPattern: "bb-color-pattern",
+  colorScale: "bb-colorscale",
   defocused: "bb-defocused",
   dragarea: "bb-dragarea",
   empty: "bb-empty",
@@ -5395,6 +5396,11 @@ function axisLeft(scale) {
   selectedCircles: "bb-selected-circles",
   shape: "bb-shape",
   shapes: "bb-shapes",
+  stanfordElements: "bb-stanford-elements",
+  stanfordLine: "bb-stanford-line",
+  stanfordLines: "bb-stanford-lines",
+  stanfordRegion: "bb-stanford-region",
+  stanfordRegions: "bb-stanford-regions",
   target: "bb-target",
   text: "bb-text",
   texts: "bb-texts",
@@ -9918,7 +9924,7 @@ function () {
  * @class ChartInternal
  * @ignore
  * @private
-*/
+ */
 
 var ChartInternal_ChartInternal =
 /*#__PURE__*/
@@ -9933,16 +9939,14 @@ function () {
   return createClass_default()(ChartInternal, [{
     key: "beforeInit",
     value: function beforeInit() {
-      var $$ = this; // can do something
-
-      callFn($$.config.onbeforeinit, $$);
+      var $$ = this;
+      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
     }
   }, {
     key: "afterInit",
     value: function afterInit() {
-      var $$ = this; // can do something
-
-      callFn($$.config.onafterinit, $$);
+      var $$ = this;
+      $$.callPluginHook("$afterInit"), callFn($$.config.onafterinit, $$);
     }
   }, {
     key: "init",
@@ -10011,7 +10015,7 @@ function () {
 
       // data.onmin/max callback
       if ($$.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
+      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
         withTransition: !1,
         withTransform: !0,
         withUpdateXDomain: !0,
@@ -10197,7 +10201,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Redraw axis
@@ -10580,6 +10584,21 @@ function () {
           hasTouch = !1;
       return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in window || window.DocumentTouch && document instanceof window.DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
     }
+    /**
+     * Call plugin hook
+     * @param {String} phase The lifecycle phase
+     * @private
+     */
+
+  }, {
+    key: "callPluginHook",
+    value: function callPluginHook(phase) {
+      for (var _this2 = this, _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) args[_key2 - 1] = arguments[_key2];
+
+      this.config.plugins.forEach(function (v) {
+        phase === "$beforeInit" && (v.$$ = _this2, _this2.api.plugins.push(v)), v[phase].apply(v, args);
+      });
+    }
   }]), ChartInternal;
 }();
 
@@ -10590,8 +10609,6 @@ function () {
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
- * @license MIT
- * @ignore
  */
 
 /**
@@ -10613,7 +10630,7 @@ function () {
 /**
  * Access primary node elements
  * @name Chart#$
- * @type Object
+ * @type {Object}
  * @property {Object} $
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
@@ -10645,8 +10662,26 @@ var Chart_Chart = function Chart(config) {
   classCallCheck_default()(this, Chart);
 
   var $$ = new ChartInternal_ChartInternal(this);
+  /**
+   * Plugin instance array
+   * @name Chart#plugins
+   * @type {Array}
+   * @instance
+   * @memberof Chart
+   * @example
+   *  var chart = bb.generate({
+   *     ...
+   *     plugins: [
+   *        new bb.plugin.stanford({ ... }),
+   *        new PluginA()
+   *     ]
+   *  });
+   *
+   *  chart.plugins; // [Stanford, PluginA] - instance array
+   */
+
   // bind "this" to nested API
-  this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
+  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
     Object.keys(fn).forEach(function (key) {
       target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
     });
@@ -11064,6 +11099,19 @@ var Options_Options = function Options() {
      * }
      */
     data_xSort: !0,
+
+    /**
+     * Specify the key of epochs values in the data.
+     * @name data․epochs
+     * @memberof Options
+     * @type {String}
+     * @default epochs
+     * @example
+     * data: {
+     *   epochs: "count"
+     * }
+     */
+    data_epochs: "epochs",
 
     /**
      * Converts data id value
@@ -13652,6 +13700,20 @@ var Options_Options = function Options() {
     pie_innerRadius: 0,
     pie_padAngle: 0,
     pie_padding: 0,
+
+    /**
+     * Set plugins
+     * @name plugins
+     * @memberof Options
+     * @type {Array}
+     * @example
+     *  plugins: [
+     *    new bb.plugin.stanford({ ... }),
+     *    new PluginA(),
+     *    ...
+     * ]
+     */
+    plugins: [],
 
     /**
      * Set gauge options
@@ -20028,7 +20090,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     // enter
     var xgridLine = $$.xgridLines.enter().append("g");
     xgridLine.append("line").style("opacity", "0"), xgridLine.append("text").attr("transform", isRotated ? "" : "rotate(-90)").attr("dy", -5).style("opacity", "0"), $$.xgridLines = xgridLine.merge($$.xgridLines), $$.xgridLines.attr("class", function (d) {
-      return "".concat(config_classes.xgridLine, " ").concat(d.class || "").trim();
+      return "".concat(config_classes.xgridLine, " ").concat(d["class"] || "").trim();
     }).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).text(function (d) {
       return d.text;
     }).transition().style("opacity", "1");
@@ -20051,7 +20113,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     // update
     var yv = $$.yv.bind($$);
     $$.ygridLines.attr("class", function (d) {
-      return "".concat(config_classes.ygridLine, " ").concat(d.class || "").trim();
+      return "".concat(config_classes.ygridLine, " ").concat(d["class"] || "").trim();
     }).select("line").transition().duration(duration).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : $$.width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? $$.height : yv).transition().style("opacity", "1"), $$.ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).attr("dy", -5).attr("x", getGridTextX(isRotated, $$.width, $$.height)).attr("y", yv).text(function (d) {
       return d.text;
     }).transition().style("opacity", "1");
@@ -20082,7 +20144,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }),
         focusEl = $$.main.selectAll("line.".concat(config_classes.xgridFocus)),
         xx = $$.xx.bind($$);
-    !config.tooltip_show || $$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType() || (focusEl.style("visibility", "visible").data([dataToShow[0]]).attr(isRotated ? "y1" : "x1", xx).attr(isRotated ? "y2" : "x2", xx), $$.smoothLines(focusEl, "grid")); // Hide when bubble/scatter plot exists
+    !config.tooltip_show || $$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType() || (focusEl.style("visibility", "visible").data([dataToShow[0]]).attr(isRotated ? "y1" : "x1", xx).attr(isRotated ? "y2" : "x2", xx), $$.smoothLines(focusEl, "grid")); // Hide when bubble/scatter/stanford plot exists
   },
   hideXGridFocus: function hideXGridFocus() {
     this.main.select("line.".concat(config_classes.xgridFocus)).style("visibility", "hidden");
@@ -20113,7 +20175,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     return params ? function (line) {
       var found = !1;
       return (isArray(params) ? params.concat() : [params]).forEach(function (param) {
-        ("value" in param && line.value === param.value || "class" in param && line.class === param.class) && (found = !0);
+        ("value" in param && line.value === param.value || "class" in param && line["class"] === param["class"]) && (found = !0);
       }), found;
     } : function () {
       return !0;
@@ -20210,7 +20272,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         getBgColor = $$.levelColor ? function (row) {
       return $$.levelColor(row.value);
     } : function (row) {
-      return color(row.id);
+      return color(row);
     },
         contents = config.tooltip_contents,
         tplStr = contents.template;
@@ -20268,8 +20330,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
               color = getBgColor(row),
               contentValue = {
             CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
-            COLOR: tplStr ? color : $$.patterns ? "<svg><rect style=\"fill:".concat(color, "\" width=\"10\" height=\"10\"></rect></svg>") : "<span style=\"background-color:".concat(color, "\"></span>"),
-            "NAME": name,
+            COLOR: tplStr || !$$.patterns ? color : "<svg><rect style=\"fill:".concat(color, "\" width=\"10\" height=\"10\"></rect></svg>"),
+            NAME: name,
             VALUE: value
           };
           tplStr && isObject(contents.text) && Object.keys(contents.text).forEach(function (key) {
@@ -20291,7 +20353,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
-    return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\">{=COLOR}{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
+    return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\"><span style=\"background-color:{=COLOR}\"></span>{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
   },
 
   /**
@@ -22549,7 +22611,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     return this.classShapes(d) + this.generateClass(config_classes.areas, d.id);
   },
   classRegion: function classRegion(d, i) {
-    return "".concat(this.generateClass(config_classes.region, i), " ").concat("class" in d ? d.class : "");
+    return "".concat(this.generateClass(config_classes.region, i), " ").concat("class" in d ? d["class"] : "");
   },
   classEvent: function classEvent(d) {
     return this.generateClass(config_classes.eventRect, d.index);
@@ -23720,7 +23782,7 @@ util_extend(api_region_regions, {
     }));
     return (duration ? regions.transition().duration(duration) : regions).style("opacity", "0").remove(), regions = config.regions, Object.keys(options).length ? (regions = regions.filter(function (region) {
       var found = !1;
-      return !region.class || (region.class.split(" ").forEach(function (c) {
+      return !region["class"] || (region["class"].split(" ").forEach(function (c) {
         classes.indexOf(c) >= 0 && (found = !0);
       }), !found);
     }), config.regions = regions) : config.regions = [], regions;
@@ -24322,7 +24384,7 @@ util_extend(Chart_Chart.prototype, {
     var _this = this,
         $$ = this.internal;
 
-    return notEmpty($$) && ($$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -24544,7 +24606,7 @@ util_extend(Chart_Chart.prototype, {
    *     document.body.appendChild(link);
    *  });
    */
-  export: function _export(mimeType, callback) {
+  "export": function _export(mimeType, callback) {
     var $$ = this.internal,
         size = {
       width: $$.currentWidth,
@@ -24628,7 +24690,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190416101918
+ * @version 1.8.0-nightly-20190430012306
  */
 
 var bb = {
@@ -24639,7 +24701,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190416101918",
+  version: "1.8.0-nightly-20190430012306",
 
   /**
    * Generate chart
@@ -24684,6 +24746,16 @@ var bb = {
    * @memberof bb
    */
   instance: [],
+
+  /**
+   * Namespace for plugins
+   * @property {Object} plugin plugin namespace
+   * @example
+   *  // Stanford diagram plugin
+   *  bb.plugin.stanford;
+   * @memberof bb
+   */
+  plugin: {},
 
   /**
    * Internal chart object
