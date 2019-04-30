@@ -185,7 +185,6 @@ var billboardDemo = {
 			if (/^(legend|tooltip)Template/.test(key)) {
 				template = document.createElement("div");
 				template.id = this.getLowerFirstCase(RegExp.$1);
-				console.log(template.id)
 				template.style.textAlign = "center";
 
 				this.$chartArea.appendChild(template);
