@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-  - "8"
+  - "10"
 dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
 before_install:
