@@ -21,21 +21,12 @@ var billboardDemo = {
 		this._bindEvents();
 		this._createList();
 
-		location.href.indexOf("#") > -1 && this.clickHandler(location.href);
+		location.hash && this.showDemo(location.hash);
 	},
 
 	_bindEvents: function() {
-		var $list = this.$list;
 		var $wrapper = this.$wrapper;
 		var WIDTH = this.WIDTH;
-
-		var clickHandler = (function(e) {
-			e.target.tagName === "A" && this.clickHandler(e.target.href)
-		}).bind(this);
-
-		// bind click event to menu list
-		$list.addEventListener("click", clickHandler, false);
-		document.querySelector(".chart_area ul").addEventListener("click", clickHandler, false);
 
 		document.getElementById("menu-toggle").addEventListener("click", function(e) {
 			$wrapper.className = $wrapper.className ? "" : "toggled";
@@ -47,6 +38,10 @@ var billboardDemo = {
 				$wrapper && ($wrapper.className = "");
 			}
 		});
+
+		window.addEventListener("hashchange", (function() {
+			this.showDemo(location.hash);
+		}).bind(this));
 	},
 
 	/**
@@ -75,7 +70,11 @@ var billboardDemo = {
 	 * Click handler
 	 * @param {String} type
 	 */
-	clickHandler: function(type) {
+	showDemo: function(type) {
+		if (!type) {
+			return;
+		}
+
 		// remove legend
 		var $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
@@ -84,11 +83,7 @@ var billboardDemo = {
 			this.$wrapper.className = "";
 		}
 
-		type = type.replace(/.*#/, "").split(".");
-
-		if (type.length < 2) {
-			return;
-		}
+		type = type.replace("#", "").split(".");
 
 		this.generate(type[0], type[1]);
 
@@ -161,12 +156,12 @@ var billboardDemo = {
 		return false;
 	},
 
-	getLowerFirstCase(str) {
+	getLowerFirstCase: function(str) {
 		return /^(JSON)/.test(str) ?
 			str : str.charAt(0).toLowerCase() + str.slice(1);
 	},
 
-	getPluginsCodeStr(val) {
+	getPluginsCodeStr: function(val) {
 		var key = this.replacer.plugin;
 		var plugins = key;
 
@@ -181,7 +176,7 @@ var billboardDemo = {
 		return plugins + key;
 	},
 
-	getCodeStr(options, key, index) {
+	getCodeStr: function(options, key, index) {
 		var self = this;
 
 		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
