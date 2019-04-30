@@ -33,8 +33,12 @@ const build = {
 	production: `${cmd}production`,
 	packaged: `${cmd}packaged`,
 	theme: `${cmd}theme`,
-	push: deploy ? `git commit -a -m "skip: ${version} build [skip ci]"` : ""
+	plugin: `${cmd}plugin`
 };
+
+if (deploy) {
+	build.push = `git commit -a -m "skip: ${version} build [skip ci]"`;
+}
 
 cmd = Object.values(build);
 
