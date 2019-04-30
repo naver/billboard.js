@@ -30,6 +30,7 @@ build_nightly() {
 
 build_and_commit() {
     build_nightly
+    git add ./dist
     git commit -a -m "skip: $VERSION build [skip ci]"
 }
 
