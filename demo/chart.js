@@ -1,5 +1,8 @@
 /* eslint-disable */
 var billboardDemo = {
+	replacer: {
+		plugin: "__PLUGIN__"
+	},
 	/**
 	 * Initializer
 	 */
@@ -18,21 +21,12 @@ var billboardDemo = {
 		this._bindEvents();
 		this._createList();
 
-		location.href.indexOf("#") > -1 && this.clickHandler(location.href);
+		location.hash && this.showDemo(location.hash);
 	},
 
 	_bindEvents: function() {
-		var $list = this.$list;
 		var $wrapper = this.$wrapper;
 		var WIDTH = this.WIDTH;
-
-		var clickHandler = (function(e) {
-			e.target.tagName === "A" && this.clickHandler(e.target.href)
-		}).bind(this);
-
-		// bind click event to menu list
-		$list.addEventListener("click", clickHandler, false);
-		document.querySelector(".chart_area ul").addEventListener("click", clickHandler, false);
 
 		document.getElementById("menu-toggle").addEventListener("click", function(e) {
 			$wrapper.className = $wrapper.className ? "" : "toggled";
@@ -43,8 +37,11 @@ var billboardDemo = {
 			if (window.innerWidth > WIDTH) {
 				$wrapper && ($wrapper.className = "");
 			}
+		});
 
-		})
+		window.addEventListener("hashchange", (function() {
+			this.showDemo(location.hash);
+		}).bind(this));
 	},
 
 	/**
@@ -73,7 +70,11 @@ var billboardDemo = {
 	 * Click handler
 	 * @param {String} type
 	 */
-	clickHandler: function(type) {
+	showDemo: function(type) {
+		if (!type) {
+			return;
+		}
+
 		// remove legend
 		var $legend = document.querySelector(".legend");
 		$legend && $legend.parentNode.removeChild($legend);
@@ -82,11 +83,7 @@ var billboardDemo = {
 			this.$wrapper.className = "";
 		}
 
-		type = type.replace(/.*#/, "").split(".");
-
-		if (type.length < 2) {
-			return;
-		}
+		type = type.replace("#", "").split(".");
 
 		this.generate(type[0], type[1]);
 
@@ -140,6 +137,8 @@ var billboardDemo = {
 			data: []
 		};
 
+		key = type +"."+ key;
+
 		// generate chart
 		isArray ? typeData.forEach(function(t, i) {
 			self._addChartInstance(t, key, i + 1, code);
@@ -157,13 +156,75 @@ var billboardDemo = {
 		return false;
 	},
 
-	getLowerFirstCase(str) {
+	getLowerFirstCase: function(str) {
 		return /^(JSON)/.test(str) ?
-		str : str.charAt(0).toLowerCase() + str.slice(1);
+			str : str.charAt(0).toLowerCase() + str.slice(1);
 	},
 
-	_addChartInstance: function(type, key, index, code) {
-		key = this.getLowerFirstCase(key);
+	getPluginsCodeStr: function(val) {
+		var key = this.replacer.plugin;
+		var plugins = key;
+
+		val.forEach(function(p) {
+			Object.keys(p).forEach(function(key) {
+				plugins += "new bb.plugin."+ key +"(";
+				plugins += JSON.stringify(p[key], null, 5).replace(/}$/, "    }");
+				plugins += "),";
+			})
+		});
+
+		return plugins + key;
+	},
+
+	getCodeStr: function(options, key, index) {
+		var self = this;
+
+		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
+			JSON.stringify(options, function(k, v) {
+				if (typeof v === "function") {
+					return v.toString().replace(/\t+}$/, Array(/(format|data)/.test(k) ? 8 : 4).join(" ") + "}");
+				} else if (/(columns|rows|json)/.test(k)) {
+					var str = JSON.stringify(v)
+						.replace(/\[\[/g, "[\r\n\t[")
+						.replace(/\]\]/g, "]\r\n    ]")
+						.replace(/(],)/g, "$1\r\n\t")
+						.replace(/(\"|\d),/g, "$1, ");
+
+					return k === "json" ?
+						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
+				} else if (k === "_plugins") {
+					return [self.getPluginsCodeStr(v)];
+				}
+
+				return v;
+			}, 2)
+			.replace(/\"?(function|})\"?/g, "$1")
+			.replace(/\\"/g, "\"")
+			.replace(/</g, "&lt;")
+			.replace(/\\t/g, "\t")
+			.replace(/\t{5}/g, "")
+			.replace(/\\r/g, "\r")
+			.replace(/"(\w+)":/g, "$1:")
+			.replace("_plugins", "plugins")
+			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
+
+			if (/multiline/i.test(key)) {
+				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
+					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
+			} else {
+				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
+					.replace(/\\(u)/g, "\$1");
+			}
+
+			codeStr += ");";
+
+		return codeStr;
+	},
+
+	_addChartInstance: function(type, typeKey, index, code) {
+		typeKey = typeKey.split(".");
+
+		var key = this.getLowerFirstCase(typeKey[1]);
 
 		if (index) {
 			key += "_"+ index;
@@ -171,6 +232,7 @@ var billboardDemo = {
 
 		var $el = document.getElementById(key);
 		var template;
+		var plugins;
 
 		if (!$el) {
 			$el = document.createElement("div");
@@ -189,6 +251,12 @@ var billboardDemo = {
 
 				this.$chartArea.appendChild(template);
 				template = "&lt;div id=\""+ template.id +"\">&lt;/div>";
+			} else if (typeKey[0] === "Plugins") {
+				type.options._plugins.forEach(function(v) {
+					plugins = Object.keys(v).map(function(p) {
+						return new bb.plugin[p](v[p]);
+					});
+				});
 			}
 		}
 
@@ -198,44 +266,16 @@ var billboardDemo = {
 
 		options.bindto = "#" + key;
 
-		var inst = bb.generate(options);
+		if (plugins) {
+			options.plugins = plugins;
+		}
 
+		var inst = bb.generate(options, key, index);
+
+		delete options.plugins;
 		inst.timer = [];
 
-		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
-			JSON.stringify(options, function (k, v) {
-				if (typeof v === "function") {
-					return v.toString().replace(/\t+}$/, Array(/(format|data)/.test(k) ? 8 : 4).join(" ") + "}");
-				} else if (/(columns|rows|json)/.test(k)) {
-					var str = JSON.stringify(v)
-						.replace(/\[\[/g, "[\r\n\t[")
-						.replace(/\]\]/g, "]\r\n    ]")
-						.replace(/(],)/g, "$1\r\n\t")
-						.replace(/(\"|\d),/g, "$1, ");
-
-					return k === "json" ?
-						str.replace(/{/, "{\r\n\t").replace(/}/, "\r\n    }") : str;
-				}
-
-				return v;
-			}, 2)
-			.replace(/\"?(function|})\"?/g, "$1")
-			.replace(/\\"/g, "\"")
-			.replace(/</g, "&lt;")
-			.replace(/\\t/g, "\t")
-			.replace(/\t{5}/g, "")
-			.replace(/\\r/g, "\r")
-			.replace(/"(\w+)":/g, "$1:");
-
-			if (/multiline/i.test(key)) {
-				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
-				.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
-			} else {
-				codeStr = codeStr.replace(/\\n(?!T)/g, "\n")
-					.replace(/\\(u)/g, "\$1");
-			}
-
-			codeStr += ");";
+		var codeStr = this.getCodeStr(options);
 
 		// markup
 		if ((index && index === 1) || !index) {
