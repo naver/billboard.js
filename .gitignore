@@ -1,6 +1,12 @@
-node_modules
 .DS_Store
 *.log
 *.iml
-/.idea
+/*.css
+/*.html
+/*.js
+/.*
 /coverage
+/demo/work
+/dist
+/doc
+/node_modules

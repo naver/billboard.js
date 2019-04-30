@@ -24,7 +24,7 @@ import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString
  * @class ChartInternal
  * @ignore
  * @private
-*/
+ */
 export default class ChartInternal {
 	constructor(api) {
 		const $$ = this;
@@ -39,12 +39,16 @@ export default class ChartInternal {
 	beforeInit() {
 		const $$ = this;
 
+		$$.callPluginHook("$beforeInit");
+
 		// can do something
 		callFn($$.config.onbeforeinit, $$);
 	}
 
 	afterInit() {
 		const $$ = this;
+
+		$$.callPluginHook("$afterInit");
 
 		// can do something
 		callFn($$.config.onafterinit, $$);
@@ -276,6 +280,8 @@ export default class ChartInternal {
 		// Define g for chart area
 		main.append("g").attr("class", CLASS.chart)
 			.attr("clip-path", $$.clipPath);
+
+		$$.callPluginHook("$init");
 
 		// Cover whole with rects for events
 		$$.initEventRect();
@@ -607,6 +613,7 @@ export default class ChartInternal {
 		// grid
 		$$.updateGrid(duration);
 
+
 		// rect for regions
 		$$.updateRegion(duration);
 
@@ -643,6 +650,7 @@ export default class ChartInternal {
 		}
 
 		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
+		$$.callPluginHook("$redraw", options, duration);
 	}
 
 	/**
@@ -998,7 +1006,8 @@ export default class ChartInternal {
 		const opacity = this.config.point_show ? "1" : "0";
 
 		return isValue(this.getBaseValue(d)) ?
-			(this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity) : "0";
+			(this.isBubbleType(d) || this.isScatterType(d) ?
+				"0.5" : opacity) : "0";
 	}
 
 	opacityForText() {
@@ -1285,5 +1294,21 @@ export default class ChartInternal {
 		}
 
 		return (hasMouse && "mouse") || (hasTouch && "touch") || null;
+	}
+
+	/**
+	 * Call plugin hook
+	 * @param {String} phase The lifecycle phase
+	 * @private
+	 */
+	callPluginHook(phase, ...args) {
+		this.config.plugins.forEach(v => {
+			if (phase === "$beforeInit") {
+				v.$$ = this;
+				this.api.plugins.push(v);
+			}
+
+			v[phase](...args);
+		});
 	}
 }

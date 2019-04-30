@@ -26,3 +26,4 @@ Jinwoo Oh <arkist@gmail.com>
 Nirmal Guna <gunaseelann@jfrog.com>
 Michael Yungerman <myungerman@lightricks.com>
 Malte Batram <ym@batr.am>
+Daniel Oliveira <danielco94@gmail.com>

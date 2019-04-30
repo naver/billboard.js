@@ -17,6 +17,7 @@
     ],
     "plugins": [
         "@babel/plugin-transform-runtime",
+        "@babel/plugin-proposal-class-properties",
         "add-module-exports",
         "transform-inline-consecutive-adds",
         "transform-merge-sibling-variables",

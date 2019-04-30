@@ -1,8 +1,6 @@
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
- * @license MIT
- * @ignore
  */
 import ChartInternal from "./ChartInternal";
 
@@ -24,7 +22,7 @@ import ChartInternal from "./ChartInternal";
 /**
  * Access primary node elements
  * @name Chart#$
- * @type Object
+ * @type {Object}
  * @property {Object} $
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
@@ -54,6 +52,25 @@ import ChartInternal from "./ChartInternal";
 export default class Chart {
 	constructor(config) {
 		const $$ = new ChartInternal(this);
+
+		/**
+		 * Plugin instance array
+		 * @name Chart#plugins
+		 * @type {Array}
+		 * @instance
+		 * @memberof Chart
+		 * @example
+		 *  var chart = bb.generate({
+		 *     ...
+		 *     plugins: [
+		 *        new bb.plugin.stanford({ ... }),
+		 *        new PluginA()
+		 *     ]
+		 *  });
+		 *
+		 *  chart.plugins; // [Stanford, PluginA] - instance array
+		 */
+		this.plugins = [];
 
 		this.internal = $$;
 

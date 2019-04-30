@@ -96,7 +96,7 @@ extend(ChartInternal.prototype, {
 		const valueFormat = config.tooltip_format_value || ($$.isStackNormalized() ? ((v, ratio) => `${(ratio * 100).toFixed(2)}%`) : defaultValueFormat);
 		const order = config.tooltip_order;
 		const getRowValue = row => $$.getBaseValue(row);
-		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row.id);
+		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
 		const contents = config.tooltip_contents;
 		const tplStr = contents.template;
 
@@ -174,10 +174,8 @@ extend(ChartInternal.prototype, {
 				const color = getBgColor(row);
 				const contentValue = {
 					CLASS_TOOLTIP_NAME: CLASS.tooltipName + $$.getTargetSelectorSuffix(row.id),
-					COLOR: tplStr ? color : (
-						$$.patterns ? `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>` :
-							`<span style="background-color:${color}"></span>`),
-					"NAME": name,
+					COLOR: (tplStr || !$$.patterns) ? color : `<svg><rect style="fill:${color}" width="10" height="10"></rect></svg>`,
+					NAME: name,
 					VALUE: value
 				};
 
@@ -204,7 +202,7 @@ extend(ChartInternal.prototype, {
 		return (tplStr || `<table class="{=CLASS_TOOLTIP}"><tbody>
 				{=TITLE}
 				{{<tr class="{=CLASS_TOOLTIP_NAME}">
-					<td class="name">{=COLOR}{=NAME}</td>
+					<td class="name"><span style="background-color:{=COLOR}"></span>{=NAME}</td>
 					<td class="value">{=VALUE}</td>
 				</tr>}}
 			</tbody></table>`)

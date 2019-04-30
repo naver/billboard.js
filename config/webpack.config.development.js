@@ -1,5 +1,6 @@
 const merge = require("webpack-merge");
 const WriteFilePlugin = require("write-file-webpack-plugin");
+const plugin = require("./webpack.config.plugin")();
 
 const config = {
 	devtool: "inline-source-map",
@@ -25,7 +26,20 @@ const config = {
 			}
 		]
 	},
-	plugins: [new WriteFilePlugin()],
+	plugins: [new WriteFilePlugin()]
 };
 
-module.exports = common => merge.smart(common, config);
+module.exports = (common, env) => {
+	if (env.plugin) {
+		config.entry = plugin.entry;
+		config.output = plugin.output;
+		config.externals = plugin.externals;
+
+		console.log(config.entry, config.output)
+	}
+
+	return env.plugin ? merge.strategy({
+		entry: "replace",
+		output: "replace"
+	})(common, config) : merge.smart(common, config);
+};
