@@ -13,7 +13,7 @@ import {
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction, isUndefined} from "../internals/util";
+import {extend, isFunction, isNumber, isUndefined} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initPie() {
@@ -47,8 +47,20 @@ extend(ChartInternal.prototype, {
 			padding ? padding * ($$.innerRadiusRatio + 0.1) : 0
 		);
 
+		// NOTE: innerRadius can be an object by user setting, only for 'pie' type
 		$$.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ?
 			$$.radius * $$.innerRadiusRatio : innerRadius;
+	},
+
+	getInnerRadius(d) {
+		const $$ = this;
+		let radius = $$.innerRadius;
+
+		if (!isNumber(radius) && d) {
+			radius = radius[d.data.id] || 0;
+		}
+
+		return radius;
 	},
 
 	updateArc() {
@@ -109,14 +121,19 @@ extend(ChartInternal.prototype, {
 
 	getSvgArc() {
 		const $$ = this;
-		const arc = d3Arc()
+		const ir = $$.getInnerRadius();
+		let arc = d3Arc()
 			.outerRadius($$.radius)
-			.innerRadius($$.innerRadius);
+			.innerRadius(isNumber(ir) ? ir : 0);
 
 		const newArc = (d, withoutUpdate) => {
 			let path = "M 0 0";
 
 			if ("value" in d ? d.value > 0 : d.data) {
+				if (!isNumber(ir)) {
+					arc = arc.innerRadius($$.getInnerRadius(d));
+				}
+
 				const updated = !withoutUpdate && $$.updateAngle(d);
 
 				if (withoutUpdate) {
@@ -138,13 +155,12 @@ extend(ChartInternal.prototype, {
 	getSvgArcExpanded(rate) {
 		const $$ = this;
 		const arc = d3Arc()
-			.outerRadius($$.radiusExpanded * (rate || 1))
-			.innerRadius($$.innerRadius);
+			.outerRadius($$.radiusExpanded * (rate || 1));
 
 		return function(d) {
 			const updated = $$.updateAngle(d);
 
-			return updated ? arc(updated) : "M 0 0";
+			return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
 		};
 	},
 
@@ -640,8 +656,6 @@ extend(ChartInternal.prototype, {
 			.style("opacity", "0")
 			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null));
 
-		config.gauge_fullCircle && text.attr("dy", `${Math.round($$.radius / 14)}`);
-
 		text.call($$.textForArcLabel.bind($$))
 			.attr("transform", $$.transformForArcLabel.bind($$))
 			.style("font-size", d => ($$.isGaugeType(d.data) ? `${Math.round($$.radius / 5)}px` : ""))
@@ -653,7 +667,10 @@ extend(ChartInternal.prototype, {
 			.style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0");
 
 		if ($$.hasType("gauge")) {
-			const endAngle = (config.gauge_fullCircle ? -4 : -1) * config.gauge_startingAngle;
+			const isFullCircle = config.gauge_fullCircle;
+			const endAngle = (isFullCircle ? -4 : -1) * config.gauge_startingAngle;
+
+			isFullCircle && text.attr("dy", `${Math.round($$.radius / 14)}`);
 
 			$$.arcs.select(`.${CLASS.chartArcsBackground}`)
 				.attr("d", () => {
@@ -677,7 +694,7 @@ extend(ChartInternal.prototype, {
 					.text($$.textForGaugeMinMax(config.gauge_min, false));
 
 				// show max text when isn't fullCircle
-				!config.gauge_fullCircle && $$.arcs.select(`.${CLASS.chartArcsGaugeMax}`)
+				!isFullCircle && $$.arcs.select(`.${CLASS.chartArcsGaugeMax}`)
 					.attr("dx", `${$$.innerRadius + (($$.radius - $$.innerRadius) / 2)}px`)
 					.attr("dy", "1.2em")
 					.text($$.textForGaugeMinMax(config.gauge_max, true));
