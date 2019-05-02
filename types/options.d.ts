@@ -385,7 +385,10 @@ export interface ChartOptions {
 		/**
 		 * Sets the inner radius of pie arc.
 		 */
-		innerRadius?: number;
+		innerRadius?: number | {
+			[key: string]: number
+			
+		};
 
 		/**
 		 * Set padding between data.

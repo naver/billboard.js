@@ -2947,7 +2947,7 @@ export default class Options {
 			 * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
 			 * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
-			 * @property {Number} [pie.innerRadius=0] Sets the inner radius of pie arc.
+			 * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
 			 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
 			 * @example
@@ -2980,6 +2980,13 @@ export default class Options {
 			 *      },
 			 *
 			 *      innerRadius: 0,
+			 *
+			 *      // set different innerRadius for each data
+			 *      innerRadius: {
+			 *      	data1: 10,
+			 *      	data2: 0
+			 *      }
+			 *
 			 *      padAngle: 0.1,
 			 *      padding: 0
 			 *  }
