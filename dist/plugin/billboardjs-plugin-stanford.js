@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190430102426
+ * @version 1.8.0-nightly-20190502102625
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -862,7 +862,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.8.0-nightly-20190430102426");
+defineProperty_default()(Plugin_Plugin, "version", "1.8.0-nightly-20190502102625");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js

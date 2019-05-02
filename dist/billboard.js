@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190430102426
+ * @version 1.8.0-nightly-20190502102625
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5429,7 +5429,7 @@ var Options_Options = function Options() {
      * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
      * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
      * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
-     * @property {Number} [pie.innerRadius=0] Sets the inner radius of pie arc.
+     * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
      * @property {Number} [pie.padAngle=0] Set padding between data.
      * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
      * @example
@@ -5462,6 +5462,13 @@ var Options_Options = function Options() {
      *      },
      *
      *      innerRadius: 0,
+     *
+     *      // set different innerRadius for each data
+     *      innerRadius: {
+     *      	data1: 10,
+     *      	data2: 0
+     *      }
+     *
      *      padAngle: 0.1,
      *      padding: 0
      *  }
@@ -7712,8 +7719,14 @@ extend(ChartInternal_ChartInternal.prototype, {
         padding = config.pie_padding,
         w = config.gauge_width || config.donut_width;
     $$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2, $$.radius = $$.radiusExpanded * .95, $$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : .6;
-    var innerRadius = radius || (padding ? padding * ($$.innerRadiusRatio + .1) : 0);
+    var innerRadius = radius || (padding ? padding * ($$.innerRadiusRatio + .1) : 0); // NOTE: innerRadius can be an object by user setting, only for 'pie' type
+
     $$.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ? $$.radius * $$.innerRadiusRatio : innerRadius;
+  },
+  getInnerRadius: function getInnerRadius(d) {
+    var $$ = this,
+        radius = $$.innerRadius;
+    return !isNumber(radius) && d && (radius = radius[d.data.id] || 0), radius;
   },
   updateArc: function updateArc() {
     var $$ = this;
@@ -7735,11 +7748,13 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   getSvgArc: function getSvgArc() {
     var $$ = this,
-        arc = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["arc"])().outerRadius($$.radius).innerRadius($$.innerRadius),
+        ir = $$.getInnerRadius(),
+        arc = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["arc"])().outerRadius($$.radius).innerRadius(isNumber(ir) ? ir : 0),
         newArc = function (d, withoutUpdate) {
       var path = "M 0 0";
 
       if ("value" in d ? d.value > 0 : d.data) {
+        isNumber(ir) || (arc = arc.innerRadius($$.getInnerRadius(d)));
         var updated = !withoutUpdate && $$.updateAngle(d);
         withoutUpdate ? path = arc(d) : updated && (path = arc(updated));
       }
@@ -7751,10 +7766,10 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   getSvgArcExpanded: function getSvgArcExpanded(rate) {
     var $$ = this,
-        arc = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["arc"])().outerRadius($$.radiusExpanded * (rate || 1)).innerRadius($$.innerRadius);
+        arc = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["arc"])().outerRadius($$.radiusExpanded * (rate || 1));
     return function (d) {
       var updated = $$.updateAngle(d);
-      return updated ? arc(updated) : "M 0 0";
+      return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
     };
   },
   getArc: function getArc(d, withoutUpdate, force) {
@@ -8029,13 +8044,14 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
     });
 
-    if (config.gauge_fullCircle && text.attr("dy", "".concat(Math.round($$.radius / 14))), text.call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+    if (text.call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
       return $$.isGaugeType(d.data) ? "".concat(Math.round($$.radius / 5), "px") : "";
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
     }), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge")) {
-      var endAngle = (config.gauge_fullCircle ? -4 : -1) * config.gauge_startingAngle;
-      $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
+      var isFullCircle = config.gauge_fullCircle,
+          endAngle = (isFullCircle ? -4 : -1) * config.gauge_startingAngle;
+      isFullCircle && text.attr("dy", "".concat(Math.round($$.radius / 14))), $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
         var d = {
           data: [{
             value: config.gauge_max
@@ -8044,7 +8060,7 @@ extend(ChartInternal_ChartInternal.prototype, {
           endAngle: endAngle
         };
         return $$.getArc(d, !0, !0);
-      }), $$.arcs.select(".".concat(config_classes.chartArcsGaugeUnit)).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select(".".concat(config_classes.chartArcsGaugeMin)).attr("dx", "".concat(-1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)), "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !config.gauge_fullCircle && $$.arcs.select(".".concat(config_classes.chartArcsGaugeMax)).attr("dx", "".concat($$.innerRadius + ($$.radius - $$.innerRadius) / 2, "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
+      }), $$.arcs.select(".".concat(config_classes.chartArcsGaugeUnit)).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select(".".concat(config_classes.chartArcsGaugeMin)).attr("dx", "".concat(-1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)), "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && $$.arcs.select(".".concat(config_classes.chartArcsGaugeMax)).attr("dx", "".concat($$.innerRadius + ($$.radius - $$.innerRadius) / 2, "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
     }
   },
   initGauge: function initGauge() {
@@ -8474,19 +8490,21 @@ extend(ChartInternal_ChartInternal.prototype, {
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this;
     $$.data.targets.forEach(function (d) {
-      var color = $$.color(d),
-          _$$$config$area_linea = $$.config.area_linearGradient,
-          _$$$config$area_linea2 = _$$$config$area_linea.x,
-          x = _$$$config$area_linea2 === void 0 ? [0, 0] : _$$$config$area_linea2,
-          _$$$config$area_linea3 = _$$$config$area_linea.y,
-          y = _$$$config$area_linea3 === void 0 ? [0, 1] : _$$$config$area_linea3,
-          _$$$config$area_linea4 = _$$$config$area_linea.stops,
-          stops = _$$$config$area_linea4 === void 0 ? [[0, color, 1], [1, color, 0]] : _$$$config$area_linea4,
-          linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient-").concat(d.id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
-      stops.forEach(function (v) {
-        var stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
-        linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
-      });
+      if ($$.isAreaType(d) && $$.defs.select("[id$=".concat(d.id, "]")).empty()) {
+        var color = $$.color(d),
+            _$$$config$area_linea = $$.config.area_linearGradient,
+            _$$$config$area_linea2 = _$$$config$area_linea.x,
+            x = _$$$config$area_linea2 === void 0 ? [0, 0] : _$$$config$area_linea2,
+            _$$$config$area_linea3 = _$$$config$area_linea.y,
+            y = _$$$config$area_linea3 === void 0 ? [0, 1] : _$$$config$area_linea3,
+            _$$$config$area_linea4 = _$$$config$area_linea.stops,
+            stops = _$$$config$area_linea4 === void 0 ? [[0, color, 1], [1, color, 0]] : _$$$config$area_linea4,
+            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient-").concat(d.id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
+        stops.forEach(function (v) {
+          var stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
+          linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
+        });
+      }
     });
   },
   updateAreaColor: function updateAreaColor(d) {
@@ -8495,7 +8513,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   updateArea: function updateArea(durationForExit) {
     var $$ = this;
-    $$.config.area_linearGradient && !$$.mainArea && $$.updateAreaGradient(), $$.mainArea = $$.main.selectAll(".".concat(config_classes.areas)).selectAll(".".concat(config_classes.area)).data($$.lineData.bind($$)), $$.mainArea.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainArea = $$.mainArea.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
+    $$.config.area_linearGradient && $$.updateAreaGradient(), $$.mainArea = $$.main.selectAll(".".concat(config_classes.areas)).selectAll(".".concat(config_classes.area)).data($$.lineData.bind($$)), $$.mainArea.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainArea = $$.mainArea.enter().append("path").attr("class", $$.classArea.bind($$)).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function () {
       return $$.orgAreaOpacity = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).style("opacity"), "0";
     }).merge($$.mainArea), $$.mainArea.style("opacity", $$.orgAreaOpacity);
   },
@@ -13557,7 +13575,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190430102426
+ * @version 1.8.0-nightly-20190502102625
  */
 
 var bb = {
@@ -13568,7 +13586,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190430102426",
+  version: "1.8.0-nightly-20190502102625",
 
   /**
    * Generate chart
