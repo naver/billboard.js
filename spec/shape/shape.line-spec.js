@@ -578,5 +578,31 @@ describe("SHAPE LINE", () => {
 				expect(chart.$.line.areas.filter(`.${CLASS.area}-${v.id}`).style("fill")).to.be.equal(`url("${id}")`);
 			});
 		});
+
+		it("set options: reset options", () => {
+			args = {
+				data: {
+					columns: [["data"]],
+					type: "area"
+				},
+				area: {
+					linearGradient: true
+				}
+			};
+		});
+
+		it("should generate customized liearGradient element", done => {
+			setTimeout(() => {
+				chart.load({
+				  columns: [
+					["data", 10, 20, 30, 40]
+				  ],
+				  done: () => {
+					  expect(chart.$.defs.select("linearGradient").empty()).to.be.false;
+					  done();
+				  }
+				});
+			  }, 1000);
+		});
 	});
 });
