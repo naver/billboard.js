@@ -348,28 +348,30 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.data.targets.forEach(d => {
-			const color = $$.color(d);
-			const {
-				x = [0, 0],
-				y = [0, 1],
-				stops = [[0, color, 1], [1, color, 0]]
-			} = $$.config.area_linearGradient;
+			if ($$.isAreaType(d) && $$.defs.select(`[id$=${d.id}]`).empty()) {
+				const color = $$.color(d);
+				const {
+					x = [0, 0],
+					y = [0, 1],
+					stops = [[0, color, 1], [1, color, 0]]
+				} = $$.config.area_linearGradient;
 
-			const linearGradient = $$.defs.append("linearGradient")
-				.attr("id", `${$$.datetimeId}-areaGradient-${d.id}`)
-				.attr("x1", x[0])
-				.attr("x2", x[1])
-				.attr("y1", y[0])
-				.attr("y2", y[1]);
+				const linearGradient = $$.defs.append("linearGradient")
+					.attr("id", `${$$.datetimeId}-areaGradient-${d.id}`)
+					.attr("x1", x[0])
+					.attr("x2", x[1])
+					.attr("y1", y[0])
+					.attr("y2", y[1]);
 
-			stops.forEach(v => {
-				const stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
+				stops.forEach(v => {
+					const stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
 
-				linearGradient.append("stop")
-					.attr("offset", v[0])
-					.attr("stop-color", stopColor || color)
-					.attr("stop-opacity", v[2]);
-			});
+					linearGradient.append("stop")
+						.attr("offset", v[0])
+						.attr("stop-color", stopColor || color)
+						.attr("stop-opacity", v[2]);
+				});
+			}
 		});
 	},
 
@@ -384,7 +386,7 @@ extend(ChartInternal.prototype, {
 	updateArea(durationForExit) {
 		const $$ = this;
 
-		$$.config.area_linearGradient && !$$.mainArea && $$.updateAreaGradient();
+		$$.config.area_linearGradient && $$.updateAreaGradient();
 
 		$$.mainArea = $$.main.selectAll(`.${CLASS.areas}`)
 			.selectAll(`.${CLASS.area}`)
