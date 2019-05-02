@@ -182,6 +182,43 @@ describe("SHAPE ARC", () => {
 				expect(value).to.be.equal(d.value);
 			});
 		});
+
+		it("check for variant innerRadius", done => {
+			const innerRadius = {
+				data1: 50,
+				data2: 80,
+				data3: 0
+			};
+			const chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 50],
+						["data3", 20]
+					],
+					type: "pie"
+				},
+				pie: {
+					innerRadius
+				}
+			});
+
+			const expected = {
+				data1: "M-8.110822788676742e-14,211.85A211.85,211.85,0,0,1,-201.48132297712823,-65.46525025833276L-47.55282581475767,-15.450849718747406A50,50,0,0,0,-1.9142843494634746e-14,50Z",
+				data2: "M1.2972071219968338e-14,-211.85A211.85,211.85,0,1,1,-8.110822788676742e-14,211.85L-3.06285495914156e-14,80A80,80,0,1,0,4.898587196589413e-15,-80Z",
+				data3: "M-201.48132297712823,-65.46525025833276A211.85,211.85,0,0,1,1.4924438455356651e-13,-211.85L0,0Z"
+			};
+
+			expect(chart.internal.innerRadius).to.be.deep.equal(innerRadius);
+
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d) {
+					expect(this.getAttribute("d")).to.be.equal(expected[d.data.id]);
+				});
+
+				done();
+			}, 500);
+		});
 	});
 
 	describe("show gauge", () => {
