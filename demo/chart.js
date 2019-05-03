@@ -161,6 +161,16 @@ var billboardDemo = {
 			str : str.charAt(0).toLowerCase() + str.slice(1);
 	},
 
+	getReplaced: function(str) {
+		return str.replace(/\"?(function|})\"?/g, "$1")
+			.replace(/\\"/g, "\"")
+			.replace(/</g, "&lt;")
+			.replace(/\\t/g, "\t")
+			.replace(/\t{5}/g, "")
+			.replace(/\\r/g, "\r")
+			.replace(/"(\w+)":/g, "$1:");
+	},
+
 	getPluginsCodeStr: function(val) {
 		var key = this.replacer.plugin;
 		var plugins = key;
@@ -168,19 +178,22 @@ var billboardDemo = {
 		val.forEach(function(p) {
 			Object.keys(p).forEach(function(key) {
 				plugins += "new bb.plugin."+ key +"(";
-				plugins += JSON.stringify(p[key], null, 5).replace(/}$/, "    }");
+				plugins += JSON.stringify(p[key], function(k, v) {
+					return typeof v === "function" ? v.toString() : v;
+				}, 5).replace(/\\n/g, "\n").replace(/}$/, "    }");
 				plugins += "),";
 			})
 		});
 
-		return plugins + key;
+		
+		return this.getReplaced(plugins) + key;
 	},
 
 	getCodeStr: function(options, key, index) {
 		var self = this;
 
 		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
-			JSON.stringify(options, function(k, v) {
+			this.getReplaced(JSON.stringify(options, function(k, v) {
 				if (typeof v === "function") {
 					return v.toString().replace(/\t+}$/, Array(/(format|data)/.test(k) ? 8 : 4).join(" ") + "}");
 				} else if (/(columns|rows|json)/.test(k)) {
@@ -197,18 +210,11 @@ var billboardDemo = {
 				}
 
 				return v;
-			}, 2)
-			.replace(/\"?(function|})\"?/g, "$1")
-			.replace(/\\"/g, "\"")
-			.replace(/</g, "&lt;")
-			.replace(/\\t/g, "\t")
-			.replace(/\t{5}/g, "")
-			.replace(/\\r/g, "\r")
-			.replace(/"(\w+)":/g, "$1:")
+			}, 2))
 			.replace("_plugins", "plugins")
 			.replace(new RegExp('"?'+ this.replacer.plugin +'"?', "g"), "");
 
-			if (/multiline/i.test(key)) {
+			if (/multiline/i.test(options.bindto)) {
 				codeStr = codeStr.replace(/\\n(?=(\t|\s+))/g, "")
 					.replace(/\\\\n(?=[a-zA-Z0-9])/g, "\\n");
 			} else {
