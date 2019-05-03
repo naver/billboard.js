@@ -1349,9 +1349,7 @@ describe("AXIS", function() {
 							{
 								tick: {
 									outer: false,
-									format: function(x) {
-									  return x + "%";
-									},
+									format: x => `${x}%`,
 									count: 2
 								}
 							}
@@ -1371,6 +1369,13 @@ describe("AXIS", function() {
 			}
 		});
 
+		const checkRange = id => {
+			const range = chart.internal[id].range();
+			const axisRange = chart.internal.axesList[id][0].scale().range();
+
+			return range.every((v, i) => v === axisRange[i]);
+		};
+
 		const checkXAxes = rotated => {
 			const main = chart.$.main;
 			const xAxisY = util.parseNum(main.select(`.${CLASS.axis}-x`).attr("transform"));
@@ -1382,6 +1387,8 @@ describe("AXIS", function() {
 			axis1.selectAll(".tick text").each(function() {
 				expect(+this.textContent).to.be.equal(tickValue += 0.5);
 			});
+
+			expect(checkRange("x")).to.be.true;
 		};
 
 		const checkYAxes = rotated => {
@@ -1408,6 +1415,8 @@ describe("AXIS", function() {
 					expect(this.textContent).to.be.equal(expectedTickValue[i][j]);
 				});
 			});
+
+			expect(checkRange("y")).to.be.true;
 		};
 
 		const checkY2Axes = rotated => {
@@ -1422,6 +1431,8 @@ describe("AXIS", function() {
 			axis1.selectAll(".tick text").each(function(d, i) {
 				expect(+this.textContent).to.be.equal(expectedTickValues[i]);
 			});
+
+			expect(checkRange("y2")).to.be.true;
 		};
 
 		it("check for axes generation", () => {
