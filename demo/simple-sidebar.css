@@ -163,6 +163,10 @@ div.row {
         position: relative;
         margin-right: 0;
     }
+
+    .by_text::after {
+        content: 'item from the left list';
+    }
 }
 
 @media(max-width:768px) {
@@ -173,6 +177,10 @@ div.row {
 
     #wrapper {
         padding-left: 0;
+    }
+
+    .by_text::after {
+        content: ' button';
     }
 }
 
@@ -200,6 +208,13 @@ div.row {
 #theme select {
     padding: 0 3px;
     color: #000;
+}
+
+.item_count {
+    font-size: 1.5em;
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 /* Style For Region */
@@ -234,3 +249,19 @@ div.row {
 #multilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }
 
 #rotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }
+
+#tooltip {font-size: 13px;padding: 0;margin-bottom: 80px;}
+#tooltip li {list-style: none;float: left; padding: 0 10px;}
+#tooltip li span:first-child {font-size: 16px;}
+
+/* Stanford Diagram region styles */
+#stanfordDiagram .test-polygon1 { fill: white; }
+#stanfordDiagram .test-polygon1 text { fill: black; }
+#stanfordDiagram .test-polygon2 { fill: orange; }
+#stanfordDiagram .test-polygon2 text { fill: black; }
+#stanfordDiagram .test-polygon3 { fill: red; }
+#stanfordDiagram .test-polygon3 text { fill: black; }
+#stanfordDiagram .test-polygon4 { fill: gray; }
+#stanfordDiagram .test-polygon4 text { fill: black; }
+#stanfordDiagram .test-polygon5 { fill: orange; }
+#stanfordDiagram .test-polygon5 text { fill: black; }
