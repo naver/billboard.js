@@ -133,7 +133,17 @@ export default class Axis {
 		const config = $$.config;
 
 		Object.keys($$.axesList).forEach(id => {
+			const range = $$[id].range();
+
 			$$.axesList[id].forEach((v, i) => {
+				const axisRange = v.scale().range();
+
+				// adjust range value with the current
+				// https://github.com/naver/billboard.js/issues/859
+				if (!range.every((v, i) => v === axisRange[i])) {
+					v.scale().range(range);
+				}
+
 				const className = `${getAxisClassName(id)}-${i + 1}`;
 				let g = $$.main.select(`.${className.replace(/\s/, ".")}`);
 
