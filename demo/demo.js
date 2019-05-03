@@ -2187,8 +2187,8 @@ d3.select(".chart_area")
 									{x: 0,y: 40}
 								],
 								text: function (value, percentage) {
-							return "Normal Operations: "+ value +" "+ percentage +"%";
-						    },
+								return "Normal Operations: "+ value +" "+ percentage +"%";
+							},
 								opacity: 0.2,
 								class: "test-polygon1"
 							},
@@ -2198,9 +2198,9 @@ d3.select(".chart_area")
 									{x: 40,y: 0},
 									{x: 40,y: 40}
 								],
-								text: function (value, percentage) {
-							return "MI: "+ value +" "+ percentage +"%";
-						    },
+							text: function (value, percentage) {
+								return "MI: "+ value +" "+ percentage +"%";
+							},
 								opacity: 0.2,
 								class: "test-polygon2"
 							},
@@ -2211,9 +2211,9 @@ d3.select(".chart_area")
 									{x: 65,y: 40},
 									{x: 40,y: 40}
 								],
-								text: function (value, percentage) {
-							return "HMI: "+ value +" "+ percentage +"%";
-						    },
+							text: function (value, percentage) {
+								return "HMI: "+ value +" "+ percentage +"%";
+							},
 								opacity: 0.2,
 								class: "test-polygon3"
 							},
@@ -2224,9 +2224,9 @@ d3.select(".chart_area")
 									{x: 65,y: 65},
 									{x: 0,y: 65}
 								],
-								text: function (value, percentage) {
-							return "Unavailable Epochs: "+ value +" "+ percentage +"%";
-						    },
+							text: function (value, percentage) {
+								return "Unavailable Epochs: "+ value +" "+ percentage +"%";
+							},
 								opacity: 0.2,
 								class: "test-polygon4"
 							},
@@ -2236,9 +2236,9 @@ d3.select(".chart_area")
 									{x: 65,y: 40},
 									{x: 65,y: 65}
 								],
-								text: function (value, percentage) {
-							return "MI: "+ value +" "+ percentage +"%";
-						    },
+							text: function (value, percentage) {
+								return "MI: "+ value +" "+ percentage +"%";
+							},
 								opacity: 0.2,
 								class: "test-polygon5"
 							}
