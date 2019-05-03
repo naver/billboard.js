@@ -117,8 +117,7 @@ extend(ChartInternal.prototype, {
 		} else if (config.axis_rotated) {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
-			padding = 2 +
-				legendWidthOnRight +
+			padding = 2 + legendWidthOnRight +
 				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
 		} else {
 			padding = ceil10(axisWidth) + legendWidthOnRight;
@@ -181,8 +180,7 @@ extend(ChartInternal.prototype, {
 		const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {right: 0};
 		const chartRect = $$.selectChart.node().getBoundingClientRect();
 		const hasArc = $$.hasArcType();
-		const svgLeft = svgRect.right -
-			chartRect.left -
+		const svgLeft = svgRect.right - chartRect.left -
 			(hasArc ? 0 : $$.getCurrentPaddingLeft(withoutRecompute));
 
 		return svgLeft > 0 ? svgLeft : 0;
