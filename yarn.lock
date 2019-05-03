@@ -2031,6 +2031,11 @@ cliui@^4.0.0:
     strip-ansi "^4.0.0"
     wrap-ansi "^2.0.0"
 
+cloc@^2.4.0:
+  version "2.4.0"
+  resolved "https://registry.yarnpkg.com/cloc/-/cloc-2.4.0.tgz#9711bf45177a681e38acaf2f9194067bfda7475c"
+  integrity sha512-uDJwmipIYX1rjkaPYaYhvwvq7YBDgKrX1gdDRLGAH3374u/ZRC+wQBpSL+zhEWoXfxW26rDGhYkfX4YTXphK5Q==
+
 clone-deep@^2.0.1:
   version "2.0.2"
   resolved "https://registry.yarnpkg.com/clone-deep/-/clone-deep-2.0.2.tgz#00db3a1e173656730d1188c3d6aced6d7ea97713"
@@ -5851,7 +5856,7 @@ mkdirp@0.5.1, mkdirp@0.5.x, "mkdirp@>=0.5 0", mkdirp@^0.5.0, mkdirp@^0.5.1, mkdi
   dependencies:
     minimist "0.0.8"
 
-mocha@^6.1.3:
+mocha@^6.1.4:
   version "6.1.4"
   resolved "https://registry.yarnpkg.com/mocha/-/mocha-6.1.4.tgz#e35fada242d5434a7e163d555c705f6875951640"
   integrity sha512-PN8CIy4RXsIoxoFJzS4QNnCH4psUCPWc4/rPrst/ecSJJbLBkubMiyGCP2Kj/9YnWbotFqAoeXyXMucj7gwCFg==
