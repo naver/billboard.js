@@ -62,7 +62,7 @@ var billboardDemo = {
 			html.push("</ul></li>");
 		});
 
-
+		this.$chartArea.querySelector(".item_count").innerHTML = (html.length - 2);
 		this.$list.innerHTML = html.join("");
 	},
 

@@ -163,6 +163,10 @@ div.row {
         position: relative;
         margin-right: 0;
     }
+
+    .by_text::after {
+        content: 'item from the left list';
+    }
 }
 
 @media(max-width:768px) {
@@ -173,6 +177,10 @@ div.row {
 
     #wrapper {
         padding-left: 0;
+    }
+
+    .by_text::after {
+        content: ' button';
     }
 }
 
@@ -200,6 +208,13 @@ div.row {
 #theme select {
     padding: 0 3px;
     color: #000;
+}
+
+.item_count {
+    font-size: 1.5em;
+    color: red;
+    font-weight: bold;
+    text-decoration: underline;
 }
 
 /* Style For Region */
