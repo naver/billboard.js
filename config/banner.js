@@ -15,5 +15,10 @@ module.exports = {
 		"",
 		`All-in-one packaged file for ease use of '${pkg.name}' with below dependency.`,
 		`- ${Object.entries(pkg.dependencies).map(v => v.join(" ")).join(", ")}`
+	].join("\r\n"),
+	plugin: [
+		"",
+		"@requires billboard.js",
+		"@summary billboard.js plugin"
 	].join("\r\n")
 };

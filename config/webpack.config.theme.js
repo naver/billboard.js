@@ -27,7 +27,7 @@ fs.readdirSync(path.resolve(__dirname, `.${srcPath}`)).forEach(file => {
 });
 
 const config = {
-	entry: entry,
+	entry,
 	output: {
 		path: distPath,
 		filename: `[name].${tmpExt}`
