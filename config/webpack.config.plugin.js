@@ -24,7 +24,7 @@ fs.readdirSync(path.resolve(__dirname, `.${srcPath}`), {
 });
 
 const config = {
-	entry: entry,
+	entry,
 	output: {
 		path: distPath,
 		filename: `billboardjs-plugin-[name].js`,
@@ -36,7 +36,7 @@ const config = {
 	devtool: false,
 	plugins: [
 		new webpack.BannerPlugin({
-			banner: banner.production,
+			banner: banner.production + banner.plugin,
 			entryOnly: true
 		})
 	]
@@ -45,7 +45,7 @@ const config = {
 module.exports = (common, env) => {
 	if (env && env.MIN) {
 		config.output.filename = config.output.filename.replace(".js", ".min.js");
-		config.plugins.push(new UglifyJSPlugin(uglifyConfig));
+		config.plugins.unshift(new UglifyJSPlugin(uglifyConfig));
 	} else {
 		config.plugins.push(new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: [distPath],
