@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190505102814
+ * @version 1.8.0-nightly-20190507102918
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -15457,8 +15457,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
             x2 = v2.x || v2.x === 0 ? v2.x : Infinity;
         return x1 - x2;
       })), t.values.forEach(function (v, i) {
-        var index = $$.data.targets ? $$.getIndexByX(v.x) : null;
-        v.index = index === null ? i : index;
+        return v.index = i;
       }), $$.data.xs[t.id].sort(function (v1, v2) {
         return v1 - v2;
       });
@@ -15498,13 +15497,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }), args.done && args.done();
   },
   loadFromArgs: function loadFromArgs(args) {
-    var data,
-        $$ = this;
-    // prevent load when chart is already destroyed
-    $$.config && ( // reset internally cached data
-    $$.resetCache(), data = args.data ? args.data : $$.convertData(args, function (d) {
-      return $$.load($$.convertDataToTargets(d), args);
-    }), $$.load(data ? $$.convertDataToTargets(data) : null, args));
+    var $$ = this; // prevent load when chart is already destroyed
+
+    if ($$.config) {
+      $$.resetCache();
+      var data = args.data || $$.convertData(args, function (d) {
+        return $$.load($$.convertDataToTargets(d), args);
+      });
+      $$.load(data ? $$.convertDataToTargets(data) : null, args);
+    } // reset internally cached data
+
   },
   unload: function unload(rawTargetIds, customDoneCb) {
     var $$ = this,
@@ -24715,7 +24717,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190505102814
+ * @version 1.8.0-nightly-20190507102918
  */
 
 var bb = {
@@ -24726,7 +24728,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190505102814",
+  version: "1.8.0-nightly-20190507102918",
 
   /**
    * Generate chart
