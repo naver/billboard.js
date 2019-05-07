@@ -352,4 +352,59 @@ describe("API load", function() {
 			});
 		});
 	});
+
+	describe("check for event rect", () => {
+		const cols = [
+			["x",0, 10, 15, 20, 25, 30, 35, 40, 45, 50],
+			["English",12,15,6,23,13,28,71,16,21,10],
+			["Russian",0,0,1,2,0,0,5,0,1,1],
+			["Spanish",0,3,0,2,0,0,1,0,1,2],
+			["Portuguese",1,0,0,0,0,0,0,1,1,0],
+			["German",0,0,0,0,0,1,0,0,0,1],
+			["Dutch",0,0,0,0,0,0,0,0,0,0],
+			["French",0,1,0,0,0,0,0,0,0,1],
+			["Chinese",0,0,0,0,0,0,0,0,5,0],
+		];		
+		const cols2 = [
+			["x",0, 5, 7, 12, 20, 22, 23, 24, 30, 35],
+			["English",12,9,31,26,17,6,11,23,20,12],
+			["Russian",0,1,1,1,0,0,4,2,0,0],
+			["Spanish",0,0,7,2,2,1,1,2,3,0],
+			["Portuguese",1,1,4,0,0,0,0,0,0,0],
+			["German",0,0,0,11,0,12,1,0,0,0],
+			["Dutch",0,0,0,0,0,1,0,0,0,0],
+			["French",0,0,2,2,0,0,0,0,2,0],
+			["Chinese",0,0,0,0,0,0,0,0,0,0],
+		];
+
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					type: "area-spline",
+					columns: cols
+				}
+			};
+		});
+
+		it("should be correctly updating eventRect elements", done => {
+			chart.load({
+				columns: cols2,
+				done: () => {
+					let lastX = 0;
+
+					chart.$.main.selectAll(`.${CLASS.eventRects} rect`).each(function(v, i) {
+						const x = +this.getAttribute("x"); 
+
+						expect(x).to.be.above(lastX);
+						expect(this.classList.contains(`${CLASS.eventRect}-${i}`)).to.be.true;
+
+						lastX = x;
+					});
+
+					done();
+				}
+			});
+		});
+	});
 });

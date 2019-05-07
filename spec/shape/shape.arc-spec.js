@@ -440,7 +440,7 @@ describe("SHAPE ARC", () => {
 		});
 
 		it("the dimension should be 0x0", () => {
-			["data1", "data2"].forEach(id => {
+			["data2", "data3"].forEach(id => {
 				const rect = chart.$.arc.select(`.${CLASS.arc}-${id}`).node().getBBox();
 
 				expect(rect.width === 0).to.be.true;
