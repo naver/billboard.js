@@ -143,6 +143,29 @@ pre {
     margin-bottom: 3px;
 }
 
+.code .js {
+    position: relative;
+}
+
+.code .js .button {
+    font-family: Raleway;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: #fff;
+    font-size: 12px;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    outline: none;
+    padding: 5px 13px;
+}
+
+.code .js .button:hover {
+    background-color: #16a085;
+    color: #fff;
+}
+
 div.row {
     min-width: 300px;
 }
