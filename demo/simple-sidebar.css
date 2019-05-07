@@ -137,6 +137,12 @@ pre {
     display: none;
 }
 
+.code p {
+    font-family: Raleway;
+    font-size: 13px;
+    margin-bottom: 3px;
+}
+
 div.row {
     min-width: 300px;
 }
