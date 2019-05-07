@@ -48,6 +48,10 @@ var billboardDemo = {
 		}).bind(this));
 
 		this.$code.addEventListener("keydown", (function(e) {
+			if (/^(9|13|3[27-9]|40)$/.test(e.keyCode)) {
+				return;
+			}
+
 			this.timer && clearTimeout(this.timer);
 
 			this.timer = setTimeout(function() {
@@ -171,7 +175,37 @@ var billboardDemo = {
 
 		return false;
 	},
+	copyToClipboard: function() {
+		var text = this.$code.textContent;
+		var hasError = false;
 
+		if (navigator.clipboard) {
+			navigator.clipboard.writeText(text)
+				.then(() => {}, e => {
+					hasError = e;
+				});
+		} else {
+			var textArea = document.createElement("textarea");
+
+			textArea.value = text;
+			document.body.appendChild(textArea);
+
+			textArea.focus();
+			textArea.select();
+		  
+			try {
+			  document.execCommand('copy');
+			} catch (e) {
+				hasError = e;
+			}
+		  
+			document.body.removeChild(textArea);
+		}
+
+		if (hasError === false) {
+			alert("Copied to clipboard!");
+		}
+	},
 	getLowerFirstCase: function(str) {
 		return /^(JSON)/.test(str) ?
 			str : str.charAt(0).toLowerCase() + str.slice(1);
