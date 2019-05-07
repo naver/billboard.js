@@ -322,11 +322,7 @@ extend(ChartInternal.prototype, {
 			}
 
 			// indexing each value
-			t.values.forEach((v, i) => {
-				const index = $$.data.targets ? $$.getIndexByX(v.x) : null;
-
-				v.index = index === null ? i : index;
-			});
+			t.values.forEach((v, i) => (v.index = i));
 
 			// this needs to be sorted because its index and value.index is identical
 			$$.data.xs[t.id].sort((v1, v2) => v1 - v2);
