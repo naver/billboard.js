@@ -3,6 +3,8 @@ var billboardDemo = {
 	replacer: {
 		plugin: "__PLUGIN__"
 	},
+	timer: null,
+
 	/**
 	 * Initializer
 	 */
@@ -13,7 +15,9 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
-		this.$code = document.querySelector("code");
+		
+		this.$html = document.querySelector("code.html");
+		this.$code = document.querySelector("code.javascript");
 
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
@@ -42,6 +46,16 @@ var billboardDemo = {
 		window.addEventListener("hashchange", (function() {
 			this.showDemo(location.hash);
 		}).bind(this));
+
+		this.$code.addEventListener("keydown", (function(e) {
+			this.timer && clearTimeout(this.timer);
+
+			this.timer = setTimeout(function() {
+				try {
+					eval(e.target.textContent);
+				} catch(e) {}
+			}, 700);
+		}).bind(this), false);
 	},
 
 	/**
@@ -61,7 +75,6 @@ var billboardDemo = {
 
 			html.push("</ul></li>");
 		});
-
 
 		this.$chartArea.querySelector(".item_count").innerHTML = (html.length - 2);
 		this.$list.innerHTML = html.join("");
@@ -145,13 +158,15 @@ var billboardDemo = {
 			self._addChartInstance(t, key, i + 1, code);
 		}) : this._addChartInstance(typeData, key, undefined, code);
 
+		this.$html.innerHTML = "";
 		this.$code.innerHTML = "";
 
-		code.markup.forEach(function(t) { self.$code.innerHTML += t; });
+		code.markup.forEach(function(t) { self.$html.innerHTML += t; });
 		code.data.forEach(function(t) { self.$code.innerHTML += t; });
 
 		this.$code.scrollTop = 0;
 
+		hljs.highlightBlock(this.$html);
 		hljs.highlightBlock(this.$code);
 
 		return false;
@@ -286,9 +301,9 @@ var billboardDemo = {
 
 		// markup
 		if ((index && index === 1) || !index) {
-			code.markup.push("&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (template ? template + "\r\n" : "") + "\r\n");
+			code.markup.push("&lt;!-- Markup -->\r\n&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (template ? template + "\r\n" : ""));
 		} else if (index && index > 1) {
-			code.markup.push("&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (template ? template + "\r\n" : "") + "\r\n");
+			code.markup.push("&lt;div id=\"" + key + "\">&lt;/div>\r\n" + (template ? template + "\r\n" : ""));
 		}
 
 		if (index && index > 1) {
@@ -296,7 +311,7 @@ var billboardDemo = {
 		}
 
 		// script this.$code.innerHTML
-		code.data.push("// Script\r\n" + codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1"));
+		code.data.push(codeStr.replace(/"(\[|{)/, "$1").replace(/(\]|})"/, "$1"));
 
 		try {
 			if (func) {
@@ -314,7 +329,7 @@ var billboardDemo = {
 
 		// style
 		if (style) {
-			code.data.push("\r\n\r\n/* Style */\r\n" + style.join("\r\n"));
+			code.markup.unshift("&lt;style>\r\n"+ style.join("\r\n") +"\r\n&lt;/style>\r\n\r\n");
 		}
 	}
 };
