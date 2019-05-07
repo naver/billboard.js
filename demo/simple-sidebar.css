@@ -143,6 +143,10 @@ pre {
     margin-bottom: 3px;
 }
 
+.code .html {
+    background-color: #eefbff;
+}
+
 .code .js {
     position: relative;
 }

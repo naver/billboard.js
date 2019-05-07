@@ -3,7 +3,10 @@ var billboardDemo = {
 	replacer: {
 		plugin: "__PLUGIN__"
 	},
-	timer: null,
+	timer: {
+		code: null,
+		btn: null
+	},
 
 	/**
 	 * Initializer
@@ -18,6 +21,7 @@ var billboardDemo = {
 		
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
+		this.$button = this.$codeArea.querySelector("button");
 
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
@@ -31,11 +35,16 @@ var billboardDemo = {
 	_bindEvents: function() {
 		var $wrapper = this.$wrapper;
 		var WIDTH = this.WIDTH;
+		var ctx = this;
 
 		document.getElementById("menu-toggle").addEventListener("click", function(e) {
 			$wrapper.className = $wrapper.className ? "" : "toggled";
 			e.preventDefault();
 		}, false);
+
+		this.$button.addEventListener("click", function(e) {
+			ctx.copyToClipboard();
+		});
 
 		window.addEventListener("resize", function() {
 			if (window.innerWidth > WIDTH) {
@@ -43,23 +52,22 @@ var billboardDemo = {
 			}
 		});
 
-		window.addEventListener("hashchange", (function() {
-			this.showDemo(location.hash);
-		}).bind(this));
+		window.addEventListener("hashchange", function() {
+			ctx.showDemo(location.hash);
+		});
 
-		this.$code.addEventListener("keydown", (function(e) {
+		this.$code.addEventListener("keydown", function(e) {
 			if (/^(9|13|3[27-9]|40)$/.test(e.keyCode)) {
 				return;
 			}
 
-			this.timer && clearTimeout(this.timer);
-
-			this.timer = setTimeout(function() {
+			ctx.timer.code && clearTimeout(ctx.timer.code);
+			ctx.timer.code = setTimeout(function() {
 				try {
 					eval(e.target.textContent);
 				} catch(e) {}
 			}, 700);
-		}).bind(this), false);
+		}, false);
 	},
 
 	/**
@@ -177,12 +185,15 @@ var billboardDemo = {
 	},
 	copyToClipboard: function() {
 		var text = this.$code.textContent;
-		var hasError = false;
+		var errMsg = false;
+		var ctx = this;
 
 		if (navigator.clipboard) {
 			navigator.clipboard.writeText(text)
-				.then(() => {}, e => {
-					hasError = e;
+				.then(function() {
+					ctx.showCopyMsg();
+				}, function(e) {
+					console.error("An error occured:", errMsg);
 				});
 		} else {
 			var textArea = document.createElement("textarea");
@@ -194,17 +205,30 @@ var billboardDemo = {
 			textArea.select();
 		  
 			try {
-			  document.execCommand('copy');
+				document.execCommand("copy");
+				ctx.showCopyMsg();
 			} catch (e) {
-				hasError = e;
+				console.error("An error occured:", errMsg);
 			}
 		  
 			document.body.removeChild(textArea);
 		}
-
-		if (hasError === false) {
-			alert("Copied to clipboard!");
+	},
+	showCopyMsg: function() {
+		if (this.timer.btn) {
+			return;
 		}
+
+		var btn = this.$button;
+		var ctx = this;
+		var origText = btn.innerHTML;
+
+		btn.innerHTML = "Copied!";
+		
+		this.timer.btn = setTimeout(function() {
+			btn.innerHTML = origText;
+			ctx.timer.btn = null;
+		}, 1000);
 	},
 	getLowerFirstCase: function(str) {
 		return /^(JSON)/.test(str) ?
