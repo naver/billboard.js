@@ -1426,21 +1426,19 @@ var demos = {
 				];
 			}
 		},
-		"DataFromURL-csv": {
+		"DataFromURL": {
 			options: {
 				data: {
-					url: './data/test.csv'
+					url: "./data/test.csv"
 				}
 			},
 			func: function(chart) {
 				chart.timer = [
 					setTimeout(function() {
-						bb.generate({
-							bindto: "#dataFromURL-csv",
-							data: {
-								url: './data/test.json',
-								mimeType: "json"
-							}
+						chart.load({
+							url: "./data/test.json",
+							mimeType: "json",
+							type: "bar"
 						});
 					}, 1000)
 				];
