@@ -29,13 +29,16 @@ extend(Chart.prototype, {
 	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
 	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
 	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+	 *    | headers |  Set 'json' if loading JSON via data.url.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+	 *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
+	 *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
 	 *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
 	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
 	 *    | done | The specified function will be called after data loaded.|
-	 *
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
 	 * @example
-	 *  // Load data1 and unload data2 and data3
-	 *  chart.load({
+	 * // Load data1 and unload data2 and data3
+	 * chart.load({
 	 *     columns: [
 	 *        ["data1", 100, 200, 150, ...],
 	 *        ...
@@ -43,7 +46,18 @@ extend(Chart.prototype, {
 	 *    unload: ["data2", "data3"],
 	 *    url: "...",
 	 *    done: function() { ... }
-	 *  });
+	 * });
+	 * @example
+	 * // myAPI.json
+	 * // {
+	 * //   "data1": [220, 240, 270, 250, 280],
+	 * //   "data2": [180, 150, 300, 70, 120]
+	 * // }
+	 *
+	 * chart.load({
+	 *     url: './data/myAPI.json',
+	 *     mimeType: "json"
+	 * });
 	 */
 	load(args) {
 		const $$ = this.internal;
