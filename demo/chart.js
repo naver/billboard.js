@@ -263,9 +263,8 @@ var billboardDemo = {
 		return this.getReplaced(plugins) + key;
 	},
 
-	getCodeStr: function(options, key, index) {
+	getCodeStr: function(options, index) {
 		var self = this;
-
 		var codeStr = "var chart"+ (index > 1 ? index : "") +" = bb.generate(" +
 			this.getReplaced(JSON.stringify(options, function(k, v) {
 				if (typeof v === "function") {
@@ -350,12 +349,12 @@ var billboardDemo = {
 			options.plugins = plugins;
 		}
 
-		var inst = bb.generate(options, key, index);
+		var inst = bb.generate(options);
 
 		delete options.plugins;
 		inst.timer = [];
 
-		var codeStr = this.getCodeStr(options);
+		var codeStr = this.getCodeStr(options, index);
 
 		// markup
 		if ((index && index === 1) || !index) {

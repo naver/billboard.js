@@ -1094,6 +1094,7 @@ export default class Options {
 
 			/**
 			 * Choose which JSON object keys correspond to desired data.
+			 * - **NOTE:** Only for JSON object given as array.
 			 * @name data․keys
 			 * @memberof Options
 			 * @type {String}
