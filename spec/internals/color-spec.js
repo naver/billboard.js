@@ -54,7 +54,7 @@ describe("COLOR", () => {
 		it("check if color pattern applied to data elements", () => {
 			chart.internal.main.selectAll(`.${CLASS.chartBars} .${CLASS.target} path:first-child`)
 				.each(function(v, i) {
-					expect(this.style.stroke).to.be.equal(util.hexToRgb(pattern[i]));
+					expect(this.style.fill).to.be.equal(util.hexToRgb(pattern[i]));
 				});
 		});
 	});
@@ -177,14 +177,14 @@ describe("COLOR", () => {
 		});
 
 		describe("pattern shouldn't be applying for line types", () => {
-			const checkStroke = () => {
+			const checkFill = () => {
 				const internal = chart.internal;
 				const rx = /#bb-\d+-pattern-/;
 
 				chart.data().forEach(v => {
 					const id = v.id;
 					const isLine = internal.isTypeOf(id, ["line", "spline", "step"]) || !internal.config.data_types[id];
-					const stroke = internal.main.select(`.${CLASS.shapes}-${id} path`).style("stroke");
+					const stroke = internal.main.select(`.${CLASS.shapes}-${id} path`).style("fill");
 
 					expect(rx.test(stroke)).to.be[!isLine];
 				})
@@ -194,25 +194,25 @@ describe("COLOR", () => {
 				args.data.type = undefined;
 			});
 
-			it("check for stroke", checkStroke);
+			it("check for fill", checkFill);
 
 			it("set options data.type=line", () => {
 				args.data.type = "line";
 			});
 
-			it("check for stroke", checkStroke);
+			it("check for fill", checkFill);
 
 			it("set options data.type=spline", () => {
 				args.data.type = "spline";
 			});
 
-			it("check for stroke", checkStroke);
+			it("check for fill", checkFill);
 
 			it("set options data.type=step", () => {
 				args.data.type = "step";
 			});
 
-			it("check for stroke", checkStroke);
+			it("check for fill", checkFill);
 
 			it("set options data.type", () => {
 				args.data.type = undefined;
@@ -222,7 +222,7 @@ describe("COLOR", () => {
 				};
 			});
 
-			it("check for stroke", checkStroke);
+			it("check for fill", checkFill);
 		});
 	});
 
@@ -253,7 +253,6 @@ describe("COLOR", () => {
 
 			shape.each(function() {
 				originalColor.push({
-					stroke: this.style.stroke,
 					fill: this.style.fill
 				});
 			});
@@ -269,7 +268,6 @@ describe("COLOR", () => {
 					color = color();
 				}
 
-				expect(this.style.stroke).to.be.equal(color);
 				expect(this.style.fill).to.be.equal(color);
 			});
 
@@ -277,7 +275,6 @@ describe("COLOR", () => {
 			util.fireEvent(eventRect, "mouseout");
 
 			shape.each(function(d, i) {
-				expect(this.style.stroke).to.be.equal(originalColor[i].stroke);
 				expect(this.style.fill).to.be.equal(originalColor[i].fill);
 		   });
 		};
