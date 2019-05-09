@@ -52,7 +52,6 @@ extend(ChartInternal.prototype, {
 
 		$$.mainBar = $$.mainBar.enter().append("path")
 			.attr("class", classBar)
-			.style("stroke", $$.color)
 			.style("fill", $$.color)
 			.merge($$.mainBar)
 			.style("opacity", initialOpacity);
