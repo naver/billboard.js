@@ -567,14 +567,16 @@ export default class Options {
 			 *  - `i` is the index of the data point where the label is shown.
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+ 			 * @property {String|Object} [data.labels.colors] Set label text colors.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-			 * @see [Demo: labels format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-			 * @see [Demo: labels position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+			 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+			 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+			 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
 			 * @example
 			 * data: {
 			 *   labels: true,
@@ -588,6 +590,18 @@ export default class Options {
 			 *         data1: function(v, id, i, j) { ... },
 			 *         ...
 			 *     },
+			 *
+			 *     // apply for all label texts
+			 *     colors: "red",
+			 *
+			 *     // or set different colors per dataset
+			 *     // for not specified dataset, will have the default color value
+			 *     colors: {
+			 *        data1: "yellow",
+			 *        data3: "green"
+			 *     },
+			 *
+			 *     // set x, y coordinate position
 			 *     position: {
 			 *        x: -10,
 			 *        y: 10
@@ -596,6 +610,7 @@ export default class Options {
 			 * }
 			 */
 			data_labels: {},
+			data_labels_colors: undefined,
 			data_labels_position: {},
 
 			/**

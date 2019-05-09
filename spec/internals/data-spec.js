@@ -560,6 +560,35 @@ describe("DATA", () => {
 				});
 			});
 
+			it("set options data.labels.colors", () => {
+				args.data.labels = {
+					colors: "red"
+				};
+			});
+
+			it("check for all data label texts colors to have same color", () => {
+				chart.$.text.texts.each(function() {
+					expect(this.style.fill).to.be.equal(args.data.labels.colors);
+				});
+			});
+
+			it("set options data.labels.colors", () => {
+				args.data.labels = {
+					colors: {
+						data1: "red",
+						data2: "green",
+						data3: "yellow",
+						data4: "cyan"
+					}
+				};
+			});
+
+			it("check for all data label texts colors to have different color", () => {
+				chart.$.text.texts.each(function(d) {
+					expect(this.style.fill).to.be.equal(args.data.labels.colors[d.id]);
+				});
+			});
+
 			it("text property shouldn't be empty", () => {
 				const texts = chart.$.text.texts;
 

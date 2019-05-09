@@ -1724,6 +1724,38 @@ var demos = {
 				}
 			}
 		},
+		DataLabelColors: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+						],
+						type: "bar",
+						labels: {
+							colors: "red"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+						],
+						labels: {
+							colors: {
+								data1: "fuchsia",
+								data2: "blue"
+							}
+						}
+					}
+				}
+			}
+		],
 		DataLabelFormat: {
 			options: {
 				data: {
@@ -1740,7 +1772,7 @@ var demos = {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
 							data1: function(x) {
-								return d3.format('$')(x)
+						     return d3.format('$')(x);
 							}
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
