@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, getRandom, isNumber, capitalize} from "./util";
+import {capitalize, extend, getRandom, isNumber, isObject, isString} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -72,10 +72,23 @@ extend(ChartInternal.prototype, {
 			.merge($$.mainText)
 			.attr("class", classText)
 			.attr("text-anchor", d => (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"))
-			.style("stroke", "none")
-			.style("fill", d => $$.color(d))
+			.style("fill", $$.updateTextColor.bind($$))
 			.style("fill-opacity", "0")
 			.text((d, i, j) => $$.dataLabelFormat(d.id)(d.value, d.id, i, j));
+	},
+
+	updateTextColor(d) {
+		const $$ = this;
+		const labelColors = $$.config.data_labels_colors;
+		let color;
+
+		if (isString(labelColors)) {
+			color = labelColors;
+		} else if (isObject(labelColors)) {
+			color = labelColors[d.id];
+		}
+
+		return color || $$.color(d);
 	},
 
 	/**
@@ -100,7 +113,7 @@ extend(ChartInternal.prototype, {
 				(withTransition && text.attr("x") ? text.transition(t) : text)
 					.attr("x", xForText)
 					.attr("y", yForText)
-					.style("fill", $$.color)
+					.style("fill", $$.updateTextColor.bind($$))
 					.style("fill-opacity", opacityForText);
 			})
 		];
