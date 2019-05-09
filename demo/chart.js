@@ -43,7 +43,10 @@ var billboardDemo = {
 		}, false);
 
 		this.$button.addEventListener("click", function(e) {
+			var pos = document.documentElement.scrollTop;
+
 			ctx.copyToClipboard();
+			document.documentElement.scrollTop = pos;
 		});
 
 		window.addEventListener("resize", function() {
@@ -58,6 +61,11 @@ var billboardDemo = {
 
 		this.$code.addEventListener("keydown", function(e) {
 			if (/^(9|13|3[27-9]|40)$/.test(e.keyCode)) {
+				if (e.keyCode === 9) {
+					document.execCommand("insertHTML", false, "&#009");
+					e.preventDefault();
+				}
+
 				return;
 			}
 
@@ -68,6 +76,14 @@ var billboardDemo = {
 				} catch(e) {}
 			}, 700);
 		}, false);
+
+		this.$code.addEventListener("focus", function(e) {
+			e.target.classList.add("focus");
+		});
+
+		this.$code.addEventListener("blur", function(e) {
+			e.target.classList.remove("focus");
+		});
 	},
 
 	/**
@@ -199,10 +215,31 @@ var billboardDemo = {
 			var textArea = document.createElement("textarea");
 
 			textArea.value = text;
+			textArea.style.cssText = "width:0;height:0";
 			document.body.appendChild(textArea);
 
 			textArea.focus();
-			textArea.select();
+
+			if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
+				var editable = textArea.contentEditable;
+				var readOnly = textArea.readOnly;
+		
+				textArea.contentEditable = true;
+				textArea.readOnly = true;
+		
+				var range = document.createRange();
+				range.selectNodeContents(textArea);
+		
+				var selection = window.getSelection();
+				selection.removeAllRanges();
+				selection.addRange(range);
+				textArea.setSelectionRange(0, 999999);
+		
+				textArea.contentEditable = editable;
+				textArea.readOnly = readOnly;
+			} else {
+				textArea.select();
+			}
 		  
 			try {
 				document.execCommand("copy");
