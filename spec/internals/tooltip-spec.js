@@ -762,5 +762,45 @@ describe("TOOLTIP", function() {
 
 			expect(d3.select("#tooltip").html()).to.be.equal(html);
 		});
+
+		it("set options color.tiles", () => {
+			delete args.data.colors;
+			delete args.tooltip.contents;
+
+			args.color = {
+				tiles: function() {
+					var pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+						.attr("patternUnits", "userSpaceOnUse")
+						.attr("width", "6")
+						.attr("height", "6");
+			
+					var g = pattern
+						.append("g")
+						.attr("fill-rule", "evenodd")
+						.attr("stroke-width", 1)
+						.append("g")
+						.attr("fill", "rgb(255, 127, 14)");
+			
+					g.append("polygon").attr("points", "5 0 6 0 0 6 0 5");
+					g.append("polygon").attr("points", "6 5 6 6 5 6");
+			
+					// Should return an array of SVGPatternElement
+					return [
+						pattern.node()
+					];
+				}
+			}
+		});
+
+		it("check for color tiled tooltip", () => {
+			const id = chart.data().map(v => v.id);
+
+			// when
+			chart.tooltip.show({x:0});
+
+			chart.$.tooltip.selectAll(".name").each(function(d, i) {
+				expect(/^<svg>(.*)<\/svg>$/.test(this.innerHTML.replace(id[i], ""))).to.be.true;
+			});
+		});
 	});
 });
