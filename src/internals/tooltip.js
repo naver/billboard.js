@@ -202,7 +202,7 @@ extend(ChartInternal.prototype, {
 		return (tplStr || `<table class="{=CLASS_TOOLTIP}"><tbody>
 				{=TITLE}
 				{{<tr class="{=CLASS_TOOLTIP_NAME}">
-					<td class="name"><span style="background-color:{=COLOR}"></span>{=NAME}</td>
+					<td class="name">${this.patterns ? `{=COLOR}` : `<span style="background-color:{=COLOR}"></span>`}{=NAME}</td>
 					<td class="value">{=VALUE}</td>
 				</tr>}}
 			</tbody></table>`)

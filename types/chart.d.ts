@@ -305,7 +305,7 @@ export interface Chart {
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
-	 * 
+	 *
 	 * The args object can consist with following members:
 	 *    | Key | Type | Description |
 	 *    | --- | --- | --- |

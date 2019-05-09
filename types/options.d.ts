@@ -387,7 +387,6 @@ export interface ChartOptions {
 		 */
 		innerRadius?: number | {
 			[key: string]: number
-			
 		};
 
 		/**
@@ -1173,16 +1172,29 @@ export interface Data {
 	 * - id is the id of the data where the label is shown.
 	 * - i is the index of the data point where the label is shown.
 	 * - j is the sub index of the data point where the label is shown.
-	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (e.g. d3.format('$'))
 	 */
-	labels?: boolean
-		| { format: FormatFunction }
-		| { format: { [key: string]: FormatFunction } }
-		| {
-			position: {
+	labels?: boolean | {
+			/**
+			 * Set label text colors.
+			 */
+			colors?: string | { [key: string]: string };
+
+			/**
+			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (e.g. d3.format('$'))
+			 */
+			format?: FormatFunction | { [key: string]: FormatFunction };
+
+			position?: {
+				/**
+				 * x coordinate position, relative the original.
+				 */
 				x?: number;
+
+				/**
+				 * y coordinate position, relative the original.
+				 */
 				y?: number;
-			}
+			};
 		};
 
 	/**
