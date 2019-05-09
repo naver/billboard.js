@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190508102903
+ * @version 1.8.0-nightly-20190509102935
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3045,14 +3045,16 @@ var Options_Options = function Options() {
      *  - `i` is the index of the data point where the label is shown.
      *  - `j` is the sub index of the data point where the label is shown.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+    	 * @property {String|Object} [data.labels.colors] Set label text colors.
      * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
      * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
      * @memberof Options
      * @type {Object}
      * @default {}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-     * @see [Demo: labels format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-     * @see [Demo: labels position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
      * @example
      * data: {
      *   labels: true,
@@ -3066,6 +3068,18 @@ var Options_Options = function Options() {
      *         data1: function(v, id, i, j) { ... },
      *         ...
      *     },
+     *
+     *     // apply for all label texts
+     *     colors: "red",
+     *
+     *     // or set different colors per dataset
+     *     // for not specified dataset, will have the default color value
+     *     colors: {
+     *        data1: "yellow",
+     *        data3: "green"
+     *     },
+     *
+     *     // set x, y coordinate position
      *     position: {
      *        x: -10,
      *        y: 10
@@ -3074,6 +3088,7 @@ var Options_Options = function Options() {
      * }
      */
     data_labels: {},
+    data_labels_colors: undefined,
     data_labels_position: {},
 
     /**
@@ -8119,7 +8134,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         barData = $$.barData.bind($$),
         classBar = $$.classBar.bind($$),
         initialOpacity = $$.initialOpacity.bind($$);
-    $$.mainBar = $$.main.selectAll(".".concat(config_classes.bars)).selectAll(".".concat(config_classes.bar)).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("stroke", $$.color).style("fill", $$.color).merge($$.mainBar).style("opacity", initialOpacity);
+    $$.mainBar = $$.main.selectAll(".".concat(config_classes.bars)).selectAll(".".concat(config_classes.bar)).data(barData), $$.mainBar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $$.mainBar = $$.mainBar.enter().append("path").attr("class", classBar).style("fill", $$.color).merge($$.mainBar).style("opacity", initialOpacity);
   },
   redrawBar: function redrawBar(drawBar, withTransition) {
     return [(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
@@ -9128,11 +9143,15 @@ extend(ChartInternal_ChartInternal.prototype, {
       return _this.isRadarType(d) ? d.values : dataFn(d);
     }), $$.mainText.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $$.mainText = $$.mainText.enter().append("text").merge($$.mainText).attr("class", classText).attr("text-anchor", function (d) {
       return config.axis_rotated ? d.value < 0 ? "end" : "start" : "middle";
-    }).style("stroke", "none").style("fill", function (d) {
-      return $$.color(d);
-    }).style("fill-opacity", "0").text(function (d, i, j) {
+    }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").text(function (d, i, j) {
       return $$.dataLabelFormat(d.id)(d.value, d.id, i, j);
     });
+  },
+  updateTextColor: function updateTextColor(d) {
+    var color,
+        $$ = this,
+        labelColors = $$.config.data_labels_colors;
+    return isString(labelColors) ? color = labelColors : isObject(labelColors) && (color = labelColors[d.id]), color || $$.color(d);
   },
 
   /**
@@ -9151,7 +9170,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     return [this.mainText.each(function () {
       var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this); // do not apply transition for newly added text elements
 
-      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", xForText).attr("y", yForText).style("fill", $$.color).style("fill-opacity", opacityForText);
+      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", xForText).attr("y", yForText).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
     })];
   },
 
@@ -9744,7 +9763,7 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
-    return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\"><span style=\"background-color:{=COLOR}\"></span>{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>").replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
+    return (tplStr || "<table class=\"{=CLASS_TOOLTIP}\"><tbody>\n\t\t\t\t{=TITLE}\n\t\t\t\t{{<tr class=\"{=CLASS_TOOLTIP_NAME}\">\n\t\t\t\t\t<td class=\"name\">".concat(this.patterns ? "{=COLOR}" : "<span style=\"background-color:{=COLOR}\"></span>", "{=NAME}</td>\n\t\t\t\t\t<td class=\"value\">{=VALUE}</td>\n\t\t\t\t</tr>}}\n\t\t\t</tbody></table>")).replace(/(\r?\n|\t)/g, "").split(/{{(.*)}}/);
   },
 
   /**
@@ -13599,7 +13618,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190508102903
+ * @version 1.8.0-nightly-20190509102935
  */
 
 var bb = {
@@ -13610,7 +13629,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190508102903",
+  version: "1.8.0-nightly-20190509102935",
 
   /**
    * Generate chart
