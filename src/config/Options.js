@@ -560,7 +560,8 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [data.labels=false] Show or hide labels on each data points
-			 * @property {Function} [data.labels.format={}] Set formatter function for data labels.<br>
+			 * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+			 * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
 			 * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
 			 *  - `v` is the value of the data point where the label is shown.
 			 *  - `id` is the id of the data where the label is shown.
@@ -590,6 +591,9 @@ export default class Options {
 			 *         data1: function(v, id, i, j) { ... },
 			 *         ...
 			 *     },
+			 *
+			 *     // align text to center of the 'bar' shape (works only for 'bar' type)
+			 *     centered: true,
 			 *
 			 *     // apply for all label texts
 			 *     colors: "red",
@@ -1457,7 +1461,7 @@ export default class Options {
 			axis_x_categories: [],
 
 			/**
-			 * Centerise ticks on category axis.
+			 * centerize ticks on category axis.
 			 * @name axis․x․tick․centered
 			 * @memberof Options
 			 * @type {Boolean}

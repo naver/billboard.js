@@ -1175,6 +1175,11 @@ export interface Data {
 	 */
 	labels?: boolean | {
 			/**
+			 * Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+			 */
+			centered?: boolean;
+
+			/**
 			 * Set label text colors.
 			 */
 			colors?: string | { [key: string]: string };
