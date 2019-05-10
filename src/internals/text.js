@@ -182,6 +182,45 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Get centerized text position for bar type data.label.text
+	 * @private
+	 * @param {Object} d Data object
+	 * @param {Array} points Data points position
+	 * @param {HTMLElement} textElement Data label text element
+	 * @returns {Number} Position value
+	 */
+	getCenteredTextPos(d, points, textElement) {
+		const $$ = this;
+		const config = $$.config;
+		const isRotated = config.axis_rotated;
+
+		if (config.data_labels.centered && $$.isBarType(d)) {
+			const rect = textElement.getBoundingClientRect();
+			const isPositive = d.value >= 0;
+
+			if (isRotated) {
+				const w = (
+					isPositive ?
+						points[1][1] - points[0][1] :
+						points[0][1] - points[1][1]
+				) / 2 + (rect.width / 2);
+
+				return isPositive ? -w - 3 : w + 4;
+			} else {
+				const h = (
+					isPositive ?
+						points[0][1] - points[1][1] :
+						points[1][1] - points[0][1]
+				) / 2 + (rect.height / 2);
+
+				return isPositive ? h : -h - 4;
+			}
+		}
+
+		return 0;
+	},
+
+	/**
 	 * Gets the x coordinate of the text
 	 * @private
 	 * @param {Object} points
@@ -192,10 +231,11 @@ extend(ChartInternal.prototype, {
 	getXForText(points, d, textElement) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		let xPos;
 		let padding;
 
-		if (config.axis_rotated) {
+		if (isRotated) {
 			padding = $$.isBarType(d) ? 4 : 6;
 			xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1);
 		} else {
@@ -208,6 +248,10 @@ extend(ChartInternal.prototype, {
 			} else if (xPos < 0) {
 				xPos = 4;
 			}
+		}
+
+		if (isRotated) {
+			xPos += $$.getCenteredTextPos(d, points, textElement);
 		}
 
 		return xPos + (config.data_labels_position.x || 0);
@@ -224,12 +268,14 @@ extend(ChartInternal.prototype, {
 	getYForText(points, d, textElement) {
 		const $$ = this;
 		const config = $$.config;
+		const isRotated = config.axis_rotated;
 		const r = config.point_r;
+		const rect = textElement.getBoundingClientRect();
 		let baseY = 3;
 		let yPos;
 
-		if (config.axis_rotated) {
-			yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * 0.6) / 2;
+		if (isRotated) {
+			yPos = (points[0][0] + points[2][0] + rect.height * 0.6) / 2;
 		} else {
 			yPos = points[2][1];
 
@@ -238,7 +284,7 @@ extend(ChartInternal.prototype, {
 			}
 
 			if (d.value < 0 || (d.value === 0 && !$$.hasPositiveValue)) {
-				yPos += textElement.getBoundingClientRect().height;
+				yPos += rect.height;
 
 				if ($$.isBarType(d) && $$.isSafari()) {
 					yPos -= baseY;
@@ -259,14 +305,18 @@ extend(ChartInternal.prototype, {
 		}
 
 		// show labels regardless of the domain if value is null
-		if (d.value === null && !config.axis_rotated) {
-			const boxHeight = textElement.getBoundingClientRect().height;
+		if (d.value === null && !isRotated) {
+			const boxHeight = rect.height;
 
 			if (yPos < boxHeight) {
 				yPos = boxHeight;
 			} else if (yPos > this.height) {
 				yPos = this.height - 4;
 			}
+		}
+
+		if (!isRotated) {
+			yPos += $$.getCenteredTextPos(d, points, textElement);
 		}
 
 		return yPos + (config.data_labels_position.y || 0);

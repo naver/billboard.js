@@ -729,6 +729,51 @@ describe("DATA", () => {
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
+
+			it("set options data.labels.centered=true", () => {
+				args.data.labels = {
+					centered: true,
+					colors: "white"
+				};
+			});
+
+			it("check for data label text position", () => {
+				const index = 1;
+				let j = 0;
+				const bars = chart.$.bar.bars.filter(d => d.index === index);
+				const texts = chart.$.text.texts.filter(d => d.index === index).nodes();
+
+				bars.each(function(d) {
+					const barRect = this.getBoundingClientRect();
+					const textRect = texts[j++].getBoundingClientRect();
+
+					expect(
+						(barRect.height / 2) - (textRect.y - barRect.y)
+					).to.be.closeTo(textRect.height / 2, 3);
+				});
+			});
+
+			it("set options axis.rotated=true", () => {
+				args.axis = {
+					rotated: true
+				}
+			});
+
+			it("check for data label text position when is rotated", () => {
+				const index = 1;
+				let j = 0;
+				const bars = chart.$.bar.bars.filter(d => d.index === index);
+				const texts = chart.$.text.texts.filter(d => d.index === index).nodes();
+
+				bars.each(function(d) {
+					const barRect = this.getBoundingClientRect();
+					const textRect = texts[j++].getBoundingClientRect();
+
+					expect(
+						(barRect.width / 2) - (textRect.x - barRect.x)
+					).to.be.closeTo(textRect.width / 2, 3);
+				});
+			});
 		});
 
 		describe("for all targets", () => {
