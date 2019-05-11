@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0-nightly-20190509102935
+ * @version 1.8.0-nightly-20190511103021
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -684,6 +684,8 @@ var isValue = function (v) {
     return a - b;
   } : function (a, b) {
     return b - a;
+  } : isAsc && data.every(Number) ? fn = function (a, b) {
+    return a - b;
   } : !isAsc && (fn = function (a, b) {
     return a > b && -1 || a < b && 1 || a === b && 0;
   }), data.concat().sort(fn);
@@ -3038,7 +3040,8 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {Boolean} [data.labels=false] Show or hide labels on each data points
-     * @property {Function} [data.labels.format={}] Set formatter function for data labels.<br>
+     * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+     * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
      * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
      *  - `v` is the value of the data point where the label is shown.
      *  - `id` is the id of the data where the label is shown.
@@ -3068,6 +3071,9 @@ var Options_Options = function Options() {
      *         data1: function(v, id, i, j) { ... },
      *         ...
      *     },
+     *
+     *     // align text to center of the 'bar' shape (works only for 'bar' type)
+     *     centered: true,
      *
      *     // apply for all label texts
      *     colors: "red",
@@ -3938,7 +3944,7 @@ var Options_Options = function Options() {
     axis_x_categories: [],
 
     /**
-     * Centerise ticks on category axis.
+     * centerize ticks on category axis.
      * @name axis․x․tick․centered
      * @memberof Options
      * @type {Boolean}
@@ -9213,6 +9219,35 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
+   * Get centerized text position for bar type data.label.text
+   * @private
+   * @param {Object} d Data object
+   * @param {Array} points Data points position
+   * @param {HTMLElement} textElement Data label text element
+   * @returns {Number} Position value
+   */
+  getCenteredTextPos: function getCenteredTextPos(d, points, textElement) {
+    var $$ = this,
+        config = $$.config,
+        isRotated = config.axis_rotated;
+
+    if (config.data_labels.centered && $$.isBarType(d)) {
+      var rect = textElement.getBoundingClientRect(),
+          isPositive = d.value >= 0;
+
+      if (isRotated) {
+        var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + rect.width / 2;
+        return isPositive ? -w - 3 : w + 4;
+      }
+
+      var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + rect.height / 2;
+      return isPositive ? h : -h - 4;
+    }
+
+    return 0;
+  },
+
+  /**
    * Gets the x coordinate of the text
    * @private
    * @param {Object} points
@@ -9224,8 +9259,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     var xPos,
         padding,
         $$ = this,
-        config = $$.config;
-    return config.axis_rotated ? (padding = $$.isBarType(d) ? 4 : 6, xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1)) : xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : points[0][0], d.value === null && (xPos > $$.width ? xPos = $$.width - textElement.getBoundingClientRect().width : xPos < 0 && (xPos = 4)), xPos + (config.data_labels_position.x || 0);
+        config = $$.config,
+        isRotated = config.axis_rotated;
+    return isRotated ? (padding = $$.isBarType(d) ? 4 : 6, xPos = points[2][1] + padding * (d.value < 0 ? -1 : 1)) : xPos = $$.hasType("bar") ? (points[2][0] + points[0][0]) / 2 : points[0][0], d.value === null && (xPos > $$.width ? xPos = $$.width - textElement.getBoundingClientRect().width : xPos < 0 && (xPos = 4)), isRotated && (xPos += $$.getCenteredTextPos(d, points, textElement)), xPos + (config.data_labels_position.x || 0);
   },
 
   /**
@@ -9240,19 +9276,21 @@ extend(ChartInternal_ChartInternal.prototype, {
     var yPos,
         $$ = this,
         config = $$.config,
+        isRotated = config.axis_rotated,
         r = config.point_r,
+        rect = textElement.getBoundingClientRect(),
         baseY = 3;
-    if (config.axis_rotated) yPos = (points[0][0] + points[2][0] + textElement.getBoundingClientRect().height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += textElement.getBoundingClientRect().height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
+    if (isRotated) yPos = (points[0][0] + points[2][0] + rect.height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += rect.height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
       var diff = -baseY * 2;
       $$.isBarType(d) ? diff = -baseY : $$.isBubbleType(d) && (diff = baseY), yPos += diff;
     } // show labels regardless of the domain if value is null
 
-    if (d.value === null && !config.axis_rotated) {
-      var boxHeight = textElement.getBoundingClientRect().height;
+    if (d.value === null && !isRotated) {
+      var boxHeight = rect.height;
       yPos < boxHeight ? yPos = boxHeight : yPos > this.height && (yPos = this.height - 4);
     }
 
-    return yPos + (config.data_labels_position.y || 0);
+    return isRotated || (yPos += $$.getCenteredTextPos(d, points, textElement)), yPos + (config.data_labels_position.y || 0);
   }
 });
 // CONCATENATED MODULE: ./src/internals/type.js
@@ -13618,7 +13656,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.8.0-nightly-20190509102935
+ * @version 1.8.0-nightly-20190511103021
  */
 
 var bb = {
@@ -13629,7 +13667,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0-nightly-20190509102935",
+  version: "1.8.0-nightly-20190511103021",
 
   /**
    * Generate chart
