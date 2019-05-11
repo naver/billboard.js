@@ -805,6 +805,24 @@ var demos = {
 				}
 			}
 		},
+		IndexedAxis: {
+			options: {
+				data: {
+					x: "x",
+					columns: [
+						["x", 495, 940, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
+						["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							culling: false
+						}
+					}
+				}
+			}
+		},
 		MultiAxes: [
 			{
 				options: {
@@ -1703,27 +1721,53 @@ var demos = {
 				];
 			}
 		},
-		DataLabel: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250],
-						["data2", -50, 150, -150, 150, -50, -150],
-						["data3", -100, 100, -40, 100, -150, -50]
-					],
-					groups: [
-						["data1", "data2"]
-					],
-					type: "bar",
-					labels: true
-				},
-				grid: {
-					y: {
-						lines: [{value: 0}]
+		DataLabel: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+							["data3", -100, 100, -40, 100, -150, -50]
+						],
+						groups: [
+							["data1", "data2"]
+						],
+						type: "bar",
+						labels: true
+					},
+					grid: {
+						y: {
+							lines: [{value: 0}]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, -200, 400],
+							["data2", -250, 350, -170],
+							["data3", -123, 100, -240]
+						],
+						groups: [
+							["data1", "data2"]
+						],
+						type: "bar",
+						labels: {
+							colors: "white",
+							centered: true
+						}
+					},
+					grid: {
+						y: {
+							lines: [{value: 0}]
+						}
 					}
 				}
 			}
-		},
+		],
 		DataLabelColors: [
 			{
 				options: {
@@ -2532,7 +2576,7 @@ d3.select(".chart_area")
 							"01-10-2019 01:00",
 							"01-10-2019 01:30",
 							"01-10-2019 02:00",
-							"01-10-2019 02:30",	
+							"01-10-2019 02:30",
 							"01-10-2019 03:00",
 							"01-10-2019 03:30",
 							"01-10-2019 04:00",
