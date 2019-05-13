@@ -6,6 +6,7 @@ module.exports = function(config) {
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/hammer-simulator/index.js",
 			"./spec/assets/hammer-simulator.run.js",
+			"./spec/assets/common.css",
 			"./spec/**/*-spec.js",
 			{
 				pattern: "./spec/assets/data/*",
