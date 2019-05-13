@@ -1757,7 +1757,7 @@ var demos = {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
 							data1: function(x) {
-								return d3.format('$')(x)
+								return d3.format('$')(x);
 							}
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
