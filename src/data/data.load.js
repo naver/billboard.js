@@ -55,7 +55,6 @@ extend(ChartInternal.prototype, {
 
 	loadFromArgs(args) {
 		const $$ = this;
-		let data;
 
 		// prevent load when chart is already destroyed
 		if (!$$.config) {
@@ -65,11 +64,7 @@ extend(ChartInternal.prototype, {
 		// reset internally cached data
 		$$.resetCache();
 
-		if (args.data) {
-			data = args.data;
-		} else {
-			data = $$.convertData(args, d => $$.load($$.convertDataToTargets(d), args));
-		}
+		const data = args.data || $$.convertData(args, d => $$.load($$.convertDataToTargets(d), args));
 
 		$$.load(data ? $$.convertDataToTargets(data) : null, args);
 	},

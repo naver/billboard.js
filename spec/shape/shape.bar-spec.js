@@ -387,7 +387,7 @@ describe("SHAPE BAR", () => {
 			chart.data().map(v => v.id).forEach(id => {
 				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
 					expect(Math.round(this.getBBox().width)).to.be.equal(args.bar.width[id]);
-				});	
+				});
 			});
 		});
 
@@ -408,7 +408,40 @@ describe("SHAPE BAR", () => {
 			chart.data().map(v => v.id).forEach((id, i) => {
 				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
 					expect(Math.round(this.getBBox().width)).to.be.equal(expected[i]);
-				});	
+				});
+			});
+		});
+	});
+
+	describe("bar position", () => {
+		before(() => {
+			args = {
+				data: {
+				  columns: [
+					["data1", 378, 200],
+					["data2", 130, 100]
+				  ],
+				  types: {
+					data1: "bar",
+					data2: "line"
+				  }
+				},
+				bar: {
+				  width: {
+					ratio: 0.5
+				  }
+				}
+			};
+		});
+
+ 		it("check for the correct bar width & position", () => {
+			const expectedPath = [
+				"M75.25,426V39.636363636363626 H224.75 V426z",
+				"M374.25,426V221.5747955747956 H523.75 V426z"
+			];
+
+ 			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
 			});
 		});
 	});

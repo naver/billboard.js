@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.0
+ * @version 1.8.1
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -678,6 +678,8 @@ var isValue = function (v) {
     return a - b;
   } : function (a, b) {
     return b - a;
+  } : isAsc && data.every(Number) ? fn = function (a, b) {
+    return a - b;
   } : !isAsc && (fn = function (a, b) {
     return a > b && -1 || a < b && 1 || a === b && 0;
   }), data.concat().sort(fn);
@@ -6881,8 +6883,7 @@ extend(ChartInternal_ChartInternal.prototype, {
             x2 = v2.x || v2.x === 0 ? v2.x : Infinity;
         return x1 - x2;
       })), t.values.forEach(function (v, i) {
-        var index = $$.data.targets ? $$.getIndexByX(v.x) : null;
-        v.index = index === null ? i : index;
+        return v.index = i;
       }), $$.data.xs[t.id].sort(function (v1, v2) {
         return v1 - v2;
       });
@@ -6922,13 +6923,16 @@ extend(ChartInternal_ChartInternal.prototype, {
     }), args.done && args.done();
   },
   loadFromArgs: function loadFromArgs(args) {
-    var data,
-        $$ = this;
-    // prevent load when chart is already destroyed
-    $$.config && ( // reset internally cached data
-    $$.resetCache(), data = args.data ? args.data : $$.convertData(args, function (d) {
-      return $$.load($$.convertDataToTargets(d), args);
-    }), $$.load(data ? $$.convertDataToTargets(data) : null, args));
+    var $$ = this; // prevent load when chart is already destroyed
+
+    if ($$.config) {
+      $$.resetCache();
+      var data = args.data || $$.convertData(args, function (d) {
+        return $$.load($$.convertDataToTargets(d), args);
+      });
+      $$.load(data ? $$.convertDataToTargets(data) : null, args);
+    } // reset internally cached data
+
   },
   unload: function unload(rawTargetIds, customDoneCb) {
     var $$ = this,
@@ -7984,7 +7988,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       width: result,
       total: []
     }, $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
-      config.bar_width[v.id] && (result[v.id] = getWidth(v.id)), result.total.push(result[v.id] || result.width);
+      config.bar_width[v.id] && (result[v.id] = getWidth(v.id), result.total.push(result[v.id] || result.width));
     })), result;
   },
   getBars: function getBars(i, id) {
@@ -9316,7 +9320,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     // enter
     var xgridLine = $$.xgridLines.enter().append("g");
     xgridLine.append("line").style("opacity", "0"), xgridLine.append("text").attr("transform", isRotated ? "" : "rotate(-90)").attr("dy", -5).style("opacity", "0"), $$.xgridLines = xgridLine.merge($$.xgridLines), $$.xgridLines.attr("class", function (d) {
-      return "".concat(config_classes.xgridLine, " ").concat(d.class || "").trim();
+      return "".concat(config_classes.xgridLine, " ").concat(d["class"] || "").trim();
     }).select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).text(function (d) {
       return d.text;
     }).transition().style("opacity", "1");
@@ -9339,7 +9343,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     // update
     var yv = $$.yv.bind($$);
     $$.ygridLines.attr("class", function (d) {
-      return "".concat(config_classes.ygridLine, " ").concat(d.class || "").trim();
+      return "".concat(config_classes.ygridLine, " ").concat(d["class"] || "").trim();
     }).select("line").transition().duration(duration).attr("x1", isRotated ? yv : 0).attr("x2", isRotated ? yv : $$.width).attr("y1", isRotated ? 0 : yv).attr("y2", isRotated ? $$.height : yv).transition().style("opacity", "1"), $$.ygridLines.select("text").attr("text-anchor", getGridTextAnchor).attr("dx", getGridTextDx).transition().duration(duration).attr("dy", -5).attr("x", getGridTextX(isRotated, $$.width, $$.height)).attr("y", yv).text(function (d) {
       return d.text;
     }).transition().style("opacity", "1");
@@ -9401,7 +9405,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     return params ? function (line) {
       var found = !1;
       return (isArray(params) ? params.concat() : [params]).forEach(function (param) {
-        ("value" in param && line.value === param.value || "class" in param && line.class === param.class) && (found = !0);
+        ("value" in param && line.value === param.value || "class" in param && line["class"] === param["class"]) && (found = !0);
       }), found;
     } : function () {
       return !0;
@@ -11284,7 +11288,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     return this.classShapes(d) + this.generateClass(config_classes.areas, d.id);
   },
   classRegion: function classRegion(d, i) {
-    return "".concat(this.generateClass(config_classes.region, i), " ").concat("class" in d ? d.class : "");
+    return "".concat(this.generateClass(config_classes.region, i), " ").concat("class" in d ? d["class"] : "");
   },
   classEvent: function classEvent(d) {
     return this.generateClass(config_classes.eventRect, d.index);
@@ -12462,7 +12466,7 @@ extend(api_region_regions, {
     }));
     return (duration ? regions.transition().duration(duration) : regions).style("opacity", "0").remove(), regions = config.regions, Object.keys(options).length ? (regions = regions.filter(function (region) {
       var found = !1;
-      return !region.class || (region.class.split(" ").forEach(function (c) {
+      return !region["class"] || (region["class"].split(" ").forEach(function (c) {
         classes.indexOf(c) >= 0 && (found = !0);
       }), !found);
     }), config.regions = regions) : config.regions = [], regions;
@@ -13283,7 +13287,7 @@ extend(Chart_Chart.prototype, {
    *     document.body.appendChild(link);
    *  });
    */
-  export: function _export(mimeType, callback) {
+  "export": function _export(mimeType, callback) {
     var $$ = this.internal,
         size = {
       width: $$.currentWidth,
@@ -13371,7 +13375,7 @@ var billboard = __webpack_require__(24);
 
 /**
  * @namespace bb
- * @version 1.8.0
+ * @version 1.8.1
  */
 
 var bb = {
@@ -13382,7 +13386,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.0",
+  version: "1.8.1",
 
   /**
    * Generate chart

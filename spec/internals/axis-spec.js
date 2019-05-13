@@ -132,6 +132,33 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("Indexed x Axis", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+					  	["x", 495, 740, 1500, 3000, 4500, 6000, 7500, 9000, 10500, 12000, 13500, 15000],
+						["data", 47.911, 47.915, 48.437, 49.117, 49.583, 50.28, 51.712, 53.103, 54.456, 55.955, 56.752, 56.851]
+					]
+				},
+				axis: {
+					x: {
+						tick: {
+							culling: false
+						}
+					}
+				}
+			};
+		});
+
+ 		it("Indexed x axis should scale correct order", () => {
+			chart.$.main.selectAll(".bb-axis-x .tick tspan").each(function(d, i) {
+				expect(+this.textContent).to.be.equal(args.data.columns[0][i + 1]);
+			});
+		});
+	});
+
 	describe("axis y timeseries", () => {
 		before(() => {
 			args = {
