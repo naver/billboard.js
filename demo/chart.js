@@ -18,7 +18,7 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
-		
+
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
 		this.$button = this.$codeArea.querySelector("button");
@@ -223,24 +223,24 @@ var billboardDemo = {
 			if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
 				var editable = textArea.contentEditable;
 				var readOnly = textArea.readOnly;
-		
+
 				textArea.contentEditable = true;
 				textArea.readOnly = true;
-		
+
 				var range = document.createRange();
 				range.selectNodeContents(textArea);
-		
+
 				var selection = window.getSelection();
 				selection.removeAllRanges();
 				selection.addRange(range);
 				textArea.setSelectionRange(0, 999999);
-		
+
 				textArea.contentEditable = editable;
 				textArea.readOnly = readOnly;
 			} else {
 				textArea.select();
 			}
-		  
+
 			try {
 				document.execCommand("copy");
 				ctx.showCopyMsg();
@@ -261,7 +261,7 @@ var billboardDemo = {
 		var origText = btn.innerHTML;
 
 		btn.innerHTML = "Copied!";
-		
+
 		this.timer.btn = setTimeout(function() {
 			btn.innerHTML = origText;
 			ctx.timer.btn = null;
@@ -296,7 +296,7 @@ var billboardDemo = {
 			})
 		});
 
-		
+
 		return this.getReplaced(plugins) + key;
 	},
 

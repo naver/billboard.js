@@ -205,7 +205,7 @@ extend(ChartInternal.prototype, {
 						points[0][1] - points[1][1]
 				) / 2 + (rect.width / 2);
 
-				return isPositive ? -w - 3 : w + 4;
+				return isPositive ? -w - 3 : w + 2;
 			} else {
 				const h = (
 					isPositive ?
@@ -213,7 +213,7 @@ extend(ChartInternal.prototype, {
 						points[1][1] - points[0][1]
 				) / 2 + (rect.height / 2);
 
-				return isPositive ? h : -h - 4;
+				return isPositive ? h : -h - 2;
 			}
 		}
 
@@ -286,9 +286,9 @@ extend(ChartInternal.prototype, {
 			if (d.value < 0 || (d.value === 0 && !$$.hasPositiveValue)) {
 				yPos += rect.height;
 
-				if ($$.isBarType(d) && $$.isSafari()) {
+				if ($$.isBarType(d)) {
 					yPos -= baseY;
-				} else if (!$$.isBarType(d) && $$.isChrome()) {
+				} else if (!$$.isBarType(d)) {
 					yPos += baseY;
 				}
 			} else {

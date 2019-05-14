@@ -16,6 +16,7 @@ import {
 import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
+import {isMobile} from "../internals/browser";
 import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
 
 /**
@@ -1283,7 +1284,6 @@ export default class ChartInternal {
 	convertInputType() {
 		const $$ = this;
 		const config = $$.config;
-		const isMobile = $$.isMobile();
 		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
 		let hasTouch = false;
 

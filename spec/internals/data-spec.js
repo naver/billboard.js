@@ -748,8 +748,8 @@ describe("DATA", () => {
 					const textRect = texts[j++].getBoundingClientRect();
 
 					expect(
-						(barRect.height / 2) - (textRect.y - barRect.y)
-					).to.be.closeTo(textRect.height / 2, 3);
+						(barRect.height / 2) - (textRect.y + (textRect.height / 2) - barRect.y)
+					).to.be.closeTo(3, 3);
 				});
 			});
 
