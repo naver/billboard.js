@@ -2,24 +2,25 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isDefined} from "../internals/util";
-
 /**
  * Window object
  * @module
  * @ignore
  */
-/* eslint-disable no-new-func */
-const win = isDefined(window) && window.Math === Math ?
-	window : isDefined(self) && (
-		self.Math === Math ?
-			self : Function("return this")()
-	);
-/* eslint-enable no-new-func */
+/* eslint-disable no-undef */
+const win = globalThis || window || self || global;
+/* eslint-enable no-undef */
 
-const doc = win.document;
+const doc = win && win.document;
+
+// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
+const isMobile = (
+	win.navigator && win.navigator.userAgent &&
+		win.navigator.userAgent.indexOf("Mobi") > -1
+) || false;
 
 export {
 	win as window,
-	doc as document
+	doc as document,
+	isMobile
 };

@@ -56,7 +56,6 @@ import "./api/api.axis";
 import "./api/api.legend";
 import "./api/api.chart";
 import "./api/api.tooltip";
-import "./internals/ua";
 import "./api/api.export";
 
 
