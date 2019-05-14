@@ -18,6 +18,7 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
+		this.$launch = document.getElementById("launch");
 
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
@@ -84,6 +85,30 @@ var billboardDemo = {
 		this.$code.addEventListener("blur", function(e) {
 			e.target.classList.remove("focus");
 		});
+
+		this.$launch.addEventListener("click", function(e) {
+			var el = e.target;
+
+			if (el.tagName === "BUTTON") {
+				var type = el.innerHTML;
+				var url = ({
+					JS: "https://stackblitz.com/edit/js-buvm68",
+					TS: "https://stackblitz.com/edit/typescript-fugjja"
+				})[type] + "?embed=1&hideNavigation=1";
+
+				ctx.$title.innerHTML = "Code Editor ("+ type +")";
+				ctx.$codeArea.style.display = "none";
+				location.hash = "";
+
+				var ifrm = ctx.$chartArea.querySelector("iframe");
+
+				if (ifrm) {
+					ifrm.src = url;
+				} else {
+					ctx.$chartArea.innerHTML = '<iframe src="'+ url +'"></iframe>'
+				}
+			}
+		})
 	},
 
 	/**
