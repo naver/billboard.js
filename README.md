@@ -1,6 +1,6 @@
 <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js">
 
-[![version][badge-version]][link-version] [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![Greenkeeper][badge-gk]][link-gk]
+[![version][badge-version]][link-version] [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Greenkeeper][badge-gk]][link-gk]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -31,7 +31,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 
 ## Download and Installation
 
-Download dist files from the repo directly or install it via npm. 
+Download dist files from the repo directly or install it via npm.
 
 ### For development (Uncompressed)
 
@@ -100,7 +100,7 @@ $ npm install billboard.js
 If you want to use 'billboard.js' without installation, load files directly from one of the CDN providers.
 
 - cdnjs: https://cdnjs.com/libraries/billboard.js
-- jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/ [![](https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded)](https://www.jsdelivr.com/package/npm/billboard.js)
+- jsDelivr: https://cdn.jsdelivr.net/npm/billboard.js/dist/
 - unpkg: https://unpkg.com/billboard.js/dist/
 
 ## Supported Browsers
@@ -124,11 +124,11 @@ Load billboard.js after D3.js.
 <!-- 1) Load D3.js and billboard.js separately -->
     <!-- Load D3 -->
     <script src="https://d3js.org/d3.v5.min.js"></script>
-    
+
     <!-- Load billboard.js with base(or theme) style -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
     <script src="$YOUR_PATH/billboard.js"></script>
-    
+
 <!-- 2) or Load billboard.js packaged with D3.js -->
     <link rel="stylesheet" href="$YOUR_PATH/billboard.css">
     <script src="$YOUR_PATH/billboard.pkgd.js"></script>
@@ -151,8 +151,8 @@ import "billboard.js/dist/billboard.css";
 import "billboard.js/dist/theme/insight.css"
 ```
 
-> **Note**  
-> For migration from C3.js, checkout the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F) 
+> **Note**
+> For migration from C3.js, checkout the [migration guide](https://github.com/naver/billboard.js/wiki/How-to-migrate-from-C3.js%3F)
 
 ## Basic usage example
 
@@ -204,7 +204,7 @@ $ git clone https://github.com/naver/billboard.js.git
 $ npm install
 
 # or
-$ yarn 
+$ yarn
 ```
 
 #### 3. Build
@@ -277,14 +277,18 @@ THE SOFTWARE.
 
 <!-- badges -->
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
+[badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
 [badge-version]: https://img.shields.io/npm/v/billboard.js.svg?style=flat
 [badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
+[badge-gzip-size]: http://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
 
 <!-- links -->
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
+[link-jsDelivr]: https://www.jsdelivr.com/package/npm/billboard.js
 [link-version]: https://www.npmjs.com/package/billboard.js
 [link-build-status]: https://travis-ci.org/naver/billboard.js
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
 [link-gk]: https://greenkeeper.io/
+[link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
