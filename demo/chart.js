@@ -94,18 +94,22 @@ var billboardDemo = {
 				var url = ({
 					JS: "https://stackblitz.com/edit/js-buvm68",
 					TS: "https://stackblitz.com/edit/typescript-fugjja"
-				})[type] + "?embed=1&hideNavigation=1";
+				})[type] + "?embed=1";
 
-				ctx.$title.innerHTML = "Code Editor ("+ type +")";
-				ctx.$codeArea.style.display = "none";
-				location.hash = "";
-
-				var ifrm = ctx.$chartArea.querySelector("iframe");
-
-				if (ifrm) {
-					ifrm.src = url;
+				if (e.altKey) {
+					window.open(url, "repl", "width=800,height=500,menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes")
 				} else {
-					ctx.$chartArea.innerHTML = '<iframe src="'+ url +'"></iframe>'
+					ctx.$title.innerHTML = "Code Editor ("+ type +")";
+					ctx.$codeArea.style.display = "none";
+					location.hash = "";
+
+					var ifrm = ctx.$chartArea.querySelector("iframe");
+
+					if (ifrm) {
+						ifrm.src = url;
+					} else {
+						ctx.$chartArea.innerHTML = '<iframe src="'+ url +'"></iframe>'
+					}
 				}
 			}
 		});
