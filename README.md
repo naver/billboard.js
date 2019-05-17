@@ -292,3 +292,6 @@ THE SOFTWARE.
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
 [link-gk]: https://greenkeeper.io/
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)
