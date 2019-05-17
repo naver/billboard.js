@@ -28,6 +28,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 
 ## Supported chart types
 ![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=4)
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_shield)
 
 ## Download and Installation
 
@@ -292,3 +293,6 @@ THE SOFTWARE.
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
 [link-gk]: https://greenkeeper.io/
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
+
+
+[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)
