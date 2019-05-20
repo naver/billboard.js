@@ -6,6 +6,7 @@ sudo: false  # no need for virtualization.
 before_install:
   - npm install -g npm@latest
 install:
+  - npm config set package-lock false
   - npm install
 sudo: required
 addons:
