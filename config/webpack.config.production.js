@@ -32,6 +32,9 @@ const config = {
 			}
 		],
 	},
+	optimization: {
+		usedExports: true
+	},
 	plugins: [
 		new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: [path.resolve(__dirname, "../dist")],

@@ -748,8 +748,8 @@ describe("DATA", () => {
 					const textRect = texts[j++].getBoundingClientRect();
 
 					expect(
-						(barRect.height / 2) - (textRect.y - barRect.y)
-					).to.be.closeTo(textRect.height / 2, 3);
+						(barRect.height / 2) - (textRect.y + (textRect.height / 2) - barRect.y)
+					).to.be.closeTo(3, 3);
 				});
 			});
 
@@ -1032,7 +1032,7 @@ describe("DATA", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1317,8 +1317,8 @@ describe("DATA", () => {
 				it("should have y domain with proper padding #1", () => {
 					const domain = chart.internal.y.domain();
 
-					expect(domain[0]).to.be.closeTo(-886, 3);
-					expect(domain[1]).to.be.closeTo(0, 3);
+					expect(domain[0]).to.be.closeTo(-886, 6);
+					expect(domain[1]).to.be.closeTo(0, 6);
 				});
 
 				it("should locate labels above each data point", () => {
@@ -1326,7 +1326,7 @@ describe("DATA", () => {
 					const expectedXs = [74, 221, 368, 515];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", {x: 3, y: 10}));
+						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1345,7 +1345,7 @@ describe("DATA", () => {
 					const expectedXs = [6, 198, 391, 583];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 10}));
+						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 			});
 
@@ -1369,7 +1369,7 @@ describe("DATA", () => {
 					const expectedXs = [533, 441, 513, 232];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", {x: 2, y: 3}));
+						.each(checkXY(expectedXs, expectedYs, "", 3));
 				});
 
 				it("set options data.type='line'", () => {
@@ -1388,7 +1388,7 @@ describe("DATA", () => {
 					const expectedXs = [479, 397, 461, 206];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 			});
 		});

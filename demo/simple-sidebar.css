@@ -5,7 +5,7 @@
  */
 @import url("//fonts.googleapis.com/css?family=Raleway");
 
-h1,h2,h3,h4,nav,.chart_area p{font-family:Raleway,sans-serif;font-weight:normal}
+h1,h2,h3,h4,nav,.chart_area p,#wrapper #sidebar-wrapper{font-family:Raleway,sans-serif;font-weight:normal}
 body {
     overflow-x: hidden;
 }
@@ -70,7 +70,7 @@ body {
     position: absolute;
     top: 0;
     width: 230px;
-    margin: 110px 0 30px 0;
+    margin: 160px 0 30px 0;
     padding: 0;
     list-style: none;
     font-family:Raleway,sans-serif;
@@ -131,6 +131,13 @@ body {
 pre {
     border: 0;
     padding: 0;
+}
+
+.chart_area iframe {
+    width: 100%;
+    height: calc(100vh - 150px);
+    border: solid 1px #000;
+    box-shadow: 5px 5px 10px #888;
 }
 
 .code {
@@ -243,8 +250,44 @@ div.row {
 }
 
 #theme select {
-    padding: 0 3px;
+    padding: 2px;
     color: #000;
+    font-size: 12px;
+}
+
+#launch {
+    color: #fff;
+    text-align: center;
+    font-size: 12px;
+    margin: 15px auto;
+    padding: 5px 0;
+    border: dotted 1px #fff;
+    z-index: 2;
+    position: relative;
+    width: 85%;
+}
+
+#launch button {
+    cursor: pointer;
+    display: inline-block;
+    box-sizing: border-box;
+    text-align: center;
+    text-transform: uppercase;
+    -webkit-appearance: none;
+    text-decoration: none;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #fff;
+}
+
+#launch button:first-child {
+    background-color: #f0db4f;
+    color: #000;
+}
+
+#launch button:last-child {
+    background-color: #007acc;
+    color: #fff;
 }
 
 .item_count {

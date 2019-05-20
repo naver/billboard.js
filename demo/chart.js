@@ -18,7 +18,8 @@ var billboardDemo = {
 		this.$title = document.getElementById("title");
 		this.$description = document.getElementById("description");
 		this.$codeArea = document.querySelector(".code");
-		
+		this.$launch = document.getElementById("launch");
+
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
 		this.$button = this.$codeArea.querySelector("button");
@@ -84,6 +85,35 @@ var billboardDemo = {
 		this.$code.addEventListener("blur", function(e) {
 			e.target.classList.remove("focus");
 		});
+
+		this.$launch.addEventListener("click", function(e) {
+			var el = e.target;
+
+			if (el.tagName === "BUTTON") {
+
+				var type = el.innerHTML;
+				var url = ({
+					JS: "https://stackblitz.com/edit/js-buvm68",
+					TS: "https://stackblitz.com/edit/typescript-fugjja"
+				})[type] + "?embed=1";
+
+				if (e.altKey) {
+					window.open(url, "repl", "width=800,height=500,menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes")
+				} else {
+					ctx.$title.innerHTML = "Code Editor ("+ type +")";
+					ctx.$codeArea.style.display = "none";
+					location.hash = "";
+
+					var ifrm = ctx.$chartArea.querySelector("iframe");
+
+					if (ifrm) {
+						ifrm.src = url;
+					} else {
+						ctx.$chartArea.innerHTML = '<iframe src="'+ url +'"></iframe>'
+					}
+				}
+			}
+		})
 	},
 
 	/**
@@ -223,24 +253,24 @@ var billboardDemo = {
 			if (navigator.userAgent.match(/ipad|ipod|iphone/i)) {
 				var editable = textArea.contentEditable;
 				var readOnly = textArea.readOnly;
-		
+
 				textArea.contentEditable = true;
 				textArea.readOnly = true;
-		
+
 				var range = document.createRange();
 				range.selectNodeContents(textArea);
-		
+
 				var selection = window.getSelection();
 				selection.removeAllRanges();
 				selection.addRange(range);
 				textArea.setSelectionRange(0, 999999);
-		
+
 				textArea.contentEditable = editable;
 				textArea.readOnly = readOnly;
 			} else {
 				textArea.select();
 			}
-		  
+
 			try {
 				document.execCommand("copy");
 				ctx.showCopyMsg();
@@ -261,7 +291,7 @@ var billboardDemo = {
 		var origText = btn.innerHTML;
 
 		btn.innerHTML = "Copied!";
-		
+
 		this.timer.btn = setTimeout(function() {
 			btn.innerHTML = origText;
 			ctx.timer.btn = null;
@@ -296,7 +326,7 @@ var billboardDemo = {
 			})
 		});
 
-		
+
 		return this.getReplaced(plugins) + key;
 	},
 
