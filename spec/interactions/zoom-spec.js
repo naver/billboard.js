@@ -225,8 +225,70 @@ describe("ZOOM", function() {
 			chart.unzoom(); // zoom set to initial
 			expect(subX.domain()).to.be.deep.equal(chart.internal.x.orgDomain()); // subX value not updated on zoom in
 		});
+	});
 
-    });
+	describe("zoom wheel", () => {
+		before(() => {
+			args = {
+				size: {
+					width: 300,
+					height: 250
+				},
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 3150, 250],
+						["data2", 50, 20, 10, 40, 15, 6025]
+					]
+				},
+				zoom: {
+					rescale: true,
+					enabled: true
+				}
+			};
+		});
+
+		it("check with rescale option", () => {
+			const eventRect = chart.$.main.select(".bb-event-rect-2").node();
+			const orgDomain = {
+				x: chart.internal.x.domain(),
+				y: chart.internal.y.domain()
+			};
+
+			// when zoom in
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: -100,
+				clientX: 159,
+				clientY: 137
+			});
+
+			["x", "y"].forEach(id => {
+				const domain = orgDomain[id];
+
+				expect(
+					chart.internal[id].domain()
+						.every((v, i) => i > 0 ? v < domain[i] : v > domain[i])
+				).to.be.true;
+			});
+
+			// when zoom out
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: 100,
+				clientX: 159,
+				clientY: 137
+			});
+
+			["x", "y"].forEach(id => {
+				const domain = orgDomain[id];
+
+				expect(
+					chart.internal[id].domain()
+						.every((v, i) => v === domain[i])
+				).to.be.true;
+			});
+		});
+	});
 
     describe("zoom type drag", () => {
 	    let clickedData;
@@ -359,7 +421,7 @@ describe("ZOOM", function() {
 		    }, chart);
 
 		    expect(clickedData).to.not.be.undefined;
-	    });
+		});
     });
 
 	describe("zoom on regions", () => {
@@ -543,7 +605,7 @@ describe("ZOOM", function() {
 			chart.zoom([new Date("01-01-2016 00:00"), new Date("02-01-2016 00:00")]);
 
 			const expected = ["Jan 03", "Jan 10", "Jan 17", "Jan 24", "Jan 31"];
-			
+
 			chart.$.main.selectAll(selector).each(function(d, i) {
 				expect(this.textContent).to.be.equal(expected[i]);
 			});
