@@ -86,8 +86,11 @@ extend(ChartInternal.prototype, {
 		 * @private
 		 */
 		zoom.updateTransformScale = transform => {
+			// in case of resize, update range of orgXScale
+			$$.orgXScale && $$.orgXScale.range($$.x.range());
+
 			// rescale from the original scale
-			const newScale = transform.rescaleX($$.x);
+			const newScale = transform.rescaleX($$.orgXScale || $$.x);
 			const domain = $$.trimXDomain(newScale.domain());
 			const rescale = config.zoom_rescale;
 
@@ -96,7 +99,11 @@ extend(ChartInternal.prototype, {
 			$$.zoomScale = $$.getCustomizedScale(newScale);
 			$$.xAxis.scale($$.zoomScale);
 
-			rescale && $$.x.domain($$.zoomScale.orgDomain());
+			if (rescale) {
+				// copy current initial x scale in case of rescale option is used
+				!$$.orgXScale && ($$.orgXScale = $$.x.copy());
+				$$.x.domain(domain);
+			}
 		};
 
 		$$.zoom = zoom;
