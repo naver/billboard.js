@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190513103037
+ * @version 1.8.1-nightly-20190520142042
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -103,7 +103,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 11);
+/******/ 	return __webpack_require__(__webpack_require__.s = 13);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -284,6 +284,61 @@ module.exports = _typeof;
 
 /***/ }),
 /* 11 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "window", function() { return win; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "document", function() { return doc; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isMobile", function() { return isMobile; });
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @module
+ * @ignore
+ */
+
+/* eslint-disable no-undef */
+var win = globalThis || window || self || global,
+    doc = win && win.document,
+    isMobile = win.navigator && win.navigator.userAgent && win.navigator.userAgent.indexOf("Mobi") > -1 || !1;
+/* eslint-enable no-undef */
+
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
+
+/***/ }),
+/* 13 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -9911,6 +9966,9 @@ function () {
 }();
 
 
+// EXTERNAL MODULE: ./src/internals/browser.js
+var browser = __webpack_require__(11);
+
 // CONCATENATED MODULE: ./src/internals/ChartInternal.js
 
 
@@ -9921,6 +9979,7 @@ function () {
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
+
 
 
 
@@ -10588,8 +10647,7 @@ function () {
     value: function convertInputType() {
       var $$ = this,
           config = $$.config,
-          isMobile = $$.isMobile(),
-          hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in window,
+          hasMouse = config.interaction_inputType_mouse && !browser["isMobile"] && "onmouseover" in window,
           hasTouch = !1;
       return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in window || window.DocumentTouch && document instanceof window.DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
     }
@@ -14312,6 +14370,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -14363,29 +14423,30 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config;
     if ($$.isStackNormalized()) return [0, 100];
-    var lengths,
-        targetsByAxisId = targets.filter(function (t) {
+    var targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
     }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
-        yMin = axisId === "y2" ? config.axis_y2_min : config.axis_y_min,
-        yMax = axisId === "y2" ? config.axis_y2_max : config.axis_y_max,
+        yMin = config["axis_".concat(axisId, "_min")],
+        yMax = config["axis_".concat(axisId, "_max")],
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
-        center = axisId === "y2" ? config.axis_y2_center : config.axis_y_center,
+        center = config["axis_".concat(axisId, "_center")],
         isZeroBased = $$.hasType("bar", yTargets) && config.bar_zerobased || $$.hasType("area", yTargets) && config.area_zerobased,
-        isInverted = axisId === "y2" ? config.axis_y2_inverted : config.axis_y_inverted,
+        isInverted = config["axis_".concat(axisId, "_inverted")],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
     if (yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
-      return axisId === "y2" ? $$.y2.domain() : $$.y.domain();
+      return $$[axisId].domain();
     isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
     var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
         isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
     (isValue(yMin) && isAllPositive || isValue(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
     var domainLength = Math.abs(yDomainMax - yDomainMin),
-        paddingTop = domainLength * .1,
-        paddingBottom = domainLength * .1;
+        padding = {
+      top: domainLength * .1,
+      bottom: domainLength * .1
+    };
 
     if (isDefined(center)) {
       var yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
@@ -14394,14 +14455,30 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
     if (showHorizontalDataLabel) {
-      lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "width");
       var diff = diffDomain($$.y.range()),
-          ratio = [lengths[0] / diff, lengths[1] / diff];
-      paddingTop += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1])), paddingBottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
-    } else showVerticalDataLabel && (lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height"), paddingTop += $$.axis.convertPixelsToAxisPadding(lengths[1], domainLength), paddingBottom += $$.axis.convertPixelsToAxisPadding(lengths[0], domainLength));
+          ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width").map(function (v) {
+        return v / diff;
+      });
+      ["bottom", "top"].forEach(function (v, i) {
+        padding[v] += domainLength * (ratio[i] / (1 - ratio[0] - ratio[1]));
+      });
+    } else if (showVerticalDataLabel) {
+      var lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
+      ["bottom", "top"].forEach(function (v, i) {
+        padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+      });
+    }
 
-    axisId === "y" && notEmpty(config.axis_y_padding) && (paddingTop = $$.axis.getPadding(config.axis_y_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y_padding, "bottom", paddingBottom, domainLength)), axisId === "y2" && notEmpty(config.axis_y2_padding) && (paddingTop = $$.axis.getPadding(config.axis_y2_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y2_padding, "bottom", paddingBottom, domainLength)), isZeroBased && (isAllPositive && (paddingBottom = yDomainMin), isAllNegative && (paddingTop = -yDomainMax));
-    var domain = [yDomainMin - paddingBottom, yDomainMax + paddingTop];
+    if (/^y2?$/.test(axisId)) {
+      var p = config["axis_".concat(axisId, "_padding")];
+      notEmpty(p) && ["bottom", "top"].forEach(function (v) {
+        padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+      });
+    } // Bar/Area chart should be 0-based if all positive|negative
+
+
+    isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
+    var domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
@@ -14459,8 +14536,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   trimXDomain: function trimXDomain(domain) {
     var zoomDomain = this.getZoomDomain(),
-        min = zoomDomain[0],
-        max = zoomDomain[1];
+        _zoomDomain = slicedToArray_default()(zoomDomain, 2),
+        min = _zoomDomain[0],
+        max = _zoomDomain[1];
+
     return domain[0] <= min && (domain[1] = +domain[1] + (min - domain[0]), domain[0] = min), max <= domain[1] && (domain[0] = +domain[0] - (domain[1] - max), domain[1] = max), domain;
   }
 });
@@ -19874,11 +19953,11 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
       if (isRotated) {
         var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + rect.width / 2;
-        return isPositive ? -w - 3 : w + 4;
+        return isPositive ? -w - 3 : w + 2;
       }
 
       var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + rect.height / 2;
-      return isPositive ? h : -h - 4;
+      return isPositive ? h : -h - 2;
     }
 
     return 0;
@@ -19917,7 +19996,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         r = config.point_r,
         rect = textElement.getBoundingClientRect(),
         baseY = 3;
-    if (isRotated) yPos = (points[0][0] + points[2][0] + rect.height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += rect.height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
+    if (isRotated) yPos = (points[0][0] + points[2][0] + rect.height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += rect.height, $$.isBarType(d) ? yPos -= baseY : !$$.isBarType(d) && (yPos += baseY);else {
       var diff = -baseY * 2;
       $$.isBarType(d) ? diff = -baseY : $$.isBubbleType(d) && (diff = baseY), yPos += diff;
     } // show labels regardless of the domain if value is null
@@ -22259,11 +22338,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           extent = this.orgScaleExtent();
       return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
     }, zoom.updateTransformScale = function (transform) {
+      $$.orgXScale && $$.orgXScale.range($$.x.range());
       // rescale from the original scale
-      var newScale = transform.rescaleX($$.x),
+      var newScale = transform.rescaleX($$.orgXScale || $$.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
-      newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && $$.x.domain($$.zoomScale.orgDomain());
+      newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && (!$$.orgXScale && ($$.orgXScale = $$.x.copy()), $$.x.domain(domain));
     }, $$.zoom = zoom;
   },
 
@@ -24397,25 +24477,6 @@ var legend = util_extend(function () {}, {
 util_extend(Chart_Chart.prototype, {
   legend: legend
 });
-// CONCATENATED MODULE: ./src/internals/browser.js
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @module
- * @ignore
- */
-
-/* eslint-disable no-new-func */
-
-var win = isDefined(window) && window.Math === Math ? window : isDefined(self) && (self.Math === Math ? self : Function("return this")()),
-    browser_doc = win.document;
-/* eslint-enable no-new-func */
-
-
 // CONCATENATED MODULE: ./src/api/api.chart.js
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -24483,7 +24544,7 @@ util_extend(Chart_Chart.prototype, {
     var _this = this,
         $$ = this.internal;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && browser["window"].clearTimeout($$.resizeTimeout), browser["window"].removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -24609,26 +24670,6 @@ var tooltip = util_extend(function () {}, {
 });
 util_extend(Chart_Chart.prototype, {
   tooltip: tooltip
-});
-// CONCATENATED MODULE: ./src/internals/ua.js
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-var ua = window.navigator.userAgent;
-util_extend(ChartInternal_ChartInternal.prototype, {
-  isSafari: function isSafari() {
-    return ua.indexOf("Safari") > -1 && !this.isChrome();
-  },
-  isChrome: function isChrome() {
-    return ua.indexOf("Chrome") > -1;
-  },
-  isMobile: function isMobile() {
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-    return ua.indexOf("Mobi") > -1;
-  }
 });
 // CONCATENATED MODULE: ./src/api/api.export.js
 /**
@@ -24784,12 +24825,11 @@ util_extend(Chart_Chart.prototype, {
 
 
 
-
  // base CSS
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190513103037
+ * @version 1.8.1-nightly-20190520142042
  */
 
 var bb = {
@@ -24800,7 +24840,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190513103037",
+  version: "1.8.1-nightly-20190520142042",
 
   /**
    * Generate chart

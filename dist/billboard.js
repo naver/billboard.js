@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190513103037
+ * @version 1.8.1-nightly-20190520142042
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__, __WEBPACK_EXTERNAL_MODULE__19__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__) {
+})(window, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__19__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__25__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -100,7 +100,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 25);
+/******/ 	return __webpack_require__(__webpack_require__.s = 27);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -317,15 +317,57 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__16__;
 
 /***/ }),
 /* 17 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__17__;
+"use strict";
+/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return win; });
+/* unused harmony export document */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return isMobile; });
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @module
+ * @ignore
+ */
+
+/* eslint-disable no-undef */
+var win = globalThis || window || self || global,
+    doc = win && win.document,
+    isMobile = win.navigator && win.navigator.userAgent && win.navigator.userAgent.indexOf("Mobi") > -1 || !1;
+/* eslint-enable no-undef */
+
+
+/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(18)))
 
 /***/ }),
 /* 18 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__18__;
+var g;
+
+// This works in non-strict mode
+g = (function() {
+	return this;
+})();
+
+try {
+	// This works if eval is allowed (see CSP)
+	g = g || new Function("return this")();
+} catch (e) {
+	// This works if the window reference is available
+	if (typeof window === "object") g = window;
+}
+
+// g can still be undefined, but nothing to do about it...
+// We return undefined, instead of nothing here, so it's
+// easier to handle this case. if(!global) { ...}
+
+module.exports = g;
+
 
 /***/ }),
 /* 19 */
@@ -359,12 +401,24 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__23__;
 
 /***/ }),
 /* 24 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__24__;
+
+/***/ }),
+/* 25 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__25__;
+
+/***/ }),
+/* 26 */
 /***/ (function(module, exports, __webpack_require__) {
 
 // extracted by mini-css-extract-plugin
 
 /***/ }),
-/* 25 */
+/* 27 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1686,6 +1740,9 @@ function () {
 }();
 
 
+// EXTERNAL MODULE: ./src/internals/browser.js
+var browser = __webpack_require__(17);
+
 // CONCATENATED MODULE: ./src/internals/ChartInternal.js
 
 
@@ -1696,6 +1753,7 @@ function () {
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
+
 
 
 
@@ -2363,8 +2421,7 @@ function () {
     value: function convertInputType() {
       var $$ = this,
           config = $$.config,
-          isMobile = $$.isMobile(),
-          hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in window,
+          hasMouse = config.interaction_inputType_mouse && !browser["a" /* isMobile */] && "onmouseover" in window,
           hasTouch = !1;
       return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in window || window.DocumentTouch && document instanceof window.DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
     }
@@ -6087,6 +6144,8 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6138,29 +6197,30 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config;
     if ($$.isStackNormalized()) return [0, 100];
-    var lengths,
-        targetsByAxisId = targets.filter(function (t) {
+    var targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
     }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
-        yMin = axisId === "y2" ? config.axis_y2_min : config.axis_y_min,
-        yMax = axisId === "y2" ? config.axis_y2_max : config.axis_y_max,
+        yMin = config["axis_".concat(axisId, "_min")],
+        yMax = config["axis_".concat(axisId, "_max")],
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
-        center = axisId === "y2" ? config.axis_y2_center : config.axis_y_center,
+        center = config["axis_".concat(axisId, "_center")],
         isZeroBased = $$.hasType("bar", yTargets) && config.bar_zerobased || $$.hasType("area", yTargets) && config.area_zerobased,
-        isInverted = axisId === "y2" ? config.axis_y2_inverted : config.axis_y_inverted,
+        isInverted = config["axis_".concat(axisId, "_inverted")],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
     if (yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
-      return axisId === "y2" ? $$.y2.domain() : $$.y.domain();
+      return $$[axisId].domain();
     isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
     var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
         isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
     (isValue(yMin) && isAllPositive || isValue(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
     var domainLength = Math.abs(yDomainMax - yDomainMin),
-        paddingTop = domainLength * .1,
-        paddingBottom = domainLength * .1;
+        padding = {
+      top: domainLength * .1,
+      bottom: domainLength * .1
+    };
 
     if (isDefined(center)) {
       var yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
@@ -6169,14 +6229,30 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
     if (showHorizontalDataLabel) {
-      lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "width");
       var diff = diffDomain($$.y.range()),
-          ratio = [lengths[0] / diff, lengths[1] / diff];
-      paddingTop += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1])), paddingBottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
-    } else showVerticalDataLabel && (lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height"), paddingTop += $$.axis.convertPixelsToAxisPadding(lengths[1], domainLength), paddingBottom += $$.axis.convertPixelsToAxisPadding(lengths[0], domainLength));
+          ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width").map(function (v) {
+        return v / diff;
+      });
+      ["bottom", "top"].forEach(function (v, i) {
+        padding[v] += domainLength * (ratio[i] / (1 - ratio[0] - ratio[1]));
+      });
+    } else if (showVerticalDataLabel) {
+      var lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
+      ["bottom", "top"].forEach(function (v, i) {
+        padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+      });
+    }
 
-    axisId === "y" && notEmpty(config.axis_y_padding) && (paddingTop = $$.axis.getPadding(config.axis_y_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y_padding, "bottom", paddingBottom, domainLength)), axisId === "y2" && notEmpty(config.axis_y2_padding) && (paddingTop = $$.axis.getPadding(config.axis_y2_padding, "top", paddingTop, domainLength), paddingBottom = $$.axis.getPadding(config.axis_y2_padding, "bottom", paddingBottom, domainLength)), isZeroBased && (isAllPositive && (paddingBottom = yDomainMin), isAllNegative && (paddingTop = -yDomainMax));
-    var domain = [yDomainMin - paddingBottom, yDomainMax + paddingTop];
+    if (/^y2?$/.test(axisId)) {
+      var p = config["axis_".concat(axisId, "_padding")];
+      notEmpty(p) && ["bottom", "top"].forEach(function (v) {
+        padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+      });
+    } // Bar/Area chart should be 0-based if all positive|negative
+
+
+    isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
+    var domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
@@ -6234,8 +6310,10 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   trimXDomain: function trimXDomain(domain) {
     var zoomDomain = this.getZoomDomain(),
-        min = zoomDomain[0],
-        max = zoomDomain[1];
+        _zoomDomain = slicedToArray_default()(zoomDomain, 2),
+        min = _zoomDomain[0],
+        max = _zoomDomain[1];
+
     return domain[0] <= min && (domain[1] = +domain[1] + (min - domain[0]), domain[0] = min), max <= domain[1] && (domain[0] = +domain[0] - (domain[1] - max), domain[1] = max), domain;
   }
 });
@@ -6864,7 +6942,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
-var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(17);
+var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(19);
 
 // CONCATENATED MODULE: ./src/data/data.convert.js
 /**
@@ -7136,7 +7214,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(18);
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(20);
 
 // CONCATENATED MODULE: ./src/interactions/interaction.js
 /**
@@ -7600,7 +7678,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
-var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(19);
+var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(21);
 
 // CONCATENATED MODULE: ./src/shape/shape.js
 /**
@@ -7718,7 +7796,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(20);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(22);
 
 // CONCATENATED MODULE: ./src/shape/arc.js
 /**
@@ -9237,11 +9315,11 @@ extend(ChartInternal_ChartInternal.prototype, {
 
       if (isRotated) {
         var w = (isPositive ? points[1][1] - points[0][1] : points[0][1] - points[1][1]) / 2 + rect.width / 2;
-        return isPositive ? -w - 3 : w + 4;
+        return isPositive ? -w - 3 : w + 2;
       }
 
       var h = (isPositive ? points[0][1] - points[1][1] : points[1][1] - points[0][1]) / 2 + rect.height / 2;
-      return isPositive ? h : -h - 4;
+      return isPositive ? h : -h - 2;
     }
 
     return 0;
@@ -9280,7 +9358,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         r = config.point_r,
         rect = textElement.getBoundingClientRect(),
         baseY = 3;
-    if (isRotated) yPos = (points[0][0] + points[2][0] + rect.height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += rect.height, $$.isBarType(d) && $$.isSafari() ? yPos -= baseY : !$$.isBarType(d) && $$.isChrome() && (yPos += baseY);else {
+    if (isRotated) yPos = (points[0][0] + points[2][0] + rect.height * .6) / 2;else if (yPos = points[2][1], isNumber(r) && r > 5 && ($$.isLineType(d) || $$.isScatterType(d)) && (baseY += config.point_r / 2.3), d.value < 0 || d.value === 0 && !$$.hasPositiveValue) yPos += rect.height, $$.isBarType(d) ? yPos -= baseY : !$$.isBarType(d) && (yPos += baseY);else {
       var diff = -baseY * 2;
       $$.isBarType(d) ? diff = -baseY : $$.isBubbleType(d) && (diff = baseY), yPos += diff;
     } // show labels regardless of the domain if value is null
@@ -10670,7 +10748,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(21);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(23);
 
 // CONCATENATED MODULE: ./src/internals/selection.js
 /**
@@ -11057,7 +11135,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(22);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(24);
 
 // CONCATENATED MODULE: ./src/interactions/zoom.js
 
@@ -11119,11 +11197,12 @@ extend(ChartInternal_ChartInternal.prototype, {
           extent = this.orgScaleExtent();
       return this.scaleExtent([extent[0] * ratio, extent[1] * ratio]), this;
     }, zoom.updateTransformScale = function (transform) {
+      $$.orgXScale && $$.orgXScale.range($$.x.range());
       // rescale from the original scale
-      var newScale = transform.rescaleX($$.x),
+      var newScale = transform.rescaleX($$.orgXScale || $$.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
-      newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && $$.x.domain($$.zoomScale.orgDomain());
+      newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && (!$$.orgXScale && ($$.orgXScale = $$.x.copy()), $$.x.domain(domain));
     }, $$.zoom = zoom;
   },
 
@@ -12110,7 +12189,7 @@ extend(Chart_Chart.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
-var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(23);
+var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(25);
 
 // CONCATENATED MODULE: ./src/api/api.flow.js
 /**
@@ -13260,25 +13339,6 @@ var legend = extend(function () {}, {
 extend(Chart_Chart.prototype, {
   legend: legend
 });
-// CONCATENATED MODULE: ./src/internals/browser.js
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @module
- * @ignore
- */
-
-/* eslint-disable no-new-func */
-
-var win = isDefined(window) && window.Math === Math ? window : isDefined(self) && (self.Math === Math ? self : Function("return this")()),
-    browser_doc = win.document;
-/* eslint-enable no-new-func */
-
-
 // CONCATENATED MODULE: ./src/api/api.chart.js
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -13346,7 +13406,7 @@ extend(Chart_Chart.prototype, {
     var _this = this,
         $$ = this.internal;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && browser["b" /* window */].clearTimeout($$.resizeTimeout), browser["b" /* window */].removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -13473,26 +13533,6 @@ var tooltip = extend(function () {}, {
 extend(Chart_Chart.prototype, {
   tooltip: tooltip
 });
-// CONCATENATED MODULE: ./src/internals/ua.js
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-var ua = window.navigator.userAgent;
-extend(ChartInternal_ChartInternal.prototype, {
-  isSafari: function isSafari() {
-    return ua.indexOf("Safari") > -1 && !this.isChrome();
-  },
-  isChrome: function isChrome() {
-    return ua.indexOf("Chrome") > -1;
-  },
-  isMobile: function isMobile() {
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-    return ua.indexOf("Mobi") > -1;
-  }
-});
 // CONCATENATED MODULE: ./src/api/api.export.js
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -13589,7 +13629,7 @@ extend(Chart_Chart.prototype, {
   }
 });
 // EXTERNAL MODULE: ./src/scss/billboard.scss
-var billboard = __webpack_require__(24);
+var billboard = __webpack_require__(26);
 
 // CONCATENATED MODULE: ./src/core.js
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return bb; });
@@ -13650,13 +13690,12 @@ var billboard = __webpack_require__(24);
 
 
 
-
  // base CSS
 
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190513103037
+ * @version 1.8.1-nightly-20190520142042
  */
 
 var bb = {
@@ -13667,7 +13706,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190513103037",
+  version: "1.8.1-nightly-20190520142042",
 
   /**
    * Generate chart
