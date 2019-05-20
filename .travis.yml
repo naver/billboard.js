@@ -6,7 +6,7 @@ sudo: false  # no need for virtualization.
 before_install:
   - npm install -g npm@latest
   - npm install -g greenkeeper-lockfile@1
- 	- "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
+  - "curl -H 'Cache-Control: no-cache' https://raw.githubusercontent.com/fossas/fossa-cli/master/install.sh | sudo bash"
 install:
   - npm install
 sudo: required
