@@ -14,11 +14,9 @@ setup_git() {
     # Add new "origin" with access token in the git URL for authentication
     git remote add origin https://netil:${GH_TOKEN}@github.com/naver/billboard.js.git > /dev/null 2>&1
 
-    git fetch
-    git checkout master
-    git pull
+    git fetch origin
     git checkout nightly
-    git merge --strategy-option theirs master
+    git merge --strategy-option theirs origin/master
 }
 
 build_nightly() {
