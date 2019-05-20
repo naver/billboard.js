@@ -76,16 +76,16 @@ extend(ChartInternal.prototype, {
 
 		const targetsByAxisId = targets.filter(t => $$.axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
-		const yMin = axisId === "y2" ? config.axis_y2_min : config.axis_y_min;
-		const yMax = axisId === "y2" ? config.axis_y2_max : config.axis_y_max;
+		const yMin = config[`axis_${axisId}_min`];
+		const yMax = config[`axis_${axisId}_max`];
 		let yDomainMin = $$.getYDomainMin(yTargets);
 		let yDomainMax = $$.getYDomainMax(yTargets);
-		const center = axisId === "y2" ? config.axis_y2_center : config.axis_y_center;
+
+		const center = config[`axis_${axisId}_center`];
 		let isZeroBased = ($$.hasType("bar", yTargets) && config.bar_zerobased) || ($$.hasType("area", yTargets) && config.area_zerobased);
-		const isInverted = axisId === "y2" ? config.axis_y2_inverted : config.axis_y_inverted;
+		const isInverted = config[`axis_${axisId}_inverted`];
 		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
 		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
-		let lengths;
 
 		// MEMO: avoid inverting domain unexpectedly
 		yDomainMin = isValue(yMin) ? yMin :
@@ -94,7 +94,7 @@ extend(ChartInternal.prototype, {
 			(isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax);
 
 		if (yTargets.length === 0) { // use current domain if target of axisId is none
-			return axisId === "y2" ? $$.y2.domain() : $$.y.domain();
+			return $$[axisId].domain();
 		}
 
 		if (isNaN(yDomainMin)) { // set minimum to zero when not number
@@ -124,8 +124,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		const domainLength = Math.abs(yDomainMax - yDomainMin);
-		let paddingTop = domainLength * 0.1;
-		let paddingBottom = domainLength * 0.1;
+		const padding = {top: domainLength * 0.1, bottom: domainLength * 0.1};
 
 		if (isDefined(center)) {
 			const yDomainAbs = Math.max(Math.abs(yDomainMin), Math.abs(yDomainMax));
@@ -136,35 +135,38 @@ extend(ChartInternal.prototype, {
 
 		// add padding for data label
 		if (showHorizontalDataLabel) {
-			lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "width");
 			const diff = diffDomain($$.y.range());
-			const ratio = [lengths[0] / diff, lengths[1] / diff];
+			const ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width")
+				.map(v => v / diff);
 
-			paddingTop += domainLength * (ratio[1] / (1 - ratio[0] - ratio[1]));
-			paddingBottom += domainLength * (ratio[0] / (1 - ratio[0] - ratio[1]));
+			["bottom", "top"].forEach((v, i) => {
+				padding[v] += domainLength * (ratio[i] / (1 - ratio[0] - ratio[1]));
+			});
 		} else if (showVerticalDataLabel) {
-			lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
-			paddingTop += $$.axis.convertPixelsToAxisPadding(lengths[1], domainLength);
-			paddingBottom += $$.axis.convertPixelsToAxisPadding(lengths[0], domainLength);
+			const lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
+
+			["bottom", "top"].forEach((v, i) => {
+				padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+			});
 		}
 
-		if (axisId === "y" && notEmpty(config.axis_y_padding)) {
-			paddingTop = $$.axis.getPadding(config.axis_y_padding, "top", paddingTop, domainLength);
-			paddingBottom = $$.axis.getPadding(config.axis_y_padding, "bottom", paddingBottom, domainLength);
-		}
+		if (/^y2?$/.test(axisId)) {
+			const p = config[`axis_${axisId}_padding`];
 
-		if (axisId === "y2" && notEmpty(config.axis_y2_padding)) {
-			paddingTop = $$.axis.getPadding(config.axis_y2_padding, "top", paddingTop, domainLength);
-			paddingBottom = $$.axis.getPadding(config.axis_y2_padding, "bottom", paddingBottom, domainLength);
+			if (notEmpty(p)) {
+				["bottom", "top"].forEach(v => {
+					padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+				});
+			}
 		}
 
 		// Bar/Area chart should be 0-based if all positive|negative
 		if (isZeroBased) {
-			isAllPositive && (paddingBottom = yDomainMin);
-			isAllNegative && (paddingTop = -yDomainMax);
+			isAllPositive && (padding.bottom = yDomainMin);
+			isAllNegative && (padding.top = -yDomainMax);
 		}
 
-		const domain = [yDomainMin - paddingBottom, yDomainMax + paddingTop];
+		const domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
 
 		return isInverted ? domain.reverse() : domain;
 	},
@@ -225,8 +227,8 @@ extend(ChartInternal.prototype, {
 		const padding = $$.getXDomainPadding(xDomain);
 		let min = 0;
 		let max = 0;
-		// show center of x domain if min and max are the same
 
+		// show center of x domain if min and max are the same
 		if ((firstX - lastX) === 0 && !$$.isCategorized()) {
 			if ($$.isTimeSeries()) {
 				firstX = new Date(firstX.getTime() * 0.5);
@@ -279,8 +281,7 @@ extend(ChartInternal.prototype, {
 
 	trimXDomain(domain) {
 		const zoomDomain = this.getZoomDomain();
-		const min = zoomDomain[0];
-		const max = zoomDomain[1];
+		const [min, max] = zoomDomain;
 
 		if (domain[0] <= min) {
 			domain[1] = +domain[1] + (min - domain[0]);
