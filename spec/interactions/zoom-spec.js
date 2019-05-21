@@ -248,7 +248,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check with rescale option", () => {
-			const eventRect = chart.$.main.select(".bb-event-rect-2").node();
+			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-2`).node();
 			const orgDomain = {
 				x: chart.internal.x.domain(),
 				y: chart.internal.y.domain()
@@ -608,6 +608,158 @@ describe("ZOOM", function() {
 
 			chart.$.main.selectAll(selector).each(function(d, i) {
 				expect(this.textContent).to.be.equal(expected[i]);
+			});
+		});
+	});
+
+    describe("zoom for rotated axis", () => {
+	    before(() => {
+		    args = {
+			    size: {
+				    width: 300,
+				    height: 250
+			    },
+			    data: {
+				    columns: [
+					    ["data1", 30, 200, 100, 400, 3150, 250],
+					    ["data2", 6025, 20, 10, 40, 15, 25]
+				    ]
+				},
+				axis: {
+					rotated: true
+				},
+			    zoom: {
+					rescale: true,
+				    enabled: {
+					    type: "drag"
+				    }
+			    }
+		    };
+		});
+
+		it("check on drag zooming", done => {
+			const internal = chart.internal;
+			const main = chart.$.main;
+			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
+			const zoomedDomain = internal.x.domain();
+			const size = {w: 0, h: 0};
+			let brush;
+			let yAxisTickText;
+
+			new Promise((resolve, reject) => {
+				util.fireEvent(eventRect, "mousedown", {
+					clientX: 100,
+					clientY: 100
+				}, chart);
+
+				brush = main.select(`.${CLASS.zoomBrush}`);
+				yAxisTickText = +chart.$.main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
+
+				size.w = +brush.attr("width");
+				size.h = +brush.attr("height");
+
+				resolve();
+			}).then(() => {
+				return new Promise((resolve, reject) => {
+					setTimeout(() => {
+						util.fireEvent(eventRect, "mousemove", {
+							clientX: 100,
+							clientY: 130
+						}, chart);
+
+						resolve();
+					}, 500);
+				});
+			}).then(() => {
+				setTimeout(() => {
+					expect(+brush.attr("width")).to.be.equal(size.w);
+					expect(+brush.attr("height")).to.be.above(size.h);
+					expect(+brush.attr("height")).to.be.equal(30);
+
+					//console.log(size, brush.attr("width"), brush.attr("height"));
+					util.fireEvent(eventRect, "mouseup", {
+						clientX: 100,
+						clientY: 200
+					}, chart);
+
+					// y axis rescaled?
+					const tickText = +chart.$.main.selectAll(`.${CLASS.axisY} .tick tspan`).nodes().pop().textContent;
+
+					expect(tickText).to.be.below(yAxisTickText);
+					expect(tickText).to.be.equal(400);
+
+					internal.x.domain().forEach((v, i) => {
+						expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
+					});
+
+					done();
+				}, 500);
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+							["data1", 100, 99, 98, 97, 96, 95, 94, 93, 92, 91, 90, 89, 88, 87, 86, 85, 84, 83, 82, 81, 80, 79, 78, 77, 76, 75, 74, 73, 72, 71, 70, 69, 68, 67, 66, 65, 64, 63, 62, 61, 60, 59, 58, 57, 56, 55, 54, 53, 52, 51, 50, 49, 48, 47, 46, 45, 44, 43, 42, 41, 40, 39, 38, 37, 36, 35, 34, 33, 32, 31, 30, 29, 28, 27, 26, 25, 24, 23, 22, 21, 20, 19, 18, 17, 16, 15, 14, 13, 12, 11, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1],
+					],
+					type: "bar"
+				},
+				axis: {
+					rotated: true,
+					x: {
+						type: "category",
+						tick: {
+						rotate: 40,
+						multiline: false
+						}
+					}
+				},
+				bar: {
+					width: {
+						ratio: 0.6
+					}
+				},
+				zoom: {
+					enabled: true,
+					rescale: true
+				}
+			};
+		});
+
+		it("check on wheel zooming", () => {
+			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-40`).node();
+			const orgDomain = {
+				x: chart.internal.x.domain(),
+				y: chart.internal.y.domain()
+			};
+
+			// when zoom in
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: -200,
+				clientX: 159,
+				clientY: 137
+			});
+
+			const expected = {
+				x: [7.738255334651066, 84.52408366017097],
+				y: [0, 101.2]
+			};
+
+			["x", "y"].forEach(id => {
+				const domain = chart.internal[id].domain();
+				const org = orgDomain[id];
+
+				if (id === "x") {
+					expect(
+						domain.every((v, i) => i > 0 ? v < org[i] : v > org[i])
+					).to.be.true;
+				} else {
+					expect(
+						domain.every((v, i) => i > 0 ? v < org[i] : v === org[i])
+					).to.be.true;
+				}
 			});
 		});
 	});

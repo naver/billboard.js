@@ -9,8 +9,9 @@ import {callFn, extend, getMinMax, isDefined, isObject, isString} from "../inter
 
 /**
  * Zoom by giving x domain.
- * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
- * To get the initial state, [.unzoom()](#unzoom) should be called.
+ * - **NOTE:**
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
  * @method zoom
  * @instance
  * @memberof Chart
