@@ -34,13 +34,13 @@ extend(ChartInternal.prototype, {
 	redrawEventRect() {
 		const $$ = this;
 		const config = $$.config;
-		const zoomEnabled = config.zoom_enabled;
 		const isMultipleX = $$.isMultipleX();
-
 		let eventRectUpdate;
+
+		const zoomEnabled = config.zoom_enabled;
 		const eventRects = $$.main.select(`.${CLASS.eventRects}`)
-			.style("cursor", zoomEnabled && (zoomEnabled === true || zoomEnabled.type === "wheel") ? (
-				config.axis_rotate ? "ns-resize" : "ew-resize"
+			.style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? (
+				config.axis_rotated ? "ns-resize" : "ew-resize"
 			) : null)
 			.classed(CLASS.eventRectsMultiple, isMultipleX)
 			.classed(CLASS.eventRectsSingle, !isMultipleX);
