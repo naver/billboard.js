@@ -450,7 +450,7 @@ var billboardDemo = {
 	 * @param {Boolean} isOpen true: open as new window, false: Embed
 	 */
 	editor: function(bodyCode, type, isOpen) {
-		var id = (bodyCode.match(/bindto: \"#(.*)\"/) || [,"chart"])[1];
+		var id = (bodyCode && bodyCode.match(/bindto: \"#(.*)\"/) || [,"chart"])[1];
 		var html = "<div id='"+ id +"'></div>";
 		var code = {
 			import: [
