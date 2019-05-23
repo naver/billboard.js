@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190520142042
+ * @version 1.8.1-nightly-20190523011017
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -11128,14 +11128,25 @@ var Options_Options = function Options() {
     data_xs: {},
 
     /**
-     * Set a format to parse string specifed as x.
+     * Set a format specifier to parse string specifed as x.
      * @name data․xFormat
      * @memberof Options
      * @type {String}
      * @default %Y-%m-%d
      * @example
      * data: {
-              *   xFormat: "%Y-%m-%d %H:%M:%S"
+     *    x: "x",
+     *    columns: [
+     *        ["x", "01012019", "02012019", "03012019"],
+     *        ["data1", 30, 200, 100]
+     *    ],
+     *    // Format specifier to parse as datetime for given 'x' string value
+     *    xFormat: "%m%d%Y"
+     * },
+     * axis: {
+     *    x: {
+     *        type: "timeseries"
+     *    }
      * }
      * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
      */
@@ -15673,9 +15684,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var eventRectUpdate,
         $$ = this,
         config = $$.config,
-        zoomEnabled = config.zoom_enabled,
         isMultipleX = $$.isMultipleX(),
-        eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && (zoomEnabled === !0 || zoomEnabled.type === "wheel") ? config.axis_rotate ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
+        zoomEnabled = config.zoom_enabled,
+        eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
       // Set data and update $$.eventRect
       var maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
@@ -22340,7 +22351,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }, zoom.updateTransformScale = function (transform) {
       $$.orgXScale && $$.orgXScale.range($$.x.range());
       // rescale from the original scale
-      var newScale = transform.rescaleX($$.orgXScale || $$.x),
+      var newScale = transform[config.axis_rotated ? "rescaleY" : "rescaleX"]($$.orgXScale || $$.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
       newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && (!$$.orgXScale && ($$.orgXScale = $$.x.copy()), $$.x.domain(domain));
@@ -22354,7 +22365,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   onZoomStart: function onZoomStart() {
     var $$ = this,
         event = on_event.sourceEvent;
-    event && ($$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
+    event && ($$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
   /**
@@ -22369,7 +22380,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     if (config.zoom_enabled && event.sourceEvent) {
       var isMousemove = event.sourceEvent.type === "mousemove",
           transform = event.transform;
-      return $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 ? void 0 : isMousemove && $$.zoom.altDomain ? ($$.x.domain($$.zoom.altDomain), void transform.scale($$.zoomScale).updateScaleExtent()) : void ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
+      $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 || ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
         withTransition: !1,
         withY: config.zoom_rescale,
         withSubchart: !1,
@@ -22442,16 +22453,21 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         isRotated = config.axis_rotated,
         start = 0,
         end = 0,
-        zoomRect = null;
+        zoomRect = null,
+        prop = {
+      axis: isRotated ? "y" : "x",
+      attr: isRotated ? "height" : "width",
+      index: isRotated ? 1 : 0
+    };
     $$.zoomBehaviour = src_drag().clickDistance(4).on("start", function () {
-      $$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", config_classes.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = src_mouse(this)[0], end = start, zoomRect.attr("x", start).attr("width", 0), $$.onZoomStart();
+      $$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", config_classes.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = src_mouse(this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart();
     }).on("drag", function () {
-      end = src_mouse(this)[0], zoomRect.attr("x", Math.min(start, end)).attr("width", Math.abs(end - start));
+      end = src_mouse(this)[prop.index], zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", function () {
       var _ref,
           scale = $$.zoomScale || $$.x;
 
-      if ($$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
+      if ($$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
       })), $$.onZoomEnd();else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
         var _event = on_event.sourceEvent || on_event,
@@ -23048,8 +23064,9 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * Zoom by giving x domain.
- * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
- * To get the initial state, [.unzoom()](#unzoom) should be called.
+ * - **NOTE:**
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
  * @method zoom
  * @instance
  * @memberof Chart
@@ -24829,7 +24846,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190520142042
+ * @version 1.8.1-nightly-20190523011017
  */
 
 var bb = {
@@ -24840,7 +24857,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190520142042",
+  version: "1.8.1-nightly-20190523011017",
 
   /**
    * Generate chart
