@@ -156,6 +156,8 @@ pre {
 
 .code .js {
     position: relative;
+    font-family: Raleway;
+    font-size: 11px;
 }
 
 .code .js .focus {
@@ -163,20 +165,43 @@ pre {
 }
 
 .code .js .button {
-    font-family: Raleway;
+    border: solid 1px #000;
+    cursor: pointer;
+    outline: none;
+}
+
+button.js {
+    background-color: #f0db4f;
+    color: #000;
+}
+
+button.ts {
+    background-color: #007acc;
+    color: #fff;
+}
+
+.editor {
+    position: absolute;
+    top: -20px;
+    right: 0;
+}
+
+.code .button.clipboard {
+    border: none;
+    padding: 5px 13px;
+    border-radius: 20px;
+    background-color: #fff;
     position: absolute;
     top: 10px;
     right: 10px;
-    background-color: #fff;
-    font-size: 12px;
-    border: none;
-    border-radius: 20px;
-    cursor: pointer;
-    outline: none;
-    padding: 5px 13px;
 }
 
-.code .js .button:hover {
+.button.editor:hover {
+    background-color: red;
+    color: #fff;
+}
+
+.button.clipboard:hover {
     background-color: #16a085;
     color: #fff;
 }
@@ -225,6 +250,10 @@ div.row {
 
     .by_text::after {
         content: ' button';
+    }
+
+    .editor {
+        display: none;
     }
 }
 
@@ -278,16 +307,6 @@ div.row {
     border-style: solid;
     border-width: 1px;
     border-color: #fff;
-}
-
-#launch button:first-child {
-    background-color: #f0db4f;
-    color: #000;
-}
-
-#launch button:last-child {
-    background-color: #007acc;
-    color: #fff;
 }
 
 .item_count {
