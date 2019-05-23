@@ -23,6 +23,8 @@ var billboardDemo = {
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
 
+		this.$clipboardBtn = this.$codeArea.querySelector(".button.clipboard");
+
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
 
@@ -272,7 +274,7 @@ var billboardDemo = {
 			return;
 		}
 
-		var btn = this.$button;
+		var btn = this.$clipboardBtn;
 		var ctx = this;
 		var origText = btn.innerHTML;
 
