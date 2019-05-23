@@ -367,14 +367,25 @@ export default class Options {
 			data_xs: {},
 
 			/**
-			 * Set a format to parse string specifed as x.
+			 * Set a format specifier to parse string specifed as x.
 			 * @name data․xFormat
 			 * @memberof Options
 			 * @type {String}
 			 * @default %Y-%m-%d
 			 * @example
 			 * data: {
-             *   xFormat: "%Y-%m-%d %H:%M:%S"
+			 *    x: "x",
+			 *    columns: [
+			 *        ["x", "01012019", "02012019", "03012019"],
+			 *        ["data1", 30, 200, 100]
+			 *    ],
+			 *    // Format specifier to parse as datetime for given 'x' string value
+			 *    xFormat: "%m%d%Y"
+			 * },
+			 * axis: {
+			 *    x: {
+			 *        type: "timeseries"
+			 *    }
 			 * }
 			 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
 			 */
