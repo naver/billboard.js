@@ -31,6 +31,8 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/highlight.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.11.0/languages/javascript.min.js"></script>
     <script src="https://d3js.org/d3.v5.min.js"></script>
+
+    <script src="https://unpkg.com/@stackblitz/sdk/bundles/sdk.umd.js"></script>
     <script>
         !function() {
             var path = ["../dist/", "../release/latest/dist/"];
@@ -96,8 +98,8 @@
             </select>
         </form>
 
-        <p id="launch" title="To open as new window, hold the 'Alt' key while clicking.">
-            Launch code editor <button>JS</button> <button>TS</button>
+        <p id="launch" title="To open as new window, hold the 'Alt(Win)/option(Mac)' key while clicking.">
+            Launch code editor <button class="js">JS</button> <button class="ts">TS</button>
         </p>
         <ul class="sidebar-nav"></ul>
     </div>
@@ -139,9 +141,14 @@
                     <div class="code">
                         <h4 class="sub_tit">Sample code</h4>
                         <pre><code class="html"></code></pre>
-                        <p>&bull; Try it out by editing below code:</p>
+                        <p>&bull; Try it out by editing below code or click right sided buttons.</p>
                         <div class="js">
-                            <button class="button">Copy to Clipboard</button>
+                            <button class="button clipboard">Copy to Clipboard</button>
+
+                            <div class="editor" title="To open as new window, hold the 'Alt(Win)/option(Mac)' key while clicking.">
+                                <button class="button js">JS</button>
+                                <button class="button ts">TS</button>
+                            </div>
                             <pre><code class="javascript" contenteditable="true" spellcheck="false"></code></pre>
                         </div>
                     </div>

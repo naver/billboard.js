@@ -22,7 +22,6 @@ var billboardDemo = {
 
 		this.$html = document.querySelector("code.html");
 		this.$code = document.querySelector("code.javascript");
-		this.$button = this.$codeArea.querySelector("button");
 
 		this.WIDTH = 768;
 		this.selectedClass = "selected";
@@ -43,11 +42,19 @@ var billboardDemo = {
 			e.preventDefault();
 		}, false);
 
-		this.$button.addEventListener("click", function(e) {
-			var pos = document.documentElement.scrollTop;
+		this.$codeArea.addEventListener("click", function(e) {
+			var el = e.target;
 
-			ctx.copyToClipboard();
-			document.documentElement.scrollTop = pos;
+			if (el.tagName === "BUTTON") {
+				if (el.className.indexOf("clipboard") > -1) {
+					var pos = document.documentElement.scrollTop;
+
+					ctx.copyToClipboard();
+					document.documentElement.scrollTop = pos;
+				} else {
+					ctx.editor(ctx.$code.textContent, el.innerHTML, e.altKey);
+				}
+			}
 		});
 
 		window.addEventListener("resize", function() {
@@ -90,29 +97,9 @@ var billboardDemo = {
 			var el = e.target;
 
 			if (el.tagName === "BUTTON") {
-				var type = el.innerHTML;
-				var url = ({
-					JS: "https://stackblitz.com/edit/js-buvm68",
-					TS: "https://stackblitz.com/edit/typescript-fugjja"
-				})[type] + "?embed=1";
-
-				if (e.altKey) {
-					window.open(url, "repl", "width=800,height=500,menubar=no,location=no,resizable=yes,scrollbars=yes,status=yes")
-				} else {
-					ctx.$title.innerHTML = "Code Editor ("+ type +")";
-					ctx.$codeArea.style.display = "none";
-					location.hash = "";
-
-					var ifrm = ctx.$chartArea.querySelector("iframe");
-
-					if (ifrm) {
-						ifrm.src = url;
-					} else {
-						ctx.$chartArea.innerHTML = '<iframe src="'+ url +'"></iframe>'
-					}
-				}
+				ctx.editor(null, el.innerHTML, e.altKey);
 			}
-		});
+		})
 	},
 
 	/**
@@ -453,6 +440,81 @@ var billboardDemo = {
 		// style
 		if (style) {
 			code.markup.unshift("&lt;style>\r\n"+ style.join("\r\n") +"\r\n&lt;/style>\r\n\r\n");
+		}
+	},
+
+	/**
+	 * Open online editor
+	 * @param {String} bodyCode Code string
+	 * @param {String} type "JS" | "TS"
+	 * @param {Boolean} isOpen true: open as new window, false: Embed
+	 */
+	editor: function(bodyCode, type, isOpen) {
+		var id = (bodyCode && bodyCode.match(/bindto: \"#(.*)\"/) || [,"chart"])[1];
+		var html = "<div id='"+ id +"'></div>";
+		var code = {
+			import: [
+				'import "billboard.js/dist/theme/insight.css";',
+				'import bb from "billboard.js";'
+			].join("\r\n"),
+			body: bodyCode || [
+				'bb.generate({',
+				'	data: {',
+				'		columns: [',
+				'			["data1", 500, 350, 300, 0, 0, 0],',
+				'			["data2", 230, 100, 140, 200, 150, 50]',
+				'		]',
+				'	}',
+				'});'
+			].join("\r\n")
+		};
+
+		// Create the project payload.
+		var project = {
+		  files: {
+			"index.html": html
+		  },
+		  title: "billboard.js: Playground!",
+		  description: "Simple billboard.js project",
+		  template: type === "JS" ? "javascript" : "typescript",
+		  tags: ["chart", "billborad.js", "d3", "data visualization"] ,
+		  dependencies: {
+			"billboard.js": "*",
+			"d3-axis": "^1.0.12",
+			"d3-brush": "^1.0.6",
+			"d3-color": "^1.2.3",
+			"d3-drag": "^1.2.3",
+			"d3-dsv": "^1.1.1",
+			"d3-ease": "^1.0.5",
+			"d3-interpolate": "^1.3.2",
+			"d3-scale": "^3.0.0",
+			"d3-selection": "^1.4.0",
+			"d3-shape": "^1.3.5",
+			"d3-time-format": "^2.1.3",
+			"d3-transition": "^1.2.0",
+			"d3-zoom": "^1.7.3"
+		  }
+		};
+
+		project.files["index."+ type.toLowerCase()] = code.import +"\r\n\r\n"+ code.body;
+
+		this.$wrapper.className = "";
+
+		if (isOpen) {
+			StackBlitzSDK.openProject(project);
+		} else {
+			this.$title.innerHTML = "Code Editor ("+ type +")";
+			this.$codeArea.style.display = "none";
+			location.hash = "";
+
+			if (!this.$chartArea.querySelector("#editor")) {
+				this.$chartArea.innerHTML = "<div id='editor'></div>";
+			}
+
+			StackBlitzSDK.embedProject("editor", project, {
+				height: "80%",
+				forceEmbedLayout: true
+			});
 		}
 	}
 };
