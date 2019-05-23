@@ -21,4 +21,4 @@ before_script:
 script:
   - npm run coverage
 after_success:
-  - npm run coveralls
+  - bash ./config/deploy-nightly.sh build
