@@ -623,7 +623,7 @@ extend(ChartInternal.prototype, {
 					const x = ratio * (+point.attr("x") + width / 2);
 					const y = ratio * (+point.attr("y") + height / 2);
 
-					point.style("transform", `translate(${x}px, ${y}px) scale(${scale})`);
+					point.attr("transform", `translate(${x} ${y}) scale(${scale})`);
 				}
 			});
 		}
@@ -642,7 +642,7 @@ extend(ChartInternal.prototype, {
 		circles.attr("r", r);
 
 		!$$.isCirclePoint() &&
-			circles.style("transform", `scale(${r(circles) / $$.config.point_r})`);
+			circles.attr("transform", `scale(${r(circles) / $$.config.point_r})`);
 	},
 
 	pointR(d) {

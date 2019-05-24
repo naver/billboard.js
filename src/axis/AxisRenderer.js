@@ -210,7 +210,7 @@ export default class AxisRenderer {
 				}
 
 				tickTransform.call(helperInst, tickEnter, scale0);
-				tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
+				tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
 			}
 		});
 
