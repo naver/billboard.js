@@ -7,9 +7,13 @@
  * @module
  * @ignore
  */
-/* eslint-disable no-undef */
-const win = globalThis || window || self || global;
-/* eslint-enable no-undef */
+/* eslint-disable no-new-func, no-undef */
+const win = (() => {
+	const def = o => typeof o !== "undefined" && o;
+
+	return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+})();
+/* eslint-enable no-new-func, no-undef */
 
 const doc = win && win.document;
 
