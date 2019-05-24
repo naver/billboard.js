@@ -4,6 +4,7 @@
 <body>(optional)
 <BLINK LINE>
 <footer>(optional)
+BREAKING CHANGE:(optional)
 
 ============= Sample ==============
 fix(shape): update aborting animation logic
@@ -11,6 +12,15 @@ fix(shape): update aborting animation logic
 Abort the animating post process when "tap" occurs or velocity is zero at inside border.
 
 Ref #30
+
+============= Sample for Breaking Changes ==============
+feat(browser): drop support for IE 11
+
+Drop support for IE 11.
+
+Ref #31
+
+BREAKING CHANGE: Internet Explorer 11 is a burden to support and at EOL.
 
 ============ See More =============
 https://github.com/naver/billboard.js/blob/master/CONTRIBUTING.md#commit-log-guidelines
