@@ -304,7 +304,8 @@ extend(ChartInternal.prototype, {
 					$$.getYFormat(forArc),
 					$$.color
 				))
-				.style("display", config.tooltip_doNotHide === false ? "block" : null)
+				.style("display", null)
+				.style("visibility", null) // for IE9
 				.datum({
 					index,
 					current: dataStr,
@@ -340,7 +341,10 @@ extend(ChartInternal.prototype, {
 			callFn(config.tooltip_onhide, $$);
 
 			// hide tooltip
-			this.tooltip.style("display", "none").datum(null);
+			this.tooltip
+				.style("display", "none")
+				.style("visibility", "hidden") // for IE9
+				.datum(null);
 
 			callFn(config.tooltip_onhidden, $$);
 		}
