@@ -35,6 +35,18 @@ describe("SHAPE POINT", () => {
 
 			expect(circles.length).to.be.equal(6);
 		});
+
+		it("circle points are expanded?", () => {
+			const index = 1;
+			const r = chart.config("point.r");
+
+			// when
+			chart.internal.expandCircles(index);
+
+			chart.$.line.circles.filter(d => d.x === index).each(function() {
+				expect(+this.getAttribute("r")).to.be.above(r);
+			});
+		});
 	});
 
 	describe("rectangle point type", () => {
@@ -90,7 +102,7 @@ describe("SHAPE POINT", () => {
 
 		it("set options point.pattern", () => {
 			args.point.pattern = [
-				"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10'></rect></g>"
+				"<g><circle cx='10' cy='10' r='10'></circle><rect x='5' y='5' width='10' height='10' style='fill:#fff'></rect></g>"
 			];
 		});
 
@@ -100,6 +112,19 @@ describe("SHAPE POINT", () => {
 
 			chart.$.defs.selectAll("g").each(function() {
 				expect(this.innerHTML).to.be.equal(innerHTML);
+			});
+		});
+
+		it("custom points are expanded?", () => {
+			const index = 1;
+
+			// when
+			chart.internal.expandCircles(index);
+
+			chart.$.line.circles.filter(d => d.x === index).each(function() {
+				const scale = +this.getAttribute("transform").match(/scale\((.*)\)/)[1];
+
+				expect(scale).to.be.equal(1.75);
 			});
 		});
 	});
