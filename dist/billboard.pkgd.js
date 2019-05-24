@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190523103710
+ * @version 1.8.1-nightly-20190524103752
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -302,11 +302,18 @@ __webpack_require__.r(__webpack_exports__);
  * @ignore
  */
 
-/* eslint-disable no-undef */
-var win = globalThis || window || self || global,
+/* eslint-disable no-new-func, no-undef */
+var win = function () {
+  var def = function (o) {
+    return typeof o !== "undefined" && o;
+  };
+
+  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+}(),
     doc = win && win.document,
     isMobile = win.navigator && win.navigator.userAgent && win.navigator.userAgent.indexOf("Mobi") > -1 || !1;
-/* eslint-enable no-undef */
+/* eslint-enable no-new-func, no-undef */
+
 
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
@@ -9288,7 +9295,7 @@ function () {
             }, scale1 = scale0;
           } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
 
-          tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
+          tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
         }
       }), this.g = $g;
     }
@@ -19395,7 +19402,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
             x = ratio * (+point.attr("x") + width / 2),
             y = ratio * (+point.attr("y") + height / 2);
 
-        point.style("transform", "translate(".concat(x, "px, ").concat(y, "px) scale(").concat(scale, ")"));
+        point.attr("transform", "translate(".concat(x, " ").concat(y, ") scale(").concat(scale, ")"));
       }
     });
   },
@@ -19405,7 +19412,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         circles = $$.getCircles(i).filter(function () {
       return src_select(this).classed(config_classes.EXPANDED);
     }).classed(config_classes.EXPANDED, !1);
-    circles.attr("r", r), $$.isCirclePoint() || circles.style("transform", "scale(".concat(r(circles) / $$.config.point_r, ")"));
+    circles.attr("r", r), $$.isCirclePoint() || circles.attr("transform", "scale(".concat(r(circles) / $$.config.point_r, ")"));
   },
   pointR: function (d) {
     var $$ = this,
@@ -20590,7 +20597,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
-        callFn(config.tooltip_onshow, $$), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", config.tooltip_doNotHide === !1 ? "block" : null).datum({
+        callFn(config.tooltip_onshow, $$), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
+        .datum({
           index: index,
           current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
@@ -20615,7 +20623,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   hideTooltip: function hideTooltip(force) {
     var $$ = this,
         config = $$.config;
-    (!config.tooltip_doNotHide || force) && (callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), callFn(config.tooltip_onhidden, $$));
+    (!config.tooltip_doNotHide || force) && (callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").style("visibility", "hidden") // for IE9
+    .datum(null), callFn(config.tooltip_onhidden, $$));
   },
 
   /**
@@ -24846,7 +24855,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190523103710
+ * @version 1.8.1-nightly-20190524103752
  */
 
 var bb = {
@@ -24857,7 +24866,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190523103710",
+  version: "1.8.1-nightly-20190524103752",
 
   /**
    * Generate chart
