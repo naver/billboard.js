@@ -5,6 +5,16 @@
 /*.html
 /*.js
 /.*
+!/commitlint.config.js
+!/.releaserc.json
+!/.eslintrc
+!/.babelrc
+!/.editorconfig
+!/.npmignore
+!/.travis.yml
+!/karma.conf.js
+!/webpack.config.js
+!/.gitignore
 /coverage
 /demo/work
 /dist

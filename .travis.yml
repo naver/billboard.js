@@ -3,24 +3,54 @@ node_js:
   - "10"
 dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
+
 before_install:
   - npm install -g npm@latest
   - npm install -g greenkeeper-lockfile@1
 install:
   - npm install
-sudo: required
-addons:
-  chrome: stable # install chrome stable.
+
 cache:
   yarn: true
+  npm: true
   directories:
     - $HOME/.npm
+
 before_script:
   - greenkeeper-lockfile-update
-  - npm run lint
-script:
-  - npm run coverage
+
 after_script:
   - greenkeeper-lockfile-upload
-after_success:
-  - npm run coveralls
+
+stages:
+  - lint
+  - test
+  - release
+
+jobs:
+  include:
+    - stage: lint
+      script:
+        - npm run lint
+    - stage: test
+      sudo: required
+      addons:
+        chrome: stable # install chrome stable.
+      script:
+        - npm run coverage
+      after_success:
+        - npm run coveralls
+    - stage: release
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script: npm run release
+        'on':
+          repo: naver/billboard.js
+          branches:
+            only:
+              - master
+              - next
+
+

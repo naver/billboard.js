@@ -1,6 +1,15 @@
 <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js">
 
-[![version][badge-version]][link-version] [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Greenkeeper][badge-gk]][link-gk]
+[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Greenkeeper][badge-gk]][link-gk]
+[![semantic-release][badge-semantic-release]][link-semantic-release]
+<p align="center">
+  <a href="https://www.npmjs.com/package/billboard.js">
+    <img alt="npm latest version" src="https://img.shields.io/npm/v/billboard.js/latest.svg">
+  </a>
+  <a href="https://www.npmjs.com/package/billboard.js">
+    <img alt="npm next version" src="https://img.shields.io/npm/v/billboard.js/next.svg">
+  </a>
+</p>
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -245,6 +254,21 @@ $ npm test
 ```
 Running the `npm test` command will start [Mocha](https://mochajs.org/) tests via [Karma-runner](https://karma-runner.github.io/).
 
+### Releasing
+
+`billboard.js` is released with [`semantic-release`](https://github.com/semantic-release/semantic-release) using the plugins:
+- [`commit-analyzer`](https://github.com/semantic-release/commit-analyzer) to determine the next version from commit messages.
+- [`release-notes-generator`](https://github.com/semantic-release/release-notes-generator) to summarize the release.
+- [`changelog`](https://github.com/semantic-release/changelog) to update the CHANGELOG.md file.
+- [`github`](https://github.com/semantic-release/github) to publish a [GitHub release](https://github.com/chaijs/chai-http/releases).
+- [`git`](https://github.com/semantic-release/git) to commit release assets.
+- [`npm`](https://github.com/semantic-release/npm) to publish to [npm](https://www.npmjs.com/package/chai-http).
+
+
+Several distribution channels are available:
+https://github.com/semantic-release/semantic-release/blob/beta/docs/recipes/distribution-channels.md#publishing-on-distribution-channels
+
+
 
 ## Bug Report
 
@@ -278,11 +302,11 @@ THE SOFTWARE.
 <!-- badges -->
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
-[badge-version]: https://img.shields.io/npm/v/billboard.js.svg?style=flat
 [badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
 [badge-gzip-size]: http://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
+[badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 
 <!-- links -->
 [link-download]: https://npm-stat.com/charts.html?package=billboard.js&from=2017-06-08
@@ -292,6 +316,6 @@ THE SOFTWARE.
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
 [link-gk]: https://greenkeeper.io/
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
-
+[link-semantic-release]: https://github.com/semantic-release/semantic-release
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js.svg?type=large)](https://app.fossa.io/projects/git%2Bgithub.com%2Fnaver%2Fbillboard.js?ref=badge_large)

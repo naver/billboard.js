@@ -16,9 +16,9 @@
     "build:production:monitor": "cross-env MONITOR=true npm run build:production",
     "build:packaged:monitor": "cross-env MONITOR=true npm run build:packaged",
     "build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
-    "build:nightly": "node ./config/nightly.js",
-    "deploy": "bash ./config/deploy.sh",
-    "deploy:nightly": "cross-env DEPLOY_NIGHTLY=true node ./config/nightly.js",
+    "prerelease": "npm run build",
+    "release": "semantic-release && npm run release:docs",
+    "release:docs": "bash ./config/deploy.sh",
     "lint": "eslint src",
     "loc": "cloc --by-file src",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
@@ -26,14 +26,17 @@
     "coverage": "npm test -- --coverage",
     "coveralls": "cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js",
     "jsdoc": "node ./config/jsdoc.js",
-    "jsdoc:cmd": "jsdoc -c jsdoc.json",
-    "changelog": "node ./config/changelog.js",
-    "commitmsg": "node ./config/validate-commit-msg.js",
-    "prepush": "npm run lint"
+    "jsdoc:cmd": "jsdoc -c jsdoc.json"
   },
   "sideEffects": [
     "dist/**/*.css"
   ],
+  "husky": {
+    "hooks": {
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
+      "pre-push": "npm run lint"
+    }
+  },
   "repository": {
     "type": "git",
     "url": "https://github.com/naver/billboard.js"
@@ -59,6 +62,13 @@
     "@babel/plugin-transform-runtime": "^7.4.4",
     "@babel/preset-env": "^7.4.5",
     "@babel/runtime": "^7.4.5",
+    "@commitlint/cli": "^7.6.1",
+    "@commitlint/config-conventional": "^7.6.0",
+    "@semantic-release/changelog": "^3.0.2",
+    "@semantic-release/commit-analyzer": "^6.1.0",
+    "@semantic-release/git": "^7.0.8",
+    "@semantic-release/npm": "^5.1.7",
+    "@semantic-release/release-notes-generator": "^7.1.4",
     "babel-eslint": "^10.0.1",
     "babel-helper-modules": "^6.0.0",
     "babel-loader": "^8.0.6",
@@ -104,6 +114,7 @@
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "sass-loader": "^7.1.0",
+    "semantic-release": "15.13.12",
     "simulant": "^0.2.2",
     "sinon": "^7.3.2",
     "string-replace-webpack-plugin": "^0.1.3",
