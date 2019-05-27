@@ -608,8 +608,7 @@ export default class ChartInternal {
 			.attr("x", $$.width / 2)
 			.attr("y", $$.height / 2)
 			.text(config.data_empty_label_text)
-			.transition()
-			.style("opacity", targetsToShow.length ? 0 : 1);
+			.style("display", targetsToShow.length ? "none" : null);
 
 		// grid
 		$$.updateGrid(duration);

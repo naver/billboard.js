@@ -418,19 +418,6 @@ export default class Options {
 			data_xSort: true,
 
 			/**
-			 * Specify the key of epochs values in the data.
-			 * @name data․epochs
-			 * @memberof Options
-			 * @type {String}
-			 * @default epochs
-			 * @example
-			 * data: {
-			 *   epochs: "count"
-			 * }
-			 */
-			data_epochs: "epochs",
-
-			/**
 			 * Converts data id value
 			 * @name data․idConverter
 			 * @memberof Options
@@ -1146,7 +1133,8 @@ export default class Options {
 			data_keys: undefined,
 
 			/**
-			 * Set text displayed when empty data.
+			 * Set text label to be displayed when there's no data to show.
+			 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
 			 * @name data․empty․label․text
 			 * @memberof Options
 			 * @type {String}

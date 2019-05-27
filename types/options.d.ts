@@ -1239,7 +1239,8 @@ export interface Data {
 	};
 
 	/**
-	 * Set text displayed when empty data.
+	 * Set text label to be displayed when there's no data to show.
+	 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
 	 */
 	empty?: { label: { text: string } };
 
