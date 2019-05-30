@@ -38,7 +38,7 @@ describe("SHAPE RADAR", () => {
 
 			setTimeout(() => {
 				expect(radar.select(".bb-shapes polygon").attr("points")).to.be.equal(expectedPoints);
-				
+
 				done();
 			}, 200)
 		});
@@ -147,6 +147,35 @@ describe("SHAPE RADAR", () => {
 				const newPoints = [+this.getAttribute("x"), +this.getAttribute("y")];
 
 				expect(points[i === 0 ? 0 : (points.length - i)]).to.deep.equal(newPoints);
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				padding: {
+					top: 20
+				},
+				data: {
+					x: "x",
+					columns: [
+						["x", "1st\nPrize", "2nd\nPrize", "3rd Prize"],
+						["data1", 230, 250, 100],
+						["data2", 150, 150, 230]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 300
+					}
+				}
+			};
+		});
+
+		it("check for multiline axis text", (d, i) => {
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
+				expect(this.childNodes.length).to.be.equal(i === 2 ? 1 : 2);
 			});
 		});
 	});

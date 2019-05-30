@@ -76,6 +76,38 @@ const callFn = (fn, ...args) => {
  */
 const sanitise = str => (isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str);
 
+/**
+ * Set text value. If there's multiline add nodes.
+ * @param {d3Selection} node Text node
+ * @param {String} text Text value string
+ * @param {Array} dy dy value for multilined text
+ */
+const setTextValue = (node, text, dy = [-1, 1]) => {
+	if (!node || !isString(text)) {
+		return;
+	}
+
+	if (text.indexOf("\n") === -1) {
+		node.text(text);
+	} else {
+		const diff = [node.text(), text].map(v => v.replace(/[\s\n]/g, ""));
+
+		if (diff[0] !== diff[1]) {
+			const multiline = text.split("\n");
+
+			// reset possible text
+			node.html("");
+
+			multiline.forEach((v, i) => {
+				node.append("tspan")
+					.attr("x", 0)
+					.attr("dy", `${i === 0 ? dy[0] : dy[1]}em`)
+					.text(v);
+			});
+		}
+	}
+};
+
 // substitution of SVGPathSeg API polyfill
 const getRectSegList = path => {
 	/*
@@ -370,6 +402,7 @@ export {
 	mergeArray,
 	notEmpty,
 	sanitise,
+	setTextValue,
 	sortValue,
 	toArray,
 	tplProcess
