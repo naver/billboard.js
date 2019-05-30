@@ -323,8 +323,8 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Get total data sum
-	 * @private
 	 * @return {Number}
+ 	 * @private
 	 */
 	getTotalDataSum() {
 		const $$ = this;
@@ -414,7 +414,7 @@ extend(ChartInternal.prototype, {
 	filterTargetsToShow(targets) {
 		const $$ = this;
 
-		return targets.filter(t => $$.isTargetToShow(t.id));
+		return (targets || $$.data.targets).filter(t => $$.isTargetToShow(t.id));
 	},
 
 	mapTargetsToUniqueXs(targets) {
@@ -497,6 +497,10 @@ extend(ChartInternal.prototype, {
 		return false;
 	},
 
+	hasMultiTargets() {
+		return this.filterTargetsToShow().length > 1;
+	},
+
 	hasNegativeValueInTargets(targets) {
 		return this.checkValueInTargets(targets, v => v < 0);
 	},
@@ -507,9 +511,9 @@ extend(ChartInternal.prototype, {
 
 	_checkOrder(type) {
 		const config = this.config;
+		const order = config.data_order;
 
-		return isString(config.data_order) &&
-			config.data_order.toLowerCase() === type;
+		return isString(order) && order.toLowerCase() === type;
 	},
 
 	isOrderDesc() {

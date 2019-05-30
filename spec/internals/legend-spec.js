@@ -71,7 +71,7 @@ describe("LEGEND", () => {
 		it("should be located on the right of chart", () => {
 			const x = util.parseNum(chart.$.legend.attr("transform"));
 
-			expect(x).to.be.closeTo(584, 1);
+			expect(x).to.be.closeTo(584, 3);
 		});
 	});
 
