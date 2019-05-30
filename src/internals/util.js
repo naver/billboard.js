@@ -83,6 +83,10 @@ const sanitise = str => (isString(str) ? str.replace(/</g, "&lt;").replace(/>/g,
  * @param {Array} dy dy value for multilined text
  */
 const setTextValue = (node, text, dy = [-1, 1]) => {
+	if (!node || !isString(text)) {
+		return;
+	}
+
 	if (text.indexOf("\n") === -1) {
 		node.text(text);
 	} else {
