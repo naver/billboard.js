@@ -31,6 +31,7 @@ export default {
 	chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
 	chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
 	chartArcsTitle: "bb-chart-arcs-title",
+	chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
 	chartBar: "bb-chart-bar",
 	chartBars: "bb-chart-bars",
 	chartLine: "bb-chart-line",

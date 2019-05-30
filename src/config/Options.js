@@ -3048,6 +3048,7 @@ export default class Options {
 			 * @property {Number} [gauge.min=0] Set min value of the gauge.
 			 * @property {Number} [gauge.max=100] Set max value of the gauge.
 			 * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
+			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
 			 * @example
@@ -3073,6 +3074,7 @@ export default class Options {
 			 *      },
 			 *      min: -100,
 			 *      max: 200,
+			 *      title: "Title Text",
 			 *      units: "%",
 			 *      width: 10
 			 *  }
@@ -3084,6 +3086,7 @@ export default class Options {
 			gauge_max: 100,
 			gauge_startingAngle: -1 * Math.PI / 2,
 			gauge_label_extents: undefined,
+			gauge_title: "",
 			gauge_units: undefined,
 			gauge_width: undefined,
 			gauge_expand: {},

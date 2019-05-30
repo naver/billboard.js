@@ -463,6 +463,11 @@ export interface ChartOptions {
 		max?: number;
 
 		/**
+		 * Set title of gauge chart. Use `\n` character to enter line break.
+		 */
+		title?: string;
+
+		/**
 		 * Set units of the gauge.
 		 */
 		units?: string;
