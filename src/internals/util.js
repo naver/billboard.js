@@ -80,9 +80,13 @@ const sanitise = str => (isString(str) ? str.replace(/</g, "&lt;").replace(/>/g,
  * Set text value. If there's multiline add nodes.
  * @param {d3Selection} node Text node
  * @param {String} text Text value string
- * @param {Array} lineHeight Line height value for multilined text
+ * @param {Array} dy dy value for multilined text
  */
-const setTextValue = (node, text, lineHeight = [-1, 1]) => {
+const setTextValue = (node, text, dy = [-1, 1]) => {
+	if (!node || !isString(text)) {
+		return;
+	}
+
 	if (text.indexOf("\n") === -1) {
 		node.text(text);
 	} else {
@@ -97,7 +101,7 @@ const setTextValue = (node, text, lineHeight = [-1, 1]) => {
 			multiline.forEach((v, i) => {
 				node.append("tspan")
 					.attr("x", 0)
-					.attr("dy", `${i === 0 ? lineHeight[0] : lineHeight[1]}em`)
+					.attr("dy", `${i === 0 ? dy[0] : dy[1]}em`)
 					.text(v);
 			});
 		}
