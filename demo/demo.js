@@ -3560,6 +3560,28 @@ d3.select(".chart_area")
 				"#radarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
 			]
 		},
+		RadarAxisMultiline: {
+			options: {
+				padding: {
+					top: 20
+				},
+				data: {
+					x: "x",
+					columns: [
+						["x", "1st\nPrize", "2nd\nPrize", "3rd\nPrize"],
+						["data1", 230, 250, 100],
+						["data2", 150, 150, 230]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 300
+					}
+				}
+			}
+		},
 		RadarLevel: {
 			options: {
 				data: {

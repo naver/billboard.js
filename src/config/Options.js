@@ -3182,6 +3182,8 @@ export default class Options {
 
 			/**
 			 * Set radar options
+			 * - **NOTE:**
+			 *  > When x tick text contains `\n`, it's used as line break.
 			 * @name radar
 			 * @memberof Options
 			 * @type {Object}
@@ -3198,6 +3200,7 @@ export default class Options {
 			 * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
 			 * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
 			 * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+			 * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
 			 * @example
 			 *  radar: {
 			 *      axis: {
