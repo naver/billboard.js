@@ -463,6 +463,11 @@ export interface ChartOptions {
 		max?: number;
 
 		/**
+		 * Set title of gauge chart. Use `\n` character to enter line break.
+		 */
+		title?: string;
+
+		/**
 		 * Set units of the gauge.
 		 */
 		units?: string;
@@ -1239,7 +1244,8 @@ export interface Data {
 	};
 
 	/**
-	 * Set text displayed when empty data.
+	 * Set text label to be displayed when there's no data to show.
+	 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
 	 */
 	empty?: { label: { text: string } };
 

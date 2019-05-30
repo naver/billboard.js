@@ -1752,7 +1752,10 @@ describe("DATA", () => {
 		before(() => {
 			args = {
 				data: {
-					columns: [],
+					columns: [
+						["data", 50, 20, 10, 40, 15]
+					],
+					hide: ["data"],
 					empty: {
 						label: {
 							text: "No Data"
@@ -1765,7 +1768,24 @@ describe("DATA", () => {
 		it("check for empty label text", () => {
 			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
 
-			expect(+emptyLabelText.style("opacity")).to.be.equal(1);
+			expect(emptyLabelText.style("display")).to.be.equal("block");
+		});
+
+		it("check the visiblity on data toggles", done => {
+			const emptyLabelText = chart.$.main.select(`.${CLASS.text}.${CLASS.empty}`);
+
+			// display data
+			chart.toggle();
+
+			expect(emptyLabelText.style("display")).to.be.equal("none");
+
+			// hide data
+			chart.toggle();
+
+			setTimeout(() => {
+				expect(emptyLabelText.style("display")).to.be.equal("block");
+				done();
+			}, 300)
 		});
 
 		it("set options empty.label.text=''", () => {
