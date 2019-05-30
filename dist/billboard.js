@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190527103933
+ * @version 1.8.1-nightly-20190530104048
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -490,6 +490,7 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
   chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
   chartArcsTitle: "bb-chart-arcs-title",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
   chartBar: "bb-chart-bar",
   chartBars: "bb-chart-bars",
   chartLine: "bb-chart-line",
@@ -642,6 +643,22 @@ var isValue = function (v) {
 },
     sanitise = function (str) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+},
+    setTextValue = function (node, text) {
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"); // reset possible text
+
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+      });
+    }
+  }
 },
     getRectSegList = function (path) {
   /*
@@ -5603,6 +5620,7 @@ var Options_Options = function Options() {
      * @property {Number} [gauge.min=0] Set min value of the gauge.
      * @property {Number} [gauge.max=100] Set max value of the gauge.
      * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
+     * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
      * @property {String} [gauge.units] Set units of the gauge.
      * @property {Number} [gauge.width] Set width of gauge chart.
      * @example
@@ -5628,6 +5646,7 @@ var Options_Options = function Options() {
      *      },
      *      min: -100,
      *      max: 200,
+     *      title: "Title Text",
      *      units: "%",
      *      width: 10
      *  }
@@ -5639,6 +5658,7 @@ var Options_Options = function Options() {
     gauge_max: 100,
     gauge_startingAngle: -1 * Math.PI / 2,
     gauge_label_extents: undefined,
+    gauge_title: "",
     gauge_units: undefined,
     gauge_width: undefined,
     gauge_expand: {},
@@ -5733,6 +5753,8 @@ var Options_Options = function Options() {
 
     /**
      * Set radar options
+     * - **NOTE:**
+     *  > When x tick text contains `\n`, it's used as line break.
      * @name radar
      * @memberof Options
      * @type {Object}
@@ -5749,6 +5771,7 @@ var Options_Options = function Options() {
      * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
      * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
      * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+     * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
      * @example
      *  radar: {
      *      axis: {
@@ -6553,8 +6576,8 @@ extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Get total data sum
-   * @private
    * @return {Number}
+  	 * @private
    */
   getTotalDataSum: function getTotalDataSum() {
     var $$ = this,
@@ -6632,7 +6655,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   filterTargetsToShow: function filterTargetsToShow(targets) {
     var $$ = this;
-    return targets.filter(function (t) {
+    return (targets || $$.data.targets).filter(function (t) {
       return $$.isTargetToShow(t.id);
     });
   },
@@ -6692,6 +6715,9 @@ extend(ChartInternal_ChartInternal.prototype, {
 
     return !1;
   },
+  hasMultiTargets: function hasMultiTargets() {
+    return this.filterTargetsToShow().length > 1;
+  },
   hasNegativeValueInTargets: function hasNegativeValueInTargets(targets) {
     return this.checkValueInTargets(targets, function (v) {
       return v < 0;
@@ -6703,8 +6729,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   _checkOrder: function _checkOrder(type) {
-    var config = this.config;
-    return isString(config.data_order) && config.data_order.toLowerCase() === type;
+    var config = this.config,
+        order = config.data_order;
+    return isString(order) && order.toLowerCase() === type;
   },
   isOrderDesc: function isOrderDesc() {
     return this._checkOrder("desc");
@@ -7821,11 +7848,13 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         padding = config.pie_padding,
         padAngle = $$.hasType("pie") && padding ? padding * .01 : config["".concat(config.data_type, "_padAngle")] ? config["".concat(config.data_type, "_padAngle")] : 0;
-    $$.pie = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["pie"])().padAngle(padAngle).value(function (d) {
+    $$.pie = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["pie"])().padAngle(padAngle).sortValues($$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
+      return $$.isOrderAsc() ? a - b : b - a;
+    } : null).value(function (d) {
       return d.values.reduce(function (a, b) {
         return a + b.value;
       }, 0);
-    }), config.data_order || $$.pie.sort(null);
+    });
   },
   updateRadius: function updateRadius() {
     var $$ = this,
@@ -7848,18 +7877,26 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded(), $$.svgArcExpandedSub = $$.getSvgArcExpanded(.98);
   },
   updateAngle: function updateAngle(dValue) {
-    var gMin,
-        gMax,
-        gTic,
-        gValue,
-        $$ = this,
+    var $$ = this,
         config = $$.config,
+        pie = $$.pie,
         d = dValue,
-        found = !1,
-        index = 0;
-    return config ? ($$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
-      found || t.data.id !== d.data.id || (found = !0, d = t, d.index = index), index++;
-    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), $$.isGaugeType(d.data) && (gMin = config.gauge_min, gMax = config.gauge_max, gTic = Math.PI * (config.gauge_fullCircle ? 2 : 1) / (gMax - gMin), gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin, d.startAngle = config.gauge_startingAngle, d.endAngle = d.startAngle + gTic * gValue), found ? d : null) : null;
+        found = !1;
+    if (!config) return null;
+
+    if (d.data && $$.isGaugeType(d.data)) {
+      var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
+
+      totalSum > config.gauge_max && (config.gauge_max = totalSum);
+      var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
+          gStart = config.gauge_startingAngle,
+          gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+      pie = $$.pie.startAngle(gStart).endAngle(gEnd + gStart);
+    }
+
+    return pie($$.filterTargetsToShow()).forEach(function (t) {
+      found || t.data.id !== d.data.id || (found = !0, d = t);
+    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), found ? d : null;
   },
   getSvgArc: function getSvgArc() {
     var $$ = this,
@@ -7896,7 +7933,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         updated = $$.updateAngle(d),
         translate = "";
 
-    if (updated && !$$.hasType("gauge")) {
+    if (updated && (!$$.hasType("gauge") || $$.hasMultiTargets())) {
       var c = this.svgArc.centroid(updated),
           x = isNaN(c[0]) ? 0 : c[0],
           y = isNaN(c[1]) ? 0 : c[1],
@@ -7926,22 +7963,8 @@ extend(ChartInternal_ChartInternal.prototype, {
           isUnderThreshold = $$.hasType("gauge") || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
-        var nodeText = node.text(),
-            text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
-        if (text.indexOf("\n") === -1) nodeText !== text && node.text(text);else {
-          var diff = [nodeText, text].map(function (v) {
-            return v.replace(/[\s\n]/g, "");
-          });
-
-          if (diff[0] !== diff[1]) {
-            var multiline = text.split("\n"),
-                len = multiline.length - 1;
-            // reset possible text
-            node.html(""), multiline.forEach(function (v, i) {
-              node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? -len : 1, "em")).text(v);
-            });
-          }
-        }
+        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        setTextValue(node, text);
       }
     });
   },
@@ -7990,10 +8013,10 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   shouldShowArcLabel: function shouldShowArcLabel() {
     var $$ = this,
-        config = $$.config,
-        shouldShow = !0;
-    // when gauge, always true
-    return $$.hasType("donut") ? shouldShow = config.donut_label_show : $$.hasType("pie") && (shouldShow = config.pie_label_show), shouldShow;
+        config = $$.config;
+    return ["pie", "donut", "gauge"].some(function (v) {
+      return $$.hasType(v) && config["".concat(v, "_label_show")];
+    });
   },
   meetsArcLabelThreshold: function meetsArcLabelThreshold(ratio) {
     var $$ = this,
@@ -8012,12 +8035,14 @@ extend(ChartInternal_ChartInternal.prototype, {
     return config.gauge_label_extents;
   },
   getArcTitle: function getArcTitle() {
-    var $$ = this;
-    return $$.hasType("donut") ? $$.config.donut_title : "";
+    var $$ = this,
+        type = $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge";
+    return type ? $$.config["".concat(type, "_title")] : "";
   },
   updateTargetsForArc: function updateTargetsForArc(targets) {
     var $$ = this,
         main = $$.main,
+        hasGauge = $$.hasType("gauge"),
         classChartArc = $$.classChartArc.bind($$),
         classArcs = $$.classArcs.bind($$),
         classFocus = $$.classFocus.bind($$),
@@ -8025,7 +8050,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return classChartArc(d) + classFocus(d.data);
     }),
         mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
-    mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate), mainPieEnter.append("text").attr("dy", $$.hasType("gauge") ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
+    mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate), mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
   },
   initArc: function initArc() {
     var $$ = this;
@@ -8038,20 +8063,12 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   setArcTitle: function setArcTitle() {
     var $$ = this,
-        title = $$.getArcTitle();
+        title = $$.getArcTitle(),
+        hasGauge = $$.hasType("gauge");
 
     if (title) {
-      var multiline = title.split("\n"),
-          text = $$.arcs.append("text").attr("class", config_classes.chartArcsTitle).style("text-anchor", "middle");
-
-      // if is multiline text
-      if (multiline.length > 1) {
-        var fontSize = +text.style("font-size").replace("px", ""),
-            height = Math.floor(text.text(".").node().getBBox().height, text.text(""));
-        multiline.forEach(function (v, i) {
-          return text.insert("tspan").text(v).attr("x", 0).attr("dy", i ? height : 0);
-        }), text.attr("y", "-".concat(fontSize * (multiline.length - 2) || fontSize / 2));
-      } else text.text(title);
+      var text = $$.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
+      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-1.3, 1.3]);
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
@@ -8155,15 +8172,16 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         main = $$.main,
+        hasGauge = $$.hasType("gauge"),
         text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
       return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
-    });
-
-    if (text.call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-      return $$.isGaugeType(d.data) ? "".concat(Math.round($$.radius / 5), "px") : "";
+    }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+      return $$.isGaugeType(d.data) && !$$.hasMultiTargets() ? "".concat(Math.round($$.radius / 5), "px") : "";
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-    }), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge")) {
+    });
+
+    if (main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle,
           endAngle = (isFullCircle ? -4 : -1) * config.gauge_startingAngle;
       isFullCircle && text.attr("dy", "".concat(Math.round($$.radius / 14))), $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
@@ -8181,8 +8199,12 @@ extend(ChartInternal_ChartInternal.prototype, {
   initGauge: function initGauge() {
     var $$ = this,
         config = $$.config,
-        arcs = $$.arcs;
-    $$.hasType("gauge") && (arcs.append("path").attr("class", config_classes.chartArcsBackground), arcs.append("text").attr("class", config_classes.chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none"), config.gauge_label_show && (arcs.append("text").attr("class", config_classes.chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none"), !config.gauge_fullCircle && arcs.append("text").attr("class", config_classes.chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none")));
+        arcs = $$.arcs,
+        appendText = function (className) {
+      arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
+    };
+
+    $$.hasType("gauge") && (arcs.append("path").attr("class", config_classes.chartArcsBackground), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax)));
   },
   getGaugeLabelHeight: function getGaugeLabelHeight() {
     return this.config.gauge_label_show ? 20 : 0;
@@ -9108,16 +9130,16 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.getRadarPosition("x", i);
     }).attr("y2", function (d, i) {
       return $$.getRadarPosition("y", i);
-    }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").text(function (d) {
-      return d;
+    }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
+      selection.each(function (d) {
+        setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d, [-1.2, 1.2]);
+      });
     }).datum(function (d, i) {
       return {
         index: i
       };
-    }).attr("x", function (d, i) {
-      return $$.getRadarPosition("x", i, undefined, 1);
-    }).attr("y", function (d, i) {
-      return $$.getRadarPosition("y", i, undefined, 1);
+    }).attr("transform", function (d, i) {
+      return "translate(".concat($$.getRadarPosition("x", i, undefined, 1), " ").concat($$.getRadarPosition("y", i, undefined, 1), ")");
     }), $$.bindEvent();
   },
   bindEvent: function bindEvent() {
@@ -9128,7 +9150,10 @@ extend(ChartInternal_ChartInternal.prototype, {
     if (config.interaction_enabled) {
       var isMouse = $$.inputType === "mouse",
           getIndex = function () {
-        var d = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target).datum();
+        var target = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].target; // in case of multilined axis text
+
+        /tspan/i.test(target.tagName) && (target = target.parentNode);
+        var d = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(target).datum();
         return d && Object.keys(d).length === 1 ? d.index : undefined;
       },
           hide = function () {
@@ -10467,9 +10492,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     if ($$.config.title_text) {
       $$.title = $$.svg.append("g");
       var text = $$.title.append("text").style("text-anchor", getTextPos($$.config.title_position)).attr("class", config_classes.title);
-      $$.config.title_text.split("\n").forEach(function (v, i) {
-        text.append("tspan").attr("x", 0).attr("dy", "".concat(i ? "1.5" : ".3", "em")).text(v);
-      });
+      setTextValue(text, $$.config.title_text, [.3, 1.5]);
     }
   },
 
@@ -13709,7 +13732,7 @@ var billboard = __webpack_require__(26);
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190527103933
+ * @version 1.8.1-nightly-20190530104048
  */
 
 var bb = {
@@ -13720,7 +13743,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190527103933",
+  version: "1.8.1-nightly-20190530104048",
 
   /**
    * Generate chart

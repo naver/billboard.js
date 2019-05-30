@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190527103933
+ * @version 1.8.1-nightly-20190530104048
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -443,6 +443,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
   chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
   chartArcsTitle: "bb-chart-arcs-title",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
   chartBar: "bb-chart-bar",
   chartBars: "bb-chart-bars",
   chartLine: "bb-chart-line",
@@ -598,6 +599,22 @@ var isValue = function (v) {
 },
     sanitise = function (str) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+},
+    setTextValue = function (node, text) {
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"); // reset possible text
+
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+      });
+    }
+  }
 },
     getRectSegList = function (path) {
   /*
@@ -866,7 +883,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.8.1-nightly-20190527103933");
+defineProperty_default()(Plugin_Plugin, "version", "1.8.1-nightly-20190530104048");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
