@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190530104048
+ * @version 1.8.1-nightly-20190603104333
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6850,7 +6850,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         xIndex = isRotated ? 1 : 0,
         yIndex = isRotated ? 0 : 1,
         y = $$.circleY(data, data.index),
-        x = $$.x(data.x);
+        x = ($$.zoomScale || $$.x)(data.x);
     return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
   },
 
@@ -9271,21 +9271,20 @@ extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Redraw chartText
+   * @param {Function} x Positioning function for x
+   * @param {Function} y Positioning function for y
+   * @param {Boolean} forFlow
+   * @param {Boolean} withTransition transition is enabled
    * @private
-   * @param {Number} x Attribute
-   * @param {Number} y Attribute
-   * @param {Object} options.flow
-   * @param {Boolean} indicates transition is enabled
-   * @returns {Object} $$.mainText
    */
-  redrawText: function redrawText(xForText, yForText, forFlow, withTransition) {
+  redrawText: function redrawText(x, y, forFlow, withTransition) {
     var $$ = this,
         t = getRandom(),
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
     return [this.mainText.each(function () {
       var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this); // do not apply transition for newly added text elements
 
-      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", xForText).attr("y", yForText).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x).attr("y", y).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
     })];
   },
 
@@ -9317,9 +9316,10 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   generateXYForText: function generateXYForText(indices, forX) {
     var $$ = this,
+        types = Object.keys(indices),
         points = {},
         getter = forX ? $$.getXForText : $$.getYForText;
-    return Object.keys(indices).concat("radar").forEach(function (v) {
+    return $$.hasType("radar") && types.push("radar"), types.forEach(function (v) {
       points[v] = $$["generateGet".concat(capitalize(v), "Points")](indices[v], !1);
     }), function (d, i) {
       var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isRadarType(d) && "radar" || "line";
@@ -13732,7 +13732,7 @@ var billboard = __webpack_require__(26);
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190530104048
+ * @version 1.8.1-nightly-20190603104333
  */
 
 var bb = {
@@ -13743,7 +13743,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190530104048",
+  version: "1.8.1-nightly-20190603104333",
 
   /**
    * Generate chart
