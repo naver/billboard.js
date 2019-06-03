@@ -671,7 +671,7 @@ extend(ChartInternal.prototype, {
 		const xIndex = isRotated ? 1 : 0;
 		const yIndex = isRotated ? 0 : 1;
 		const y = $$.circleY(data, data.index);
-		const x = $$.x(data.x);
+		const x = ($$.zoomScale || $$.x)(data.x);
 
 		return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
 	},

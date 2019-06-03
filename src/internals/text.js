@@ -93,14 +93,13 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Redraw chartText
+	 * @param {Function} x Positioning function for x
+	 * @param {Function} y Positioning function for y
+	 * @param {Boolean} forFlow
+	 * @param {Boolean} withTransition transition is enabled
 	 * @private
-	 * @param {Number} x Attribute
-	 * @param {Number} y Attribute
-	 * @param {Object} options.flow
-	 * @param {Boolean} indicates transition is enabled
-	 * @returns {Object} $$.mainText
 	 */
-	redrawText(xForText, yForText, forFlow, withTransition) {
+	redrawText(x, y, forFlow, withTransition) {
 		const $$ = this;
 		const t = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
@@ -111,8 +110,8 @@ extend(ChartInternal.prototype, {
 
 				// do not apply transition for newly added text elements
 				(withTransition && text.attr("x") ? text.transition(t) : text)
-					.attr("x", xForText)
-					.attr("y", yForText)
+					.attr("x", x)
+					.attr("y", y)
 					.style("fill", $$.updateTextColor.bind($$))
 					.style("fill-opacity", opacityForText);
 			})
@@ -164,13 +163,15 @@ extend(ChartInternal.prototype, {
 	 */
 	generateXYForText(indices, forX) {
 		const $$ = this;
+		const types = Object.keys(indices);
 		const points = {};
 		const getter = forX ? $$.getXForText : $$.getYForText;
 
-		Object.keys(indices).concat("radar")
-			.forEach(v => {
-				points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
-			});
+		$$.hasType("radar") && types.push("radar");
+
+		types.forEach(v => {
+			points[v] = $$[`generateGet${capitalize(v)}Points`](indices[v], false);
+		});
 
 		return function(d, i) {
 			const type = ($$.isAreaType(d) && "area") ||
