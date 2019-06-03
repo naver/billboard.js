@@ -762,5 +762,58 @@ describe("ZOOM", function() {
 				}
 			});
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+				columns: [
+						["data1", 30, 350, 200],
+						["data2", 130, 100, 10],
+						["data3", 230, 153, 85]
+				],
+				types: {
+						data1: "scatter",
+					},
+				labels: true
+				},
+			  bubble: {
+				maxR: 50
+			  },
+			  axis: {
+				x: {
+				  type: "category"
+				},
+				y: {
+				  max: 450
+				}
+				},
+				zoom: {
+					enabled: true
+				}
+			};
+		});
+
+		it("check on wheel zooming", () => {
+			const internal = chart.internal;
+			const eventRect = chart.$.main.select(`.${CLASS.eventRect}`).node();
+			const value = args.data.columns[0][2];
+
+			// when zoom in
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: -500,
+				clientX: 259,
+				clientY: 137
+			});
+
+			const {x, y} = chart.$.line.circles
+				.filter(d => d.id === "data1" && d.value === value)
+				.node()
+				.getBBox();
+
+			const target = internal.findClosestFromTargets(internal.data.targets, [x, y]);
+
+			expect(target && target.value === value).to.be.true;
+		});
 	});
 });
