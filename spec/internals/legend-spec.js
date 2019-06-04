@@ -335,6 +335,29 @@ describe("LEGEND", () => {
 			expect(items.size()).to.be.equal(2);
 		});
 
+		it("custom legend should behaves as normal legend", done => {
+			const selector = `.${CLASS.legendItem}-data1`;
+			const legend = chart.$.legend.select(selector).node();
+			const rect = legend.getBoundingClientRect();
+
+			util.fireEvent(legend, "mouseover", {
+				clientX: rect.x,
+				clientY: rect.y
+			}, chart);
+
+			expect(legend.classList.contains(CLASS.legendItemFocused)).to.be.true;
+
+			util.fireEvent(legend, "click", {
+				clientX: rect.x,
+				clientY: rect.y
+			}, chart);
+
+			setTimeout(() => {
+				expect(chart.$.legend.select(selector).classed(CLASS.legendItemHidden)).to.be.true;
+				done();
+			}, 300);
+		});
+
 		it("check for template update on dynamic loading", d => {
 			setTimeout(function() {
 				chart.load({

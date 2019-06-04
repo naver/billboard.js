@@ -65,6 +65,10 @@ extend(ChartInternal.prototype, {
 			);
 		}
 
+		// toggle legend state
+		$$.legend.selectAll(`.${CLASS.legendItem}`)
+			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
+
 		// Update size and scale
 		$$.updateScales(false, !$$.zoomScale);
 		$$.updateSvgSize();
@@ -86,11 +90,11 @@ extend(ChartInternal.prototype, {
 		const template = config.legend_contents_template;
 
 		if (!wrapper.empty()) {
-			const targets = $$.data.targets;
+			const targets = $$.mapToIds($$.data.targets);
 			const ids = [];
 			let html = "";
 
-			$$.mapToIds(targets).forEach(v => {
+			targets.forEach(v => {
 				const content = isFunction(template) ?
 					template.call($$, v, $$.color(v), $$.api.data(v)[0].values) :
 					tplProcess(template, {
@@ -109,6 +113,8 @@ extend(ChartInternal.prototype, {
 				.data(ids);
 
 			$$.setLegendItem(legendItem);
+
+			$$.legend = wrapper;
 		}
 	},
 
@@ -244,9 +250,8 @@ extend(ChartInternal.prototype, {
 			.transition()
 			.duration(100)
 			.style("opacity", function() {
-				const opacity = focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend;
-
-				return opacity.call($$, d3Select(this));
+				return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend)
+					.call($$, d3Select(this));
 			});
 	},
 
@@ -667,8 +672,8 @@ extend(ChartInternal.prototype, {
 		}
 
 		// toggle legend state
-		$$.legend.selectAll(`.${CLASS.legendItem}`)
-			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
+		// $$.legend.selectAll(`.${CLASS.legendItem}`)
+		// 	.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
 
 		// Update all to reflect change of legend
 		$$.updateLegendItemWidth(maxWidth);
