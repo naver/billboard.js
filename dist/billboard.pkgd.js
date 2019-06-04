@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190603104333
+ * @version 1.8.1-nightly-20190604104337
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -10312,9 +10312,10 @@ function () {
           xDomainForZoom,
           $$ = this,
           config = $$.config,
-          hasArcType = $$.hasArcType();
+          hasArcType = $$.hasArcType(),
+          hasZoom = !!$$.zoomScale;
       // show/hide if manual culling needed
-      if ($$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+      if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
         var axis = $$[key];
 
         if (axis) {
@@ -14383,17 +14384,20 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @param {Boolean} isInit - param is given at the init rendering
    */
   updateScales: function updateScales(isInit) {
-    var $$ = this,
+    var updateXDomain = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+        $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated;
-    // update edges
+    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1;
     // update scales
     // x Axis
+    var xDomain = updateXDomain && $$.x && $$.x.orgDomain(),
+        xSubDomain = updateXDomain && $$.orgXDomain;
     // y Axis
     // update for arc
-    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, $$.x && $$.x.orgDomain(), function () {
+    $$.x = $$.getX($$.xMin, $$.xMax, xDomain, function () {
       return $$.xAxis.tickOffset();
-    }), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
+    }), $$.subX = $$.getX($$.xMin, $$.xMax, xSubDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
     }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
   }
@@ -20709,9 +20713,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       withTransitionForTransform: !1,
       withTransition: !1
     };
+    // toggle legend state
     // Update size and scale
     // Update g positions
-    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
+    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.legend.selectAll(".".concat(config_classes.legendItem)).classed(config_classes.legendItemHidden, function (id) {
+      return !$$.isTargetToShow(id);
+    }), $$.updateScales(!1, !$$.zoomScale), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
   },
 
   /**
@@ -20725,10 +20732,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         template = config.legend_contents_template;
 
     if (!wrapper.empty()) {
-      var targets = $$.data.targets,
+      var targets = $$.mapToIds($$.data.targets),
           ids = [],
           html = "";
-      $$.mapToIds(targets).forEach(function (v) {
+      targets.forEach(function (v) {
         var content = isFunction(template) ? template.call($$, v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
           COLOR: $$.color(v),
           TITLE: v
@@ -20738,7 +20745,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       var legendItem = wrapper.html(html).selectAll(function () {
         return this.childNodes;
       }).data(ids);
-      $$.setLegendItem(legendItem);
+      $$.setLegendItem(legendItem), $$.legend = wrapper;
     }
   },
 
@@ -20853,8 +20860,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     $$.legend.selectAll(".".concat(config_classes.legendItem)).filter(function (id) {
       return targetIdz.indexOf(id) >= 0;
     }).classed(config_classes.legendItemFocused, focus).transition().duration(100).style("opacity", function () {
-      var opacity = focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend;
-      return opacity.call($$, src_select(this));
+      return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend).call($$, src_select(this));
     });
   },
 
@@ -21090,9 +21096,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.color).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
     }
 
-    background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.legend.selectAll(".".concat(config_classes.legendItem)).classed(config_classes.legendItemHidden, function (id) {
-      return !$$.isTargetToShow(id);
-    }), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
+    background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
   }
 });
 // CONCATENATED MODULE: ./src/internals/title.js
@@ -22397,16 +22401,19 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         event = on_event;
 
-    if (config.zoom_enabled && event.sourceEvent) {
+    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0) {
       var isMousemove = event.sourceEvent.type === "mousemove",
+          isZoomOut = event.sourceEvent.wheelDelta < 0,
           transform = event.transform;
-      $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 || ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
+      !isMousemove && isZoomOut && $$.x.domain().every(function (v, i) {
+        return v !== $$.orgXDomain[i];
+      }) && $$.x.domain($$.orgXDomain), $$.zoom.updateTransformScale(transform), $$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
         withTransition: !1,
         withY: config.zoom_rescale,
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain()));
+      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain());
     }
   },
 
@@ -23074,6 +23081,8 @@ util_extend(Chart_Chart.prototype, {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.zoom.js
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -23083,29 +23092,27 @@ util_extend(Chart_Chart.prototype, {
 
 
 /**
- * Zoom by giving x domain.
- * - **NOTE:**
- *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
- *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
- * @method zoom
- * @instance
- * @memberof Chart
- * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
- * @return {Array} domain value in array
- * @example
- *  // Zoom to specified domain
- *  chart.zoom([10, 20]);
- *
- *  // Get the current zoomed domain
- *  chart.zoom();
+ * Check if the given domain is within zoom range
+ * @param {Array} domain
+ * @return {Boolean}
+ * @private
  */
 
-var api_zoom_zoom = function (domainValue) {
+var withinRange = function (domain, range) {
+  var _range = slicedToArray_default()(range, 2),
+      min = _range[0],
+      max = _range[1];
+
+  return domain.every(function (v, i) {
+    return i === 0 ? v >= min : v <= max;
+  });
+},
+    api_zoom_zoom = function (domainValue) {
   var resultDomain,
       $$ = this.internal,
       domain = domainValue;
 
-  if ($$.config.zoom_enabled && domain) {
+  if ($$.config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
     var isTimeSeries = $$.isTimeSeries();
 
     if (isTimeSeries && (domain = domain.map(function (x) {
@@ -23124,6 +23131,24 @@ var api_zoom_zoom = function (domainValue) {
 
   return resultDomain;
 };
+/**
+ * Zoom by giving x domain.
+ * - **NOTE:**
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
+ * @method zoom
+ * @instance
+ * @memberof Chart
+ * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+ * @return {Array} domain value in array
+ * @example
+ *  // Zoom to specified domain
+ *  chart.zoom([10, 20]);
+ *
+ *  // Get the current zoomed domain
+ *  chart.zoom();
+ */
+
 
 util_extend(api_zoom_zoom, {
   /**
@@ -23176,7 +23201,7 @@ util_extend(api_zoom_zoom, {
    * @method zoom․min
    * @instance
    * @memberof Chart
-   * @param {Number} [min] minimum value tp set for zoom
+   * @param {Number} [min] minimum value to set for zoom
    * @return {Number} zoom min value
    * @example
    *  // Set minimum range value
@@ -23205,12 +23230,12 @@ util_extend(api_zoom_zoom, {
    *      max: 100
    *  });
    */
-  range: function range(_range) {
+  range: function range(_range2) {
     var zoom = this.zoom;
 
-    if (isObject(_range)) {
-      var min = _range.min,
-          max = _range.max;
+    if (isObject(_range2)) {
+      var min = _range2.min,
+          max = _range2.max;
       isDefined(min) && zoom.min(min), isDefined(max) && zoom.max(max);
     }
 
@@ -23240,6 +23265,8 @@ util_extend(api_zoom_zoom, {
       var eventRects = $$.main.select(".".concat(config_classes.eventRects));
       transform_transform(eventRects.node()) !== transform_identity && $$.zoom.transform(eventRects, transform_identity), $$.redraw({
         withTransition: !0,
+        withUpdateXDomain: !0,
+        withUpdateOrgXDomain: !0,
         withY: config.zoom_rescale
       });
     }
@@ -24866,7 +24893,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190603104333
+ * @version 1.8.1-nightly-20190604104337
  */
 
 var bb = {
@@ -24877,7 +24904,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190603104333",
+  version: "1.8.1-nightly-20190604104337",
 
   /**
    * Generate chart
