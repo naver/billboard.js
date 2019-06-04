@@ -585,6 +585,7 @@ export default class ChartInternal {
 		$$.updateSizes(initializing);
 
 		// update legend and transform each g
+
 		if (wth.Legend && config.legend_show) {
 			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
 		} else if (wth.Dimension) {
@@ -612,7 +613,6 @@ export default class ChartInternal {
 
 		// grid
 		$$.updateGrid(duration);
-
 
 		// rect for regions
 		$$.updateRegion(duration);
@@ -665,16 +665,18 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 		const hasArcType = $$.hasArcType();
+		const hasZoom = !!$$.zoomScale;
 		let tickValues;
 		let intervalForCulling;
 		let xDomainForZoom;
 
-		if ($$.isCategorized() && targetsToShow.length === 0) {
+		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
 			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
 		}
 
 		if ($$.x && targetsToShow.length) {
-			$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
+			!hasZoom &&
+				$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
 
 			if (!config.axis_x_tick_values) {
 				tickValues = $$.axis.updateXAxisTickValues(targetsToShow);
