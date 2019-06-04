@@ -8,6 +8,20 @@ import CLASS from "../config/classes";
 import {callFn, extend, getMinMax, isDefined, isObject, isString} from "../internals/util";
 
 /**
+ * Check if the given domain is within zoom range
+ * @param {Array} domain
+ * @return {Boolean}
+ * @private
+ */
+const withinRange = (domain, range) => {
+	const [min, max] = range;
+
+	return domain.every((v, i) => (
+		i === 0 ? (v >= min) : (v <= max)
+	));
+};
+
+/**
  * Zoom by giving x domain.
  * - **NOTE:**
  *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
@@ -29,7 +43,7 @@ const zoom = function(domainValue) {
 	let domain = domainValue;
 	let resultDomain;
 
-	if ($$.config.zoom_enabled && domain) {
+	if ($$.config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
 		const isTimeSeries = $$.isTimeSeries();
 
 		if (isTimeSeries) {
@@ -133,7 +147,7 @@ extend(zoom, {
 	 * @method zoom․min
 	 * @instance
 	 * @memberof Chart
-	 * @param {Number} [min] minimum value tp set for zoom
+	 * @param {Number} [min] minimum value to set for zoom
 	 * @return {Number} zoom min value
 	 * @example
 	 *  // Set minimum range value
@@ -216,6 +230,8 @@ extend(Chart.prototype, {
 
 			$$.redraw({
 				withTransition: true,
+				withUpdateXDomain: true,
+				withUpdateOrgXDomain: true,
 				withY: config.zoom_rescale
 			});
 		}

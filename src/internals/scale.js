@@ -108,7 +108,7 @@ extend(ChartInternal.prototype, {
 	 * @private
 	 * @param {Boolean} isInit - param is given at the init rendering
 	 */
-	updateScales(isInit) {
+	updateScales(isInit, updateXDomain = true) {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
@@ -125,8 +125,11 @@ extend(ChartInternal.prototype, {
 
 		// update scales
 		// x Axis
-		$$.x = $$.getX($$.xMin, $$.xMax, $$.x && $$.x.orgDomain(), () => $$.xAxis.tickOffset());
-		$$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
+		const xDomain = updateXDomain && $$.x && $$.x.orgDomain();
+		const xSubDomain = updateXDomain && $$.orgXDomain;
+
+		$$.x = $$.getX($$.xMin, $$.xMax, xDomain, () => $$.xAxis.tickOffset());
+		$$.subX = $$.getX($$.xMin, $$.xMax, xSubDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
 
 		$$.xAxisTickFormat = $$.axis.getXAxisTickFormat();
 		$$.xAxisTickValues = $$.axis.getXAxisTickValues();
