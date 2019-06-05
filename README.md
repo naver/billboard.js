@@ -88,6 +88,19 @@ With nightly, you can try upcoming changes prior the official release.
 
 > The version info will be given as the build datetime: `x.x.x-nightly-yyyymmddhhmmss`
 
+There're two ways to install from `nightly` branch directly.
+```js
+// Specify on 'package.json' file
+"dependencies": {
+      ...
+      "billboard.js": "git://github.com/naver/billboard.js.git#nightly"
+},
+```
+
+```sh
+# Run install command from shell
+$ npm install git+https://github.com/naver/billboard.js.git#nightly --save
+```
 
 ### Installation with npm
 
