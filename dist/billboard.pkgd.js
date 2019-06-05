@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190604104337
+ * @version 1.8.1-nightly-20190605104446
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -9883,12 +9883,15 @@ function () {
             targetsToShow = $$.filterTargetsToShow($$.data.targets),
             getFrom = isYAxis ? "getY" : "getX",
             scale = $$[id].copy().domain($$["".concat(getFrom, "Domain")](targetsToShow, id)),
-            domain = scale.domain().toString();
+            domain = scale.domain();
         // do not compute if domain is same
-        if (currentTickMax.domain === domain) return currentTickMax.size;
+        if (isArray(currentTickMax.domain) && currentTickMax.domain.every(function (v, i) {
+          return v === domain[i];
+        })) return currentTickMax.size;
         currentTickMax.domain = domain;
-        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0);
-        isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0),
+            tickCount = config["axis_".concat(id, "_tick_count")];
+        tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
         axis.create(dummy), dummy.selectAll("text").each(function () {
           maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
@@ -24893,7 +24896,7 @@ util_extend(Chart_Chart.prototype, {
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190604104337
+ * @version 1.8.1-nightly-20190605104446
  */
 
 var bb = {
@@ -24904,7 +24907,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190604104337",
+  version: "1.8.1-nightly-20190605104446",
 
   /**
    * Generate chart
