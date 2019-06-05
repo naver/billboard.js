@@ -9,7 +9,7 @@ import {
 	axisRight as d3AxisRight
 } from "d3-axis";
 import CLASS from "../config/classes";
-import {capitalize, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
 
 const isHorizontal = ($$, forHorizontal) => {
@@ -527,16 +527,28 @@ export default class Axis {
 			const getFrom = isYAxis ? "getY" : "getX";
 
 			const scale = $$[id].copy().domain($$[`${getFrom}Domain`](targetsToShow, id));
-			const domain = scale.domain().toString();
+			const domain = scale.domain();
 
 			// do not compute if domain is same
-			if (currentTickMax.domain === domain) {
+			if (isArray(currentTickMax.domain) && currentTickMax.domain.every((v, i) => v === domain[i])) {
 				return currentTickMax.size;
 			} else {
 				currentTickMax.domain = domain;
 			}
 
 			const axis = this[`${getFrom}Axis`](id, scale, false, false, true);
+			const tickCount = config[`axis_${id}_tick_count`];
+
+			// Make to generate the final tick text to be rendered
+			// https://github.com/naver/billboard.js/issues/920
+			if (tickCount) {
+				axis.tickValues(
+					this.generateTickValues(
+						domain,
+						tickCount,
+						isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries()
+					));
+			}
 
 			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 

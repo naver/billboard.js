@@ -71,7 +71,6 @@ describe("AXIS", function() {
 
 			expect(ticksSize).to.be.equal(3);
 		});
-
 	});
 
 	describe("axis.y.tick.values", () => {
@@ -1499,6 +1498,34 @@ describe("AXIS", function() {
 
 		it("check for rotated y2 Axes", () => {
 			checkY2Axes(true);
+		});
+	});
+
+	describe("y Axis size", () => {
+		before(() => {
+			args = {
+				data: {
+				  columns: [
+						  ["sample", 30, 200, 100, 400, 150, 2500]
+				  ]
+				},
+				axis: {
+				  y: {
+					tick: {
+					  format: function(x) { return d3.format("$,")(x); },
+					  count: 12
+					},
+				  }
+				}
+			};
+		});
+
+		it("check y Axis width sizing", () => {
+			const axisY = chart.$.main.select(`.${CLASS.axisY}`);
+
+			expect(axisY.node().getBoundingClientRect().width).to.be.equal(
+				axisY.select(".tick:nth-child(12)").node().getBoundingClientRect().width
+			);
 		});
 	});
 });
