@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190605104446
+ * @version 1.8.1-nightly-20190610104702
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5246,7 +5246,7 @@ var Options_Options = function Options() {
      *     show: true,
      *     lines: [
      *       {value: 2, text: "Label on 2"},
-     *       {value: 5, text: "Label on 5", class: "label-5"}
+     *       {value: 5, text: "Label on 5", class: "label-5"},
      *       {value: 6, text: "Label on 6", position: "start"}
      *     ]
      *   },
@@ -5254,7 +5254,7 @@ var Options_Options = function Options() {
      *     show: true,
      *     lines: [
      *       {value: 100, text: "Label on 100"},
-     *       {value: 200, text: "Label on 200", class: "label-200"}
+     *       {value: 200, text: "Label on 200", class: "label-200"},
      *       {value: 300, text: "Label on 300", position: 'middle'}
      *     ],
      *     ticks: 5
@@ -9601,7 +9601,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         xgridData = $$.generateGridData(config.grid_x_type, $$.x),
         tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
         pos = function (d) {
-      return ($$.x(d) + tickOffset) * (isRotated ? -1 : 1);
+      return (($$.zoomScale || $$.x)(d) + tickOffset) * (isRotated ? -1 : 1);
     };
 
     $$.xgridAttr = isRotated ? {
@@ -13762,7 +13762,7 @@ var billboard = __webpack_require__(26);
 
 /**
  * @namespace bb
- * @version 1.8.1-nightly-20190605104446
+ * @version 1.8.1-nightly-20190610104702
  */
 
 var bb = {
@@ -13773,7 +13773,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190605104446",
+  version: "1.8.1-nightly-20190610104702",
 
   /**
    * Generate chart
