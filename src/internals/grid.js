@@ -57,7 +57,7 @@ extend(ChartInternal.prototype, {
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, $$.x);
 		const tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0;
-		const pos = d => ($$.x(d) + tickOffset) * (isRotated ? -1 : 1);
+		const pos = d => (($$.zoomScale || $$.x)(d) + tickOffset) * (isRotated ? -1 : 1);
 
 		$$.xgridAttr = isRotated ? {
 			"x1": 0,

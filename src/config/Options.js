@@ -2670,7 +2670,7 @@ export default class Options {
 			 *     show: true,
 			 *     lines: [
 			 *       {value: 2, text: "Label on 2"},
-			 *       {value: 5, text: "Label on 5", class: "label-5"}
+			 *       {value: 5, text: "Label on 5", class: "label-5"},
 			 *       {value: 6, text: "Label on 6", position: "start"}
 			 *     ]
 			 *   },
@@ -2678,7 +2678,7 @@ export default class Options {
 			 *     show: true,
 			 *     lines: [
 			 *       {value: 100, text: "Label on 100"},
-			 *       {value: 200, text: "Label on 200", class: "label-200"}
+			 *       {value: 200, text: "Label on 200", class: "label-200"},
 			 *       {value: 300, text: "Label on 300", position: 'middle'}
 			 *     ],
 			 *     ticks: 5
