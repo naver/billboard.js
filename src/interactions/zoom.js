@@ -137,18 +137,23 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const event = d3Event;
 
-		if (!config.zoom_enabled || !event.sourceEvent) {
+		if (
+			!config.zoom_enabled ||
+			!event.sourceEvent ||
+			$$.filterTargetsToShow($$.data.targets).length === 0
+		) {
 			return;
 		}
 
 		const isMousemove = event.sourceEvent.type === "mousemove";
+		const isZoomOut = event.sourceEvent.wheelDelta < 0;
 		const transform = event.transform;
 
-		$$.zoom.updateTransformScale(transform);
-
-		if ($$.filterTargetsToShow($$.data.targets).length === 0) {
-			return;
+		if (!isMousemove && isZoomOut && $$.x.domain().every((v, i) => v !== $$.orgXDomain[i])) {
+			$$.x.domain($$.orgXDomain);
 		}
+
+		$$.zoom.updateTransformScale(transform);
 
 		if ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0]) {
 			$$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]);
