@@ -335,7 +335,7 @@ const getRange = (start, end) => {
 const sendStats = () => {
 	if (navigator && localStorage) {
 		const key = "$bb.stats";
-		const url = `https://www.google-analytics.com/collect?v=1&t=event&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F${location ? location.hostname : ""}`;
+		const url = `https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F${location ? location.hostname : ""}`;
 		const t = +new Date();
 		const last = +localStorage.getItem(key);
 		const expire = 1000 * 60 * 60 * 24 * 14;
