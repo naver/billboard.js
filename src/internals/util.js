@@ -81,6 +81,7 @@ const sanitise = str => (isString(str) ? str.replace(/</g, "&lt;").replace(/>/g,
  * @param {d3Selection} node Text node
  * @param {String} text Text value string
  * @param {Array} dy dy value for multilined text
+ * @private
  */
 const setTextValue = (node, text, dy = [-1, 1]) => {
 	if (!node || !isString(text)) {
@@ -327,6 +328,36 @@ const getRange = (start, end) => {
 	return res;
 };
 
+/**
+ * Send stats
+ * @private
+ */
+const sendStats = () => {
+	if (navigator && localStorage) {
+		const key = "$bb.stats";
+		const url = `https://www.google-analytics.com/collect?v=1&t=event&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F${location ? location.hostname : ""}`;
+		const t = +new Date();
+		const last = +localStorage.getItem(key);
+		const expire = 1000 * 60 * 60 * 24 * 14;
+
+		if (!last || (last + expire) < t) {
+			localStorage.setItem(key, t + expire);
+
+			if (navigator.sendBeacon) {
+				navigator.sendBeacon(url);
+			} else {
+				const i = new Image();
+
+				i.src = url;
+				i.style.display = "none";
+
+				document.body.appendChild(i);
+				document.body.removeChild(i);
+			}
+		}
+	}
+};
+
 // emulate event
 const emulateEvent = {
 	mouse: (() => {
@@ -434,6 +465,7 @@ export {
 	mergeObj,
 	notEmpty,
 	sanitise,
+	sendStats,
 	setTextValue,
 	sortValue,
 	toArray,
