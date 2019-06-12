@@ -234,6 +234,37 @@ const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
 const mergeArray = arr => (arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : []);
 
 /**
+ * Merge object returning new object
+ * @param {Object} target
+ * @param {Object} objectN
+ * @returns {Object} merged target object
+ * @private
+ */
+const mergeObj = (target, ...objectN) => {
+	if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
+		return target;
+	}
+
+	const source = objectN.shift();
+
+	if (isObject(target) && isObject(source)) {
+		Object.keys(source).forEach(key => {
+			const value = source[key];
+
+			if (isObject(value)) {
+				!target[key] && (target[key] = {});
+				target[key] = mergeObj(target[key], value);
+			} else {
+				target[key] = isArray(value) ?
+					value.concat() : value;
+			}
+		});
+	}
+
+	return mergeObj(target, ...objectN);
+};
+
+/**
  * Sort value
  * @param {Array} data value to be sorted
  * @param {Boolean} isAsc true: asc, false: desc
@@ -400,6 +431,7 @@ export {
 	isUndefined,
 	isValue,
 	mergeArray,
+	mergeObj,
 	notEmpty,
 	sanitise,
 	setTextValue,
