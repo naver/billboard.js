@@ -13,7 +13,7 @@ export const bb: {
 	generate(options: ChartOptions): Chart;
 
 	/**
-	 * Set or get default options globally.
+	 * Set or get global default options.
 	 * - **NOTE:**
 	 *   - The options values settings are valid within page context only.
 	 *   - If is called multiple times, will override the last value.
