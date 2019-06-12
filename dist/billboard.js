@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190611104730
+ * @version 1.8.1-nightly-20190612104732
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -755,6 +755,24 @@ var isValue = function (v) {
     return p.concat(c);
   }) : [];
 },
+    mergeObj = function (_mergeObj) {
+  function mergeObj() {
+    return _mergeObj.apply(this, arguments);
+  }
+
+  return mergeObj.toString = function () {
+    return _mergeObj.toString();
+  }, mergeObj;
+}(function (target) {
+  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}),
     sortValue = function (data) {
   var fn,
       isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
@@ -8634,7 +8652,9 @@ extend(ChartInternal_ChartInternal.prototype, {
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this;
     $$.data.targets.forEach(function (d) {
-      if ($$.isAreaType(d) && $$.defs.select("[id$=".concat(d.id, "]")).empty()) {
+      var id = $$.getTargetSelectorSuffix(d.id);
+
+      if ($$.isAreaType(d) && $$.defs.select("[id$=".concat(id, "]")).empty()) {
         var color = $$.color(d),
             _$$$config$area_linea = $$.config.area_linearGradient,
             _$$$config$area_linea2 = _$$$config$area_linea.x,
@@ -8643,7 +8663,7 @@ extend(ChartInternal_ChartInternal.prototype, {
             y = _$$$config$area_linea3 === void 0 ? [0, 1] : _$$$config$area_linea3,
             _$$$config$area_linea4 = _$$$config$area_linea.stops,
             stops = _$$$config$area_linea4 === void 0 ? [[0, color, 1], [1, color, 0]] : _$$$config$area_linea4,
-            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient-").concat(d.id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
+            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient").concat(id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
         stops.forEach(function (v) {
           var stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
           linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
@@ -8653,7 +8673,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   updateAreaColor: function updateAreaColor(d) {
     var $$ = this;
-    return $$.config.area_linearGradient ? "url(#".concat($$.datetimeId, "-areaGradient-").concat(d.id, ")") : $$.color(d);
+    return $$.config.area_linearGradient ? "url(#".concat($$.datetimeId, "-areaGradient").concat($$.getTargetSelectorSuffix(d.id), ")") : $$.color(d);
   },
   updateArea: function updateArea(durationForExit) {
     var $$ = this;
@@ -13757,15 +13777,12 @@ var billboard = __webpack_require__(26);
 
 
 
+
  // base CSS
 
 
-/**
- * @namespace bb
- * @version 1.8.1-nightly-20190611104730
- */
-
-var bb = {
+var _defaults = {},
+    bb = {
   /**
    * Version information
    * @property {String} version version
@@ -13773,7 +13790,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190611104730",
+  version: "1.8.1-nightly-20190612104732",
 
   /**
    * Generate chart
@@ -13802,8 +13819,35 @@ var bb = {
    *  chart.data("data1");
    */
   generate: function generate(config) {
-    var inst = new Chart_Chart(config);
+    var options = mergeObj({}, _defaults, config),
+        inst = new Chart_Chart(options);
     return inst.internal.charts = this.instance, this.instance.push(inst), inst;
+  },
+
+  /**
+   * Set or get default options globally.
+   * - **NOTE:**
+   *   - The options values settings are valid within page context only.
+   *   - If is called multiple times, will override the last value.
+   * @param {Options} options chart options
+   * @memberof bb
+   * @return {Options}
+   * @see {@link Options}
+   * @example
+   * // Set same option value as for `.generate()`
+   * bb.defaults({
+   *   data: {
+   *     type: "bar"
+   *   }
+   * });
+   *
+   * bb.defaults();  // {data:{type: "bar"}}
+   *
+   * // data.type defaults to 'bar'
+   * var chart = bb.generate({ ... });
+   */
+  defaults: function defaults(options) {
+    return isObject(options) && (_defaults = options), _defaults;
   },
 
   /**
@@ -13843,6 +13887,11 @@ var bb = {
     }
   }
 };
+/**
+ * @namespace bb
+ * @version 1.8.1-nightly-20190612104732
+ */
+
 
 /* harmony default export */ var core = __webpack_exports__["default"] = (bb);
 

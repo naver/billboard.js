@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190611104730
+ * @version 1.8.1-nightly-20190612104732
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -711,6 +711,24 @@ var isValue = function (v) {
     return p.concat(c);
   }) : [];
 },
+    mergeObj = function (_mergeObj) {
+  function mergeObj() {
+    return _mergeObj.apply(this, arguments);
+  }
+
+  return mergeObj.toString = function () {
+    return _mergeObj.toString();
+  }, mergeObj;
+}(function (target) {
+  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}),
     sortValue = function (data) {
   var fn,
       isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
@@ -883,7 +901,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.8.1-nightly-20190611104730");
+defineProperty_default()(Plugin_Plugin, "version", "1.8.1-nightly-20190612104732");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
