@@ -40,6 +40,15 @@ export interface ChartOptions {
 		height?: number;
 	};
 
+	/**
+	 * Allow usage stats collection.
+	 * - **NOTE:**
+	 *   - The usage stats collection is used for reference purpose only.
+	 *   - The stats data will be sent in a period of once in every 2 weeks.
+	 *   - Help us to make a better chart library! :)
+	 */
+	stats?: boolean;
+
 	padding?: {
 		/**
 		 * The padding on the top of the chart.
