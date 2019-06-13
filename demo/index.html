@@ -34,8 +34,9 @@
 
     <script src="https://unpkg.com/@stackblitz/sdk/bundles/sdk.umd.js"></script>
     <script>
+        var path = ["../dist/", "../release/latest/dist/"];
+
         !function() {
-            var path = ["../dist/", "../release/latest/dist/"];
             var cssFileName = localStorage.cssThemeName;
 
             cssFileName = cssFileName ? "theme/" + cssFileName : "billboard";
@@ -43,14 +44,15 @@
             /Edge/.test(navigator.userAgent) && /github.io/.test(location.hostname) && path.reverse();
 
             fallback.load({
-                    billboard_js: [
-                        path[0] + "billboard.js",
-                        path[1] + "billboard.js"
-                    ],
-                    billboard_css: [
-                        path[0] + cssFileName + ".css",
-                        path[1] + cssFileName + ".css"
-                    ]
+                    billboard_js: path.map(function(p) {
+                        return p + "billboard.js"
+                    }),
+                    billboard_css: path.map(function(p) {
+                        return p + cssFileName + ".css"
+                    }),
+                    // plugins_stanford: path.map(function(p) {
+                    //     return p + "plugin/billboardjs-plugin-stanford.js"
+                    // })
             });
 
 	        $(function() {
@@ -174,7 +176,15 @@
 		}, 1000);
 	} else {
 		fallback.ready(function() {
-			billboardDemo.init();
+            fallback.load({
+                plugins_stanford: path.map(function(p) {
+                    return p + "plugin/billboardjs-plugin-stanford.js"
+                })
+            });
+
+            fallback.ready(function() {
+                billboardDemo.init();
+            });
 		});
 	}
 }();
