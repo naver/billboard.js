@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>internals/util.js - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#transform">transform</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#setTextValue">setTextValue</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">internals/util.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+import {event as d3Event} from "d3-selection";
+import {brushSelection as d3BrushSelection} from "d3-brush";
+import CLASS from "../config/classes";
+
+const isValue = v => v || v === 0;
+const isFunction = v => typeof v === "function";
+const isString = v => typeof v === "string";
+const isNumber = v => typeof v === "number";
+const isUndefined = v => typeof v === "undefined";
+const isDefined = v => typeof v !== "undefined";
+const isBoolean = v => typeof v === "boolean";
+const ceil10 = v => Math.ceil(v / 10) * 10;
+const asHalfPixel = n => Math.ceil(n) + 0.5;
+const diffDomain = d => d[1] - d[0];
+const isObjectType = v => typeof v === "object";
+const isEmpty = o => (
+	isUndefined(o) || o === null ||
+	(isString(o) &amp;&amp; o.length === 0) ||
+	(isObjectType(o) &amp;&amp; !(o instanceof Date) &amp;&amp; Object.keys(o).length === 0) ||
+	(isNumber(o) &amp;&amp; isNaN(o))
+);
+const notEmpty = o => !isEmpty(o);
+
+/**
+ * Check if is array
+ * @param {Array} arr
+ * @returns {Boolean}
+ * @private
+ */
+const isArray = arr => arr &amp;&amp; arr.constructor === Array;
+
+/**
+ * Check if is object
+ * @param {Object} obj
+ * @returns {Boolean}
+ * @private
+ */
+const isObject = obj => obj &amp;&amp; !obj.nodeType &amp;&amp; isObjectType(obj) &amp;&amp; !isArray(obj);
+
+const getOption = (options, key, defaultValue) => (
+	isDefined(options[key]) ? options[key] : defaultValue
+);
+
+const hasValue = (dict, value) => {
+	let found = false;
+
+	Object.keys(dict).forEach(key => (dict[key] === value) &amp;&amp; (found = true));
+
+	return found;
+};
+
+/**
+ * Call function with arguments
+ * @param {Function} fn Function to be called
+ * @param {*} args Arguments
+ * @return {Boolean} true: fn is function, false: fn is not function
+ * @private
+ */
+const callFn = (fn, ...args) => {
+	const isFn = isFunction(fn);
+
+	isFn &amp;&amp; fn.call(...args);
+	return isFn;
+};
+
+/**
+ * Replace tag sign to html entity
+ * @param {String} str
+ * @return {String}
+ * @private
+ */
+const sanitise = str => (isString(str) ? str.replace(/&lt;/g, "&amp;lt;").replace(/>/g, "&amp;gt;") : str);
+
+/**
+ * Set text value. If there's multiline add nodes.
+ * @param {d3Selection} node Text node
+ * @param {String} text Text value string
+ * @param {Array} dy dy value for multilined text
+ */
+const setTextValue = (node, text, dy = [-1, 1]) => {
+	if (!node || !isString(text)) {
+		return;
+	}
+
+	if (text.indexOf("\n") === -1) {
+		node.text(text);
+	} else {
+		const diff = [node.text(), text].map(v => v.replace(/[\s\n]/g, ""));
+
+		if (diff[0] !== diff[1]) {
+			const multiline = text.split("\n");
+
+			// reset possible text
+			node.html("");
+
+			multiline.forEach((v, i) => {
+				node.append("tspan")
+					.attr("x", 0)
+					.attr("dy", `${i === 0 ? dy[0] : dy[1]}em`)
+					.text(v);
+			});
+		}
+	}
+};
+
+// substitution of SVGPathSeg API polyfill
+const getRectSegList = path => {
+	/*
+	 * seg1 ---------- seg2
+	 *   |               |
+	 *   |               |
+	 *   |               |
+	 * seg0 ---------- seg3
+	 * */
+	const {x, y, width, height} = path.getBBox();
+
+	return [
+		{x, y: y + height}, // seg0
+		{x, y}, // seg1
+		{x: x + width, y}, // seg2
+		{x: x + width, y: y + height} // seg3
+	];
+};
+
+const getPathBox = path => {
+	const {width, height} = path.getBoundingClientRect();
+	const items = getRectSegList(path);
+	const x = items[0].x;
+	const y = Math.min(items[0].y, items[1].y);
+
+	return {
+		x, y, width, height
+	};
+};
+
+// return brush selection array
+const getBrushSelection = ctx => {
+	let selection = null;
+	const event = d3Event;
+	const main = ctx.context || ctx.main;
+
+	// check from event
+	if (event &amp;&amp; event.constructor.name === "BrushEvent") {
+		selection = event.selection;
+	// check from brush area selection
+	} else if (main &amp;&amp; (selection = main.select(`.${CLASS.brush}`).node())) {
+		selection = d3BrushSelection(selection);
+	}
+
+	return selection;
+};
+
+// retrun random number
+const getRandom = (asStr = true) => Math.random() + (asStr ? "" : 0);
+
+const brushEmpty = ctx => {
+	const selection = getBrushSelection(ctx);
+
+	if (selection) {
+		// brush selected area
+		// two-dimensional: [[x0, y0], [x1, y1]]
+		// one-dimensional: [x0, x1] or [y0, y1]
+		return selection[0] === selection[1];
+	}
+
+	return true;
+};
+
+const extend = (target = {}, source) => {
+	for (const p in source) {
+		target[p] = source[p];
+	}
+
+	return target;
+};
+
+/**
+ * Return first letter capitalized
+ * @param {String} str
+ * @return {String} capitalized string
+ * @private
+ */
+const capitalize = str => str.charAt(0).toUpperCase() + str.slice(1);
+
+/**
+ * Convert to array
+ * @param {Object} v
+ * @returns {Array}
+ * @private
+ */
+const toArray = v => [].slice.call(v);
+
+/**
+ * Get css rules for specified stylesheets
+ * @param {Array} styleSheets The stylesheets to get the rules from
+ * @returns {Array}
+ * @private
+ */
+const getCssRules = styleSheets => {
+	let rules = [];
+
+	styleSheets.forEach(sheet => {
+		try {
+			if (sheet.cssRules &amp;&amp; sheet.cssRules.length) {
+				rules = rules.concat(toArray(sheet.cssRules));
+			}
+		} catch (e) {
+			console.error(`Error while reading rules from ${sheet.href}: ${e.toString()}`);
+		}
+	});
+
+	return rules;
+};
+
+/**
+ * Get unique value from array
+ * @param {Array} data
+ * @return {Array} Unique array value
+ * @private
+ */
+const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
+
+/**
+ * Merge array
+ * @param {Array} arr
+ * @return {Array}
+ * @private
+ */
+const mergeArray = arr => (arr &amp;&amp; arr.length ? arr.reduce((p, c) => p.concat(c)) : []);
+
+/**
+ * Merge object returning new object
+ * @param {Object} target
+ * @param {Object} objectN
+ * @returns {Object} merged target object
+ * @private
+ */
+const mergeObj = (target, ...objectN) => {
+	if (!objectN.length || (objectN.length === 1 &amp;&amp; !objectN[0])) {
+		return target;
+	}
+
+	const source = objectN.shift();
+
+	if (isObject(target) &amp;&amp; isObject(source)) {
+		Object.keys(source).forEach(key => {
+			const value = source[key];
+
+			if (isObject(value)) {
+				!target[key] &amp;&amp; (target[key] = {});
+				target[key] = mergeObj(target[key], value);
+			} else {
+				target[key] = isArray(value) ?
+					value.concat() : value;
+			}
+		});
+	}
+
+	return mergeObj(target, ...objectN);
+};
+
+/**
+ * Sort value
+ * @param {Array} data value to be sorted
+ * @param {Boolean} isAsc true: asc, false: desc
+ * @return {Number|String|Date} sorted date
+ * @private
+ */
+const sortValue = (data, isAsc = true) => {
+	let fn;
+
+	if (data[0] instanceof Date) {
+		fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
+	} else {
+		if (isAsc &amp;&amp; data.every(Number)) {
+			fn = (a, b) => a - b;
+		} else if (!isAsc) {
+			fn = (a, b) => (a > b &amp;&amp; -1) || (a &lt; b &amp;&amp; 1) || (a === b &amp;&amp; 0);
+		}
+	}
+
+	return data.concat().sort(fn);
+};
+
+/**
+ * Get min/max value
+ * @param {String} type 'min' or 'max'
+ * @param {Array} data Array data value
+ * @retun {Number|Date|undefined}
+ * @private
+ */
+const getMinMax = (type, data) => {
+	let res = data.filter(v => notEmpty(v));
+
+	if (res.length) {
+		if (isNumber(res[0])) {
+			res = Math[type](...res);
+		} else if (res[0] instanceof Date) {
+			res = sortValue(res, type === "min")[0];
+		}
+	} else {
+		res = undefined;
+	}
+
+	return res;
+};
+
+/**
+ * Get range
+ * @param {Number} start Start number
+ * @param {Number} end End number
+ * @return {Array}
+ * @private
+ */
+const getRange = (start, end) => {
+	const res = [];
+
+	for (let i = start; i &lt; end; i++) {
+		res.push(i);
+	}
+
+	return res;
+};
+
+// emulate event
+const emulateEvent = {
+	mouse: (() => {
+		const getParams = () => ({
+			bubbles: false, cancelable: false, screenX: 0, screenY: 0, clientX: 0, clientY: 0
+		});
+
+		try {
+			// eslint-disable-next-line no-new
+			new MouseEvent("t");
+
+			return (el, eventType, params = getParams()) => {
+				el.dispatchEvent(new MouseEvent(eventType, params));
+			};
+		} catch (e) {
+			// Polyfills DOM4 MouseEvent
+			return (el, eventType, params = getParams()) => {
+				const mouseEvent = document.createEvent("MouseEvent");
+
+				// https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+				mouseEvent.initMouseEvent(
+					eventType,
+					params.bubbles,
+					params.cancelable,
+					window,
+					0, // the event's mouse click count
+					params.screenX, params.screenY,
+					params.clientX, params.clientY,
+					false, false, false, false, 0, null
+				);
+
+				el.dispatchEvent(mouseEvent);
+			};
+		}
+	})(),
+	touch: (el, eventType, params) => {
+		const touchObj = new Touch(Object.assign({
+			identifier: Date.now(),
+			target: el,
+			radiusX: 2.5,
+			radiusY: 2.5,
+			rotationAngle: 10,
+			force: 0.5
+		}, params));
+
+		el.dispatchEvent(new TouchEvent(eventType, {
+			cancelable: true,
+			bubbles: true,
+			shiftKey: true,
+			touches: [touchObj],
+			targetTouches: [],
+			changedTouches: [touchObj]
+		}));
+	}
+};
+
+/**
+ * Process the template  &amp; return bound string
+ * @param {String} tpl Template string
+ * @param {Object} data Data value to be replaced
+ * @return {String}
+ * @private
+ */
+const tplProcess = (tpl, data) => {
+	let res = tpl;
+
+	for (const x in data) {
+		res = res.replace(new RegExp(`{=${x}}`, "g"), data[x]);
+	}
+
+	return res;
+};
+
+export {
+	asHalfPixel,
+	brushEmpty,
+	callFn,
+	capitalize,
+	ceil10,
+	diffDomain,
+	emulateEvent,
+	extend,
+	getBrushSelection,
+	getCssRules,
+	getMinMax,
+	getOption,
+	getPathBox,
+	getRandom,
+	getRange,
+	getRectSegList,
+	getUnique,
+	hasValue,
+	isArray,
+	isBoolean,
+	isDefined,
+	isEmpty,
+	isFunction,
+	isNumber,
+	isObject,
+	isObjectType,
+	isString,
+	isUndefined,
+	isValue,
+	mergeArray,
+	mergeObj,
+	notEmpty,
+	sanitise,
+	setTextValue,
+	sortValue,
+	toArray,
+	tplProcess
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.2</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+</body>
+</html>
