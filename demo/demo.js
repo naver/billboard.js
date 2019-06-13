@@ -1444,7 +1444,8 @@ var demos = {
 				];
 			}
 		},
-		"DataFromURL": {
+		"DataFromURL":
+		{
 			options: {
 				data: {
 					url: "./data/test.csv"
@@ -1720,27 +1721,85 @@ var demos = {
 				];
 			}
 		},
-		DataLabel: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250],
-						["data2", -50, 150, -150, 150, -50, -150],
-						["data3", -100, 100, -40, 100, -150, -50]
-					],
-					groups: [
-						["data1", "data2"]
-					],
-					type: "bar",
-					labels: true
-				},
-				grid: {
-					y: {
-						lines: [{value: 0}]
+		DataLabel: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+							["data3", -100, 100, -40, 100, -150, -50]
+						],
+						groups: [
+							["data1", "data2"]
+						],
+						type: "bar",
+						labels: true
+					},
+					grid: {
+						y: {
+							lines: [{value: 0}]
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 230, -200, 400],
+							["data2", -250, 350, -170],
+							["data3", -123, 100, -240]
+						],
+						groups: [
+							["data1", "data2"]
+						],
+						type: "bar",
+						labels: {
+							colors: "white",
+							centered: true
+						}
+					},
+					grid: {
+						y: {
+							lines: [{value: 0}]
+						}
 					}
 				}
 			}
-		},
+		],
+		DataLabelColors: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+						],
+						type: "bar",
+						labels: {
+							colors: "red"
+						}
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250],
+							["data2", -50, 150, -150, 150, -50, -150],
+						],
+						labels: {
+							colors: {
+								data1: "fuchsia",
+								data2: "blue"
+							}
+						}
+					}
+				}
+			}
+		],
 		DataLabelFormat: {
 			options: {
 				data: {
@@ -1757,7 +1816,7 @@ var demos = {
 						// format: function(v, id, i, j) { return "Default Format"; },
 						format: {
 							data1: function(x) {
-								return d3.format('$')(x);
+						     return d3.format('$')(x);
 							}
 							// data1: function(v, id, i, j) { return "Format for data1"; },
 						}
@@ -2169,6 +2228,157 @@ d3.select(".chart_area")
 		}
 	},
 
+	Plugins: {
+		StanfordDiagram: {
+			description: "Must load or import plugin before the use.",
+			options: {
+				data: {
+					x: "HPE",
+					columns: [
+						["HPE", 2.5, 2.5, 3.5, 3.5, 4, 4, 4.5, 5],
+						["HPL", 24.5, 24, 67.5, 56.5, 26.5, 26, 30, 28]
+					],
+					type: "scatter"
+				},
+				_plugins: [{
+					stanford: {
+						epochs: [1, 12, 32, 103, 200, 124, 234, 300],
+						scale: {
+							min: 1,
+							max: 10000,
+							format: "pow10"
+						},
+						padding: {
+							top: 15,
+							right: 0,
+							bottom: 0,
+							left: 0
+						},
+						regions: [
+							{
+								points: [
+									{x: 0,y: 0},
+									{x: 40,y: 40},
+									{x: 0,y: 40}
+								],
+								text: function (value, percentage) {
+								return "Normal Operations: "+ value +" "+ percentage +"%";
+							},
+								opacity: 0.2,
+								class: "test-polygon1"
+							},
+							{
+								points: [
+									{x: 0,y: 0},
+									{x: 40,y: 0},
+									{x: 40,y: 40}
+								],
+							text: function (value, percentage) {
+								return "MI: "+ value +" "+ percentage +"%";
+							},
+								opacity: 0.2,
+								class: "test-polygon2"
+							},
+							{
+								points: [
+									{x: 40,y: 0},
+									{x: 65,y: 0},
+									{x: 65,y: 40},
+									{x: 40,y: 40}
+								],
+							text: function (value, percentage) {
+								return "HMI: "+ value +" "+ percentage +"%";
+							},
+								opacity: 0.2,
+								class: "test-polygon3"
+							},
+							{
+								points: [
+									{x: 0,y: 40},
+									{x: 40,y: 40},
+									{x: 65,y: 65},
+									{x: 0,y: 65}
+								],
+							text: function (value, percentage) {
+								return "Unavailable Epochs: "+ value +" "+ percentage +"%";
+							},
+								opacity: 0.2,
+								class: "test-polygon4"
+							},
+							{
+								points: [
+									{x: 40,y: 40},
+									{x: 65,y: 40},
+									{x: 65,y: 65}
+								],
+							text: function (value, percentage) {
+								return "MI: "+ value +" "+ percentage +"%";
+							},
+								opacity: 0.2,
+								class: "test-polygon5"
+							}
+						],
+						lines: [
+							{x1: 0, y1: 0, x2: 65, y2: 65, class: "line"},
+							{x1: 0, x2: 65, y1: 40, y2: 40, class: "line"},
+							{x1: 40, x2: 40, y1: 0, y2: 40, class: "line"}
+						]
+					}
+				}],
+				legend: {
+					show: false
+				},
+				axis: {
+					x: {
+						label: {
+							text: "HPE",
+							position: "outer-center"
+						},
+						min: 0,
+						max: 60,
+						padding: {
+							left: 0
+						},
+						tick: {
+							values: [0, 10, 20, 30, 40, 50, 60]
+						}
+					},
+					y: {
+						label: {
+							text: "HPL",
+							position: "outer-middle"
+						},
+						min: 0,
+						max: 60,
+						tick: {
+							values: [0, 10, 20, 30, 40, 50, 60]
+						},
+						padding: {
+							top: 5,
+							bottom: 0
+						}
+					}
+				},
+				point: {
+					r: 1.5,
+					type: "rectangle"
+				}
+			},
+			style: [
+				"#stanfordDiagram .test-polygon1 { fill: white; }",
+				"#stanfordDiagram .test-polygon1 text { fill: black; }",
+				"#stanfordDiagram .test-polygon2 { fill: orange; }",
+				"#stanfordDiagram .test-polygon2 text { fill: black; }",
+				"#stanfordDiagram .test-polygon3 { fill: red; }",
+				"#stanfordDiagram .test-polygon3 text { fill: black; }",
+				"#stanfordDiagram .test-polygon4 { fill: gray; }",
+				"#stanfordDiagram .test-polygon4 text { fill: black; }",
+				"#stanfordDiagram .test-polygon5 { fill: orange; }",
+				"#stanfordDiagram .test-polygon5 text { fill: black; }"
+			]
+		}
+	},
+
 	Point: {
 		RectanglePoints: {
 			options: {
@@ -2257,8 +2467,8 @@ d3.select(".chart_area")
 					]
 				},
 				onrendered: function() {
-					       // or set unicode value as
-					       // this.defs.selectAll("text").text(() => "\uf21c");
+								 // or set unicode value as
+								 // this.defs.selectAll("text").text(() => "\uf21c");
 				}
 			}
 		},
@@ -2450,13 +2660,13 @@ d3.select(".chart_area")
 				tooltip: {
 					format: {
 						title: function(d) {
-						  return 'Data ' + d;
-					      },
+							return 'Data ' + d;
+								},
 						value: function(value, ratio, id) {
-						  var format = id === "data1" ? d3.format(',') : d3.format('$');
+							var format = id === "data1" ? d3.format(',') : d3.format('$');
 
-						  return format(value);
-					      }
+							return format(value);
+								}
 						// value: d3.format(',') // apply this format to both y and y2
 					}
 				}
@@ -2480,6 +2690,38 @@ d3.select(".chart_area")
 					order: "desc"
 				}
 			}
+		},
+		TooltipTemplate: {
+			options: {
+				data: {
+					columns: [
+						["data1", 120, 200, 300, 100, 150, 250],
+						["data2", 250, 129, 217, 240, 315, 225],
+						["data3", 100, 320, 210, 340, 215, 125]
+					]
+				},
+				tooltip: {
+					init: {
+						show: true
+					},
+					doNotHide: true,
+					contents: {
+						bindto: "#tooltip",
+						text: {
+							VAR: ["A", "B", "TextA"]
+						},
+						template: "<ul><li>Index<br>{=TITLE}</li>" +
+								"{{<li class={=CLASS_TOOLTIP_NAME}>" +
+								"<span>{=VALUE}:{=VAR}</span><br>" +
+								"<span style=color:{=COLOR}>{=NAME}</span></li>}}</ul>"
+					}
+				}
+			},
+			style: [
+				"#tooltip { font-size: 13px;padding: 0;margin-bottom: 80px; }",
+				"#tooltip li { list-style: none;float: left; padding: 0 10px; }",
+				"#tooltip li span:first-child { font-size: 16px; }"
+			]
 		},
 		LinkedTooltips: [
 			{
@@ -2575,8 +2817,8 @@ d3.select(".chart_area")
 							y: [0, 1],
 							stops: [
 								[0, function(id) {
-             return id == "data1" ? "red" : "yellow";
-					          }, 1],
+						 return id == "data1" ? "red" : "yellow";
+										}, 1],
 								[0.3, "orange", 0.5],
 								[0.6, "green", 0.7],
 								[0.8, "purple", 0.7],
@@ -2866,9 +3108,9 @@ d3.select(".chart_area")
 					tiles: function() {
 						/* will add below <linearGradient> definition to be used for 'fill' attribute
 						<linearGradient patternUnits="userSpaceOnUse" x2="0" y2="80%">
-						  <stop offset="49%" stop-color="blue"></stop>
-						  <stop offset="50%" stop-color="grey"></stop>
-						  <stop offset="51%" stop-color="red"></stop>
+							<stop offset="49%" stop-color="blue"></stop>
+							<stop offset="50%" stop-color="grey"></stop>
+							<stop offset="51%" stop-color="red"></stop>
 						</linearGradient>
 						 */
 						var gradient = d3.select(document.createElementNS(d3.namespaces.svg, "linearGradient"))
@@ -3013,13 +3255,13 @@ d3.select(".chart_area")
 				donut: {
 					label: {
 						format: function(value, ratio, id) {
-						  return value +"\nHours";
-					      }
+							return value +"\nHours";
+								}
 					}
 				}
 			}
 		},
-		MultilneTitle: {
+		MultilineTitle: {
 			options: {
 				data: {
 					columns: [
@@ -3080,7 +3322,49 @@ d3.select(".chart_area")
 					}
 				}
 			}
-		}
+		},
+		GaugeStackData: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 10],
+							["data2", 190],
+							["data3", 70],
+							["data4", 150],
+							["data5", 50]
+						],
+						type: "gauge",
+						order: "asc"
+					},
+					gauge: {
+						title: "Title A"
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 150]
+						],
+						type: "gauge",
+						order: null
+					},
+					gauge: {
+						max: 500,
+						title: "Title B",
+						label: {
+							format: function(value, ratio) {
+								return value;
+							}
+						},
+						width: 80
+					}
+				}
+			}
+		]
 	},
 	LineChartOptions: {
 		HidePoints: {
@@ -3151,8 +3435,8 @@ d3.select(".chart_area")
 				pie: {
 					label: {
 						format: function(value, ratio, id) {
-						  return d3.format('$')(value);
-					      }
+							return d3.format('$')(value);
+								}
 					}
 				}
 			}
@@ -3170,27 +3454,48 @@ d3.select(".chart_area")
 				pie: {
 					label: {
 						format: function(value, ratio, id) {
-						  return value +"\nHours";
-					      }
+							return value +"\nHours";
+								}
 					}
 				}
 			}
 		},
-		InnerRadius: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30],
-						["data2", 50],
-						["data3", 20]
-					],
-					type: "pie"
-				},
-				pie: {
-					innerRadius: 20
+		InnerRadius: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 50],
+							["data3", 20]
+						],
+						type: "pie"
+					},
+					pie: {
+						innerRadius: 20
+					}
 				}
-			}
-		},
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30],
+							["data2", 50],
+							["data3", 20]
+						],
+						type: "pie"
+					},
+					pie: {
+						innerRadius: {
+							data1: 50,
+							data2: 80,
+							data3: 0
+						}
+					}
+				}
+			},
+		],
 		PadAngle: {
 			options: {
 				data: {
@@ -3254,6 +3559,28 @@ d3.select(".chart_area")
 			style: [
 				"#radarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
 			]
+		},
+		RadarAxisMultiline: {
+			options: {
+				padding: {
+					top: 20
+				},
+				data: {
+					x: "x",
+					columns: [
+						["x", "1st\nPrize", "2nd\nPrize", "3rd\nPrize"],
+						["data1", 230, 250, 100],
+						["data2", 150, 150, 230]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 300
+					}
+				}
+			}
 		},
 		RadarLevel: {
 			options: {
@@ -3511,37 +3838,37 @@ d3.select(".chart_area")
 							done: function() {
 								chart.flow({
 									columns: [
-                                        ["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
-                                        ["data1", 200, 300, 100, 250],
-                                        ["data2", 100, 90, 40, 120],
-                                        ["data3", 100, 100, 300, 500]
+																				["x", '2013-02-11', '2013-02-12', '2013-02-13', '2013-02-14'],
+																				["data1", 200, 300, 100, 250],
+																				["data2", 100, 90, 40, 120],
+																				["data3", 100, 100, 300, 500]
 									],
 									length: 0,
 									duration: 1500,
 									done: function() {
-                                        chart.flow({
-                                            columns: [
-                                                ["x", '2013-03-01', '2013-03-02'],
-                                                ["data1", 200, 300],
-                                                ["data2", 150, 250],
-                                                ["data3", 100, 100]
-                                            ],
-                                            length: 2,
-                                            duration: 1500,
-                                            done: function() {
-                                                chart.flow({
-                                                    columns: [
-                                                        ["x", '2013-03-21', '2013-04-01'],
-                                                        ["data1", 500, 200],
-                                                        ["data2", 100, 150],
-                                                        ["data3", 200, 400]
-                                                    ],
-                                                    to: '2013-03-01',
-                                                    duration: 1500
-                                                });
-                                            }
-                                        });
-   									}
+																				chart.flow({
+																						columns: [
+																								["x", '2013-03-01', '2013-03-02'],
+																								["data1", 200, 300],
+																								["data2", 150, 250],
+																								["data3", 100, 100]
+																						],
+																						length: 2,
+																						duration: 1500,
+																						done: function() {
+																								chart.flow({
+																										columns: [
+																												["x", '2013-03-21', '2013-04-01'],
+																												["data1", 500, 200],
+																												["data2", 100, 150],
+																												["data3", 200, 400]
+																										],
+																										to: '2013-03-01',
+																										duration: 1500
+																								});
+																						}
+																				});
+	 									}
 								});
 							},
 						});
