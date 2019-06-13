@@ -3563,7 +3563,7 @@ d3.select(".chart_area")
 		RadarAxisMultiline: {
 			options: {
 				padding: {
-					top: 20
+					top: 25
 				},
 				data: {
 					x: "x",
