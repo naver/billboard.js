@@ -574,4 +574,44 @@ describe("SHAPE ARC", () => {
 			checkMultiline(chart.$.arc);
 		});
 	});
+
+	describe("check for data loading", () => {
+		it("Interaction of chart when initialized with 0 and .load()", done => {
+		const chart = util.generate({
+			data: {
+			  columns: [
+				["data1", 0],
+				["data2", 0],
+			  ],
+			  type: "pie",
+			}
+		  });
+
+		  setTimeout(function() {
+			  chart.load({
+				  columns: [
+					  ["data1", 3],
+					  ["data2", 6],
+				  ],
+				  done: () => {
+					const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+
+					util.fireEvent(legend, "mouseover");
+					util.fireEvent(legend, "mouseout");
+
+					setTimeout(() => {
+						chart.$.arc.selectAll("path").each(function() {
+							const rect = this.getBoundingClientRect();
+
+							expect(this.getAttribute("d")).to.not.be.equal("M 0 0");
+							expect(rect.width > 0 && rect.height > 0).to.be.true;
+						});
+
+						done();
+					}, 1000);
+				  }
+			  });
+		  }, 1000);
+		});
+	});
 });
