@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.0-nightly-20190613104954
+ * @version 1.9.0-nightly-20190617104911
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7958,7 +7958,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         newArc = function (d, withoutUpdate) {
       var path = "M 0 0";
 
-      if ("value" in d ? d.value > 0 : d.data) {
+      if (d.value || d.data) {
         isNumber(ir) || (arc = arc.innerRadius($$.getInnerRadius(d)));
         var updated = !withoutUpdate && $$.updateAngle(d);
         withoutUpdate ? path = arc(d) : updated && (path = arc(updated));
@@ -8680,9 +8680,9 @@ extend(ChartInternal_ChartInternal.prototype, {
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this;
     $$.data.targets.forEach(function (d) {
-      var id = $$.getTargetSelectorSuffix(d.id);
+      var id = "".concat($$.datetimeId, "-areaGradient").concat($$.getTargetSelectorSuffix(d.id));
 
-      if ($$.isAreaType(d) && $$.defs.select("[id$=".concat(id, "]")).empty()) {
+      if ($$.isAreaType(d) && $$.defs.select("#".concat(id)).empty()) {
         var color = $$.color(d),
             _$$$config$area_linea = $$.config.area_linearGradient,
             _$$$config$area_linea2 = _$$$config$area_linea.x,
@@ -8691,7 +8691,7 @@ extend(ChartInternal_ChartInternal.prototype, {
             y = _$$$config$area_linea3 === void 0 ? [0, 1] : _$$$config$area_linea3,
             _$$$config$area_linea4 = _$$$config$area_linea.stops,
             stops = _$$$config$area_linea4 === void 0 ? [[0, color, 1], [1, color, 0]] : _$$$config$area_linea4,
-            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient").concat(id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
+            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat(id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
         stops.forEach(function (v) {
           var stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
           linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
@@ -13818,7 +13818,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.0-nightly-20190613104954",
+  version: "1.9.0-nightly-20190617104911",
 
   /**
    * Generate chart
@@ -13917,7 +13917,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.0-nightly-20190613104954
+ * @version 1.9.0-nightly-20190617104911
  */
 
 
