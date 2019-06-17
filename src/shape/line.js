@@ -348,9 +348,9 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.data.targets.forEach(d => {
-			const id = $$.getTargetSelectorSuffix(d.id);
+			const id = `${$$.datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)}`;
 
-			if ($$.isAreaType(d) && $$.defs.select(`[id$=${id}]`).empty()) {
+			if ($$.isAreaType(d) && $$.defs.select(`#${id}`).empty()) {
 				const color = $$.color(d);
 				const {
 					x = [0, 0],
@@ -359,7 +359,7 @@ extend(ChartInternal.prototype, {
 				} = $$.config.area_linearGradient;
 
 				const linearGradient = $$.defs.append("linearGradient")
-					.attr("id", `${$$.datetimeId}-areaGradient${id}`)
+					.attr("id", `${id}`)
 					.attr("x1", x[0])
 					.attr("x2", x[1])
 					.attr("y1", y[0])
