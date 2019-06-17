@@ -129,7 +129,7 @@ extend(ChartInternal.prototype, {
 		const newArc = (d, withoutUpdate) => {
 			let path = "M 0 0";
 
-			if ("value" in d ? d.value > 0 : d.data) {
+			if (d.value || d.data) {
 				if (!isNumber(ir)) {
 					arc = arc.innerRadius($$.getInnerRadius(d));
 				}
