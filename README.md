@@ -1,14 +1,8 @@
 <img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
-  
-<a href="https://www.npmjs.com/package/billboard.js">
-  <img alt="npm latest version" src="https://img.shields.io/npm/v/billboard.js/latest.svg">
-</a>
-<a href="https://www.npmjs.com/package/billboard.js">
-  <img alt="npm next version" src="https://img.shields.io/npm/v/billboard.js/next.svg">
-</a><br>
+
+[![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
 [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Greenkeeper][badge-gk]][link-gk]
-[![semantic-release][badge-semantic-release]][link-semantic-release]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -302,6 +296,8 @@ THE SOFTWARE.
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
 [badge-gzip-size]: http://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
+[badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
+[badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
 [badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
 
 <!-- links -->
