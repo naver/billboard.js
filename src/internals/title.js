@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
-import {extend, isNumber} from "./util";
+import {extend, isNumber, setTextValue} from "./util";
 import CLASS from "../config/classes";
 
 /**
@@ -44,12 +44,7 @@ extend(ChartInternal.prototype, {
 				.style("text-anchor", getTextPos($$.config.title_position))
 				.attr("class", CLASS.title);
 
-			$$.config.title_text.split("\n").forEach((v, i) => {
-				text.append("tspan")
-					.attr("x", 0)
-					.attr("dy", `${i ? "1.5" : ".3"}em`)
-					.text(v);
-			});
+			setTextValue(text, $$.config.title_text, [0.3, 1.5]);
 		}
 	},
 

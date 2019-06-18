@@ -76,6 +76,39 @@ const callFn = (fn, ...args) => {
  */
 const sanitise = str => (isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str);
 
+/**
+ * Set text value. If there's multiline add nodes.
+ * @param {d3Selection} node Text node
+ * @param {String} text Text value string
+ * @param {Array} dy dy value for multilined text
+ * @private
+ */
+const setTextValue = (node, text, dy = [-1, 1]) => {
+	if (!node || !isString(text)) {
+		return;
+	}
+
+	if (text.indexOf("\n") === -1) {
+		node.text(text);
+	} else {
+		const diff = [node.text(), text].map(v => v.replace(/[\s\n]/g, ""));
+
+		if (diff[0] !== diff[1]) {
+			const multiline = text.split("\n");
+
+			// reset possible text
+			node.html("");
+
+			multiline.forEach((v, i) => {
+				node.append("tspan")
+					.attr("x", 0)
+					.attr("dy", `${i === 0 ? dy[0] : dy[1]}em`)
+					.text(v);
+			});
+		}
+	}
+};
+
 // substitution of SVGPathSeg API polyfill
 const getRectSegList = path => {
 	/*
@@ -202,6 +235,37 @@ const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
 const mergeArray = arr => (arr && arr.length ? arr.reduce((p, c) => p.concat(c)) : []);
 
 /**
+ * Merge object returning new object
+ * @param {Object} target
+ * @param {Object} objectN
+ * @returns {Object} merged target object
+ * @private
+ */
+const mergeObj = (target, ...objectN) => {
+	if (!objectN.length || (objectN.length === 1 && !objectN[0])) {
+		return target;
+	}
+
+	const source = objectN.shift();
+
+	if (isObject(target) && isObject(source)) {
+		Object.keys(source).forEach(key => {
+			const value = source[key];
+
+			if (isObject(value)) {
+				!target[key] && (target[key] = {});
+				target[key] = mergeObj(target[key], value);
+			} else {
+				target[key] = isArray(value) ?
+					value.concat() : value;
+			}
+		});
+	}
+
+	return mergeObj(target, ...objectN);
+};
+
+/**
  * Sort value
  * @param {Array} data value to be sorted
  * @param {Boolean} isAsc true: asc, false: desc
@@ -262,6 +326,36 @@ const getRange = (start, end) => {
 	}
 
 	return res;
+};
+
+/**
+ * Send stats
+ * @private
+ */
+const sendStats = () => {
+	if (navigator && localStorage) {
+		const key = "$bb.stats";
+		const url = `https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F${location ? location.hostname : ""}`;
+		const t = +new Date();
+		const last = +localStorage.getItem(key);
+		const expire = 1000 * 60 * 60 * 24 * 14;
+
+		if (!last || (last + expire) < t) {
+			localStorage.setItem(key, t + expire);
+
+			if (navigator.sendBeacon) {
+				navigator.sendBeacon(url);
+			} else {
+				const i = new Image();
+
+				i.src = url;
+				i.style.display = "none";
+
+				document.body.appendChild(i);
+				document.body.removeChild(i);
+			}
+		}
+	}
 };
 
 // emulate event
@@ -368,8 +462,11 @@ export {
 	isUndefined,
 	isValue,
 	mergeArray,
+	mergeObj,
 	notEmpty,
 	sanitise,
+	sendStats,
+	setTextValue,
 	sortValue,
 	toArray,
 	tplProcess

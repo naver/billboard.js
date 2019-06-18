@@ -27,7 +27,7 @@ If you have any questions, checkout the previous posts or create a new one at:
 - [Issue with 'question' label](https://github.com/naver/billboard.js/issues?utf8=%E2%9C%93&q=label%3Aquestion)
 
 ## Supported chart types
-![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=4)
+![Chart Types](https://naver.github.io/billboard.js/img/chart-types.png?v=5)
 
 ## Download and Installation
 
@@ -88,6 +88,19 @@ With nightly, you can try upcoming changes prior the official release.
 
 > The version info will be given as the build datetime: `x.x.x-nightly-yyyymmddhhmmss`
 
+There're two ways to install from `nightly` branch directly.
+```js
+// Specify on 'package.json' file
+"dependencies": {
+      ...
+      "billboard.js": "git://github.com/naver/billboard.js.git#nightly"
+},
+```
+
+```sh
+# Run install command from shell
+$ npm install git+https://github.com/naver/billboard.js.git#nightly --save
+```
 
 ### Installation with npm
 

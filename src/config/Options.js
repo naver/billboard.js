@@ -87,6 +87,22 @@ export default class Options {
 			size_height: undefined,
 
 			/**
+			 * Allow usage stats collection.
+			 * - **NOTE:**
+			 *   - The usage stats collection is used for reference purpose only.
+			 *   - The stats data will be sent in a period of once in every 2 weeks.
+			 *   - Help us to make a better chart library! :)
+			 * @name stats
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default true
+			 * @example
+			 * // turn off stats sending
+			 * stats: false
+			 */
+			stats: true,
+
+			/**
 			 * The padding of the chart element.
 			 * @name padding
 			 * @memberof Options
@@ -367,14 +383,25 @@ export default class Options {
 			data_xs: {},
 
 			/**
-			 * Set a format to parse string specifed as x.
+			 * Set a format specifier to parse string specifed as x.
 			 * @name data․xFormat
 			 * @memberof Options
 			 * @type {String}
 			 * @default %Y-%m-%d
 			 * @example
 			 * data: {
-             *   xFormat: "%Y-%m-%d %H:%M:%S"
+			 *    x: "x",
+			 *    columns: [
+			 *        ["x", "01012019", "02012019", "03012019"],
+			 *        ["data1", 30, 200, 100]
+			 *    ],
+			 *    // Format specifier to parse as datetime for given 'x' string value
+			 *    xFormat: "%m%d%Y"
+			 * },
+			 * axis: {
+			 *    x: {
+			 *        type: "timeseries"
+			 *    }
 			 * }
 			 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
 			 */
@@ -405,19 +432,6 @@ export default class Options {
 			 * }
 			 */
 			data_xSort: true,
-
-			/**
-			 * Specify the key of epochs values in the data.
-			 * @name data․epochs
-			 * @memberof Options
-			 * @type {String}
-			 * @default epochs
-			 * @example
-			 * data: {
-			 *   epochs: "count"
-			 * }
-			 */
-			data_epochs: "epochs",
 
 			/**
 			 * Converts data id value
@@ -1135,7 +1149,8 @@ export default class Options {
 			data_keys: undefined,
 
 			/**
-			 * Set text displayed when empty data.
+			 * Set text label to be displayed when there's no data to show.
+			 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
 			 * @name data․empty․label․text
 			 * @memberof Options
 			 * @type {String}
@@ -2671,7 +2686,7 @@ export default class Options {
 			 *     show: true,
 			 *     lines: [
 			 *       {value: 2, text: "Label on 2"},
-			 *       {value: 5, text: "Label on 5", class: "label-5"}
+			 *       {value: 5, text: "Label on 5", class: "label-5"},
 			 *       {value: 6, text: "Label on 6", position: "start"}
 			 *     ]
 			 *   },
@@ -2679,7 +2694,7 @@ export default class Options {
 			 *     show: true,
 			 *     lines: [
 			 *       {value: 100, text: "Label on 100"},
-			 *       {value: 200, text: "Label on 200", class: "label-200"}
+			 *       {value: 200, text: "Label on 200", class: "label-200"},
 			 *       {value: 300, text: "Label on 300", position: 'middle'}
 			 *     ],
 			 *     ticks: 5
@@ -3049,6 +3064,7 @@ export default class Options {
 			 * @property {Number} [gauge.min=0] Set min value of the gauge.
 			 * @property {Number} [gauge.max=100] Set max value of the gauge.
 			 * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
+			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
 			 * @example
@@ -3074,6 +3090,7 @@ export default class Options {
 			 *      },
 			 *      min: -100,
 			 *      max: 200,
+			 *      title: "Title Text",
 			 *      units: "%",
 			 *      width: 10
 			 *  }
@@ -3085,6 +3102,7 @@ export default class Options {
 			gauge_max: 100,
 			gauge_startingAngle: -1 * Math.PI / 2,
 			gauge_label_extents: undefined,
+			gauge_title: "",
 			gauge_units: undefined,
 			gauge_width: undefined,
 			gauge_expand: {},
@@ -3180,6 +3198,8 @@ export default class Options {
 
 			/**
 			 * Set radar options
+			 * - **NOTE:**
+			 *  > When x tick text contains `\n`, it's used as line break.
 			 * @name radar
 			 * @memberof Options
 			 * @type {Object}
@@ -3196,6 +3216,7 @@ export default class Options {
 			 * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
 			 * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
 			 * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+			 * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
 			 * @example
 			 *  radar: {
 			 *      axis: {

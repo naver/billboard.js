@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190520142042
+ * @version 1.9.0-nightly-20190617104911
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -302,11 +302,18 @@ __webpack_require__.r(__webpack_exports__);
  * @ignore
  */
 
-/* eslint-disable no-undef */
-var win = globalThis || window || self || global,
+/* eslint-disable no-new-func, no-undef */
+var win = function () {
+  var def = function (o) {
+    return typeof o !== "undefined" && o;
+  };
+
+  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+}(),
     doc = win && win.document,
     isMobile = win.navigator && win.navigator.userAgent && win.navigator.userAgent.indexOf("Mobi") > -1 || !1;
-/* eslint-enable no-undef */
+/* eslint-enable no-new-func, no-undef */
+
 
 
 /* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(12)))
@@ -5411,6 +5418,7 @@ function axisLeft(scale) {
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
   chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
   chartArcsTitle: "bb-chart-arcs-title",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
   chartBar: "bb-chart-bar",
   chartBars: "bb-chart-bars",
   chartLine: "bb-chart-line",
@@ -6372,6 +6380,22 @@ var isValue = function (v) {
     sanitise = function (str) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 },
+    setTextValue = function (node, text) {
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"); // reset possible text
+
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+      });
+    }
+  }
+},
     getRectSegList = function (path) {
   /*
    * seg1 ---------- seg2
@@ -6467,6 +6491,24 @@ var isValue = function (v) {
     return p.concat(c);
   }) : [];
 },
+    mergeObj = function (_mergeObj) {
+  function mergeObj() {
+    return _mergeObj.apply(this, arguments);
+  }
+
+  return mergeObj.toString = function () {
+    return _mergeObj.toString();
+  }, mergeObj;
+}(function (target) {
+  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}),
     sortValue = function (data) {
   var fn,
       isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
@@ -6492,6 +6534,18 @@ var isValue = function (v) {
   for (var i = start; i < end; i++) res.push(i);
 
   return res;
+},
+    sendStats = function () {
+  if (navigator && localStorage) {
+    var url = "https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F".concat(location ? location.hostname : ""),
+        t = +new Date(),
+        last = +localStorage.getItem("$bb.stats"),
+        expire = 1209600000;
+    if (!last || last + expire < t) if (localStorage.setItem("$bb.stats", t + expire), navigator.sendBeacon) navigator.sendBeacon(url);else {
+      var i = new Image();
+      i.src = url, i.style.display = "none", document.body.appendChild(i), document.body.removeChild(i);
+    }
+  }
 },
     emulateEvent = {
   mouse: function () {
@@ -9288,7 +9342,7 @@ function () {
             }, scale1 = scale0;
           } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
 
-          tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", 1), scale1);
+          tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
         }
       }), this.g = $g;
     }
@@ -9859,12 +9913,15 @@ function () {
             targetsToShow = $$.filterTargetsToShow($$.data.targets),
             getFrom = isYAxis ? "getY" : "getX",
             scale = $$[id].copy().domain($$["".concat(getFrom, "Domain")](targetsToShow, id)),
-            domain = scale.domain().toString();
+            domain = scale.domain();
         // do not compute if domain is same
-        if (currentTickMax.domain === domain) return currentTickMax.size;
+        if (isArray(currentTickMax.domain) && currentTickMax.domain.every(function (v, i) {
+          return v === domain[i];
+        })) return currentTickMax.size;
         currentTickMax.domain = domain;
-        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0);
-        isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0),
+            tickCount = config["axis_".concat(id, "_tick_count")];
+        tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
         axis.create(dummy), dummy.selectAll("text").each(function () {
           maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
@@ -10008,7 +10065,7 @@ function () {
     key: "beforeInit",
     value: function beforeInit() {
       var $$ = this;
-      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
+      $$.config.stats && sendStats(), $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
     }
   }, {
     key: "afterInit",
@@ -10269,7 +10326,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).transition().style("opacity", targetsToShow.length ? 0 : 1), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Redraw axis
@@ -10288,9 +10345,10 @@ function () {
           xDomainForZoom,
           $$ = this,
           config = $$.config,
-          hasArcType = $$.hasArcType();
+          hasArcType = $$.hasArcType(),
+          hasZoom = !!$$.zoomScale;
       // show/hide if manual culling needed
-      if ($$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? ($$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+      if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
         var axis = $$[key];
 
         if (axis) {
@@ -10848,6 +10906,22 @@ var Options_Options = function Options() {
     size_height: undefined,
 
     /**
+     * Allow usage stats collection.
+     * - **NOTE:**
+     *   - The usage stats collection is used for reference purpose only.
+     *   - The stats data will be sent in a period of once in every 2 weeks.
+     *   - Help us to make a better chart library! :)
+     * @name stats
+     * @memberof Options
+     * @type {Boolean}
+     * @default true
+     * @example
+     * // turn off stats sending
+     * stats: false
+     */
+    stats: !0,
+
+    /**
      * The padding of the chart element.
      * @name padding
      * @memberof Options
@@ -11128,14 +11202,25 @@ var Options_Options = function Options() {
     data_xs: {},
 
     /**
-     * Set a format to parse string specifed as x.
+     * Set a format specifier to parse string specifed as x.
      * @name data․xFormat
      * @memberof Options
      * @type {String}
      * @default %Y-%m-%d
      * @example
      * data: {
-              *   xFormat: "%Y-%m-%d %H:%M:%S"
+     *    x: "x",
+     *    columns: [
+     *        ["x", "01012019", "02012019", "03012019"],
+     *        ["data1", 30, 200, 100]
+     *    ],
+     *    // Format specifier to parse as datetime for given 'x' string value
+     *    xFormat: "%m%d%Y"
+     * },
+     * axis: {
+     *    x: {
+     *        type: "timeseries"
+     *    }
      * }
      * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
      */
@@ -11166,19 +11251,6 @@ var Options_Options = function Options() {
      * }
      */
     data_xSort: !0,
-
-    /**
-     * Specify the key of epochs values in the data.
-     * @name data․epochs
-     * @memberof Options
-     * @type {String}
-     * @default epochs
-     * @example
-     * data: {
-     *   epochs: "count"
-     * }
-     */
-    data_epochs: "epochs",
 
     /**
      * Converts data id value
@@ -11901,7 +11973,8 @@ var Options_Options = function Options() {
     data_keys: undefined,
 
     /**
-     * Set text displayed when empty data.
+     * Set text label to be displayed when there's no data to show.
+     * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
      * @name data․empty․label․text
      * @memberof Options
      * @type {String}
@@ -13445,7 +13518,7 @@ var Options_Options = function Options() {
      *     show: true,
      *     lines: [
      *       {value: 2, text: "Label on 2"},
-     *       {value: 5, text: "Label on 5", class: "label-5"}
+     *       {value: 5, text: "Label on 5", class: "label-5"},
      *       {value: 6, text: "Label on 6", position: "start"}
      *     ]
      *   },
@@ -13453,7 +13526,7 @@ var Options_Options = function Options() {
      *     show: true,
      *     lines: [
      *       {value: 100, text: "Label on 100"},
-     *       {value: 200, text: "Label on 200", class: "label-200"}
+     *       {value: 200, text: "Label on 200", class: "label-200"},
      *       {value: 300, text: "Label on 300", position: 'middle'}
      *     ],
      *     ticks: 5
@@ -13823,6 +13896,7 @@ var Options_Options = function Options() {
      * @property {Number} [gauge.min=0] Set min value of the gauge.
      * @property {Number} [gauge.max=100] Set max value of the gauge.
      * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
+     * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
      * @property {String} [gauge.units] Set units of the gauge.
      * @property {Number} [gauge.width] Set width of gauge chart.
      * @example
@@ -13848,6 +13922,7 @@ var Options_Options = function Options() {
      *      },
      *      min: -100,
      *      max: 200,
+     *      title: "Title Text",
      *      units: "%",
      *      width: 10
      *  }
@@ -13859,6 +13934,7 @@ var Options_Options = function Options() {
     gauge_max: 100,
     gauge_startingAngle: -1 * Math.PI / 2,
     gauge_label_extents: undefined,
+    gauge_title: "",
     gauge_units: undefined,
     gauge_width: undefined,
     gauge_expand: {},
@@ -13953,6 +14029,8 @@ var Options_Options = function Options() {
 
     /**
      * Set radar options
+     * - **NOTE:**
+     *  > When x tick text contains `\n`, it's used as line break.
      * @name radar
      * @memberof Options
      * @type {Object}
@@ -13969,6 +14047,7 @@ var Options_Options = function Options() {
      * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
      * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
      * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+     * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
      * @example
      *  radar: {
      *      axis: {
@@ -14354,17 +14433,20 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @param {Boolean} isInit - param is given at the init rendering
    */
   updateScales: function updateScales(isInit) {
-    var $$ = this,
+    var updateXDomain = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1],
+        $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated;
-    // update edges
+    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1;
     // update scales
     // x Axis
+    var xDomain = updateXDomain && $$.x && $$.x.orgDomain(),
+        xSubDomain = updateXDomain && $$.orgXDomain;
     // y Axis
     // update for arc
-    $$.xMin = isRotated ? 1 : 0, $$.xMax = isRotated ? $$.height : $$.width, $$.yMin = isRotated ? 0 : $$.height, $$.yMax = isRotated ? $$.width : 1, $$.subXMin = $$.xMin, $$.subXMax = $$.xMax, $$.subYMin = isRotated ? 0 : $$.height2, $$.subYMax = isRotated ? $$.width2 : 1, $$.x = $$.getX($$.xMin, $$.xMax, $$.x && $$.x.orgDomain(), function () {
+    $$.x = $$.getX($$.xMin, $$.xMax, xDomain, function () {
       return $$.xAxis.tickOffset();
-    }), $$.subX = $$.getX($$.xMin, $$.xMax, $$.orgXDomain, function (d) {
+    }), $$.subX = $$.getX($$.xMin, $$.xMax, xSubDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
     }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
   }
@@ -14773,8 +14855,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Get total data sum
-   * @private
    * @return {Number}
+  	 * @private
    */
   getTotalDataSum: function getTotalDataSum() {
     var $$ = this,
@@ -14852,7 +14934,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   filterTargetsToShow: function filterTargetsToShow(targets) {
     var $$ = this;
-    return targets.filter(function (t) {
+    return (targets || $$.data.targets).filter(function (t) {
       return $$.isTargetToShow(t.id);
     });
   },
@@ -14912,6 +14994,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
     return !1;
   },
+  hasMultiTargets: function hasMultiTargets() {
+    return this.filterTargetsToShow().length > 1;
+  },
   hasNegativeValueInTargets: function hasNegativeValueInTargets(targets) {
     return this.checkValueInTargets(targets, function (v) {
       return v < 0;
@@ -14923,8 +15008,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   _checkOrder: function _checkOrder(type) {
-    var config = this.config;
-    return isString(config.data_order) && config.data_order.toLowerCase() === type;
+    var config = this.config,
+        order = config.data_order;
+    return isString(order) && order.toLowerCase() === type;
   },
   isOrderDesc: function isOrderDesc() {
     return this._checkOrder("desc");
@@ -15043,7 +15129,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         xIndex = isRotated ? 1 : 0,
         yIndex = isRotated ? 0 : 1,
         y = $$.circleY(data, data.index),
-        x = $$.x(data.x);
+        x = ($$.zoomScale || $$.x)(data.x);
     return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
   },
 
@@ -15673,9 +15759,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var eventRectUpdate,
         $$ = this,
         config = $$.config,
-        zoomEnabled = config.zoom_enabled,
         isMultipleX = $$.isMultipleX(),
-        eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && (zoomEnabled === !0 || zoomEnabled.type === "wheel") ? config.axis_rotate ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
+        zoomEnabled = config.zoom_enabled,
+        eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
       // Set data and update $$.eventRect
       var maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
@@ -18453,11 +18539,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         padding = config.pie_padding,
         padAngle = $$.hasType("pie") && padding ? padding * .01 : config["".concat(config.data_type, "_padAngle")] ? config["".concat(config.data_type, "_padAngle")] : 0;
-    $$.pie = src_pie().padAngle(padAngle).value(function (d) {
+    $$.pie = src_pie().padAngle(padAngle).sortValues($$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
+      return $$.isOrderAsc() ? a - b : b - a;
+    } : null).value(function (d) {
       return d.values.reduce(function (a, b) {
         return a + b.value;
       }, 0);
-    }), config.data_order || $$.pie.sort(null);
+    });
   },
   updateRadius: function updateRadius() {
     var $$ = this,
@@ -18480,18 +18568,26 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded(), $$.svgArcExpandedSub = $$.getSvgArcExpanded(.98);
   },
   updateAngle: function updateAngle(dValue) {
-    var gMin,
-        gMax,
-        gTic,
-        gValue,
-        $$ = this,
+    var $$ = this,
         config = $$.config,
+        pie = $$.pie,
         d = dValue,
-        found = !1,
-        index = 0;
-    return config ? ($$.pie($$.filterTargetsToShow($$.data.targets)).forEach(function (t) {
-      found || t.data.id !== d.data.id || (found = !0, d = t, d.index = index), index++;
-    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), $$.isGaugeType(d.data) && (gMin = config.gauge_min, gMax = config.gauge_max, gTic = Math.PI * (config.gauge_fullCircle ? 2 : 1) / (gMax - gMin), gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin, d.startAngle = config.gauge_startingAngle, d.endAngle = d.startAngle + gTic * gValue), found ? d : null) : null;
+        found = !1;
+    if (!config) return null;
+
+    if (d.data && $$.isGaugeType(d.data)) {
+      var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
+
+      totalSum > config.gauge_max && (config.gauge_max = totalSum);
+      var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
+          gStart = config.gauge_startingAngle,
+          gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+      pie = $$.pie.startAngle(gStart).endAngle(gEnd + gStart);
+    }
+
+    return pie($$.filterTargetsToShow()).forEach(function (t) {
+      found || t.data.id !== d.data.id || (found = !0, d = t);
+    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), found ? d : null;
   },
   getSvgArc: function getSvgArc() {
     var $$ = this,
@@ -18500,7 +18596,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         newArc = function (d, withoutUpdate) {
       var path = "M 0 0";
 
-      if ("value" in d ? d.value > 0 : d.data) {
+      if (d.value || d.data) {
         isNumber(ir) || (arc = arc.innerRadius($$.getInnerRadius(d)));
         var updated = !withoutUpdate && $$.updateAngle(d);
         withoutUpdate ? path = arc(d) : updated && (path = arc(updated));
@@ -18528,7 +18624,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         updated = $$.updateAngle(d),
         translate = "";
 
-    if (updated && !$$.hasType("gauge")) {
+    if (updated && (!$$.hasType("gauge") || $$.hasMultiTargets())) {
       var c = this.svgArc.centroid(updated),
           x = isNaN(c[0]) ? 0 : c[0],
           y = isNaN(c[1]) ? 0 : c[1],
@@ -18558,22 +18654,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           isUnderThreshold = $$.hasType("gauge") || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
-        var nodeText = node.text(),
-            text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
-        if (text.indexOf("\n") === -1) nodeText !== text && node.text(text);else {
-          var diff = [nodeText, text].map(function (v) {
-            return v.replace(/[\s\n]/g, "");
-          });
-
-          if (diff[0] !== diff[1]) {
-            var multiline = text.split("\n"),
-                len = multiline.length - 1;
-            // reset possible text
-            node.html(""), multiline.forEach(function (v, i) {
-              node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? -len : 1, "em")).text(v);
-            });
-          }
-        }
+        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        setTextValue(node, text);
       }
     });
   },
@@ -18622,10 +18704,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   shouldShowArcLabel: function shouldShowArcLabel() {
     var $$ = this,
-        config = $$.config,
-        shouldShow = !0;
-    // when gauge, always true
-    return $$.hasType("donut") ? shouldShow = config.donut_label_show : $$.hasType("pie") && (shouldShow = config.pie_label_show), shouldShow;
+        config = $$.config;
+    return ["pie", "donut", "gauge"].some(function (v) {
+      return $$.hasType(v) && config["".concat(v, "_label_show")];
+    });
   },
   meetsArcLabelThreshold: function meetsArcLabelThreshold(ratio) {
     var $$ = this,
@@ -18644,12 +18726,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     return config.gauge_label_extents;
   },
   getArcTitle: function getArcTitle() {
-    var $$ = this;
-    return $$.hasType("donut") ? $$.config.donut_title : "";
+    var $$ = this,
+        type = $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge";
+    return type ? $$.config["".concat(type, "_title")] : "";
   },
   updateTargetsForArc: function updateTargetsForArc(targets) {
     var $$ = this,
         main = $$.main,
+        hasGauge = $$.hasType("gauge"),
         classChartArc = $$.classChartArc.bind($$),
         classArcs = $$.classArcs.bind($$),
         classFocus = $$.classFocus.bind($$),
@@ -18657,7 +18741,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       return classChartArc(d) + classFocus(d.data);
     }),
         mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
-    mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate), mainPieEnter.append("text").attr("dy", $$.hasType("gauge") ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
+    mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate), mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
   },
   initArc: function initArc() {
     var $$ = this;
@@ -18670,20 +18754,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    */
   setArcTitle: function setArcTitle() {
     var $$ = this,
-        title = $$.getArcTitle();
+        title = $$.getArcTitle(),
+        hasGauge = $$.hasType("gauge");
 
     if (title) {
-      var multiline = title.split("\n"),
-          text = $$.arcs.append("text").attr("class", config_classes.chartArcsTitle).style("text-anchor", "middle");
-
-      // if is multiline text
-      if (multiline.length > 1) {
-        var fontSize = +text.style("font-size").replace("px", ""),
-            height = Math.floor(text.text(".").node().getBBox().height, text.text(""));
-        multiline.forEach(function (v, i) {
-          return text.insert("tspan").text(v).attr("x", 0).attr("dy", i ? height : 0);
-        }), text.attr("y", "-".concat(fontSize * (multiline.length - 2) || fontSize / 2));
-      } else text.text(title);
+      var text = $$.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
+      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-1.3, 1.3]);
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
@@ -18787,15 +18863,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         main = $$.main,
+        hasGauge = $$.hasType("gauge"),
         text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
       return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
-    });
-
-    if (text.call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-      return $$.isGaugeType(d.data) ? "".concat(Math.round($$.radius / 5), "px") : "";
+    }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+      return $$.isGaugeType(d.data) && !$$.hasMultiTargets() ? "".concat(Math.round($$.radius / 5), "px") : "";
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-    }), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0"), $$.hasType("gauge")) {
+    });
+
+    if (main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle,
           endAngle = (isFullCircle ? -4 : -1) * config.gauge_startingAngle;
       isFullCircle && text.attr("dy", "".concat(Math.round($$.radius / 14))), $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
@@ -18813,8 +18890,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   initGauge: function initGauge() {
     var $$ = this,
         config = $$.config,
-        arcs = $$.arcs;
-    $$.hasType("gauge") && (arcs.append("path").attr("class", config_classes.chartArcsBackground), arcs.append("text").attr("class", config_classes.chartArcsGaugeUnit).style("text-anchor", "middle").style("pointer-events", "none"), config.gauge_label_show && (arcs.append("text").attr("class", config_classes.chartArcsGaugeMin).style("text-anchor", "middle").style("pointer-events", "none"), !config.gauge_fullCircle && arcs.append("text").attr("class", config_classes.chartArcsGaugeMax).style("text-anchor", "middle").style("pointer-events", "none")));
+        arcs = $$.arcs,
+        appendText = function (className) {
+      arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
+    };
+
+    $$.hasType("gauge") && (arcs.append("path").attr("class", config_classes.chartArcsBackground), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax)));
   },
   getGaugeLabelHeight: function getGaugeLabelHeight() {
     return this.config.gauge_label_show ? 20 : 0;
@@ -19237,7 +19318,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   updateAreaGradient: function updateAreaGradient() {
     var $$ = this;
     $$.data.targets.forEach(function (d) {
-      if ($$.isAreaType(d) && $$.defs.select("[id$=".concat(d.id, "]")).empty()) {
+      var id = "".concat($$.datetimeId, "-areaGradient").concat($$.getTargetSelectorSuffix(d.id));
+
+      if ($$.isAreaType(d) && $$.defs.select("#".concat(id)).empty()) {
         var color = $$.color(d),
             _$$$config$area_linea = $$.config.area_linearGradient,
             _$$$config$area_linea2 = _$$$config$area_linea.x,
@@ -19246,7 +19329,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
             y = _$$$config$area_linea3 === void 0 ? [0, 1] : _$$$config$area_linea3,
             _$$$config$area_linea4 = _$$$config$area_linea.stops,
             stops = _$$$config$area_linea4 === void 0 ? [[0, color, 1], [1, color, 0]] : _$$$config$area_linea4,
-            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat($$.datetimeId, "-areaGradient-").concat(d.id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
+            linearGradient = $$.defs.append("linearGradient").attr("id", "".concat(id)).attr("x1", x[0]).attr("x2", x[1]).attr("y1", y[0]).attr("y2", y[1]);
         stops.forEach(function (v) {
           var stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
           linearGradient.append("stop").attr("offset", v[0]).attr("stop-color", stopColor || color).attr("stop-opacity", v[2]);
@@ -19256,7 +19339,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   updateAreaColor: function updateAreaColor(d) {
     var $$ = this;
-    return $$.config.area_linearGradient ? "url(#".concat($$.datetimeId, "-areaGradient-").concat(d.id, ")") : $$.color(d);
+    return $$.config.area_linearGradient ? "url(#".concat($$.datetimeId, "-areaGradient").concat($$.getTargetSelectorSuffix(d.id), ")") : $$.color(d);
   },
   updateArea: function updateArea(durationForExit) {
     var $$ = this;
@@ -19384,7 +19467,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
             x = ratio * (+point.attr("x") + width / 2),
             y = ratio * (+point.attr("y") + height / 2);
 
-        point.style("transform", "translate(".concat(x, "px, ").concat(y, "px) scale(").concat(scale, ")"));
+        point.attr("transform", "translate(".concat(x, " ").concat(y, ") scale(").concat(scale, ")"));
       }
     });
   },
@@ -19394,7 +19477,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         circles = $$.getCircles(i).filter(function () {
       return src_select(this).classed(config_classes.EXPANDED);
     }).classed(config_classes.EXPANDED, !1);
-    circles.attr("r", r), $$.isCirclePoint() || circles.style("transform", "scale(".concat(r(circles) / $$.config.point_r, ")"));
+    circles.attr("r", r), $$.isCirclePoint() || circles.attr("transform", "scale(".concat(r(circles) / $$.config.point_r, ")"));
   },
   pointR: function (d) {
     var $$ = this,
@@ -19740,16 +19823,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       return $$.getRadarPosition("x", i);
     }).attr("y2", function (d, i) {
       return $$.getRadarPosition("y", i);
-    }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").text(function (d) {
-      return d;
+    }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
+      selection.each(function (d) {
+        setTextValue(src_select(this), d, [-1.2, 1.2]);
+      });
     }).datum(function (d, i) {
       return {
         index: i
       };
-    }).attr("x", function (d, i) {
-      return $$.getRadarPosition("x", i, undefined, 1);
-    }).attr("y", function (d, i) {
-      return $$.getRadarPosition("y", i, undefined, 1);
+    }).attr("transform", function (d, i) {
+      return "translate(".concat($$.getRadarPosition("x", i, undefined, 1), " ").concat($$.getRadarPosition("y", i, undefined, 1), ")");
     }), $$.bindEvent();
   },
   bindEvent: function bindEvent() {
@@ -19760,7 +19843,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     if (config.interaction_enabled) {
       var isMouse = $$.inputType === "mouse",
           getIndex = function () {
-        var d = src_select(on_event.target).datum();
+        var target = on_event.target; // in case of multilined axis text
+
+        /tspan/i.test(target.tagName) && (target = target.parentNode);
+        var d = src_select(target).datum();
         return d && Object.keys(d).length === 1 ? d.index : undefined;
       },
           hide = function () {
@@ -19878,21 +19964,20 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Redraw chartText
+   * @param {Function} x Positioning function for x
+   * @param {Function} y Positioning function for y
+   * @param {Boolean} forFlow
+   * @param {Boolean} withTransition transition is enabled
    * @private
-   * @param {Number} x Attribute
-   * @param {Number} y Attribute
-   * @param {Object} options.flow
-   * @param {Boolean} indicates transition is enabled
-   * @returns {Object} $$.mainText
    */
-  redrawText: function redrawText(xForText, yForText, forFlow, withTransition) {
+  redrawText: function redrawText(x, y, forFlow, withTransition) {
     var $$ = this,
         t = getRandom(),
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
     return [this.mainText.each(function () {
       var text = src_select(this); // do not apply transition for newly added text elements
 
-      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", xForText).attr("y", yForText).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x).attr("y", y).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
     })];
   },
 
@@ -19924,9 +20009,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    */
   generateXYForText: function generateXYForText(indices, forX) {
     var $$ = this,
+        types = Object.keys(indices),
         points = {},
         getter = forX ? $$.getXForText : $$.getYForText;
-    return Object.keys(indices).concat("radar").forEach(function (v) {
+    return $$.hasType("radar") && types.push("radar"), types.forEach(function (v) {
       points[v] = $$["generateGet".concat(capitalize(v), "Points")](indices[v], !1);
     }), function (d, i) {
       var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isRadarType(d) && "radar" || "line";
@@ -20201,7 +20287,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         xgridData = $$.generateGridData(config.grid_x_type, $$.x),
         tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
         pos = function (d) {
-      return ($$.x(d) + tickOffset) * (isRotated ? -1 : 1);
+      return (($$.zoomScale || $$.x)(d) + tickOffset) * (isRotated ? -1 : 1);
     };
 
     $$.xgridAttr = isRotated ? {
@@ -20579,7 +20665,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
-        callFn(config.tooltip_onshow, $$), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", config.tooltip_doNotHide === !1 ? "block" : null).datum({
+        callFn(config.tooltip_onshow, $$), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
+        .datum({
           index: index,
           current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
@@ -20604,7 +20691,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   hideTooltip: function hideTooltip(force) {
     var $$ = this,
         config = $$.config;
-    (!config.tooltip_doNotHide || force) && (callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").datum(null), callFn(config.tooltip_onhidden, $$));
+    (!config.tooltip_doNotHide || force) && (callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").style("visibility", "hidden") // for IE9
+    .datum(null), callFn(config.tooltip_onhidden, $$));
   },
 
   /**
@@ -20676,9 +20764,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       withTransitionForTransform: !1,
       withTransition: !1
     };
+    // toggle legend state
     // Update size and scale
     // Update g positions
-    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
+    optionz.withTransition = getOption(optionz, "withTransition", !0), optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", !0), config.legend_contents_bindto && config.legend_contents_template ? $$.updateLegendTemplate() : $$.updateLegendElement(targetIds || $$.mapToIds($$.data.targets), optionz, transitions), $$.legend.selectAll(".".concat(config_classes.legendItem)).classed(config_classes.legendItemHidden, function (id) {
+      return !$$.isTargetToShow(id);
+    }), $$.updateScales(!1, !$$.zoomScale), $$.updateSvgSize(), $$.transformAll(optionz.withTransitionForTransform, transitions), $$.legendHasRendered = !0;
   },
 
   /**
@@ -20692,10 +20783,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         template = config.legend_contents_template;
 
     if (!wrapper.empty()) {
-      var targets = $$.data.targets,
+      var targets = $$.mapToIds($$.data.targets),
           ids = [],
           html = "";
-      $$.mapToIds(targets).forEach(function (v) {
+      targets.forEach(function (v) {
         var content = isFunction(template) ? template.call($$, v, $$.color(v), $$.api.data(v)[0].values) : tplProcess(template, {
           COLOR: $$.color(v),
           TITLE: v
@@ -20705,7 +20796,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       var legendItem = wrapper.html(html).selectAll(function () {
         return this.childNodes;
       }).data(ids);
-      $$.setLegendItem(legendItem);
+      $$.setLegendItem(legendItem), $$.legend = wrapper;
     }
   },
 
@@ -20820,8 +20911,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     $$.legend.selectAll(".".concat(config_classes.legendItem)).filter(function (id) {
       return targetIdz.indexOf(id) >= 0;
     }).classed(config_classes.legendItemFocused, focus).transition().duration(100).style("opacity", function () {
-      var opacity = focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend;
-      return opacity.call($$, src_select(this));
+      return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend).call($$, src_select(this));
     });
   },
 
@@ -21057,9 +21147,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.color).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
     }
 
-    background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.legend.selectAll(".".concat(config_classes.legendItem)).classed(config_classes.legendItemHidden, function (id) {
-      return !$$.isTargetToShow(id);
-    }), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
+    background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
   }
 });
 // CONCATENATED MODULE: ./src/internals/title.js
@@ -21097,9 +21185,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     if ($$.config.title_text) {
       $$.title = $$.svg.append("g");
       var text = $$.title.append("text").style("text-anchor", getTextPos($$.config.title_position)).attr("class", config_classes.title);
-      $$.config.title_text.split("\n").forEach(function (v, i) {
-        text.append("tspan").attr("x", 0).attr("dy", "".concat(i ? "1.5" : ".3", "em")).text(v);
-      });
+      setTextValue(text, $$.config.title_text, [.3, 1.5]);
     }
   },
 
@@ -22340,7 +22426,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }, zoom.updateTransformScale = function (transform) {
       $$.orgXScale && $$.orgXScale.range($$.x.range());
       // rescale from the original scale
-      var newScale = transform.rescaleX($$.orgXScale || $$.x),
+      var newScale = transform[config.axis_rotated ? "rescaleY" : "rescaleX"]($$.orgXScale || $$.x),
           domain = $$.trimXDomain(newScale.domain()),
           rescale = config.zoom_rescale;
       newScale.domain(domain, $$.orgXDomain), $$.zoomScale = $$.getCustomizedScale(newScale), $$.xAxis.scale($$.zoomScale), rescale && (!$$.orgXScale && ($$.orgXScale = $$.x.copy()), $$.x.domain(domain));
@@ -22354,7 +22440,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   onZoomStart: function onZoomStart() {
     var $$ = this,
         event = on_event.sourceEvent;
-    event && ($$.zoom.altDomain = event.altKey ? $$.x.orgDomain() : null, $$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
+    event && ($$.zoom.startEvent = event, callFn($$.config.zoom_onzoomstart, $$.api, event));
   },
 
   /**
@@ -22366,16 +22452,19 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         event = on_event;
 
-    if (config.zoom_enabled && event.sourceEvent) {
+    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0) {
       var isMousemove = event.sourceEvent.type === "mousemove",
+          isZoomOut = event.sourceEvent.wheelDelta < 0,
           transform = event.transform;
-      return $$.zoom.updateTransformScale(transform), $$.filterTargetsToShow($$.data.targets).length === 0 ? void 0 : isMousemove && $$.zoom.altDomain ? ($$.x.domain($$.zoom.altDomain), void transform.scale($$.zoomScale).updateScaleExtent()) : void ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
+      !isMousemove && isZoomOut && $$.x.domain().every(function (v, i) {
+        return v !== $$.orgXDomain[i];
+      }) && $$.x.domain($$.orgXDomain), $$.zoom.updateTransformScale(transform), $$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0] && $$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]), $$.redraw({
         withTransition: !1,
         withY: config.zoom_rescale,
         withSubchart: !1,
         withEventRect: !1,
         withDimension: !1
-      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain()));
+      }), $$.cancelClick = isMousemove, callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain());
     }
   },
 
@@ -22442,16 +22531,21 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         isRotated = config.axis_rotated,
         start = 0,
         end = 0,
-        zoomRect = null;
+        zoomRect = null,
+        prop = {
+      axis: isRotated ? "y" : "x",
+      attr: isRotated ? "height" : "width",
+      index: isRotated ? 1 : 0
+    };
     $$.zoomBehaviour = src_drag().clickDistance(4).on("start", function () {
-      $$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", config_classes.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = src_mouse(this)[0], end = start, zoomRect.attr("x", start).attr("width", 0), $$.onZoomStart();
+      $$.setDragStatus(!0), zoomRect || (zoomRect = $$.main.append("rect").attr("clip-path", $$.clipPath).attr("class", config_classes.zoomBrush).attr("width", isRotated ? $$.width : 0).attr("height", isRotated ? 0 : $$.height)), start = src_mouse(this)[prop.index], end = start, zoomRect.attr(prop.axis, start).attr(prop.attr, 0), $$.onZoomStart();
     }).on("drag", function () {
-      end = src_mouse(this)[0], zoomRect.attr("x", Math.min(start, end)).attr("width", Math.abs(end - start));
+      end = src_mouse(this)[prop.index], zoomRect.attr(prop.axis, Math.min(start, end)).attr(prop.attr, Math.abs(end - start));
     }).on("end", function () {
       var _ref,
           scale = $$.zoomScale || $$.x;
 
-      if ($$.setDragStatus(!1), zoomRect.attr("x", 0).attr("width", 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
+      if ($$.setDragStatus(!1), zoomRect.attr(prop.axis, 0).attr(prop.attr, 0), start > end && (_ref = [end, start], start = _ref[0], end = _ref[1], _ref), start < 0 && (end += Math.abs(start), start = 0), start !== end) $$.api.zoom([start, end].map(function (v) {
         return scale.invert(v);
       })), $$.onZoomEnd();else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
         var _event = on_event.sourceEvent || on_event,
@@ -23038,6 +23132,8 @@ util_extend(Chart_Chart.prototype, {
   }
 });
 // CONCATENATED MODULE: ./src/api/api.zoom.js
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -23047,28 +23143,27 @@ util_extend(Chart_Chart.prototype, {
 
 
 /**
- * Zoom by giving x domain.
- * - **NOTE:** For `wheel` type zoom, the minimum zoom range will be set as the given domain.<br>
- * To get the initial state, [.unzoom()](#unzoom) should be called.
- * @method zoom
- * @instance
- * @memberof Chart
- * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
- * @return {Array} domain value in array
- * @example
- *  // Zoom to specified domain
- *  chart.zoom([10, 20]);
- *
- *  // Get the current zoomed domain
- *  chart.zoom();
+ * Check if the given domain is within zoom range
+ * @param {Array} domain
+ * @return {Boolean}
+ * @private
  */
 
-var api_zoom_zoom = function (domainValue) {
+var withinRange = function (domain, range) {
+  var _range = slicedToArray_default()(range, 2),
+      min = _range[0],
+      max = _range[1];
+
+  return domain.every(function (v, i) {
+    return i === 0 ? v >= min : v <= max;
+  });
+},
+    api_zoom_zoom = function (domainValue) {
   var resultDomain,
       $$ = this.internal,
       domain = domainValue;
 
-  if ($$.config.zoom_enabled && domain) {
+  if ($$.config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
     var isTimeSeries = $$.isTimeSeries();
 
     if (isTimeSeries && (domain = domain.map(function (x) {
@@ -23087,6 +23182,24 @@ var api_zoom_zoom = function (domainValue) {
 
   return resultDomain;
 };
+/**
+ * Zoom by giving x domain.
+ * - **NOTE:**
+ *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
+ *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
+ * @method zoom
+ * @instance
+ * @memberof Chart
+ * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+ * @return {Array} domain value in array
+ * @example
+ *  // Zoom to specified domain
+ *  chart.zoom([10, 20]);
+ *
+ *  // Get the current zoomed domain
+ *  chart.zoom();
+ */
+
 
 util_extend(api_zoom_zoom, {
   /**
@@ -23139,7 +23252,7 @@ util_extend(api_zoom_zoom, {
    * @method zoom․min
    * @instance
    * @memberof Chart
-   * @param {Number} [min] minimum value tp set for zoom
+   * @param {Number} [min] minimum value to set for zoom
    * @return {Number} zoom min value
    * @example
    *  // Set minimum range value
@@ -23168,12 +23281,12 @@ util_extend(api_zoom_zoom, {
    *      max: 100
    *  });
    */
-  range: function range(_range) {
+  range: function range(_range2) {
     var zoom = this.zoom;
 
-    if (isObject(_range)) {
-      var min = _range.min,
-          max = _range.max;
+    if (isObject(_range2)) {
+      var min = _range2.min,
+          max = _range2.max;
       isDefined(min) && zoom.min(min), isDefined(max) && zoom.max(max);
     }
 
@@ -23203,6 +23316,8 @@ util_extend(api_zoom_zoom, {
       var eventRects = $$.main.select(".".concat(config_classes.eventRects));
       transform_transform(eventRects.node()) !== transform_identity && $$.zoom.transform(eventRects, transform_identity), $$.redraw({
         withTransition: !0,
+        withUpdateXDomain: !0,
+        withUpdateOrgXDomain: !0,
         withY: config.zoom_rescale
       });
     }
@@ -24825,14 +24940,11 @@ util_extend(Chart_Chart.prototype, {
 
 
 
+
  // base CSS
 
-/**
- * @namespace bb
- * @version 1.8.1-nightly-20190520142042
- */
-
-var bb = {
+var _defaults = {},
+    bb = {
   /**
    * Version information
    * @property {String} version version
@@ -24840,7 +24952,7 @@ var bb = {
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.8.1-nightly-20190520142042",
+  version: "1.9.0-nightly-20190617104911",
 
   /**
    * Generate chart
@@ -24869,8 +24981,35 @@ var bb = {
    *  chart.data("data1");
    */
   generate: function generate(config) {
-    var inst = new Chart_Chart(config);
+    var options = mergeObj({}, _defaults, config),
+        inst = new Chart_Chart(options);
     return inst.internal.charts = this.instance, this.instance.push(inst), inst;
+  },
+
+  /**
+   * Set or get global default options.
+   * - **NOTE:**
+   *   - The options values settings are valid within page context only.
+   *   - If is called multiple times, will override the last value.
+   * @param {Options} options chart options
+   * @memberof bb
+   * @return {Options}
+   * @see {@link Options}
+   * @example
+   * // Set same option value as for `.generate()`
+   * bb.defaults({
+   *   data: {
+   *     type: "bar"
+   *   }
+   * });
+   *
+   * bb.defaults();  // {data:{type: "bar"}}
+   *
+   * // data.type defaults to 'bar'
+   * var chart = bb.generate({ ... });
+   */
+  defaults: function defaults(options) {
+    return isObject(options) && (_defaults = options), _defaults;
   },
 
   /**
@@ -24910,6 +25049,11 @@ var bb = {
     }
   }
 };
+/**
+ * @namespace bb
+ * @version 1.9.0-nightly-20190617104911
+ */
+
 
 /* harmony default export */ var core = __webpack_exports__["default"] = (bb);
 

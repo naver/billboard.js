@@ -344,7 +344,7 @@ describe("SHAPE ARC", () => {
 			expect(max.empty()).to.be.true;
 		});
 
-		it("check for fullCircle option", () => {
+		it("check for fullCircle option", done => {
 			const chart = util.generate({
 				gauge: {
 					width: 10,
@@ -354,25 +354,106 @@ describe("SHAPE ARC", () => {
 				},
 				data: {
 					columns: [
-						["data", 75]
+						["data", 10]
 					],
 					type: "gauge"
 				}
 			});
 
-			const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
-			const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
-			const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
+			setTimeout(() => {
+				const chartArc = chart.$.main.select(`.${CLASS.chartArcs}`);
+				const min = chartArc.select(`.${CLASS.chartArcsGaugeMin}`);
+				const max = chartArc.select(`.${CLASS.chartArcsGaugeMax}`);
 
-			// check if gauge value text is centered
-			expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
+				// check if gauge value text is centered
+				expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
 
-			// check background height
-			expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(400);
+				// check background height
+				expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(400);
 
-			// with fullCircle option, only min text is showed
-			expect(min.empty()).to.be.false;
-			expect(max.empty()).to.be.true;
+				// with fullCircle option, only min text is showed
+				expect(min.empty()).to.be.false;
+				expect(max.empty()).to.be.true;
+
+				done();
+			}, 100);
+		});
+
+		it("check for stack data #1", done => {
+			const chart = util.generate({
+				size: {
+					width: 640,
+					height: 480
+				},
+				data: {
+					columns: [
+						["data1", 50, 10],
+						["data2", 200],
+						["data3", 70],
+						["data4", 50],
+						["data5", 50],
+					],
+					type: "gauge",
+					order: null
+				}
+			});
+
+			const expected = [
+				"M-304,-3.7229262694079536e-14A304,304,0,0,1,-275.25626419791655,-129.03483645824778L-165.15375851874995,-77.42090187494867A182.4,182.4,0,0,0,-182.4,-2.2337557616447722e-14Z",
+				"M-275.25626419791655,-129.03483645824778A304,304,0,0,1,98.15564305051961,-287.71769103991323L58.893385830311765,-172.63061462394796A182.4,182.4,0,0,0,-165.15375851874995,-77.42090187494867Z",
+				"M98.15564305051961,-287.71769103991323A304,304,0,0,1,226.4107435541097,-202.86491861156077L135.84644613246581,-121.71895116693646A182.4,182.4,0,0,0,58.893385830311765,-172.63061462394796Z",
+				"M226.4107435541097,-202.86491861156077A304,304,0,0,1,283.9408970546946,-108.59819049954436L170.36453823281676,-65.15891429972662A182.4,182.4,0,0,0,135.84644613246581,-121.71895116693646Z",
+				"M283.9408970546946,-108.59819049954436A304,304,0,0,1,304,0L182.4,0A182.4,182.4,0,0,0,170.36453823281676,-65.15891429972662Z"
+		  	];
+
+			setTimeout(() => {
+				chart.$.arc.selectAll(`.${CLASS.target} path`).each(function(d, i) {
+					expect(this.getAttribute("d")).to.be.equal(expected[i]);
+				});
+
+				done();
+			}, 100);
+		});
+
+		it("check for stack data #2", done => {
+			const args = {
+				size: {
+					width: 640,
+					height: 480
+				},
+				data: {
+					columns: [
+						["data1", 50],
+						["data2", 200]
+					],
+					type: "gauge",
+					order: "desc"
+				},
+				gauge: {
+					min: 50,
+					max: 550,
+					title: "TitleText"
+				}
+			};
+			const chart = util.generate(args);
+
+			const expected = [
+				"M-93.941166289984,-289.1211809537267A304,304,0,0,1,1.8614631347039768e-14,-304L1.1168778808223861e-14,-182.4A182.4,182.4,0,0,0,-56.364699773990395,-173.47270857223603Z",
+				"M-304,-3.7229262694079536e-14A304,304,0,0,1,-93.941166289984,-289.1211809537267L-56.364699773990395,-173.47270857223603A182.4,182.4,0,0,0,-182.4,-2.2337557616447722e-14Z"
+			];
+
+			setTimeout(() => {
+				const data = chart.data();
+
+				expect(chart.$.arc.select(`.${CLASS.chartArcsGaugeTitle}`).text()).to.be.equal(args.gauge.title);
+
+				chart.$.arc.selectAll(`.${CLASS.target} path`).each(function(d, i) {
+					expect(d.value).to.be.equal(data[i].values[0].value);
+					expect(this.getAttribute("d")).to.be.equal(expected[i]);
+				});
+
+				done();
+			}, 100);
 		});
 	});
 
@@ -491,6 +572,46 @@ describe("SHAPE ARC", () => {
 
 		it("should be multilined in donut", () => {
 			checkMultiline(chart.$.arc);
+		});
+	});
+
+	describe("check for data loading", () => {
+		it("Interaction of chart when initialized with 0 and .load()", done => {
+		const chart = util.generate({
+			data: {
+			  columns: [
+				["data1", 0],
+				["data2", 0],
+			  ],
+			  type: "pie",
+			}
+		  });
+
+		  setTimeout(function() {
+			  chart.load({
+				  columns: [
+					  ["data1", 3],
+					  ["data2", 6],
+				  ],
+				  done: () => {
+					const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+
+					util.fireEvent(legend, "mouseover");
+					util.fireEvent(legend, "mouseout");
+
+					setTimeout(() => {
+						chart.$.arc.selectAll("path").each(function() {
+							const rect = this.getBoundingClientRect();
+
+							expect(this.getAttribute("d")).to.not.be.equal("M 0 0");
+							expect(rect.width > 0 && rect.height > 0).to.be.true;
+						});
+
+						done();
+					}, 1000);
+				  }
+			  });
+		  }, 1000);
 		});
 	});
 });

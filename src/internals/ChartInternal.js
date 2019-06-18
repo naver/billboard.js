@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {isMobile} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sendStats, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -40,6 +40,7 @@ export default class ChartInternal {
 	beforeInit() {
 		const $$ = this;
 
+		$$.config.stats && sendStats();
 		$$.callPluginHook("$beforeInit");
 
 		// can do something
@@ -585,6 +586,7 @@ export default class ChartInternal {
 		$$.updateSizes(initializing);
 
 		// update legend and transform each g
+
 		if (wth.Legend && config.legend_show) {
 			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
 		} else if (wth.Dimension) {
@@ -608,12 +610,10 @@ export default class ChartInternal {
 			.attr("x", $$.width / 2)
 			.attr("y", $$.height / 2)
 			.text(config.data_empty_label_text)
-			.transition()
-			.style("opacity", targetsToShow.length ? 0 : 1);
+			.style("display", targetsToShow.length ? "none" : null);
 
 		// grid
 		$$.updateGrid(duration);
-
 
 		// rect for regions
 		$$.updateRegion(duration);
@@ -666,16 +666,18 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 		const hasArcType = $$.hasArcType();
+		const hasZoom = !!$$.zoomScale;
 		let tickValues;
 		let intervalForCulling;
 		let xDomainForZoom;
 
-		if ($$.isCategorized() && targetsToShow.length === 0) {
+		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
 			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
 		}
 
 		if ($$.x && targetsToShow.length) {
-			$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
+			!hasZoom &&
+				$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
 
 			if (!config.axis_x_tick_values) {
 				tickValues = $$.axis.updateXAxisTickValues(targetsToShow);

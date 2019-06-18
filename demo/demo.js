@@ -3261,7 +3261,7 @@ d3.select(".chart_area")
 				}
 			}
 		},
-		MultilneTitle: {
+		MultilineTitle: {
 			options: {
 				data: {
 					columns: [
@@ -3322,7 +3322,49 @@ d3.select(".chart_area")
 					}
 				}
 			}
-		}
+		},
+		GaugeStackData: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 10],
+							["data2", 190],
+							["data3", 70],
+							["data4", 150],
+							["data5", 50]
+						],
+						type: "gauge",
+						order: "asc"
+					},
+					gauge: {
+						title: "Title A"
+					}
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 100],
+							["data2", 150]
+						],
+						type: "gauge",
+						order: null
+					},
+					gauge: {
+						max: 500,
+						title: "Title B",
+						label: {
+							format: function(value, ratio) {
+								return value;
+							}
+						},
+						width: 80
+					}
+				}
+			}
+		]
 	},
 	LineChartOptions: {
 		HidePoints: {
@@ -3517,6 +3559,28 @@ d3.select(".chart_area")
 			style: [
 				"#radarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }"
 			]
+		},
+		RadarAxisMultiline: {
+			options: {
+				padding: {
+					top: 25
+				},
+				data: {
+					x: "x",
+					columns: [
+						["x", "1st\nPrize", "2nd\nPrize", "3rd\nPrize"],
+						["data1", 230, 250, 100],
+						["data2", 150, 150, 230]
+					],
+					type: "radar",
+					labels: true
+				},
+				radar: {
+					axis: {
+						max: 300
+					}
+				}
+			}
 		},
 		RadarLevel: {
 			options: {

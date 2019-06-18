@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, toArray} from "../internals/util";
+import {extend, getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../internals/util";
 
 /**
  * Get the position value
@@ -257,10 +257,13 @@ extend(ChartInternal.prototype, {
 			axis.select("text")
 				.style("text-anchor", "middle")
 				.attr("dy", ".5em")
-				.text(d => d)
+				.call(selection => {
+					selection.each(function(d) {
+						setTextValue(d3Select(this), d, [-1.2, 1.2]);
+					});
+				})
 				.datum((d, i) => ({index: i}))
-				.attr("x", (d, i) => $$.getRadarPosition("x", i, undefined, 1))
-				.attr("y", (d, i) => $$.getRadarPosition("y", i, undefined, 1));
+				.attr("transform", (d, i) => `translate(${$$.getRadarPosition("x", i, undefined, 1)} ${$$.getRadarPosition("y", i, undefined, 1)})`);
 		}
 
 		$$.bindEvent();
@@ -273,7 +276,14 @@ extend(ChartInternal.prototype, {
 		if (config.interaction_enabled) {
 			const isMouse = $$.inputType === "mouse";
 			const getIndex = () => {
-				const d = d3Select(d3Event.target).datum();
+				let target = d3Event.target;
+
+				// in case of multilined axis text
+				if (/tspan/i.test(target.tagName)) {
+					target = target.parentNode;
+				}
+
+				const d = d3Select(target).datum();
 
 				return d && Object.keys(d).length === 1 ? d.index : undefined;
 			};

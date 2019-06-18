@@ -501,7 +501,8 @@ describe("SHAPE LINE", () => {
 				data: {
 				columns: [
 						["data1", 230, 280, 251, 400, 150, 546, 158],
-						["data2", 230, 280, 251, 400, 150, 546, 158]
+						["hello there", 230, 280, 251, 400, 150, 546, 158],
+						["123 test", 130, 220, 120, 129, 410, 100, 440]
 					],
 					type: "area",
 				},
@@ -522,7 +523,8 @@ describe("SHAPE LINE", () => {
 
 			chart.data().forEach(v => {
 				const color = chart.color(v.id);
-				const id = `#${internal.datetimeId}-areaGradient-${v.id}`;
+				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
+				const id = `#${internal.datetimeId}-areaGradient${selectorSuffix}`;
 				const gradient = chart.$.svg.select(id);
 
 				expect(gradient.empty()).to.be.false;
@@ -537,7 +539,7 @@ describe("SHAPE LINE", () => {
 					expect(+stop.attr("stop-opacity")).to.be.equal(expected.opacity[i]);
 				});
 
-				expect(chart.$.line.areas.filter(`.${CLASS.area}-${v.id}`).style("fill")).to.be.equal(`url("${id}")`);
+				expect(chart.$.line.areas.filter(`.${CLASS.area}${selectorSuffix}`).style("fill")).to.be.equal(`url("${id}")`);
 			});
 		});
 
@@ -556,8 +558,11 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("should generate customized liearGradient element", () => {
+			const internal = chart.internal;
+
 			chart.data().forEach(v => {
-				const id = `#${chart.internal.datetimeId}-areaGradient-${v.id}`;
+				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
+				const id = `#${internal.datetimeId}-areaGradient${selectorSuffix}`;
 				const gradient = chart.$.svg.select(id);
 
 				expect(gradient.empty()).to.be.false;
@@ -575,7 +580,7 @@ describe("SHAPE LINE", () => {
 					expect(+stop.attr("stop-opacity")).to.be.equal(stops[i][2]);
 				});
 
-				expect(chart.$.line.areas.filter(`.${CLASS.area}-${v.id}`).style("fill")).to.be.equal(`url("${id}")`);
+				expect(chart.$.line.areas.filter(`.${CLASS.area}${selectorSuffix}`).style("fill")).to.be.equal(`url("${id}")`);
 			});
 		});
 

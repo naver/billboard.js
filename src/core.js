@@ -5,6 +5,7 @@
 import Chart from "./internals/Chart";
 import ChartInternal from "./internals/ChartInternal";
 import Axis from "./axis/Axis";
+import {isObject, mergeObj} from "./internals/util";
 
 import "./config/config";
 import "./internals/scale";
@@ -58,9 +59,10 @@ import "./api/api.chart";
 import "./api/api.tooltip";
 import "./api/api.export";
 
-
 // base CSS
 import "./scss/billboard.scss";
+
+let defaults = {};
 
 /**
  * @namespace bb
@@ -103,12 +105,43 @@ const bb = {
 	 *  chart.data("data1");
 	 */
 	generate(config) {
-		const inst = new Chart(config);
+		const options = mergeObj({}, defaults, config);
+		const inst = new Chart(options);
 
 		inst.internal.charts = this.instance;
 		this.instance.push(inst);
 
 		return inst;
+	},
+
+	/**
+	 * Set or get global default options.
+	 * - **NOTE:**
+	 *   - The options values settings are valid within page context only.
+	 *   - If is called multiple times, will override the last value.
+	 * @param {Options} options chart options
+	 * @memberof bb
+	 * @return {Options}
+	 * @see {@link Options}
+	 * @example
+	 * // Set same option value as for `.generate()`
+	 * bb.defaults({
+	 *   data: {
+	 *     type: "bar"
+	 *   }
+	 * });
+	 *
+	 * bb.defaults();  // {data:{type: "bar"}}
+	 *
+	 * // data.type defaults to 'bar'
+	 * var chart = bb.generate({ ... });
+	 */
+	defaults(options) {
+		if (isObject(options)) {
+			defaults = options;
+		}
+
+		return defaults;
 	},
 
 	/**

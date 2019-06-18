@@ -13,7 +13,7 @@ import {
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction, isNumber, isUndefined} from "../internals/util";
+import {extend, isFunction, isNumber, isUndefined, setTextValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initPie() {
@@ -27,9 +27,11 @@ extend(ChartInternal.prototype, {
 
 		$$.pie = d3Pie()
 			.padAngle(padAngle)
+			.sortValues(
+				$$.isOrderAsc() || $$.isOrderDesc() ?
+					(a, b) => ($$.isOrderAsc() ? a - b : b - a) : null
+			)
 			.value(d => d.values.reduce((a, b) => a + b.value, 0));
-
-		!config.data_order && $$.pie.sort(null);
 	},
 
 	updateRadius() {
@@ -74,26 +76,36 @@ extend(ChartInternal.prototype, {
 	updateAngle(dValue) {
 		const $$ = this;
 		const config = $$.config;
+		let pie = $$.pie;
 		let d = dValue;
 		let found = false;
-		let index = 0;
-		let gMin;
-		let gMax;
-		let gTic;
-		let gValue;
 
 		if (!config) {
 			return null;
 		}
 
-		$$.pie($$.filterTargetsToShow($$.data.targets)).forEach(t => {
+		if (d.data && $$.isGaugeType(d.data)) {
+			const totalSum = $$.getTotalDataSum();
+
+			// if gauge_max less than totalSum, make totalSum to max value
+			if (totalSum > config.gauge_max) {
+				config.gauge_max = totalSum;
+			}
+
+			const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
+			const gStart = config.gauge_startingAngle;
+			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+
+			pie = $$.pie
+				.startAngle(gStart)
+				.endAngle(gEnd + gStart);
+		}
+
+		pie($$.filterTargetsToShow()).forEach(t => {
 			if (!found && t.data.id === d.data.id) {
 				found = true;
 				d = t;
-				d.index = index;
 			}
-
-			index++;
 		});
 
 		if (isNaN(d.startAngle)) {
@@ -102,18 +114,6 @@ extend(ChartInternal.prototype, {
 
 		if (isNaN(d.endAngle)) {
 			d.endAngle = d.startAngle;
-		}
-
-		if ($$.isGaugeType(d.data)) {
-			gMin = config.gauge_min;
-			gMax = config.gauge_max;
-			gTic = (Math.PI * (config.gauge_fullCircle ? 2 : 1)) / (gMax - gMin);
-
-			gValue = d.value < gMin ?
-				0 : (d.value < gMax ? d.value - gMin : (gMax - gMin));
-
-			d.startAngle = config.gauge_startingAngle;
-			d.endAngle = d.startAngle + gTic * gValue;
 		}
 
 		return found ? d : null;
@@ -129,7 +129,7 @@ extend(ChartInternal.prototype, {
 		const newArc = (d, withoutUpdate) => {
 			let path = "M 0 0";
 
-			if ("value" in d ? d.value > 0 : d.data) {
+			if (d.value || d.data) {
 				if (!isNumber(ir)) {
 					arc = arc.innerRadius($$.getInnerRadius(d));
 				}
@@ -174,7 +174,7 @@ extend(ChartInternal.prototype, {
 		const updated = $$.updateAngle(d);
 		let translate = "";
 
-		if (updated && !$$.hasType("gauge")) {
+		if (updated && (!$$.hasType("gauge") || $$.hasMultiTargets())) {
 			const c = this.svgArc.centroid(updated);
 			const x = isNaN(c[0]) ? 0 : c[0];
 			const y = isNaN(c[1]) ? 0 : c[1];
@@ -220,31 +220,11 @@ extend(ChartInternal.prototype, {
 				);
 
 				if (isUnderThreshold) {
-					const nodeText = node.text();
 					const text = (
 						$$.getArcLabelFormat() || $$.defaultArcValueFormat
 					)(value, ratio, id).toString();
 
-					if (text.indexOf("\n") === -1) {
-						nodeText !== text && node.text(text);
-					} else {
-						const diff = [nodeText, text].map(v => v.replace(/[\s\n]/g, ""));
-
-						if (diff[0] !== diff[1]) {
-							const multiline = text.split("\n");
-							const len = multiline.length - 1;
-
-							// reset possible text
-							node.html("");
-
-							multiline.forEach((v, i) => {
-								node.append("tspan")
-									.attr("x", 0)
-									.attr("dy", `${i === 0 ? -len : 1}em`)
-									.text(v);
-							});
-						}
-					}
+					setTextValue(node, text);
 				}
 			});
 		}
@@ -340,16 +320,9 @@ extend(ChartInternal.prototype, {
 	shouldShowArcLabel() {
 		const $$ = this;
 		const config = $$.config;
-		let shouldShow = true;
 
-		if ($$.hasType("donut")) {
-			shouldShow = config.donut_label_show;
-		} else if ($$.hasType("pie")) {
-			shouldShow = config.pie_label_show;
-		}
-
-		// when gauge, always true
-		return shouldShow;
+		return ["pie", "donut", "gauge"]
+			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
 	},
 
 	meetsArcLabelThreshold(ratio) {
@@ -382,13 +355,15 @@ extend(ChartInternal.prototype, {
 
 	getArcTitle() {
 		const $$ = this;
+		const type = ($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge");
 
-		return $$.hasType("donut") ? $$.config.donut_title : "";
+		return type ? $$.config[`${type}_title`] : "";
 	},
 
 	updateTargetsForArc(targets) {
 		const $$ = this;
 		const main = $$.main;
+		const hasGauge = $$.hasType("gauge");
 		const classChartArc = $$.classChartArc.bind($$);
 		const classArcs = $$.classArcs.bind($$);
 		const classFocus = $$.classFocus.bind($$);
@@ -405,7 +380,7 @@ extend(ChartInternal.prototype, {
 			.merge(mainPieUpdate);
 
 		mainPieEnter.append("text")
-			.attr("dy", $$.hasType("gauge") ? "-.1em" : ".35em")
+			.attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em")
 			.style("opacity", "0")
 			.style("text-anchor", "middle")
 			.style("pointer-events", "none");
@@ -431,35 +406,20 @@ extend(ChartInternal.prototype, {
 	setArcTitle() {
 		const $$ = this;
 		const title = $$.getArcTitle();
+		const hasGauge = $$.hasType("gauge");
 
 		if (title) {
-			const multiline = title.split("\n");
 			const text = $$.arcs.append("text")
-				.attr("class", CLASS.chartArcsTitle)
+				.attr("class", CLASS[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"])
 				.style("text-anchor", "middle");
 
-			// if is multiline text
-			if (multiline.length > 1) {
-				const fontSize = +text.style("font-size").replace("px", "");
-				const height = Math.floor(
-					text.text(".").node()
-						.getBBox().height, text.text("")
-				);
-
-				multiline.forEach((v, i) =>
-					text.insert("tspan")
-						.text(v)
-						.attr("x", 0)
-						.attr("dy", i ? height : 0)
-				);
-
-				text.attr("y", `-${
-					fontSize * (multiline.length - 2) ||
-					fontSize / 2
-				}`);
-			} else {
-				text.text(title);
+			if (hasGauge) {
+				text
+					.attr("dy", "-0.3em")
+					.style("font-size", "27px");
 			}
+
+			setTextValue(text, title, hasGauge ? undefined : [-1.3, 1.3]);
 		}
 	},
 
@@ -650,23 +610,23 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const main = $$.main;
+		const hasGauge = $$.hasType("gauge");
 
 		const text = main.selectAll(`.${CLASS.chartArc}`)
 			.select("text")
 			.style("opacity", "0")
-			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null));
-
-		text.call($$.textForArcLabel.bind($$))
+			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null))
+			.call($$.textForArcLabel.bind($$))
 			.attr("transform", $$.transformForArcLabel.bind($$))
-			.style("font-size", d => ($$.isGaugeType(d.data) ? `${Math.round($$.radius / 5)}px` : ""))
+			.style("font-size", d => ($$.isGaugeType(d.data) && !$$.hasMultiTargets() ? `${Math.round($$.radius / 5)}px` : ""))
 			.transition()
 			.duration(duration)
 			.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
 
 		main.select(`.${CLASS.chartArcsTitle}`)
-			.style("opacity", $$.hasType("donut") || $$.hasType("gauge") ? "1" : "0");
+			.style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
 
-		if ($$.hasType("gauge")) {
+		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
 			const endAngle = (isFullCircle ? -4 : -1) * config.gauge_startingAngle;
 
@@ -706,26 +666,22 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const arcs = $$.arcs;
+		const appendText = className => {
+			arcs.append("text")
+				.attr("class", className)
+				.style("text-anchor", "middle")
+				.style("pointer-events", "none");
+		};
 
 		if ($$.hasType("gauge")) {
 			arcs.append("path")
 				.attr("class", CLASS.chartArcsBackground);
 
-			arcs.append("text")
-				.attr("class", CLASS.chartArcsGaugeUnit)
-				.style("text-anchor", "middle")
-				.style("pointer-events", "none");
+			config.gauge_units && appendText(CLASS.chartArcsGaugeUnit);
 
 			if (config.gauge_label_show) {
-				arcs.append("text")
-					.attr("class", CLASS.chartArcsGaugeMin)
-					.style("text-anchor", "middle")
-					.style("pointer-events", "none");
-
-				!config.gauge_fullCircle && arcs.append("text")
-					.attr("class", CLASS.chartArcsGaugeMax)
-					.style("text-anchor", "middle")
-					.style("pointer-events", "none");
+				appendText(CLASS.chartArcsGaugeMin);
+				!config.gauge_fullCircle && appendText(CLASS.chartArcsGaugeMax);
 			}
 		}
 	},

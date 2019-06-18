@@ -139,6 +139,7 @@
 /*-- Legend --*/
 .bb-legend-item {
   font-size: 12px;
+  user-select: none;
 }
 
 .bb-legend-item-hidden {
@@ -213,6 +214,11 @@
 .bb-chart-arcs-title {
   dominant-baseline: middle;
   font-size: 1.3em;
+}
+
+.bb-chart-arcs-gauge-title {
+  dominant-baseline: middle;
+  font-size: 2.7em;
 }
 
 .bb-chart-arcs {

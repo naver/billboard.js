@@ -5,6 +5,7 @@
 /* eslint-disable */
 import bb from "../../src/core";
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";7
 
 describe("Interface & initialization", () => {
 	let chart;
@@ -195,6 +196,79 @@ describe("Interface & initialization", () => {
 				expect(+chart2.internal.svg.attr("width")).to.be.equal(width);
 				done();
 			}, 200);
+		});
+	});
+
+	describe("set defaults options", () => {
+		let tickPrefix = "-A-";
+		let args = {
+			data: {
+				types: {
+					data1: "area",
+					data2: "area-spline"
+				}
+			},
+			axis: {
+				x: {
+					tick: {
+						format: x =>`${tickPrefix}${x}`
+					}
+				}
+			}
+		};
+
+		before(() => {
+			bb.defaults(args);
+		});
+
+		it("check if defaults options applied", () => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					]
+				}
+			});
+
+			expect(bb.defaults()).deep.equal(args);
+			expect(chart.config("data.types")).to.be.deep.equal(args.data.types);
+
+			chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function(d, i) {
+				expect(this.textContent).to.be.equal(`${tickPrefix}${i}`);
+			})
+		});
+
+		it("check if defaults options not applied", () => {
+			tickPrefix = "AB-";
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					types: {
+						data1: "bar"
+					}
+				},
+				axis: {
+					x: {
+						tick: {
+							format: x =>`${tickPrefix}${x}`
+						}
+					}
+				}
+			};
+
+			chart = util.generate(args);
+
+			expect(chart.config("data.types")).to.be.deep.equal(
+				Object.assign({}, bb.defaults().data.types, args.data.types)
+			);
+
+			chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function(d, i) {
+				expect(this.textContent).to.be.equal(`${tickPrefix}${i}`);
+			})
 		});
 	});
 });

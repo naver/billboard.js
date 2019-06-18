@@ -603,7 +603,7 @@ console.log(JSON.stringify(args))
 				}
 			};
 		});
-		
+
 		beforeEach(() => {
 			spy1.resetHistory();
 			spy2.resetHistory();
@@ -623,7 +623,7 @@ console.log(JSON.stringify(args))
 		it("set options interaction.inputType.touch=true", () => {
 			args.interaction.inputType.touch = true;
 		});
-		
+
 		it("should be called callbacks for touch events", done => {
 			chart.internal.callOverOutForTouch.last = null;
 

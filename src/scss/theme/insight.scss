@@ -159,6 +159,10 @@ rect.bb-circle, use.bb-circle {
 
 /*-- Select - Drag --*/
 /*-- Legend --*/
+.bb-legend-item {
+    user-select: none;
+}
+
 .bb-legend-item-hidden {
     opacity: 0.15;
 }
@@ -263,6 +267,11 @@ rect.bb-circle, use.bb-circle {
 .bb-chart-arcs-title {
     dominant-baseline: middle;
     font-size: 1.3em;
+}
+
+.bb-chart-arcs-gauge-title {
+    dominant-baseline: middle;
+    font-size: 2.7em;
 }
 
 .bb-chart-arcs {

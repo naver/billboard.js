@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.8.1-nightly-20190520142042
+ * @version 1.9.0-nightly-20190617104911
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -443,6 +443,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
   chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
   chartArcsTitle: "bb-chart-arcs-title",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
   chartBar: "bb-chart-bar",
   chartBars: "bb-chart-bars",
   chartLine: "bb-chart-line",
@@ -599,6 +600,22 @@ var isValue = function (v) {
     sanitise = function (str) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 },
+    setTextValue = function (node, text) {
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"); // reset possible text
+
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+      });
+    }
+  }
+},
     getRectSegList = function (path) {
   /*
    * seg1 ---------- seg2
@@ -694,6 +711,24 @@ var isValue = function (v) {
     return p.concat(c);
   }) : [];
 },
+    mergeObj = function (_mergeObj) {
+  function mergeObj() {
+    return _mergeObj.apply(this, arguments);
+  }
+
+  return mergeObj.toString = function () {
+    return _mergeObj.toString();
+  }, mergeObj;
+}(function (target) {
+  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}),
     sortValue = function (data) {
   var fn,
       isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
@@ -719,6 +754,18 @@ var isValue = function (v) {
   for (var i = start; i < end; i++) res.push(i);
 
   return res;
+},
+    sendStats = function () {
+  if (navigator && localStorage) {
+    var url = "https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F".concat(location ? location.hostname : ""),
+        t = +new Date(),
+        last = +localStorage.getItem("$bb.stats"),
+        expire = 1209600000;
+    if (!last || last + expire < t) if (localStorage.setItem("$bb.stats", t + expire), navigator.sendBeacon) navigator.sendBeacon(url);else {
+      var i = new Image();
+      i.src = url, i.style.display = "none", document.body.appendChild(i), document.body.removeChild(i);
+    }
+  }
 },
     emulateEvent = {
   mouse: function () {
@@ -866,7 +913,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.8.1-nightly-20190520142042");
+defineProperty_default()(Plugin_Plugin, "version", "1.9.0-nightly-20190617104911");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js

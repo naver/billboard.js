@@ -90,7 +90,10 @@ extend(ChartInternal.prototype, {
 			$$.orgXScale && $$.orgXScale.range($$.x.range());
 
 			// rescale from the original scale
-			const newScale = transform.rescaleX($$.orgXScale || $$.x);
+			const newScale = transform[
+				config.axis_rotated ? "rescaleY" : "rescaleX"
+			]($$.orgXScale || $$.x);
+
 			const domain = $$.trimXDomain(newScale.domain());
 			const rescale = config.zoom_rescale;
 
@@ -121,9 +124,6 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		$$.zoom.altDomain = event.altKey ?
-			$$.x.orgDomain() : null;
-
 		$$.zoom.startEvent = event;
 		callFn($$.config.zoom_onzoomstart, $$.api, event);
 	},
@@ -137,24 +137,23 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const event = d3Event;
 
-		if (!config.zoom_enabled || !event.sourceEvent) {
+		if (
+			!config.zoom_enabled ||
+			!event.sourceEvent ||
+			$$.filterTargetsToShow($$.data.targets).length === 0
+		) {
 			return;
 		}
 
 		const isMousemove = event.sourceEvent.type === "mousemove";
+		const isZoomOut = event.sourceEvent.wheelDelta < 0;
 		const transform = event.transform;
 
+		if (!isMousemove && isZoomOut && $$.x.domain().every((v, i) => v !== $$.orgXDomain[i])) {
+			$$.x.domain($$.orgXDomain);
+		}
+
 		$$.zoom.updateTransformScale(transform);
-
-		if ($$.filterTargetsToShow($$.data.targets).length === 0) {
-			return;
-		}
-
-		if (isMousemove && $$.zoom.altDomain) {
-			$$.x.domain($$.zoom.altDomain);
-			transform.scale($$.zoomScale).updateScaleExtent();
-			return;
-		}
 
 		if ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0]) {
 			$$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]);
@@ -264,6 +263,12 @@ extend(ChartInternal.prototype, {
 		let end = 0;
 		let zoomRect = null;
 
+		const prop = {
+			axis: isRotated ? "y" : "x",
+			attr: isRotated ? "height" : "width",
+			index: isRotated ? 1 : 0
+		};
+
 		$$.zoomBehaviour = d3Drag()
 			.clickDistance(4)
 			.on("start", function() {
@@ -277,21 +282,21 @@ extend(ChartInternal.prototype, {
 						.attr("height", isRotated ? 0 : $$.height);
 				}
 
-				start = d3Mouse(this)[0];
+				start = d3Mouse(this)[prop.index];
 				end = start;
 
 				zoomRect
-					.attr("x", start)
-					.attr("width", 0);
+					.attr(prop.axis, start)
+					.attr(prop.attr, 0);
 
 				$$.onZoomStart();
 			})
 			.on("drag", function() {
-				end = d3Mouse(this)[0];
+				end = d3Mouse(this)[prop.index];
 
 				zoomRect
-					.attr("x", Math.min(start, end))
-					.attr("width", Math.abs(end - start));
+					.attr(prop.axis, Math.min(start, end))
+					.attr(prop.attr, Math.abs(end - start));
 			})
 			.on("end", function(d) {
 				const scale = $$.zoomScale || $$.x;
@@ -299,8 +304,8 @@ extend(ChartInternal.prototype, {
 				$$.setDragStatus(false);
 
 				zoomRect
-					.attr("x", 0)
-					.attr("width", 0);
+					.attr(prop.axis, 0)
+					.attr(prop.attr, 0);
 
 				if (start > end) {
 					[start, end] = [end, start];

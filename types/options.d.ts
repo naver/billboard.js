@@ -40,6 +40,15 @@ export interface ChartOptions {
 		height?: number;
 	};
 
+	/**
+	 * Allow usage stats collection.
+	 * - **NOTE:**
+	 *   - The usage stats collection is used for reference purpose only.
+	 *   - The stats data will be sent in a period of once in every 2 weeks.
+	 *   - Help us to make a better chart library! :)
+	 */
+	stats?: boolean;
+
 	padding?: {
 		/**
 		 * The padding on the top of the chart.
@@ -110,7 +119,7 @@ export interface ChartOptions {
 		/**
 		 * Set the color value for each data point when mouse/touch onover event occurs.
 		 */
-		onover: string | {[key: string]: string} | ((d: DataItem) => string);
+		onover?: string | { [key: string]: string } | ((d: DataItem) => string);
 	};
 
 	interaction?: {
@@ -463,6 +472,11 @@ export interface ChartOptions {
 		max?: number;
 
 		/**
+		 * Set title of gauge chart. Use `\n` character to enter line break.
+		 */
+		title?: string;
+
+		/**
 		 * Set units of the gauge.
 		 */
 		units?: string;
@@ -486,22 +500,22 @@ export interface ChartOptions {
 			 * Set custom spline interpolation
 			 */
 			type?: "basis"
-				| "basis-open"
-				| "bundle"
-				| "cardinal"
-				| "cardinal-closed"
-				| "cardinal-open"
-				| "catmull-rom"
-				| "catmull-rom-closed"
-				| "catmull-rom-open"
-				| "monotone-x"
-				| "monotone-y"
-				| "natural"
-				| "linear-closed"
-				| "linear"
-				| "step"
-				| "step-after"
-				| "step-before"
+			| "basis-open"
+			| "bundle"
+			| "cardinal"
+			| "cardinal-closed"
+			| "cardinal-open"
+			| "catmull-rom"
+			| "catmull-rom-closed"
+			| "catmull-rom-open"
+			| "monotone-x"
+			| "monotone-y"
+			| "natural"
+			| "linear-closed"
+			| "linear"
+			| "step"
+			| "step-after"
+			| "step-before"
 		};
 	};
 
@@ -555,7 +569,7 @@ export interface ChartOptions {
 	/**
 	 * Set plugins
 	 */
-	plugins?: Stanford|any[];
+	plugins?: Stanford | any[];
 }
 
 export interface AreaLinearGradientOptions {
@@ -743,51 +757,51 @@ export interface TooltipOptions {
 	 * If tooltip.grouped is true, data includes multiple data points.
 	 */
 	contents?: (
-			data: any,
-			defaultTitleFormat: string,
-			defaultValueFormat: string,
-			color: any
-		) => string | {
-			/**
-			 * Set CSS selector or element reference to bind tooltip.
-			 */
-			bindto?: string | HTMLElement;
+		data: any,
+		defaultTitleFormat: string,
+		defaultValueFormat: string,
+		color: any
+	) => string | {
+		/**
+		 * Set CSS selector or element reference to bind tooltip.
+		 */
+		bindto?: string | HTMLElement;
 
-			/**
-			 * Within template, below syntax will be replaced using template-like syntax string:
-			 *  - {{ ... }}: the doubly curly brackets indicate loop block for data rows
-			 *  - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
-			 *  - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
-			 *  - {=TITLE}: title value
-			 *  - {=COLOR}: data color
-			 *  - {=VALUE}: data value
-			 */
-			template?: string;
+		/**
+		 * Within template, below syntax will be replaced using template-like syntax string:
+		 *  - {{ ... }}: the doubly curly brackets indicate loop block for data rows
+		 *  - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
+		 *  - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+		 *  - {=TITLE}: title value
+		 *  - {=COLOR}: data color
+		 *  - {=VALUE}: data value
+		 */
+		template?: string;
 
-			/**
-			 * Set additional text content within data loop, using template syntax.
-			 *  - NOTE: It should contain `{ key: Array, ... }` value
-			 *    - 'key' name is used as substitution within template as '{=KEY}'
-			 *    - The value array length should match with the data length
-			 */
-			text?: { [key: string]: string[]|number[] }
-		};
+		/**
+		 * Set additional text content within data loop, using template syntax.
+		 *  - NOTE: It should contain `{ key: Array, ... }` value
+		 *    - 'key' name is used as substitution within template as '{=KEY}'
+		 *    - The value array length should match with the data length
+		 */
+		text?: { [key: string]: string[] | number[] }
+	};
 
 	init?: {
-	/**
-	 * Show tooltip at the initialization.
-	 */
-	show?: boolean;
+		/**
+		 * Show tooltip at the initialization.
+		 */
+		show?: boolean;
 
-	/**
-	 * Set x Axis index to be shown at the initialization.
-	 */
-	x?: number;
+		/**
+		 * Set x Axis index to be shown at the initialization.
+		 */
+		x?: number;
 
-	/**
-	 * Set the position of tooltip at the initialization.
-	 */
-	position?: {
+		/**
+		 * Set the position of tooltip at the initialization.
+		 */
+		position?: {
 			top?: string;
 			left?: string;
 		}
@@ -1174,33 +1188,33 @@ export interface Data {
 	 * - j is the sub index of the data point where the label is shown.
 	 */
 	labels?: boolean | {
+		/**
+		 * Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+		 */
+		centered?: boolean;
+
+		/**
+		 * Set label text colors.
+		 */
+		colors?: string | { [key: string]: string };
+
+		/**
+		 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (e.g. d3.format('$'))
+		 */
+		format?: FormatFunction | { [key: string]: FormatFunction };
+
+		position?: {
 			/**
-			 * Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+			 * x coordinate position, relative the original.
 			 */
-			centered?: boolean;
+			x?: number;
 
 			/**
-			 * Set label text colors.
+			 * y coordinate position, relative the original.
 			 */
-			colors?: string | { [key: string]: string };
-
-			/**
-			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (e.g. d3.format('$'))
-			 */
-			format?: FormatFunction | { [key: string]: FormatFunction };
-
-			position?: {
-				/**
-				 * x coordinate position, relative the original.
-				 */
-				x?: number;
-
-				/**
-				 * y coordinate position, relative the original.
-				 */
-				y?: number;
-			};
+			y?: number;
 		};
+	};
 
 	/**
 	 * Define the order of the data.
@@ -1216,13 +1230,15 @@ export interface Data {
 	 * If start is not set, the start will be the first data point. If end is not set, the end will be the last data point.
 	 * Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
 	 */
-	regions?: { [key: string]: Array<{
-		start?: number;
-		end?: number;
-		style?: {
-			dasharray?: string;
-		};
-	}> };
+	regions?: {
+		[key: string]: Array<{
+			start?: number;
+			end?: number;
+			style?: {
+				dasharray?: string;
+			};
+		}>
+	};
 
 	/**
 	 * Set color converter function.
@@ -1239,7 +1255,8 @@ export interface Data {
 	};
 
 	/**
-	 * Set text displayed when empty data.
+	 * Set text label to be displayed when there's no data to show.
+	 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
 	 */
 	empty?: { label: { text: string } };
 
@@ -1285,8 +1302,8 @@ export interface Data {
 			value: number;
 			id: string;
 			index: number;
-			}>
-		}>) => boolean;
+		}>
+	}>) => boolean;
 
 	stack?: {
 		/**

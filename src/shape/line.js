@@ -348,7 +348,9 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.data.targets.forEach(d => {
-			if ($$.isAreaType(d) && $$.defs.select(`[id$=${d.id}]`).empty()) {
+			const id = `${$$.datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)}`;
+
+			if ($$.isAreaType(d) && $$.defs.select(`#${id}`).empty()) {
 				const color = $$.color(d);
 				const {
 					x = [0, 0],
@@ -357,7 +359,7 @@ extend(ChartInternal.prototype, {
 				} = $$.config.area_linearGradient;
 
 				const linearGradient = $$.defs.append("linearGradient")
-					.attr("id", `${$$.datetimeId}-areaGradient-${d.id}`)
+					.attr("id", `${id}`)
 					.attr("x1", x[0])
 					.attr("x2", x[1])
 					.attr("y1", y[0])
@@ -379,7 +381,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return $$.config.area_linearGradient ?
-			`url(#${$$.datetimeId}-areaGradient-${d.id})` :
+			`url(#${$$.datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)})` :
 			$$.color(d);
 	},
 
@@ -623,7 +625,7 @@ extend(ChartInternal.prototype, {
 					const x = ratio * (+point.attr("x") + width / 2);
 					const y = ratio * (+point.attr("y") + height / 2);
 
-					point.style("transform", `translate(${x}px, ${y}px) scale(${scale})`);
+					point.attr("transform", `translate(${x} ${y}) scale(${scale})`);
 				}
 			});
 		}
@@ -642,7 +644,7 @@ extend(ChartInternal.prototype, {
 		circles.attr("r", r);
 
 		!$$.isCirclePoint() &&
-			circles.style("transform", `scale(${r(circles) / $$.config.point_r})`);
+			circles.attr("transform", `scale(${r(circles) / $$.config.point_r})`);
 	},
 
 	pointR(d) {
