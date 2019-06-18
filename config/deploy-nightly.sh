@@ -16,7 +16,7 @@ setup_git() {
 
     git fetch origin
     git checkout nightly
-    git merge --strategy-option theirs origin/master
+    git merge --strategy-option theirs origin/dev
 }
 
 build_nightly() {
