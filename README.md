@@ -1,13 +1,11 @@
-<img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js">
-
-<p align="center">
-  <a href="https://www.npmjs.com/package/billboard.js">
-    <img alt="npm latest version" src="https://img.shields.io/npm/v/billboard.js/latest.svg">
-  </a>
-  <a href="https://www.npmjs.com/package/billboard.js">
-    <img alt="npm next version" src="https://img.shields.io/npm/v/billboard.js/next.svg">
-  </a>
-</p>
+<img src="https://naver.github.io/billboard.js/img/logo/billboard.js.svg" width="350" alt="billboard.js"><br>
+  
+<a href="https://www.npmjs.com/package/billboard.js">
+  <img alt="npm latest version" src="https://img.shields.io/npm/v/billboard.js/latest.svg">
+</a>
+<a href="https://www.npmjs.com/package/billboard.js">
+  <img alt="npm next version" src="https://img.shields.io/npm/v/billboard.js/next.svg">
+</a><br>
 
 [![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Greenkeeper][badge-gk]][link-gk]
 [![semantic-release][badge-semantic-release]][link-semantic-release]
