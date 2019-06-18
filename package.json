@@ -120,7 +120,7 @@
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.1",
     "sass-loader": "^7.1.0",
-    "semantic-release": "15.13.12",
+    "semantic-release": "^15.13.16",
     "simulant": "^0.2.2",
     "sinon": "^7.3.2",
     "string-replace-webpack-plugin": "^0.1.3",
