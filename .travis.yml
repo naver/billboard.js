@@ -3,38 +3,22 @@ node_js:
   - "10"
 dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
-
 before_install:
   - npm install -g npm@latest
 install:
   - npm config set package-lock false
   - npm install
-
+sudo: required
+addons:
+  chrome: stable # install chrome stable.
 cache:
   yarn: true
-  npm: true
   directories:
     - $HOME/.npm
-
-stages:
-  - lint
-  - test
-  - release
-
-jobs:
-  include:
-    - stage: lint
-      script:
-        - bash ./config/deploy-nightly.sh setup
-        - npm run lint
-    - stage: test
-      sudo: required
-      addons:
-        chrome: stable # install chrome stable.
-      script:
-        - npm run coverage
-      after_success:
-        - npm run coveralls
-    - stage: release
-      script:
-        - bash ./config/deploy-nightly.sh build
+before_script:
+  - bash ./config/deploy-nightly.sh setup
+  - npm run lint
+script:
+  - npm run coverage
+after_success:
+  - bash ./config/deploy-nightly.sh build
