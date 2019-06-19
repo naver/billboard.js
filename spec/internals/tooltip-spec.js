@@ -676,6 +676,32 @@ describe("TOOLTIP", function() {
 		});
 	});
 
+	describe("tooltip for null data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, null],
+						["data2", null, 20]
+					]
+				}
+			};
+		});
+
+		it("check when first data is null", () => {
+			chart.tooltip.show({x:1});
+
+			expect(chart.$.tooltip.html()).to.be.equal(
+				`<table class="bb-tooltip"><tbody><tr><th colspan="2">1</th></tr>
+					<tr class="bb-tooltip-name-data2">
+						<td class="name"><span style="background-color:#fa7171"></span>data2</td>
+						<td class="value">20</td>
+					</tr>
+				</tbody></table>`.replace(/[\r\n\t]/g, "")
+			);
+		});
+	});
+
 	describe("tooltip for dynamic loaded data", () => {
 		before(() => {
 			args = {
@@ -773,17 +799,17 @@ describe("TOOLTIP", function() {
 						.attr("patternUnits", "userSpaceOnUse")
 						.attr("width", "6")
 						.attr("height", "6");
-			
+
 					var g = pattern
 						.append("g")
 						.attr("fill-rule", "evenodd")
 						.attr("stroke-width", 1)
 						.append("g")
 						.attr("fill", "rgb(255, 127, 14)");
-			
+
 					g.append("polygon").attr("points", "5 0 6 0 0 6 0 5");
 					g.append("polygon").attr("points", "6 5 6 6 5 6");
-			
+
 					// Should return an array of SVGPatternElement
 					return [
 						pattern.node()
