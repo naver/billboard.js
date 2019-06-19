@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {extend, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess} from "./util";
+import {extend, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -142,7 +142,7 @@ extend(ChartInternal.prototype, {
 				continue;
 			}
 
-			if (i === 0) {
+			if (isUndefined(text)) {
 				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
 
 				text = tplProcess(tpl[0], {
