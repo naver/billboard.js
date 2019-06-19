@@ -16,16 +16,9 @@ cache:
   directories:
     - $HOME/.npm
 
-before_script:
-  - greenkeeper-lockfile-update
-
-after_script:
-  - greenkeeper-lockfile-upload
-
 stages:
   - lint
   - test
-  - release
 
 jobs:
   include:
@@ -40,17 +33,3 @@ jobs:
         - npm run coverage
       after_success:
         - npm run coveralls
-    - stage: release
-      script: skip
-      deploy:
-        provider: script
-        skip_cleanup: true
-        script: npm run release
-        'on':
-          repo: naver/billboard.js
-          branches:
-            only:
-              - master
-              - next
-
-
