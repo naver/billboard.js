@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>plugin-stanford - billboard.js API doc</title>
+    <title>core.js - billboard.js API doc</title>
     
     <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
     
@@ -40,1235 +40,205 @@
 
 <div id="main">
     
-    <h1 class="page-title">plugin-stanford</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        plugin-stanford
-        </h2>
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-    
-
-    <h4 class="name" id="plugin-stanford"><span class="type-signature"></span>new plugin-stanford<span class="signature">(options)</span><span class="type-signature"> &rarr; {Stanford}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_index.js.html">plugin/stanford/index.js</a>, <a href="plugin_stanford_index.js.html#line20">line 20</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Stanford diagram plugin</p>
-<ul>
-<li><strong>NOTE:</strong>
-<ul>
-<li>Plugins aren't built-in. Need to be loaded or imported to be used.</li>
-<li>Is preferable use <code>scatter</code> as data.type</li>
-</ul>
-</li>
-</ul>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>var chart = bb.generate({
-    data: {
-    	  columns: [ ... ],
-       type: "scatter"
-    }
-    ...
-    plugins: [
-       new bb.plugin.stanford({
-          colors: d3.interpolateHslLong(
-             d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)
-          ),
-          epochs: [ 1, 1, 2, 2, ... ],
-          lines: [
-                 { x1: 0, y1: 0, x2: 65, y2: 65, class: "line1" },
-                 { x1: 0, x2: 65, y1: 40, y2: 40, class: "line2" }
-          ],
-          scale: {
-          	max: 10000,
-            	min: 1,
-          	width: 500,
-            	format: 'pow10',
-          },
-          padding: {
-          	top: 15,
-          	right: 0,
-          	bottom: 0,
-          	left: 0
-          },
-          regions: [
-          	{
-              	points: [ // add points counter-clockwise
-              		{ x: 0, y: 0 },
-              		{ x: 40, y: 40 },
-              		{ x: 0, y: 40 }
-              	],
-              	text: function (value, percentage) {
-              		return `Normal Operations: ${value} (${percentage}%)`;
-              	},
-              	opacity: 0.2, // 0 to 1
-              	class: "test-polygon1"
-             },
-            	...
-          ]
-       }
-    ]
- });</code></pre>
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Stanford plugin options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Stanford</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-        </div>
-    
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="Plugin.html">Plugin</a></li>
-    </ul>
-
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".colors"><span class="type-signature">(static) </span>colors<span class="type-signature"> :function</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line17">line 17</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>undefined</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">function</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>colors: d3.interpolateHslLong(
-     d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)
-  )</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".epochs"><span class="type-signature">(static) </span>epochs<span class="type-signature"> :Array</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line30">line 30</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>[]</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Specify the key of epochs values in the data.</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>epochs: [ 1, 1, 2, 2, ... ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".lines"><span class="type-signature">(static) </span>lines<span class="type-signature"> :Array</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line61">line 61</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>[]</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Show additional lines anywhere on the chart.</p>
-<ul>
-<li>Each line object should consist with following options:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>x1</td>
-<td>Number</td>
-<td>Starting position on the x axis</td>
-</tr>
-<tr>
-<td>y1</td>
-<td>Number</td>
-<td>Starting position on the y axis</td>
-</tr>
-<tr>
-<td>x2</td>
-<td>Number</td>
-<td>Ending position on the x axis</td>
-</tr>
-<tr>
-<td>y2</td>
-<td>Number</td>
-<td>Ending position on the y axis</td>
-</tr>
-<tr>
-<td>class</td>
-<td>String</td>
-<td>Optional value. Set a custom css class to this line.</td>
-</tr>
-</tbody>
-</table>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>lines: [
-      { x1: 0, y1: 0, x2: 65, y2: 65, class: "line1" },
-      { x1: 0, x2: 65, y1: 40, y2: 40, class: "line2" }
-  ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".padding"><span class="type-signature">(static) </span>padding<span class="type-signature"> :Object</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line85">line 85</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.top</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Top padding value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.right</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Right padding value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.bottom</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Bottom padding value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.left</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Left padding value.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>The padding for color scale element</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>padding: {
-    top: 15,
-    right: 0,
-    bottom: 0,
-    left: 0
- },</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".regions"><span class="type-signature">(static) </span>regions<span class="type-signature"> :Array</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>[]</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Show additional regions anywhere on the chart.</p>
-<ul>
-<li>Each region object should consist with following options:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>points</td>
-<td>Array</td>
-<td></td>
-<td>Accepts a group of objects that has x and y.<br>These points should be added in a counter-clockwise fashion to make a closed polygon.</td>
-</tr>
-<tr>
-<td>opacity</td>
-<td>Number</td>
-<td>0.2</td>
-<td>Optional value. Sets the opacity of the region as value between 0 and 1</td>
-</tr>
-<tr>
-<td>text</td>
-<td>Function</td>
-<td></td>
-<td>Optional value. This function receives a value and percentage of the number of epochs in this region.<br>Return a string to place text in the middle of the region.</td>
-</tr>
-<tr>
-<td>class</td>
-<td>String</td>
-<td></td>
-<td>Optional value. Set a custom css class to this region, use the fill property in css to set a background color.</td>
-</tr>
-</tbody>
-</table>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>regions: [
-      {
-          points: [ // add points counter-clockwise
-              { x: 0, y: 0 },
-              { x: 40, y: 40 },
-              { x: 0, y: 40 },
-          ],
-          text: function (value, percentage) {
-              return `Normal Operations: ${value} (${percentage}%)`;
-          },
-          opacity: 0.2, // 0 to 1
-          class: "test-polygon1"
-      },
-      ...
-  ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".scale"><span class="type-signature">(static) </span>scale<span class="type-signature"> :Object</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line63">line 63</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Minimum value of the color scale. Default: lowest value in epochs</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Maximum value of the color scale. Default: highest value in epochs</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.width</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>20</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Width of the color scale</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.format</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format(&quot;d&quot;)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>Set scale values</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>scale: {
-   max: 10000,
-   min: 1,
-   width: 500,
-   format: "pow10"
- },</code></pre>
-
-
-
-        
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">core.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard project is licensed under the MIT license
+ */
+import Chart from "./internals/Chart";
+import ChartInternal from "./internals/ChartInternal";
+import Axis from "./axis/Axis";
+import {isObject, mergeObj} from "./internals/util";
+
+import "./config/config";
+import "./internals/scale";
+import "./internals/domain";
+import "./data/data";
+import "./data/data.convert";
+import "./data/data.load";
+import "./internals/category";
+import "./interactions/interaction";
+import "./internals/size";
+import "./shape/shape";
+import "./shape/arc";
+import "./shape/bar";
+import "./shape/bubble";
+import "./shape/line";
+import "./shape/point";
+import "./shape/radar";
+import "./internals/text";
+import "./internals/type";
+import "./internals/grid";
+import "./internals/tooltip";
+import "./internals/legend";
+import "./internals/title";
+import "./internals/clip";
+import "./internals/region";
+import "./interactions/drag";
+import "./internals/selection";
+import "./interactions/subchart";
+import "./interactions/zoom";
+import "./internals/color";
+import "./internals/format";
+import "./internals/cache";
+import "./internals/class";
+import "./api/api.focus";
+import "./api/api.show";
+import "./api/api.zoom";
+import "./api/api.load";
+import "./api/api.flow";
+import "./api/api.selection";
+import "./api/api.transform";
+import "./api/api.group";
+import "./api/api.grid";
+import "./api/api.region";
+import "./api/api.data";
+import "./api/api.category";
+import "./api/api.color";
+import "./api/api.x";
+import "./api/api.axis";
+import "./api/api.legend";
+import "./api/api.chart";
+import "./api/api.tooltip";
+import "./api/api.export";
+
+// base CSS
+import "./scss/billboard.scss";
+
+let defaults = {};
+
+/**
+ * @namespace bb
+ * @version #__VERSION__#
+ */
+const bb = {
+	/**
+	 * Version information
+	 * @property {String} version version
+	 * @example
+	 *    bb.version;  // "1.0.0"
+	 * @memberof bb
+	 */
+	version: "#__VERSION__#",
+
+	/**
+	 * Generate chart
+	 * @param {Options} options chart options
+	 * @memberof bb
+	 * @return {Chart}
+	 * @see {@link Options} for different generation options
+	 * @see {@link Chart} for different methods API
+	 * @example
+	 *  &lt;!-- chart holder -->
+	 * &lt;div id="LineChart">&lt;/div>
+	 * @example
+	 *   // generate chart with options
+	 *  var chart = bb.generate({
+	 *      "bindto": "#LineChart"
+	 *      "data": {
+	 *          "columns": [
+	 *              ["data1", 30, 200, 100, 400, 150, 250],
+	 *              ["data2", 50, 20, 10, 40, 15, 25]
+	 *           ]
+	 *      }
+	 *  });
+	 *
+	 *  // call some API
+	 *  // ex) get the data of 'data1'
+	 *  chart.data("data1");
+	 */
+	generate(config) {
+		const options = mergeObj({}, defaults, config);
+		const inst = new Chart(options);
+
+		inst.internal.charts = this.instance;
+		this.instance.push(inst);
+
+		return inst;
+	},
+
+	/**
+	 * Set or get global default options.
+	 * - **NOTE:**
+	 *   - The options values settings are valid within page context only.
+	 *   - If is called multiple times, will override the last value.
+	 * @param {Options} options chart options
+	 * @memberof bb
+	 * @return {Options}
+	 * @see {@link Options}
+	 * @example
+	 * // Set same option value as for `.generate()`
+	 * bb.defaults({
+	 *   data: {
+	 *     type: "bar"
+	 *   }
+	 * });
+	 *
+	 * bb.defaults();  // {data:{type: "bar"}}
+	 *
+	 * // data.type defaults to 'bar'
+	 * var chart = bb.generate({ ... });
+	 */
+	defaults(options) {
+		if (isObject(options)) {
+			defaults = options;
+		}
+
+		return defaults;
+	},
+
+	/**
+	 * An array containing instance created
+	 * @property {Array} instance instance array
+	 * @example
+	 *  // generate charts
+	 *  var chart1 = bb.generate(...);
+	 *  var chart2 = bb.generate(...);
+	 *
+	 *  bb.instance;  // [ chart1, chart2, ... ]
+	 * @memberof bb
+	 */
+	instance: [],
+
+	/**
+	 * Namespace for plugins
+	 * @property {Object} plugin plugin namespace
+	 * @example
+	 *  // Stanford diagram plugin
+	 *  bb.plugin.stanford;
+	 * @memberof bb
+	 */
+	plugin: {},
+
+	/**
+	 * Internal chart object
+	 * @private
+	 */
+	chart: {
+		fn: Chart.prototype,
+		internal: {
+			fn: ChartInternal.prototype,
+			axis: {
+				fn: Axis.prototype
+			}
+		}
+	}
+};
+
+export {bb};
+export default bb;
+</code></pre>
+        </article>
+    </section>
 
 
 
