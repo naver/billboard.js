@@ -45,7 +45,9 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        script: npm run release && npm run release:docs
+        script:
+          - npm run release
+          - npm run release:docs
         'on':
           repo: naver/billboard.js
           branches:

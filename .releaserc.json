@@ -8,8 +8,5 @@
     "@semantic-release/git"
   ],
   "tagFormat": "${version}",
-  "branches": [
-    "master",
-    {"name": "next", "prerelease": true}
-  ]
+  "branch": "master"
 }

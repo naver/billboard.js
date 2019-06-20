@@ -924,7 +924,7 @@
     parse-github-url "^1.0.1"
     url-join "^4.0.0"
 
-"@semantic-release/npm@^5.0.5", "@semantic-release/npm@^5.1.7":
+"@semantic-release/npm@^5.0.5":
   version "5.1.9"
   resolved "https://registry.yarnpkg.com/@semantic-release/npm/-/npm-5.1.9.tgz#30d775433c91f32d7365382574aeda3b1422a5df"
   integrity sha512-Hcwhiu7zC0hD0ZPTkEE5bsK9l0z7Ou+N/mcSpYT1kq96ETMQtyZee0gjxXiAGaIHJ7wlMuUhHbYp7iAaI1965w==
@@ -940,6 +940,23 @@
     rc "^1.2.8"
     read-pkg "^5.0.0"
     registry-auth-token "^3.3.1"
+
+"@semantic-release/npm@^5.1.10":
+  version "5.1.10"
+  resolved "https://registry.yarnpkg.com/@semantic-release/npm/-/npm-5.1.10.tgz#0f966e04bbcb3cf9cb8b834325d4c79909cfc7ea"
+  integrity sha512-IwpbRyA3AZTcM+6o/nzMtj8PWAclf239Rp4ba4EYvAl5Ks4YjBBsMbi8UMaFKWjNcfvy66fvIhPvn3F2DMhu9Q==
+  dependencies:
+    "@semantic-release/error" "^2.2.0"
+    aggregate-error "^3.0.0"
+    execa "^1.0.0"
+    fs-extra "^8.0.0"
+    lodash "^4.17.4"
+    nerf-dart "^1.0.0"
+    normalize-url "^4.0.0"
+    npm "^6.8.0"
+    rc "^1.2.8"
+    read-pkg "^5.0.0"
+    registry-auth-token "^4.0.0"
 
 "@semantic-release/release-notes-generator@^7.1.2", "@semantic-release/release-notes-generator@^7.1.4":
   version "7.2.0"
@@ -9538,6 +9555,14 @@ registry-auth-token@^3.0.1, registry-auth-token@^3.3.1:
   integrity sha512-4LM6Fw8eBQdwMYcES4yTnn2TqIasbXuwDx3um+QRs7S55aMKCBKBxvPXl2RiUjHwuJLTyYfxSpmfSAjQpcuP+A==
   dependencies:
     rc "^1.1.6"
+    safe-buffer "^5.0.1"
+
+registry-auth-token@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/registry-auth-token/-/registry-auth-token-4.0.0.tgz#30e55961eec77379da551ea5c4cf43cbf03522be"
+  integrity sha512-lpQkHxd9UL6tb3k/aHAVfnVtn+Bcs9ob5InuFLLEDqSqeq+AljB8GZW9xY0x7F+xYwEcjKe07nyoxzEYz6yvkw==
+  dependencies:
+    rc "^1.2.8"
     safe-buffer "^5.0.1"
 
 registry-url@^3.0.3:
