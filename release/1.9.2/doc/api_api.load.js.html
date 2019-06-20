@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>bb - billboard.js API doc</title>
+    <title>api/api.load.js - billboard.js API doc</title>
     
     <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
     
@@ -40,847 +40,168 @@
 
 <div id="main">
     
-    <h1 class="page-title">bb</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        bb
-        </h2>
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line67">line 67</a>
-    </li></ul></dd>
-    
-
-    
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>1.9.2</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-            
-
-            
-        
-        </div>
-    
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".instance"><span class="type-signature">(static) </span>instance<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line158">line 158</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>instance</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>instance array</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>An array containing instance created</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// generate charts
- var chart1 = bb.generate(...);
- var chart2 = bb.generate(...);
-
- bb.instance;  // [ chart1, chart2, ... ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".plugin"><span class="type-signature">(static) </span>plugin<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line168">line 168</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>plugin</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>plugin namespace</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>Namespace for plugins</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// Stanford diagram plugin
- bb.plugin.stanford;</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".version"><span class="type-signature">(static) </span>version<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line79">line 79</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>version</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>version</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>Version information</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>bb.version;  // "1.0.0"</code></pre>
-
-
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".defaults"><span class="type-signature">(static) </span>defaults<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="Options.html">Options</a>}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line139">line 139</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Options.html">Options</a></li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Set or get global default options.</p>
-<ul>
-<li><strong>NOTE:</strong>
-<ul>
-<li>The options values settings are valid within page context only.</li>
-<li>If is called multiple times, will override the last value.</li>
-</ul>
-</li>
-</ul>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// Set same option value as for `.generate()`
-bb.defaults({
-  data: {
-    type: "bar"
-  }
+    <h1 class="page-title">api/api.load.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import Chart from "../internals/Chart";
+import {extend, isString, isArray} from "../internals/util";
+
+extend(Chart.prototype, {
+	/**
+	 * Load data to the chart.&lt;br>&lt;br>
+	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+	 * - &lt;b>Note:&lt;/b>
+	 *   - unload should be used if some data needs to be unloaded simultaneously.
+	 *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.&lt;br>
+	 *   - done will be called after data loaded, but it's not after rendering.
+	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
+	 * @method load
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args The object can consist with following members:&lt;br>
+	 *
+	 *    | Key | Description |
+	 *    | --- | --- |
+	 *    | - url&lt;br>- json&lt;br>- rows&lt;br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | data | Data objects to be loaded |
+	 *    | names | Same as data.names() |
+	 *    | xs | Same as data.xs option  |
+	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
+	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
+	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
+	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+	 *    | headers |  Set 'json' if loading JSON via data.url.&lt;br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+	 *    | keys |  Choose which JSON objects keys correspond to desired data.&lt;br>**NOTE:** Only for JSON object given as array.&lt;br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
+	 *    | mimeType |  Set 'json' if loading JSON via url.&lt;br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
+	 *    | - type&lt;br>- types | The type of targets will be updated. type must be String and types must be Object. |
+	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
+	 *    | done | The specified function will be called after data loaded.|
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
+	 * @example
+	 * // Load data1 and unload data2 and data3
+	 * chart.load({
+	 *     columns: [
+	 *        ["data1", 100, 200, 150, ...],
+	 *        ...
+	 *    ],
+	 *    unload: ["data2", "data3"],
+	 *    url: "...",
+	 *    done: function() { ... }
+	 * });
+	 * @example
+	 * // myAPI.json
+	 * // {
+	 * //   "data1": [220, 240, 270, 250, 280],
+	 * //   "data2": [180, 150, 300, 70, 120]
+	 * // }
+	 *
+	 * chart.load({
+	 *     url: './data/myAPI.json',
+	 *     mimeType: "json"
+	 * });
+	 */
+	load(args) {
+		const $$ = this.internal;
+		const config = $$.config;
+
+		// update xs if specified
+		args.xs &amp;&amp; $$.addXs(args.xs);
+
+		// update names if exists
+		"names" in args &amp;&amp; this.data.names(args.names);
+
+		// update classes if exists
+		"classes" in args &amp;&amp; Object.keys(args.classes).forEach(id => {
+			config.data_classes[id] = args.classes[id];
+		});
+
+		// update categories if exists
+		if ("categories" in args &amp;&amp; $$.isCategorized()) {
+			config.axis_x_categories = args.categories;
+		}
+
+		// update axes if exists
+		"axes" in args &amp;&amp; Object.keys(args.axes).forEach(id => {
+			config.data_axes[id] = args.axes[id];
+		});
+
+		// update colors if exists
+		"colors" in args &amp;&amp; Object.keys(args.colors).forEach(id => {
+			config.data_colors[id] = args.colors[id];
+		});
+
+		// unload if needed
+		if ("unload" in args &amp;&amp; args.unload !== false) {
+			// TODO: do not unload if target will load (included in url/rows/columns)
+			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () =>
+				$$.loadFromArgs(args)
+			);
+		} else {
+			$$.loadFromArgs(args);
+		}
+	},
+
+	/**
+	 * Unload data to the chart.&lt;br>&lt;br>
+	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+	 * - &lt;b>Note:&lt;/b>
+	 * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.&lt;br>
+	 * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
+	 * @method unload
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args
+	 *  | key | Type | Description |
+	 *  | --- | --- | --- |
+	 *  | ids | String &amp;vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
+	 *  | done | Fuction | Callback after data is unloaded. |
+	 * @example
+	 *  // Unload data2 and data3
+	 *  chart.unload({
+	 *    ids: ["data2", "data3"],
+	 *    done: function() {
+	 *       // called after the unloaded
+	 *    }
+	 *  });
+	 */
+	unload(argsValue) {
+		const $$ = this.internal;
+		let args = argsValue || {};
+
+		if (isArray(args)) {
+			args = {ids: args};
+		} else if (isString(args)) {
+			args = {ids: [args]};
+		}
+
+		const ids = $$.mapToTargetIds(args.ids);
+
+		$$.unload(ids, () => {
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true,
+				withLegend: true
+			});
+
+			$$.removeCache(ids);
+			args.done &amp;&amp; args.done();
+		});
+	}
 });
-
-bb.defaults();  // {data:{type: "bar"}}
-
-// data.type defaults to 'bar'
-var chart = bb.generate({ ... });</code></pre>
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Options.html">Options</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>chart options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="Options.html">Options</a></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".generate"><span class="type-signature">(static) </span>generate<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="Chart.html">Chart</a>}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Options.html">Options</a> for different generation options</li>
-        
-            <li><a href="Chart.html">Chart</a> for different methods API</li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Generate chart</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Examples</h5>
-    
-    <pre class="prettyprint"><code>&lt;!-- chart holder -->
-&lt;div id="LineChart">&lt;/div></code></pre>
-
-    <pre class="prettyprint"><code>// generate chart with options
- var chart = bb.generate({
-     "bindto": "#LineChart"
-     "data": {
-         "columns": [
-             ["data1", 30, 200, 100, 400, 150, 250],
-             ["data2", 50, 20, 10, 40, 15, 25]
-          ]
-     }
- });
-
- // call some API
- // ex) get the data of 'data1'
- chart.data("data1");</code></pre>
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Options.html">Options</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>chart options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="Chart.html">Chart</a></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+</code></pre>
+        </article>
+    </section>
 
 
 

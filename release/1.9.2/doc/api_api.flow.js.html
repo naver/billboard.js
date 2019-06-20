@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>bb - billboard.js API doc</title>
+    <title>api/api.flow.js - billboard.js API doc</title>
     
     <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
     
@@ -40,847 +40,459 @@
 
 <div id="main">
     
-    <h1 class="page-title">bb</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        bb
-        </h2>
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line67">line 67</a>
-    </li></ul></dd>
-    
-
-    
-    <dt class="tag-version">Version:</dt>
-    <dd class="tag-version"><ul class="dummy"><li>1.9.2</li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-            
-
-            
-        
-        </div>
-    
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".instance"><span class="type-signature">(static) </span>instance<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line158">line 158</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>instance</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Array</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>instance array</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>An array containing instance created</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// generate charts
- var chart1 = bb.generate(...);
- var chart2 = bb.generate(...);
-
- bb.instance;  // [ chart1, chart2, ... ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".plugin"><span class="type-signature">(static) </span>plugin<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line168">line 168</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>plugin</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>plugin namespace</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>Namespace for plugins</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// Stanford diagram plugin
- bb.plugin.stanford;</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".version"><span class="type-signature">(static) </span>version<span class="type-signature"></span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line79">line 79</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>version</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>version</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>Version information</p>
-</div>
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>bb.version;  // "1.0.0"</code></pre>
-
-
-
-        
-    
-
-    
-        <h3 class="subsection-title">Methods</h3>
-
-        
-            
-
-    
-
-    <h4 class="name" id=".defaults"><span class="type-signature">(static) </span>defaults<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="Options.html">Options</a>}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line139">line 139</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Options.html">Options</a></li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Set or get global default options.</p>
-<ul>
-<li><strong>NOTE:</strong>
-<ul>
-<li>The options values settings are valid within page context only.</li>
-<li>If is called multiple times, will override the last value.</li>
-</ul>
-</li>
-</ul>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>// Set same option value as for `.generate()`
-bb.defaults({
-  data: {
-    type: "bar"
-  }
+    <h1 class="page-title">api/api.flow.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import {selectAll as d3SelectAll} from "d3-selection";
+import {easeLinear as d3EaseLinear} from "d3-ease";
+import {transition as d3Transition} from "d3-transition";
+import Chart from "../internals/Chart";
+import ChartInternal from "../internals/ChartInternal";
+import {isDefined, isValue, diffDomain, extend} from "../internals/util";
+import CLASS from "../config/classes";
+
+extend(Chart.prototype, {
+	/**
+	 * Flow data to the chart.&lt;br>&lt;br>
+	 * By this API, you can append new data points to the chart.
+	 * @method flow
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args The object can consist with following members:&lt;br>
+	 *
+	 *    | Key | Type | Description |
+	 *    | --- | --- | --- |
+	 *    | json | Object | Data as JSON format (@see [data․json](Options.html#.data%25E2%2580%25A4json)) |
+	 *    | rows | Array | Data in array as row format (@see [data․rows](Options.html#.data%25E2%2580%25A4json)) |
+	 *    | columns | Array | Data in array as column format (@see [data․columns](Options.html#.data%25E2%2580%25A4columns)) |
+	 *    | to | String | The lower x edge will move to that point. If not given, the lower x edge will move by the number of given data points |
+	 *    | length | Number | The lower x edge will move by the number of this argument |
+	 *    | duration | Number | The duration of the transition will be specified value. If not given, transition.duration will be used as default |
+	 *    | done | Function | The specified function will be called when flow ends |
+	 *
+	 * - **NOTE:**
+	 *   - If json, rows and columns given, the data will be loaded.
+	 *   - If data that has the same target id is given, the chart will be appended.
+	 *   - Otherwise, new target will be added. One of these is required when calling.
+	 *   - If json specified, keys is required as well as data.json.
+	 * 	 - If tab isn't visible(by evaluating `document.hidden`), will not be executed to prevent unnecessary work.
+	 * @example
+	 * // 2 data points will be apprended to the tail and popped from the head.
+	 * // After that, 4 data points will be appended and no data points will be poppoed.
+	 * chart.flow({
+	 *  columns: [
+	 *    ["x", "2018-01-11", "2018-01-21"],
+	 *    ["data1", 500, 200],
+	 *    ["data2", 100, 300],
+	 *    ["data3", 200, 120]
+	 *  ],
+	 *  to: "2013-01-11",
+	 *  done: function () {
+	 *    chart.flow({
+	 *      columns: [
+	 *        ["x", "2018-02-11", "2018-02-12", "2018-02-13", "2018-02-14"],
+	 *        ["data1", 200, 300, 100, 250],
+	 *        ["data2", 100, 90, 40, 120],
+	 *        ["data3", 100, 100, 300, 500]
+	 *      ],
+	 *      length: 2,
+     *      duration: 1500
+	 *    });
+	 *  }
+	 * });
+	 */
+	flow(args) {
+		const $$ = this.internal;
+		let data;
+		let domain;
+		let length = 0;
+		let tail = 0;
+		let diff;
+		let to;
+
+		if (args.json || args.rows || args.columns) {
+			data = $$.convertData(args);
+		}
+
+		if (!data || !$$.isTabVisible()) {
+			return;
+		}
+
+		const notfoundIds = [];
+		const orgDataCount = $$.getMaxDataCount();
+		const targets = $$.convertDataToTargets(data, true);
+
+		// Update/Add data
+		$$.data.targets.forEach(t => {
+			let found = false;
+
+			for (let i = 0; i &lt; targets.length; i++) {
+				if (t.id === targets[i].id) {
+					found = true;
+
+					if (t.values[t.values.length - 1]) {
+						tail = t.values[t.values.length - 1].index + 1;
+					}
+
+					length = targets[i].values.length;
+
+					for (let j = 0; j &lt; length; j++) {
+						targets[i].values[j].index = tail + j;
+
+						if (!$$.isTimeSeries()) {
+							targets[i].values[j].x = tail + j;
+						}
+					}
+
+					t.values = t.values.concat(targets[i].values);
+					targets.splice(i, 1);
+					break;
+				}
+			}
+
+			!found &amp;&amp; notfoundIds.push(t.id);
+		});
+
+		// Append null for not found targets
+		$$.data.targets.forEach(t => {
+			for (let i = 0; i &lt; notfoundIds.length; i++) {
+				if (t.id === notfoundIds[i]) {
+					tail = t.values[t.values.length - 1].index + 1;
+
+					for (let j = 0; j &lt; length; j++) {
+						t.values.push({
+							id: t.id,
+							index: tail + j,
+							x: $$.isTimeSeries() ? $$.getOtherTargetX(tail + j) : tail + j,
+							value: null
+						});
+					}
+				}
+			}
+		});
+
+		// Generate null values for new target
+		if ($$.data.targets.length) {
+			targets.forEach(t => {
+				const missing = [];
+
+				for (let i = $$.data.targets[0].values[0].index; i &lt; tail; i++) {
+					missing.push({
+						id: t.id,
+						index: i,
+						x: $$.isTimeSeries() ? $$.getOtherTargetX(i) : i,
+						value: null
+					});
+				}
+
+				t.values.forEach(v => {
+					v.index += tail;
+
+					if (!$$.isTimeSeries()) {
+						v.x += tail;
+					}
+				});
+
+				t.values = missing.concat(t.values);
+			});
+		}
+
+		$$.data.targets = $$.data.targets.concat(targets); // add remained
+
+		// check data count because behavior needs to change when it"s only one
+		// const dataCount = $$.getMaxDataCount();
+		const baseTarget = $$.data.targets[0];
+		const baseValue = baseTarget.values[0];
+
+		// Update length to flow if needed
+		if (isDefined(args.to)) {
+			length = 0;
+			to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to;
+
+			baseTarget.values.forEach(v => {
+				v.x &lt; to &amp;&amp; length++;
+			});
+		} else if (isDefined(args.length)) {
+			length = args.length;
+		}
+
+		// If only one data, update the domain to flow from left edge of the chart
+		if (!orgDataCount) {
+			if ($$.isTimeSeries()) {
+				diff = baseTarget.values.length > 1 ?
+					baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
+					baseValue.x - $$.getXDomain($$.data.targets)[0];
+			} else {
+				diff = 1;
+			}
+
+			domain = [baseValue.x - diff, baseValue.x];
+		} else if (orgDataCount === 1 &amp;&amp; $$.isTimeSeries()) {
+			diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
+			domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
+		}
+
+		domain &amp;&amp; $$.updateXDomain(null, true, true, false, domain);
+
+		// Set targets
+		$$.updateTargets($$.data.targets);
+
+		// Redraw with new targets
+		$$.redraw({
+			flow: {
+				index: baseValue.index,
+				length: length,
+				duration: isValue(args.duration) ? args.duration : $$.config.transition_duration,
+				done: args.done,
+				orgDataCount: orgDataCount,
+			},
+			withLegend: true,
+			withTransition: orgDataCount > 1,
+			withTrimXDomain: false,
+			withUpdateXAxis: true
+		});
+	}
 });
 
-bb.defaults();  // {data:{type: "bar"}}
-
-// data.type defaults to 'bar'
-var chart = bb.generate({ ... });</code></pre>
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Options.html">Options</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>chart options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="Options.html">Options</a></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-            
-
-    
-
-    <h4 class="name" id=".generate"><span class="type-signature">(static) </span>generate<span class="signature">(options)</span><span class="type-signature"> &rarr; {<a href="Chart.html">Chart</a>}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="core.js.html">core.js</a>, <a href="core.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-see">See:</dt>
-    <dd class="tag-see">
-        <ul>
-            <li><a href="Options.html">Options</a> for different generation options</li>
-        
-            <li><a href="Chart.html">Chart</a> for different methods API</li>
-        </ul>
-    </dd>
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Generate chart</p>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Examples</h5>
-    
-    <pre class="prettyprint"><code>&lt;!-- chart holder -->
-&lt;div id="LineChart">&lt;/div></code></pre>
-
-    <pre class="prettyprint"><code>// generate chart with options
- var chart = bb.generate({
-     "bindto": "#LineChart"
-     "data": {
-         "columns": [
-             ["data1", 30, 200, 100, 400, 150, 250],
-             ["data2", 50, 20, 10, 40, 15, 25]
-          ]
-     }
- });
-
- // call some API
- // ex) get the data of 'data1'
- chart.data("data1");</code></pre>
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type"><a href="Options.html">Options</a></span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>chart options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type"><a href="Chart.html">Chart</a></span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-    
-
-    
-
-    
-</article>
-
-</section>
+extend(ChartInternal.prototype, {
+	/**
+	 * Generate flow
+	 * @memberof ChartInternal
+	 * @private
+	 * @param {Object} args
+	 * @return {Function}
+	 */
+	generateFlow(args) {
+		const $$ = this;
+		const config = $$.config;
+
+		return function() {
+			const targets = args.targets;
+			const flow = args.flow;
+
+			const {bar: drawBar, line: drawLine, area: drawArea} = args.shape.type;
+			const {cx, cy, xForText, yForText} = args.shape.pos;
+			const xv = args.xv;
+			const duration = args.duration;
+
+			let translateX;
+			let scaleX = 1;
+			const flowIndex = flow.index;
+			const flowLength = flow.length;
+			let flowStart = $$.getValueOnIndex($$.data.targets[0].values, flowIndex);
+			let flowEnd = $$.getValueOnIndex($$.data.targets[0].values, flowIndex + flowLength);
+			const orgDomain = $$.x.domain();
+			const durationForFlow = flow.duration || duration;
+			const done = flow.done || function() {};
+			const wait = $$.generateWait();
+
+			const xgrid = $$.xgrid || d3SelectAll([]);
+			const xgridLines = $$.xgridLines || d3SelectAll([]);
+			const mainRegion = $$.mainRegion || d3SelectAll([]);
+			const mainText = $$.mainText || d3SelectAll([]);
+			const mainBar = $$.mainBar || d3SelectAll([]);
+			const mainLine = $$.mainLine || d3SelectAll([]);
+			const mainArea = $$.mainArea || d3SelectAll([]);
+			const mainCircle = $$.mainCircle || d3SelectAll([]);
+
+			// set flag
+			$$.flowing = true;
+
+			// remove head data after rendered
+			$$.data.targets.forEach(d => {
+				d.values.splice(0, flowLength);
+			});
+
+			// update x domain to generate axis elements for flow
+			const domain = $$.updateXDomain(targets, true, true);
+
+			// update elements related to x scale
+			if ($$.updateXGrid) { $$.updateXGrid(true); }
+
+			// generate transform to flow
+			if (!flow.orgDataCount) { // if empty
+				if ($$.data.targets[0].values.length !== 1) {
+					translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
+				} else {
+					if ($$.isTimeSeries()) {
+						flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0);
+						flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1);
+						translateX = $$.x(flowStart.x) - $$.x(flowEnd.x);
+					} else {
+						translateX = diffDomain(domain) / 2;
+					}
+				}
+			} else if (flow.orgDataCount === 1 || (flowStart &amp;&amp; flowStart.x) === (flowEnd &amp;&amp; flowEnd.x)) {
+				translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
+			} else {
+				if ($$.isTimeSeries()) {
+					translateX = ($$.x(orgDomain[0]) - $$.x(domain[0]));
+				} else {
+					translateX = ($$.x(flowStart.x) - $$.x(flowEnd.x));
+				}
+			}
+
+			scaleX = (diffDomain(orgDomain) / diffDomain(domain));
+			const transform = `translate(${translateX},0) scale(${scaleX},1)`;
+
+			$$.hideXGridFocus();
+
+			const gt = d3Transition().ease(d3EaseLinear)
+				.duration(durationForFlow);
+
+			wait.add([
+				$$.axes.x
+					.transition(gt)
+					.call(g => $$.xAxis.setTransition(gt).create(g)),
+
+				mainBar
+					.transition(gt)
+					.attr("transform", transform),
+
+				mainLine
+					.transition(gt)
+					.attr("transform", transform),
+
+				mainArea
+					.transition(gt)
+					.attr("transform", transform),
+
+				mainCircle
+					.transition(gt)
+					.attr("transform", transform),
+
+				mainText
+					.transition(gt)
+					.attr("transform", transform),
+
+				mainRegion
+					.filter($$.isRegionOnX)
+					.transition(gt)
+					.attr("transform", transform),
+
+				xgrid
+					.transition(gt)
+					.attr("transform", transform),
+
+				xgridLines
+					.transition(gt)
+					.attr("transform", transform),
+			]);
+
+			gt.call(wait, () => {
+				const shapes = [];
+				const texts = [];
+				const eventRects = [];
+
+				// remove flowed elements
+				if (flowLength) {
+					for (let i = 0; i &lt; flowLength; i++) {
+						const index = flowIndex + i;
+
+						shapes.push(`.${CLASS.shape}-${index}`);
+						texts.push(`.${CLASS.text}-${index}`);
+						eventRects.push(`.${CLASS.eventRect}-${index}`);
+					}
+
+					$$.svg.selectAll(`.${CLASS.shapes}`)
+						.selectAll(shapes)
+						.remove();
+
+					$$.svg.selectAll(`.${CLASS.texts}`)
+						.selectAll(texts)
+						.remove();
+
+					$$.svg.selectAll(`.${CLASS.eventRects}`)
+						.selectAll(eventRects)
+						.remove();
+
+					$$.svg.select(`.${CLASS.xgrid}`)
+						.remove();
+				}
+
+				// draw again for removing flowed elements and reverting attr
+				xgrid.size() &amp;&amp; xgrid
+					.attr("transform", null)
+					.attr($$.xgridAttr);
+
+				xgridLines
+					.attr("transform", null);
+
+				xgridLines.select("line")
+					.attr("x1", config.axis_rotated ? 0 : xv)
+					.attr("x2", config.axis_rotated ? $$.width : xv);
+
+				xgridLines.select("text")
+					.attr("x", config.axis_rotated ? $$.width : 0)
+					.attr("y", xv);
+
+				mainBar
+					.attr("transform", null)
+					.attr("d", drawBar);
+
+				mainLine
+					.attr("transform", null)
+					.attr("d", drawLine);
+
+				mainArea
+					.attr("transform", null)
+					.attr("d", drawArea);
+
+				mainCircle
+					.attr("transform", null);
+
+				if ($$.isCirclePoint()) {
+					mainCircle
+						.attr("cx", cx)
+						.attr("cy", cy);
+				} else {
+					const xFunc = d => cx(d) - config.point_r;
+					const yFunc = d => cy(d) - config.point_r;
+
+					mainCircle
+						.attr("x", xFunc)
+						.attr("y", yFunc)
+						.attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
+						.attr("cy", cy);
+				}
+
+				mainText
+					.attr("transform", null)
+					.attr("x", xForText)
+					.attr("y", yForText)
+					.style("fill-opacity", $$.opacityForText.bind($$));
+
+				mainRegion
+					.attr("transform", null);
+
+				mainRegion.select("rect").filter($$.isRegionOnX)
+					.attr("x", $$.regionX.bind($$))
+					.attr("width", $$.regionWidth.bind($$));
+
+				config.interaction_enabled &amp;&amp; $$.redrawEventRect();
+
+				// callback for end of flow
+				done();
+
+				$$.flowing = false;
+			});
+		};
+	}
+});
+</code></pre>
+        </article>
+    </section>
 
 
 
