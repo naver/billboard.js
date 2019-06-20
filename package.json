@@ -18,7 +18,6 @@
     "build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
     "prerelease": "npm run build",
     "release": "semantic-release",
-    "release:docs": "bash ./config/deploy.sh",
     "lint": "eslint src",
     "loc": "cloc --by-file src",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
