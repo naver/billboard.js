@@ -16,9 +16,42 @@ cache:
   directories:
     - $HOME/.npm
 before_script:
-  - bash ./config/deploy-nightly.sh setup
-  - npm run lint
-script:
-  - npm run coverage
-after_success:
-  - bash ./config/deploy-nightly.sh build
+  - greenkeeper-lockfile-update
+
+after_script:
+  - greenkeeper-lockfile-upload
+
+stages:
+  - lint
+  - test
+  - release
+
+jobs:
+  include:
+    - stage: lint
+      script:
+        - npm run lint
+    - stage: test
+      sudo: required
+      addons:
+        chrome: stable # install chrome stable.
+      script:
+        - npm run coverage
+      after_success:
+        - npm run coveralls
+    - stage: release
+      script: skip
+      deploy:
+        provider: script
+        skip_cleanup: true
+        script:
+          - npm run release
+          - npm run release:docs
+        'on':
+          repo: naver/billboard.js
+          branches:
+            only:
+              - master
+              - next
+
+
