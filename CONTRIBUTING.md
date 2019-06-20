@@ -60,7 +60,7 @@ The outline is as below:
     <footer>
     ```
 
-    > **BREAKING CHANGE:** a commit that has the text 'BREAKING CHANGE:' at the beginning of its optional body or footer section introduces a breaking API chang
+    > **BREAKING CHANGE:** a commit that has the text 'BREAKING CHANGE:' at the beginning of its optional body or footer section introduces a breaking API change.
 
 - #### Footer
 
