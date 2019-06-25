@@ -97,6 +97,7 @@ describe("Interface & initialization", () => {
 
 	describe("auto resize", () => {
 		let container;
+		let innerHTML = "";
 
 		beforeEach(() => {
 			container = document.getElementById("container");
@@ -109,11 +110,12 @@ describe("Interface & initialization", () => {
 		});
 
 		after(() => {
-			document.body.innerHTML = "";
 			document.body.removeAttribute("style");
 		});
 
 		it("should resize correctly in flex container", function(done) {
+			const innerHTML = document.body.innerHTML;
+
 			this.timeout(5000);
 
 			// set flex container
@@ -138,6 +140,8 @@ describe("Interface & initialization", () => {
 
 			setTimeout(() => {
 				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
+				document.body.innerHTML = innerHTML;
+
 				done();
 			}, 200);
 		});
@@ -221,6 +225,10 @@ describe("Interface & initialization", () => {
 			bb.defaults(args);
 		});
 
+		after(() => {
+			bb.defaults({});
+		})
+
 		it("check if defaults options applied", () => {
 			chart = util.generate({
 				data: {
@@ -268,7 +276,7 @@ describe("Interface & initialization", () => {
 
 			chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function(d, i) {
 				expect(this.textContent).to.be.equal(`${tickPrefix}${i}`);
-			})
+			});
 		});
 	});
 });

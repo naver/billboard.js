@@ -34,8 +34,6 @@ module.exports = (common, env) => {
 		config.entry = plugin.entry;
 		config.output = plugin.output;
 		config.externals = plugin.externals;
-
-		console.log(config.entry, config.output)
 	}
 
 	return env.plugin ? merge.strategy({
