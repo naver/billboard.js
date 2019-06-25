@@ -16,6 +16,8 @@ setup_git() {
 
     git fetch origin
     git checkout nightly
+
+    git config --global merge.ours.driver true
     git merge --strategy-option theirs origin/master
 }
 
