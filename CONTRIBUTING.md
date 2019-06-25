@@ -103,14 +103,14 @@ The outline is as below:
 Steps to submit your pull request:
 
 1. Fork `billboard.js` on your repository
-2. Create a new branch from your billboard.js `dev` branch (and be sure to be always up-to-date)
+2. Create a new branch from your billboard.js `master` branch (and be sure to be always up-to-date)
 3. Do your work
 4. Create test code for your work (when is possible)
 5. Run `npm run lint` for linting and code style check. (update until without any error or warnings)
 6. Run test code by `npm test` or `npm test:chrome` for chrome browser.
    Make sure all tests pass at least on the latest version of Chrome(mobile/desktop).
 7. Write a commit log following convention and push to your repository branch.
-8. Create a new PR from your branch to `billboard.js/dev` branch.
+8. Create a new PR from your branch to `billboard.js/master` branch.
 9. Wait for reviews.
    When your contribution is well enough to be accepted, then it will be merged to our branch.
 10. All done!

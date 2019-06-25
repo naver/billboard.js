@@ -8,5 +8,5 @@
     "@semantic-release/git"
   ],
   "tagFormat": "${version}",
-  "branch": "master"
+  "branch": "latest"
 }

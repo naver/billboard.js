@@ -53,7 +53,7 @@ jobs:
           repo: naver/billboard.js
           branches:
             only:
-              - master
+              - latest
               - next
 
 
