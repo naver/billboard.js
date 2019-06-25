@@ -292,7 +292,7 @@ THE SOFTWARE.
 <!-- badges -->
 [badge-download]: https://img.shields.io/npm/dm/billboard.js.svg?style=flat
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
-[badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=dev
+[badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
 [badge-gzip-size]: http://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
