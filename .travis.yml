@@ -5,6 +5,7 @@ dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
 before_install:
   - npm install -g npm@latest
+  - bash ./config/deploy-nightly.sh setup
 install:
   - npm config set package-lock false
   - npm install
@@ -16,10 +17,8 @@ cache:
   directories:
     - $HOME/.npm
 before_script:
-  - bash ./config/deploy-nightly.sh setup
   - npm run lint
 script:
   - npm run coverage
 after_success:
   - bash ./config/deploy-nightly.sh build
-  
