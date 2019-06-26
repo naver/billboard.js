@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.2-20190625132032
+ * @version 1.9.2-20190626105513
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -12045,7 +12045,7 @@ var Options_Options = function Options() {
      * @property {Object} [color.threshold] color threshold for gauge and tooltip color
      * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
      * @property {Array} [color.threshold.values] Threshold values for each steps
-     * @property {Array} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+     * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
      * @example
      *  color: {
      *      pattern: ["#1f77b4", "#aec7e8", ...],
@@ -12078,8 +12078,14 @@ var Options_Options = function Options() {
      *      pattern: ["grey", "green", "yellow", "orange", "red"],
      *      threshold: {
      *          unit: "value",
-     *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
-     *          max: 30  // the equation for max is: value*100/30
+     *
+     *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
+     *          values: [10, 20, 30, 40, 50],
+     *
+     *          // the equation for max:
+     *          // - unit == 'value': max => 30
+     *          // - unit != 'value': max => value*100/30
+     *          max: 30
      *      },
      *
      *      // set all data to 'red'
@@ -22657,9 +22663,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         max = threshold.max || 100,
         values = threshold.values && threshold.values.length ? threshold.values : [];
     return notEmpty(threshold) ? function (value) {
-      var color = colors[colors.length - 1];
+      var v = asValue ? value : value * 100 / max,
+          color = colors[colors.length - 1];
 
-      for (var v, val, i = 0; val = values[i]; i++) if (v = asValue ? value : value * 100 / max, v < val) {
+      for (var i = 0, l = values.length; i < l; i++) if (v <= values[i]) {
         color = colors[i];
         break;
       }
@@ -24951,7 +24958,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.2-20190625132032",
+  version: "1.9.2-20190626105513",
 
   /**
    * Generate chart
@@ -25050,7 +25057,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.2-20190625132032
+ * @version 1.9.2-20190626105513
  */
 
 
