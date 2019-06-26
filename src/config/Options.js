@@ -1221,7 +1221,7 @@ export default class Options {
 			 * @property {Object} [color.threshold] color threshold for gauge and tooltip color
 			 * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
 			 * @property {Array} [color.threshold.values] Threshold values for each steps
-			 * @property {Array} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+			 * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
 			 * @example
 			 *  color: {
 			 *      pattern: ["#1f77b4", "#aec7e8", ...],
@@ -1254,8 +1254,14 @@ export default class Options {
 			 *      pattern: ["grey", "green", "yellow", "orange", "red"],
 			 *      threshold: {
 			 *          unit: "value",
-			 *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
-			 *          max: 30  // the equation for max is: value*100/30
+			 *
+			 *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
+			 *          values: [10, 20, 30, 40, 50],
+			 *
+			 *          // the equation for max:
+			 *          // - unit == 'value': max => 30
+			 *          // - unit != 'value': max => value*100/30
+			 *          max: 30
 			 *      },
 			 *
 			 *      // set all data to 'red'

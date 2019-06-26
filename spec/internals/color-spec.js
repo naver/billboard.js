@@ -133,8 +133,6 @@ describe("COLOR", () => {
 				.each(function(v, i) {
 					const stroke = d3.select(this).style("stroke").replace(/\"/g, "");
 
-					console.log(this, stroke, colors, i)
-
 					expect(stroke).to.be.equal(colors[i]);
 			});
 		});
@@ -344,6 +342,44 @@ describe("COLOR", () => {
 				util.fireEvent(arc, "mouseout");
 				expect(arc.style.fill).to.be.equal(originalColor);
 
+				done();
+			}, 1000);
+		});
+	});
+
+	describe("color.threshold", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data", 0]
+					],
+					type: "gauge"
+				},
+				color: {
+					pattern: ["rgb(255, 0, 0)", "rgb(255, 165, 0)", "rgb(255, 255, 0)", "rgb(0, 128, 0)", "rgb(0, 0, 255)"],
+					threshold: {
+						values: [0, 20, 40, 60, 80]
+					}
+				}
+			}
+		});
+
+		it("check for color update", done => {
+			const path = chart.$.arc.select(`path.${CLASS.arc}-data`);
+			let i = 0;
+
+			expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
+
+			chart.load({columns: [["data", 19]]});
+
+			setTimeout(() => {
+				expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
+				chart.load({columns: [["data", 40]]});
+			}, 500);
+
+			setTimeout(() => {
+				expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
 				done();
 			}, 1000);
 		});
