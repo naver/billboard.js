@@ -32,6 +32,10 @@ describe("SHAPE RADAR", () => {
 			};
 		});
 
+		it("data points should positioned over radar chart element", () => {
+			expect(chart.internal.radars.node().nextSibling.classList.contains(CLASS.chartLines)).to.be.true;
+		});
+
 		it("check for shape rendering", done => {
 			const radar = chart.$.main.select(`.${CLASS.chartRadars}`);
 			const expectedPoints = "233,30.290000000000003 233,233 309.32696069614934,277.06739130434784";

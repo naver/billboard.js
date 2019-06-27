@@ -342,7 +342,7 @@ export default class ChartInternal {
 	initChartElements() {
 		const $$ = this;
 
-		["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(v => {
+		["Bar", "Radar", "Line", "Bubble", "Arc", "Gauge", "Pie"].forEach(v => {
 			$$[`init${v}`]();
 		});
 
