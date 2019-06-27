@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.2-20190626105513
+ * @version 1.9.2-20190627055520
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -3461,7 +3461,7 @@ function rgb2lrgb(x) {
 function hclConvert(o) {
   if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
   if (!(o instanceof Lab)) o = labConvert(o);
-  if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0, o.l, o.opacity);
+  if (o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l ? 0 : NaN, o.l, o.opacity);
   var h = Math.atan2(o.b, o.a) * rad2deg;
   return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
 }
@@ -10159,7 +10159,7 @@ function () {
     key: "initChartElements",
     value: function initChartElements() {
       var $$ = this;
-      ["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(function (v) {
+      ["Bar", "Radar", "Line", "Bubble", "Arc", "Gauge", "Pie"].forEach(function (v) {
         $$["init".concat(v)]();
       }), notEmpty($$.config.data_labels) && $$.initText();
     }
@@ -10540,8 +10540,11 @@ function () {
           isRotated = config.axis_rotated,
           padding = 0;
       if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
-        var diff = ($$.arcWidth - $$.arcHeight) / 2;
-        x = Math.max(diff, 0) + 4, y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
+        var _$$$getRadarSize = $$.getRadarSize(),
+            _$$$getRadarSize2 = slicedToArray_default()(_$$$getRadarSize, 1),
+            width = _$$$getRadarSize2[0];
+
+        x = $$.width / 2 - width, y = asHalfPixel($$.margin.top);
       }
       return "translate(".concat(x, ", ").concat(y, ")");
     }
@@ -24958,7 +24961,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.2-20190626105513",
+  version: "1.9.2-20190627055520",
 
   /**
    * Generate chart
@@ -25057,7 +25060,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.2-20190626105513
+ * @version 1.9.2-20190627055520
  */
 
 
