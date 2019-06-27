@@ -19,10 +19,16 @@ const config = {
 		rules: [
 			{
 				test: /\.js$/,
-				loader: "eslint-loader",
 				include: path.resolve(process.cwd(), "src"),
 				exclude: /(node_modules)/,
-				enforce: "pre"
+				enforce: "pre",
+				use: {
+					loader: "eslint-loader",
+					options: {
+						failOnError: true,
+						formatter: require("eslint/lib/cli-engine/formatters/stylish")
+					}
+				},
 			},
 			{
 				test: /\.scss$/,

@@ -342,7 +342,7 @@ export default class ChartInternal {
 	initChartElements() {
 		const $$ = this;
 
-		["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(v => {
+		["Bar", "Radar", "Line", "Bubble", "Arc", "Gauge", "Pie"].forEach(v => {
 			$$[`init${v}`]();
 		});
 
@@ -986,10 +986,10 @@ export default class ChartInternal {
 			x = $$.arcWidth / 2;
 			y = $$.arcHeight / 2;
 		} else if (target === "radar") {
-			const diff = ($$.arcWidth - $$.arcHeight) / 2;
+			const [width] = $$.getRadarSize();
 
-			x = Math.max(diff, 0) + 4;
-			y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
+			x = $$.width / 2 - width;
+			y = asHalfPixel($$.margin.top);
 		}
 
 		return `translate(${x}, ${y})`;
