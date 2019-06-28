@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.2
+ * @version 1.9.3
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -10159,7 +10159,7 @@ function () {
     key: "initChartElements",
     value: function initChartElements() {
       var $$ = this;
-      ["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(function (v) {
+      ["Bar", "Radar", "Line", "Bubble", "Arc", "Gauge", "Pie"].forEach(function (v) {
         $$["init".concat(v)]();
       }), notEmpty($$.config.data_labels) && $$.initText();
     }
@@ -10540,8 +10540,11 @@ function () {
           isRotated = config.axis_rotated,
           padding = 0;
       if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
-        var diff = ($$.arcWidth - $$.arcHeight) / 2;
-        x = Math.max(diff, 0) + 4, y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
+        var _$$$getRadarSize = $$.getRadarSize(),
+            _$$$getRadarSize2 = slicedToArray_default()(_$$$getRadarSize, 1),
+            width = _$$$getRadarSize2[0];
+
+        x = $$.width / 2 - width, y = asHalfPixel($$.margin.top);
       }
       return "translate(".concat(x, ", ").concat(y, ")");
     }
@@ -12045,7 +12048,7 @@ var Options_Options = function Options() {
      * @property {Object} [color.threshold] color threshold for gauge and tooltip color
      * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
      * @property {Array} [color.threshold.values] Threshold values for each steps
-     * @property {Array} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+     * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
      * @example
      *  color: {
      *      pattern: ["#1f77b4", "#aec7e8", ...],
@@ -12078,8 +12081,14 @@ var Options_Options = function Options() {
      *      pattern: ["grey", "green", "yellow", "orange", "red"],
      *      threshold: {
      *          unit: "value",
-     *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
-     *          max: 30  // the equation for max is: value*100/30
+     *
+     *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
+     *          values: [10, 20, 30, 40, 50],
+     *
+     *          // the equation for max:
+     *          // - unit == 'value': max => 30
+     *          // - unit != 'value': max => value*100/30
+     *          max: 30
      *      },
      *
      *      // set all data to 'red'
@@ -22657,9 +22666,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         max = threshold.max || 100,
         values = threshold.values && threshold.values.length ? threshold.values : [];
     return notEmpty(threshold) ? function (value) {
-      var color = colors[colors.length - 1];
+      var v = asValue ? value : value * 100 / max,
+          color = colors[colors.length - 1];
 
-      for (var v, val, i = 0; val = values[i]; i++) if (v = asValue ? value : value * 100 / max, v < val) {
+      for (var i = 0, l = values.length; i < l; i++) if (v <= values[i]) {
         color = colors[i];
         break;
       }
@@ -24941,7 +24951,6 @@ util_extend(Chart_Chart.prototype, {
 
 
 
- // base CSS
 
 var _defaults = {},
     bb = {
@@ -24952,7 +24961,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.2",
+  version: "1.9.3",
 
   /**
    * Generate chart
@@ -25051,7 +25060,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.2
+ * @version 1.9.3
  */
 
 
