@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.3-20190628105617
+ * @version 1.9.3-20190701105727
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -19,7 +19,7 @@
 		var a = factory();
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(window, function() {
+})(this, function() {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -290,7 +290,6 @@ module.exports = _typeof;
 __webpack_require__.r(__webpack_exports__);
 /* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "window", function() { return win; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "document", function() { return doc; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "isMobile", function() { return isMobile; });
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -310,8 +309,7 @@ var win = function () {
 
   return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
 }(),
-    doc = win && win.document,
-    isMobile = win.navigator && win.navigator.userAgent && win.navigator.userAgent.indexOf("Mobi") > -1 || !1;
+    doc = win && win.document;
 /* eslint-enable no-new-func, no-undef */
 
 
@@ -6307,6 +6305,9 @@ function brush_brush(dim) {
 // CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
 
 
+// EXTERNAL MODULE: ./src/internals/browser.js
+var browser = __webpack_require__(11);
+
 // CONCATENATED MODULE: ./src/internals/util.js
 
 
@@ -6316,6 +6317,7 @@ function brush_brush(dim) {
  * billboard.js project is licensed under the MIT license
  * @ignore
  */
+
 
 
 
@@ -6545,7 +6547,7 @@ var isValue = function (v) {
         expire = 1209600000;
     if (!last || last + expire < t) if (localStorage.setItem("$bb.stats", t + expire), navigator.sendBeacon) navigator.sendBeacon(url);else {
       var i = new Image();
-      i.src = url, i.style.display = "none", document.body.appendChild(i), document.body.removeChild(i);
+      i.src = url, i.style.display = "none", browser["document"].body.appendChild(i), browser["document"].body.removeChild(i);
     }
   }
 },
@@ -6571,8 +6573,8 @@ var isValue = function (v) {
       // Polyfills DOM4 MouseEvent
       return function (el, eventType) {
         var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
-            mouseEvent = document.createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, window, 0, // the event's mouse click count
+            mouseEvent = browser["document"].createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, browser["window"], 0, // the event's mouse click count
         params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
       };
     }
@@ -10025,9 +10027,6 @@ function () {
 }();
 
 
-// EXTERNAL MODULE: ./src/internals/browser.js
-var browser = __webpack_require__(11);
-
 // CONCATENATED MODULE: ./src/internals/ChartInternal.js
 
 
@@ -10123,7 +10122,7 @@ function () {
         classname: "bb"
       };
 
-      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = src_select(document.body.appendChild(document.createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = src_select(browser["document"].body.appendChild(browser["document"].createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$);
@@ -10634,10 +10633,10 @@ function () {
       var $$ = this,
           config = $$.config;
       $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(config.onresize.bind($$)), config.resize_auto && $$.resizeFunction.add(function () {
-        $$.resizeTimeout && (window.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = window.setTimeout(function () {
+        $$.resizeTimeout && (browser["window"].clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = browser["window"].setTimeout(function () {
           $$.api.flush(!1, !0);
         }, 200);
-      }), $$.resizeFunction.add(config.onresized.bind($$)), window.addEventListener("resize", $$.resizeFunction);
+      }), $$.resizeFunction.add(config.onresized.bind($$)), browser["window"].addEventListener("resize", $$.resizeFunction);
     }
   }, {
     key: "generateResize",
@@ -10703,16 +10702,17 @@ function () {
   }, {
     key: "isTabVisible",
     value: function isTabVisible() {
-      return !document.hidden;
+      return !browser["document"].hidden;
     }
   }, {
     key: "convertInputType",
     value: function convertInputType() {
       var $$ = this,
           config = $$.config,
-          hasMouse = config.interaction_inputType_mouse && !browser["isMobile"] && "onmouseover" in window,
+          isMobile = browser["window"].navigator && "maxTouchPoints" in browser["window"].navigator && browser["window"].navigator.maxTouchPoints > 0 || !1,
+          hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in browser["window"],
           hasTouch = !1;
-      return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in window || window.DocumentTouch && document instanceof window.DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
+      return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in browser["window"] || browser["window"].DocumentTouch && browser["document"] instanceof browser["window"].DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
     }
     /**
      * Call plugin hook
@@ -15751,6 +15751,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize the area that detects the event.
@@ -15788,7 +15789,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         getEventRect = function () {
       var touch = on_event.changedTouches[0];
-      return src_select(document.elementFromPoint(touch.clientX, touch.clientY));
+      return src_select(browser["document"].elementFromPoint(touch.clientX, touch.clientY));
     },
         getIndex = function (eventRect) {
       var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(".concat(config_classes.eventRect, "-?|s)"), "g"), "") * 1;
@@ -16073,6 +16074,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Update container size
@@ -16159,7 +16161,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     if (key === "width") {
       // Sometimes element's width value is incorrect(ex. flex container)
       // In this case, use body's offsetWidth instead.
-      var bodyWidth = document.body.offsetWidth;
+      var bodyWidth = browser["document"].body.offsetWidth;
       v > bodyWidth && (v = bodyWidth);
     }
 
@@ -18544,6 +18546,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   initPie: function initPie() {
     var $$ = this,
@@ -18852,7 +18855,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }), isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function () {
         var touch = on_event.changedTouches[0],
-            eventArc = src_select(document.elementFromPoint(touch.clientX, touch.clientY));
+            eventArc = src_select(browser["document"].elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
       },
           handler = function () {
@@ -19543,6 +19546,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   hasValidPointType: function hasValidPointType(type) {
     return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
@@ -19558,7 +19562,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     },
         doc = new DOMParser().parseFromString(point, "image/svg+xml"),
         node = doc.documentElement,
-        clone = document.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
+        clone = browser["document"].createElementNS(namespaces.svg, node.nodeName.toLowerCase());
 
     if (clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", copyAttr(node, clone), node.childNodes && node.childNodes.length) {
       var parent = src_select(clone);
@@ -20467,6 +20471,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initializes the tooltip
@@ -20722,7 +20727,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           var _config = c.internal.config,
               isLinked = _config.tooltip_linked,
               name = _config.tooltip_linked_name,
-              isInDom = document.body.contains(c.element);
+              isInDom = browser["document"].body.contains(c.element);
 
           if (isLinked && linkedName === name && isInDom) {
             var data = c.internal.tooltip.data()[0],
@@ -20745,6 +20750,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 
@@ -21099,7 +21105,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
         ids.indexOf(d) === -1 && ids.push(d);
         var point = pattern[ids.indexOf(d) % pattern.length];
-        return point === "rectangle" && (point = "rect"), document.createElementNS(namespaces.svg, $$.hasValidPointType(point) ? point : "use");
+        return point === "rectangle" && (point = "rect"), browser["document"].createElementNS(namespaces.svg, $$.hasValidPointType(point) ? point : "use");
       }).attr("class", config_classes.legendItemPoint).style("fill", function (d) {
         return $$.color(d);
       }).style("pointer-events", "none").attr("href", function (data, idx, selection) {
@@ -21253,6 +21259,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  */
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   initClip: function initClip() {
     var $$ = this; // MEMO: clipId needs to be unique because it conflicts when multiple charts exist
@@ -21264,8 +21271,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config;
     if (!config.clipPath && /-clip$/.test(id) || !config.axis_x_clipPath && /-clip-xaxis$/.test(id) || !config.axis_y_clipPath && /-clip-yaxis$/.test(id)) return null;
-    var isIE9 = window.navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
-    return "url(".concat(isIE9 ? "" : document.URL.split("#")[0], "#").concat(id, ")");
+    var isIE9 = !!browser["window"].navigator && browser["window"].navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
+    return "url(".concat(isIE9 ? "" : browser["document"].URL.split("#")[0], "#").concat(id, ")");
   },
   appendClip: function appendClip(parent, id) {
     return parent.append("clipPath").attr("id", id).append("rect");
@@ -22388,6 +22395,7 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 
 
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Initialize zoom.
@@ -22564,7 +22572,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
             _ref3 = slicedToArray_default()(_ref2, 2),
             x = _ref3[0],
             y = _ref3[1],
-            target = document.elementFromPoint(x, y);
+            target = browser["document"].elementFromPoint(x, y);
 
         $$.clickHandlerForSingleX.bind(target)(src_select(target).datum(), $$);
       }
@@ -22582,6 +22590,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 
@@ -22616,13 +22625,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getColorFromCss: function getColorFromCss() {
-    var body = document.body,
+    var body = browser["document"].body,
         pattern = body["__colorPattern__"];
 
     if (!pattern) {
-      var span = document.createElement("span");
+      var span = browser["document"].createElement("span");
       span.className = config_classes.colorPattern, span.style.display = "none", body.appendChild(span);
-      var content = window.getComputedStyle(span).backgroundImage;
+      var content = browser["window"].getComputedStyle(span).backgroundImage;
       span.parentNode.removeChild(span), content.indexOf(";") > -1 && (pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
         return v.trim().replace(/[\"'\s]/g, "");
       }).filter(Boolean), body["__colorPattern__"] = pattern);
@@ -24806,6 +24815,7 @@ util_extend(Chart_Chart.prototype, {
 
 
 
+
 /**
  * Encode to base64
  * @param {String} str
@@ -24822,16 +24832,16 @@ var b64EncodeUnicode = function (str) {
     nodeToSvgDataUrl = function (node, size) {
   var serializer = new XMLSerializer(),
       clone = node.cloneNode(!0),
-      cssText = getCssRules(toArray(document.styleSheets)).filter(function (r) {
+      cssText = getCssRules(toArray(browser["document"].styleSheets)).filter(function (r) {
     return r.cssText;
   }).map(function (r) {
     return r.cssText;
   });
   clone.setAttribute("xmlns", namespaces.xhtml);
   var nodeXml = serializer.serializeToString(clone),
-      style = document.createElement("style"); // escape css for XML
+      style = browser["document"].createElement("style"); // escape css for XML
 
-  style.appendChild(document.createTextNode(cssText.join("\n")));
+  style.appendChild(browser["document"].createTextNode(cssText.join("\n")));
   var styleXml = serializer.serializeToString(style),
       dataStr = "<svg xmlns=\"".concat(namespaces.svg, "\" width=\"").concat(size.width, "\" height=\"").concat(size.height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
@@ -24884,7 +24894,7 @@ util_extend(Chart_Chart.prototype, {
     if (isFunction(callback)) {
       var img = new Image();
       img.crosssOrigin = "Anonymous", img.onload = function () {
-        var canvas = document.createElement("canvas"),
+        var canvas = browser["document"].createElement("canvas"),
             ctx = canvas.getContext("2d");
         canvas.width = size.width, canvas.height = size.height, ctx.drawImage(img, 0, 0), callback(canvas.toDataURL(mimeType));
       }, img.src = svgDataUrl;
@@ -24963,7 +24973,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.3-20190628105617",
+  version: "1.9.3-20190701105727",
 
   /**
    * Generate chart
@@ -25062,7 +25072,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.3-20190628105617
+ * @version 1.9.3-20190701105727
  */
 
 
