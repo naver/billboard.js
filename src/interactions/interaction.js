@@ -9,6 +9,7 @@ import {
 } from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import ChartInternal from "../internals/ChartInternal";
+import {document} from "../internals/browser";
 import CLASS from "../config/classes";
 import {emulateEvent, extend, isBoolean, isNumber, isObject} from "../internals/util";
 

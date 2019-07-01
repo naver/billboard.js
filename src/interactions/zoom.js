@@ -10,6 +10,7 @@ import {
 import {drag as d3Drag} from "d3-drag";
 import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
+import {document} from "../internals/browser";
 import CLASS from "../config/classes";
 import {extend, callFn, diffDomain, getMinMax, isDefined} from "../internals/util";
 

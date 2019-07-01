@@ -12,6 +12,7 @@ import {
 } from "d3-shape";
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
+import {document} from "../internals/browser";
 import CLASS from "../config/classes";
 import {extend, isFunction, isNumber, isUndefined, setTextValue} from "../internals/util";
 
