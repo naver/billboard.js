@@ -17,14 +17,7 @@ const win = (() => {
 
 const doc = win && win.document;
 
-// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-const isMobile = (
-	win.navigator && win.navigator.userAgent &&
-		win.navigator.userAgent.indexOf("Mobi") > -1
-) || false;
-
 export {
 	win as window,
-	doc as document,
-	isMobile
+	doc as document
 };

@@ -5,6 +5,7 @@
  */
 import {event as d3Event} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
+import {document, window} from "./browser";
 import CLASS from "../config/classes";
 
 const isValue = v => v || v === 0;
