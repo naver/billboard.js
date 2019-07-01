@@ -4,6 +4,7 @@
  */
 import {namespaces as d3Namespaces} from "d3-selection";
 import Chart from "../internals/Chart";
+import {document} from "../internals/browser";
 import {extend, isFunction, toArray, getCssRules} from "../internals/util";
 
 /**

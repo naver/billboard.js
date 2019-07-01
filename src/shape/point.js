@@ -7,6 +7,7 @@ import {
 	select as d3Select
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
+import {document} from "../internals/browser";
 import {getRandom, isFunction, isObjectType, toArray, extend, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {

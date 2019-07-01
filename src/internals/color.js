@@ -5,6 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import ChartInternal from "./ChartInternal";
+import {document, window} from "./browser";
 import CLASS from "../config/classes";
 import {notEmpty, extend, isFunction, isObject, isString} from "./util";
 
