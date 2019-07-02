@@ -89,6 +89,10 @@ module.exports = () => {
 		pkg.version = env.NIGHTLY;
 	}
 
+	if (env.VERSION) {
+		pkg.version = env.VERSION;
+	}
+
 	mode === "packaged" && delete config.externals;
 
 	return require(`./config/webpack.config.${mode}.js`)(config, env);
