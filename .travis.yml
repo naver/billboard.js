@@ -52,4 +52,4 @@ jobs:
           all_branches: true
           condition: $TRAVIS_BRANCH =~ ^latest|next$
       after_deploy:
-        - chmod +x ./config/deploy.sh
+        - bash ./config/deploy.sh
