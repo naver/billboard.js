@@ -3,7 +3,7 @@
 <head>
     
     <meta charset="utf-8">
-    <title>plugin-stanford - billboard.js API doc</title>
+    <title>api/api.load.js - billboard.js API doc</title>
     
     <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
     
@@ -40,1235 +40,168 @@
 
 <div id="main">
     
-    <h1 class="page-title">plugin-stanford</h1>
-    
-
-    
-
-
-
-
-<section>
-
-<header>
-    
-        <h2>
-        plugin-stanford
-        </h2>
-        
-    
-</header>
-
-<article>
-    
-        <div class="container-overview">
-        
-            
-
-    
-
-    <h4 class="name" id="plugin-stanford"><span class="type-signature"></span>new plugin-stanford<span class="signature">(options)</span><span class="type-signature"> &rarr; {Stanford}</span></h4>
-
-    
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_index.js.html">plugin/stanford/index.js</a>, <a href="plugin_stanford_index.js.html#line20">line 20</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Stanford diagram plugin</p>
-<ul>
-<li><strong>NOTE:</strong>
-<ul>
-<li>Plugins aren't built-in. Need to be loaded or imported to be used.</li>
-<li>Is preferable use <code>scatter</code> as data.type</li>
-</ul>
-</li>
-</ul>
-</div>
-
-
-
-
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>var chart = bb.generate({
-    data: {
-    	  columns: [ ... ],
-       type: "scatter"
-    }
-    ...
-    plugins: [
-       new bb.plugin.stanford({
-          colors: d3.interpolateHslLong(
-             d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)
-          ),
-          epochs: [ 1, 1, 2, 2, ... ],
-          lines: [
-                 { x1: 0, y1: 0, x2: 65, y2: 65, class: "line1" },
-                 { x1: 0, x2: 65, y1: 40, y2: 40, class: "line2" }
-          ],
-          scale: {
-          	max: 10000,
-            	min: 1,
-          	width: 500,
-            	format: 'pow10',
-          },
-          padding: {
-          	top: 15,
-          	right: 0,
-          	bottom: 0,
-          	left: 0
-          },
-          regions: [
-          	{
-              	points: [ // add points counter-clockwise
-              		{ x: 0, y: 0 },
-              		{ x: 40, y: 40 },
-              		{ x: 0, y: 40 }
-              	],
-              	text: function (value, percentage) {
-              		return `Normal Operations: ${value} (${percentage}%)`;
-              	},
-              	opacity: 0.2, // 0 to 1
-              	class: "test-polygon1"
-             },
-            	...
-          ]
-       }
-    ]
- });</code></pre>
-
-
-
-
-    <h5>Parameters:</h5>
-    
-
-<table class="params">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>options</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Object</span>
-
-
-            
-            </td>
-
-            
-
-            
-
-            <td class="description last"><p>Stanford plugin options</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-<h5>Returns:</h5>
-
-        
-
-
-<dl class="param-type">
-    <dt>
-        Type
-    </dt>
-    <dd>
-        
-<span class="param-type">Stanford</span>
-
-
-    </dd>
-</dl>
-
-    
-
-
-
-        
-        </div>
-    
-
-    
-        <h3 class="subsection-title">Extends</h3>
-
-        
-
-
-    <ul>
-        <li><a href="Plugin.html">Plugin</a></li>
-    </ul>
-
-
-    
-
-    
-
-    
-    
-    
-
-     
-
-    
-
-    
-        <h3 class="subsection-title">Members</h3>
-
-        
-            
-<h4 class="name" id=".colors"><span class="type-signature">(static) </span>colors<span class="type-signature"> :function</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line17">line 17</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>undefined</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">function</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>colors: d3.interpolateHslLong(
-     d3.hsl(250, 1, 0.5), d3.hsl(0, 1, 0.5)
-  )</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".epochs"><span class="type-signature">(static) </span>epochs<span class="type-signature"> :Array</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line30">line 30</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>[]</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Specify the key of epochs values in the data.</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>epochs: [ 1, 1, 2, 2, ... ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".lines"><span class="type-signature">(static) </span>lines<span class="type-signature"> :Array</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line61">line 61</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>[]</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Show additional lines anywhere on the chart.</p>
-<ul>
-<li>Each line object should consist with following options:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>x1</td>
-<td>Number</td>
-<td>Starting position on the x axis</td>
-</tr>
-<tr>
-<td>y1</td>
-<td>Number</td>
-<td>Starting position on the y axis</td>
-</tr>
-<tr>
-<td>x2</td>
-<td>Number</td>
-<td>Ending position on the x axis</td>
-</tr>
-<tr>
-<td>y2</td>
-<td>Number</td>
-<td>Ending position on the y axis</td>
-</tr>
-<tr>
-<td>class</td>
-<td>String</td>
-<td>Optional value. Set a custom css class to this line.</td>
-</tr>
-</tbody>
-</table>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>lines: [
-      { x1: 0, y1: 0, x2: 65, y2: 65, class: "line1" },
-      { x1: 0, x2: 65, y1: 40, y2: 40, class: "line2" }
-  ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".padding"><span class="type-signature">(static) </span>padding<span class="type-signature"> :Object</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line85">line 85</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.top</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Top padding value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.right</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Right padding value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.bottom</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Bottom padding value.</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>padding.left</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>0</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Left padding value.</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>The padding for color scale element</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>padding: {
-    top: 15,
-    right: 0,
-    bottom: 0,
-    left: 0
- },</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".regions"><span class="type-signature">(static) </span>regions<span class="type-signature"> :Array</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line107">line 107</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-    <dt class="tag-default">Default Value:</dt>
-    <dd class="tag-default"><ul class="dummy">
-            <li>[]</li>
-        </ul></dd>
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-
-
-<div class="description">
-    <p>Show additional regions anywhere on the chart.</p>
-<ul>
-<li>Each region object should consist with following options:</li>
-</ul>
-<table>
-<thead>
-<tr>
-<th>Key</th>
-<th>Type</th>
-<th>Default</th>
-<th>Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>points</td>
-<td>Array</td>
-<td></td>
-<td>Accepts a group of objects that has x and y.<br>These points should be added in a counter-clockwise fashion to make a closed polygon.</td>
-</tr>
-<tr>
-<td>opacity</td>
-<td>Number</td>
-<td>0.2</td>
-<td>Optional value. Sets the opacity of the region as value between 0 and 1</td>
-</tr>
-<tr>
-<td>text</td>
-<td>Function</td>
-<td></td>
-<td>Optional value. This function receives a value and percentage of the number of epochs in this region.<br>Return a string to place text in the middle of the region.</td>
-</tr>
-<tr>
-<td>class</td>
-<td>String</td>
-<td></td>
-<td>Optional value. Set a custom css class to this region, use the fill property in css to set a background color.</td>
-</tr>
-</tbody>
-</table>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Array</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>regions: [
-      {
-          points: [ // add points counter-clockwise
-              { x: 0, y: 0 },
-              { x: 40, y: 40 },
-              { x: 0, y: 40 },
-          ],
-          text: function (value, percentage) {
-              return `Normal Operations: ${value} (${percentage}%)`;
-          },
-          opacity: 0.2, // 0 to 1
-          class: "test-polygon1"
-      },
-      ...
-  ]</code></pre>
-
-
-
-        
-            
-<h4 class="name" id=".scale"><span class="type-signature">(static) </span>scale<span class="type-signature"> :Object</span></h4>
-
-
-
-
-
-<dl class="details">
-
-    
-    <dt class="tag-source">Source:</dt>
-    <dd class="tag-source"><ul class="dummy"><li>
-        <a href="plugin_stanford_Options.js.html">plugin/stanford/Options.js</a>, <a href="plugin_stanford_Options.js.html#line63">line 63</a>
-    </li></ul></dd>
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-
-    
-</dl>
-
-
-
-    <h5 class="subsection-title">Properties:</h5>
-
-    
-
-<table class="props">
-    <thead>
-    <tr>
-        
-        <th>Name</th>
-        
-
-        <th>Type</th>
-
-        
-        <th>Attributes</th>
-        
-
-        
-        <th>Default</th>
-        
-
-        <th class="last">Description</th>
-    </tr>
-    </thead>
-
-    <tbody>
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.min</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Minimum value of the color scale. Default: lowest value in epochs</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.max</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Maximum value of the color scale. Default: highest value in epochs</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.width</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">Number</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                    <code>20</code>
-                
-                </td>
-            
-
-            <td class="description last"><p>Width of the color scale</p></td>
-        </tr>
-
-    
-
-        <tr>
-            
-                <td class="name"><code>scale.format</code></td>
-            
-
-            <td class="type">
-            
-                
-<span class="param-type">String</span>
-|
-
-<span class="param-type">function</span>
-
-
-            
-            </td>
-
-            
-                <td class="attributes">
-                
-                    &lt;optional><br>
-                
-
-                
-                </td>
-            
-
-            
-                <td class="default">
-                
-                </td>
-            
-
-            <td class="description last"><p>Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format(&quot;d&quot;)</p></td>
-        </tr>
-
-    
-    </tbody>
-</table>
-
-
-
-
-
-
-<div class="description">
-    <p>Set scale values</p>
-</div>
-
-
-
-    <h5>Type:</h5>
-    <ul>
-        <li>
-            
-<span class="param-type">Object</span>
-
-
-        </li>
-    </ul>
-
-
-
-
-
-    <h5>Example</h5>
-    
-    <pre class="prettyprint"><code>scale: {
-   max: 10000,
-   min: 1,
-   width: 500,
-   format: "pow10"
- },</code></pre>
-
-
-
-        
-    
-
-    
-
-    
-
-    
-</article>
-
-</section>
+    <h1 class="page-title">api/api.load.js</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import Chart from "../internals/Chart";
+import {extend, isString, isArray} from "../internals/util";
+
+extend(Chart.prototype, {
+	/**
+	 * Load data to the chart.&lt;br>&lt;br>
+	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+	 * - &lt;b>Note:&lt;/b>
+	 *   - unload should be used if some data needs to be unloaded simultaneously.
+	 *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.&lt;br>
+	 *   - done will be called after data loaded, but it's not after rendering.
+	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
+	 * @method load
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args The object can consist with following members:&lt;br>
+	 *
+	 *    | Key | Description |
+	 *    | --- | --- |
+	 *    | - url&lt;br>- json&lt;br>- rows&lt;br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+	 *    | data | Data objects to be loaded |
+	 *    | names | Same as data.names() |
+	 *    | xs | Same as data.xs option  |
+	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
+	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
+	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
+	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+	 *    | headers |  Set 'json' if loading JSON via data.url.&lt;br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+	 *    | keys |  Choose which JSON objects keys correspond to desired data.&lt;br>**NOTE:** Only for JSON object given as array.&lt;br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
+	 *    | mimeType |  Set 'json' if loading JSON via url.&lt;br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
+	 *    | - type&lt;br>- types | The type of targets will be updated. type must be String and types must be Object. |
+	 *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
+	 *    | done | The specified function will be called after data loaded.|
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
+	 * @example
+	 * // Load data1 and unload data2 and data3
+	 * chart.load({
+	 *     columns: [
+	 *        ["data1", 100, 200, 150, ...],
+	 *        ...
+	 *    ],
+	 *    unload: ["data2", "data3"],
+	 *    url: "...",
+	 *    done: function() { ... }
+	 * });
+	 * @example
+	 * // myAPI.json
+	 * // {
+	 * //   "data1": [220, 240, 270, 250, 280],
+	 * //   "data2": [180, 150, 300, 70, 120]
+	 * // }
+	 *
+	 * chart.load({
+	 *     url: './data/myAPI.json',
+	 *     mimeType: "json"
+	 * });
+	 */
+	load(args) {
+		const $$ = this.internal;
+		const config = $$.config;
+
+		// update xs if specified
+		args.xs &amp;&amp; $$.addXs(args.xs);
+
+		// update names if exists
+		"names" in args &amp;&amp; this.data.names(args.names);
+
+		// update classes if exists
+		"classes" in args &amp;&amp; Object.keys(args.classes).forEach(id => {
+			config.data_classes[id] = args.classes[id];
+		});
+
+		// update categories if exists
+		if ("categories" in args &amp;&amp; $$.isCategorized()) {
+			config.axis_x_categories = args.categories;
+		}
+
+		// update axes if exists
+		"axes" in args &amp;&amp; Object.keys(args.axes).forEach(id => {
+			config.data_axes[id] = args.axes[id];
+		});
+
+		// update colors if exists
+		"colors" in args &amp;&amp; Object.keys(args.colors).forEach(id => {
+			config.data_colors[id] = args.colors[id];
+		});
+
+		// unload if needed
+		if ("unload" in args &amp;&amp; args.unload !== false) {
+			// TODO: do not unload if target will load (included in url/rows/columns)
+			$$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), () =>
+				$$.loadFromArgs(args)
+			);
+		} else {
+			$$.loadFromArgs(args);
+		}
+	},
+
+	/**
+	 * Unload data to the chart.&lt;br>&lt;br>
+	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+	 * - &lt;b>Note:&lt;/b>
+	 * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.&lt;br>
+	 * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
+	 * @method unload
+	 * @instance
+	 * @memberof Chart
+	 * @param {Object} args
+	 *  | key | Type | Description |
+	 *  | --- | --- | --- |
+	 *  | ids | String &amp;vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
+	 *  | done | Fuction | Callback after data is unloaded. |
+	 * @example
+	 *  // Unload data2 and data3
+	 *  chart.unload({
+	 *    ids: ["data2", "data3"],
+	 *    done: function() {
+	 *       // called after the unloaded
+	 *    }
+	 *  });
+	 */
+	unload(argsValue) {
+		const $$ = this.internal;
+		let args = argsValue || {};
+
+		if (isArray(args)) {
+			args = {ids: args};
+		} else if (isString(args)) {
+			args = {ids: [args]};
+		}
+
+		const ids = $$.mapToTargetIds(args.ids);
+
+		$$.unload(ids, () => {
+			$$.redraw({
+				withUpdateOrgXDomain: true,
+				withUpdateXDomain: true,
+				withLegend: true
+			});
+
+			$$.removeCache(ids);
+			args.done &amp;&amp; args.done();
+		});
+	}
+});
+</code></pre>
+        </article>
+    </section>
 
 
 
