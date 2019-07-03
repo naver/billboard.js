@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.3-20190702105759
+ * @version 1.9.5-20190703110809
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -819,18 +819,6 @@ var isValue = function (v) {
 
   return res;
 },
-    sendStats = function () {
-  if (navigator && localStorage) {
-    var url = "https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F".concat(location ? location.hostname : ""),
-        t = +new Date(),
-        last = +localStorage.getItem("$bb.stats"),
-        expire = 1209600000;
-    if (!last || last + expire < t) if (localStorage.setItem("$bb.stats", t + expire), navigator.sendBeacon) navigator.sendBeacon(url);else {
-      var i = new Image();
-      i.src = url, i.style.display = "none", browser["document"].body.appendChild(i), browser["document"].body.removeChild(i);
-    }
-  }
-},
     emulateEvent = {
   mouse: function () {
     var getParams = function () {
@@ -977,7 +965,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.9.3-20190702105759");
+defineProperty_default()(Plugin_Plugin, "version", "1.9.5-20190703110809");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js

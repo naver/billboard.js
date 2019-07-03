@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.3-20190702105759
+ * @version 1.9.5-20190703110809
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -6539,18 +6539,6 @@ var isValue = function (v) {
 
   return res;
 },
-    sendStats = function () {
-  if (navigator && localStorage) {
-    var url = "https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F".concat(location ? location.hostname : ""),
-        t = +new Date(),
-        last = +localStorage.getItem("$bb.stats"),
-        expire = 1209600000;
-    if (!last || last + expire < t) if (localStorage.setItem("$bb.stats", t + expire), navigator.sendBeacon) navigator.sendBeacon(url);else {
-      var i = new Image();
-      i.src = url, i.style.display = "none", browser["document"].body.appendChild(i), browser["document"].body.removeChild(i);
-    }
-  }
-},
     emulateEvent = {
   mouse: function () {
     var getParams = function () {
@@ -10066,7 +10054,7 @@ function () {
     key: "beforeInit",
     value: function beforeInit() {
       var $$ = this;
-      $$.config.stats && sendStats(), $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
+      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
     }
   }, {
     key: "afterInit",
@@ -10909,22 +10897,6 @@ var Options_Options = function Options() {
      */
     size_width: undefined,
     size_height: undefined,
-
-    /**
-     * Allow usage stats collection.
-     * - **NOTE:**
-     *   - The usage stats collection is used for reference purpose only.
-     *   - The stats data will be sent in a period of once in every 2 weeks.
-     *   - Help us to make a better chart library! :)
-     * @name stats
-     * @memberof Options
-     * @type {Boolean}
-     * @default true
-     * @example
-     * // turn off stats sending
-     * stats: false
-     */
-    stats: !0,
 
     /**
      * The padding of the chart element.
@@ -24973,7 +24945,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.3-20190702105759",
+  version: "1.9.5-20190703110809",
 
   /**
    * Generate chart
@@ -25072,7 +25044,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.3-20190702105759
+ * @version 1.9.5-20190703110809
  */
 
 
