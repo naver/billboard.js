@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {document, window} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sendStats, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -40,7 +40,6 @@ export default class ChartInternal {
 	beforeInit() {
 		const $$ = this;
 
-		$$.config.stats && sendStats();
 		$$.callPluginHook("$beforeInit");
 
 		// can do something
