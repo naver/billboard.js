@@ -329,36 +329,6 @@ const getRange = (start, end) => {
 	return res;
 };
 
-/**
- * Send stats
- * @private
- */
-const sendStats = () => {
-	if (navigator && localStorage) {
-		const key = "$bb.stats";
-		const url = `https://www.google-analytics.com/collect?v=1&tid=UA-141911582-1&cid=555&t=pageview&dp=%2F${location ? location.hostname : ""}`;
-		const t = +new Date();
-		const last = +localStorage.getItem(key);
-		const expire = 1000 * 60 * 60 * 24 * 14;
-
-		if (!last || (last + expire) < t) {
-			localStorage.setItem(key, t + expire);
-
-			if (navigator.sendBeacon) {
-				navigator.sendBeacon(url);
-			} else {
-				const i = new Image();
-
-				i.src = url;
-				i.style.display = "none";
-
-				document.body.appendChild(i);
-				document.body.removeChild(i);
-			}
-		}
-	}
-};
-
 // emulate event
 const emulateEvent = {
 	mouse: (() => {
@@ -466,7 +436,6 @@ export {
 	mergeObj,
 	notEmpty,
 	sanitise,
-	sendStats,
 	setTextValue,
 	sortValue,
 	toArray,
