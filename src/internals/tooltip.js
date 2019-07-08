@@ -132,14 +132,17 @@ extend(ChartInternal.prototype, {
 		}
 
 		const tpl = $$.getTooltipContentTemplate(tplStr);
+		const len = d.length;
 		let text;
 		let row;
 		let param;
 		let value;
 		let i;
 
-		for (i = 0; (row = d[i]); i++) {
-			if (!(getRowValue(row) || getRowValue(row) === 0)) {
+		for (i = 0; i < len; i++) {
+			row = d[i];
+
+			if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
 				continue;
 			}
 

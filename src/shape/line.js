@@ -560,7 +560,7 @@ extend(ChartInternal.prototype, {
 			const result = fn(d);
 
 			mainCircles.push(result);
-		});
+		}).attr("class", $$.classCircle.bind($$));
 
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
