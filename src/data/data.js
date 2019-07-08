@@ -193,15 +193,8 @@ extend(ChartInternal.prototype, {
 
 	updateXs() {
 		const $$ = this;
-		const targets = $$.data.targets;
 
-		if (targets.length) {
-			$$.xs = [];
-
-			targets[0].values.forEach(v => {
-				$$.xs[v.index] = v.x;
-			});
-		}
+		$$.xs = $$.axis.getXAxisTickValues() || [];
 	},
 
 	getPrevX(i) {
@@ -833,5 +826,35 @@ extend(ChartInternal.prototype, {
 		}
 
 		return asPercent && ratio ? ratio * 100 : ratio;
+	},
+
+	/**
+	 * Sort data index to be aligned with x axis.
+	 */
+	updateDataIndexByX() {
+		const $$ = this;
+		const isTimeSeries = $$.isTimeSeries();
+		const tickValues = $$.axis.getXAxisTickValues() || [];
+
+		$$.data.targets.forEach(t => {
+			t.values.forEach((v, i) => {
+				if (isTimeSeries) {
+					tickValues.some((d, j) => {
+						if (+d === +v.x) {
+							v.index = j;
+							return true;
+						}
+
+						return false;
+					});
+				} else {
+					v.index = tickValues.indexOf(v.x);
+				}
+
+				if (!isNumber(v.index) || v.index === -1) {
+					v.index = i;
+				}
+			});
+		});
 	}
 });

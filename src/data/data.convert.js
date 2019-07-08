@@ -224,16 +224,19 @@ extend(ChartInternal.prototype, {
 	convertDataToTargets(data, appendXs) {
 		const $$ = this;
 		const config = $$.config;
+		const isTimeSeries = $$.isTimeSeries();
+
 		const dataKeys = Object.keys(data[0] || {});
 		const ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
 		const xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
+
 		let xsData;
 
 		// save x for update data by load when custom x and bb.x API
 		ids.forEach(id => {
 			const xKey = this.getXKey(id);
 
-			if (this.isCustomX() || this.isTimeSeries()) {
+			if (this.isCustomX() || isTimeSeries) {
 				// if included in input data
 				if (xs.indexOf(xKey) >= 0) {
 					xsData = ((appendXs && $$.data.xs[id]) || [])
@@ -259,7 +262,7 @@ extend(ChartInternal.prototype, {
 
 		// check x is defined
 		ids.forEach(id => {
-			if (!xsData) {
+			if (!this.data.xs[id]) {
 				throw new Error(`x is not defined for id = "${id}".`);
 			}
 		});

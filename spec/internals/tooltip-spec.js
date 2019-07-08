@@ -691,14 +691,10 @@ describe("TOOLTIP", function() {
 		it("check when first data is null", () => {
 			chart.tooltip.show({x:1});
 
-			expect(chart.$.tooltip.html()).to.be.equal(
-				`<table class="bb-tooltip"><tbody><tr><th colspan="2">1</th></tr>
-					<tr class="bb-tooltip-name-data2">
-						<td class="name"><span style="background-color:#fa7171"></span>data2</td>
-						<td class="value">20</td>
-					</tr>
-				</tbody></table>`.replace(/[\r\n\t]/g, "")
-			);
+			const tooltip = chart.$.tooltip;
+
+			expect(tooltip.select(".name").node().textContent).to.be.equal("data2");
+			expect(+tooltip.select(".value").node().textContent).to.be.equal(20);
 		});
 	});
 
@@ -715,7 +711,6 @@ describe("TOOLTIP", function() {
 		});
 
 		it("load data to be adding more columns", done => {
-			setTimeout(() => {
 				chart.load({
 					columns: [
 						["data2", 44, 134, 98, 170]
@@ -723,6 +718,7 @@ describe("TOOLTIP", function() {
 					done: () => {
 						try {
 							chart.tooltip.show({index: 3});
+							expect(+chart.$.tooltip.select(".value").html()).to.be.equal(170);
 						} catch(e) {
 							expect(false).to.be.true;
 						}
@@ -731,7 +727,112 @@ describe("TOOLTIP", function() {
 						done();
 					}
 				});
-			}, 500);
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05"],
+						["data1", 30, 200, 100, 400, 150]
+					]
+				  },
+				  axis: {
+					x: {
+					  type: "timeseries",
+					  tick: {
+						format: "%Y-%m-%d"
+					  }
+					}
+				}
+			};
+		});
+
+		it("should correctly showing tooltip for loaded data", done => {
+			chart.load({
+				columns: [
+					["x", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05"],
+					["data2", 220, 150, 40, 250]
+				],
+				done: () => {
+					const index = 1;
+					const expected = [200, 220];
+
+					chart.tooltip.show({index});
+
+					const tooltipValue = chart.$.tooltip.selectAll(".value").nodes();
+
+					chart.data().forEach((v, i) => {
+						expect(+tooltipValue[i].textContent).to.be.equal(expected[i]);
+					 });
+
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x:"x",
+					columns: [
+						["x", 10, 30, 40, 60, 80],
+						["data1", 230, 190, 50, 10, 60]
+					]
+				},
+			};
+		});
+
+		it("should correclty show tooltip for new added x Axis ticks", done => {
+			chart.load({
+				columns: [
+				  	// when load different data name than the generated, it will add new axis ticks
+					["x", 35, 60, 85],
+					["data2", 10, 20, 160]
+				],
+				done: () => {
+					const value = [];
+
+					[1, 2, 5, 6].forEach(v => {
+						chart.tooltip.show({index: v});
+						value.push(chart.$.tooltip.select(".value").html());
+					});
+
+					[190, 10, 60, 160].forEach((v, i) => {
+						expect(+value[i]).to.be.equal(v);
+					});
+
+					// when
+					chart.toggle("data1");
+
+					setTimeout(() => {
+						chart.tooltip.show({index: 2});
+						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(160);
+
+						done();
+					}, 500);
+				}
+			});
+		});
+
+		it("should correclty show tooltip for overriden x Axis ticks", done => {
+			chart.load({
+				columns: [
+				  	// when load same data name than the generated, it will add override axis ticks
+					["x", 35, 60, 85],
+					["data1", 10, 20, 160]
+				],
+				done: () => {
+					chart.data()[0].values.forEach((v, i) => {
+						chart.tooltip.show({index: i});
+
+						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(v.value);
+					});
+
+					done();
+				}
+			});
 		});
 	});
 

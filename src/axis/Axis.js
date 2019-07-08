@@ -304,7 +304,8 @@ export default class Axis {
 		const tickValues = $$.config[`axis_${id}_tick_values`];
 		const axis = $$[`${id}Axis`];
 
-		return tickValues || (axis ? axis.tickValues() : undefined);
+		return (isFunction(tickValues) ? tickValues() : tickValues) ||
+			(axis ? axis.tickValues() : undefined);
 	}
 
 	getXAxisTickValues() {
