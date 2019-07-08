@@ -60,10 +60,18 @@ extend(ChartInternal.prototype, {
 			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
 		} else {
-			// Set data and update $$.eventRect
-			const maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
+			let xAxisTickValues = $$.axis.getXAxisTickValues() || $$.getMaxDataCountTarget($$.data.targets);
 
-			eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []);
+			if (isObject(xAxisTickValues)) {
+				xAxisTickValues = xAxisTickValues.values;
+			}
+
+			// Set data and update $$.eventRect
+			const xAxisTarget = (xAxisTickValues || [])
+				.map((x, index) => ({x, index}));
+
+			eventRects.datum(xAxisTarget);
+
 			$$.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
 			eventRectUpdate = $$.eventRect.data(d => d);
 
@@ -239,7 +247,7 @@ extend(ChartInternal.prototype, {
 
 				rectX = d => {
 					const x = getPrevNextX(d);
-					const thisX = $$.data.xs[d.id][d.index];
+					const thisX = d.x;
 
 					// if there this is a single data point position the eventRect at 0
 					if (x.prev === null && x.next === null) {
