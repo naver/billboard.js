@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190703110809
+ * @version 1.9.5-20190708110045
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.2
@@ -9707,7 +9707,7 @@ function () {
       var $$ = this.owner,
           tickValues = $$.config["axis_".concat(id, "_tick_values")],
           axis = $$["".concat(id, "Axis")];
-      return tickValues || (axis ? axis.tickValues() : undefined);
+      return (isFunction(tickValues) ? tickValues() : tickValues) || (axis ? axis.tickValues() : undefined);
     }
   }, {
     key: "getXAxisTickValues",
@@ -10315,7 +10315,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Redraw axis
@@ -14742,11 +14742,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     };
   },
   updateXs: function updateXs() {
-    var $$ = this,
-        targets = $$.data.targets;
-    targets.length && ($$.xs = [], targets[0].values.forEach(function (v) {
-      $$.xs[v.index] = v.x;
-    }));
+    var $$ = this;
+    $$.xs = $$.axis.getXAxisTickValues() || [];
   },
   getPrevX: function getPrevX(i) {
     var x = this.xs[i - 1];
@@ -15234,6 +15231,22 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }
 
     return asPercent && ratio ? ratio * 100 : ratio;
+  },
+
+  /**
+   * Sort data index to be aligned with x axis.
+   */
+  updateDataIndexByX: function updateDataIndexByX() {
+    var $$ = this,
+        isTimeSeries = $$.isTimeSeries(),
+        tickValues = $$.axis.getXAxisTickValues() || [];
+    $$.data.targets.forEach(function (t) {
+      t.values.forEach(function (v, i) {
+        isTimeSeries ? tickValues.some(function (d, j) {
+          return !(+d !== +v.x) && (v.index = j, !0);
+        }) : v.index = tickValues.indexOf(v.x), isNumber(v.index) && v.index !== -1 || (v.index = i);
+      });
+    });
   }
 });
 // CONCATENATED MODULE: ./node_modules/d3-dsv/src/dsv.js
@@ -15576,6 +15589,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         _this3 = this,
         $$ = this,
         config = $$.config,
+        isTimeSeries = $$.isTimeSeries(),
         dataKeys = Object.keys(data[0] || {}),
         ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [],
         xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
@@ -15583,7 +15597,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     ids.forEach(function (id) {
       var xKey = _this3.getXKey(id);
 
-      _this3.isCustomX() || _this3.isTimeSeries() ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
+      _this3.isCustomX() || isTimeSeries ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
         return d[xKey];
       }).filter(isValue).map(function (rawX, i) {
         return $$.generateTargetX(rawX, id, i);
@@ -15591,7 +15605,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         return i;
       }), xsData && (_this3.data.xs[id] = xsData);
     }), ids.forEach(function (id) {
-      if (!xsData) throw new Error("x is not defined for id = \"".concat(id, "\"."));
+      if (!_this3.data.xs[id]) throw new Error("x is not defined for id = \"".concat(id, "\"."));
     });
     // convert to target
     var targets = ids.map(function (id, index) {
@@ -15747,9 +15761,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         zoomEnabled = config.zoom_enabled,
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
+      var xAxisTickValues = $$.axis.getXAxisTickValues() || $$.getMaxDataCountTarget($$.data.targets);
+      isObject(xAxisTickValues) && (xAxisTickValues = xAxisTickValues.values);
       // Set data and update $$.eventRect
-      var maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
-      eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      var xAxisTarget = (xAxisTickValues || []).map(function (x, index) {
+        return {
+          x: x,
+          index: index
+        };
+      });
+      eventRects.datum(xAxisTarget), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -15835,7 +15856,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           return x.prev === null && x.next === null ? isRotated ? $$.height : $$.width : (x.prev === null && (x.prev = xScale.domain()[0]), x.next === null && (x.next = xScale.domain()[1]), Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2));
         }, rectX = function (d) {
           var x = getPrevNextX(d),
-              thisX = $$.data.xs[d.id][d.index];
+              thisX = d.x;
           // if there this is a single data point position the eventRect at 0
           return x.prev === null && x.next === null ? 0 : (x.prev === null && (x.prev = xScale.domain()[0]), (xScale(thisX) + xScale(x.prev)) / 2);
         };
@@ -19415,7 +19436,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       var fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this),
           result = fn(d);
       mainCircles.push(result);
-    });
+    }).attr("class", $$.classCircle.bind($$));
     var posAttr = $$.isCirclePoint() ? "c" : "";
     return [mainCircles, selectedCircles.attr("".concat(posAttr, "x"), cx).attr("".concat(posAttr, "y"), cy)];
   },
@@ -20538,9 +20559,10 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         param,
         value,
         i,
-        tpl = $$.getTooltipContentTemplate(tplStr);
+        tpl = $$.getTooltipContentTemplate(tplStr),
+        len = d.length;
 
-    for (i = 0; row = d[i]; i++) if (getRowValue(row) || getRowValue(row) === 0) {
+    for (i = 0; i < len; i++) if (row = d[i], row && (getRowValue(row) || getRowValue(row) === 0)) {
       if (isUndefined(text)) {
         var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
@@ -24945,7 +24967,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190703110809",
+  version: "1.9.5-20190708110045",
 
   /**
    * Generate chart
@@ -25044,7 +25066,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190703110809
+ * @version 1.9.5-20190708110045
  */
 
 
