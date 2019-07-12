@@ -164,6 +164,32 @@ var demos = {
 				];
 			}
 		},
+		BubbleDimensionChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 20, 30, 50, 80, 100],
+						["data2", [350, 350], 230, [200, 100], [250, 150], [200, 200]],
+						["data3", {y: 80, z: 70}, {y: 350, z: 50}, {y: 350, z: 70}, {y: 150, z: 150}, [310, 100]],
+						["data4", [270, 150], [100, 200], [300, 100], [450, 150], [400, 60]],
+						["data5", [170, 110], [430, 80], [100, 50], [350, 150], [480, 30]],
+					],
+					type: "bubble",
+					labels: true
+				},
+				bubble: {
+					maxR: 50
+				},
+				axis: {
+					x: {
+						type: "category"
+					},
+					y: {
+						max: 450
+					}
+				}
+			}
+		},
 		CombinationChart: {
 			options: {
 				data: {
