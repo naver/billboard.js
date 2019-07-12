@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "../internals/ChartInternal";
-import {extend, getMinMax, isFunction, isNumber, isObject} from "../internals/util";
+import {extend, getMinMax, isArray, isFunction, isNumber, isObject} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -60,10 +60,41 @@ extend(ChartInternal.prototype, {
 			maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
 		}
 
-		const max = getMinMax("max", $$.getMinMaxData().max.map(d => (isObject(d.value) ? d.value.mid : d.value)));
+		const max = getMinMax("max", $$.getMinMaxData().max.map(d => (
+			$$.isBubbleZType(d) ?
+				$$.getBubbleZData(d.value, "y") : (
+					isObject(d.value) ? d.value.mid : d.value
+				)
+		)));
 		const maxArea = maxR * maxR * Math.PI;
-		const area = d.value * (maxArea / max);
+		const area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
 
 		return Math.sqrt(area / Math.PI);
+	},
+
+	/**
+	 * Get bubble dimension data
+	 * @param {Object|Array} d data value
+	 * @param {String} type - y or z
+	 * @return {Number}
+	 * @private
+	 */
+	getBubbleZData(d, type) {
+		return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
+	},
+
+	/**
+	 * Determine if bubble has dimension data
+	 * @param {Object|array} d data value
+	 * @return {Boolean}
+	 * @private
+	 */
+	isBubbleZType(d) {
+		const $$ = this;
+
+		return $$.isBubbleType(d) && (
+			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
+			(isArray(d.value) && d.value.length === 2)
+		);
 	}
 });

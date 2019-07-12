@@ -283,8 +283,8 @@ extend(ChartInternal.prototype, {
 					let value = d[id];
 					let x;
 
-					value = value !== null && !isNaN(value) ?
-						+d[id] : (isArray(value) || (isObject(value) && value.high) ? value : null);
+					value = value !== null && !isNaN(value) && !isObject(value) ?
+						+d[id] : (isArray(value) || isObject(value) ? value : null);
 
 					// use x as categories if custom x and categorized
 					if (isCategorized && index === 0 && !isUndefined(rawX)) {

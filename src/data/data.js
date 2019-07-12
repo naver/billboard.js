@@ -221,10 +221,13 @@ extend(ChartInternal.prototype, {
 
 		// In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
 		// will take the 'mid' as the base value
-		if (value && $$.isAreaRangeType(data)) {
-			value = $$.getAreaRangeData(data, "mid");
+		if (value) {
+			if ($$.isAreaRangeType(data)) {
+				value = $$.getAreaRangeData(data, "mid");
+			} else if ($$.isBubbleZType(data)) {
+				value = $$.getBubbleZData(value, "y");
+			}
 		}
-
 		return value;
 	},
 
@@ -458,6 +461,8 @@ extend(ChartInternal.prototype, {
 					data.push(...value);
 				} else if (isObject(value) && "high" in value) {
 					data.push(...Object.values(value));
+				} else if ($$.isBubbleZType(v)) {
+					data.push($$.getBubbleZData(value, "y"));
 				} else {
 					if (isMultipleX) {
 						data[$$.getIndexByX(v.x, xs)] = value;

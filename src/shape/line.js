@@ -533,8 +533,9 @@ extend(ChartInternal.prototype, {
 		}
 
 		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data(d => !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) &&
-				$$.labelishData(d));
+			.data(d => !$$.isBarType(d) && (
+				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
+			) && $$.labelishData(d));
 
 		$$.mainCircle.exit().remove();
 

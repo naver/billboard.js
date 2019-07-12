@@ -1061,6 +1061,26 @@ export default class Options {
 			 *       data2: "line"
 			 *   }
 			 * }
+			 *
+			 * // for 'bubble' type, data can contain dimension value:
+			 * // - an array of [y, z] data following the order
+			 * // - or an object with 'y' and 'z' key value
+			 * // 'y' is for y axis coordination and 'z' is the bubble radius value
+			 * data: {
+			 *   rows: [
+			 *      ["data1", "data2"],
+			 *      [
+			 *        // or {y:10, z: 140}, 120
+			 *        [10, 140], 120
+			 *      ],
+			 *      [[100, 30], 55],
+			 *      [[50, 100], 60]
+			 *   ],
+			 *   types: {
+			 *       data1: "bubble",
+			 *       data2: "line"
+			 *   }
+			 * }
 			 */
 			data_rows: undefined,
 
@@ -1092,6 +1112,21 @@ export default class Options {
 			 *      ]
 			 *   ],
 			 *   type: "area-line-range"
+			 * }
+			 *
+			 * // for 'bubble' type, data can contain dimension value:
+			 * // - an array of [y, z] data following the order
+			 * // - or an object with 'y' and 'z' key value
+			 * // 'y' is for y axis coordination and 'z' is the bubble radius value
+			 * data: {
+			 *   columns: [
+			 *      ["data1",
+			 *          [10, 140],  // or {y:10, z: 140}
+			 *          [100, 30],
+			 *          [50, 100]
+			 *      ]
+			 *   ],
+			 *   type: "bubble"
 			 * }
 			 */
 			data_columns: undefined,
