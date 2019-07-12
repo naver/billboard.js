@@ -74,7 +74,11 @@ extend(ChartInternal.prototype, {
 			.attr("text-anchor", d => (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"))
 			.style("fill", $$.updateTextColor.bind($$))
 			.style("fill-opacity", "0")
-			.text((d, i, j) => $$.dataLabelFormat(d.id)(d.value, d.id, i, j));
+			.text((d, i, j) => {
+				const value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
+
+				return $$.dataLabelFormat(d.id)(value, d.id, i, j);
+			});
 	},
 
 	updateTextColor(d) {

@@ -104,9 +104,13 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const isStackNormalized = $$.isStackNormalized();
 
-		return d => (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(
-			isStackNormalized ? $$.getRatio("index", d, true) : d.value
-		);
+		return d => {
+			const value = isStackNormalized ? $$.getRatio("index", d, true) : (
+				$$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value
+			);
+
+			return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(value);
+		};
 	},
 
 	getShapeOffset(typeFilter, indices, isSub) {
