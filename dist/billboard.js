@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190708110045
+ * @version 1.9.5-20190712110358
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3658,6 +3658,26 @@ var Options_Options = function Options() {
      *       data2: "line"
      *   }
      * }
+     *
+     * // for 'bubble' type, data can contain dimension value:
+     * // - an array of [y, z] data following the order
+     * // - or an object with 'y' and 'z' key value
+     * // 'y' is for y axis coordination and 'z' is the bubble radius value
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *      [
+     *        // or {y:10, z: 140}, 120
+     *        [10, 140], 120
+     *      ],
+     *      [[100, 30], 55],
+     *      [[50, 100], 60]
+     *   ],
+     *   types: {
+     *       data1: "bubble",
+     *       data2: "line"
+     *   }
+     * }
      */
     data_rows: undefined,
 
@@ -3689,6 +3709,21 @@ var Options_Options = function Options() {
      *      ]
      *   ],
      *   type: "area-line-range"
+     * }
+     *
+     * // for 'bubble' type, data can contain dimension value:
+     * // - an array of [y, z] data following the order
+     * // - or an object with 'y' and 'z' key value
+     * // 'y' is for y axis coordination and 'z' is the bubble radius value
+     * data: {
+     *   columns: [
+     *      ["data1",
+     *          [10, 140],  // or {y:10, z: 140}
+     *          [100, 30],
+     *          [50, 100]
+     *      ]
+     *   ],
+     *   type: "bubble"
      * }
      */
     data_columns: undefined,
@@ -6543,7 +6578,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   getBaseValue: function getBaseValue(data) {
     var $$ = this,
         value = data.value;
-    return value && $$.isAreaRangeType(data) && (value = $$.getAreaRangeData(data, "mid")), value;
+    return value && ($$.isAreaRangeType(data) ? value = $$.getAreaRangeData(data, "mid") : $$.isBubbleZType(data) && (value = $$.getBubbleZData(value, "y"))), value;
   },
 
   /**
@@ -6738,7 +6773,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var data = [];
       t.values.forEach(function (v) {
         var value = v.value;
-        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
+        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : $$.isBubbleZType(v) ? data.push($$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },
@@ -7199,7 +7234,7 @@ extend(ChartInternal_ChartInternal.prototype, {
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) ? isArray(value) || isObject(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +d[id], isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
@@ -7829,7 +7864,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         isStackNormalized = $$.isStackNormalized();
     return function (d) {
-      return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(isStackNormalized ? $$.getRatio("index", d, !0) : d.value);
+      var value = isStackNormalized ? $$.getRatio("index", d, !0) : $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value;
+      return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(value);
     };
   },
   getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
@@ -8463,11 +8499,33 @@ extend(ChartInternal_ChartInternal.prototype, {
         maxR = $$.config.bubble_maxR;
     isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
     var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
-      return isObject(d.value) ? d.value.mid : d.value;
+      return $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : isObject(d.value) ? d.value.mid : d.value;
     })),
         maxArea = maxR * maxR * Math.PI,
-        area = d.value * (maxArea / max);
+        area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
     return Math.sqrt(area / Math.PI);
+  },
+
+  /**
+   * Get bubble dimension data
+   * @param {Object|Array} d data value
+   * @param {String} type - y or z
+   * @return {Number}
+   * @private
+   */
+  getBubbleZData: function getBubbleZData(d, type) {
+    return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
+  },
+
+  /**
+   * Determine if bubble has dimension data
+   * @param {Object|array} d data value
+   * @return {Boolean}
+   * @private
+   */
+  isBubbleZType: function isBubbleZType(d) {
+    var $$ = this;
+    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   }
 });
 // CONCATENATED MODULE: ./src/shape/line.js
@@ -9328,7 +9386,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     }), $$.mainText.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $$.mainText = $$.mainText.enter().append("text").merge($$.mainText).attr("class", classText).attr("text-anchor", function (d) {
       return config.axis_rotated ? d.value < 0 ? "end" : "start" : "middle";
     }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").text(function (d, i, j) {
-      return $$.dataLabelFormat(d.id)(d.value, d.id, i, j);
+      var value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
+      return $$.dataLabelFormat(d.id)(value, d.id, i, j);
     });
   },
   updateTextColor: function updateTextColor(d) {
@@ -9894,7 +9953,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     } : defaultValueFormat),
         order = config.tooltip_order,
         getRowValue = function (row) {
-      return $$.getBaseValue(row);
+      return $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row);
     },
         getBgColor = $$.levelColor ? function (row) {
       return $$.levelColor(row.value);
@@ -13835,7 +13894,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190708110045",
+  version: "1.9.5-20190712110358",
 
   /**
    * Generate chart
@@ -13934,7 +13993,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190708110045
+ * @version 1.9.5-20190712110358
  */
 
 
