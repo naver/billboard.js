@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190713110416
+ * @version 1.9.5-20190715110456
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -15270,6 +15270,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Sort data index to be aligned with x axis.
+   * @private
    */
   updateDataIndexByX: function updateDataIndexByX() {
     var $$ = this,
@@ -25026,7 +25027,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190713110416",
+  version: "1.9.5-20190715110456",
 
   /**
    * Generate chart
@@ -25125,7 +25126,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190713110416
+ * @version 1.9.5-20190715110456
  */
 
 
