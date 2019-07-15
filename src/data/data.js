@@ -835,6 +835,7 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Sort data index to be aligned with x axis.
+	 * @private
 	 */
 	updateDataIndexByX() {
 		const $$ = this;
