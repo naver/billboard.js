@@ -1267,14 +1267,8 @@ export default class Options {
 			 *      pattern: ["grey", "green", "yellow", "orange", "red"],
 			 *      threshold: {
 			 *          unit: "value",
-			 *
-			 *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
-			 *          values: [10, 20, 30, 40, 50],
-			 *
-			 *          // the equation for max:
-			 *          // - unit == 'value': max => 30
-			 *          // - unit != 'value': max => value*100/30
-			 *          max: 30
+			 *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
+			 *          max: 30  // the equation for max is: value*100/30
 			 *      },
 			 *
 			 *      // set all data to 'red'
