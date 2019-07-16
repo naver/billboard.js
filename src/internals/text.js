@@ -91,6 +91,53 @@ extend(ChartInternal.prototype, {
 		return color || $$.color(d);
 	},
 
+	preventLabelOverlap: function preventLabelOverlap() {
+		const $$ = this;
+		const overlap = $$.config.data_labels_overlap;
+		const plottedCoordinates = [];
+
+		for (let i = 0; i < ($$.mainText._groups).length; i++) {
+			$$.mainText._groups[i].forEach(element => {
+				plottedCoordinates.push([element.__data__.x, element.__data__.value]);
+			});
+		}
+
+		const voronoiCells = $$.generateVoronoi(plottedCoordinates);
+		const voronoiExtent = (typeof (overlap) === "object" && $$.config.data_labels_overlap.extent !== undefined) ? $$.config.data_labels_overlap.extent : 1;
+		const labelArea = (typeof (overlap) === "object" && $$.config.data_labels_overlap.area !== undefined) ? $$.config.data_labels_overlap.area : 0;
+
+		$$.mainText.each(i => {
+			const text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select.$$);
+			const searchJson = JSON.stringify([i.x, i.value]);
+			const elementPos = voronoiCells.map(x => x.data).map(JSON.stringify)
+				.indexOf(searchJson);
+			const cell = elementPos !== -1 ? voronoiCells[elementPos] : undefined;
+			let xTranslate = 0;
+			let yTranslate = 0;
+			let dy = 0;
+			let txtAnchor = "middle";
+
+			if (cell && text) {
+				const [x, y] = cell.data;
+				const [cx, cy] = d3.polygonCentroid(cell);
+				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+
+				if (d3.polygonArea(cell) < labelArea) {
+					text.attr("display", "none");
+				}
+				
+				xTranslate = (angle === 0) ? (xTranslate + voronoiExtent) : (xTranslate - voronoiExtent);
+				yTranslate = (angle === -1) ? (yTranslate - voronoiExtent) : (yTranslate + voronoiExtent + 5);
+				txtAnchor = (angle === -1 || angle === 1) ? "middle" : (angle === 0) ? "start" : "end";
+				dy = (angle === 1) ? "0.71em" : "0.35em";
+				text
+					.attr("text-anchor", txtAnchor)
+					.attr("dy", dy)
+					.attr("transform", `translate(${xTranslate}, ${yTranslate})`);
+			}
+		});
+	},
+
 	/**
 	 * Redraw chartText
 	 * @param {Function} x Positioning function for x
@@ -103,6 +150,11 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const t = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+		const overlap = $$.config.data_labels_overlap;
+
+		if (overlap !== undefined && (overlap === false || typeof (overlap) === "object")) {
+			$$.preventLabelOverlap();
+		}
 
 		return [
 			this.mainText.each(function() {
@@ -180,6 +232,32 @@ extend(ChartInternal.prototype, {
 
 			return getter.call($$, points[type](d, i), d, this);
 		};
+	},
+
+	/**
+	 * Generates the voronoi layout for data labels
+	 * @param {Object} data Indices values
+	 * @returns {Object} Voronoi layout points and corresponding Data points
+	 * @private
+	 */
+
+	generateVoronoi: function generateVoronoi(data) {
+		const $$ = this;
+		const xExtent = Math.abs($$.x.domain()[1]) + Math.abs($$.x.domain()[0]);
+		const yExtent = Math.abs($$.y.domain()[1]) + Math.abs($$.y.domain()[0]);
+
+		const cells = d3.voronoi()
+			.extent([[0, 0], [xExtent, yExtent]])
+			.polygons(data);
+
+		d3.select("bb-event-rects bb-event-rects-multiple").append("g")
+			.attr("fill", "none")
+			.selectAll("g")
+			.data(cells)
+			.enter()
+			.append("g");
+
+		return (cells);
 	},
 
 	/**
