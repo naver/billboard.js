@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
+import {document} from "./browser";
 import CLASS from "../config/classes";
 import {isValue, ceil10, extend, capitalize} from "./util";
 

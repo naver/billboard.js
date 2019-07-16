@@ -41,6 +41,10 @@ describe("COLOR", () => {
 			}`, 0);
 		});
 
+		after(() => {
+			document.styleSheets[0].deleteRule(0);
+		});
+
 		it("should get and parse from the stylesheet", () => {
 			const internal = chart.internal;
 			const pttrn = internal.getColorFromCss();
@@ -125,7 +129,7 @@ describe("COLOR", () => {
 		it("check for legend color tiles", () => {
 			const colors = [chart.color("data1"), chart.color("data2")];
 
-			d3.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemTile}`)
+			chart.$.legend.selectAll(`.${CLASS.legendItemTile}`)
 				.each(function(v, i) {
 					const stroke = d3.select(this).style("stroke").replace(/\"/g, "");
 
@@ -327,18 +331,57 @@ describe("COLOR", () => {
 
 		it("check for the arc type", done => {
 			setTimeout(() => {
-				const main = chart.$.main;			
+				const main = chart.$.main;
 				const arc = main.select(`.${CLASS.arc}-data1`).node();
 				const originalColor = arc.style.fill;
 
 				util.fireEvent(arc, "mouseover");
+
 				expect(arc.style.fill).to.be.equal(args.color.onover);
 
 				util.fireEvent(arc, "mouseout");
 				expect(arc.style.fill).to.be.equal(originalColor);
 
 				done();
+			}, 1000);
+		});
+	});
+
+	describe("color.threshold", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data", 0]
+					],
+					type: "gauge"
+				},
+				color: {
+					pattern: ["rgb(255, 0, 0)", "rgb(255, 165, 0)", "rgb(255, 255, 0)", "rgb(0, 128, 0)", "rgb(0, 0, 255)"],
+					threshold: {
+						values: [0, 20, 40, 60, 80]
+					}
+				}
+			}
+		});
+
+		it("check for color update", done => {
+			const path = chart.$.arc.select(`path.${CLASS.arc}-data`);
+			let i = 0;
+
+			expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
+
+			chart.load({columns: [["data", 19]]});
+
+			setTimeout(() => {
+				expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
+				chart.load({columns: [["data", 40]]});
 			}, 500);
+
+			setTimeout(() => {
+				expect(path.style("fill")).to.be.equal(args.color.pattern[i++]);
+				done();
+			}, 1000);
 		});
 	});
 });

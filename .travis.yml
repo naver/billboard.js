@@ -45,12 +45,11 @@ jobs:
       deploy:
         provider: script
         skip_cleanup: true
-        script: npm run release
-        'on':
+        script:
+          - npm run release
+        on:
           repo: naver/billboard.js
-          branches:
-            only:
-              - master
-              - next
-
-
+          all_branches: true
+          condition: $TRAVIS_BRANCH =~ ^latest|next$
+      after_deploy:
+        - bash ./config/deploy.sh

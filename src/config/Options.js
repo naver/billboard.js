@@ -87,22 +87,6 @@ export default class Options {
 			size_height: undefined,
 
 			/**
-			 * Allow usage stats collection.
-			 * - **NOTE:**
-			 *   - The usage stats collection is used for reference purpose only.
-			 *   - The stats data will be sent in a period of once in every 2 weeks.
-			 *   - Help us to make a better chart library! :)
-			 * @name stats
-			 * @memberof Options
-			 * @type {Boolean}
-			 * @default true
-			 * @example
-			 * // turn off stats sending
-			 * stats: false
-			 */
-			stats: true,
-
-			/**
 			 * The padding of the chart element.
 			 * @name padding
 			 * @memberof Options
@@ -1090,6 +1074,26 @@ export default class Options {
 			 *       data2: "line"
 			 *   }
 			 * }
+			 *
+			 * // for 'bubble' type, data can contain dimension value:
+			 * // - an array of [y, z] data following the order
+			 * // - or an object with 'y' and 'z' key value
+			 * // 'y' is for y axis coordination and 'z' is the bubble radius value
+			 * data: {
+			 *   rows: [
+			 *      ["data1", "data2"],
+			 *      [
+			 *        // or {y:10, z: 140}, 120
+			 *        [10, 140], 120
+			 *      ],
+			 *      [[100, 30], 55],
+			 *      [[50, 100], 60]
+			 *   ],
+			 *   types: {
+			 *       data1: "bubble",
+			 *       data2: "line"
+			 *   }
+			 * }
 			 */
 			data_rows: undefined,
 
@@ -1121,6 +1125,21 @@ export default class Options {
 			 *      ]
 			 *   ],
 			 *   type: "area-line-range"
+			 * }
+			 *
+			 * // for 'bubble' type, data can contain dimension value:
+			 * // - an array of [y, z] data following the order
+			 * // - or an object with 'y' and 'z' key value
+			 * // 'y' is for y axis coordination and 'z' is the bubble radius value
+			 * data: {
+			 *   columns: [
+			 *      ["data1",
+			 *          [10, 140],  // or {y:10, z: 140}
+			 *          [100, 30],
+			 *          [50, 100]
+			 *      ]
+			 *   ],
+			 *   type: "bubble"
 			 * }
 			 */
 			data_columns: undefined,
@@ -1234,7 +1253,7 @@ export default class Options {
 			 * @property {Object} [color.threshold] color threshold for gauge and tooltip color
 			 * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
 			 * @property {Array} [color.threshold.values] Threshold values for each steps
-			 * @property {Array} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+			 * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
 			 * @example
 			 *  color: {
 			 *      pattern: ["#1f77b4", "#aec7e8", ...],
@@ -1267,8 +1286,14 @@ export default class Options {
 			 *      pattern: ["grey", "green", "yellow", "orange", "red"],
 			 *      threshold: {
 			 *          unit: "value",
-			 *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
-			 *          max: 30  // the equation for max is: value*100/30
+			 *
+			 *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
+			 *          values: [10, 20, 30, 40, 50],
+			 *
+			 *          // the equation for max:
+			 *          // - unit == 'value': max => 30
+			 *          // - unit != 'value': max => value*100/30
+			 *          max: 30
 			 *      },
 			 *
 			 *      // set all data to 'red'

@@ -16,8 +16,8 @@ import {
 import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
-import {isMobile} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sendStats, sortValue} from "./util";
+import {document, window} from "../internals/browser";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -40,7 +40,6 @@ export default class ChartInternal {
 	beforeInit() {
 		const $$ = this;
 
-		$$.config.stats && sendStats();
 		$$.callPluginHook("$beforeInit");
 
 		// can do something
@@ -342,7 +341,7 @@ export default class ChartInternal {
 	initChartElements() {
 		const $$ = this;
 
-		["Bar", "Line", "Bubble", "Arc", "Gauge", "Pie", "Radar"].forEach(v => {
+		["Bar", "Radar", "Line", "Bubble", "Arc", "Gauge", "Pie"].forEach(v => {
 			$$[`init${v}`]();
 		});
 
@@ -598,6 +597,9 @@ export default class ChartInternal {
 		// update axis
 		// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 		$$.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
+
+		// update data's index value to be alinged with the x Axis
+		$$.updateDataIndexByX();
 
 		// update circleY based on updated parameters
 		$$.updateCircleY();
@@ -986,10 +988,10 @@ export default class ChartInternal {
 			x = $$.arcWidth / 2;
 			y = $$.arcHeight / 2;
 		} else if (target === "radar") {
-			const diff = ($$.arcWidth - $$.arcHeight) / 2;
+			const [width] = $$.getRadarSize();
 
-			x = Math.max(diff, 0) + 4;
-			y = diff < 0 ? Math.abs(diff) : asHalfPixel($$.margin.top);
+			x = $$.width / 2 - width;
+			y = asHalfPixel($$.margin.top);
 		}
 
 		return `translate(${x}, ${y})`;
@@ -1286,16 +1288,23 @@ export default class ChartInternal {
 	convertInputType() {
 		const $$ = this;
 		const config = $$.config;
-		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
-		let hasTouch = false;
+		let isMobile = false;
 
-		if (config.interaction_inputType_touch) {
+		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+		if (/Mobi/.test(window.navigator.userAgent) && config.interaction_inputType_touch) {
+			// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+			const hasTouchPoints = window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0;
+
 			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 			// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-			hasTouch = ("ontouchmove" in window) || (window.DocumentTouch && document instanceof window.DocumentTouch);
+			const hasTouch = ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch));
+
+			isMobile = hasTouchPoints || hasTouch;
 		}
 
-		return (hasMouse && "mouse") || (hasTouch && "touch") || null;
+		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
+
+		return (hasMouse && "mouse") || (isMobile && "touch") || null;
 	}
 
 	/**

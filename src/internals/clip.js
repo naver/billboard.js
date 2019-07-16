@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "./ChartInternal";
+import {document, window} from "../internals/browser";
 import {extend} from "./util";
 
 extend(ChartInternal.prototype, {
@@ -33,8 +34,9 @@ extend(ChartInternal.prototype, {
 			return null;
 		}
 
-		const isIE9 = window.navigator.appVersion
-			.toLowerCase().indexOf("msie 9.") >= 0;
+		const isIE9 = window.navigator ?
+			window.navigator.appVersion
+				.toLowerCase().indexOf("msie 9.") >= 0 : false;
 
 		return `url(${(isIE9 ? "" : document.URL.split("#")[0])}#${id})`;
 	},

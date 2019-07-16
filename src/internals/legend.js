@@ -8,6 +8,7 @@ import {
 	namespaces as d3Namespaces
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
+import {document} from "./browser";
 import CLASS from "../config/classes";
 import {extend, callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess} from "./util";
 

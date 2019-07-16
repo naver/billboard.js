@@ -8,13 +8,17 @@ const WebpackBar = require("webpackbar");
 
 const config = {
 	entry: {
-		billboard: "./src/core.js"
+		billboard: [
+			"./src/scss/billboard.scss",
+			"./src/core.js"
+		]
 	},
 	output: {
 		path: path.resolve(__dirname, "dist"),
 		filename: "[name].js",
 		libraryTarget: "umd",
 		umdNamedDefine: true,
+		globalObject: "this"
 	},
 	externals: (context, request, callback) => {
 		// every 'd3-*' import, will be externally required as their name except root as 'd3'
@@ -83,6 +87,10 @@ module.exports = () => {
 
 	if (env.NIGHTLY) {
 		pkg.version = env.NIGHTLY;
+	}
+
+	if (env.VERSION) {
+		pkg.version = env.VERSION;
 	}
 
 	mode === "packaged" && delete config.externals;

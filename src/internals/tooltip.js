@@ -7,8 +7,9 @@ import {
 	mouse as d3Mouse
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
+import {document} from "./browser";
 import CLASS from "../config/classes";
-import {extend, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess} from "./util";
+import {extend, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -95,10 +96,11 @@ extend(ChartInternal.prototype, {
 		const nameFormat = config.tooltip_format_name || (name => name);
 		const valueFormat = config.tooltip_format_value || ($$.isStackNormalized() ? ((v, ratio) => `${(ratio * 100).toFixed(2)}%`) : defaultValueFormat);
 		const order = config.tooltip_order;
-		const getRowValue = row => $$.getBaseValue(row);
+		const getRowValue = row => ($$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row));
 		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
 		const contents = config.tooltip_contents;
 		const tplStr = contents.template;
+		const targetIds = $$.mapToTargetIds();
 
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
@@ -131,18 +133,21 @@ extend(ChartInternal.prototype, {
 		}
 
 		const tpl = $$.getTooltipContentTemplate(tplStr);
+		const len = d.length;
 		let text;
 		let row;
 		let param;
 		let value;
 		let i;
 
-		for (i = 0; (row = d[i]); i++) {
-			if (!(getRowValue(row) || getRowValue(row) === 0)) {
+		for (i = 0; i < len; i++) {
+			row = d[i];
+
+			if (!row || !(getRowValue(row) || getRowValue(row) === 0)) {
 				continue;
 			}
 
-			if (i === 0) {
+			if (isUndefined(text)) {
 				const title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
 
 				text = tplProcess(tpl[0], {
@@ -180,8 +185,10 @@ extend(ChartInternal.prototype, {
 				};
 
 				if (tplStr && isObject(contents.text)) {
+					const index = targetIds.indexOf(row.id);
+
 					Object.keys(contents.text).forEach(key => {
-						contentValue[key] = contents.text[key][i];
+						contentValue[key] = contents.text[key][index];
 					});
 				}
 

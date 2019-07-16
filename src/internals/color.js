@@ -5,6 +5,7 @@
 import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import ChartInternal from "./ChartInternal";
+import {document, window} from "./browser";
 import CLASS from "../config/classes";
 import {notEmpty, extend, isFunction, isObject, isString} from "./util";
 
@@ -137,19 +138,17 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const colors = config.color_pattern;
 		const threshold = config.color_threshold;
-
 		const asValue = threshold.unit === "value";
 		const max = threshold.max || 100;
 		const values = threshold.values &&
 			threshold.values.length ? threshold.values : [];
 
 		return notEmpty(threshold) ? function(value) {
+			const v = asValue ? value : (value * 100 / max);
 			let color = colors[colors.length - 1];
 
-			for (let i = 0, v, val; (val = values[i]); i++) {
-				v = asValue ? value : (value * 100 / max);
-
-				if (v < val) {
+			for (let i = 0, l = values.length; i < l; i++) {
+				if (v <= values[i]) {
 					color = colors[i];
 					break;
 				}

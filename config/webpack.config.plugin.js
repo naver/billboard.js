@@ -31,7 +31,8 @@ const config = {
 		library: ["bb", "plugin", "[name]"],
 		libraryExport: "default",
 		libraryTarget: "umd",
-		umdNamedDefine: true
+		umdNamedDefine: true,
+		globalObject: "this"
 	},
 	devtool: false,
 	plugins: [

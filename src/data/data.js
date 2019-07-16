@@ -193,15 +193,8 @@ extend(ChartInternal.prototype, {
 
 	updateXs() {
 		const $$ = this;
-		const targets = $$.data.targets;
 
-		if (targets.length) {
-			$$.xs = [];
-
-			targets[0].values.forEach(v => {
-				$$.xs[v.index] = v.x;
-			});
-		}
+		$$.xs = $$.axis.getXAxisTickValues() || [];
 	},
 
 	getPrevX(i) {
@@ -228,10 +221,13 @@ extend(ChartInternal.prototype, {
 
 		// In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
 		// will take the 'mid' as the base value
-		if (value && $$.isAreaRangeType(data)) {
-			value = $$.getAreaRangeData(data, "mid");
+		if (value) {
+			if ($$.isAreaRangeType(data)) {
+				value = $$.getAreaRangeData(data, "mid");
+			} else if ($$.isBubbleZType(data)) {
+				value = $$.getBubbleZData(value, "y");
+			}
 		}
-
 		return value;
 	},
 
@@ -465,6 +461,8 @@ extend(ChartInternal.prototype, {
 					data.push(...value);
 				} else if (isObject(value) && "high" in value) {
 					data.push(...Object.values(value));
+				} else if ($$.isBubbleZType(v)) {
+					data.push($$.getBubbleZData(value, "y"));
 				} else {
 					if (isMultipleX) {
 						data[$$.getIndexByX(v.x, xs)] = value;
@@ -833,5 +831,36 @@ extend(ChartInternal.prototype, {
 		}
 
 		return asPercent && ratio ? ratio * 100 : ratio;
+	},
+
+	/**
+	 * Sort data index to be aligned with x axis.
+	 * @private
+	 */
+	updateDataIndexByX() {
+		const $$ = this;
+		const isTimeSeries = $$.isTimeSeries();
+		const tickValues = $$.axis.getXAxisTickValues() || [];
+
+		$$.data.targets.forEach(t => {
+			t.values.forEach((v, i) => {
+				if (isTimeSeries) {
+					tickValues.some((d, j) => {
+						if (+d === +v.x) {
+							v.index = j;
+							return true;
+						}
+
+						return false;
+					});
+				} else {
+					v.index = tickValues.indexOf(v.x);
+				}
+
+				if (!isNumber(v.index) || v.index === -1) {
+					v.index = i;
+				}
+			});
+		});
 	}
 });

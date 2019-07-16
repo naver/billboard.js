@@ -59,7 +59,7 @@ describe("LEGEND", () => {
 			const box = chart.internal.legend.node()
 				.getBoundingClientRect();
 
-			expect(box.left + box.right).to.be.equal(638); // org : 640
+			expect(box.left + box.right).to.be.closeTo(638, 3); // org : 640
 		});
 
 		it("set option legend.position='right'", () => {
@@ -71,7 +71,7 @@ describe("LEGEND", () => {
 		it("should be located on the right of chart", () => {
 			const x = util.parseNum(chart.$.legend.attr("transform"));
 
-			expect(x).to.be.closeTo(584, 3);
+			expect(x).to.be.closeTo(584, 4);
 		});
 	});
 

@@ -10,17 +10,25 @@ const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const config = {
 	entry: {
-		"billboard": "./src/core.js",
-		"billboard.min": "./src/core.js"
+		"billboard.min": [
+			"./src/scss/billboard.scss",
+			"./src/core.js"
+		]
 	},
 	module: {
 		rules: [
 			{
 				test: /\.js$/,
-				loader: "eslint-loader",
 				include: path.resolve(process.cwd(), "src"),
 				exclude: /(node_modules)/,
-				enforce: "pre"
+				enforce: "pre",
+				use: {
+					loader: "eslint-loader",
+					options: {
+						failOnError: true,
+						formatter: require("eslint/lib/cli-engine/formatters/stylish")
+					}
+				},
 			},
 			{
 				test: /\.scss$/,

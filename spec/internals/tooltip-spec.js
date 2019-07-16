@@ -676,6 +676,28 @@ describe("TOOLTIP", function() {
 		});
 	});
 
+	describe("tooltip for null data", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 10, null],
+						["data2", null, 20]
+					]
+				}
+			};
+		});
+
+		it("check when first data is null", () => {
+			chart.tooltip.show({x:1});
+
+			const tooltip = chart.$.tooltip;
+
+			expect(tooltip.select(".name").node().textContent).to.be.equal("data2");
+			expect(+tooltip.select(".value").node().textContent).to.be.equal(20);
+		});
+	});
+
 	describe("tooltip for dynamic loaded data", () => {
 		before(() => {
 			args = {
@@ -689,7 +711,6 @@ describe("TOOLTIP", function() {
 		});
 
 		it("load data to be adding more columns", done => {
-			setTimeout(() => {
 				chart.load({
 					columns: [
 						["data2", 44, 134, 98, 170]
@@ -697,6 +718,7 @@ describe("TOOLTIP", function() {
 					done: () => {
 						try {
 							chart.tooltip.show({index: 3});
+							expect(+chart.$.tooltip.select(".value").html()).to.be.equal(170);
 						} catch(e) {
 							expect(false).to.be.true;
 						}
@@ -705,7 +727,112 @@ describe("TOOLTIP", function() {
 						done();
 					}
 				});
-			}, 500);
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05"],
+						["data1", 30, 200, 100, 400, 150]
+					]
+				  },
+				  axis: {
+					x: {
+					  type: "timeseries",
+					  tick: {
+						format: "%Y-%m-%d"
+					  }
+					}
+				}
+			};
+		});
+
+		it("should correctly showing tooltip for loaded data", done => {
+			chart.load({
+				columns: [
+					["x", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05"],
+					["data2", 220, 150, 40, 250]
+				],
+				done: () => {
+					const index = 1;
+					const expected = [200, 220];
+
+					chart.tooltip.show({index});
+
+					const tooltipValue = chart.$.tooltip.selectAll(".value").nodes();
+
+					chart.data().forEach((v, i) => {
+						expect(+tooltipValue[i].textContent).to.be.equal(expected[i]);
+					 });
+
+					done();
+				}
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x:"x",
+					columns: [
+						["x", 10, 30, 40, 60, 80],
+						["data1", 230, 190, 50, 10, 60]
+					]
+				},
+			};
+		});
+
+		it("should correclty show tooltip for new added x Axis ticks", done => {
+			chart.load({
+				columns: [
+				  	// when load different data name than the generated, it will add new axis ticks
+					["x", 35, 60, 85],
+					["data2", 10, 20, 160]
+				],
+				done: () => {
+					const value = [];
+
+					[1, 2, 5, 6].forEach(v => {
+						chart.tooltip.show({index: v});
+						value.push(chart.$.tooltip.select(".value").html());
+					});
+
+					[190, 10, 60, 160].forEach((v, i) => {
+						expect(+value[i]).to.be.equal(v);
+					});
+
+					// when
+					chart.toggle("data1");
+
+					setTimeout(() => {
+						chart.tooltip.show({index: 2});
+						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(160);
+
+						done();
+					}, 500);
+				}
+			});
+		});
+
+		it("should correclty show tooltip for overriden x Axis ticks", done => {
+			chart.load({
+				columns: [
+				  	// when load same data name than the generated, it will add override axis ticks
+					["x", 35, 60, 85],
+					["data1", 10, 20, 160]
+				],
+				done: () => {
+					chart.data()[0].values.forEach((v, i) => {
+						chart.tooltip.show({index: i});
+
+						expect(+chart.$.tooltip.select(".value").html()).to.be.equal(v.value);
+					});
+
+					done();
+				}
+			});
 		});
 	});
 
@@ -763,6 +890,26 @@ describe("TOOLTIP", function() {
 			expect(d3.select("#tooltip").html()).to.be.equal(html);
 		});
 
+		it("set options tooltip.grouped=false", () => {
+			args.tooltip.grouped = false;
+		});
+
+		it("check for tooltip contents template when is non-grouped", () => {
+			const texts = args.tooltip.contents.text.VAR;
+
+			chart.tooltip.show({
+				data: {x: 1, id: "data2",value: 100}
+			});
+
+			expect(chart.$.tooltip.html().indexOf(texts[1]) > -1).to.be.true;
+
+			chart.tooltip.show({
+				data: {x: 1, id: "data1", value: 200}
+			});
+
+			expect(chart.$.tooltip.html().indexOf(texts[0]) > -1).to.be.true;
+		});
+
 		it("set options color.tiles", () => {
 			delete args.data.colors;
 			delete args.tooltip.contents;
@@ -773,17 +920,17 @@ describe("TOOLTIP", function() {
 						.attr("patternUnits", "userSpaceOnUse")
 						.attr("width", "6")
 						.attr("height", "6");
-			
+
 					var g = pattern
 						.append("g")
 						.attr("fill-rule", "evenodd")
 						.attr("stroke-width", 1)
 						.append("g")
 						.attr("fill", "rgb(255, 127, 14)");
-			
+
 					g.append("polygon").attr("points", "5 0 6 0 0 6 0 5");
 					g.append("polygon").attr("points", "6 5 6 6 5 6");
-			
+
 					// Should return an array of SVGPatternElement
 					return [
 						pattern.node()
