@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190715110456
+ * @version 1.9.5-20190716110513
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2477,10 +2477,20 @@ function () {
     value: function convertInputType() {
       var $$ = this,
           config = $$.config,
-          isMobile = browser["b" /* window */].navigator && "maxTouchPoints" in browser["b" /* window */].navigator && browser["b" /* window */].navigator.maxTouchPoints > 0 || !1,
-          hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in browser["b" /* window */],
-          hasTouch = !1;
-      return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in browser["b" /* window */] || browser["b" /* window */].DocumentTouch && browser["a" /* document */] instanceof browser["b" /* window */].DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
+          isMobile = !1;
+
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+      if (/Mobi/.test(browser["b" /* window */].navigator.userAgent) && config.interaction_inputType_touch) {
+        // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+        var hasTouchPoints = browser["b" /* window */].navigator && "maxTouchPoints" in browser["b" /* window */].navigator && browser["b" /* window */].navigator.maxTouchPoints > 0,
+            hasTouch = "ontouchmove" in browser["b" /* window */] || browser["b" /* window */].DocumentTouch && browser["a" /* document */] instanceof browser["b" /* window */].DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+        // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+
+        isMobile = hasTouchPoints || hasTouch;
+      }
+
+      var hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in browser["b" /* window */];
+      return hasMouse && "mouse" || isMobile && "touch" || null;
     }
     /**
      * Call plugin hook
@@ -9962,7 +9972,8 @@ extend(ChartInternal_ChartInternal.prototype, {
       return color(row);
     },
         contents = config.tooltip_contents,
-        tplStr = contents.template;
+        tplStr = contents.template,
+        targetIds = $$.mapToTargetIds();
 
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
@@ -10022,9 +10033,15 @@ extend(ChartInternal_ChartInternal.prototype, {
             NAME: name,
             VALUE: value
           };
-          tplStr && isObject(contents.text) && Object.keys(contents.text).forEach(function (key) {
-            contentValue[key] = contents.text[key][i];
-          }), text += tplProcess(tpl[1], contentValue);
+
+          if (tplStr && isObject(contents.text)) {
+            var index = targetIds.indexOf(row.id);
+            Object.keys(contents.text).forEach(function (key) {
+              contentValue[key] = contents.text[key][index];
+            });
+          }
+
+          text += tplProcess(tpl[1], contentValue);
         }();
 
         if (_ret === "continue") continue;
@@ -13895,7 +13912,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190715110456",
+  version: "1.9.5-20190716110513",
 
   /**
    * Generate chart
@@ -13994,7 +14011,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190715110456
+ * @version 1.9.5-20190716110513
  */
 
 
