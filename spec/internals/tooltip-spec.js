@@ -890,6 +890,26 @@ describe("TOOLTIP", function() {
 			expect(d3.select("#tooltip").html()).to.be.equal(html);
 		});
 
+		it("set options tooltip.grouped=false", () => {
+			args.tooltip.grouped = false;
+		});
+
+		it("check for tooltip contents template when is non-grouped", () => {
+			const texts = args.tooltip.contents.text.VAR;
+
+			chart.tooltip.show({
+				data: {x: 1, id: "data2",value: 100}
+			});
+
+			expect(chart.$.tooltip.html().indexOf(texts[1]) > -1).to.be.true;
+
+			chart.tooltip.show({
+				data: {x: 1, id: "data1", value: 200}
+			});
+
+			expect(chart.$.tooltip.html().indexOf(texts[0]) > -1).to.be.true;
+		});
+
 		it("set options color.tiles", () => {
 			delete args.data.colors;
 			delete args.tooltip.contents;
