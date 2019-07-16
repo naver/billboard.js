@@ -4,8 +4,15 @@
  */
 import {
 	select as d3Select,
-	selectAll as d3SelectAll
+	selectAll as d3SelectAll,
 } from "d3-selection";
+import {
+	voronoi as d3Voronoi
+} from "d3-voronoi";
+import {
+	polygonCentroid as d3PolygonCentroid,
+	polygonArea as d3PolygonArea,
+} from "d3-polygon";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {capitalize, extend, getRandom, isNumber, isObject, isString} from "./util";
@@ -111,7 +118,7 @@ extend(ChartInternal.prototype, {
 		const labelArea = (typeof (overlap) === "object" && $$.config.data_labels_overlap.area !== undefined) ? $$.config.data_labels_overlap.area : 0;
 
 		$$.mainText.each(i => {
-			const text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_.select.$$);
+			const text = d3Select(this);
 			const searchJson = JSON.stringify([i.x, i.value]);
 			const elementPos = voronoiCells.map(x => x.data).map(JSON.stringify)
 				.indexOf(searchJson);
@@ -123,13 +130,13 @@ extend(ChartInternal.prototype, {
 
 			if (cell && text) {
 				const [x, y] = cell.data;
-				const [cx, cy] = d3.polygonCentroid(cell);
+				const [cx, cy] = d3PolygonCentroid(cell);
 				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
 
-				if (d3.polygonArea(cell) < labelArea) {
+				if (d3PolygonArea(cell) < labelArea) {
 					text.attr("display", "none");
 				}
-				
+
 				xTranslate = (angle === 0) ? (xTranslate + voronoiExtent) : (xTranslate - voronoiExtent);
 				yTranslate = (angle === -1) ? (yTranslate - voronoiExtent) : (yTranslate + voronoiExtent + 5);
 				txtAnchor = (angle === -1 || angle === 1) ? "middle" : (angle === 0) ? "start" : "end";
@@ -250,11 +257,11 @@ extend(ChartInternal.prototype, {
 		const xExtent = Math.abs($$.x.domain()[1]) + Math.abs($$.x.domain()[0]);
 		const yExtent = Math.abs($$.y.domain()[1]) + Math.abs($$.y.domain()[0]);
 
-		const cells = d3.voronoi()
+		const cells = d3Voronoi()
 			.extent([[0, 0], [xExtent, yExtent]])
 			.polygons(data);
 
-		d3.select("bb-event-rects bb-event-rects-multiple").append("g")
+		d3Select("bb-event-rects bb-event-rects-multiple").append("g")
 			.attr("fill", "none")
 			.selectAll("g")
 			.data(cells)
