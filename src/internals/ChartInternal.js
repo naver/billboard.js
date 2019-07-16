@@ -1288,20 +1288,23 @@ export default class ChartInternal {
 	convertInputType() {
 		const $$ = this;
 		const config = $$.config;
-		const isMobile = (
-			window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0
-		) || false;
+		let isMobile = false;
 
-		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
-		let hasTouch = false;
+		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+		if (/Mobi/.test(window.navigator.userAgent) && config.interaction_inputType_touch) {
+			// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+			const hasTouchPoints = window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0;
 
-		if (config.interaction_inputType_touch) {
 			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
 			// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-			hasTouch = ("ontouchmove" in window) || (window.DocumentTouch && document instanceof window.DocumentTouch);
+			const hasTouch = ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch));
+
+			isMobile = hasTouchPoints || hasTouch;
 		}
 
-		return (hasMouse && "mouse") || (hasTouch && "touch") || null;
+		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
+
+		return (hasMouse && "mouse") || (isMobile && "touch") || null;
 	}
 
 	/**
