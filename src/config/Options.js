@@ -87,22 +87,6 @@ export default class Options {
 			size_height: undefined,
 
 			/**
-			 * Allow usage stats collection.
-			 * - **NOTE:**
-			 *   - The usage stats collection is used for reference purpose only.
-			 *   - The stats data will be sent in a period of once in every 2 weeks.
-			 *   - Help us to make a better chart library! :)
-			 * @name stats
-			 * @memberof Options
-			 * @type {Boolean}
-			 * @default true
-			 * @example
-			 * // turn off stats sending
-			 * stats: false
-			 */
-			stats: true,
-
-			/**
 			 * The padding of the chart element.
 			 * @name padding
 			 * @memberof Options
@@ -583,6 +567,9 @@ export default class Options {
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
  			 * @property {String|Object} [data.labels.colors] Set label text colors.
+			 * @property {Boolean|Object} [data.labels.overlap] Prevents label overlap using voronoi layout if set to false.
+    		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
+     		 * @property {Number} [data.labels.overlap.area=1] Set minimum area needed to show a data label.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
@@ -618,7 +605,16 @@ export default class Options {
 			 *        data1: "yellow",
 			 *        data3: "green"
 			 *     },
-			 *
+			 *	   
+			 *	   //turn on overlap prevention
+			 *     overlap: false,
+			 * 
+		 	 *	   //set extent of prevent overlap, and minimum area needed to show a data label
+			 *	   overlap: {
+			 *     	   extent : 6,
+			 *         area: 2,
+			 *     },
+			 * 
 			 *     // set x, y coordinate position
 			 *     position: {
 			 *        x: -10,
@@ -630,6 +626,7 @@ export default class Options {
 			data_labels: {},
 			data_labels_colors: undefined,
 			data_labels_position: {},
+			data_labels_overlap: undefined,
 
 			/**
 			 *  This option changes the order of stacking data and pieces of pie/donut.
@@ -1221,7 +1218,7 @@ export default class Options {
 			 * @property {Object} [color.threshold] color threshold for gauge and tooltip color
 			 * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
 			 * @property {Array} [color.threshold.values] Threshold values for each steps
-			 * @property {Array} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+			 * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
 			 * @example
 			 *  color: {
 			 *      pattern: ["#1f77b4", "#aec7e8", ...],
@@ -1254,8 +1251,14 @@ export default class Options {
 			 *      pattern: ["grey", "green", "yellow", "orange", "red"],
 			 *      threshold: {
 			 *          unit: "value",
-			 *          values: [10, 20, 30, 40, 50],  // when the value is 20, 'green' will be set and the value is 40, 'orange' will be set.
-			 *          max: 30  // the equation for max is: value*100/30
+			 *
+			 *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
+			 *          values: [10, 20, 30, 40, 50],
+			 *
+			 *          // the equation for max:
+			 *          // - unit == 'value': max => 30
+			 *          // - unit != 'value': max => value*100/30
+			 *          max: 30
 			 *      },
 			 *
 			 *      // set all data to 'red'
