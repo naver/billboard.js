@@ -100,6 +100,7 @@ extend(ChartInternal.prototype, {
 		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
 		const contents = config.tooltip_contents;
 		const tplStr = contents.template;
+		const targetIds = $$.mapToTargetIds();
 
 		if (order === null && config.data_groups.length) {
 			// for stacked data, order should aligned with the visually displayed data
@@ -184,8 +185,10 @@ extend(ChartInternal.prototype, {
 				};
 
 				if (tplStr && isObject(contents.text)) {
+					const index = targetIds.indexOf(row.id);
+
 					Object.keys(contents.text).forEach(key => {
-						contentValue[key] = contents.text[key][i];
+						contentValue[key] = contents.text[key][index];
 					});
 				}
 
