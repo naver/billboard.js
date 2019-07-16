@@ -568,8 +568,8 @@ export default class Options {
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
  			 * @property {String|Object} [data.labels.colors] Set label text colors.
 			 * @property {Boolean|Object} [data.labels.overlap] Prevents label overlap using voronoi layout if set to false.
-    		 	 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
-     			 * @property {Number} [data.labels.overlap.area=1] Set minimum area needed to show a data label.
+    		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
+     		 * @property {Number} [data.labels.overlap.area=1] Set minimum area needed to show a data label.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
@@ -605,16 +605,16 @@ export default class Options {
 			 *        data1: "yellow",
 			 *        data3: "green"
 			 *     },
-			 *	   
+			 *
 			 *	   //turn on overlap prevention
 			 *     overlap: false,
-			 * 
+			 *
 		 	 *	   //set extent of prevent overlap, and minimum area needed to show a data label
 			 *	   overlap: {
 			 *     	   extent : 6,
 			 *         area: 2,
 			 *     },
-			 * 
+			 *
 			 *     // set x, y coordinate position
 			 *     position: {
 			 *        x: -10,
