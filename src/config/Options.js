@@ -626,7 +626,7 @@ export default class Options {
 			data_labels: {},
 			data_labels_colors: undefined,
 			data_labels_position: {},
-			data_labels_overlap: undefined,
+			data_labels_overlap: true,
 
 			/**
 			 *  This option changes the order of stacking data and pieces of pie/donut.
