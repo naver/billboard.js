@@ -286,7 +286,7 @@ export interface ChartOptions {
 		/**
 		 * Set the max bubble radius value
 		 */
-		maxR?: (d: {}) => number | number;
+		maxR?: ((d: {}) => number) | number;
 	};
 
 	radar?: {
@@ -370,7 +370,7 @@ export interface ChartOptions {
 			/**
 			 * Set ratio of labels position.
 			 */
-			ratio?: (d: DataItem, radius: number, h: number) => void | number
+			ratio?: ((d: DataItem, radius: number, h: number) => void) | number
 		};
 		/**
 		 * Enable or disable expanding pie pieces.
@@ -680,7 +680,7 @@ export interface LegendOptions {
 		 *  color {String}: color string
 		 *  data {Array}: data array
 		 */
-		template?: (title: string, color: string, data: DataItem[]) => void | string;
+		template?: ((title: string, color: string, data: DataItem[]) => void) | string;
 	};
 
 	/**
@@ -747,12 +747,12 @@ export interface TooltipOptions {
 	 * Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show.
 	 * If tooltip.grouped is true, data includes multiple data points.
 	 */
-	contents?: (
+	contents?: ((
 		data: any,
 		defaultTitleFormat: string,
 		defaultValueFormat: string,
 		color: any
-	) => string | {
+	) => string) | {
 		/**
 		 * Set CSS selector or element reference to bind tooltip.
 		 */
