@@ -575,6 +575,52 @@ describe("SHAPE ARC", () => {
 		});
 	});
 
+	describe("check for multiline text position", () => {
+		let chart;
+		let args = {
+			data: {
+				columns: [
+					["data1", 50],
+					["data2", 50]
+				],
+				type: "donut"
+			},
+			donut: {
+				title: "Title 1\nTitle 2"
+			}
+		};
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		const checkAtMiddle = done => {
+			const arc = chart.$.arc.node().getBoundingClientRect();
+			const title = chart.$.arc.select("text").node().getBoundingClientRect();
+
+			const titlePos = title.top - arc.top + (title.height / 2);
+
+			expect(titlePos).to.be.closeTo(arc.height / 2, 2);
+			done && done();
+		};
+
+		it("check for two lined text position", done => {
+			setTimeout(() => {
+				checkAtMiddle(done);
+			}, 100);
+		});
+
+		it("set option args.donut.title", () => {
+			args.donut.title = "Title 1\nTitle 2\nTitle 3";
+		});
+
+		it("check for three lined text position", done => {
+			setTimeout(() => {
+				checkAtMiddle(done);
+			}, 100);
+		});
+	});
+
 	describe("check for data loading", () => {
 		it("Interaction of chart when initialized with 0 and .load()", done => {
 		const chart = util.generate({
