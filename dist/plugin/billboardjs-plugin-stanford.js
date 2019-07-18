@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190717110545
+ * @version 1.9.5-20190718110634
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -665,17 +665,18 @@ var isValue = function (v) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 },
     setTextValue = function (node, text) {
-  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1],
+      toMiddle = !!(arguments.length > 3 && arguments[3] !== undefined) && arguments[3];
   if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
     var diff = [node.text(), text].map(function (v) {
       return v.replace(/[\s\n]/g, "");
     });
 
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"); // reset possible text
-
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
       node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] * len : dy[1], "em")).text(v);
       });
     }
   }
@@ -965,7 +966,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.9.5-20190717110545");
+defineProperty_default()(Plugin_Plugin, "version", "1.9.5-20190718110634");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js

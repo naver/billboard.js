@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190717110545
+ * @version 1.9.5-20190718110634
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -655,17 +655,18 @@ var isValue = function (v) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 },
     setTextValue = function (node, text) {
-  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1],
+      toMiddle = !!(arguments.length > 3 && arguments[3] !== undefined) && arguments[3];
   if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
     var diff = [node.text(), text].map(function (v) {
       return v.replace(/[\s\n]/g, "");
     });
 
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"); // reset possible text
-
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
       node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] * len : dy[1], "em")).text(v);
       });
     }
   }
@@ -8073,11 +8074,12 @@ extend(ChartInternal_ChartInternal.prototype, {
           value = updated ? updated.value : null,
           ratio = $$.getRatio("arc", updated),
           id = d.data.id,
-          isUnderThreshold = $$.hasType("gauge") || $$.meetsArcLabelThreshold(ratio);
+          hasGauge = $$.hasType("gauge"),
+          isUnderThreshold = hasGauge || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
         var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
-        setTextValue(node, text);
+        setTextValue(node, text, [-1, 1], hasGauge);
       }
     });
   },
@@ -8181,7 +8183,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
     if (title) {
       var text = $$.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
-      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-1.3, 1.3]);
+      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-.6, 1.35], !0);
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
@@ -9270,7 +9272,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.getRadarPosition("y", i);
     }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
       selection.each(function (d) {
-        setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d, [-1.2, 1.2]);
+        setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d, [-1.2, 1.2], !0);
       });
     }).datum(function (d, i) {
       return {
@@ -13912,7 +13914,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190717110545",
+  version: "1.9.5-20190718110634",
 
   /**
    * Generate chart
@@ -14011,7 +14013,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190717110545
+ * @version 1.9.5-20190718110634
  */
 
 
