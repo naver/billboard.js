@@ -75,7 +75,8 @@ export default class Elements {
 		const countPointsInRegion = this.owner.countEpochsInRegion.bind($$);
 
 		// Stanford-Regions
-		let stanfordRegion = main.select(`.${CLASS.stanfordRegions}`).selectAll(`.${CLASS.stanfordRegion}`)
+		let stanfordRegion = main.select(`.${CLASS.stanfordRegions}`)
+			.selectAll(`.${CLASS.stanfordRegion}`)
 			.data(this.owner.config.regions);
 
 		// exit
