@@ -6,7 +6,7 @@
 	/**
 	 * Set the color of the color scale.
 	 */
-	colors?: ((value: number) => string);
+	colors?: (value: number) => string;
 
 	/**
 	 * Specify the key of epochs values in the data.
@@ -65,7 +65,7 @@
 		/**
 		 * Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function.
 		 */
-		format?: string | ((x) => string);
+		format?: string | ((x: number) => string);
 	};
 }
 
@@ -87,7 +87,7 @@ export interface StanfordLineOptions {
 	 */
 	y2: number;
 	/**
-	 * Optional value. Set a custom css class to this line.
+	 * Set a custom css class to this line.
 	 */
 	class?: string;
 }
@@ -98,16 +98,16 @@ export interface StanfordRegionOptions {
 	 */
 	points: StanfordPointOptions[];
 	/**
-	 *  Optional value. Sets the opacity of the region as value between 0 and 1. Default: 0.2
+	 * Sets the opacity of the region as value between 0 and 1. Default: 0.2
 	 */
 	opacity?: number;
 	/**
-	 * Optional value. This function receives a value and percentage of the number of epochs in this region.
+	 * This function receives a value and percentage of the number of epochs in this region.
 	 * Return a string to place text in the middle of the region.
 	 */
-	text?: ((value, percentage) => string);
+	text?: (value: number, percentage: number) => string;
 	/**
-	 * Optional value. Set a custom css class to this region, use the fill property in css to set a background color.
+	 * Set a custom css class to this region, use the fill property in css to set a background color.
 	 */
 	class?: string;
 }

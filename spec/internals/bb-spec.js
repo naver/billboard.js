@@ -279,4 +279,62 @@ describe("Interface & initialization", () => {
 			});
 		});
 	});
+
+	describe("check for callbacks if instance param is passed", () => {
+		let chart;
+		const spy = sinon.spy();
+
+		before(() => {
+			const args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300]
+					]
+				}
+			};
+
+			["beforeinit", "init", "rendered", "afterinit", "resize", "resized", "over", "out"]
+				.forEach(v => {
+					args[`on${v}`] = ctx => spy(v, ctx);
+				});
+
+			chart = util.generate(args);
+		});
+
+		beforeEach(() => spy.resetHistory());
+
+		it("check for the init callbacks", () => {
+			const expected = ["beforeinit", "init", "rendered", "afterinit"];
+
+			spy.args.forEach((v, i) => {
+				expect(v[0]).to.be.equal(expected[i]);
+				expect(v[1]).to.be.equal(chart);
+			});
+		});
+
+		it("check for the resize callbacks", () => {
+			const expected = ["resize", "resized"];
+
+			// when
+			chart.internal.resizeFunction();
+
+			spy.args.forEach((v, i) => {
+				expect(v[0]).to.be.equal(expected[i]);
+				expect(v[1]).to.be.equal(chart);
+			});
+		});
+
+		it("check for the onover/out callbacks", () => {
+			const expected = ["over", "out"];
+
+			// when
+			chart.$.svg.on("mouseenter")();
+			chart.$.svg.on("mouseleave")();
+
+			spy.args.forEach((v, i) => {
+				expect(v[0]).to.be.equal(expected[i]);
+				expect(v[1]).to.be.equal(chart);
+			});
+		});
+	});
 });

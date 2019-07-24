@@ -222,61 +222,66 @@ export default class Options {
 			 * @name onover
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * onover: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onover: function(ctx) {
 			 *   ...
 			 * }
 			 */
-			onover: () => {},
+			onover: undefined,
 
 			/**
 			 * Set a callback to execute when mouse/touch leaves the chart.
 			 * @name onout
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * onout: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onout: function(ctx) {
 			 *   ...
 			 * }
 			 */
-			onout: () => {},
+			onout: undefined,
 
 			/**
 			 * Set a callback to execute when user resizes the screen.
 			 * @name onresize
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * onresize: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onresize: function(ctx) {
 			 *   ...
 			 * }
 			 */
-			onresize: () => {},
+			onresize: undefined,
 
 			/**
 			 * SSet a callback to execute when screen resize finished.
 			 * @name onresized
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * onresized: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onresized: function(ctx) {
 			 *   ...
 			 * }
 			 */
-			onresized: () => {},
+			onresized: undefined,
 
 			/**
 			 * Set a callback to execute before the chart is initialized
 			 * @name onbeforeinit
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * onbeforeinit: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onbeforeinit: function(ctx) {
 			 *   ...
 			 * }
 			 */
@@ -287,22 +292,24 @@ export default class Options {
 			 * @name oninit
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * oninit: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * oninit: function(ctx) {
 			 *   ...
 			 * }
 			 */
-			oninit: () => {},
+			oninit: undefined,
 
 			/**
 			 * Set a callback to execute after the chart is initialized
 			 * @name onafterinit
 			 * @memberof Options
 			 * @type {Function}
-			 * @default function(){}
+			 * @default undefined
 			 * @example
-			 * onafterinit: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onafterinit: function(ctx) {
 			 *   ...
 			 * }
 			 */
@@ -315,7 +322,8 @@ export default class Options {
 			 * @type {Function}
 			 * @default undefined
 			 * @example
-			 * onrendered: function() {
+			 * // @param {Chart} ctx - Instance itself
+			 * onrendered: function(ctx) {
 			 *   ...
 			 * }
 			 */

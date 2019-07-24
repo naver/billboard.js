@@ -216,8 +216,9 @@ extend(ChartInternal.prototype, {
 				const value = updated ? updated.value : null;
 				const ratio = $$.getRatio("arc", updated);
 				const id = d.data.id;
+				const hasGauge = $$.hasType("gauge");
 				const isUnderThreshold = !(
-					!$$.hasType("gauge") && !$$.meetsArcLabelThreshold(ratio)
+					!hasGauge && !$$.meetsArcLabelThreshold(ratio)
 				);
 
 				if (isUnderThreshold) {
@@ -225,7 +226,7 @@ extend(ChartInternal.prototype, {
 						$$.getArcLabelFormat() || $$.defaultArcValueFormat
 					)(value, ratio, id).toString();
 
-					setTextValue(node, text);
+					setTextValue(node, text, [-1, 1], hasGauge);
 				}
 			});
 		}
@@ -420,7 +421,7 @@ extend(ChartInternal.prototype, {
 					.style("font-size", "27px");
 			}
 
-			setTextValue(text, title, hasGauge ? undefined : [-1.3, 1.3]);
+			setTextValue(text, title, hasGauge ? undefined : [-0.6, 1.35], true);
 		}
 	},
 

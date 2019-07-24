@@ -236,7 +236,7 @@ export default class Stanford extends Plugin {
 
 		return {
 			value,
-			percentage: value !== 0 ? (value / total * 100).toFixed(1) : 0
+			percentage: value !== 0 ? +(value / total * 100).toFixed(1) : 0
 		};
 	}
 }
