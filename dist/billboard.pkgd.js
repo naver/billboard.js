@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190718110634
+ * @version 1.9.5-20190724110933
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -10055,13 +10055,13 @@ function () {
     key: "beforeInit",
     value: function beforeInit() {
       var $$ = this;
-      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
+      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$, $$.api);
     }
   }, {
     key: "afterInit",
     value: function afterInit() {
       var $$ = this;
-      $$.callPluginHook("$afterInit"), callFn($$.config.onafterinit, $$);
+      $$.callPluginHook("$afterInit"), callFn($$.config.onafterinit, $$, $$.api);
     }
   }, {
     key: "init",
@@ -10114,9 +10114,9 @@ function () {
       if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = src_select(browser["document"].body.appendChild(browser["document"].createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
-          return callFn(config.onover, $$);
+          return callFn(config.onover, $$, $$.api);
         }).on(isTouch ? "touchend" : "mouseleave", function () {
-          return callFn(config.onout, $$);
+          return callFn(config.onout, $$, $$.api);
         });
       }
 
@@ -10130,7 +10130,7 @@ function () {
 
       // data.onmin/max callback
       if ($$.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
+      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$, $$.api), $$.redraw({
         withTransition: !1,
         withTransform: !0,
         withUpdateXDomain: !0,
@@ -10393,7 +10393,7 @@ function () {
           isTransition = (duration || flowFn) && $$.isTabVisible(),
           redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
           afterRedraw = flow || config.onrendered ? function () {
-        flowFn && flowFn(), callFn(config.onrendered, $$);
+        flowFn && flowFn(), callFn(config.onrendered, $$, $$.api);
       } : null;
       if (afterRedraw) // Only use transition when current tab is visible.
         if (isTransition) {
@@ -10621,11 +10621,15 @@ function () {
     value: function bindResize() {
       var $$ = this,
           config = $$.config;
-      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(config.onresize.bind($$)), config.resize_auto && $$.resizeFunction.add(function () {
+      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
+        return callFn(config.onresize, $$, $$.api);
+      }), config.resize_auto && $$.resizeFunction.add(function () {
         $$.resizeTimeout && (browser["window"].clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = browser["window"].setTimeout(function () {
           $$.api.flush(!1, !0);
         }, 200);
-      }), $$.resizeFunction.add(config.onresized.bind($$)), browser["window"].addEventListener("resize", $$.resizeFunction);
+      }), $$.resizeFunction.add(function () {
+        return callFn(config.onresized, $$, $$.api);
+      }), browser["window"].addEventListener("resize", $$.resizeFunction);
     }
   }, {
     key: "generateResize",
@@ -11045,61 +11049,66 @@ var Options_Options = function Options() {
      * @name onover
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onover: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onover: function(ctx) {
      *   ...
      * }
      */
-    onover: function onover() {},
+    onover: undefined,
 
     /**
      * Set a callback to execute when mouse/touch leaves the chart.
      * @name onout
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onout: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onout: function(ctx) {
      *   ...
      * }
      */
-    onout: function onout() {},
+    onout: undefined,
 
     /**
      * Set a callback to execute when user resizes the screen.
      * @name onresize
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onresize: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onresize: function(ctx) {
      *   ...
      * }
      */
-    onresize: function onresize() {},
+    onresize: undefined,
 
     /**
      * SSet a callback to execute when screen resize finished.
      * @name onresized
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onresized: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onresized: function(ctx) {
      *   ...
      * }
      */
-    onresized: function onresized() {},
+    onresized: undefined,
 
     /**
      * Set a callback to execute before the chart is initialized
      * @name onbeforeinit
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onbeforeinit: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onbeforeinit: function(ctx) {
      *   ...
      * }
      */
@@ -11110,22 +11119,24 @@ var Options_Options = function Options() {
      * @name oninit
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * oninit: function() {
+     * // @param {Chart} ctx - Instance itself
+     * oninit: function(ctx) {
      *   ...
      * }
      */
-    oninit: function oninit() {},
+    oninit: undefined,
 
     /**
      * Set a callback to execute after the chart is initialized
      * @name onafterinit
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onafterinit: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onafterinit: function(ctx) {
      *   ...
      * }
      */
@@ -11138,7 +11149,8 @@ var Options_Options = function Options() {
      * @type {Function}
      * @default undefined
      * @example
-     * onrendered: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onrendered: function(ctx) {
      *   ...
      * }
      */
@@ -25046,7 +25058,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190718110634",
+  version: "1.9.5-20190724110933",
 
   /**
    * Generate chart
@@ -25145,7 +25157,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190718110634
+ * @version 1.9.5-20190724110933
  */
 
 
