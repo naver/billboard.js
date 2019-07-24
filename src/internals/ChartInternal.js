@@ -43,7 +43,7 @@ export default class ChartInternal {
 		$$.callPluginHook("$beforeInit");
 
 		// can do something
-		callFn($$.config.onbeforeinit, $$);
+		callFn($$.config.onbeforeinit, $$, $$.api);
 	}
 
 	afterInit() {
@@ -52,7 +52,7 @@ export default class ChartInternal {
 		$$.callPluginHook("$afterInit");
 
 		// can do something
-		callFn($$.config.onafterinit, $$);
+		callFn($$.config.onafterinit, $$, $$.api);
 	}
 
 	init() {
@@ -229,8 +229,8 @@ export default class ChartInternal {
 			const isTouch = $$.inputType === "touch";
 
 			$$.svg
-				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$))
-				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$));
+				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$, $$.api))
+				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$, $$.api));
 		}
 
 		config.svg_classname && $$.svg.attr("class", config.svg_classname);
@@ -312,7 +312,7 @@ export default class ChartInternal {
 		$$.updateDimension();
 
 		// oninit callback
-		config.oninit.call($$);
+		callFn(config.oninit, $$, $$.api);
 
 		$$.redraw({
 			withTransition: false,
@@ -782,7 +782,7 @@ export default class ChartInternal {
 		// callback function after redraw ends
 		const afterRedraw = flow || config.onrendered ? () => {
 			flowFn && flowFn();
-			callFn(config.onrendered, $$);
+			callFn(config.onrendered, $$, $$.api);
 		} : null;
 
 		if (afterRedraw) {
@@ -1175,7 +1175,7 @@ export default class ChartInternal {
 		const config = $$.config;
 
 		$$.resizeFunction = $$.generateResize();
-		$$.resizeFunction.add(config.onresize.bind($$));
+		$$.resizeFunction.add(() => callFn(config.onresize, $$, $$.api));
 
 		if (config.resize_auto) {
 			$$.resizeFunction.add(() => {
@@ -1190,7 +1190,7 @@ export default class ChartInternal {
 			});
 		}
 
-		$$.resizeFunction.add(config.onresized.bind($$));
+		$$.resizeFunction.add(() => callFn(config.onresized, $$, $$.api));
 
 		// attach resize event
 		window.addEventListener("resize", $$.resizeFunction);

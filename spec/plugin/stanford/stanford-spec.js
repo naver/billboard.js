@@ -5,7 +5,8 @@ import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../..
 
 describe("STANFORD", () => {
 	let chart;
-	const args = {
+	let stanford = new Stanford({ epochs: [30, 35] });
+	let args = {
 		data: {
 			x: "x",
 			columns: [
@@ -14,11 +15,7 @@ describe("STANFORD", () => {
 			],
 			type: "scatter"
 		},
-		plugins: [
-			new Stanford({
-				epochs: [30, 35]
-			})
-		]
+		plugins: [stanford]
 	};
 
 	beforeEach(() => {
@@ -33,7 +30,7 @@ describe("STANFORD", () => {
 				{x: 20, y: 20},
 				{x: 0, y: 20}
 			];
-			
+
 			const stanford = chart.plugins[0];
 			const result = stanford.countEpochsInRegion.bind(stanford.$$)(region);
 
@@ -134,6 +131,44 @@ describe("STANFORD", () => {
 
 		it("should return false if point is outside region", () => {
 			expect(pointInRegion(pointOutInside, region)).to.be.false;
+		});
+	});
+
+	describe("regions", () => {
+		before(() => {
+			args.plugins = [
+				new Stanford({
+					epochs: [30, 35],
+					regions: [
+						{
+							points: [
+									{
+										x: 0,
+										y: 0
+									},
+									{
+										x: 50,
+										y: 50
+									},
+									{
+										x: 30,
+										y: 40
+									}
+							],
+							text: sinon.spy(function (value, percentage) {
+								return "Normal Operations: "+ value +" "+ percentage +"%";
+							}),
+							opacity: 0.1
+						}
+					]
+				})
+			];
+		})
+
+		it("check for text function arguments data type", () => {
+			chart.plugins[0].options.regions[0].text.args.forEach(v => {
+				expect(v.every(t => typeof t === "number")).to.be.true;
+			});
 		});
 	});
 });

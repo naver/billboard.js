@@ -74,7 +74,14 @@ export default class Options {
 			 *    max: 10000,
 			 *    min: 1,
 			 *    width: 500,
-			 *    format: "pow10"
+			 *
+			 *    // specify 'pow10' to format as powers of 10
+			 *    format: "pow10",
+			 *
+			 *    // or specify a format function
+			 *    format: function(x) {
+			 *    	return x +"%";
+			 *    }
 			 *  },
 			 */
 			scale_min: undefined,
@@ -108,12 +115,12 @@ export default class Options {
 			 * Show additional regions anywhere on the chart.
 			 * - Each region object should consist with following options:
 			 *
-			 * | Key | Type | Default | Description |
-			 * | --- | --- | --- | --- |
-			 * | points | Array |  | Accepts a group of objects that has x and y.<br>These points should be added in a counter-clockwise fashion to make a closed polygon. |
-			 * | opacity | Number | 0.2 | Optional value. Sets the opacity of the region as value between 0 and 1 |
-			 * | text | Function |  | Optional value. This function receives a value and percentage of the number of epochs in this region.<br>Return a string to place text in the middle of the region. |
-			 * | class | String | | Optional value. Set a custom css class to this region, use the fill property in css to set a background color. |
+			 *   | Key | Type | Default | Attributes | Description |
+			 *   | --- | --- | --- | --- | --- |
+			 *   | points | Array |  | | Accepts a group of objects that has x and y.<br>These points should be added in a counter-clockwise fashion to make a closed polygon. |
+			 *   | opacity | Number | `0.2` | &lt;optional> | Sets the opacity of the region as value between 0 and 1 |
+			 *   | text | Function |  | &lt;optional> | This function receives a value and percentage of the number of epochs in this region.<br>Return a string to place text in the middle of the region. |
+			 *   | class | String | | &lt;optional> | Se a custom css class to this region, use the fill property in css to set a background color. |
 			 * @name regions
 			 * @memberof plugin-stanford
 			 * @type {Array}

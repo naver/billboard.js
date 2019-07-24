@@ -5,6 +5,7 @@
 import { Axis } from "./axis";
 import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
 import Stanford from "./plugin/stanford/index";
+import { Chart } from "./chart";
 
 export interface ChartOptions {
 	/**
@@ -513,42 +514,42 @@ export interface ChartOptions {
 	/**
 	 * Set a callback to execute when the chart is initialized.
 	 */
-	oninit?(): void;
+	oninit?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute after the chart is initialized
 	 */
-	onafterinit?(): void;
+	onafterinit?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute before the chart is initialized
 	 */
-	onbeforeinit?(): void;
+	onbeforeinit?(ctx: Chart): void;
 
 	/**
 	 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
 	 */
-	onrendered?(): void;
+	onrendered?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when mouse/touch enters the chart.
 	 */
-	onover?(): void;
+	onover?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when mouse/touch leaves the chart.
 	 */
-	onout?(): void;
+	onout?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when user resizes the screen.
 	 */
-	onresize?(): void;
+	onresize?(ctx: Chart): void;
 
 	/**
 	 * Set a callback to execute when screen resize finished.
 	 */
-	onresized?(): void;
+	onresized?(ctx: Chart): void;
 
 	/**
 	 * Set 'clip-path' attribute for chart element.
