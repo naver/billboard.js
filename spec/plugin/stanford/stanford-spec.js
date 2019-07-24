@@ -6,7 +6,7 @@ import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../..
 describe("STANFORD", () => {
 	let chart;
 	let stanford = new Stanford({ epochs: [30, 35] });
-	const args = {
+	let args = {
 		data: {
 			x: "x",
 			columns: [
