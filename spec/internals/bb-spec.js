@@ -10,94 +10,96 @@ import CLASS from "../../src/config/classes";7
 describe("Interface & initialization", () => {
 	let chart;
 
-	it("Check for billboard.js object", () => {
-		expect(bb).not.to.be.null;
-		expect(typeof bb).to.be.equal("object");
-		expect(typeof bb.generate).to.be.equal("function");
-	});
+	describe("Initialization", () => {
+		const checkElements = $ => {
+			const isD3Node = v => v && "node" in v || false;
 
-	it("Check for initialization", () => {
-		chart = util.generate({
-			title: {
-				text: "test"
-			},
-			data: {
-				columns: [
-					["data1", 30]
-				],
-				labels: {
-					show: true
+			Object.values($).forEach(v1 => {
+				const isNode = isD3Node(v1);
+
+				if (isNode) {
+					expect(isNode).to.be.true;
+				} else {
+					Object.values(v1).forEach(v2 => {
+						expect(isD3Node(v2)).to.be.true;
+					});
+				}
+			});
+		};
+
+		it("Check for billboard.js object", () => {
+			expect(bb).not.to.be.null;
+			expect(typeof bb).to.be.equal("object");
+			expect(typeof bb.generate).to.be.equal("function");
+		});
+
+		it("Check for initialization", () => {
+			chart = util.generate({
+				title: {
+					text: "test"
 				},
-				type: "bar"
-			}
-		});
-		const internal = chart.internal;
+				data: {
+					columns: [
+						["data1", 30]
+					],
+					labels: {
+						show: true
+					},
+					type: "bar"
+				},
+				onrendered: ctx => checkElements(ctx.$)
+			});
+			const internal = chart.internal;
 
-		expect(chart).not.to.be.null;
-		expect(d3.select(chart.element).classed("bb")).to.be.true;
-		expect(internal.svg.node().tagName).to.be.equal("svg");
-		expect(internal.convertInputType()).to.be.equal(internal.inputType);
-
-		expect(chart).to.be.equal(bb.instance[0]);
-
-		// onrendered value should be undefined for default
-		expect(chart.internal.config.onrendered).to.be.undefined;
-	});
-
-	it("should return version string", () => {
-		expect(bb.version.length > 0).to.be.ok;
-	});
-
-	it("should be accessing node elements", () => {
-		const isD3Node = v => v && "node" in v || false;
-
-		Object.values(chart.$).forEach(v1 => {
-			const isNode = isD3Node(v1);
-
-			if (isNode) {
-				expect(isNode).to.be.true;
-			} else {
-				Object.values(v1).forEach(v2 => {
-					expect(isD3Node(v2)).to.be.true;
-				});
-			}
-		});
-	});
-
-	it("instantiate with non-existing element", () => {
-		chart = util.generate({
-			bindto: "#no-exist-element",
-			data: {
-				columns: [
-					["data1", 30]
-				]
-			}
+			expect(chart).not.to.be.null;
+			expect(d3.select(chart.element).classed("bb")).to.be.true;
+			expect(internal.svg.node().tagName).to.be.equal("svg");
+			expect(internal.convertInputType()).to.be.equal(internal.inputType);
+			expect(chart).to.be.equal(bb.instance[0]);
 		});
 
-		expect(chart.element.classList.contains("bb")).to.be.true;
-	});
-
-	it("instantiate with different classname on wrapper element", () => {
-		const bindtoClassName = "billboard-js";
-		chart = bb.generate({
-			bindto: {
-				element: "#chart",
-				classname: bindtoClassName
-			},
-			data: {
-				columns: [
-					["data1", 30, 200, 100, 400],
-					["data2", 500, 800, 500, 2000]
-				]
-			}
+		it("should return version string", () => {
+			expect(bb.version.length > 0).to.be.ok;
 		});
 
-		expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
+		it("should be accessing node elements", () => {
+			checkElements(chart.$);
+		});
+
+		it("instantiate with non-existing element", () => {
+			chart = util.generate({
+				bindto: "#no-exist-element",
+				data: {
+					columns: [
+						["data1", 30]
+					]
+				}
+			});
+
+			expect(chart.element.classList.contains("bb")).to.be.true;
+		});
+
+		it("instantiate with different classname on wrapper element", () => {
+			const bindtoClassName = "billboard-js";
+			chart = bb.generate({
+				bindto: {
+					element: "#chart",
+					classname: bindtoClassName
+				},
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400],
+						["data2", 500, 800, 500, 2000]
+					]
+				}
+			});
+
+			expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
+		});
 	});
 
 	describe("auto resize", () => {
 		let container;
-		let innerHTML = "";
 
 		beforeEach(() => {
 			container = document.getElementById("container");

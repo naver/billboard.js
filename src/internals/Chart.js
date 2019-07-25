@@ -20,9 +20,8 @@ import ChartInternal from "./ChartInternal";
  * @see {@link bb.generate} for the initialization.
 */
 /**
- * Access primary node elements
- * @name Chart#$
- * @type {Object}
+ * Access instance's primary node elements
+ * @member {Object} $
  * @property {Object} $
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
@@ -41,7 +40,6 @@ import ChartInternal from "./ChartInternal";
  * @property {d3.selection} $.line.circles Data point circle elements
  * @property {Object} $.text
  * @property {d3.selection} $.text.texts Data label text elements
- * @instance
  * @memberof Chart
  * @example
  * var chart = bb.generate({ ... });
@@ -55,11 +53,10 @@ export default class Chart {
 
 		/**
 		 * Plugin instance array
-		 * @name Chart#plugins
-		 * @type {Array}
-		 * @instance
+		 * @member {Array} plugins
 		 * @memberof Chart
-		 * @example
+		 * @instance
+ 	 	 * @example
 		 *  var chart = bb.generate({
 		 *     ...
 		 *     plugins: [
@@ -71,15 +68,11 @@ export default class Chart {
 		 *  chart.plugins; // [Stanford, PluginA] - instance array
 		 */
 		this.plugins = [];
-
 		this.internal = $$;
 
 		$$.loadConfig(config);
 		$$.beforeInit(config);
 		$$.init();
-
-		this.$ = $$.getChartElements();
-
 		$$.afterInit(config);
 
 		// bind "this" to nested API
