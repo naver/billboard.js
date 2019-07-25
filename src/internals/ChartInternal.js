@@ -348,10 +348,10 @@ export default class ChartInternal {
 		notEmpty($$.config.data_labels) && $$.initText();
 	}
 
-	getChartElements() {
+	setChartElements() {
 		const $$ = this;
 
-		return {
+		$$.api.$ = {
 			chart: $$.selectChart,
 			svg: $$.svg,
 			defs: $$.defs,
@@ -651,6 +651,8 @@ export default class ChartInternal {
 			$$.redrawEventRect();
 			$$.bindZoomEvent();
 		}
+
+		initializing && $$.setChartElements();
 
 		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
 		$$.callPluginHook("$redraw", options, duration);
