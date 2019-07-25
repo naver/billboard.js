@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190724110933
+ * @version 1.9.5-20190725111036
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1934,10 +1934,10 @@ function () {
       }), notEmpty($$.config.data_labels) && $$.initText();
     }
   }, {
-    key: "getChartElements",
-    value: function getChartElements() {
+    key: "setChartElements",
+    value: function setChartElements() {
       var $$ = this;
-      return {
+      $$.api.$ = {
         chart: $$.selectChart,
         svg: $$.svg,
         defs: $$.defs,
@@ -2096,7 +2096,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Redraw axis
@@ -2541,9 +2541,8 @@ function () {
 */
 
 /**
- * Access primary node elements
- * @name Chart#$
- * @type {Object}
+ * Access instance's primary node elements
+ * @member {Object} $
  * @property {Object} $
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
@@ -2562,7 +2561,6 @@ function () {
  * @property {d3.selection} $.line.circles Data point circle elements
  * @property {Object} $.text
  * @property {d3.selection} $.text.texts Data label text elements
- * @instance
  * @memberof Chart
  * @example
  * var chart = bb.generate({ ... });
@@ -2577,11 +2575,10 @@ var Chart_Chart = function Chart(config) {
   var $$ = new ChartInternal_ChartInternal(this);
   /**
    * Plugin instance array
-   * @name Chart#plugins
-   * @type {Array}
-   * @instance
+   * @member {Array} plugins
    * @memberof Chart
-   * @example
+   * @instance
+   	 * @example
    *  var chart = bb.generate({
    *     ...
    *     plugins: [
@@ -2594,7 +2591,7 @@ var Chart_Chart = function Chart(config) {
    */
 
   // bind "this" to nested API
-  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
+  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), $$.afterInit(config), function bindThis(fn, target, argThis) {
     Object.keys(fn).forEach(function (key) {
       target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
     });
@@ -13926,7 +13923,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190724110933",
+  version: "1.9.5-20190725111036",
 
   /**
    * Generate chart
@@ -14025,7 +14022,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190724110933
+ * @version 1.9.5-20190725111036
  */
 
 
