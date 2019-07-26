@@ -305,6 +305,18 @@ export interface ChartOptions {
 			};
 
 			text?: {
+				position?: {
+					/**
+					 * x coordinate position, relative the original
+					 */
+					x?: number;
+
+					/**
+					 * y coordinate position, relative the original
+					 */
+					y?: number;
+				};
+
 				/**
 				 * Show or hide axis text.
 				 */
