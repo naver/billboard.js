@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-20190725111036
+ * @version 1.9.5-20190726111106
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5854,6 +5854,8 @@ var Options_Options = function Options() {
      * @type {Object}
      * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
      * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
+     * @property {Number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+     * @property {NUmber} [radar.axis.text.position.y=0] y coordinate position, relative the original.
      * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
      * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
      * @property {Number} [radar.level.depth=3] Set the level depth.
@@ -5874,6 +5876,10 @@ var Options_Options = function Options() {
      *              show: false
      *          },
      *          text: {
+     *              position: {
+     *              	x: 0,
+     *              	y: 0
+     *              },
      *              show: false
      *          }
      *      },
@@ -5897,6 +5903,7 @@ var Options_Options = function Options() {
     radar_axis_max: undefined,
     radar_axis_line_show: !0,
     radar_axis_text_show: !0,
+    radar_axis_text_position: {},
     radar_level_depth: 3,
     radar_level_show: !0,
     radar_level_text_format: function radar_level_text_format(x) {
@@ -5949,15 +5956,15 @@ var Options_Options = function Options() {
      * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
      *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
      * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
-     * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
      *  - **NOTE:** When is specified, will not be updating tooltip's position.
-     *  - Within template, below syntax will be replaced using template-like syntax string:
-     *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
-     *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
-     *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
-     *    - {=TITLE}: title value
-     *    - {=COLOR}: data color
-     *    - {=VALUE}: data value
+     * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+     *  Within template, below syntax will be replaced using template-like syntax string:
+     *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
+     *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
+     *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+     *    - **{=TITLE}**: title value.
+     *    - **{=COLOR}**: data color.
+     *    - **{=VALUE}**: data value.
      * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
      *  - **NOTE:** It should contain `{ key: Array, ... }` value
      *    - 'key' name is used as substitution within template as '{=KEY}'
@@ -9275,21 +9282,35 @@ extend(ChartInternal_ChartInternal.prototype, {
     var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
       return "".concat(config_classes.axis, "-").concat(i);
     });
-    config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
+
+    // axis text
+    if (config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
       return $$.getRadarPosition("x", i);
     }).attr("y2", function (d, i) {
       return $$.getRadarPosition("y", i);
-    }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
-      selection.each(function (d) {
-        setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d, [-1.2, 1.2], !0);
+    }), config.radar_axis_text_show) {
+      var _config$radar_axis_te = config.radar_axis_text_position,
+          _config$radar_axis_te2 = _config$radar_axis_te.x,
+          x = _config$radar_axis_te2 === void 0 ? 0 : _config$radar_axis_te2,
+          _config$radar_axis_te3 = _config$radar_axis_te.y,
+          y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3;
+      axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
+        selection.each(function (d) {
+          setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d + "", [-.6, 1.2]);
+        });
+      }).datum(function (d, i) {
+        return {
+          index: i
+        };
+      }).attr("transform", function (d) {
+        isUndefined(this.width) && (this.width = this.getBoundingClientRect().width / 2);
+        var posX = $$.getRadarPosition("x", d.index, undefined, 1),
+            posY = Math.round($$.getRadarPosition("y", d.index, undefined, 1));
+        return posX > width ? posX += this.width + x : Math.round(posX) < width && (posX -= this.width + x), posY > height ? (posY / 2 === height && this.firstChild.tagName === "tspan" && this.firstChild.setAttribute("dy", "0em"), posY += y) : posY < height && (posY -= y), "translate(".concat(posX, " ").concat(posY, ")");
       });
-    }).datum(function (d, i) {
-      return {
-        index: i
-      };
-    }).attr("transform", function (d, i) {
-      return "translate(".concat($$.getRadarPosition("x", i, undefined, 1), " ").concat($$.getRadarPosition("y", i, undefined, 1), ")");
-    }), $$.bindEvent();
+    }
+
+    $$.bindEvent();
   },
   bindEvent: function bindEvent() {
     var _this = this,
@@ -13923,7 +13944,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-20190725111036",
+  version: "1.9.5-20190726111106",
 
   /**
    * Generate chart
@@ -14022,7 +14043,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-20190725111036
+ * @version 1.9.5-20190726111106
  */
 
 
