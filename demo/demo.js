@@ -3626,6 +3626,11 @@ d3.select(".chart_area")
 						text: {
 							format: function(x) { return x + "%"; }
 						}
+					},
+					axis: {
+						text: {
+							position: {x: -15, y: -5}
+						}
 					}
 				}
 			}

@@ -3238,6 +3238,8 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
 			 * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
+			 * @property {Number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+			 * @property {NUmber} [radar.axis.text.position.y=0] y coordinate position, relative the original.
 			 * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
 			 * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
 			 * @property {Number} [radar.level.depth=3] Set the level depth.
@@ -3258,6 +3260,10 @@ export default class Options {
 			 *              show: false
 			 *          },
 			 *          text: {
+			 *              position: {
+			 *              	x: 0,
+			 *              	y: 0
+			 *              },
 			 *              show: false
 			 *          }
 			 *      },
@@ -3281,6 +3287,7 @@ export default class Options {
 			radar_axis_max: undefined,
 			radar_axis_line_show: true,
 			radar_axis_text_show: true,
+			radar_axis_text_position: {},
 			radar_level_depth: 3,
 			radar_level_show: true,
 			radar_level_text_format: x => (x % 1 === 0 ? x : x.toFixed(2)),
