@@ -190,4 +190,23 @@ describe("SHAPE RADAR", () => {
 			});
 		});
 	});
+
+	describe("Axis", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 330, 350, 220, 400, 150, 330, 230, 390, 95, 195, 220]
+					],
+					type: "radar"
+				}
+			};
+		});
+
+		it("check if default indexed axis text are showing", () => {
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
+				expect(+this.textContent).to.be.equal(i);
+			});
+		});
+	});
 });

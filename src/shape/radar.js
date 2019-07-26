@@ -259,7 +259,7 @@ extend(ChartInternal.prototype, {
 				.attr("dy", ".5em")
 				.call(selection => {
 					selection.each(function(d) {
-						setTextValue(d3Select(this), d, [-1.2, 1.2], true);
+						setTextValue(d3Select(this), String(d), [-1.2, 1.2], true);
 					});
 				})
 				.datum((d, i) => ({index: i}))
