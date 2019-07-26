@@ -2,7 +2,7 @@
 # Credit: https://www.vinaygopinath.me/blog/tech/commit-to-master-branch-on-github-using-travis-ci/
 
 # set nightly version
-VERSION="$(node -pe "require('./package.json').version.replace('snapshot', 'nightly')")-`date '+%Y%m%d%H%M%S'`"
+VERSION="$(node -pe "require('./package.json').version")-nightly-`date '+%Y%m%d%H%M%S'`"
 
 setup_git() {
     git config --global user.email "travis@travis-ci.org"
