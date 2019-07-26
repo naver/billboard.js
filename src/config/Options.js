@@ -3338,15 +3338,15 @@ export default class Options {
 			 * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
 			 * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
-			 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
 			 *  - **NOTE:** When is specified, will not be updating tooltip's position.
-			 *  - Within template, below syntax will be replaced using template-like syntax string:
-			 *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
-			 *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
-			 *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
-			 *    - {=TITLE}: title value
-			 *    - {=COLOR}: data color
-			 *    - {=VALUE}: data value
+			 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+			 *  Within template, below syntax will be replaced using template-like syntax string:
+			 *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
+			 *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
+			 *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+			 *    - **{=TITLE}**: title value.
+			 *    - **{=COLOR}**: data color.
+			 *    - **{=VALUE}**: data value.
 			 * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
 			 *  - **NOTE:** It should contain `{ key: Array, ... }` value
 			 *    - 'key' name is used as substitution within template as '{=KEY}'
