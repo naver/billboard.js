@@ -1,0 +1,41 @@
+@import url('https://fonts.googleapis.com/css?family=Lato&display=swap');
+
+nav #nav-search {
+    border: solid 4px #2980b9;
+    border-radius: 0;
+}
+
+nav #nav-search::placeholder {
+    color: #aaa;
+}
+
+nav ul a, nav ul a:active {
+    font-family: 'Lato', 'proxima-nova', 'Helvetica Neue', Arial, sans-serif;
+    line-height: 18px;
+    font-size: 14px;
+}
+
+body, .name, .signature {
+    font-family: 'Lato', 'Helvetica Neue', Helvetica, sans-serif;
+}
+
+h4[id$='$'] > span:first-child {
+    display: none;
+}
+
+/*
+h4.name {
+    background: #2f6545;
+}
+
+h4.name a {
+    color: #fff683;
+}
+
+.signature {
+    color: #95ff83;
+}
+
+.type-signature {
+    color: #89ca79;
+} */
