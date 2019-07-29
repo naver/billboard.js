@@ -43,6 +43,9 @@
 		"search": true,
 		"typedefs": true,
 		"private": false,
+		"scripts": [
+			"../doc.css"
+		],
 		"menu":{
 			"Examples": {
 				"href":"https://naver.github.io/billboard.js/demo/",
