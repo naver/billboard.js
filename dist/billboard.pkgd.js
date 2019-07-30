@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-nightly-20190729111229
+ * @version 1.9.5-nightly-20190730111304
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -9621,53 +9621,35 @@ function () {
     } // called from : updateScales() & getMaxTickWidth()
 
   }, {
-    key: "getXAxis",
-    value: function getXAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
+    key: "getAxis",
+    value: function getAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
       var $$ = this.owner,
           config = $$.config,
-          isCategory = $$.isCategorized(),
+          isX = /^(x|subX)$/.test(name),
+          type = isX ? "x" : "y",
+          isCategory = isX && $$.isCategorized(),
           orient = $$["".concat(name, "Orient")],
-          tickFormat = $$.xAxisTickFormat,
-          tickValues = $$.xAxisTickValues,
-          axisParams = {
-        isCategory: isCategory,
+          tickFormat = isX ? $$.xAxisTickFormat : config["axis_".concat(name, "_tick_format")],
+          tickValues = isX ? $$.xAxisTickValues : $$["".concat(name, "AxisTickValues")],
+          axisParams = Object.assign({
         outerTick: outerTick,
         noTransition: noTransition,
         config: config,
         name: name,
+        tickTextRotate: noTickTextRotate ? 0 : config["axis_".concat(type, "_tick_rotate")]
+      }, isX && {
+        isCategory: isCategory,
         tickMultiline: config.axis_x_tick_multiline,
         tickWidth: config.axis_x_tick_width,
-        tickTextRotate: noTickTextRotate ? 0 : config.axis_x_tick_rotate,
         tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
         orgXScale: $$.x
-      },
-          axis = new AxisRenderer_AxisRenderer(axisParams).scale($$.zoomScale || scale).orient(orient),
-          newTickValues = tickValues;
-      return $$.isTimeSeries() && tickValues && !isFunction(tickValues) && (newTickValues = tickValues.map(function (v) {
+      }),
+          axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
+      return isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
-      })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config.axis_x_tick_count && axis.ticks(config.axis_x_tick_count), axis;
-    } // called from : updateScales() & getMaxTickWidth()
-
-  }, {
-    key: "getYAxis",
-    value: function getYAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
-      var $$ = this.owner,
-          config = $$.config,
-          orient = $$["".concat(name, "Orient")],
-          tickFormat = config["axis_".concat(name, "_tick_format")],
-          tickValues = $$["".concat(name, "AxisTickValues")],
-          axisParams = {
-        outerTick: outerTick,
-        noTransition: noTransition,
-        config: config,
-        name: name,
-        tickTextRotate: noTickTextRotate ? 0 : config.axis_y_tick_rotate
-      },
-          axis = new AxisRenderer_AxisRenderer(axisParams).scale(scale).orient(orient).tickFormat(tickFormat || $$.isStackNormalized() && function (x) {
+      }) : !isX && $$.isTimeSeriesY() && (axis.ticks(config.axis_y_tick_time_value), tickValues = null), tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
         return "".concat(x, "%");
-      });
-      return $$.isTimeSeriesY() ? // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
-      axis.ticks(config.axis_y_tick_time_value) : axis.tickValues(tickValues), axis;
+      }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config["axis_".concat(type, "_tick_count")] && axis.ticks(config["axis_".concat(type, "_tick_count")]), axis;
     }
   }, {
     key: "updateXAxisTickValues",
@@ -9709,21 +9691,6 @@ function () {
           tickValues = $$.config["axis_".concat(id, "_tick_values")],
           axis = $$["".concat(id, "Axis")];
       return (isFunction(tickValues) ? tickValues() : tickValues) || (axis ? axis.tickValues() : undefined);
-    }
-  }, {
-    key: "getXAxisTickValues",
-    value: function getXAxisTickValues() {
-      return this.getTickValues("x");
-    }
-  }, {
-    key: "getYAxisTickValues",
-    value: function getYAxisTickValues() {
-      return this.getTickValues("y");
-    }
-  }, {
-    key: "getY2AxisTickValues",
-    value: function getY2AxisTickValues() {
-      return this.getTickValues("y2");
     }
   }, {
     key: "getLabelOptionByAxisId",
@@ -9904,15 +9871,14 @@ function () {
       if ($$.svg) {
         var isYAxis = /^y2?$/.test(id),
             targetsToShow = $$.filterTargetsToShow($$.data.targets),
-            getFrom = isYAxis ? "getY" : "getX",
-            scale = $$[id].copy().domain($$["".concat(getFrom, "Domain")](targetsToShow, id)),
+            scale = $$[id].copy().domain($$["get".concat(isYAxis ? "Y" : "X", "Domain")](targetsToShow, id)),
             domain = scale.domain();
         // do not compute if domain is same
         if (isArray(currentTickMax.domain) && currentTickMax.domain.every(function (v, i) {
           return v === domain[i];
         })) return currentTickMax.size;
         currentTickMax.domain = domain;
-        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0),
+        var axis = this.getAxis(id, scale, !1, !1, !0),
             tickCount = config["axis_".concat(id, "_tick_count")];
         tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
@@ -14493,7 +14459,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       return $$.xAxis.tickOffset();
     }), $$.subX = $$.getX($$.xMin, $$.xMax, xSubDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
-    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
+    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getTickValues("x"), $$.xAxis = $$.axis.getAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getTickValues("y"), $$.yAxis = $$.axis.getAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getTickValues("y2"), $$.y2Axis = $$.axis.getAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
@@ -14805,7 +14771,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   updateXs: function updateXs() {
     var $$ = this;
-    $$.xs = $$.axis.getXAxisTickValues() || [];
+    $$.xs = $$.axis.getTickValues("x") || [];
   },
   getPrevX: function getPrevX(i) {
     var x = this.xs[i - 1];
@@ -15302,7 +15268,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   updateDataIndexByX: function updateDataIndexByX() {
     var $$ = this,
         isTimeSeries = $$.isTimeSeries(),
-        tickValues = $$.axis.getXAxisTickValues() || [];
+        tickValues = $$.axis.getTickValues("x") || [];
     $$.data.targets.forEach(function (t) {
       t.values.forEach(function (v, i) {
         isTimeSeries ? tickValues.some(function (d, j) {
@@ -15824,7 +15790,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         zoomEnabled = config.zoom_enabled,
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
-      var xAxisTickValues = $$.axis.getXAxisTickValues() || $$.getMaxDataCountTarget($$.data.targets);
+      var xAxisTickValues = $$.axis.getTickValues("x") || $$.getMaxDataCountTarget($$.data.targets);
       isObject(xAxisTickValues) && (xAxisTickValues = xAxisTickValues.values);
       // Set data and update $$.eventRect
       var xAxisTarget = (xAxisTickValues || []).map(function (x, index) {
@@ -25076,7 +25042,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-nightly-20190729111229",
+  version: "1.9.5-nightly-20190730111304",
 
   /**
    * Generate chart
@@ -25175,7 +25141,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-nightly-20190729111229
+ * @version 1.9.5-nightly-20190730111304
  */
 
 
