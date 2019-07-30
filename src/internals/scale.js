@@ -132,22 +132,22 @@ extend(ChartInternal.prototype, {
 		$$.subX = $$.getX($$.xMin, $$.xMax, xSubDomain, d => (d % 1 ? 0 : $$.subXAxis.tickOffset()));
 
 		$$.xAxisTickFormat = $$.axis.getXAxisTickFormat();
-		$$.xAxisTickValues = $$.axis.getXAxisTickValues();
+		$$.xAxisTickValues = $$.axis.getTickValues("x");
 
 		$$.xAxis = $$.axis
-			.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit);
+			.getAxis("x", $$.x, config.axis_x_tick_outer, isInit);
 
 		$$.subXAxis = $$.axis
-			.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit);
+			.getAxis("subX", $$.subX, config.axis_x_tick_outer, isInit);
 
 		// y Axis
 		$$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default);
 		$$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default);
 
-		$$.yAxisTickValues = $$.axis.getYAxisTickValues();
+		$$.yAxisTickValues = $$.axis.getTickValues("y");
 
 		$$.yAxis = $$.axis
-			.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit);
+			.getAxis("y", $$.y, config.axis_y_tick_outer, isInit);
 
 		// y2 Axis
 		if (config.axis_y2_show) {
@@ -155,10 +155,10 @@ extend(ChartInternal.prototype, {
 			$$.subY2 = $$.getY($$.subYMin, $$.subYMax,
 				$$.subY2 ? $$.subY2.domain() : config.axis_y2_default);
 
-			$$.y2AxisTickValues = $$.axis.getY2AxisTickValues();
+			$$.y2AxisTickValues = $$.axis.getTickValues("y2");
 
 			$$.y2Axis = $$.axis
-				.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit);
+				.getAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit);
 		}
 
 		// update for arc

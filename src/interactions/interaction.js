@@ -60,7 +60,7 @@ extend(ChartInternal.prototype, {
 			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
 		} else {
-			let xAxisTickValues = $$.axis.getXAxisTickValues() || $$.getMaxDataCountTarget($$.data.targets);
+			let xAxisTickValues = $$.axis.getTickValues("x") || $$.getMaxDataCountTarget($$.data.targets);
 
 			if (isObject(xAxisTickValues)) {
 				xAxisTickValues = xAxisTickValues.values;
