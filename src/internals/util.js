@@ -281,7 +281,7 @@ const sortValue = (data, isAsc = true) => {
 	if (data[0] instanceof Date) {
 		fn = isAsc ? (a, b) => a - b : (a, b) => b - a;
 	} else {
-		if (isAsc && data.every(Number)) {
+		if (isAsc && !data.every(isNaN)) {
 			fn = (a, b) => a - b;
 		} else if (!isAsc) {
 			fn = (a, b) => (a > b && -1) || (a < b && 1) || (a === b && 0);

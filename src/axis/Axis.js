@@ -9,7 +9,7 @@ import {
 	axisRight as d3AxisRight
 } from "d3-axis";
 import CLASS from "../config/classes";
-import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, sortValue} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
 
 const isHorizontal = ($$, forHorizontal) => {
@@ -664,5 +664,117 @@ export default class Axis {
 		});
 
 		this.updateAxes();
+	}
+
+	/**
+	 * Redraw axis
+	 * @param {Object} targetsToShow targets data to be shown
+	 * @param {Object} wth
+	 * @param {Ojbect} transitions
+	 * @param {Object} flow
+	 * @private
+	 */
+	redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const hasZoom = !!$$.zoomScale;
+		let xDomainForZoom;
+
+		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
+			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
+		}
+
+		if ($$.x && targetsToShow.length) {
+			!hasZoom &&
+				$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
+
+			if (!config.axis_x_tick_values) {
+				this.updateXAxisTickValues(targetsToShow);
+			}
+		} else if ($$.xAxis) {
+			$$.xAxis.tickValues([]);
+			$$.subXAxis.tickValues([]);
+		}
+
+		if (config.zoom_rescale && !flow) {
+			xDomainForZoom = $$.x.orgDomain();
+		}
+
+		["y", "y2"].forEach(key => {
+			const axis = $$[key];
+
+			if (axis) {
+				const tickValues = config[`axis_${key}_tick_values`];
+				const tickCount = config[`axis_${key}_tick_count`];
+
+				axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
+
+				if (!tickValues && tickCount) {
+					const domain = axis.domain();
+
+					$$[`${key}Axis`].tickValues(
+						this.generateTickValues(
+							domain,
+							domain.every(v => v === 0) ? 1 : tickCount,
+							$$.isTimeSeriesY()
+						)
+					);
+				}
+			}
+		});
+
+		// axes
+		this.redraw(transitions, $$.hasArcType(), isInit);
+
+		// Update axis label
+		this.updateLabels(wth.Transition);
+
+		// show/hide if manual culling needed
+		if ((wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) {
+			this.setCulling();
+		}
+
+		// Update sub domain
+		if (wth.Y) {
+			$$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y"));
+			$$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+		}
+	}
+
+	/**
+	 * Set manual culling
+	 * @private
+	 */
+	setCulling() {
+		const $$ = this.owner;
+		const config = $$.config;
+
+		["x", "y", "y2"].forEach(type => {
+			const axis = $$.axes[type];
+			const toCull = config[`axis_${type}_tick_culling`];
+
+			if (axis && toCull) {
+				const tickText = axis.selectAll(".tick text");
+				const tickValues = sortValue(tickText.data());
+				const tickSize = tickValues.length;
+				const cullingMax = config[`axis_${type}_tick_culling_max`];
+				let intervalForCulling;
+
+				if (tickSize) {
+					for (let i = 1; i < tickSize; i++) {
+						if (tickSize / i < cullingMax) {
+							intervalForCulling = i;
+							break;
+						}
+					}
+
+					tickText.each(function(d) {
+						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+					});
+				} else {
+					tickText.style("display", "block");
+				}
+			}
+		});
 	}
 }

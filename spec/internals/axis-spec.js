@@ -1528,4 +1528,71 @@ describe("AXIS", function() {
 			);
 		});
 	});
+
+	describe("Axes tick culling", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250],
+						["data2", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250]
+					],
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					x: {
+					tick: {
+						culling: {
+							max: 4
+						}
+					}
+					},
+					y: {
+						tick: {
+							culling: {
+								max: 3
+							}
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							culling: true
+						}
+					}
+				}
+			};
+		});
+
+		const checkTickValues = () => {
+			const expected = {
+				x: [0, 6, 12, 18],
+				y: [0, 200, 400],
+				y2: [0, 100, 200, 300, 400]
+			};
+
+			["x", "y", "y2"].forEach(v => {
+				const data = chart.internal.axes[v]
+					.selectAll(".tick text").filter(function() {
+						return this.style.display === "block";
+					}).data();
+
+				expect(data).to.be.deep.equal(expected[v]);
+			});
+		}
+
+		it("check tick values are culled", () => {
+			checkTickValues();
+		});
+
+		it("set options axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("check tick values are culled when axis is rotated", () => {
+			checkTickValues();
+		});
+	});
 });
