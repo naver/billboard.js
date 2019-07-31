@@ -2180,6 +2180,44 @@ export default class Options {
 			axis_y_tick_format: undefined,
 
 			/**
+			 * Setting for culling ticks.<br><br>
+			 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+			 * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+			 * @name axis․y․tick․culling
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default false
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       culling: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_culling: false,
+
+			/**
+			 * The number of tick texts will be adjusted to less than this value.
+			 * @name axis․y․tick․culling․max
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 5
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       culling: {
+			 *           max: 5
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_culling_max: 5,
+
+			/**
 			 * Show y axis outer tick.
 			 * @name axis․y․tick․outer
 			 * @memberof Options
@@ -2523,6 +2561,44 @@ export default class Options {
 			 * }
 			 */
 			axis_y2_tick_format: undefined,
+
+			/**
+			 * Setting for culling ticks.<br><br>
+			 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+			 * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+			 * @name axis․y2․tick․culling
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default false
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       culling: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_culling: false,
+
+			/**
+			 * The number of tick texts will be adjusted to less than this value.
+			 * @name axis․y2․tick․culling․max
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 5
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       culling: {
+			 *           max: 5
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_culling_max: 5,
 
 			/**
 			 * Show or hide y2 axis outer tick.
@@ -3251,6 +3327,8 @@ export default class Options {
 			 * @type {Object}
 			 * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
 			 * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
+			 * @property {Number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+			 * @property {NUmber} [radar.axis.text.position.y=0] y coordinate position, relative the original.
 			 * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
 			 * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
 			 * @property {Number} [radar.level.depth=3] Set the level depth.
@@ -3271,6 +3349,10 @@ export default class Options {
 			 *              show: false
 			 *          },
 			 *          text: {
+			 *              position: {
+			 *              	x: 0,
+			 *              	y: 0
+			 *              },
 			 *              show: false
 			 *          }
 			 *      },
@@ -3294,6 +3376,7 @@ export default class Options {
 			radar_axis_max: undefined,
 			radar_axis_line_show: true,
 			radar_axis_text_show: true,
+			radar_axis_text_position: {},
 			radar_level_depth: 3,
 			radar_level_show: true,
 			radar_level_text_format: x => (x % 1 === 0 ? x : x.toFixed(2)),
@@ -3344,15 +3427,15 @@ export default class Options {
 			 * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
 			 * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
-			 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
 			 *  - **NOTE:** When is specified, will not be updating tooltip's position.
-			 *  - Within template, below syntax will be replaced using template-like syntax string:
-			 *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
-			 *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
-			 *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
-			 *    - {=TITLE}: title value
-			 *    - {=COLOR}: data color
-			 *    - {=VALUE}: data value
+			 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+			 *  Within template, below syntax will be replaced using template-like syntax string:
+			 *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
+			 *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
+			 *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+			 *    - **{=TITLE}**: title value.
+			 *    - **{=COLOR}**: data color.
+			 *    - **{=VALUE}**: data value.
 			 * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
 			 *  - **NOTE:** It should contain `{ key: Array, ... }` value
 			 *    - 'key' name is used as substitution within template as '{=KEY}'

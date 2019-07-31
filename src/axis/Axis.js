@@ -9,7 +9,7 @@ import {
 	axisRight as d3AxisRight
 } from "d3-axis";
 import CLASS from "../config/classes";
-import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType} from "../internals/util";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, sortValue} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
 
 const isHorizontal = ($$, forHorizontal) => {
@@ -163,39 +163,51 @@ export default class Axis {
 	}
 
 	// called from : updateScales() & getMaxTickWidth()
-	getXAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
+	getAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
 		const $$ = this.owner;
 		const config = $$.config;
-		const isCategory = $$.isCategorized();
-		const orient = $$[`${name}Orient`];
-		const tickFormat = $$.xAxisTickFormat;
-		const tickValues = $$.xAxisTickValues;
+		const isX = /^(x|subX)$/.test(name);
+		const type = isX ? "x" : "y";
 
-		const axisParams = {
-			isCategory,
+		const isCategory = isX && $$.isCategorized();
+		const orient = $$[`${name}Orient`];
+		const tickFormat = isX ? $$.xAxisTickFormat : config[`axis_${name}_tick_format`];
+		let tickValues = isX ? $$.xAxisTickValues : $$[`${name}AxisTickValues`];
+
+		const axisParams = Object.assign({
 			outerTick,
 			noTransition,
 			config,
 			name,
+			tickTextRotate: noTickTextRotate ? 0 : config[`axis_${type}_tick_rotate`]
+		}, isX && {
+			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
-			tickTextRotate: noTickTextRotate ? 0 : config.axis_x_tick_rotate,
 			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
 			orgXScale: $$.x
-		};
+		});
 
 		const axis = new AxisRenderer(axisParams)
-			.scale($$.zoomScale || scale)
+			.scale((isX && $$.zoomScale) || scale)
 			.orient(orient);
 
-		let newTickValues = tickValues;
-
-		if ($$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
-			newTickValues = tickValues.map(v => $$.parseDate(v));
+		if (isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
+			tickValues = tickValues.map(v => $$.parseDate(v));
+		} else if (!isX && $$.isTimeSeriesY()) {
+			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+			axis.ticks(config.axis_y_tick_time_value);
+			tickValues = null;
 		}
 
+		tickValues && axis.tickValues(tickValues);
+
 		// Set tick
-		axis.tickFormat(tickFormat).tickValues(newTickValues);
+		axis.tickFormat(
+			tickFormat || (
+				!isX && ($$.isStackNormalized() && (x => `${x}%`))
+			)
+		);
 
 		if (isCategory) {
 			axis.tickCentered(config.axis_x_tick_centered);
@@ -205,38 +217,7 @@ export default class Axis {
 			}
 		}
 
-		config.axis_x_tick_count && axis.ticks(config.axis_x_tick_count);
-
-		return axis;
-	}
-
-	// called from : updateScales() & getMaxTickWidth()
-	getYAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
-		const $$ = this.owner;
-		const config = $$.config;
-		const orient = $$[`${name}Orient`];
-		const tickFormat = config[`axis_${name}_tick_format`];
-		const tickValues = $$[`${name}AxisTickValues`];
-
-		const axisParams = {
-			outerTick,
-			noTransition,
-			config,
-			name,
-			tickTextRotate: noTickTextRotate ? 0 : config.axis_y_tick_rotate
-		};
-
-		const axis = new AxisRenderer(axisParams)
-			.scale(scale)
-			.orient(orient)
-			.tickFormat(
-				tickFormat || ($$.isStackNormalized() && (x => `${x}%`))
-			);
-
-		$$.isTimeSeriesY() ?
-			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
-			axis.ticks(config.axis_y_tick_time_value) :
-			axis.tickValues(tickValues);
+		config[`axis_${type}_tick_count`] && axis.ticks(config[`axis_${type}_tick_count`]);
 
 		return axis;
 	}
@@ -306,18 +287,6 @@ export default class Axis {
 
 		return (isFunction(tickValues) ? tickValues() : tickValues) ||
 			(axis ? axis.tickValues() : undefined);
-	}
-
-	getXAxisTickValues() {
-		return this.getTickValues("x");
-	}
-
-	getYAxisTickValues() {
-		return this.getTickValues("y");
-	}
-
-	getY2AxisTickValues() {
-		return this.getTickValues("y2");
 	}
 
 	getLabelOptionByAxisId(id) {
@@ -525,9 +494,7 @@ export default class Axis {
 		if ($$.svg) {
 			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-			const getFrom = isYAxis ? "getY" : "getX";
-
-			const scale = $$[id].copy().domain($$[`${getFrom}Domain`](targetsToShow, id));
+			const scale = $$[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
 			const domain = scale.domain();
 
 			// do not compute if domain is same
@@ -537,7 +504,7 @@ export default class Axis {
 				currentTickMax.domain = domain;
 			}
 
-			const axis = this[`${getFrom}Axis`](id, scale, false, false, true);
+			const axis = this.getAxis(id, scale, false, false, true);
 			const tickCount = config[`axis_${id}_tick_count`];
 
 			// Make to generate the final tick text to be rendered
@@ -697,5 +664,117 @@ export default class Axis {
 		});
 
 		this.updateAxes();
+	}
+
+	/**
+	 * Redraw axis
+	 * @param {Object} targetsToShow targets data to be shown
+	 * @param {Object} wth
+	 * @param {Ojbect} transitions
+	 * @param {Object} flow
+	 * @private
+	 */
+	redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const hasZoom = !!$$.zoomScale;
+		let xDomainForZoom;
+
+		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
+			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
+		}
+
+		if ($$.x && targetsToShow.length) {
+			!hasZoom &&
+				$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
+
+			if (!config.axis_x_tick_values) {
+				this.updateXAxisTickValues(targetsToShow);
+			}
+		} else if ($$.xAxis) {
+			$$.xAxis.tickValues([]);
+			$$.subXAxis.tickValues([]);
+		}
+
+		if (config.zoom_rescale && !flow) {
+			xDomainForZoom = $$.x.orgDomain();
+		}
+
+		["y", "y2"].forEach(key => {
+			const axis = $$[key];
+
+			if (axis) {
+				const tickValues = config[`axis_${key}_tick_values`];
+				const tickCount = config[`axis_${key}_tick_count`];
+
+				axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
+
+				if (!tickValues && tickCount) {
+					const domain = axis.domain();
+
+					$$[`${key}Axis`].tickValues(
+						this.generateTickValues(
+							domain,
+							domain.every(v => v === 0) ? 1 : tickCount,
+							$$.isTimeSeriesY()
+						)
+					);
+				}
+			}
+		});
+
+		// axes
+		this.redraw(transitions, $$.hasArcType(), isInit);
+
+		// Update axis label
+		this.updateLabels(wth.Transition);
+
+		// show/hide if manual culling needed
+		if ((wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) {
+			this.setCulling();
+		}
+
+		// Update sub domain
+		if (wth.Y) {
+			$$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y"));
+			$$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+		}
+	}
+
+	/**
+	 * Set manual culling
+	 * @private
+	 */
+	setCulling() {
+		const $$ = this.owner;
+		const config = $$.config;
+
+		["x", "y", "y2"].forEach(type => {
+			const axis = $$.axes[type];
+			const toCull = config[`axis_${type}_tick_culling`];
+
+			if (axis && toCull) {
+				const tickText = axis.selectAll(".tick text");
+				const tickValues = sortValue(tickText.data());
+				const tickSize = tickValues.length;
+				const cullingMax = config[`axis_${type}_tick_culling_max`];
+				let intervalForCulling;
+
+				if (tickSize) {
+					for (let i = 1; i < tickSize; i++) {
+						if (tickSize / i < cullingMax) {
+							intervalForCulling = i;
+							break;
+						}
+					}
+
+					tickText.each(function(d) {
+						this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+					});
+				} else {
+					tickText.style("display", "block");
+				}
+			}
+		});
 	}
 }

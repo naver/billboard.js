@@ -194,7 +194,7 @@ extend(ChartInternal.prototype, {
 	updateXs() {
 		const $$ = this;
 
-		$$.xs = $$.axis.getXAxisTickValues() || [];
+		$$.xs = $$.axis.getTickValues("x") || [];
 	},
 
 	getPrevX(i) {
@@ -840,7 +840,7 @@ extend(ChartInternal.prototype, {
 	updateDataIndexByX() {
 		const $$ = this;
 		const isTimeSeries = $$.isTimeSeries();
-		const tickValues = $$.axis.getXAxisTickValues() || [];
+		const tickValues = $$.axis.getTickValues("x") || [];
 
 		$$.data.targets.forEach(t => {
 			t.values.forEach((v, i) => {

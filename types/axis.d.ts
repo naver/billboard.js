@@ -287,6 +287,18 @@ export interface YTickConfiguration {
 	 */
 	format?(x: number): string;
 
+	/**
+	 * Setting for culling ticks.
+	 * If true is set, the ticks will be culled, then only limitted tick text will be shown.
+	 * This option does not hide the tick lines. If false is set, all of ticks will be shown.
+	 */
+	culling?: boolean | {
+		/**
+		 * The number of tick texts will be adjusted to less than this value.
+		 */
+		max?: number;
+	};
+
 	text?: {
 		/**
 		 * Set the x Axis tick text's position relatively its original position

@@ -190,4 +190,93 @@ describe("SHAPE RADAR", () => {
 			});
 		});
 	});
+
+	describe("Axis", () => {
+		const textPos = [];
+
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 330, 350, 220, 400, 150, 330, 230, 390, 95, 195, 220]
+					],
+					type: "radar"
+				}
+			};
+		});
+
+		it("check if default indexed axis text are showing", () => {
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
+				expect(+this.textContent).to.be.equal(i);
+			});
+		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "a", "b", "c"],
+						["data", 230, 250, 300]
+					],
+					type: "radar"
+				},
+				radar:{
+					direction: {
+						clockwise: true
+					}
+				}
+			};
+		});
+
+		it("check for the default text position", () => {
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} g`).each(function(d, i) {
+				const line = this.firstChild.getBoundingClientRect();
+				const text = this.lastChild.getBoundingClientRect();
+				let distance = 0;
+
+				if (i === 0) {
+					distance = line.top - text.bottom;
+				} else if (i === 1) {
+					distance = text.left - line.right;
+				} else if (i === 2) {
+					distance = line.left - text.right;
+				}
+
+				expect(distance).to.be.above(20);
+			});
+		});
+
+		it("set options radar.axis.text.position", () => {
+			args.radar.axis = {
+				text: {
+					position: {
+						x: 10,
+						y: 12
+					}
+				}
+			};
+
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function() {
+				textPos.push(this.getBoundingClientRect());
+			});
+		});
+
+		it("check for axis text position", () => {
+			const {x, y} = args.radar.axis.text.position;
+
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
+				const rect = this.getBoundingClientRect();
+				let distance = 0;
+
+				if (i === 0) {
+					expect(rect.left).to.be.equal(textPos[i].left);
+					expect(textPos[i].top - y).to.be.equal(rect.top);
+				} else {
+					expect(Math.abs(rect.left - textPos[i].left)).to.be.equal(x);
+					expect(Math.abs(rect.top - textPos[i].top)).to.be.equal(y);
+				}
+			});
+		});
+	});
 });

@@ -1374,6 +1374,37 @@ var demos = {
 				}
 			}
 		},
+		YAxisTickCulling: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 200, 250, 250, 150, 230, 300, 200, 300, 250, 150, 330, 100, 200, 100, 350, 50, 100, 200, 300, 250, 150]
+					],
+					axes: {
+						data2: "y2"
+					},
+					types: {
+						data1: "bar"
+					}
+				},
+				axis: {
+					y: {
+						tick: {
+							culling: {
+								max: 3
+							}
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							culling: true
+						}
+					}
+				}
+			}
+		},
 		YAxisTickFormat: {
 			options: {
 				data: {
@@ -3625,6 +3656,11 @@ d3.select(".chart_area")
 						show: false,
 						text: {
 							format: function(x) { return x + "%"; }
+						}
+					},
+					axis: {
+						text: {
+							position: {x: -15, y: -5}
 						}
 					}
 				}

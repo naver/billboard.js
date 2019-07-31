@@ -348,10 +348,10 @@ export default class ChartInternal {
 		notEmpty($$.config.data_labels) && $$.initText();
 	}
 
-	getChartElements() {
+	setChartElements() {
 		const $$ = this;
 
-		return {
+		$$.api.$ = {
 			chart: $$.selectChart,
 			svg: $$.svg,
 			defs: $$.defs,
@@ -596,7 +596,7 @@ export default class ChartInternal {
 
 		// update axis
 		// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
-		$$.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
+		$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
 		// update data's index value to be alinged with the x Axis
 		$$.updateDataIndexByX();
@@ -652,102 +652,10 @@ export default class ChartInternal {
 			$$.bindZoomEvent();
 		}
 
+		initializing && $$.setChartElements();
+
 		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
 		$$.callPluginHook("$redraw", options, duration);
-	}
-
-	/**
-	 * Redraw axis
-	 * @param {Object} targetsToShow targets data to be shown
-	 * @param {Object} wth
-	 * @param {Ojbect} transitions
-	 * @param {Object} flow
-	 * @private
-	 */
-	redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
-		const $$ = this;
-		const config = $$.config;
-		const hasArcType = $$.hasArcType();
-		const hasZoom = !!$$.zoomScale;
-		let tickValues;
-		let intervalForCulling;
-		let xDomainForZoom;
-
-		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
-			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
-		}
-
-		if ($$.x && targetsToShow.length) {
-			!hasZoom &&
-				$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
-
-			if (!config.axis_x_tick_values) {
-				tickValues = $$.axis.updateXAxisTickValues(targetsToShow);
-			}
-		} else if ($$.xAxis) {
-			$$.xAxis.tickValues([]);
-			$$.subXAxis.tickValues([]);
-		}
-
-		if (config.zoom_rescale && !flow) {
-			xDomainForZoom = $$.x.orgDomain();
-		}
-
-		["y", "y2"].forEach(key => {
-			const axis = $$[key];
-
-			if (axis) {
-				const tickValues = config[`axis_${key}_tick_values`];
-				const tickCount = config[`axis_${key}_tick_count`];
-
-				axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
-
-				if (!tickValues && tickCount) {
-					const domain = axis.domain();
-
-					$$[`${key}Axis`].tickValues(
-						$$.axis.generateTickValues(
-							domain,
-							domain.every(v => v === 0) ? 1 : tickCount,
-							$$.isTimeSeriesY()
-						)
-					);
-				}
-			}
-		});
-
-		// axes
-		$$.axis.redraw(transitions, hasArcType, isInit);
-
-		// Update axis label
-		$$.axis.updateLabels(wth.Transition);
-
-		// show/hide if manual culling needed
-		if ((wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) {
-			if (config.axis_x_tick_culling && tickValues) {
-				for (let i = 1; i < tickValues.length; i++) {
-					if (tickValues.length / i < config.axis_x_tick_culling_max) {
-						intervalForCulling = i;
-						break;
-					}
-				}
-
-				$$.svg.selectAll(`.${CLASS.axisX} .tick text`).each(function(d) {
-					const index = tickValues.indexOf(d);
-
-					index >= 0 &&
-						d3Select(this).style("display", index % intervalForCulling ? "none" : "block");
-				});
-			} else {
-				$$.svg.selectAll(`.${CLASS.axisX} .tick text`).style("display", "block");
-			}
-		}
-
-		// Update sub domain
-		if (wth.Y) {
-			$$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y"));
-			$$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
-		}
 	}
 
 	/**

@@ -254,16 +254,45 @@ extend(ChartInternal.prototype, {
 
 		// axis text
 		if (config.radar_axis_text_show) {
+			const {x = 0, y = 0} = config.radar_axis_text_position;
+
 			axis.select("text")
 				.style("text-anchor", "middle")
 				.attr("dy", ".5em")
 				.call(selection => {
 					selection.each(function(d) {
-						setTextValue(d3Select(this), d, [-1.2, 1.2], true);
+						setTextValue(d3Select(this), String(d), [-0.6, 1.2]);
 					});
 				})
 				.datum((d, i) => ({index: i}))
-				.attr("transform", (d, i) => `translate(${$$.getRadarPosition("x", i, undefined, 1)} ${$$.getRadarPosition("y", i, undefined, 1)})`);
+				.attr("transform", function(d) {
+					if (isUndefined(this.width)) {
+						// cache evaluated axis text width
+						this.width = this.getBoundingClientRect().width / 2;
+					}
+
+					let posX = $$.getRadarPosition("x", d.index, undefined, 1);
+					let posY = Math.round($$.getRadarPosition("y", d.index, undefined, 1));
+
+					if (posX > width) {
+						posX += this.width + x;
+					} else if (Math.round(posX) < width) {
+						posX -= this.width + x;
+					}
+
+					if (posY > height) {
+						// update vertical centered edge axis text dy position
+						if (posY / 2 === height && this.firstChild.tagName === "tspan") {
+							this.firstChild.setAttribute("dy", "0em");
+						}
+
+						posY += y;
+					} else if (posY < height) {
+						posY -= y;
+					}
+
+					return `translate(${posX} ${posY})`;
+				});
 		}
 
 		$$.bindEvent();
