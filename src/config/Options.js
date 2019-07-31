@@ -2167,6 +2167,44 @@ export default class Options {
 			axis_y_tick_format: undefined,
 
 			/**
+			 * Setting for culling ticks.<br><br>
+			 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+			 * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+			 * @name axis․y․tick․culling
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default false
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       culling: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_culling: false,
+
+			/**
+			 * The number of tick texts will be adjusted to less than this value.
+			 * @name axis․y․tick․culling․max
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 5
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       culling: {
+			 *           max: 5
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_culling_max: 5,
+
+			/**
 			 * Show y axis outer tick.
 			 * @name axis․y․tick․outer
 			 * @memberof Options
@@ -2510,6 +2548,44 @@ export default class Options {
 			 * }
 			 */
 			axis_y2_tick_format: undefined,
+
+			/**
+			 * Setting for culling ticks.<br><br>
+			 * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+			 * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+			 * @name axis․y2․tick․culling
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default false
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       culling: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_culling: false,
+
+			/**
+			 * The number of tick texts will be adjusted to less than this value.
+			 * @name axis․y2․tick․culling․max
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 5
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       culling: {
+			 *           max: 5
+			 *       }
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_culling_max: 5,
 
 			/**
 			 * Show or hide y2 axis outer tick.
