@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-nightly-20190730111304
+ * @version 1.9.5-nightly-20190731111332
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -6521,7 +6521,7 @@ var isValue = function (v) {
     return a - b;
   } : function (a, b) {
     return b - a;
-  } : isAsc && data.every(Number) ? fn = function (a, b) {
+  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
     return a - b;
   } : !isAsc && (fn = function (a, b) {
     return a > b && -1 || a < b && 1 || a === b && 0;
@@ -9978,6 +9978,74 @@ function () {
         axis && (!isInit && (axis.config.withoutTransition = !$$.config.transition_duration), $$.axes[id.toLowerCase()].style("opacity", opacity), axis.create(transitions["axis".concat(capitalize(id))]));
       }), this.updateAxes();
     }
+    /**
+     * Redraw axis
+     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} wth
+     * @param {Ojbect} transitions
+     * @param {Object} flow
+     * @private
+     */
+
+  }, {
+    key: "redrawAxis",
+    value: function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
+      var xDomainForZoom,
+          _this3 = this,
+          $$ = this.owner,
+          config = $$.config,
+          hasZoom = !!$$.zoomScale;
+
+      !hasZoom && $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && this.updateXAxisTickValues(targetsToShow)) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+        var axis = $$[key];
+
+        if (axis) {
+          var tickValues = config["axis_".concat(key, "_tick_values")],
+              tickCount = config["axis_".concat(key, "_tick_count")];
+
+          if (axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
+            var domain = axis.domain();
+            $$["".concat(key, "Axis")].tickValues(_this3.generateTickValues(domain, domain.every(function (v) {
+              return v === 0;
+            }) ? 1 : tickCount, $$.isTimeSeriesY()));
+          }
+        }
+      }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length && this.setCulling(), wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+    }
+    /**
+     * Set manual culling
+     * @private
+     */
+
+  }, {
+    key: "setCulling",
+    value: function setCulling() {
+      var $$ = this.owner,
+          config = $$.config;
+      ["x", "y", "y2"].forEach(function (type) {
+        var axis = $$.axes[type],
+            toCull = config["axis_".concat(type, "_tick_culling")];
+
+        if (axis && toCull) {
+          var intervalForCulling,
+              tickText = axis.selectAll(".tick text"),
+              tickValues = sortValue(tickText.data()),
+              tickSize = tickValues.length,
+              cullingMax = config["axis_".concat(type, "_tick_culling_max")];
+
+          if (tickSize) {
+            for (var _i = 1; _i < tickSize; _i++) if (tickSize / _i < cullingMax) {
+              intervalForCulling = _i;
+              break;
+            }
+
+            tickText.each(function (d) {
+              this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+            });
+          } else tickText.style("display", "block");
+        }
+      });
+    }
   }]), Axis;
 }();
 
@@ -10282,55 +10350,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
-    }
-    /**
-     * Redraw axis
-     * @param {Object} targetsToShow targets data to be shown
-     * @param {Object} wth
-     * @param {Ojbect} transitions
-     * @param {Object} flow
-     * @private
-     */
-
-  }, {
-    key: "redrawAxis",
-    value: function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
-      var tickValues,
-          intervalForCulling,
-          xDomainForZoom,
-          $$ = this,
-          config = $$.config,
-          hasArcType = $$.hasArcType(),
-          hasZoom = !!$$.zoomScale;
-      // show/hide if manual culling needed
-      if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
-        var axis = $$[key];
-
-        if (axis) {
-          var tickValues = config["axis_".concat(key, "_tick_values")],
-              tickCount = config["axis_".concat(key, "_tick_count")];
-
-          if (axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
-            var domain = axis.domain();
-            $$["".concat(key, "Axis")].tickValues($$.axis.generateTickValues(domain, domain.every(function (v) {
-              return v === 0;
-            }) ? 1 : tickCount, $$.isTimeSeriesY()));
-          }
-        }
-      }), $$.axis.redraw(transitions, hasArcType, isInit), $$.axis.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
-        for (var i = 1; i < tickValues.length; i++) if (tickValues.length / i < config.axis_x_tick_culling_max) {
-          intervalForCulling = i;
-          break;
-        }
-
-        $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).each(function (d) {
-          var index = tickValues.indexOf(d);
-          index >= 0 && src_select(this).style("display", index % intervalForCulling ? "none" : "block");
-        });
-      } else $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).style("display", "block"); // Update sub domain
-
-      wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Generate redraw list
@@ -12964,6 +12984,44 @@ var Options_Options = function Options() {
     axis_y_tick_format: undefined,
 
     /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+     * @name axis․y․tick․culling
+     * @memberof Options
+     * @type {Boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling: !1,
+
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․y․tick․culling․max
+     * @memberof Options
+     * @type {Number}
+     * @default 5
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling_max: 5,
+
+    /**
      * Show y axis outer tick.
      * @name axis․y․tick․outer
      * @memberof Options
@@ -13310,6 +13368,44 @@ var Options_Options = function Options() {
      * }
      */
     axis_y2_tick_format: undefined,
+
+    /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+     * @name axis․y2․tick․culling
+     * @memberof Options
+     * @type {Boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling: !1,
+
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․y2․tick․culling․max
+     * @memberof Options
+     * @type {Number}
+     * @default 5
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling_max: 5,
 
     /**
      * Show or hide y2 axis outer tick.
@@ -25042,7 +25138,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-nightly-20190730111304",
+  version: "1.9.5-nightly-20190731111332",
 
   /**
    * Generate chart
@@ -25141,7 +25237,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-nightly-20190730111304
+ * @version 1.9.5-nightly-20190731111332
  */
 
 
