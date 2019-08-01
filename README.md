@@ -196,6 +196,7 @@ chart.load( ... );
 ## How to start developing billboard.js?
 
 For anyone interested in developing billboard.js, follow the instructions below.
+> Required Node.js version: `10.10.0+`
 
 ### Development Environment
 
