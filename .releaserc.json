@@ -8,6 +8,7 @@
     "@semantic-release/changelog",
     "@semantic-release/npm",
     ["@semantic-release/github", {
+      "successComment": false,
       "releasedLabels": false
     }],
     "@semantic-release/git"
