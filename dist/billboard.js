@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-nightly-20190801111345
+ * @version 1.9.5-nightly-20190805111553
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2134,7 +2134,7 @@ function () {
     }
     /**
      * Generate redraw list
-     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} targets targets data to be shown
      * @param {Object} flow
      * @param {Object} duration
      * @param {Boolean} withSubchart whether or not to show subchart
@@ -2143,14 +2143,14 @@ function () {
 
   }, {
     key: "generateRedrawList",
-    value: function generateRedrawList(targetsToShow, flow, duration, withSubchart) {
+    value: function generateRedrawList(targets, flow, duration, withSubchart) {
       var $$ = this,
           config = $$.config,
           shape = $$.getDrawShape();
       config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
       // generate flow
       var flowFn = flow && $$.generateFlow({
-        targets: targetsToShow,
+        targets: targets,
         flow: flow,
         duration: flow.duration,
         shape: shape,
@@ -2431,16 +2431,20 @@ function () {
       var transitionsToWait = [],
           f = function (transition, callback) {
         function loop() {
-          var done = 0;
-          transitionsToWait.forEach(function (t) {
-            if (t.empty()) return void done++;
+          for (var t, done = 0, i = 0; t = transitionsToWait[i]; i++) {
+            if (t.empty()) {
+              done++;
+              continue;
+            }
 
             try {
               t.transition();
             } catch (e) {
               done++;
             }
-          }), timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
+          }
+
+          timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
         }
 
         var timer;
@@ -7144,7 +7148,9 @@ extend(ChartInternal_ChartInternal.prototype, {
   updateDataIndexByX: function updateDataIndexByX() {
     var $$ = this,
         isTimeSeries = $$.isTimeSeries(),
-        tickValues = $$.axis.getTickValues("x") || [];
+        tickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values.map(function (v) {
+      return v.x;
+    }) : $$.axis.getTickValues("x") || [];
     $$.data.targets.forEach(function (t) {
       t.values.forEach(function (v, i) {
         isTimeSeries ? tickValues.some(function (d, j) {
@@ -7464,16 +7470,14 @@ extend(ChartInternal_ChartInternal.prototype, {
         zoomEnabled = config.zoom_enabled,
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
-      var xAxisTickValues = $$.axis.getTickValues("x") || $$.getMaxDataCountTarget($$.data.targets);
-      isObject(xAxisTickValues) && (xAxisTickValues = xAxisTickValues.values);
       // Set data and update $$.eventRect
-      var xAxisTarget = (xAxisTickValues || []).map(function (x, index) {
+      var xAxisTickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values : ($$.axis.getTickValues("x") || []).map(function (x, index) {
         return {
           x: x,
           index: index
         };
       });
-      eventRects.datum(xAxisTarget), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -9095,14 +9099,14 @@ extend(ChartInternal_ChartInternal.prototype, {
       for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) args[_key - 2] = arguments[_key];
 
       return function (d) {
-        var point,
-            id = d.id || d.data && d.data.id || d,
+        var id = d.id || d.data && d.data.id || d,
             element = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
-        if (ids.indexOf(id) < 0 && ids.push(id), point = pattern[ids.indexOf(id) % pattern.length], $$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
+        ids.indexOf(id) < 0 && ids.push(id);
+        var point = pattern[ids.indexOf(id) % pattern.length];
+        if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
           var pointId = "".concat($$.datetimeId, "-point-").concat(id),
               pointFromDefs = $$.pointFromDefs(pointId);
-          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), method === "create") return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
-          if (method === "update") return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
+          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), /^(create|update)$/.test(method)) return method === "create" && args.unshift(pointId), $$.custom[method].bind(context).apply(void 0, [element].concat(args));
         }
         return point[method].bind(context).apply(void 0, [element].concat(args));
       };
@@ -9123,17 +9127,16 @@ extend(ChartInternal_ChartInternal.prototype, {
           xPosFn2 = function (d) {
         return xPosFn(d) - width / 2;
       },
-          yPosFn2 = function (d) {
-        return yPosFn(d) - height / 2;
-      },
           mainCircles = element;
 
       if (withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = element.attr("x", xPosFn2)), mainCircles = element.transition(transitionName).attr("x", xPosFn2).attr("y", yPosFn2).transition(transitionName), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = element.attr("x", xPosFn2).attr("y", yPosFn2);
+        flow && mainCircles.attr("x", xPosFn2), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("x", xPosFn2).attr("y", function yPosFn2(d) {
+        return yPosFn(d) - height / 2;
+      }).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   },
   // 'circle' data point
@@ -9145,12 +9148,12 @@ extend(ChartInternal_ChartInternal.prototype, {
       var $$ = this,
           mainCircles = element;
 
-      if ($$.hasType("bubble") && (mainCircles = mainCircles.attr("r", $$.pointR.bind($$))), withTransition) {
+      if ($$.hasType("bubble") && mainCircles.attr("r", $$.pointR.bind($$)), withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("cx", xPosFn)), mainCircles = element.attr("cx") ? mainCircles.transition(transitionName).attr("cx", xPosFn).attr("cy", yPosFn).transition(transitionName) : mainCircles.attr("cx", xPosFn).attr("cy", yPosFn), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = mainCircles.attr("cx", xPosFn).attr("cy", yPosFn);
+        flow && mainCircles.attr("cx", xPosFn), mainCircles.attr("cx") && (mainCircles = mainCircles.transition(transitionName)), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   },
   // 'rectangle' data point
@@ -9168,17 +9171,16 @@ extend(ChartInternal_ChartInternal.prototype, {
           rectXPosFn = function (d) {
         return xPosFn(d) - r;
       },
-          rectYPosFn = function (d) {
-        return yPosFn(d) - r;
-      },
           mainCircles = element;
 
       if (withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("x", rectXPosFn)), mainCircles = mainCircles.transition(transitionName).attr("x", rectXPosFn).attr("y", rectYPosFn).transition(transitionName), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = mainCircles.attr("x", rectXPosFn).attr("y", rectYPosFn);
+        flow && mainCircles.attr("x", rectXPosFn), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("x", rectXPosFn).attr("y", function rectYPosFn(d) {
+        return yPosFn(d) - r;
+      }).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   }
 });
@@ -12686,15 +12688,17 @@ extend(Chart_Chart.prototype, {
       wait.add([$$.axes.x.transition(gt).call(function (g) {
         return $$.xAxis.setTransition(gt).create(g);
       }), mainBar.transition(gt).attr("transform", transform), mainLine.transition(gt).attr("transform", transform), mainArea.transition(gt).attr("transform", transform), mainCircle.transition(gt).attr("transform", transform), mainText.transition(gt).attr("transform", transform), mainRegion.filter($$.isRegionOnX).transition(gt).attr("transform", transform), xgrid.transition(gt).attr("transform", transform), xgridLines.transition(gt).attr("transform", transform)]), gt.call(wait, function () {
-        var shapes = [],
-            texts = [],
-            eventRects = [];
-
         // remove flowed elements
         if (flowLength) {
-          for (var index, i = 0; i < flowLength; i++) index = flowIndex + i, shapes.push(".".concat(config_classes.shape, "-").concat(index)), texts.push(".".concat(config_classes.text, "-").concat(index)), eventRects.push(".".concat(config_classes.eventRect, "-").concat(index));
+          for (var target = {
+            shapes: [],
+            texts: [],
+            eventRects: []
+          }, i = 0; i < flowLength; i++) target.shapes.push(".".concat(config_classes.shape, "-").concat(i)), target.texts.push(".".concat(config_classes.text, "-").concat(i)), target.eventRects.push(".".concat(config_classes.eventRect, "-").concat(i));
 
-          $$.svg.selectAll(".".concat(config_classes.shapes)).selectAll(shapes).remove(), $$.svg.selectAll(".".concat(config_classes.texts)).selectAll(texts).remove(), $$.svg.selectAll(".".concat(config_classes.eventRects)).selectAll(eventRects).remove(), $$.svg.select(".".concat(config_classes.xgrid)).remove();
+          ["shapes", "texts", "eventRects"].forEach(function (v) {
+            $$.svg.selectAll(".".concat(config_classes[v])).selectAll(target[v]).remove();
+          }), $$.svg.select(".".concat(config_classes.xgrid)).remove();
         } // draw again for removing flowed elements and reverting attr
 
 
@@ -14006,7 +14010,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-nightly-20190801111345",
+  version: "1.9.5-nightly-20190805111553",
 
   /**
    * Generate chart
@@ -14105,7 +14109,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-nightly-20190801111345
+ * @version 1.9.5-nightly-20190805111553
  */
 
 

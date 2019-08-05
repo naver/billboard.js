@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-nightly-20190801111345
+ * @version 1.9.5-nightly-20190805111553
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -3193,16 +3193,30 @@ var named = {
 };
 
 define(Color, color_color, {
+  copy: function(channels) {
+    return Object.assign(new this.constructor, this, channels);
+  },
   displayable: function() {
     return this.rgb().displayable();
   },
-  hex: function() {
-    return this.rgb().hex();
-  },
-  toString: function() {
-    return this.rgb() + "";
-  }
+  hex: color_formatHex, // Deprecated! Use color.formatHex.
+  formatHex: color_formatHex,
+  formatHsl: color_formatHsl,
+  formatRgb: color_formatRgb,
+  toString: color_formatRgb
 });
+
+function color_formatHex() {
+  return this.rgb().formatHex();
+}
+
+function color_formatHsl() {
+  return hslConvert(this).formatHsl();
+}
+
+function color_formatRgb() {
+  return this.rgb().formatRgb();
+}
 
 function color_color(format) {
   var m;
@@ -3215,7 +3229,7 @@ function color_color(format) {
       : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
       : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
       : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-      : named.hasOwnProperty(format) ? rgbn(named[format])
+      : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
       : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0)
       : null;
 }
@@ -3265,18 +3279,24 @@ define(Rgb, color_rgb, extend(Color, {
         && (-0.5 <= this.b && this.b < 255.5)
         && (0 <= this.opacity && this.opacity <= 1);
   },
-  hex: function() {
-    return "#" + hex(this.r) + hex(this.g) + hex(this.b);
-  },
-  toString: function() {
-    var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
-    return (a === 1 ? "rgb(" : "rgba(")
-        + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
-        + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
-        + Math.max(0, Math.min(255, Math.round(this.b) || 0))
-        + (a === 1 ? ")" : ", " + a + ")");
-  }
+  hex: rgb_formatHex, // Deprecated! Use color.formatHex.
+  formatHex: rgb_formatHex,
+  formatRgb: rgb_formatRgb,
+  toString: rgb_formatRgb
 }));
+
+function rgb_formatHex() {
+  return "#" + hex(this.r) + hex(this.g) + hex(this.b);
+}
+
+function rgb_formatRgb() {
+  var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+  return (a === 1 ? "rgb(" : "rgba(")
+      + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", "
+      + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", "
+      + Math.max(0, Math.min(255, Math.round(this.b) || 0))
+      + (a === 1 ? ")" : ", " + a + ")");
+}
 
 function hex(value) {
   value = Math.max(0, Math.min(255, Math.round(value) || 0));
@@ -3353,6 +3373,14 @@ define(Hsl, hsl, extend(Color, {
     return (0 <= this.s && this.s <= 1 || isNaN(this.s))
         && (0 <= this.l && this.l <= 1)
         && (0 <= this.opacity && this.opacity <= 1);
+  },
+  formatHsl: function() {
+    var a = this.opacity; a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a));
+    return (a === 1 ? "hsl(" : "hsla(")
+        + (this.h || 0) + ", "
+        + (this.s || 0) * 100 + "%, "
+        + (this.l || 0) * 100 + "%"
+        + (a === 1 ? ")" : ", " + a + ")");
   }
 }));
 
@@ -5776,24 +5804,32 @@ var MODE_DRAG = {name: "drag"},
     MODE_HANDLE = {name: "handle"},
     MODE_CENTER = {name: "center"};
 
+function number1(e) {
+  return [+e[0], +e[1]];
+}
+
+function number2(e) {
+  return [number1(e[0]), number1(e[1])];
+}
+
 var X = {
   name: "x",
-  handles: ["e", "w"].map(brush_type),
-  input: function(x, e) { return x && [[x[0], e[0][1]], [x[1], e[1][1]]]; },
+  handles: ["w", "e"].map(brush_type),
+  input: function(x, e) { return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]]; },
   output: function(xy) { return xy && [xy[0][0], xy[1][0]]; }
 };
 
 var Y = {
   name: "y",
   handles: ["n", "s"].map(brush_type),
-  input: function(y, e) { return y && [[e[0][0], y[0]], [e[1][0], y[1]]]; },
+  input: function(y, e) { return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]]; },
   output: function(xy) { return xy && [xy[0][1], xy[1][1]]; }
 };
 
 var XY = {
   name: "xy",
-  handles: ["n", "e", "s", "w", "nw", "ne", "se", "sw"].map(brush_type),
-  input: function(xy) { return xy; },
+  handles: ["nw", "n", "ne", "w", "e", "sw", "s", "se"].map(brush_type),
+  input: function(xy) { return xy == null ? null : number2(xy); },
   output: function(xy) { return xy; }
 };
 
@@ -5865,7 +5901,15 @@ function brush_defaultFilter() {
 
 function defaultExtent() {
   var svg = this.ownerSVGElement || this;
+  if (svg.hasAttribute("viewBox")) {
+    svg = svg.viewBox.baseVal;
+    return [[svg.x, svg.y], [svg.x + svg.width, svg.y + svg.height]];
+  }
   return [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
+}
+
+function brush_defaultTouchable() {
+  return "ontouchstart" in this;
 }
 
 // Like d3.local, but with the name “__brush” rather than auto-generated.
@@ -5899,6 +5943,8 @@ function brushY() {
 function brush_brush(dim) {
   var extent = defaultExtent,
       filter = brush_defaultFilter,
+      touchable = brush_defaultTouchable,
+      keys = true,
       listeners = src_dispatch(brush, "start", "brush", "end"),
       handleSize = 6,
       touchending;
@@ -5946,8 +5992,13 @@ function brush_brush(dim) {
         .each(redraw)
         .attr("fill", "none")
         .attr("pointer-events", "all")
-        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)")
-        .on("mousedown.brush touchstart.brush", started);
+        .on("mousedown.brush", started)
+      .filter(touchable)
+        .on("touchstart.brush", started)
+        .on("touchmove.brush", touchmoved)
+        .on("touchend.brush touchcancel.brush", touchended)
+        .style("touch-action", "none")
+        .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
   brush.move = function(group, selection) {
@@ -5964,12 +6015,12 @@ function brush_brush(dim) {
                 i = src_value(selection0, selection1);
 
             function tween(t) {
-              state.selection = t === 1 && brush_empty(selection1) ? null : i(t);
+              state.selection = t === 1 && selection1 === null ? null : i(t);
               redraw.call(that);
               emit.brush();
             }
 
-            return selection0 && selection1 ? tween : tween(1);
+            return selection0 !== null && selection1 !== null ? tween : tween(1);
           });
     } else {
       group
@@ -5981,11 +6032,15 @@ function brush_brush(dim) {
                 emit = emitter(that, args).beforestart();
 
             interrupt(that);
-            state.selection = selection1 == null || brush_empty(selection1) ? null : selection1;
+            state.selection = selection1 === null ? null : selection1;
             redraw.call(that);
             emit.start().brush().end();
           });
     }
+  };
+
+  brush.clear = function(group) {
+    brush.move(group, null);
   };
 
   function redraw() {
@@ -6018,8 +6073,8 @@ function brush_brush(dim) {
     }
   }
 
-  function emitter(that, args) {
-    return that.__brush.emitter || new Emitter(that, args);
+  function emitter(that, args, clean) {
+    return (!clean && that.__brush.emitter) || new Emitter(that, args);
   }
 
   function Emitter(that, args) {
@@ -6036,6 +6091,7 @@ function brush_brush(dim) {
     },
     start: function() {
       if (this.starting) this.starting = false, this.emit("start");
+      else this.emit("brush");
       return this;
     },
     brush: function() {
@@ -6058,7 +6114,7 @@ function brush_brush(dim) {
 
     var that = this,
         type = on_event.target.__data__.type,
-        mode = (on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : (on_event.altKey ? MODE_CENTER : MODE_HANDLE),
+        mode = (keys && on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : (keys && on_event.altKey ? MODE_CENTER : MODE_HANDLE),
         signX = dim === Y ? null : signsX[type],
         signY = dim === X ? null : signsY[type],
         state = brush_local(that),
@@ -6068,15 +6124,15 @@ function brush_brush(dim) {
         N = extent[0][1], n0, n1,
         E = extent[1][0], e0, e1,
         S = extent[1][1], s0, s1,
-        dx,
-        dy,
+        dx = 0,
+        dy = 0,
         moving,
-        shifting = signX && signY && on_event.shiftKey,
+        shifting = signX && signY && keys && on_event.shiftKey,
         lockX,
         lockY,
         point0 = src_mouse(that),
         point = point0,
-        emit = emitter(that, arguments).beforestart();
+        emit = emitter(that, arguments, true).beforestart();
 
     if (type === "overlay") {
       state.selection = selection = [
@@ -6102,15 +6158,15 @@ function brush_brush(dim) {
         .attr("cursor", cursors[type]);
 
     if (on_event.touches) {
-      group
-          .on("touchmove.brush", moved, true)
-          .on("touchend.brush touchcancel.brush", ended, true);
+      emit.moved = moved;
+      emit.ended = ended;
     } else {
       var view = src_select(on_event.view)
-          .on("keydown.brush", keydowned, true)
-          .on("keyup.brush", keyupped, true)
           .on("mousemove.brush", moved, true)
           .on("mouseup.brush", ended, true);
+      if (keys) view
+          .on("keydown.brush", keydowned, true)
+          .on("keyup.brush", keyupped, true)
 
       nodrag(on_event.view);
     }
@@ -6193,7 +6249,6 @@ function brush_brush(dim) {
         if (on_event.touches.length) return;
         if (touchending) clearTimeout(touchending);
         touchending = setTimeout(function() { touchending = null; }, 500); // Ghost clicks are delayed!
-        group.on("touchmove.brush touchend.brush touchcancel.brush", null);
       } else {
         yesdrag(on_event.view, moving);
         view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
@@ -6275,15 +6330,23 @@ function brush_brush(dim) {
     }
   }
 
+  function touchmoved() {
+    emitter(this, arguments).moved();
+  }
+
+  function touchended() {
+    emitter(this, arguments).ended();
+  }
+
   function initialize() {
     var state = this.__brush || {selection: null};
-    state.extent = extent.apply(this, arguments);
+    state.extent = number2(extent.apply(this, arguments));
     state.dim = dim;
     return state;
   }
 
   brush.extent = function(_) {
-    return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant([[+_[0][0], +_[0][1]], [+_[1][0], +_[1][1]]]), brush) : extent;
+    return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
   };
 
   brush.filter = function(_) {
@@ -6292,6 +6355,10 @@ function brush_brush(dim) {
 
   brush.handleSize = function(_) {
     return arguments.length ? (handleSize = +_, brush) : handleSize;
+  };
+
+  brush.keyModifiers = function(_) {
+    return arguments.length ? (keys = !!_, brush) : keys;
   };
 
   brush.on = function() {
@@ -10354,7 +10421,7 @@ function () {
     }
     /**
      * Generate redraw list
-     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} targets targets data to be shown
      * @param {Object} flow
      * @param {Object} duration
      * @param {Boolean} withSubchart whether or not to show subchart
@@ -10363,14 +10430,14 @@ function () {
 
   }, {
     key: "generateRedrawList",
-    value: function generateRedrawList(targetsToShow, flow, duration, withSubchart) {
+    value: function generateRedrawList(targets, flow, duration, withSubchart) {
       var $$ = this,
           config = $$.config,
           shape = $$.getDrawShape();
       config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
       // generate flow
       var flowFn = flow && $$.generateFlow({
-        targets: targetsToShow,
+        targets: targets,
         flow: flow,
         duration: flow.duration,
         shape: shape,
@@ -10651,16 +10718,20 @@ function () {
       var transitionsToWait = [],
           f = function (transition, callback) {
         function loop() {
-          var done = 0;
-          transitionsToWait.forEach(function (t) {
-            if (t.empty()) return void done++;
+          for (var t, done = 0, i = 0; t = transitionsToWait[i]; i++) {
+            if (t.empty()) {
+              done++;
+              continue;
+            }
 
             try {
               t.transition();
             } catch (e) {
               done++;
             }
-          }), timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
+          }
+
+          timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
         }
 
         var timer;
@@ -15364,7 +15435,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   updateDataIndexByX: function updateDataIndexByX() {
     var $$ = this,
         isTimeSeries = $$.isTimeSeries(),
-        tickValues = $$.axis.getTickValues("x") || [];
+        tickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values.map(function (v) {
+      return v.x;
+    }) : $$.axis.getTickValues("x") || [];
     $$.data.targets.forEach(function (t) {
       t.values.forEach(function (v, i) {
         isTimeSeries ? tickValues.some(function (d, j) {
@@ -15886,16 +15959,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         zoomEnabled = config.zoom_enabled,
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
-      var xAxisTickValues = $$.axis.getTickValues("x") || $$.getMaxDataCountTarget($$.data.targets);
-      isObject(xAxisTickValues) && (xAxisTickValues = xAxisTickValues.values);
       // Set data and update $$.eventRect
-      var xAxisTarget = (xAxisTickValues || []).map(function (x, index) {
+      var xAxisTickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values : ($$.axis.getTickValues("x") || []).map(function (x, index) {
         return {
           x: x,
           index: index
         };
       });
-      eventRects.datum(xAxisTarget), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -16407,7 +16478,7 @@ Path.prototype = path_path.prototype = {
     }
   },
   arc: function(x, y, r, a0, a1, ccw) {
-    x = +x, y = +y, r = +r;
+    x = +x, y = +y, r = +r, ccw = !!ccw;
     var dx = r * Math.cos(a0),
         dy = r * Math.sin(a0),
         x0 = x + dx,
@@ -19727,14 +19798,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) args[_key - 2] = arguments[_key];
 
       return function (d) {
-        var point,
-            id = d.id || d.data && d.data.id || d,
+        var id = d.id || d.data && d.data.id || d,
             element = src_select(this);
-        if (ids.indexOf(id) < 0 && ids.push(id), point = pattern[ids.indexOf(id) % pattern.length], $$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
+        ids.indexOf(id) < 0 && ids.push(id);
+        var point = pattern[ids.indexOf(id) % pattern.length];
+        if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
           var pointId = "".concat($$.datetimeId, "-point-").concat(id),
               pointFromDefs = $$.pointFromDefs(pointId);
-          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), method === "create") return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
-          if (method === "update") return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
+          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), /^(create|update)$/.test(method)) return method === "create" && args.unshift(pointId), $$.custom[method].bind(context).apply(void 0, [element].concat(args));
         }
         return point[method].bind(context).apply(void 0, [element].concat(args));
       };
@@ -19755,17 +19826,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           xPosFn2 = function (d) {
         return xPosFn(d) - width / 2;
       },
-          yPosFn2 = function (d) {
-        return yPosFn(d) - height / 2;
-      },
           mainCircles = element;
 
       if (withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = element.attr("x", xPosFn2)), mainCircles = element.transition(transitionName).attr("x", xPosFn2).attr("y", yPosFn2).transition(transitionName), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = element.attr("x", xPosFn2).attr("y", yPosFn2);
+        flow && mainCircles.attr("x", xPosFn2), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("x", xPosFn2).attr("y", function yPosFn2(d) {
+        return yPosFn(d) - height / 2;
+      }).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   },
   // 'circle' data point
@@ -19777,12 +19847,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       var $$ = this,
           mainCircles = element;
 
-      if ($$.hasType("bubble") && (mainCircles = mainCircles.attr("r", $$.pointR.bind($$))), withTransition) {
+      if ($$.hasType("bubble") && mainCircles.attr("r", $$.pointR.bind($$)), withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("cx", xPosFn)), mainCircles = element.attr("cx") ? mainCircles.transition(transitionName).attr("cx", xPosFn).attr("cy", yPosFn).transition(transitionName) : mainCircles.attr("cx", xPosFn).attr("cy", yPosFn), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = mainCircles.attr("cx", xPosFn).attr("cy", yPosFn);
+        flow && mainCircles.attr("cx", xPosFn), mainCircles.attr("cx") && (mainCircles = mainCircles.transition(transitionName)), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   },
   // 'rectangle' data point
@@ -19800,17 +19870,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           rectXPosFn = function (d) {
         return xPosFn(d) - r;
       },
-          rectYPosFn = function (d) {
-        return yPosFn(d) - r;
-      },
           mainCircles = element;
 
       if (withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("x", rectXPosFn)), mainCircles = mainCircles.transition(transitionName).attr("x", rectXPosFn).attr("y", rectYPosFn).transition(transitionName), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = mainCircles.attr("x", rectXPosFn).attr("y", rectYPosFn);
+        flow && mainCircles.attr("x", rectXPosFn), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("x", rectXPosFn).attr("y", function rectYPosFn(d) {
+        return yPosFn(d) - r;
+      }).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   }
 });
@@ -23818,15 +23887,17 @@ util_extend(Chart_Chart.prototype, {
       wait.add([$$.axes.x.transition(gt).call(function (g) {
         return $$.xAxis.setTransition(gt).create(g);
       }), mainBar.transition(gt).attr("transform", transform), mainLine.transition(gt).attr("transform", transform), mainArea.transition(gt).attr("transform", transform), mainCircle.transition(gt).attr("transform", transform), mainText.transition(gt).attr("transform", transform), mainRegion.filter($$.isRegionOnX).transition(gt).attr("transform", transform), xgrid.transition(gt).attr("transform", transform), xgridLines.transition(gt).attr("transform", transform)]), gt.call(wait, function () {
-        var shapes = [],
-            texts = [],
-            eventRects = [];
-
         // remove flowed elements
         if (flowLength) {
-          for (var index, i = 0; i < flowLength; i++) index = flowIndex + i, shapes.push(".".concat(config_classes.shape, "-").concat(index)), texts.push(".".concat(config_classes.text, "-").concat(index)), eventRects.push(".".concat(config_classes.eventRect, "-").concat(index));
+          for (var target = {
+            shapes: [],
+            texts: [],
+            eventRects: []
+          }, i = 0; i < flowLength; i++) target.shapes.push(".".concat(config_classes.shape, "-").concat(i)), target.texts.push(".".concat(config_classes.text, "-").concat(i)), target.eventRects.push(".".concat(config_classes.eventRect, "-").concat(i));
 
-          $$.svg.selectAll(".".concat(config_classes.shapes)).selectAll(shapes).remove(), $$.svg.selectAll(".".concat(config_classes.texts)).selectAll(texts).remove(), $$.svg.selectAll(".".concat(config_classes.eventRects)).selectAll(eventRects).remove(), $$.svg.select(".".concat(config_classes.xgrid)).remove();
+          ["shapes", "texts", "eventRects"].forEach(function (v) {
+            $$.svg.selectAll(".".concat(config_classes[v])).selectAll(target[v]).remove();
+          }), $$.svg.select(".".concat(config_classes.xgrid)).remove();
         } // draw again for removing flowed elements and reverting attr
 
 
@@ -25138,7 +25209,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-nightly-20190801111345",
+  version: "1.9.5-nightly-20190805111553",
 
   /**
    * Generate chart
@@ -25237,7 +25308,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-nightly-20190801111345
+ * @version 1.9.5-nightly-20190805111553
  */
 
 
