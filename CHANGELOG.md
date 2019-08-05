@@ -1,3 +1,10 @@
+# [1.10.0-next.2](https://github.com/naver/billboard.js/compare/1.10.0-next.1@next...1.10.0-next.2@next) (2019-08-05)
+
+
+### Bug Fixes
+
+* **flow:** Fix data points removal ([5463150](https://github.com/naver/billboard.js/commit/5463150)), closes [#1006](https://github.com/naver/billboard.js/issues/1006)
+
 # [1.10.0-next.1](https://github.com/naver/billboard.js/compare/1.9.5...1.10.0-next.1@next) (2019-08-02)
 
 
