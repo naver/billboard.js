@@ -72,12 +72,10 @@ extend(ChartInternal.prototype, {
 			return function(d) {
 				const id = d.id || (d.data && d.data.id) || d;
 				const element = d3Select(this);
-				let point;
 
-				if (ids.indexOf(id) < 0) {
-					ids.push(id);
-				}
-				point = pattern[ids.indexOf(id) % pattern.length];
+				ids.indexOf(id) < 0 && ids.push(id);
+
+				let point = pattern[ids.indexOf(id) % pattern.length];
 
 				if ($$.hasValidPointType(point)) {
 					point = $$[point];
@@ -89,10 +87,10 @@ extend(ChartInternal.prototype, {
 						$$.insertPointInfoDefs(point, pointId);
 					}
 
-					if (method === "create") {
-						return $$.custom.create.bind(context)(element, pointId, ...args);
-					} else if (method === "update") {
-						return $$.custom.update.bind(context)(element, ...args);
+					if (/^(create|update)$/.test(method)) {
+						method === "create" && args.unshift(pointId);
+
+						return $$.custom[method].bind(context)(element, ...args);
 					}
 				}
 
@@ -126,25 +124,15 @@ extend(ChartInternal.prototype, {
 			if (withTransition) {
 				const transitionName = $$.getTransitionName();
 
-				if (flow) {
-					mainCircles = element
-						.attr("x", xPosFn2);
-				}
+				flow && mainCircles.attr("x", xPosFn2);
 
-				mainCircles = element
-					.transition(transitionName)
-					.attr("x", xPosFn2)
-					.attr("y", yPosFn2)
-					.transition(transitionName);
-
+				mainCircles = mainCircles.transition(transitionName);
 				selectedCircles.transition($$.getTransitionName());
-			} else {
-				mainCircles = element
-					.attr("x", xPosFn2)
-					.attr("y", yPosFn2);
 			}
 
 			return mainCircles
+				.attr("x", xPosFn2)
+				.attr("y", yPosFn2)
 				.style("opacity", opacityStyleFn)
 				.style("fill", fillStyleFn);
 		}
@@ -167,34 +155,24 @@ extend(ChartInternal.prototype, {
 
 			// when '.load()' called, bubble size should be updated
 			if ($$.hasType("bubble")) {
-				mainCircles = mainCircles
-					.attr("r", $$.pointR.bind($$));
+				mainCircles.attr("r", $$.pointR.bind($$));
 			}
 
 			if (withTransition) {
 				const transitionName = $$.getTransitionName();
 
-				if (flow) {
-					mainCircles = mainCircles
-						.attr("cx", xPosFn);
+				flow && mainCircles.attr("cx", xPosFn);
+
+				if (mainCircles.attr("cx")) {
+					mainCircles = mainCircles.transition(transitionName);
 				}
 
-				mainCircles = element.attr("cx") ?
-					mainCircles.transition(transitionName)
-						.attr("cx", xPosFn)
-						.attr("cy", yPosFn)
-						.transition(transitionName) :
-					mainCircles.attr("cx", xPosFn)
-						.attr("cy", yPosFn);
-
 				selectedCircles.transition($$.getTransitionName());
-			} else {
-				mainCircles = mainCircles
-					.attr("cx", xPosFn)
-					.attr("cy", yPosFn);
 			}
 
 			return mainCircles
+				.attr("cx", xPosFn)
+				.attr("cy", yPosFn)
 				.style("opacity", opacityStyleFn)
 				.style("fill", fillStyleFn);
 		}
@@ -225,25 +203,15 @@ extend(ChartInternal.prototype, {
 			if (withTransition) {
 				const transitionName = $$.getTransitionName();
 
-				if (flow) {
-					mainCircles = mainCircles
-						.attr("x", rectXPosFn);
-				}
+				flow && mainCircles.attr("x", rectXPosFn);
 
-				mainCircles = mainCircles
-					.transition(transitionName)
-					.attr("x", rectXPosFn)
-					.attr("y", rectYPosFn)
-					.transition(transitionName);
-
+				mainCircles = mainCircles.transition(transitionName);
 				selectedCircles.transition($$.getTransitionName());
-			} else {
-				mainCircles = mainCircles
-					.attr("x", rectXPosFn)
-					.attr("y", rectYPosFn);
 			}
 
 			return mainCircles
+				.attr("x", rectXPosFn)
+				.attr("y", rectYPosFn)
 				.style("opacity", opacityStyleFn)
 				.style("fill", fillStyleFn);
 		}

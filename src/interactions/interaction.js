@@ -60,17 +60,12 @@ extend(ChartInternal.prototype, {
 			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
 		} else {
-			let xAxisTickValues = $$.axis.getTickValues("x") || $$.getMaxDataCountTarget($$.data.targets);
-
-			if (isObject(xAxisTickValues)) {
-				xAxisTickValues = xAxisTickValues.values;
-			}
-
 			// Set data and update $$.eventRect
-			const xAxisTarget = (xAxisTickValues || [])
-				.map((x, index) => ({x, index}));
+			const xAxisTickValues = $$.flowing ?
+				$$.getMaxDataCountTarget($$.data.targets).values :
+				($$.axis.getTickValues("x") || []).map((x, index) => ({x, index}));
 
-			eventRects.datum(xAxisTarget);
+			eventRects.datum(xAxisTickValues);
 
 			$$.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
 			eventRectUpdate = $$.eventRect.data(d => d);
