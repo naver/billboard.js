@@ -526,7 +526,8 @@ describe("DATA", () => {
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
-						it("set options data.labels.overlap", () => {
+
+			it("set options data.labels.overlap", () => {
 				args.data.labels = {
 					overlap: false
 				};
