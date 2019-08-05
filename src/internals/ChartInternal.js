@@ -660,13 +660,13 @@ export default class ChartInternal {
 
 	/**
 	 * Generate redraw list
-	 * @param {Object} targetsToShow targets data to be shown
+	 * @param {Object} targets targets data to be shown
 	 * @param {Object} flow
 	 * @param {Object} duration
 	 * @param {Boolean} withSubchart whether or not to show subchart
 	 * @private
 	 */
-	generateRedrawList(targetsToShow, flow, duration, withSubchart) {
+	generateRedrawList(targets, flow, duration, withSubchart) {
 		const $$ = this;
 		const config = $$.config;
 		const shape = $$.getDrawShape();
@@ -676,8 +676,8 @@ export default class ChartInternal {
 
 		// generate flow
 		const flowFn = flow && $$.generateFlow({
-			targets: targetsToShow,
-			flow: flow,
+			targets,
+			flow,
 			duration: flow.duration,
 			shape,
 			xv: $$.xv.bind($$)
@@ -1135,10 +1135,10 @@ export default class ChartInternal {
 			function loop() {
 				let done = 0;
 
-				transitionsToWait.forEach(t => {
+				for (let i = 0, t; (t = transitionsToWait[i]); i++) {
 					if (t.empty()) {
 						done++;
-						return;
+						continue;
 					}
 
 					try {
@@ -1146,7 +1146,7 @@ export default class ChartInternal {
 					} catch (e) {
 						done++;
 					}
-				});
+				}
 
 				timer && clearTimeout(timer);
 
