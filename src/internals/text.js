@@ -108,18 +108,16 @@ extend(ChartInternal.prototype, {
 		const plottedCoordinates = [];
 
 		for (let i = 0; i < ($$.mainText._groups).length; i++) {
-			$$.mainText._groups[i].forEach(element => {
-				plottedCoordinates.push([element.__data__.x, element.__data__.value]);
+			$$.mainText.each(v => {
+				plottedCoordinates.push([v.x, v.value]);
 			});
 		}
-
 		const voronoiCells = $$.generateVoronoi(plottedCoordinates);
 		const voronoiExtent = (typeof (overlap) === "object" && $$.config.data_labels_overlap.extent !== undefined) ? $$.config.data_labels_overlap.extent : 1;
 		const labelArea = (typeof (overlap) === "object" && $$.config.data_labels_overlap.area !== undefined) ? $$.config.data_labels_overlap.area : 0;
-
-		$$.mainText.each(i => {
+		$$.mainText.each(function(d) {
 			const text = d3Select(this);
-			const searchJson = JSON.stringify([i.x, i.value]);
+			const searchJson = JSON.stringify([d.x, d.value]);
 			const elementPos = voronoiCells.map(x => x.data).map(JSON.stringify)
 				.indexOf(searchJson);
 			const cell = elementPos !== -1 ? voronoiCells[elementPos] : undefined;
@@ -180,7 +178,7 @@ extend(ChartInternal.prototype, {
 			})
 		];
 	},
-
+	
 	/**
 	 * Gets the getBoundingClientRect value of the element
 	 * @private
@@ -251,24 +249,14 @@ extend(ChartInternal.prototype, {
 	 * @returns {Object} Voronoi layout points and corresponding Data points
 	 * @private
 	 */
-
 	generateVoronoi: function generateVoronoi(data) {
 		const $$ = this;
-		const xExtent = Math.abs($$.x.domain()[1]) + Math.abs($$.x.domain()[0]);
-		const yExtent = Math.abs($$.y.domain()[1]) + Math.abs($$.y.domain()[0]);
+		const extentMin = ["x", "y"].map(v => $$[v].domain()[0]);
+		const extentMax = ["x", "y"].map(v => $$[v].domain()[1]);
 
-		const cells = d3Voronoi()
-			.extent([[0, 0], [xExtent, yExtent]])
+		return d3Voronoi()
+			.extent([extentMin, extentMax])
 			.polygons(data);
-
-		d3Select("bb-event-rects bb-event-rects-multiple").append("g")
-			.attr("fill", "none")
-			.selectAll("g")
-			.data(cells)
-			.enter()
-			.append("g");
-
-		return (cells);
 	},
 
 	/**
