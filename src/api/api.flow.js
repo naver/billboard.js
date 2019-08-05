@@ -339,31 +339,25 @@ extend(ChartInternal.prototype, {
 			]);
 
 			gt.call(wait, () => {
-				const shapes = [];
-				const texts = [];
-				const eventRects = [];
-
 				// remove flowed elements
 				if (flowLength) {
-					for (let i = 0; i < flowLength; i++) {
-						const index = flowIndex + i;
+					const target = {
+						shapes: [],
+						texts: [],
+						eventRects: []
+					};
 
-						shapes.push(`.${CLASS.shape}-${index}`);
-						texts.push(`.${CLASS.text}-${index}`);
-						eventRects.push(`.${CLASS.eventRect}-${index}`);
+					for (let i = 0; i < flowLength; i++) {
+						target.shapes.push(`.${CLASS.shape}-${i}`);
+						target.texts.push(`.${CLASS.text}-${i}`);
+						target.eventRects.push(`.${CLASS.eventRect}-${i}`);
 					}
 
-					$$.svg.selectAll(`.${CLASS.shapes}`)
-						.selectAll(shapes)
-						.remove();
-
-					$$.svg.selectAll(`.${CLASS.texts}`)
-						.selectAll(texts)
-						.remove();
-
-					$$.svg.selectAll(`.${CLASS.eventRects}`)
-						.selectAll(eventRects)
-						.remove();
+					["shapes", "texts", "eventRects"].forEach(v => {
+						$$.svg.selectAll(`.${CLASS[v]}`)
+							.selectAll(target[v])
+							.remove();
+					});
 
 					$$.svg.select(`.${CLASS.xgrid}`)
 						.remove();
