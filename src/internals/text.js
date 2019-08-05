@@ -115,6 +115,7 @@ extend(ChartInternal.prototype, {
 		const voronoiCells = $$.generateVoronoi(plottedCoordinates);
 		const voronoiExtent = (typeof (overlap) === "object" && $$.config.data_labels_overlap.extent !== undefined) ? $$.config.data_labels_overlap.extent : 1;
 		const labelArea = (typeof (overlap) === "object" && $$.config.data_labels_overlap.area !== undefined) ? $$.config.data_labels_overlap.area : 0;
+		
 		$$.mainText.each(function(d) {
 			const text = d3Select(this);
 			const searchJson = JSON.stringify([d.x, d.value]);
@@ -178,7 +179,7 @@ extend(ChartInternal.prototype, {
 			})
 		];
 	},
-	
+
 	/**
 	 * Gets the getBoundingClientRect value of the element
 	 * @private
