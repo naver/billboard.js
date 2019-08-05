@@ -840,7 +840,9 @@ extend(ChartInternal.prototype, {
 	updateDataIndexByX() {
 		const $$ = this;
 		const isTimeSeries = $$.isTimeSeries();
-		const tickValues = $$.axis.getTickValues("x") || [];
+		const tickValues = $$.flowing ?
+			$$.getMaxDataCountTarget($$.data.targets).values.map(v => v.x) :
+			($$.axis.getTickValues("x") || []);
 
 		$$.data.targets.forEach(t => {
 			t.values.forEach((v, i) => {
