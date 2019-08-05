@@ -4,14 +4,14 @@
  */
 import {
 	select as d3Select,
-	selectAll as d3SelectAll,
+	selectAll as d3SelectAll
 } from "d3-selection";
 import {
 	voronoi as d3Voronoi
 } from "d3-voronoi";
 import {
 	polygonCentroid as d3PolygonCentroid,
-	polygonArea as d3PolygonArea,
+	polygonArea as d3PolygonArea
 } from "d3-polygon";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
