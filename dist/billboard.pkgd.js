@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-nightly-20190805111553
+ * @version 1.9.5-nightly-20190806111713
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -5909,7 +5909,7 @@ function defaultExtent() {
 }
 
 function brush_defaultTouchable() {
-  return "ontouchstart" in this;
+  return navigator.maxTouchPoints || ("ontouchstart" in this);
 }
 
 // Like d3.local, but with the name “__brush” rather than auto-generated.
@@ -6107,6 +6107,10 @@ function brush_brush(dim) {
     }
   };
 
+  function pointer(target) {
+    return src_point(target, on_event.touches ? on_event.touches[0] : on_event);
+  }
+
   function started() {
     if (on_event.touches) { if (on_event.changedTouches.length < on_event.touches.length) return src_noevent(); }
     else if (touchending) return;
@@ -6130,11 +6134,12 @@ function brush_brush(dim) {
         shifting = signX && signY && keys && on_event.shiftKey,
         lockX,
         lockY,
-        point0 = src_mouse(that),
+        point0 = pointer(that),
         point = point0,
         emit = emitter(that, arguments, true).beforestart();
 
     if (type === "overlay") {
+      if (selection) moving = true;
       state.selection = selection = [
         [w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]],
         [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]
@@ -6177,7 +6182,7 @@ function brush_brush(dim) {
     emit.start();
 
     function moved() {
-      var point1 = src_mouse(that);
+      var point1 = pointer(that);
       if (shifting && !lockX && !lockY) {
         if (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1])) lockY = true;
         else lockX = true;
@@ -25209,7 +25214,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-nightly-20190805111553",
+  version: "1.9.5-nightly-20190806111713",
 
   /**
    * Generate chart
@@ -25308,7 +25313,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-nightly-20190805111553
+ * @version 1.9.5-nightly-20190806111713
  */
 
 
