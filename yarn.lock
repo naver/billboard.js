@@ -8809,7 +8809,7 @@ schema-utils@^1.0.0:
     ajv-errors "^1.0.0"
     ajv-keywords "^3.1.0"
 
-schema-utils@^2.0.0:
+schema-utils@^2.0.0, schema-utils@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/schema-utils/-/schema-utils-2.0.1.tgz#1eec2e059556af841b7f3a83b61af13d7a3f9196"
   dependencies:
@@ -9536,18 +9536,18 @@ strip-json-comments@^3.0.1:
   version "3.0.1"
   resolved "https://registry.yarnpkg.com/strip-json-comments/-/strip-json-comments-3.0.1.tgz#85713975a91fb87bf1b305cca77395e40d2a64a7"
 
-style-loader@^0.23.1:
-  version "0.23.1"
-  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.23.1.tgz#cb9154606f3e771ab6c4ab637026a1049174d925"
-  dependencies:
-    loader-utils "^1.1.0"
-    schema-utils "^1.0.0"
-
 style-loader@^0.8.3:
   version "0.8.3"
   resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-0.8.3.tgz#f4f92eb7db63768748f15065cd6700f5a1c85357"
   dependencies:
     loader-utils "^0.2.5"
+
+style-loader@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/style-loader/-/style-loader-1.0.0.tgz#1d5296f9165e8e2c85d24eee0b7caf9ec8ca1f82"
+  dependencies:
+    loader-utils "^1.2.3"
+    schema-utils "^2.0.1"
 
 stylehacks@^4.0.0:
   version "4.0.3"

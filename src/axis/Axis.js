@@ -39,7 +39,8 @@ export default class Axis {
 
 		target.forEach(v => {
 			const classAxis = getAxisClassName(v);
-			const classLabel = CLASS[`axis${capitalize(v)}Label`];
+			const axisId = v.toUpperCase();
+			const classLabel = CLASS[`axis${axisId}Label`];
 
 			$$.axes[v] = main.append("g")
 				.attr("class", classAxis)
@@ -62,7 +63,7 @@ export default class Axis {
 				.attr("transform", ["rotate(-90)", null][
 					v === "x" ? +!isRotated : +isRotated
 				])
-				.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+				.style("text-anchor", this[`textAnchorFor${axisId}AxisLabel`].bind(this));
 
 			this.generateAxes(v);
 		});
