@@ -231,6 +231,8 @@ describe("COLOR", () => {
 	});
 
 	describe("color.onover", () => {
+		const barStrokeColor = "blue";
+
 		before(() => {
 			args = {
 				data: {
@@ -244,6 +246,12 @@ describe("COLOR", () => {
 				},
 				color: {
 					onover: "yellow"
+				},
+				onafterinit: function(ctx) {
+					// set bar stroke color value manually
+					ctx.$.bar.bars
+						.style("stroke", barStrokeColor)
+						.style("stroke-width", 1)
 				}
 			}
 		});
@@ -257,7 +265,8 @@ describe("COLOR", () => {
 
 			shape.each(function() {
 				originalColor.push({
-					fill: this.style.fill
+					fill: this.style.fill,
+					stroke: this.style.stroke
 				});
 			});
 
@@ -273,6 +282,10 @@ describe("COLOR", () => {
 				}
 
 				expect(this.style.fill).to.be.equal(color);
+
+				if (this.tagName === "path") {
+					expect(this.style.stroke).to.be.equal(barStrokeColor);
+				}
 			});
 
 			// check for restoration
@@ -280,6 +293,7 @@ describe("COLOR", () => {
 
 			shape.each(function(d, i) {
 				expect(this.style.fill).to.be.equal(originalColor[i].fill);
+				expect(this.style.stroke).to.be.equal(originalColor[i].stroke);
 		   });
 		};
 
