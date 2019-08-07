@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5
+ * @version 1.10.0
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -655,17 +655,18 @@ var isValue = function (v) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 },
     setTextValue = function (node, text) {
-  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1],
+      toMiddle = !!(arguments.length > 3 && arguments[3] !== undefined) && arguments[3];
   if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
     var diff = [node.text(), text].map(function (v) {
       return v.replace(/[\s\n]/g, "");
     });
 
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"); // reset possible text
-
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
       node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] * len : dy[1], "em")).text(v);
       });
     }
   }
@@ -790,7 +791,7 @@ var isValue = function (v) {
     return a - b;
   } : function (a, b) {
     return b - a;
-  } : isAsc && data.every(Number) ? fn = function (a, b) {
+  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
     return a - b;
   } : !isAsc && (fn = function (a, b) {
     return a > b && -1 || a < b && 1 || a === b && 0;
@@ -1328,11 +1329,12 @@ function () {
 
       config.axis_y2_show && target.push("y2"), $$.axesList = {}, target.forEach(function (v) {
         var classAxis = getAxisClassName(v),
-            classLabel = config_classes["axis".concat(capitalize(v), "Label")];
+            axisId = v.toUpperCase(),
+            classLabel = config_classes["axis".concat(axisId, "Label")];
         $$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
           var res = null;
           return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
-        }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this)), _this.generateAxes(v);
+        }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this["textAnchorFor".concat(axisId, "AxisLabel")].bind(_this)), _this.generateAxes(v);
       });
     }
     /**
@@ -1400,53 +1402,35 @@ function () {
     } // called from : updateScales() & getMaxTickWidth()
 
   }, {
-    key: "getXAxis",
-    value: function getXAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
+    key: "getAxis",
+    value: function getAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
       var $$ = this.owner,
           config = $$.config,
-          isCategory = $$.isCategorized(),
+          isX = /^(x|subX)$/.test(name),
+          type = isX ? "x" : "y",
+          isCategory = isX && $$.isCategorized(),
           orient = $$["".concat(name, "Orient")],
-          tickFormat = $$.xAxisTickFormat,
-          tickValues = $$.xAxisTickValues,
-          axisParams = {
-        isCategory: isCategory,
+          tickFormat = isX ? $$.xAxisTickFormat : config["axis_".concat(name, "_tick_format")],
+          tickValues = isX ? $$.xAxisTickValues : $$["".concat(name, "AxisTickValues")],
+          axisParams = Object.assign({
         outerTick: outerTick,
         noTransition: noTransition,
         config: config,
         name: name,
+        tickTextRotate: noTickTextRotate ? 0 : config["axis_".concat(type, "_tick_rotate")]
+      }, isX && {
+        isCategory: isCategory,
         tickMultiline: config.axis_x_tick_multiline,
         tickWidth: config.axis_x_tick_width,
-        tickTextRotate: noTickTextRotate ? 0 : config.axis_x_tick_rotate,
         tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
         orgXScale: $$.x
-      },
-          axis = new AxisRenderer_AxisRenderer(axisParams).scale($$.zoomScale || scale).orient(orient),
-          newTickValues = tickValues;
-      return $$.isTimeSeries() && tickValues && !isFunction(tickValues) && (newTickValues = tickValues.map(function (v) {
+      }),
+          axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
+      return isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
-      })), axis.tickFormat(tickFormat).tickValues(newTickValues), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config.axis_x_tick_count && axis.ticks(config.axis_x_tick_count), axis;
-    } // called from : updateScales() & getMaxTickWidth()
-
-  }, {
-    key: "getYAxis",
-    value: function getYAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
-      var $$ = this.owner,
-          config = $$.config,
-          orient = $$["".concat(name, "Orient")],
-          tickFormat = config["axis_".concat(name, "_tick_format")],
-          tickValues = $$["".concat(name, "AxisTickValues")],
-          axisParams = {
-        outerTick: outerTick,
-        noTransition: noTransition,
-        config: config,
-        name: name,
-        tickTextRotate: noTickTextRotate ? 0 : config.axis_y_tick_rotate
-      },
-          axis = new AxisRenderer_AxisRenderer(axisParams).scale(scale).orient(orient).tickFormat(tickFormat || $$.isStackNormalized() && function (x) {
+      }) : !isX && $$.isTimeSeriesY() && (axis.ticks(config.axis_y_tick_time_value), tickValues = null), tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
         return "".concat(x, "%");
-      });
-      return $$.isTimeSeriesY() ? // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
-      axis.ticks(config.axis_y_tick_time_value) : axis.tickValues(tickValues), axis;
+      }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config["axis_".concat(type, "_tick_count")] && axis.ticks(config["axis_".concat(type, "_tick_count")]), axis;
     }
   }, {
     key: "updateXAxisTickValues",
@@ -1487,22 +1471,7 @@ function () {
       var $$ = this.owner,
           tickValues = $$.config["axis_".concat(id, "_tick_values")],
           axis = $$["".concat(id, "Axis")];
-      return tickValues || (axis ? axis.tickValues() : undefined);
-    }
-  }, {
-    key: "getXAxisTickValues",
-    value: function getXAxisTickValues() {
-      return this.getTickValues("x");
-    }
-  }, {
-    key: "getYAxisTickValues",
-    value: function getYAxisTickValues() {
-      return this.getTickValues("y");
-    }
-  }, {
-    key: "getY2AxisTickValues",
-    value: function getY2AxisTickValues() {
-      return this.getTickValues("y2");
+      return (isFunction(tickValues) ? tickValues() : tickValues) || (axis ? axis.tickValues() : undefined);
     }
   }, {
     key: "getLabelOptionByAxisId",
@@ -1683,15 +1652,14 @@ function () {
       if ($$.svg) {
         var isYAxis = /^y2?$/.test(id),
             targetsToShow = $$.filterTargetsToShow($$.data.targets),
-            getFrom = isYAxis ? "getY" : "getX",
-            scale = $$[id].copy().domain($$["".concat(getFrom, "Domain")](targetsToShow, id)),
+            scale = $$[id].copy().domain($$["get".concat(isYAxis ? "Y" : "X", "Domain")](targetsToShow, id)),
             domain = scale.domain();
         // do not compute if domain is same
         if (isArray(currentTickMax.domain) && currentTickMax.domain.every(function (v, i) {
           return v === domain[i];
         })) return currentTickMax.size;
         currentTickMax.domain = domain;
-        var axis = this["".concat(getFrom, "Axis")](id, scale, !1, !1, !0),
+        var axis = this.getAxis(id, scale, !1, !1, !0),
             tickCount = config["axis_".concat(id, "_tick_count")];
         tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
@@ -1791,6 +1759,74 @@ function () {
         axis && (!isInit && (axis.config.withoutTransition = !$$.config.transition_duration), $$.axes[id.toLowerCase()].style("opacity", opacity), axis.create(transitions["axis".concat(capitalize(id))]));
       }), this.updateAxes();
     }
+    /**
+     * Redraw axis
+     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} wth
+     * @param {Ojbect} transitions
+     * @param {Object} flow
+     * @private
+     */
+
+  }, {
+    key: "redrawAxis",
+    value: function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
+      var xDomainForZoom,
+          _this3 = this,
+          $$ = this.owner,
+          config = $$.config,
+          hasZoom = !!$$.zoomScale;
+
+      !hasZoom && $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && this.updateXAxisTickValues(targetsToShow)) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+        var axis = $$[key];
+
+        if (axis) {
+          var tickValues = config["axis_".concat(key, "_tick_values")],
+              tickCount = config["axis_".concat(key, "_tick_count")];
+
+          if (axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
+            var domain = axis.domain();
+            $$["".concat(key, "Axis")].tickValues(_this3.generateTickValues(domain, domain.every(function (v) {
+              return v === 0;
+            }) ? 1 : tickCount, $$.isTimeSeriesY()));
+          }
+        }
+      }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length && this.setCulling(), wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+    }
+    /**
+     * Set manual culling
+     * @private
+     */
+
+  }, {
+    key: "setCulling",
+    value: function setCulling() {
+      var $$ = this.owner,
+          config = $$.config;
+      ["x", "y", "y2"].forEach(function (type) {
+        var axis = $$.axes[type],
+            toCull = config["axis_".concat(type, "_tick_culling")];
+
+        if (axis && toCull) {
+          var intervalForCulling,
+              tickText = axis.selectAll(".tick text"),
+              tickValues = sortValue(tickText.data()),
+              tickSize = tickValues.length,
+              cullingMax = config["axis_".concat(type, "_tick_culling_max")];
+
+          if (tickSize) {
+            for (var _i = 1; _i < tickSize; _i++) if (tickSize / _i < cullingMax) {
+              intervalForCulling = _i;
+              break;
+            }
+
+            tickText.each(function (d) {
+              this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
+            });
+          } else tickText.style("display", "block");
+        }
+      });
+    }
   }]), Axis;
 }();
 
@@ -1834,13 +1870,13 @@ function () {
     key: "beforeInit",
     value: function beforeInit() {
       var $$ = this;
-      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$);
+      $$.callPluginHook("$beforeInit"), callFn($$.config.onbeforeinit, $$, $$.api);
     }
   }, {
     key: "afterInit",
     value: function afterInit() {
       var $$ = this;
-      $$.callPluginHook("$afterInit"), callFn($$.config.onafterinit, $$);
+      $$.callPluginHook("$afterInit"), callFn($$.config.onafterinit, $$, $$.api);
     }
   }, {
     key: "init",
@@ -1893,9 +1929,9 @@ function () {
       if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser["a" /* document */].body.appendChild(browser["a" /* document */].createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
-          return callFn(config.onover, $$);
+          return callFn(config.onover, $$, $$.api);
         }).on(isTouch ? "touchend" : "mouseleave", function () {
-          return callFn(config.onout, $$);
+          return callFn(config.onout, $$, $$.api);
         });
       }
 
@@ -1909,7 +1945,7 @@ function () {
 
       // data.onmin/max callback
       if ($$.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), config.oninit.call($$), $$.redraw({
+      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$, $$.api), $$.redraw({
         withTransition: !1,
         withTransform: !0,
         withUpdateXDomain: !0,
@@ -1933,10 +1969,10 @@ function () {
       }), notEmpty($$.config.data_labels) && $$.initText();
     }
   }, {
-    key: "getChartElements",
-    value: function getChartElements() {
+    key: "setChartElements",
+    value: function setChartElements() {
       var $$ = this;
-      return {
+      $$.api.$ = {
         chart: $$.selectChart,
         svg: $$.svg,
         defs: $$.defs,
@@ -2095,59 +2131,11 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
-    }
-    /**
-     * Redraw axis
-     * @param {Object} targetsToShow targets data to be shown
-     * @param {Object} wth
-     * @param {Ojbect} transitions
-     * @param {Object} flow
-     * @private
-     */
-
-  }, {
-    key: "redrawAxis",
-    value: function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
-      var tickValues,
-          intervalForCulling,
-          xDomainForZoom,
-          $$ = this,
-          config = $$.config,
-          hasArcType = $$.hasArcType(),
-          hasZoom = !!$$.zoomScale;
-      // show/hide if manual culling needed
-      if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0 && $$.x.domain([0, $$.axes.x.selectAll(".tick").size()]), $$.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && (tickValues = $$.axis.updateXAxisTickValues(targetsToShow))) : $$.xAxis && ($$.xAxis.tickValues([]), $$.subXAxis.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = $$.x.orgDomain()), ["y", "y2"].forEach(function (key) {
-        var axis = $$[key];
-
-        if (axis) {
-          var tickValues = config["axis_".concat(key, "_tick_values")],
-              tickCount = config["axis_".concat(key, "_tick_count")];
-
-          if (axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
-            var domain = axis.domain();
-            $$["".concat(key, "Axis")].tickValues($$.axis.generateTickValues(domain, domain.every(function (v) {
-              return v === 0;
-            }) ? 1 : tickCount, $$.isTimeSeriesY()));
-          }
-        }
-      }), $$.axis.redraw(transitions, hasArcType, isInit), $$.axis.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) if (config.axis_x_tick_culling && tickValues) {
-        for (var i = 1; i < tickValues.length; i++) if (tickValues.length / i < config.axis_x_tick_culling_max) {
-          intervalForCulling = i;
-          break;
-        }
-
-        $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).each(function (d) {
-          var index = tickValues.indexOf(d);
-          index >= 0 && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).style("display", index % intervalForCulling ? "none" : "block");
-        });
-      } else $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).style("display", "block"); // Update sub domain
-
-      wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Generate redraw list
-     * @param {Object} targetsToShow targets data to be shown
+     * @param {Object} targets targets data to be shown
      * @param {Object} flow
      * @param {Object} duration
      * @param {Boolean} withSubchart whether or not to show subchart
@@ -2156,14 +2144,14 @@ function () {
 
   }, {
     key: "generateRedrawList",
-    value: function generateRedrawList(targetsToShow, flow, duration, withSubchart) {
+    value: function generateRedrawList(targets, flow, duration, withSubchart) {
       var $$ = this,
           config = $$.config,
           shape = $$.getDrawShape();
       config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
       // generate flow
       var flowFn = flow && $$.generateFlow({
-        targets: targetsToShow,
+        targets: targets,
         flow: flow,
         duration: flow.duration,
         shape: shape,
@@ -2172,7 +2160,7 @@ function () {
           isTransition = (duration || flowFn) && $$.isTabVisible(),
           redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
           afterRedraw = flow || config.onrendered ? function () {
-        flowFn && flowFn(), callFn(config.onrendered, $$);
+        flowFn && flowFn(), callFn(config.onrendered, $$, $$.api);
       } : null;
       if (afterRedraw) // Only use transition when current tab is visible.
         if (isTransition) {
@@ -2400,11 +2388,15 @@ function () {
     value: function bindResize() {
       var $$ = this,
           config = $$.config;
-      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(config.onresize.bind($$)), config.resize_auto && $$.resizeFunction.add(function () {
+      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
+        return callFn(config.onresize, $$, $$.api);
+      }), config.resize_auto && $$.resizeFunction.add(function () {
         $$.resizeTimeout && (browser["b" /* window */].clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = browser["b" /* window */].setTimeout(function () {
           $$.api.flush(!1, !0);
         }, 200);
-      }), $$.resizeFunction.add(config.onresized.bind($$)), browser["b" /* window */].addEventListener("resize", $$.resizeFunction);
+      }), $$.resizeFunction.add(function () {
+        return callFn(config.onresized, $$, $$.api);
+      }), browser["b" /* window */].addEventListener("resize", $$.resizeFunction);
     }
   }, {
     key: "generateResize",
@@ -2440,16 +2432,20 @@ function () {
       var transitionsToWait = [],
           f = function (transition, callback) {
         function loop() {
-          var done = 0;
-          transitionsToWait.forEach(function (t) {
-            if (t.empty()) return void done++;
+          for (var t, done = 0, i = 0; t = transitionsToWait[i]; i++) {
+            if (t.empty()) {
+              done++;
+              continue;
+            }
 
             try {
               t.transition();
             } catch (e) {
               done++;
             }
-          }), timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
+          }
+
+          timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
         }
 
         var timer;
@@ -2477,10 +2473,20 @@ function () {
     value: function convertInputType() {
       var $$ = this,
           config = $$.config,
-          isMobile = browser["b" /* window */].navigator && "maxTouchPoints" in browser["b" /* window */].navigator && browser["b" /* window */].navigator.maxTouchPoints > 0 || !1,
-          hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in browser["b" /* window */],
-          hasTouch = !1;
-      return config.interaction_inputType_touch && (hasTouch = "ontouchmove" in browser["b" /* window */] || browser["b" /* window */].DocumentTouch && browser["a" /* document */] instanceof browser["b" /* window */].DocumentTouch), hasMouse && "mouse" || hasTouch && "touch" || null;
+          isMobile = !1;
+
+      // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+      if (/Mobi/.test(browser["b" /* window */].navigator.userAgent) && config.interaction_inputType_touch) {
+        // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+        var hasTouchPoints = browser["b" /* window */].navigator && "maxTouchPoints" in browser["b" /* window */].navigator && browser["b" /* window */].navigator.maxTouchPoints > 0,
+            hasTouch = "ontouchmove" in browser["b" /* window */] || browser["b" /* window */].DocumentTouch && browser["a" /* document */] instanceof browser["b" /* window */].DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+        // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+
+        isMobile = hasTouchPoints || hasTouch;
+      }
+
+      var hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in browser["b" /* window */];
+      return hasMouse && "mouse" || isMobile && "touch" || null;
     }
     /**
      * Call plugin hook
@@ -2526,9 +2532,8 @@ function () {
 */
 
 /**
- * Access primary node elements
- * @name Chart#$
- * @type {Object}
+ * Access instance's primary node elements
+ * @member {Object} $
  * @property {Object} $
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
@@ -2547,7 +2552,6 @@ function () {
  * @property {d3.selection} $.line.circles Data point circle elements
  * @property {Object} $.text
  * @property {d3.selection} $.text.texts Data label text elements
- * @instance
  * @memberof Chart
  * @example
  * var chart = bb.generate({ ... });
@@ -2562,11 +2566,10 @@ var Chart_Chart = function Chart(config) {
   var $$ = new ChartInternal_ChartInternal(this);
   /**
    * Plugin instance array
-   * @name Chart#plugins
-   * @type {Array}
-   * @instance
+   * @member {Array} plugins
    * @memberof Chart
-   * @example
+   * @instance
+   	 * @example
    *  var chart = bb.generate({
    *     ...
    *     plugins: [
@@ -2579,7 +2582,7 @@ var Chart_Chart = function Chart(config) {
    */
 
   // bind "this" to nested API
-  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), this.$ = $$.getChartElements(), $$.afterInit(config), function bindThis(fn, target, argThis) {
+  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), $$.afterInit(config), function bindThis(fn, target, argThis) {
     Object.keys(fn).forEach(function (key) {
       target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
     });
@@ -2814,61 +2817,66 @@ var Options_Options = function Options() {
      * @name onover
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onover: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onover: function(ctx) {
      *   ...
      * }
      */
-    onover: function onover() {},
+    onover: undefined,
 
     /**
      * Set a callback to execute when mouse/touch leaves the chart.
      * @name onout
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onout: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onout: function(ctx) {
      *   ...
      * }
      */
-    onout: function onout() {},
+    onout: undefined,
 
     /**
      * Set a callback to execute when user resizes the screen.
      * @name onresize
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onresize: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onresize: function(ctx) {
      *   ...
      * }
      */
-    onresize: function onresize() {},
+    onresize: undefined,
 
     /**
      * SSet a callback to execute when screen resize finished.
      * @name onresized
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onresized: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onresized: function(ctx) {
      *   ...
      * }
      */
-    onresized: function onresized() {},
+    onresized: undefined,
 
     /**
      * Set a callback to execute before the chart is initialized
      * @name onbeforeinit
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onbeforeinit: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onbeforeinit: function(ctx) {
      *   ...
      * }
      */
@@ -2879,22 +2887,24 @@ var Options_Options = function Options() {
      * @name oninit
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * oninit: function() {
+     * // @param {Chart} ctx - Instance itself
+     * oninit: function(ctx) {
      *   ...
      * }
      */
-    oninit: function oninit() {},
+    oninit: undefined,
 
     /**
      * Set a callback to execute after the chart is initialized
      * @name onafterinit
      * @memberof Options
      * @type {Function}
-     * @default function(){}
+     * @default undefined
      * @example
-     * onafterinit: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onafterinit: function(ctx) {
      *   ...
      * }
      */
@@ -2907,7 +2917,8 @@ var Options_Options = function Options() {
      * @type {Function}
      * @default undefined
      * @example
-     * onrendered: function() {
+     * // @param {Chart} ctx - Instance itself
+     * onrendered: function(ctx) {
      *   ...
      * }
      */
@@ -3658,6 +3669,26 @@ var Options_Options = function Options() {
      *       data2: "line"
      *   }
      * }
+     *
+     * // for 'bubble' type, data can contain dimension value:
+     * // - an array of [y, z] data following the order
+     * // - or an object with 'y' and 'z' key value
+     * // 'y' is for y axis coordination and 'z' is the bubble radius value
+     * data: {
+     *   rows: [
+     *      ["data1", "data2"],
+     *      [
+     *        // or {y:10, z: 140}, 120
+     *        [10, 140], 120
+     *      ],
+     *      [[100, 30], 55],
+     *      [[50, 100], 60]
+     *   ],
+     *   types: {
+     *       data1: "bubble",
+     *       data2: "line"
+     *   }
+     * }
      */
     data_rows: undefined,
 
@@ -3689,6 +3720,21 @@ var Options_Options = function Options() {
      *      ]
      *   ],
      *   type: "area-line-range"
+     * }
+     *
+     * // for 'bubble' type, data can contain dimension value:
+     * // - an array of [y, z] data following the order
+     * // - or an object with 'y' and 'z' key value
+     * // 'y' is for y axis coordination and 'z' is the bubble radius value
+     * data: {
+     *   columns: [
+     *      ["data1",
+     *          [10, 140],  // or {y:10, z: 140}
+     *          [100, 30],
+     *          [50, 100]
+     *      ]
+     *   ],
+     *   type: "bubble"
      * }
      */
     data_columns: undefined,
@@ -4480,7 +4526,11 @@ var Options_Options = function Options() {
 
     /**
      * Set label on x axis.<br><br>
-     *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
+     * You can set x axis label and change its position by this option.
+     * `string` and `object` can be passed and we can change the poisiton by passing object that has position key.<br>
+     * Available position differs according to the axis direction (vertical or horizontal).
+     * If string set, the position will be the default.
+     *
      *  - **If it's horizontal axis:**
      *    - inner-right [default]
      *    - inner-center
@@ -4679,11 +4729,12 @@ var Options_Options = function Options() {
 
     /**
      * Set label on y axis.<br><br>
-     * You can set y axis label and change its position by this option. This option works in the same way as axis.x.label.
+     * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
      * @name axis․y․label
      * @memberof Options
      * @type {String|Object}
      * @default {}
+     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
      * @example
      * axis: {
      *   y: {
@@ -4721,6 +4772,44 @@ var Options_Options = function Options() {
      * }
      */
     axis_y_tick_format: undefined,
+
+    /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+     * @name axis․y․tick․culling
+     * @memberof Options
+     * @type {Boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling: !1,
+
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․y․tick․culling․max
+     * @memberof Options
+     * @type {Number}
+     * @default 5
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_culling_max: 5,
 
     /**
      * Show y axis outer tick.
@@ -5028,11 +5117,12 @@ var Options_Options = function Options() {
 
     /**
      * Set label on y2 axis.<br><br>
-     * You can set y2 axis label and change its position by this option. This option works in the same way as axis.x.label.
+     * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
      * @name axis․y2․label
      * @memberof Options
      * @type {String|Object}
      * @default {}
+     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
      * @example
      * axis: {
      *   y2: {
@@ -5069,6 +5159,44 @@ var Options_Options = function Options() {
      * }
      */
     axis_y2_tick_format: undefined,
+
+    /**
+     * Setting for culling ticks.<br><br>
+     * If true is set, the ticks will be culled, then only limitted tick text will be shown. This option does not hide the tick lines. If false is set, all of ticks will be shown.<br><br>
+     * We can change the number of ticks to be shown by axis.y.tick.culling.max.
+     * @name axis․y2․tick․culling
+     * @memberof Options
+     * @type {Boolean}
+     * @default false
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: false
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling: !1,
+
+    /**
+     * The number of tick texts will be adjusted to less than this value.
+     * @name axis․y2․tick․culling․max
+     * @memberof Options
+     * @type {Number}
+     * @default 5
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       culling: {
+     *           max: 5
+     *       }
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_culling_max: 5,
 
     /**
      * Show or hide y2 axis outer tick.
@@ -5799,6 +5927,8 @@ var Options_Options = function Options() {
      * @type {Object}
      * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
      * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
+     * @property {Number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+     * @property {NUmber} [radar.axis.text.position.y=0] y coordinate position, relative the original.
      * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
      * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
      * @property {Number} [radar.level.depth=3] Set the level depth.
@@ -5819,6 +5949,10 @@ var Options_Options = function Options() {
      *              show: false
      *          },
      *          text: {
+     *              position: {
+     *              	x: 0,
+     *              	y: 0
+     *              },
      *              show: false
      *          }
      *      },
@@ -5842,6 +5976,7 @@ var Options_Options = function Options() {
     radar_axis_max: undefined,
     radar_axis_line_show: !0,
     radar_axis_text_show: !0,
+    radar_axis_text_position: {},
     radar_level_depth: 3,
     radar_level_show: !0,
     radar_level_text_format: function radar_level_text_format(x) {
@@ -5894,15 +6029,15 @@ var Options_Options = function Options() {
      * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
      *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
      * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
-     * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.
      *  - **NOTE:** When is specified, will not be updating tooltip's position.
-     *  - Within template, below syntax will be replaced using template-like syntax string:
-     *    - {{ ... }}: the doubly curly brackets indicate loop block for data rows
-     *    - {=CLASS_TOOLTIP}: default tooltip class name `bb-tooltip`.
-     *    - {=CLASS_TOOLTIP_NAME}: default tooltip data class name (ex. `bb-tooltip-name-data1`)
-     *    - {=TITLE}: title value
-     *    - {=COLOR}: data color
-     *    - {=VALUE}: data value
+     * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+     *  Within template, below syntax will be replaced using template-like syntax string:
+     *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
+     *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
+     *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+     *    - **{=TITLE}**: title value.
+     *    - **{=COLOR}**: data color.
+     *    - **{=VALUE}**: data value.
      * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
      *  - **NOTE:** It should contain `{ key: Array, ... }` value
      *    - 'key' name is used as substitution within template as '{=KEY}'
@@ -6211,7 +6346,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.xAxis.tickOffset();
     }), $$.subX = $$.getX($$.xMin, $$.xMax, xSubDomain, function (d) {
       return d % 1 ? 0 : $$.subXAxis.tickOffset();
-    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getXAxisTickValues(), $$.xAxis = $$.axis.getXAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getXAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getYAxisTickValues(), $$.yAxis = $$.axis.getYAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getY2AxisTickValues(), $$.y2Axis = $$.axis.getYAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
+    }), $$.xAxisTickFormat = $$.axis.getXAxisTickFormat(), $$.xAxisTickValues = $$.axis.getTickValues("x"), $$.xAxis = $$.axis.getAxis("x", $$.x, config.axis_x_tick_outer, isInit), $$.subXAxis = $$.axis.getAxis("subX", $$.subX, config.axis_x_tick_outer, isInit), $$.y = $$.getY($$.yMin, $$.yMax, $$.y ? $$.y.domain() : config.axis_y_default), $$.subY = $$.getY($$.subYMin, $$.subYMax, $$.subY ? $$.subY.domain() : config.axis_y_default), $$.yAxisTickValues = $$.axis.getTickValues("y"), $$.yAxis = $$.axis.getAxis("y", $$.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && ($$.y2 = $$.getY($$.yMin, $$.yMax, $$.y2 ? $$.y2.domain() : config.axis_y2_default), $$.subY2 = $$.getY($$.subYMin, $$.subYMax, $$.subY2 ? $$.subY2.domain() : config.axis_y2_default), $$.y2AxisTickValues = $$.axis.getTickValues("y2"), $$.y2Axis = $$.axis.getAxis("y2", $$.y2, config.axis_y2_tick_outer, isInit)), $$.updateArc && $$.updateArc();
   }
 });
 // CONCATENATED MODULE: ./src/internals/domain.js
@@ -6522,11 +6657,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     };
   },
   updateXs: function updateXs() {
-    var $$ = this,
-        targets = $$.data.targets;
-    targets.length && ($$.xs = [], targets[0].values.forEach(function (v) {
-      $$.xs[v.index] = v.x;
-    }));
+    var $$ = this;
+    $$.xs = $$.axis.getTickValues("x") || [];
   },
   getPrevX: function getPrevX(i) {
     var x = this.xs[i - 1];
@@ -6546,7 +6678,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   getBaseValue: function getBaseValue(data) {
     var $$ = this,
         value = data.value;
-    return value && $$.isAreaRangeType(data) && (value = $$.getAreaRangeData(data, "mid")), value;
+    return value && ($$.isAreaRangeType(data) ? value = $$.getAreaRangeData(data, "mid") : $$.isBubbleZType(data) && (value = $$.getBubbleZData(value, "y"))), value;
   },
 
   /**
@@ -6741,7 +6873,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var data = [];
       t.values.forEach(function (v) {
         var value = v.value;
-        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
+        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : $$.isBubbleZType(v) ? data.push($$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },
@@ -7014,6 +7146,25 @@ extend(ChartInternal_ChartInternal.prototype, {
     }
 
     return asPercent && ratio ? ratio * 100 : ratio;
+  },
+
+  /**
+   * Sort data index to be aligned with x axis.
+   * @private
+   */
+  updateDataIndexByX: function updateDataIndexByX() {
+    var $$ = this,
+        isTimeSeries = $$.isTimeSeries(),
+        tickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values.map(function (v) {
+      return v.x;
+    }) : $$.axis.getTickValues("x") || [];
+    $$.data.targets.forEach(function (t) {
+      t.values.forEach(function (v, i) {
+        isTimeSeries ? tickValues.some(function (d, j) {
+          return !(+d !== +v.x) && (v.index = j, !0);
+        }) : v.index = tickValues.indexOf(v.x), isNumber(v.index) && v.index !== -1 || (v.index = i);
+      });
+    });
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
@@ -7151,6 +7302,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         _this3 = this,
         $$ = this,
         config = $$.config,
+        isTimeSeries = $$.isTimeSeries(),
         dataKeys = Object.keys(data[0] || {}),
         ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [],
         xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
@@ -7158,7 +7310,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     ids.forEach(function (id) {
       var xKey = _this3.getXKey(id);
 
-      _this3.isCustomX() || _this3.isTimeSeries() ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
+      _this3.isCustomX() || isTimeSeries ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
         return d[xKey];
       }).filter(isValue).map(function (rawX, i) {
         return $$.generateTargetX(rawX, id, i);
@@ -7166,7 +7318,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         return i;
       }), xsData && (_this3.data.xs[id] = xsData);
     }), ids.forEach(function (id) {
-      if (!xsData) throw new Error("x is not defined for id = \"".concat(id, "\"."));
+      if (!_this3.data.xs[id]) throw new Error("x is not defined for id = \"".concat(id, "\"."));
     });
     // convert to target
     var targets = ids.map(function (id, index) {
@@ -7185,7 +7337,7 @@ extend(ChartInternal_ChartInternal.prototype, {
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) ? isArray(value) || isObject(value) && value.high ? value : null : +d[id], isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +d[id], isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
@@ -7326,8 +7478,13 @@ extend(ChartInternal_ChartInternal.prototype, {
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
       // Set data and update $$.eventRect
-      var maxDataCountTarget = $$.getMaxDataCountTarget($$.data.targets);
-      eventRects.datum(maxDataCountTarget ? maxDataCountTarget.values : []), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      var xAxisTickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values : ($$.axis.getTickValues("x") || []).map(function (x, index) {
+        return {
+          x: x,
+          index: index
+        };
+      });
+      eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -7413,7 +7570,7 @@ extend(ChartInternal_ChartInternal.prototype, {
           return x.prev === null && x.next === null ? isRotated ? $$.height : $$.width : (x.prev === null && (x.prev = xScale.domain()[0]), x.next === null && (x.next = xScale.domain()[1]), Math.max(0, (xScale(x.next) - xScale(x.prev)) / 2));
         }, rectX = function (d) {
           var x = getPrevNextX(d),
-              thisX = $$.data.xs[d.id][d.index];
+              thisX = d.x;
           // if there this is a single data point position the eventRect at 0
           return x.prev === null && x.next === null ? 0 : (x.prev === null && (x.prev = xScale.domain()[0]), (xScale(thisX) + xScale(x.prev)) / 2);
         };
@@ -7808,7 +7965,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         isStackNormalized = $$.isStackNormalized();
     return function (d) {
-      return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(isStackNormalized ? $$.getRatio("index", d, !0) : d.value);
+      var value = isStackNormalized ? $$.getRatio("index", d, !0) : $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value;
+      return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(value);
     };
   },
   getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
@@ -8005,11 +8163,12 @@ extend(ChartInternal_ChartInternal.prototype, {
           value = updated ? updated.value : null,
           ratio = $$.getRatio("arc", updated),
           id = d.data.id,
-          isUnderThreshold = $$.hasType("gauge") || $$.meetsArcLabelThreshold(ratio);
+          hasGauge = $$.hasType("gauge"),
+          isUnderThreshold = hasGauge || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
         var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
-        setTextValue(node, text);
+        setTextValue(node, text, [-1, 1], hasGauge);
       }
     });
   },
@@ -8113,7 +8272,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
     if (title) {
       var text = $$.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
-      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-1.3, 1.3]);
+      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-.6, 1.35], !0);
     }
   },
   redrawArc: function redrawArc(duration, durationForExit, withTransform) {
@@ -8442,11 +8601,33 @@ extend(ChartInternal_ChartInternal.prototype, {
         maxR = $$.config.bubble_maxR;
     isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
     var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
-      return isObject(d.value) ? d.value.mid : d.value;
+      return $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : isObject(d.value) ? d.value.mid : d.value;
     })),
         maxArea = maxR * maxR * Math.PI,
-        area = d.value * (maxArea / max);
+        area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
     return Math.sqrt(area / Math.PI);
+  },
+
+  /**
+   * Get bubble dimension data
+   * @param {Object|Array} d data value
+   * @param {String} type - y or z
+   * @return {Number}
+   * @private
+   */
+  getBubbleZData: function getBubbleZData(d, type) {
+    return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
+  },
+
+  /**
+   * Determine if bubble has dimension data
+   * @param {Object|array} d data value
+   * @return {Boolean}
+   * @private
+   */
+  isBubbleZType: function isBubbleZType(d) {
+    var $$ = this;
+    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
   }
 });
 // CONCATENATED MODULE: ./src/shape/line.js
@@ -8783,7 +8964,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this),
           result = fn(d);
       mainCircles.push(result);
-    });
+    }).attr("class", $$.classCircle.bind($$));
     var posAttr = $$.isCirclePoint() ? "c" : "";
     return [mainCircles, selectedCircles.attr("".concat(posAttr, "x"), cx).attr("".concat(posAttr, "y"), cy)];
   },
@@ -8925,14 +9106,14 @@ extend(ChartInternal_ChartInternal.prototype, {
       for (var _len = arguments.length, args = Array(_len > 2 ? _len - 2 : 0), _key = 2; _key < _len; _key++) args[_key - 2] = arguments[_key];
 
       return function (d) {
-        var point,
-            id = d.id || d.data && d.data.id || d,
+        var id = d.id || d.data && d.data.id || d,
             element = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this);
-        if (ids.indexOf(id) < 0 && ids.push(id), point = pattern[ids.indexOf(id) % pattern.length], $$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
+        ids.indexOf(id) < 0 && ids.push(id);
+        var point = pattern[ids.indexOf(id) % pattern.length];
+        if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
           var pointId = "".concat($$.datetimeId, "-point-").concat(id),
               pointFromDefs = $$.pointFromDefs(pointId);
-          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), method === "create") return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
-          if (method === "update") return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
+          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), /^(create|update)$/.test(method)) return method === "create" && args.unshift(pointId), $$.custom[method].bind(context).apply(void 0, [element].concat(args));
         }
         return point[method].bind(context).apply(void 0, [element].concat(args));
       };
@@ -8953,17 +9134,16 @@ extend(ChartInternal_ChartInternal.prototype, {
           xPosFn2 = function (d) {
         return xPosFn(d) - width / 2;
       },
-          yPosFn2 = function (d) {
-        return yPosFn(d) - height / 2;
-      },
           mainCircles = element;
 
       if (withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = element.attr("x", xPosFn2)), mainCircles = element.transition(transitionName).attr("x", xPosFn2).attr("y", yPosFn2).transition(transitionName), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = element.attr("x", xPosFn2).attr("y", yPosFn2);
+        flow && mainCircles.attr("x", xPosFn2), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("x", xPosFn2).attr("y", function yPosFn2(d) {
+        return yPosFn(d) - height / 2;
+      }).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   },
   // 'circle' data point
@@ -8975,12 +9155,12 @@ extend(ChartInternal_ChartInternal.prototype, {
       var $$ = this,
           mainCircles = element;
 
-      if ($$.hasType("bubble") && (mainCircles = mainCircles.attr("r", $$.pointR.bind($$))), withTransition) {
+      if ($$.hasType("bubble") && mainCircles.attr("r", $$.pointR.bind($$)), withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("cx", xPosFn)), mainCircles = element.attr("cx") ? mainCircles.transition(transitionName).attr("cx", xPosFn).attr("cy", yPosFn).transition(transitionName) : mainCircles.attr("cx", xPosFn).attr("cy", yPosFn), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = mainCircles.attr("cx", xPosFn).attr("cy", yPosFn);
+        flow && mainCircles.attr("cx", xPosFn), mainCircles.attr("cx") && (mainCircles = mainCircles.transition(transitionName)), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   },
   // 'rectangle' data point
@@ -8998,17 +9178,16 @@ extend(ChartInternal_ChartInternal.prototype, {
           rectXPosFn = function (d) {
         return xPosFn(d) - r;
       },
-          rectYPosFn = function (d) {
-        return yPosFn(d) - r;
-      },
           mainCircles = element;
 
       if (withTransition) {
         var transitionName = $$.getTransitionName();
-        flow && (mainCircles = mainCircles.attr("x", rectXPosFn)), mainCircles = mainCircles.transition(transitionName).attr("x", rectXPosFn).attr("y", rectYPosFn).transition(transitionName), selectedCircles.transition($$.getTransitionName());
-      } else mainCircles = mainCircles.attr("x", rectXPosFn).attr("y", rectYPosFn);
+        flow && mainCircles.attr("x", rectXPosFn), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+      }
 
-      return mainCircles.style("opacity", opacityStyleFn).style("fill", fillStyleFn);
+      return mainCircles.attr("x", rectXPosFn).attr("y", function rectYPosFn(d) {
+        return yPosFn(d) - r;
+      }).style("opacity", opacityStyleFn).style("fill", fillStyleFn);
     }
   }
 });
@@ -9174,21 +9353,35 @@ extend(ChartInternal_ChartInternal.prototype, {
     var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
       return "".concat(config_classes.axis, "-").concat(i);
     });
-    config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
+
+    // axis text
+    if (config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
       return $$.getRadarPosition("x", i);
     }).attr("y2", function (d, i) {
       return $$.getRadarPosition("y", i);
-    }), config.radar_axis_text_show && axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
-      selection.each(function (d) {
-        setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d, [-1.2, 1.2]);
+    }), config.radar_axis_text_show) {
+      var _config$radar_axis_te = config.radar_axis_text_position,
+          _config$radar_axis_te2 = _config$radar_axis_te.x,
+          x = _config$radar_axis_te2 === void 0 ? 0 : _config$radar_axis_te2,
+          _config$radar_axis_te3 = _config$radar_axis_te.y,
+          y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3;
+      axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
+        selection.each(function (d) {
+          setTextValue(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this), d + "", [-.6, 1.2]);
+        });
+      }).datum(function (d, i) {
+        return {
+          index: i
+        };
+      }).attr("transform", function (d) {
+        isUndefined(this.width) && (this.width = this.getBoundingClientRect().width / 2);
+        var posX = $$.getRadarPosition("x", d.index, undefined, 1),
+            posY = Math.round($$.getRadarPosition("y", d.index, undefined, 1));
+        return posX > width ? posX += this.width + x : Math.round(posX) < width && (posX -= this.width + x), posY > height ? (posY / 2 === height && this.firstChild.tagName === "tspan" && this.firstChild.setAttribute("dy", "0em"), posY += y) : posY < height && (posY -= y), "translate(".concat(posX, " ").concat(posY, ")");
       });
-    }).datum(function (d, i) {
-      return {
-        index: i
-      };
-    }).attr("transform", function (d, i) {
-      return "translate(".concat($$.getRadarPosition("x", i, undefined, 1), " ").concat($$.getRadarPosition("y", i, undefined, 1), ")");
-    }), $$.bindEvent();
+    }
+
+    $$.bindEvent();
   },
   bindEvent: function bindEvent() {
     var _this = this,
@@ -9307,7 +9500,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     }), $$.mainText.exit().transition().duration(durationForExit).style("fill-opacity", "0").remove(), $$.mainText = $$.mainText.enter().append("text").merge($$.mainText).attr("class", classText).attr("text-anchor", function (d) {
       return config.axis_rotated ? d.value < 0 ? "end" : "start" : "middle";
     }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", "0").text(function (d, i, j) {
-      return $$.dataLabelFormat(d.id)(d.value, d.id, i, j);
+      var value = $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value;
+      return $$.dataLabelFormat(d.id)(value, d.id, i, j);
     });
   },
   updateTextColor: function updateTextColor(d) {
@@ -9873,7 +10067,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     } : defaultValueFormat),
         order = config.tooltip_order,
         getRowValue = function (row) {
-      return $$.getBaseValue(row);
+      return $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row);
     },
         getBgColor = $$.levelColor ? function (row) {
       return $$.levelColor(row.value);
@@ -9881,7 +10075,8 @@ extend(ChartInternal_ChartInternal.prototype, {
       return color(row);
     },
         contents = config.tooltip_contents,
-        tplStr = contents.template;
+        tplStr = contents.template,
+        targetIds = $$.mapToTargetIds();
 
     if (order === null && config.data_groups.length) {
       // for stacked data, order should aligned with the visually displayed data
@@ -9906,9 +10101,10 @@ extend(ChartInternal_ChartInternal.prototype, {
         param,
         value,
         i,
-        tpl = $$.getTooltipContentTemplate(tplStr);
+        tpl = $$.getTooltipContentTemplate(tplStr),
+        len = d.length;
 
-    for (i = 0; row = d[i]; i++) if (getRowValue(row) || getRowValue(row) === 0) {
+    for (i = 0; i < len; i++) if (row = d[i], row && (getRowValue(row) || getRowValue(row) === 0)) {
       if (isUndefined(text)) {
         var title = sanitise(titleFormat ? titleFormat(row.x) : row.x);
         text = tplProcess(tpl[0], {
@@ -9940,9 +10136,15 @@ extend(ChartInternal_ChartInternal.prototype, {
             NAME: name,
             VALUE: value
           };
-          tplStr && isObject(contents.text) && Object.keys(contents.text).forEach(function (key) {
-            contentValue[key] = contents.text[key][i];
-          }), text += tplProcess(tpl[1], contentValue);
+
+          if (tplStr && isObject(contents.text)) {
+            var index = targetIds.indexOf(row.id);
+            Object.keys(contents.text).forEach(function (key) {
+              contentValue[key] = contents.text[key][index];
+            });
+          }
+
+          text += tplProcess(tpl[1], contentValue);
         }();
 
         if (_ret === "continue") continue;
@@ -11538,15 +11740,12 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         onover = config.color_onover,
         color = isOver ? onover : $$.color;
-    isObject(color) ? color = function (d) {
-      var id = d.id;
+    isObject(color) ? color = function (_ref) {
+      var id = _ref.id;
       return id in onover ? onover[id] : $$.color(id);
     } : isString(color) && (color = function () {
       return onover;
-    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc, "-").concat(d.id)).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).each(function (d) {
-      var val = color(d);
-      this.style.stroke = val, this.style.fill = val;
-    });
+    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc, "-").concat(d.id)).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).style("fill", color);
   }
 });
 // CONCATENATED MODULE: ./src/internals/format.js
@@ -12493,15 +12692,17 @@ extend(Chart_Chart.prototype, {
       wait.add([$$.axes.x.transition(gt).call(function (g) {
         return $$.xAxis.setTransition(gt).create(g);
       }), mainBar.transition(gt).attr("transform", transform), mainLine.transition(gt).attr("transform", transform), mainArea.transition(gt).attr("transform", transform), mainCircle.transition(gt).attr("transform", transform), mainText.transition(gt).attr("transform", transform), mainRegion.filter($$.isRegionOnX).transition(gt).attr("transform", transform), xgrid.transition(gt).attr("transform", transform), xgridLines.transition(gt).attr("transform", transform)]), gt.call(wait, function () {
-        var shapes = [],
-            texts = [],
-            eventRects = [];
-
         // remove flowed elements
         if (flowLength) {
-          for (var index, i = 0; i < flowLength; i++) index = flowIndex + i, shapes.push(".".concat(config_classes.shape, "-").concat(index)), texts.push(".".concat(config_classes.text, "-").concat(index)), eventRects.push(".".concat(config_classes.eventRect, "-").concat(index));
+          for (var target = {
+            shapes: [],
+            texts: [],
+            eventRects: []
+          }, i = 0; i < flowLength; i++) target.shapes.push(".".concat(config_classes.shape, "-").concat(i)), target.texts.push(".".concat(config_classes.text, "-").concat(i)), target.eventRects.push(".".concat(config_classes.eventRect, "-").concat(i));
 
-          $$.svg.selectAll(".".concat(config_classes.shapes)).selectAll(shapes).remove(), $$.svg.selectAll(".".concat(config_classes.texts)).selectAll(texts).remove(), $$.svg.selectAll(".".concat(config_classes.eventRects)).selectAll(eventRects).remove(), $$.svg.select(".".concat(config_classes.xgrid)).remove();
+          ["shapes", "texts", "eventRects"].forEach(function (v) {
+            $$.svg.selectAll(".".concat(config_classes[v])).selectAll(target[v]).remove();
+          }), $$.svg.select(".".concat(config_classes.xgrid)).remove();
         } // draw again for removing flowed elements and reverting attr
 
 
@@ -13813,7 +14014,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5",
+  version: "1.10.0",
 
   /**
    * Generate chart
@@ -13912,7 +14113,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5
+ * @version 1.10.0
  */
 
 

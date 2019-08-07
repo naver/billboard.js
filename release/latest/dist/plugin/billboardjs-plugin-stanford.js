@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5
+ * @version 1.10.0
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -665,17 +665,18 @@ var isValue = function (v) {
   return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
 },
     setTextValue = function (node, text) {
-  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1];
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1],
+      toMiddle = !!(arguments.length > 3 && arguments[3] !== undefined) && arguments[3];
   if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
     var diff = [node.text(), text].map(function (v) {
       return v.replace(/[\s\n]/g, "");
     });
 
     if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"); // reset possible text
-
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
       node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] : dy[1], "em")).text(v);
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] * len : dy[1], "em")).text(v);
       });
     }
   }
@@ -800,7 +801,7 @@ var isValue = function (v) {
     return a - b;
   } : function (a, b) {
     return b - a;
-  } : isAsc && data.every(Number) ? fn = function (a, b) {
+  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
     return a - b;
   } : !isAsc && (fn = function (a, b) {
     return a > b && -1 || a < b && 1 || a === b && 0;
@@ -965,7 +966,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.9.5");
+defineProperty_default()(Plugin_Plugin, "version", "1.10.0");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
@@ -1046,7 +1047,14 @@ var Options_Options = function Options() {
      *    max: 10000,
      *    min: 1,
      *    width: 500,
-     *    format: "pow10"
+     *
+     *    // specify 'pow10' to format as powers of 10
+     *    format: "pow10",
+     *
+     *    // or specify a format function
+     *    format: function(x) {
+     *    	return x +"%";
+     *    }
      *  },
      */
     scale_min: undefined,
@@ -1080,12 +1088,12 @@ var Options_Options = function Options() {
      * Show additional regions anywhere on the chart.
      * - Each region object should consist with following options:
      *
-     * | Key | Type | Default | Description |
-     * | --- | --- | --- | --- |
-     * | points | Array |  | Accepts a group of objects that has x and y.<br>These points should be added in a counter-clockwise fashion to make a closed polygon. |
-     * | opacity | Number | 0.2 | Optional value. Sets the opacity of the region as value between 0 and 1 |
-     * | text | Function |  | Optional value. This function receives a value and percentage of the number of epochs in this region.<br>Return a string to place text in the middle of the region. |
-     * | class | String | | Optional value. Set a custom css class to this region, use the fill property in css to set a background color. |
+     *   | Key | Type | Default | Attributes | Description |
+     *   | --- | --- | --- | --- | --- |
+     *   | points | Array |  | | Accepts a group of objects that has x and y.<br>These points should be added in a counter-clockwise fashion to make a closed polygon. |
+     *   | opacity | Number | `0.2` | &lt;optional> | Sets the opacity of the region as value between 0 and 1 |
+     *   | text | Function |  | &lt;optional> | This function receives a value and percentage of the number of epochs in this region.<br>Return a string to place text in the middle of the region. |
+     *   | class | String | | &lt;optional> | Se a custom css class to this region, use the fill property in css to set a background color. |
      * @name regions
      * @memberof plugin-stanford
      * @type {Array}
@@ -1571,7 +1579,7 @@ function (_Plugin) {
       }, 0);
       return {
         value: value,
-        percentage: value === 0 ? 0 : (value / total * 100).toFixed(1)
+        percentage: value === 0 ? 0 : +(value / total * 100).toFixed(1)
       };
     }
   }]), Stanford;
