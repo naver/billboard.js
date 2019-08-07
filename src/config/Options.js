@@ -1924,7 +1924,11 @@ export default class Options {
 
 			/**
 			 * Set label on x axis.<br><br>
-			 *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
+			 * You can set x axis label and change its position by this option.
+			 * `string` and `object` can be passed and we can change the poisiton by passing object that has position key.<br>
+			 * Available position differs according to the axis direction (vertical or horizontal).
+			 * If string set, the position will be the default.
+			 *
 			 *  - **If it's horizontal axis:**
 			 *    - inner-right [default]
 			 *    - inner-center
@@ -2123,11 +2127,12 @@ export default class Options {
 
 			/**
 			 * Set label on y axis.<br><br>
-			 * You can set y axis label and change its position by this option. This option works in the same way as axis.x.label.
+			 * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
 			 * @name axis․y․label
 			 * @memberof Options
 			 * @type {String|Object}
 			 * @default {}
+			 * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
 			 * @example
 			 * axis: {
 			 *   y: {
@@ -2507,11 +2512,12 @@ export default class Options {
 
 			/**
 			 * Set label on y2 axis.<br><br>
-			 * You can set y2 axis label and change its position by this option. This option works in the same way as axis.x.label.
+			 * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
 			 * @name axis․y2․label
 			 * @memberof Options
 			 * @type {String|Object}
 			 * @default {}
+			 * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
 			 * @example
 			 * axis: {
 			 *   y2: {
