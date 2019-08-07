@@ -158,6 +158,71 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis label", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 170, 150, 250]
+					]
+				},
+				axis:{
+					x: {
+						label: {
+							text: 'This is a very long label centered'
+						}
+					},
+					y: {
+						label: {
+							text: 'This is a very long label centered'
+						}
+					},
+					y2: {
+						show: true,
+						label: {
+							text: 'This is a very long label centered'
+						}
+					}
+				}
+			};
+		});
+
+ 		const checkAnchor = value => {
+			["x", "y", "y2"].forEach(v => {
+				const anchor = chart.$.main.select(`.${CLASS[`axis${v.toUpperCase()}Label`]}`);
+
+ 				expect(anchor.style("text-anchor")).to.be.equal(value);
+			});
+		};
+
+ 		it("check axis label position ==> x: inner-right, y/y2: inner-top", () => {
+			// x: inner-right, y/y2: inner-top
+			checkAnchor("end");
+		});
+
+ 		it("set options label.position=center/middle", () => {
+			args.axis.x.label.position = "inner-center";
+			args.axis.y.label.position = "inner-middle";
+			args.axis.y2.label.position = "inner-middle";
+		});
+
+ 		it("check axis label position ==> x: inner-center, y/y2: inner-middle", () => {
+			// x: inner-right, y/y2: inner-top
+			checkAnchor("middle");
+		});
+
+ 		it("set options label.position=left/bottom", () => {
+			args.axis.x.label.position = "inner-left";
+			args.axis.y.label.position = "inner-bottom";
+			args.axis.y2.label.position = "inner-bottom";
+		});
+
+ 		it("check axis label position ==> x: inner-left, y/y2: inner-bottom", () => {
+			// x: inner-right, y/y2: inner-top
+			checkAnchor("start");
+		});
+	});
+
 	describe("axis y timeseries", () => {
 		before(() => {
 			args = {
