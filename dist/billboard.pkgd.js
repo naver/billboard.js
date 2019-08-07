@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.9.5-nightly-20190806111713
+ * @version 1.10.0-nightly-20190807111652
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -9621,11 +9621,12 @@ function () {
 
       config.axis_y2_show && target.push("y2"), $$.axesList = {}, target.forEach(function (v) {
         var classAxis = getAxisClassName(v),
-            classLabel = config_classes["axis".concat(capitalize(v), "Label")];
+            axisId = v.toUpperCase(),
+            classLabel = config_classes["axis".concat(axisId, "Label")];
         $$.axes[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
           var res = null;
           return v === "x" ? res = $$.clipPathForXAxis : v === "y" && config.axis_y_inner && (res = $$.clipPathForYAxis), res;
-        }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this.textAnchorForXAxisLabel.bind(_this)), _this.generateAxes(v);
+        }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_".concat(v, "_show")] ? "visible" : "hidden"), $$.axes[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this["textAnchorFor".concat(axisId, "AxisLabel")].bind(_this)), _this.generateAxes(v);
       });
     }
     /**
@@ -12817,7 +12818,11 @@ var Options_Options = function Options() {
 
     /**
      * Set label on x axis.<br><br>
-     *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
+     * You can set x axis label and change its position by this option.
+     * `string` and `object` can be passed and we can change the poisiton by passing object that has position key.<br>
+     * Available position differs according to the axis direction (vertical or horizontal).
+     * If string set, the position will be the default.
+     *
      *  - **If it's horizontal axis:**
      *    - inner-right [default]
      *    - inner-center
@@ -13016,11 +13021,12 @@ var Options_Options = function Options() {
 
     /**
      * Set label on y axis.<br><br>
-     * You can set y axis label and change its position by this option. This option works in the same way as axis.x.label.
+     * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
      * @name axis․y․label
      * @memberof Options
      * @type {String|Object}
      * @default {}
+     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
      * @example
      * axis: {
      *   y: {
@@ -13403,11 +13409,12 @@ var Options_Options = function Options() {
 
     /**
      * Set label on y2 axis.<br><br>
-     * You can set y2 axis label and change its position by this option. This option works in the same way as axis.x.label.
+     * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
      * @name axis․y2․label
      * @memberof Options
      * @type {String|Object}
      * @default {}
+     * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
      * @example
      * axis: {
      *   y2: {
@@ -22940,15 +22947,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         onover = config.color_onover,
         color = isOver ? onover : $$.color;
-    isObject(color) ? color = function (d) {
-      var id = d.id;
+    isObject(color) ? color = function (_ref) {
+      var id = _ref.id;
       return id in onover ? onover[id] : $$.color(id);
     } : isString(color) && (color = function () {
       return onover;
-    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc, "-").concat(d.id)).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).each(function (d) {
-      var val = color(d);
-      this.style.stroke = val, this.style.fill = val;
-    });
+    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc, "-").concat(d.id)).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).style("fill", color);
   }
 });
 // CONCATENATED MODULE: ./src/internals/format.js
@@ -25214,7 +25218,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.9.5-nightly-20190806111713",
+  version: "1.10.0-nightly-20190807111652",
 
   /**
    * Generate chart
@@ -25313,7 +25317,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.9.5-nightly-20190806111713
+ * @version 1.10.0-nightly-20190807111652
  */
 
 
