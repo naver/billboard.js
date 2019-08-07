@@ -41,4 +41,7 @@ mkdir release/$DIST_TAG
 cp -r doc dist release/$DIST_TAG
 
 # push to github pages
-npx gh-pages --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
+# Use fixed gh-pages version, due to the bug from the latest 2.1.0
+# https://travis-ci.org/naver/billboard.js/jobs/568700732#L1172
+# https://github.com/tschaub/gh-pages/issues/308
+npx gh-pages@2.0.1 --dist $DIST_FOLDER --dest $DEST_FOLDER --add --remote $DEST_REMOTE --message $COMMIT_MESSAGE
