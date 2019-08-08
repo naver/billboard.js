@@ -27,7 +27,8 @@
     "jsdoc:cmd": "jsdoc -c jsdoc.json"
   },
   "sideEffects": [
-    "dist/**/*.css"
+    "dist/**/*.css",
+    "src/**/*.js"
   ],
   "husky": {
     "hooks": {
