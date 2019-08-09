@@ -2421,6 +2421,9 @@ export default class Options {
 
 			/**
 			 * Show or hide y2 axis.
+			 * - **NOTE**:
+			 *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
+			 *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
 			 * @name axis․y2․show
 			 * @memberof Options
 			 * @type {Boolean}
