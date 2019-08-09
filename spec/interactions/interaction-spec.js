@@ -127,6 +127,46 @@ describe("INTERACTION", () => {
 				});
 			});
 
+			describe("timeseries #3", () => {
+				before(() => {
+					args = {
+						data: {
+							x: "x",
+							json: {
+								Temperature:["29.39", "29.7", "29.37", "28.87", "28.62"],
+								x:["01-01-2015 00:00", "02-01-2015 00:00", "03-01-2015 00:00", "04-01-2015 00:00", "05-01-2015 00:00"]
+							},
+							type: "area",
+							xFormat: "%m-%d-%Y %H:%M"
+						},
+						axis: {
+							x: {
+								tick: {
+									fit: false
+								},
+								type: "timeseries"
+							}
+						}
+					};
+				});
+
+				it("check if rect element generated correctly", () => {
+					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+					let lastX = 0;
+
+					expect(rect.size()).to.be.equal(args.data.json.x.length);
+
+					rect.each(function(d, i) {
+						const x = +this.getAttribute("x");
+
+						expect(+this.getAttribute("x")).to.be.above(lastX);
+						expect(+this.getAttribute("width")).to.be.above(0);
+
+						lastX = x;
+					});
+				});
+			});
+
 			describe("indexed", () => {
 				before(() => {
 					args = {
