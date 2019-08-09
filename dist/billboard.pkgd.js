@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.0-nightly-20190807111652
+ * @version 1.10.0-nightly-20190809111755
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -5600,7 +5600,7 @@ DragEvent.prototype.on = function() {
 
 // Ignore right-click, since that should open the context menu.
 function defaultFilter() {
-  return !on_event.button;
+  return !on_event.ctrlKey && !on_event.button;
 }
 
 function defaultContainer() {
@@ -5612,7 +5612,7 @@ function defaultSubject(d) {
 }
 
 function defaultTouchable() {
-  return "ontouchstart" in this;
+  return navigator.maxTouchPoints || ("ontouchstart" in this);
 }
 
 /* harmony default export */ var src_drag = (function() {
@@ -5896,7 +5896,7 @@ function brush_type(t) {
 
 // Ignore right-click, since that should open the context menu.
 function brush_defaultFilter() {
-  return !on_event.button;
+  return !on_event.ctrlKey && !on_event.button;
 }
 
 function defaultExtent() {
@@ -13318,6 +13318,9 @@ var Options_Options = function Options() {
 
     /**
      * Show or hide y2 axis.
+     * - **NOTE**:
+     *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
+     *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
      * @name axis․y2․show
      * @memberof Options
      * @type {Boolean}
@@ -22210,20 +22213,20 @@ function src_noevent_nopropagation() {
 
 // Ignore right-click, since that should open the context menu.
 function zoom_defaultFilter() {
-  return !on_event.button;
+  return !on_event.ctrlKey && !on_event.button;
 }
 
 function zoom_defaultExtent() {
-  var e = this, w, h;
+  var e = this;
   if (e instanceof SVGElement) {
     e = e.ownerSVGElement || e;
-    w = e.width.baseVal.value;
-    h = e.height.baseVal.value;
-  } else {
-    w = e.clientWidth;
-    h = e.clientHeight;
+    if (e.hasAttribute("viewBox")) {
+      e = e.viewBox.baseVal;
+      return [[e.x, e.y], [e.x + e.width, e.y + e.height]];
+    }
+    return [[0, 0], [e.width.baseVal.value, e.height.baseVal.value]];
   }
-  return [[0, 0], [w, h]];
+  return [[0, 0], [e.clientWidth, e.clientHeight]];
 }
 
 function defaultTransform() {
@@ -22231,11 +22234,11 @@ function defaultTransform() {
 }
 
 function defaultWheelDelta() {
-  return -on_event.deltaY * (on_event.deltaMode ? 120 : 1) / 500;
+  return -on_event.deltaY * (on_event.deltaMode === 1 ? 0.05 : on_event.deltaMode ? 1 : 0.002);
 }
 
 function zoom_defaultTouchable() {
-  return "ontouchstart" in this;
+  return navigator.maxTouchPoints || ("ontouchstart" in this);
 }
 
 function defaultConstrain(transform, extent, translateExtent) {
@@ -22259,7 +22262,6 @@ function defaultConstrain(transform, extent, translateExtent) {
       translateExtent = [[-Infinity, -Infinity], [Infinity, Infinity]],
       duration = 250,
       interpolate = src_zoom,
-      gestures = [],
       listeners = src_dispatch("start", "zoom", "end"),
       touchstarting,
       touchending,
@@ -22372,27 +22374,22 @@ function defaultConstrain(transform, extent, translateExtent) {
         });
   }
 
-  function gesture(that, args) {
-    for (var i = 0, n = gestures.length, g; i < n; ++i) {
-      if ((g = gestures[i]).that === that) {
-        return g;
-      }
-    }
-    return new Gesture(that, args);
+  function gesture(that, args, clean) {
+    return (!clean && that.__zooming) || new Gesture(that, args);
   }
 
   function Gesture(that, args) {
     this.that = that;
     this.args = args;
-    this.index = -1;
     this.active = 0;
     this.extent = extent.apply(that, args);
+    this.taps = 0;
   }
 
   Gesture.prototype = {
     start: function() {
       if (++this.active === 1) {
-        this.index = gestures.push(this) - 1;
+        this.that.__zooming = this;
         this.emit("start");
       }
       return this;
@@ -22407,8 +22404,7 @@ function defaultConstrain(transform, extent, translateExtent) {
     },
     end: function() {
       if (--this.active === 0) {
-        gestures.splice(this.index, 1);
-        this.index = -1;
+        delete this.that.__zooming;
         this.emit("end");
       }
       return this;
@@ -22425,6 +22421,9 @@ function defaultConstrain(transform, extent, translateExtent) {
         k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta.apply(this, arguments)))),
         p = src_mouse(this);
 
+    // If this wheel event won’t trigger a transform change, ignore it.
+    if (t.k === k) return;
+
     // If the mouse is in the same location as before, reuse it.
     // If there were recent wheel events, reset the wheel idle timeout.
     if (g.wheel) {
@@ -22433,9 +22432,6 @@ function defaultConstrain(transform, extent, translateExtent) {
       }
       clearTimeout(g.wheel);
     }
-
-    // If this wheel event won’t trigger a transform change, ignore it.
-    else if (t.k === k) return;
 
     // Otherwise, capture the mouse point and location at the start.
     else {
@@ -22456,7 +22452,7 @@ function defaultConstrain(transform, extent, translateExtent) {
 
   function mousedowned() {
     if (touchending || !filter.apply(this, arguments)) return;
-    var g = gesture(this, arguments),
+    var g = gesture(this, arguments, true),
         v = src_select(on_event.view).on("mousemove.zoom", mousemoved, true).on("mouseup.zoom", mouseupped, true),
         p = src_mouse(this),
         x0 = on_event.clientX,
@@ -22500,44 +22496,37 @@ function defaultConstrain(transform, extent, translateExtent) {
 
   function touchstarted() {
     if (!filter.apply(this, arguments)) return;
-    var g = gesture(this, arguments),
-        touches = on_event.changedTouches,
-        started,
-        n = touches.length, i, t, p;
+    var touches = on_event.touches,
+        n = touches.length,
+        g = gesture(this, arguments, on_event.changedTouches.length === n),
+        started, i, t, p;
 
     src_noevent_nopropagation();
     for (i = 0; i < n; ++i) {
       t = touches[i], p = src_touch(this, touches, t.identifier);
       p = [p, this.__zoom.invert(p), t.identifier];
-      if (!g.touch0) g.touch0 = p, started = true;
-      else if (!g.touch1) g.touch1 = p;
+      if (!g.touch0) g.touch0 = p, started = true, g.taps = 1 + !!touchstarting;
+      else if (!g.touch1) g.touch1 = p, g.taps = 0;
     }
 
-    // If this is a dbltap, reroute to the (optional) dblclick.zoom handler.
-    if (touchstarting) {
-      touchstarting = clearTimeout(touchstarting);
-      if (!g.touch1) {
-        g.end();
-        p = src_select(this).on("dblclick.zoom");
-        if (p) p.apply(this, arguments);
-        return;
-      }
-    }
+    if (touchstarting) touchstarting = clearTimeout(touchstarting);
 
     if (started) {
-      touchstarting = setTimeout(function() { touchstarting = null; }, touchDelay);
+      if (g.taps < 2) touchstarting = setTimeout(function() { touchstarting = null; }, touchDelay);
       interrupt(this);
       g.start();
     }
   }
 
   function touchmoved() {
+    if (!this.__zooming) return;
     var g = gesture(this, arguments),
         touches = on_event.changedTouches,
         n = touches.length, i, t, p, l;
 
     d3_zoom_src_noevent();
     if (touchstarting) touchstarting = clearTimeout(touchstarting);
+    g.taps = 0;
     for (i = 0; i < n; ++i) {
       t = touches[i], p = src_touch(this, touches, t.identifier);
       if (g.touch0 && g.touch0[2] === t.identifier) g.touch0[0] = p;
@@ -22559,6 +22548,7 @@ function defaultConstrain(transform, extent, translateExtent) {
   }
 
   function touchended() {
+    if (!this.__zooming) return;
     var g = gesture(this, arguments),
         touches = on_event.changedTouches,
         n = touches.length, i, t;
@@ -22573,7 +22563,14 @@ function defaultConstrain(transform, extent, translateExtent) {
     }
     if (g.touch1 && !g.touch0) g.touch0 = g.touch1, delete g.touch1;
     if (g.touch0) g.touch0[1] = this.__zoom.invert(g.touch0[0]);
-    else g.end();
+    else {
+      g.end();
+      // If this was a dbltap, reroute to the (optional) dblclick.zoom handler.
+      if (g.taps === 2) {
+        var p = src_select(this).on("dblclick.zoom");
+        if (p) p.apply(this, arguments);
+      }
+    }
   }
 
   zoom.wheelDelta = function(_) {
@@ -25218,7 +25215,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.0-nightly-20190807111652",
+  version: "1.10.0-nightly-20190809111755",
 
   /**
    * Generate chart
@@ -25317,7 +25314,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.0-nightly-20190807111652
+ * @version 1.10.0-nightly-20190809111755
  */
 
 

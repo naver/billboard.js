@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.0-nightly-20190807111652
+ * @version 1.10.0-nightly-20190809111755
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5026,6 +5026,9 @@ var Options_Options = function Options() {
 
     /**
      * Show or hide y2 axis.
+     * - **NOTE**:
+     *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
+     *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
      * @name axis․y2․show
      * @memberof Options
      * @type {Boolean}
@@ -14014,7 +14017,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.0-nightly-20190807111652",
+  version: "1.10.0-nightly-20190809111755",
 
   /**
    * Generate chart
@@ -14113,7 +14116,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.0-nightly-20190807111652
+ * @version 1.10.0-nightly-20190809111755
  */
 
 
