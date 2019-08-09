@@ -193,8 +193,15 @@ extend(ChartInternal.prototype, {
 
 	updateXs() {
 		const $$ = this;
+		const targets = $$.data.targets;
 
-		$$.xs = $$.axis.getTickValues("x") || [];
+		if (targets.length) {
+			$$.xs = [];
+
+			targets[0].values.forEach(v => {
+				$$.xs[v.index] = v.x;
+			});
+		}
 	},
 
 	getPrevX(i) {
