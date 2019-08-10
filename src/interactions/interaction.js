@@ -61,9 +61,11 @@ extend(ChartInternal.prototype, {
 				.merge(eventRectUpdate);
 		} else {
 			// Set data and update $$.eventRect
-			const xAxisTickValues = $$.flowing ?
+			let xAxisTickValues = $$.axis.getTickValues("x");
+
+			xAxisTickValues = ($$.flowing || !xAxisTickValues || config.axis_x_tick_count) ?
 				$$.getMaxDataCountTarget($$.data.targets).values :
-				($$.axis.getTickValues("x") || []).map((x, index) => ({x, index}));
+				xAxisTickValues.map((x, index) => ({x, index}));
 
 			eventRects.datum(xAxisTickValues);
 

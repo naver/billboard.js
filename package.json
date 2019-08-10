@@ -1,6 +1,6 @@
 {
   "name": "billboard.js",
-  "version": "1.10.0",
+  "version": "1.10.1",
   "description": "Re-usable easy interface JavaScript chart library, based on D3 v4+",
   "homepage": "http://naver.github.io/billboard.js/",
   "main": "dist/billboard.js",
@@ -27,7 +27,8 @@
     "jsdoc:cmd": "jsdoc -c jsdoc.json"
   },
   "sideEffects": [
-    "dist/**/*.css"
+    "dist/**/*.css",
+    "src/**/*.js"
   ],
   "husky": {
     "hooks": {
