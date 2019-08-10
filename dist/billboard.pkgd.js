@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.0-nightly-20190809111755
+ * @version 1.10.1-nightly-20190810111827
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -14952,8 +14952,11 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     };
   },
   updateXs: function updateXs() {
-    var $$ = this;
-    $$.xs = $$.axis.getTickValues("x") || [];
+    var $$ = this,
+        targets = $$.data.targets;
+    targets.length && ($$.xs = [], targets[0].values.forEach(function (v) {
+      $$.xs[v.index] = v.x;
+    }));
   },
   getPrevX: function getPrevX(i) {
     var x = this.xs[i - 1];
@@ -15975,13 +15978,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
       // Set data and update $$.eventRect
-      var xAxisTickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values : ($$.axis.getTickValues("x") || []).map(function (x, index) {
+      var xAxisTickValues = $$.axis.getTickValues("x");
+      xAxisTickValues = $$.flowing || !xAxisTickValues || config.axis_x_tick_count ? $$.getMaxDataCountTarget($$.data.targets).values : xAxisTickValues.map(function (x, index) {
         return {
           x: x,
           index: index
         };
-      });
-      eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      }), eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -22185,7 +22188,8 @@ var transform_identity = new Transform(1, 0, 0);
 transform_transform.prototype = Transform.prototype;
 
 function transform_transform(node) {
-  return node.__zoom || transform_identity;
+  while (!node.__zoom) if (!(node = node.parentNode)) return transform_identity;
+  return node.__zoom;
 }
 
 // CONCATENATED MODULE: ./node_modules/d3-zoom/src/noevent.js
@@ -22283,11 +22287,11 @@ function defaultConstrain(transform, extent, translateExtent) {
         .style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
   }
 
-  zoom.transform = function(collection, transform) {
+  zoom.transform = function(collection, transform, point) {
     var selection = collection.selection ? collection.selection() : collection;
     selection.property("__zoom", defaultTransform);
     if (collection !== selection) {
-      schedule(collection, transform);
+      schedule(collection, transform, point);
     } else {
       selection.interrupt().each(function() {
         gesture(this, arguments)
@@ -22298,23 +22302,23 @@ function defaultConstrain(transform, extent, translateExtent) {
     }
   };
 
-  zoom.scaleBy = function(selection, k) {
+  zoom.scaleBy = function(selection, k, p) {
     zoom.scaleTo(selection, function() {
       var k0 = this.__zoom.k,
           k1 = typeof k === "function" ? k.apply(this, arguments) : k;
       return k0 * k1;
-    });
+    }, p);
   };
 
-  zoom.scaleTo = function(selection, k) {
+  zoom.scaleTo = function(selection, k, p) {
     zoom.transform(selection, function() {
       var e = extent.apply(this, arguments),
           t0 = this.__zoom,
-          p0 = centroid(e),
+          p0 = p == null ? centroid(e) : typeof p === "function" ? p.apply(this, arguments) : p,
           p1 = t0.invert(p0),
           k1 = typeof k === "function" ? k.apply(this, arguments) : k;
       return constrain(translate(scale(t0, k1), p0, p1), e, translateExtent);
-    });
+    }, p);
   };
 
   zoom.translateBy = function(selection, x, y) {
@@ -22326,16 +22330,16 @@ function defaultConstrain(transform, extent, translateExtent) {
     });
   };
 
-  zoom.translateTo = function(selection, x, y) {
+  zoom.translateTo = function(selection, x, y, p) {
     zoom.transform(selection, function() {
       var e = extent.apply(this, arguments),
           t = this.__zoom,
-          p = centroid(e);
-      return constrain(transform_identity.translate(p[0], p[1]).scale(t.k).translate(
+          p0 = p == null ? centroid(e) : typeof p === "function" ? p.apply(this, arguments) : p;
+      return constrain(transform_identity.translate(p0[0], p0[1]).scale(t.k).translate(
         typeof x === "function" ? -x.apply(this, arguments) : -x,
         typeof y === "function" ? -y.apply(this, arguments) : -y
       ), e, translateExtent);
-    });
+    }, p);
   };
 
   function scale(transform, k) {
@@ -22352,7 +22356,7 @@ function defaultConstrain(transform, extent, translateExtent) {
     return [(+extent[0][0] + +extent[1][0]) / 2, (+extent[0][1] + +extent[1][1]) / 2];
   }
 
-  function schedule(transition, transform, center) {
+  function schedule(transition, transform, point) {
     transition
         .on("start.zoom", function() { gesture(this, arguments).start(); })
         .on("interrupt.zoom end.zoom", function() { gesture(this, arguments).end(); })
@@ -22361,7 +22365,7 @@ function defaultConstrain(transform, extent, translateExtent) {
               args = arguments,
               g = gesture(that, args),
               e = extent.apply(that, args),
-              p = center || centroid(e),
+              p = point == null ? centroid(e) : typeof point === "function" ? point.apply(that, args) : point,
               w = Math.max(e[1][0] - e[0][0], e[1][1] - e[0][1]),
               a = that.__zoom,
               b = typeof transform === "function" ? transform.apply(that, args) : transform,
@@ -22421,9 +22425,6 @@ function defaultConstrain(transform, extent, translateExtent) {
         k = Math.max(scaleExtent[0], Math.min(scaleExtent[1], t.k * Math.pow(2, wheelDelta.apply(this, arguments)))),
         p = src_mouse(this);
 
-    // If this wheel event won’t trigger a transform change, ignore it.
-    if (t.k === k) return;
-
     // If the mouse is in the same location as before, reuse it.
     // If there were recent wheel events, reset the wheel idle timeout.
     if (g.wheel) {
@@ -22432,6 +22433,9 @@ function defaultConstrain(transform, extent, translateExtent) {
       }
       clearTimeout(g.wheel);
     }
+
+    // If this wheel event won’t trigger a transform change, ignore it.
+    else if (t.k === k) return;
 
     // Otherwise, capture the mouse point and location at the start.
     else {
@@ -25215,7 +25219,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.0-nightly-20190809111755",
+  version: "1.10.1-nightly-20190810111827",
 
   /**
    * Generate chart
@@ -25314,7 +25318,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.0-nightly-20190809111755
+ * @version 1.10.1-nightly-20190810111827
  */
 
 

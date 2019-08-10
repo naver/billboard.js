@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.0-nightly-20190809111755
+ * @version 1.10.1-nightly-20190810111827
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6660,8 +6660,11 @@ extend(ChartInternal_ChartInternal.prototype, {
     };
   },
   updateXs: function updateXs() {
-    var $$ = this;
-    $$.xs = $$.axis.getTickValues("x") || [];
+    var $$ = this,
+        targets = $$.data.targets;
+    targets.length && ($$.xs = [], targets[0].values.forEach(function (v) {
+      $$.xs[v.index] = v.x;
+    }));
   },
   getPrevX: function getPrevX(i) {
     var x = this.xs[i - 1];
@@ -7481,13 +7484,13 @@ extend(ChartInternal_ChartInternal.prototype, {
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
       // Set data and update $$.eventRect
-      var xAxisTickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values : ($$.axis.getTickValues("x") || []).map(function (x, index) {
+      var xAxisTickValues = $$.axis.getTickValues("x");
+      xAxisTickValues = $$.flowing || !xAxisTickValues || config.axis_x_tick_count ? $$.getMaxDataCountTarget($$.data.targets).values : xAxisTickValues.map(function (x, index) {
         return {
           x: x,
           index: index
         };
-      });
-      eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      }), eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -14017,7 +14020,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.0-nightly-20190809111755",
+  version: "1.10.1-nightly-20190810111827",
 
   /**
    * Generate chart
@@ -14116,7 +14119,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.0-nightly-20190809111755
+ * @version 1.10.1-nightly-20190810111827
  */
 
 
