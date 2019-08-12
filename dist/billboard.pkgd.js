@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190810111827
+ * @version 1.10.1-nightly-20190812111913
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.9.7
@@ -22510,7 +22510,7 @@ function defaultConstrain(transform, extent, translateExtent) {
       t = touches[i], p = src_touch(this, touches, t.identifier);
       p = [p, this.__zoom.invert(p), t.identifier];
       if (!g.touch0) g.touch0 = p, started = true, g.taps = 1 + !!touchstarting;
-      else if (!g.touch1) g.touch1 = p, g.taps = 0;
+      else if (!g.touch1 && g.touch0[2] !== p[2]) g.touch1 = p, g.taps = 0;
     }
 
     if (touchstarting) touchstarting = clearTimeout(touchstarting);
@@ -25219,7 +25219,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.1-nightly-20190810111827",
+  version: "1.10.1-nightly-20190812111913",
 
   /**
    * Generate chart
@@ -25318,7 +25318,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.1-nightly-20190810111827
+ * @version 1.10.1-nightly-20190812111913
  */
 
 
