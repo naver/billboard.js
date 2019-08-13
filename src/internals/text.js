@@ -121,7 +121,7 @@ extend(ChartInternal.prototype, {
 				const [cx, cy] = d3PolygonCentroid(cell);
 				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
 				const xTranslate = (angle === 0) ? voronoiExtent : -voronoiExtent;
-				const yTranslate = (angle === -1) ? -voronoiExtent : voronoiExtent + 3;
+				const yTranslate = (angle === -1) ? -voronoiExtent : voronoiExtent + 5;
 				const txtAnchor = (angle === -1 || angle === 1) ? "middle" : (angle === 0) ? "start" : "end";
 				const dy = (angle === 1) ? "0.71em" : "0.35em";
 
