@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190812111913
+ * @version 1.10.1-nightly-20190813111920
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1863,7 +1863,7 @@ function () {
     classCallCheck_default()(this, ChartInternal);
 
     var $$ = this;
-    $$.api = api, $$.config = $$.getOptions(), $$.data = {}, $$.cache = {}, $$.axes = {};
+    $$.api = api, $$.config = $$.getOptions(), $$.data = {}, $$.cache = {}, $$.axes = {}, $$.rendered = !1;
   }
 
   return createClass_default()(ChartInternal, [{
@@ -1881,10 +1881,55 @@ function () {
   }, {
     key: "init",
     value: function init() {
-      var $$ = this;
+      var $$ = this,
+          config = $$.config;
       $$.initParams();
-      var convertedData = $$.convertData($$.config, $$.initWithData);
-      convertedData && $$.initWithData(convertedData);
+      var bindto = {
+        element: config.bindto,
+        classname: "bb"
+      };
+      isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser["a" /* document */].body.appendChild(browser["a" /* document */].createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.initToRender();
+    }
+    /**
+     * Initialize the rendering process
+     * @param {Boolean} forced Force to render process
+     * @private
+     */
+
+  }, {
+    key: "initToRender",
+    value: function initToRender(forced) {
+      var $$ = this,
+          config = $$.config,
+          target = $$.selectChart,
+          isHidden = function () {
+        return target.style("display") === "none" || target.style("visibility") === "hidden";
+      },
+          isLazy = config.render.lazy || isHidden(),
+          hasObserver = isDefined(MutationObserver);
+
+      if (isLazy && hasObserver && config.render.observe !== !1 && !forced && new MutationObserver(function (mutationsList, observer) {
+        var _iteratorNormalCompletion = !0,
+            _didIteratorError = !1,
+            _iteratorError = undefined;
+
+        try {
+          for (var _step, mutation, _iterator = mutationsList[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) mutation = _step.value, mutation.attributeName !== "style" || isHidden() || (observer.disconnect(), !$$.rendered && $$.initToRender(!0));
+        } catch (err) {
+          _didIteratorError = !0, _iteratorError = err;
+        } finally {
+          try {
+            _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
+          } finally {
+            if (_didIteratorError) throw _iteratorError;
+          }
+        }
+      }).observe(target.node(), {
+        attributes: !0
+      }), !isLazy || forced) {
+        var convertedData = $$.convertData(config, $$.initWithData);
+        convertedData && $$.initWithData(convertedData);
+      }
     }
   }, {
     key: "initParams",
@@ -1920,13 +1965,8 @@ function () {
     value: function initWithData(data) {
       var $$ = this,
           config = $$.config;
-      $$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom();
-      var bindto = {
-        element: config.bindto,
-        classname: "bb"
-      };
 
-      if (isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser["a" /* document */].body.appendChild(browser["a" /* document */].createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom(), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$, $$.api);
@@ -1958,7 +1998,7 @@ function () {
       } // Bind resize event
 
 
-      $$.bindResize(), $$.api.element = $$.selectChart.node();
+      $$.bindResize(), $$.api.element = $$.selectChart.node(), $$.rendered = !0;
     }
   }, {
     key: "initChartElements",
@@ -5990,6 +6030,45 @@ var Options_Options = function Options() {
     radar_direction_clockwise: !1,
 
     /**
+     * Control the render timing
+     * @name render
+     * @memberof Options
+     * @type {Object}
+     * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+     * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
+     * @example
+     *  render: {
+     *    lazy: true,
+     *    observe: true
+     * }
+     *
+     * @example
+     *	<!-- render.lazy will detect visibility defined as inline or rule -->
+     *  <div id='chart' style='display:none'></div>
+     *
+     *  // render.lazy enabled by default when element is hidden
+     *  var chart = bb.generate({ ... });
+     *
+     *  // chart will be rendered automatically when element's visibility changes
+     *  // Note: works only for inline attribute's value changes
+     *  document.getElementById('chart').style.display = 'block';
+     *
+     * @example
+     *	// chart won't be rendered and not observing bind element's visiblity changes
+     *  var chart = bb.generate({
+     *     render: {
+     *          lazy: true,
+     *          observe: false
+     *     }
+     *  });
+     *
+     *  // call at any point when you want to render
+     *  chart.flush();
+     */
+    render: {},
+
+    /**
      * Show rectangles inside the chart.<br><br>
      * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
      * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
@@ -7199,7 +7278,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var key = "data_".concat(v);
       key in args && (data[v] = args[key]);
     })) : data = args, data.url && callback) $$.convertUrlToData(data.url, data.mimeType, data.headers, data.keys, callback);else if (data.json) data = $$.convertJsonToData(data.json, data.keys);else if (data.rows) data = $$.convertRowsToData(data.rows);else if (data.columns) data = $$.convertColumnsToData(data.columns);else if (args.bindto) throw Error("url or json or rows or columns is required.");
-    return data;
+    return isArray(data) && data;
   },
   convertUrlToData: function convertUrlToData(url) {
     var _this = this,
@@ -13701,9 +13780,8 @@ extend(Chart_Chart.prototype, {
    * chart.flush(true);
    */
   flush: function flush(soft, isFromResize) {
-    var $$ = this.internal; // reset possible zoom scale
-
-    isFromResize ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.zoomScale = null, soft ? $$.redraw({
+    var $$ = this.internal;
+    $$.rendered ? (isFromResize ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.zoomScale = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -13712,7 +13790,7 @@ extend(Chart_Chart.prototype, {
       withLegend: !0,
       withTransition: !1,
       withTransitionForTransform: !1
-    });
+    })) : $$.initToRender(!0);
   },
 
   /**
@@ -14020,7 +14098,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.1-nightly-20190812111913",
+  version: "1.10.1-nightly-20190813111920",
 
   /**
    * Generate chart
@@ -14119,7 +14197,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.1-nightly-20190812111913
+ * @version 1.10.1-nightly-20190813111920
  */
 
 
