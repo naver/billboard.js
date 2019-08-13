@@ -339,4 +339,56 @@ describe("Interface & initialization", () => {
 			});
 		});
 	});
+
+	describe("check for lazy rendering", () => {
+		const args = {
+			data: {
+				columns: [
+					["data1", 300, 350, 300]
+				]
+			}
+		};
+
+		before(() => {
+			// hide to lazy render
+			document.body.querySelector("#chart").style.display = "none";
+
+			chart = util.generate(args);
+		});
+
+		it("check lazy rendering & mutation observer", done => {
+			const el = document.body.querySelector("#chart");
+
+			expect(el.innerHTML).to.be.empty;
+
+			el.style.display = "block";
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				done();
+			}, 500);
+		});
+
+		it("check lazy rendering via option", done => {
+			const el = document.body.querySelector("#chart");
+
+			args.render = {
+				lazy: true,
+				observe: false
+			};
+
+			chart = util.generate(args);
+
+			// chart shouldn't be rendered
+			expect(el.innerHTML).to.be.empty;
+
+			// call to render
+			chart.flush();
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				done();
+			}, 500);
+		});
+	});
 });
