@@ -102,44 +102,33 @@ extend(ChartInternal.prototype, {
 		return color || $$.color(d);
 	},
 
-	preventLabelOverlap: function preventLabelOverlap() {
+	preventLabelOverlap() {
 		const $$ = this;
 		const overlap = $$.config.data_labels_overlap;
-		const plottedCoordinates = [];
-
-		for (let i = 0; i < ($$.mainText._groups).length; i++) {
-			$$.mainText.each(v => {
-				plottedCoordinates.push([v.x, v.value]);
-			});
-		}
+		const plottedCoordinates = $$.mainText.data().map(v => [v.x, v.value]);
 		const voronoiCells = $$.generateVoronoi(plottedCoordinates);
+		const searchVoronoi = voronoiCells.map(x => x.data).map(JSON.stringify);
 		const voronoiExtent = (typeof (overlap) === "object" && $$.config.data_labels_overlap.extent !== undefined) ? $$.config.data_labels_overlap.extent : 1;
 		const labelArea = (typeof (overlap) === "object" && $$.config.data_labels_overlap.area !== undefined) ? $$.config.data_labels_overlap.area : 0;
 
 		$$.mainText.each(function(d) {
 			const text = d3Select(this);
-			const searchJson = JSON.stringify([d.x, d.value]);
-			const elementPos = voronoiCells.map(x => x.data).map(JSON.stringify)
-				.indexOf(searchJson);
+			const elementPos = searchVoronoi.indexOf(JSON.stringify([d.x, d.value]));
 			const cell = elementPos !== -1 ? voronoiCells[elementPos] : undefined;
-			let xTranslate = 0;
-			let yTranslate = 0;
-			let dy = 0;
-			let txtAnchor = "middle";
 
 			if (cell && text) {
 				const [x, y] = cell.data;
 				const [cx, cy] = d3PolygonCentroid(cell);
 				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
+				const xTranslate = (angle === 0) ? voronoiExtent : -voronoiExtent;
+				const yTranslate = (angle === -1) ? -voronoiExtent : voronoiExtent + 3;
+				const txtAnchor = (angle === -1 || angle === 1) ? "middle" : (angle === 0) ? "start" : "end";
+				const dy = (angle === 1) ? "0.71em" : "0.35em";
 
 				if (d3PolygonArea(cell) < labelArea) {
 					text.attr("display", "none");
 				}
 
-				xTranslate = (angle === 0) ? (xTranslate + voronoiExtent) : (xTranslate - voronoiExtent);
-				yTranslate = (angle === -1) ? (yTranslate - voronoiExtent) : (yTranslate + voronoiExtent + 5);
-				txtAnchor = (angle === -1 || angle === 1) ? "middle" : (angle === 0) ? "start" : "end";
-				dy = (angle === 1) ? "0.71em" : "0.35em";
 				text
 					.attr("text-anchor", txtAnchor)
 					.attr("dy", dy)
