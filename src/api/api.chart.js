@@ -45,26 +45,31 @@ extend(Chart.prototype, {
 	flush(soft, isFromResize) {
 		const $$ = this.internal;
 
-		// reset possible zoom scale
-		if (isFromResize) {
-			$$.brush && $$.brush.updateResize();
+
+		if ($$.rendered) {
+			// reset possible zoom scale
+			if (isFromResize) {
+				$$.brush && $$.brush.updateResize();
+			} else {
+				// re-update config info
+				$$.axis && $$.axis.setOrient();
+			}
+
+			$$.zoomScale = null;
+
+			soft ? $$.redraw({
+				withTransform: true,
+				withUpdateXDomain: true,
+				withUpdateOrgXDomain: true,
+				withLegend: true
+			}) : $$.updateAndRedraw({
+				withLegend: true,
+				withTransition: false,
+				withTransitionForTransform: false,
+			});
 		} else {
-			// re-update config info
-			$$.axis && $$.axis.setOrient();
+			$$.initToRender(true);
 		}
-
-		$$.zoomScale = null;
-
-		soft ? $$.redraw({
-			withTransform: true,
-			withUpdateXDomain: true,
-			withUpdateOrgXDomain: true,
-			withLegend: true
-		}) : $$.updateAndRedraw({
-			withLegend: true,
-			withTransition: false,
-			withTransitionForTransform: false,
-		});
 	},
 
 	/**

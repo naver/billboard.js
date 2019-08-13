@@ -187,6 +187,7 @@ export default {
 	generate,
 	hexToRgb,
 	hoverChart,
+	initDom,
 	parseNum,
 	parseSvgPath,
 	simulator
