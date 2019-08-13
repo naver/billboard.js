@@ -578,7 +578,7 @@ export interface ChartOptions {
 	/**
 	 * Control the render timing
 	 */
-	redner?: {
+	render?: {
 		/**
 		 * Make to not render at initialization (enabled by default when bind element's visibility is hidden).
 		 */
