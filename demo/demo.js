@@ -2985,6 +2985,44 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		LazyRender: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 0, 0, 0],
+							["data2", 130, 100, 140, 200, 150, 50]
+						]
+					}
+				},
+				style: [
+					"#lazyRender_1 { display: none; }"
+				],
+				func: function(chart) {
+					setTimeout(function() {
+					    document.getElementById("lazyRender_1").style.display = "block";
+					}, 1000)
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300],
+							["data2", 130]
+						],
+						type: "pie"
+					},
+					render: {
+						lazy: true,
+						observe: false
+					}
+				},
+				func: function(chart) {
+					setTimeout(function() { chart.flush(); }, 1000)
+				}
+			}
+		],
 		Padding: {
 			options: {
 				padding: {

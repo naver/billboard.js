@@ -192,11 +192,12 @@ describe("DATA", () => {
 			setTimeout(() => {
 				const data = chart.data();
 
+				expect(chart.$.chart.selectAll("svg").size()).to.be.equal(1);
 				expect(data).to.not.be.null;
 				expect(data.length).to.be.equal(3);
 
 				done();
-			}, 300);
+			}, 500);
 		});
 
 		it("set options data.mimeType='json'", () => {
