@@ -3381,6 +3381,45 @@ export default class Options {
 			radar_direction_clockwise: false,
 
 			/**
+			 * Control the render timing
+			 * @name render
+			 * @memberof Options
+			 * @type {Object}
+			 * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+			 * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
+			 * @example
+			 *  render: {
+			 *    lazy: true,
+			 *    observe: true
+			 * }
+			 *
+			 * @example
+			 *	<!-- render.lazy will detect visibility defined as inline or rule -->
+			 *  <div id='chart' style='display:none'></div>
+			 *
+			 *  // render.lazy enabled by default when element is hidden
+			 *  var chart = bb.generate({ ... });
+			 *
+			 *  // chart will be rendered automatically when element's visibility changes
+			 *  // Note: works only for inline attribute's value changes
+			 *  document.getElementById('chart').style.display = 'block';
+			 *
+			 * @example
+			 *	// chart won't be rendered and not observing bind element's visiblity changes
+			 *  var chart = bb.generate({
+			 *     render: {
+			 *          lazy: true,
+			 *          observe: false
+			 *     }
+			 *  });
+			 *
+			 *  // call at any point when you want to render
+			 *  chart.flush();
+			 */
+			render: {},
+
+			/**
 			 * Show rectangles inside the chart.<br><br>
 			 * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
 			 * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.

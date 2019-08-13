@@ -50,7 +50,7 @@ extend(ChartInternal.prototype, {
 			throw Error("url or json or rows or columns is required.");
 		}
 
-		return data;
+		return isArray(data) && data;
 	},
 
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
