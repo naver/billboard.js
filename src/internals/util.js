@@ -159,6 +159,9 @@ const getBrushSelection = ctx => {
 	return selection;
 };
 
+// Get boundingClientRect. Cache the evaluated value once it was called.
+const getBoundingRect = node => node.rect || (node.rect = node.getBoundingClientRect());
+
 // retrun random number
 const getRandom = (asStr = true) => Math.random() + (asStr ? "" : 0);
 
@@ -414,6 +417,7 @@ export {
 	emulateEvent,
 	extend,
 	getBrushSelection,
+	getBoundingRect,
 	getCssRules,
 	getMinMax,
 	getOption,
