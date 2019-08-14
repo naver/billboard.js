@@ -926,7 +926,7 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [67, 49, 67, 423];
+					const expectedYs = [68, 50, 68, 423];
 					const expectedXs = [75, 225, 374, 524];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
@@ -1522,6 +1522,44 @@ describe("DATA", () => {
 						}
 					});
 				}, 500);
+			});
+		});
+
+		describe("when all data values are 0", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 0, 0, 0, 0],
+						],
+						labels: true
+					},
+					axis: {
+						y: {
+							min: 0
+						}
+					}
+				};
+			});
+
+			it("label text should locate above the data points", () => {
+				const texts = chart.$.text.texts.nodes();
+
+				chart.$.line.circles.each(function(d, i) {
+					expect(+this.getAttribute("cy")).to.be.above(+texts[i].getAttribute("y"));
+				});
+			});
+
+			it("set options axis.rotated=true", () => {
+				args.axis.rotated = true;
+			});
+
+			it("label text should locate above the data points", () => {
+				const texts = chart.$.text.texts.nodes();
+
+				chart.$.line.circles.each(function(d, i) {
+					expect(+this.getAttribute("cx")).to.be.below(+texts[i].getAttribute("x"));
+				});
 			});
 		});
 	});
