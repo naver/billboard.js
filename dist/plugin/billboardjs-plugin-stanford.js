@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190813111920
+ * @version 1.10.1-nightly-20190814111936
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -734,6 +734,9 @@ var isValue = function (v) {
       main = ctx.context || ctx.main;
   return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select(".".concat(classes.brush)).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
 },
+    getBoundingRect = function (node) {
+  return node.rect || (node.rect = node.getBoundingClientRect());
+},
     getRandom = function () {
   var asStr = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0];
   return Math.random() + (asStr ? "" : 0);
@@ -966,7 +969,7 @@ function () {
   }]), Plugin;
 }();
 
-defineProperty_default()(Plugin_Plugin, "version", "1.10.1-nightly-20190813111920");
+defineProperty_default()(Plugin_Plugin, "version", "1.10.1-nightly-20190814111936");
 
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
