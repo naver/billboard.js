@@ -575,6 +575,9 @@ export default class Options {
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
  			 * @property {String|Object} [data.labels.colors] Set label text colors.
+			 * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
+    		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
+     		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
@@ -583,6 +586,7 @@ export default class Options {
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
 			 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
 			 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+			 * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
 			 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
 			 * @example
 			 * data: {
@@ -611,6 +615,15 @@ export default class Options {
 			 *        data3: "green"
 			 *     },
 			 *
+			 *     //turn on overlap prevention
+			 *     overlap: false,
+			 *
+		 	 *	   //set extent of prevent overlap, and minimum area needed to show a data label
+			 *	   overlap: {
+			 *     	   extent : 6,
+			 *         area: 2,
+			 *     },
+			 *
 			 *     // set x, y coordinate position
 			 *     position: {
 			 *        x: -10,
@@ -622,6 +635,7 @@ export default class Options {
 			data_labels: {},
 			data_labels_colors: undefined,
 			data_labels_position: {},
+			data_labels_overlap: true,
 
 			/**
 			 *  This option changes the order of stacking data and pieces of pie/donut.

@@ -528,6 +528,71 @@ describe("DATA", () => {
 				});
 			});
 
+			it("set options data.labels.overlap", () => {
+				args.data.labels = {
+					overlap: false
+				};
+			});
+
+			it("should move data labels into correct position", () => {
+				const expectedTextDy = {
+					data1: ["0.35em", "0.71em", "0.71em"],
+					data2: ["0.35em", "0.35em", "0.71em"],
+					data3: ["0.71em", "0.71em", "0.35em"],
+					data4: ["0.71em", "0.35em", "0.35em"]
+				};
+				const expectedTextTransform = {
+					data1: ["translate(-1, -1)", "translate(-1, 6)", "translate(-1, 6)"],
+					data2: ["translate(-1, -1)", "translate(-1, -1)", "translate(-1, 6)"],
+					data3: ["translate(-1, 6)", "translate(-1, 6)", "translate(-1, -1)"],
+					data4: ["translate(-1, 6)", "translate(-1, -1)", "translate(-1, -1)"]
+				};
+
+				Object.keys(expectedTextDy).forEach(key => {
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
+						const text = d3.select(this);
+
+						expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
+						expect(text.attr("transform")).to.be.equal(expectedTextTransform[key][i]);
+					});
+				});
+
+			});
+
+			it("set options data.labels.overlap", () => {
+				args.data.labels = {
+					overlap: {
+						extent: 8,
+						area: 3
+					}
+				};
+			});
+
+			it("should move data labels into correct position with specified extent and area", () => {
+				const expectedTextDy = {
+					data1: ["0.35em", "0.71em", "0.71em"],
+					data2: ["0.35em", "0.35em", "0.71em"],
+					data3: ["0.71em", "0.71em", "0.35em"],
+					data4: ["0.71em", "0.35em", "0.35em"]
+				};
+				const expectedTextTransform = {
+					data1: ["translate(-8, -8)", "translate(-8, 13)", "translate(-8, 13)"],
+					data2: ["translate(-8, -8)", "translate(-8, -8)", "translate(-8, 13)"],
+					data3: ["translate(-8, 13)", "translate(-8, 13)", "translate(-8, -8)"],
+					data4: ["translate(-8, 13)", "translate(-8, -8)", "translate(-8, -8)"]
+				};
+
+				Object.keys(expectedTextDy).forEach(key => {
+					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
+						const text = d3.select(this);
+
+						expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
+						expect(text.attr("transform")).to.be.equal(expectedTextTransform[key][i]);
+					});
+				});
+
+			});
+
 			it("set options data.labels.position", () => {
 				args.data.labels = {
 					position: {
@@ -927,7 +992,7 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [67, 49, 67, 423];
+					const expectedYs = [68, 50, 68, 423];
 					const expectedXs = [75, 225, 374, 524];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
@@ -1523,6 +1588,44 @@ describe("DATA", () => {
 						}
 					});
 				}, 500);
+			});
+		});
+
+		describe("when all data values are 0", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 0, 0, 0, 0],
+						],
+						labels: true
+					},
+					axis: {
+						y: {
+							min: 0
+						}
+					}
+				};
+			});
+
+			it("label text should locate above the data points", () => {
+				const texts = chart.$.text.texts.nodes();
+
+				chart.$.line.circles.each(function(d, i) {
+					expect(+this.getAttribute("cy")).to.be.above(+texts[i].getAttribute("y"));
+				});
+			});
+
+			it("set options axis.rotated=true", () => {
+				args.axis.rotated = true;
+			});
+
+			it("label text should locate above the data points", () => {
+				const texts = chart.$.text.texts.nodes();
+
+				chart.$.line.circles.each(function(d, i) {
+					expect(+this.getAttribute("cx")).to.be.below(+texts[i].getAttribute("x"));
+				});
 			});
 		});
 	});
