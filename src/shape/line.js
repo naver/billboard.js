@@ -540,7 +540,7 @@ extend(ChartInternal.prototype, {
 		$$.mainCircle.exit().remove();
 
 		$$.mainCircle = $$.mainCircle.enter()
-			.append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color))
+			.append($$.point("create", this, $$.pointR.bind($$), $$.color))
 			.merge($$.mainCircle)
 			.style("stroke", $$.color)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
@@ -561,7 +561,7 @@ extend(ChartInternal.prototype, {
 			const result = fn(d);
 
 			mainCircles.push(result);
-		}).attr("class", $$.classCircle.bind($$));
+		});
 
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
