@@ -598,9 +598,6 @@ export default class ChartInternal {
 		// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 		$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
-		// update data's index value to be alinged with the x Axis
-		$$.updateDataIndexByX();
-
 		// update circleY based on updated parameters
 		$$.updateCircleY();
 
