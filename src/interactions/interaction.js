@@ -61,11 +61,12 @@ extend(ChartInternal.prototype, {
 				.merge(eventRectUpdate);
 		} else {
 			// Set data and update $$.eventRect
-			let xAxisTickValues = $$.axis.getTickValues("x");
+			const xAxisTickValues = $$.getMaxDataCountTarget();
 
-			xAxisTickValues = ($$.flowing || !xAxisTickValues || config.axis_x_tick_count) ?
-				$$.getMaxDataCountTarget($$.data.targets).values :
-				xAxisTickValues.map((x, index) => ({x, index}));
+			// update data's index value to be alinged with the x Axis
+			$$.updateDataIndexByX(xAxisTickValues);
+			$$.updateXs(xAxisTickValues);
+			$$.updatePointClass(true);
 
 			eventRects.datum(xAxisTickValues);
 
@@ -211,9 +212,6 @@ extend(ChartInternal.prototype, {
 				rectW = $$.getEventRectWidth();
 				rectX = d => xScale(d.x) - (rectW / 2);
 			} else {
-				// update index for x that is used by prevX and nextX
-				$$.updateXs();
-
 				const getPrevNextX = d => {
 					const index = d.index;
 

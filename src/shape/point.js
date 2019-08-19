@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "../internals/ChartInternal";
 import {document} from "../internals/browser";
-import {getRandom, isFunction, isObjectType, toArray, extend, notEmpty} from "../internals/util";
+import {getRandom, isFunction, isObject, isObjectType, toArray, extend, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	hasValidPointType(type) {
@@ -62,6 +62,19 @@ extend(ChartInternal.prototype, {
 		return this.defs.select(`#${id}`);
 	},
 
+	updatePointClass(d) {
+		const $$ = this;
+		let pointClass = false;
+
+		if (isObject(d) || $$.mainCircle) {
+			pointClass = d === true ?
+				$$.mainCircle.attr("class", $$.classCircle.bind($$)) :
+				$$.classCircle(d);
+		}
+
+		return pointClass;
+	},
+
 	generatePoint() {
 		const $$ = this;
 		const config = $$.config;
@@ -104,10 +117,10 @@ extend(ChartInternal.prototype, {
 	},
 
 	custom: {
-		create(element, id, cssClassFn, sizeFn, fillStyleFn) {
+		create(element, id, sizeFn, fillStyleFn) {
 			return element.append("use")
 				.attr("xlink:href", `#${id}`)
-				.attr("class", cssClassFn)
+				.attr("class", this.updatePointClass.bind(this))
 				.style("fill", fillStyleFn)
 				.node();
 		},
@@ -140,9 +153,9 @@ extend(ChartInternal.prototype, {
 
 	// 'circle' data point
 	circle: {
-		create(element, cssClassFn, sizeFn, fillStyleFn) {
+		create(element, sizeFn, fillStyleFn) {
 			return element.append("circle")
-				.attr("class", cssClassFn)
+				.attr("class", this.updatePointClass.bind(this))
 				.attr("r", sizeFn)
 				.style("fill", fillStyleFn)
 				.node();
@@ -180,11 +193,11 @@ extend(ChartInternal.prototype, {
 
 	// 'rectangle' data point
 	rectangle: {
-		create(element, cssClassFn, sizeFn, fillStyleFn) {
+		create(element, sizeFn, fillStyleFn) {
 			const rectSizeFn = d => sizeFn(d) * 2.0;
 
 			return element.append("rect")
-				.attr("class", cssClassFn)
+				.attr("class", this.updatePointClass.bind(this))
 				.attr("width", rectSizeFn)
 				.attr("height", rectSizeFn)
 				.style("fill", fillStyleFn)

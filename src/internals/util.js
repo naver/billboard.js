@@ -230,7 +230,13 @@ const getCssRules = styleSheets => {
  * @return {Array} Unique array value
  * @private
  */
-const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
+const getUnique = data => {
+	const isDate = data[0] instanceof Date;
+	const d = (isDate ? data.map(Number) : data)
+		.filter((v, i, self) => self.indexOf(v) === i);
+
+	return isDate ? d.map(v => new Date(v)) : d;
+};
 
 /**
  * Merge array
