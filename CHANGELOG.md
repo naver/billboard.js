@@ -1,3 +1,11 @@
+## [1.10.2](https://github.com/naver/billboard.js/compare/1.10.1...1.10.2) (2019-08-19)
+
+
+### Bug Fixes
+
+* **interaction:** Fix on eventRect rederaw ([d8df023](https://github.com/naver/billboard.js/commit/d8df023)), closes [#1028](https://github.com/naver/billboard.js/issues/1028) [#1019](https://github.com/naver/billboard.js/issues/1019) [#963](https://github.com/naver/billboard.js/issues/963)
+* **text:** Fix data label y position when all data are 0 ([90b6949](https://github.com/naver/billboard.js/commit/90b6949)), closes [#1026](https://github.com/naver/billboard.js/issues/1026)
+
 ## [1.10.1](https://github.com/naver/billboard.js/compare/1.10.0...1.10.1) (2019-08-09)
 
 
