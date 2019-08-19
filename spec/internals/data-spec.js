@@ -141,6 +141,10 @@ describe("DATA", () => {
 			};
 		});
 
+		after(() => {
+			args = {};
+		})
+
 		it("should draw nested JSON correctly", () => {
 			const main = chart.internal.main;
 			const expectedCx = [98, 294, 490];
@@ -218,9 +222,8 @@ describe("DATA", () => {
 				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
 
 				done();
-			}, 300);
+			}, 500);
 		});
-
 	});
 
 	describe("check data.order", () => {
