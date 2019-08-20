@@ -26,8 +26,13 @@ import {extend, isUndefined, isArray} from "../internals/util";
 const data = function(targetIds) {
 	const targets = this.internal.data.targets;
 
-	return isUndefined(targetIds) ?
-		targets : targets.filter(t => targetIds.indexOf(t.id) >= 0);
+	if (!isUndefined(targetIds)) {
+		const ids = isArray(targetIds) ? targetIds : [targetIds];
+
+		return targets.filter(t => ids.some(v => v === t.id));
+	}
+
+	return targets;
 };
 
 extend(data, {
