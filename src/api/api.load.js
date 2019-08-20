@@ -22,14 +22,14 @@ extend(Chart.prototype, {
 	 *    | Key | Description |
 	 *    | --- | --- |
 	 *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
-	 *    | data | Data objects to be loaded |
+	 *    | data | Data objects to be loaded. Checkout the example. |
 	 *    | names | Same as data.names() |
 	 *    | xs | Same as data.xs option  |
 	 *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
 	 *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
 	 *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
 	 *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-	 *    | headers |  Set 'json' if loading JSON via data.url.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+	 *    | headers |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
 	 *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
 	 *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
 	 *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
@@ -56,7 +56,23 @@ extend(Chart.prototype, {
 	 *
 	 * chart.load({
 	 *     url: './data/myAPI.json',
-	 *     mimeType: "json"
+	 *     mimeType: "json",
+	 *
+	 *     // set request header if is needed
+	 *     headers: {
+	 *       "Content-Type": "text/json"
+	 *     }
+	 * });
+	 * @example
+	 * chart.load({
+	 *     data: [
+	 *       // equivalent as: columns: [["data1", 30, 200, 100]]
+	 *       {"data1": 30}, {"data1": 200}, {"data1": 100}
+	 *
+	 *       // or
+	 *       // equivalent as: columns: [["data1", 10, 20], ["data2", 13, 30]]
+	 *       // {"data1": 10, "data2": 13}, {"data1": 20, "data2": 30}}
+	 *     ]
 	 * });
 	 */
 	load(args) {

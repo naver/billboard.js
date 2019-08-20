@@ -142,7 +142,8 @@ describe("INTERACTION", () => {
 						axis: {
 							x: {
 								tick: {
-									fit: false
+									fit: false,
+									count: 5
 								},
 								type: "timeseries"
 							}
@@ -164,6 +165,126 @@ describe("INTERACTION", () => {
 
 						lastX = x;
 					});
+				});
+			});
+
+			describe("timeseries #4", () => {
+				before(() => {
+					args = {
+						data: {
+							x: "x",
+							json: {
+								Temperature:["29.39", "29.7", "29.37", "28.87", "28.62", "27.72", "27.61", "27.82", "27.48", "26.78", "26.62", "26.64", "26.29", "26.01", "25.84", "25.07", "24.85", "24.01", "23.83", "22.8", "23", "22.64", "22.77", "22.64", "22.64", "22.62", "22.51", "21.42", "21.18", "20.93", "20.66", "20.48", "20.7", "21.24", "22.14", "22.78", "23.43", "23.16", "27.48", "26.78", "26.62", "26.64", "26.29", "26.01", "25.84", "25.07", "24.85", "24.01"],
+								x:["01-01-2015 00:00", "02-01-2015 00:00", "03-01-2015 00:00", "04-01-2015 00:00", "05-01-2015 00:00", "06-01-2015 00:00", "07-01-2015 00:00", "08-01-2015 00:00", "09-01-2015 00:00", "10-01-2015 00:00", "11-01-2015 00:00", "12-01-2015 00:00", "01-01-2016 00:00", "02-01-2016 00:00", "03-01-2016 00:00", "04-01-2016 00:00", "05-01-2016 00:00", "06-01-2016 00:00", "07-01-2016 00:00", "08-01-2016 00:00", "09-01-2016 00:00", "10-01-2016 00:00", "11-01-2016 00:00", "12-01-2016 00:00", "01-01-2017 00:00", "02-01-2017 00:00", "03-01-2017 00:00", "04-01-2017 00:00", "05-01-2017 00:00", "06-01-2017 00:00", "07-01-2017 00:00", "08-01-2017 00:00", "09-01-2017 00:00", "10-01-2017 00:00", "11-01-2017 00:00", "12-01-2017 00:00", "01-01-2018 00:00", "02-01-2018 00:00", "03-01-2018 00:00", "04-01-2018 00:00", "05-01-2018 00:00", "06-01-2018 00:00", "07-01-2018 00:00", "08-01-2018 00:00", "09-01-2018 00:00", "10-01-2018 00:00", "11-01-2018 00:00", "12-01-2018 00:00"]
+							},
+							type: "area",
+							xFormat: "%m-%d-%Y %H:%M"
+						},
+						axis: {
+							x: {
+								tick: {
+									fit: false,
+									count: 5
+								},
+								type: "timeseries"
+							}
+						}
+					};
+				});
+
+				it("check if rect & data points are generated correctly", () => {
+					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+					const dataLen = chart.data()[0].values.length;
+					const circles = chart.$.line.circles;
+
+					rect.each((d, i) => {
+						expect(d.index).to.be.equal(i);
+					});
+
+					expect(rect.size()).to.be.equal(dataLen);
+					expect(circles.size()).to.be.equal(dataLen);
+
+					circles.each(function(d, i) {
+						expect(this.classList.contains(`${CLASS.shape}-${i}`)).to.be.true;
+						expect(d.index).to.be.equal(i);
+					});
+				});
+			});
+
+			describe("timeseries #5", () => {
+				before(() => {
+					args = {
+						data: {
+							x: "x",
+							columns: [
+								["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06", "2013-01-07", "2013-01-08", "2013-01-09", "2013-01-10", "2013-01-11", "2013-01-12"],
+								["sample", 30, 200, 100, 400, 150, 250, 30, 200, 100, 400, 150, 250],
+								["sample2", 130, 100, 200, 300, 250, 150, 230, 130]
+							]
+						},
+						axis: {
+							x: {
+							type: "timeseries",
+							tick: {
+								values: [
+									"2013-01-05",
+									"2013-01-10"
+								]
+							}
+							}
+						}
+					};
+				});
+
+				it("check if rect & data points are generated correctly", () => {
+					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+					const dataLen = chart.data()[0].values.length;
+					const circles = chart.$.line.circles;
+
+					const sampleCircle = circles.filter(d => d.id === "sample");
+					const sample2Circle = circles.filter(d => d.id === "sample2");
+
+					rect.each((d, i) => {
+						expect(d.index).to.be.equal(i);
+					});
+
+					expect(rect.size()).to.be.equal(dataLen);
+					expect(sampleCircle.size()).to.be.equal(dataLen);
+
+					sampleCircle.each(function(d, i) {
+						expect(this.classList.contains(`${CLASS.circle}-${i}`)).to.be.true;
+						expect(d.index).to.be.equal(i);
+					});
+
+					sample2Circle.each(function(d, i) {
+						expect(this.classList.contains(`${CLASS.circle}-${i}`)).to.be.true;
+						expect(d.index).to.be.equal(i);
+					});
+				});
+
+				it("check changes when 'sample' data is hidden", done => {
+					// when
+					chart.toggle("sample");
+
+					setTimeout(() => {
+						const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+						const dataLen = chart.data()[1].values.length;
+						const circles = chart.$.line.circles.filter(d => d.id === "sample2");
+
+						rect.each((d, i) => {
+							expect(d.index).to.be.equal(i);
+						});
+
+						expect(rect.size()).to.be.equal(dataLen);
+						expect(circles.size()).to.be.equal(dataLen);
+
+						circles.each(function(d, i) {
+							expect(this.classList.contains(`${CLASS.circle}-${i}`)).to.be.true;
+							expect(d.index).to.be.equal(i);
+						});
+
+						done();
+					}, 500);
 				});
 			});
 
@@ -191,6 +312,64 @@ describe("INTERACTION", () => {
 
 						rect.push(x + width);
 					});
+				});
+			});
+
+			describe("flow", () => {
+				before(() => {
+					args = {
+						data: {
+							x: "x",
+							columns: [
+								["x", "2012-12-29", "2012-12-30", "2012-12-31"],
+								["data1", 230, 300, 330],
+								["data2", 190, 230, 200]
+							]
+						},
+						axis: {
+							x: {
+								type: "timeseries",
+								tick: {
+									format: "%m/%d"
+								}
+							}
+						}
+					};
+				});
+
+				it("check rect & data points generated after flow correctly", done => {
+					setTimeout(() => {
+						chart.flow({
+							columns: [
+								["x", '2013-01-11', '2013-01-21'],
+								["data1", 500, 200],
+								["data2", 100, 300]
+							],
+							duration: 500,
+							done: function() {
+								const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
+								const circlesData1 = chart.$.main.selectAll(`.${CLASS.circles}-data1 circle`);
+								const circlesData2 = chart.$.main.selectAll(`.${CLASS.circles}-data2 circle`);
+
+								rect.each((d, i) => {
+									expect(d.index).to.be.equal(i);
+								});
+
+								["data1", "data2"].forEach(v => {
+									expect(rect.size()).to.be.equal(chart.data(v)[0].values.length);
+								});
+
+								[circlesData1, circlesData2].forEach(v => {
+									v.each(function(d, i) {
+										expect(this.classList.contains(`${CLASS.circle}-${i}`)).to.be.true;
+										expect(d.index).to.be.equal(i);
+									});
+								});
+
+								done();
+							}
+						});
+					}, 500);
 				});
 			});
 		});
@@ -331,7 +510,7 @@ describe("INTERACTION", () => {
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
 				const delta = 50;
-console.log(JSON.stringify(args))
+
 				util.fireEvent(rect, "click", {
 					clientX: circle.x + delta,
 					clientY: circle.y + delta
