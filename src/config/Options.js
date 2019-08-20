@@ -618,9 +618,9 @@ export default class Options {
 			 *     //turn on overlap prevention
 			 *     overlap: false,
 			 *
-		 	 *	   //set extent of prevent overlap, and minimum area needed to show a data label
-			 *	   overlap: {
-			 *     	   extent : 6,
+		 	 *     //set extent of prevent overlap, and minimum area needed to show a data label
+			 *     overlap: {
+			 *         extent : 6,
 			 *         area: 2,
 			 *     },
 			 *
@@ -1226,17 +1226,17 @@ export default class Options {
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
 			 * @example
 			 *  subchart: {
-			 * 		axis: {
-			 * 			x: {
-			 * 				show: true,
-			 * 				tick: {
-			 * 					show: true,
-			 * 					text: {
-			 * 						show: false
-			 * 					}
-			 * 				}
-			 * 			}
-			 * 		},
+			 *      axis: {
+			 *      	x: {
+			 *      	  show: true,
+			 *      	    tick: {
+			 *      	      show: true,
+			 *      	      text: {
+			 *      	        show: false
+			 *      	      }
+			 *      	    }
+			 *      	}
+			 *      },
 			 *      show: true,
 			 *      size: {
 			 *          height: 20
@@ -3090,15 +3090,15 @@ export default class Options {
 			 *      	x: [0, 0],  // x1, x2 attributes
 			 *      	y: [0, 0],  // y1, y2 attributes
 			 *      	stops: [
-			 *      		// offset, stop-color, stop-opacity
-			 *      		[0, "#7cb5ec", 1],
+			 *      	  // offset, stop-color, stop-opacity
+			 *      	  [0, "#7cb5ec", 1],
 			 *
-			 *      		// setting 'null' for stop-color, will set its original data color
-			 *      		[0.5, null, 0],
+			 *      	  // setting 'null' for stop-color, will set its original data color
+			 *      	  [0.5, null, 0],
 			 *
-			 *      		// setting 'function' for stop-color, will pass data id as argument.
-			 *      		// It should return color string or null value
-			 *      		[1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+			 *      	  // setting 'function' for stop-color, will pass data id as argument.
+			 *      	  // It should return color string or null value
+			 *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
 			 *      	]
 			 *      }
 			 *  }
