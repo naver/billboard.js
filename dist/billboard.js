@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190814111936
+ * @version 1.10.1-nightly-20190820235823
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -772,9 +772,13 @@ var isValue = function (v) {
   }), rules;
 },
     getUnique = function (data) {
-  return data.filter(function (v, i, self) {
+  var isDate = data[0] instanceof Date,
+      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
     return self.indexOf(v) === i;
   });
+  return isDate ? d.map(function (v) {
+    return new Date(v);
+  }) : d;
 },
     mergeArray = function (arr) {
   return arr && arr.length ? arr.reduce(function (p, c) {
@@ -2186,7 +2190,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateDataIndexByX(), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && ($$.redrawEventRect(), $$.bindZoomEvent()), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Generate redraw list
@@ -3270,9 +3274,9 @@ var Options_Options = function Options() {
      *     //turn on overlap prevention
      *     overlap: false,
      *
-    	 *	   //set extent of prevent overlap, and minimum area needed to show a data label
-     *	   overlap: {
-     *     	   extent : 6,
+    	 *     //set extent of prevent overlap, and minimum area needed to show a data label
+     *     overlap: {
+     *         extent : 6,
      *         area: 2,
      *     },
      *
@@ -3810,16 +3814,20 @@ var Options_Options = function Options() {
 
     /**
      * Used if loading JSON via data.url.
+     * - **Available Values:**
+     *   - json
+     *   - csv
+     *   - tsv
      * @name data․mimeType
      * @memberof Options
      * @type {String}
-     * @default undefined
+     * @default csv
      * @example
      * data: {
      *     mimeType: "json"
      * }
      */
-    data_mimeType: undefined,
+    data_mimeType: "csv",
 
     /**
      * Choose which JSON object keys correspond to desired data.
@@ -3877,17 +3885,17 @@ var Options_Options = function Options() {
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
      * @example
      *  subchart: {
-     * 		axis: {
-     * 			x: {
-     * 				show: true,
-     * 				tick: {
-     * 					show: true,
-     * 					text: {
-     * 						show: false
-     * 					}
-     * 				}
-     * 			}
-     * 		},
+     *      axis: {
+     *      	x: {
+     *      	  show: true,
+     *      	    tick: {
+     *      	      show: true,
+     *      	      text: {
+     *      	        show: false
+     *      	      }
+     *      	    }
+     *      	}
+     *      },
      *      show: true,
      *      size: {
      *          height: 20
@@ -5749,15 +5757,15 @@ var Options_Options = function Options() {
      *      	x: [0, 0],  // x1, x2 attributes
      *      	y: [0, 0],  // y1, y2 attributes
      *      	stops: [
-     *      		// offset, stop-color, stop-opacity
-     *      		[0, "#7cb5ec", 1],
+     *      	  // offset, stop-color, stop-opacity
+     *      	  [0, "#7cb5ec", 1],
      *
-     *      		// setting 'null' for stop-color, will set its original data color
-     *      		[0.5, null, 0],
+     *      	  // setting 'null' for stop-color, will set its original data color
+     *      	  [0.5, null, 0],
      *
-     *      		// setting 'function' for stop-color, will pass data id as argument.
-     *      		// It should return color string or null value
-     *      		[1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+     *      	  // setting 'function' for stop-color, will pass data id as argument.
+     *      	  // It should return color string or null value
+     *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
      *      	]
      *      }
      *  }
@@ -6767,11 +6775,9 @@ extend(ChartInternal_ChartInternal.prototype, {
       })
     };
   },
-  updateXs: function updateXs() {
-    var $$ = this,
-        targets = $$.data.targets;
-    targets.length && ($$.xs = [], targets[0].values.forEach(function (v) {
-      $$.xs[v.index] = v.x;
+  updateXs: function updateXs(values) {
+    values.length && (this.xs = values.map(function (v) {
+      return v.x;
     }));
   },
   getPrevX: function getPrevX(i) {
@@ -6911,13 +6917,21 @@ extend(ChartInternal_ChartInternal.prototype, {
       return t.values.length;
     })));
   },
-  getMaxDataCountTarget: function getMaxDataCountTarget(targets) {
-    var maxTarget,
-        length = targets.length,
-        max = 0;
-    return length > 1 ? targets.forEach(function (t) {
-      t.values.length > max && (maxTarget = t, max = t.values.length);
-    }) : maxTarget = length ? targets[0] : null, maxTarget;
+  getMaxDataCountTarget: function getMaxDataCountTarget() {
+    var target = this.filterTargetsToShow() || [],
+        length = target.length;
+    return length > 1 ? (target = target.map(function (t) {
+      return t.values;
+    }).reduce(function (a, b) {
+      return a.concat(b);
+    }).map(function (v) {
+      return v.x;
+    }), target = sortValue(getUnique(target)).map(function (x, index) {
+      return {
+        x: x,
+        index: index
+      };
+    })) : length && (target = target[0].values), target;
   },
   mapToIds: function mapToIds(targets) {
     return targets.map(function (d) {
@@ -7264,19 +7278,16 @@ extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Sort data index to be aligned with x axis.
+   * @param {Array} tickValues Tick array values
    * @private
    */
-  updateDataIndexByX: function updateDataIndexByX() {
-    var $$ = this,
-        isTimeSeries = $$.isTimeSeries(),
-        tickValues = $$.flowing ? $$.getMaxDataCountTarget($$.data.targets).values.map(function (v) {
-      return v.x;
-    }) : $$.axis.getTickValues("x") || [];
+  updateDataIndexByX: function updateDataIndexByX(tickValues) {
+    var $$ = this;
     $$.data.targets.forEach(function (t) {
       t.values.forEach(function (v, i) {
-        isTimeSeries ? tickValues.some(function (d, j) {
-          return !(+d !== +v.x) && (v.index = j, !0);
-        }) : v.index = tickValues.indexOf(v.x), isNumber(v.index) && v.index !== -1 || (v.index = i);
+        tickValues.some(function (d, j) {
+          return !(+d.x !== +v.x) && (v.index = j, !0);
+        }), isNumber(v.index) && v.index !== -1 || (v.index = i);
       });
     });
   }
@@ -7317,9 +7328,9 @@ extend(ChartInternal_ChartInternal.prototype, {
         done = arguments.length > 4 ? arguments[4] : undefined,
         req = new XMLHttpRequest();
 
-    headers && Object.keys(headers).forEach(function (key) {
+    req.open("GET", url), headers && Object.keys(headers).forEach(function (key) {
       req.setRequestHeader(key, headers[key]);
-    }), req.open("GET", url), req.onreadystatechange = function () {
+    }), req.onreadystatechange = function () {
       if (req.readyState === 4) if (req.status === 200) {
         var response = req.responseText;
         response && done.call(_this, _this["convert".concat(capitalize(mimeType), "ToData")](mimeType === "json" ? JSON.parse(response) : response, keys));
@@ -7515,7 +7526,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var data = args.data || $$.convertData(args, function (d) {
         return $$.load($$.convertDataToTargets(d), args);
       });
-      $$.load(data ? $$.convertDataToTargets(data) : null, args);
+      data && $$.load($$.convertDataToTargets(data), args);
     } // reset internally cached data
 
   },
@@ -7592,13 +7603,9 @@ extend(ChartInternal_ChartInternal.prototype, {
         eventRects = $$.main.select(".".concat(config_classes.eventRects)).style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? config.axis_rotated ? "ns-resize" : "ew-resize" : null).classed(config_classes.eventRectsMultiple, isMultipleX).classed(config_classes.eventRectsSingle, !isMultipleX);
     if (eventRects.selectAll(".".concat(config_classes.eventRect)).remove(), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), isMultipleX) eventRectUpdate = $$.eventRect.data([0]), eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter()).merge(eventRectUpdate);else {
       // Set data and update $$.eventRect
-      var xAxisTickValues = $$.axis.getTickValues("x");
-      xAxisTickValues = $$.flowing || !xAxisTickValues || config.axis_x_tick_count ? $$.getMaxDataCountTarget($$.data.targets).values : xAxisTickValues.map(function (x, index) {
-        return {
-          x: x,
-          index: index
-        };
-      }), eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
+      var xAxisTickValues = $$.getMaxDataCountTarget(); // update data's index value to be alinged with the x Axis
+
+      $$.updateDataIndexByX(xAxisTickValues), $$.updateXs(xAxisTickValues), $$.updatePointClass(!0), eventRects.datum(xAxisTickValues), $$.eventRect = eventRects.selectAll(".".concat(config_classes.eventRect)), eventRectUpdate = $$.eventRect.data(function (d) {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
@@ -7668,8 +7675,6 @@ extend(ChartInternal_ChartInternal.prototype, {
       if ($$.isCategorized()) rectW = $$.getEventRectWidth(), rectX = function (d) {
         return xScale(d.x) - rectW / 2;
       };else {
-        $$.updateXs();
-
         var getPrevNextX = function (d) {
           var index = d.index;
           return {
@@ -9067,7 +9072,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this;
     $$.config.point_show && ($$.mainCircle = $$.main.selectAll(".".concat(config_classes.circles)).selectAll(".".concat(config_classes.circle)).data(function (d) {
       return !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
-    }), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.classCircle.bind($$), $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)));
+    }), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)));
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
     var $$ = this,
@@ -9078,7 +9083,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this),
           result = fn(d);
       mainCircles.push(result);
-    }).attr("class", $$.classCircle.bind($$));
+    });
     var posAttr = $$.isCirclePoint() ? "c" : "";
     return [mainCircles, selectedCircles.attr("".concat(posAttr, "x"), cx).attr("".concat(posAttr, "y"), cy)];
   },
@@ -9211,6 +9216,11 @@ extend(ChartInternal_ChartInternal.prototype, {
   pointFromDefs: function pointFromDefs(id) {
     return this.defs.select("#".concat(id));
   },
+  updatePointClass: function updatePointClass(d) {
+    var $$ = this,
+        pointClass = !1;
+    return (isObject(d) || $$.mainCircle) && (pointClass = d === !0 ? $$.mainCircle.attr("class", $$.classCircle.bind($$)) : $$.classCircle(d)), pointClass;
+  },
   generatePoint: function generatePoint() {
     var $$ = this,
         config = $$.config,
@@ -9237,8 +9247,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     return getRandom();
   },
   custom: {
-    create: function create(element, id, cssClassFn, sizeFn, fillStyleFn) {
-      return element.append("use").attr("xlink:href", "#".concat(id)).attr("class", cssClassFn).style("fill", fillStyleFn).node();
+    create: function create(element, id, sizeFn, fillStyleFn) {
+      return element.append("use").attr("xlink:href", "#".concat(id)).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
       var $$ = this,
@@ -9262,8 +9272,8 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   // 'circle' data point
   circle: {
-    create: function create(element, cssClassFn, sizeFn, fillStyleFn) {
-      return element.append("circle").attr("class", cssClassFn).attr("r", sizeFn).style("fill", fillStyleFn).node();
+    create: function create(element, sizeFn, fillStyleFn) {
+      return element.append("circle").attr("class", this.updatePointClass.bind(this)).attr("r", sizeFn).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
       var $$ = this,
@@ -9279,12 +9289,12 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   // 'rectangle' data point
   rectangle: {
-    create: function create(element, cssClassFn, sizeFn, fillStyleFn) {
+    create: function create(element, sizeFn, fillStyleFn) {
       var rectSizeFn = function (d) {
         return sizeFn(d) * 2;
       };
 
-      return element.append("rect").attr("class", cssClassFn).attr("width", rectSizeFn).attr("height", rectSizeFn).style("fill", fillStyleFn).node();
+      return element.append("rect").attr("class", this.updatePointClass.bind(this)).attr("width", rectSizeFn).attr("height", rectSizeFn).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn, withTransition, flow, selectedCircles) {
       var $$ = this,
@@ -12589,14 +12599,14 @@ extend(Chart_Chart.prototype, {
    *    | Key | Description |
    *    | --- | --- |
    *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
-   *    | data | Data objects to be loaded |
+   *    | data | Data objects to be loaded. Checkout the example. |
    *    | names | Same as data.names() |
    *    | xs | Same as data.xs option  |
    *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
    *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
    *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
    *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-   *    | headers |  Set 'json' if loading JSON via data.url.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+   *    | headers |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
    *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
    *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
    *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
@@ -12623,7 +12633,23 @@ extend(Chart_Chart.prototype, {
    *
    * chart.load({
    *     url: './data/myAPI.json',
-   *     mimeType: "json"
+   *     mimeType: "json",
+   *
+   *     // set request header if is needed
+   *     headers: {
+   *       "Content-Type": "text/json"
+   *     }
+   * });
+   * @example
+   * chart.load({
+   *     data: [
+   *       // equivalent as: columns: [["data1", 30, 200, 100]]
+   *       {"data1": 30}, {"data1": 200}, {"data1": 100}
+   *
+   *       // or
+   *       // equivalent as: columns: [["data1", 10, 20], ["data2", 13, 30]]
+   *       // {"data1": 10, "data2": 13}, {"data1": 20, "data2": 30}}
+   *     ]
    * });
    */
   load: function load(args) {
@@ -12877,7 +12903,8 @@ extend(Chart_Chart.prototype, {
       wait.add([$$.axes.x.transition(gt).call(function (g) {
         return $$.xAxis.setTransition(gt).create(g);
       }), mainBar.transition(gt).attr("transform", transform), mainLine.transition(gt).attr("transform", transform), mainArea.transition(gt).attr("transform", transform), mainCircle.transition(gt).attr("transform", transform), mainText.transition(gt).attr("transform", transform), mainRegion.filter($$.isRegionOnX).transition(gt).attr("transform", transform), xgrid.transition(gt).attr("transform", transform), xgridLines.transition(gt).attr("transform", transform)]), gt.call(wait, function () {
-        // remove flowed elements
+        var isRotated = config.axis_rotated; // remove flowed elements
+
         if (flowLength) {
           for (var target = {
             shapes: [],
@@ -12891,7 +12918,7 @@ extend(Chart_Chart.prototype, {
         } // draw again for removing flowed elements and reverting attr
 
 
-        if (xgrid.size() && xgrid.attr("transform", null).attr($$.xgridAttr), xgridLines.attr("transform", null), xgridLines.select("line").attr("x1", config.axis_rotated ? 0 : xv).attr("x2", config.axis_rotated ? $$.width : xv), xgridLines.select("text").attr("x", config.axis_rotated ? $$.width : 0).attr("y", xv), mainBar.attr("transform", null).attr("d", drawBar), mainLine.attr("transform", null).attr("d", drawLine), mainArea.attr("transform", null).attr("d", drawArea), mainCircle.attr("transform", null), $$.isCirclePoint()) mainCircle.attr("cx", cx).attr("cy", cy);else {
+        if (xgrid.size() && xgrid.attr("transform", null).attr($$.xgridAttr), xgridLines.attr("transform", null), xgridLines.select("line").attr("x1", isRotated ? 0 : xv).attr("x2", isRotated ? $$.width : xv), xgridLines.select("text").attr("x", isRotated ? $$.width : 0).attr("y", xv), mainBar.attr("transform", null).attr("d", drawBar), mainLine.attr("transform", null).attr("d", drawLine), mainArea.attr("transform", null).attr("d", drawArea), mainCircle.attr("transform", null), $$.isCirclePoint()) mainCircle.attr("cx", cx).attr("cy", cy);else {
           var xFunc = function (d) {
             return cx(d) - config.point_r;
           },
@@ -13359,9 +13386,17 @@ extend(api_region_regions, {
 
 var api_data_data = function (targetIds) {
   var targets = this.internal.data.targets;
-  return isUndefined(targetIds) ? targets : targets.filter(function (t) {
-    return targetIds.indexOf(t.id) >= 0;
-  });
+
+  if (!isUndefined(targetIds)) {
+    var ids = isArray(targetIds) ? targetIds : [targetIds];
+    return targets.filter(function (t) {
+      return ids.some(function (v) {
+        return v === t.id;
+      });
+    });
+  }
+
+  return targets;
 };
 
 extend(api_data_data, {
@@ -14198,7 +14233,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.1-nightly-20190814111936",
+  version: "1.10.1-nightly-20190820235823",
 
   /**
    * Generate chart
@@ -14297,7 +14332,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.1-nightly-20190814111936
+ * @version 1.10.1-nightly-20190820235823
  */
 
 
