@@ -14,6 +14,30 @@ describe("API load", function() {
 		chart = util.generate(args);
 	});
 
+	describe("XHR data loading", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: []
+				}
+			};
+		});
+
+		it("should be load data via 'url'", done => {
+			chart.load({
+				url: "/base/spec/assets/data/test.json",
+				mimeType: "json",
+				headers: {
+					"Content-Type": "text/xml"
+				},
+				done: () => {
+					expect(chart.data().length).to.be.equal(3);
+					done();
+				}
+			});
+		});
+	});
+
 	describe("check for load options", () => {
 		before(() => {
 			args = {
@@ -402,32 +426,6 @@ describe("API load", function() {
 						lastX = x;
 					});
 
-					done();
-				}
-			});
-		});
-	});
-
-	describe.skip("XHR data loading", () => {
-		const path = "/base/spec/assets/data/";
-
-		before(() => {
-			args = {
-				data: {
-					columns: []
-				}
-			};
-		});
-
-		it("should be load data via 'url'", done => {
-			chart.load({
-				url: `${path}test.json`,
-				mimeType: "json",
-				headers: {
-					"Content-Type": "text/xml"
-				},
-				done: () => {
-					expect(chart.data().length).to.be.equal(3);
 					done();
 				}
 			});
