@@ -408,7 +408,7 @@ describe("API load", function() {
 		});
 	});
 
-	describe("XHR data loading", () => {
+	describe.skip("XHR data loading", () => {
 		const path = "/base/spec/assets/data/";
 
 		before(() => {
