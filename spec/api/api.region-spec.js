@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";
 
 describe("API region", function() {
 	let chart;
@@ -60,7 +61,7 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(".bb-region");
+				regions = main.selectAll(`.${CLASS.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
@@ -156,7 +157,7 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(".bb-region");
+				regions = main.selectAll(`.${CLASS.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
@@ -228,7 +229,7 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(".bb-region");
+				regions = main.selectAll(`.${CLASS.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
