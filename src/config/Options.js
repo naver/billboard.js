@@ -1155,16 +1155,20 @@ export default class Options {
 
 			/**
 			 * Used if loading JSON via data.url.
+			 * - **Available Values:**
+			 *   - json
+			 *   - csv
+			 *   - tsv
 			 * @name data․mimeType
 			 * @memberof Options
 			 * @type {String}
-			 * @default undefined
+			 * @default csv
 			 * @example
 			 * data: {
 			 *     mimeType: "json"
 			 * }
 			 */
-			data_mimeType: undefined,
+			data_mimeType: "csv",
 
 			/**
 			 * Choose which JSON object keys correspond to desired data.

@@ -14,6 +14,30 @@ describe("API load", function() {
 		chart = util.generate(args);
 	});
 
+	describe("XHR data loading", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: []
+				}
+			};
+		});
+
+		it("should be load data via 'url'", done => {
+			chart.load({
+				url: "/base/spec/assets/data/test.json",
+				mimeType: "json",
+				headers: {
+					"Content-Type": "text/xml"
+				},
+				done: () => {
+					expect(chart.data().length).to.be.equal(3);
+					done();
+				}
+			});
+		});
+	});
+
 	describe("check for load options", () => {
 		before(() => {
 			args = {
@@ -364,7 +388,7 @@ describe("API load", function() {
 			["Dutch",0,0,0,0,0,0,0,0,0,0],
 			["French",0,1,0,0,0,0,0,0,0,1],
 			["Chinese",0,0,0,0,0,0,0,0,5,0],
-		];		
+		];
 		const cols2 = [
 			["x",0, 5, 7, 12, 20, 22, 23, 24, 30, 35],
 			["English",12,9,31,26,17,6,11,23,20,12],
@@ -394,7 +418,7 @@ describe("API load", function() {
 					let lastX = 0;
 
 					chart.$.main.selectAll(`.${CLASS.eventRects} rect`).each(function(v, i) {
-						const x = +this.getAttribute("x"); 
+						const x = +this.getAttribute("x");
 
 						expect(x).to.be.above(lastX);
 						expect(this.classList.contains(`${CLASS.eventRect}-${i}`)).to.be.true;
