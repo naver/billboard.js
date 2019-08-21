@@ -79,6 +79,18 @@ describe("Interface & initialization", () => {
 			expect(chart.element.classList.contains("bb")).to.be.true;
 		});
 
+		it("instantiate with empty data", () => {
+			let threw = false;
+
+			try {
+				util.generate({data: {}});
+			} catch(e) {
+				threw = true;
+			} finally {
+				expect(threw).to.be.true;
+			}
+		});
+
 		it("instantiate with different classname on wrapper element", () => {
 			const bindtoClassName = "billboard-js";
 			chart = bb.generate({
