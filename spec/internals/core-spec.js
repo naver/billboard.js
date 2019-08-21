@@ -5,6 +5,7 @@
 /* eslint-disable */
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import {window, document} from "../../src/internals/browser";
 
 describe("CORE", function() {
 	let chart;
@@ -55,6 +56,11 @@ describe("CORE", function() {
 
 			expect(y2.empty()).to.be.true;
 		});
+
+		it("check for browser object", () => {
+			expect(window === Function("return this")()).to.be.true;
+			expect(document.body).to.be.not.undefined;
+		})
 	});
 
 	describe("init callbacks", () => {
@@ -163,7 +169,6 @@ describe("CORE", function() {
 				expect(svg.size()).to.be.equal(0);
 			});
 		});
-
 	});
 
 	describe("empty data", () => {
