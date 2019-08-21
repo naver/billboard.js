@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190820235823
+ * @version 1.10.1-nightly-20190821112512
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.10.0
@@ -5812,6 +5812,12 @@ function number2(e) {
   return [number1(e[0]), number1(e[1])];
 }
 
+function toucher(identifier) {
+  return function(target) {
+    return src_touch(target, on_event.touches, identifier);
+  };
+}
+
 var X = {
   name: "x",
   handles: ["w", "e"].map(brush_type),
@@ -5828,7 +5834,7 @@ var Y = {
 
 var XY = {
   name: "xy",
-  handles: ["nw", "n", "ne", "w", "e", "sw", "s", "se"].map(brush_type),
+  handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(brush_type),
   input: function(xy) { return xy == null ? null : number2(xy); },
   output: function(xy) { return xy; }
 };
@@ -6107,13 +6113,8 @@ function brush_brush(dim) {
     }
   };
 
-  function pointer(target) {
-    return src_point(target, on_event.touches ? on_event.touches[0] : on_event);
-  }
-
   function started() {
-    if (on_event.touches) { if (on_event.changedTouches.length < on_event.touches.length) return src_noevent(); }
-    else if (touchending) return;
+    if (touchending && !on_event.touches) return;
     if (!filter.apply(this, arguments)) return;
 
     var that = this,
@@ -6134,6 +6135,7 @@ function brush_brush(dim) {
         shifting = signX && signY && keys && on_event.shiftKey,
         lockX,
         lockY,
+        pointer = on_event.touches ? toucher(on_event.changedTouches[0].identifier) : src_mouse,
         point0 = pointer(that),
         point = point0,
         emit = emitter(that, arguments, true).beforestart();
@@ -26588,7 +26590,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.1-nightly-20190820235823",
+  version: "1.10.1-nightly-20190821112512",
 
   /**
    * Generate chart
@@ -26687,7 +26689,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.1-nightly-20190820235823
+ * @version 1.10.1-nightly-20190821112512
  */
 
 
