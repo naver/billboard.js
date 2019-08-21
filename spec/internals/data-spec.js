@@ -181,6 +181,32 @@ describe("DATA", () => {
 		});
 	});
 
+	describe("load rows", () => {
+		before(() => {
+			args = {
+				data: {
+					rows: [
+						["A", "B", "C"],
+						[90, 120, 300],
+						[40, 160, 240],
+						[50, 200, 290]
+					]
+				}
+			};
+		});
+
+		it("should load rows data correctly", () => {
+			const data = chart.data();
+			const dataName = args.data.rows[0];
+
+			expect(data.length).to.be.equal(dataName.length);
+
+			data.forEach((v, i) => {
+				expect(v.id).to.be.equal(dataName[i]);
+			});
+		});
+	});
+
 	describe("XHR data loading", () => {
 		const path = "/base/spec/assets/data/";
 
