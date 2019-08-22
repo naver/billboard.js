@@ -3404,7 +3404,7 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
-			 * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+			 * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 			 * @example
 			 *  render: {
@@ -3413,15 +3413,17 @@ export default class Options {
 			 * }
 			 *
 			 * @example
-			 *	<!-- render.lazy will detect visibility defined as inline or rule -->
-			 *  <div id='chart' style='display:none'></div>
+			 *	// <!-- render.lazy will detect visibility defined -->
+			 *  // (a) <div id='chart' class='hide'></div>
+			 *  // (b) <div id='chart' style='display:none'></div>
 			 *
 			 *  // render.lazy enabled by default when element is hidden
 			 *  var chart = bb.generate({ ... });
 			 *
 			 *  // chart will be rendered automatically when element's visibility changes
-			 *  // Note: works only for inline attribute's value changes
-			 *  document.getElementById('chart').style.display = 'block';
+			 *  // Note: works only for inlined css property or class attribute changes
+			 *  document.getElementById('chart').classList.remove('hide')  // (a)
+			 *  document.getElementById('chart').style.display = 'block';  // (b)
 			 *
 			 * @example
 			 *	// chart won't be rendered and not observing bind element's visiblity changes
