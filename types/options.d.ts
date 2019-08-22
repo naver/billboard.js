@@ -585,7 +585,7 @@ export interface ChartOptions {
 		lazy?: boolean;
 
 		/**
-		 * Observe bind element's visibility(`display` or `visiblity` inline css property value) & render when is visible automatically (for IEs, only works IE11+).
+		 * Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+).
 		 * When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 		 */
 		observe?: boolean;

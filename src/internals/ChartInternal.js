@@ -99,14 +99,15 @@ export default class ChartInternal {
 		const hasObserver = isDefined(MutationObserver);
 
 		if (isLazy && hasObserver && config.render.observe !== false && !forced) {
-			new MutationObserver((mutationsList, observer) => {
-				for (const mutation of mutationsList) {
-					if (mutation.attributeName === "style" && !isHidden()) {
-						observer.disconnect();
-						!$$.rendered && $$.initToRender(true);
-					}
+			new MutationObserver((mutation, observer) => {
+				if (!isHidden()) {
+					observer.disconnect();
+					!$$.rendered && $$.initToRender(true);
 				}
-			}).observe(target.node(), {attributes: true});
+			}).observe(target.node(), {
+				attributes: true,
+				attributeFilter: ["class", "style"]
+			});
 		}
 
 		if (!isLazy || forced) {

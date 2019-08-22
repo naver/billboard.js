@@ -361,19 +361,36 @@ describe("Interface & initialization", () => {
 			}
 		};
 
-		before(() => {
+		it("check lazy rendering & mutation observer: style attribute", done => {
+			const el = document.body.querySelector("#chart");
+
 			// hide to lazy render
-			document.body.querySelector("#chart").style.display = "none";
+			el.style.display = "none";
 
 			chart = util.generate(args);
-		});
-
-		it("check lazy rendering & mutation observer", done => {
-			const el = document.body.querySelector("#chart");
 
 			expect(el.innerHTML).to.be.empty;
 
 			el.style.display = "block";
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				el.style.display = "";
+				done();
+			}, 500);
+		});
+
+		it("check lazy rendering & mutation observer: class attribute", done => {
+			const el = document.body.querySelector("#chart");
+
+			// hide to lazy render
+			el.classList.add("hide");
+
+			chart = util.generate(args);
+
+			expect(el.innerHTML).to.be.empty;
+
+			el.classList.remove("hide");
 
 			setTimeout(() => {
 				expect(el.innerHTML).to.be.not.empty;

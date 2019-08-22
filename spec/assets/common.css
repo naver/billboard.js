@@ -1,3 +1,7 @@
 .bb .bb-button, .bb text {
     font-size: 11px;
 }
+
+.hide {
+    display: none;
+}
