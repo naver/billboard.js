@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190821112512
+ * @version 1.10.1-nightly-20190822112604
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with below dependency.
  * - d3 ^5.10.0
@@ -10209,24 +10209,11 @@ function () {
           isLazy = config.render.lazy || isHidden(),
           hasObserver = isDefined(MutationObserver);
 
-      if (isLazy && hasObserver && config.render.observe !== !1 && !forced && new MutationObserver(function (mutationsList, observer) {
-        var _iteratorNormalCompletion = !0,
-            _didIteratorError = !1,
-            _iteratorError = undefined;
-
-        try {
-          for (var _step, mutation, _iterator = mutationsList[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) mutation = _step.value, mutation.attributeName !== "style" || isHidden() || (observer.disconnect(), !$$.rendered && $$.initToRender(!0));
-        } catch (err) {
-          _didIteratorError = !0, _iteratorError = err;
-        } finally {
-          try {
-            _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-          } finally {
-            if (_didIteratorError) throw _iteratorError;
-          }
-        }
+      if (isLazy && hasObserver && config.render.observe !== !1 && !forced && new MutationObserver(function (mutation, observer) {
+        isHidden() || (observer.disconnect(), !$$.rendered && $$.initToRender(!0));
       }).observe(target.node(), {
-        attributes: !0
+        attributes: !0,
+        attributeFilter: ["class", "style"]
       }), !isLazy || forced) {
         var convertedData = $$.convertData(config, $$.initWithData);
         convertedData && $$.initWithData(convertedData);
@@ -14354,7 +14341,7 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
-     * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+     * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
      * @example
      *  render: {
@@ -14363,15 +14350,17 @@ var Options_Options = function Options() {
      * }
      *
      * @example
-     *	<!-- render.lazy will detect visibility defined as inline or rule -->
-     *  <div id='chart' style='display:none'></div>
+     *	// <!-- render.lazy will detect visibility defined -->
+     *  // (a) <div id='chart' class='hide'></div>
+     *  // (b) <div id='chart' style='display:none'></div>
      *
      *  // render.lazy enabled by default when element is hidden
      *  var chart = bb.generate({ ... });
      *
      *  // chart will be rendered automatically when element's visibility changes
-     *  // Note: works only for inline attribute's value changes
-     *  document.getElementById('chart').style.display = 'block';
+     *  // Note: works only for inlined css property or class attribute changes
+     *  document.getElementById('chart').classList.remove('hide')  // (a)
+     *  document.getElementById('chart').style.display = 'block';  // (b)
      *
      * @example
      *	// chart won't be rendered and not observing bind element's visiblity changes
@@ -26590,7 +26579,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.1-nightly-20190821112512",
+  version: "1.10.1-nightly-20190822112604",
 
   /**
    * Generate chart
@@ -26689,7 +26678,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.1-nightly-20190821112512
+ * @version 1.10.1-nightly-20190822112604
  */
 
 
