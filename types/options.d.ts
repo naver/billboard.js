@@ -1223,21 +1223,6 @@ export interface Data {
 		 */
 		format?: FormatFunction | { [key: string]: FormatFunction };
 
-		/**
-		 * Prevents label overlap using Voronoi layout if set to 'false'.
-		 */
-		overlap?: boolean | {
-			/**
-			 * Set extent of label overlap prevention.
-			 */
-			extent?: number;
-
-			/**
-			 * Set minimum area needed to show a data label.
-			 */
-			area?: number;
-		};
-
 		position?: {
 			/**
 			 * x coordinate position, relative the original.
