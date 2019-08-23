@@ -6,11 +6,6 @@ import {
 	select as d3Select,
 	selectAll as d3SelectAll
 } from "d3-selection";
-import {voronoi as d3Voronoi} from "d3-voronoi";
-import {
-	polygonCentroid as d3PolygonCentroid,
-	polygonArea as d3PolygonArea
-} from "d3-polygon";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
 import {capitalize, extend, getBoundingRect, getRandom, isNumber, isObject, isString} from "./util";
@@ -101,40 +96,6 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
-	 * Set text label's position to preventg overlap.
-	 * @param {Object} overlap Overlap config object
-	 * @private
-	 */
-	preventLabelOverlap(overlap) {
-		const $$ = this;
-		const {extent = 1, area = 0} = overlap;
-		const cells = $$.generateVoronoi($$.mainText.data().map(v => [v.x, v.value]));
-		let i = 0;
-
-		$$.mainText.each(function() {
-			const cell = cells[i++];
-
-			if (cell && this) {
-				const [x, y] = cell.data;
-				const [cx, cy] = d3PolygonCentroid(cell);
-				const angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2);
-
-				const xTranslate = extent * (angle === 0 ? 1 : -1);
-				const yTranslate = angle === -1 ? -extent : extent + 5;
-
-				const txtAnchor = Math.abs(angle) === 1 ?
-					"middle" : (angle === 0 ? "start" : "end");
-
-				d3Select(this)
-					.attr("display", d3PolygonArea(cell) < area ? "none" : null)
-					.attr("text-anchor", txtAnchor)
-					.attr("dy", `0.${angle === 1 ? 71 : 35}em`)
-					.attr("transform", `translate(${xTranslate}, ${yTranslate})`);
-			}
-		});
-	},
-
-	/**
 	 * Redraw chartText
 	 * @param {Function} x Positioning function for x
 	 * @param {Function} y Positioning function for y
@@ -146,11 +107,6 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const t = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
-		const overlap = $$.config.data_labels_overlap;
-
-		if (overlap === false || isObject(overlap)) {
-			$$.preventLabelOverlap(overlap);
-		}
 
 		return [
 			this.mainText.each(function() {
@@ -228,22 +184,6 @@ extend(ChartInternal.prototype, {
 
 			return getter.call($$, points[type](d, i), d, this);
 		};
-	},
-
-	/**
-	 * Generates the voronoi layout for data labels
-	 * @param {Object} data Indices values
-	 * @returns {Object} Voronoi layout points and corresponding Data points
-	 * @private
-	 */
-	generateVoronoi(data) {
-		const $$ = this;
-		const min = ["x", "y"].map(v => $$[v].domain()[0]);
-		const max = ["x", "y"].map(v => $$[v].domain()[1]);
-
-		return d3Voronoi()
-			.extent([min, max])
-			.polygons(data);
 	},
 
 	/**

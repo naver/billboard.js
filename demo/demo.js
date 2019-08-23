@@ -1886,26 +1886,6 @@ var demos = {
 				}
 			}
 		},
-		DataLabelOverlap: {
-			options: {
-				data: {
-					columns: [
-						["data1", 3, 3.8, 2, 3.8, 15, 2.5, 5.4, 6, 5.5, 2.4],
-						["data2", 1.7, 1.0, 10, 20, 8.4, 5, 2.5, 12.3, 8.5, 9.8],
-						["data3", 2.3, 15.3, 8.5, 30, 25, 12.0, 5, 8.4, 9.9, 28],
-						["data4", 30, 35, 20, 38, 19, 28, 5.6, 8, 5.5, 22],
-						["data5", 13, 10, 10, 20, 8, 5, 20, 13, 18.5, 9.8]
-					],
-					labels:{
-						overlap: {
-							extent: 8,
-							area : 3
-						}
-					}
-				}
-			},
-			description: "Prevents data label texts overlap using <a href='https://en.wikipedia.org/wiki/Voronoi_diagram' target='_new'>Voronoi layout</a>."
-		},
 		DataLabelPosition: {
 			options: {
 				data: {
@@ -2453,6 +2433,33 @@ d3.select(".chart_area")
 				"#stanfordDiagram .test-polygon5 { fill: orange; }",
 				"#stanfordDiagram .test-polygon5 text { fill: black; }"
 			]
+		},
+		TextOverlap: {
+			description: "Prevents data label texts overlap using <a href='https://en.wikipedia.org/wiki/Voronoi_diagram' target='_new'>Voronoi layout</a>.<br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					columns: [
+						["data1", 3, 3.8, 2, 3.8, 15, 2.5, 5.4, 6, 5.5, 2.4],
+						["data2", 1.7, 1.0, 10, 20, 8.4, 5, 2.5, 12.3, 8.5, 9.8],
+						["data3", 2.3, 15.3, 8.5, 30, 25, 12.0, 5, 8.4, 9.9, 28],
+						["data4", 30, 35, 20, 38, 19, 28, 5.6, 8, 5.5, 22],
+						["data5", 13, 10, 10, 20, 8, 5, 20, 13, 18.5, 9.8]
+					],
+					labels:{
+						overlap: {
+							extent: 8,
+							area : 3
+						}
+					}
+				},
+				_plugins: [{
+					textoverlap: {
+						selector: ".bb-texts text",
+						extent: 8,
+						area : 3
+					}
+				}]
+			}
 		}
 	},
 

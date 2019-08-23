@@ -1,9 +1,13 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /* eslint-disable */
 import util from "../../assets/util";
 import Stanford from "../../../src/plugin/stanford/index";
 import CLASS from "../../../src/plugin/stanford/classes";
 
-describe("STANFORD ELEMENTS", () => {
+describe("PLUGIN: STANFORD ELEMENTS", () => {
 	let chart;
 	const expectedLines = [
 		{x1: 0, y1: 0, x2: 65, y2: 65, class: "line1"},
