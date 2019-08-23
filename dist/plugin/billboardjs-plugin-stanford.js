@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190822112604
+ * @version 1.10.1-nightly-20190823112636
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18,7 +18,7 @@
 		exports["stanford"] = factory(require("d3-array"), require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-selection"), require("d3-brush"), require("d3-axis"), require("d3-format"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -102,7 +102,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 23);
+/******/ 	return __webpack_require__(__webpack_require__.s = 30);
 /******/ })
 /************************************************************************/
 /******/ ([
@@ -394,6 +394,108 @@ module.exports = g;
 
 /***/ }),
 /* 20 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Plugin; });
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
+/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
+/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
+
+
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Base class to generate billboard.js plugin
+ * @class Plugin
+ */
+var Plugin =
+/*#__PURE__*/
+function () {
+  /**
+   * Version info string for plugin
+   * @name version
+   * @static
+   * @memberof Plugin
+   * @type {String}
+   * @example
+   *   bb.plugin.stanford.version;  // ex) 1.9.0
+   */
+
+  /**
+   * Constructor
+   * @param {Any} config config option object
+   * @private
+   */
+  function Plugin() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Plugin), this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+
+
+  return _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Plugin, [{
+    key: "$beforeInit",
+    value: function $beforeInit() {}
+    /**
+     * Lifecycle hook for 'init' phase.
+     * @private
+     */
+
+  }, {
+    key: "$init",
+    value: function $init() {}
+    /**
+     * Lifecycle hook for 'afterInit' phase.
+     * @private
+     */
+
+  }, {
+    key: "$afterInit",
+    value: function $afterInit() {}
+    /**
+     * Lifecycle hook for 'redraw' phase.
+     * @private
+     */
+
+  }, {
+    key: "$redraw",
+    value: function $redraw() {}
+    /**
+     * Lifecycle hook for 'willDestroy' phase.
+     * @private
+     */
+
+  }, {
+    key: "$willDestroy",
+    value: function $willDestroy() {
+      var _this = this;
+
+      Object.keys(this).forEach(function (key) {
+        _this[key] = null, delete _this[key];
+      });
+    }
+  }]), Plugin;
+}();
+
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.1-nightly-20190823112636");
+
+
+
+/***/ }),
+/* 21 */
 /***/ (function(module, exports) {
 
 function _defineProperty(obj, key, value) {
@@ -414,12 +516,6 @@ function _defineProperty(obj, key, value) {
 module.exports = _defineProperty;
 
 /***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__21__;
-
-/***/ }),
 /* 22 */
 /***/ (function(module, exports) {
 
@@ -427,6 +523,18 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__22__;
 
 /***/ }),
 /* 23 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__23__;
+
+/***/ }),
+/* 24 */,
+/* 25 */,
+/* 26 */,
+/* 27 */,
+/* 28 */,
+/* 29 */,
+/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -883,98 +991,8 @@ var isValue = function (v) {
 };
 
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/defineProperty.js
-var defineProperty = __webpack_require__(20);
-var defineProperty_default = /*#__PURE__*/__webpack_require__.n(defineProperty);
-
-// CONCATENATED MODULE: ./src/plugin/Plugin.js
-
-
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-var Plugin_Plugin =
-/*#__PURE__*/
-function () {
-  /**
-   * Version info string for plugin
-   * @name version
-   * @static
-   * @memberof Plugin
-   * @type {String}
-   * @example
-   *   bb.plugin.stanford.version;  // ex) 1.9.0
-   */
-
-  /**
-   * Constructor
-   * @param {Any} config config option object
-   * @private
-   */
-  function Plugin() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    classCallCheck_default()(this, Plugin), this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-
-
-  return createClass_default()(Plugin, [{
-    key: "$beforeInit",
-    value: function $beforeInit() {}
-    /**
-     * Lifecycle hook for 'init' phase.
-     * @private
-     */
-
-  }, {
-    key: "$init",
-    value: function $init() {}
-    /**
-     * Lifecycle hook for 'afterInit' phase.
-     * @private
-     */
-
-  }, {
-    key: "$afterInit",
-    value: function $afterInit() {}
-    /**
-     * Lifecycle hook for 'redraw' phase.
-     * @private
-     */
-
-  }, {
-    key: "$redraw",
-    value: function $redraw() {}
-    /**
-     * Lifecycle hook for 'willDestroy' phase.
-     * @private
-     */
-
-  }, {
-    key: "$willDestroy",
-    value: function $willDestroy() {
-      var _this = this;
-
-      Object.keys(this).forEach(function (key) {
-        _this[key] = null, delete _this[key];
-      });
-    }
-  }]), Plugin;
-}();
-
-defineProperty_default()(Plugin_Plugin, "version", "1.10.1-nightly-20190822112604");
-
+// EXTERNAL MODULE: ./src/plugin/Plugin.js
+var Plugin = __webpack_require__(20);
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
 
@@ -1312,10 +1330,10 @@ function () {
 
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(21);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(22);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
-var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(22);
+var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(23);
 
 // CONCATENATED MODULE: ./src/plugin/stanford/ColorScale.js
 
@@ -1590,7 +1608,7 @@ function (_Plugin) {
       };
     }
   }]), Stanford;
-}(Plugin_Plugin);
+}(Plugin["default"]);
 
 
 

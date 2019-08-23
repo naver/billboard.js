@@ -5,18 +5,18 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.1-nightly-20190822112604
+ * @version 1.10.1-nightly-20190823112636
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-voronoi"), require("d3-polygon"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
+		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-brush", "d3-scale", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-voronoi", "d3-polygon", "d3-color", "d3-zoom", "d3-ease"], factory);
+		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-brush", "d3-scale", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-voronoi"), require("d3-polygon"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__25__, __WEBPACK_EXTERNAL_MODULE__26__, __WEBPACK_EXTERNAL_MODULE__27__, __WEBPACK_EXTERNAL_MODULE__28__, __WEBPACK_EXTERNAL_MODULE__29__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__25__, __WEBPACK_EXTERNAL_MODULE__26__, __WEBPACK_EXTERNAL_MODULE__27__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -108,7 +108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-module.exports = __webpack_require__(30);
+module.exports = __webpack_require__(28);
 
 
 /***/ }),
@@ -432,18 +432,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__27__;
 
 /***/ }),
 /* 28 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__28__;
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__29__;
-
-/***/ }),
-/* 30 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -3258,15 +3246,6 @@ var Options_Options = function Options() {
      *        data3: "green"
      *     },
      *
-     *     //turn on overlap prevention
-     *     overlap: false,
-     *
-    	 *     //set extent of prevent overlap, and minimum area needed to show a data label
-     *     overlap: {
-     *         extent : 6,
-     *         area: 2,
-     *     },
-     *
      *     // set x, y coordinate position
      *     position: {
      *        x: -10,
@@ -3278,7 +3257,6 @@ var Options_Options = function Options() {
     data_labels: {},
     data_labels_colors: undefined,
     data_labels_position: {},
-    data_labels_overlap: !0,
 
     /**
      *  This option changes the order of stacking data and pieces of pie/donut.
@@ -9560,21 +9538,11 @@ extend(ChartInternal_ChartInternal.prototype, {
     return this.getCache(radar_cacheKey)[d.id][d.index][1];
   }
 });
-// EXTERNAL MODULE: external {"commonjs":"d3-voronoi","commonjs2":"d3-voronoi","amd":"d3-voronoi","root":"d3"}
-var external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_ = __webpack_require__(25);
-
-// EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
-var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(26);
-
 // CONCATENATED MODULE: ./src/internals/text.js
-
-
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
-
 
 
 
@@ -9635,42 +9603,6 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
-   * Set text label's position to preventg overlap.
-   * @param {Object} overlap Overlap config object
-   * @private
-   */
-  preventLabelOverlap: function preventLabelOverlap(overlap) {
-    var $$ = this,
-        _overlap$extent = overlap.extent,
-        extent = _overlap$extent === void 0 ? 1 : _overlap$extent,
-        _overlap$area = overlap.area,
-        area = _overlap$area === void 0 ? 0 : _overlap$area,
-        cells = $$.generateVoronoi($$.mainText.data().map(function (v) {
-      return [v.x, v.value];
-    })),
-        i = 0;
-    $$.mainText.each(function () {
-      var cell = cells[i++];
-
-      if (cell && this) {
-        var _cell$data = slicedToArray_default()(cell.data, 2),
-            x = _cell$data[0],
-            y = _cell$data[1],
-            _d3PolygonCentroid = Object(external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_["polygonCentroid"])(cell),
-            _d3PolygonCentroid2 = slicedToArray_default()(_d3PolygonCentroid, 2),
-            cx = _d3PolygonCentroid2[0],
-            cy = _d3PolygonCentroid2[1],
-            angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
-            xTranslate = extent * (angle === 0 ? 1 : -1),
-            yTranslate = angle === -1 ? -extent : extent + 5,
-            txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-
-        Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).attr("display", Object(external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_["polygonArea"])(cell) < area ? "none" : null).attr("text-anchor", txtAnchor).attr("dy", "0.".concat(angle === 1 ? 71 : 35, "em")).attr("transform", "translate(".concat(xTranslate, ", ").concat(yTranslate, ")"));
-      }
-    });
-  },
-
-  /**
    * Redraw chartText
    * @param {Function} x Positioning function for x
    * @param {Function} y Positioning function for y
@@ -9681,9 +9613,8 @@ extend(ChartInternal_ChartInternal.prototype, {
   redrawText: function redrawText(x, y, forFlow, withTransition) {
     var $$ = this,
         t = getRandom(),
-        opacityForText = forFlow ? 0 : $$.opacityForText.bind($$),
-        overlap = $$.config.data_labels_overlap;
-    return (overlap === !1 || isObject(overlap)) && $$.preventLabelOverlap(overlap), [this.mainText.each(function () {
+        opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
+    return [this.mainText.each(function () {
       var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this); // do not apply transition for newly added text elements
 
       (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x).attr("y", y).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
@@ -9727,23 +9658,6 @@ extend(ChartInternal_ChartInternal.prototype, {
       var type = $$.isAreaType(d) && "area" || $$.isBarType(d) && "bar" || $$.isRadarType(d) && "radar" || "line";
       return getter.call($$, points[type](d, i), d, this);
     };
-  },
-
-  /**
-   * Generates the voronoi layout for data labels
-   * @param {Object} data Indices values
-   * @returns {Object} Voronoi layout points and corresponding Data points
-   * @private
-   */
-  generateVoronoi: function generateVoronoi(data) {
-    var $$ = this,
-        min = ["x", "y"].map(function (v) {
-      return $$[v].domain()[0];
-    }),
-        max = ["x", "y"].map(function (v) {
-      return $$[v].domain()[1];
-    });
-    return Object(external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_["voronoi"])().extent([min, max]).polygons(data);
   },
 
   /**
@@ -11216,7 +11130,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(27);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(25);
 
 // CONCATENATED MODULE: ./src/internals/selection.js
 /**
@@ -11603,7 +11517,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(28);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(26);
 
 // CONCATENATED MODULE: ./src/interactions/zoom.js
 
@@ -12702,7 +12616,7 @@ extend(Chart_Chart.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
-var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(29);
+var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(27);
 
 // CONCATENATED MODULE: ./src/api/api.flow.js
 /**
@@ -14222,7 +14136,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.1-nightly-20190822112604",
+  version: "1.10.1-nightly-20190823112636",
 
   /**
    * Generate chart
@@ -14321,7 +14235,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.1-nightly-20190822112604
+ * @version 1.10.1-nightly-20190823112636
  */
 
 
