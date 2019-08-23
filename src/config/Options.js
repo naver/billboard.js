@@ -615,15 +615,6 @@ export default class Options {
 			 *        data3: "green"
 			 *     },
 			 *
-			 *     //turn on overlap prevention
-			 *     overlap: false,
-			 *
-		 	 *     //set extent of prevent overlap, and minimum area needed to show a data label
-			 *     overlap: {
-			 *         extent : 6,
-			 *         area: 2,
-			 *     },
-			 *
 			 *     // set x, y coordinate position
 			 *     position: {
 			 *        x: -10,
@@ -635,7 +626,6 @@ export default class Options {
 			data_labels: {},
 			data_labels_colors: undefined,
 			data_labels_position: {},
-			data_labels_overlap: true,
 
 			/**
 			 *  This option changes the order of stacking data and pieces of pie/donut.

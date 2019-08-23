@@ -1,9 +1,13 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /* eslint-disable */
 import util from "../../assets/util";
 import Stanford from "../../../src/plugin/stanford/index";
 import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../../src/plugin/stanford/util";
 
-describe("STANFORD", () => {
+describe("PLUGIN: STANFORD", () => {
 	let chart;
 	let stanford = new Stanford({ epochs: [30, 35] });
 	let args = {
