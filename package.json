@@ -97,7 +97,7 @@
     "docdash": "^1.1.1",
     "eslint": "6.1.0",
     "eslint-config-naver": "^2.1.0",
-    "eslint-loader": "^2.2.1",
+    "eslint-loader": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",
     "exports-loader": "^0.7.0",
     "hammer-simulator": "0.0.1",
