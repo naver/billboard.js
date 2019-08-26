@@ -4,6 +4,10 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {
+	select as d3Select,
+	selectAll as d3SelectAll
+} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -39,8 +43,8 @@ describe("SELECTION", () => {
 			});
 
 			it("multiple selection & onselected callback", () => {
-				let circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
-				let rect = d3.select(`.${CLASS.eventRect}-3`).node();
+				let circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				let rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -49,8 +53,8 @@ describe("SELECTION", () => {
 
 				expect(spySelected.calledOnce).to.be.true;
 
-				circle = d3.select(`.${CLASS.shape}-4`).node().getBBox();
-				rect = d3.select(`.${CLASS.eventRect}-4`).node();
+				circle = d3Select(`.${CLASS.shape}-4`).node().getBBox();
+				rect = d3Select(`.${CLASS.eventRect}-4`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -60,7 +64,7 @@ describe("SELECTION", () => {
 				expect(spySelected.calledTwice).to.be.true;
 
 				// should be selected multiple data points
-				expect(d3.selectAll(`.${CLASS.SELECTED}`).size() > 1).to.be.true;
+				expect(d3SelectAll(`.${CLASS.SELECTED}`).size() > 1).to.be.true;
 			});
 
 			it("set options data.selection.multiple=false", () => {
@@ -68,8 +72,8 @@ describe("SELECTION", () => {
 			});
 
 			it("one selection & onunselected callback", () => {
-				let circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
-				let rect = d3.select(`.${CLASS.eventRect}-3`).node();
+				let circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				let rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -78,8 +82,8 @@ describe("SELECTION", () => {
 
 				expect(spySelected.calledOnce).to.be.true;
 
-				circle = d3.select(`.${CLASS.shape}-4`).node().getBBox();
-				rect = d3.select(`.${CLASS.eventRect}-4`).node();
+				circle = d3Select(`.${CLASS.shape}-4`).node().getBBox();
+				rect = d3Select(`.${CLASS.eventRect}-4`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -90,12 +94,12 @@ describe("SELECTION", () => {
 				expect(spyUnSelected.calledOnce).to.be.true;
 
 				// should be selected one data point only
-				expect(d3.selectAll(`.${CLASS.SELECTED}`).size() === 1).to.be.true;
+				expect(d3SelectAll(`.${CLASS.SELECTED}`).size() === 1).to.be.true;
 			});
 
 			it("onselected & onunselected callback should be called once", () => {
-				const circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
-				const rect = d3.select(`.${CLASS.eventRect}-3`).node();
+				const circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				const rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -116,8 +120,8 @@ describe("SELECTION", () => {
 			});
 
 			it("grouped selections & onunselected callback", () => {
-				let circle = d3.select(`.${CLASS.shape}-3`).node().getBBox();
-				let rect = d3.select(`.${CLASS.eventRect}-3`).node();
+				let circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				let rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -126,8 +130,8 @@ describe("SELECTION", () => {
 
 				expect(spySelected.calledTwice).to.be.true;
 
-				circle = d3.select(`.${CLASS.shape}-4`).node().getBBox();
-				rect = d3.select(`.${CLASS.eventRect}-4`).node();
+				circle = d3Select(`.${CLASS.shape}-4`).node().getBBox();
+				rect = d3Select(`.${CLASS.eventRect}-4`).node();
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -138,7 +142,7 @@ describe("SELECTION", () => {
 				expect(spyUnSelected.calledTwice).to.be.true;
 
 				// should be selected 2 data points only
-				expect(d3.selectAll(`.${CLASS.SELECTED}`).size() === 2).to.be.true;
+				expect(d3SelectAll(`.${CLASS.SELECTED}`).size() === 2).to.be.true;
 			});
 		});
 	});

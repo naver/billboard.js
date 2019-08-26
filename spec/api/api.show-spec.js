@@ -2,7 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
- /* eslint-disable */
+/* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -56,7 +57,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(chart.data().length);
 
 				legend.each(function() {
-					expect(+d3.select(this).style("opacity")).to.be.equal(0.15);
+					expect(+d3Select(this).style("opacity")).to.be.equal(0.15);
 				});
 
 				done();
@@ -71,7 +72,7 @@ describe("API show", () => {
 				chart.$.svg
 					.selectAll(`.${CLASS.legendItemHidden}`)
 					.each(function() {
-						expect(+d3.select(this).style("opacity")).to.be.equal(0);
+						expect(+d3Select(this).style("opacity")).to.be.equal(0);
 					});
 
 				done();
@@ -123,7 +124,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(0);
 
 				legend.each(function() {
-					expect(+d3.select(this).style("opacity")).to.be.equal(1);
+					expect(+d3Select(this).style("opacity")).to.be.equal(1);
 				});
 
 				done();
@@ -150,7 +151,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(0);
 
 				internal.svg.selectAll(`.${CLASS.legendItem}`).each(function() {
-					expect(+d3.select(this).style("opacity")).to.be.equal(0);
+					expect(+d3Select(this).style("opacity")).to.be.equal(0);
 				});
 
 				done();
@@ -177,7 +178,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(chart.data().length);
 
 				legend.each(function() {
-					expect(+d3.select(this).style("opacity")).to.be.equal(0.15);
+					expect(+d3Select(this).style("opacity")).to.be.equal(0.15);
 				});
 
 				// show data
@@ -194,7 +195,7 @@ describe("API show", () => {
 				expect(+legend.size()).to.be.equal(0);
 
 				legend.each(function() {
-					expect(+d3.select(this).style("opacity")).to.be.equal(1);
+					expect(+d3Select(this).style("opacity")).to.be.equal(1);
 				});
 
 				done();

@@ -2,7 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
- /* eslint-disable */
+/* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import bb from "../../src/core";
@@ -24,7 +25,7 @@ describe("API chart", () => {
 
 	describe("flush()", () => {
 		it("should be flushed correctly", () => {
-			const svg = d3.select(chart.internal.main.node().parentNode);
+			const svg = d3Select(chart.internal.main.node().parentNode);
 			const width = +svg.attr("width");
 
 			svg.attr("width", 100);
@@ -129,7 +130,7 @@ describe("API chart", () => {
 		it("should be destroyed", () => {
 			chart.destroy();
 
-			expect(d3.select("#chart svg").empty()).to.be.true;
+			expect(d3Select("#chart svg").empty()).to.be.true;
 			expect(Object.keys(chart).length).to.be.equal(0);
 			expect(bb.instance.indexOf(chart) === -1).to.be.true;
 		});
@@ -146,7 +147,7 @@ describe("API chart", () => {
 					columns: [["data1", 100, 150]],
 					unload: ["data1"]
 				});
-			
+
 				chart.destroy();
 				setTimeout(done, 500);
 			}, 500);
@@ -214,7 +215,7 @@ describe("API chart", () => {
 		it("check for the axis config update", () => {
 			const axisYTick = chart.$.main.selectAll(`.${CLASS.axisY} .tick`);
 			const expected = [];
-			
+
 			// axis y tick is outer
 			axisYTick.each(function() {
 				const line = this.querySelector("line");

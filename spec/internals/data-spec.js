@@ -4,6 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
+import {format as d3Format} from "d3-format";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isNumber} from "../../src/internals/util";
@@ -22,7 +24,7 @@ describe("DATA", () => {
 		}
 
 		return function(d, i) {
-			const node = d3.select(this);
+			const node = d3Select(this);
 
 			expect(+node.attr(`${prefix}x`)).to.be.closeTo(x[i], delta.x);
 			expect(+node.attr(`${prefix}y`)).to.be.closeTo(y[i], delta.y);
@@ -442,7 +444,7 @@ describe("DATA", () => {
 					const expected = ["2014-05-20 17:25:00.123", "2014-05-20 17:30:00.345"];
 
 					chart.internal.main.selectAll(`.${CLASS.axisX} g.tick text`).each(function(d, i) {
-						expect(d3.select(this).text()).to.be.equal(expected[i]);
+						expect(d3Select(this).text()).to.be.equal(expected[i]);
 					});
 				});
 			});
@@ -582,7 +584,7 @@ describe("DATA", () => {
 
 				Object.keys(expectedTextY).forEach(key => {
 					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
+						const text = d3Select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i] - 20, 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i] + 20, 3);
@@ -824,15 +826,15 @@ describe("DATA", () => {
 				const main = chart.internal.main;
 
 				main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
-					expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+					expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 				});
 
 				main.selectAll(`.${CLASS.texts}-data2 text`).each(function(d, i) {
-					expect(d3.select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
+					expect(d3Select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
 				});
 
 				main.selectAll(`.${CLASS.texts}-data3 text`).each(function(d, i) {
-					expect(d3.select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
+					expect(d3Select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
 				});
 			});
 		});
@@ -860,15 +862,15 @@ describe("DATA", () => {
 					const main = chart.internal.main;
 
 					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
-						expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+						expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 					});
 
 					main.selectAll(`.${CLASS.texts}-data2 text`).each(function() {
-						expect(d3.select(this).text()).to.be.equal("");
+						expect(d3Select(this).text()).to.be.equal("");
 					});
 
 					main.selectAll(`.${CLASS.texts}-data3 text`).each(function() {
-						expect(d3.select(this).text()).to.be.equal("");
+						expect(d3Select(this).text()).to.be.equal("");
 					});
 				});
 			});
@@ -884,7 +886,7 @@ describe("DATA", () => {
 							],
 							labels: {
 								format: {
-									data1: d3.format("$")
+									data1: d3Format("$")
 								}
 							}
 						}
@@ -895,15 +897,15 @@ describe("DATA", () => {
 					const main = chart.internal.main;
 
 					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
-						expect(d3.select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
+						expect(d3Select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
 					});
 
 					main.selectAll(`.${CLASS.texts}-data2 text`).each(function() {
-						expect(d3.select(this).text()).to.equal("");
+						expect(d3Select(this).text()).to.equal("");
 					});
 
 					main.selectAll(`.${CLASS.texts}-data3 text`).each(function() {
-						expect(d3.select(this).text()).to.equal("");
+						expect(d3Select(this).text()).to.equal("");
 					});
 				});
 			});
@@ -942,7 +944,7 @@ describe("DATA", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => (v === null ? "Not Applicable" : d3.format("$")(v))
+								format: v => (v === null ? "Not Applicable" : d3Format("$")(v))
 							}
 						}
 					};
@@ -1043,7 +1045,7 @@ describe("DATA", () => {
 							type: "bar",
 							labels: {
 								format: v => (v === null ?
-									"Not Applicable" : d3.format("$")(v)
+									"Not Applicable" : d3Format("$")(v)
 								)
 							}
 						}
@@ -1145,7 +1147,7 @@ describe("DATA", () => {
 							type: "bar",
 							labels: {
 								format: v => (v === null ?
-									"Not Applicable" : d3.format("$")(v)
+									"Not Applicable" : d3Format("$")(v)
 								)
 							}
 						}

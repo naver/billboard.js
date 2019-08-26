@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 import {isArray, isObject} from "../../src/internals/util";
@@ -56,7 +57,7 @@ describe("SHAPE BUBBLE", () => {
 			setTimeout(() => {
 				chart.$.main.selectAll(`.${CLASS.circles}-data1 circle`)
 					.each(function(v, i) {
-						const r = +d3.select(this).attr("r");
+						const r = +d3Select(this).attr("r");
 
 						if (i === 0) {
 							expect(r).to.be.equal(35);
@@ -87,7 +88,7 @@ describe("SHAPE BUBBLE", () => {
 		it("check for the label text", () => {
 			args.data.columns.forEach((v, i) => {
 				chart.$.main.selectAll(`.${CLASS.chartTexts}-data${i+1} text`).each(function(w, j) {
-					expect(+d3.select(this).text()).to.be.equal(v[j+1]);
+					expect(+d3Select(this).text()).to.be.equal(v[j+1]);
 				});
 			});
 		});
