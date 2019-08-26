@@ -4,6 +4,11 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
+import {
+	curveStepAfter as d3CurveStepAfter,
+	curveStepBefore as d3CurveStepBefore
+} from "d3-shape";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -48,7 +53,7 @@ describe("SHAPE LINE", () => {
 
 		it("should not have shape-rendering when it's line chart", () => {
 			chart.internal.main.selectAll(`.${CLASS.line}`).each(function() {
-				const style = d3.select(this).style("shape-rendering");
+				const style = d3Select(this).style("shape-rendering");
 
 				expect(style).to.be.equal("auto");
 			});
@@ -61,7 +66,7 @@ describe("SHAPE LINE", () => {
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
 			chart.internal.main.selectAll(`.${CLASS.line}`).each(function() {
-				const style = d3.select(this).style("shape-rendering").toLowerCase();
+				const style = d3Select(this).style("shape-rendering").toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
 			});
@@ -184,7 +189,7 @@ describe("SHAPE LINE", () => {
 
 		it("check for line path data count", () => {
 			chart.internal.main.selectAll(`path.${CLASS.line}`).each(function(d) {
-				const line = d3.select(this);
+				const line = d3Select(this);
 
 				// it should have 4 lines
 				expect(line.attr("d").split("L").length).to.be.equal(4);
@@ -328,7 +333,7 @@ describe("SHAPE LINE", () => {
 
 		it("check for correct generation", () => {
 			const d = chart.$.line.lines.attr("d");
-			const box = d3.select(`.${CLASS.chartLine}.${CLASS.target}-data3`).node().getBBox();;
+			const box = d3Select(`.${CLASS.chartLine}.${CLASS.target}-data3`).node().getBBox();;
 
 			// check for correct path data
 			expect(/NaN/.test(d)).to.be.false;
@@ -433,7 +438,7 @@ describe("SHAPE LINE", () => {
 		it("step-after type's interpolate use d3 curve function ", () => {
 			const to = chart.internal.getInterpolate(chart.data()[0]);
 
-			expect(to).to.be.equal(d3.curveStepAfter);
+			expect(to).to.be.equal(d3CurveStepAfter);
 		});
 
 		it("set options line.step.type='step-before'", () => {
@@ -451,7 +456,7 @@ describe("SHAPE LINE", () => {
 		it("step-before type's interpolate use d3 curve function ", () => {
 			const to = chart.internal.getInterpolate(chart.data()[0]);
 
-			expect(to).to.be.equal(d3.curveStepBefore);
+			expect(to).to.be.equal(d3CurveStepBefore);
 		});
 	});
 
@@ -532,7 +537,7 @@ describe("SHAPE LINE", () => {
 				expect([+gradient.attr("y1"), +gradient.attr("y2")]).to.be.deep.equal(expected.y);
 
 				gradient.selectAll("stop").each(function(d, i) {
-					const stop = d3.select(this);
+					const stop = d3Select(this);
 
 					expect(+stop.attr("offset")).to.be.equal(expected.offset[i]);
 					expect(stop.attr("stop-color")).to.be.equal(color);
@@ -573,7 +578,7 @@ describe("SHAPE LINE", () => {
 
 				gradient.selectAll("stop").each(function(d, i) {
 					const color = i === 0 ? stops[i][1](v.id) : stops[i][1];
-					const stop = d3.select(this);
+					const stop = d3Select(this);
 
 					expect(+stop.attr("offset")).to.be.equal(stops[i][0]);
 					expect(stop.attr("stop-color")).to.be.equal(color || chart.color(v.id));

@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -36,7 +37,7 @@ describe("SHAPE BAR", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
 				chart.internal.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
-					const rect = d3.select(this).node()
+					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
 					expect(rect.bottom).to.be.closeTo(expectedBottom[i], 1); // change -1 => 1
@@ -73,7 +74,7 @@ describe("SHAPE BAR", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
 				chart.internal.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
-					const rect = d3.select(this).node()
+					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
 					// Get bar width for the next test
@@ -126,7 +127,7 @@ describe("SHAPE BAR", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
 				chart.internal.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
-					const rect = d3.select(this).node()
+					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
 					expect(rect.bottom).to.be.closeTo(expectedBottom[i], 1); // change -1 => 1
@@ -398,7 +399,7 @@ describe("SHAPE BAR", () => {
 			chart.data().map(v => v.id).forEach(id => {
 				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
 					expect(Math.round(this.getBBox().width)).to.be.equal(args.bar.width[id]);
-				});	
+				});
 			});
 		});
 
@@ -419,7 +420,7 @@ describe("SHAPE BAR", () => {
 			chart.data().map(v => v.id).forEach((id, i) => {
 				chart.$.main.selectAll(`.${CLASS.bars}-${id} path`).each(function() {
 					expect(Math.round(this.getBBox().width)).to.be.equal(expected[i]);
-				});	
+				});
 			});
 		});
 	});

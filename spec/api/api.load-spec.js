@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
+import {format as d3Format} from "d3-format";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -175,7 +177,7 @@ describe("API load", function() {
 					expect(circles.size()).to.be.equal(3);
 
 					tickTexts.each(function(d, i) {
-						const text = d3.select(this).select("tspan").text();
+						const text = d3Select(this).select("tspan").text();
 
 						expect(text).to.be.equal(date[i]);
 					});
@@ -226,7 +228,7 @@ describe("API load", function() {
 						expect(legendItem.size()).to.be.equal(1);
 
 						tickTexts.each(function(d, i) {
-							const text = d3.select(this).select("tspan").text();
+							const text = d3Select(this).select("tspan").text();
 
 							expect(text).to.be.equal(expected[i]);
 						});
@@ -255,7 +257,7 @@ describe("API load", function() {
 						expect(legendItem.size()).to.be.equal(1);
 
 						tickTexts.each(function(d, i) {
-							const text = d3.select(this).select("tspan").text();
+							const text = d3Select(this).select("tspan").text();
 
 							expect(text).to.be.equal(expected[i]);
 						});
@@ -331,7 +333,7 @@ describe("API load", function() {
 						},
 						tick: {
 							count: 5,
-							format: d3.format("$,")
+							format: d3Format("$,")
 						}
 					},
 					y2:{

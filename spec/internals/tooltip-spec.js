@@ -3,6 +3,10 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {
+	select as d3Select,
+	namespaces as d3Namespaces
+} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -887,7 +891,7 @@ describe("TOOLTIP", function() {
 			util.hoverChart(chart, "mousemove", {clientX: 185, clientY: 107});
 			util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
 
-			expect(d3.select("#tooltip").html()).to.be.equal(html);
+			expect(d3Select("#tooltip").html()).to.be.equal(html);
 		});
 
 		it("set options tooltip.grouped=false", () => {
@@ -916,7 +920,7 @@ describe("TOOLTIP", function() {
 
 			args.color = {
 				tiles: function() {
-					var pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+					var pattern = d3Select(document.createElementNS(d3Namespaces.svg, "pattern"))
 						.attr("patternUnits", "userSpaceOnUse")
 						.attr("width", "6")
 						.attr("height", "6");

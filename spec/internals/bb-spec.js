@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import bb from "../../src/core";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";7
@@ -52,7 +53,7 @@ describe("Interface & initialization", () => {
 			const internal = chart.internal;
 
 			expect(chart).not.to.be.null;
-			expect(d3.select(chart.element).classed("bb")).to.be.true;
+			expect(d3Select(chart.element).classed("bb")).to.be.true;
 			expect(internal.svg.node().tagName).to.be.equal("svg");
 			expect(internal.convertInputType()).to.be.equal(internal.inputType);
 			expect(chart).to.be.equal(bb.instance[0]);
@@ -106,7 +107,7 @@ describe("Interface & initialization", () => {
 				}
 			});
 
-			expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
+			expect(d3Select(chart.element).classed(bindtoClassName)).to.be.true;
 		});
 	});
 
