@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../../assets/util";
 import CLASS from "../../../src/config/classes";
 import TextOverlap from "../../../src/plugin/textoverlap";
@@ -52,7 +53,7 @@ describe("PLUGIN: TEXTOVERLAP", () => {
 
         Object.keys(expectedTextDy).forEach(key => {
             chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-                const text = d3.select(this);
+                const text = d3Select(this);
 
                 expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
                 expect(text.attr("transform")).to.be.equal(expectedTextTransform[key][i]);
@@ -85,7 +86,7 @@ describe("PLUGIN: TEXTOVERLAP", () => {
 
         Object.keys(expectedTextDy).forEach(key => {
             chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-                const text = d3.select(this);
+                const text = d3Select(this);
 
                 expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
                 expect(text.attr("transform")).to.be.equal(expectedTextTransform[key][i]);

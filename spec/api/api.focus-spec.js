@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 
 describe("API focus", function() {
@@ -36,13 +37,13 @@ describe("API focus", function() {
 				const legendItems = legend.select(".bb-legend-item");
 
 				targets.each(function() {
-					const line = d3.select(this);
+					const line = d3Select(this);
 
 					expect(line.classed(focused)).to.be.ok;
 				});
 
 				legendItems.each(function() {
-					const item = d3.select(this);
+					const item = d3Select(this);
 
 					expect(item.classed(itemFocused)).to.be.ok;
 				});
@@ -124,14 +125,14 @@ describe("API focus", function() {
 
 			setTimeout(() => {
 				targets.each(function () {
-					const line = d3.select(this);
+					const line = d3Select(this);
 
 					expect(line.classed(focused)).to.not.be.ok;
 					expect(line.classed(defocused)).to.be.ok;
 				});
 
 				legendItems.each(function () {
-					const item = d3.select(this);
+					const item = d3Select(this);
 
 					expect(item.classed(itemFocused)).to.not.be.ok;
 					expect(getFixed(item.style("opacity"))).to.be.equal(0.3);
@@ -153,7 +154,7 @@ describe("API focus", function() {
 
 			setTimeout(() => {
 				targets.each(function() {
-					const target = d3.select(this);
+					const target = d3Select(this);
 
 					if (target.attr("class").indexOf("data2") > -1) {
 						expect(target.classed(defocused)).to.be.ok;
@@ -163,7 +164,7 @@ describe("API focus", function() {
 				});
 
 				legendItems.each(function() {
-					const legend = d3.select(this);
+					const legend = d3Select(this);
 
 					if (legend.attr("class").indexOf("data2") > -1) {
 						expect(legend.classed(itemFocused)).to.not.be.ok;
@@ -189,7 +190,7 @@ describe("API focus", function() {
 
 			setTimeout(() => {
 				targets.each(function() {
-					const target = d3.select(this);
+					const target = d3Select(this);
 
 					if (target.attr("class").indexOf("data3") > -1) {
 						expect(target.classed(defocused)).to.not.be.ok;
@@ -199,7 +200,7 @@ describe("API focus", function() {
 				});
 
 				legendItems.each(function() {
-					const legend = d3.select(this);
+					const legend = d3Select(this);
 
 					if (legend.attr("class").indexOf("data3") > -1) {
 						expect(legend.classed(itemFocused)).to.be.ok;
@@ -269,13 +270,13 @@ describe("API focus", function() {
 					const legendItems = legend.select(".bb-legend-item");
 
 					targets.each(function() {
-						const line = d3.select(this);
+						const line = d3Select(this);
 
 						expect(line.classed(focused)).to.not.be.ok;
 					});
 
 					legendItems.each(function () {
-						const item = d3.select(this);
+						const item = d3Select(this);
 
 						expect(item.classed(itemFocused)).to.not.be.ok;
 						expect(+item.style("opacity")).to.be.equal(1);
@@ -300,13 +301,13 @@ describe("API focus", function() {
 					const legendItems = legend.select(".bb-legend-item");
 
 					targets.each(function () {
-						const line = d3.select(this);
+						const line = d3Select(this);
 
 						expect(line.classed(defocused)).to.not.be.ok;
 					});
 
 					legendItems.each(function () {
-						const item = d3.select(this);
+						const item = d3Select(this);
 
 						expect(item.classed(itemFocused)).to.not.be.ok;
 						expect(+item.style("opacity")).to.be.equal(1);
@@ -500,7 +501,7 @@ describe("API focus", function() {
 				const legendItems = legend.select(".bb-legend-item");
 
 				targets.each(function() {
-					const line = d3.select(this);
+					const line = d3Select(this);
 
 					expect(line.classed(focused)).to.be.ok;
 				});
@@ -522,7 +523,7 @@ describe("API focus", function() {
 				const legendItems = legend.select(".bb-legend-item");
 
 				targets.each(function() {
-					const line = d3.select(this);
+					const line = d3Select(this);
 
 					expect(line.classed(defocused)).to.be.ok;
 				});
@@ -547,7 +548,7 @@ describe("API focus", function() {
 					const legendItems = legend.select(".bb-legend-item");
 
 					targets.each(function() {
-						const line = d3.select(this);
+						const line = d3Select(this);
 
 						expect(line.classed(focused)).to.not.be.ok;
 					});

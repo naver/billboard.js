@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -66,7 +67,7 @@ describe("API region", function() {
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
 				regions.each(function(d, i) {
-					const region = d3.select(this);
+					const region = d3Select(this);
 
 					const rect = region.select("rect");
 					const y = +rect.attr("y");
@@ -162,7 +163,7 @@ describe("API region", function() {
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
 				regions.each(function(d, i) {
-					const region = d3.select(this);
+					const region = d3Select(this);
 					const rect = region.select("rect");
 					const y = +rect.attr("y");
 					const height = +rect.attr("height");
@@ -235,7 +236,7 @@ describe("API region", function() {
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
 				regions.each(function(d, i) {
-					const region = d3.select(this);
+					const region = d3Select(this);
 					const rect = region.select("rect");
 					const y = +rect.attr("y");
 					const height = +rect.attr("height");

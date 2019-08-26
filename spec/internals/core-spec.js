@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {window, document} from "../../src/internals/browser";
@@ -28,7 +29,7 @@ describe("CORE", function() {
 
 	describe("init", () => {
 		it("should be created", () => {
-			const svg = d3.select("#chart svg");
+			const svg = d3Select("#chart svg");
 
 			expect(svg).not.to.be.null;
 		});
@@ -39,13 +40,13 @@ describe("CORE", function() {
 		});
 
 		it("should be created even if 3rd party property has been set", () => {
-			const svg = d3.select("#chart svg");
+			const svg = d3Select("#chart svg");
 
 			expect(svg).not.to.be.null;
 		});
 
 		it("should be created with a custom class", () => {
-			const svg = d3.select("#chart svg");
+			const svg = d3Select("#chart svg");
 
 			expect(svg.attr("class")).not.to.be.null;
 			expect(svg.attr("class")).to.be.equal("customclass");
@@ -104,13 +105,13 @@ describe("CORE", function() {
 
 	describe("size", () => {
 		it("should have same width", () => {
-			const svg = d3.select("#chart svg");
+			const svg = d3Select("#chart svg");
 
 			expect(+svg.attr("width")).to.be.equal(640);
 		});
 
 		it("should have same height", () => {
-			const svg = d3.select("#chart svg");
+			const svg = d3Select("#chart svg");
 
 			expect(+svg.attr("height")).to.be.equal(480);
 		});
@@ -120,25 +121,25 @@ describe("CORE", function() {
 	describe("bindto", () => {
 		describe("selector", () => {
 			before(() => {
-				d3.select("#chart").html("");
+				d3Select("#chart").html("");
 				args.bindto = "#chart";
 			});
 
 			it("should be created", () => {
-				const svg = d3.select("#chart svg");
+				const svg = d3Select("#chart svg");
 
 				expect(svg.size()).to.be.equal(1);
 			});
 		});
 
-		describe("d3.selection object", () => {
+		describe("d3Selection object", () => {
 			before(() => {
-				d3.select("#chart").html("");
-				args.bindto = d3.select("#chart");
+				d3Select("#chart").html("");
+				args.bindto = d3Select("#chart");
 			});
 
 			it("should be created", () => {
-				const svg = d3.select("#chart svg");
+				const svg = d3Select("#chart svg");
 
 				expect(svg.size()).to.be.equal(1);
 			});
@@ -146,12 +147,12 @@ describe("CORE", function() {
 
 		describe("null", () => {
 			before(() => {
-				d3.select("#chart").html("");
+				d3Select("#chart").html("");
 				args.bindto = "#chart-dummy";
 			});
 
 			it("should not be created", () => {
-				const svg = d3.select("#chart svg");
+				const svg = d3Select("#chart svg");
 
 				expect(svg.size()).to.be.equal(0);
 			});
@@ -159,12 +160,12 @@ describe("CORE", function() {
 
 		describe("empty string", () => {
 			before(() => {
-				d3.select("#chart").html("");
+				d3Select("#chart").html("");
 				args.bindto = "#chart-dummy";
 			});
 
 			it("should not be created", () => {
-				const svg = d3.select("#chart svg");
+				const svg = d3Select("#chart svg");
 
 				expect(svg.size()).to.be.equal(0);
 			});
@@ -266,7 +267,7 @@ describe("CORE", function() {
 			const previous = chart.internal.main.select(`.${CLASS.chart}`).node().previousSibling;
 
 			// chart element should positioned after axis element
-			expect(d3.select(previous).classed(CLASS.grid)).to.be.true;
+			expect(d3Select(previous).classed(CLASS.grid)).to.be.true;
 		});
 	});
 });

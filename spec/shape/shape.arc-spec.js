@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -147,7 +148,7 @@ describe("SHAPE ARC", () => {
 			expect(chart.internal.pie.padAngle()()).to.be.equal(value);
 			expect(chart.$.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
 
-			d3.selectAll(`.${CLASS.chartArc} text`).each(function(d) {
+			d3SelectAll(`.${CLASS.chartArc} text`).each(function(d) {
 				const value = parseInt(this.textContent);
 
 				expect(value).to.be.equal(d.value);
@@ -176,7 +177,7 @@ describe("SHAPE ARC", () => {
 			expect(internal.pie.padAngle()()).to.be.equal(padding * 0.01);
 			expect(internal.innerRadius).to.be.equal(innerRadius);
 
-			d3.selectAll(`.${CLASS.chartArc} text`).each(function(d) {
+			d3SelectAll(`.${CLASS.chartArc} text`).each(function(d) {
 				const value = parseInt(this.textContent);
 
 				expect(value).to.be.equal(d.value);

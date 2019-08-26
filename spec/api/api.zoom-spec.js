@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -162,7 +163,7 @@ describe("API zoom", function() {
 				expect(domain[1] - 1).to.be.equal(target[1]);
 
 				rectlist.each(function(d, i) {
-					const x = +d3.select(this).attr("x");
+					const x = +d3Select(this).attr("x");
 
 					expect(x * i).to.be.closeTo(rectSize * i, 5);
 				});

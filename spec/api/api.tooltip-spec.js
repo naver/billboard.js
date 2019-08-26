@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {timeFormat as d3TimeFormat} from "d3-time-format";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -54,7 +55,7 @@ describe("API tooltip", () => {
 				const value = chart.data(id)[0].values[x];
 
 				expect(id).to.be.equal(v.id);
-				expect(tooltip.select("th").html()).to.be.equal(d3.timeFormat(config.axis_x_tick_format)(value.x));
+				expect(tooltip.select("th").html()).to.be.equal(d3TimeFormat(config.axis_x_tick_format)(value.x));
 				expect(data.select(".name").text()).to.be.equal(id);
 				expect(+data.select(".value").html()).to.be.equal(value.value);
 			});
