@@ -59,7 +59,7 @@
   "license": "MIT",
   "readmeFilename": "README.md",
   "dependencies": {
-    "d3": "^5.10.0"
+    "d3": "^5.11.0"
   },
   "devDependencies": {
     "@babel/core": "^7.5.5",
@@ -73,9 +73,9 @@
     "@semantic-release/commit-analyzer": "^6.3.0",
     "@semantic-release/exec": "^3.3.6",
     "@semantic-release/git": "^7.0.16",
-    "@semantic-release/npm": "^5.1.13",
+    "@semantic-release/npm": "^5.1.15",
     "@semantic-release/release-notes-generator": "^7.3.0",
-    "babel-eslint": "^10.0.2",
+    "babel-eslint": "^10.0.3",
     "babel-helper-modules": "^6.0.0",
     "babel-loader": "^8.0.6",
     "babel-plugin-add-module-exports": "^1.0.2",
@@ -95,9 +95,9 @@
     "cross-env": "^5.2.0",
     "css-loader": "^3.2.0",
     "docdash": "^1.1.1",
-    "eslint": "6.1.0",
+    "eslint": "6.2.2",
     "eslint-config-naver": "^2.1.0",
-    "eslint-loader": "^2.2.1",
+    "eslint-loader": "^3.0.0",
     "eslint-plugin-import": "^2.18.2",
     "exports-loader": "^0.7.0",
     "hammer-simulator": "0.0.1",
@@ -120,8 +120,8 @@
     "mocha": "^6.2.0",
     "node-sass": "^4.12.0",
     "optimize-css-assets-webpack-plugin": "^5.0.3",
-    "sass-loader": "^7.2.0",
-    "semantic-release": "^15.13.21",
+    "sass-loader": "^7.3.1",
+    "semantic-release": "^15.13.24",
     "simulant": "^0.2.2",
     "sinon": "^7.4.1",
     "string-replace-webpack-plugin": "^0.1.3",
