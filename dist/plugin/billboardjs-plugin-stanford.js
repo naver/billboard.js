@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190826112938
+ * @version 1.10.2-nightly-20190827113108
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -490,7 +490,7 @@ function () {
   }]), Plugin;
 }();
 
-_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20190826112938");
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20190827113108");
 
 
 
@@ -964,7 +964,7 @@ var isValue = function (v) {
     }
   }(),
   touch: function touch(el, eventType, params) {
-    var touchObj = new Touch(Object.assign({
+    var touchObj = new Touch(mergeObj({
       identifier: Date.now(),
       target: el,
       radiusX: 2.5,

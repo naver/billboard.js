@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190826112938
+ * @version 1.10.2-nightly-20190827113108
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -846,7 +846,7 @@ var isValue = function (v) {
     }
   }(),
   touch: function touch(el, eventType, params) {
-    var touchObj = new Touch(Object.assign({
+    var touchObj = new Touch(mergeObj({
       identifier: Date.now(),
       target: el,
       radiusX: 2.5,
@@ -1419,7 +1419,7 @@ function () {
           orient = $$["".concat(name, "Orient")],
           tickFormat = isX ? $$.xAxisTickFormat : config["axis_".concat(name, "_tick_format")],
           tickValues = isX ? $$.xAxisTickValues : $$["".concat(name, "AxisTickValues")],
-          axisParams = Object.assign({
+          axisParams = mergeObj({
         outerTick: outerTick,
         noTransition: noTransition,
         config: config,
@@ -14136,7 +14136,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20190826112938",
+  version: "1.10.2-nightly-20190827113108",
 
   /**
    * Generate chart
@@ -14235,7 +14235,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20190826112938
+ * @version 1.10.2-nightly-20190827113108
  */
 
 
