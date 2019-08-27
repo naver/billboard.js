@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -39,7 +40,7 @@ describe("INTERACTION", () => {
 				const widths = [61, 68, 205, 197.5];
 
 				chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
-					const box = d3.select(this).node().getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
@@ -67,7 +68,7 @@ describe("INTERACTION", () => {
 				expect(eventRects.size()).to.be.equal(1);
 
 				eventRects.each(function () {
-					const box = d3.select(this).node().getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(30.5, 10);
 					expect(box.width).to.be.closeTo(608, 10);
@@ -93,7 +94,7 @@ describe("INTERACTION", () => {
 				const widths = [152, 162.5, 149.5, 138.5];
 
 				chart.$.main.selectAll(`.${CLASS.eventRect}`).each(function (d, i) {
-					const box = d3.select(this).node().getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(lefts[i], 10);
 					expect(box.width).to.be.closeTo(widths[i], 10);
@@ -120,7 +121,7 @@ describe("INTERACTION", () => {
 				expect(eventRects.size()).to.be.equal(1);
 
 				eventRects.each(function () {
-					const box = d3.select(this).node().getBoundingClientRect();
+					const box = d3Select(this).node().getBoundingClientRect();
 
 					expect(box.left).to.be.closeTo(30.5, 10);
 					expect(box.width).to.be.closeTo(608, 10);
@@ -510,7 +511,7 @@ describe("INTERACTION", () => {
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
 				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
 				const delta = 50;
-console.log(JSON.stringify(args))
+
 				util.fireEvent(rect, "click", {
 					clientX: circle.x + delta,
 					clientY: circle.y + delta
@@ -648,7 +649,7 @@ console.log(JSON.stringify(args))
 				expect(svg.on("mouseleave")).to.not.be.null;
 
 				internal.main.selectAll(`.${CLASS.eventRect}`).each(function() {
-					const el = d3.select(this);
+					const el = d3Select(this);
 
 					expect(el.on("mouseenter")).to.not.be.null;
 					expect(el.on("mouseleave")).to.not.be.null;
@@ -670,7 +671,7 @@ console.log(JSON.stringify(args))
 				expect(svg.on("mouseleave")).to.be.undefined;
 
 				internal.main.selectAll(`.${CLASS.eventRect}`).each(function() {
-					const el = d3.select(this);
+					const el = d3Select(this);
 
 					expect(el.on("mouseenter")).to.be.undefined;
 					expect(el.on("mouseleave")).to.be.undefined;
@@ -699,7 +700,7 @@ console.log(JSON.stringify(args))
 				expect(svg.on("mouseleave")).to.be.undefined;
 
 				internal.main.selectAll(`.${CLASS.eventRect}`).each(function() {
-					const el = d3.select(this);
+					const el = d3Select(this);
 
 					expect(el.on("mouseenter")).to.be.undefined;
 					expect(el.on("mouseleave")).to.be.undefined;
@@ -726,8 +727,8 @@ console.log(JSON.stringify(args))
 			});
 
 			it("data point circle should be selected and unselected", () => {
-				const circle = d3.select(`.${CLASS.shape}-2`).node();
-				const rect = d3.select(`.${CLASS.eventRect}-2`).node();
+				const circle = d3Select(`.${CLASS.shape}-2`).node();
+				const rect = d3Select(`.${CLASS.eventRect}-2`).node();
 
 				const box = circle.getBBox();
 				const clientX = box.x;
@@ -737,13 +738,13 @@ console.log(JSON.stringify(args))
 					clientX, clientY
 				}, chart);
 
-				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.true;
+				expect(d3Select(circle).classed(CLASS.SELECTED)).to.be.true;
 
 				util.fireEvent(rect, "click", {
 					clientX, clientY
 				}, chart);
 
-				expect(d3.select(circle).classed(CLASS.SELECTED)).to.be.false;
+				expect(d3Select(circle).classed(CLASS.SELECTED)).to.be.false;
 			});
 		});
 

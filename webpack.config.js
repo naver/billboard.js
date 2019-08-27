@@ -38,7 +38,10 @@ const config = {
 		rules: [
 			{
 				test: /(\.js)$/,
-				exclude: /(node_modules)/,
+				exclude: {
+					test: /node_modules/,
+					not: [/(d3\-.*)$/]
+				},
 				use: {
 					loader: "babel-loader",
 					options: {

@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -119,14 +120,14 @@ describe("GRID", function() {
 			const expectedYs = [];
 
 			ygrids.selectAll(`.${CLASS.ygrid}`).each(function(d, i) {
-				expectedYs[i] = +d3.select(this).attr("y1");
+				expectedYs[i] = +d3Select(this).attr("y1");
 			});
 
 			expect(ygrids.size()).to.be.equal(1);
 			expect(ygrids.selectAll(`.${CLASS.ygrid}`).size()).to.be.equal(5);
 
 			chart.internal.main.select(`.${CLASS.axisY}`).selectAll(".tick").each(function(d, i) {
-				let y = d3.select(this).attr("transform").match(/\d+\)/);
+				let y = d3Select(this).attr("transform").match(/\d+\)/);
 
 				if (y.length >= 1) {
 					y = parseInt(y[0]);
@@ -198,7 +199,7 @@ describe("GRID", function() {
 					const expectedY1s = [373, 268, 196];
 
 					lines.each(function (d, i) {
-						const line = d3.select(this);
+						const line = d3Select(this);
 						const y1 = +line.attr("y1");
 
 						y1 && expect(y1).to.be.closeTo(expectedY1s[i], 1);
@@ -214,7 +215,7 @@ describe("GRID", function() {
 				const expectedDxs = [4, 0, -4];
 
 				lines.each(function (d, i) {
-					const text = d3.select(this).select("text");
+					const text = d3Select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
 
@@ -257,7 +258,7 @@ describe("GRID", function() {
 					const expectedX1s = [75, 220, 321];
 
 					lines.each(function(d, i) {
-						const line = d3.select(this);
+						const line = d3Select(this);
 						const x1 = Number(line.attr("x1"));
 
 						x1 && expect(x1).to.be.closeTo(expectedX1s[i], 1);
@@ -273,7 +274,7 @@ describe("GRID", function() {
 				const expectedDxs = [4, 0, -4];
 
 				lines.each(function(d, i) {
-					const text = d3.select(this).select("text");
+					const text = d3Select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
 
@@ -334,7 +335,7 @@ describe("GRID", function() {
 				const expectedX1s = [202, 397, 593];
 
 				lines.each(function (d, i) {
-					const x1 = Number(d3.select(this).select("line").attr("x1"));
+					const x1 = Number(d3Select(this).select("line").attr("x1"));
 
 					expect(x1).to.be.closeTo(expectedX1s[i], 1);
 				});
@@ -346,7 +347,7 @@ describe("GRID", function() {
 				const expectedDxs = [4, 0, -4];
 
 				lines.each(function (d, i) {
-					const text = d3.select(this).select("text");
+					const text = d3Select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
 
@@ -388,7 +389,7 @@ describe("GRID", function() {
 				const expectedY1s = [144, 283, 421];
 
 				lines.each(function(d, i) {
-					const y1 = +d3.select(this).select("line").attr("y1");
+					const y1 = +d3Select(this).select("line").attr("y1");
 
 					expect(y1).to.be.closeTo(expectedY1s[i], 1);
 				});
@@ -400,7 +401,7 @@ describe("GRID", function() {
 				const expectedDxs = [4, 0, -4];
 
 				lines.each(function(d, i) {
-					const text = d3.select(this).select("text");
+					const text = d3Select(this).select("text");
 					const textAnchor = text.attr("text-anchor");
 					const dx = text.attr("dx");
 
@@ -438,7 +439,7 @@ describe("GRID", function() {
 				const expectedText = ["Label 3"];
 
 				lines.each(function(id, i) {
-					const line = d3.select(this);
+					const line = d3Select(this);
 					const l = line.select("line");
 					const t = line.select("text");
 
@@ -481,7 +482,7 @@ describe("GRID", function() {
 				const expectedText = ["Label 3", "Label a"];
 
 				lines.each(function(id, i) {
-					const line = d3.select(this);
+					const line = d3Select(this);
 					const l = line.select("line");
 					const t = line.select("text");
 

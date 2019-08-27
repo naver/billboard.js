@@ -66,7 +66,7 @@ extend(ChartInternal.prototype, {
 
 		const data = args.data || $$.convertData(args, d => $$.load($$.convertDataToTargets(d), args));
 
-		$$.load(data ? $$.convertDataToTargets(data) : null, args);
+		data && $$.load($$.convertDataToTargets(data), args);
 	},
 
 	unload(rawTargetIds, customDoneCb) {

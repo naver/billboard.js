@@ -3,7 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
+import CLASS from "../../src/config/classes";
 
 describe("API region", function() {
 	let chart;
@@ -41,31 +43,31 @@ describe("API region", function() {
 		it("should update regions", done => {
 			const main = chart.$.main;
 			const expectedRegions = [
-					{
-						axis: "y",
-						start: 250,
-						end: 350,
-						class: "red"
-					},
-					{
-						axis: "y",
-						start: 25,
-						end: 75,
-						class: "red"
-					}
-				];
+				{
+					axis: "y",
+					start: 250,
+					end: 350,
+					class: "red"
+				},
+				{
+					axis: "y",
+					start: 25,
+					end: 75,
+					class: "red"
+				}
+			];
 			let regions;
 
 			// Call regions API
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(".bb-region");
+				regions = main.selectAll(`.${CLASS.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
 				regions.each(function(d, i) {
-					const region = d3.select(this);
+					const region = d3Select(this);
 
 					const rect = region.select("rect");
 					const y = +rect.attr("y");
@@ -117,38 +119,38 @@ describe("API region", function() {
 		it("should add regions", done => {
 			const main = chart.$.main;
 			const expectedRegions = [
-					{
-						axis: "y",
-						start: 300,
-						end: 400,
-						class: "green",
-					},
-					{
-						axis: "y",
-						start: 0,
-						end: 100,
-						class: "green",
-					},
-					{
-						axis: "y",
-						start: 250,
-						end: 350,
-						class: "red"
-					},
-					{
-						axis: "y",
-						start: 25,
-						end: 75,
-						class: "red"
-					}
-				];
+				{
+					axis: "y",
+					start: 300,
+					end: 400,
+					class: "green",
+				},
+				{
+					axis: "y",
+					start: 0,
+					end: 100,
+					class: "green",
+				},
+				{
+					axis: "y",
+					start: 250,
+					end: 350,
+					class: "red"
+				},
+				{
+					axis: "y",
+					start: 25,
+					end: 75,
+					class: "red"
+				}
+			];
 
 			const expectedClasses = [
-					"green",
-					"green",
-					"red",
-					"red",
-				];
+				"green",
+				"green",
+				"red",
+				"red",
+			];
 
 			let regions;
 
@@ -156,12 +158,12 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(".bb-region");
+				regions = main.selectAll(`.${CLASS.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
 				regions.each(function(d, i) {
-					const region = d3.select(this);
+					const region = d3Select(this);
 					const rect = region.select("rect");
 					const y = +rect.attr("y");
 					const height = +rect.attr("height");
@@ -182,7 +184,7 @@ describe("API region", function() {
 	});
 
 	describe("Remove regions using regions()", () => {
-		before(() =>
+		before(() => {
 			args = {
 				data: {
 					columns: [
@@ -209,18 +211,19 @@ describe("API region", function() {
 						class: "red"
 					},
 				]
-			});
+			}
+		});
 
 		it("should remove regions", done => {
 			const main = chart.$.main;
 			const expectedRegions = [
-					{
-						axis: "y",
-						start: 250,
-						end: 350,
-						class: "red"
-					},
-				];
+				{
+					axis: "y",
+					start: 250,
+					end: 350,
+					class: "red"
+				},
+			];
 			const expectedClasses = ["red"];
 			let regions;
 
@@ -228,12 +231,12 @@ describe("API region", function() {
 			chart.regions(expectedRegions);
 
 			setTimeout(() => {
-				regions = main.selectAll(".bb-region");
+				regions = main.selectAll(`.${CLASS.region}`);
 
 				expect(regions.size()).to.be.equal(expectedRegions.length);
 
 				regions.each(function(d, i) {
-					const region = d3.select(this);
+					const region = d3Select(this);
 					const rect = region.select("rect");
 					const y = +rect.attr("y");
 					const height = +rect.attr("height");
@@ -255,14 +258,15 @@ describe("API region", function() {
 
 	// regions.add / remove
 	describe("regions()", () => {
-		before(() =>
-			args ={
+		before(() => {
+			args = {
 				data: {
 					columns: [
 						["data1", 30, 200, 100, 400, 150, 250]
 					]
 				}
-			});
+			}
+		});
 
 		it(".add() / .remove()", () => {
 			const regions = [

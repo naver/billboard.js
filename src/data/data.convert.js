@@ -50,11 +50,13 @@ extend(ChartInternal.prototype, {
 			throw Error("url or json or rows or columns is required.");
 		}
 
-		return data;
+		return isArray(data) && data;
 	},
 
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
 		const req = new XMLHttpRequest();
+
+		req.open("GET", url);
 
 		if (headers) {
 			Object.keys(headers).forEach(key => {
@@ -62,7 +64,6 @@ extend(ChartInternal.prototype, {
 			});
 		}
 
-		req.open("GET", url);
 		req.onreadystatechange = () => {
 			if (req.readyState === 4) {
 				if (req.status === 200) {

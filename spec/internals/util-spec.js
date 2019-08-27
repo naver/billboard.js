@@ -4,7 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
-import {toArray, getCssRules, isArray, sortValue} from "../../src/internals/util";
+import {toArray, getBoundingRect, getCssRules, getPathBox, getUnique, isArray, isNumber, sortValue} from "../../src/internals/util";
 
 describe("UTIL", function() {
 	describe("toArray", () => {
@@ -27,7 +27,6 @@ describe("UTIL", function() {
 			expect(isArray(rules1));
 		});
 	});
-
 
 	describe("sortValue", () => {
 		const value = [1362063600000, 1462063600000, 1562063600000];
@@ -58,6 +57,44 @@ describe("UTIL", function() {
 
 			// desc
 			expect(sortValue(data, false)).to.be.deep.equal(data.reverse());
+		});
+	});
+
+	describe("getBoundingRect", () => {
+		it("should return element's getBoundingClientRect()", () => {
+			const rect = getBoundingRect(document.body);
+
+			["bottom", "height", "left", "right", "top", "width", "x", "y"].forEach(v => {
+				expect(v in rect).to.be.true;
+			});
+
+			expect(document.body.rect).to.be.deep.equal(rect);
+		});
+	});
+
+	describe("getPathBox", () => {
+		it("should return element's path box value", () => {
+			const pathBox = getPathBox(document.body.querySelector("svg"));
+
+			for (let x in pathBox) {
+				expect(isNumber(pathBox[x])).to.be.true;
+			}
+		});
+	});
+
+	describe("getUnique", () => {
+		it("should return unique values", () => {
+			let data = [1,3,2,4,5,1,2,3];
+
+			expect(getUnique(data)).to.deep.equal([1, 3, 2, 4, 5]);
+
+			// for string
+			data = ["a","b","c","a","b"];
+			expect(getUnique(data)).to.deep.equal(["a", "b", "c"]);
+
+			// for datetime
+			data = [new Date("2019-08-01"), new Date("2019-08-01"), new Date("2019-08-01")];
+			expect(getUnique(data)).to.deep.equal([new Date("2019-08-01")]);
 		});
 	});
 });
