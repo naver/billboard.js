@@ -376,7 +376,7 @@ const emulateEvent = {
 		}
 	})(),
 	touch: (el, eventType, params) => {
-		const touchObj = new Touch(Object.assign({
+		const touchObj = new Touch(mergeObj({
 			identifier: Date.now(),
 			target: el,
 			radiusX: 2.5,
