@@ -9,7 +9,7 @@ import {
 	axisRight as d3AxisRight
 } from "d3-axis";
 import CLASS from "../config/classes";
-import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, sortValue} from "../internals/util";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, sortValue} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
 
 const isHorizontal = ($$, forHorizontal) => {
@@ -175,7 +175,7 @@ export default class Axis {
 		const tickFormat = isX ? $$.xAxisTickFormat : config[`axis_${name}_tick_format`];
 		let tickValues = isX ? $$.xAxisTickValues : $$[`${name}AxisTickValues`];
 
-		const axisParams = Object.assign({
+		const axisParams = mergeObj({
 			outerTick,
 			noTransition,
 			config,
