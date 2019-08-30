@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190828112910
+ * @version 1.10.2-nightly-20190830073209
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1913,9 +1913,9 @@ function () {
         return target.style("display") === "none" || target.style("visibility") === "hidden";
       },
           isLazy = config.render.lazy || isHidden(),
-          hasObserver = isDefined(MutationObserver);
+          MutationObserver = browser["b" /* window */].MutationObserver;
 
-      if (isLazy && hasObserver && config.render.observe !== !1 && !forced && new MutationObserver(function (mutation, observer) {
+      if (isLazy && MutationObserver && config.render.observe !== !1 && !forced && new MutationObserver(function (mutation, observer) {
         isHidden() || (observer.disconnect(), !$$.rendered && $$.initToRender(!0));
       }).observe(target.node(), {
         attributes: !0,
@@ -14136,7 +14136,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20190828112910",
+  version: "1.10.2-nightly-20190830073209",
 
   /**
    * Generate chart
@@ -14235,7 +14235,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20190828112910
+ * @version 1.10.2-nightly-20190830073209
  */
 
 
