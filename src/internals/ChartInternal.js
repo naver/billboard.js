@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {document, window} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isDefined, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -96,9 +96,9 @@ export default class ChartInternal {
 		const isHidden = () => target.style("display") === "none" || target.style("visibility") === "hidden";
 
 		const isLazy = config.render.lazy || isHidden();
-		const hasObserver = isDefined(MutationObserver);
+		const MutationObserver = window.MutationObserver;
 
-		if (isLazy && hasObserver && config.render.observe !== false && !forced) {
+		if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
 			new MutationObserver((mutation, observer) => {
 				if (!isHidden()) {
 					observer.disconnect();

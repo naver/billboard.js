@@ -13,8 +13,7 @@ module.exports = {
 	packaged: [
 		"",
 		"",
-		`All-in-one packaged file for ease use of '${pkg.name}' with the below dependencies.`,
-		"(NOTE: For IEs, do not use this file. Load d3.js & non pacakged file instead.)",
+		`All-in-one packaged file for ease use of '${pkg.name}' with dependant d3.js modules & polyfills.`,
 		`- ${Object.entries(pkg.dependencies).map(v => v.join(" ")).join("\r\n- ")}`
 	].join("\r\n"),
 	plugin: [

@@ -6,8 +6,8 @@ const banner = require("./banner");
 
 const config = {
 	entry: {
-		"billboard.pkgd": "./src/core.js",
-		"billboard.pkgd.min": "./src/core.js",
+		"billboard.pkgd": ["core-js/stable", "regenerator-runtime/runtime", "./src/core.js"],
+		"billboard.pkgd.min": ["core-js/stable", "./src/core.js"]
 	},
 	devtool: false,
 	plugins: [
