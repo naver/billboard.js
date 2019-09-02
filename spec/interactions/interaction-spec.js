@@ -798,6 +798,28 @@ describe("INTERACTION", () => {
 					done();
 				});
 			});
+
+			it("set options zoom.enabled=true", () => {
+				args.zoom = {enabled: true};
+			});
+
+			it("showed each data points tooltip?", done => {
+				chart.tooltip.show({x:1});
+
+				chart.$.tooltip.selectAll(".value").each(function(d, i) {
+					expect(+this.innerHTML).to.be.equal(args.data.columns[i][2]);
+				});
+
+				util.simulator(chart.$.svg.node(), {
+					pos: [250,150],
+					deltaX: -200,
+					deltaY: 0,
+					duration: 500,
+				}, () => {
+					expect(selection).to.deep.equal([5, 4, 3, 2, 1, 0]);
+					done();
+				});
+			});
 		});
 	});
 

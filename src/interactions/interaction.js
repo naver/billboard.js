@@ -158,19 +158,21 @@ extend(ChartInternal.prototype, {
 		$$.svg
 			.on("touchstart.eventRect touchmove.eventRect", function() {
 				const eventRect = getEventRect();
+				const event = d3Event;
 
 				if (!eventRect.empty() && eventRect.classed(CLASS.eventRect)) {
-					if ($$.dragging || $$.flowing || $$.hasArcType()) {
+					// if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
+					if ($$.dragging || $$.flowing || $$.hasArcType() || event.touches.length > 1) {
 						return;
 					}
 
-					preventEvent(d3Event);
+					preventEvent(event);
 					selectRect(this);
 				} else {
 					$$.unselectRect();
 					$$.callOverOutForTouch();
 				}
-			})
+			}, true)
 			.on("touchend.eventRect", () => {
 				const eventRect = getEventRect();
 
@@ -179,7 +181,7 @@ extend(ChartInternal.prototype, {
 						$$.cancelClick && ($$.cancelClick = false);
 					}
 				}
-			});
+			}, true);
 	},
 
 	/**

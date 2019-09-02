@@ -42,14 +42,14 @@ export default class Elements {
 		// exit
 		stanfordLine.exit().transition()
 			.duration(duration)
-			.style("opacity", 0)
+			.style("opacity", "0")
 			.remove();
 
 		// enter
 		const stanfordLineEnter = stanfordLine.enter().append("g");
 
 		stanfordLineEnter.append("line")
-			.style("opacity", 0);
+			.style("opacity", "0");
 
 		stanfordLineEnter
 			.merge(stanfordLine)
@@ -62,7 +62,7 @@ export default class Elements {
 			.attr("y1", d => (isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1")))
 			.attr("y2", d => (isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2")))
 			.transition()
-			.style("opacity", 1);
+			.style("opacity", "1");
 	}
 
 	updateStanfordRegions(duration) {
@@ -82,18 +82,18 @@ export default class Elements {
 		// exit
 		stanfordRegion.exit().transition()
 			.duration(duration)
-			.style("opacity", 0)
+			.style("opacity", "0")
 			.remove();
 
 		// enter
 		const stanfordRegionEnter = stanfordRegion.enter().append("g");
 
 		stanfordRegionEnter.append("polygon")
-			.style("opacity", 0);
+			.style("opacity", "0");
 
 		stanfordRegionEnter.append("text")
 			.attr("transform", isRotated ? "rotate(-90)" : "")
-			.style("opacity", 0);
+			.style("opacity", "0");
 
 		stanfordRegion = stanfordRegionEnter.merge(stanfordRegion);
 
@@ -108,7 +108,7 @@ export default class Elements {
 				isRotated ? xvCustom(value, "x") : yvCustom(value, "y")
 			].join(",")).join(" "))
 			.transition()
-			.style("opacity", d => (d.opacity ? d.opacity : 0.2));
+			.style("opacity", d => String(d.opacity ? d.opacity : 0.2));
 
 		stanfordRegion.select("text")
 			.transition()
@@ -127,7 +127,7 @@ export default class Elements {
 			.attr("text-anchor", "middle")
 			.attr("dominant-baseline", "middle")
 			.transition()
-			.style("opacity", 1);
+			.style("opacity", "1");
 	}
 
 	updateStanfordElements(duration = 0) {
