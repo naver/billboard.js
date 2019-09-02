@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190830073209
+ * @version 1.10.2-nightly-20190902070621
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7609,16 +7609,18 @@ extend(ChartInternal_ChartInternal.prototype, {
 
     // bind touch events
     $$.svg.on("touchstart.eventRect touchmove.eventRect", function () {
-      var eventRect = getEventRect();
+      var eventRect = getEventRect(),
+          event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"];
 
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
-        if ($$.dragging || $$.flowing || $$.hasArcType()) return;
-        preventEvent(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"]), selectRect(this);
+        // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
+        if ($$.dragging || $$.flowing || $$.hasArcType() || event.touches.length > 1) return;
+        preventEvent(event), selectRect(this);
       } else $$.unselectRect(), $$.callOverOutForTouch();
-    }).on("touchend.eventRect", function () {
+    }, !0).on("touchend.eventRect", function () {
       var eventRect = getEventRect();
       !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) && $$.cancelClick && ($$.cancelClick = !1);
-    });
+    }, !0);
   },
 
   /**
@@ -8371,7 +8373,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
       return $$.color(d.data);
     }).style("cursor", function (d) {
-      return hasInteraction && (config.data_selection_isselectable(d) ? "pointer" : null);
+      return hasInteraction && config.data_selection_isselectable(d) ? "pointer" : null;
     }).style("opacity", "0").each(function (d) {
       $$.isGaugeType(d.data) && (d.startAngle = config.gauge_startingAngle, d.endAngle = config.gauge_startingAngle), this._current = d;
     }).merge(mainArc), mainArc.attr("transform", function (d) {
@@ -8971,7 +8973,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   redrawArea: function redrawArea(drawArea, withTransition) {
     var $$ = this;
     return [(withTransition ? $$.mainArea.transition(getRandom()) : $$.mainArea).attr("d", drawArea).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function (d) {
-      return $$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity;
+      return ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity) + "";
     })];
   },
 
@@ -9037,9 +9039,14 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   updateCircle: function updateCircle() {
     var $$ = this;
-    $$.config.point_show && ($$.mainCircle = $$.main.selectAll(".".concat(config_classes.circles)).selectAll(".".concat(config_classes.circle)).data(function (d) {
-      return !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
-    }), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)));
+
+    if ($$.config.point_show) {
+      $$.mainCircle = $$.main.selectAll(".".concat(config_classes.circles)).selectAll(".".concat(config_classes.circle)).data(function (d) {
+        return !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
+      }), $$.mainCircle.exit().remove();
+      var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
+      $$.mainCircle = $$.mainCircle.enter().append(fn).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
+    }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
     var $$ = this,
@@ -9204,7 +9211,8 @@ extend(ChartInternal_ChartInternal.prototype, {
         if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
           var pointId = "".concat($$.datetimeId, "-point-").concat(id),
               pointFromDefs = $$.pointFromDefs(pointId);
-          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), /^(create|update)$/.test(method)) return method === "create" && args.unshift(pointId), $$.custom[method].bind(context).apply(void 0, [element].concat(args));
+          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), method === "create") return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
+          if (method === "update") return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
         }
         return point[method].bind(context).apply(void 0, [element].concat(args));
       };
@@ -11606,11 +11614,12 @@ extend(ChartInternal_ChartInternal.prototype, {
   onZoom: function onZoom() {
     var $$ = this,
         config = $$.config,
-        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"];
+        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
+        sourceEvent = event.sourceEvent;
 
-    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0) {
-      var isMousemove = event.sourceEvent.type === "mousemove",
-          isZoomOut = event.sourceEvent.wheelDelta < 0,
+    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0 && ($$.zoomScale || !(sourceEvent.type.indexOf("touch") > -1) || sourceEvent.touches.length !== 1)) {
+      var isMousemove = sourceEvent.type === "mousemove",
+          isZoomOut = sourceEvent.wheelDelta < 0,
           transform = event.transform;
       !isMousemove && isZoomOut && $$.x.domain().every(function (v, i) {
         return v !== $$.orgXDomain[i];
@@ -11630,7 +11639,9 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   onZoomEnd: function onZoomEnd() {
     var $$ = this,
-        startEvent = $$.zoom.startEvent;
+        startEvent = $$.zoom.startEvent,
+        event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"] && external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent;
+    startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], event = event.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
     !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$[$$.zoomScale ? "zoomScale" : "subX"].domain()));
   },
@@ -14136,7 +14147,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20190830073209",
+  version: "1.10.2-nightly-20190902070621",
 
   /**
    * Generate chart
@@ -14235,7 +14246,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20190830073209
+ * @version 1.10.2-nightly-20190902070621
  */
 
 

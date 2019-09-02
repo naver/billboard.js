@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190830073209
+ * @version 1.10.2-nightly-20190902070621
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -15185,7 +15185,7 @@ Local.prototype = local.prototype = {
 };
 // CONCATENATED MODULE: ./node_modules/d3-selection/src/sourceEvent.js
 
-/* harmony default export */ var sourceEvent = (function () {
+/* harmony default export */ var src_sourceEvent = (function () {
   var current = on_event,
       source;
 
@@ -15213,7 +15213,7 @@ Local.prototype = local.prototype = {
 
 
 /* harmony default export */ var src_mouse = (function (node) {
-  var event = sourceEvent();
+  var event = src_sourceEvent();
   if (event.changedTouches) event = event.changedTouches[0];
   return src_point(node, event);
 });
@@ -15226,7 +15226,7 @@ Local.prototype = local.prototype = {
 
 
 /* harmony default export */ var src_touch = (function (node, touches, identifier) {
-  if (arguments.length < 3) identifier = touches, touches = sourceEvent().changedTouches;
+  if (arguments.length < 3) identifier = touches, touches = src_sourceEvent().changedTouches;
 
   for (var i = 0, n = touches ? touches.length : 0, touch; i < n; ++i) {
     if ((touch = touches[i]).identifier === identifier) {
@@ -15240,7 +15240,7 @@ Local.prototype = local.prototype = {
 
 
 /* harmony default export */ var src_touches = (function (node, touches) {
-  if (touches == null) touches = sourceEvent().touches;
+  if (touches == null) touches = src_sourceEvent().touches;
 
   for (var i = 0, n = touches ? touches.length : 0, points = new Array(n); i < n; ++i) {
     points[i] = src_point(node, touches[i]);
@@ -29418,16 +29418,18 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
     // bind touch events
     $$.svg.on("touchstart.eventRect touchmove.eventRect", function () {
-      var eventRect = getEventRect();
+      var eventRect = getEventRect(),
+          event = on_event;
 
       if (!eventRect.empty() && eventRect.classed(config_classes.eventRect)) {
-        if ($$.dragging || $$.flowing || $$.hasArcType()) return;
-        preventEvent(on_event), selectRect(this);
+        // if touch points are > 1, means doing zooming interaction. In this case do not execute tooltip codes.
+        if ($$.dragging || $$.flowing || $$.hasArcType() || event.touches.length > 1) return;
+        preventEvent(event), selectRect(this);
       } else $$.unselectRect(), $$.callOverOutForTouch();
-    }).on("touchend.eventRect", function () {
+    }, !0).on("touchend.eventRect", function () {
       var eventRect = getEventRect();
       !eventRect.empty() && eventRect.classed(config_classes.eventRect) && ($$.hasArcType() || !$$.toggleShape || $$.cancelClick) && $$.cancelClick && ($$.cancelClick = !1);
-    });
+    }, !0);
   },
 
   /**
@@ -32533,7 +32535,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
       return $$.color(d.data);
     }).style("cursor", function (d) {
-      return hasInteraction && (config.data_selection_isselectable(d) ? "pointer" : null);
+      return hasInteraction && config.data_selection_isselectable(d) ? "pointer" : null;
     }).style("opacity", "0").each(function (d) {
       $$.isGaugeType(d.data) && (d.startAngle = config.gauge_startingAngle, d.endAngle = config.gauge_startingAngle), this._current = d;
     }).merge(mainArc), mainArc.attr("transform", function (d) {
@@ -33133,7 +33135,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   redrawArea: function redrawArea(drawArea, withTransition) {
     var $$ = this;
     return [(withTransition ? $$.mainArea.transition(getRandom()) : $$.mainArea).attr("d", drawArea).style("fill", $$.updateAreaColor.bind($$)).style("opacity", function (d) {
-      return $$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity;
+      return ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity) + "";
     })];
   },
 
@@ -33199,9 +33201,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   updateCircle: function updateCircle() {
     var $$ = this;
-    $$.config.point_show && ($$.mainCircle = $$.main.selectAll(".".concat(config_classes.circles)).selectAll(".".concat(config_classes.circle)).data(function (d) {
-      return !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
-    }), $$.mainCircle.exit().remove(), $$.mainCircle = $$.mainCircle.enter().append($$.point("create", this, $$.pointR.bind($$), $$.color)).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)));
+
+    if ($$.config.point_show) {
+      $$.mainCircle = $$.main.selectAll(".".concat(config_classes.circles)).selectAll(".".concat(config_classes.circle)).data(function (d) {
+        return !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
+      }), $$.mainCircle.exit().remove();
+      var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
+      $$.mainCircle = $$.mainCircle.enter().append(fn).merge($$.mainCircle).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
+    }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
     var $$ = this,
@@ -33366,7 +33373,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         if ($$.hasValidPointType(point)) point = $$[point];else if (!$$.hasValidPointDrawMethods(point)) {
           var pointId = "".concat($$.datetimeId, "-point-").concat(id),
               pointFromDefs = $$.pointFromDefs(pointId);
-          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), /^(create|update)$/.test(method)) return method === "create" && args.unshift(pointId), $$.custom[method].bind(context).apply(void 0, [element].concat(args));
+          if (pointFromDefs.size() < 1 && $$.insertPointInfoDefs(point, pointId), method === "create") return $$.custom.create.bind(context).apply(void 0, [element, pointId].concat(args));
+          if (method === "update") return $$.custom.update.bind(context).apply(void 0, [element].concat(args));
         }
         return point[method].bind(context).apply(void 0, [element].concat(args));
       };
@@ -36256,11 +36264,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   onZoom: function onZoom() {
     var $$ = this,
         config = $$.config,
-        event = on_event;
+        event = on_event,
+        sourceEvent = event.sourceEvent;
 
-    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0) {
-      var isMousemove = event.sourceEvent.type === "mousemove",
-          isZoomOut = event.sourceEvent.wheelDelta < 0,
+    if (config.zoom_enabled && event.sourceEvent && $$.filterTargetsToShow($$.data.targets).length !== 0 && ($$.zoomScale || !(sourceEvent.type.indexOf("touch") > -1) || sourceEvent.touches.length !== 1)) {
+      var isMousemove = sourceEvent.type === "mousemove",
+          isZoomOut = sourceEvent.wheelDelta < 0,
           transform = event.transform;
       !isMousemove && isZoomOut && $$.x.domain().every(function (v, i) {
         return v !== $$.orgXDomain[i];
@@ -36280,7 +36289,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    */
   onZoomEnd: function onZoomEnd() {
     var $$ = this,
-        startEvent = $$.zoom.startEvent;
+        startEvent = $$.zoom.startEvent,
+        event = on_event && on_event.sourceEvent;
+    startEvent && startEvent.type.indexOf("touch") > -1 && (startEvent = startEvent.changedTouches[0], event = event.changedTouches[0]);
     // if click, do nothing. otherwise, click interaction will be canceled.
     !startEvent || event && startEvent.clientX === event.clientX && startEvent.clientY === event.clientY || ($$.redrawEventRect(), $$.updateZoom(), callFn($$.config.zoom_onzoomend, $$.api, $$[$$.zoomScale ? "zoomScale" : "subX"].domain()));
   },
@@ -38783,7 +38794,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20190830073209",
+  version: "1.10.2-nightly-20190902070621",
 
   /**
    * Generate chart
@@ -38882,7 +38893,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20190830073209
+ * @version 1.10.2-nightly-20190902070621
  */
 
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190830073209
+ * @version 1.10.2-nightly-20190902070621
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -490,7 +490,7 @@ function () {
   }]), Plugin;
 }();
 
-_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20190830073209");
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20190902070621");
 
 
 
@@ -1251,10 +1251,10 @@ function () {
           xvCustom = this.xvCustom.bind($$),
           yvCustom = this.yvCustom.bind($$),
           stanfordLine = main.select(".".concat(stanford_classes.stanfordLines)).style("shape-rendering", "geometricprecision").selectAll(".".concat(stanford_classes.stanfordLine)).data(this.owner.config.lines);
-      stanfordLine.exit().transition().duration(duration).style("opacity", 0).remove();
+      stanfordLine.exit().transition().duration(duration).style("opacity", "0").remove();
       // enter
       var stanfordLineEnter = stanfordLine.enter().append("g");
-      stanfordLineEnter.append("line").style("opacity", 0), stanfordLineEnter.merge(stanfordLine).attr("class", function (d) {
+      stanfordLineEnter.append("line").style("opacity", "0"), stanfordLineEnter.merge(stanfordLine).attr("class", function (d) {
         return stanford_classes.stanfordLine + (d["class"] ? " ".concat(d["class"]) : "");
       }).select("line").transition().duration(duration).attr("x1", function (d) {
         return isRotated ? yvCustom(d, "y1") : xvCustom(d, "x1");
@@ -1264,7 +1264,7 @@ function () {
         return isRotated ? xvCustom(d, "x1") : yvCustom(d, "y1");
       }).attr("y2", function (d) {
         return isRotated ? xvCustom(d, "x2") : yvCustom(d, "y2");
-      }).transition().style("opacity", 1);
+      }).transition().style("opacity", "1");
     }
   }, {
     key: "updateStanfordRegions",
@@ -1277,17 +1277,17 @@ function () {
           yvCustom = this.yvCustom.bind($$),
           countPointsInRegion = this.owner.countEpochsInRegion.bind($$),
           stanfordRegion = main.select(".".concat(stanford_classes.stanfordRegions)).selectAll(".".concat(stanford_classes.stanfordRegion)).data(this.owner.config.regions);
-      stanfordRegion.exit().transition().duration(duration).style("opacity", 0).remove();
+      stanfordRegion.exit().transition().duration(duration).style("opacity", "0").remove();
       // enter
       var stanfordRegionEnter = stanfordRegion.enter().append("g");
-      stanfordRegionEnter.append("polygon").style("opacity", 0), stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", 0), stanfordRegion = stanfordRegionEnter.merge(stanfordRegion), stanfordRegion.attr("class", function (d) {
+      stanfordRegionEnter.append("polygon").style("opacity", "0"), stanfordRegionEnter.append("text").attr("transform", isRotated ? "rotate(-90)" : "").style("opacity", "0"), stanfordRegion = stanfordRegionEnter.merge(stanfordRegion), stanfordRegion.attr("class", function (d) {
         return stanford_classes.stanfordRegion + (d["class"] ? " ".concat(d["class"]) : "");
       }).select("polygon").transition().duration(duration).attr("points", function (d) {
         return d.points.map(function (value) {
           return [isRotated ? yvCustom(value, "y") : xvCustom(value, "x"), isRotated ? xvCustom(value, "x") : yvCustom(value, "y")].join(",");
         }).join(" ");
       }).transition().style("opacity", function (d) {
-        return d.opacity ? d.opacity : .2;
+        return (d.opacity ? d.opacity : .2) + "";
       }), stanfordRegion.select("text").transition().duration(duration).attr("x", function (d) {
         return isRotated ? yvCustom(getCentroid(d.points), "y") : xvCustom(getCentroid(d.points), "x");
       }).attr("y", function (d) {
@@ -1302,7 +1302,7 @@ function () {
         }
 
         return "";
-      }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", 1);
+      }).attr("text-anchor", "middle").attr("dominant-baseline", "middle").transition().style("opacity", "1");
     }
   }, {
     key: "updateStanfordElements",
