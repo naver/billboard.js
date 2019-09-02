@@ -137,17 +137,19 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const event = d3Event;
+		const sourceEvent = event.sourceEvent;
 
 		if (
 			!config.zoom_enabled ||
 			!event.sourceEvent ||
-			$$.filterTargetsToShow($$.data.targets).length === 0
+			$$.filterTargetsToShow($$.data.targets).length === 0 ||
+			(!$$.zoomScale && sourceEvent.type.indexOf("touch") > -1 && sourceEvent.touches.length === 1)
 		) {
 			return;
 		}
 
-		const isMousemove = event.sourceEvent.type === "mousemove";
-		const isZoomOut = event.sourceEvent.wheelDelta < 0;
+		const isMousemove = sourceEvent.type === "mousemove";
+		const isZoomOut = sourceEvent.wheelDelta < 0;
 		const transform = event.transform;
 
 		if (!isMousemove && isZoomOut && $$.x.domain().every((v, i) => v !== $$.orgXDomain[i])) {
@@ -178,7 +180,13 @@ extend(ChartInternal.prototype, {
 	 */
 	onZoomEnd() {
 		const $$ = this;
-		const startEvent = $$.zoom.startEvent;
+		let startEvent = $$.zoom.startEvent;
+		let event = d3Event && d3Event.sourceEvent;
+
+		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {
+			startEvent = startEvent.changedTouches[0];
+			event = event.changedTouches[0];
+		}
 
 		// if click, do nothing. otherwise, click interaction will be canceled.
 		if (!startEvent ||
