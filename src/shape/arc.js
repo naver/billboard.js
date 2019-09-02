@@ -443,7 +443,7 @@ extend(ChartInternal.prototype, {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.classArc.bind($$))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => hasInteraction && (config.data_selection_isselectable(d) ? "pointer" : null))
+			.style("cursor", d => (hasInteraction && config.data_selection_isselectable(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {

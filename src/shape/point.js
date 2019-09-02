@@ -100,10 +100,10 @@ extend(ChartInternal.prototype, {
 						$$.insertPointInfoDefs(point, pointId);
 					}
 
-					if (/^(create|update)$/.test(method)) {
-						method === "create" && args.unshift(pointId);
-
-						return $$.custom[method].bind(context)(element, ...args);
+					if (method === "create") {
+						return $$.custom.create.bind(context)(element, pointId, ...args);
+					} else if (method === "update") {
+						return $$.custom.update.bind(context)(element, ...args);
 					}
 				}
 
