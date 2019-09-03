@@ -191,10 +191,10 @@ extend(ChartInternal.prototype, {
 		};
 	},
 
-	updateXs() {
-		const $$ = this;
-
-		$$.xs = $$.axis.getTickValues("x") || [];
+	updateXs(values) {
+		if (values.length) {
+			this.xs = values.map(v => v.x);
+		}
 	},
 
 	getPrevX(i) {
@@ -358,23 +358,22 @@ extend(ChartInternal.prototype, {
 		return Math.max(...this.data.targets.map(t => t.values.length));
 	},
 
-	getMaxDataCountTarget(targets) {
-		const length = targets.length;
-		let max = 0;
-		let maxTarget;
+	getMaxDataCountTarget() {
+		let target = this.filterTargetsToShow() || [];
+		const length = target.length;
 
 		if (length > 1) {
-			targets.forEach(t => {
-				if (t.values.length > max) {
-					maxTarget = t;
-					max = t.values.length;
-				}
-			});
-		} else {
-			maxTarget = length ? targets[0] : null;
+			target = target.map(t => t.values)
+				.reduce((a, b) => a.concat(b))
+				.map(v => v.x);
+
+			target = sortValue(getUnique(target))
+				.map((x, index) => ({x, index}));
+		} else if (length) {
+			target = target[0].values;
 		}
 
-		return maxTarget;
+		return target;
 	},
 
 	mapToIds(targets) {
@@ -835,29 +834,22 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Sort data index to be aligned with x axis.
+	 * @param {Array} tickValues Tick array values
 	 * @private
 	 */
-	updateDataIndexByX() {
+	updateDataIndexByX(tickValues) {
 		const $$ = this;
-		const isTimeSeries = $$.isTimeSeries();
-		const tickValues = $$.flowing ?
-			$$.getMaxDataCountTarget($$.data.targets).values.map(v => v.x) :
-			($$.axis.getTickValues("x") || []);
 
 		$$.data.targets.forEach(t => {
 			t.values.forEach((v, i) => {
-				if (isTimeSeries) {
-					tickValues.some((d, j) => {
-						if (+d === +v.x) {
-							v.index = j;
-							return true;
-						}
+				tickValues.some((d, j) => {
+					if (+d.x === +v.x) {
+						v.index = j;
+						return true;
+					}
 
-						return false;
-					});
-				} else {
-					v.index = tickValues.indexOf(v.x);
-				}
+					return false;
+				});
 
 				if (!isNumber(v.index) || v.index === -1) {
 					v.index = i;

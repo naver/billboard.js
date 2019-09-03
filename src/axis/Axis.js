@@ -9,7 +9,7 @@ import {
 	axisRight as d3AxisRight
 } from "d3-axis";
 import CLASS from "../config/classes";
-import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, sortValue} from "../internals/util";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, sortValue} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
 
 const isHorizontal = ($$, forHorizontal) => {
@@ -39,7 +39,8 @@ export default class Axis {
 
 		target.forEach(v => {
 			const classAxis = getAxisClassName(v);
-			const classLabel = CLASS[`axis${capitalize(v)}Label`];
+			const axisId = v.toUpperCase();
+			const classLabel = CLASS[`axis${axisId}Label`];
 
 			$$.axes[v] = main.append("g")
 				.attr("class", classAxis)
@@ -62,7 +63,7 @@ export default class Axis {
 				.attr("transform", ["rotate(-90)", null][
 					v === "x" ? +!isRotated : +isRotated
 				])
-				.style("text-anchor", this.textAnchorForXAxisLabel.bind(this));
+				.style("text-anchor", this[`textAnchorFor${axisId}AxisLabel`].bind(this));
 
 			this.generateAxes(v);
 		});
@@ -174,7 +175,7 @@ export default class Axis {
 		const tickFormat = isX ? $$.xAxisTickFormat : config[`axis_${name}_tick_format`];
 		let tickValues = isX ? $$.xAxisTickValues : $$[`${name}AxisTickValues`];
 
-		const axisParams = Object.assign({
+		const axisParams = mergeObj({
 			outerTick,
 			noTransition,
 			config,

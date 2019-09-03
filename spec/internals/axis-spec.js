@@ -3,6 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
+import {format as d3Format} from "d3-format";
+import {timeMinute as d3TimeMinute} from "d3-time";
 import util from "../assets/util";
 import bb from "../../src/core";
 import CLASS from "../../src/config/classes";
@@ -81,7 +84,7 @@ describe("AXIS", function() {
 		});
 
 		it("should compute char dimension", () => {
-			const size = AxisRendererHelper.getSizeFor1Char(d3.select(".tick"));
+			const size = AxisRendererHelper.getSizeFor1Char(d3Select(".tick"));
 
 			expect(size.w && size.h).to.be.ok;
 			expect(AxisRendererHelper.getSizeFor1Char()).to.be.equal(size);
@@ -96,7 +99,7 @@ describe("AXIS", function() {
 
 		it("should have specified tick texts", () => {
 			chart.$.main.select(`.${CLASS.axisY}`).selectAll("g.tick").each(function(d, i) {
-				const text = d3.select(this)
+				const text = d3Select(this)
 					.select("text").text();
 
 				expect(+text).to.be.equal(values[i]);
@@ -158,6 +161,71 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis label", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 170, 150, 250]
+					]
+				},
+				axis:{
+					x: {
+						label: {
+							text: 'This is a very long label centered'
+						}
+					},
+					y: {
+						label: {
+							text: 'This is a very long label centered'
+						}
+					},
+					y2: {
+						show: true,
+						label: {
+							text: 'This is a very long label centered'
+						}
+					}
+				}
+			};
+		});
+
+ 		const checkAnchor = value => {
+			["x", "y", "y2"].forEach(v => {
+				const anchor = chart.$.main.select(`.${CLASS[`axis${v.toUpperCase()}Label`]}`);
+
+ 				expect(anchor.style("text-anchor")).to.be.equal(value);
+			});
+		};
+
+ 		it("check axis label position ==> x: inner-right, y/y2: inner-top", () => {
+			// x: inner-right, y/y2: inner-top
+			checkAnchor("end");
+		});
+
+ 		it("set options label.position=center/middle", () => {
+			args.axis.x.label.position = "inner-center";
+			args.axis.y.label.position = "inner-middle";
+			args.axis.y2.label.position = "inner-middle";
+		});
+
+ 		it("check axis label position ==> x: inner-center, y/y2: inner-middle", () => {
+			// x: inner-right, y/y2: inner-top
+			checkAnchor("middle");
+		});
+
+ 		it("set options label.position=left/bottom", () => {
+			args.axis.x.label.position = "inner-left";
+			args.axis.y.label.position = "inner-bottom";
+			args.axis.y2.label.position = "inner-bottom";
+		});
+
+ 		it("check axis label position ==> x: inner-left, y/y2: inner-bottom", () => {
+			// x: inner-right, y/y2: inner-top
+			checkAnchor("start");
+		});
+	});
+
 	describe("axis y timeseries", () => {
 		before(() => {
 			args = {
@@ -204,7 +272,7 @@ describe("AXIS", function() {
 
 		it("set options axis.y.tick.time", () => {
 			args.axis.y.tick.time = {
-				value : d3.timeMinute.every(60)
+				value : d3TimeMinute.every(60)
 			};
 		});
 
@@ -250,7 +318,7 @@ describe("AXIS", function() {
 				chart.$.main.select(`.${CLASS.axisX}`)
 					.selectAll("g.tick")
 					.each(function(d, i) {
-						const tick = d3.select(this).select("text").text();
+						const tick = d3Select(this).select("text").text();
 
 						expect(+tick).to.be.equal(window.generatedTicks[i]);
 					});
@@ -288,12 +356,12 @@ describe("AXIS", function() {
 					expect(ticks.size()).to.be.equal(6);
 
 					ticks.each(function(d, i) {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(1);
 
 						tspans.each(function() {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(i + "");
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -318,12 +386,12 @@ describe("AXIS", function() {
 					expect(ticks.size()).to.be.equal(6);
 
 					ticks.each(function() {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(2);
 
 						tspans.each(function(d, i) {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(expectedTexts[i]);
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -345,12 +413,12 @@ describe("AXIS", function() {
 					expect(ticks.size()).to.be.equal(9);
 
 					ticks.each(function(d) {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(1);
 
 						tspans.each(function() {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(d + "");
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -367,12 +435,12 @@ describe("AXIS", function() {
 					expect(ticks.size()).to.be.equal(9);
 
 					ticks.each(function(d) {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(1);
 
 						tspans.each(function() {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(d + "");
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -393,7 +461,7 @@ describe("AXIS", function() {
 						.selectAll("g.tick");
 
 					ticks.each(function() {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(1);
 					});
@@ -414,12 +482,12 @@ describe("AXIS", function() {
 					expect(ticks.size()).to.be.equal(6);
 
 					ticks.each(function() {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(2);
 
 						tspans.each(function(d, i) {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(expectedTexts[i]);
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -450,12 +518,12 @@ describe("AXIS", function() {
 					expect(ticks.size()).to.be.equal(7);
 
 					ticks.each(function(d, i) {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 
 						expect(tspans.size()).to.be.equal(1);
 
 						tspans.each(function() {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(expectedTexts[i]);
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -495,7 +563,7 @@ describe("AXIS", function() {
 						.selectAll("g.tick");
 
 					ticks.each(function(d, i) {
-						const tspans = d3.select(this).selectAll("tspan");
+						const tspans = d3Select(this).selectAll("tspan");
 						const expectedX = "0";
 						const expectedDy = ".71em";
 
@@ -503,7 +571,7 @@ describe("AXIS", function() {
 							expect(tspans.size()).to.be.equal(1);
 
 							tspans.each(function() {
-								const tspan = d3.select(this);
+								const tspan = d3Select(this);
 
 								expect(tspan.attr("x")).to.be.equal(expectedX);
 								expect(tspan.attr("dy")).to.be.equal(expectedDy);
@@ -526,7 +594,7 @@ describe("AXIS", function() {
 					expect(tspans.size()).to.be.equal(expectedTickTexts.length);
 
 					tspans.each(function(d, i) {
-						const tspan = d3.select(this);
+						const tspan = d3Select(this);
 
 						expect(tspan.text()).to.be.equal(expectedTickTexts[i]);
 						expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -546,7 +614,7 @@ describe("AXIS", function() {
 					const categories = chart.categories();
 
 					ticks.each(function(d, i) {
-						expect(d3.select(this).select("title").text()).to.be.equal(categories[i]);
+						expect(d3Select(this).select("title").text()).to.be.equal(categories[i]);
 					});
 
 					// check when toggling displaying data series
@@ -563,14 +631,14 @@ describe("AXIS", function() {
 					const ticks = chart.$.main.select(`.${CLASS.axisX}`).selectAll("g.tick");
 
 					ticks.each(function(d, i) {
-						const texts = d3.select(this).selectAll("text");
+						const texts = d3Select(this).selectAll("text");
 						const tspans = texts.selectAll("tspan");
 
 						const expectedX = "-9";
 						const expectedY = "36";
 
 						texts.each(function() {
-							const text = d3.select(this);
+							const text = d3Select(this);
 
 							expect(text.attr("x")).to.be.equal(expectedX);
 							expect(text.attr("y")).to.be.equal(expectedY);
@@ -582,7 +650,7 @@ describe("AXIS", function() {
 							expect(tspans.size()).to.be.equal(1);
 
 							tspans.each(function() {
-								const tspan = d3.select(this);
+								const tspan = d3Select(this);
 
 								expect(tspan.attr("x")).to.be.equal(expectedX);
 								expect(tspan.attr("dy")).to.be.equal(expectedDy);
@@ -605,7 +673,7 @@ describe("AXIS", function() {
 					expect(tspans.size()).to.be.equal(expectedTickTexts.length);
 
 					tspans.each(function(d, i) {
-						const tspan = d3.select(this);
+						const tspan = d3Select(this);
 
 						expect(tspan.text()).to.be.equal(expectedTickTexts[i]);
 						expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -668,7 +736,7 @@ describe("AXIS", function() {
 						expect(tspans.size()).to.be.equal(expectedTickTexts.length);
 
 						tspans.each(function(d, i) {
-							const tspan = d3.select(this);
+							const tspan = d3Select(this);
 
 							expect(tspan.text()).to.be.equal(expectedTickTexts[i]);
 							expect(tspan.attr("x")).to.be.equal(expectedX);
@@ -699,7 +767,7 @@ describe("AXIS", function() {
 				expect(tspans.size()).to.be.equal(tickTexts.length);
 
 				tspans.each(function(d, i) {
-					const tspan = d3.select(this);
+					const tspan = d3Select(this);
 
 					expect(tspan.text()).to.be.equal(tickTexts[i]);
 				});
@@ -721,7 +789,7 @@ describe("AXIS", function() {
 				expect(tspans.size()).to.be.equal(lineBreaks.length);
 
 				tspans.each(function(d, i) {
-					const tspan = d3.select(this);
+					const tspan = d3Select(this);
 
 					expect(tspan.text()).to.be.equal(lineBreaks[i]);
 				});
@@ -771,7 +839,7 @@ describe("AXIS", function() {
 
 			it("should rotate tick texts", () => {
 				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
-					const tick = d3.select(this);
+					const tick = d3Select(this);
 					const text = tick.select("text");
 					const tspan = text.select("tspan");
 
@@ -817,7 +885,7 @@ describe("AXIS", function() {
 			it("should rotate tick texts", done => {
 				setTimeout(() => {
 					chart.$.main.selectAll(`.${CLASS.axisY} g.tick`).each(function() {
-						const tick = d3.select(this);
+						const tick = d3Select(this);
 						const text = tick.select("text");
 						const tspan = text.select("tspan");
 						const transform = text.attr("transform");
@@ -974,7 +1042,7 @@ describe("AXIS", function() {
 			expect(paddingLeft).to.be.above(19);
 
 			tickTexts.each(function() {
-				expect(+d3.select(this).attr("x")).to.be.below(0);
+				expect(+d3Select(this).attr("x")).to.be.below(0);
 			});
 		});
 
@@ -989,7 +1057,7 @@ describe("AXIS", function() {
 			expect(paddingLeft).to.be.equal(1);
 
 			tickTexts.each(function() {
-				expect(+d3.select(this).attr("x")).to.be.above(0);
+				expect(+d3Select(this).attr("x")).to.be.above(0);
 			});
 		});
 
@@ -1020,7 +1088,7 @@ describe("AXIS", function() {
 			expect(paddingRight).to.be.above(19);
 
 			tickTexts.each(function() {
-				expect(+d3.select(this).attr("x")).to.be.above(0);
+				expect(+d3Select(this).attr("x")).to.be.above(0);
 			});
 		});
 
@@ -1035,7 +1103,7 @@ describe("AXIS", function() {
 			expect(paddingRight).to.be.equal(2);
 
 			tickTexts.each(function() {
-				expect(+d3.select(this).attr("x")).to.be.below(0);
+				expect(+d3Select(this).attr("x")).to.be.below(0);
 			});
 		});
 	});
@@ -1070,8 +1138,8 @@ describe("AXIS", function() {
 			const ticks = chart.$.main.select(`.${CLASS.axisX}`).selectAll("g.tick").nodes();
 
 			barRects.each(function(d, idx){
-				const y = d3.select(this).attr("y");
-				const tick = d3.select(ticks[idx]);
+				const y = d3Select(this).attr("y");
+				const tick = d3Select(ticks[idx]);
 
 				expect(tick.attr("transform")).to.be.equal("translate(0,"+y+")");
 			});
@@ -1247,7 +1315,7 @@ describe("AXIS", function() {
 				const pos = args.axis[v].tick.text.position;
 
 				main.selectAll(`.${CLASS[`axis${v.toUpperCase()}`]} tspan`).each(function() {
-					const tspan = d3.select(this);
+					const tspan = d3Select(this);
 
 					expect(+tspan.attr("dx")).to.be.equal(pos.x);
 					expect(+tspan.attr("dy")).to.be.equal(pos.y + (v !== "x" ? 3 : 0));
@@ -1266,7 +1334,7 @@ describe("AXIS", function() {
 				const pos = args.axis[v].tick.text.position;
 
 				main.selectAll(`.${CLASS[`axis${v.toUpperCase()}`]} tspan`).each(function() {
-					const tspan = d3.select(this);
+					const tspan = d3Select(this);
 
 					expect(+tspan.attr("dx")).to.be.equal(pos.x);
 					expect(+tspan.attr("dy")).to.be.equal(pos.y + (v === "x" ? 3 : 0));
@@ -1512,7 +1580,7 @@ describe("AXIS", function() {
 				axis: {
 				  y: {
 					tick: {
-					  format: function(x) { return d3.format("$,")(x); },
+					  format: function(x) { return d3Format("$,")(x); },
 					  count: 12
 					},
 				  }

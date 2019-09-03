@@ -4,7 +4,6 @@
  */
 /* global sandbox, window */
 /* eslint-disable */
-import * as d3 from "d3";
 import simulant from "simulant";
 import bb from "../../src/core";
 import CLASS from "../../src/config/classes";
@@ -47,7 +46,6 @@ const generate = args => {
 		}
 
 		bb.chart.internal.fn.convertInputType = () => inputType;
-		window.d3 = d3;
 
 		chart = bb.generate(args);
 	}

@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -36,7 +37,7 @@ describe("API category", () => {
 		chart.categories(name);
 
 		chart.internal.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
-			expect(d3.select(this).text()).to.be.equal(name[i]);
+			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});
 
@@ -54,7 +55,7 @@ describe("API category", () => {
 
 		// check if <tspan> element value has changed
 		chart.internal.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
-			expect(d3.select(this).text()).to.be.equal(name[i]);
+			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});
 });

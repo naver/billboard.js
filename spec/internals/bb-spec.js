@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import bb from "../../src/core";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";7
@@ -52,7 +53,7 @@ describe("Interface & initialization", () => {
 			const internal = chart.internal;
 
 			expect(chart).not.to.be.null;
-			expect(d3.select(chart.element).classed("bb")).to.be.true;
+			expect(d3Select(chart.element).classed("bb")).to.be.true;
 			expect(internal.svg.node().tagName).to.be.equal("svg");
 			expect(internal.convertInputType()).to.be.equal(internal.inputType);
 			expect(chart).to.be.equal(bb.instance[0]);
@@ -79,6 +80,18 @@ describe("Interface & initialization", () => {
 			expect(chart.element.classList.contains("bb")).to.be.true;
 		});
 
+		it("instantiate with empty data", () => {
+			let threw = false;
+
+			try {
+				util.generate({data: {}});
+			} catch(e) {
+				threw = true;
+			} finally {
+				expect(threw).to.be.true;
+			}
+		});
+
 		it("instantiate with different classname on wrapper element", () => {
 			const bindtoClassName = "billboard-js";
 			chart = bb.generate({
@@ -94,7 +107,7 @@ describe("Interface & initialization", () => {
 				}
 			});
 
-			expect(d3.select(chart.element).classed(bindtoClassName)).to.be.true;
+			expect(d3Select(chart.element).classed(bindtoClassName)).to.be.true;
 		});
 	});
 
@@ -337,6 +350,75 @@ describe("Interface & initialization", () => {
 				expect(v[0]).to.be.equal(expected[i]);
 				expect(v[1]).to.be.equal(chart);
 			});
+		});
+	});
+
+	describe("check for lazy rendering", () => {
+		const args = {
+			data: {
+				columns: [
+					["data1", 300, 350, 300]
+				]
+			}
+		};
+
+		it("check lazy rendering & mutation observer: style attribute", done => {
+			const el = document.body.querySelector("#chart");
+
+			// hide to lazy render
+			el.style.display = "none";
+
+			chart = util.generate(args);
+
+			expect(el.innerHTML).to.be.empty;
+
+			el.style.display = "block";
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				el.style.display = "";
+				done();
+			}, 500);
+		});
+
+		it("check lazy rendering & mutation observer: class attribute", done => {
+			const el = document.body.querySelector("#chart");
+
+			// hide to lazy render
+			el.classList.add("hide");
+
+			chart = util.generate(args);
+
+			expect(el.innerHTML).to.be.empty;
+
+			el.classList.remove("hide");
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				done();
+			}, 500);
+		});
+
+		it("check lazy rendering via option", done => {
+			const el = document.body.querySelector("#chart");
+
+			args.render = {
+				lazy: true,
+				observe: false
+			};
+
+			chart = util.generate(args);
+
+			// chart shouldn't be rendered
+			expect(el.innerHTML).to.be.empty;
+
+			// call to render
+			chart.flush();
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				done();
+			}, 500);
 		});
 	});
 });

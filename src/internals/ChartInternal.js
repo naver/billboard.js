@@ -35,6 +35,7 @@ export default class ChartInternal {
 		$$.data = {};
 		$$.cache = {};
 		$$.axes = {};
+		$$.rendered = false;
 	}
 
 	beforeInit() {
@@ -57,12 +58,63 @@ export default class ChartInternal {
 
 	init() {
 		const $$ = this;
+		const config = $$.config;
 
 		$$.initParams();
 
-		const convertedData = $$.convertData($$.config, $$.initWithData);
+		const bindto = {
+			element: config.bindto,
+			classname: "bb"
+		};
 
-		convertedData && $$.initWithData(convertedData);
+		if (isObject(config.bindto)) {
+			bindto.element = config.bindto.element || "#chart";
+			bindto.classname = config.bindto.classname || bindto.classname;
+		}
+
+		// select bind element
+		$$.selectChart = isFunction(bindto.element.node) ?
+			config.bindto.element : d3Select(bindto.element || []);
+
+		if ($$.selectChart.empty()) {
+			$$.selectChart = d3Select(document.body.appendChild(document.createElement("div")));
+		}
+
+		$$.selectChart.html("").classed(bindto.classname, true);
+		$$.initToRender();
+	}
+
+	/**
+	 * Initialize the rendering process
+	 * @param {Boolean} forced Force to render process
+	 * @private
+	 */
+	initToRender(forced) {
+		const $$ = this;
+		const config = $$.config;
+		const target = $$.selectChart;
+		const isHidden = () => target.style("display") === "none" || target.style("visibility") === "hidden";
+
+		const isLazy = config.render.lazy || isHidden();
+		const MutationObserver = window.MutationObserver;
+
+		if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
+			new MutationObserver((mutation, observer) => {
+				if (!isHidden()) {
+					observer.disconnect();
+					!$$.rendered && $$.initToRender(true);
+				}
+			}).observe(target.node(), {
+				attributes: true,
+				attributeFilter: ["class", "style"]
+			});
+		}
+
+		if (!isLazy || forced) {
+			const convertedData = $$.convertData(config, $$.initWithData);
+
+			convertedData && $$.initWithData(convertedData);
+		}
 	}
 
 	initParams() {
@@ -149,26 +201,6 @@ export default class ChartInternal {
 
 		$$.axis = new Axis($$);
 		config.zoom_enabled && $$.initZoom();
-
-		const bindto = {
-			element: config.bindto,
-			classname: "bb"
-		};
-
-		if (isObject(config.bindto)) {
-			bindto.element = config.bindto.element || "#chart";
-			bindto.classname = config.bindto.classname || bindto.classname;
-		}
-
-		// select bind element
-		$$.selectChart = isFunction(bindto.element.node) ?
-			config.bindto.element : d3Select(bindto.element || []);
-
-		if ($$.selectChart.empty()) {
-			$$.selectChart = d3Select(document.body.appendChild(document.createElement("div")));
-		}
-
-		$$.selectChart.html("").classed(bindto.classname, true);
 
 		// Init data as targets
 		$$.data.xs = {};
@@ -336,6 +368,8 @@ export default class ChartInternal {
 
 		// export element of the chart
 		$$.api.element = $$.selectChart.node();
+
+		$$.rendered = true;
 	}
 
 	initChartElements() {
@@ -597,9 +631,6 @@ export default class ChartInternal {
 		// update axis
 		// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 		$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-
-		// update data's index value to be alinged with the x Axis
-		$$.updateDataIndexByX();
 
 		// update circleY based on updated parameters
 		$$.updateCircleY();

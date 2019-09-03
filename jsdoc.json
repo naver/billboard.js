@@ -44,7 +44,7 @@
 		"typedefs": true,
 		"private": false,
 		"scripts": [
-			"../doc.css"
+			"../../../css/doc.css"
 		],
 		"menu":{
 			"Examples": {

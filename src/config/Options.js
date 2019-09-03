@@ -575,6 +575,9 @@ export default class Options {
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
  			 * @property {String|Object} [data.labels.colors] Set label text colors.
+			 * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
+    		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
+     		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
@@ -583,6 +586,7 @@ export default class Options {
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
 			 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
 			 * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+			 * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
 			 * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
 			 * @example
 			 * data: {
@@ -1141,16 +1145,20 @@ export default class Options {
 
 			/**
 			 * Used if loading JSON via data.url.
+			 * - **Available Values:**
+			 *   - json
+			 *   - csv
+			 *   - tsv
 			 * @name data․mimeType
 			 * @memberof Options
 			 * @type {String}
-			 * @default undefined
+			 * @default csv
 			 * @example
 			 * data: {
 			 *     mimeType: "json"
 			 * }
 			 */
-			data_mimeType: undefined,
+			data_mimeType: "csv",
 
 			/**
 			 * Choose which JSON object keys correspond to desired data.
@@ -1208,17 +1216,17 @@ export default class Options {
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
 			 * @example
 			 *  subchart: {
-			 * 		axis: {
-			 * 			x: {
-			 * 				show: true,
-			 * 				tick: {
-			 * 					show: true,
-			 * 					text: {
-			 * 						show: false
-			 * 					}
-			 * 				}
-			 * 			}
-			 * 		},
+			 *      axis: {
+			 *      	x: {
+			 *      	  show: true,
+			 *      	    tick: {
+			 *      	      show: true,
+			 *      	      text: {
+			 *      	        show: false
+			 *      	      }
+			 *      	    }
+			 *      	}
+			 *      },
 			 *      show: true,
 			 *      size: {
 			 *          height: 20
@@ -1924,7 +1932,11 @@ export default class Options {
 
 			/**
 			 * Set label on x axis.<br><br>
-			 *  You can set x axis label and change its position by this option. string and object can be passed and we can change the poisiton by passing object that has position key. Available position differs according to the axis direction (vertical or horizontal). If string set, the position will be the default.
+			 * You can set x axis label and change its position by this option.
+			 * `string` and `object` can be passed and we can change the poisiton by passing object that has position key.<br>
+			 * Available position differs according to the axis direction (vertical or horizontal).
+			 * If string set, the position will be the default.
+			 *
 			 *  - **If it's horizontal axis:**
 			 *    - inner-right [default]
 			 *    - inner-center
@@ -2123,11 +2135,12 @@ export default class Options {
 
 			/**
 			 * Set label on y axis.<br><br>
-			 * You can set y axis label and change its position by this option. This option works in the same way as axis.x.label.
+			 * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
 			 * @name axis․y․label
 			 * @memberof Options
 			 * @type {String|Object}
 			 * @default {}
+			 * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
 			 * @example
 			 * axis: {
 			 *   y: {
@@ -2416,6 +2429,9 @@ export default class Options {
 
 			/**
 			 * Show or hide y2 axis.
+			 * - **NOTE**:
+			 *   - When set to `false` will not generate y2 axis node. In this case, all 'y2' axis related functionality won't work properly.
+			 *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
 			 * @name axis․y2․show
 			 * @memberof Options
 			 * @type {Boolean}
@@ -2507,11 +2523,12 @@ export default class Options {
 
 			/**
 			 * Set label on y2 axis.<br><br>
-			 * You can set y2 axis label and change its position by this option. This option works in the same way as axis.x.label.
+			 * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
 			 * @name axis․y2․label
 			 * @memberof Options
 			 * @type {String|Object}
 			 * @default {}
+			 * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
 			 * @example
 			 * axis: {
 			 *   y2: {
@@ -3063,15 +3080,15 @@ export default class Options {
 			 *      	x: [0, 0],  // x1, x2 attributes
 			 *      	y: [0, 0],  // y1, y2 attributes
 			 *      	stops: [
-			 *      		// offset, stop-color, stop-opacity
-			 *      		[0, "#7cb5ec", 1],
+			 *      	  // offset, stop-color, stop-opacity
+			 *      	  [0, "#7cb5ec", 1],
 			 *
-			 *      		// setting 'null' for stop-color, will set its original data color
-			 *      		[0.5, null, 0],
+			 *      	  // setting 'null' for stop-color, will set its original data color
+			 *      	  [0.5, null, 0],
 			 *
-			 *      		// setting 'function' for stop-color, will pass data id as argument.
-			 *      		// It should return color string or null value
-			 *      		[1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+			 *      	  // setting 'function' for stop-color, will pass data id as argument.
+			 *      	  // It should return color string or null value
+			 *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
 			 *      	]
 			 *      }
 			 *  }
@@ -3370,6 +3387,47 @@ export default class Options {
 			radar_level_text_show: true,
 			radar_size_ratio: 0.87,
 			radar_direction_clockwise: false,
+
+			/**
+			 * Control the render timing
+			 * @name render
+			 * @memberof Options
+			 * @type {Object}
+			 * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+			 * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
+			 * @example
+			 *  render: {
+			 *    lazy: true,
+			 *    observe: true
+			 * }
+			 *
+			 * @example
+			 *	// <!-- render.lazy will detect visibility defined -->
+			 *  // (a) <div id='chart' class='hide'></div>
+			 *  // (b) <div id='chart' style='display:none'></div>
+			 *
+			 *  // render.lazy enabled by default when element is hidden
+			 *  var chart = bb.generate({ ... });
+			 *
+			 *  // chart will be rendered automatically when element's visibility changes
+			 *  // Note: works only for inlined css property or class attribute changes
+			 *  document.getElementById('chart').classList.remove('hide')  // (a)
+			 *  document.getElementById('chart').style.display = 'block';  // (b)
+			 *
+			 * @example
+			 *	// chart won't be rendered and not observing bind element's visiblity changes
+			 *  var chart = bb.generate({
+			 *     render: {
+			 *          lazy: true,
+			 *          observe: false
+			 *     }
+			 *  });
+			 *
+			 *  // call at any point when you want to render
+			 *  chart.flush();
+			 */
+			render: {},
 
 			/**
 			 * Show rectangles inside the chart.<br><br>

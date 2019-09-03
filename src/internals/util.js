@@ -159,6 +159,9 @@ const getBrushSelection = ctx => {
 	return selection;
 };
 
+// Get boundingClientRect. Cache the evaluated value once it was called.
+const getBoundingRect = node => node.rect || (node.rect = node.getBoundingClientRect());
+
 // retrun random number
 const getRandom = (asStr = true) => Math.random() + (asStr ? "" : 0);
 
@@ -227,7 +230,13 @@ const getCssRules = styleSheets => {
  * @return {Array} Unique array value
  * @private
  */
-const getUnique = data => data.filter((v, i, self) => self.indexOf(v) === i);
+const getUnique = data => {
+	const isDate = data[0] instanceof Date;
+	const d = (isDate ? data.map(Number) : data)
+		.filter((v, i, self) => self.indexOf(v) === i);
+
+	return isDate ? d.map(v => new Date(v)) : d;
+};
 
 /**
  * Merge array
@@ -367,7 +376,7 @@ const emulateEvent = {
 		}
 	})(),
 	touch: (el, eventType, params) => {
-		const touchObj = new Touch(Object.assign({
+		const touchObj = new Touch(mergeObj({
 			identifier: Date.now(),
 			target: el,
 			radiusX: 2.5,
@@ -414,6 +423,7 @@ export {
 	emulateEvent,
 	extend,
 	getBrushSelection,
+	getBoundingRect,
 	getCssRules,
 	getMinMax,
 	getOption,

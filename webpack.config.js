@@ -3,7 +3,7 @@ const path = require("path");
 const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
 const Stylish = require("webpack-stylish");
-const WebpackMonitor = require("webpack-monitor");
+const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
 
 const config = {
@@ -38,7 +38,10 @@ const config = {
 		rules: [
 			{
 				test: /(\.js)$/,
-				exclude: /(node_modules)/,
+				exclude: {
+					test: /node_modules/,
+					not: [/(d3\-.*)$/]
+				},
 				use: {
 					loader: "babel-loader",
 					options: {
@@ -79,10 +82,8 @@ module.exports = () => {
 		mode = env.NODE_ENV;
 	}
 
-	env.MONITOR && config.plugins.push(
-		new WebpackMonitor({
-			launch: true
-		})
+	env.ANALYZER && config.plugins.push(
+		new BundleAnalyzerPlugin()
 	);
 
 	if (env.NIGHTLY) {

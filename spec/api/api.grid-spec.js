@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -38,8 +39,8 @@ describe("API grid", function() {
 				expect(grids.size()).to.be.equal(expectedGrids.length);
 
 				grids.each(function (d, i) {
-					const y = +d3.select(this).select("line").attr("y1");
-					const text = d3.select(this).select("text").text();
+					const y = +d3Select(this).select("line").attr("y1");
+					const text = d3Select(this).select("text").text();
 					const expectedY = Math.round(chart.internal.y(expectedGrids[i].value));
 					const expectedText = expectedGrids[i].text;
 
@@ -88,8 +89,8 @@ describe("API grid", function() {
 					expect(grids.size()).to.be.equal(expectedGrids.length);
 
 					grids.each(function(d, i) {
-						const x = +d3.select(this).select("line").attr("x1");
-						const text = d3.select(this).select("text").text();
+						const x = +d3Select(this).select("line").attr("x1");
+						const text = d3Select(this).select("text").text();
 						const expectedX = Math.round(chart.internal.x(expectedGrids[i].value));
 						const expectedText = expectedGrids[i].text;
 

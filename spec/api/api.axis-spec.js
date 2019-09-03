@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -90,13 +91,13 @@ describe("API axis", function() {
 
 				// check for y max value
 				tspan = main.selectAll(`.${CLASS.axisY} tspan`).filter(function() {
-					return +d3.select(this).text() === y;
+					return +d3Select(this).text() === y;
 				});
 
 				expect(tspan.empty()).to.be.false;
 
 				tspan = main.selectAll(`.${CLASS.axisY2} tspan`).filter(function() {
-					return +d3.select(this).text() === y2;
+					return +d3Select(this).text() === y2;
 				});
 
 				expect(tspan.empty()).to.be.false;
@@ -178,7 +179,7 @@ describe("API axis", function() {
 
 				// check for y value
 				tspan = main.selectAll(`.${CLASS.axisY} tspan`).filter(function() {
-					const val = +d3.select(this).text();
+					const val = +d3Select(this).text();
 
 					return val === min.y || val === max.y;
 				});
@@ -187,7 +188,7 @@ describe("API axis", function() {
 
 				// check for y2 value
 				tspan = main.selectAll(`.${CLASS.axisY2} tspan`).filter(function() {
-					const val = +d3.select(this).text();
+					const val = +d3Select(this).text();
 
 					return val === min.y2 || val === max.y2;
 				});

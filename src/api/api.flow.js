@@ -339,6 +339,8 @@ extend(ChartInternal.prototype, {
 			]);
 
 			gt.call(wait, () => {
+				const isRotated = config.axis_rotated;
+
 				// remove flowed elements
 				if (flowLength) {
 					const target = {
@@ -372,11 +374,11 @@ extend(ChartInternal.prototype, {
 					.attr("transform", null);
 
 				xgridLines.select("line")
-					.attr("x1", config.axis_rotated ? 0 : xv)
-					.attr("x2", config.axis_rotated ? $$.width : xv);
+					.attr("x1", isRotated ? 0 : xv)
+					.attr("x2", isRotated ? $$.width : xv);
 
 				xgridLines.select("text")
-					.attr("x", config.axis_rotated ? $$.width : 0)
+					.attr("x", isRotated ? $$.width : 0)
 					.attr("y", xv);
 
 				mainBar

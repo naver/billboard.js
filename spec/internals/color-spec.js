@@ -4,6 +4,10 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {
+	select as d3Select,
+	namespaces as d3Namespaces
+} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isFunction, isObject, isString} from "../../src/internals/util";
@@ -77,7 +81,7 @@ describe("COLOR", () => {
 					pattern: ["red", "blue"],
 					tiles: function() {
 						function circlePattern(fillColor, opacity, radiusMin, radiusMax) {
-							const pattern = d3.select(document.createElementNS(d3.namespaces.svg, "pattern"))
+							const pattern = d3Select(document.createElementNS(d3Namespaces.svg, "pattern"))
 								.attr("patternUnits", "userSpaceOnUse")
 								.attr("width", "32")
 								.attr("height", "32");
@@ -131,7 +135,7 @@ describe("COLOR", () => {
 
 			chart.$.legend.selectAll(`.${CLASS.legendItemTile}`)
 				.each(function(v, i) {
-					const stroke = d3.select(this).style("stroke").replace(/\"/g, "");
+					const stroke = d3Select(this).style("stroke").replace(/\"/g, "");
 
 					expect(stroke).to.be.equal(colors[i]);
 			});
@@ -148,10 +152,10 @@ describe("COLOR", () => {
 				clientY: 100
 			}, chart);
 
-			d3.select(chart.element)
+			d3Select(chart.element)
 				.selectAll(`.${CLASS.tooltip} td rect`)
 				.each(function(v, i) {
-					const fill = d3.select(this).style("fill").replace(/\"/g, "");
+					const fill = d3Select(this).style("fill").replace(/\"/g, "");
 
 					expect(fill).to.be.equal(colors[i]);
 				});
@@ -231,6 +235,8 @@ describe("COLOR", () => {
 	});
 
 	describe("color.onover", () => {
+		const barStrokeColor = "blue";
+
 		before(() => {
 			args = {
 				data: {
@@ -244,6 +250,12 @@ describe("COLOR", () => {
 				},
 				color: {
 					onover: "yellow"
+				},
+				onafterinit: function(ctx) {
+					// set bar stroke color value manually
+					ctx.$.bar.bars
+						.style("stroke", barStrokeColor)
+						.style("stroke-width", 1)
 				}
 			}
 		});
@@ -257,7 +269,8 @@ describe("COLOR", () => {
 
 			shape.each(function() {
 				originalColor.push({
-					fill: this.style.fill
+					fill: this.style.fill,
+					stroke: this.style.stroke
 				});
 			});
 
@@ -273,6 +286,10 @@ describe("COLOR", () => {
 				}
 
 				expect(this.style.fill).to.be.equal(color);
+
+				if (this.tagName === "path") {
+					expect(this.style.stroke).to.be.equal(barStrokeColor);
+				}
 			});
 
 			// check for restoration
@@ -280,6 +297,7 @@ describe("COLOR", () => {
 
 			shape.each(function(d, i) {
 				expect(this.style.fill).to.be.equal(originalColor[i].fill);
+				expect(this.style.stroke).to.be.equal(originalColor[i].stroke);
 		   });
 		};
 

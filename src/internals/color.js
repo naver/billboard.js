@@ -172,11 +172,7 @@ extend(ChartInternal.prototype, {
 		let color = isOver ? onover : $$.color;
 
 		if (isObject(color)) {
-			color = d => {
-				const id = d.id;
-
-				return id in onover ? onover[id] : $$.color(id);
-			};
+			color = ({id}) => (id in onover ? onover[id] : $$.color(id));
 		} else if (isString(color)) {
 			color = () => onover;
 		}
@@ -187,12 +183,7 @@ extend(ChartInternal.prototype, {
 				.style("fill", color(d));
 		} else {
 			$$.main.selectAll(`.${CLASS.shape}-${d}`)
-				.each(function(d) {
-					const val = color(d);
-
-					this.style.stroke = val;
-					this.style.fill = val;
-				});
+				.style("fill", color);
 		}
 	}
 });

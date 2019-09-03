@@ -4,6 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
+import {format as d3Format} from "d3-format";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isNumber} from "../../src/internals/util";
@@ -22,7 +24,7 @@ describe("DATA", () => {
 		}
 
 		return function(d, i) {
-			const node = d3.select(this);
+			const node = d3Select(this);
 
 			expect(+node.attr(`${prefix}x`)).to.be.closeTo(x[i], delta.x);
 			expect(+node.attr(`${prefix}y`)).to.be.closeTo(y[i], delta.y);
@@ -141,6 +143,10 @@ describe("DATA", () => {
 			};
 		});
 
+		after(() => {
+			args = {};
+		})
+
 		it("should draw nested JSON correctly", () => {
 			const main = chart.internal.main;
 			const expectedCx = [98, 294, 490];
@@ -177,6 +183,32 @@ describe("DATA", () => {
 		});
 	});
 
+	describe("load rows", () => {
+		before(() => {
+			args = {
+				data: {
+					rows: [
+						["A", "B", "C"],
+						[90, 120, 300],
+						[40, 160, 240],
+						[50, 200, 290]
+					]
+				}
+			};
+		});
+
+		it("should load rows data correctly", () => {
+			const data = chart.data();
+			const dataName = args.data.rows[0];
+
+			expect(data.length).to.be.equal(dataName.length);
+
+			data.forEach((v, i) => {
+				expect(v.id).to.be.equal(dataName[i]);
+			});
+		});
+	});
+
 	describe("XHR data loading", () => {
 		const path = "/base/spec/assets/data/";
 
@@ -192,11 +224,12 @@ describe("DATA", () => {
 			setTimeout(() => {
 				const data = chart.data();
 
+				expect(chart.$.chart.selectAll("svg").size()).to.be.equal(1);
 				expect(data).to.not.be.null;
 				expect(data.length).to.be.equal(3);
 
 				done();
-			}, 300);
+			}, 500);
 		});
 
 		it("set options data.mimeType='json'", () => {
@@ -217,9 +250,8 @@ describe("DATA", () => {
 				expect(chart.data.values("data1")).to.deep.equal([220, 240, 270, 250, 280]);
 
 				done();
-			}, 300);
+			}, 500);
 		});
-
 	});
 
 	describe("check data.order", () => {
@@ -412,7 +444,7 @@ describe("DATA", () => {
 					const expected = ["2014-05-20 17:25:00.123", "2014-05-20 17:30:00.345"];
 
 					chart.internal.main.selectAll(`.${CLASS.axisX} g.tick text`).each(function(d, i) {
-						expect(d3.select(this).text()).to.be.equal(expected[i]);
+						expect(d3Select(this).text()).to.be.equal(expected[i]);
 					});
 				});
 			});
@@ -552,7 +584,7 @@ describe("DATA", () => {
 
 				Object.keys(expectedTextY).forEach(key => {
 					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
-						const text = d3.select(this);
+						const text = d3Select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i] - 20, 3);
 						expect(+text.attr("x")).to.be.closeTo(expectedTextX[key][i] + 20, 3);
@@ -794,15 +826,15 @@ describe("DATA", () => {
 				const main = chart.internal.main;
 
 				main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
-					expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+					expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 				});
 
 				main.selectAll(`.${CLASS.texts}-data2 text`).each(function(d, i) {
-					expect(d3.select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
+					expect(d3Select(this).text()).to.equal(`${args.data.columns[1][i + 1]}`);
 				});
 
 				main.selectAll(`.${CLASS.texts}-data3 text`).each(function(d, i) {
-					expect(d3.select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
+					expect(d3Select(this).text()).to.equal(`${args.data.columns[2][i + 1]}`);
 				});
 			});
 		});
@@ -830,15 +862,15 @@ describe("DATA", () => {
 					const main = chart.internal.main;
 
 					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
-						expect(d3.select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
+						expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
 					});
 
 					main.selectAll(`.${CLASS.texts}-data2 text`).each(function() {
-						expect(d3.select(this).text()).to.be.equal("");
+						expect(d3Select(this).text()).to.be.equal("");
 					});
 
 					main.selectAll(`.${CLASS.texts}-data3 text`).each(function() {
-						expect(d3.select(this).text()).to.be.equal("");
+						expect(d3Select(this).text()).to.be.equal("");
 					});
 				});
 			});
@@ -854,7 +886,7 @@ describe("DATA", () => {
 							],
 							labels: {
 								format: {
-									data1: d3.format("$")
+									data1: d3Format("$")
 								}
 							}
 						}
@@ -865,15 +897,15 @@ describe("DATA", () => {
 					const main = chart.internal.main;
 
 					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
-						expect(d3.select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
+						expect(d3Select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
 					});
 
 					main.selectAll(`.${CLASS.texts}-data2 text`).each(function() {
-						expect(d3.select(this).text()).to.equal("");
+						expect(d3Select(this).text()).to.equal("");
 					});
 
 					main.selectAll(`.${CLASS.texts}-data3 text`).each(function() {
-						expect(d3.select(this).text()).to.equal("");
+						expect(d3Select(this).text()).to.equal("");
 					});
 				});
 			});
@@ -912,7 +944,7 @@ describe("DATA", () => {
 							],
 							type: "bar",
 							labels: {
-								format: v => (v === null ? "Not Applicable" : d3.format("$")(v))
+								format: v => (v === null ? "Not Applicable" : d3Format("$")(v))
 							}
 						}
 					};
@@ -926,7 +958,7 @@ describe("DATA", () => {
 				});
 
 				it("should locate labels above each data point", () => {
-					const expectedYs = [67, 49, 67, 423];
+					const expectedYs = [68, 50, 68, 423];
 					const expectedXs = [75, 225, 374, 524];
 
 					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
@@ -1013,7 +1045,7 @@ describe("DATA", () => {
 							type: "bar",
 							labels: {
 								format: v => (v === null ?
-									"Not Applicable" : d3.format("$")(v)
+									"Not Applicable" : d3Format("$")(v)
 								)
 							}
 						}
@@ -1115,7 +1147,7 @@ describe("DATA", () => {
 							type: "bar",
 							labels: {
 								format: v => (v === null ?
-									"Not Applicable" : d3.format("$")(v)
+									"Not Applicable" : d3Format("$")(v)
 								)
 							}
 						}
@@ -1522,6 +1554,44 @@ describe("DATA", () => {
 						}
 					});
 				}, 500);
+			});
+		});
+
+		describe("when all data values are 0", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 0, 0, 0, 0],
+						],
+						labels: true
+					},
+					axis: {
+						y: {
+							min: 0
+						}
+					}
+				};
+			});
+
+			it("label text should locate above the data points", () => {
+				const texts = chart.$.text.texts.nodes();
+
+				chart.$.line.circles.each(function(d, i) {
+					expect(+this.getAttribute("cy")).to.be.above(+texts[i].getAttribute("y"));
+				});
+			});
+
+			it("set options axis.rotated=true", () => {
+				args.axis.rotated = true;
+			});
+
+			it("label text should locate above the data points", () => {
+				const texts = chart.$.text.texts.nodes();
+
+				chart.$.line.circles.each(function(d, i) {
+					expect(+this.getAttribute("cx")).to.be.below(+texts[i].getAttribute("x"));
+				});
 			});
 		});
 	});

@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -33,7 +34,7 @@ describe("LEGEND", () => {
 			const expectedWidth = [112, 114, 104];
 
 			chart.internal.main.selectAll(".bb-legend-item").each(function(d, i) {
-				const rect = d3.select(this)
+				const rect = d3Select(this)
 					.node()
 					.getBoundingClientRect();
 
@@ -181,7 +182,7 @@ describe("LEGEND", () => {
 
 		it("should not show legends", () => {
 			chart.internal.svg.selectAll(".bb-legend-item").each(function() {
-				expect(d3.select(this).style("visibility")).to.be.equal("hidden");
+				expect(d3Select(this).style("visibility")).to.be.equal("hidden");
 			});
 		});
 
@@ -230,9 +231,9 @@ describe("LEGEND", () => {
 			chart.legend.show();
 
 			chart.internal.svg.selectAll(".bb-legend-item").each(function() {
-				expect(d3.select(this).style("visibility")).to.be.equal("visible");
+				expect(d3Select(this).style("visibility")).to.be.equal("visible");
 				// This selects all the children, but we expect it to be empty
-				expect(d3.select(this).size()).not.to.equal(0); // d3.selectAll("*")
+				expect(d3Select(this).size()).not.to.equal(0);
 			});
 		});
 	});
@@ -259,7 +260,7 @@ describe("LEGEND", () => {
 
 		it("renders the legend item with the correct width and height", () => {
 			chart.internal.svg.selectAll(".bb-legend-item-tile").each(function() {
-				const el = d3.select(this);
+				const el = d3Select(this);
 				const tileWidth = el.attr("x2") - el.attr("x1");
 
 				expect(el.style("stroke-width")).to.be.equal(`${args.legend.item.tile.height}px`);
@@ -276,9 +277,9 @@ describe("LEGEND", () => {
 		it("renders the correct amount of padding on the legend element", function() {
 			chart.internal.svg.selectAll(".bb-legend-item-padded1 .bb-legend-item-title, .bb-legend-item-padded2 .bb-legend-item-title")
 				.each(function(v, i) {
-					const parentNode = d3.select(this).node().parentNode;
+					const parentNode = d3Select(this).node().parentNode;
 					const itemWidth = parentNode.getBBox().width;
-					const textBoxWidth = d3.select(parentNode).querySelector("text").getBBox().width;
+					const textBoxWidth = d3Select(parentNode).querySelector("text").getBBox().width;
 					const tileWidth = 15; // default value is 10, plus 5 more for padding
 					const expectedWidth = textBoxWidth + tileWidth + (i ? 0 : 10) + args.legend.padding;
 
@@ -314,13 +315,13 @@ describe("LEGEND", () => {
 		});
 
 		it("check for legend template setting with template string", () => {
-			const legend = d3.select("#legend");
+			const legend = d3Select("#legend");
 			const items = legend.selectAll(`.${CLASS.legendItem}`);
 
 			expect(legend.html()).not.to.be.null;
 
 			items.each(function(v) {
-				const item = d3.select(this);
+				const item = d3Select(this);
 
 				expect(item.html()).to.be.equal(v);
 				expect(item.style("background-color")).to.be.equal(chart.color(v));
@@ -366,7 +367,7 @@ describe("LEGEND", () => {
 					],
 					unload: true,
 					done: () => {
-						const legend = d3.select("#legend");
+						const legend = d3Select("#legend");
 
 						expect(legend.selectAll("li").size()).to.be.equal(1);
 						expect(legend.text()).to.be.equal("data3");
@@ -385,13 +386,13 @@ describe("LEGEND", () => {
 		});
 
 		it("check for legend template setting with template function callback", () => {
-			const legend = d3.select("#legend");
+			const legend = d3Select("#legend");
 			const items = legend.selectAll(`.${CLASS.legendItem}`);
 
 			expect(legend.html()).not.to.be.null;
 
 			items.each(function(v) {
-				const item = d3.select(this);
+				const item = d3Select(this);
 
 				expect(item.html()).to.be.equal(`${v}-${chart.data.values(v)[0]}`);
 				expect(item.style("background-color")).to.be.equal(chart.color(v));
