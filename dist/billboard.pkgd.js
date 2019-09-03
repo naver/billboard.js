@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190902070621
+ * @version 1.10.2-nightly-20190903113256
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21102,10 +21102,8 @@ function normalize(a, b) {
   } : d3_scale_src_constant(isNaN(b) ? NaN : 0.5);
 }
 
-function clamper(domain) {
-  var a = domain[0],
-      b = domain[domain.length - 1],
-      t;
+function clamper(a, b) {
+  var t;
   if (a > b) t = a, a = b, b = t;
   return function (x) {
     return Math.max(a, Math.min(b, x));
@@ -21163,7 +21161,9 @@ function transformer() {
       input;
 
   function rescale() {
-    piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap;
+    var n = Math.min(domain.length, range.length);
+    if (clamp !== continuous_identity) clamp = clamper(domain[0], domain[n - 1]);
+    piecewise = n > 2 ? polymap : bimap;
     output = input = null;
     return scale;
   }
@@ -21177,7 +21177,7 @@ function transformer() {
   };
 
   scale.domain = function (_) {
-    return arguments.length ? (domain = Array.from(_, d3_scale_src_number), clamp === continuous_identity || (clamp = clamper(domain)), rescale()) : domain.slice();
+    return arguments.length ? (domain = Array.from(_, d3_scale_src_number), rescale()) : domain.slice();
   };
 
   scale.range = function (_) {
@@ -21189,7 +21189,7 @@ function transformer() {
   };
 
   scale.clamp = function (_) {
-    return arguments.length ? (clamp = _ ? clamper(domain) : continuous_identity, scale) : clamp !== continuous_identity;
+    return arguments.length ? (clamp = _ ? true : continuous_identity, rescale()) : clamp !== continuous_identity;
   };
 
   scale.interpolate = function (_) {
@@ -21205,8 +21205,8 @@ function transformer() {
     return rescale();
   };
 }
-function continuous(transform, untransform) {
-  return transformer()(transform, untransform);
+function continuous() {
+  return transformer()(continuous_identity, continuous_identity);
 }
 // CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
 // Computes the decimal coefficient and exponent of the specified number x with
@@ -21643,7 +21643,7 @@ function linearish(scale) {
   return scale;
 }
 function src_linear_linear() {
-  var scale = continuous(continuous_identity, continuous_identity);
+  var scale = continuous();
 
   scale.copy = function () {
     return copy(scale, src_linear_linear());
@@ -21785,15 +21785,15 @@ function loggish(transform) {
         z = [];
 
     if (!(base % 1) && j - i < n) {
-      i = Math.round(i) - 1, j = Math.round(j) + 1;
-      if (u > 0) for (; i < j; ++i) {
+      i = Math.floor(i), j = Math.ceil(j);
+      if (u > 0) for (; i <= j; ++i) {
         for (k = 1, p = pows(i); k < base; ++k) {
           t = p * k;
           if (t < u) continue;
           if (t > v) break;
           z.push(t);
         }
-      } else for (; i < j; ++i) {
+      } else for (; i <= j; ++i) {
         for (k = base - 1, p = pows(i); k >= 1; --k) {
           t = p * k;
           if (t < u) continue;
@@ -21801,6 +21801,7 @@ function loggish(transform) {
           z.push(t);
         }
       }
+      if (!z.length) z = src_ticks(u, v, n);
     } else {
       z = src_ticks(i, j, Math.min(j - i, n)).map(pows);
     }
@@ -21926,6 +21927,66 @@ function pow() {
 }
 function sqrt() {
   return pow.apply(null, arguments).exponent(0.5);
+}
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/radial.js
+
+
+
+
+
+function square(x) {
+  return Math.sign(x) * x * x;
+}
+
+function unsquare(x) {
+  return Math.sign(x) * Math.sqrt(Math.abs(x));
+}
+
+function radial() {
+  var squared = continuous(),
+      range = [0, 1],
+      round = false,
+      unknown;
+
+  function scale(x) {
+    var y = unsquare(squared(x));
+    return isNaN(y) ? unknown : round ? Math.round(y) : y;
+  }
+
+  scale.invert = function (y) {
+    return squared.invert(square(y));
+  };
+
+  scale.domain = function (_) {
+    return arguments.length ? (squared.domain(_), scale) : squared.domain();
+  };
+
+  scale.range = function (_) {
+    return arguments.length ? (squared.range((range = Array.from(_, d3_scale_src_number)).map(square)), scale) : range.slice();
+  };
+
+  scale.rangeRound = function (_) {
+    return scale.range(_).round(true);
+  };
+
+  scale.round = function (_) {
+    return arguments.length ? (round = !!_, scale) : round;
+  };
+
+  scale.clamp = function (_) {
+    return arguments.length ? (squared.clamp(_), scale) : squared.clamp();
+  };
+
+  scale.unknown = function (_) {
+    return arguments.length ? (unknown = _, scale) : unknown;
+  };
+
+  scale.copy = function () {
+    return radial(squared.domain(), range).round(round).clamp(squared.clamp()).unknown(unknown);
+  };
+
+  initRange.apply(scale, arguments);
+  return linearish(scale);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/quantile.js
 
@@ -22130,7 +22191,7 @@ function time_number(t) {
 }
 
 function calendar(year, month, week, day, hour, minute, second, millisecond, format) {
-  var scale = continuous(continuous_identity, continuous_identity),
+  var scale = continuous(),
       invert = scale.invert,
       domain = scale.domain;
   var formatMillisecond = format(".%L"),
@@ -22269,6 +22330,10 @@ function sequential_transformer() {
     return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
+  scale.range = function () {
+    return [interpolator(0), interpolator(1)];
+  };
+
   scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   };
@@ -22330,7 +22395,7 @@ function sequentialQuantile() {
       interpolator = continuous_identity;
 
   function scale(x) {
-    if (!isNaN(x = +x)) return interpolator((bisect(domain, x) - 1) / (domain.length - 1));
+    if (!isNaN(x = +x)) return interpolator((bisect(domain, x, 1) - 1) / (domain.length - 1));
   }
 
   scale.domain = function (_) {
@@ -22368,6 +22433,12 @@ function sequentialQuantile() {
     return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
+  scale.range = function () {
+    return domain.map(function (d, i) {
+      return interpolator(i / (domain.length - 1));
+    });
+  };
+
   scale.copy = function () {
     return sequentialQuantile(interpolator).domain(domain);
   };
@@ -22395,6 +22466,7 @@ function diverging_transformer() {
   var x0 = 0,
       x1 = 0.5,
       x2 = 1,
+      s = 1,
       t0,
       t1,
       t2,
@@ -22406,13 +22478,13 @@ function diverging_transformer() {
       unknown;
 
   function scale(x) {
-    return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
+    return isNaN(x = +x) ? unknown : (x = 0.5 + ((x = +transform(x)) - t1) * (s * x < s * t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
   scale.domain = function (_) {
     var _ref, _ref2;
 
-    return arguments.length ? ((_ref = _, _ref2 = diverging_slicedToArray(_ref, 3), x0 = _ref2[0], x1 = _ref2[1], x2 = _ref2[2], _ref), t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), scale) : [x0, x1, x2];
+    return arguments.length ? ((_ref = _, _ref2 = diverging_slicedToArray(_ref, 3), x0 = _ref2[0], x1 = _ref2[1], x2 = _ref2[2], _ref), t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1, scale) : [x0, x1, x2];
   };
 
   scale.clamp = function (_) {
@@ -22423,12 +22495,16 @@ function diverging_transformer() {
     return arguments.length ? (interpolator = _, scale) : interpolator;
   };
 
+  scale.range = function () {
+    return [interpolator(0), interpolator(0.5), interpolator(1)];
+  };
+
   scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   };
 
   return function (t) {
-    transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1);
+    transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : 0.5 / (t1 - t0), k21 = t1 === t2 ? 0 : 0.5 / (t2 - t1), s = t1 < t0 ? -1 : 1;
     return scale;
   };
 }
@@ -22473,6 +22549,7 @@ function divergingSqrt() {
   return divergingPow.apply(null, arguments).exponent(0.5);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/index.js
+
 
 
 
@@ -30728,7 +30805,7 @@ var ka = 0.89081309152928522810,
   }
 });
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/square.js
-/* harmony default export */ var square = ({
+/* harmony default export */ var symbol_square = ({
   draw: function draw(context, size) {
     var w = Math.sqrt(size),
         x = -w / 2;
@@ -30782,7 +30859,7 @@ var wye_c = -0.5,
 
 
 
-var symbols = [circle, symbol_cross, diamond, square, star, triangle, wye];
+var symbols = [circle, symbol_cross, diamond, symbol_square, star, triangle, wye];
 /* harmony default export */ var src_symbol = (function () {
   var type = d3_shape_src_constant(circle),
       size = d3_shape_src_constant(64),
@@ -38794,7 +38871,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20190902070621",
+  version: "1.10.2-nightly-20190903113256",
 
   /**
    * Generate chart
@@ -38893,7 +38970,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20190902070621
+ * @version 1.10.2-nightly-20190903113256
  */
 
 
