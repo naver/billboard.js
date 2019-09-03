@@ -45,5 +45,3 @@ jobs:
           repo: naver/billboard.js
           all_branches: true
           condition: $TRAVIS_BRANCH =~ ^latest|next$
-      after_deploy:
-        - bash ./config/deploy.sh
