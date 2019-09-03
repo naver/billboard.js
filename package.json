@@ -16,7 +16,7 @@
     "build:production:analyzer": "cross-env ANALYZER=true npm run build:production",
     "build:packaged:analyzer": "cross-env ANALYZER=true npm run build:packaged",
     "build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
-    "release": "semantic-release",
+    "release": "npx semantic-release@beta",
     "lint": "eslint src",
     "loc": "cloc --by-file src",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
