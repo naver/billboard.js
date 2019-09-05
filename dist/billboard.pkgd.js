@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190904113401
+ * @version 1.10.2-nightly-20190905113424
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -23500,16 +23500,17 @@ function () {
     value: function setCulling() {
       var $$ = this.owner,
           config = $$.config;
-      ["x", "y", "y2"].forEach(function (type) {
+      ["subx", "x", "y", "y2"].forEach(function (type) {
         var axis = $$.axes[type],
-            toCull = config["axis_".concat(type, "_tick_culling")];
+            id = type === "subx" ? "x" : type,
+            toCull = config["axis_".concat(id, "_tick_culling")]; // subchart x axis should be aligned with x axis culling
 
         if (axis && toCull) {
           var intervalForCulling,
               tickText = axis.selectAll(".tick text"),
               tickValues = sortValue(tickText.data()),
               tickSize = tickValues.length,
-              cullingMax = config["axis_".concat(type, "_tick_culling_max")];
+              cullingMax = config["axis_".concat(id, "_tick_culling_max")];
 
           if (tickSize) {
             for (var _i = 1; _i < tickSize; _i++) if (tickSize / _i < cullingMax) {
@@ -38871,7 +38872,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20190904113401",
+  version: "1.10.2-nightly-20190905113424",
 
   /**
    * Generate chart
@@ -38970,7 +38971,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20190904113401
+ * @version 1.10.2-nightly-20190905113424
  */
 
 
