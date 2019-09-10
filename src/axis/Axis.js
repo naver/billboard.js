@@ -750,15 +750,18 @@ export default class Axis {
 		const $$ = this.owner;
 		const config = $$.config;
 
-		["x", "y", "y2"].forEach(type => {
+		["subx", "x", "y", "y2"].forEach(type => {
 			const axis = $$.axes[type];
-			const toCull = config[`axis_${type}_tick_culling`];
+
+			// subchart x axis should be aligned with x axis culling
+			const id = type === "subx" ? "x" : type;
+			const toCull = config[`axis_${id}_tick_culling`];
 
 			if (axis && toCull) {
 				const tickText = axis.selectAll(".tick text");
 				const tickValues = sortValue(tickText.data());
 				const tickSize = tickValues.length;
-				const cullingMax = config[`axis_${type}_tick_culling_max`];
+				const cullingMax = config[`axis_${id}_tick_culling_max`];
 				let intervalForCulling;
 
 				if (tickSize) {

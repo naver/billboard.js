@@ -1630,6 +1630,9 @@ describe("AXIS", function() {
 							culling: true
 						}
 					}
+				},
+				subchart: {
+					show: true
 				}
 			};
 		});
@@ -1641,13 +1644,13 @@ describe("AXIS", function() {
 				y2: [0, 100, 200, 300, 400]
 			};
 
-			["x", "y", "y2"].forEach(v => {
+			["subx", "x", "y", "y2"].forEach(v => {
 				const data = chart.internal.axes[v]
 					.selectAll(".tick text").filter(function() {
 						return this.style.display === "block";
 					}).data();
 
-				expect(data).to.be.deep.equal(expected[v]);
+				expect(data).to.be.deep.equal(expected[v === "subx" ? "x" : v]);
 			});
 		}
 
