@@ -3189,7 +3189,7 @@ export default class Options {
 			 * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
 			 * @property {Number} [gauge.min=0] Set min value of the gauge.
 			 * @property {Number} [gauge.max=100] Set max value of the gauge.
-			 * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
+			 * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
 			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
