@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20190905113424
+ * @version 1.10.2-nightly-20190911113621
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -359,7 +359,7 @@ function () {
   }]), Plugin;
 }();
 
-_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20190905113424");
+_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20190911113621");
 
 
 
@@ -417,6 +417,10 @@ module.exports = _arrayWithHoles;
 /***/ (function(module, exports) {
 
 function _iterableToArrayLimit(arr, i) {
+  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
+    return;
+  }
+
   var _arr = [];
   var _n = true;
   var _d = false;
