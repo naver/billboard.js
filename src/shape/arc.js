@@ -630,7 +630,8 @@ extend(ChartInternal.prototype, {
 
 		if (hasGauge) {
 			const isFullCircle = config.gauge_fullCircle;
-			const endAngle = (isFullCircle ? -4 : -1) * config.gauge_startingAngle;
+			const startAngle = -1 * Math.PI / 2;
+			const endAngle = (isFullCircle ? -4 : -1) * startAngle;
 
 			isFullCircle && text.attr("dy", `${Math.round($$.radius / 14)}`);
 
@@ -638,8 +639,8 @@ extend(ChartInternal.prototype, {
 				.attr("d", () => {
 					const d = {
 						data: [{value: config.gauge_max}],
-						startAngle: config.gauge_startingAngle,
-						endAngle: endAngle
+						startAngle,
+						endAngle
 					};
 
 					return $$.getArc(d, true, true);
@@ -651,7 +652,7 @@ extend(ChartInternal.prototype, {
 
 			if (config.gauge_label_show) {
 				$$.arcs.select(`.${CLASS.chartArcsGaugeMin}`)
-					.attr("dx", `${-1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / (config.gauge_fullCircle ? 1 : 2)))}px`)
+					.attr("dx", `${-1 * ($$.innerRadius + (($$.radius - $$.innerRadius) / (isFullCircle ? 1 : 2)))}px`)
 					.attr("dy", "1.2em")
 					.text($$.textForGaugeMinMax(config.gauge_min, false));
 
