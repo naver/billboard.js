@@ -6,6 +6,7 @@
 import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
+import {getBoundingRect} from "../../src/internals/util";
 
 describe("SHAPE ARC", () => {
 	const selector = {
@@ -455,6 +456,33 @@ describe("SHAPE ARC", () => {
 
 				done();
 			}, 100);
+		});
+
+		it("check for startingAngle option", () => {
+			const chart = util.generate({
+				data: {
+				  columns: [
+					  ["data", 50]
+					],
+				  type: "gauge"
+				},
+				gauge: {
+				  startingAngle: 0
+				}
+			});
+
+			const arc = chart.$.arc;
+
+			// gauge backgound shouldn't be aligned with the 'startingAngle' option
+			expect(
+				getBoundingRect(arc.select(`.${CLASS.chartArcsBackground}`).node()).width
+			).to.be.above(600);
+
+			expect(
+				arc.select(`.${CLASS.arc}-data`).datum().startAngle
+			).to.be.equal(
+				chart.config("gauge.startingAngle")
+			);
 		});
 	});
 
