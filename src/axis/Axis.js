@@ -605,6 +605,8 @@ export default class Axis {
 			} else if (targetCount === 2) {
 				tickValues = [values[0], values[values.length - 1]];
 			} else if (targetCount > 2) {
+				const isCategorized = this.owner.isCategorized();
+
 				count = targetCount - 2;
 				start = values[0];
 				end = values[values.length - 1];
@@ -615,7 +617,11 @@ export default class Axis {
 
 				for (i = 0; i < count; i++) {
 					tickValue = +start + interval * (i + 1);
-					tickValues.push(forTimeSeries ? new Date(tickValue) : tickValue);
+					tickValues.push(
+						forTimeSeries ? new Date(tickValue) : (
+							isCategorized ? Math.round(tickValue) : tickValue
+						)
+					);
 				}
 
 				tickValues.push(end);

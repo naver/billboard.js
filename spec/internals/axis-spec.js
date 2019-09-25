@@ -23,6 +23,11 @@ describe("AXIS", function() {
 			]
 		},
 		axis: {
+			x: {
+				tick: {
+					count: undefined
+				}
+			},
 			y: {
 				tick: {
 					values: null,
@@ -40,6 +45,25 @@ describe("AXIS", function() {
 
 	beforeEach(() => {
 		chart = util.generate(args);
+	});
+
+	describe("axis.x.tick.count", () => {
+		after(() => {
+			args.axis.x.type = "indexed";
+			args.axis.x.tick.count = undefined;
+		});
+
+		it("set options axis.x.tick.count=3", () => {
+			args.axis.x.type = "category";
+			args.axis.x.tick.count = 3;
+		});
+
+		it("should have only 3 tick on x axis", () => {
+			const ticks = chart.$.main.select(`.${CLASS.axisX}`).selectAll("g.tick");
+
+			expect(ticks.size()).to.be.equal(3);
+			expect(ticks.data()).to.be.deep.equal([0,3,5]);
+		});
 	});
 
 	describe("axis.y.tick.count", () => {

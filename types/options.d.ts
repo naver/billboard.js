@@ -448,6 +448,13 @@ export interface ChartOptions {
 	};
 
 	gauge?: {
+		/**
+		 * Whether this should be displayed
+		 * as a full circle instead of a
+		 * half circle.
+		 */
+		fullCircle?: boolean;
+
 		label?: {
 			/**
 			 * Show or hide label on gauge.
@@ -458,12 +465,22 @@ export interface ChartOptions {
 			 * Set formatter for the label on gauge.
 			 */
 			format?(value: any, ratio: number): string;
+
+			/**
+			 * Set customized min/max label text.
+			 */
+			extents?(value: number, isMax: boolean): string | number;
 		};
 
 		/**
 		 * Enable or disable expanding gauge.
 		 */
-		expand?: boolean;
+		expand?: boolean | {
+			/**
+			 * Set the expand transition time in milliseconds.
+			 */
+			duration?: number
+		};
 
 		/**
 		 * Set min value of the gauge.
@@ -474,6 +491,11 @@ export interface ChartOptions {
 		 * Set max value of the gauge.
 		 */
 		max?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 
 		/**
 		 * Set title of gauge chart. Use `\n` character to enter line break.
@@ -489,13 +511,6 @@ export interface ChartOptions {
 		 * Set width of gauge chart.
 		 */
 		width?: number;
-
-		/**
-		 * Whether this should be displayed
-		 * as a full circle instead of a
-		 * half circle.
-		 */
-		fullCircle?: boolean;
 	};
 
 	spline?: {
