@@ -848,8 +848,9 @@ extend(ChartInternal.prototype, {
 		$$.data.targets.forEach(t => {
 			t.values.forEach((value, valueIndex) => {
 				let index = tickValueMap[Number(value.x)];
+
 				if (index === undefined) {
-					index = valueIndex
+					index = valueIndex;
 				}
 				value.index = index;
 			});
