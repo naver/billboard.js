@@ -32,3 +32,4 @@ Austin Cawley-Edwards <austin.cawley@gmail.com>
 soyeong <soy1114@gmail.com>
 Cristian Necula <virusz@gmail.com>
 Kimberly Baum <https://github.com/kimberlybaum>
+Dylan Praul <dylan.praul@gmail.com>

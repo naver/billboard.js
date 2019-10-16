@@ -679,7 +679,6 @@ export default class ChartInternal {
 
 		// event rects will redrawn when flow called
 		if (config.interaction_enabled && !flow && wth.EventRect) {
-			$$.redrawEventRect();
 			$$.bindZoomEvent();
 		}
 
