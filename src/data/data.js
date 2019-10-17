@@ -840,8 +840,8 @@ extend(ChartInternal.prototype, {
 	updateDataIndexByX(tickValues) {
 		const $$ = this;
 
-		const tickValueMap = tickValues.reduce((out, tick) => {
-			out[Number(tick.x)] = tick.index;
+		const tickValueMap = tickValues.reduce((out, tick, index) => {
+			out[Number(tick.x)] = index;
 			return out;
 		}, {});
 
