@@ -177,7 +177,8 @@ extend(ChartInternal.prototype, {
 		const barW = $$.getBarW(axis, barTargetsNum);
 		const barX = $$.getShapeX(barW, barTargetsNum, barIndices, !!isSub);
 		const barY = $$.getShapeY(!!isSub);
-		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
+		const shapeOffsetData = $$.getShapeOffsetData($$.isBarType);
+		const barOffset = $$.getShapeOffset(shapeOffsetData, barIndices, !!isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return (d, i) => {

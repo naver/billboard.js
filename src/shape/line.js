@@ -208,7 +208,8 @@ extend(ChartInternal.prototype, {
 		const isSub = !!isSubValue;
 		const x = $$.getShapeX(0, lineTargetsNum, lineIndices, isSub);
 		const y = $$.getShapeY(isSub);
-		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
+		const shapeOffsetData = $$.getShapeOffsetData($$.isLineType);
+		const lineOffset = $$.getShapeOffset(shapeOffsetData, lineIndices, isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return (d, i) => {
@@ -499,7 +500,8 @@ extend(ChartInternal.prototype, {
 		const areaTargetsNum = areaIndices.__max__ + 1;
 		const x = $$.getShapeX(0, areaTargetsNum, areaIndices, !!isSub);
 		const y = $$.getShapeY(!!isSub);
-		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
+		const shapeOffsetData = $$.getShapeOffsetData($$.isAreaType);
+		const areaOffset = $$.getShapeOffset(shapeOffsetData, areaIndices, !!isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return function(d, i) {
@@ -586,12 +588,13 @@ extend(ChartInternal.prototype, {
 
 	updateCircleY() {
 		const $$ = this;
+		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
 
 		$$.circleY = (d, i) => {
 			const id = d.id;
 
 			return $$.isGrouped(id) ?
-				$$.generateGetLinePoints($$.getShapeIndices($$.isLineType))(d, i)[0][1] :
+				getPoints(d, i)[0][1] :
 				$$.getYScale(id)($$.getBaseValue(d));
 		};
 	},
