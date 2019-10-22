@@ -840,20 +840,19 @@ extend(ChartInternal.prototype, {
 	updateDataIndexByX(tickValues) {
 		const $$ = this;
 
+		const tickValueMap = tickValues.reduce((out, tick, index) => {
+			out[Number(tick.x)] = index;
+			return out;
+		}, {});
+
 		$$.data.targets.forEach(t => {
-			t.values.forEach((v, i) => {
-				tickValues.some((d, j) => {
-					if (+d.x === +v.x) {
-						v.index = j;
-						return true;
-					}
+			t.values.forEach((value, valueIndex) => {
+				let index = tickValueMap[Number(value.x)];
 
-					return false;
-				});
-
-				if (!isNumber(v.index) || v.index === -1) {
-					v.index = i;
+				if (index === undefined) {
+					index = valueIndex;
 				}
+				value.index = index;
 			});
 		});
 	}
