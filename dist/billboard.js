@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191023115835
+ * @version 1.10.2-nightly-20191030120156
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -16,7 +16,7 @@
 		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
-})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__20__, __WEBPACK_EXTERNAL_MODULE__21__, __WEBPACK_EXTERNAL_MODULE__22__, __WEBPACK_EXTERNAL_MODULE__23__, __WEBPACK_EXTERNAL_MODULE__24__, __WEBPACK_EXTERNAL_MODULE__25__, __WEBPACK_EXTERNAL_MODULE__26__, __WEBPACK_EXTERNAL_MODULE__27__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__14__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -108,7 +108,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, exports, __webpack_require__) {
 
 __webpack_require__(1);
-module.exports = __webpack_require__(28);
+module.exports = __webpack_require__(15);
 
 
 /***/ }),
@@ -121,44 +121,98 @@ module.exports = __webpack_require__(28);
 /* 2 */
 /***/ (function(module, exports) {
 
-function _classCallCheck(instance, Constructor) {
-  if (!(instance instanceof Constructor)) {
-    throw new TypeError("Cannot call a class as a function");
-  }
-}
-
-module.exports = _classCallCheck;
+module.exports = __WEBPACK_EXTERNAL_MODULE__2__;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, exports) {
 
-var arrayWithHoles = __webpack_require__(4);
-
-var iterableToArrayLimit = __webpack_require__(5);
-
-var nonIterableRest = __webpack_require__(6);
-
-function _slicedToArray(arr, i) {
-  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || nonIterableRest();
-}
-
-module.exports = _slicedToArray;
+module.exports = __WEBPACK_EXTERNAL_MODULE__3__;
 
 /***/ }),
 /* 4 */
 /***/ (function(module, exports) {
 
-function _arrayWithHoles(arr) {
-  if (Array.isArray(arr)) return arr;
-}
-
-module.exports = _arrayWithHoles;
+module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
 
 /***/ }),
 /* 5 */
 /***/ (function(module, exports) {
 
+module.exports = __WEBPACK_EXTERNAL_MODULE__5__;
+
+/***/ }),
+/* 6 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
+
+/***/ }),
+/* 7 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
+
+/***/ }),
+/* 8 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
+
+/***/ }),
+/* 9 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
+
+/***/ }),
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
+
+/***/ }),
+/* 11 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
+
+/***/ }),
+/* 12 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
+
+/***/ }),
+/* 13 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
+
+/***/ }),
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
+function _classCallCheck(instance, Constructor) {
+  if (!(instance instanceof Constructor)) {
+    throw new TypeError("Cannot call a class as a function");
+  }
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
+function _arrayWithHoles(arr) {
+  if (Array.isArray(arr)) return arr;
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(arr, i) {
   if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
     return;
@@ -188,23 +242,18 @@ function _iterableToArrayLimit(arr, i) {
 
   return _arr;
 }
-
-module.exports = _iterableToArrayLimit;
-
-/***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
 
-module.exports = _nonIterableRest;
 
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
 
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
@@ -220,250 +269,17 @@ function _createClass(Constructor, protoProps, staticProps) {
   if (staticProps) _defineProperties(Constructor, staticProps);
   return Constructor;
 }
-
-module.exports = _createClass;
-
-/***/ }),
-/* 8 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
-
-/***/ }),
-/* 9 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithoutHoles = __webpack_require__(13);
-
-var iterableToArray = __webpack_require__(14);
-
-var nonIterableSpread = __webpack_require__(15);
-
-function _toConsumableArray(arr) {
-  return arrayWithoutHoles(arr) || iterableToArray(arr) || nonIterableSpread();
-}
-
-module.exports = _toConsumableArray;
-
-/***/ }),
-/* 13 */
-/***/ (function(module, exports) {
-
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-
-module.exports = _arrayWithoutHoles;
-
-/***/ }),
-/* 14 */
-/***/ (function(module, exports) {
-
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-
-module.exports = _iterableToArray;
-
-/***/ }),
-/* 15 */
-/***/ (function(module, exports) {
-
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-
-module.exports = _nonIterableSpread;
-
-/***/ }),
-/* 16 */
-/***/ (function(module, exports) {
-
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
-function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
-      return _typeof2(obj);
-    };
-  } else {
-    module.exports = _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
-    };
-  }
-
-  return _typeof(obj);
-}
-
-module.exports = _typeof;
-
-/***/ }),
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__17__;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* WEBPACK VAR INJECTION */(function(global) {/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return win; });
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return doc; });
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @module
- * @ignore
- */
-
-/* eslint-disable no-new-func, no-undef */
-var win = function () {
-  var def = function (o) {
-    return typeof o !== "undefined" && o;
-  };
-
-  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
-}(),
-    doc = win && win.document;
-/* eslint-enable no-new-func, no-undef */
-
-
-
-/* WEBPACK VAR INJECTION */}.call(this, __webpack_require__(19)))
-
-/***/ }),
-/* 19 */
-/***/ (function(module, exports) {
-
-var g;
-
-// This works in non-strict mode
-g = (function() {
-	return this;
-})();
-
-try {
-	// This works if eval is allowed (see CSP)
-	g = g || new Function("return this")();
-} catch (e) {
-	// This works if the window reference is available
-	if (typeof window === "object") g = window;
-}
-
-// g can still be undefined, but nothing to do about it...
-// We return undefined, instead of nothing here, so it's
-// easier to handle this case. if(!global) { ...}
-
-module.exports = g;
-
-
-/***/ }),
-/* 20 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__20__;
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__21__;
-
-/***/ }),
-/* 22 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__22__;
-
-/***/ }),
-/* 23 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__23__;
-
-/***/ }),
-/* 24 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__24__;
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__25__;
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__26__;
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__27__;
-
-/***/ }),
-/* 28 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
-var classCallCheck = __webpack_require__(2);
-var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/slicedToArray.js
-var slicedToArray = __webpack_require__(3);
-var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/createClass.js
-var createClass = __webpack_require__(7);
-var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
-
 // EXTERNAL MODULE: external {"commonjs":"d3-time-format","commonjs2":"d3-time-format","amd":"d3-time-format","root":"d3"}
-var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(8);
+var external_commonjs_d3_time_format_commonjs2_d3_time_format_amd_d3_time_format_root_d3_ = __webpack_require__(2);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(9);
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(3);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-transition","commonjs2":"d3-transition","amd":"d3-transition","root":"d3"}
-var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(10);
+var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_root_d3_ = __webpack_require__(4);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(11);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(5);
 
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
@@ -568,19 +384,74 @@ var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack
   SELECTED: "_selected_",
   INCLUDED: "_included_"
 });
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/toConsumableArray.js
-var toConsumableArray = __webpack_require__(12);
-var toConsumableArray_default = /*#__PURE__*/__webpack_require__.n(toConsumableArray);
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/typeof.js
-var helpers_typeof = __webpack_require__(16);
-var typeof_default = /*#__PURE__*/__webpack_require__.n(helpers_typeof);
+    return arr2;
+  }
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js
 
+
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
+function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
+
+function _typeof(obj) {
+  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+    _typeof = function _typeof(obj) {
+      return _typeof2(obj);
+    };
+  } else {
+    _typeof = function _typeof(obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+    };
+  }
+
+  return _typeof(obj);
+}
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(17);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(6);
 
-// EXTERNAL MODULE: ./src/internals/browser.js
-var browser = __webpack_require__(18);
+// CONCATENATED MODULE: ./src/internals/browser.js
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @module
+ * @ignore
+ */
+
+/* eslint-disable no-new-func, no-undef */
+var win = function () {
+  var def = function (o) {
+    return typeof o !== "undefined" && o;
+  };
+
+  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+}(),
+    browser_doc = win && win.document;
+/* eslint-enable no-new-func, no-undef */
+
+
 
 // CONCATENATED MODULE: ./src/internals/util.js
 
@@ -627,7 +498,7 @@ var isValue = function (v) {
   return d[1] - d[0];
 },
     isObjectType = function (v) {
-  return typeof_default()(v) === "object";
+  return _typeof(v) === "object";
 },
     isEmpty = function (o) {
   return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
@@ -812,7 +683,7 @@ var isValue = function (v) {
   var res = data.filter(function (v) {
     return notEmpty(v);
   });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, toConsumableArray_default()(res)) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, _toConsumableArray(res)) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
 },
     getRange = function (start, end) {
   var res = [];
@@ -843,8 +714,8 @@ var isValue = function (v) {
       // Polyfills DOM4 MouseEvent
       return function (el, eventType) {
         var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
-            mouseEvent = browser["a" /* document */].createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, browser["b" /* window */], 0, // the event's mouse click count
+            mouseEvent = browser_doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
         params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
       };
     }
@@ -878,7 +749,7 @@ var isValue = function (v) {
 
 
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(20);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
 
 // CONCATENATED MODULE: ./src/axis/AxisRendererHelper.js
 
@@ -897,7 +768,7 @@ var AxisRendererHelper_AxisRendererHelper =
 /*#__PURE__*/
 function () {
   function AxisRendererHelper(config, params) {
-    classCallCheck_default()(this, AxisRendererHelper);
+    _classCallCheck(this, AxisRendererHelper);
 
     var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])();
     this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
@@ -910,7 +781,7 @@ function () {
    */
 
 
-  return createClass_default()(AxisRendererHelper, [{
+  return _createClass(AxisRendererHelper, [{
     key: "axisX",
     value: function axisX(selection, x) {
       var _this = this;
@@ -937,7 +808,7 @@ function () {
     key: "generateTicks",
     value: function generateTicks(scale) {
       var ticks = [];
-      if (scale.ticks) return scale.ticks.apply(scale, toConsumableArray_default()(this.config.tickArguments || [])).map(function (v) {
+      if (scale.ticks) return scale.ticks.apply(scale, _toConsumableArray(this.config.tickArguments || [])).map(function (v) {
         return (// round the tick value if is number
           isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
         );
@@ -1013,7 +884,7 @@ function () {
   function AxisRenderer() {
     var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
-    classCallCheck_default()(this, AxisRenderer);
+    _classCallCheck(this, AxisRenderer);
 
     var config = {
       innerTickSize: 6,
@@ -1040,7 +911,7 @@ function () {
    */
 
 
-  return createClass_default()(AxisRenderer, [{
+  return _createClass(AxisRenderer, [{
     key: "create",
     value: function create(g) {
       var ctx = this,
@@ -1325,10 +1196,10 @@ var Axis_Axis =
 /*#__PURE__*/
 function () {
   function Axis(owner) {
-    classCallCheck_default()(this, Axis), this.owner = owner, this.setOrient();
+    _classCallCheck(this, Axis), this.owner = owner, this.setOrient();
   }
 
-  return createClass_default()(Axis, [{
+  return _createClass(Axis, [{
     key: "init",
     value: function init() {
       var _this = this,
@@ -1749,7 +1620,7 @@ function () {
         var axis = axes[v];
         return axis && duration && (axis = axis.transition().duration(duration)), axis;
       }),
-          _map2 = slicedToArray_default()(_map, 4),
+          _map2 = _slicedToArray(_map, 4),
           axisX = _map2[0],
           axisY = _map2[1],
           axisY2 = _map2[2],
@@ -1874,13 +1745,13 @@ var ChartInternal_ChartInternal =
 /*#__PURE__*/
 function () {
   function ChartInternal(api) {
-    classCallCheck_default()(this, ChartInternal);
+    _classCallCheck(this, ChartInternal);
 
     var $$ = this;
     $$.api = api, $$.config = $$.getOptions(), $$.data = {}, $$.cache = {}, $$.axes = {}, $$.rendered = !1;
   }
 
-  return createClass_default()(ChartInternal, [{
+  return _createClass(ChartInternal, [{
     key: "beforeInit",
     value: function beforeInit() {
       var $$ = this;
@@ -1902,7 +1773,7 @@ function () {
         element: config.bindto,
         classname: "bb"
       };
-      isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser["a" /* document */].body.appendChild(browser["a" /* document */].createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.initToRender();
+      isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $$.selectChart = isFunction(bindto.element.node) ? config.bindto.element : Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto.element || []), $$.selectChart.empty() && ($$.selectChart = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser_doc.body.appendChild(browser_doc.createElement("div")))), $$.selectChart.html("").classed(bindto.classname, !0), $$.initToRender();
     }
     /**
      * Initialize the rendering process
@@ -1920,7 +1791,7 @@ function () {
         return target.style("display") === "none" || target.style("visibility") === "hidden";
       },
           isLazy = config.render.lazy || isHidden(),
-          MutationObserver = browser["b" /* window */].MutationObserver;
+          MutationObserver = win.MutationObserver;
 
       if (isLazy && MutationObserver && config.render.observe !== !1 && !forced && new MutationObserver(function (mutation, observer) {
         isHidden() || (observer.disconnect(), !$$.rendered && $$.initToRender(!0));
@@ -2044,7 +1915,7 @@ function () {
             _map = ["x1", "x2", "y1", "y2"].map(function (v) {
           return Math.ceil(g.attr(v));
         }),
-            _map2 = slicedToArray_default()(_map, 4),
+            _map2 = _slicedToArray(_map, 4),
             x1 = _map2[0],
             x2 = _map2[1],
             y1 = _map2[2],
@@ -2339,7 +2210,7 @@ function () {
           padding = 0;
       if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
         var _$$$getRadarSize = $$.getRadarSize(),
-            _$$$getRadarSize2 = slicedToArray_default()(_$$$getRadarSize, 1),
+            _$$$getRadarSize2 = _slicedToArray(_$$$getRadarSize, 1),
             width = _$$$getRadarSize2[0];
 
         x = $$.width / 2 - width, y = asHalfPixel($$.margin.top);
@@ -2432,12 +2303,12 @@ function () {
       $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
         return callFn(config.onresize, $$, $$.api);
       }), config.resize_auto && $$.resizeFunction.add(function () {
-        $$.resizeTimeout && (browser["b" /* window */].clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = browser["b" /* window */].setTimeout(function () {
+        $$.resizeTimeout && (win.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = win.setTimeout(function () {
           $$.api.flush(!1, !0);
         }, 200);
       }), $$.resizeFunction.add(function () {
         return callFn(config.onresized, $$, $$.api);
-      }), browser["b" /* window */].addEventListener("resize", $$.resizeFunction);
+      }), win.addEventListener("resize", $$.resizeFunction);
     }
   }, {
     key: "generateResize",
@@ -2507,7 +2378,7 @@ function () {
   }, {
     key: "isTabVisible",
     value: function isTabVisible() {
-      return !browser["a" /* document */].hidden;
+      return !browser_doc.hidden;
     }
   }, {
     key: "convertInputType",
@@ -2517,16 +2388,16 @@ function () {
           isMobile = !1;
 
       // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-      if (/Mobi/.test(browser["b" /* window */].navigator.userAgent) && config.interaction_inputType_touch) {
+      if (/Mobi/.test(win.navigator.userAgent) && config.interaction_inputType_touch) {
         // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-        var hasTouchPoints = browser["b" /* window */].navigator && "maxTouchPoints" in browser["b" /* window */].navigator && browser["b" /* window */].navigator.maxTouchPoints > 0,
-            hasTouch = "ontouchmove" in browser["b" /* window */] || browser["b" /* window */].DocumentTouch && browser["a" /* document */] instanceof browser["b" /* window */].DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+        var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
+            hasTouch = "ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
         // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
 
         isMobile = hasTouchPoints || hasTouch;
       }
 
-      var hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in browser["b" /* window */];
+      var hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in win;
       return hasMouse && "mouse" || isMobile && "touch" || null;
     }
     /**
@@ -2602,7 +2473,7 @@ function () {
  */
 
 var Chart_Chart = function Chart(config) {
-  classCallCheck_default()(this, Chart);
+  _classCallCheck(this, Chart);
 
   var $$ = new ChartInternal_ChartInternal(this);
   /**
@@ -2646,7 +2517,7 @@ var Chart_Chart = function Chart(config) {
  * @see {@link bb.generate} to use these options on generating the chart
  */
 var Options_Options = function Options() {
-  return classCallCheck_default()(this, Options), {
+  return _classCallCheck(this, Options), {
     /**
      * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
      * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
@@ -6609,7 +6480,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   trimXDomain: function trimXDomain(domain) {
     var zoomDomain = this.getZoomDomain(),
-        _zoomDomain = slicedToArray_default()(zoomDomain, 2),
+        _zoomDomain = _slicedToArray(zoomDomain, 2),
         min = _zoomDomain[0],
         max = _zoomDomain[1];
 
@@ -6789,7 +6660,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return t.values;
     })).forEach(function (v, i) {
       var value = v.map(getBaseValue).filter(isNumber);
-      min = Math.min.apply(Math, [i ? min : Infinity].concat(toConsumableArray_default()(value))), max = Math.max.apply(Math, [i ? max : -Infinity].concat(toConsumableArray_default()(value)));
+      min = Math.min.apply(Math, [i ? min : Infinity].concat(_toConsumableArray(value))), max = Math.max.apply(Math, [i ? max : -Infinity].concat(_toConsumableArray(value)));
     }), {
       min: min,
       max: max
@@ -6887,7 +6758,7 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getMaxDataCount: function getMaxDataCount() {
-    return Math.max.apply(Math, toConsumableArray_default()(this.data.targets.map(function (t) {
+    return Math.max.apply(Math, _toConsumableArray(this.data.targets.map(function (t) {
       return t.values.length;
     })));
   },
@@ -6975,7 +6846,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var data = [];
       t.values.forEach(function (v) {
         var value = v.value;
-        isArray(value) ? data.push.apply(data, toConsumableArray_default()(value)) : isObject(value) && "high" in value ? data.push.apply(data, toConsumableArray_default()(Object.values(value))) : $$.isBubbleZType(v) ? data.push($$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
+        isArray(value) ? data.push.apply(data, _toConsumableArray(value)) : isObject(value) && "high" in value ? data.push.apply(data, _toConsumableArray(Object.values(value))) : $$.isBubbleZType(v) ? data.push($$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },
@@ -7025,7 +6896,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   orderTargets: function orderTargets(targetsValue) {
     var $$ = this,
         config = $$.config,
-        targets = toConsumableArray_default()(targetsValue),
+        targets = _toConsumableArray(targetsValue),
         orderAsc = $$.isOrderAsc(),
         orderDesc = $$.isOrderDesc();
 
@@ -7269,7 +7140,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
-var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(21);
+var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(8);
 
 // CONCATENATED MODULE: ./src/data/data.convert.js
 /**
@@ -7542,7 +7413,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-drag","commonjs2":"d3-drag","amd":"d3-drag","root":"d3"}
-var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(22);
+var external_commonjs_d3_drag_commonjs2_d3_drag_amd_d3_drag_root_d3_ = __webpack_require__(9);
 
 // CONCATENATED MODULE: ./src/interactions/interaction.js
 /**
@@ -7593,7 +7464,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         getEventRect = function () {
       var touch = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].changedTouches[0];
-      return Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser["a" /* document */].elementFromPoint(touch.clientX, touch.clientY));
+      return Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
     },
         getIndex = function (eventRect) {
       var index = eventRect && eventRect.attr("class") && eventRect.attr("class").replace(new RegExp("(".concat(config_classes.eventRect, "-?|s)"), "g"), "") * 1;
@@ -7965,7 +7836,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     if (key === "width") {
       // Sometimes element's width value is incorrect(ex. flex container)
       // In this case, use body's offsetWidth instead.
-      var bodyWidth = browser["a" /* document */].body.offsetWidth;
+      var bodyWidth = browser_doc.body.offsetWidth;
       v > bodyWidth && (v = bodyWidth);
     }
 
@@ -8009,7 +7880,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
-var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(23);
+var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webpack_require__(10);
 
 // CONCATENATED MODULE: ./src/shape/shape.js
 /**
@@ -8128,7 +7999,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(24);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(11);
 
 // CONCATENATED MODULE: ./src/shape/arc.js
 /**
@@ -8451,7 +8322,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     }), isTouch && $$.hasArcType() && !$$.radars) {
       var getEventArc = function () {
         var touch = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].changedTouches[0],
-            eventArc = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser["a" /* document */].elementFromPoint(touch.clientX, touch.clientY));
+            eventArc = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
         return eventArc;
       },
           handler = function () {
@@ -8644,7 +8515,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   isWithinBar: function isWithinBar(that) {
     var mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(that),
         list = getRectSegList(that),
-        _list2 = slicedToArray_default()(list, 2),
+        _list2 = _slicedToArray(list, 2),
         seg0 = _list2[0],
         seg1 = _list2[1],
         x = Math.min(seg0.x, seg1.x),
@@ -9186,7 +9057,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     },
         doc = new DOMParser().parseFromString(point, "image/svg+xml"),
         node = doc.documentElement,
-        clone = browser["a" /* document */].createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, node.nodeName.toLowerCase());
+        clone = browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, node.nodeName.toLowerCase());
 
     if (clone.id = id, clone.style.fill = "inherit", clone.style.stroke = "inherit", copyAttr(node, clone), node.childNodes && node.childNodes.length) {
       var parent = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(clone);
@@ -9356,7 +9227,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         _$$$getRadarSize = $$.getRadarSize(),
-        _$$$getRadarSize2 = slicedToArray_default()(_$$$getRadarSize, 2),
+        _$$$getRadarSize2 = _slicedToArray(_$$$getRadarSize, 2),
         width = _$$$getRadarSize2[0],
         height = _$$$getRadarSize2[1],
         edge = config.axis_x_categories.length,
@@ -9376,7 +9247,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         targets = $$.data.targets,
         _$$$getRadarSize3 = $$.getRadarSize(),
-        _$$$getRadarSize4 = slicedToArray_default()(_$$$getRadarSize3, 2),
+        _$$$getRadarSize4 = _slicedToArray(_$$$getRadarSize3, 2),
         width = _$$$getRadarSize4[0],
         height = _$$$getRadarSize4[1],
         points = $$.getCache(radar_cacheKey) || {},
@@ -9408,7 +9279,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         _$$$getRadarSize5 = $$.getRadarSize(),
-        _$$$getRadarSize6 = slicedToArray_default()(_$$$getRadarSize5, 2),
+        _$$$getRadarSize6 = _slicedToArray(_$$$getRadarSize5, 2),
         width = _$$$getRadarSize6[0],
         height = _$$$getRadarSize6[1],
         depth = config.radar_level_depth,
@@ -9452,7 +9323,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         _$$$getRadarSize7 = $$.getRadarSize(),
-        _$$$getRadarSize8 = slicedToArray_default()(_$$$getRadarSize7, 2),
+        _$$$getRadarSize8 = _slicedToArray(_$$$getRadarSize7, 2),
         width = _$$$getRadarSize8[0],
         height = _$$$getRadarSize8[1],
         categories = config.axis_x_categories,
@@ -10229,11 +10100,11 @@ extend(ChartInternal_ChartInternal.prototype, {
         });
       }
 
-      if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(toConsumableArray_default()(param)))), $$.isAreaRangeType(row)) {
+      if (param = [row.ratio, row.id, row.index, d], value = sanitise(valueFormat.apply(void 0, [getRowValue(row)].concat(_toConsumableArray(param)))), $$.isAreaRangeType(row)) {
         var _map = ["high", "low"].map(function (v) {
-          return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(toConsumableArray_default()(param))));
+          return sanitise(valueFormat.apply(void 0, [$$.getAreaRangeData(row, v)].concat(_toConsumableArray(param))));
         }),
-            _map2 = slicedToArray_default()(_map, 2),
+            _map2 = _slicedToArray(_map, 2),
             high = _map2[0],
             low = _map2[1];
 
@@ -10244,7 +10115,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         var _ret = function () {
           // Skip elements when their name is set to null
           if (row.name === null) return "continue";
-          var name = sanitise(nameFormat.apply(void 0, [row.name].concat(toConsumableArray_default()(param)))),
+          var name = sanitise(nameFormat.apply(void 0, [row.name].concat(_toConsumableArray(param)))),
               color = getBgColor(row),
               contentValue = {
             CLASS_TOOLTIP_NAME: config_classes.tooltipName + $$.getTargetSelectorSuffix(row.id),
@@ -10293,7 +10164,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         _d3Mouse = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(element),
-        _d3Mouse2 = slicedToArray_default()(_d3Mouse, 2),
+        _d3Mouse2 = _slicedToArray(_d3Mouse, 2),
         left = _d3Mouse2[0],
         top = _d3Mouse2[1],
         svgLeft = $$.getSvgLeft(!0),
@@ -10385,7 +10256,7 @@ extend(ChartInternal_ChartInternal.prototype, {
           var _config = c.internal.config,
               isLinked = _config.tooltip_linked,
               name = _config.tooltip_linked_name,
-              isInDom = browser["a" /* document */].body.contains(c.element);
+              isInDom = browser_doc.body.contains(c.element);
 
           if (isLinked && linkedName === name && isInDom) {
             var data = c.internal.tooltip.data()[0],
@@ -10763,7 +10634,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
         ids.indexOf(d) === -1 && ids.push(d);
         var point = pattern[ids.indexOf(d) % pattern.length];
-        return point === "rectangle" && (point = "rect"), browser["a" /* document */].createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, $$.hasValidPointType(point) ? point : "use");
+        return point === "rectangle" && (point = "rect"), browser_doc.createElementNS(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, $$.hasValidPointType(point) ? point : "use");
       }).attr("class", config_classes.legendItemPoint).style("fill", function (d) {
         return $$.color(d);
       }).style("pointer-events", "none").attr("href", function (data, idx, selection) {
@@ -10929,8 +10800,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config;
     if (!config.clipPath && /-clip$/.test(id) || !config.axis_x_clipPath && /-clip-xaxis$/.test(id) || !config.axis_y_clipPath && /-clip-yaxis$/.test(id)) return null;
-    var isIE9 = !!browser["b" /* window */].navigator && browser["b" /* window */].navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
-    return "url(".concat(isIE9 ? "" : browser["a" /* document */].URL.split("#")[0], "#").concat(id, ")");
+    var isIE9 = !!win.navigator && win.navigator.appVersion.toLowerCase().indexOf("msie 9.") >= 0;
+    return "url(".concat(isIE9 ? "" : browser_doc.URL.split("#")[0], "#").concat(id, ")");
   },
   appendClip: function appendClip(parent, id) {
     return parent.append("clipPath").attr("id", id).append("rect");
@@ -11081,10 +10952,10 @@ extend(ChartInternal_ChartInternal.prototype, {
     if (!$$.hasArcType() && config.data_selection_enabled && ( // do nothing if not selectable
     !config.zoom_enabled || $$.zoom.altDomain) && config.data_selection_multiple // skip when single selection because drag is used for multiple selection
     ) {
-        var _$$$dragStart = slicedToArray_default()($$.dragStart, 2),
+        var _$$$dragStart = _slicedToArray($$.dragStart, 2),
             sx = _$$$dragStart[0],
             sy = _$$$dragStart[1],
-            _mouse = slicedToArray_default()(mouse, 2),
+            _mouse = _slicedToArray(mouse, 2),
             mx = _mouse[0],
             my = _mouse[1],
             minX = Math.min(sx, mx),
@@ -11148,7 +11019,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(25);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(12);
 
 // CONCATENATED MODULE: ./src/internals/selection.js
 /**
@@ -11535,7 +11406,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-zoom","commonjs2":"d3-zoom","amd":"d3-zoom","root":"d3"}
-var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(26);
+var external_commonjs_d3_zoom_commonjs2_d3_zoom_amd_d3_zoom_root_d3_ = __webpack_require__(13);
 
 // CONCATENATED MODULE: ./src/interactions/zoom.js
 
@@ -11664,7 +11535,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   getZoomDomain: function getZoomDomain() {
     var $$ = this,
         config = $$.config,
-        _$$$orgXDomain = slicedToArray_default()($$.orgXDomain, 2),
+        _$$$orgXDomain = _slicedToArray($$.orgXDomain, 2),
         min = _$$$orgXDomain[0],
         max = _$$$orgXDomain[1];
 
@@ -11727,10 +11598,10 @@ extend(ChartInternal_ChartInternal.prototype, {
       })), $$.onZoomEnd();else if ($$.isMultipleX()) $$.clickHandlerForMultipleXS.bind(this)($$);else {
         var _event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"].sourceEvent || external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
             _ref2 = "clientX" in _event ? [_event.clientX, _event.clientY] : [_event.x, _event.y],
-            _ref3 = slicedToArray_default()(_ref2, 2),
+            _ref3 = _slicedToArray(_ref2, 2),
             x = _ref3[0],
             y = _ref3[1],
-            target = browser["a" /* document */].elementFromPoint(x, y);
+            target = browser_doc.elementFromPoint(x, y);
 
         $$.clickHandlerForSingleX.bind(target)(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(target).datum(), $$);
       }
@@ -11783,13 +11654,13 @@ extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getColorFromCss: function getColorFromCss() {
-    var body = browser["a" /* document */].body,
+    var body = browser_doc.body,
         pattern = body["__colorPattern__"];
 
     if (!pattern) {
-      var span = browser["a" /* document */].createElement("span");
+      var span = browser_doc.createElement("span");
       span.className = config_classes.colorPattern, span.style.display = "none", body.appendChild(span);
-      var content = browser["b" /* window */].getComputedStyle(span).backgroundImage;
+      var content = win.getComputedStyle(span).backgroundImage;
       span.parentNode.removeChild(span), content.indexOf(";") > -1 && (pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
         return v.trim().replace(/[\"'\s]/g, "");
       }).filter(Boolean), body["__colorPattern__"] = pattern);
@@ -12326,7 +12197,7 @@ extend(Chart_Chart.prototype, {
  */
 
 var withinRange = function (domain, range) {
-  var _range = slicedToArray_default()(range, 2),
+  var _range = _slicedToArray(range, 2),
       min = _range[0],
       max = _range[1];
 
@@ -12637,7 +12508,7 @@ extend(Chart_Chart.prototype, {
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-ease","commonjs2":"d3-ease","amd":"d3-ease","root":"d3"}
-var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(27);
+var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack_require__(14);
 
 // CONCATENATED MODULE: ./src/api/api.flow.js
 /**
@@ -13864,7 +13735,7 @@ extend(Chart_Chart.prototype, {
     var _this = this,
         $$ = this.internal;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && browser["b" /* window */].clearTimeout($$.resizeTimeout), browser["b" /* window */].removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -14016,16 +13887,16 @@ var b64EncodeUnicode = function (str) {
     nodeToSvgDataUrl = function (node, size) {
   var serializer = new XMLSerializer(),
       clone = node.cloneNode(!0),
-      cssText = getCssRules(toArray(browser["a" /* document */].styleSheets)).filter(function (r) {
+      cssText = getCssRules(toArray(browser_doc.styleSheets)).filter(function (r) {
     return r.cssText;
   }).map(function (r) {
     return r.cssText;
   });
   clone.setAttribute("xmlns", external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].xhtml);
   var nodeXml = serializer.serializeToString(clone),
-      style = browser["a" /* document */].createElement("style"); // escape css for XML
+      style = browser_doc.createElement("style"); // escape css for XML
 
-  style.appendChild(browser["a" /* document */].createTextNode(cssText.join("\n")));
+  style.appendChild(browser_doc.createTextNode(cssText.join("\n")));
   var styleXml = serializer.serializeToString(style),
       dataStr = "<svg xmlns=\"".concat(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["namespaces"].svg, "\" width=\"").concat(size.width, "\" height=\"").concat(size.height, "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t").concat(styleXml, "\n\t\t\t\t").concat(nodeXml.replace(/(url\()[^#]+/g, "$1"), "\n\t\t\t</foreignObject></svg>").replace("/\n/g", "%0A"); // foreignObject not supported in IE11 and below
   // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
@@ -14078,7 +13949,7 @@ extend(Chart_Chart.prototype, {
     if (isFunction(callback)) {
       var img = new Image();
       img.crosssOrigin = "Anonymous", img.onload = function () {
-        var canvas = browser["a" /* document */].createElement("canvas"),
+        var canvas = browser_doc.createElement("canvas"),
             ctx = canvas.getContext("2d");
         canvas.width = size.width, canvas.height = size.height, ctx.drawImage(img, 0, 0), callback(canvas.toDataURL(mimeType));
       }, img.src = svgDataUrl;
@@ -14157,7 +14028,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191023115835",
+  version: "1.10.2-nightly-20191030120156",
 
   /**
    * Generate chart
@@ -14256,7 +14127,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191023115835
+ * @version 1.10.2-nightly-20191030120156
  */
 
 

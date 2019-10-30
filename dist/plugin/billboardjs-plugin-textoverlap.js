@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191023115835
+ * @version 1.10.2-nightly-20191030120156
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18,7 +18,7 @@
 		exports["textoverlap"] = factory(require("d3-selection"), require("d3-voronoi"), require("d3-polygon"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__28__, __WEBPACK_EXTERNAL_MODULE__29__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__14__, __WEBPACK_EXTERNAL_MODULE__15__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -102,25 +102,29 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 31);
+/******/ 	return __webpack_require__(__webpack_require__.s = 17);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _classCallCheck; });
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
   }
 }
 
-module.exports = _classCallCheck;
-
 /***/ }),
 /* 1 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _createClass; });
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
@@ -137,39 +141,41 @@ function _createClass(Constructor, protoProps, staticProps) {
   return Constructor;
 }
 
-module.exports = _createClass;
-
 /***/ }),
 /* 2 */
-/***/ (function(module, exports, __webpack_require__) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-var _typeof = __webpack_require__(3);
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _possibleConstructorReturn; });
+/* harmony import */ var _helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
 
-var assertThisInitialized = __webpack_require__(4);
 
 function _possibleConstructorReturn(self, call) {
-  if (call && (_typeof(call) === "object" || typeof call === "function")) {
+  if (call && (Object(_helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__["default"])(call) === "object" || typeof call === "function")) {
     return call;
   }
 
-  return assertThisInitialized(self);
+  return Object(_assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__["default"])(self);
 }
-
-module.exports = _possibleConstructorReturn;
 
 /***/ }),
 /* 3 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _typeof; });
 function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
 
 function _typeof(obj) {
   if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
-    module.exports = _typeof = function _typeof(obj) {
+    _typeof = function _typeof(obj) {
       return _typeof2(obj);
     };
   } else {
-    module.exports = _typeof = function _typeof(obj) {
+    _typeof = function _typeof(obj) {
       return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
     };
   }
@@ -177,12 +183,13 @@ function _typeof(obj) {
   return _typeof(obj);
 }
 
-module.exports = _typeof;
-
 /***/ }),
 /* 4 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _assertThisInitialized; });
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -191,231 +198,58 @@ function _assertThisInitialized(self) {
   return self;
 }
 
-module.exports = _assertThisInitialized;
-
 /***/ }),
 /* 5 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _getPrototypeOf; });
 function _getPrototypeOf(o) {
-  module.exports = _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
+  _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
   };
   return _getPrototypeOf(o);
 }
 
-module.exports = _getPrototypeOf;
-
 /***/ }),
-/* 6 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var setPrototypeOf = __webpack_require__(7);
-
-function _inherits(subClass, superClass) {
-  if (typeof superClass !== "function" && superClass !== null) {
-    throw new TypeError("Super expression must either be null or a function");
-  }
-
-  subClass.prototype = Object.create(superClass && superClass.prototype, {
-    constructor: {
-      value: subClass,
-      writable: true,
-      configurable: true
-    }
-  });
-  if (superClass) setPrototypeOf(subClass, superClass);
-}
-
-module.exports = _inherits;
-
-/***/ }),
-/* 7 */
-/***/ (function(module, exports) {
-
-function _setPrototypeOf(o, p) {
-  module.exports = _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
-    o.__proto__ = p;
-    return o;
-  };
-
-  return _setPrototypeOf(o, p);
-}
-
-module.exports = _setPrototypeOf;
-
-/***/ }),
+/* 6 */,
+/* 7 */,
 /* 8 */,
 /* 9 */,
-/* 10 */,
+/* 10 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
+
+/***/ }),
 /* 11 */,
 /* 12 */,
 /* 13 */,
-/* 14 */,
-/* 15 */,
-/* 16 */
+/* 14 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__16__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 
 /***/ }),
-/* 17 */,
-/* 18 */,
-/* 19 */,
-/* 20 */
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__15__;
+
+/***/ }),
+/* 16 */,
+/* 17 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Plugin; });
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(0);
-/* harmony import */ var _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0__);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
-/* harmony import */ var _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1__);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(21);
-/* harmony import */ var _babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default = /*#__PURE__*/__webpack_require__.n(_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2__);
 
-
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-var Plugin =
-/*#__PURE__*/
-function () {
-  /**
-   * Version info string for plugin
-   * @name version
-   * @static
-   * @memberof Plugin
-   * @type {String}
-   * @example
-   *   bb.plugin.stanford.version;  // ex) 1.9.0
-   */
-
-  /**
-   * Constructor
-   * @param {Any} config config option object
-   * @private
-   */
-  function Plugin() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    _babel_runtime_helpers_classCallCheck__WEBPACK_IMPORTED_MODULE_0___default()(this, Plugin), this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-
-
-  return _babel_runtime_helpers_createClass__WEBPACK_IMPORTED_MODULE_1___default()(Plugin, [{
-    key: "$beforeInit",
-    value: function $beforeInit() {}
-    /**
-     * Lifecycle hook for 'init' phase.
-     * @private
-     */
-
-  }, {
-    key: "$init",
-    value: function $init() {}
-    /**
-     * Lifecycle hook for 'afterInit' phase.
-     * @private
-     */
-
-  }, {
-    key: "$afterInit",
-    value: function $afterInit() {}
-    /**
-     * Lifecycle hook for 'redraw' phase.
-     * @private
-     */
-
-  }, {
-    key: "$redraw",
-    value: function $redraw() {}
-    /**
-     * Lifecycle hook for 'willDestroy' phase.
-     * @private
-     */
-
-  }, {
-    key: "$willDestroy",
-    value: function $willDestroy() {
-      var _this = this;
-
-      Object.keys(this).forEach(function (key) {
-        _this[key] = null, delete _this[key];
-      });
-    }
-  }]), Plugin;
-}();
-
-_babel_runtime_helpers_defineProperty__WEBPACK_IMPORTED_MODULE_2___default()(Plugin, "version", "1.10.2-nightly-20191023115835");
-
-
-
-/***/ }),
-/* 21 */
-/***/ (function(module, exports) {
-
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-
-module.exports = _defineProperty;
-
-/***/ }),
-/* 22 */,
-/* 23 */,
-/* 24 */
-/***/ (function(module, exports, __webpack_require__) {
-
-var arrayWithHoles = __webpack_require__(25);
-
-var iterableToArrayLimit = __webpack_require__(26);
-
-var nonIterableRest = __webpack_require__(27);
-
-function _slicedToArray(arr, i) {
-  return arrayWithHoles(arr) || iterableToArrayLimit(arr, i) || nonIterableRest();
-}
-
-module.exports = _slicedToArray;
-
-/***/ }),
-/* 25 */
-/***/ (function(module, exports) {
-
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
 function _arrayWithHoles(arr) {
   if (Array.isArray(arr)) return arr;
 }
-
-module.exports = _arrayWithHoles;
-
-/***/ }),
-/* 26 */
-/***/ (function(module, exports) {
-
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(arr, i) {
   if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
     return;
@@ -445,78 +279,46 @@ function _iterableToArrayLimit(arr, i) {
 
   return _arr;
 }
-
-module.exports = _iterableToArrayLimit;
-
-/***/ }),
-/* 27 */
-/***/ (function(module, exports) {
-
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
 function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
 
-module.exports = _nonIterableRest;
 
-/***/ }),
-/* 28 */
-/***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__28__;
-
-/***/ }),
-/* 29 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__29__;
-
-/***/ }),
-/* 30 */,
-/* 31 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/slicedToArray.js
-var slicedToArray = __webpack_require__(24);
-var slicedToArray_default = /*#__PURE__*/__webpack_require__.n(slicedToArray);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/classCallCheck.js
+function _slicedToArray(arr, i) {
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+}
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
 var classCallCheck = __webpack_require__(0);
-var classCallCheck_default = /*#__PURE__*/__webpack_require__.n(classCallCheck);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/createClass.js
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
 var createClass = __webpack_require__(1);
-var createClass_default = /*#__PURE__*/__webpack_require__.n(createClass);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/possibleConstructorReturn.js
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
 var possibleConstructorReturn = __webpack_require__(2);
-var possibleConstructorReturn_default = /*#__PURE__*/__webpack_require__.n(possibleConstructorReturn);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/getPrototypeOf.js
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
 var getPrototypeOf = __webpack_require__(5);
-var getPrototypeOf_default = /*#__PURE__*/__webpack_require__.n(getPrototypeOf);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/assertThisInitialized.js
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 var assertThisInitialized = __webpack_require__(4);
-var assertThisInitialized_default = /*#__PURE__*/__webpack_require__.n(assertThisInitialized);
 
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/inherits.js
-var inherits = __webpack_require__(6);
-var inherits_default = /*#__PURE__*/__webpack_require__.n(inherits);
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
+var inherits = __webpack_require__(18);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-voronoi","commonjs2":"d3-voronoi","amd":"d3-voronoi","root":"d3"}
-var external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_ = __webpack_require__(28);
+var external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_ = __webpack_require__(14);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
-var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(29);
+var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(15);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(16);
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(10);
 
-// EXTERNAL MODULE: ./src/plugin/Plugin.js
-var Plugin = __webpack_require__(20);
+// EXTERNAL MODULE: ./src/plugin/Plugin.js + 1 modules
+var Plugin = __webpack_require__(19);
 
 // CONCATENATED MODULE: ./src/plugin/textoverlap/Options.js
 
@@ -535,7 +337,7 @@ var Plugin = __webpack_require__(20);
  * @private
  */
 var Options_Options = function Options() {
-  return classCallCheck_default()(this, Options), {
+  return Object(classCallCheck["default"])(this, Options), {
     /**
      * Set selector string for target text nodes
      * @name selector
@@ -622,10 +424,10 @@ function (_Plugin) {
   function TextOverlap(options) {
     var _this;
 
-    return classCallCheck_default()(this, TextOverlap), _this = possibleConstructorReturn_default()(this, getPrototypeOf_default()(TextOverlap).call(this, options)), _this.config = new Options_Options(), possibleConstructorReturn_default()(_this, assertThisInitialized_default()(_this));
+    return Object(classCallCheck["default"])(this, TextOverlap), _this = Object(possibleConstructorReturn["default"])(this, Object(getPrototypeOf["default"])(TextOverlap).call(this, options)), _this.config = new Options_Options(), Object(possibleConstructorReturn["default"])(_this, Object(assertThisInitialized["default"])(_this));
   }
 
-  return inherits_default()(TextOverlap, _Plugin), createClass_default()(TextOverlap, [{
+  return Object(inherits["default"])(TextOverlap, _Plugin), Object(createClass["default"])(TextOverlap, [{
     key: "$init",
     value: function $init() {
       var $$ = this.$$;
@@ -651,7 +453,7 @@ function (_Plugin) {
           _map = ["x", "y"].map(function (v) {
         return $$[v].domain();
       }),
-          _map2 = slicedToArray_default()(_map, 2),
+          _map2 = _slicedToArray(_map, 2),
           min = _map2[0],
           max = _map2[1],
           _ref = [max[0], min[1]];
@@ -678,11 +480,11 @@ function (_Plugin) {
         var cell = cells[i++];
 
         if (cell && this) {
-          var _cell$data = slicedToArray_default()(cell.data, 2),
+          var _cell$data = _slicedToArray(cell.data, 2),
               x = _cell$data[0],
               y = _cell$data[1],
               _d3PolygonCentroid = Object(external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_["polygonCentroid"])(cell),
-              _d3PolygonCentroid2 = slicedToArray_default()(_d3PolygonCentroid, 2),
+              _d3PolygonCentroid2 = _slicedToArray(_d3PolygonCentroid, 2),
               cx = _d3PolygonCentroid2[0],
               cy = _d3PolygonCentroid2[1],
               angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
@@ -696,6 +498,159 @@ function (_Plugin) {
     }
   }]), TextOverlap;
 }(Plugin["default"]);
+
+
+
+/***/ }),
+/* 18 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
+function _setPrototypeOf(o, p) {
+  _setPrototypeOf = Object.setPrototypeOf || function _setPrototypeOf(o, p) {
+    o.__proto__ = p;
+    return o;
+  };
+
+  return _setPrototypeOf(o, p);
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _inherits; });
+
+function _inherits(subClass, superClass) {
+  if (typeof superClass !== "function" && superClass !== null) {
+    throw new TypeError("Super expression must either be null or a function");
+  }
+
+  subClass.prototype = Object.create(superClass && superClass.prototype, {
+    constructor: {
+      value: subClass,
+      writable: true,
+      configurable: true
+    }
+  });
+  if (superClass) _setPrototypeOf(subClass, superClass);
+}
+
+/***/ }),
+/* 19 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
+var classCallCheck = __webpack_require__(0);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
+var createClass = __webpack_require__(1);
+
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
+// CONCATENATED MODULE: ./src/plugin/Plugin.js
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Plugin_Plugin; });
+
+
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Base class to generate billboard.js plugin
+ * @class Plugin
+ */
+var Plugin_Plugin =
+/*#__PURE__*/
+function () {
+  /**
+   * Version info string for plugin
+   * @name version
+   * @static
+   * @memberof Plugin
+   * @type {String}
+   * @example
+   *   bb.plugin.stanford.version;  // ex) 1.9.0
+   */
+
+  /**
+   * Constructor
+   * @param {Any} config config option object
+   * @private
+   */
+  function Plugin() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    Object(classCallCheck["default"])(this, Plugin), this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+
+
+  return Object(createClass["default"])(Plugin, [{
+    key: "$beforeInit",
+    value: function $beforeInit() {}
+    /**
+     * Lifecycle hook for 'init' phase.
+     * @private
+     */
+
+  }, {
+    key: "$init",
+    value: function $init() {}
+    /**
+     * Lifecycle hook for 'afterInit' phase.
+     * @private
+     */
+
+  }, {
+    key: "$afterInit",
+    value: function $afterInit() {}
+    /**
+     * Lifecycle hook for 'redraw' phase.
+     * @private
+     */
+
+  }, {
+    key: "$redraw",
+    value: function $redraw() {}
+    /**
+     * Lifecycle hook for 'willDestroy' phase.
+     * @private
+     */
+
+  }, {
+    key: "$willDestroy",
+    value: function $willDestroy() {
+      var _this = this;
+
+      Object.keys(this).forEach(function (key) {
+        _this[key] = null, delete _this[key];
+      });
+    }
+  }]), Plugin;
+}();
+
+_defineProperty(Plugin_Plugin, "version", "1.10.2-nightly-20191030120156");
 
 
 
