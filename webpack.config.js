@@ -66,6 +66,7 @@ const config = {
 		new Stylish(),
 		new WebpackBar()
 	],
+	node: false,
 	stats: "minimal",
 	mode: "none",
 	devServer: {

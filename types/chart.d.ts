@@ -215,6 +215,24 @@ export interface Chart {
 		enable(enabled: boolean): void;
 	};
 
+	tooltip: {
+		/**
+		 * Hide tooltip
+		 */
+		hide(): void;
+
+		/**
+		 * Show tooltip
+		 * @param args Option object to specify specific tooltip
+		 */
+		show(args: {
+			index?: number,
+			data?: { x?: number | Date, index?: number, id?: string, value?: number },
+			mouse?: number[],
+			x?: number | Date,
+		}): void
+	};
+
 	/**
 	 * This API highlights specified targets and fade out the others.
 	 * You can specify multiple targets by giving an array that includes id as String.
