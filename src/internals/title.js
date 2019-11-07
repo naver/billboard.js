@@ -75,15 +75,16 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const position = config.title_position || "left";
+		const textRectWidth = $$.getTextRect($$.title, CLASS.title).width;
 		let x;
 
 		if (/(right|center)/.test(position)) {
-			x = $$.currentWidth - $$.getTextRect($$.title, CLASS.title).width;
+			x = $$.currentWidth - textRectWidth;
 
 			if (position.indexOf("right") >= 0) {
-				x -= (config.title_padding.right || 0);
+				x = $$.currentWidth - textRectWidth - config.title_padding.right;
 			} else if (position.indexOf("center") >= 0) {
-				x /= 2;
+				x = ($$.currentWidth - textRectWidth) / 2;
 			}
 		} else { // left
 			x = (config.title_padding.left || 0);
