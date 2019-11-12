@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191111120739
+ * @version 1.10.2-nightly-20191112120716
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -3384,42 +3384,63 @@ var Options_Options = function Options() {
 
     /**
      * Set a callback for click event on each data point.<br><br>
-     * This callback will be called when each data point clicked and will receive d and element as the arguments. d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
+     * This callback will be called when each data point clicked and will receive `d` and element as the arguments.
+     * - `d` is the data clicked and element is the element clicked.
+     * - `element` is the current interacting svg element.
+     * - In this callback, `this` will be the Chart object.
      * @name data․onclick
      * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
      * data: {
-     *     onclick: function(d, element) { ... }
+     *     onclick: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+     *        // element - <circle>
+     *        ...
+     *     }
      * }
      */
     data_onclick: function data_onclick() {},
 
     /**
      * Set a callback for mouse/touch over event on each data point.<br><br>
-     * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument. d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
+     * This callback will be called when mouse cursor or via touch moves onto each data point and will receive `d` and `element` as the argument.
+     * - `d` is the data where mouse cursor moves onto.
+     * - `element` is the current interacting svg element.
+     * - In this callback, `this` will be the Chart object.
      * @name data․onover
      * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
      * data: {
-     *     onover: function(d) { ... }
+     *     onover: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+     *        // element - <circle>
+     *        ...
+     *     }
      * }
      */
     data_onover: function data_onover() {},
 
     /**
      * Set a callback for mouse/touch out event on each data point.<br><br>
-     * This callback will be called when mouse cursor or via touch moves out each data point and will receive d as the argument. d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
+     * This callback will be called when mouse cursor or via touch moves out each data point and will receive `d` as the argument.
+     * - `d` is the data where mouse cursor moves out.
+     * - `element` is the current interacting svg element.
+     * - In this callback, `this` will be the Chart object.
      * @name data․onout
      * @memberof Options
      * @type {Function}
      * @default function() {}
      * @example
      * data: {
-     *     onout: function(d) { ... }
+     *     onout: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+     *        // element - <circle>
+     *        ...
+     *     }
      * }
      */
     data_onout: function data_onout() {},
@@ -7612,7 +7633,24 @@ extend(ChartInternal_ChartInternal.prototype, {
     // Call event handler
     if (isArc || d !== -1) {
       var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
-      config.color_onover && $$.setOverColor(isOver, d, isArc), isArc ? callback(d) : (isOver && $$.expandCirclesBars(d, null, !0), !$$.isMultipleX() && $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).each(callback));
+      if (config.color_onover && $$.setOverColor(isOver, d, isArc), isArc) callback(d, $$.main.select(".".concat(config_classes.arc, "-").concat(d.id)).node());else if (!config.tooltip_grouped) {
+        var callee = $$.setOverOut,
+            last = callee.last || [],
+            shape = $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).filter(function (d) {
+          return $$.isWithinShape(this, d);
+        });
+        shape.each(function (d) {
+          var _this = this;
+
+          (last.length === 0 || last.every(function (v) {
+            return v !== _this;
+          })) && (callback(d, this), last.push(this));
+        }), last.length > 0 && shape.empty() && (callback = config.data_onout.bind($$.api), last.forEach(function (v) {
+          return callback(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(v).datum(), v);
+        }), last = []), callee.last = last;
+      } else isOver && $$.expandCirclesBars(d, null, !0), $$.isMultipleX() || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).each(function (d) {
+        callback(d, this);
+      });
     }
   },
 
@@ -7659,13 +7697,13 @@ extend(ChartInternal_ChartInternal.prototype, {
       $$.clickHandlerForSingleX.bind(this)(d, $$);
     }).call($$.getDraggableSelection());
     return $$.inputType === "mouse" && rect.on("mouseover", function (d) {
-      $$.dragging || $$.flowing || $$.hasArcType() || $$.setOverOut(!0, d.index);
+      $$.dragging || $$.flowing || $$.hasArcType() || $$.config.tooltip_grouped && $$.setOverOut(!0, d.index);
     }).on("mousemove", function (d) {
       // do nothing while dragging/flowing
       if (!($$.dragging || $$.flowing || $$.hasArcType())) {
         var index = d.index,
             eventRect = $$.svg.select(".".concat(config_classes.eventRect, "-").concat(index));
-        $$.isStepType(d) && $$.config.line_step_type === "step-after" && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[0] < $$.x($$.getXValue(d.id, index)) && (index -= 1), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
+        $$.isStepType(d) && $$.config.line_step_type === "step-after" && Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(this)[0] < $$.x($$.getXValue(d.id, index)) && (index -= 1), index === -1 ? $$.unselectRect() : $$.selectRectForSingle(this, eventRect, index), $$.config.tooltip_grouped || $$.setOverOut(index !== -1, d.index);
       }
     }).on("mouseout", function (d) {
       !$$.config || $$.hasArcType() || ($$.unselectRect(), $$.setOverOut(!1, d.index));
@@ -9022,8 +9060,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       cx = x, cy = y;
     }
 
-    var is = Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || this.config.point_sensitivity);
-    return is;
+    return Math.sqrt(Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)) < (r || this.config.point_sensitivity);
   },
   isWithinStep: function isWithinStep(that, y) {
     return Math.abs(y - Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["mouse"])(that)[1]) < 30;
@@ -14028,7 +14065,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191111120739",
+  version: "1.10.2-nightly-20191112120716",
 
   /**
    * Generate chart
@@ -14127,7 +14164,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191111120739
+ * @version 1.10.2-nightly-20191112120716
  */
 
 
