@@ -38,6 +38,7 @@ export interface DataItem {
 	index: number;
 	value: number;
 	x: number;
+	name?: string;
 	ratio?: number;
 }
 

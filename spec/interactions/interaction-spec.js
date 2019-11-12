@@ -377,6 +377,114 @@ describe("INTERACTION", () => {
 	});
 
 	describe("Different interactions", () => {
+		describe("check for data.onover/out", () => {
+			let itemOver = [];
+			let itemOut = [];
+
+			const spyOver = sinon.spy((d, element) => itemOver.push({d, element}));
+			const spyOut = sinon.spy((d, element) => itemOut.push({d, element}));
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 0, 0, 0],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						onover: spyOver,
+						onout: spyOut
+					}
+				};
+			});
+
+			afterEach(() => {
+				itemOver = [];
+				itemOut = [];
+				spyOver.resetHistory();
+				spyOut.resetHistory();
+			});
+
+			it("Callbacks were called correctly with its arguments?", done => {
+				setTimeout(() => {
+					const index = 1;
+					const rect = chart.$.main.select(`.${CLASS.eventRect}-${index}`).node();
+
+					util.fireEvent(rect, "mouseover", {
+						clientX: 174,
+						clientY: 200
+					}, chart);
+
+					util.fireEvent(rect, "mouseout", {
+						clientX: 0,
+						clientY: 0
+					}, chart);
+
+					expect(spyOver.calledTwice).to.be.true;
+					expect(spyOut.calledTwice).to.be.true;
+
+					itemOver.forEach((v, i) => {
+						expect(v.d.x).to.be.equal(index);
+						expect(v.element.tagName).to.be.equal("circle");
+
+						expect(itemOut[i].d).to.be.deep.equal(v.d);
+						expect(itemOut[i].element).to.be.deep.equal(v.element);
+					});
+
+					done();
+				}, 500);
+			});
+
+			it("set options data.groups / tooltip.grouped=false", () => {
+				args.data.groups = [["data1", "data2"]];
+				args.tooltip = {grouped: false};
+				args.point = {r:5};
+			});
+
+			it("Tooltip grouped false: Callbacks were called correctly with its arguments?", done => {
+				setTimeout(() => {
+					const index = 2;
+
+					util.hoverChart(chart, "mousemove", {clientX: 250, clientY: 311});
+					util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100});
+
+					expect(spyOver.calledOnce).to.be.true;
+					expect(spyOut.calledOnce).to.be.true;
+
+					itemOver.forEach((v, i) => {
+						expect(v.d.x).to.be.equal(index);
+						expect(v.element.tagName).to.be.equal("circle");
+
+						expect(itemOut[i].d).to.be.deep.equal(v.d);
+						expect(itemOut[i].element).to.be.deep.equal(v.element);
+					});
+
+					done();
+				}, 500);
+			});
+
+			it("Overlapped circles: Callbacks were called correctly with its arguments?", done => {
+				setTimeout(() => {
+					const index = 3;
+
+					util.hoverChart(chart, "mousemove", {clientX: 360, clientY: 266}, index);
+					util.hoverChart(chart, "mouseout", {clientX: -100, clientY: -100}, index);
+
+					expect(spyOver.calledTwice).to.be.true;
+					expect(spyOut.calledTwice).to.be.true;
+
+					itemOver.forEach((v, i) => {
+						expect(v.d.x).to.be.equal(index);
+						expect(v.element.tagName).to.be.equal("circle");
+
+						expect(itemOut[i].d).to.be.deep.equal(v.d);
+						expect(itemOut[i].element).to.be.deep.equal(v.element);
+					});
+
+					done();
+				}, 500);
+			});
+		});
+
 		describe("check for data.onclick", () => {
 			let clicked = false;
 			let data;
