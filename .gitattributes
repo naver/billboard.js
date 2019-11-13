@@ -1,3 +1,4 @@
 .releaserc.json merge=ours
 .travis.yml merge=ours
+package.json merge=ours
 README.md merge=ours

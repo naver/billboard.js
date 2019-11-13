@@ -411,15 +411,44 @@ extend(ChartInternal.prototype, {
 
 		// Call event handler
 		if (isArc || d !== -1) {
-			const callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
+			let callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
 
 			config.color_onover && $$.setOverColor(isOver, d, isArc);
 
 			if (isArc) {
-				callback(d);
+				callback(d, $$.main.select(`.${CLASS.arc}-${d.id}`).node());
+			} else if (!config.tooltip_grouped) {
+				const callee = $$.setOverOut;
+				let last = callee.last || [];
+
+				const shape = $$.main.selectAll(`.${CLASS.shape}-${d}`)
+					.filter(function(d) {
+						return $$.isWithinShape(this, d);
+					});
+
+				shape
+					.each(function(d) {
+						if (last.length === 0 || last.every(v => v !== this)) {
+							callback(d, this);
+							last.push(this);
+						}
+					});
+
+				if (last.length > 0 && shape.empty()) {
+					callback = config.data_onout.bind($$.api);
+
+					last.forEach(v => callback(d3Select(v).datum(), v));
+					last = [];
+				}
+
+				callee.last = last;
 			} else {
 				isOver && $$.expandCirclesBars(d, null, true);
-				!$$.isMultipleX() && $$.main.selectAll(`.${CLASS.shape}-${d}`).each(callback);
+
+				!$$.isMultipleX() && $$.main.selectAll(`.${CLASS.shape}-${d}`)
+					.each(function(d) {
+						callback(d, this);
+					});
 			}
 		}
 	},
@@ -485,7 +514,7 @@ extend(ChartInternal.prototype, {
 						return;
 					}
 
-					$$.setOverOut(true, d.index);
+					$$.config.tooltip_grouped && $$.setOverOut(true, d.index);
 				})
 				.on("mousemove", function(d) {
 					// do nothing while dragging/flowing
@@ -505,6 +534,12 @@ extend(ChartInternal.prototype, {
 
 					index === -1 ?
 						$$.unselectRect() : $$.selectRectForSingle(this, eventRect, index);
+
+					// As of individual data point(or <path>) element can't bind mouseover/out event
+					// to determine current interacting element, so use 'mousemove' event instead.
+					if (!$$.config.tooltip_grouped) {
+						$$.setOverOut(index !== -1, d.index);
+					}
 				})
 				.on("mouseout", d => {
 					// chart is destroyed
