@@ -123,6 +123,8 @@ describe("ZOOM", function() {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
 						if (spyOnZoomStart.called) {
+							expect(spyOnZoomStart.args[0][0].type).to.be.equal("mousedown");
+
 							util.fireEvent(eventRect, "mousemove", {
 								clientX: 100,
 								clientY: 150
@@ -138,17 +140,17 @@ describe("ZOOM", function() {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
 						if (spyOnZoom.called) {
-							if (spyOnZoom.called) {
-								util.fireEvent(eventRect, "mouseup", {
-									clientX: 100,
-									clientY: 150
-								}, chart);
+							expect(spyOnZoom.args[0][0]).to.be.deep.equal([0, 3]);
 
-								// call explicitly, due to mouseup isn't firing well programmatically.
-								chart.internal.onZoomEnd();
+							util.fireEvent(eventRect, "mouseup", {
+								clientX: 100,
+								clientY: 150
+							}, chart);
 
-								resolve("--> onzoom callback called!");
-							}
+							// call explicitly, due to mouseup isn't firing well programmatically.
+							chart.internal.onZoomEnd();
+
+							resolve("--> onzoom callback called!");
 						};
 					}, 500);
 				})
