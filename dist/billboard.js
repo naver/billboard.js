@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191112120716
+ * @version 1.10.2-nightly-20191113120810
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -12261,7 +12261,7 @@ var withinRange = function (domain, range) {
       withTransition: !0,
       withY: $$.config.zoom_rescale,
       withDimension: !1
-    }), $$.setZoomResetButton(), callFn($$.config.zoom_onzoom, resultDomain);
+    }), $$.setZoomResetButton(), callFn($$.config.zoom_onzoom, $$.api, resultDomain);
   } else resultDomain = $$.zoomScale ? $$.zoomScale.domain() : $$.x.orgDomain();
 
   return resultDomain;
@@ -14065,7 +14065,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191112120716",
+  version: "1.10.2-nightly-20191113120810",
 
   /**
    * Generate chart
@@ -14164,7 +14164,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191112120716
+ * @version 1.10.2-nightly-20191113120810
  */
 
 
