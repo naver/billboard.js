@@ -11,6 +11,8 @@ describe("API zoom", function() {
 	let chart;
 
 	describe("zoom line chart #1", () => {
+		const spy = sinon.spy();
+
 		before(() => {
 			chart = util.generate({
 				data: {
@@ -21,7 +23,8 @@ describe("API zoom", function() {
 					]
 				},
 				zoom: {
-					enabled: true
+					enabled: true,
+					onzoom: spy
 				}
 			});
 		});
@@ -35,6 +38,10 @@ describe("API zoom", function() {
 
 			expect(domain[0]).to.be.equal(target[0]);
 			expect(domain[1]).to.be.equal(target[1]);
+
+			// onzoom callback has been called?
+			expect(spy.called).to.be.true;
+			expect(spy.args[0][0]).to.be.deep.equal(target);
 		});
 
 		it("should be zoomed properly again", () => {
