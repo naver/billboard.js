@@ -6,84 +6,117 @@ import { Data } from "./options";
 import { ArrayOrString, d3Selection, DataArray, PrimitiveArray, TargetIds } from "./types";
 
 export interface Chart {
-	$: {
-		/**
-		 * Wrapper element
-		 */
-		chart: d3Selection;
+  api: {
+    $: {
+      /**
+       * Wrapper element
+       */
+      chart: d3Selection;
+  
+      /**
+       * Main svg element
+       */
+      svg: d3Selection;
+  
+      /**
+       * Definition element
+       */
+      defs: d3Selection;
+  
+      /**
+       * Main grouping element
+       */
+      main: d3Selection;
+  
+      /**
+       * Tooltip element
+       */
+      tooltip: d3Selection;
+  
+      /**
+       * Legend element
+       */
+      legend: d3Selection;
+  
+      /**
+       * Title element
+       */
+      title: d3Selection;
+  
+      /**
+       * Grid element
+       */
+      grid: d3Selection;
+  
+      /**
+       * Arc element
+       */
+      arc: d3Selection;
+  
+      bar: {
+        /**
+         * Bar elements
+         */
+        bars: d3Selection;
+      };
+  
+      line: {
+        /**
+         * Line elements
+         */
+        lines: d3Selection;
+  
+        /**
+         * Areas elements
+         */
+        areas: d3Selection;
+  
+        /**
+         * Data point circle elements
+         */
+        circles: d3Selection;
+      };
+  
+      text: {
+        /**
+         * Data label text elements
+         */
+        texts: d3Selection;
+      };
 
-		/**
-		 * Main svg element
-		 */
-		svg: d3Selection;
-
-		/**
-		 * Definition element
-		 */
-		defs: d3Selection;
-
-		/**
-		 * Main grouping element
-		 */
-		main: d3Selection;
-
-		/**
-		 * Tooltip element
-		 */
-		tooltip: d3Selection;
-
-		/**
-		 * Legend element
-		 */
-		legend: d3Selection;
-
-		/**
-		 * Title element
-		 */
-		title: d3Selection;
-
-		/**
-		 * Grid element
-		 */
-		grid: d3Selection;
-
-		/**
-		 * Arc element
-		 */
-		arc: d3Selection;
-
-		bar: {
-			/**
-			 * Bar elements
-			 */
-			bars: d3Selection;
-		};
-
-		line: {
-			/**
-			 * Line elements
-			 */
-			lines: d3Selection;
-
-			/**
-			 * Areas elements
-			 */
-			areas: d3Selection;
-
-			/**
-			 * Data point circle elements
-			 */
-			circles: d3Selection;
-		};
-
-		text: {
-			/**
-			 * Data label text elements
-			 */
-			texts: d3Selection;
-		};
-	};
-
+      zoom: {
+        /**
+         * Zoom by giving x domain.
+         * @param domain If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
+         */
+        (domain?: number[]): number[];
+    
+        /**
+         * Enable and disable zooming.
+         * @param enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.
+         */
+        enable(enabled: boolean): void;
+    
+        /**
+         * Set or get x Axis minimum zoom range value.
+         * @param min Minimum value to set for zoom
+         */
+        min(min?: number): number;
+    
+        /**
+         * Set or get x Axis maximum zoom range value.
+         * @param max Maximum value to set for zoom
+         */
+        max(max?: number): number;
+    
+        /**
+         * Set zoom range.
+         * @param range Zoom range object value
+         */
+        range(range?: { min?: number, max?: number }): { min: number, max: number }
+      };
+    };
+  },
 	/**
 	 * Plugin instance array
 	 */
@@ -209,38 +242,6 @@ export interface Chart {
 		 * legend will be hidden.
 		 */
 		hide(targetIds?: ArrayOrString): void;
-	};
-
-	zoom: {
-		/**
-		 * Zoom by giving x domain.
-		 * @param domain If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
-		 */
-		(domain?: number[]): number[];
-
-		/**
-		 * Enable and disable zooming.
-		 * @param enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.
-		 */
-		enable(enabled: boolean): void;
-
-		/**
-		 * Set or get x Axis minimum zoom range value.
-		 * @param min Minimum value to set for zoom
-		 */
-		min(min?: number): number;
-
-		/**
-		 * Set or get x Axis maximum zoom range value.
-		 * @param max Maximum value to set for zoom
-		 */
-		max(max?: number): number;
-
-		/**
-		 * Set zoom range.
-		 * @param range Zoom range object value
-		 */
-		range(range?: { min?: number, max?: number }): { min: number, max: number }
 	};
 
 	tooltip: {
