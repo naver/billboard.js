@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191113120810
+ * @version 1.10.2-nightly-20191115120932
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6584,11 +6584,6 @@ extend(ChartInternal_ChartInternal.prototype, {
       $$.config.data_xs[id] = xs[id];
     });
   },
-  hasMultipleX: function hasMultipleX(xs) {
-    return Object.keys(xs).map(function (id) {
-      return xs[id];
-    }).length > 1;
-  },
   isMultipleX: function isMultipleX() {
     return notEmpty(this.config.data_xs) || !this.config.data_xSort || this.hasType("bubble") || this.hasType("scatter");
   },
@@ -7934,18 +7929,51 @@ extend(ChartInternal_ChartInternal.prototype, {
   getShapeIndices: function getShapeIndices(typeFilter) {
     var $$ = this,
         config = $$.config,
+        xs = config.data_xs,
+        hasXs = notEmpty(xs),
         indices = {},
-        i = 0;
-    return $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
-      for (var groups, j = 0; groups = config.data_groups[j]; j++) if (!(groups.indexOf(d.id) < 0)) for (var _row4, _k4 = 0; _row4 = groups[_k4]; _k4++) if (_row4 in indices) {
-        indices[d.id] = indices[_row4];
+        i = hasXs ? {} : 0;
+    return hasXs && getUnique(Object.keys(xs).map(function (v) {
+      return xs[v];
+    })).forEach(function (v) {
+      i[v] = 0, indices[v] = {};
+    }), $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)).forEach(function (d) {
+      for (var groups, xKey = (d.id in xs) ? xs[d.id] : "", ind = xKey ? indices[xKey] : indices, j = 0; groups = config.data_groups[j]; j++) if (!(groups.indexOf(d.id) < 0)) for (var _row4, _k4 = 0; _row4 = groups[_k4]; _k4++) if (_row4 in ind) {
+        ind[d.id] = ind[_row4];
         break;
       }
 
-      isUndefined(indices[d.id]) && (indices[d.id] = i++);
-    }), indices.__max__ = i - 1, indices;
+      isUndefined(ind[d.id]) && (ind[d.id] = xKey ? i[xKey]++ : i++, ind.__max__ = (xKey ? i[xKey] : i) - 1);
+    }), indices;
   },
-  getShapeX: function getShapeX(offset, targetsNum, indices, isSub) {
+
+  /**
+   * Get indices value based on data ID value
+   * @param {Object} indices Indices object
+   * @param {String} id Data id value
+   * @return {Object} Indices object
+   * @private
+   */
+  getIndices: function getIndices(indices, id) {
+    var xs = this.config.data_xs;
+    return notEmpty(xs) ? indices[xs[id]] : indices;
+  },
+
+  /**
+   * Get indices max number
+   * @param {Object} indices Indices object
+   * @return {Number} Max number
+   * @private
+   */
+  getIndicesMax: function getIndicesMax(indices) {
+    return notEmpty(this.config.data_xs) ? // if is multiple xs, return total sum of xs' __max__ value
+    Object.keys(indices).map(function (v) {
+      return indices[v].__max__ || 0;
+    }).reduce(function (acc, curr) {
+      return acc + curr;
+    }) : indices.__max__;
+  },
+  getShapeX: function getShapeX(offset, indices, isSub) {
     var $$ = this,
         scale = isSub ? $$.subX : $$.zoomScale || $$.x,
         barPadding = $$.config.bar_padding,
@@ -7955,7 +7983,9 @@ extend(ChartInternal_ChartInternal.prototype, {
         halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
 
     return function (d) {
-      var index = d.id in indices ? indices[d.id] : 0,
+      var ind = $$.getIndices(indices, d.id),
+          index = d.id in ind ? ind[d.id] : 0,
+          targetsNum = (ind.__max__ || 0) + 1,
           x = 0;
 
       if (notEmpty(d.x)) {
@@ -7982,7 +8012,8 @@ extend(ChartInternal_ChartInternal.prototype, {
       return t.id;
     });
     return function (d, idx) {
-      var scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
+      var ind = $$.getIndices(indices, d.id),
+          scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
           y0 = scale(0),
           offset = y0,
           i = idx;
@@ -7991,7 +8022,7 @@ extend(ChartInternal_ChartInternal.prototype, {
             values = rowValues.map(function (v) {
           return $$.isStackNormalized() ? $$.getRatio("index", v, !0) : v.value;
         });
-        t.id === d.id || indices[t.id] !== indices[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) && (i = -1, rowValues.forEach(function (v, j) {
+        t.id === d.id || ind[t.id] !== ind[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) && (i = -1, rowValues.forEach(function (v, j) {
           var x1 = v.x.constructor === Date ? +v.x : v.x,
               x2 = d.x.constructor === Date ? +d.x : d.x;
           x1 === x2 && (i = j);
@@ -8534,9 +8565,9 @@ extend(ChartInternal_ChartInternal.prototype, {
   generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
     var $$ = this,
         axis = isSub ? $$.subXAxis : $$.xAxis,
-        barTargetsNum = barIndices.__max__ + 1,
+        barTargetsNum = $$.getIndicesMax(barIndices) + 1,
         barW = $$.getBarW(axis, barTargetsNum),
-        barX = $$.getShapeX(barW, barTargetsNum, barIndices, !!isSub),
+        barX = $$.getShapeX(barW, barIndices, !!isSub),
         barY = $$.getShapeY(!!isSub),
         barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
         yScale = isSub ? $$.getSubYScale : $$.getYScale;
@@ -8750,9 +8781,8 @@ extend(ChartInternal_ChartInternal.prototype, {
     // partial duplication of generateGetBarPoints
     var $$ = this,
         config = $$.config,
-        lineTargetsNum = lineIndices.__max__ + 1,
         isSub = !!isSubValue,
-        x = $$.getShapeX(0, lineTargetsNum, lineIndices, isSub),
+        x = $$.getShapeX(0, lineIndices, isSub),
         y = $$.getShapeY(isSub),
         lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
         yScale = isSub ? $$.getSubYScale : $$.getYScale;
@@ -8940,8 +8970,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     // partial duplication of generateGetBarPoints
     var $$ = this,
         config = $$.config,
-        areaTargetsNum = areaIndices.__max__ + 1,
-        x = $$.getShapeX(0, areaTargetsNum, areaIndices, !!isSub),
+        x = $$.getShapeX(0, areaIndices, !!isSub),
         y = $$.getShapeY(!!isSub),
         areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub),
         yScale = isSub ? $$.getSubYScale : $$.getYScale;
@@ -14065,7 +14094,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191113120810",
+  version: "1.10.2-nightly-20191115120932",
 
   /**
    * Generate chart
@@ -14164,7 +14193,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191113120810
+ * @version 1.10.2-nightly-20191115120932
  */
 
 
