@@ -173,9 +173,9 @@ extend(ChartInternal.prototype, {
 	generateGetBarPoints(barIndices, isSub) {
 		const $$ = this;
 		const axis = isSub ? $$.subXAxis : $$.xAxis;
-		const barTargetsNum = barIndices.__max__ + 1;
+		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
 		const barW = $$.getBarW(axis, barTargetsNum);
-		const barX = $$.getShapeX(barW, barTargetsNum, barIndices, !!isSub);
+		const barX = $$.getShapeX(barW, barIndices, !!isSub);
 		const barY = $$.getShapeY(!!isSub);
 		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
