@@ -114,10 +114,6 @@ extend(ChartInternal.prototype, {
 		});
 	},
 
-	hasMultipleX(xs) {
-		return Object.keys(xs).map(id => xs[id]).length > 1;
-	},
-
 	isMultipleX() {
 		return notEmpty(this.config.data_xs) ||
 			!this.config.data_xSort ||
