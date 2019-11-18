@@ -737,7 +737,7 @@ export default class Axis {
 		this.updateLabels(wth.Transition);
 
 		// show/hide if manual culling needed
-		if ((wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) {
+		if ((wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length) {
 			this.setCulling();
 		}
 
