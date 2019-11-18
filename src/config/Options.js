@@ -2031,6 +2031,7 @@ export default class Options {
 
 			/**
 			 * Set clip-path attribute for y axis element
+			 * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
 			 * @name axis․y․clipPath
 			 * @memberof Options
 			 * @type {Boolean}

@@ -154,45 +154,86 @@ extend(ChartInternal.prototype, {
 		};
 	},
 
-	getShapeOffset(typeFilter, indices, isSub) {
+	/**
+	 * @typedef {object} ShapeOffsetTarget
+	 * @property {string} id - target id
+	 * @property {object[]} rowValues - data point for each row (scaled as necessary)
+	 * @property {object<number, object>} rowValueMapByXValue - each x value is a key,
+	 *   mapped to the rowValue for that x value
+   * @property {number[]} values - value for each rowValue (normalized as necessary)
+	 */
+
+	/**
+	 * @param {function(Object): boolean} typeFilter
+	 * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+	 */
+	getShapeOffsetData(typeFilter) {
 		const $$ = this;
 		const targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)));
-		const targetIds = targets.map(t => t.id);
+		const shapeOffsetTargets = targets.map(target => {
+			let rowValues = target.values;
+
+			if ($$.isStepType(target)) {
+				rowValues = $$.convertValuesToStep(rowValues);
+			}
+			const rowValueMapByXValue = rowValues.reduce((out, value) => {
+				out[Number(value.x)] = value;
+				return out;
+			}, {});
+
+			let values;
+
+			if ($$.isStackNormalized()) {
+				values = rowValues.map(v => $$.getRatio("index", v, true));
+			} else {
+				values = rowValues.map(({value}) => value);
+			}
+
+			return {
+				id: target.id,
+				rowValues,
+				rowValueMapByXValue,
+				values,
+			};
+		});
+		const indexMapByTargetId = targets.reduce((out, {id}, index) => {
+			out[id] = index;
+			return out;
+		}, {});
+
+		return {indexMapByTargetId, shapeOffsetTargets};
+	},
+
+	getShapeOffset(typeFilter, indices, isSub) {
+		const $$ = this;
+		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(typeFilter);
 
 		return (d, idx) => {
 			const ind = $$.getIndices(indices, d.id);
 			const scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
 			const y0 = scale(0);
+			const dataXAsNumber = Number(d.x);
 			let offset = y0;
-			let i = idx;
 
-			targets
+			shapeOffsetTargets
 				.forEach(t => {
-					const rowValues = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
-					const values = rowValues.map(v => ($$.isStackNormalized() ? $$.getRatio("index", v, true) : v.value));
+					const rowValues = t.rowValues;
+					const values = t.values;
 
 					if (t.id === d.id || ind[t.id] !== ind[d.id]) {
 						return;
 					}
 
-					if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
+					if (indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+						let rowValue = rowValues[idx];
+
 						// check if the x values line up
-						if (isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) { // "+" for timeseries
-							// if not, try to find the value that does line up
-							i = -1;
-
-							rowValues.forEach((v, j) => {
-								const x1 = v.x.constructor === Date ? +v.x : v.x;
-								const x2 = d.x.constructor === Date ? +d.x : d.x;
-
-								if (x1 === x2) {
-									i = j;
-								}
-							});
+						if (!rowValue || Number(rowValue.x) !== dataXAsNumber) {
+							rowValue = t.rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (i in rowValues && rowValues[i].value * d.value >= 0) {
-							offset += scale(values[i]) - y0;
+						if (rowValue && rowValue.value * d.value >= 0) {
+							offset += scale(values[rowValue.index]) - y0;
 						}
 					}
 				});
