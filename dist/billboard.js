@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191115120932
+ * @version 1.10.2-nightly-20191118121122
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1675,7 +1675,7 @@ function () {
             }) ? 1 : tickCount, $$.isTimeSeriesY()));
           }
         }
-      }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length && this.setCulling(), wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
+      }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length && this.setCulling(), wth.Y && ($$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y")), $$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2")));
     }
     /**
      * Set manual culling
@@ -4545,6 +4545,7 @@ var Options_Options = function Options() {
 
     /**
      * Set clip-path attribute for y axis element
+     * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
      * @name axis․y․clipPath
      * @memberof Options
      * @type {Boolean}
@@ -8005,28 +8006,72 @@ extend(ChartInternal_ChartInternal.prototype, {
       return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(value);
     };
   },
-  getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
+
+  /**
+   * @typedef {object} ShapeOffsetTarget
+   * @property {string} id - target id
+   * @property {object[]} rowValues - data point for each row (scaled as necessary)
+   * @property {object<number, object>} rowValueMapByXValue - each x value is a key,
+   *   mapped to the rowValue for that x value
+    * @property {number[]} values - value for each rowValue (normalized as necessary)
+   */
+
+  /**
+   * @param {function(Object): boolean} typeFilter
+   * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+   */
+  getShapeOffsetData: function getShapeOffsetData(typeFilter) {
     var $$ = this,
         targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
-        targetIds = targets.map(function (t) {
-      return t.id;
-    });
+        shapeOffsetTargets = targets.map(function (target) {
+      var rowValues = target.values;
+      $$.isStepType(target) && (rowValues = $$.convertValuesToStep(rowValues));
+      var values,
+          rowValueMapByXValue = rowValues.reduce(function (out, value) {
+        return out[+value.x] = value, out;
+      }, {});
+      return values = $$.isStackNormalized() ? rowValues.map(function (v) {
+        return $$.getRatio("index", v, !0);
+      }) : rowValues.map(function (_ref) {
+        var value = _ref.value;
+        return value;
+      }), {
+        id: target.id,
+        rowValues: rowValues,
+        rowValueMapByXValue: rowValueMapByXValue,
+        values: values
+      };
+    }),
+        indexMapByTargetId = targets.reduce(function (out, _ref2, index) {
+      var id = _ref2.id;
+      return out[id] = index, out;
+    }, {});
+    return {
+      indexMapByTargetId: indexMapByTargetId,
+      shapeOffsetTargets: shapeOffsetTargets
+    };
+  },
+  getShapeOffset: function getShapeOffset(typeFilter, indices, isSub) {
+    var $$ = this,
+        _$$$getShapeOffsetDat = $$.getShapeOffsetData(typeFilter),
+        shapeOffsetTargets = _$$$getShapeOffsetDat.shapeOffsetTargets,
+        indexMapByTargetId = _$$$getShapeOffsetDat.indexMapByTargetId;
+
     return function (d, idx) {
       var ind = $$.getIndices(indices, d.id),
           scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
           y0 = scale(0),
-          offset = y0,
-          i = idx;
-      return targets.forEach(function (t) {
-        var rowValues = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values,
-            values = rowValues.map(function (v) {
-          return $$.isStackNormalized() ? $$.getRatio("index", v, !0) : v.value;
-        });
-        t.id === d.id || ind[t.id] !== ind[d.id] || targetIds.indexOf(t.id) < targetIds.indexOf(d.id) && ((isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) && (i = -1, rowValues.forEach(function (v, j) {
-          var x1 = v.x.constructor === Date ? +v.x : v.x,
-              x2 = d.x.constructor === Date ? +d.x : d.x;
-          x1 === x2 && (i = j);
-        })), i in rowValues && rowValues[i].value * d.value >= 0 && (offset += scale(values[i]) - y0));
+          dataXAsNumber = +d.x,
+          offset = y0;
+      return shapeOffsetTargets.forEach(function (t) {
+        var rowValues = t.rowValues,
+            values = t.values;
+
+        if (t.id !== d.id && ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+          var _rowValue = rowValues[idx]; // check if the x values line up
+
+          _rowValue && +_rowValue.x === dataXAsNumber || (_rowValue = t.rowValueMapByXValue[dataXAsNumber]), _rowValue && _rowValue.value * d.value >= 0 && (offset += scale(values[_rowValue.index]) - y0);
+        }
       }), offset;
     };
   },
@@ -9015,11 +9060,12 @@ extend(ChartInternal_ChartInternal.prototype, {
     return $$.config.zoom_enabled && $$.zoomScale ? hasValue ? $$.zoomScale(d.x) : null : hasValue ? $$.x(d.x) : null;
   },
   updateCircleY: function updateCircleY() {
-    var $$ = this;
+    var $$ = this,
+        getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), !1);
 
     $$.circleY = function (d, i) {
       var id = d.id;
-      return $$.isGrouped(id) ? $$.generateGetLinePoints($$.getShapeIndices($$.isLineType))(d, i)[0][1] : $$.getYScale(id)($$.getBaseValue(d));
+      return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScale(id)($$.getBaseValue(d));
     };
   },
   getCircles: function getCircles(i, id) {
@@ -14094,7 +14140,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191115120932",
+  version: "1.10.2-nightly-20191118121122",
 
   /**
    * Generate chart
@@ -14193,7 +14239,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191115120932
+ * @version 1.10.2-nightly-20191118121122
  */
 
 
