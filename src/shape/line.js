@@ -584,12 +584,13 @@ extend(ChartInternal.prototype, {
 
 	updateCircleY() {
 		const $$ = this;
+		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
 
 		$$.circleY = (d, i) => {
 			const id = d.id;
 
 			return $$.isGrouped(id) ?
-				$$.generateGetLinePoints($$.getShapeIndices($$.isLineType))(d, i)[0][1] :
+				getPoints(d, i)[0][1] :
 				$$.getYScale(id)($$.getBaseValue(d));
 		};
 	},
