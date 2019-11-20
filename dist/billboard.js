@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191118121122
+ * @version 1.10.2-nightly-20191120121226
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1251,8 +1251,9 @@ function () {
           axesConfig = config["axis_".concat(id, "_axes")],
           isRotated = config.axis_rotated;
       id === "x" ? d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisLeft"] : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisBottom"] : id === "y" ? d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisBottom"] : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisLeft"] : id === "y2" && (d3Axis = isRotated ? external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisTop"] : external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_["axisRight"]), axesConfig.length && axesConfig.forEach(function (v) {
-        var tick = v.tick;
-        axes.push(d3Axis($$[id]).ticks(tick.count).tickFormat(tick.format || function (x) {
+        var tick = v.tick || {},
+            scale = $$[id].copy();
+        v.domain && scale.domain(v.domain), axes.push(d3Axis(scale).ticks(tick.count).tickFormat(tick.format || function (x) {
           return x;
         }).tickValues(tick.values).tickSizeOuter(tick.outer === !1 ? 0 : 6));
       }), $$.axesList[id] = axes;
@@ -1268,7 +1269,9 @@ function () {
       var $$ = this.owner,
           config = $$.config;
       Object.keys($$.axesList).forEach(function (id) {
-        var range = $$[id].range();
+        var axesConfig = config["axis_".concat(id, "_axes")],
+            scale = $$[id].copy(),
+            range = scale.range();
         $$.axesList[id].forEach(function (v, i) {
           var axisRange = v.scale().range(); // adjust range value with the current
           // https://github.com/naver/billboard.js/issues/859
@@ -1278,7 +1281,7 @@ function () {
           }) || v.scale().range(range);
           var className = "".concat(getAxisClassName(id), "-").concat(i + 1),
               g = $$.main.select(".".concat(className.replace(/\s/, ".")));
-          g.empty() ? g = $$.main.append("g").attr("class", className).style("visibility", config["axis_".concat(id, "_show")] ? "visible" : "hidden").call(v) : $$.xAxis.helper.transitionise(g).call(v.scale($$[id])), g.attr("transform", $$.getTranslate(id, i + 1));
+          g.empty() ? g = $$.main.append("g").attr("class", className).style("visibility", config["axis_".concat(id, "_show")] ? "visible" : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), $$.xAxis.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
         });
       });
     } // called from : updateScales() & getMaxTickWidth()
@@ -3087,8 +3090,9 @@ var Options_Options = function Options() {
      * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
      		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
       		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
+     * @property {Object} [data.labels.position] Set each dataset position, relative the original.
      * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-     * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
+     * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
      * @memberof Options
      * @type {Object}
      * @default {}
@@ -3128,6 +3132,12 @@ var Options_Options = function Options() {
      *     position: {
      *        x: -10,
      *        y: 10
+     *     },
+     *
+     *     // or set x, y coordinate position by each dataset
+     *     position: {
+     *        data1: {x: 5, y: 5},
+     *        data2: {x: 10, y: -20}
      *     }
      *   }
      * }
@@ -4510,12 +4520,13 @@ var Options_Options = function Options() {
 
     /**
      * Set additional axes for x Axis.
-     * - **NOTE:** Axis' scale is based on x Axis value
+     * - **NOTE:** Axis' scale is based on x Axis value if domain option isn't set.
      *
      * Each axis object should consist with following options:
      *
      * | Name | Type | Default | Description |
      * | --- | --- | --- | --- |
+     * | domain | Array | - | Set the domain value |
      * | tick.outer | Boolean | true | Show outer tick |
      * | tick.format | Function | - | Set formatter for tick text |
      * | tick.count | Number | - | Set the number of y axis ticks |
@@ -4524,10 +4535,13 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Array}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
      * @example
      * x: {
      *    axes: [
      *      {
+     *        // if set, will not be correlated with the main x Axis domain value
+    	 *        domain: [0, 1000],
      *        tick: {
      *          outer: false,
      *          format: function(x) {
@@ -4933,12 +4947,13 @@ var Options_Options = function Options() {
 
     /**
      * Set additional axes for y Axis.
-     * - **NOTE:** Axis' scale is based on y Axis value
+     * - **NOTE:** Axis' scale is based on y Axis value if domain option isn't set.
      *
      * Each axis object should consist with following options:
      *
      * | Name | Type | Default | Description |
      * | --- | --- | --- | --- |
+     * | domain | Array | - | Set the domain value |
      * | tick.outer | Boolean | true | Show outer tick |
      * | tick.format | Function | - | Set formatter for tick text |
      * | tick.count | Number | - | Set the number of y axis ticks |
@@ -4947,10 +4962,13 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Array}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
      * @example
      * y: {
      *    axes: [
      *      {
+     *        // if set, will not be correlated with the main y Axis domain value
+     *        domain: [0, 1000],
      *        tick: {
      *          outer: false,
      *          format: function(x) {
@@ -5295,12 +5313,13 @@ var Options_Options = function Options() {
 
     /**
      * Set additional axes for y2 Axis.
-     * - **NOTE:** Axis' scale is based on y2 Axis value
+     * - **NOTE:** Axis' scale is based on y2 Axis value if domain option isn't set.
      *
      * Each axis object should consist with following options:
      *
      * | Name | Type | Default | Description |
      * | --- | --- | --- | --- |
+     * | domain | Array | - | Set the domain value |
      * | tick.outer | Boolean | true | Show outer tick |
      * | tick.format | Function | - | Set formatter for tick text |
      * | tick.count | Number | - | Set the number of y axis ticks |
@@ -5309,10 +5328,13 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Array}
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+     * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
      * @example
      * y2: {
      *    axes: [
      *      {
+     *        // if set, will not be correlated with the main y2 Axis domain value
+     *        domain: [0, 1000],
      *        tick: {
      *          outer: false,
      *          format: function(x) {
@@ -9691,6 +9713,18 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
+   * Get data.labels.position value
+   * @param {String} id Data id value
+   * @param {String} type x | y
+   * @return {Number} Position value
+   * @private
+   */
+  getTextPos: function getTextPos(id, type) {
+    var pos = this.config.data_labels_position;
+    return (id in pos ? pos[id] : pos)[type] || 0;
+  },
+
+  /**
    * Gets the x coordinate of the text
    * @private
    * @param {Object} points
@@ -9711,7 +9745,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
       xPos = $$.width - width;
     } else xPos < 0 && (xPos = 4);
-    return isRotated && (xPos += $$.getCenteredTextPos(d, points, textElement)), xPos + (config.data_labels_position.x || 0);
+    return isRotated && (xPos += $$.getCenteredTextPos(d, points, textElement)), xPos + $$.getTextPos(d.id, "x");
   },
 
   /**
@@ -9740,7 +9774,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       yPos < boxHeight ? yPos = boxHeight : yPos > this.height && (yPos = this.height - 4);
     }
 
-    return isRotated || (yPos += $$.getCenteredTextPos(d, points, textElement)), yPos + (config.data_labels_position.y || 0);
+    return isRotated || (yPos += $$.getCenteredTextPos(d, points, textElement)), yPos + $$.getTextPos(d.id, "y");
   }
 });
 // CONCATENATED MODULE: ./src/internals/type.js
@@ -10116,7 +10150,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         bindto = config.tooltip_contents.bindto;
 
     // Show tooltip if needed
-    if ($$.tooltip = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto), $$.tooltip.empty() && ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
+    if ($$.tooltip = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto), $$.tooltip.empty() && ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("display", "none")), config.tooltip_init_show) {
       if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
@@ -14140,7 +14174,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191118121122",
+  version: "1.10.2-nightly-20191120121226",
 
   /**
    * Generate chart
@@ -14239,7 +14273,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191118121122
+ * @version 1.10.2-nightly-20191120121226
  */
 
 
