@@ -1931,26 +1931,54 @@ var demos = {
 				}
 			}
 		},
-		DataLabelPosition: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250]
-					],
-					labels: {
-						position: {
-							x: -25,
-							y: 5
+		DataLabelPosition: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250]
+						],
+						labels: {
+							position: {
+								x: -25,
+								y: 5
+							}
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
 						}
 					}
-				},
-				axis: {
-					x: {
-						type: "category"
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 300, 200],
+							["data2", 80, 120, 300, 240, 115]
+						],
+						type: "spline",
+						labels: {
+							show: true,
+							position: {
+								data1: {x: 3, y: -10},
+								data2: {x: 3, y: 30}
+							}
+						}
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 0.5,
+								right: 0.5
+							}
+						}
 					}
 				}
-			}
-		},
+			},
+		],
 		DataSelection: {
 			options: {
 				data: {

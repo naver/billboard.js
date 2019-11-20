@@ -1594,6 +1594,64 @@ describe("DATA", () => {
 				});
 			});
 		});
+
+		describe("Labels' postion", () => {
+			const pos = {};
+
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 300, 200],
+							["data2", 80, 120, 300, 240, 115]
+						],
+						type: "area",
+						labels: {
+							show: true
+						}
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 0.5,
+								right: 0.5
+							}
+						}
+					}
+				};
+			});
+
+			it("Collect default label position", () => {
+				chart.$.text.texts.each(function(d) {
+					if (!(d.id in pos)) {
+						pos[d.id] = [];
+					}
+
+					pos[d.id].push([+this.getAttribute("x"), +this.getAttribute("y")]);
+				});
+			});
+
+			it("Set options data.labels.position", () => {
+				args.data.labels.position = {
+					data1: {x: 3, y: -10},
+					data2: {x: 3, y: 30}
+				};
+			});
+
+			it("Check position relative its original value", () => {
+				const confPos = args.data.labels.position;
+
+				chart.$.text.texts.each(function(d, i) {
+					const currPos = [+this.getAttribute("x"), +this.getAttribute("y")];
+					const expectedPos = pos[d.id][i];
+
+					expect(currPos).to.be.deep.equal([
+						expectedPos[0] + confPos[d.id].x,
+						expectedPos[1] + confPos[d.id].y
+					]);
+				});
+			});
+		});
 	});
 
 	describe("inner functions", () => {
