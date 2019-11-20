@@ -578,8 +578,9 @@ export default class Options {
 			 * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
     		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
      		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
+			 * @property {Object} [data.labels.position] Set each dataset position, relative the original.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
+			 * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
@@ -619,6 +620,12 @@ export default class Options {
 			 *     position: {
 			 *        x: -10,
 			 *        y: 10
+			 *     },
+			 *
+			 *     // or set x, y coordinate position by each dataset
+			 *     position: {
+			 *        data1: {x: 5, y: 5},
+			 *        data2: {x: 10, y: -20}
 			 *     }
 			 *   }
 			 * }
