@@ -29,7 +29,6 @@ extend(ChartInternal.prototype, {
 				.append("div")
 				.attr("class", CLASS.tooltipContainer)
 				.style("position", "absolute")
-				.style("pointer-events", "none")
 				.style("display", "none");
 		}
 

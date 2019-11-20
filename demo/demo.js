@@ -922,6 +922,51 @@ var demos = {
 				}
 			},
 		],
+		MultiAxesDomain: {
+			options: {
+				data: {
+					axes: {
+						data1: "y",
+						data2: "y2"
+					},
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15]
+					]
+				},
+				clipPath: false,
+				axis: {
+					y: {
+						min: 0,
+						padding: {
+							top: 0,
+							bottom: 0
+						},
+						axes: [
+							{
+								domain: [500, 1000]
+							}
+						]
+					},
+					y2: {
+						show: true,
+						min: 0,
+						padding: {
+							top: 0,
+							bottom: 0
+						},
+						axes: [
+							{
+								domain: [0, 500],
+								tick: {
+									count: 5
+								}
+							}
+						]
+					}
+				}
+			}
+		},
 		PaddingForYAxis: {
 			options: {
 				data: {
@@ -1886,26 +1931,54 @@ var demos = {
 				}
 			}
 		},
-		DataLabelPosition: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250]
-					],
-					labels: {
-						position: {
-							x: -25,
-							y: 5
+		DataLabelPosition: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250]
+						],
+						labels: {
+							position: {
+								x: -25,
+								y: 5
+							}
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
 						}
 					}
-				},
-				axis: {
-					x: {
-						type: "category"
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 300, 200],
+							["data2", 80, 120, 300, 240, 115]
+						],
+						type: "spline",
+						labels: {
+							show: true,
+							position: {
+								data1: {x: 3, y: -10},
+								data2: {x: 3, y: 30}
+							}
+						}
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 0.5,
+								right: 0.5
+							}
+						}
 					}
 				}
-			}
-		},
+			},
+		],
 		DataSelection: {
 			options: {
 				data: {

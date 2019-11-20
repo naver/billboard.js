@@ -1591,6 +1591,48 @@ describe("AXIS", function() {
 		it("check for rotated y2 Axes", () => {
 			checkY2Axes(true);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1",30,200,100,400,150],
+						["data2",50,20,10,40,15]
+					]
+				},
+				axis:{
+					x:{
+						axes: [{domain: [0, 500]}]
+					},
+					y:{
+						axes: [
+							{domain: [0, 1000]},
+							{domain: [0, 2000]}
+						]
+					},
+					y2:{
+						show: true,
+						axes: [{domain: [0, 300]}]
+					}
+				}
+			};
+		});
+
+		it("check axes domain value", () => {
+			const main = chart.$.main;
+
+			["x", "y", "y2"].forEach(id => {
+				chart.internal.axesList[id]
+					.forEach((v, i) => {
+						const axis = main.select(`.${CLASS.axis}-${id}-${i + 1}`);
+						const domain = v.scale().domain();
+
+						expect(domain).to.be.deep.equal(args.axis[id].axes[i].domain);
+						expect(+axis.select(`.tick text`).text()).to.be.equal(domain[0]);
+						expect(+axis.select(`.tick:last-child text`).text()).to.be.equal(domain[1]);
+					});
+			});
+		})
 	});
 
 	describe("y Axis size", () => {

@@ -311,6 +311,15 @@ export interface YTickConfiguration {
 }
 
 export interface AxesConfiguration {
+	/**
+	 * Set the axis domain value
+	 * if set, will not be correlated with the main x Axis domain value
+	 */
+	domain?: [number, number];
+
+	/**
+	 * Set axis tick options
+	 */
 	tick?: {
 		/**
 		 * Show outer tick

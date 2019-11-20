@@ -1240,15 +1240,30 @@ export interface Data {
 
 		position?: {
 			/**
-			 * x coordinate position, relative the original.
-			 */
-			x?: number;
+			* Set each dataset position, relative the original.
+			*/
+			[key: string]: {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
 
-			/**
-			 * y coordinate position, relative the original.
-			 */
-			y?: number;
-		};
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			} | {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
+
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			};
+		}
 	};
 
 	/**
