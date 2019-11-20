@@ -1996,12 +1996,13 @@ export default class Options {
 
 			/**
 			 * Set additional axes for x Axis.
-			 * - **NOTE:** Axis' scale is based on x Axis value
+			 * - **NOTE:** Axis' scale is based on x Axis value if domain option isn't set.
 			 *
 			 * Each axis object should consist with following options:
 			 *
 			 * | Name | Type | Default | Description |
 			 * | --- | --- | --- | --- |
+			 * | domain | Array | - | Set the domain value |
 			 * | tick.outer | Boolean | true | Show outer tick |
 			 * | tick.format | Function | - | Set formatter for tick text |
 			 * | tick.count | Number | - | Set the number of y axis ticks |
@@ -2010,10 +2011,13 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Array}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
 			 * @example
 			 * x: {
 			 *    axes: [
 			 *      {
+			 *        // if set, will not be correlated with the main x Axis domain value
+ 			 *        domain: [0, 1000],
 			 *        tick: {
 			 *          outer: false,
 			 *          format: function(x) {
@@ -2416,12 +2420,13 @@ export default class Options {
 
 			/**
 			 * Set additional axes for y Axis.
-			 * - **NOTE:** Axis' scale is based on y Axis value
+			 * - **NOTE:** Axis' scale is based on y Axis value if domain option isn't set.
 			 *
 			 * Each axis object should consist with following options:
 			 *
 			 * | Name | Type | Default | Description |
 			 * | --- | --- | --- | --- |
+			 * | domain | Array | - | Set the domain value |
 			 * | tick.outer | Boolean | true | Show outer tick |
 			 * | tick.format | Function | - | Set formatter for tick text |
 			 * | tick.count | Number | - | Set the number of y axis ticks |
@@ -2430,10 +2435,13 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Array}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
 			 * @example
 			 * y: {
 			 *    axes: [
 			 *      {
+			 *        // if set, will not be correlated with the main y Axis domain value
+			 *        domain: [0, 1000],
 			 *        tick: {
 			 *          outer: false,
 			 *          format: function(x) {
@@ -2775,12 +2783,13 @@ export default class Options {
 
 			/**
 			 * Set additional axes for y2 Axis.
-			 * - **NOTE:** Axis' scale is based on y2 Axis value
+			 * - **NOTE:** Axis' scale is based on y2 Axis value if domain option isn't set.
 			 *
 			 * Each axis object should consist with following options:
 			 *
 			 * | Name | Type | Default | Description |
 			 * | --- | --- | --- | --- |
+			 * | domain | Array | - | Set the domain value |
 			 * | tick.outer | Boolean | true | Show outer tick |
 			 * | tick.format | Function | - | Set formatter for tick text |
 			 * | tick.count | Number | - | Set the number of y axis ticks |
@@ -2789,10 +2798,13 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Array}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
 			 * @example
 			 * y2: {
 			 *    axes: [
 			 *      {
+			 *        // if set, will not be correlated with the main y2 Axis domain value
+			 *        domain: [0, 1000],
 			 *        tick: {
 			 *          outer: false,
 			 *          format: function(x) {
