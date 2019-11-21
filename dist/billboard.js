@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191120121226
+ * @version 1.10.2-nightly-20191121121240
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1860,7 +1860,7 @@ function () {
 
       // data.onmin/max callback
       if ($$.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", "".concat(config_classes.text, " ").concat(config_classes.empty)).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$, $$.api), $$.redraw({
+      .attr("dominant-baseline", "middle"), $$.initRegion(), config.clipPath || $$.axis.init(), main.append("g").attr("class", config_classes.chart).attr("clip-path", $$.clipPath), $$.callPluginHook("$init"), $$.initEventRect(), $$.initChartElements(), $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g.".concat(config_classes.regions)).attr("class", config_classes.zoomRect).attr("width", $$.width).attr("height", $$.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis.init(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$, $$.api), $$.setBackground(), $$.redraw({
         withTransition: !1,
         withTransform: !0,
         withUpdateXDomain: !0,
@@ -1909,6 +1909,23 @@ function () {
           texts: $$.mainText
         }
       };
+    }
+    /**
+     * Set background element/image
+     * @private
+     */
+
+  }, {
+    key: "setBackground",
+    value: function setBackground() {
+      var $$ = this,
+          bg = $$.config.background;
+
+      if (notEmpty(bg)) {
+        var element,
+            eventRect = $$.svg.select(".".concat(config_classes.eventRects));
+        element = bg.imgUrl ? eventRect.insert("image").attr("href", bg.imgUrl) : eventRect.insert("rect").style("fill", bg.color || null), element && element.attr("class", bg["class"] || null).attr("width", "100%").attr("height", "100%");
+      }
     }
   }, {
     key: "smoothLines",
@@ -2548,6 +2565,26 @@ var Options_Options = function Options() {
      * }
      */
     bindto: "#chart",
+
+    /**
+     * Set chart background.
+     * @name background
+     * @memberof Options
+     * @property {String} background.class Specify the class name for background element.
+     * @property {String} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
+     * @property {String} background.imgUrl Specify the image url string for background.
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
+     * @example
+     * background: {
+     *    class: "myClass",
+     *    color: "red",
+     *
+     *    // Set image url for background.
+     *    // If specified, 'color' option will be ignored.
+     *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+     * }
+     */
+    background: {},
 
     /**
      * Set 'clip-path' attribute for chart element
@@ -5675,6 +5712,7 @@ var Options_Options = function Options() {
      * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
      * @property {Number} [pie.padAngle=0] Set padding between data.
      * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
+    	 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
      * @example
      *  pie: {
      *      label: {
@@ -5713,7 +5751,8 @@ var Options_Options = function Options() {
      *      }
      *
      *      padAngle: 0.1,
-     *      padding: 0
+     *      padding: 0,
+     *      startingAngle: 1
      *  }
      */
     pie_label_show: !0,
@@ -5725,6 +5764,7 @@ var Options_Options = function Options() {
     pie_innerRadius: 0,
     pie_padAngle: 0,
     pie_padding: 0,
+    pie_startingAngle: 0,
 
     /**
      * Set plugins
@@ -5811,6 +5851,7 @@ var Options_Options = function Options() {
      * @property {Number} [donut.width] Set width of donut chart.
      * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
      * @property {Number} [donut.padAngle=0] Set padding between data.
+     * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
      * @example
      *  donut: {
      *      label: {
@@ -5834,6 +5875,7 @@ var Options_Options = function Options() {
      *      expand: false,
      *      width: 10,
      *      padAngle: 0.2,
+     *      startingAngle: 1,
      *      title: "Donut Title"
      *
      *      // title with line break
@@ -5849,6 +5891,7 @@ var Options_Options = function Options() {
     donut_expand: {},
     donut_expand_duration: 50,
     donut_padAngle: 0,
+    donut_startingAngle: 0,
 
     /**
      * Set spline options
@@ -5996,8 +6039,12 @@ var Options_Options = function Options() {
 
     /**
      * Show rectangles inside the chart.<br><br>
-     * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
-     * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
+     * This option accepts array including object that has axis, start, end and class.
+     * The keys start, end and class are optional.
+     * axis must be x, y or y2. start and end should be the value where regions start and end.
+     * If not specified, the edge values will be used.
+     * If timeseries x axis, date string, Date object and unixtime integer can be used.
+     * If class is set, the region element will have it as class.
      * @name regions
      * @memberof Options
      * @type {Array}
@@ -8153,9 +8200,11 @@ extend(ChartInternal_ChartInternal.prototype, {
   initPie: function initPie() {
     var $$ = this,
         config = $$.config,
+        dataType = config.data_type,
         padding = config.pie_padding,
-        padAngle = $$.hasType("pie") && padding ? padding * .01 : config["".concat(config.data_type, "_padAngle")] ? config["".concat(config.data_type, "_padAngle")] : 0;
-    $$.pie = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["pie"])().padAngle(padAngle).sortValues($$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
+        startingAngle = config["".concat(dataType, "_startingAngle")] || 0,
+        padAngle = ($$.hasType("pie") && padding ? padding * .01 : config["".concat(dataType, "_padAngle")]) || 0;
+    $$.pie = Object(external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_["pie"])().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).sortValues($$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
       return $$.isOrderAsc() ? a - b : b - a;
     } : null).value(function (d) {
       return d.values.reduce(function (a, b) {
@@ -14174,7 +14223,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191120121226",
+  version: "1.10.2-nightly-20191121121240",
 
   /**
    * Generate chart
@@ -14273,7 +14322,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191120121226
+ * @version 1.10.2-nightly-20191121121240
  */
 
 
