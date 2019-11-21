@@ -652,41 +652,101 @@ describe("SHAPE ARC", () => {
 
 	describe("check for data loading", () => {
 		it("Interaction of chart when initialized with 0 and .load()", done => {
-		const chart = util.generate({
+			const chart = util.generate({
+				data: {
+				columns: [
+					["data1", 0],
+					["data2", 0],
+				],
+				type: "pie",
+				}
+			});
+
+			setTimeout(function() {
+				chart.load({
+					columns: [
+						["data1", 3],
+						["data2", 6],
+					],
+					done: () => {
+						const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+
+						util.fireEvent(legend, "mouseover");
+						util.fireEvent(legend, "mouseout");
+
+						setTimeout(() => {
+							chart.$.arc.selectAll("path").each(function() {
+								const rect = this.getBoundingClientRect();
+
+								expect(this.getAttribute("d")).to.not.be.equal("M 0 0");
+								expect(rect.width > 0 && rect.height > 0).to.be.true;
+							});
+
+							done();
+						}, 1000);
+					}
+				});
+			}, 1000);
+		});
+	});
+
+	describe("check for startingAngle", () => {
+		let chart;
+		let args = {
 			data: {
-			  columns: [
-				["data1", 0],
-				["data2", 0],
-			  ],
-			  type: "pie",
+				columns: [
+					["data1", 30],
+					["data2", 45],
+					["data3", 25]
+				],
+				type: "pie"
+			},
+			donut: {
+				startingAngle: 0.5
+			},
+			pie: {
+				startingAngle: 1
 			}
-		  });
+		};
 
-		  setTimeout(function() {
-			  chart.load({
-				  columns: [
-					  ["data1", 3],
-					  ["data2", 6],
-				  ],
-				  done: () => {
-					const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
 
-					util.fireEvent(legend, "mouseover");
-					util.fireEvent(legend, "mouseout");
+		it("check Pie's startingAngle", done => {
+			const expectedPath = [
+				"M-134.1696615971501,163.9479319994803A211.85,211.85,0,0,1,-114.46304349816526,-178.26562813155297L0,0Z",
+				"M178.26562813155286,-114.46304349816538A211.85,211.85,0,0,1,-134.1696615971501,163.9479319994803L0,0Z",
+				"M-114.46304349816526,-178.26562813155297A211.85,211.85,0,0,1,178.26562813155294,-114.46304349816526L0,0Z"
+			];
 
-					setTimeout(() => {
-						chart.$.arc.selectAll("path").each(function() {
-							const rect = this.getBoundingClientRect();
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d, i) {
+					expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+				});
 
-							expect(this.getAttribute("d")).to.not.be.equal("M 0 0");
-							expect(rect.width > 0 && rect.height > 0).to.be.true;
-						});
+				done();
+			}, 100);
+		});
 
-						done();
-					}, 1000);
-				  }
-			  });
-		  }, 1000);
+		it("set options data.type=donut", () => {
+			args.data.type = "donut";
+		});
+
+		it("check Donut's startingAngle", done => {
+			const expectedPath = [
+				"M-39.144129750495274,208.2022084562899A211.85,211.85,0,0,1,-185.91586573647538,-101.56630035330055L-111.54951944188521,-60.93978021198032A127.10999999999999,127.10999999999999,0,0,0,-23.486477850297163,124.92132507377393Z",
+				"M101.56630035330042,-185.91586573647544A211.85,211.85,0,0,1,-39.144129750495274,208.2022084562899L-23.486477850297163,124.92132507377393A127.10999999999999,127.10999999999999,0,0,0,60.93978021198024,-111.54951944188525Z",
+				"M-185.91586573647538,-101.56630035330055A211.85,211.85,0,0,1,101.56630035330053,-185.91586573647538L60.93978021198031,-111.54951944188522A127.10999999999999,127.10999999999999,0,0,0,-111.54951944188521,-60.93978021198032Z"
+			];
+
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d, i) {
+					expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+				});
+
+				done();
+			}, 100);
 		});
 	});
 });

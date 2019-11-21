@@ -3486,6 +3486,21 @@ d3.select(".chart_area")
 					padAngle: 0.1
 				}
 			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					startingAngle: 0.7
+				}
+			}
 		}
 	},
 	GaugeChartOptions: {
@@ -3717,6 +3732,21 @@ d3.select(".chart_area")
 				},
 				pie: {
 					padding: 3
+				}
+			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					startingAngle: 1
 				}
 			}
 		}

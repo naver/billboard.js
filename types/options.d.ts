@@ -411,6 +411,11 @@ export interface ChartOptions {
 		 * Sets the gap between pie arcs.
 		 */
 		padding?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 	};
 
 	donut?: {
@@ -435,6 +440,16 @@ export interface ChartOptions {
 		 * Enable or disable expanding pie pieces.
 		 */
 		expand?: boolean;
+
+		/**
+		 * Set padding between data.
+		 */
+		padAngle?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 
 		/**
 		 * Set width of donut chart.

@@ -3152,6 +3152,7 @@ export default class Options {
 			 * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
 			 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
+ 			 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
 			 * @example
 			 *  pie: {
 			 *      label: {
@@ -3190,7 +3191,8 @@ export default class Options {
 			 *      }
 			 *
 			 *      padAngle: 0.1,
-			 *      padding: 0
+			 *      padding: 0,
+			 *      startingAngle: 1
 			 *  }
 			 */
 			pie_label_show: true,
@@ -3202,6 +3204,7 @@ export default class Options {
 			pie_innerRadius: 0,
 			pie_padAngle: 0,
 			pie_padding: 0,
+			pie_startingAngle: 0,
 
 			/**
 			 * Set plugins
@@ -3289,6 +3292,7 @@ export default class Options {
 			 * @property {Number} [donut.width] Set width of donut chart.
 			 * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
 			 * @property {Number} [donut.padAngle=0] Set padding between data.
+			 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
 			 * @example
 			 *  donut: {
 			 *      label: {
@@ -3312,6 +3316,7 @@ export default class Options {
 			 *      expand: false,
 			 *      width: 10,
 			 *      padAngle: 0.2,
+			 *      startingAngle: 1,
 			 *      title: "Donut Title"
 			 *
 			 *      // title with line break
@@ -3327,6 +3332,7 @@ export default class Options {
 			donut_expand: {},
 			donut_expand_duration: 50,
 			donut_padAngle: 0,
+			donut_startingAngle: 0,
 
 			/**
 			 * Set spline options
