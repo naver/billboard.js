@@ -40,6 +40,26 @@ export default class Options {
 			bindto: "#chart",
 
 			/**
+			 * Set chart background.
+			 * @name background
+			 * @memberof Options
+			 * @property {String} background.class Specify the class name for background element.
+			 * @property {String} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
+			 * @property {String} background.imgUrl Specify the image url string for background.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
+			 * @example
+			 * background: {
+			 *    class: "myClass",
+			 *    color: "red",
+			 *
+			 *    // Set image url for background.
+			 *    // If specified, 'color' option will be ignored.
+			 *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+			 * }
+			 */
+			background: {},
+
+			/**
 			 * Set 'clip-path' attribute for chart element
 			 * - **NOTE:**
 			 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
@@ -3152,6 +3172,7 @@ export default class Options {
 			 * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
 			 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
+ 			 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
 			 * @example
 			 *  pie: {
 			 *      label: {
@@ -3190,7 +3211,8 @@ export default class Options {
 			 *      }
 			 *
 			 *      padAngle: 0.1,
-			 *      padding: 0
+			 *      padding: 0,
+			 *      startingAngle: 1
 			 *  }
 			 */
 			pie_label_show: true,
@@ -3202,6 +3224,7 @@ export default class Options {
 			pie_innerRadius: 0,
 			pie_padAngle: 0,
 			pie_padding: 0,
+			pie_startingAngle: 0,
 
 			/**
 			 * Set plugins
@@ -3289,6 +3312,7 @@ export default class Options {
 			 * @property {Number} [donut.width] Set width of donut chart.
 			 * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
 			 * @property {Number} [donut.padAngle=0] Set padding between data.
+			 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
 			 * @example
 			 *  donut: {
 			 *      label: {
@@ -3312,6 +3336,7 @@ export default class Options {
 			 *      expand: false,
 			 *      width: 10,
 			 *      padAngle: 0.2,
+			 *      startingAngle: 1,
 			 *      title: "Donut Title"
 			 *
 			 *      // title with line break
@@ -3327,6 +3352,7 @@ export default class Options {
 			donut_expand: {},
 			donut_expand_duration: 50,
 			donut_padAngle: 0,
+			donut_startingAngle: 0,
 
 			/**
 			 * Set spline options
@@ -3472,8 +3498,12 @@ export default class Options {
 
 			/**
 			 * Show rectangles inside the chart.<br><br>
-			 * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
-			 * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
+			 * This option accepts array including object that has axis, start, end and class.
+			 * The keys start, end and class are optional.
+			 * axis must be x, y or y2. start and end should be the value where regions start and end.
+			 * If not specified, the edge values will be used.
+			 * If timeseries x axis, date string, Date object and unixtime integer can be used.
+			 * If class is set, the region element will have it as class.
 			 * @name regions
 			 * @memberof Options
 			 * @type {Array}

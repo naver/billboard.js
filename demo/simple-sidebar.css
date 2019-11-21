@@ -367,3 +367,7 @@ div.row {
 
 /* Lazy Render */
 #lazyRender_1 { display: none; }
+
+/* Background */
+.myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
+
