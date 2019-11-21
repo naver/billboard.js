@@ -346,6 +346,9 @@ export default class ChartInternal {
 		// oninit callback
 		callFn(config.oninit, $$, $$.api);
 
+		// Set background
+		$$.setBackground();
+
 		$$.redraw({
 			withTransition: false,
 			withTransform: true,
@@ -407,6 +410,35 @@ export default class ChartInternal {
 				texts: $$.mainText
 			}
 		};
+	}
+
+	/**
+	 * Set background element/image
+	 * @private
+	 */
+	setBackground() {
+		const $$ = this;
+		const bg = $$.config.background;
+
+		if (notEmpty(bg)) {
+			const eventRect = $$.svg.select(`.${CLASS.eventRects}`);
+			let element;
+
+			if (bg.imgUrl) {
+				element = eventRect
+					.insert("image")
+					.attr("href", bg.imgUrl);
+			} else {
+				element = eventRect
+					.insert("rect")
+					.style("fill", bg.color || null);
+			}
+
+			element && element
+				.attr("class", bg.class || null)
+				.attr("width", "100%")
+				.attr("height", "100%");
+		}
 	}
 
 	smoothLines(el, type) {

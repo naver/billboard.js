@@ -26,6 +26,26 @@ export interface ChartOptions {
 		classname?: string;
 	};
 
+	/**
+	 * Set chart background.
+	 */
+	background?: {
+		/**
+		 * Specify the class name for background element.
+		 */
+		class?: string;
+
+		/**
+		 * Specify the fill color for background element. (NOTE: Will be ignored if `imgUrl` option is set.)
+		 */
+		color?: string;
+
+		/**
+		 * Specify the image url string for background.
+		 */
+		imgUrl?: string;
+	};
+
 	size?: {
 		/**
 		 * The desired width of the chart element.
