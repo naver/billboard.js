@@ -26,6 +26,26 @@ export interface ChartOptions {
 		classname?: string;
 	};
 
+	/**
+	 * Set chart background.
+	 */
+	background?: {
+		/**
+		 * Specify the class name for background element.
+		 */
+		class?: string;
+
+		/**
+		 * Specify the fill color for background element. (NOTE: Will be ignored if `imgUrl` option is set.)
+		 */
+		color?: string;
+
+		/**
+		 * Specify the image url string for background.
+		 */
+		imgUrl?: string;
+	};
+
 	size?: {
 		/**
 		 * The desired width of the chart element.
@@ -411,6 +431,11 @@ export interface ChartOptions {
 		 * Sets the gap between pie arcs.
 		 */
 		padding?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 	};
 
 	donut?: {
@@ -435,6 +460,16 @@ export interface ChartOptions {
 		 * Enable or disable expanding pie pieces.
 		 */
 		expand?: boolean;
+
+		/**
+		 * Set padding between data.
+		 */
+		padAngle?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 
 		/**
 		 * Set width of donut chart.
@@ -1240,15 +1275,30 @@ export interface Data {
 
 		position?: {
 			/**
-			 * x coordinate position, relative the original.
-			 */
-			x?: number;
+			* Set each dataset position, relative the original.
+			*/
+			[key: string]: {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
 
-			/**
-			 * y coordinate position, relative the original.
-			 */
-			y?: number;
-		};
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			} | {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
+
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			};
+		}
 	};
 
 	/**

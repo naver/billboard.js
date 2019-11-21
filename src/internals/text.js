@@ -226,6 +226,19 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Get data.labels.position value
+	 * @param {String} id Data id value
+	 * @param {String} type x | y
+	 * @return {Number} Position value
+	 * @private
+	 */
+	getTextPos(id, type) {
+		const pos = this.config.data_labels_position;
+
+		return (id in pos ? pos[id] : pos)[type] || 0;
+	},
+
+	/**
 	 * Gets the x coordinate of the text
 	 * @private
 	 * @param {Object} points
@@ -261,7 +274,7 @@ extend(ChartInternal.prototype, {
 			xPos += $$.getCenteredTextPos(d, points, textElement);
 		}
 
-		return xPos + (config.data_labels_position.x || 0);
+		return xPos + $$.getTextPos(d.id, "x");
 	},
 
 	/**
@@ -320,6 +333,6 @@ extend(ChartInternal.prototype, {
 			yPos += $$.getCenteredTextPos(d, points, textElement);
 		}
 
-		return yPos + (config.data_labels_position.y || 0);
+		return yPos + $$.getTextPos(d.id, "y");
 	}
 });

@@ -922,6 +922,51 @@ var demos = {
 				}
 			},
 		],
+		MultiAxesDomain: {
+			options: {
+				data: {
+					axes: {
+						data1: "y",
+						data2: "y2"
+					},
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15]
+					]
+				},
+				clipPath: false,
+				axis: {
+					y: {
+						min: 0,
+						padding: {
+							top: 0,
+							bottom: 0
+						},
+						axes: [
+							{
+								domain: [500, 1000]
+							}
+						]
+					},
+					y2: {
+						show: true,
+						min: 0,
+						padding: {
+							top: 0,
+							bottom: 0
+						},
+						axes: [
+							{
+								domain: [0, 500],
+								tick: {
+									count: 5
+								}
+							}
+						]
+					}
+				}
+			}
+		},
 		PaddingForYAxis: {
 			options: {
 				data: {
@@ -1886,26 +1931,54 @@ var demos = {
 				}
 			}
 		},
-		DataLabelPosition: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250]
-					],
-					labels: {
-						position: {
-							x: -25,
-							y: 5
+		DataLabelPosition: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250]
+						],
+						labels: {
+							position: {
+								x: -25,
+								y: 5
+							}
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
 						}
 					}
-				},
-				axis: {
-					x: {
-						type: "category"
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 300, 200],
+							["data2", 80, 120, 300, 240, 115]
+						],
+						type: "spline",
+						labels: {
+							show: true,
+							position: {
+								data1: {x: 3, y: -10},
+								data2: {x: 3, y: 30}
+							}
+						}
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 0.5,
+								right: 0.5
+							}
+						}
 					}
 				}
-			}
-		},
+			},
+		],
 		DataSelection: {
 			options: {
 				data: {
@@ -2999,6 +3072,41 @@ d3.select(".chart_area")
 		}
 	},
 	ChartOptions: {
+		Background: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 430, 200, 100, 400, 350, 250, 400],
+							["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
+						],
+					},
+					background: {
+						class: "myBgClass",
+						imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+					}
+				},
+				style: [
+					".myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 150, 120, 200, 330, 215, 325]
+						],
+						types: {
+							data1: "bar"
+						}
+					},
+					background: {
+						color: "lightcyan"
+					}
+				}
+			},
+		],
 		ChartSize: {
 			options: {
 				size: {
@@ -3413,6 +3521,21 @@ d3.select(".chart_area")
 					padAngle: 0.1
 				}
 			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					startingAngle: 0.7
+				}
+			}
 		}
 	},
 	GaugeChartOptions: {
@@ -3644,6 +3767,21 @@ d3.select(".chart_area")
 				},
 				pie: {
 					padding: 3
+				}
+			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					startingAngle: 1
 				}
 			}
 		}

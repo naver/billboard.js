@@ -110,10 +110,13 @@ export default class Axis {
 
 		if (axesConfig.length) {
 			axesConfig.forEach(v => {
-				const tick = v.tick;
+				const tick = v.tick || {};
+				const scale = $$[id].copy();
+
+				v.domain && scale.domain(v.domain);
 
 				axes.push(
-					d3Axis($$[id])
+					d3Axis(scale)
 						.ticks(tick.count)
 						.tickFormat(tick.format || (x => x))
 						.tickValues(tick.values)
@@ -134,7 +137,9 @@ export default class Axis {
 		const config = $$.config;
 
 		Object.keys($$.axesList).forEach(id => {
-			const range = $$[id].range();
+			const axesConfig = config[`axis_${id}_axes`];
+			const scale = $$[id].copy();
+			const range = scale.range();
 
 			$$.axesList[id].forEach((v, i) => {
 				const axisRange = v.scale().range();
@@ -154,8 +159,10 @@ export default class Axis {
 						.style("visibility", config[`axis_${id}_show`] ? "visible" : "hidden")
 						.call(v);
 				} else {
+					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
+
 					$$.xAxis.helper.transitionise(g)
-						.call(v.scale($$[id]));
+						.call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));

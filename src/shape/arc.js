@@ -20,13 +20,17 @@ extend(ChartInternal.prototype, {
 	initPie() {
 		const $$ = this;
 		const config = $$.config;
+		const dataType = config.data_type;
 		const padding = config.pie_padding;
-
-		const padAngle = $$.hasType("pie") && padding ?
-			padding * 0.01 : config[`${config.data_type}_padAngle`] ?
-				config[`${config.data_type}_padAngle`] : 0;
+		const startingAngle = config[`${dataType}_startingAngle`] || 0;
+		const padAngle = (
+			$$.hasType("pie") && padding ? padding * 0.01 :
+				config[`${dataType}_padAngle`]
+		) || 0;
 
 		$$.pie = d3Pie()
+			.startAngle(startingAngle)
+			.endAngle(startingAngle + (2 * Math.PI))
 			.padAngle(padAngle)
 			.sortValues(
 				$$.isOrderAsc() || $$.isOrderDesc() ?
