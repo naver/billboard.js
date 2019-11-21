@@ -3072,6 +3072,41 @@ d3.select(".chart_area")
 		}
 	},
 	ChartOptions: {
+		Background: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 430, 200, 100, 400, 350, 250, 400],
+							["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
+						],
+					},
+					background: {
+						class: "myBgClass",
+						imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+					}
+				},
+				style: [
+					".myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 150, 120, 200, 330, 215, 325]
+						],
+						types: {
+							data1: "bar"
+						}
+					},
+					background: {
+						color: "lightcyan"
+					}
+				}
+			},
+		],
 		ChartSize: {
 			options: {
 				size: {
