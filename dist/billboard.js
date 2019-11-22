@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.10.2-nightly-20191121121240
+ * @version 1.10.2-nightly-20191122121335
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1841,7 +1841,7 @@ function () {
       var $$ = this,
           config = $$.config;
 
-      if ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom(), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.hasType("gauge") && (config.legend_show = !1), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
+      if ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom(), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0), $$.x && ($$.x.domain(sortValue($$.getXDomain($$.data.targets))), $$.subX.domain($$.x.domain()), $$.orgXDomain = $$.x.domain()), $$.y && ($$.y.domain($$.getYDomain($$.data.targets, "y")), $$.subY.domain($$.y.domain())), $$.y2 && ($$.y2.domain($$.getYDomain($$.data.targets, "y2")), $$.subY2 && $$.subY2.domain($$.y2.domain())), $$.svg = $$.selectChart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && $$.inputType) {
         var isTouch = $$.inputType === "touch";
         $$.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
           return callFn(config.onover, $$, $$.api);
@@ -1922,9 +1922,8 @@ function () {
           bg = $$.config.background;
 
       if (notEmpty(bg)) {
-        var element,
-            eventRect = $$.svg.select(".".concat(config_classes.eventRects));
-        element = bg.imgUrl ? eventRect.insert("image").attr("href", bg.imgUrl) : eventRect.insert("rect").style("fill", bg.color || null), element && element.attr("class", bg["class"] || null).attr("width", "100%").attr("height", "100%");
+        var element = $$.svg.select(".".concat(config_classes[$$.hasArcType() ? "chart" : "regions"])).insert(bg.imgUrl ? "image" : "rect", ":first-child");
+        bg.imgUrl ? element.attr("href", bg.imgUrl) : bg.color && element.style("fill", bg.color), element.attr("class", bg["class"] || null).attr("width", "100%").attr("height", "100%");
       }
     }
   }, {
@@ -2228,7 +2227,7 @@ function () {
           config = $$.config,
           isRotated = config.axis_rotated,
           padding = 0;
-      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top;else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
+      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
         var _$$$getRadarSize = $$.getRadarSize(),
             _$$$getRadarSize2 = _slicedToArray(_$$$getRadarSize, 1),
             width = _$$$getRadarSize2[0];
@@ -8077,17 +8076,10 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
-   * @typedef {object} ShapeOffsetTarget
-   * @property {string} id - target id
-   * @property {object[]} rowValues - data point for each row (scaled as necessary)
-   * @property {object<number, object>} rowValueMapByXValue - each x value is a key,
-   *   mapped to the rowValue for that x value
-    * @property {number[]} values - value for each rowValue (normalized as necessary)
-   */
-
-  /**
+   * Get Shape's offset data
    * @param {function(Object): boolean} typeFilter
    * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+   * @private
    */
   getShapeOffsetData: function getShapeOffsetData(typeFilter) {
     var $$ = this,
@@ -8289,7 +8281,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         updated = $$.updateAngle(d),
         translate = "";
 
-    if (updated && (!$$.hasType("gauge") || $$.hasMultiTargets())) {
+    if (updated && (!$$.hasType("gauge") || $$.data.targets.length > 1)) {
       var c = this.svgArc.centroid(updated),
           x = isNaN(c[0]) ? 0 : c[0],
           y = isNaN(c[1]) ? 0 : c[1],
@@ -8313,7 +8305,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     $$.shouldShowArcLabel() && selection.each(function (d) {
       var node = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
           updated = $$.updateAngle(d),
-          value = updated ? updated.value : null,
+          value = updated ? updated.value : d.value,
           ratio = $$.getRatio("arc", updated),
           id = d.data.id,
           hasGauge = $$.hasType("gauge"),
@@ -8460,9 +8452,16 @@ extend(ChartInternal_ChartInternal.prototype, {
         return interpolated.data = d.data, $$.getArc(interpolated, !0);
       };
     }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
-      return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data.id);
+      var color;
+      return $$.levelColor ? (color = $$.levelColor(d.data.values[0].value), config.data_colors[d.data.id] = color) : color = $$.color(d.data.id), color;
     }) // Where gauge reading color would receive customization.
     .style("opacity", "1").call($$.endall, function () {
+      if ($$.levelColor) {
+        var path = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
+            d = path.datum();
+        $$.updateLegendItemColor(d.data.id, path.style("fill"));
+      }
+
       $$.transiting = !1;
     }), hasInteraction && $$.bindArcEvent(mainArc), $$.redrawArcText(duration);
   },
@@ -8526,23 +8525,23 @@ extend(ChartInternal_ChartInternal.prototype, {
     }
   },
   redrawArcText: function redrawArcText(duration) {
-    var $$ = this,
+    var text,
+        $$ = this,
         config = $$.config,
         main = $$.main,
-        hasGauge = $$.hasType("gauge"),
-        text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
+        hasGauge = $$.hasType("gauge");
+
+    if (hasGauge && $$.data.targets.length === 1 && config.gauge_title || (text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
       return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
     }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-      return $$.isGaugeType(d.data) && !$$.hasMultiTargets() ? "".concat(Math.round($$.radius / 5), "px") : "";
+      return $$.isGaugeType(d.data) && $$.data.targets.length === 1 ? "".concat(Math.round($$.radius / 5), "px") : null;
     }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-    });
-
-    if (main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
+    })), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle,
           startAngle = -1 * Math.PI / 2,
           endAngle = (isFullCircle ? -4 : -1) * startAngle;
-      isFullCircle && text.attr("dy", "".concat(Math.round($$.radius / 14))), $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
+      isFullCircle && text && text.attr("dy", "".concat(Math.round($$.radius / 14))), $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
         var d = {
           data: [{
             value: config.gauge_max
@@ -10598,6 +10597,16 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   updateLegendItemHeight: function updateLegendItemHeight(h) {
     this.legendItemHeight = h;
+  },
+
+  /**
+   * Update legend item color
+   * @private
+   * @param {String} id Corresponding data ID value
+   * @param {String} color Color value
+   */
+  updateLegendItemColor: function updateLegendItemColor(id, color) {
+    this.legend.select(".".concat(config_classes.legendItem, "-").concat(id, " line")).style("stroke", color);
   },
 
   /**
@@ -14223,7 +14232,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.10.2-nightly-20191121121240",
+  version: "1.10.2-nightly-20191122121335",
 
   /**
    * Generate chart
@@ -14322,7 +14331,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.10.2-nightly-20191121121240
+ * @version 1.10.2-nightly-20191122121335
  */
 
 
