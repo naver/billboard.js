@@ -440,12 +440,23 @@ describe("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.regions);
 			expect(element.empty()).to.be.false;
 			expect(element.attr("href")).to.be.equal(args.background.imgUrl);
 			expect(element.node().tagName).to.be.equal("image");
 		});
 
+		it("check for pie's image background", () => {
+			args.data.type = "pie";
+			chart = util.generate(args);
+
+			const element = chart.$.main.select(".myBgClass");
+
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.chart);
+		});
+
 		it("set option background.color=red", () => {
+			args.data.type = "line";
 			args.background.color = "red";
 			delete args.background.imgUrl;
 		});
@@ -455,9 +466,19 @@ describe("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.regions);
 			expect(element.empty()).to.be.false;
 			expect(element.style("fill")).to.be.equal(args.background.color);
 			expect(element.node().tagName).to.be.equal("rect");
+		});
+
+		it("check for pie's rect background", () => {
+			args.data.type = "pie";
+			chart = util.generate(args);
+
+			const element = chart.$.main.select(".myBgClass");
+
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.chart);
 		});
 	});
 });
