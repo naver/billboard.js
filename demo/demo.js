@@ -3103,6 +3103,11 @@ d3.select(".chart_area")
 					},
 					background: {
 						color: "lightcyan"
+					},
+					grid: {
+						y: {
+							show: true
+						}
 					}
 				}
 			},
