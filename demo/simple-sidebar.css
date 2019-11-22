@@ -364,3 +364,9 @@
  #stanfordDiagram .test-polygon4 text { fill: black; }
  #stanfordDiagram .test-polygon5 { fill: orange; }
  #stanfordDiagram .test-polygon5 text { fill: black; }
+
+ /* Lazy Render */
+#lazyRender_1 { display: none; }
+
+/* Background */
+.myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }

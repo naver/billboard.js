@@ -922,6 +922,51 @@ var demos = {
 				}
 			},
 		],
+		MultiAxesDomain: {
+			options: {
+				data: {
+					axes: {
+						data1: "y",
+						data2: "y2"
+					},
+					columns: [
+						["data1", 30, 200, 100, 400, 150],
+						["data2", 50, 20, 10, 40, 15]
+					]
+				},
+				clipPath: false,
+				axis: {
+					y: {
+						min: 0,
+						padding: {
+							top: 0,
+							bottom: 0
+						},
+						axes: [
+							{
+								domain: [500, 1000]
+							}
+						]
+					},
+					y2: {
+						show: true,
+						min: 0,
+						padding: {
+							top: 0,
+							bottom: 0
+						},
+						axes: [
+							{
+								domain: [0, 500],
+								tick: {
+									count: 5
+								}
+							}
+						]
+					}
+				}
+			}
+		},
 		PaddingForYAxis: {
 			options: {
 				data: {
@@ -1886,26 +1931,54 @@ var demos = {
 				}
 			}
 		},
-		DataLabelPosition: {
-			options: {
-				data: {
-					columns: [
-						["data1", 30, -200, -100, 400, 150, 250]
-					],
-					labels: {
-						position: {
-							x: -25,
-							y: 5
+		DataLabelPosition: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, -200, -100, 400, 150, 250]
+						],
+						labels: {
+							position: {
+								x: -25,
+								y: 5
+							}
+						}
+					},
+					axis: {
+						x: {
+							type: "category"
 						}
 					}
-				},
-				axis: {
-					x: {
-						type: "category"
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 150, 240, 400, 300, 200],
+							["data2", 80, 120, 300, 240, 115]
+						],
+						type: "spline",
+						labels: {
+							show: true,
+							position: {
+								data1: {x: 3, y: -10},
+								data2: {x: 3, y: 30}
+							}
+						}
+					},
+					axis: {
+						x: {
+							padding: {
+								left: 0.5,
+								right: 0.5
+							}
+						}
 					}
 				}
-			}
-		},
+			},
+		],
 		DataSelection: {
 			options: {
 				data: {
@@ -2433,6 +2506,33 @@ d3.select(".chart_area")
 				"#stanfordDiagram .test-polygon5 { fill: orange; }",
 				"#stanfordDiagram .test-polygon5 text { fill: black; }"
 			]
+		},
+		TextOverlap: {
+			description: "Prevents data label texts overlap using <a href='https://en.wikipedia.org/wiki/Voronoi_diagram' target='_new'>Voronoi layout</a>.<br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					columns: [
+						["data1", 3, 3.8, 2, 3.8, 15, 2.5, 5.4, 6, 5.5, 2.4],
+						["data2", 1.7, 1.0, 10, 20, 8.4, 5, 2.5, 12.3, 8.5, 9.8],
+						["data3", 2.3, 15.3, 8.5, 30, 25, 12.0, 5, 8.4, 9.9, 28],
+						["data4", 30, 35, 20, 38, 19, 28, 5.6, 8, 5.5, 22],
+						["data5", 13, 10, 10, 20, 8, 5, 20, 13, 18.5, 9.8]
+					],
+					labels:{
+						overlap: {
+							extent: 8,
+							area : 3
+						}
+					}
+				},
+				_plugins: [{
+					textoverlap: {
+						selector: ".bb-texts text",
+						extent: 8,
+						area : 3
+					}
+				}]
+			}
 		}
 	},
 
@@ -2972,6 +3072,46 @@ d3.select(".chart_area")
 		}
 	},
 	ChartOptions: {
+		Background: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 430, 200, 100, 400, 350, 250, 400],
+							["data2", 830, 1200, 1100, 1400, 1150, 1250, 1500]
+						],
+					},
+					background: {
+						class: "myBgClass",
+						imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+					}
+				},
+				style: [
+					".myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250],
+							["data2", 150, 120, 200, 330, 215, 325]
+						],
+						types: {
+							data1: "bar"
+						}
+					},
+					background: {
+						color: "lightcyan"
+					},
+					grid: {
+						y: {
+							show: true
+						}
+					}
+				}
+			},
+		],
 		ChartSize: {
 			options: {
 				size: {
@@ -2985,6 +3125,44 @@ d3.select(".chart_area")
 				}
 			}
 		},
+		LazyRender: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 0, 0, 0],
+							["data2", 130, 100, 140, 200, 150, 50]
+						]
+					}
+				},
+				style: [
+					"#lazyRender_1 { display: none; }"
+				],
+				func: function(chart) {
+					setTimeout(function() {
+					    document.getElementById("lazyRender_1").style.display = "block";
+					}, 1000)
+				}
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300],
+							["data2", 130]
+						],
+						type: "pie"
+					},
+					render: {
+						lazy: true,
+						observe: false
+					}
+				},
+				func: function(chart) {
+					setTimeout(function() { chart.flush(); }, 1000)
+				}
+			}
+		],
 		Padding: {
 			options: {
 				padding: {
@@ -3348,6 +3526,21 @@ d3.select(".chart_area")
 					padAngle: 0.1
 				}
 			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "donut"
+				},
+				donut: {
+					startingAngle: 0.7
+				}
+			}
 		}
 	},
 	GaugeChartOptions: {
@@ -3418,6 +3611,9 @@ d3.select(".chart_area")
 							}
 						},
 						width: 80
+					},
+					legend: {
+						show: false
 					}
 				}
 			}
@@ -3579,6 +3775,21 @@ d3.select(".chart_area")
 				},
 				pie: {
 					padding: 3
+				}
+			}
+		},
+		StartingAngle: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					startingAngle: 1
 				}
 			}
 		}
