@@ -224,11 +224,6 @@ export default class ChartInternal {
 			);
 		}
 
-		// when gauge, hide legend // TODO: fix
-		if ($$.hasType("gauge")) {
-			config.legend_show = false;
-		}
-
 		// Init sizes and scales
 		$$.updateSizes();
 		$$.updateScales(true);
@@ -937,7 +932,7 @@ export default class ChartInternal {
 			y = asHalfPixel($$.margin2.top);
 		} else if (target === "legend") {
 			x = $$.margin3.left;
-			y = $$.margin3.top;
+			y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : $$.height + padding;
