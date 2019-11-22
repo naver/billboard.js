@@ -188,6 +188,17 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Update legend item color
+	 * @private
+	 * @param {String} id Corresponding data ID value
+	 * @param {String} color Color value
+	 */
+	updateLegendItemColor(id, color) {
+		this.legend.select(`.${CLASS.legendItem}-${id} line`)
+			.style("stroke", color);
+	},
+
+	/**
 	 * Get the width of the legend
 	 * @private
 	 * @return {Number} width
@@ -671,10 +682,6 @@ extend(ChartInternal.prototype, {
 				.attr("height", $$.getLegendHeight() - 12)
 				.attr("width", maxWidth * (step + 1) + 10);
 		}
-
-		// toggle legend state
-		// $$.legend.selectAll(`.${CLASS.legendItem}`)
-		// 	.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
 
 		// Update all to reflect change of legend
 		$$.updateLegendItemWidth(maxWidth);

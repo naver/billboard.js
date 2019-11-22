@@ -155,17 +155,10 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
-	 * @typedef {object} ShapeOffsetTarget
-	 * @property {string} id - target id
-	 * @property {object[]} rowValues - data point for each row (scaled as necessary)
-	 * @property {object<number, object>} rowValueMapByXValue - each x value is a key,
-	 *   mapped to the rowValue for that x value
-   * @property {number[]} values - value for each rowValue (normalized as necessary)
-	 */
-
-	/**
+	 * Get Shape's offset data
 	 * @param {function(Object): boolean} typeFilter
 	 * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+	 * @private
 	 */
 	getShapeOffsetData(typeFilter) {
 		const $$ = this;
