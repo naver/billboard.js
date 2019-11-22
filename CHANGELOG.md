@@ -1,3 +1,36 @@
+# [1.11.0](https://github.com/naver/billboard.js/compare/1.10.2...1.11.0) (2019-11-22)
+
+
+### Bug Fixes
+
+* **all:** Fix possible IE9 style value ([950c335](https://github.com/naver/billboard.js/commit/950c3359644a735ba3aa4551c78551a116667f24)), closes [/github.com/naver/billboard.js/commit/54631506721bc64476d5c8fd64a2a681f3b340c1#diff-851f1a6e431d0ae7dc68b646d27821a8R90-R93](https://github.com//github.com/naver/billboard.js/commit/54631506721bc64476d5c8fd64a2a681f3b340c1/issues/diff-851f1a6e431d0ae7dc68b646d27821a8R90-R93) [#1059](https://github.com/naver/billboard.js/issues/1059)
+* **api:** Fix .data() to return exact data ([12bdc54](https://github.com/naver/billboard.js/commit/12bdc54b5628043776ed72683341f58a4bedb40a)), closes [#1035](https://github.com/naver/billboard.js/issues/1035)
+* **axis:** Correct on tick count display ([d4c8eb1](https://github.com/naver/billboard.js/commit/d4c8eb1bee366098bd4867fe04c441a87af409b8)), closes [#1077](https://github.com/naver/billboard.js/issues/1077)
+* **axis:** Correct subchart x axis culling ([8478dd9](https://github.com/naver/billboard.js/commit/8478dd95d3c8b27d03fe3256083dcd04ccd1c58d)), closes [#1068](https://github.com/naver/billboard.js/issues/1068)
+* **data:** Fix header option setting ([82461b3](https://github.com/naver/billboard.js/commit/82461b312311066fb2876bb175cc05d84e8b2e4b)), closes [#1031](https://github.com/naver/billboard.js/issues/1031)
+* **gauge:** Fix to not align background startingAngle from option ([862156f](https://github.com/naver/billboard.js/commit/862156fc9c3c975af09aef07e95cd61d5cf3d727)), closes [#1073](https://github.com/naver/billboard.js/issues/1073)
+* **gauge:** Show legend by default ([46fc102](https://github.com/naver/billboard.js/commit/46fc102889336e6dae5a0a6ca7fda316eff82955)), closes [#1136](https://github.com/naver/billboard.js/issues/1136)
+* **interaction:** Fix on eventRect rederaw ([dc5f67a](https://github.com/naver/billboard.js/commit/dc5f67afd7dc64bbfa69a6716812741025d8b8ea)), closes [#1028](https://github.com/naver/billboard.js/issues/1028) [#1019](https://github.com/naver/billboard.js/issues/1019) [#963](https://github.com/naver/billboard.js/issues/963)
+* **options:** Correct background element's position ([d66e4fd](https://github.com/naver/billboard.js/commit/d66e4fd617593edb5cd53ed88c155cb9911fafd5)), closes [#1132](https://github.com/naver/billboard.js/issues/1132)
+* **shape:** Fix shape position on multiple xs ([6ce784a](https://github.com/naver/billboard.js/commit/6ce784afb01d53b4758e255f50f5d2f8ebc9c0a8)), closes [#1115](https://github.com/naver/billboard.js/issues/1115)
+* **text:** Fix data label y position when all data are 0 ([4b423a5](https://github.com/naver/billboard.js/commit/4b423a51e21aefa95c3200fffd545cc189925fbe)), closes [#1026](https://github.com/naver/billboard.js/issues/1026)
+* **tooltip:** Fix tooltip work on touch zoom ([5d98187](https://github.com/naver/billboard.js/commit/5d98187716fc7d0d7e992df5e7342b54814b5f48)), closes [#1056](https://github.com/naver/billboard.js/issues/1056)
+* **tooltip:** Remove 'pointer-events:none' inline set ([baa7bc6](https://github.com/naver/billboard.js/commit/baa7bc66ded0285c93db7d96c6d88a36f6b96b49)), closes [#1124](https://github.com/naver/billboard.js/issues/1124)
+* **zoom:** Correct Axis culling on zoom ([c319302](https://github.com/naver/billboard.js/commit/c319302a97fdce05f8811406ffd84374cbaf84fb)), closes [#1106](https://github.com/naver/billboard.js/issues/1106)
+* **zoom:** Fix to pass domain arg on onzoom ([e1daae6](https://github.com/naver/billboard.js/commit/e1daae67539bbb6bf468d1357f61275cddd5d006)), closes [#1109](https://github.com/naver/billboard.js/issues/1109)
+
+
+### Features
+
+* **arc:** Intent to ship pie/donut.startingAngle ([b84be8e](https://github.com/naver/billboard.js/commit/b84be8e499712d00e0bef2ed8a6ffc55b87c7536)), closes [#1128](https://github.com/naver/billboard.js/issues/1128)
+* **axis:** Intent to ship axes.domain ([355b0bd](https://github.com/naver/billboard.js/commit/355b0bd7afbb593d0aeca52890c619b424666706)), closes [#1090](https://github.com/naver/billboard.js/issues/1090)
+* **data:** Intent to ship data.labels.overlap ([90792fa](https://github.com/naver/billboard.js/commit/90792fa5883dc80b005d1c6eb5d255f88af8f6f3)), closes [#977](https://github.com/naver/billboard.js/issues/977)
+* **data:** Intent to ship data.labels.position dataset ([dd5ba44](https://github.com/naver/billboard.js/commit/dd5ba44874f11563042b6070444e4fc851de1b01)), closes [#1126](https://github.com/naver/billboard.js/issues/1126)
+* **data:** Pass element arg for data callbacks ([bb9f952](https://github.com/naver/billboard.js/commit/bb9f95273dcd838862ad8e713a7865e0d062dbbc)), closes [#1100](https://github.com/naver/billboard.js/issues/1100)
+* **options:** Intent to ship background ([493c2a3](https://github.com/naver/billboard.js/commit/493c2a304648a1d81bf0755ca75b871c88d190f6)), closes [#1131](https://github.com/naver/billboard.js/issues/1131)
+* **options:** Intent to ship render option ([b6af77f](https://github.com/naver/billboard.js/commit/b6af77faeac932fda8cb76957e52fe04d0e07577)), closes [#1015](https://github.com/naver/billboard.js/issues/1015)
+* **plugin:** Intent to ship TextOverlap ([728e879](https://github.com/naver/billboard.js/commit/728e879d2f74be7d7e0d0be3b36f6c1b9e37e13f)), closes [#1048](https://github.com/naver/billboard.js/issues/1048)
+
 ## [1.10.2](https://github.com/naver/billboard.js/compare/1.10.1...1.10.2) (2019-08-19)
 
 
