@@ -6,6 +6,7 @@
 import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
+import {getBoundingRect} from "../../src/internals/util";
 
 describe("SHAPE ARC", () => {
 	const selector = {
@@ -277,7 +278,7 @@ describe("SHAPE ARC", () => {
 			setTimeout(() => {
 				// This test has bee updated to make tests pass. @TODO double-check this test is accurate.
 				expect(data.attr("d"))
-					.to.match(/M-221.*?,-2\..+A221.*?,221.*?,0,1,1,-68.*?,210.*?L-65.*?,201.*?A211.*?,211.*?,0,1,0,-211.*?,-2.*?Z/);
+					.to.equal("M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,-65.46525025833259,201.4813229771283L-62.375080314583116,191.97075781417675A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z");
 
 				done();
 			}, 500);
@@ -402,9 +403,9 @@ describe("SHAPE ARC", () => {
 			const expected = [
 				"M-304,-3.7229262694079536e-14A304,304,0,0,1,-275.25626419791655,-129.03483645824778L-165.15375851874995,-77.42090187494867A182.4,182.4,0,0,0,-182.4,-2.2337557616447722e-14Z",
 				"M-275.25626419791655,-129.03483645824778A304,304,0,0,1,98.15564305051961,-287.71769103991323L58.893385830311765,-172.63061462394796A182.4,182.4,0,0,0,-165.15375851874995,-77.42090187494867Z",
-				"M98.15564305051961,-287.71769103991323A304,304,0,0,1,226.4107435541097,-202.86491861156077L135.84644613246581,-121.71895116693646A182.4,182.4,0,0,0,58.893385830311765,-172.63061462394796Z",
-				"M226.4107435541097,-202.86491861156077A304,304,0,0,1,283.9408970546946,-108.59819049954436L170.36453823281676,-65.15891429972662A182.4,182.4,0,0,0,135.84644613246581,-121.71895116693646Z",
-				"M283.9408970546946,-108.59819049954436A304,304,0,0,1,304,0L182.4,0A182.4,182.4,0,0,0,170.36453823281676,-65.15891429972662Z"
+				"M98.15564305051961,-287.71769103991323A304,304,0,0,1,226.41074355410964,-202.86491861156082L135.8464461324658,-121.7189511669365A182.4,182.4,0,0,0,58.893385830311765,-172.63061462394796Z",
+				"M226.41074355410964,-202.86491861156082A304,304,0,0,1,283.9408970546946,-108.59819049954442L170.36453823281676,-65.15891429972665A182.4,182.4,0,0,0,135.8464461324658,-121.7189511669365Z",
+				"M283.9408970546946,-108.59819049954442A304,304,0,0,1,304,-6.750155989720952e-14L182.4,-4.050093593832571e-14A182.4,182.4,0,0,0,170.36453823281676,-65.15891429972665Z"
 		  	];
 
 			setTimeout(() => {
@@ -413,7 +414,7 @@ describe("SHAPE ARC", () => {
 				});
 
 				done();
-			}, 100);
+			}, 200);
 		});
 
 		it("check for stack data #2", done => {
@@ -455,6 +456,33 @@ describe("SHAPE ARC", () => {
 
 				done();
 			}, 100);
+		});
+
+		it("check for startingAngle option", () => {
+			const chart = util.generate({
+				data: {
+				  columns: [
+					  ["data", 50]
+					],
+				  type: "gauge"
+				},
+				gauge: {
+				  startingAngle: 0
+				}
+			});
+
+			const arc = chart.$.arc;
+
+			// gauge backgound shouldn't be aligned with the 'startingAngle' option
+			expect(
+				getBoundingRect(arc.select(`.${CLASS.chartArcsBackground}`).node()).width
+			).to.be.above(600);
+
+			expect(
+				arc.select(`.${CLASS.arc}-data`).datum().startAngle
+			).to.be.equal(
+				chart.config("gauge.startingAngle")
+			);
 		});
 	});
 
@@ -624,41 +652,101 @@ describe("SHAPE ARC", () => {
 
 	describe("check for data loading", () => {
 		it("Interaction of chart when initialized with 0 and .load()", done => {
-		const chart = util.generate({
+			const chart = util.generate({
+				data: {
+				columns: [
+					["data1", 0],
+					["data2", 0],
+				],
+				type: "pie",
+				}
+			});
+
+			setTimeout(function() {
+				chart.load({
+					columns: [
+						["data1", 3],
+						["data2", 6],
+					],
+					done: () => {
+						const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+
+						util.fireEvent(legend, "mouseover");
+						util.fireEvent(legend, "mouseout");
+
+						setTimeout(() => {
+							chart.$.arc.selectAll("path").each(function() {
+								const rect = this.getBoundingClientRect();
+
+								expect(this.getAttribute("d")).to.not.be.equal("M 0 0");
+								expect(rect.width > 0 && rect.height > 0).to.be.true;
+							});
+
+							done();
+						}, 1000);
+					}
+				});
+			}, 1000);
+		});
+	});
+
+	describe("check for startingAngle", () => {
+		let chart;
+		let args = {
 			data: {
-			  columns: [
-				["data1", 0],
-				["data2", 0],
-			  ],
-			  type: "pie",
+				columns: [
+					["data1", 30],
+					["data2", 45],
+					["data3", 25]
+				],
+				type: "pie"
+			},
+			donut: {
+				startingAngle: 0.5
+			},
+			pie: {
+				startingAngle: 1
 			}
-		  });
+		};
 
-		  setTimeout(function() {
-			  chart.load({
-				  columns: [
-					  ["data1", 3],
-					  ["data2", 6],
-				  ],
-				  done: () => {
-					const legend = chart.$.legend.select(`.${CLASS.legendItem}-data2`).node();
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
 
-					util.fireEvent(legend, "mouseover");
-					util.fireEvent(legend, "mouseout");
+		it("check Pie's startingAngle", done => {
+			const expectedPath = [
+				"M-134.1696615971501,163.9479319994803A211.85,211.85,0,0,1,-114.46304349816526,-178.26562813155297L0,0Z",
+				"M178.26562813155286,-114.46304349816538A211.85,211.85,0,0,1,-134.1696615971501,163.9479319994803L0,0Z",
+				"M-114.46304349816526,-178.26562813155297A211.85,211.85,0,0,1,178.26562813155294,-114.46304349816526L0,0Z"
+			];
 
-					setTimeout(() => {
-						chart.$.arc.selectAll("path").each(function() {
-							const rect = this.getBoundingClientRect();
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d, i) {
+					expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+				});
 
-							expect(this.getAttribute("d")).to.not.be.equal("M 0 0");
-							expect(rect.width > 0 && rect.height > 0).to.be.true;
-						});
+				done();
+			}, 100);
+		});
 
-						done();
-					}, 1000);
-				  }
-			  });
-		  }, 1000);
+		it("set options data.type=donut", () => {
+			args.data.type = "donut";
+		});
+
+		it("check Donut's startingAngle", done => {
+			const expectedPath = [
+				"M-39.144129750495274,208.2022084562899A211.85,211.85,0,0,1,-185.91586573647538,-101.56630035330055L-111.54951944188521,-60.93978021198032A127.10999999999999,127.10999999999999,0,0,0,-23.486477850297163,124.92132507377393Z",
+				"M101.56630035330042,-185.91586573647544A211.85,211.85,0,0,1,-39.144129750495274,208.2022084562899L-23.486477850297163,124.92132507377393A127.10999999999999,127.10999999999999,0,0,0,60.93978021198024,-111.54951944188525Z",
+				"M-185.91586573647538,-101.56630035330055A211.85,211.85,0,0,1,101.56630035330053,-185.91586573647538L60.93978021198031,-111.54951944188522A127.10999999999999,127.10999999999999,0,0,0,-111.54951944188521,-60.93978021198032Z"
+			];
+
+			setTimeout(() => {
+				chart.$.arc.selectAll("path").each(function(d, i) {
+					expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
+				});
+
+				done();
+			}, 100);
 		});
 	});
 });

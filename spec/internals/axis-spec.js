@@ -23,6 +23,11 @@ describe("AXIS", function() {
 			]
 		},
 		axis: {
+			x: {
+				tick: {
+					count: undefined
+				}
+			},
 			y: {
 				tick: {
 					values: null,
@@ -40,6 +45,25 @@ describe("AXIS", function() {
 
 	beforeEach(() => {
 		chart = util.generate(args);
+	});
+
+	describe("axis.x.tick.count", () => {
+		after(() => {
+			args.axis.x.type = "indexed";
+			args.axis.x.tick.count = undefined;
+		});
+
+		it("set options axis.x.tick.count=3", () => {
+			args.axis.x.type = "category";
+			args.axis.x.tick.count = 3;
+		});
+
+		it("should have only 3 tick on x axis", () => {
+			const ticks = chart.$.main.select(`.${CLASS.axisX}`).selectAll("g.tick");
+
+			expect(ticks.size()).to.be.equal(3);
+			expect(ticks.data()).to.be.deep.equal([0,3,5]);
+		});
 	});
 
 	describe("axis.y.tick.count", () => {
@@ -1567,6 +1591,48 @@ describe("AXIS", function() {
 		it("check for rotated y2 Axes", () => {
 			checkY2Axes(true);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1",30,200,100,400,150],
+						["data2",50,20,10,40,15]
+					]
+				},
+				axis:{
+					x:{
+						axes: [{domain: [0, 500]}]
+					},
+					y:{
+						axes: [
+							{domain: [0, 1000]},
+							{domain: [0, 2000]}
+						]
+					},
+					y2:{
+						show: true,
+						axes: [{domain: [0, 300]}]
+					}
+				}
+			};
+		});
+
+		it("check axes domain value", () => {
+			const main = chart.$.main;
+
+			["x", "y", "y2"].forEach(id => {
+				chart.internal.axesList[id]
+					.forEach((v, i) => {
+						const axis = main.select(`.${CLASS.axis}-${id}-${i + 1}`);
+						const domain = v.scale().domain();
+
+						expect(domain).to.be.deep.equal(args.axis[id].axes[i].domain);
+						expect(+axis.select(`.tick text`).text()).to.be.equal(domain[0]);
+						expect(+axis.select(`.tick:last-child text`).text()).to.be.equal(domain[1]);
+					});
+			});
+		})
 	});
 
 	describe("y Axis size", () => {
@@ -1630,6 +1696,9 @@ describe("AXIS", function() {
 							culling: true
 						}
 					}
+				},
+				subchart: {
+					show: true
 				}
 			};
 		});
@@ -1641,13 +1710,13 @@ describe("AXIS", function() {
 				y2: [0, 100, 200, 300, 400]
 			};
 
-			["x", "y", "y2"].forEach(v => {
+			["subx", "x", "y", "y2"].forEach(v => {
 				const data = chart.internal.axes[v]
 					.selectAll(".tick text").filter(function() {
 						return this.style.display === "block";
 					}).data();
 
-				expect(data).to.be.deep.equal(expected[v]);
+				expect(data).to.be.deep.equal(expected[v === "subx" ? "x" : v]);
 			});
 		}
 

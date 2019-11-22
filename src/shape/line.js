@@ -204,9 +204,8 @@ extend(ChartInternal.prototype, {
 	generateGetLinePoints(lineIndices, isSubValue) { // partial duplication of generateGetBarPoints
 		const $$ = this;
 		const config = $$.config;
-		const lineTargetsNum = lineIndices.__max__ + 1;
 		const isSub = !!isSubValue;
-		const x = $$.getShapeX(0, lineTargetsNum, lineIndices, isSub);
+		const x = $$.getShapeX(0, lineIndices, isSub);
 		const y = $$.getShapeY(isSub);
 		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
@@ -419,7 +418,7 @@ extend(ChartInternal.prototype, {
 			(withTransition ? $$.mainArea.transition(getRandom()) : $$.mainArea)
 				.attr("d", drawArea)
 				.style("fill", $$.updateAreaColor.bind($$))
-				.style("opacity", d => ($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity))
+				.style("opacity", d => String($$.isAreaRangeType(d) ? $$.orgAreaOpacity / 1.75 : $$.orgAreaOpacity))
 		];
 	},
 
@@ -496,8 +495,7 @@ extend(ChartInternal.prototype, {
 		// partial duplication of generateGetBarPoints
 		const $$ = this;
 		const config = $$.config;
-		const areaTargetsNum = areaIndices.__max__ + 1;
-		const x = $$.getShapeX(0, areaTargetsNum, areaIndices, !!isSub);
+		const x = $$.getShapeX(0, areaIndices, !!isSub);
 		const y = $$.getShapeY(!!isSub);
 		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
@@ -539,8 +537,10 @@ extend(ChartInternal.prototype, {
 
 		$$.mainCircle.exit().remove();
 
+		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
+
 		$$.mainCircle = $$.mainCircle.enter()
-			.append($$.point("create", this, $$.pointR.bind($$), $$.color))
+			.append(fn)
 			.merge($$.mainCircle)
 			.style("stroke", $$.color)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
@@ -584,12 +584,13 @@ extend(ChartInternal.prototype, {
 
 	updateCircleY() {
 		const $$ = this;
+		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
 
 		$$.circleY = (d, i) => {
 			const id = d.id;
 
 			return $$.isGrouped(id) ?
-				$$.generateGetLinePoints($$.getShapeIndices($$.isLineType))(d, i)[0][1] :
+				getPoints(d, i)[0][1] :
 				$$.getYScale(id)($$.getBaseValue(d));
 		};
 	},
@@ -698,11 +699,9 @@ extend(ChartInternal.prototype, {
 			cy = y;
 		}
 
-		const is = Math.sqrt(
+		return Math.sqrt(
 			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
 		) < (r || this.config.point_sensitivity);
-
-		return is;
 	},
 
 	isWithinStep(that, y) {

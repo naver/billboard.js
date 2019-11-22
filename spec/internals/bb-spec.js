@@ -421,4 +421,64 @@ describe("Interface & initialization", () => {
 			}, 500);
 		});
 	});
+
+	describe("check for background", () => {
+		const args = {
+			data: {
+				columns: [
+					["data1", 300, 350, 300]
+				]
+			},
+			background: {
+				class: "myBgClass",
+				imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg"
+			}
+		};
+
+		it("check for image background", () => {
+			chart = util.generate(args);
+
+			const element = chart.$.main.select(".myBgClass");
+
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.regions);
+			expect(element.empty()).to.be.false;
+			expect(element.attr("href")).to.be.equal(args.background.imgUrl);
+			expect(element.node().tagName).to.be.equal("image");
+		});
+
+		it("check for pie's image background", () => {
+			args.data.type = "pie";
+			chart = util.generate(args);
+
+			const element = chart.$.main.select(".myBgClass");
+
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.chart);
+		});
+
+		it("set option background.color=red", () => {
+			args.data.type = "line";
+			args.background.color = "red";
+			delete args.background.imgUrl;
+		});
+
+		it("check for rect background", () => {
+			chart = util.generate(args);
+
+			const element = chart.$.main.select(".myBgClass");
+
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.regions);
+			expect(element.empty()).to.be.false;
+			expect(element.style("fill")).to.be.equal(args.background.color);
+			expect(element.node().tagName).to.be.equal("rect");
+		});
+
+		it("check for pie's rect background", () => {
+			args.data.type = "pie";
+			chart = util.generate(args);
+
+			const element = chart.$.main.select(".myBgClass");
+
+			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.chart);
+		});
+	});
 });

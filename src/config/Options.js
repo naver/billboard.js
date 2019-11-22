@@ -40,6 +40,26 @@ export default class Options {
 			bindto: "#chart",
 
 			/**
+			 * Set chart background.
+			 * @name background
+			 * @memberof Options
+			 * @property {String} background.class Specify the class name for background element.
+			 * @property {String} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
+			 * @property {String} background.imgUrl Specify the image url string for background.
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
+			 * @example
+			 * background: {
+			 *    class: "myClass",
+			 *    color: "red",
+			 *
+			 *    // Set image url for background.
+			 *    // If specified, 'color' option will be ignored.
+			 *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
+			 * }
+			 */
+			background: {},
+
+			/**
 			 * Set 'clip-path' attribute for chart element
 			 * - **NOTE:**
 			 *  > When is false, chart node element is positioned after the axis node in DOM tree hierarchy.
@@ -578,8 +598,9 @@ export default class Options {
 			 * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
     		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
      		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
+			 * @property {Object} [data.labels.position] Set each dataset position, relative the original.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-			 * @property {NUmber} [data.labels.position.y=0] y coordinate position, relative the original.
+			 * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
 			 * @memberof Options
 			 * @type {Object}
 			 * @default {}
@@ -619,6 +640,12 @@ export default class Options {
 			 *     position: {
 			 *        x: -10,
 			 *        y: 10
+			 *     },
+			 *
+			 *     // or set x, y coordinate position by each dataset
+			 *     position: {
+			 *        data1: {x: 5, y: 5},
+			 *        data2: {x: 10, y: -20}
 			 *     }
 			 *   }
 			 * }
@@ -872,42 +899,63 @@ export default class Options {
 
 			/**
 			 * Set a callback for click event on each data point.<br><br>
-			 * This callback will be called when each data point clicked and will receive d and element as the arguments. d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
+			 * This callback will be called when each data point clicked and will receive `d` and element as the arguments.
+			 * - `d` is the data clicked and element is the element clicked.
+			 * - `element` is the current interacting svg element.
+			 * - In this callback, `this` will be the Chart object.
 			 * @name data․onclick
 			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
 			 * data: {
-			 *     onclick: function(d, element) { ... }
+			 *     onclick: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+			 *        // element - <circle>
+			 *        ...
+			 *     }
 			 * }
 			 */
 			data_onclick: () => {},
 
 			/**
 			 * Set a callback for mouse/touch over event on each data point.<br><br>
-			 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument. d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
+			 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive `d` and `element` as the argument.
+			 * - `d` is the data where mouse cursor moves onto.
+			 * - `element` is the current interacting svg element.
+			 * - In this callback, `this` will be the Chart object.
 			 * @name data․onover
 			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
 			 * data: {
-			 *     onover: function(d) { ... }
+			 *     onover: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+			 *        // element - <circle>
+			 *        ...
+			 *     }
 			 * }
 			 */
 			data_onover: () => {},
 
 			/**
 			 * Set a callback for mouse/touch out event on each data point.<br><br>
-			 * This callback will be called when mouse cursor or via touch moves out each data point and will receive d as the argument. d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
+			 * This callback will be called when mouse cursor or via touch moves out each data point and will receive `d` as the argument.
+			 * - `d` is the data where mouse cursor moves out.
+			 * - `element` is the current interacting svg element.
+			 * - In this callback, `this` will be the Chart object.
 			 * @name data․onout
 			 * @memberof Options
 			 * @type {Function}
 			 * @default function() {}
 			 * @example
 			 * data: {
-			 *     onout: function(d) { ... }
+			 *     onout: function(d, element) {
+			 *        // d - ex) {x: 4, value: 150, id: "data1", index: 4}
+			 *        // element - <circle>
+			 *        ...
+			 *     }
 			 * }
 			 */
 			data_onout: () => {},
@@ -1975,12 +2023,13 @@ export default class Options {
 
 			/**
 			 * Set additional axes for x Axis.
-			 * - **NOTE:** Axis' scale is based on x Axis value
+			 * - **NOTE:** Axis' scale is based on x Axis value if domain option isn't set.
 			 *
 			 * Each axis object should consist with following options:
 			 *
 			 * | Name | Type | Default | Description |
 			 * | --- | --- | --- | --- |
+			 * | domain | Array | - | Set the domain value |
 			 * | tick.outer | Boolean | true | Show outer tick |
 			 * | tick.format | Function | - | Set formatter for tick text |
 			 * | tick.count | Number | - | Set the number of y axis ticks |
@@ -1989,10 +2038,13 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Array}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
 			 * @example
 			 * x: {
 			 *    axes: [
 			 *      {
+			 *        // if set, will not be correlated with the main x Axis domain value
+ 			 *        domain: [0, 1000],
 			 *        tick: {
 			 *          outer: false,
 			 *          format: function(x) {
@@ -2010,6 +2062,7 @@ export default class Options {
 
 			/**
 			 * Set clip-path attribute for y axis element
+			 * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
 			 * @name axis․y․clipPath
 			 * @memberof Options
 			 * @type {Boolean}
@@ -2394,12 +2447,13 @@ export default class Options {
 
 			/**
 			 * Set additional axes for y Axis.
-			 * - **NOTE:** Axis' scale is based on y Axis value
+			 * - **NOTE:** Axis' scale is based on y Axis value if domain option isn't set.
 			 *
 			 * Each axis object should consist with following options:
 			 *
 			 * | Name | Type | Default | Description |
 			 * | --- | --- | --- | --- |
+			 * | domain | Array | - | Set the domain value |
 			 * | tick.outer | Boolean | true | Show outer tick |
 			 * | tick.format | Function | - | Set formatter for tick text |
 			 * | tick.count | Number | - | Set the number of y axis ticks |
@@ -2408,10 +2462,13 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Array}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
 			 * @example
 			 * y: {
 			 *    axes: [
 			 *      {
+			 *        // if set, will not be correlated with the main y Axis domain value
+			 *        domain: [0, 1000],
 			 *        tick: {
 			 *          outer: false,
 			 *          format: function(x) {
@@ -2753,12 +2810,13 @@ export default class Options {
 
 			/**
 			 * Set additional axes for y2 Axis.
-			 * - **NOTE:** Axis' scale is based on y2 Axis value
+			 * - **NOTE:** Axis' scale is based on y2 Axis value if domain option isn't set.
 			 *
 			 * Each axis object should consist with following options:
 			 *
 			 * | Name | Type | Default | Description |
 			 * | --- | --- | --- | --- |
+			 * | domain | Array | - | Set the domain value |
 			 * | tick.outer | Boolean | true | Show outer tick |
 			 * | tick.format | Function | - | Set formatter for tick text |
 			 * | tick.count | Number | - | Set the number of y axis ticks |
@@ -2767,10 +2825,13 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Array}
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.MultiAxes)
+			 * @see [Demo: Domain](https://naver.github.io/billboard.js/demo/#Axis.MultiAxesDomain)
 			 * @example
 			 * y2: {
 			 *    axes: [
 			 *      {
+			 *        // if set, will not be correlated with the main y2 Axis domain value
+			 *        domain: [0, 1000],
 			 *        tick: {
 			 *          outer: false,
 			 *          format: function(x) {
@@ -3111,6 +3172,7 @@ export default class Options {
 			 * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
 			 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
+ 			 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
 			 * @example
 			 *  pie: {
 			 *      label: {
@@ -3149,7 +3211,8 @@ export default class Options {
 			 *      }
 			 *
 			 *      padAngle: 0.1,
-			 *      padding: 0
+			 *      padding: 0,
+			 *      startingAngle: 1
 			 *  }
 			 */
 			pie_label_show: true,
@@ -3161,6 +3224,7 @@ export default class Options {
 			pie_innerRadius: 0,
 			pie_padAngle: 0,
 			pie_padding: 0,
+			pie_startingAngle: 0,
 
 			/**
 			 * Set plugins
@@ -3189,7 +3253,7 @@ export default class Options {
 			 * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
 			 * @property {Number} [gauge.min=0] Set min value of the gauge.
 			 * @property {Number} [gauge.max=100] Set max value of the gauge.
-			 * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2]
+			 * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
 			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
@@ -3248,6 +3312,7 @@ export default class Options {
 			 * @property {Number} [donut.width] Set width of donut chart.
 			 * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
 			 * @property {Number} [donut.padAngle=0] Set padding between data.
+			 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
 			 * @example
 			 *  donut: {
 			 *      label: {
@@ -3271,6 +3336,7 @@ export default class Options {
 			 *      expand: false,
 			 *      width: 10,
 			 *      padAngle: 0.2,
+			 *      startingAngle: 1,
 			 *      title: "Donut Title"
 			 *
 			 *      // title with line break
@@ -3286,6 +3352,7 @@ export default class Options {
 			donut_expand: {},
 			donut_expand_duration: 50,
 			donut_padAngle: 0,
+			donut_startingAngle: 0,
 
 			/**
 			 * Set spline options
@@ -3431,8 +3498,12 @@ export default class Options {
 
 			/**
 			 * Show rectangles inside the chart.<br><br>
-			 * This option accepts array including object that has axis, start, end and class. The keys start, end and class are optional.
-			 * axis must be x, y or y2. start and end should be the value where regions start and end. If not specified, the edge values will be used. If timeseries x axis, date string, Date object and unixtime integer can be used. If class is set, the region element will have it as class.
+			 * This option accepts array including object that has axis, start, end and class.
+			 * The keys start, end and class are optional.
+			 * axis must be x, y or y2. start and end should be the value where regions start and end.
+			 * If not specified, the edge values will be used.
+			 * If timeseries x axis, date string, Date object and unixtime integer can be used.
+			 * If class is set, the region element will have it as class.
 			 * @name regions
 			 * @memberof Options
 			 * @type {Array}

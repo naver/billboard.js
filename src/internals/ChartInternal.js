@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {document, window} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isDefined, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -96,9 +96,9 @@ export default class ChartInternal {
 		const isHidden = () => target.style("display") === "none" || target.style("visibility") === "hidden";
 
 		const isLazy = config.render.lazy || isHidden();
-		const hasObserver = isDefined(MutationObserver);
+		const MutationObserver = window.MutationObserver;
 
-		if (isLazy && hasObserver && config.render.observe !== false && !forced) {
+		if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
 			new MutationObserver((mutation, observer) => {
 				if (!isHidden()) {
 					observer.disconnect();
@@ -224,11 +224,6 @@ export default class ChartInternal {
 			);
 		}
 
-		// when gauge, hide legend // TODO: fix
-		if ($$.hasType("gauge")) {
-			config.legend_show = false;
-		}
-
 		// Init sizes and scales
 		$$.updateSizes();
 		$$.updateScales(true);
@@ -346,6 +341,9 @@ export default class ChartInternal {
 		// oninit callback
 		callFn(config.oninit, $$, $$.api);
 
+		// Set background
+		$$.setBackground();
+
 		$$.redraw({
 			withTransition: false,
 			withTransform: true,
@@ -407,6 +405,31 @@ export default class ChartInternal {
 				texts: $$.mainText
 			}
 		};
+	}
+
+	/**
+	 * Set background element/image
+	 * @private
+	 */
+	setBackground() {
+		const $$ = this;
+		const bg = $$.config.background;
+
+		if (notEmpty(bg)) {
+			const element = $$.svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
+				.insert(bg.imgUrl ? "image" : "rect", ":first-child");
+
+			if (bg.imgUrl) {
+				element.attr("href", bg.imgUrl);
+			} else if (bg.color) {
+				element.style("fill", bg.color);
+			}
+
+			element
+				.attr("class", bg.class || null)
+				.attr("width", "100%")
+				.attr("height", "100%");
+		}
 	}
 
 	smoothLines(el, type) {
@@ -679,7 +702,6 @@ export default class ChartInternal {
 
 		// event rects will redrawn when flow called
 		if (config.interaction_enabled && !flow && wth.EventRect) {
-			$$.redrawEventRect();
 			$$.bindZoomEvent();
 		}
 
@@ -910,7 +932,7 @@ export default class ChartInternal {
 			y = asHalfPixel($$.margin2.top);
 		} else if (target === "legend") {
 			x = $$.margin3.left;
-			y = $$.margin3.top;
+			y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : $$.height + padding;

@@ -26,6 +26,26 @@ export interface ChartOptions {
 		classname?: string;
 	};
 
+	/**
+	 * Set chart background.
+	 */
+	background?: {
+		/**
+		 * Specify the class name for background element.
+		 */
+		class?: string;
+
+		/**
+		 * Specify the fill color for background element. (NOTE: Will be ignored if `imgUrl` option is set.)
+		 */
+		color?: string;
+
+		/**
+		 * Specify the image url string for background.
+		 */
+		imgUrl?: string;
+	};
+
 	size?: {
 		/**
 		 * The desired width of the chart element.
@@ -411,6 +431,11 @@ export interface ChartOptions {
 		 * Sets the gap between pie arcs.
 		 */
 		padding?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 	};
 
 	donut?: {
@@ -437,6 +462,16 @@ export interface ChartOptions {
 		expand?: boolean;
 
 		/**
+		 * Set padding between data.
+		 */
+		padAngle?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
+
+		/**
 		 * Set width of donut chart.
 		 */
 		width?: number;
@@ -448,6 +483,13 @@ export interface ChartOptions {
 	};
 
 	gauge?: {
+		/**
+		 * Whether this should be displayed
+		 * as a full circle instead of a
+		 * half circle.
+		 */
+		fullCircle?: boolean;
+
 		label?: {
 			/**
 			 * Show or hide label on gauge.
@@ -458,12 +500,22 @@ export interface ChartOptions {
 			 * Set formatter for the label on gauge.
 			 */
 			format?(value: any, ratio: number): string;
+
+			/**
+			 * Set customized min/max label text.
+			 */
+			extents?(value: number, isMax: boolean): string | number;
 		};
 
 		/**
 		 * Enable or disable expanding gauge.
 		 */
-		expand?: boolean;
+		expand?: boolean | {
+			/**
+			 * Set the expand transition time in milliseconds.
+			 */
+			duration?: number
+		};
 
 		/**
 		 * Set min value of the gauge.
@@ -474,6 +526,11 @@ export interface ChartOptions {
 		 * Set max value of the gauge.
 		 */
 		max?: number;
+
+		/**
+		 * Set starting angle where data draws.
+		 */
+		startingAngle?: number;
 
 		/**
 		 * Set title of gauge chart. Use `\n` character to enter line break.
@@ -489,13 +546,6 @@ export interface ChartOptions {
 		 * Set width of gauge chart.
 		 */
 		width?: number;
-
-		/**
-		 * Whether this should be displayed
-		 * as a full circle instead of a
-		 * half circle.
-		 */
-		fullCircle?: boolean;
 	};
 
 	spline?: {
@@ -1225,15 +1275,30 @@ export interface Data {
 
 		position?: {
 			/**
-			 * x coordinate position, relative the original.
-			 */
-			x?: number;
+			* Set each dataset position, relative the original.
+			*/
+			[key: string]: {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
 
-			/**
-			 * y coordinate position, relative the original.
-			 */
-			y?: number;
-		};
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			} | {
+				/**
+				 * x coordinate position, relative the original.
+				 */
+				x?: number;
+
+				/**
+				 * y coordinate position, relative the original.
+				 */
+				y?: number;
+			};
+		}
 	};
 
 	/**
@@ -1340,31 +1405,31 @@ export interface Data {
 	 * This callback will be called when each data point clicked and will receive d and element as the arguments.
 	 * - d is the data clicked and element is the element clicked. In this callback, this will be the Chart object.
 	 */
-	onclick?(d: DataItem, element: any): void;
+	onclick?(d: DataItem, element: SVGElement): void;
 
 	/**
 	 * Set a callback for mouse/touch over event on each data point.
 	 * This callback will be called when mouse cursor or via touch moves onto each data point and will receive d as the argument.
 	 * - d is the data where mouse cursor moves onto. In this callback, this will be the Chart object.
 	 */
-	onover?(d: DataItem, element?: any): void;
+	onover?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for mouse/touch event on each data point.
 	 * This callback will be called when mouse cursor moves out each data point and will receive d as the argument.
 	 * - d is the data where mouse cursor moves out. In this callback, this will be the Chart object.
 	 */
-	onout?(d: DataItem, element?: any): void;
+	onout?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for on data selection.
 	 */
-	onselected?(d: DataItem, element?: any): void;
+	onselected?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for on data un-selection.
 	 */
-	onunselected?(d: DataItem, element?: any): void;
+	onunselected?(d: DataItem, element?: SVGElement): void;
 
 	/**
 	 * Set a callback for minimum data

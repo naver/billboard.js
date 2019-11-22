@@ -25,42 +25,81 @@ import {
 import {select as d3Select} from "d3-selection";
 import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
-import {extend, isObjectType, isNumber, isUndefined, notEmpty} from "../internals/util";
+import {extend, getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	getShapeIndices(typeFilter) {
 		const $$ = this;
 		const config = $$.config;
+		const xs = config.data_xs;
+		const hasXs = notEmpty(xs);
 		const indices = {};
-		let i = 0;
+		let i = hasXs ? {} : 0;
 
-		$$.filterTargetsToShow(
-			$$.data.targets.filter(typeFilter, $$)
-		).forEach(d => {
-			for (let j = 0, groups; (groups = config.data_groups[j]); j++) {
-				if (groups.indexOf(d.id) < 0) {
-					continue;
-				}
+		if (hasXs) {
+			getUnique(Object.keys(xs).map(v => xs[v]))
+				.forEach(v => {
+					i[v] = 0;
+					indices[v] = {};
+				});
+		}
 
-				for (let k = 0, row; (row = groups[k]); k++) {
-					if (row in indices) {
-						indices[d.id] = indices[row];
-						break;
+		$$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
+			.forEach(d => {
+				const xKey = d.id in xs ? xs[d.id] : "";
+				const ind = xKey ? indices[xKey] : indices;
+
+				for (let j = 0, groups; (groups = config.data_groups[j]); j++) {
+					if (groups.indexOf(d.id) < 0) {
+						continue;
+					}
+
+					for (let k = 0, row; (row = groups[k]); k++) {
+						if (row in ind) {
+							ind[d.id] = ind[row];
+							break;
+						}
 					}
 				}
-			}
 
-			if (isUndefined(indices[d.id])) {
-				indices[d.id] = i++;
-			}
-		});
-
-		indices.__max__ = i - 1;
+				if (isUndefined(ind[d.id])) {
+					ind[d.id] = xKey ? i[xKey]++ : i++;
+					ind.__max__ = (xKey ? i[xKey] : i) - 1;
+				}
+			});
 
 		return indices;
 	},
 
-	getShapeX(offset, targetsNum, indices, isSub) {
+	/**
+	 * Get indices value based on data ID value
+	 * @param {Object} indices Indices object
+	 * @param {String} id Data id value
+	 * @return {Object} Indices object
+	 * @private
+	 */
+	getIndices(indices, id) {
+		const xs = this.config.data_xs;
+
+		return notEmpty(xs) ?
+			indices[xs[id]] : indices;
+	},
+
+	/**
+	 * Get indices max number
+	 * @param {Object} indices Indices object
+	 * @return {Number} Max number
+	 * @private
+	 */
+	getIndicesMax(indices) {
+		return notEmpty(this.config.data_xs) ?
+			// if is multiple xs, return total sum of xs' __max__ value
+			Object.keys(indices)
+				.map(v => indices[v].__max__ || 0)
+				.reduce((acc, curr) => acc + curr) : indices.__max__;
+	},
+
+	getShapeX(offset, indices, isSub) {
 		const $$ = this;
 		const scale = isSub ? $$.subX : ($$.zoomScale || $$.x);
 		const barPadding = $$.config.bar_padding;
@@ -68,7 +107,9 @@ extend(ChartInternal.prototype, {
 		const halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
 
 		return d => {
-			const index = d.id in indices ? indices[d.id] : 0;
+			const ind = $$.getIndices(indices, d.id);
+			const index = d.id in ind ? ind[d.id] : 0;
+			const targetsNum = (ind.__max__ || 0) + 1;
 			let x = 0;
 
 			if (notEmpty(d.x)) {
@@ -113,44 +154,86 @@ extend(ChartInternal.prototype, {
 		};
 	},
 
-	getShapeOffset(typeFilter, indices, isSub) {
+	/**
+	 * @typedef {object} ShapeOffsetTarget
+	 * @property {string} id - target id
+	 * @property {object[]} rowValues - data point for each row (scaled as necessary)
+	 * @property {object<number, object>} rowValueMapByXValue - each x value is a key,
+	 *   mapped to the rowValue for that x value
+   * @property {number[]} values - value for each rowValue (normalized as necessary)
+	 */
+
+	/**
+	 * @param {function(Object): boolean} typeFilter
+	 * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+	 */
+	getShapeOffsetData(typeFilter) {
 		const $$ = this;
 		const targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)));
-		const targetIds = targets.map(t => t.id);
+		const shapeOffsetTargets = targets.map(target => {
+			let rowValues = target.values;
+
+			if ($$.isStepType(target)) {
+				rowValues = $$.convertValuesToStep(rowValues);
+			}
+			const rowValueMapByXValue = rowValues.reduce((out, value) => {
+				out[Number(value.x)] = value;
+				return out;
+			}, {});
+
+			let values;
+
+			if ($$.isStackNormalized()) {
+				values = rowValues.map(v => $$.getRatio("index", v, true));
+			} else {
+				values = rowValues.map(({value}) => value);
+			}
+
+			return {
+				id: target.id,
+				rowValues,
+				rowValueMapByXValue,
+				values,
+			};
+		});
+		const indexMapByTargetId = targets.reduce((out, {id}, index) => {
+			out[id] = index;
+			return out;
+		}, {});
+
+		return {indexMapByTargetId, shapeOffsetTargets};
+	},
+
+	getShapeOffset(typeFilter, indices, isSub) {
+		const $$ = this;
+		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(typeFilter);
 
 		return (d, idx) => {
+			const ind = $$.getIndices(indices, d.id);
 			const scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
 			const y0 = scale(0);
+			const dataXAsNumber = Number(d.x);
 			let offset = y0;
-			let i = idx;
 
-			targets
+			shapeOffsetTargets
 				.forEach(t => {
-					const rowValues = $$.isStepType(d) ? $$.convertValuesToStep(t.values) : t.values;
-					const values = rowValues.map(v => ($$.isStackNormalized() ? $$.getRatio("index", v, true) : v.value));
+					const rowValues = t.rowValues;
+					const values = t.values;
 
-					if (t.id === d.id || indices[t.id] !== indices[d.id]) {
+					if (t.id === d.id || ind[t.id] !== ind[d.id]) {
 						return;
 					}
 
-					if (targetIds.indexOf(t.id) < targetIds.indexOf(d.id)) {
+					if (indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+						let rowValue = rowValues[idx];
+
 						// check if the x values line up
-						if (isUndefined(rowValues[i]) || +rowValues[i].x !== +d.x) { // "+" for timeseries
-							// if not, try to find the value that does line up
-							i = -1;
-
-							rowValues.forEach((v, j) => {
-								const x1 = v.x.constructor === Date ? +v.x : v.x;
-								const x2 = d.x.constructor === Date ? +d.x : d.x;
-
-								if (x1 === x2) {
-									i = j;
-								}
-							});
+						if (!rowValue || Number(rowValue.x) !== dataXAsNumber) {
+							rowValue = t.rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (i in rowValues && rowValues[i].value * d.value >= 0) {
-							offset += scale(values[i]) - y0;
+						if (rowValue && rowValue.value * d.value >= 0) {
+							offset += scale(values[rowValue.index]) - y0;
 						}
 					}
 				});

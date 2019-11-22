@@ -110,10 +110,13 @@ export default class Axis {
 
 		if (axesConfig.length) {
 			axesConfig.forEach(v => {
-				const tick = v.tick;
+				const tick = v.tick || {};
+				const scale = $$[id].copy();
+
+				v.domain && scale.domain(v.domain);
 
 				axes.push(
-					d3Axis($$[id])
+					d3Axis(scale)
 						.ticks(tick.count)
 						.tickFormat(tick.format || (x => x))
 						.tickValues(tick.values)
@@ -134,7 +137,9 @@ export default class Axis {
 		const config = $$.config;
 
 		Object.keys($$.axesList).forEach(id => {
-			const range = $$[id].range();
+			const axesConfig = config[`axis_${id}_axes`];
+			const scale = $$[id].copy();
+			const range = scale.range();
 
 			$$.axesList[id].forEach((v, i) => {
 				const axisRange = v.scale().range();
@@ -154,8 +159,10 @@ export default class Axis {
 						.style("visibility", config[`axis_${id}_show`] ? "visible" : "hidden")
 						.call(v);
 				} else {
+					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
+
 					$$.xAxis.helper.transitionise(g)
-						.call(v.scale($$[id]));
+						.call(v.scale(scale));
 				}
 
 				g.attr("transform", $$.getTranslate(id, i + 1));
@@ -605,6 +612,8 @@ export default class Axis {
 			} else if (targetCount === 2) {
 				tickValues = [values[0], values[values.length - 1]];
 			} else if (targetCount > 2) {
+				const isCategorized = this.owner.isCategorized();
+
 				count = targetCount - 2;
 				start = values[0];
 				end = values[values.length - 1];
@@ -615,7 +624,11 @@ export default class Axis {
 
 				for (i = 0; i < count; i++) {
 					tickValue = +start + interval * (i + 1);
-					tickValues.push(forTimeSeries ? new Date(tickValue) : tickValue);
+					tickValues.push(
+						forTimeSeries ? new Date(tickValue) : (
+							isCategorized ? Math.round(tickValue) : tickValue
+						)
+					);
 				}
 
 				tickValues.push(end);
@@ -731,7 +744,7 @@ export default class Axis {
 		this.updateLabels(wth.Transition);
 
 		// show/hide if manual culling needed
-		if ((wth.UpdateXDomain || wth.UpdateXAxis) && targetsToShow.length) {
+		if ((wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length) {
 			this.setCulling();
 		}
 
@@ -750,15 +763,18 @@ export default class Axis {
 		const $$ = this.owner;
 		const config = $$.config;
 
-		["x", "y", "y2"].forEach(type => {
+		["subx", "x", "y", "y2"].forEach(type => {
 			const axis = $$.axes[type];
-			const toCull = config[`axis_${type}_tick_culling`];
+
+			// subchart x axis should be aligned with x axis culling
+			const id = type === "subx" ? "x" : type;
+			const toCull = config[`axis_${id}_tick_culling`];
 
 			if (axis && toCull) {
 				const tickText = axis.selectAll(".tick text");
 				const tickValues = sortValue(tickText.data());
 				const tickSize = tickValues.length;
-				const cullingMax = config[`axis_${type}_tick_culling_max`];
+				const cullingMax = config[`axis_${id}_tick_culling_max`];
 				let intervalForCulling;
 
 				if (tickSize) {

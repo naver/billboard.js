@@ -123,6 +123,8 @@ describe("ZOOM", function() {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
 						if (spyOnZoomStart.called) {
+							expect(spyOnZoomStart.args[0][0].type).to.be.equal("mousedown");
+
 							util.fireEvent(eventRect, "mousemove", {
 								clientX: 100,
 								clientY: 150
@@ -138,17 +140,17 @@ describe("ZOOM", function() {
 				return new Promise((resolve, reject) => {
 					setTimeout(() => {
 						if (spyOnZoom.called) {
-							if (spyOnZoom.called) {
-								util.fireEvent(eventRect, "mouseup", {
-									clientX: 100,
-									clientY: 150
-								}, chart);
+							expect(spyOnZoom.args[0][0]).to.be.deep.equal([0, 3]);
 
-								// call explicitly, due to mouseup isn't firing well programmatically.
-								chart.internal.onZoomEnd();
+							util.fireEvent(eventRect, "mouseup", {
+								clientX: 100,
+								clientY: 150
+							}, chart);
 
-								resolve("--> onzoom callback called!");
-							}
+							// call explicitly, due to mouseup isn't firing well programmatically.
+							chart.internal.onZoomEnd();
+
+							resolve("--> onzoom callback called!");
 						};
 					}, 500);
 				})
@@ -651,7 +653,7 @@ describe("ZOOM", function() {
 				rotated: true
 			},
 				zoom: {
-				rescale: true,
+					rescale: true,
 					enabled: {
 						type: "drag"
 					}
@@ -870,6 +872,46 @@ describe("ZOOM", function() {
 			chart.toggle();
 
 			checkDomain(chart.internal.zoomScale);
+		});
+	});
+
+	describe("zoom rescale culling", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+				},
+				axis: {
+					y: {
+						tick: {
+							culling: {
+								max: 3
+							}
+						}
+					}
+				},
+				zoom: {
+					rescale: true,
+					enabled: true
+				}
+			};
+		});
+
+		it("check y Axis culling after zoom", () => {
+			chart.zoom([4,5]);
+
+			const tickTexts = chart.$.main.selectAll(`.${CLASS.axisY} .tick text`)
+				.filter(function() { return this.style.display === "block"});
+
+			tickTexts.each(function() {
+				console.log(this);
+			})
+
+
+			expect(tickTexts.size()).to.be.equal(args.axis.y.tick.culling.max);
 		});
 	});
 });

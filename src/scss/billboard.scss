@@ -161,6 +161,7 @@
 /*-- Tooltip --*/
 .bb-tooltip-container {
   z-index: 10;
+	user-select: none;
 }
 
 .bb-tooltip {

@@ -151,6 +151,16 @@ export interface Chart {
 		 * @param axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as data.axes.
 		 */
 		axes(axes?: { [key: string]: string }): { [key: string]: string };
+
+		/**
+		 * Get the minimum data value bound to the chart.
+		 */
+		min(): [{ x: number, value: number, id: string, index: number }];
+
+		/**
+		 * Get the maximum data value bound to the chart.
+		 */
+		max(): [{ x: number, value: number, id: string, index: number }];
 	};
 
 	axis: {
@@ -213,6 +223,42 @@ export interface Chart {
 		 * @param enabled If enabled is true, the feature of zooming will be enabled. If false is given, it will be disabled.
 		 */
 		enable(enabled: boolean): void;
+
+		/**
+		 * Set or get x Axis minimum zoom range value.
+		 * @param min Minimum value to set for zoom
+		 */
+		min(min?: number): number;
+
+		/**
+		 * Set or get x Axis maximum zoom range value.
+		 * @param max Maximum value to set for zoom
+		 */
+		max(max?: number): number;
+
+		/**
+		 * Set zoom range.
+		 * @param range Zoom range object value
+		 */
+		range(range?: { min?: number, max?: number }): { min: number, max: number }
+	};
+
+	tooltip: {
+		/**
+		 * Hide tooltip
+		 */
+		hide(): void;
+
+		/**
+		 * Show tooltip
+		 * @param args Option object to specify specific tooltip
+		 */
+		show(args: {
+			index?: number,
+			data?: { x?: number | Date, index?: number, id?: string, value?: number },
+			mouse?: number[],
+			x?: number | Date,
+		}): void
 	};
 
 	/**
