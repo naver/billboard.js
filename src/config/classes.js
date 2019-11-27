@@ -8,6 +8,7 @@
  */
 export default {
 	arc: "bb-arc",
+	arcLabelLine: "bb-arc-label-line",
 	arcs: "bb-arcs",
 	area: "bb-area",
 	areas: "bb-areas",
@@ -98,5 +99,6 @@ export default {
 	zoomRect: "bb-zoom-rect",
 	EXPANDED: "_expanded_",
 	SELECTED: "_selected_",
-	INCLUDED: "_included_"
+	INCLUDED: "_included_",
+	TextOverlapping: "text-overlapping"
 };

@@ -915,6 +915,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
+		const hasGauge = $$.hasType("gauge");
 		let padding = 0;
 		let x;
 		let y;
@@ -931,7 +932,7 @@ export default class ChartInternal {
 			y = asHalfPixel($$.margin2.top);
 		} else if (target === "legend") {
 			x = $$.margin3.left;
-			y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);
+			y = $$.margin3.top + (hasGauge ? 10 : 0);
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : $$.height + padding;

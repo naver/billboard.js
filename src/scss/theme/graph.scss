@@ -133,7 +133,13 @@ rect.bb-circle, use.bb-circle {
         }
     }
 
-    &.bb-defocused { opacity: 0.3 !important; }
+    &.bb-defocused {
+		opacity: 0.3 !important;
+
+		.text-overlapping {
+            opacity: .05 !important;
+        }
+	}
 }
 
 /*-- Region --*/
@@ -294,7 +300,7 @@ rect.bb-circle, use.bb-circle {
 .bb-chart-arcs {
     .bb-chart-arcs-background {
         fill: #e0e0e0;
-        stroke: none;
+        stroke: #fff;
     }
 
     .bb-chart-arcs-gauge-unit {
@@ -326,6 +332,11 @@ rect.bb-circle, use.bb-circle {
 
     path {
         stroke: #fff;
+    }
+
+    rect {
+        stroke: white;
+        stroke-width: 1;
     }
 
     text {

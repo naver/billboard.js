@@ -3709,7 +3709,52 @@ d3.select(".chart_area")
 					}
 				}
 			}
-		]
+		],
+		GaugeTypeMulti: {
+			options: {
+				data: {
+					columns: [
+						["data0", -100],
+						["data1", -50],
+						["data2", -25],
+						["data3", 0],
+						["data4", 25],
+						["data5", 50],
+						["data6", 100]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "multi",
+					max: 100, // 100 is default
+					min: -100, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					arcs: {
+						minWidth: 5
+					},
+				},
+				color: {
+					pattern: ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#4B0082", "#EE82EE"],
+					threshold: {
+						values: [-50, -25, 0, 25, 50, 75, 100]
+					}
+				},
+				size: {
+					height: 300
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["data7", -68],
+								["data8", 72],
+							]
+						});
+					}, 2000),
+				];
+			}
+		},
 	},
 	LineChartOptions: {
 		HidePoints: {

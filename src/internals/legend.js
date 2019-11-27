@@ -345,6 +345,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const isTouch = $$.inputType === "touch";
+		const hasGauge = $$.hasType("gauge");
 
 		item
 			.attr("class", function(id) {
@@ -374,12 +375,21 @@ extend(ChartInternal.prototype, {
 				.on("mouseout", function(id) {
 					if (!callFn(config.legend_item_onout, $$, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, false);
+
+						if (hasGauge) {
+							$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
+						}
+
 						$$.api.revert();
 					}
 				})
 				.on("mouseover", function(id) {
 					if (!callFn(config.legend_item_onover, $$, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, true);
+
+						if (hasGauge) {
+							$$.markOverlapped(id, $$, `.${CLASS.gaugeValue}`);
+						}
 
 						if (!$$.transiting && $$.isTargetToShow(id)) {
 							$$.api.focus(id);
@@ -670,7 +680,7 @@ extend(ChartInternal.prototype, {
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)
-				.style("stroke", $$.color)
+				.style("stroke", $$.levelColor ? id => $$.levelColor($$.cache[id].values[0].value) : $$.color)
 				.attr("x1", x1ForLegendTile)
 				.attr("y1", yForLegendTile)
 				.attr("x2", x2ForLegendTile)
