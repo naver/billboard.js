@@ -97,6 +97,10 @@ extend(ChartInternal.prototype, {
 		return this.hasTypeOf("Arc", targets, exclude);
 	},
 
+	hasMultiArcGauge() {
+		return this.config.gauge_type === "multi";
+	},
+
 	isLineType(d) {
 		const id = isString(d) ? d : d.id;
 

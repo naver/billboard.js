@@ -45,10 +45,17 @@ extend(ChartInternal.prototype, {
 		const radius = config.pie_innerRadius;
 		const padding = config.pie_padding;
 		const w = config.gauge_width || config.donut_width;
+		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
+			5;
 
-		$$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2;
+		$$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2 * ($$.hasType("gauge") ? 0.85 : 1);
 		$$.radius = $$.radiusExpanded * 0.95;
 		$$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
+		$$.gaugeArcWidth = w ||
+			(gaugeArcWidth <= $$.radius - $$.innerRadius ?
+				$$.radius - $$.innerRadius :
+				(gaugeArcWidth <= $$.radius ? gaugeArcWidth : $$.radius)
+			);
 
 		const innerRadius = radius || (
 			padding ? padding * ($$.innerRadiusRatio + 0.1) : 0
@@ -89,7 +96,15 @@ extend(ChartInternal.prototype, {
 			return null;
 		}
 
-		if (d.data && $$.isGaugeType(d.data)) {
+		const hasGauge = $$.hasType("gauge");
+		const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
+		const gMin = config.gauge_min;
+		const gMax = config.gauge_max;
+		const gStart = config.gauge_startingAngle;
+
+		let index = 0;
+
+		if (d.data && hasGauge && !$$.hasMultiArcGauge()) {
 			const totalSum = $$.getTotalDataSum();
 
 			// if gauge_max less than totalSum, make totalSum to max value
@@ -97,21 +112,22 @@ extend(ChartInternal.prototype, {
 				config.gauge_max = totalSum;
 			}
 
-			const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
-			const gStart = config.gauge_startingAngle;
-			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+			const gEnd = radius * (totalSum / (gMax - gMin));
 
 			pie = $$.pie
 				.startAngle(gStart)
 				.endAngle(gEnd + gStart);
 		}
 
-		pie($$.filterTargetsToShow()).forEach(t => {
-			if (!found && t.data.id === d.data.id) {
-				found = true;
-				d = t;
-			}
-		});
+		pie($$.filterTargetsToShow())
+			.forEach(t => {
+				if (!found && t.data.id === d.data.id) {
+					found = true;
+					d = t;
+					d.index = index;
+				}
+				index++;
+			});
 
 		if (isNaN(d.startAngle)) {
 			d.startAngle = 0;
@@ -121,17 +137,37 @@ extend(ChartInternal.prototype, {
 			d.endAngle = d.startAngle;
 		}
 
+		if (d.data && hasGauge && $$.hasMultiArcGauge()) {
+			const maxValue = $$.getMinMaxData().max[0].value;
+
+			// if gauge_max less than maxValue, make maxValue to max value
+			if (maxValue > config.gauge_max) {
+				config.gauge_max = maxValue;
+			}
+
+			const gTic = radius / (gMax - gMin);
+			const gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
+
+			d.startAngle = gStart;
+			d.endAngle = gStart + gTic * gValue;
+		}
+
 		return found ? d : null;
 	},
 
 	getSvgArc() {
 		const $$ = this;
+		const hasGaugeType = $$.hasType("gauge");
+		const hasMultiArcGauge = hasGaugeType && $$.hasMultiArcGauge();
 		const ir = $$.getInnerRadius();
-		let arc = d3Arc()
-			.outerRadius($$.radius)
-			.innerRadius(isNumber(ir) ? ir : 0);
+		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 
-		const newArc = (d, withoutUpdate) => {
+		let arc = d3Arc()
+			.outerRadius(d => (hasMultiArcGauge ? ($$.radius - singleArcWidth * d.index) : $$.radius))
+			.innerRadius(d => (hasMultiArcGauge ? $$.radius - singleArcWidth * (d.index + 1) :
+				isNumber(ir) ? ir : 0));
+
+		const newArc = function(d, withoutUpdate) {
 			let path = "M 0 0";
 
 			if (d.value || d.data) {
@@ -159,13 +195,28 @@ extend(ChartInternal.prototype, {
 
 	getSvgArcExpanded(rate) {
 		const $$ = this;
+		const newRate = rate || 1;
+		const hasGaugeType = $$.hasType("gauge");
+		const hasMultiArcGauge = hasGaugeType && $$.hasMultiArcGauge();
+		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+		const expandWidth = Math.min($$.radiusExpanded * newRate - $$.radius,
+			singleArcWidth * 0.8 - (1 - newRate) * 100
+		);
+
 		const arc = d3Arc()
-			.outerRadius($$.radiusExpanded * (rate || 1));
+			.outerRadius(d => (hasMultiArcGauge ?
+				$$.radius - singleArcWidth * d.index + expandWidth : $$.radiusExpanded * newRate))
+			.innerRadius(d => (hasMultiArcGauge ?
+				$$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius));
 
 		return function(d) {
 			const updated = $$.updateAngle(d);
 
-			return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
+			if (hasMultiArcGauge) {
+				return updated ? arc(updated) : "M 0 0";
+			} else {
+				return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
+			}
 		};
 	},
 
