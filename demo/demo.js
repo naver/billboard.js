@@ -2518,12 +2518,7 @@ d3.select(".chart_area")
 						["data4", 30, 35, 20, 38, 19, 28, 5.6, 8, 5.5, 22],
 						["data5", 13, 10, 10, 20, 8, 5, 20, 13, 18.5, 9.8]
 					],
-					labels:{
-						overlap: {
-							extent: 8,
-							area : 3
-						}
-					}
+					labels: true
 				},
 				_plugins: [{
 					textoverlap: {
