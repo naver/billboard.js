@@ -3295,6 +3295,7 @@ export default class Options {
 			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
+			 * @property {GaugeTypes} [gauge.type] Set type of gauge to be displayed.
 			 * @example
 			 *  gauge: {
 			 *      fullCircle: false,
@@ -3318,6 +3319,7 @@ export default class Options {
 			 *      },
 			 *      min: -100,
 			 *      max: 200,
+				*      type: "single"
 			 *      title: "Title Text",
 			 *      units: "%",
 			 *      width: 10,
@@ -3331,6 +3333,7 @@ export default class Options {
 			gauge_label_format: undefined,
 			gauge_min: 0,
 			gauge_max: 100,
+			gauge_type: "single",
 			gauge_startingAngle: -1 * Math.PI / 2,
 			gauge_label_extents: undefined,
 			gauge_title: "",

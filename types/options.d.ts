@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import { Axis } from "./axis";
-import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
+import { ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray } from "./types";
 import Stanford from "./plugin/stanford/index";
 import { Chart } from "./chart";
 
@@ -533,6 +533,11 @@ export interface ChartOptions {
 			 */
 			duration?: number
 		};
+
+		/**
+		 * Set type of the gauge.
+		 */
+		type?: GaugeTypes;
 
 		/**
 		 * Set min value of the gauge.
