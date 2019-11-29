@@ -319,20 +319,23 @@ export interface Chart {
 	 */
 	load(args: {
 		url?: string;
-		json?: {};
+		json?: [{ [key: string]: string }];
 		rows?: PrimitiveArray[];
 		columns?: PrimitiveArray[];
 		data?: DataArray;
-		xs?: { [key: string]: string };
 		names?: { [key: string]: string };
+		xs?: { [key: string]: string };
 		classes?: { [key: string]: string };
 		categories?: string[];
 		axes?: { [key: string]: string };
 		colors?: { [key: string]: string };
+		headers?: { [key: string]: string };
+		keys?: { [key: string]: string };
+		mimeType?: string;
 		type?: string;
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
-		done?(): any;
+		done?(): () => any;
 	}): void;
 
 	/**
