@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191127121438
+ * @version 1.11.0-nightly-20191129121527
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -25138,9 +25138,6 @@ var Options_Options = function Options() {
      *  - `j` is the sub index of the data point where the label is shown.<br><br>
      * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
     	 * @property {String|Object} [data.labels.colors] Set label text colors.
-     * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
-     		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
-      		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
      * @property {Object} [data.labels.position] Set each dataset position, relative the original.
      * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
      * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
@@ -39293,7 +39290,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.0-nightly-20191127121438",
+  version: "1.11.0-nightly-20191129121527",
 
   /**
    * Generate chart
@@ -39392,7 +39389,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.0-nightly-20191127121438
+ * @version 1.11.0-nightly-20191129121527
  */
 
 
