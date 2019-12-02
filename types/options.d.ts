@@ -214,6 +214,11 @@ export interface ChartOptions {
 		};
 
 		/**
+		 * Set if min or max value will be 0 on line chart.
+		 */
+		zerobased?: boolean;
+
+		/**
 		 * If set, used to set a css class on each line.
 		 */
 		classes?: string[];
