@@ -2991,6 +2991,7 @@ export default class Options {
 			 * - step-before
 			 * - step-after
 			 * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+			 * @property {Boolean} [line.zerobased=true] Set if min or max value will be 0 on line chart.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
@@ -3008,11 +3009,14 @@ export default class Options {
 			 *      // show data points for only indicated datas
 			 *      point: [
 			 *          "data1", "data3"
-			 *      ]
+			 *      ],
+			 *
+			 *      zerobased: false
 			 *  }
 			 */
 			line_connectNull: false,
 			line_step_type: "step",
+			line_zerobased: false,
 			line_classes: undefined,
 			line_point: true,
 
