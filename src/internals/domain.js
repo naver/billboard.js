@@ -83,7 +83,7 @@ extend(ChartInternal.prototype, {
 
 		const center = config[`axis_${axisId}_center`];
 		let isZeroBased = ($$.hasType("bar", yTargets) && config.bar_zerobased) || ($$.hasType("area", yTargets) && config.area_zerobased) ||
-						($$.hasType("line", yTargets) && config.line_zerobased);
+						($$.hasType("line", yTargets) && config.line_zerobased) || ($$.hasType("scatter", yTargets) && config.scatter_zerobased);
 		const isInverted = config[`axis_${axisId}_inverted`];
 		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
 		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;

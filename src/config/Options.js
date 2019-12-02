@@ -3021,6 +3021,32 @@ export default class Options {
 			line_point: true,
 
 			/**
+				* Set scatter options
+				* @name scatter
+				* @memberof Options
+				* @type {Object}
+				* @property {Boolean} [scatter.zerobased=true] Set if min or max value will be 0 on scatter chart.
+				* @example
+				*  scatter: {
+				*      connectNull: true,
+				*      step: {
+				*          type: "step-after"
+				*      },
+				*
+				*      // hide all data points ('point.show=false' also has similar effect)
+				*      point: false,
+				*
+				*      // show data points for only indicated datas
+				*      point: [
+				*          "data1", "data3"
+				*      ],
+				*
+				*      zerobased: false
+				*  }
+				*/
+			scatter_zerobased: false,
+
+			/**
 			 * Set bar options
 			 * @name bar
 			 * @memberof Options
