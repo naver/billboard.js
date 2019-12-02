@@ -229,6 +229,13 @@ export interface ChartOptions {
 		point?: boolean | string[];
 	};
 
+	scatter?: {
+		/**
+		 * Set if min or max value will be 0 on scatter chart.
+		 */
+		zerobased?: boolean;
+	};
+
 	area?: {
 		/**
 		 * Set background area above the data chart line.
