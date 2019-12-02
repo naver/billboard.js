@@ -214,6 +214,11 @@ export interface ChartOptions {
 		};
 
 		/**
+		 * Set if min or max value will be 0 on line chart.
+		 */
+		zerobased?: boolean;
+
+		/**
 		 * If set, used to set a css class on each line.
 		 */
 		classes?: string[];
@@ -222,6 +227,13 @@ export interface ChartOptions {
 		 * Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
 		 */
 		point?: boolean | string[];
+	};
+
+	scatter?: {
+		/**
+		 * Set if min or max value will be 0 on scatter chart.
+		 */
+		zerobased?: boolean;
 	};
 
 	area?: {
@@ -308,6 +320,11 @@ export interface ChartOptions {
 		 * Set the max bubble radius value
 		 */
 		maxR?: ((d: {}) => number) | number;
+
+		/**
+		 * Set if min or max value will be 0 on bubble chart.
+		 */
+		zerobased?: boolean;
 	};
 
 	radar?: {

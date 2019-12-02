@@ -118,6 +118,64 @@ describe("SHAPE BUBBLE", () => {
 				chart.internal.getBubbleR({value})
 			);
 		});
+
+		it("set options [bubble.zerobased=true]", () => {
+			args.bubble = {
+				zerobased: true
+			};
+		});
+
+		it("should be zerobased", () => {
+			chart = util.generate(args);
+
+			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickElements = tickNodes.nodes();
+
+			const translateValues = [
+				"translate(0,426)",
+				"translate(0,377)",
+				"translate(0,328)",
+				"translate(0,279)",
+				"translate(0,230)",
+				"translate(0,181)",
+				"translate(0,131)",
+				"translate(0,82)",
+				"translate(0,33)"
+			];
+
+			tickNodes.each((data, index) => {
+				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+			});
+		});
+
+		it("set options [bubble.zerobased=false]", () => {
+			args.bubble = {
+				zerobased: false
+			};
+		});
+
+		it("should not be zerobased", () => {
+			chart = util.generate(args);
+
+			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickElements = tickNodes.nodes();
+
+			const translateValues = [
+				"translate(0,390)",
+				"translate(0,345)",
+				"translate(0,300)",
+				"translate(0,255)",
+				"translate(0,209)",
+				"translate(0,164)",
+				"translate(0,119)",
+				"translate(0,74)",
+				"translate(0,29)"
+			];
+
+			tickNodes.each((data, index) => {
+				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+			});
+		});
 	});
 
 	describe("with dimension data", () => {
