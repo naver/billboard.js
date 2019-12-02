@@ -1444,6 +1444,60 @@ describe("DATA", () => {
 
 				expect(texts.size()).to.be.equal(data.length);
 			});
+
+			it("should be be zerobased", () => {
+							args.scatter = { zerobased: true };
+							chart = util.generate(args);
+
+							const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+							const tickElements = tickNodes.nodes();
+
+							const translateValues = [
+											"translate(0,426)",
+											"translate(0,389)",
+											"translate(0,352)",
+											"translate(0,314)",
+											"translate(0,277)",
+											"translate(0,240)",
+											"translate(0,202)",
+											"translate(0,165)",
+											"translate(0,127)",
+											"translate(0,90)",
+											"translate(0,53)",
+											"translate(0,15)"
+							];
+
+							tickNodes.each((data, index) => {
+											expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+							});
+			});
+
+			it("should not be zerobased", () => {
+							args.scatter = { zerobased: false };
+							chart = util.generate(args);
+
+							const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+							const tickElements = tickNodes.nodes();
+
+							const translateValues = [
+											"translate(0,402)",
+											"translate(0,367)",
+											"translate(0,331)",
+											"translate(0,296)",
+											"translate(0,260)",
+											"translate(0,225)",
+											"translate(0,189)",
+											"translate(0,154)",
+											"translate(0,118)",
+											"translate(0,83)",
+											"translate(0,47)",
+											"translate(0,12)"
+							];
+
+							tickNodes.each((data, index) => {
+											expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+							});
+			});
 		});
 
 		describe("on scatter + line type", () => {
