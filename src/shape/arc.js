@@ -716,22 +716,37 @@ extend(ChartInternal.prototype, {
 			.style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
 
 		if (hasGauge) {
+			let index = 0;
 			const isFullCircle = config.gauge_fullCircle;
 			const startAngle = -1 * Math.PI / 2;
 			const endAngle = (isFullCircle ? -4 : -1) * startAngle;
 
 			isFullCircle && text && text.attr("dy", `${Math.round($$.radius / 14)}`);
 
-			$$.arcs.select(`.${CLASS.chartArcsBackground}`)
-				.attr("d", () => {
+			const backgroundArc = $$.arcs.select(`g.${CLASS.chartArcsBackground}`)
+				.selectAll(`path.${CLASS.chartArcsBackground}`)
+				.data($$.data.targets);
+
+			backgroundArc.enter()
+				.append("path")
+				.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
+				.merge(backgroundArc)
+				.attr("d", d1 => {
+					if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) {
+						return "M 0 0";
+					}
 					const d = {
 						data: [{value: config.gauge_max}],
 						startAngle,
-						endAngle
+						endAngle,
+						index: index++
 					};
 
 					return $$.getArc(d, true, true);
 				});
+
+			backgroundArc.exit()
+				.remove();
 
 			$$.arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
 				.attr("dy", ".75em")
