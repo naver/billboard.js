@@ -456,8 +456,10 @@ var billboardDemo = {
 		var html = "<div id='"+ id +"'></div>";
 		var code = {
 			import: [
+				'// base css',
 				'import "billboard.js/dist/theme/insight.css";',
-				'import bb from "billboard.js";'
+				'// Packaged build with d3',
+				'import bb from "billboard.js/dist/billboard.pkgd";'
 			].join("\r\n"),
 			body: bodyCode || [
 				'bb.generate({',
@@ -481,20 +483,7 @@ var billboardDemo = {
 		  template: type === "JS" ? "javascript" : "typescript",
 		  tags: ["chart", "billborad.js", "d3", "data visualization"] ,
 		  dependencies: {
-			"billboard.js": "*",
-			"d3-axis": "^1.0.12",
-			"d3-brush": "^1.0.6",
-			"d3-color": "^1.2.3",
-			"d3-drag": "^1.2.3",
-			"d3-dsv": "^1.1.1",
-			"d3-ease": "^1.0.5",
-			"d3-interpolate": "^1.3.2",
-			"d3-scale": "^3.0.0",
-			"d3-selection": "^1.4.0",
-			"d3-shape": "^1.3.5",
-			"d3-time-format": "^2.1.3",
-			"d3-transition": "^1.2.0",
-			"d3-zoom": "^1.7.3"
+			"billboard.js": "*"
 		  }
 		};
 
