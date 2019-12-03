@@ -428,7 +428,7 @@ var billboardDemo = {
 		try {
 			if (func) {
 				code.data.push("\r\n\r\n" + func.toString()
-					.replace(/[\t\s]*function\s*\(chart\) \{[\r\n\t\s]*/, "")
+					.replace(/[\t\s]*function\s*\(chart[\d+]?\) \{[\r\n\t\s]*/, "")
 					.replace(/}$/, "")
 					.replace(/chart.timer = \[[\r\n\t\s]*/, "")
 					.replace(/\t{5}/g, "")
