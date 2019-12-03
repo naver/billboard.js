@@ -240,7 +240,7 @@ extend(ChartInternal.prototype, {
 			const raw = $$.inputType === "touch" || $$.hasType("radar");
 
 			if (!raw) {
-				top += $$.height / 2;
+				top += $$.hasType("gauge") ? $$.height : $$.height / 2;
 				left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
 		} else {
@@ -264,7 +264,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		if (top + tHeight > $$.currentHeight) {
-			top -= tHeight + 30;
+			top -= $$.hasType("gauge") ? tHeight * 3 : tHeight + 30;
 		}
 
 		if (top < 0) {
