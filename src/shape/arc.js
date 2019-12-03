@@ -494,6 +494,10 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const main = $$.main;
 		const hasInteraction = config.interaction_enabled;
+		const hasGaugeType = $$.hasType("gauge");
+		const hasMultiArcGauge = hasGaugeType && $$.hasMultiArcGauge();
+		let mainArcLabelLine;
+		let arcLabelLines;
 
 		let mainArc = main.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arc}`)
@@ -518,6 +522,53 @@ extend(ChartInternal.prototype, {
 				this._current = d;
 			})
 			.merge(mainArc);
+
+		if (hasMultiArcGauge) {
+			arcLabelLines = main.selectAll(`.${CLASS.arcs}`)
+				.selectAll(`.${CLASS.arcLabelLine}`)
+				.data($$.arcData.bind($$));
+
+			mainArcLabelLine = arcLabelLines.enter()
+				.append("rect")
+				.attr("class", d => `${CLASS.arcLabelLine} ${CLASS.target} ${CLASS.target}-${d.data.id}`)
+				.merge(arcLabelLines);
+
+			if ($$.filterTargetsToShow($$.data.targets).length === 1) {
+				mainArcLabelLine.style("display", "none");
+			}	else {
+				mainArcLabelLine
+					.style("fill", d => ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)))
+					.style("display", config.gauge_label_show ? "" : "none")
+					.each(function(d) {
+						let lineLength = 0;
+						const lineThickness = 2;
+						let x = 0;
+						let y = 0;
+						let transform = "";
+
+						if ($$.hiddenTargetIds.indexOf(d.data.id) < 0) {
+							const updated = $$.updateAngle(d);
+							const innerLineLength = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length *
+								(updated.index + 1);
+							const lineAngle = updated.endAngle - Math.PI / 2;
+							const arcInnerRadius = $$.radius - innerLineLength;
+							const linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : (1 / arcInnerRadius));
+
+							lineLength = $$.radiusExpanded - $$.radius + innerLineLength;
+							x = Math.cos(linePositioningAngle) * arcInnerRadius;
+							y = Math.sin(linePositioningAngle) * arcInnerRadius;
+							transform = `rotate(${lineAngle * 180 / Math.PI}, ${x}, ${y})`;
+						}
+						d3Select(this)
+							.attr("x", x)
+							.attr("y", y)
+							.attr("width", lineLength)
+							.attr("height", lineThickness)
+							.attr("transform", transform)
+							.style("stroke-dasharray", `0, ${lineLength + lineThickness}, 0`);
+					});
+			}
+		}
 
 		mainArc
 			.attr("transform", d => (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""))

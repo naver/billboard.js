@@ -332,6 +332,11 @@ rect.bb-circle, use.bb-circle {
         stroke: #fff;
     }
 
+    rect {
+        stroke: white;
+        stroke-width: 1;
+    }
+
     text {
         fill: #fff;
         font-size: 13px;

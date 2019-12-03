@@ -8,6 +8,7 @@
  */
 export default {
 	arc: "bb-arc",
+	arcLabelLine: "bb-arc-label-line",
 	arcs: "bb-arcs",
 	area: "bb-area",
 	areas: "bb-areas",
