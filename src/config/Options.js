@@ -3320,7 +3320,10 @@ export default class Options {
 			 *      max: 200,
 			 *      title: "Title Text",
 			 *      units: "%",
-			 *      width: 10
+			 *      width: 10,
+				*      arcs: {
+				*          minWidth: 5
+				*      }
 			 *  }
 			 */
 			gauge_fullCircle: false,
@@ -3333,6 +3336,7 @@ export default class Options {
 			gauge_title: "",
 			gauge_units: undefined,
 			gauge_width: undefined,
+			gauge_arcs_minWidth: 5,
 			gauge_expand: {},
 			gauge_expand_duration: 50,
 

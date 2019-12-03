@@ -563,6 +563,13 @@ export interface ChartOptions {
 		 * Set width of gauge chart.
 		 */
 		width?: number;
+
+		/**
+		 * Set minimal width of gauge arcs until the innerRadius disappears.
+		 */
+		arcs?: {
+			minWidth: number;
+		}
 	};
 
 	spline?: {

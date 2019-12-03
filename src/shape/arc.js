@@ -46,7 +46,7 @@ extend(ChartInternal.prototype, {
 		const padding = config.pie_padding;
 		const w = config.gauge_width || config.donut_width;
 		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
-			5;
+			config.gauge_arcs_minWidth;
 
 		$$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2 * ($$.hasType("gauge") ? 0.85 : 1);
 		$$.radius = $$.radiusExpanded * 0.95;
