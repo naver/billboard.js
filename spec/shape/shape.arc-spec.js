@@ -612,6 +612,40 @@ describe("SHAPE ARC", () => {
 				expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
 			});
 		});
+
+		it("set new columns", () => {
+			args.data.columns = [
+				["padded1", 1],
+				["padded2", 14],
+				["padded3", 15],
+				["padded4", 16],
+				["padded5", 50],
+			];
+			expect(args.data.columns[1][1]).to.be.equal(14);
+		});
+
+		it("each overlapped text should be hidden", () => {
+			const arc = chart.$.arc;
+
+			chart.focus("padded3");
+
+			const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+			const gaugeValuesNodes = gaugeValues.nodes();
+
+			expect(gaugeValuesNodes[0].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[1].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
+			expect(gaugeValuesNodes[2].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[3].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
+			expect(gaugeValuesNodes[4].className.baseVal).to.be.equal("bb-gauge-value");
+
+			chart.focus("padded4");
+
+			expect(gaugeValuesNodes[0].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[1].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[2].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
+			expect(gaugeValuesNodes[3].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[4].className.baseVal).to.be.equal("bb-gauge-value");
+		});
 	});
 
 	describe("check for interaction", () => {
