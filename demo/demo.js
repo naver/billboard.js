@@ -3153,8 +3153,8 @@ d3.select(".chart_area")
 						observe: false
 					}
 				},
-				func: function(chart) {
-					setTimeout(function() { chart.flush(); }, 1000)
+				func: function(chart2) {
+					setTimeout(function() { chart2.flush(); }, 1000)
 				}
 			}
 		],
