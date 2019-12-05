@@ -320,6 +320,11 @@ export interface ChartOptions {
 		 * Set the max bubble radius value
 		 */
 		maxR?: ((d: {}) => number) | number;
+
+		/**
+		 * Set if min or max value will be 0 on bubble chart.
+		 */
+		zerobased?: boolean;
 	};
 
 	radar?: {
