@@ -2582,9 +2582,52 @@ d3.select(".chart_area")
 					}
 				}]
 			}
+		},
+		BubbleCompare: {
+			description: "Compare data 3-dimensional ways: x-axis, y-axis &s bubble-size.<br>&rarr; <b>Value x:</b> population density / <b>Value y:</b> Area / <b>Value z:</b> population.<br><br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					"type": "bubble",
+					"xs": {
+						"Country-A": "x0",
+						"Country-B": "x1",
+						"Country-C": "x2",
+						"Country-D": "x3",
+						"Country-E": "x4"
+					},
+					// value x: population density
+					// value y: Area
+					// value z: population
+					"columns": [
+						["x0", 30],
+						["x1", 515],
+						["x2", 319],
+						["x3", 337],
+						["x4", 164],
+						["Country-A", {"y": 9631418, "z": 295734134}],
+						["Country-B", {"y": 100210, "z": 51635256}],
+						["Country-C", {"y": 547030, "z": 67022000}],
+						["Country-D", {"y": 377835, "z": 127417244}],
+						["Country-E", {"y": 464, "z": 76177}],
+					]
+				},
+				axis: {
+					x: {padding: {left: 100, right: 20}},
+					y: {padding: {top: 150, bottom: 100}},
+				},
+				tooltip: {
+					format: {
+						value: function(x) {
+						  return x.toLocaleString();
+					      }
+					}
+				},
+				_plugins: [{
+					bubblecompare: {minR: 11, maxR: 74, expandScale: 1.1}
+				}]
+			}
 		}
 	},
-
 	Point: {
 		RectanglePoints: {
 			options: {
