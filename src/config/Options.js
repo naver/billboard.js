@@ -2991,7 +2991,7 @@ export default class Options {
 			 * - step-before
 			 * - step-after
 			 * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-			 * @property {Boolean} [line.zerobased=true] Set if min or max value will be 0 on line chart.
+			 * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
@@ -3025,7 +3025,7 @@ export default class Options {
 				* @name scatter
 				* @memberof Options
 				* @type {Object}
-				* @property {Boolean} [scatter.zerobased=true] Set if min or max value will be 0 on scatter chart.
+				* @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
 				* @example
 				*  scatter: {
 				*      connectNull: true,
