@@ -2991,6 +2991,7 @@ export default class Options {
 			 * - step-before
 			 * - step-after
 			 * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+			 * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
@@ -3008,13 +3009,42 @@ export default class Options {
 			 *      // show data points for only indicated datas
 			 *      point: [
 			 *          "data1", "data3"
-			 *      ]
+			 *      ],
+			 *
+			 *      zerobased: false
 			 *  }
 			 */
 			line_connectNull: false,
 			line_step_type: "step",
+			line_zerobased: false,
 			line_classes: undefined,
 			line_point: true,
+
+			/**
+				* Set scatter options
+				* @name scatter
+				* @memberof Options
+				* @type {Object}
+				* @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+				* @example
+				*  scatter: {
+				*      connectNull: true,
+				*      step: {
+				*          type: "step-after"
+				*      },
+				*
+				*      // hide all data points ('point.show=false' also has similar effect)
+				*      point: false,
+				*
+				*      // show data points for only indicated datas
+				*      point: [
+				*          "data1", "data3"
+				*      ],
+				*
+				*      zerobased: false
+				*  }
+				*/
+			scatter_zerobased: false,
 
 			/**
 			 * Set bar options
@@ -3089,6 +3119,7 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
+			 * @property {Boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
 			 * @example
 			 *  bubble: {
 			 *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
@@ -3100,10 +3131,12 @@ export default class Options {
 			 *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
 			 *          ...
 			 *          return Math.sqrt(d.value * 2);
-			 *      }
+			 *      },
+			 *      zerobased: false
 			 *  }
 			 */
 			bubble_maxR: 35,
+			bubble_zerobased: false,
 
 			/**
 			 * Set area options
