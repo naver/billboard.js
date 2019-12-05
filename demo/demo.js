@@ -2528,6 +2528,43 @@ d3.select(".chart_area")
 					}
 				}]
 			}
+		},
+	 BubbleCompare: {
+						description: 'bubble chart expansion',
+						options: {
+										data: {
+														"type": "bubble",
+														"xs": {
+																		"United States": "x0",
+																		"Korea": "x1",
+																		"France": "x2",
+																		"Japan": "x3",
+																		"Andorra": "x4"
+														},
+														// value x: population density
+														// value y: Area
+														// value z: population
+														"columns": [
+																		["x0", 30],
+																		["x1", 515],
+																		["x2", 319],
+																		["x3", 337],
+																		["x4", 164],
+																		["United States", {"y": 9631418, "z": 295734134}],
+																		["Korea", {"y": 100210, "z": 51635256}],
+																		["France", {"y": 547030, "z": 67022000}],
+																		["Japan", {"y": 377835, "z": 127417244}],
+																		["Andorra", {"y": 464, "z": 76177}],
+														]
+										},
+										axis: {
+														x: {padding: {left: 100, right: 20}},
+														y: {padding: {top: 150, bottom: 100}},
+										},
+										_plugins: [{
+														bubblecompare: {minR: 11, maxR: 74, expandScale: 1.1}
+										}]
+						}
 		}
 	},
 

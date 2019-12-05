@@ -1,0 +1,75 @@
+import {select} from "d3-selection";
+import Plugin from "../Plugin";
+
+export default class BubbleCompare extends Plugin {
+				static version = `0.0.1`;
+
+				constructor(options) {
+					super(options);
+
+					return this;
+				}
+
+				$init() {
+					const {$$} = this;
+
+					$$.findClosest = this.findClosest.bind(this);
+					$$.getBubbleR = this.getBubbleR.bind(this);
+					$$.pointExpandedR = this.pointExpandedR.bind(this);
+				}
+
+				pointExpandedR(d) {
+					const baseR = this.getBubbleR(d);
+					const {expandScale} = this.options;
+
+					BubbleCompare.raiseFocusedBubbleLayer(d);
+					this.changeCursorPoint();
+
+					return baseR * (expandScale || 1);
+				}
+
+				static raiseFocusedBubbleLayer(d) {
+					if (d.raise) select(d.node().parentNode.parentNode).raise();
+				}
+
+				changeCursorPoint() {
+					this.$$.svg.select(`.bb-event-rect`).style("cursor", "pointer");
+				}
+
+				findClosest(values, pos) {
+					const {$$} = this;
+
+					return values
+						.filter(v => v && !$$.isBarType(v.id))
+						.reduce((acc, cur) => {
+							const d = $$.dist(cur, pos);
+
+							return d < this.getBubbleR(cur) ? cur : acc;
+						}, 0);
+				}
+
+				getBubbleR(d) {
+					const {minR, maxR} = this.options;
+					const curVal = this.getZData(d);
+
+					if (!curVal) return minR;
+
+					const [min, max] = this.$$.data.targets.reduce(
+						([accMin, accMax], cur) => {
+							const val = this.getZData(cur.values[0]);
+
+							return [Math.min(accMin, val), Math.max(accMax, val)];
+						},
+						[10000, 0]
+					);
+					const size = min > 0 && max === min ? 0 : curVal / max;
+
+					return Math.abs(size) * (maxR - minR) + minR;
+				}
+
+				getZData(d) {
+					return this.$$.isBubbleZType(d) ?
+						this.$$.getBubbleZData(d.value, "z") :
+						d.value;
+				}
+}
