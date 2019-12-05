@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191204121822
+ * @version 1.11.0-nightly-20191205121754
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -5530,6 +5530,7 @@ var Options_Options = function Options() {
      * - step-before
      * - step-after
      * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+     * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
      * @example
      *  line: {
      *      connectNull: true,
@@ -5547,13 +5548,42 @@ var Options_Options = function Options() {
      *      // show data points for only indicated datas
      *      point: [
      *          "data1", "data3"
-     *      ]
+     *      ],
+     *
+     *      zerobased: false
      *  }
      */
     line_connectNull: !1,
     line_step_type: "step",
+    line_zerobased: !1,
     line_classes: undefined,
     line_point: !0,
+
+    /**
+    	* Set scatter options
+    	* @name scatter
+    	* @memberof Options
+    	* @type {Object}
+    	* @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+    	* @example
+    	*  scatter: {
+    	*      connectNull: true,
+    	*      step: {
+    	*          type: "step-after"
+    	*      },
+    	*
+    	*      // hide all data points ('point.show=false' also has similar effect)
+    	*      point: false,
+    	*
+    	*      // show data points for only indicated datas
+    	*      point: [
+    	*          "data1", "data3"
+    	*      ],
+    	*
+    	*      zerobased: false
+    	*  }
+    	*/
+    scatter_zerobased: !1,
 
     /**
      * Set bar options
@@ -5628,6 +5658,7 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
+     * @property {Boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
      * @example
      *  bubble: {
      *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
@@ -5639,10 +5670,12 @@ var Options_Options = function Options() {
      *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
      *          ...
      *          return Math.sqrt(d.value * 2);
-     *      }
+     *      },
+     *      zerobased: false
      *  }
      */
     bubble_maxR: 35,
+    bubble_zerobased: !1,
 
     /**
      * Set area options
@@ -6463,7 +6496,9 @@ extend(ChartInternal_ChartInternal.prototype, {
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
         center = config["axis_".concat(axisId, "_center")],
-        isZeroBased = $$.hasType("bar", yTargets) && config.bar_zerobased || $$.hasType("area", yTargets) && config.area_zerobased,
+        isZeroBased = ["area", "bar", "bubble", "line", "scatter"].some(function (v) {
+      return $$.hasType(v, yTargets) && config["".concat(v, "_zerobased")];
+    }),
         isInverted = config["axis_".concat(axisId, "_inverted")],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
@@ -14229,7 +14264,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.0-nightly-20191204121822",
+  version: "1.11.0-nightly-20191205121754",
 
   /**
    * Generate chart
@@ -14328,7 +14363,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.0-nightly-20191204121822
+ * @version 1.11.0-nightly-20191205121754
  */
 
 
