@@ -5,8 +5,8 @@
 VERSION="$(node -pe "require('./package.json').version")-nightly-`date '+%Y%m%d%H%M%S'`"
 
 setup_git() {
-    git config --global user.email "travis@travis-ci.org"
-    git config --global user.name "Travis CI"
+    git config --global user.email "alberto.park@gmail.com"
+    git config --global user.name "netil"
 
     # Remove existing "origin"
     git remote rm origin
