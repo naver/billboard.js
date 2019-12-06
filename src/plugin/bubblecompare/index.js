@@ -1,6 +1,31 @@
 import {select} from "d3-selection";
 import Plugin from "../Plugin";
 
+/**
+	* Bubble compare diagram plugin
+	* - **NOTE:**
+	*   - Plugins aren't built-in. Need to be loaded or imported to be used.
+	* @class plugin-bubblecompare
+	* @param {Object} options bubble compare plugin options
+	* @extends Plugin
+	* @return {BubbleCompare}
+	* @example
+	*  var chart = bb.generate({
+	*     data: {
+	*        columns: [ ... ],
+	*        type: "bubble"
+	*     }
+	*     ...
+	*     plugins: [
+	*        new bb.plugin.bubblecompare({
+	*          minR: 11,
+	*          maxR: 74,
+	*          expandScale: 1.1
+	*        }),
+	*     ]
+	*  });
+	*/
+
 export default class BubbleCompare extends Plugin {
 				static version = `0.0.1`;
 
@@ -20,12 +45,12 @@ export default class BubbleCompare extends Plugin {
 
 				pointExpandedR(d) {
 					const baseR = this.getBubbleR(d);
-					const {expandScale} = this.options;
+					const {expandScale = 1} = this.options;
 
 					BubbleCompare.raiseFocusedBubbleLayer(d);
 					this.changeCursorPoint();
 
-					return baseR * (expandScale || 1);
+					return baseR * expandScale;
 				}
 
 				static raiseFocusedBubbleLayer(d) {
