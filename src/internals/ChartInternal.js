@@ -436,10 +436,9 @@ export default class ChartInternal {
 		if (type === "grid") {
 			el.each(function() {
 				const g = d3Select(this);
-				const [x1, x2, y1, y2] = ["x1", "x2", "y1", "y2"]
-					.map(v => Math.ceil(g.attr(v)));
 
-				g.attr({x1, x2, y1, y2});
+				["x1", "x2", "y1", "y2"]
+					.forEach(v => g.attr(v, Math.ceil(g.attr(v))));
 			});
 		}
 	}
@@ -659,7 +658,7 @@ export default class ChartInternal {
 		$$.updateCircleY();
 
 		// xgrid focus
-		$$.updateXgridFocus();
+		$$.updategridFocus();
 
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)

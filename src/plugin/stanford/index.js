@@ -88,7 +88,7 @@ export default class Stanford extends Plugin {
 		// override on config values & methods
 		$$.config.data_xSort = false;
 		$$.isMultipleX = () => true;
-		$$.showXGridFocus = () => {};
+		$$.showGridFocus = () => {};
 		$$.labelishData = d => d.values;
 		$$.opacityForCircle = () => 1;
 

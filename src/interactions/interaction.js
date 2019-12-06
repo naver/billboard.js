@@ -282,7 +282,7 @@ extend(ChartInternal.prototype, {
 
 		if (isTooltipGrouped) {
 			$$.showTooltip(selectedData, context);
-			$$.showXGridFocus(selectedData);
+			$$.showGridFocus(selectedData);
 
 			if (!isSelectionEnabled || isSelectionGrouped) {
 				return;
@@ -298,7 +298,7 @@ extend(ChartInternal.prototype, {
 				}
 
 				if (!isTooltipGrouped) {
-					$$.hideXGridFocus();
+					$$.hideGridFocus();
 					$$.hideTooltip();
 
 					!isSelectionGrouped && $$.expandCirclesBars(index);
@@ -316,7 +316,7 @@ extend(ChartInternal.prototype, {
 
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
-					$$.showXGridFocus(d);
+					$$.showGridFocus(d);
 
 					$$.unexpandCircles();
 					selected.each(d => $$.expandCirclesBars(index, d.id));
@@ -370,7 +370,7 @@ extend(ChartInternal.prototype, {
 		$$.expandCirclesBars(closest.index, closest.id, true);
 
 		// Show xgrid focus line
-		$$.showXGridFocus(selectedData);
+		$$.showGridFocus(selectedData);
 
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
@@ -391,7 +391,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
-		$$.hideXGridFocus();
+		$$.hideGridFocus();
 		$$.hideTooltip();
 		$$._handleLinkedCharts(false);
 		$$.unexpandCircles();
@@ -658,7 +658,9 @@ extend(ChartInternal.prototype, {
 		const selector = `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
 		const eventRect = $$.main.select(selector).node();
 		const {width, left, top} = eventRect.getBoundingClientRect();
-		const x = left + (mouse ? mouse[0] : 0) + (isMultipleX ? 0 : (width / 2));
+		const x = left + (mouse ? mouse[0] : 0) + (
+			isMultipleX || $$.config.axis_rotated ? 0 : (width / 2)
+		);
 		const y = top + (mouse ? mouse[1] : 0);
 		const params = {
 			screenX: x,

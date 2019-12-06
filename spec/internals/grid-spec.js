@@ -492,4 +492,158 @@ describe("GRID", function() {
 			});
 		});
 	});
+
+	describe("Focus grid lines", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 350, 300, 0, 0, 0],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "area",
+					axes: {
+						data1: "y",
+						data2: "y2"
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				},
+				tooltip: {
+					grouped: false
+				},
+				grid: {
+					focus: {
+						show: true,
+						y: true,
+						edge: true
+					}
+				}
+			};
+		});
+
+		const checkFocusGridPosition = expectedPositions => {
+			chart.$.grid.selectAll("line").each(function(d, i) {
+				["x1", "y1", "x2", "y2"].forEach(v => {
+					expect(+this.getAttribute(v)).to.be.equal(expectedPositions[i][v]);
+				});
+			});
+		}
+
+		it("check for y Axis based edge focus grid line", () => {
+			// to show y Axis based focus grid line
+			chart.tooltip.show({
+				data: { index: 2, value: 300 }
+			});
+
+			checkFocusGridPosition([
+				{ x1: 226, y1: 95, x2: 226, y2: 426 }, // xgrid-focus
+				{ x1: 0, y1: 95, x2: 226, y2: 95 }, // ygrid-focus
+			]);
+		});
+
+		it("check for y2 Axis based edge focus grid line", () => {
+			// to show y2 Axis based focus grid line
+			chart.tooltip.show({
+				data: { index: 2, id: "data2", value: 140 }
+			});
+
+			checkFocusGridPosition([
+				{ x1: 226, y1: 156, x2: 226, y2: 426 }, // xgrid-focus
+				{ x1: 226, y1: 156, x2: 560, y2: 156 }, // ygrid-focus
+			]);
+		});
+
+		it("set options args.grid.focus.edge=false", () => {
+			args.grid.focus.edge = false;
+		});
+
+		it("check for y Axis based non-edge focus grid line", () => {
+			// to show y Axis based focus grid line
+			chart.tooltip.show({
+				data: { index: 2, value: 300 }
+			});
+
+			checkFocusGridPosition([
+				{ x1: 226, y1: 0, x2: 226, y2: 426 }, // xgrid-focus
+				{ x1: 0, y1: 95, x2: 560, y2: 95 }, // ygrid-focus
+			]);
+		});
+
+		it("check for y2 Axis based non-edge focus grid line", () => {
+			// to show y2 Axis based focus grid line
+			chart.tooltip.show({
+				data: { index: 2, id: "data2", value: 140 }
+			});
+
+			checkFocusGridPosition([
+				{ x1: 226, y1: 0, x2: 226, y2: 426 }, // xgrid-focus
+				{ x1: 0, y1: 156, x2: 560, y2: 156 }, // ygrid-focus
+			]);
+		});
+
+		it("set options axis.rotated=true", () => {
+			args.axis.rotated = true;
+			args.grid.focus.edge = true;
+		});
+
+		it("check for y Axis based edge focus grid line", () => {
+			// to show y Axis based focus grid line
+			chart.tooltip.show({
+				x: 2,
+				mouse: [375.5, 39.5]
+			});
+
+			checkFocusGridPosition([
+				{ x1: 0, y1: 162, x2: 376, y2: 162 }, // xgrid-focus
+				{ x1: 376, y1: 0, x2: 376, y2: 162 }, // ygrid-focus
+			]);
+		});
+
+		it("check for y2 Axis based edge focus grid line", () => {
+			// to show y2 Axis based focus grid line
+			chart.tooltip.show({
+				x: 2,
+				mouse: [459.5, 38.5]
+			});
+
+			checkFocusGridPosition([
+				{ x1: 0, y1: 162, x2: 460, y2: 162 }, // xgrid-focus
+				{ x1: 460, y1: 162, x2: 460, y2: 400 }, // ygrid-focus
+			]);
+		});
+
+		it("set options args.grid.focus.edge=false", () => {
+			args.grid.focus.edge = false;
+		});
+
+		it("check for y Axis based non-edge focus grid line", () => {
+			// to show y Axis based focus grid line
+			chart.tooltip.show({
+				x: 2,
+				mouse: [375.5, 39.5]
+			});
+
+			checkFocusGridPosition([
+				{ x1: 0, y1: 162, x2: 590, y2: 162 }, // xgrid-focus
+				{ x1: 376, y1: 0, x2: 376, y2: 400 }, // ygrid-focus
+			]);
+		});
+
+		it("check for y2 Axis based non-edge focus grid line", () => {
+			// to show y2 Axis based focus grid line
+			chart.tooltip.show({
+				x: 2,
+				mouse: [459.5, 38.5]
+			});
+
+			checkFocusGridPosition([
+				{ x1: 0, y1: 162, x2: 590, y2: 162 }, // xgrid-focus
+				{ x1: 460, y1: 0, x2: 460, y2: 400 }, // ygrid-focus
+			]);
+		});
+	});
 });

@@ -32,6 +32,7 @@ $font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
 
 .bb-legend-item-title,
 .bb-xgrid-focus,
+.bb-ygrid-focus,
 .bb-ygrid,
 .bb-event-rect,
 .bb-bars path {
@@ -75,7 +76,7 @@ $font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
     }
 }
 
-.bb-xgrid-focus line {
+.bb-xgrid-focus line, .bb-ygrid-focus line {
     stroke: #ddd;
 }
 

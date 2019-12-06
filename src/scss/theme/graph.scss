@@ -37,6 +37,7 @@ $axis-color: #8c8c8c;
 
 .bb-legend-item-title,
 .bb-xgrid-focus,
+.bb-ygrid-focus,
 .bb-ygrid,
 .bb-event-rect,
 .bb-bars path {
@@ -80,7 +81,7 @@ $axis-color: #8c8c8c;
     }
 }
 
-.bb-xgrid-focus line {
+.bb-xgrid-focus line, .bb-ygrid-focus line {
     stroke: #ffb6b6;
     stroke-dasharray: 3px;
 }
