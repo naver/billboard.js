@@ -227,10 +227,12 @@ extend(ChartInternal.prototype, {
 	transformForArcLabel(d) {
 		const $$ = this;
 		const config = $$.config;
+		const hasGauge = $$.hasType("gauge");
+		const hasMultiArcGauge = hasGauge && $$.hasMultiArcGauge();
 		const updated = $$.updateAngle(d);
 		let translate = "";
 
-		if (updated && (!$$.hasType("gauge") || $$.data.targets.length > 1)) {
+		if (updated && (!hasMultiArcGauge && $$.hasMultiTargets())) {
 			const c = this.svgArc.centroid(updated);
 			const x = isNaN(c[0]) ? 0 : c[0];
 			const y = isNaN(c[1]) ? 0 : c[1];
@@ -247,6 +249,13 @@ extend(ChartInternal.prototype, {
 			}
 
 			translate = `translate(${x * ratio},${y * ratio})`;
+		} else if (updated && hasMultiArcGauge && $$.hasMultiTargets()) {
+			const y1 = Math.sin(updated.endAngle - Math.PI / 2);
+
+			const x = Math.cos(updated.endAngle - Math.PI / 2) * ($$.radiusExpanded + 25);
+			const y = y1 * ($$.radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+
+			translate = `translate(${x},${y})`;
 		}
 
 		return translate;
@@ -696,7 +705,8 @@ extend(ChartInternal.prototype, {
 				.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null))
 				.call($$.textForArcLabel.bind($$))
 				.attr("transform", $$.transformForArcLabel.bind($$))
-				.style("font-size", d => ($$.isGaugeType(d.data) && $$.data.targets.length === 1 ? `${Math.round($$.radius / 5)}px` : null))
+				.style("font-size", d => ($$.isGaugeType(d.data) && !$$.hasMultiTargets() ? `${Math.round($$.radius / 5)}px` : null))
+				.attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : "")
 				.transition()
 				.duration(duration)
 				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
