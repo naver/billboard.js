@@ -306,7 +306,7 @@ THE SOFTWARE.
 [badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
 [badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
-[badge-gzip-size]: http://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
+[badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
 [badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
 [badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
 [badge-semantic-release]: https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg
