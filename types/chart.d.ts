@@ -463,8 +463,9 @@ export interface Chart {
 
 	/**
 	 * Force to redraw.
+	 * @param soft For soft redraw.
 	 */
-	flush(): void;
+	flush(soft?: boolean): void;
 
 	/**
 	 * Reset the chart object and remove element and events completely.

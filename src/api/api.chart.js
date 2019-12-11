@@ -35,20 +35,19 @@ extend(Chart.prototype, {
 	 * @instance
 	 * @memberof Chart
 	 * @param {Boolean} [soft] For soft redraw.
-	 * @param {Boolean} [isFromResize] For soft redraw.
 	 * @example
 	 * chart.flush();
 	 *
 	 * // for soft redraw
 	 * chart.flush(true);
 	 */
-	flush(soft, isFromResize) {
+	flush(soft, _isFromResize) {
 		const $$ = this.internal;
 
 
 		if ($$.rendered) {
-			// reset possible zoom scale
-			if (isFromResize) {
+			// reset possible zoom scale when is called from resize event
+			if (_isFromResize) {
 				$$.brush && $$.brush.updateResize();
 			} else {
 				// re-update config info
