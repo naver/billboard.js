@@ -19,6 +19,7 @@
 
 .bb-legend-item-tile,
 .bb-xgrid-focus,
+.bb-ygrid-focus,
 .bb-ygrid,
 .bb-event-rect,
 .bb-bars path {
@@ -64,8 +65,6 @@
 .bb-xgrid, .bb-ygrid {
   stroke-dasharray: 3 3;
 }
-
-.bb-xgrid-focus {}
 
 /*-- Text on Chart --*/
 .bb-text {

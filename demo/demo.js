@@ -2069,6 +2069,60 @@ var demos = {
 	},
 
 	Grid: {
+		FocusedGridLines: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						axes: {
+							data1: "y",
+							data2: "y2"
+						}
+					},
+					axis: {
+						y2: {
+							show: true
+						}
+					},
+					tooltip: {
+						grouped: false
+					},
+					grid: {
+						focus: {
+							show: true,
+							y: true,
+							edge: true
+						}
+					}
+				},
+				style: [
+					"#focusedGridLines_1 line.bb-xgrid-focus, #focusedGridLines_1 line.bb-ygrid-focus { stroke: blue; stroke-dasharray: 2 2; }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "scatter"
+					},
+					tooltip: {
+						grouped: false
+					},
+					grid: {
+						focus: {
+							show: true,
+							y: true
+						}
+					}
+				}
+			}
+		],
 		GridLines: {
 			options: {
 				data: {

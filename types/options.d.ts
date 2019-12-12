@@ -1100,9 +1100,21 @@ export interface Grid {
 
 	focus?: {
 		/**
+		 * Show edged focus grid line.
+		 * **NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+		 */
+		edge?: boolean;
+
+		/**
 		 * Show grids when focus.
 		 */
 		show?: boolean;
+
+		/**
+		 * Show y coordinate focus grid line.
+		 * **NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+		 */
+		y?: boolean;
 	};
 
 	lines?: {
