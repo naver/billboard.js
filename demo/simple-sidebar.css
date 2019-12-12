@@ -371,3 +371,5 @@ div.row {
 /* Background */
 .myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
 
+/* FocusedGridLines */
+#focusedGridLines_1 line.bb-xgrid-focus, #focusedGridLines_1 line.bb-ygrid-focus { stroke: blue; stroke-dasharray: 2 2; }

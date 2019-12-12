@@ -2858,7 +2858,9 @@ export default class Options {
 			 * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
 			 *  This option accepts array including object that has value, text, position and class.
 			 * @property {Number} [y.ticks=10] Number of y grids to be shown.
-			 * @property {Boolean} [focus.show=true] Show grids when focus.
+			 * @property {Boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+			 * @property {Boolean} [focus.show=true] Show grid line when focus.
+			 * @property {Boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
 			 * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
@@ -2885,7 +2887,11 @@ export default class Options {
 			 *   },
 			 *   front: true,
 			 *   focus: {
-			 *      show: false
+			 *      show: false,
+			 *
+			 *      // Below options are available when 'tooltip.grouped=false' option is set
+			 *      edge: true,
+			 *      y: true
 			 *   },
 			 *   lines: {
 			 *      front: false
@@ -2898,7 +2904,9 @@ export default class Options {
 			grid_y_show: false,
 			grid_y_lines: [],
 			grid_y_ticks: 10,
+			grid_focus_edge: false,
 			grid_focus_show: true,
+			grid_focus_y: false,
 			grid_front: false,
 			grid_lines_front: true,
 
@@ -2917,21 +2925,21 @@ export default class Options {
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
 			 * @property {String} [point.type="circle"] The type of point to be drawn
 			 * - **NOTE:**
-			 *  - If chart has 'bubble' type, only circle can be used.
-			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
+			 *   - If chart has 'bubble' type, only circle can be used.
+			 *   - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
-			 *  - circle
-			 *  - rectangle
+			 *   - circle
+			 *   - rectangle
 			 * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
 			 * - **NOTE:**
-			 *  - This is an `experimental` feature and can have some unexpected behaviors.
-			 *  - If chart has 'bubble' type, only circle can be used.
-			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
+			 *   - This is an `experimental` feature and can have some unexpected behaviors.
+			 *   - If chart has 'bubble' type, only circle can be used.
+			 *   - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
-			 *  - circle
-			 *  - rectangle
-			 *  - svg shape tag interpreted as string<br>
-			 *    (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+			 *   - circle
+			 *   - rectangle
+			 *   - svg shape tag interpreted as string<br>
+			 *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
 			 * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
 			 * @example
 			 *  point: {

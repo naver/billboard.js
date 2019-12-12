@@ -90,6 +90,7 @@ export default {
 	xgridLines: "bb-xgrid-lines",
 	xgrids: "bb-xgrids",
 	ygrid: "bb-ygrid",
+	ygridFocus: "bb-ygrid-focus",
 	ygridLine: "bb-ygrid-line",
 	ygridLines: "bb-ygrid-lines",
 	ygrids: "bb-ygrids",
