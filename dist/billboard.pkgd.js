@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191206010955
+ * @version 1.11.0-nightly-20191212122109
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -17429,6 +17429,7 @@ function axisLeft(scale) {
   xgridLines: "bb-xgrid-lines",
   xgrids: "bb-xgrids",
   ygrid: "bb-ygrid",
+  ygridFocus: "bb-ygrid-focus",
   ygridLine: "bb-ygrid-line",
   ygridLines: "bb-ygrid-lines",
   ygrids: "bb-ygrids",
@@ -22150,21 +22151,9 @@ function () {
     key: "smoothLines",
     value: function smoothLines(el, type) {
       type === "grid" && el.each(function () {
-        var g = src_select(this),
-            _map = ["x1", "x2", "y1", "y2"].map(function (v) {
-          return Math.ceil(g.attr(v));
-        }),
-            _map2 = _slicedToArray(_map, 4),
-            x1 = _map2[0],
-            x2 = _map2[1],
-            y1 = _map2[2],
-            y2 = _map2[3];
-
-        g.attr({
-          x1: x1,
-          x2: x2,
-          y1: y1,
-          y2: y2
+        var g = src_select(this);
+        ["x1", "x2", "y1", "y2"].forEach(function (v) {
+          return g.attr(v, Math.ceil(g.attr(v)));
         });
       });
     }
@@ -22282,7 +22271,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updateXgridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updategridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Generate redraw list
@@ -25617,7 +25606,9 @@ var Options_Options = function Options() {
      * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
      *  This option accepts array including object that has value, text, position and class.
      * @property {Number} [y.ticks=10] Number of y grids to be shown.
-     * @property {Boolean} [focus.show=true] Show grids when focus.
+     * @property {Boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+     * @property {Boolean} [focus.show=true] Show grid line when focus.
+     * @property {Boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
      * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
      * @default undefined
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
@@ -25644,7 +25635,11 @@ var Options_Options = function Options() {
      *   },
      *   front: true,
      *   focus: {
-     *      show: false
+     *      show: false,
+     *
+     *      // Below options are available when 'tooltip.grouped=false' option is set
+     *      edge: true,
+     *      y: true
      *   },
      *   lines: {
      *      front: false
@@ -25657,7 +25652,9 @@ var Options_Options = function Options() {
     grid_y_show: !1,
     grid_y_lines: [],
     grid_y_ticks: 10,
+    grid_focus_edge: !1,
     grid_focus_show: !0,
+    grid_focus_y: !1,
     grid_front: !1,
     grid_lines_front: !0,
 
@@ -25676,21 +25673,21 @@ var Options_Options = function Options() {
      * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
      * @property {String} [point.type="circle"] The type of point to be drawn
      * - **NOTE:**
-     *  - If chart has 'bubble' type, only circle can be used.
-     *  - For IE, non circle point expansions are not supported due to lack of transform support.
+     *   - If chart has 'bubble' type, only circle can be used.
+     *   - For IE, non circle point expansions are not supported due to lack of transform support.
      * - **Available Values:**
-     *  - circle
-     *  - rectangle
+     *   - circle
+     *   - rectangle
      * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
      * - **NOTE:**
-     *  - This is an `experimental` feature and can have some unexpected behaviors.
-     *  - If chart has 'bubble' type, only circle can be used.
-     *  - For IE, non circle point expansions are not supported due to lack of transform support.
+     *   - This is an `experimental` feature and can have some unexpected behaviors.
+     *   - If chart has 'bubble' type, only circle can be used.
+     *   - For IE, non circle point expansions are not supported due to lack of transform support.
      * - **Available Values:**
-     *  - circle
-     *  - rectangle
-     *  - svg shape tag interpreted as string<br>
-     *    (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+     *   - circle
+     *   - rectangle
+     *   - svg shape tag interpreted as string<br>
+     *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
      * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
      * @example
      *  point: {
@@ -28061,13 +28058,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         isSelectionGrouped = config.data_selection_grouped,
         isTooltipGrouped = config.tooltip_grouped,
         selectedData = $$.getAllValuesOnIndex(index);
-    isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showXGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function () {
-      src_select(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideXGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
+    isTooltipGrouped && ($$.showTooltip(selectedData, context), $$.showGridFocus(selectedData), !isSelectionEnabled || isSelectionGrouped) || $$.main.selectAll(".".concat(config_classes.shape, "-").concat(index)).each(function () {
+      src_select(this).classed(config_classes.EXPANDED, !0), isSelectionEnabled && eventRect.style("cursor", isSelectionGrouped ? "pointer" : null), isTooltipGrouped || ($$.hideGridFocus(), $$.hideTooltip(), !isSelectionGrouped && $$.expandCirclesBars(index));
     }).filter(function (d) {
       return $$.isWithinShape(this, d);
     }).call(function (selected) {
       var d = selected.data();
-      isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showXGridFocus(d), $$.unexpandCircles(), selected.each(function (d) {
+      isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d)) && eventRect.style("cursor", "pointer"), isTooltipGrouped || ($$.showTooltip(d, context), $$.showGridFocus(d), $$.unexpandCircles(), selected.each(function (d) {
         return $$.expandCirclesBars(index, d.id);
       }));
     });
@@ -28092,7 +28089,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         return $$.addName(d);
       }); // show tooltip when cursor is close to some point
 
-      $$.showTooltip(selectedData, context), $$.expandCirclesBars(closest.index, closest.id, !0), $$.showXGridFocus(selectedData), ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && ($$.svg.select(".".concat(config_classes.eventRect)).style("cursor", "pointer"), !$$.mouseover && (config.data_onover.call($$.api, closest), $$.mouseover = closest));
+      $$.showTooltip(selectedData, context), $$.expandCirclesBars(closest.index, closest.id, !0), $$.showGridFocus(selectedData), ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) && ($$.svg.select(".".concat(config_classes.eventRect)).style("cursor", "pointer"), !$$.mouseover && (config.data_onover.call($$.api, closest), $$.mouseover = closest));
     }
   },
 
@@ -28102,7 +28099,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    */
   unselectRect: function unselectRect() {
     var $$ = this;
-    $$.svg.select(".".concat(config_classes.eventRect)).style("cursor", null), $$.hideXGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
+    $$.svg.select(".".concat(config_classes.eventRect)).style("cursor", null), $$.hideGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
   },
 
   /**
@@ -28254,7 +28251,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         width = _eventRect$getBoundin.width,
         left = _eventRect$getBoundin.left,
         top = _eventRect$getBoundin.top,
-        x = left + (mouse ? mouse[0] : 0) + (isMultipleX ? 0 : width / 2),
+        x = left + (mouse ? mouse[0] : 0) + (isMultipleX || $$.config.axis_rotated ? 0 : width / 2),
         y = top + (mouse ? mouse[1] : 0);
 
     emulateEvent[/^(mouse|click)/.test(type) ? "mouse" : "touch"](eventRect, type, {
@@ -32231,7 +32228,7 @@ var getGridTextAnchor = function (d) {
 util_extend(ChartInternal_ChartInternal.prototype, {
   initGrid: function initGrid() {
     var $$ = this;
-    $$.xgrid = src_selectAll([]), $$.initGridLines(), $$.initXYFocusGrid();
+    $$.xgrid = src_selectAll([]), $$.initGridLines(), $$.initFocusGrid();
   },
   initGridLines: function initGridLines() {
     var $$ = this,
@@ -32281,7 +32278,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   updateGrid: function updateGrid(duration) {
     var $$ = this;
     // hide if arc type
-    $$.gridLines || $$.initGridLines(), $$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.main.select("line.".concat(config_classes.xgridFocus)).style("visibility", "hidden"), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
+    $$.gridLines || $$.initGridLines(), $$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.hideGridFocus(), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
   },
 
   /**
@@ -32336,28 +32333,61 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       return d.text;
     }), [(withTransition ? lines.transition() : lines).style("opacity", "1"), (withTransition ? texts.transition() : texts).style("opacity", "1")];
   },
-  initXYFocusGrid: function initXYFocusGrid() {
+  initFocusGrid: function initFocusGrid() {
     var $$ = this,
         config = $$.config,
         isFront = config.grid_front,
         className = ".".concat(config_classes[isFront && $$.gridLines ? "gridLines" : "chart"]).concat(isFront ? " + *" : "");
-    $$.grid = $$.main.insert("g", className).attr("clip-path", $$.clipPathForGrid).attr("class", config_classes.grid), config.grid_x_show && $$.grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && $$.grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && $$.grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus);
+    $$.grid = $$.main.insert("g", className).attr("clip-path", $$.clipPathForGrid).attr("class", config_classes.grid), config.grid_x_show && $$.grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && $$.grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && ($$.grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus), config.grid_focus_y && !config.tooltip_grouped && $$.grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus));
   },
-  showXGridFocus: function showXGridFocus(selectedData) {
+
+  /**
+   * Show grid focus line
+   * @param {Array} selectedData
+   * @private
+   */
+  showGridFocus: function showGridFocus(selectedData) {
     var $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated,
         dataToShow = selectedData.filter(function (d) {
       return d && isValue($$.getBaseValue(d));
-    }),
-        focusEl = $$.main.selectAll("line.".concat(config_classes.xgridFocus)),
-        xx = $$.xx.bind($$);
-    !config.tooltip_show || $$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType() || (focusEl.style("visibility", "visible").data([dataToShow[0]]).attr(isRotated ? "y1" : "x1", xx).attr(isRotated ? "y2" : "x2", xx), $$.smoothLines(focusEl, "grid")); // Hide when bubble/scatter/stanford plot exists
+    });
+
+    // Hide when bubble/scatter/stanford plot exists
+    if (!(!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType())) {
+      var focusEl = $$.main.selectAll("line.".concat(config_classes.xgridFocus, ", line.").concat(config_classes.ygridFocus)),
+          isEdge = config.grid_focus_edge && !config.tooltip_grouped,
+          xx = $$.xx.bind($$);
+      focusEl.style("visibility", "visible").data(dataToShow.concat(dataToShow)).each(function (d) {
+        var xy,
+            el = src_select(this),
+            pos = {
+          x: xx(d),
+          y: $$.getYScale(d.id)(d.value)
+        };
+        if (el.classed(config_classes.xgridFocus)) xy = isRotated ? [null, // x1
+        pos.x, // y1
+        isEdge ? pos.y : $$.width, // x2
+        pos.x // y2
+        ] : [pos.x, isEdge ? pos.y : null, pos.x, $$.height];else {
+          var isY2 = $$.axis.getId(d.id) === "y2";
+          xy = isRotated ? [pos.y, // x1
+          isEdge && !isY2 ? pos.x : null, // y1
+          pos.y, // x2
+          isEdge && isY2 ? pos.x : $$.height // y2
+          ] : [isEdge && isY2 ? pos.x : null, pos.y, isEdge && !isY2 ? pos.x : $$.width, pos.y];
+        }
+        ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
+          return el.attr(v, xy[i]);
+        });
+      }), $$.smoothLines(focusEl, "grid");
+    }
   },
-  hideXGridFocus: function hideXGridFocus() {
-    this.main.select("line.".concat(config_classes.xgridFocus)).style("visibility", "hidden");
+  hideGridFocus: function hideGridFocus() {
+    this.main.selectAll("line.".concat(config_classes.xgridFocus, ", line.").concat(config_classes.ygridFocus)).style("visibility", "hidden");
   },
-  updateXgridFocus: function updateXgridFocus() {
+  updategridFocus: function updategridFocus() {
     var $$ = this,
         isRotated = $$.config.axis_rotated;
     $$.main.select("line.".concat(config_classes.xgridFocus)).attr("x1", isRotated ? 0 : -10).attr("x2", isRotated ? $$.width : -10).attr("y1", isRotated ? -10 : 0).attr("y2", isRotated ? -10 : $$.height);
@@ -35482,7 +35512,7 @@ util_extend(Chart_Chart.prototype, {
 
       $$.updateXGrid && $$.updateXGrid(!0), flow.orgDataCount ? flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x) ? translateX = $$.x(orgDomain[0]) - $$.x(domain[0]) : $$.isTimeSeries() ? translateX = $$.x(orgDomain[0]) - $$.x(domain[0]) : translateX = $$.x(flowStart.x) - $$.x(flowEnd.x) : $$.data.targets[0].values.length === 1 ? $$.isTimeSeries() ? (flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0), flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1), translateX = $$.x(flowStart.x) - $$.x(flowEnd.x)) : translateX = diffDomain(domain) / 2 : translateX = $$.x(orgDomain[0]) - $$.x(domain[0]), scaleX = diffDomain(orgDomain) / diffDomain(domain);
       var transform = "translate(".concat(translateX, ",0) scale(").concat(scaleX, ",1)");
-      $$.hideXGridFocus();
+      $$.hideGridFocus();
       var gt = src_transition_transition().ease(linear_linear).duration(durationForFlow);
       wait.add([$$.axes.x.transition(gt).call(function (g) {
         return $$.xAxis.setTransition(gt).create(g);
@@ -36581,8 +36611,8 @@ var tooltip = util_extend(function () {}, {
    *    | --- | --- | --- |
    *    | index | Number | Determine focus by index |
    *    | x | Number &vert; Date | Determine focus by x Axis index |
-   *    | mouse | Array | Determine x and y coordinate value relative the targeted x Axis element.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
-   *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: Axis id. 'y' or 'y2'(default 'y')<br>- value {Number}: The corresponding value for tooltip. |
+   *    | mouse | Array | Determine x and y coordinate value relative the targeted '.bb-event-rect' x Axis.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
+   *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: data id<br>- value {Number}: The corresponding value for tooltip. |
    *
    * @example
    *  // show the 2nd x Axis coordinate tooltip
@@ -36590,9 +36620,9 @@ var tooltip = util_extend(function () {}, {
    *    index: 1
    *  });
    *
-   *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate relative the x Axis element.
+   *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate of '.bb-event-rect' of the x Axis.
    *  chart.tooltip.show({
-   *    data: {x: 2},
+   *    x: 2,
    *    mouse: [50, 100]
    *  });
    *
@@ -36605,7 +36635,7 @@ var tooltip = util_extend(function () {}, {
    *  chart.tooltip.show({
    *    data: {
    *        x: 3,  // x Axis value
-   *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+   *        id: "data1",  // data id
    *        value: 500  // data value
    *    }
    *  });
@@ -36614,7 +36644,7 @@ var tooltip = util_extend(function () {}, {
    *  chart.tooltip.show({
    *    data: {
    *        index: 3,  // or 'x' key value
-   *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+   *        id: "data1",  // data id
    *        value: 500  // data value
    *    }
    *  });
@@ -36645,7 +36675,7 @@ var tooltip = util_extend(function () {}, {
    */
   hide: function hide() {
     var $$ = this.internal;
-    $$.hideTooltip(!0), $$.hideXGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 });
 util_extend(Chart_Chart.prototype, {
@@ -36817,7 +36847,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.0-nightly-20191206010955",
+  version: "1.11.0-nightly-20191212122109",
 
   /**
    * Generate chart
@@ -36916,7 +36946,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.0-nightly-20191206010955
+ * @version 1.11.0-nightly-20191212122109
  */
 
 

@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191206010955
+ * @version 1.11.0-nightly-20191212122109
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -393,6 +393,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   xgridLines: "bb-xgrid-lines",
   xgrids: "bb-xgrids",
   ygrid: "bb-ygrid",
+  ygridFocus: "bb-ygrid-focus",
   ygridLine: "bb-ygrid-line",
   ygridLines: "bb-ygrid-lines",
   ygrids: "bb-ygrids",
@@ -1272,7 +1273,7 @@ function (_Plugin) {
 
       $$.config.data_xSort = !1, $$.isMultipleX = function () {
         return !0;
-      }, $$.showXGridFocus = function () {}, $$.labelishData = function (d) {
+      }, $$.showGridFocus = function () {}, $$.labelishData = function (d) {
         return d.values;
       }, $$.opacityForCircle = function () {
         return 1;
@@ -1527,7 +1528,7 @@ function () {
   }]), Plugin;
 }();
 
-_defineProperty(Plugin_Plugin, "version", "1.11.0-nightly-20191206010955");
+_defineProperty(Plugin_Plugin, "version", "1.11.0-nightly-20191212122109");
 
 
 
