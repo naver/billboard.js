@@ -323,7 +323,7 @@ extend(ChartInternal.prototype, {
 
 		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.each(function(d) {
-				if (!$$.shouldExpand(d.data.id) || d.value === 0) {
+				if (!$$.shouldExpand(d.data.id)) {
 					return;
 				}
 
@@ -830,7 +830,7 @@ extend(ChartInternal.prototype, {
 		};
 
 		if ($$.hasType("gauge")) {
-			arcs.append("path")
+			arcs.append("g")
 				.attr("class", CLASS.chartArcsBackground);
 
 			config.gauge_units && appendText(CLASS.chartArcsGaugeUnit);

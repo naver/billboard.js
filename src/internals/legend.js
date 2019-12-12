@@ -670,7 +670,7 @@ extend(ChartInternal.prototype, {
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)
-				.style("stroke", $$.color)
+				.style("stroke", $$.levelColor ? id => $$.levelColor($$.cache[id].values[0].value) : $$.color)
 				.attr("x1", x1ForLegendTile)
 				.attr("y1", yForLegendTile)
 				.attr("x2", x2ForLegendTile)

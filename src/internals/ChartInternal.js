@@ -946,7 +946,8 @@ export default class ChartInternal {
 			y = isRotated ? 0 : $$.height2;
 		} else if (target === "arc") {
 			x = $$.arcWidth / 2;
-			y = $$.arcHeight / 2;
+			// to prevent wrong display of min and max label in case when legend is not at the bottom
+			y = $$.arcHeight / 2 - (($$.hasType("gauge") && this.config.legend_position === "bottom") ? 0 : 6);
 		} else if (target === "radar") {
 			const [width] = $$.getRadarSize();
 

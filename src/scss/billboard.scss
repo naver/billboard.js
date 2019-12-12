@@ -229,7 +229,7 @@
 .bb-chart-arcs {
   .bb-chart-arcs-background {
     fill: #e0e0e0;
-    stroke: none;
+    stroke: #FFF;
   }
 
   .bb-chart-arcs-gauge-unit {
@@ -248,6 +248,7 @@
 
 .bb-chart-arc .bb-gauge-value {
   fill: #000;
+  font-size: 12px;
 }
 
 /*-- Radar --*/
