@@ -121,6 +121,10 @@
   }
 }
 
+.bb-defocused .text-overlapping {
+  opacity: .05 !important;
+}
+
 /*-- Region --*/
 .bb-region {
   fill: steelblue;

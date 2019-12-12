@@ -334,5 +334,78 @@ extend(ChartInternal.prototype, {
 		}
 
 		return yPos + $$.getTextPos(d.id, "y");
-	}
+	},
+
+	/**
+	 * Calculate if two or more text nodes are overlapping
+	 * Mark overlapping text nodes with "text-overlapping" class
+	 * @private
+	 * @param {number} id
+	 * @param {ChartInternal} $$
+	 * @param {string} selector
+	 */
+	markOverlapped(id, $$, selector) {
+		const textNodes = $$.arcs.selectAll(selector);
+		const filteredTextNodes = textNodes.filter(node => node.data.id !== id);
+		const textNode = textNodes.filter(node => node.data.id === id);
+		const translate = $$.getTranslation(textNode.node());
+
+		textNode.node() && filteredTextNodes.each(function() {
+			const coordinate = $$.getTranslation(this);
+			const filteredTextNode = d3Select(this);
+			const nodeForWidth =
+				$$.calcHypo(translate.e, translate.f) > $$.calcHypo(coordinate.e, coordinate.f) ?
+					textNode : filteredTextNode;
+
+			const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) <
+				Math.ceil(nodeForWidth.node()
+					.getComputedTextLength());
+			const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 0);
+
+			filteredTextNode.classed("text-overlapping", overlapsX && overlapsY);
+		});
+	},
+
+	/**
+	 * Calculate if two or more text nodes are overlapping
+	 * Remove "text-overlapping" class on selected text nodes
+	 * @private
+	 * @param {ChartInternal} $$
+	 * @param {string} selector
+	 */
+	undoMarkOverlapped($$, selector) {
+		$$.arcs.selectAll(selector)
+			.each(function() {
+				d3Select(this)
+					.classed("text-overlapping", false);
+				d3Select(this.previousSibling)
+					.classed("text-overlapping", false);
+			});
+	},
+
+	/**
+	 * Calculates the length of the hypotenuse
+	 * @private
+	 * @param {number} x
+	 * @param {number} y
+	 * @returns {number} hypotenuse
+	 */
+	calcHypo(x, y) {
+		return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+	},
+
+	/**
+	 * Gets the SVGMatrix of an HTMLElement
+	 * @private
+	 * @param {HTMLElement} element
+	 * @returns {SVGMatrix} matrix
+	 */
+	getTranslation(element) {
+		const node = d3Select(element)
+			.node();
+		const transform = node ? node.transform : null;
+		const baseVal = transform ? transform.baseVal : [];
+
+		return baseVal.length ? baseVal.getItem(0).matrix : {a: 0, b: 0, c: 0, d: 0, e: 0, f: 0};
+	},
 });

@@ -374,12 +374,19 @@ extend(ChartInternal.prototype, {
 				.on("mouseout", function(id) {
 					if (!callFn(config.legend_item_onout, $$, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, false);
+						if ($$.hasType("gauge")) {
+							$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
+						}
 						$$.api.revert();
 					}
 				})
 				.on("mouseover", function(id) {
 					if (!callFn(config.legend_item_onover, $$, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, true);
+
+						if ($$.hasType("gauge")) {
+							$$.markOverlapped(id, $$, `.${CLASS.gaugeValue}`);
+						}
 
 						if (!$$.transiting && $$.isTargetToShow(id)) {
 							$$.api.focus(id);
