@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+/* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
 import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
@@ -246,7 +248,7 @@ describe("SHAPE ARC", () => {
 
 			setTimeout(() => {
 				expect(data.attr("d"))
-					.to.match(/M-304,-3\..+A304,304,0,0,1,245\..+,-178\..+L237\..+,-172\..+A294,294,0,0,0,-294,-3\..+Z/);
+					.to.match(/M-258.*?,-3\..+A258.*?,258.*?,0,0,1,209.*?,-151.*?L200.*?,-146.*?A248.*?,248.*?,0,0,0,-248.*?,-3.*?Z/);
 
 				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
@@ -278,7 +280,7 @@ describe("SHAPE ARC", () => {
 			setTimeout(() => {
 				// This test has bee updated to make tests pass. @TODO double-check this test is accurate.
 				expect(data.attr("d"))
-					.to.equal("M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,-65.46525025833259,201.4813229771283L-62.375080314583116,191.97075781417675A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z");
+					.to.equal("M-180.07249999999996,-2.2052521073946173e-14A180.07249999999996,180.07249999999996,0,1,1,-55.645462719582696,171.259124530559L-52.55529277583322,161.74855936760747A170.07249999999996,170.07249999999996,0,1,0,-170.07249999999996,-2.0827874274798818e-14Z");
 
 				done();
 			}, 500);
@@ -371,7 +373,7 @@ describe("SHAPE ARC", () => {
 				expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
 
 				// check background height
-				expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(400);
+				expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(300);
 
 				// with fullCircle option, only min text is showed
 				expect(min.empty()).to.be.false;
@@ -401,11 +403,11 @@ describe("SHAPE ARC", () => {
 			});
 
 			const expected = [
-				"M-304,-3.7229262694079536e-14A304,304,0,0,1,-275.25626419791655,-129.03483645824778L-165.15375851874995,-77.42090187494867A182.4,182.4,0,0,0,-182.4,-2.2337557616447722e-14Z",
-				"M-275.25626419791655,-129.03483645824778A304,304,0,0,1,98.15564305051961,-287.71769103991323L58.893385830311765,-172.63061462394796A182.4,182.4,0,0,0,-165.15375851874995,-77.42090187494867Z",
-				"M98.15564305051961,-287.71769103991323A304,304,0,0,1,226.41074355410964,-202.86491861156082L135.8464461324658,-121.7189511669365A182.4,182.4,0,0,0,58.893385830311765,-172.63061462394796Z",
-				"M226.41074355410964,-202.86491861156082A304,304,0,0,1,283.9408970546946,-108.59819049954442L170.36453823281676,-65.15891429972665A182.4,182.4,0,0,0,135.8464461324658,-121.7189511669365Z",
-				"M283.9408970546946,-108.59819049954442A304,304,0,0,1,304,-6.750155989720952e-14L182.4,-4.050093593832571e-14A182.4,182.4,0,0,0,170.36453823281676,-65.15891429972665Z"
+				"M-258.4,-3.16448732899676e-14A258.4,258.4,0,0,1,-233.96782456822908,-109.6796109895106L-140.38069474093746,-65.80776659370636A155.04,155.04,0,0,0,-155.04,-1.8986923973980563e-14Z",
+				"M-233.96782456822908,-109.6796109895106A258.4,258.4,0,0,1,83.43229659294165,-244.56003738392624L50.059377955765,-146.73602243035575A155.04,155.04,0,0,0,-140.38069474093746,-65.80776659370636Z",
+				"M83.43229659294165,-244.56003738392624A258.4,258.4,0,0,1,192.4491320209932,-172.43518081982668L115.46947921259591,-103.46110849189601A155.04,155.04,0,0,0,50.059377955765,-146.73602243035575Z",
+				"M192.4491320209932,-172.43518081982668A258.4,258.4,0,0,1,241.34976249649037,-92.30846192461274L144.80985749789423,-55.38507715476765A155.04,155.04,0,0,0,115.46947921259591,-103.46110849189601Z",
+				"M241.34976249649037,-92.30846192461274A258.4,258.4,0,0,1,258.4,-5.737632591262808e-14L155.04,-3.442579554757685e-14A155.04,155.04,0,0,0,144.80985749789423,-55.38507715476765Z"
 		  	];
 
 			setTimeout(() => {
@@ -440,8 +442,8 @@ describe("SHAPE ARC", () => {
 			const chart = util.generate(args);
 
 			const expected = [
-				"M-93.941166289984,-289.1211809537267A304,304,0,0,1,1.8614631347039768e-14,-304L1.1168778808223861e-14,-182.4A182.4,182.4,0,0,0,-56.364699773990395,-173.47270857223603Z",
-				"M-304,-3.7229262694079536e-14A304,304,0,0,1,-93.941166289984,-289.1211809537267L-56.364699773990395,-173.47270857223603A182.4,182.4,0,0,0,-182.4,-2.2337557616447722e-14Z"
+				"M-79.84999134648639,-245.75300381066768A258.4,258.4,0,0,1,1.58224366449838e-14,-258.4L9.493461986990282e-15,-155.04A155.04,155.04,0,0,0,-47.909994807891835,-147.4518022864006Z",
+				"M-258.4,-3.16448732899676e-14A258.4,258.4,0,0,1,-79.84999134648639,-245.75300381066768L-47.909994807891835,-147.4518022864006A155.04,155.04,0,0,0,-155.04,-1.8986923973980563e-14Z"
 			];
 
 			setTimeout(() => {
@@ -476,13 +478,139 @@ describe("SHAPE ARC", () => {
 			// gauge backgound shouldn't be aligned with the 'startingAngle' option
 			expect(
 				getBoundingRect(arc.select(`.${CLASS.chartArcsBackground}`).node()).width
-			).to.be.above(600);
+			).to.be.above(500);
 
 			expect(
 				arc.select(`.${CLASS.arc}-data`).datum().startAngle
 			).to.be.equal(
 				chart.config("gauge.startingAngle")
 			);
+		});
+	});
+
+	describe("show multi-arc-gauge", () => {
+		const args = {
+			data: {
+				columns: [
+					["padded1", 100],
+					["padded2", 90],
+					["padded3", 50],
+					["padded4", 20]
+				],
+				type: "gauge"
+			},
+			gauge: {
+				type: "multi",
+				label: {
+					format: function(value) {
+						return `${value}%`;
+					}
+				}
+			},
+			color: {
+				pattern: ["rgb(255,0,0)", "rgb(249,118,0)", "rgb(246,198,0)", "rgb(96,176,68)"],
+				threshold: {
+					values: [30, 80, 95]
+				}
+			}
+		};
+		const arcColor = ["rgb(96, 176, 68)", "rgb(246, 198, 0)", "rgb(249, 118, 0)", "rgb(255, 0, 0)"];
+		let chart;
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		it("each data_column should have one arc", () => {
+			const arc = chart.$.arc;
+			const chartArcs = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arc}`);
+
+			chartArcs.each(function(d, i) {
+				expect(d3Select(this).classed(`${CLASS.shape} ${CLASS.arc} ${CLASS.arc}-${args.data.columns[i][0]}`)).to.be.true;
+			});
+		});
+
+		it("each arc should have the color from color_pattern if color_treshold is given ", done => {
+			setTimeout(() => {
+				const arc = chart.$.arc;
+				const chartArcs = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arc}`);
+
+				chartArcs.each(function(d, i) {
+					expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
+				});
+
+				done();
+			}, 100);
+		});
+
+		it("each data_column should have one background", () => {
+			const arc = chart.$.arc;
+			const chartArcBackgrounds = arc.selectAll(`.${CLASS.chartArcs} path.${CLASS.chartArcsBackground}`);
+
+			chartArcBackgrounds.each(function(d, i) {
+				expect(d3Select(this).classed(`${CLASS.chartArcsBackground}-${i}`)).to.be.true;
+			});
+		});
+
+		it("each background should have the same color", () => {
+			const arc = chart.$.arc;
+			const chartArcBackgrounds = arc.selectAll(`.${CLASS.chartArcs} path.${CLASS.chartArcsBackground}`);
+
+			chartArcBackgrounds.each(function(d, i) {
+				expect(d3Select(this).style("fill")).to.be.equal("rgb(224, 224, 224)");
+			});
+		});
+
+		it("each data_column should have a label", done => {
+			setTimeout(() => {
+				const arc = chart.$.arc;
+				const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+
+				gaugeValues.each(function(d, i) {
+					expect(d3Select(this).text()).to.be.equal(`${args.data.columns[i][1]}%`);
+				});
+
+				done();
+			}, 100);
+		});
+
+		it("each label should have the same color", () => {
+			const arc = chart.$.arc;
+			const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+
+			gaugeValues.each(function(d, i) {
+				expect(d3Select(this).style("fill")).to.be.equal("rgb(0, 0, 0)");
+			});
+		});
+
+		it("if only one data_column is visible the label transform should be empty", done => {
+			const arc = chart.$.main;
+			const textBeforeHide = arc.select(`${selector.arc}-padded4 text`);
+			expect(textBeforeHide.attr("transform")).not.to.be.equal("");
+			chart.hide(["padded1", "padded2", "padded3"]);
+			setTimeout(function() {
+				const textAfterHide = chart.internal.main.select(`${selector.arc}-padded4 text`);
+				expect(textAfterHide.attr("transform")).to.be.equal("");
+				done();
+			}, 1000);
+		});
+
+		it("each data_column should have a labelline", () => {
+			const arc = chart.$.arc;
+			const arcLabelLines = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arcLabelLine}`);
+
+			arcLabelLines.each(function(d, i) {
+				expect(d3Select(this).classed(`${CLASS.arcLabelLine} ${CLASS.target} ${CLASS.target}-${args.data.columns[i][0]}`)).to.be.true;
+			});
+		});
+
+		it("each labelline should have the color from color_pattern if color_treshold is given", () => {
+			const arc = chart.$.arc;
+			const arcLabelLines = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arcLabelLine}`);
+
+			arcLabelLines.each(function(d, i) {
+				expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
+			});
 		});
 	});
 
