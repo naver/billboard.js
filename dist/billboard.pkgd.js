@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191212122109
+ * @version 1.11.0-nightly-20191213122155
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -36521,16 +36521,15 @@ util_extend(Chart_Chart.prototype, {
    * @instance
    * @memberof Chart
    * @param {Boolean} [soft] For soft redraw.
-   * @param {Boolean} [isFromResize] For soft redraw.
    * @example
    * chart.flush();
    *
    * // for soft redraw
    * chart.flush(true);
    */
-  flush: function flush(soft, isFromResize) {
+  flush: function flush(soft, _isFromResize) {
     var $$ = this.internal;
-    $$.rendered ? (isFromResize ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.zoomScale = null, soft ? $$.redraw({
+    $$.rendered ? (_isFromResize ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.zoomScale = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -36847,7 +36846,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.0-nightly-20191212122109",
+  version: "1.11.0-nightly-20191213122155",
 
   /**
    * Generate chart
@@ -36946,7 +36945,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.0-nightly-20191212122109
+ * @version 1.11.0-nightly-20191213122155
  */
 
 

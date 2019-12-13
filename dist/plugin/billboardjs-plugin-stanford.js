@@ -5,20 +5,20 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191212122109
+ * @version 1.11.0-nightly-20191213122155
  * @requires billboard.js
  * @summary billboard.js plugin
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-array"), require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-selection"), require("d3-brush"), require("d3-axis"), require("d3-format"));
+		module.exports = factory(require("d3-selection"), require("d3-array"), require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-brush"), require("d3-axis"), require("d3-format"));
 	else if(typeof define === 'function' && define.amd)
-		define("stanford", ["d3-array", "d3-interpolate", "d3-color", "d3-scale", "d3-selection", "d3-brush", "d3-axis", "d3-format"], factory);
+		define("stanford", ["d3-selection", "d3-array", "d3-interpolate", "d3-color", "d3-scale", "d3-brush", "d3-axis", "d3-format"], factory);
 	else if(typeof exports === 'object')
-		exports["stanford"] = factory(require("d3-array"), require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-selection"), require("d3-brush"), require("d3-axis"), require("d3-format"));
+		exports["stanford"] = factory(require("d3-selection"), require("d3-array"), require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-brush"), require("d3-axis"), require("d3-format"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__14__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -102,11 +102,12 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 16);
+/******/ 	return __webpack_require__(__webpack_require__.s = 19);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */
+/* 0 */,
+/* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119,7 +120,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 /***/ }),
-/* 1 */
+/* 2 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -142,14 +143,14 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 /***/ }),
-/* 2 */
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _possibleConstructorReturn; });
-/* harmony import */ var _helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
-/* harmony import */ var _assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var _helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 
 
 function _possibleConstructorReturn(self, call) {
@@ -161,7 +162,7 @@ function _possibleConstructorReturn(self, call) {
 }
 
 /***/ }),
-/* 3 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -184,7 +185,7 @@ function _typeof(obj) {
 }
 
 /***/ }),
-/* 4 */
+/* 5 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -199,7 +200,7 @@ function _assertThisInitialized(self) {
 }
 
 /***/ }),
-/* 5 */
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -213,16 +214,26 @@ function _getPrototypeOf(o) {
 }
 
 /***/ }),
-/* 6 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__6__;
-
-/***/ }),
 /* 7 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__7__;
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _defineProperty; });
+function _defineProperty(obj, key, value) {
+  if (key in obj) {
+    Object.defineProperty(obj, key, {
+      value: value,
+      enumerable: true,
+      configurable: true,
+      writable: true
+    });
+  } else {
+    obj[key] = value;
+  }
+
+  return obj;
+}
 
 /***/ }),
 /* 8 */
@@ -232,9 +243,102 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
 
 /***/ }),
 /* 9 */
-/***/ (function(module, exports) {
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Plugin; });
+/* harmony import */ var _babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
+/* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
+/* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
+
+
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Base class to generate billboard.js plugin
+ * @class Plugin
+ */
+var Plugin =
+/*#__PURE__*/
+function () {
+  /**
+   * Version info string for plugin
+   * @name version
+   * @static
+   * @memberof Plugin
+   * @type {String}
+   * @example
+   *   bb.plugin.stanford.version;  // ex) 1.9.0
+   */
+
+  /**
+   * Constructor
+   * @param {Any} config config option object
+   * @private
+   */
+  function Plugin() {
+    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
+    Object(_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__["default"])(this, Plugin), this.options = options;
+  }
+  /**
+   * Lifecycle hook for 'beforeInit' phase.
+   * @private
+   */
+
+
+  return Object(_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__["default"])(Plugin, [{
+    key: "$beforeInit",
+    value: function $beforeInit() {}
+    /**
+     * Lifecycle hook for 'init' phase.
+     * @private
+     */
+
+  }, {
+    key: "$init",
+    value: function $init() {}
+    /**
+     * Lifecycle hook for 'afterInit' phase.
+     * @private
+     */
+
+  }, {
+    key: "$afterInit",
+    value: function $afterInit() {}
+    /**
+     * Lifecycle hook for 'redraw' phase.
+     * @private
+     */
+
+  }, {
+    key: "$redraw",
+    value: function $redraw() {}
+    /**
+     * Lifecycle hook for 'willDestroy' phase.
+     * @private
+     */
+
+  }, {
+    key: "$willDestroy",
+    value: function $willDestroy() {
+      var _this = this;
+
+      Object.keys(this).forEach(function (key) {
+        _this[key] = null, delete _this[key];
+      });
+    }
+  }]), Plugin;
+}();
+
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.0-nightly-20191213122155");
+
+
 
 /***/ }),
 /* 10 */
@@ -261,43 +365,61 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__12__;
 module.exports = __WEBPACK_EXTERNAL_MODULE__13__;
 
 /***/ }),
-/* 14 */,
-/* 15 */,
+/* 14 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
+
+/***/ }),
+/* 15 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__15__;
+
+/***/ }),
 /* 16 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__16__;
+
+/***/ }),
+/* 17 */,
+/* 18 */,
+/* 19 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 __webpack_require__.r(__webpack_exports__);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(0);
+var classCallCheck = __webpack_require__(1);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(1);
+var createClass = __webpack_require__(2);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
-var possibleConstructorReturn = __webpack_require__(2);
+var possibleConstructorReturn = __webpack_require__(3);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
-var getPrototypeOf = __webpack_require__(5);
+var getPrototypeOf = __webpack_require__(6);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-var assertThisInitialized = __webpack_require__(4);
+var assertThisInitialized = __webpack_require__(5);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
-var inherits = __webpack_require__(18);
+var inherits = __webpack_require__(22);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-array","commonjs2":"d3-array","amd":"d3-array","root":"d3"}
-var external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_ = __webpack_require__(10);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(7);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(11);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(8);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(12);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(9);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(13);
 
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
@@ -429,13 +551,13 @@ function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-var esm_typeof = __webpack_require__(3);
+var esm_typeof = __webpack_require__(4);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(10);
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(8);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(11);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(14);
 
 // CONCATENATED MODULE: ./src/internals/browser.js
 /**
@@ -757,8 +879,8 @@ var isValue = function (v) {
 };
 
 
-// EXTERNAL MODULE: ./src/plugin/Plugin.js + 1 modules
-var Plugin = __webpack_require__(19);
+// EXTERNAL MODULE: ./src/plugin/Plugin.js
+var Plugin = __webpack_require__(9);
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
 
@@ -1096,10 +1218,10 @@ function () {
 
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(12);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(15);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
-var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(13);
+var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(16);
 
 // CONCATENATED MODULE: ./src/plugin/stanford/ColorScale.js
 
@@ -1379,8 +1501,9 @@ function (_Plugin) {
 
 
 /***/ }),
-/* 17 */,
-/* 18 */
+/* 20 */,
+/* 21 */,
+/* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -1412,125 +1535,6 @@ function _inherits(subClass, superClass) {
   });
   if (superClass) _setPrototypeOf(subClass, superClass);
 }
-
-/***/ }),
-/* 19 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(0);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(1);
-
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/defineProperty.js
-function _defineProperty(obj, key, value) {
-  if (key in obj) {
-    Object.defineProperty(obj, key, {
-      value: value,
-      enumerable: true,
-      configurable: true,
-      writable: true
-    });
-  } else {
-    obj[key] = value;
-  }
-
-  return obj;
-}
-// CONCATENATED MODULE: ./src/plugin/Plugin.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Plugin_Plugin; });
-
-
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Base class to generate billboard.js plugin
- * @class Plugin
- */
-var Plugin_Plugin =
-/*#__PURE__*/
-function () {
-  /**
-   * Version info string for plugin
-   * @name version
-   * @static
-   * @memberof Plugin
-   * @type {String}
-   * @example
-   *   bb.plugin.stanford.version;  // ex) 1.9.0
-   */
-
-  /**
-   * Constructor
-   * @param {Any} config config option object
-   * @private
-   */
-  function Plugin() {
-    var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    Object(classCallCheck["default"])(this, Plugin), this.options = options;
-  }
-  /**
-   * Lifecycle hook for 'beforeInit' phase.
-   * @private
-   */
-
-
-  return Object(createClass["default"])(Plugin, [{
-    key: "$beforeInit",
-    value: function $beforeInit() {}
-    /**
-     * Lifecycle hook for 'init' phase.
-     * @private
-     */
-
-  }, {
-    key: "$init",
-    value: function $init() {}
-    /**
-     * Lifecycle hook for 'afterInit' phase.
-     * @private
-     */
-
-  }, {
-    key: "$afterInit",
-    value: function $afterInit() {}
-    /**
-     * Lifecycle hook for 'redraw' phase.
-     * @private
-     */
-
-  }, {
-    key: "$redraw",
-    value: function $redraw() {}
-    /**
-     * Lifecycle hook for 'willDestroy' phase.
-     * @private
-     */
-
-  }, {
-    key: "$willDestroy",
-    value: function $willDestroy() {
-      var _this = this;
-
-      Object.keys(this).forEach(function (key) {
-        _this[key] = null, delete _this[key];
-      });
-    }
-  }]), Plugin;
-}();
-
-_defineProperty(Plugin_Plugin, "version", "1.11.0-nightly-20191212122109");
-
-
 
 /***/ })
 /******/ ])["default"];

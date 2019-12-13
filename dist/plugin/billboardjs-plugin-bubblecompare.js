@@ -11,14 +11,14 @@
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-selection"), require("d3-voronoi"), require("d3-polygon"));
+		module.exports = factory(require("d3-selection"));
 	else if(typeof define === 'function' && define.amd)
-		define("textoverlap", ["d3-selection", "d3-voronoi", "d3-polygon"], factory);
+		define("bubblecompare", ["d3-selection"], factory);
 	else if(typeof exports === 'object')
-		exports["textoverlap"] = factory(require("d3-selection"), require("d3-voronoi"), require("d3-polygon"));
+		exports["bubblecompare"] = factory(require("d3-selection"));
 	else
-		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["textoverlap"] = factory(root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__) {
+		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["bubblecompare"] = factory(root["d3"]);
+})(this, function(__WEBPACK_EXTERNAL_MODULE__8__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -102,11 +102,148 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 21);
+/******/ 	return __webpack_require__(__webpack_require__.s = 0);
 /******/ })
 /************************************************************************/
 /******/ ([
-/* 0 */,
+/* 0 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return BubbleCompare; });
+/* harmony import */ var _babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(20);
+/* harmony import */ var _babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(1);
+/* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(2);
+/* harmony import */ var _babel_runtime_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__ = __webpack_require__(6);
+/* harmony import */ var _babel_runtime_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5__ = __webpack_require__(5);
+/* harmony import */ var _babel_runtime_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_6__ = __webpack_require__(22);
+/* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_7__ = __webpack_require__(7);
+/* harmony import */ var d3_selection__WEBPACK_IMPORTED_MODULE_8__ = __webpack_require__(8);
+/* harmony import */ var d3_selection__WEBPACK_IMPORTED_MODULE_8___default = /*#__PURE__*/__webpack_require__.n(d3_selection__WEBPACK_IMPORTED_MODULE_8__);
+/* harmony import */ var _Plugin__WEBPACK_IMPORTED_MODULE_9__ = __webpack_require__(9);
+
+
+
+
+
+
+
+
+
+
+/**
+ * Bubble compare diagram plugin.<br>
+ * Compare data 3-dimensional ways: x-axis, y-axis & bubble-size.
+ * - **NOTE:**
+ *   - Plugins aren't built-in. Need to be loaded or imported to be used.
+ * @class plugin-bubblecompare
+ * @param {Object} options bubble compare plugin options
+ * @extends Plugin
+ * @return {BubbleCompare}
+ * @example
+ *  var chart = bb.generate({
+ *     data: {
+ *        columns: [ ... ],
+ *        type: "bubble"
+ *     }
+ *     ...
+ *     plugins: [
+ *        new bb.plugin.bubblecompare({
+ *          minR: 11,
+ *          maxR: 74,
+ *          expandScale: 1.1
+ *        }),
+ *     ]
+ *  });
+ */
+
+var BubbleCompare =
+/*#__PURE__*/
+function (_Plugin) {
+  function BubbleCompare(options) {
+    var _this;
+
+    return Object(_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_1__["default"])(this, BubbleCompare), _this = Object(_babel_runtime_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__["default"])(this, Object(_babel_runtime_helpers_esm_getPrototypeOf__WEBPACK_IMPORTED_MODULE_4__["default"])(BubbleCompare).call(this, options)), Object(_babel_runtime_helpers_esm_possibleConstructorReturn__WEBPACK_IMPORTED_MODULE_3__["default"])(_this, Object(_babel_runtime_helpers_esm_assertThisInitialized__WEBPACK_IMPORTED_MODULE_5__["default"])(_this));
+  }
+
+  return Object(_babel_runtime_helpers_esm_inherits__WEBPACK_IMPORTED_MODULE_6__["default"])(BubbleCompare, _Plugin), Object(_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_2__["default"])(BubbleCompare, [{
+    key: "$init",
+    value: function $init() {
+      var $$ = this.$$;
+      $$.findClosest = this.findClosest.bind(this), $$.getBubbleR = this.getBubbleR.bind(this), $$.pointExpandedR = this.pointExpandedR.bind(this);
+    }
+  }, {
+    key: "pointExpandedR",
+    value: function pointExpandedR(d) {
+      var baseR = this.getBubbleR(d),
+          _this$options$expandS = this.options.expandScale,
+          expandScale = _this$options$expandS === void 0 ? 1 : _this$options$expandS;
+      return BubbleCompare.raiseFocusedBubbleLayer(d), this.changeCursorPoint(), baseR * expandScale;
+    }
+  }, {
+    key: "changeCursorPoint",
+    value: function changeCursorPoint() {
+      this.$$.svg.select(".bb-event-rect").style("cursor", "pointer");
+    }
+  }, {
+    key: "findClosest",
+    value: function findClosest(values, pos) {
+      var _this2 = this,
+          $$ = this.$$;
+
+      return values.filter(function (v) {
+        return v && !$$.isBarType(v.id);
+      }).reduce(function (acc, cur) {
+        var d = $$.dist(cur, pos);
+        return d < _this2.getBubbleR(cur) ? cur : acc;
+      }, 0);
+    }
+  }, {
+    key: "getBubbleR",
+    value: function getBubbleR(d) {
+      var _this3 = this,
+          _this$options = this.options,
+          minR = _this$options.minR,
+          maxR = _this$options.maxR,
+          curVal = this.getZData(d);
+
+      if (!curVal) return minR;
+
+      var _this$$$$data$targets = this.$$.data.targets.reduce(function (_ref, cur) {
+        var _ref2 = Object(_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_ref, 2),
+            accMin = _ref2[0],
+            accMax = _ref2[1],
+            val = _this3.getZData(cur.values[0]);
+
+        return [Math.min(accMin, val), Math.max(accMax, val)];
+      }, [1e4, 0]),
+          _this$$$$data$targets2 = Object(_babel_runtime_helpers_esm_slicedToArray__WEBPACK_IMPORTED_MODULE_0__["default"])(_this$$$$data$targets, 2),
+          min = _this$$$$data$targets2[0],
+          max = _this$$$$data$targets2[1],
+          size = min > 0 && max === min ? 0 : curVal / max;
+
+      return Math.abs(size) * (maxR - minR) + minR;
+    }
+  }, {
+    key: "getZData",
+    value: function getZData(d) {
+      return this.$$.isBubbleZType(d) ? this.$$.getBubbleZData(d.value, "z") : d.value;
+    }
+  }], [{
+    key: "raiseFocusedBubbleLayer",
+    value: function raiseFocusedBubbleLayer(d) {
+      d.raise && Object(d3_selection__WEBPACK_IMPORTED_MODULE_8__["select"])(d.node().parentNode.parentNode).raise();
+    }
+  }]), BubbleCompare;
+}(_Plugin__WEBPACK_IMPORTED_MODULE_9__["default"]);
+
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_7__["default"])(BubbleCompare, "version", "0.0.1");
+
+
+
+/***/ }),
 /* 1 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
@@ -348,18 +485,8 @@ Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["d
 /* 14 */,
 /* 15 */,
 /* 16 */,
-/* 17 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__17__;
-
-/***/ }),
-/* 18 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__18__;
-
-/***/ }),
+/* 17 */,
+/* 18 */,
 /* 19 */,
 /* 20 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
@@ -415,227 +542,7 @@ function _slicedToArray(arr, i) {
 }
 
 /***/ }),
-/* 21 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-__webpack_require__.r(__webpack_exports__);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js + 3 modules
-var slicedToArray = __webpack_require__(20);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(1);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(2);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
-var possibleConstructorReturn = __webpack_require__(3);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
-var getPrototypeOf = __webpack_require__(6);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
-var assertThisInitialized = __webpack_require__(5);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
-var inherits = __webpack_require__(22);
-
-// EXTERNAL MODULE: external {"commonjs":"d3-voronoi","commonjs2":"d3-voronoi","amd":"d3-voronoi","root":"d3"}
-var external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_ = __webpack_require__(17);
-
-// EXTERNAL MODULE: external {"commonjs":"d3-polygon","commonjs2":"d3-polygon","amd":"d3-polygon","root":"d3"}
-var external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_ = __webpack_require__(18);
-
-// EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(8);
-
-// EXTERNAL MODULE: ./src/plugin/Plugin.js
-var Plugin = __webpack_require__(9);
-
-// CONCATENATED MODULE: ./src/plugin/textoverlap/Options.js
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * TextOverlap plugin option class
- * @class TextOverlapOptions
- * @param {Options} options TextOverlap plugin options
- * @extends Plugin
- * @return {TextOverlapOptions}
- * @private
- */
-var Options_Options = function Options() {
-  return Object(classCallCheck["default"])(this, Options), {
-    /**
-     * Set selector string for target text nodes
-     * @name selector
-     * @memberof plugin-textoverlap
-     * @type {String}
-     * @default ".bb-texts text"
-     * @example
-     *  // selector for data label text nodes
-     * selector: ".bb-texts text"
-     */
-    selector: ".bb-texts text",
-
-    /**
-     * Set extent of label overlap prevention
-     * @name extent
-     * @memberof plugin-textoverlap
-     * @type {Number}
-     * @default 1
-     * @example
-     * 	extent: 1
-     */
-    extent: 1,
-
-    /**
-     * Set minimum area needed to show a data label
-     * @name area
-     * @memberof plugin-textoverlap
-     * @type {Number}
-     * @default 0
-     * @example
-     * 	area: 0
-     */
-    area: 0
-  };
-};
-
-
-// CONCATENATED MODULE: ./src/plugin/textoverlap/index.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return textoverlap_TextOverlap; });
-
-
-
-
-
-
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-
-
-
-/**
- * TextOverlap plugin<br>
- * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
- * - **NOTE:**
- *   - Plugins aren't built-in. Need to be loaded or imported to be used.
- * @class plugin-textoverlap
- * @param {Object} options TextOverlap plugin options
- * @extends Plugin
- * @return {TextOverlap}
- * @example
- *  var chart = bb.generate({
- *     data: {
- *     	  columns: [ ... ]
- *     }
- *     ...
- *     plugins: [
- *        new bb.plugin.textoverlap({
- *          selector: ".bb-texts text",
- *          extent: 8,
- *          area: 3
- *     ]
- *  });
- */
-
-var textoverlap_TextOverlap =
-/*#__PURE__*/
-function (_Plugin) {
-  function TextOverlap(options) {
-    var _this;
-
-    return Object(classCallCheck["default"])(this, TextOverlap), _this = Object(possibleConstructorReturn["default"])(this, Object(getPrototypeOf["default"])(TextOverlap).call(this, options)), _this.config = new Options_Options(), Object(possibleConstructorReturn["default"])(_this, Object(assertThisInitialized["default"])(_this));
-  }
-
-  return Object(inherits["default"])(TextOverlap, _Plugin), Object(createClass["default"])(TextOverlap, [{
-    key: "$init",
-    value: function $init() {
-      var $$ = this.$$;
-      $$.loadConfig.bind(this)(this.options);
-    }
-  }, {
-    key: "$redraw",
-    value: function $redraw() {
-      var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["selectAll"])(this.config.selector);
-      text.empty() || this.preventLabelOverlap(text);
-    }
-    /**
-     * Generates the voronoi layout for data labels
-     * @param {Object} data Indices values
-     * @returns {Object} Voronoi layout points and corresponding Data points
-     * @private
-     */
-
-  }, {
-    key: "generateVoronoi",
-    value: function generateVoronoi(data) {
-      var $$ = this.$$,
-          _map = ["x", "y"].map(function (v) {
-        return $$[v].domain();
-      }),
-          _map2 = Object(slicedToArray["default"])(_map, 2),
-          min = _map2[0],
-          max = _map2[1],
-          _ref = [max[0], min[1]];
-
-      return min[1] = _ref[0], max[0] = _ref[1], Object(external_commonjs_d3_voronoi_commonjs2_d3_voronoi_amd_d3_voronoi_root_d3_["voronoi"])().extent([min, max]).polygons(data);
-    }
-    /**
-     * Set text label's position to preventg overlap.
-     * @param {d3Selection} text target text selection
-     * @private
-     */
-
-  }, {
-    key: "preventLabelOverlap",
-    value: function preventLabelOverlap(text) {
-      var _this$config = this.config,
-          extent = _this$config.extent,
-          area = _this$config.area,
-          cells = this.generateVoronoi(text.data().map(function (v) {
-        return [v.x, v.value];
-      })),
-          i = 0;
-      text.each(function () {
-        var cell = cells[i++];
-
-        if (cell && this) {
-          var _cell$data = Object(slicedToArray["default"])(cell.data, 2),
-              x = _cell$data[0],
-              y = _cell$data[1],
-              _d3PolygonCentroid = Object(external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_["polygonCentroid"])(cell),
-              _d3PolygonCentroid2 = Object(slicedToArray["default"])(_d3PolygonCentroid, 2),
-              cx = _d3PolygonCentroid2[0],
-              cy = _d3PolygonCentroid2[1],
-              angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
-              xTranslate = extent * (angle === 0 ? 1 : -1),
-              yTranslate = angle === -1 ? -extent : extent + 5,
-              txtAnchor = Math.abs(angle) === 1 ? "middle" : angle === 0 ? "start" : "end";
-
-          Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).attr("display", Object(external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_["polygonArea"])(cell) < area ? "none" : null).attr("text-anchor", txtAnchor).attr("dy", "0.".concat(angle === 1 ? 71 : 35, "em")).attr("transform", "translate(".concat(xTranslate, ", ").concat(yTranslate, ")"));
-        }
-      });
-    }
-  }]), TextOverlap;
-}(Plugin["default"]);
-
-
-
-/***/ }),
+/* 21 */,
 /* 22 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
