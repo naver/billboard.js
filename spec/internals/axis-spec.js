@@ -886,7 +886,7 @@ describe("AXIS", function() {
 	});
 
 	describe("axis.y.tick.rotate", () => {
-		describe("not rotated", () => {
+		describe("y Axis", () => {
 			before(() => {
 				args = {
 					data: {
@@ -915,7 +915,7 @@ describe("AXIS", function() {
 						const transform = text.attr("transform");
 
 						transform &&
-							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.closeTo(45, 5);
+							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.equal(args.axis.y.tick.rotate);
 
 						expect(text.attr("y")).to.be.equal("4");
 						expect(parseFloat(tspan.attr("dx"))).to.be.closeTo(5.6, 0.5);
@@ -930,6 +930,54 @@ describe("AXIS", function() {
 					.node().getBoundingClientRect();
 
 				expect(box.width).to.be.closeTo(590, 1);
+			});
+		});
+
+		describe("y2 Axis", () => {
+			before(() => {
+				args = {
+					data: {
+						columns: [
+							["data1", 30, 200, 100, 400, 150, 250, 100, 600],
+							["data2", 50, 20, 10, 40, 15, 25],
+						]
+					},
+					axis: {
+						rotated: true,
+						y2: {
+							show: true,
+							tick: {
+								rotate: 45
+							}
+						}
+					}
+				};
+			});
+
+			it("should rotate tick texts", done => {
+				setTimeout(() => {
+					chart.$.main.selectAll(`.${CLASS.axisY2} g.tick`).each(function() {
+						const tick = d3Select(this);
+						const text = tick.select("text");
+						const tspan = text.select("tspan");
+						const transform = text.attr("transform");
+
+						transform &&
+							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.equal(args.axis.y2.tick.rotate);
+
+						expect(+text.attr("y")).to.be.closeTo(-13, 0.5);
+						expect(parseFloat(tspan.attr("dx"))).to.be.closeTo(-5.6, 0.5);
+					});
+
+					done();
+				}, 1000);
+			});
+
+			it("should have automatically calculated y axis width", () => {
+				const box = chart.$.main.select(`.${CLASS.axisY2}`)
+					.node().getBoundingClientRect();
+
+				expect(box.width).to.be.closeTo(602, 1);
 			});
 
 		});
