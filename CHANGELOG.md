@@ -1,3 +1,10 @@
+## [1.11.1](https://github.com/naver/billboard.js/compare/1.11.0...1.11.1) (2019-12-19)
+
+
+### Bug Fixes
+
+* **tooltip:** Revert on pointer-events css prop ([916f012](https://github.com/naver/billboard.js/commit/916f0127e0a0415224c28043a69917e694ec3963)), closes [#1124](https://github.com/naver/billboard.js/issues/1124) [#1155](https://github.com/naver/billboard.js/issues/1155)
+
 # [1.11.0](https://github.com/naver/billboard.js/compare/1.10.2...1.11.0) (2019-11-22)
 
 
