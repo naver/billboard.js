@@ -1292,7 +1292,7 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
-			 * @property {Array} [color.pattern] custom color pattern
+			 * @property {Array} [color.pattern=[]] custom color pattern
 			 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
 			 *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
 			 *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
@@ -1765,8 +1765,9 @@ export default class Options {
 			axis_x_tick_values: null,
 
 			/**
-			 * Rotate x axis tick text.<br>
-			 * If you set negative value, it will rotate to opposite direction.
+			 * Rotate x axis tick text.
+			 * - If you set negative value, it will rotate to opposite direction.
+			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
 			 * @name axis․x․tick․rotate
 			 * @memberof Options
 			 * @type {Number}
@@ -1910,7 +1911,7 @@ export default class Options {
 			 *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
 			 * @name axis․x․padding
 			 * @memberof Options
-			 * @type {Object}
+			 * @type {Object|Number}
 			 * @default {}
 			 * @example
 			 * axis: {
@@ -1923,7 +1924,10 @@ export default class Options {
 			 *       // when axis type is 'timeseries'
 			 *       left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
 			 *       right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
-			 *     }
+			 *     },
+			 *
+			 *     // or set both values at once.
+			 *     padding: 10
 			 *   }
 			 * }
 			 */
@@ -2300,6 +2304,24 @@ export default class Options {
 			 * }
 			 */
 			axis_y_tick_values: null,
+
+			/**
+			 * Rotate y axis tick text.
+			 * - If you set negative value, it will rotate to opposite direction.
+			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+			 * @name axis․y․tick․rotate
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 0
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       rotate: 60
+			 *     }
+			 *   }
+			 * }
+			 */
 			axis_y_tick_rotate: 0,
 
 			/**
@@ -2412,7 +2434,7 @@ export default class Options {
 			 * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y․padding
 			 * @memberof Options
-			 * @type {Object}
+			 * @type {Object|Number}
 			 * @default {}
 			 * @example
 			 * axis: {
@@ -2420,7 +2442,10 @@ export default class Options {
 			 *     padding: {
 			 *       top: 0,
 			 *       bottom: 0
-			 *     }
+			 *     },
+			 *
+			 *     // or set both values at once.
+			 *     padding: 10
 			 *   }
 			 * }
 			 */
@@ -2693,6 +2718,25 @@ export default class Options {
 			axis_y2_tick_values: null,
 
 			/**
+			 * Rotate y2 axis tick text.
+			 * - If you set negative value, it will rotate to opposite direction.
+			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+			 * @name axis․y2․tick․rotate
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 0
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       rotate: 60
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_rotate: 0,
+
+			/**
 			 * Set the number of y2 axis ticks.
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․tick․count
@@ -2775,7 +2819,7 @@ export default class Options {
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․padding
 			 * @memberof Options
-			 * @type {Object}
+			 * @type {Object|Number}
 			 * @default {}
 			 * @example
 			 * axis: {
@@ -2784,7 +2828,9 @@ export default class Options {
 			 *       top: 100,
 			 *       bottom: 100
 			 *     }
-			 *   }
+			 *
+			 *     // or set both values at once.
+			 *     padding: 10
 			 * }
 			 */
 			axis_y2_padding: {},

@@ -219,12 +219,15 @@ extend(ChartInternal.prototype, {
 			return $$.rotated_padding_top;
 		}
 
+		const rotate = config[`axis_${id}_tick_rotate`];
+
 		// Calculate x/y axis height when tick rotated
-		if ((id === "x" && !isRotated && config.axis_x_tick_rotate) ||
-			(id === "y" && isRotated && config.axis_y_tick_rotate)) {
+		if (
+			((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate
+		) {
 			h = 30 +
 				$$.axis.getMaxTickWidth(id) *
-				Math.cos(Math.PI * (90 - config[`axis_${id}_tick_rotate`]) / 180);
+				Math.cos(Math.PI * (90 - rotate) / 180);
 		}
 
 		return h +
