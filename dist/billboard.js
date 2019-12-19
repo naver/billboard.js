@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.0-nightly-20191213122155
+ * @version 1.11.1-nightly-20191219122410
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -411,16 +411,14 @@ function _toConsumableArray(arr) {
   return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-function _typeof2(obj) { if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") { _typeof2 = function _typeof2(obj) { return typeof obj; }; } else { _typeof2 = function _typeof2(obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; }; } return _typeof2(obj); }
-
 function _typeof(obj) {
-  if (typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol") {
+  if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
-      return _typeof2(obj);
+      return typeof obj;
     };
   } else {
     _typeof = function _typeof(obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : _typeof2(obj);
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
     };
   }
 
@@ -980,7 +978,7 @@ function () {
             return d.splitted;
           }), tspan.attr("x", isTopBottom ? 0 : tickLength * sign).attr("dx", function () {
             var dx = 0;
-            return orient === "bottom" && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180))), dx + (tickTextPos.x || 0);
+            return /(top|bottom)/.test(orient) && rotate && (dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1)), dx + (tickTextPos.x || 0);
           }()).attr("dy", function (d, i) {
             var dy = 0;
             return orient !== "top" && (dy = sizeFor1Char.h, i === 0 && (dy = isLeftRight ? -((counts[d.index] - 1) * (sizeFor1Char.h / 2) - 3) : tickTextPos.y === 0 ? ".71em" : 0)), isNumber(dy) && tickTextPos.y ? dy + tickTextPos.y : dy || ".71em";
@@ -1052,14 +1050,20 @@ function () {
           orient = _this$config.orient,
           tickLength = _this$config.tickLength,
           tickOffset = _this$config.tickOffset,
-          rotate = this.params.tickTextRotate;
-      orient === "bottom" ? (lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this)), textUpdate.attr("x", 0).attr("y", function yForText(r) {
-        return r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength;
-      }(rotate)).style("text-anchor", function textAnchorForText(r) {
-        return r ? r > 0 ? "start" : "end" : "middle";
-      }(rotate)).attr("transform", function textTransform(r) {
+          rotate = this.params.tickTextRotate,
+          textAnchorForText = function (r) {
+        var value = ["start", "end"];
+        return orient === "top" && value.reverse(), r ? r > 0 ? value[0] : value[1] : "middle";
+      },
+          textTransform = function (r) {
         return r ? "rotate(".concat(r, ")") : null;
-      }(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -tickLength * 2).style("text-anchor", "middle")) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
+      },
+          yForText = function (r) {
+        var r2 = r / (orient === "bottom" ? 15 : 23);
+        return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+      };
+
+      orient === "bottom" ? (lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this)), textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -yForText(rotate) * 2).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
     } // this should be called only when category axis
 
   }, {
@@ -1293,7 +1297,7 @@ function () {
       var $$ = this.owner,
           config = $$.config,
           isX = /^(x|subX)$/.test(name),
-          type = isX ? "x" : "y",
+          type = isX ? "x" : name,
           isCategory = isX && $$.isCategorized(),
           orient = $$["".concat(name, "Orient")],
           tickFormat = isX ? $$.xAxisTickFormat : config["axis_".concat(name, "_tick_format")],
@@ -1579,7 +1583,7 @@ function () {
     key: "getPadding",
     value: function getPadding(padding, key, defaultValue, domainLength) {
       var p = isNumber(padding) ? padding : padding[key];
-      return isValue(p) ? padding.unit === "ratio" ? padding[key] * domainLength : this.convertPixelsToAxisPadding(p, domainLength) : defaultValue; // assume padding is pixels if unit is not specified
+      return isValue(p) ? this.convertPixelsToAxisPadding(p, domainLength) : defaultValue;
     }
   }, {
     key: "convertPixelsToAxisPadding",
@@ -3812,7 +3816,7 @@ var Options_Options = function Options() {
      * @memberof Options
      * @type {Object}
      * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
-     * @property {Array} [color.pattern] custom color pattern
+     * @property {Array} [color.pattern=[]] custom color pattern
      * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
      *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
      *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
@@ -4288,8 +4292,9 @@ var Options_Options = function Options() {
     axis_x_tick_values: null,
 
     /**
-     * Rotate x axis tick text.<br>
-     * If you set negative value, it will rotate to opposite direction.
+     * Rotate x axis tick text.
+     * - If you set negative value, it will rotate to opposite direction.
+     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
      * @name axis․x․tick․rotate
      * @memberof Options
      * @type {Number}
@@ -4432,7 +4437,7 @@ var Options_Options = function Options() {
      *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
      * @name axis․x․padding
      * @memberof Options
-     * @type {Object}
+     * @type {Object|Number}
      * @default {}
      * @example
      * axis: {
@@ -4445,7 +4450,10 @@ var Options_Options = function Options() {
      *       // when axis type is 'timeseries'
      *       left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
      *       right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
-     *     }
+     *     },
+     *
+     *     // or set both values at once.
+     *     padding: 10
      *   }
      * }
      */
@@ -4822,6 +4830,24 @@ var Options_Options = function Options() {
      * }
      */
     axis_y_tick_values: null,
+
+    /**
+     * Rotate y axis tick text.
+     * - If you set negative value, it will rotate to opposite direction.
+     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+     * @name axis․y․tick․rotate
+     * @memberof Options
+     * @type {Number}
+     * @default 0
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       rotate: 60
+     *     }
+     *   }
+     * }
+     */
     axis_y_tick_rotate: 0,
 
     /**
@@ -4937,7 +4963,7 @@ var Options_Options = function Options() {
      * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
      * @name axis․y․padding
      * @memberof Options
-     * @type {Object}
+     * @type {Object|Number}
      * @default {}
      * @example
      * axis: {
@@ -4945,7 +4971,10 @@ var Options_Options = function Options() {
      *     padding: {
      *       top: 0,
      *       bottom: 0
-     *     }
+     *     },
+     *
+     *     // or set both values at once.
+     *     padding: 10
      *   }
      * }
      */
@@ -5218,6 +5247,25 @@ var Options_Options = function Options() {
     axis_y2_tick_values: null,
 
     /**
+     * Rotate y2 axis tick text.
+     * - If you set negative value, it will rotate to opposite direction.
+     * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+     * @name axis․y2․tick․rotate
+     * @memberof Options
+     * @type {Number}
+     * @default 0
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       rotate: 60
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_rotate: 0,
+
+    /**
      * Set the number of y2 axis ticks.
      * - **NOTE:** This works in the same way as axis.y.tick.count.
      * @name axis․y2․tick․count
@@ -5303,7 +5351,7 @@ var Options_Options = function Options() {
      * - **NOTE:** This works in the same way as axis.y.tick.count.
      * @name axis․y2․padding
      * @memberof Options
-     * @type {Object}
+     * @type {Object|Number}
      * @default {}
      * @example
      * axis: {
@@ -5312,7 +5360,9 @@ var Options_Options = function Options() {
      *       top: 100,
      *       bottom: 100
      *     }
-     *   }
+     *
+     *     // or set both values at once.
+     *     padding: 10
      * }
      */
     axis_y2_padding: {},
@@ -8004,7 +8054,13 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         isRotated = config.axis_rotated,
         h = 30;
-    return id !== "x" || config.axis_x_show ? id === "x" && config.axis_x_height ? config.axis_x_height : id !== "y" || config.axis_y_show ? id !== "y2" || config.axis_y2_show ? ((id === "x" && !isRotated && config.axis_x_tick_rotate || id === "y" && isRotated && config.axis_y_tick_rotate) && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - config["axis_".concat(id, "_tick_rotate")]) / 180)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10)) : $$.rotated_padding_top : !config.legend_show || $$.isLegendRight || $$.isLegendInset ? 1 : 10 : 8; // Calculate x/y axis height when tick rotated
+    if (id === "x" && !config.axis_x_show) return 8;
+    if (id === "x" && config.axis_x_height) return config.axis_x_height;
+    if (id === "y" && !config.axis_y_show) return !config.legend_show || $$.isLegendRight || $$.isLegendInset ? 1 : 10;
+    if (id === "y2" && !config.axis_y2_show) return $$.rotated_padding_top;
+    var rotate = config["axis_".concat(id, "_tick_rotate")]; // Calculate x/y axis height when tick rotated
+
+    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.xAxis.tickInterval());
@@ -10260,7 +10316,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         bindto = config.tooltip_contents.bindto;
 
     // Show tooltip if needed
-    if ($$.tooltip = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto), $$.tooltip.empty() && ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("display", "none")), config.tooltip_init_show) {
+    if ($$.tooltip = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(bindto), $$.tooltip.empty() && ($$.tooltip = $$.selectChart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
       if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
@@ -14293,7 +14349,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.0-nightly-20191213122155",
+  version: "1.11.1-nightly-20191219122410",
 
   /**
    * Generate chart
@@ -14392,7 +14448,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.0-nightly-20191213122155
+ * @version 1.11.1-nightly-20191219122410
  */
 
 
