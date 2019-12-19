@@ -175,7 +175,7 @@ export default class Axis {
 		const $$ = this.owner;
 		const config = $$.config;
 		const isX = /^(x|subX)$/.test(name);
-		const type = isX ? "x" : "y";
+		const type = isX ? "x" : name;
 
 		const isCategory = isX && $$.isCategorized();
 		const orient = $$[`${name}Orient`];
@@ -579,11 +579,6 @@ export default class Axis {
 			return defaultValue;
 		}
 
-		if (padding.unit === "ratio") {
-			return padding[key] * domainLength;
-		}
-
-		// assume padding is pixels if unit is not specified
 		return this.convertPixelsToAxisPadding(p, domainLength);
 	}
 
@@ -662,7 +657,7 @@ export default class Axis {
 
 	redraw(transitions, isHidden, isInit) {
 		const $$ = this.owner;
-		const opacity = isHidden ? "0" : "1";
+		const opacity 	= isHidden ? "0" : "1";
 
 		["x", "y", "y2", "subX"].forEach(id => {
 			const axis = $$[`${id}Axis`];

@@ -56,7 +56,7 @@ export interface XAxisConfiguration {
 	padding?: {
 		left?: number;
 		right?: number;
-	};
+	} | number;
 
 	/**
 	 * Set height of x axis.
@@ -150,7 +150,7 @@ export interface YAxisConfiguration {
 	padding?: {
 		top?: number;
 		bottom?: number;
-	};
+	} | number;
 
 	/**
 	 * Set default range of y axis.
@@ -216,7 +216,9 @@ export interface XTickConfiguration {
 	values?: number[] | string[];
 
 	/**
-	 * Rotate x axis tick text. If you set negative value, it will rotate to opposite direction.
+	 * Rotate x axis tick text.
+	 * - If you set negative value, it will rotate to opposite direction.
+	 * - Applied when 'axis.rotated' option is 'false'.
 	 */
 	rotate?: number;
 
@@ -273,6 +275,13 @@ export interface YTickConfiguration {
 	 * Set the y values of ticks manually.
 	 */
 	values?: number[];
+
+	/**
+	 * Rotate y(or y2) axis tick text.
+	 * - If you set negative value, it will rotate to opposite direction.
+	 * - Applied when 'axis.rotated' option is 'true'.
+	 */
+	rotate?: number;
 
 	/**
 	 * The number of y axis ticks to show.
