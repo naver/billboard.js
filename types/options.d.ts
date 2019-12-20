@@ -359,7 +359,7 @@ export interface ChartOptions {
 				 */
 				show?: boolean;
 			};
-
+		};
 			direction?: {
 				/**
 				 * Set the direction to be drawn.
@@ -397,7 +397,6 @@ export interface ChartOptions {
 				 */
 				ratio?: number;
 			}
-		}
 	};
 
 	pie?: {
