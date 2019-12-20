@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20191219122410
+ * @version 1.11.1-nightly-20191220122451
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7776,7 +7776,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     // Call event handler
     if (isArc || d !== -1) {
       var callback = config[isOver ? "data_onover" : "data_onout"].bind($$.api);
-      if (config.color_onover && $$.setOverColor(isOver, d, isArc), isArc) callback(d, $$.main.select(".".concat(config_classes.arc, "-").concat(d.id)).node());else if (!config.tooltip_grouped) {
+      if (config.color_onover && $$.setOverColor(isOver, d, isArc), isArc) callback(d, $$.main.select(".".concat(config_classes.arc).concat($$.getTargetSelectorSuffix(d.id))).node());else if (!config.tooltip_grouped) {
         var callee = $$.setOverOut,
             last = callee.last || [],
             shape = $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).filter(function (d) {
@@ -9061,28 +9061,30 @@ extend(ChartInternal_ChartInternal.prototype, {
       var points = isRotated ? [[y(yp(k), !0), x(xp(k))], [y(yp(k + otherDiff), !0), x(xp(k + otherDiff))]] : [[x(xp(k), !0), y(yp(k))], [x(xp(k + otherDiff), !0), y(yp(k + otherDiff))]];
       return generateM(points);
     },
-        path = "M";
+        path = "";
 
     for (var data, _i = 0; data = d[_i]; _i++) {
       var prevData = d[_i - 1],
+          hasPrevData = prevData && isValue(prevData.value),
           style = isWithinRegions(data.x, regions);
-      // Draw as normal
-      if (isUndefined(regions) || !style) path += "".concat(_i ? "L" : "").concat(xValue(data), ",").concat(yValue(data));else {
-        try {
-          style = style.dasharray.split(" ");
-        } catch (e) {
-          style = dasharray.split(" ");
-        } // Draw with region // TODO: Fix for horizotal charts
+      // https://github.com/naver/billboard.js/issues/1172
+      if (isValue(data.value)) // Draw as normal
+        if (isUndefined(regions) || !style || !hasPrevData) path += "".concat(_i && hasPrevData ? "L" : "M").concat(xValue(data), ",").concat(yValue(data));else if (hasPrevData) {
+          try {
+            style = style.dasharray.split(" ");
+          } catch (e) {
+            style = dasharray.split(" ");
+          } // Draw with region // TODO: Fix for horizotal charts
 
 
-        xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries), yp = $$.getScale(prevData.value, data.value);
-        var dx = x(data.x) - x(prevData.x),
-            dy = y(data.value) - y(prevData.value),
-            dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-        diff = style[0] / dd, diffx2 = diff * style[1];
+          xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries), yp = $$.getScale(prevData.value, data.value);
+          var dx = x(data.x) - x(prevData.x),
+              dy = y(data.value) - y(prevData.value),
+              dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+          diff = style[0] / dd, diffx2 = diff * style[1];
 
-        for (var j = diff; j <= 1; j += diffx2) path += sWithRegion(prevData, data, j, diff), j + diffx2 >= 1 && (path += sWithRegion(prevData, data, 1, 0));
-      }
+          for (var _j = diff; _j <= 1; _j += diffx2) path += sWithRegion(prevData, data, _j, diff), _j + diffx2 >= 1 && (path += sWithRegion(prevData, data, 1, 0));
+        }
     }
 
     return path;
@@ -12057,7 +12059,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return id in onover ? onover[id] : $$.color(id);
     } : isString(color) && (color = function () {
       return onover;
-    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc, "-").concat(d.id)).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).style("fill", color);
+    }), isObject(d) ? $$.main.selectAll(".".concat(config_classes.arc).concat($$.getTargetSelectorSuffix(d.id))).style("fill", color(d)) : $$.main.selectAll(".".concat(config_classes.shape, "-").concat(d)).style("fill", color);
   }
 });
 // CONCATENATED MODULE: ./src/internals/format.js
@@ -14349,7 +14351,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20191219122410",
+  version: "1.11.1-nightly-20191220122451",
 
   /**
    * Generate chart
@@ -14448,7 +14450,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20191219122410
+ * @version 1.11.1-nightly-20191220122451
  */
 
 
