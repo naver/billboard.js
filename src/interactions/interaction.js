@@ -416,7 +416,7 @@ extend(ChartInternal.prototype, {
 			config.color_onover && $$.setOverColor(isOver, d, isArc);
 
 			if (isArc) {
-				callback(d, $$.main.select(`.${CLASS.arc}-${d.id}`).node());
+				callback(d, $$.main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
 			} else if (!config.tooltip_grouped) {
 				const callee = $$.setOverOut;
 				let last = callee.last || [];

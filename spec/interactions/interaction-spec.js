@@ -1012,4 +1012,32 @@ describe("INTERACTION", () => {
 			expect(main.selectAll(`.${CLASS.EXPANDED}`).size()).to.be.equal(0);
 		});
 	});
+
+	describe("check for arc data name", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["catégorie 1", 20],
+						["catégorie 2 2", 80]
+					],
+					type: "pie"
+				}
+			};
+		});
+
+		it("should not throw error", () => {
+			try {
+				chart.internal.setOverOut(true, {
+					id: "catégorie 1"
+				});
+
+				chart.internal.setOverOut(true, {
+					id: "catégorie 2 2"
+				});
+
+				expect(true).to.be.ok;
+			} catch(e) {}
+		})
+	});
 });
