@@ -1809,13 +1809,52 @@ describe("DATA", () => {
 			};
 		});
 
-		it("should be generating correct dashed path data", () => {
+		const checkPathLengths = expected => {
 			const line = chart.internal.main.select(`path.${CLASS.line}-data1`);
 			const path = line.attr("d");
-			const expected = {M: 118, L: 119};
 
 			expect(path.split("M").length).to.be.equal(expected.M);
 			expect(path.split("L").length).to.be.equal(expected.L);
+		}
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 118, L: 119});
+		});
+
+		it("set options for null data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, 100, 200, null, 100, 20, 30, null, null]
+					],
+					regions: {
+						data1: [
+							{
+								start: 0,
+								end: 2,
+								style: {
+									dasharray: "5 3"
+								}
+							},
+							{
+								start: 5
+							}
+						]
+					}
+				}
+			};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 38, L: 37});
+		});
+
+		it("set options line.connectNull=true", () => {
+			args.line = {connectNull: true};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 37, L: 38});
 		});
 	});
 

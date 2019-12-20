@@ -179,7 +179,7 @@ extend(ChartInternal.prototype, {
 
 		// when is Arc type
 		if (isObject(d)) {
-			$$.main.selectAll(`.${CLASS.arc}-${d.id}`)
+			$$.main.selectAll(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`)
 				.style("fill", color(d));
 		} else {
 			$$.main.selectAll(`.${CLASS.shape}-${d}`)

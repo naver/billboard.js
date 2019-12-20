@@ -302,16 +302,22 @@ extend(ChartInternal.prototype, {
 		};
 
 		// Generate
-		let path = "M";
+		let path = "";
 
 		for (let i = 0, data; (data = d[i]); i++) {
 			const prevData = d[i - 1];
+			const hasPrevData = prevData && isValue(prevData.value);
 			let style = isWithinRegions(data.x, regions);
 
+			// https://github.com/naver/billboard.js/issues/1172
+			if (!isValue(data.value)) {
+				continue;
+			}
+
 			// Draw as normal
-			if (isUndefined(regions) || !style) {
-				path += `${i ? "L" : ""}${xValue(data)},${yValue(data)}`;
-			} else {
+			if (isUndefined(regions) || !style || !hasPrevData) {
+				path += `${i && hasPrevData ? "L" : "M"}${xValue(data)},${yValue(data)}`;
+			} else if (hasPrevData) {
 				try {
 					style = style.dasharray.split(" ");
 				} catch (e) {
