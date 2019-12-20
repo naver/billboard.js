@@ -359,44 +359,44 @@ export interface ChartOptions {
 				 */
 				show?: boolean;
 			};
+		};
 
-			direction?: {
+		direction?: {
+			/**
+			 * Set the direction to be drawn.
+			 */
+			clockwise: boolean;
+		};
+
+		level?: {
+			/**
+			 * Set the level depth.
+			 */
+			depth?: number;
+
+			/**
+			 * Show or hide level.
+			 */
+			show?: boolean;
+
+			text?: {
 				/**
-				 * Set the direction to be drawn.
+				 * Set format function for the level value.
 				 */
-				clockwise: boolean;
-			};
-
-			level?: {
-				/**
-				 * Set the level depth.
-				 */
-				depth?: number;
+				format?: (x: string) => string;
 
 				/**
-				 * Show or hide level.
+				 * Show or hide level text.
 				 */
 				show?: boolean;
+			};
+		}
 
-				text?: {
-					/**
-					 * Set format function for the level value.
-					 */
-					format?: (x: string) => string;
-
-					/**
-					 * Show or hide level text.
-					 */
-					show?: boolean;
-				};
-			}
-
-			size?: {
-				/**
-				 * Set size ratio.
-				 */
-				ratio?: number;
-			}
+		size?: {
+			/**
+			 * Set size ratio.
+			 */
+			ratio?: number;
 		}
 	};
 
