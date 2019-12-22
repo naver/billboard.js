@@ -141,7 +141,7 @@
     "sass-loader": "^8.0.0",
     "semantic-release": "^15.13.31",
     "simulant": "^0.2.2",
-    "sinon": "^7.5.0",
+    "sinon": "^8.0.0",
     "string-replace-webpack-plugin": "^0.1.3",
     "style-loader": "^1.0.2",
     "uglify-js": "^3.7.2",
