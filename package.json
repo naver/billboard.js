@@ -120,7 +120,7 @@
     "hammer-simulator": "0.0.1",
     "husky": "^3.1.0",
     "istanbul-instrumenter-loader": "^3.0.1",
-    "istanbul-lib-instrument": "^3.3.0",
+    "istanbul-lib-instrument": "^4.0.0",
     "jsdoc": "^3.6.3",
     "karma": "^4.4.1",
     "karma-chai": "^0.1.0",
