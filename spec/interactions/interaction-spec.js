@@ -1027,7 +1027,7 @@ describe("INTERACTION", () => {
 		});
 
 		it("should not throw error", () => {
-			try {
+			expect(() => {
 				chart.internal.setOverOut(true, {
 					id: "catégorie 1"
 				});
@@ -1035,9 +1035,7 @@ describe("INTERACTION", () => {
 				chart.internal.setOverOut(true, {
 					id: "catégorie 2 2"
 				});
-
-				expect(true).to.be.ok;
-			} catch(e) {}
-		})
+			}).to.not.throw();
+		});
 	});
 });
