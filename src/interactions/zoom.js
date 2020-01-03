@@ -42,7 +42,9 @@ extend(ChartInternal.prototype, {
 		const eventRects = $$.main.select(`.${CLASS.eventRects}`);
 
 		if (zoomEnabled && bind) {
-			$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
+			// Do not bind zoom event when subchart is shown
+			!$$.config.subchart_show &&
+				$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
 		} else if (bind === false) {
 			$$.api.unzoom();
 

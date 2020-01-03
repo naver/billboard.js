@@ -480,7 +480,7 @@ describe("ZOOM", function() {
 		});
 
 		it("region area should be resized on zoom", done => {
-				const main = chart.$.main;
+			const main = chart.$.main;
 			const regionRect = main.select(`.${CLASS.region}-0 rect`);
 			const lineWidth = chart.$.line.lines.node().getBBox().width;
 
@@ -734,8 +734,8 @@ describe("ZOOM", function() {
 					x: {
 						type: "category",
 						tick: {
-						rotate: 40,
-						multiline: false
+							rotate: 40,
+							multiline: false
 						}
 					}
 				},
@@ -766,11 +766,6 @@ describe("ZOOM", function() {
 				clientY: 137
 			});
 
-			const expected = {
-				x: [7.738255334651066, 84.52408366017097],
-				y: [0, 101.2]
-			};
-
 			["x", "y"].forEach(id => {
 				const domain = chart.internal[id].domain();
 				const org = orgDomain[id];
@@ -790,26 +785,26 @@ describe("ZOOM", function() {
 		it("set options", () => {
 			args = {
 				data: {
-				columns: [
-						["data1", 30, 350, 200],
-						["data2", 130, 100, 10],
-						["data3", 230, 153, 85]
-				],
-				types: {
-						data1: "scatter",
+					columns: [
+							["data1", 30, 350, 200],
+							["data2", 130, 100, 10],
+							["data3", 230, 153, 85]
+					],
+					types: {
+							data1: "scatter",
 					},
-				labels: true
+					labels: true
 				},
 				bubble: {
-				maxR: 50
+					maxR: 50
 				},
 				axis: {
-				x: {
-					type: "category"
-				},
-				y: {
-					max: 450
-				}
+					x: {
+						type: "category"
+					},
+					y: {
+						max: 450
+					}
 				},
 				zoom: {
 					enabled: true
@@ -912,6 +907,69 @@ describe("ZOOM", function() {
 
 
 			expect(tickTexts.size()).to.be.equal(args.axis.y.tick.culling.max);
+		});
+	});
+
+	describe("bar's width based on ratio", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						ratio: 0.8
+					}
+				},
+				axis: {
+					x: {
+						type: "timeseries"
+					}
+				},
+				zoom: {
+					enabled: {
+						type: "wheel"
+					}
+				}
+			}
+		});
+
+		it("check bar's width during wheel zoom in/out", () => {
+			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-2`).node();
+			const len = [];
+
+			chart.$.bar.bars.each(function() {
+				len.push(this.getTotalLength());
+			});
+
+			// when zoom in
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: -100,
+				clientX: 159,
+				clientY: 137
+			});
+
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getTotalLength()).to.be.greaterThan(len[i]);
+			});
+
+			// when zoom out
+			util.fireEvent(eventRect, "wheel", {
+				deltaX: 0,
+				deltaY: 100,
+				clientX: 159,
+				clientY: 137
+			});
+
+			chart.$.bar.bars.each(function(d, i) {
+				expect(this.getTotalLength()).to.be.equal(len[i]);
+			});
 		});
 	});
 });

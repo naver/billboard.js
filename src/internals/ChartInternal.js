@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {document, window} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isArray, isFunction, isNumber, isObject, isString, isValue, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -979,11 +979,17 @@ export default class ChartInternal {
 		return this.hasDataLabel() ? "1" : "0";
 	}
 
+	/**
+	 * Get the zoom or unzoomed scaled value
+	 * @param {Date|Number|Object} d Data value
+	 * @private
+	 */
 	xx(d) {
-		const fn = this.config.zoom_enabled && this.zoomScale ?
-			this.zoomScale : this.x;
+		const $$ = this;
+		const fn = $$.config.zoom_enabled && $$.zoomScale ?
+			$$.zoomScale : this.x;
 
-		return d ? fn(d.x) : null;
+		return d ? fn(isValue(d.x) ? d.x : d) : null;
 	}
 
 	xv(d) {
