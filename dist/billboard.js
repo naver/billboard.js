@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20191230123136
+ * @version 1.11.1-nightly-20200103123425
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2250,11 +2250,18 @@ function () {
     value: function opacityForText() {
       return this.hasDataLabel() ? "1" : "0";
     }
+    /**
+     * Get the zoom or unzoomed scaled value
+     * @param {Date|Number|Object} d Data value
+     * @private
+     */
+
   }, {
     key: "xx",
     value: function xx(d) {
-      var fn = this.config.zoom_enabled && this.zoomScale ? this.zoomScale : this.x;
-      return d ? fn(d.x) : null;
+      var $$ = this,
+          fn = $$.config.zoom_enabled && $$.zoomScale ? $$.zoomScale : this.x;
+      return d ? fn(isValue(d.x) ? d.x : d) : null;
     }
   }, {
     key: "xv",
@@ -5784,6 +5791,7 @@ var Options_Options = function Options() {
      * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
      * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
      * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
+     * @property {Number} [pie.expand.rate=0.98] Set expand rate.
      * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
      * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
      * @property {Number} [pie.padAngle=0] Set padding between data.
@@ -5813,9 +5821,12 @@ var Options_Options = function Options() {
      *      // disable expand transition for interaction
      *      expand: false,
      *
-     *      // set duration of expand transition to 500ms.
      *      expand: {
-     *          duration: 500
+     *      	// set duration of expand transition to 500ms.
+     *          duration: 500,
+     *
+     *      	// set expand area rate
+     *          rate: 1
      *      },
      *
      *      innerRadius: 0,
@@ -5836,6 +5847,7 @@ var Options_Options = function Options() {
     pie_label_threshold: .05,
     pie_label_ratio: undefined,
     pie_expand: {},
+    pie_expand_rate: .98,
     pie_expand_duration: 50,
     pie_innerRadius: 0,
     pie_padAngle: 0,
@@ -5866,6 +5878,7 @@ var Options_Options = function Options() {
      * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
      * @property {Function} [gauge.label.extents] Set customized min/max label text.
      * @property {Boolean} [gauge.expand=true] Enable or disable expanding gauge.
+    	 * @property {Number} [gauge.expand.rate=0.98] Set expand rate.
      * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
      * @property {Number} [gauge.min=0] Set min value of the gauge.
      * @property {Number} [gauge.max=100] Set max value of the gauge.
@@ -5888,12 +5901,18 @@ var Options_Options = function Options() {
     	 *              return (isMax ? "Max:" : "Min:") + value;
      *          }
      *      },
+     *
+     *      // disable expand transition for interaction
      *      expand: false,
      *
-     *      // or set duration
      *      expand: {
-     *          duration: 20
+     *      	// set duration of expand transition to 500ms.
+     *          duration: 500,
+     *
+     *      	// set expand area rate
+     *          rate: 1
      *      },
+     *
      *      min: -100,
      *      max: 200,
      *      title: "Title Text",
@@ -5912,6 +5931,7 @@ var Options_Options = function Options() {
     gauge_units: undefined,
     gauge_width: undefined,
     gauge_expand: {},
+    gauge_expand_rate: .98,
     gauge_expand_duration: 50,
 
     /**
@@ -5924,6 +5944,8 @@ var Options_Options = function Options() {
      * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
      * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
      * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+     * @property {Number} [donut.expand.rate=0.98] Set expand rate.
+     * @property {Number} [donut.expand.duration=50] Set expand transition time in ms.
      * @property {Number} [donut.width] Set width of donut chart.
      * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
      * @property {Number} [donut.padAngle=0] Set padding between data.
@@ -5948,7 +5970,18 @@ var Options_Options = function Options() {
      *          // or set ratio number
      *          ratio: 0.5
      *      },
+     *
+     *      // disable expand transition for interaction
      *      expand: false,
+     *
+     *      expand: {
+     *      	// set duration of expand transition to 500ms.
+     *          duration: 500,
+     *
+     *      	// set expand area rate
+     *          rate: 1
+     *      },
+     *
      *      width: 10,
      *      padAngle: 0.2,
      *      startingAngle: 1,
@@ -5965,6 +5998,7 @@ var Options_Options = function Options() {
     donut_width: undefined,
     donut_title: "",
     donut_expand: {},
+    donut_expand_rate: .98,
     donut_expand_duration: 50,
     donut_padAngle: 0,
     donut_startingAngle: 0,
@@ -7620,7 +7654,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         return d;
       }), eventRectUpdate.exit().remove(), eventRectUpdate = $$.generateEventRectsForSingleX(eventRectUpdate.enter()).merge(eventRectUpdate);
     }
-    $$.updateEventRect(eventRectUpdate), $$.inputType !== "touch" || $$.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
+    $$.eventRect = eventRectUpdate, $$.updateEventRect(eventRectUpdate), $$.inputType !== "touch" || $$.svg.on("touchstart.eventRect") || $$.hasArcType() || $$.bindTouchOnEventRect(isMultipleX);
   },
   bindTouchOnEventRect: function bindTouchOnEventRect(isMultipleX) {
     var startPx,
@@ -8307,7 +8341,7 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   updateArc: function updateArc() {
     var $$ = this;
-    $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded(), $$.svgArcExpandedSub = $$.getSvgArcExpanded(.98);
+    $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded();
   },
   updateAngle: function updateAngle(dValue) {
     var $$ = this,
@@ -8419,8 +8453,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     var newTargetIds = $$.mapToTargetIds(targetIds);
     $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(config_classes.chartArc))).each(function (d) {
       if ($$.shouldExpand(d.data.id) && d.value !== 0) {
-        var expandDuration = $$.expandDuration(d.data.id);
-        Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", $$.svgArcExpandedSub);
+        var expandDuration = $$.getExpandConfig(d.data.id, "duration"),
+            svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
+        Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", svgArcExpandedSub);
       }
     });
   },
@@ -8430,15 +8465,26 @@ extend(ChartInternal_ChartInternal.prototype, {
     if (!$$.transiting) {
       var newTargetIds = $$.mapToTargetIds(targetIds);
       $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(config_classes.chartArc))).selectAll("path").transition().duration(function (d) {
-        return $$.expandDuration(d.data.id);
+        return $$.getExpandConfig(d.data.id, "duration");
       }).attr("d", $$.svgArc), $$.svg.selectAll("".concat(config_classes.arc)).style("opacity", "1");
     }
   },
-  expandDuration: function expandDuration(id) {
+
+  /**
+   * Get expand config value
+   * @param {String} id data ID
+   * @param {String} key config key: 'duration | rate'
+   * @return {Number}
+   * @private
+   */
+  getExpandConfig: function getExpandConfig(id, key) {
     var type,
         $$ = this,
         config = $$.config;
-    return $$.isDonutType(id) ? type = "donut" : $$.isGaugeType(id) ? type = "gauge" : $$.isPieType(id) && (type = "pie"), type ? config["".concat(type, "_expand_duration")] : 50;
+    return $$.isDonutType(id) ? type = "donut" : $$.isGaugeType(id) ? type = "gauge" : $$.isPieType(id) && (type = "pie"), type ? config["".concat(type, "_expand_").concat(key)] : {
+      duration: 50,
+      rate: .98
+    }[key];
   },
   shouldExpand: function shouldExpand(id) {
     var $$ = this,
@@ -8697,8 +8743,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     var result,
         $$ = this,
         config = $$.config,
-        tickInterval = axis.tickInterval($$.getMaxDataCount()),
+        maxDataCount = $$.getMaxDataCount(),
         isGrouped = config.data_groups.length,
+        tickInterval = ($$.zoomScale || $$) && !$$.isCategorized() ? $$.xx($$.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount),
         getWidth = function (id) {
       var width = id ? config.bar_width[id] : config.bar_width,
           ratio = id ? width.ratio : config.bar_width_ratio,
@@ -11767,7 +11814,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         zoomEnabled = $$.config.zoom_enabled;
     $$.redrawEventRect();
     var eventRects = $$.main.select(".".concat(config_classes.eventRects));
-    zoomEnabled && bind ? $$.bindZoomOnEventRect(eventRects, zoomEnabled.type) : bind === !1 && ($$.api.unzoom(), eventRects.on(".zoom", null).on(".drag", null));
+    zoomEnabled && bind ? !$$.config.subchart_show && $$.bindZoomOnEventRect(eventRects, zoomEnabled.type) : bind === !1 && ($$.api.unzoom(), eventRects.on(".zoom", null).on(".drag", null));
   },
 
   /**
@@ -14351,7 +14398,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20191230123136",
+  version: "1.11.1-nightly-20200103123425",
 
   /**
    * Generate chart
@@ -14450,7 +14497,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20191230123136
+ * @version 1.11.1-nightly-20200103123425
  */
 
 
