@@ -3884,6 +3884,23 @@ d3.select(".chart_area")
 					startingAngle: 1
 				}
 			}
+		},
+		ExpandRate: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					expand: {
+						rate: 1.007
+					}
+				}
+			}
 		}
 	},
 	RadarChartOptions: {
