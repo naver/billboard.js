@@ -749,4 +749,84 @@ describe("SHAPE ARC", () => {
 			}, 100);
 		});
 	});
+
+	describe("check for expand rate", () => {
+		let chart;
+		let args = {
+			data: {
+				columns: [
+					["data1", 30],
+					["data2", 50]
+				],
+				type: "pie"
+			},
+			donut: {
+				expand: {
+					rate: 1.05
+				}
+			},
+			gauge: {
+				expand: {
+					rate: 1.05
+				}
+			},
+			pie: {
+				expand: {
+					rate: 1.05
+				}
+			},
+			transition: {
+				duration: 0
+			}
+		};
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		const checkExpand = done => {
+			let path;
+			let length;
+
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					path = chart.$.arc
+						.select(`.${CLASS.arc}-data1`)
+						.node();
+
+					length = path.getTotalLength();
+
+					// when
+					chart.focus("data1");
+
+					resolve();
+				}, 300);
+			}).then(() => {
+				setTimeout(() => {
+					expect(path.getTotalLength()).to.be.greaterThan(length);
+					done();
+				}, 300);
+			});
+		};
+
+		it("check Pie's expand", done => {
+			checkExpand(done);
+		});
+
+		it("set options: data.type='donut'", done => {
+			args.data.type = "donut";
+		});
+
+		it("check Donut's expand", done => {
+			checkExpand(done);
+		});
+
+		it("set options: data.type='gauge'", done => {
+			args.data.type = "donut";
+		});
+
+		it("check Gauge's expand", done => {
+			checkExpand(done);
+		});
+	});
 });

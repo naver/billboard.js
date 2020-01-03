@@ -81,6 +81,7 @@ extend(ChartInternal.prototype, {
 				.merge(eventRectUpdate);
 		}
 
+		$$.eventRect = eventRectUpdate;
 		$$.updateEventRect(eventRectUpdate);
 
 		if ($$.inputType === "touch" && !$$.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
@@ -193,7 +194,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const xScale = $$.zoomScale || $$.x;
-		const eventRectData = eventRectUpdate || $$.eventRect.data();// set update selection if null
+		const eventRectData = eventRectUpdate || $$.eventRect.data(); // set update selection if null
 		const isRotated = config.axis_rotated;
 		let x;
 		let y;
