@@ -422,6 +422,7 @@ export interface ChartOptions {
 			 */
 			ratio?: ((d: DataItem, radius: number, h: number) => void) | number
 		};
+
 		/**
 		 * Enable or disable expanding pie pieces.
 		 */
@@ -430,6 +431,11 @@ export interface ChartOptions {
 			 * Set expand transition time in ms.
 			 */
 			duration?: number;
+
+			/**
+			 * Set expand rate.
+			 */
+			rate?: number;
 		};
 
 		/**
@@ -474,9 +480,19 @@ export interface ChartOptions {
 		};
 
 		/**
-		 * Enable or disable expanding pie pieces.
+		 * Enable or disable expanding donut pieces.
 		 */
-		expand?: boolean;
+		expand?: boolean | {
+			/**
+			 * Set expand transition time in ms.
+			 */
+			duration?: number;
+
+			/**
+			 * Set expand rate.
+			 */
+			rate?: number;
+		};
 
 		/**
 		 * Set padding between data.
@@ -525,13 +541,18 @@ export interface ChartOptions {
 		};
 
 		/**
-		 * Enable or disable expanding gauge.
+		 * Enable or disable expanding gauge pieces.
 		 */
 		expand?: boolean | {
 			/**
-			 * Set the expand transition time in milliseconds.
+			 * Set expand transition time in ms.
 			 */
-			duration?: number
+			duration?: number;
+
+			/**
+			 * Set expand rate.
+			 */
+			rate?: number;
 		};
 
 		/**

@@ -75,7 +75,6 @@ extend(ChartInternal.prototype, {
 
 		$$.svgArc = $$.getSvgArc();
 		$$.svgArcExpanded = $$.getSvgArcExpanded();
-		$$.svgArcExpandedSub = $$.getSvgArcExpanded(0.98);
 	},
 
 	updateAngle(dValue) {
@@ -267,7 +266,8 @@ extend(ChartInternal.prototype, {
 					return;
 				}
 
-				const expandDuration = $$.expandDuration(d.data.id);
+				const expandDuration = $$.getExpandConfig(d.data.id, "duration");
+				const svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
 
 				d3Select(this).selectAll("path")
 					.transition()
@@ -275,7 +275,7 @@ extend(ChartInternal.prototype, {
 					.attr("d", $$.svgArcExpanded)
 					.transition()
 					.duration(expandDuration * 2)
-					.attr("d", $$.svgArcExpandedSub);
+					.attr("d", svgArcExpandedSub);
 			});
 	},
 
@@ -291,16 +291,27 @@ extend(ChartInternal.prototype, {
 		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.selectAll("path")
 			.transition()
-			.duration(d => $$.expandDuration(d.data.id))
+			.duration(d => $$.getExpandConfig(d.data.id, "duration"))
 			.attr("d", $$.svgArc);
 
 		$$.svg.selectAll(`${CLASS.arc}`)
 			.style("opacity", "1");
 	},
 
-	expandDuration(id) {
+	/**
+	 * Get expand config value
+	 * @param {String} id data ID
+	 * @param {String} key config key: 'duration | rate'
+	 * @return {Number}
+	 * @private
+	 */
+	getExpandConfig(id, key) {
 		const $$ = this;
 		const config = $$.config;
+		const def = {
+			duration: 50,
+			rate: 0.98
+		};
 		let type;
 
 		if ($$.isDonutType(id)) {
@@ -311,7 +322,7 @@ extend(ChartInternal.prototype, {
 			type = "pie";
 		}
 
-		return type ? config[`${type}_expand_duration`] : 50;
+		return type ? config[`${type}_expand_${key}`] : def[key];
 	},
 
 	shouldExpand(id) {
