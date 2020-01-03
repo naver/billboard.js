@@ -69,8 +69,10 @@ extend(ChartInternal.prototype, {
 	getBarW(axis, barTargetsNum) {
 		const $$ = this;
 		const config = $$.config;
-		const tickInterval = axis.tickInterval($$.getMaxDataCount());
+		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = config.data_groups.length;
+		const tickInterval = ($$.zoomScale || $$) && !$$.isCategorized() ?
+			$$.xx($$.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
 		let result;
 
 		const getWidth = id => {
