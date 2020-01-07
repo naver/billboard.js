@@ -102,8 +102,6 @@ extend(ChartInternal.prototype, {
 		const gMax = config.gauge_max;
 		const gStart = config.gauge_startingAngle;
 
-		let index = 0;
-
 		if (d.data && hasGauge && !$$.hasMultiArcGauge()) {
 			const totalSum = $$.getTotalDataSum();
 
@@ -120,13 +118,12 @@ extend(ChartInternal.prototype, {
 		}
 
 		pie($$.filterTargetsToShow())
-			.forEach(t => {
+			.forEach((t, i) => {
 				if (!found && t.data.id === d.data.id) {
 					found = true;
 					d = t;
-					d.index = index;
+					d.index = i;
 				}
-				index++;
 			});
 
 		if (isNaN(d.startAngle)) {
