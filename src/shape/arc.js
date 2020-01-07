@@ -154,14 +154,12 @@ extend(ChartInternal.prototype, {
 
 	getSvgArc() {
 		const $$ = this;
-		const hasGaugeType = $$.hasType("gauge");
-		const hasMultiArcGauge = hasGaugeType && $$.hasMultiArcGauge();
 		const ir = $$.getInnerRadius();
 		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 
 		let arc = d3Arc()
-			.outerRadius(d => (hasMultiArcGauge ? ($$.radius - singleArcWidth * d.index) : $$.radius))
-			.innerRadius(d => (hasMultiArcGauge ? $$.radius - singleArcWidth * (d.index + 1) :
+			.outerRadius(d => ($$.hasMultiArcGauge() ? ($$.radius - singleArcWidth * d.index) : $$.radius))
+			.innerRadius(d => ($$.hasMultiArcGauge() ? $$.radius - singleArcWidth * (d.index + 1) :
 				isNumber(ir) ? ir : 0));
 
 		const newArc = function(d, withoutUpdate) {
@@ -193,17 +191,15 @@ extend(ChartInternal.prototype, {
 	getSvgArcExpanded(rate) {
 		const $$ = this;
 		const newRate = rate || 1;
-		const hasGaugeType = $$.hasType("gauge");
-		const hasMultiArcGauge = hasGaugeType && $$.hasMultiArcGauge();
 		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 		const expandWidth = Math.min($$.radiusExpanded * newRate - $$.radius,
 			singleArcWidth * 0.8 - (1 - newRate) * 100
 		);
 
 		const arc = d3Arc()
-			.outerRadius(d => (hasMultiArcGauge ?
+			.outerRadius(d => ($$.hasMultiArcGauge() ?
 				$$.radius - singleArcWidth * d.index + expandWidth : $$.radiusExpanded * newRate))
-			.innerRadius(d => (hasMultiArcGauge ?
+			.innerRadius(d => ($$.hasMultiArcGauge() ?
 				$$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius));
 
 		return function(d) {
@@ -226,12 +222,10 @@ extend(ChartInternal.prototype, {
 	transformForArcLabel(d) {
 		const $$ = this;
 		const config = $$.config;
-		const hasGauge = $$.hasType("gauge");
-		const hasMultiArcGauge = hasGauge && $$.hasMultiArcGauge();
 		const updated = $$.updateAngle(d);
 		let translate = "";
 
-		if (updated && (!hasMultiArcGauge && $$.hasMultiTargets())) {
+		if (updated && (!$$.hasMultiArcGauge() && $$.hasMultiTargets())) {
 			const c = this.svgArc.centroid(updated);
 			const x = isNaN(c[0]) ? 0 : c[0];
 			const y = isNaN(c[1]) ? 0 : c[1];
@@ -248,7 +242,7 @@ extend(ChartInternal.prototype, {
 			}
 
 			translate = `translate(${x * ratio},${y * ratio})`;
-		} else if (updated && hasMultiArcGauge && $$.hasMultiTargets()) {
+		} else if (updated && $$.hasMultiArcGauge() && $$.hasMultiTargets()) {
 			const y1 = Math.sin(updated.endAngle - Math.PI / 2);
 
 			const x = Math.cos(updated.endAngle - Math.PI / 2) * ($$.radiusExpanded + 25);
@@ -493,8 +487,6 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const main = $$.main;
 		const hasInteraction = config.interaction_enabled;
-		const hasGaugeType = $$.hasType("gauge");
-		const hasMultiArcGauge = hasGaugeType && $$.hasMultiArcGauge();
 		let mainArcLabelLine;
 		let arcLabelLines;
 
@@ -522,7 +514,7 @@ extend(ChartInternal.prototype, {
 			})
 			.merge(mainArc);
 
-		if (hasMultiArcGauge) {
+		if ($$.hasMultiArcGauge()) {
 			arcLabelLines = main.selectAll(`.${CLASS.arcs}`)
 				.selectAll(`.${CLASS.arcLabelLine}`)
 				.data($$.arcData.bind($$));

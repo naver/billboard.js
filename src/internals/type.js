@@ -98,7 +98,7 @@ extend(ChartInternal.prototype, {
 	},
 
 	hasMultiArcGauge() {
-		return this.config.gauge_type === "multi";
+		return this.hasType("gauge") && this.config.gauge_type === "multi";
 	},
 
 	isLineType(d) {
