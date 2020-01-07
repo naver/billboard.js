@@ -3295,7 +3295,7 @@ export default class Options {
 			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
-			 * @property {GaugeTypes} [gauge.type] Set type of gauge to be displayed.
+			 * @property {String} [gauge.type="single"] Set type of gauge to be displayed.
 			 * @example
 			 *  gauge: {
 			 *      fullCircle: false,
