@@ -212,10 +212,12 @@ extend(ChartInternal.prototype, {
 		return function(d) {
 			const updated = $$.updateAngle(d);
 
-			if (hasMultiArcGauge) {
-				return updated ? arc(updated) : "M 0 0";
+			if (updated) {
+				return (
+					$$.hasMultiArcGauge() ? arc : arc.innerRadius($$.getInnerRadius(d))
+				)(updated);
 			} else {
-				return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
+				return "M 0 0";
 			}
 		};
 	},
