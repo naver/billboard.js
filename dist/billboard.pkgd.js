@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200103123425
+ * @version 1.11.1-nightly-20200108123727
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -22504,7 +22504,7 @@ function () {
         flowFn && flowFn(), callFn(config.onrendered, $$, $$.api);
       } : null;
       if (afterRedraw) // Only use transition when current tab is visible.
-        if (isTransition) {
+        if (isTransition && redrawList.length) {
           // Wait for end of transitions for callback
           var waitForDraw = $$.generateWait(); // transition should be derived from one transition
 
@@ -22515,7 +22515,7 @@ function () {
               return waitForDraw.add(t);
             });
           }).call(waitForDraw, afterRedraw);
-        } else afterRedraw(); // update fadein condition
+        } else $$.transiting || afterRedraw(); // update fadein condition
 
       $$.mapToIds($$.data.targets).forEach(function (id) {
         $$.withoutFadeIn[id] = !0;
@@ -30986,7 +30986,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         $$.updateLegendItemColor(d.data.id, path.style("fill"));
       }
 
-      $$.transiting = !1;
+      $$.transiting = !1, callFn(config.onrendered, $$, $$.api);
     }), hasInteraction && $$.bindArcEvent(mainArc), $$.redrawArcText(duration);
   },
   bindArcEvent: function bindArcEvent(arc) {
@@ -32107,7 +32107,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         points = $$.getCache(radar_cacheKey),
         areas = $$.radars.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
-    areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).transition().duration(duration).style("fill", function (d) {
+    areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", function (d) {
       return $$.color(d);
     }).style("stroke", function (d) {
       return $$.color(d);
@@ -37148,7 +37148,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200103123425",
+  version: "1.11.1-nightly-20200108123727",
 
   /**
    * Generate chart
@@ -37247,7 +37247,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200103123425
+ * @version 1.11.1-nightly-20200108123727
  */
 
 
