@@ -103,6 +103,65 @@ describe("CORE", function() {
 		});
 	});
 
+	describe("onrendered callbacks", () => {
+		const spy = sinon.spy(function(ctx) {
+			const type = args.data.type;
+			let d;
+
+			if (type === "radar") {
+				d = ctx.$.main.select("polygon").attr("points");
+			} else {
+				d = ctx.$.main.select("path").attr("d");
+			}
+
+		  return d;
+		});
+
+		before(() => {
+			args = {
+				data: {
+				  columns: [
+					  ["data1", 330, 350, 200, 380, 150],
+					  ["data2", 130, 100, 30, 200, 80]
+				  ],
+				  type: "radar",
+				  labels: true
+				},
+				onrendered: spy
+			}
+		});
+
+		it("check radar type", () => {
+			expect(spy.returnValues).to.be.not.empty;
+		});
+
+		it("set options data.type='donut'", () => {
+			args.data.type = "donut";
+			spy.resetHistory();
+		});
+
+		// Note: Arc types are rendered with transition
+		it("check donut type", done => {
+			setTimeout(() => {
+				expect(spy.returnValues).to.be.not.empty;
+				done();
+			}, 300);
+		});
+
+		it("set options data.type='line'", () => {
+			args.data.type = "line";
+			spy.resetHistory();
+		});
+
+		// Note: Arc types are rendered with transition
+		it("check donut type", done => {
+			setTimeout(() => {
+				expect(spy.returnValues).to.be.not.empty;
+				done();
+			}, 300);
+		});
+	});
+
 	describe("size", () => {
 		it("should have same width", () => {
 			const svg = d3Select("#chart svg");
