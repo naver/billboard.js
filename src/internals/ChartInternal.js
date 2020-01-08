@@ -747,7 +747,7 @@ export default class ChartInternal {
 
 		if (afterRedraw) {
 			// Only use transition when current tab is visible.
-			if (isTransition) {
+			if (isTransition && redrawList.length) {
 				// Wait for end of transitions for callback
 				const waitForDraw = $$.generateWait();
 
@@ -759,7 +759,7 @@ export default class ChartInternal {
 							.forEach(t => waitForDraw.add(t));
 					})
 					.call(waitForDraw, afterRedraw);
-			} else {
+			} else if (!$$.transiting) {
 				afterRedraw();
 			}
 		}
