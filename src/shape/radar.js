@@ -370,8 +370,6 @@ extend(ChartInternal.prototype, {
 		areasEnter
 			.append("polygon")
 			.merge(areas)
-			.transition()
-			.duration(duration)
 			.style("fill", d => $$.color(d))
 			.style("stroke", d => $$.color(d))
 			.attr("points", d => points[d.id].join(" "));

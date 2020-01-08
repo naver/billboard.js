@@ -14,7 +14,7 @@ import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import {document} from "../internals/browser";
 import CLASS from "../config/classes";
-import {extend, isFunction, isNumber, isUndefined, setTextValue} from "../internals/util";
+import {callFn, extend, isFunction, isNumber, isUndefined, setTextValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initPie() {
@@ -532,6 +532,7 @@ extend(ChartInternal.prototype, {
 				}
 
 				$$.transiting = false;
+				callFn(config.onrendered, $$, $$.api);
 			});
 
 		// bind arc events
