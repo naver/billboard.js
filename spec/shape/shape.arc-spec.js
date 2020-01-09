@@ -250,7 +250,7 @@ describe("SHAPE ARC", () => {
 				expect(data.attr("d"))
 					.to.match(/M-258.*?,-3\..+A258.*?,258.*?,0,0,1,209.*?,-151.*?L200.*?,-146.*?A248.*?,248.*?,0,0,0,-248.*?,-3.*?Z/);
 
-				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal("");
+				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal(".35em");
 
 				done();
 			}, 500);

@@ -748,7 +748,7 @@ extend(ChartInternal.prototype, {
 				.call($$.textForArcLabel.bind($$))
 				.attr("transform", $$.transformForArcLabel.bind($$))
 				.style("font-size", d => ($$.isGaugeType(d.data) && !$$.hasMultiTargets() ? `${Math.round($$.radius / 5)}px` : null))
-				.attr("dy", $$.hasMultiArcGauge() && !$$.hasMultiTargets() ? "-.1em" : "")
+				.attr("dy", $$.hasMultiArcGauge() ? "-.1em" : ".35em")
 				.transition()
 				.duration(duration)
 				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
