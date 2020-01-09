@@ -155,7 +155,7 @@ extend(ChartInternal.prototype, {
 	getSvgArc() {
 		const $$ = this;
 		const ir = $$.getInnerRadius();
-		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+		const singleArcWidth = $$.gaugeArcWidth / ($$.filterTargetsToShow($$.data.targets).length || 1);
 
 		let arc = d3Arc()
 			.outerRadius(d => ($$.hasMultiArcGauge() ? ($$.radius - singleArcWidth * d.index) : $$.radius))
@@ -774,7 +774,7 @@ extend(ChartInternal.prototype, {
 				.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
 				.merge(backgroundArc)
 				.attr("d", d1 => {
-					if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) {
+					if ($$.hasMultiArcGauge() && $$.hiddenTargetIds.indexOf(d1.id) > -1 && index > 0) {
 						return "M 0 0";
 					}
 					const d = {
