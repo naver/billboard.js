@@ -769,13 +769,14 @@ extend(ChartInternal.prototype, {
 				.call($$.textForArcLabel.bind($$))
 				.attr("transform", $$.transformForArcLabel.bind($$))
 				.style("font-size", d => (
-					$$.isGaugeType(d.data) && $$.data.targets.length === 1 && !$$.hasMultiArcGauge() ?
+					$$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ?
 						`${Math.round($$.radius / 5)}px` : null
 				))
-				.attr("dy", hasGauge && !$$.hasMultiTargets() && !config.gauge_fullCircle ? "-.1em" : null)
 				.transition()
 				.duration(duration)
 				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
+
+			hasMultiArcGauge && text.attr("dy", "-.1em");
 		}
 
 		main.select(`.${CLASS.chartArcsTitle}`)
