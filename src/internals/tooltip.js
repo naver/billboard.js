@@ -229,9 +229,9 @@ extend(ChartInternal.prototype, {
 	tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		const $$ = this;
 		const config = $$.config;
-		let [left, top] = d3Mouse(element);
-
+		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
+		let [left, top] = d3Mouse(element);
 		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
 
 		top += 20;
@@ -241,7 +241,7 @@ extend(ChartInternal.prototype, {
 			const raw = $$.inputType === "touch" || $$.hasType("radar");
 
 			if (!raw) {
-				top += $$.height / 2;
+				top += hasGauge ? $$.height : $$.height / 2;
 				left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
 		} else {
@@ -265,7 +265,7 @@ extend(ChartInternal.prototype, {
 		}
 
 		if (top + tHeight > $$.currentHeight) {
-			top -= tHeight + 30;
+			top -= hasGauge ? tHeight * 3 : tHeight + 30;
 		}
 
 		if (top < 0) {

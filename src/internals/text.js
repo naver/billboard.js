@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
 import CLASS from "../config/classes";
-import {capitalize, extend, getBoundingRect, getRandom, isNumber, isObject, isString} from "./util";
+import {capitalize, extend, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation} from "./util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -334,5 +334,52 @@ extend(ChartInternal.prototype, {
 		}
 
 		return yPos + $$.getTextPos(d.id, "y");
+	},
+
+	/**
+	 * Calculate if two or more text nodes are overlapping
+	 * Mark overlapping text nodes with "text-overlapping" class
+	 * @private
+	 * @param {number} id
+	 * @param {ChartInternal} $$
+	 * @param {string} selector
+	 */
+	markOverlapped(id, $$, selector) {
+		const textNodes = $$.arcs.selectAll(selector);
+		const filteredTextNodes = textNodes.filter(node => node.data.id !== id);
+		const textNode = textNodes.filter(node => node.data.id === id);
+		const translate = getTranslation(textNode.node());
+
+		// Calculates the length of the hypotenuse
+		const calcHypo = (x, y) => Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+
+		textNode.node() && filteredTextNodes.each(function() {
+			const coordinate = getTranslation(this);
+			const filteredTextNode = d3Select(this);
+			const nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ?
+				textNode : filteredTextNode;
+
+			const overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) <
+				Math.ceil(nodeForWidth.node().getComputedTextLength());
+			const overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) <
+				parseInt(textNode.style("font-size"), 0);
+
+			filteredTextNode.classed(CLASS.TextOverlapping, overlapsX && overlapsY);
+		});
+	},
+
+	/**
+	 * Calculate if two or more text nodes are overlapping
+	 * Remove "text-overlapping" class on selected text nodes
+	 * @private
+	 * @param {ChartInternal} $$
+	 * @param {string} selector
+	 */
+	undoMarkOverlapped($$, selector) {
+		$$.arcs.selectAll(selector)
+			.each(function() {
+				d3SelectAll([this, this.previousSibling])
+					.classed(CLASS.TextOverlapping, false);
+			});
 	}
 });

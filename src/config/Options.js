@@ -3347,6 +3347,11 @@ export default class Options {
 			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
+			 * @property {String} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+			 * **Available Values:**
+			 * - single
+			 * - multi
+			 * @property {String} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
 			 * @example
 			 *  gauge: {
 			 *      fullCircle: false,
@@ -3376,9 +3381,13 @@ export default class Options {
 			 *
 			 *      min: -100,
 			 *      max: 200,
+			 *      type: "single"  // or 'multi'
 			 *      title: "Title Text",
 			 *      units: "%",
-			 *      width: 10
+			 *      width: 10,
+			 *      arcs: {
+			 *          minWidth: 5
+			 *      }
 			 *  }
 			 */
 			gauge_fullCircle: false,
@@ -3386,15 +3395,16 @@ export default class Options {
 			gauge_label_format: undefined,
 			gauge_min: 0,
 			gauge_max: 100,
+			gauge_type: "single",
 			gauge_startingAngle: -1 * Math.PI / 2,
 			gauge_label_extents: undefined,
 			gauge_title: "",
 			gauge_units: undefined,
 			gauge_width: undefined,
+			gauge_arcs_minWidth: 5,
 			gauge_expand: {},
 			gauge_expand_rate: 0.98,
 			gauge_expand_duration: 50,
-
 
 			/**
 			 * Set donut options
