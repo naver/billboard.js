@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200108123727
+ * @version 1.11.1-nightly-20200110123820
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -334,7 +334,7 @@ function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200108123727");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200110123820");
 
 
 
@@ -431,6 +431,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
  */
 /* harmony default export */ var classes = ({
   arc: "bb-arc",
+  arcLabelLine: "bb-arc-label-line",
   arcs: "bb-arcs",
   area: "bb-area",
   areas: "bb-areas",
@@ -521,7 +522,8 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   zoomRect: "bb-zoom-rect",
   EXPANDED: "_expanded_",
   SELECTED: "_selected_",
-  INCLUDED: "_included_"
+  INCLUDED: "_included_",
+  TextOverlapping: "text-overlapping"
 });
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
 function _arrayWithoutHoles(arr) {
@@ -762,6 +764,18 @@ var isValue = function (v) {
       console.error("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
     }
   }), rules;
+},
+    getTranslation = function (node) {
+  var transform = node ? node.transform : null,
+      baseVal = transform ? transform.baseVal : [];
+  return baseVal.length ? baseVal.getItem(0).matrix : {
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+    e: 0,
+    f: 0
+  };
 },
     getUnique = function (data) {
   var isDate = data[0] instanceof Date,

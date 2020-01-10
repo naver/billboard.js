@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200108123727
+ * @version 1.11.1-nightly-20200110123820
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -17545,6 +17545,7 @@ function axisLeft(scale) {
  */
 /* harmony default export */ var config_classes = ({
   arc: "bb-arc",
+  arcLabelLine: "bb-arc-label-line",
   arcs: "bb-arcs",
   area: "bb-area",
   areas: "bb-areas",
@@ -17635,7 +17636,8 @@ function axisLeft(scale) {
   zoomRect: "bb-zoom-rect",
   EXPANDED: "_expanded_",
   SELECTED: "_selected_",
-  INCLUDED: "_included_"
+  INCLUDED: "_included_",
+  TextOverlapping: "text-overlapping"
 });
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
 function _arrayWithoutHoles(arr) {
@@ -18494,6 +18496,18 @@ var isValue = function (v) {
       console.error("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
     }
   }), rules;
+},
+    getTranslation = function (node) {
+  var transform = node ? node.transform : null,
+      baseVal = transform ? transform.baseVal : [];
+  return baseVal.length ? baseVal.getItem(0).matrix : {
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+    e: 0,
+    f: 0
+  };
 },
     getUnique = function (data) {
   var isDate = data[0] instanceof Date,
@@ -22636,8 +22650,9 @@ function () {
           $$ = this,
           config = $$.config,
           isRotated = config.axis_rotated,
+          hasGauge = $$.hasType("gauge"),
           padding = 0;
-      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
+      if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel($$.margin.left), y = asHalfPixel($$.margin.top);else if (target === "context") x = asHalfPixel($$.margin2.left), y = asHalfPixel($$.margin2.top);else if (target === "legend") x = $$.margin3.left, y = $$.margin3.top + (hasGauge ? 10 : 0);else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : $$.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? $$.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : $$.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subx") x = 0, y = isRotated ? 0 : $$.height2;else if (target === "arc") x = $$.arcWidth / 2, y = $$.arcHeight / 2;else if (target === "radar") {
         var _$$$getRadarSize = $$.getRadarSize(),
             _$$$getRadarSize2 = _slicedToArray(_$$$getRadarSize, 1),
             width = _$$$getRadarSize2[0];
@@ -26303,6 +26318,11 @@ var Options_Options = function Options() {
      * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
      * @property {String} [gauge.units] Set units of the gauge.
      * @property {Number} [gauge.width] Set width of gauge chart.
+     * @property {String} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+     * **Available Values:**
+     * - single
+     * - multi
+     * @property {String} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
      * @example
      *  gauge: {
      *      fullCircle: false,
@@ -26332,9 +26352,13 @@ var Options_Options = function Options() {
      *
      *      min: -100,
      *      max: 200,
+     *      type: "single"  // or 'multi'
      *      title: "Title Text",
      *      units: "%",
-     *      width: 10
+     *      width: 10,
+     *      arcs: {
+     *          minWidth: 5
+     *      }
      *  }
      */
     gauge_fullCircle: !1,
@@ -26342,11 +26366,13 @@ var Options_Options = function Options() {
     gauge_label_format: undefined,
     gauge_min: 0,
     gauge_max: 100,
+    gauge_type: "single",
     gauge_startingAngle: -1 * Math.PI / 2,
     gauge_label_extents: undefined,
     gauge_title: "",
     gauge_units: undefined,
     gauge_width: undefined,
+    gauge_arcs_minWidth: 5,
     gauge_expand: {},
     gauge_expand_rate: .98,
     gauge_expand_duration: 50,
@@ -28804,7 +28830,7 @@ function asin(x) {
 
 
 
-function arcInnerRadius(d) {
+function arc_arcInnerRadius(d) {
   return d.innerRadius;
 }
 
@@ -28938,7 +28964,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return (context.closePath(), buffer) ? (context = null, buffer + "" || null) : void 0;
   }
 
-  var innerRadius = arcInnerRadius,
+  var innerRadius = arc_arcInnerRadius,
       outerRadius = arcOuterRadius,
       cornerRadius = d3_shape_src_constant(0),
       padRadius = null,
@@ -30721,8 +30747,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         radius = config.pie_innerRadius,
         padding = config.pie_padding,
-        w = config.gauge_width || config.donut_width;
-    $$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2, $$.radius = $$.radiusExpanded * .95, $$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : .6;
+        w = config.gauge_width || config.donut_width,
+        gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
+    $$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2 * ($$.hasMultiArcGauge() ? .85 : 1), $$.radius = $$.radiusExpanded * .95, $$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : .6, $$.gaugeArcWidth = w || (gaugeArcWidth <= $$.radius - $$.innerRadius ? $$.radius - $$.innerRadius : gaugeArcWidth <= $$.radius ? gaugeArcWidth : $$.radius);
     var innerRadius = radius || (padding ? padding * ($$.innerRadiusRatio + .1) : 0); // NOTE: innerRadius can be an object by user setting, only for 'pie' type
 
     $$.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ? $$.radius * $$.innerRadiusRatio : innerRadius;
@@ -30743,25 +30770,41 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         d = dValue,
         found = !1;
     if (!config) return null;
+    var hasMultiArcGauge = $$.hasMultiArcGauge(),
+        radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
+        gMin = config.gauge_min,
+        gMax = config.gauge_max,
+        gStart = config.gauge_startingAngle;
 
-    if (d.data && $$.isGaugeType(d.data)) {
+    if (d.data && $$.hasType("gauge") && !hasMultiArcGauge) {
       var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
 
       totalSum > config.gauge_max && (config.gauge_max = totalSum);
-      var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
-          gStart = config.gauge_startingAngle,
-          gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
-      pie = $$.pie.startAngle(gStart).endAngle(gEnd + gStart);
+      pie = pie.startAngle(gStart).endAngle(radius * (totalSum / (gMax - gMin)) + gStart);
     }
 
-    return pie($$.filterTargetsToShow()).forEach(function (t) {
-      found || t.data.id !== d.data.id || (found = !0, d = t);
-    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), found ? d : null;
+    if (pie($$.filterTargetsToShow()).forEach(function (t, i) {
+      found || t.data.id !== d.data.id || (found = !0, d = t, d.index = i);
+    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), d.data && hasMultiArcGauge) {
+      var maxValue = $$.getMinMaxData().max[0].value; // if gauge_max less than maxValue, make maxValue to max value
+
+      maxValue > config.gauge_max && (config.gauge_max = maxValue);
+      var gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
+      d.startAngle = gStart, d.endAngle = gStart + radius / (gMax - gMin) * gValue;
+    }
+
+    return found ? d : null;
   },
   getSvgArc: function getSvgArc() {
     var $$ = this,
         ir = $$.getInnerRadius(),
-        arc = src_arc().outerRadius($$.radius).innerRadius(isNumber(ir) ? ir : 0),
+        singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+        hasMultiArcGauge = $$.hasMultiArcGauge(),
+        arc = src_arc().outerRadius(function (d) {
+      return hasMultiArcGauge ? $$.radius - singleArcWidth * d.index : $$.radius;
+    }).innerRadius(function (d) {
+      return hasMultiArcGauge ? $$.radius - singleArcWidth * (d.index + 1) : isNumber(ir) ? ir : 0;
+    }),
         newArc = function (d, withoutUpdate) {
       var path = "M 0 0";
 
@@ -30778,10 +30821,18 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   getSvgArcExpanded: function getSvgArcExpanded(rate) {
     var $$ = this,
-        arc = src_arc().outerRadius($$.radiusExpanded * (rate || 1));
+        newRate = rate || 1,
+        singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+        hasMultiArcGauge = $$.hasMultiArcGauge(),
+        expandWidth = Math.min($$.radiusExpanded * newRate - $$.radius, singleArcWidth * .8 - (1 - newRate) * 100),
+        arc = src_arc().outerRadius(function (d) {
+      return hasMultiArcGauge ? $$.radius - singleArcWidth * d.index + expandWidth : $$.radiusExpanded * newRate;
+    }).innerRadius(function (d) {
+      return hasMultiArcGauge ? $$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius;
+    });
     return function (d) {
       var updated = $$.updateAngle(d);
-      return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
+      return updated ? (hasMultiArcGauge ? arc : arc.innerRadius($$.getInnerRadius(d)))(updated) : "M 0 0";
     };
   },
   getArc: function getArc(d, withoutUpdate, force) {
@@ -30792,8 +30843,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         updated = $$.updateAngle(d),
         translate = "";
-
-    if (updated && (!$$.hasType("gauge") || $$.data.targets.length > 1)) {
+    if (updated) if ($$.hasMultiArcGauge()) {
+      var y1 = Math.sin(updated.endAngle - Math.PI / 2),
+          x = Math.cos(updated.endAngle - Math.PI / 2) * ($$.radiusExpanded + 25),
+          y = y1 * ($$.radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+      translate = "translate(".concat(x, ",").concat(y, ")");
+    } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
       var c = this.svgArc.centroid(updated),
           x = isNaN(c[0]) ? 0 : c[0],
           y = isNaN(c[1]) ? 0 : c[1],
@@ -30801,7 +30856,6 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           ratio = $$.hasType("donut") && config.donut_label_ratio || $$.hasType("pie") && config.pie_label_ratio;
       ratio = ratio ? isFunction(ratio) ? ratio(d, $$.radius, h) : ratio : $$.radius && (h ? (36 / $$.radius > .375 ? 1.175 - 36 / $$.radius : .8) * $$.radius / h : 0), translate = "translate(".concat(x * ratio, ",").concat(y * ratio, ")");
     }
-
     return translate;
   },
   convertToArcData: function convertToArcData(d) {
@@ -30845,7 +30899,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
     var newTargetIds = $$.mapToTargetIds(targetIds);
     $$.svg.selectAll($$.selectorTargets(newTargetIds, ".".concat(config_classes.chartArc))).each(function (d) {
-      if ($$.shouldExpand(d.data.id) && d.value !== 0) {
+      if ($$.shouldExpand(d.data.id)) {
         var expandDuration = $$.getExpandConfig(d.data.id, "duration"),
             svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
         src_select(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", svgArcExpandedSub);
@@ -30957,7 +31011,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       return hasInteraction && config.data_selection_isselectable(d) ? "pointer" : null;
     }).style("opacity", "0").each(function (d) {
       $$.isGaugeType(d.data) && (d.startAngle = config.gauge_startingAngle, d.endAngle = config.gauge_startingAngle), this._current = d;
-    }).merge(mainArc), mainArc.attr("transform", function (d) {
+    }).merge(mainArc), $$.hasMultiArcGauge() && $$.redrawMultiArcGauge(), mainArc.attr("transform", function (d) {
       return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
     }).style("opacity", function (d) {
       return d === this._current ? "0" : "1";
@@ -30988,6 +31042,34 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
       $$.transiting = !1, callFn(config.onrendered, $$, $$.api);
     }), hasInteraction && $$.bindArcEvent(mainArc), $$.redrawArcText(duration);
+  },
+  redrawMultiArcGauge: function redrawMultiArcGauge() {
+    var $$ = this,
+        config = $$.config,
+        arcLabelLines = $$.main.selectAll(".".concat(config_classes.arcs)).selectAll(".".concat(config_classes.arcLabelLine)).data($$.arcData.bind($$)),
+        mainArcLabelLine = arcLabelLines.enter().append("rect").attr("class", function (d) {
+      return "".concat(config_classes.arcLabelLine, " ").concat(config_classes.target, " ").concat(config_classes.target, "-").concat(d.data.id);
+    }).merge(arcLabelLines);
+    mainArcLabelLine.style("fill", function (d) {
+      return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
+    }).style("display", config.gauge_label_show ? "" : "none").each(function (d) {
+      var lineLength = 0,
+          lineThickness = 2,
+          x = 0,
+          y = 0,
+          transform = "";
+
+      if ($$.hiddenTargetIds.indexOf(d.data.id) < 0) {
+        var updated = $$.updateAngle(d),
+            innerLineLength = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length * (updated.index + 1),
+            lineAngle = updated.endAngle - Math.PI / 2,
+            arcInnerRadius = $$.radius - innerLineLength,
+            linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : 1 / arcInnerRadius);
+        lineLength = $$.radiusExpanded - $$.radius + innerLineLength, x = Math.cos(linePositioningAngle) * arcInnerRadius, y = Math.sin(linePositioningAngle) * arcInnerRadius, transform = "rotate(".concat(lineAngle * 180 / Math.PI, ", ").concat(x, ", ").concat(y, ")");
+      }
+
+      src_select(this).attr("x", x).attr("y", y).attr("width", lineLength).attr("height", lineThickness).attr("transform", transform).style("stroke-dasharray", "0, ".concat(lineLength + lineThickness, ", 0"));
+    });
   },
   bindArcEvent: function bindArcEvent(arc) {
     function selectArc(_this, arcData, id) {
@@ -31053,19 +31135,39 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         $$ = this,
         config = $$.config,
         main = $$.main,
-        hasGauge = $$.hasType("gauge");
+        hasGauge = $$.hasType("gauge"),
+        hasMultiArcGauge = $$.hasMultiArcGauge();
 
     if (hasGauge && $$.data.targets.length === 1 && config.gauge_title || (text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
       return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
     }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-      return $$.isGaugeType(d.data) && $$.data.targets.length === 1 ? "".concat(Math.round($$.radius / 5), "px") : null;
-    }).transition().duration(duration).style("opacity", function (d) {
+      return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !$$.hasMultiArcGauge() ? "".concat(Math.round($$.radius / 5), "px") : null;
+    }).attr("dy", !hasGauge || $$.hasMultiTargets() || config.gauge_fullCircle ? null : "-.1em").transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
     })), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle,
           startAngle = -1 * Math.PI / 2,
           endAngle = (isFullCircle ? -4 : -1) * startAngle;
-      isFullCircle && text && text.attr("dy", "".concat(Math.round($$.radius / 14))), $$.arcs.select(".".concat(config_classes.chartArcsBackground)).attr("d", function () {
+      isFullCircle && text && text.attr("dy", "".concat(Math.round($$.radius / 14)));
+      var backgroundArc = $$.arcs.select("".concat(hasMultiArcGauge ? "g" : "", ".").concat(config_classes.chartArcsBackground));
+
+      if (hasMultiArcGauge) {
+        var index = 0;
+        backgroundArc = backgroundArc.selectAll("path.".concat(config_classes.chartArcsBackground)).data($$.data.targets), backgroundArc.enter().append("path").attr("class", function (d, i) {
+          return "".concat(config_classes.chartArcsBackground, " ").concat(config_classes.chartArcsBackground, "-").concat(i);
+        }).merge(backgroundArc).attr("d", function (d1) {
+          if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) return "M 0 0";
+          var d = {
+            data: [{
+              value: config.gauge_max
+            }],
+            startAngle: startAngle,
+            endAngle: endAngle,
+            index: index++
+          };
+          return $$.getArc(d, !0, !0);
+        }), backgroundArc.exit().remove();
+      } else backgroundArc.attr("d", function () {
         var d = {
           data: [{
             value: config.gauge_max
@@ -31074,7 +31176,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           endAngle: endAngle
         };
         return $$.getArc(d, !0, !0);
-      }), $$.arcs.select(".".concat(config_classes.chartArcsGaugeUnit)).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select(".".concat(config_classes.chartArcsGaugeMin)).attr("dx", "".concat(-1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (isFullCircle ? 1 : 2)), "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && $$.arcs.select(".".concat(config_classes.chartArcsGaugeMax)).attr("dx", "".concat($$.innerRadius + ($$.radius - $$.innerRadius) / 2, "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
+      });
+
+      $$.arcs.select(".".concat(config_classes.chartArcsGaugeUnit)).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && ($$.arcs.select(".".concat(config_classes.chartArcsGaugeMin)).attr("dx", "".concat(-1 * ($$.innerRadius + ($$.radius - $$.innerRadius) / (isFullCircle ? 1 : 2)), "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && $$.arcs.select(".".concat(config_classes.chartArcsGaugeMax)).attr("dx", "".concat($$.innerRadius + ($$.radius - $$.innerRadius) / 2, "px")).attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
     }
   },
   initGauge: function initGauge() {
@@ -31085,7 +31189,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
     };
 
-    $$.hasType("gauge") && (arcs.append("path").attr("class", config_classes.chartArcsBackground), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax)));
+    $$.hasType("gauge") && (arcs.append($$.hasMultiArcGauge() ? "g" : "path").attr("class", config_classes.chartArcsBackground), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax)));
   },
   getGaugeLabelHeight: function getGaugeLabelHeight() {
     return this.config.gauge_label_show ? 20 : 0;
@@ -32350,6 +32454,50 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }
 
     return isRotated || (yPos += $$.getCenteredTextPos(d, points, textElement)), yPos + $$.getTextPos(d.id, "y");
+  },
+
+  /**
+   * Calculate if two or more text nodes are overlapping
+   * Mark overlapping text nodes with "text-overlapping" class
+   * @private
+   * @param {number} id
+   * @param {ChartInternal} $$
+   * @param {string} selector
+   */
+  markOverlapped: function markOverlapped(id, $$, selector) {
+    var textNodes = $$.arcs.selectAll(selector),
+        filteredTextNodes = textNodes.filter(function (node) {
+      return node.data.id !== id;
+    }),
+        textNode = textNodes.filter(function (node) {
+      return node.data.id === id;
+    }),
+        translate = getTranslation(textNode.node()),
+        calcHypo = function (x, y) {
+      return Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2));
+    };
+
+    textNode.node() && filteredTextNodes.each(function () {
+      var coordinate = getTranslation(this),
+          filteredTextNode = src_select(this),
+          nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : filteredTextNode,
+          overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) < Math.ceil(nodeForWidth.node().getComputedTextLength()),
+          overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 0);
+      filteredTextNode.classed(config_classes.TextOverlapping, overlapsX && overlapsY);
+    });
+  },
+
+  /**
+   * Calculate if two or more text nodes are overlapping
+   * Remove "text-overlapping" class on selected text nodes
+   * @private
+   * @param {ChartInternal} $$
+   * @param {string} selector
+   */
+  undoMarkOverlapped: function undoMarkOverlapped($$, selector) {
+    $$.arcs.selectAll(selector).each(function () {
+      src_selectAll([this, this.previousSibling]).classed(config_classes.TextOverlapping, !1);
+    });
   }
 });
 // CONCATENATED MODULE: ./src/internals/type.js
@@ -32430,6 +32578,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    */
   hasArcType: function hasArcType(targets, exclude) {
     return this.hasTypeOf("Arc", targets, exclude);
+  },
+  hasMultiArcGauge: function hasMultiArcGauge() {
+    return this.hasType("gauge") && this.config.gauge_type === "multi";
   },
   isLineType: function isLineType(d) {
     var id = isString(d) ? d : d.id;
@@ -32917,24 +33068,25 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
     var $$ = this,
         config = $$.config,
+        hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle,
+        svgLeft = $$.getSvgLeft(!0),
         _d3Mouse = src_mouse(element),
         _d3Mouse2 = _slicedToArray(_d3Mouse, 2),
         left = _d3Mouse2[0],
         top = _d3Mouse2[1],
-        svgLeft = $$.getSvgLeft(!0),
         chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
 
     // Determine tooltip position
     if (top += 20, $$.hasArcType()) {
       var raw = $$.inputType === "touch" || $$.hasType("radar");
-      raw || (top += $$.height / 2, left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2);
+      raw || (top += hasGauge ? $$.height : $$.height / 2, left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2);
     } else {
       var dataScale = $$.x(dataToShow[0].x);
       config.axis_rotated ? (top = dataScale + 20, left += svgLeft + 100, chartRight -= svgLeft) : (top -= 5, left = svgLeft + $$.getCurrentPaddingLeft(!0) + 20 + ($$.zoomScale ? left : dataScale));
     }
 
     var right = left + tWidth;
-    return right > chartRight && (left -= right - chartRight + 20), top + tHeight > $$.currentHeight && (top -= tHeight + 30), top < 0 && (top = 0), {
+    return right > chartRight && (left -= right - chartRight + 20), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
       top: top,
       left: left
     };
@@ -33276,7 +33428,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   setLegendItem: function setLegendItem(item) {
     var $$ = this,
         config = $$.config,
-        isTouch = $$.inputType === "touch";
+        isTouch = $$.inputType === "touch",
+        hasGauge = $$.hasType("gauge");
     item.attr("class", function (id) {
       var node = src_select(this),
           itemClass = !node.empty() && node.attr("class") || "";
@@ -33286,9 +33439,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     }).style("cursor", "pointer").on("click", function (id) {
       callFn(config.legend_item_onclick, $$, id) || (on_event.altKey ? ($$.api.hide(), $$.api.show(id)) : ($$.api.toggle(id), !isTouch && $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert())), isTouch && $$.hideTooltip();
     }), isTouch || item.on("mouseout", function (id) {
-      callFn(config.legend_item_onout, $$, id) || (src_select(this).classed(config_classes.legendItemFocused, !1), $$.api.revert());
+      callFn(config.legend_item_onout, $$, id) || (src_select(this).classed(config_classes.legendItemFocused, !1), hasGauge && $$.undoMarkOverlapped($$, ".".concat(config_classes.gaugeValue)), $$.api.revert());
     }).on("mouseover", function (id) {
-      callFn(config.legend_item_onover, $$, id) || (src_select(this).classed(config_classes.legendItemFocused, !0), !$$.transiting && $$.isTargetToShow(id) && $$.api.focus(id));
+      callFn(config.legend_item_onover, $$, id) || (src_select(this).classed(config_classes.legendItemFocused, !0), hasGauge && $$.markOverlapped(id, $$, ".".concat(config_classes.gaugeValue)), !$$.transiting && $$.isTargetToShow(id) && $$.api.focus(id));
     });
   },
 
@@ -33454,7 +33607,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     } else {
       var _tiles = $$.legend.selectAll("line.".concat(config_classes.legendItemTile)).data(targetIdz);
 
-      (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.color).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
+      (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.levelColor ? function (id) {
+        return $$.levelColor($$.cache[id].values[0].value);
+      } : $$.color).attr("x1", x1ForLegendTile).attr("y1", yForLegendTile).attr("x2", x2ForLegendTile).attr("y2", yForLegendTile);
     }
 
     background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
@@ -33521,8 +33676,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var x,
         $$ = this,
         config = $$.config,
-        position = config.title_position || "left";
-    return /(right|center)/.test(position) ? (x = $$.currentWidth - $$.getTextRect($$.title, config_classes.title).width, position.indexOf("right") >= 0 ? x -= config.title_padding.right || 0 : position.indexOf("center") >= 0 && (x /= 2)) : x = config.title_padding.left || 0, x;
+        position = config.title_position || "left",
+        textRectWidth = $$.getTextRect($$.title, config_classes.title).width;
+    return /(right|center)/.test(position) ? (x = $$.currentWidth - textRectWidth, position.indexOf("right") >= 0 ? x = $$.currentWidth - textRectWidth - config.title_padding.right : position.indexOf("center") >= 0 && (x = ($$.currentWidth - textRectWidth) / 2)) : x = config.title_padding.left || 0, x;
   },
 
   /**
@@ -35129,7 +35285,7 @@ util_extend(Chart_Chart.prototype, {
     var $$ = this.internal,
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $$.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-    this.revert(), this.defocus(), candidates.classed(config_classes.focused, !0).classed(config_classes.defocused, !1), $$.hasArcType() && $$.expandArc(targetIds), $$.toggleFocusLegend(targetIds, !0), $$.focusedTargetIds = targetIds, $$.defocusedTargetIds = $$.defocusedTargetIds.filter(function (id) {
+    this.revert(), this.defocus(), candidates.classed(config_classes.focused, !0).classed(config_classes.defocused, !1), $$.hasArcType() && ($$.expandArc(targetIds), $$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, ".".concat(config_classes.gaugeValue))), $$.toggleFocusLegend(targetIds, !0), $$.focusedTargetIds = targetIds, $$.defocusedTargetIds = $$.defocusedTargetIds.filter(function (id) {
       return targetIds.indexOf(id) < 0;
     });
   },
@@ -35155,7 +35311,7 @@ util_extend(Chart_Chart.prototype, {
     var $$ = this.internal,
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $$.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-    candidates.classed(config_classes.focused, !1).classed(config_classes.defocused, !0), $$.hasArcType() && $$.unexpandArc(targetIds), $$.toggleFocusLegend(targetIds, !1), $$.focusedTargetIds = $$.focusedTargetIds.filter(function (id) {
+    candidates.classed(config_classes.focused, !1).classed(config_classes.defocused, !0), $$.hasArcType() && ($$.unexpandArc(targetIds), $$.hasType("gauge") && $$.undoMarkOverlapped($$, ".".concat(config_classes.gaugeValue))), $$.toggleFocusLegend(targetIds, !1), $$.focusedTargetIds = $$.focusedTargetIds.filter(function (id) {
       return targetIds.indexOf(id) < 0;
     }), $$.defocusedTargetIds = targetIds;
   },
@@ -37148,7 +37304,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200108123727",
+  version: "1.11.1-nightly-20200110123820",
 
   /**
    * Generate chart
@@ -37247,7 +37403,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200108123727
+ * @version 1.11.1-nightly-20200110123820
  */
 
 

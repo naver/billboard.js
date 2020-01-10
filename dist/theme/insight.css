@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200108123727
+ * @version 1.11.1-nightly-20200110123820
  */
 /*-- Insight Theme --*/
 /*-- Default color pattern --*/
@@ -97,6 +97,8 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
 
 .bb-target.bb-defocused {
   opacity: 0.3 !important; }
+  .bb-target.bb-defocused .text-overlapping {
+    opacity: .05 !important; }
 
 /*-- Region --*/
 .bb-region {
@@ -220,10 +222,15 @@ rect.bb-circle._expanded_, use.bb-circle._expanded_ {
   stroke-width: 0; }
 
 .bb-chart-arc .bb-gauge-value {
-  fill: #000; }
+  fill: #000;
+  font-size: 12px; }
 
 .bb-chart-arc path {
   stroke: #fff; }
+
+.bb-chart-arc rect {
+  stroke: #fff;
+  stroke-width: 1; }
 
 .bb-chart-arc text {
   fill: #fff;
