@@ -95,13 +95,10 @@ extend(ChartInternal.prototype, {
 			return null;
 		}
 
-		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
-		const gMin = config.gauge_min;
-		const gMax = config.gauge_max;
 		const gStart = config.gauge_startingAngle;
 
-		if (d.data && $$.hasType("gauge") && !hasMultiArcGauge) {
+		if (d.data && $$.isGaugeType(d.data)) {
 			const totalSum = $$.getTotalDataSum();
 
 			// if gauge_max less than totalSum, make totalSum to max value
@@ -109,7 +106,7 @@ extend(ChartInternal.prototype, {
 				config.gauge_max = totalSum;
 			}
 
-			const gEnd = radius * (totalSum / (gMax - gMin));
+			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
 
 			pie = pie
 				.startAngle(gStart)
@@ -133,7 +130,7 @@ extend(ChartInternal.prototype, {
 			d.endAngle = d.startAngle;
 		}
 
-		if (d.data && hasMultiArcGauge) {
+		if (d.data && $$.hasMultiArcGauge()) {
 			const maxValue = $$.getMinMaxData().max[0].value;
 
 			// if gauge_max less than maxValue, make maxValue to max value
@@ -141,6 +138,8 @@ extend(ChartInternal.prototype, {
 				config.gauge_max = maxValue;
 			}
 
+			const gMin = config.gauge_min;
+			const gMax = config.gauge_max;
 			const gTic = radius / (gMax - gMin);
 			const gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
 
