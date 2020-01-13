@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200110123820
+ * @version 1.11.1-nightly-20200113124012
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8377,26 +8377,26 @@ extend(ChartInternal_ChartInternal.prototype, {
         d = dValue,
         found = !1;
     if (!config) return null;
-    var hasMultiArcGauge = $$.hasMultiArcGauge(),
-        radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
-        gMin = config.gauge_min,
-        gMax = config.gauge_max,
+    var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
         gStart = config.gauge_startingAngle;
 
-    if (d.data && $$.hasType("gauge") && !hasMultiArcGauge) {
+    if (d.data && $$.isGaugeType(d.data)) {
       var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
 
       totalSum > config.gauge_max && (config.gauge_max = totalSum);
-      pie = pie.startAngle(gStart).endAngle(radius * (totalSum / (gMax - gMin)) + gStart);
+      var gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+      pie = pie.startAngle(gStart).endAngle(gEnd + gStart);
     }
 
     if (pie($$.filterTargetsToShow()).forEach(function (t, i) {
       found || t.data.id !== d.data.id || (found = !0, d = t, d.index = i);
-    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), d.data && hasMultiArcGauge) {
+    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), d.data && $$.hasMultiArcGauge()) {
       var maxValue = $$.getMinMaxData().max[0].value; // if gauge_max less than maxValue, make maxValue to max value
 
       maxValue > config.gauge_max && (config.gauge_max = maxValue);
-      var gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
+      var gMin = config.gauge_min,
+          gMax = config.gauge_max,
+          gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
       d.startAngle = gStart, d.endAngle = gStart + radius / (gMax - gMin) * gValue;
     }
 
@@ -8748,10 +8748,10 @@ extend(ChartInternal_ChartInternal.prototype, {
     if (hasGauge && $$.data.targets.length === 1 && config.gauge_title || (text = main.selectAll(".".concat(config_classes.chartArc)).select("text").style("opacity", "0").attr("class", function (d) {
       return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
     }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
-      return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !$$.hasMultiArcGauge() ? "".concat(Math.round($$.radius / 5), "px") : null;
-    }).attr("dy", !hasGauge || $$.hasMultiTargets() || config.gauge_fullCircle ? null : "-.1em").transition().duration(duration).style("opacity", function (d) {
+      return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? "".concat(Math.round($$.radius / 5), "px") : null;
+    }).transition().duration(duration).style("opacity", function (d) {
       return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
-    })), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
+    }), hasMultiArcGauge && text.attr("dy", "-.1em")), main.select(".".concat(config_classes.chartArcsTitle)).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
       var isFullCircle = config.gauge_fullCircle,
           startAngle = -1 * Math.PI / 2,
           endAngle = (isFullCircle ? -4 : -1) * startAngle;
@@ -14554,7 +14554,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200110123820",
+  version: "1.11.1-nightly-20200113124012",
 
   /**
    * Generate chart
@@ -14653,7 +14653,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200110123820
+ * @version 1.11.1-nightly-20200113124012
  */
 
 

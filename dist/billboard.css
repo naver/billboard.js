@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200110123820
+ * @version 1.11.1-nightly-20200113124012
  */
 /*-- Chart --*/
 .bb svg {
@@ -30,8 +30,7 @@
   shape-rendering: crispEdges; }
 
 .bb-chart-arc .bb-gauge-value {
-  fill: #000;
-  font-size: 12px; }
+  fill: #000; }
 
 .bb-chart-arc path {
   stroke: #fff; }
