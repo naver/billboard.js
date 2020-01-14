@@ -6,7 +6,11 @@ import Plugin from "../Plugin";
  * Compare data 3-dimensional ways: x-axis, y-axis & bubble-size.
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
+ *   - Non required modules from billboard.js core, need to be installed separately.
+ * - **Required modules:**
+ *   - [d3-selection](https://github.com/d3/d3-selection)
  * @class plugin-bubblecompare
+ * @requires d3-selection
  * @param {Object} options bubble compare plugin options
  * @extends Plugin
  * @return {BubbleCompare}
@@ -25,6 +29,15 @@ import Plugin from "../Plugin";
  *        }),
  *     ]
  *  });
+  * @example
+ *	import {bb} from "billboard.js";
+ * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
+ *
+ * bb.generate({
+ *     plugins: [
+ *        new BubbleCompare({ ... })
+ *     ]
+ * })
  */
 
 export default class BubbleCompare extends Plugin {
