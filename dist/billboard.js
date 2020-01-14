@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200113124012
+ * @version 1.11.1-nightly-20200114124126
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7202,14 +7202,17 @@ extend(ChartInternal_ChartInternal.prototype, {
   findClosest: function findClosest(values, pos) {
     var closest,
         $$ = this,
+        data = values.filter(function (v) {
+      return v && isValue(v.value);
+    }),
         minDist = $$.config.point_sensitivity;
-    return values.filter(function (v) {
-      return v && $$.isBarType(v.id);
+    return data.filter(function (v) {
+      return $$.isBarType(v.id);
     }).forEach(function (v) {
       var shape = $$.main.select(".".concat(config_classes.bars).concat($$.getTargetSelectorSuffix(v.id), " .").concat(config_classes.bar, "-").concat(v.index)).node();
       !closest && $$.isWithinBar(shape) && (closest = v);
-    }), values.filter(function (v) {
-      return v && !$$.isBarType(v.id);
+    }), data.filter(function (v) {
+      return !$$.isBarType(v.id);
     }).forEach(function (v) {
       var d = $$.dist(v, pos);
       d < minDist && (minDist = d, closest = v);
@@ -14554,7 +14557,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200113124012",
+  version: "1.11.1-nightly-20200114124126",
 
   /**
    * Generate chart
@@ -14653,7 +14656,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200113124012
+ * @version 1.11.1-nightly-20200114124126
  */
 
 

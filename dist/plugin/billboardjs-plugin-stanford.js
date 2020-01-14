@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200113124012
+ * @version 1.11.1-nightly-20200114124126
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -334,7 +334,7 @@ function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200113124012");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200114124126");
 
 
 
@@ -1336,15 +1336,33 @@ function () {
  * Stanford diagram plugin
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
+ *   - Non required modules from billboard.js core, need to be installed separately.
  *   - Is preferable use `scatter` as data.type
+ * - **Required modules:**
+ *   - [d3-selection](https://github.com/d3/d3-selection)
+ *   - [d3-array](https://github.com/d3/d3-array)
+ *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
+ *   - [d3-color](https://github.com/d3/d3-color)
+ *   - [d3-scale](https://github.com/d3/d3-scale)
+ *   - [d3-brush](https://github.com/d3/d3-brush)
+ *   - [d3-axis](https://github.com/d3/d3-axis)
+ *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
+ * @requies d3-selection
+ * @requies d3-array
+ * @requies d3-interpolate
+ * @requies d3-color
+ * @requies d3-scale
+ * @requies d3-brush
+ * @requies d3-axis
+ * @requies d3-format
  * @param {Object} options Stanford plugin options
  * @extends Plugin
  * @return {Stanford}
  * @example
  *  var chart = bb.generate({
  *     data: {
- *     	  columns: [ ... ],
+ *        columns: [ ... ],
  *        type: "scatter"
  *     }
  *     ...
@@ -1373,12 +1391,12 @@ function () {
  *           regions: [
  *           	{
  *               	points: [ // add points counter-clockwise
- *               		{ x: 0, y: 0 },
- *               		{ x: 40, y: 40 },
- *               		{ x: 0, y: 40 }
+ *               	    { x: 0, y: 0 },
+ *               	    { x: 40, y: 40 },
+ *               	    { x: 0, y: 40 }
  *               	],
  *               	text: function (value, percentage) {
- *               		return `Normal Operations: ${value} (${percentage}%)`;
+ *               	    return `Normal Operations: ${value} (${percentage}%)`;
  *               	},
  *               	opacity: 0.2, // 0 to 1
  *               	class: "test-polygon1"
@@ -1388,6 +1406,15 @@ function () {
  *        }
  *     ]
  *  });
+ * @example
+ *	import {bb} from "billboard.js";
+ * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
+ *
+ * bb.generate({
+ *     plugins: [
+ *        new Stanford({ ... })
+ *     ]
+ * })
  */
 
 var stanford_Stanford =

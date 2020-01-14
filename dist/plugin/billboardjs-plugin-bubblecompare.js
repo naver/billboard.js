@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200113124012
+ * @version 1.11.1-nightly-20200114124126
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -138,7 +138,11 @@ __webpack_require__.r(__webpack_exports__);
  * Compare data 3-dimensional ways: x-axis, y-axis & bubble-size.
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
+ *   - Non required modules from billboard.js core, need to be installed separately.
+ * - **Required modules:**
+ *   - [d3-selection](https://github.com/d3/d3-selection)
  * @class plugin-bubblecompare
+ * @requires d3-selection
  * @param {Object} options bubble compare plugin options
  * @extends Plugin
  * @return {BubbleCompare}
@@ -157,6 +161,15 @@ __webpack_require__.r(__webpack_exports__);
  *        }),
  *     ]
  *  });
+  * @example
+ *	import {bb} from "billboard.js";
+ * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
+ *
+ * bb.generate({
+ *     plugins: [
+ *        new BubbleCompare({ ... })
+ *     ]
+ * })
  */
 
 var BubbleCompare =
@@ -471,7 +484,7 @@ function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200113124012");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200114124126");
 
 
 

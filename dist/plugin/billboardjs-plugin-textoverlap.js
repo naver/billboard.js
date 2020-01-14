@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200113124012
+ * @version 1.11.1-nightly-20200114124126
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -334,7 +334,7 @@ function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200113124012");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200114124126");
 
 
 
@@ -531,7 +531,15 @@ var Options_Options = function Options() {
  * Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram).
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
+ *   - Non required modules from billboard.js core, need to be installed separately.
+ * - **Required modules:**
+ *   - [d3-selection](https://github.com/d3/d3-selection)
+ *   - [d3-polygon](https://github.com/d3/d3-polygon)
+ *   - [d3-voronoi](https://github.com/d3/d3-voronoi)
  * @class plugin-textoverlap
+ * @requires d3-selection
+ * @requires d3-polygon
+ * @requires d3-voronoi
  * @param {Object} options TextOverlap plugin options
  * @extends Plugin
  * @return {TextOverlap}
@@ -548,6 +556,15 @@ var Options_Options = function Options() {
  *          area: 3
  *     ]
  *  });
+ * @example
+ *	import {bb} from "billboard.js";
+ * import TextOverlap from "billboard.js/dist/billboardjs-plugin-textoverlap";
+ *
+ * bb.generate({
+ *     plugins: [
+ *        new TextOverlap({ ... })
+ *     ]
+ * })
  */
 
 var textoverlap_TextOverlap =
