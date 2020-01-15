@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200114124126
+ * @version 1.11.1-nightly-20200115124143
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -28075,6 +28075,22 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
 
 
+/**
+ * Convert CSV/TSV data
+ * @param {Object} parser Parser object
+ * @param {Object} xsv Data
+ * @private
+ * @return {Object}
+ */
+
+var convertCsvTsvToData = function (parser, xsv) {
+  var d,
+      rows = parser.rows(xsv);
+  return rows.length === 1 ? (d = [{}], rows[0].forEach(function (id) {
+    d[0][id] = null;
+  })) : d = parser.parse(xsv), d;
+};
+
 util_extend(ChartInternal_ChartInternal.prototype, {
   /**
    * Convert data according its type
@@ -28092,6 +28108,16 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     })) : data = args, data.url && callback) $$.convertUrlToData(data.url, data.mimeType, data.headers, data.keys, callback);else if (data.json) data = $$.convertJsonToData(data.json, data.keys);else if (data.rows) data = $$.convertRowsToData(data.rows);else if (data.columns) data = $$.convertColumnsToData(data.columns);else if (args.bindto) throw Error("url or json or rows or columns is required.");
     return isArray(data) && data;
   },
+
+  /**
+   * Convert URL data
+   * @param {String} url Remote URL
+   * @param {String} mimeType MIME type string: json | csv | tsv
+   * @param {Object} headers Header object
+   * @param {Object} keys Key object
+   * @param {Function} done Callback function
+   * @private
+   */
   convertUrlToData: function convertUrlToData(url) {
     var _this = this,
         mimeType = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : "csv",
@@ -28109,21 +28135,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       } else throw new Error("".concat(url, ": Something went wrong loading!"));
     }, req.send();
   },
-  _convertCsvTsvToData: function _convertCsvTsvToData(parser, xsv) {
-    var d,
-        rows = parser.rows(xsv);
-    return rows.length === 1 ? (d = [{}], rows[0].forEach(function (id) {
-      d[0][id] = null;
-    })) : d = parser.parse(xsv), d;
-  },
   convertCsvToData: function convertCsvToData(xsv) {
-    return this._convertCsvTsvToData({
+    return convertCsvTsvToData({
       rows: csvParseRows,
       parse: csvParse
     }, xsv);
   },
   convertTsvToData: function convertTsvToData(tsv) {
-    return this._convertCsvTsvToData({
+    return convertCsvTsvToData({
       rows: tsvParseRows,
       parse: tsvParse
     }, tsv);
@@ -28166,33 +28185,27 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   convertRowsToData: function convertRowsToData(rows) {
     var keys = rows[0],
         newRows = [];
-
-    for (var i = 1, len1 = rows.length; i < len1; i++) {
-      var newRow = {};
-
-      for (var j = 0, len2 = rows[i].length; j < len2; j++) {
-        if (isUndefined(rows[i][j])) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
-        newRow[keys[j]] = rows[i][j];
+    return rows.forEach(function (row, i) {
+      if (i > 0) {
+        var newRow = {};
+        row.forEach(function (v, j) {
+          if (isUndefined(v)) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
+          newRow[keys[j]] = v;
+        }), newRows.push(newRow);
       }
-
-      newRows.push(newRow);
-    }
-
-    return newRows;
+    }), newRows;
   },
   convertColumnsToData: function convertColumnsToData(columns) {
     var newRows = [];
-
-    for (var i = 0, len1 = columns.length; i < len1; i++) {
-      var key = columns[i][0];
-
-      for (var j = 1, len2 = columns[i].length; j < len2; j++) {
-        if (isUndefined(newRows[j - 1]) && (newRows[j - 1] = {}), isUndefined(columns[i][j])) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
-        newRows[j - 1][key] = columns[i][j];
-      }
-    }
-
-    return newRows;
+    return columns.forEach(function (col, i) {
+      var key = col[0];
+      col.forEach(function (v, j) {
+        if (j > 0) {
+          if (isUndefined(newRows[j - 1]) && (newRows[j - 1] = {}), isUndefined(v)) throw new Error("Source data is missing a component at (".concat(i, ", ").concat(j, ")!"));
+          newRows[j - 1][key] = v;
+        }
+      });
+    }), newRows;
   },
   convertDataToTargets: function convertDataToTargets(data, appendXs) {
     var xsData,
@@ -28234,7 +28247,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +d[id], isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(d[id]) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
@@ -37415,7 +37428,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200114124126",
+  version: "1.11.1-nightly-20200115124143",
 
   /**
    * Generate chart
@@ -37514,7 +37527,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200114124126
+ * @version 1.11.1-nightly-20200115124143
  */
 
 
