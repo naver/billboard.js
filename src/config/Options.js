@@ -163,6 +163,7 @@ export default class Options {
 			 * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
 			 *  Specified function receives the zoomed domain.
 			 * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+			 * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
 			 * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
 			 * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
 			 * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
@@ -184,8 +185,14 @@ export default class Options {
 			 *      // show reset button when is zoomed-in
 			 *      resetButton: true,
 			 *
-			 *      // customized text value for reset zoom button
 			 *      resetButton: {
+			 *          // onclick callback when reset button is clicked
+			 *          onclick: function(button) {
+			 *            button; // Reset button element reference
+			 *            ...
+			 *          },
+			 *
+			 *          // customized text value for reset zoom button
 			 *          text: "Unzoom"
 			 *      }
 			 *  }
@@ -595,9 +602,6 @@ export default class Options {
 			 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 			 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
  			 * @property {String|Object} [data.labels.colors] Set label text colors.
-			 * @property {Boolean|Object} [data.labels.overlap=true] Prevents label overlap using [Voronoi layout](https://en.wikipedia.org/wiki/Voronoi_diagram) if set to `false`.
-    		 * @property {Number} [data.labels.overlap.extent=1] Set extent of label overlap prevention.
-     		 * @property {Number} [data.labels.overlap.area=0] Set minimum area needed to show a data label.
 			 * @property {Object} [data.labels.position] Set each dataset position, relative the original.
 			 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
 			 * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
@@ -1295,7 +1299,7 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
-			 * @property {Array} [color.pattern] custom color pattern
+			 * @property {Array} [color.pattern=[]] custom color pattern
 			 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
 			 *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
 			 *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
@@ -1768,8 +1772,9 @@ export default class Options {
 			axis_x_tick_values: null,
 
 			/**
-			 * Rotate x axis tick text.<br>
-			 * If you set negative value, it will rotate to opposite direction.
+			 * Rotate x axis tick text.
+			 * - If you set negative value, it will rotate to opposite direction.
+			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
 			 * @name axis․x․tick․rotate
 			 * @memberof Options
 			 * @type {Number}
@@ -1913,7 +1918,7 @@ export default class Options {
 			 *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
 			 * @name axis․x․padding
 			 * @memberof Options
-			 * @type {Object}
+			 * @type {Object|Number}
 			 * @default {}
 			 * @example
 			 * axis: {
@@ -1926,7 +1931,10 @@ export default class Options {
 			 *       // when axis type is 'timeseries'
 			 *       left: 1000*60*60*24,  // set left padding width of equivalent value of a day tick's width
 			 *       right: 1000*60*60*12   // set right padding width as half of equivalent value of a day tick's width
-			 *     }
+			 *     },
+			 *
+			 *     // or set both values at once.
+			 *     padding: 10
 			 *   }
 			 * }
 			 */
@@ -2303,6 +2311,24 @@ export default class Options {
 			 * }
 			 */
 			axis_y_tick_values: null,
+
+			/**
+			 * Rotate y axis tick text.
+			 * - If you set negative value, it will rotate to opposite direction.
+			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+			 * @name axis․y․tick․rotate
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 0
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       rotate: 60
+			 *     }
+			 *   }
+			 * }
+			 */
 			axis_y_tick_rotate: 0,
 
 			/**
@@ -2415,7 +2441,7 @@ export default class Options {
 			 * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y․padding
 			 * @memberof Options
-			 * @type {Object}
+			 * @type {Object|Number}
 			 * @default {}
 			 * @example
 			 * axis: {
@@ -2423,7 +2449,10 @@ export default class Options {
 			 *     padding: {
 			 *       top: 0,
 			 *       bottom: 0
-			 *     }
+			 *     },
+			 *
+			 *     // or set both values at once.
+			 *     padding: 10
 			 *   }
 			 * }
 			 */
@@ -2696,6 +2725,25 @@ export default class Options {
 			axis_y2_tick_values: null,
 
 			/**
+			 * Rotate y2 axis tick text.
+			 * - If you set negative value, it will rotate to opposite direction.
+			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
+			 * @name axis․y2․tick․rotate
+			 * @memberof Options
+			 * @type {Number}
+			 * @default 0
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       rotate: 60
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_rotate: 0,
+
+			/**
 			 * Set the number of y2 axis ticks.
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․tick․count
@@ -2778,7 +2826,7 @@ export default class Options {
 			 * - **NOTE:** This works in the same way as axis.y.tick.count.
 			 * @name axis․y2․padding
 			 * @memberof Options
-			 * @type {Object}
+			 * @type {Object|Number}
 			 * @default {}
 			 * @example
 			 * axis: {
@@ -2787,7 +2835,9 @@ export default class Options {
 			 *       top: 100,
 			 *       bottom: 100
 			 *     }
-			 *   }
+			 *
+			 *     // or set both values at once.
+			 *     padding: 10
 			 * }
 			 */
 			axis_y2_padding: {},
@@ -2861,7 +2911,9 @@ export default class Options {
 			 * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
 			 *  This option accepts array including object that has value, text, position and class.
 			 * @property {Number} [y.ticks=10] Number of y grids to be shown.
-			 * @property {Boolean} [focus.show=true] Show grids when focus.
+			 * @property {Boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+			 * @property {Boolean} [focus.show=true] Show grid line when focus.
+			 * @property {Boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
 			 * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
 			 * @default undefined
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
@@ -2888,7 +2940,11 @@ export default class Options {
 			 *   },
 			 *   front: true,
 			 *   focus: {
-			 *      show: false
+			 *      show: false,
+			 *
+			 *      // Below options are available when 'tooltip.grouped=false' option is set
+			 *      edge: true,
+			 *      y: true
 			 *   },
 			 *   lines: {
 			 *      front: false
@@ -2901,7 +2957,9 @@ export default class Options {
 			grid_y_show: false,
 			grid_y_lines: [],
 			grid_y_ticks: 10,
+			grid_focus_edge: false,
 			grid_focus_show: true,
+			grid_focus_y: false,
 			grid_front: false,
 			grid_lines_front: true,
 
@@ -2920,21 +2978,21 @@ export default class Options {
 			 * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
 			 * @property {String} [point.type="circle"] The type of point to be drawn
 			 * - **NOTE:**
-			 *  - If chart has 'bubble' type, only circle can be used.
-			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
+			 *   - If chart has 'bubble' type, only circle can be used.
+			 *   - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
-			 *  - circle
-			 *  - rectangle
+			 *   - circle
+			 *   - rectangle
 			 * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
 			 * - **NOTE:**
-			 *  - This is an `experimental` feature and can have some unexpected behaviors.
-			 *  - If chart has 'bubble' type, only circle can be used.
-			 *  - For IE, non circle point expansions are not supported due to lack of transform support.
+			 *   - This is an `experimental` feature and can have some unexpected behaviors.
+			 *   - If chart has 'bubble' type, only circle can be used.
+			 *   - For IE, non circle point expansions are not supported due to lack of transform support.
 			 * - **Available Values:**
-			 *  - circle
-			 *  - rectangle
-			 *  - svg shape tag interpreted as string<br>
-			 *    (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+			 *   - circle
+			 *   - rectangle
+			 *   - svg shape tag interpreted as string<br>
+			 *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
 			 * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
 			 * @example
 			 *  point: {
@@ -2994,6 +3052,7 @@ export default class Options {
 			 * - step-before
 			 * - step-after
 			 * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+			 * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
 			 * @example
 			 *  line: {
 			 *      connectNull: true,
@@ -3011,13 +3070,42 @@ export default class Options {
 			 *      // show data points for only indicated datas
 			 *      point: [
 			 *          "data1", "data3"
-			 *      ]
+			 *      ],
+			 *
+			 *      zerobased: false
 			 *  }
 			 */
 			line_connectNull: false,
 			line_step_type: "step",
+			line_zerobased: false,
 			line_classes: undefined,
 			line_point: true,
+
+			/**
+				* Set scatter options
+				* @name scatter
+				* @memberof Options
+				* @type {Object}
+				* @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+				* @example
+				*  scatter: {
+				*      connectNull: true,
+				*      step: {
+				*          type: "step-after"
+				*      },
+				*
+				*      // hide all data points ('point.show=false' also has similar effect)
+				*      point: false,
+				*
+				*      // show data points for only indicated datas
+				*      point: [
+				*          "data1", "data3"
+				*      ],
+				*
+				*      zerobased: false
+				*  }
+				*/
+			scatter_zerobased: false,
 
 			/**
 			 * Set bar options
@@ -3092,6 +3180,7 @@ export default class Options {
 			 * @memberof Options
 			 * @type {Object}
 			 * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
+			 * @property {Boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
 			 * @example
 			 *  bubble: {
 			 *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
@@ -3103,10 +3192,12 @@ export default class Options {
 			 *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
 			 *          ...
 			 *          return Math.sqrt(d.value * 2);
-			 *      }
+			 *      },
+			 *      zerobased: false
 			 *  }
 			 */
 			bubble_maxR: 35,
+			bubble_zerobased: false,
 
 			/**
 			 * Set area options
@@ -3168,6 +3259,7 @@ export default class Options {
 			 * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
 			 * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
+			 * @property {Number} [pie.expand.rate=0.98] Set expand rate.
 			 * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
 			 * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
 			 * @property {Number} [pie.padAngle=0] Set padding between data.
@@ -3197,9 +3289,12 @@ export default class Options {
 			 *      // disable expand transition for interaction
 			 *      expand: false,
 			 *
-			 *      // set duration of expand transition to 500ms.
 			 *      expand: {
-			 *          duration: 500
+			 *      	// set duration of expand transition to 500ms.
+			 *          duration: 500,
+			 *
+			 *      	// set expand area rate
+			 *          rate: 1
 			 *      },
 			 *
 			 *      innerRadius: 0,
@@ -3220,6 +3315,7 @@ export default class Options {
 			pie_label_threshold: 0.05,
 			pie_label_ratio: undefined,
 			pie_expand: {},
+			pie_expand_rate: 0.98,
 			pie_expand_duration: 50,
 			pie_innerRadius: 0,
 			pie_padAngle: 0,
@@ -3250,6 +3346,7 @@ export default class Options {
 			 * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
 			 * @property {Function} [gauge.label.extents] Set customized min/max label text.
 			 * @property {Boolean} [gauge.expand=true] Enable or disable expanding gauge.
+ 			 * @property {Number} [gauge.expand.rate=0.98] Set expand rate.
 			 * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
 			 * @property {Number} [gauge.min=0] Set min value of the gauge.
 			 * @property {Number} [gauge.max=100] Set max value of the gauge.
@@ -3257,6 +3354,11 @@ export default class Options {
 			 * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
 			 * @property {String} [gauge.units] Set units of the gauge.
 			 * @property {Number} [gauge.width] Set width of gauge chart.
+			 * @property {String} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+			 * **Available Values:**
+			 * - single
+			 * - multi
+			 * @property {String} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
 			 * @example
 			 *  gauge: {
 			 *      fullCircle: false,
@@ -3272,17 +3374,27 @@ export default class Options {
 		 	 *              return (isMax ? "Max:" : "Min:") + value;
 			 *          }
 			 *      },
+			 *
+			 *      // disable expand transition for interaction
 			 *      expand: false,
 			 *
-			 *      // or set duration
 			 *      expand: {
-			 *          duration: 20
+			 *      	// set duration of expand transition to 500ms.
+			 *          duration: 500,
+			 *
+			 *      	// set expand area rate
+			 *          rate: 1
 			 *      },
+			 *
 			 *      min: -100,
 			 *      max: 200,
+			 *      type: "single"  // or 'multi'
 			 *      title: "Title Text",
 			 *      units: "%",
-			 *      width: 10
+			 *      width: 10,
+			 *      arcs: {
+			 *          minWidth: 5
+			 *      }
 			 *  }
 			 */
 			gauge_fullCircle: false,
@@ -3290,14 +3402,16 @@ export default class Options {
 			gauge_label_format: undefined,
 			gauge_min: 0,
 			gauge_max: 100,
+			gauge_type: "single",
 			gauge_startingAngle: -1 * Math.PI / 2,
 			gauge_label_extents: undefined,
 			gauge_title: "",
 			gauge_units: undefined,
 			gauge_width: undefined,
+			gauge_arcs_minWidth: 5,
 			gauge_expand: {},
+			gauge_expand_rate: 0.98,
 			gauge_expand_duration: 50,
-
 
 			/**
 			 * Set donut options
@@ -3309,6 +3423,8 @@ export default class Options {
 			 * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
 			 * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
 			 * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+			 * @property {Number} [donut.expand.rate=0.98] Set expand rate.
+			 * @property {Number} [donut.expand.duration=50] Set expand transition time in ms.
 			 * @property {Number} [donut.width] Set width of donut chart.
 			 * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
 			 * @property {Number} [donut.padAngle=0] Set padding between data.
@@ -3333,7 +3449,18 @@ export default class Options {
 			 *          // or set ratio number
 			 *          ratio: 0.5
 			 *      },
+			 *
+			 *      // disable expand transition for interaction
 			 *      expand: false,
+			 *
+			 *      expand: {
+			 *      	// set duration of expand transition to 500ms.
+			 *          duration: 500,
+			 *
+			 *      	// set expand area rate
+			 *          rate: 1
+			 *      },
+			 *
 			 *      width: 10,
 			 *      padAngle: 0.2,
 			 *      startingAngle: 1,
@@ -3350,6 +3477,7 @@ export default class Options {
 			donut_width: undefined,
 			donut_title: "",
 			donut_expand: {},
+			donut_expand_rate: 0.98,
 			donut_expand_duration: 50,
 			donut_padAngle: 0,
 			donut_startingAngle: 0,

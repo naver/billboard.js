@@ -14,7 +14,7 @@ import {interpolate as d3Interpolate} from "d3-interpolate";
 import ChartInternal from "../internals/ChartInternal";
 import {document} from "../internals/browser";
 import CLASS from "../config/classes";
-import {extend, isFunction, isNumber, isUndefined, setTextValue} from "../internals/util";
+import {callFn, extend, isFunction, isNumber, isUndefined, setTextValue} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	initPie() {
@@ -45,10 +45,17 @@ extend(ChartInternal.prototype, {
 		const radius = config.pie_innerRadius;
 		const padding = config.pie_padding;
 		const w = config.gauge_width || config.donut_width;
+		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
+			config.gauge_arcs_minWidth;
 
-		$$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2;
+		$$.radiusExpanded = Math.min($$.arcWidth, $$.arcHeight) / 2 * ($$.hasMultiArcGauge() ? 0.85 : 1);
 		$$.radius = $$.radiusExpanded * 0.95;
 		$$.innerRadiusRatio = w ? ($$.radius - w) / $$.radius : 0.6;
+		$$.gaugeArcWidth = w || (
+			gaugeArcWidth <= $$.radius - $$.innerRadius ?
+				$$.radius - $$.innerRadius :
+				(gaugeArcWidth <= $$.radius ? gaugeArcWidth : $$.radius)
+		);
 
 		const innerRadius = radius || (
 			padding ? padding * ($$.innerRadiusRatio + 0.1) : 0
@@ -75,7 +82,6 @@ extend(ChartInternal.prototype, {
 
 		$$.svgArc = $$.getSvgArc();
 		$$.svgArcExpanded = $$.getSvgArcExpanded();
-		$$.svgArcExpandedSub = $$.getSvgArcExpanded(0.98);
 	},
 
 	updateAngle(dValue) {
@@ -89,6 +95,9 @@ extend(ChartInternal.prototype, {
 			return null;
 		}
 
+		const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
+		const gStart = config.gauge_startingAngle;
+
 		if (d.data && $$.isGaugeType(d.data)) {
 			const totalSum = $$.getTotalDataSum();
 
@@ -97,21 +106,21 @@ extend(ChartInternal.prototype, {
 				config.gauge_max = totalSum;
 			}
 
-			const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
-			const gStart = config.gauge_startingAngle;
 			const gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
 
-			pie = $$.pie
+			pie = pie
 				.startAngle(gStart)
 				.endAngle(gEnd + gStart);
 		}
 
-		pie($$.filterTargetsToShow()).forEach(t => {
-			if (!found && t.data.id === d.data.id) {
-				found = true;
-				d = t;
-			}
-		});
+		pie($$.filterTargetsToShow())
+			.forEach((t, i) => {
+				if (!found && t.data.id === d.data.id) {
+					found = true;
+					d = t;
+					d.index = i;
+				}
+			});
 
 		if (isNaN(d.startAngle)) {
 			d.startAngle = 0;
@@ -121,17 +130,39 @@ extend(ChartInternal.prototype, {
 			d.endAngle = d.startAngle;
 		}
 
+		if (d.data && $$.hasMultiArcGauge()) {
+			const maxValue = $$.getMinMaxData().max[0].value;
+
+			// if gauge_max less than maxValue, make maxValue to max value
+			if (maxValue > config.gauge_max) {
+				config.gauge_max = maxValue;
+			}
+
+			const gMin = config.gauge_min;
+			const gMax = config.gauge_max;
+			const gTic = radius / (gMax - gMin);
+			const gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : (gMax - gMin);
+
+			d.startAngle = gStart;
+			d.endAngle = gStart + gTic * gValue;
+		}
+
 		return found ? d : null;
 	},
 
 	getSvgArc() {
 		const $$ = this;
 		const ir = $$.getInnerRadius();
-		let arc = d3Arc()
-			.outerRadius($$.radius)
-			.innerRadius(isNumber(ir) ? ir : 0);
+		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+		const hasMultiArcGauge = $$.hasMultiArcGauge();
 
-		const newArc = (d, withoutUpdate) => {
+		let arc = d3Arc()
+			.outerRadius(d => (hasMultiArcGauge ? ($$.radius - singleArcWidth * d.index) : $$.radius))
+			.innerRadius(d => (hasMultiArcGauge ?
+				$$.radius - singleArcWidth * (d.index + 1) :
+				isNumber(ir) ? ir : 0));
+
+		const newArc = function(d, withoutUpdate) {
 			let path = "M 0 0";
 
 			if (d.value || d.data) {
@@ -159,13 +190,31 @@ extend(ChartInternal.prototype, {
 
 	getSvgArcExpanded(rate) {
 		const $$ = this;
+		const newRate = rate || 1;
+		const singleArcWidth = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
+		const hasMultiArcGauge = $$.hasMultiArcGauge();
+		const expandWidth = Math.min($$.radiusExpanded * newRate - $$.radius,
+			singleArcWidth * 0.8 - (1 - newRate) * 100
+		);
+
 		const arc = d3Arc()
-			.outerRadius($$.radiusExpanded * (rate || 1));
+			.outerRadius(d => (hasMultiArcGauge ?
+				$$.radius - singleArcWidth * d.index + expandWidth :
+				$$.radiusExpanded * newRate)
+			)
+			.innerRadius(d => (hasMultiArcGauge ?
+				$$.radius - singleArcWidth * (d.index + 1) : $$.innerRadius));
 
 		return function(d) {
 			const updated = $$.updateAngle(d);
 
-			return updated ? arc.innerRadius($$.getInnerRadius(d))(updated) : "M 0 0";
+			if (updated) {
+				return (
+					hasMultiArcGauge ? arc : arc.innerRadius($$.getInnerRadius(d))
+				)(updated);
+			} else {
+				return "M 0 0";
+			}
 		};
 	},
 
@@ -179,23 +228,33 @@ extend(ChartInternal.prototype, {
 		const updated = $$.updateAngle(d);
 		let translate = "";
 
-		if (updated && (!$$.hasType("gauge") || $$.data.targets.length > 1)) {
-			const c = this.svgArc.centroid(updated);
-			const x = isNaN(c[0]) ? 0 : c[0];
-			const y = isNaN(c[1]) ? 0 : c[1];
-			const h = Math.sqrt(x * x + y * y);
+		if (updated) {
+			if ($$.hasMultiArcGauge()) {
+				const y1 = Math.sin(updated.endAngle - Math.PI / 2);
 
-			let ratio = ($$.hasType("donut") && config.donut_label_ratio) ||
-				($$.hasType("pie") && config.pie_label_ratio);
+				const x = Math.cos(updated.endAngle - Math.PI / 2) * ($$.radiusExpanded + 25);
+				const y = y1 * ($$.radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
 
-			if (ratio) {
-				ratio = isFunction(ratio) ? ratio(d, $$.radius, h) : ratio;
-			} else {
-				ratio = $$.radius &&
-					(h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0);
+				translate = `translate(${x},${y})`;
+			} else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
+				const c = this.svgArc.centroid(updated);
+				const x = isNaN(c[0]) ? 0 : c[0];
+				const y = isNaN(c[1]) ? 0 : c[1];
+				const h = Math.sqrt(x * x + y * y);
+
+				let ratio = ($$.hasType("donut") && config.donut_label_ratio) ||
+					($$.hasType("pie") && config.pie_label_ratio);
+
+				if (ratio) {
+					ratio = isFunction(ratio) ? ratio(d, $$.radius, h) : ratio;
+				} else {
+					ratio = $$.radius && (
+						h ? (36 / $$.radius > 0.375 ? 1.175 - 36 / $$.radius : 0.8) * $$.radius / h : 0
+					);
+				}
+
+				translate = `translate(${x * ratio},${y * ratio})`;
 			}
-
-			translate = `translate(${x * ratio},${y * ratio})`;
 		}
 
 		return translate;
@@ -263,11 +322,12 @@ extend(ChartInternal.prototype, {
 
 		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.each(function(d) {
-				if (!$$.shouldExpand(d.data.id) || d.value === 0) {
+				if (!$$.shouldExpand(d.data.id)) {
 					return;
 				}
 
-				const expandDuration = $$.expandDuration(d.data.id);
+				const expandDuration = $$.getExpandConfig(d.data.id, "duration");
+				const svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
 
 				d3Select(this).selectAll("path")
 					.transition()
@@ -275,7 +335,7 @@ extend(ChartInternal.prototype, {
 					.attr("d", $$.svgArcExpanded)
 					.transition()
 					.duration(expandDuration * 2)
-					.attr("d", $$.svgArcExpandedSub);
+					.attr("d", svgArcExpandedSub);
 			});
 	},
 
@@ -291,16 +351,27 @@ extend(ChartInternal.prototype, {
 		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.selectAll("path")
 			.transition()
-			.duration(d => $$.expandDuration(d.data.id))
+			.duration(d => $$.getExpandConfig(d.data.id, "duration"))
 			.attr("d", $$.svgArc);
 
 		$$.svg.selectAll(`${CLASS.arc}`)
 			.style("opacity", "1");
 	},
 
-	expandDuration(id) {
+	/**
+	 * Get expand config value
+	 * @param {String} id data ID
+	 * @param {String} key config key: 'duration | rate'
+	 * @return {Number}
+	 * @private
+	 */
+	getExpandConfig(id, key) {
 		const $$ = this;
 		const config = $$.config;
+		const def = {
+			duration: 50,
+			rate: 0.98
+		};
 		let type;
 
 		if ($$.isDonutType(id)) {
@@ -311,7 +382,7 @@ extend(ChartInternal.prototype, {
 			type = "pie";
 		}
 
-		return type ? config[`${type}_expand_duration`] : 50;
+		return type ? config[`${type}_expand_${key}`] : def[key];
 	},
 
 	shouldExpand(id) {
@@ -459,6 +530,8 @@ extend(ChartInternal.prototype, {
 			})
 			.merge(mainArc);
 
+		$$.hasMultiArcGauge() && $$.redrawMultiArcGauge();
+
 		mainArc
 			.attr("transform", d => (!$$.isGaugeType(d.data) && withTransform ? "scale(0)" : ""))
 			.style("opacity", function(d) {
@@ -521,12 +594,60 @@ extend(ChartInternal.prototype, {
 				}
 
 				$$.transiting = false;
+				callFn(config.onrendered, $$, $$.api);
 			});
 
 		// bind arc events
 		hasInteraction && $$.bindArcEvent(mainArc);
 
 		$$.redrawArcText(duration);
+	},
+
+	redrawMultiArcGauge() {
+		const $$ = this;
+		const config = $$.config;
+
+		const arcLabelLines = $$.main.selectAll(`.${CLASS.arcs}`)
+			.selectAll(`.${CLASS.arcLabelLine}`)
+			.data($$.arcData.bind($$));
+
+		const mainArcLabelLine = arcLabelLines.enter()
+			.append("rect")
+			.attr("class", d => `${CLASS.arcLabelLine} ${CLASS.target} ${CLASS.target}-${d.data.id}`)
+			.merge(arcLabelLines);
+
+		mainArcLabelLine
+			.style("fill", d => ($$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data)))
+			.style("display", config.gauge_label_show ? "" : "none")
+			.each(function(d) {
+				let lineLength = 0;
+				const lineThickness = 2;
+				let x = 0;
+				let y = 0;
+				let transform = "";
+
+				if ($$.hiddenTargetIds.indexOf(d.data.id) < 0) {
+					const updated = $$.updateAngle(d);
+					const innerLineLength = $$.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length *
+						(updated.index + 1);
+					const lineAngle = updated.endAngle - Math.PI / 2;
+					const arcInnerRadius = $$.radius - innerLineLength;
+					const linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : (1 / arcInnerRadius));
+
+					lineLength = $$.radiusExpanded - $$.radius + innerLineLength;
+					x = Math.cos(linePositioningAngle) * arcInnerRadius;
+					y = Math.sin(linePositioningAngle) * arcInnerRadius;
+					transform = `rotate(${lineAngle * 180 / Math.PI}, ${x}, ${y})`;
+				}
+
+				d3Select(this)
+					.attr("x", x)
+					.attr("y", y)
+					.attr("width", lineLength)
+					.attr("height", lineThickness)
+					.attr("transform", transform)
+					.style("stroke-dasharray", `0, ${lineLength + lineThickness}, 0`);
+			});
 	},
 
 	bindArcEvent(arc) {
@@ -635,6 +756,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const main = $$.main;
 		const hasGauge = $$.hasType("gauge");
+		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		let text;
 
 		// for gauge type, update text when has no title & multi data
@@ -645,10 +767,15 @@ extend(ChartInternal.prototype, {
 				.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null))
 				.call($$.textForArcLabel.bind($$))
 				.attr("transform", $$.transformForArcLabel.bind($$))
-				.style("font-size", d => ($$.isGaugeType(d.data) && $$.data.targets.length === 1 ? `${Math.round($$.radius / 5)}px` : null))
+				.style("font-size", d => (
+					$$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ?
+						`${Math.round($$.radius / 5)}px` : null
+				))
 				.transition()
 				.duration(duration)
 				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
+
+			hasMultiArcGauge && text.attr("dy", "-.1em");
 		}
 
 		main.select(`.${CLASS.chartArcsTitle}`)
@@ -661,8 +788,39 @@ extend(ChartInternal.prototype, {
 
 			isFullCircle && text && text.attr("dy", `${Math.round($$.radius / 14)}`);
 
-			$$.arcs.select(`.${CLASS.chartArcsBackground}`)
-				.attr("d", () => {
+			let backgroundArc = $$.arcs.select(
+				`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`
+			);
+
+			if (hasMultiArcGauge) {
+				let index = 0;
+
+				backgroundArc = backgroundArc
+					.selectAll(`path.${CLASS.chartArcsBackground}`)
+					.data($$.data.targets);
+
+				backgroundArc.enter()
+					.append("path")
+					.attr("class", (d, i) => `${CLASS.chartArcsBackground} ${CLASS.chartArcsBackground}-${i}`)
+					.merge(backgroundArc)
+					.attr("d", d1 => {
+						if ($$.hiddenTargetIds.indexOf(d1.id) >= 0) {
+							return "M 0 0";
+						}
+
+						const d = {
+							data: [{value: config.gauge_max}],
+							startAngle,
+							endAngle,
+							index: index++
+						};
+
+						return $$.getArc(d, true, true);
+					});
+
+				backgroundArc.exit().remove();
+			} else {
+				backgroundArc.attr("d", () => {
 					const d = {
 						data: [{value: config.gauge_max}],
 						startAngle,
@@ -671,6 +829,7 @@ extend(ChartInternal.prototype, {
 
 					return $$.getArc(d, true, true);
 				});
+			}
 
 			$$.arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
 				.attr("dy", ".75em")
@@ -703,7 +862,7 @@ extend(ChartInternal.prototype, {
 		};
 
 		if ($$.hasType("gauge")) {
-			arcs.append("path")
+			arcs.append($$.hasMultiArcGauge() ? "g" : "path")
 				.attr("class", CLASS.chartArcsBackground);
 
 			config.gauge_units && appendText(CLASS.chartArcsGaugeUnit);

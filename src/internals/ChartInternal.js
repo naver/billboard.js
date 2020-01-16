@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {document, window} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isArray, isFunction, isNumber, isObject, isString, isValue, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -436,10 +436,9 @@ export default class ChartInternal {
 		if (type === "grid") {
 			el.each(function() {
 				const g = d3Select(this);
-				const [x1, x2, y1, y2] = ["x1", "x2", "y1", "y2"]
-					.map(v => Math.ceil(g.attr(v)));
 
-				g.attr({x1, x2, y1, y2});
+				["x1", "x2", "y1", "y2"]
+					.forEach(v => g.attr(v, Math.ceil(g.attr(v))));
 			});
 		}
 	}
@@ -659,7 +658,7 @@ export default class ChartInternal {
 		$$.updateCircleY();
 
 		// xgrid focus
-		$$.updateXgridFocus();
+		$$.updategridFocus();
 
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
@@ -748,7 +747,7 @@ export default class ChartInternal {
 
 		if (afterRedraw) {
 			// Only use transition when current tab is visible.
-			if (isTransition) {
+			if (isTransition && redrawList.length) {
 				// Wait for end of transitions for callback
 				const waitForDraw = $$.generateWait();
 
@@ -760,7 +759,7 @@ export default class ChartInternal {
 							.forEach(t => waitForDraw.add(t));
 					})
 					.call(waitForDraw, afterRedraw);
-			} else {
+			} else if (!$$.transiting) {
 				afterRedraw();
 			}
 		}
@@ -916,6 +915,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
+		const hasGauge = $$.hasType("gauge");
 		let padding = 0;
 		let x;
 		let y;
@@ -932,7 +932,7 @@ export default class ChartInternal {
 			y = asHalfPixel($$.margin2.top);
 		} else if (target === "legend") {
 			x = $$.margin3.left;
-			y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);
+			y = $$.margin3.top + (hasGauge ? 10 : 0);
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : $$.height + padding;
@@ -980,11 +980,17 @@ export default class ChartInternal {
 		return this.hasDataLabel() ? "1" : "0";
 	}
 
+	/**
+	 * Get the zoom or unzoomed scaled value
+	 * @param {Date|Number|Object} d Data value
+	 * @private
+	 */
 	xx(d) {
-		const fn = this.config.zoom_enabled && this.zoomScale ?
-			this.zoomScale : this.x;
+		const $$ = this;
+		const fn = $$.config.zoom_enabled && $$.zoomScale ?
+			$$.zoomScale : this.x;
 
-		return d ? fn(d.x) : null;
+		return d ? fn(isValue(d.x) ? d.x : d) : null;
 	}
 
 	xv(d) {

@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import { Axis } from "./axis";
-import { ChartTypes, d3Selection, DataItem, PrimitiveArray } from "./types";
+import { ChartTypes, d3Selection, DataItem, GaugeTypes, PrimitiveArray } from "./types";
 import Stanford from "./plugin/stanford/index";
 import { Chart } from "./chart";
 
@@ -214,6 +214,11 @@ export interface ChartOptions {
 		};
 
 		/**
+		 * Set if min or max value will be 0 on line chart.
+		 */
+		zerobased?: boolean;
+
+		/**
 		 * If set, used to set a css class on each line.
 		 */
 		classes?: string[];
@@ -222,6 +227,13 @@ export interface ChartOptions {
 		 * Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
 		 */
 		point?: boolean | string[];
+	};
+
+	scatter?: {
+		/**
+		 * Set if min or max value will be 0 on scatter chart.
+		 */
+		zerobased?: boolean;
 	};
 
 	area?: {
@@ -308,6 +320,11 @@ export interface ChartOptions {
 		 * Set the max bubble radius value
 		 */
 		maxR?: ((d: {}) => number) | number;
+
+		/**
+		 * Set if min or max value will be 0 on bubble chart.
+		 */
+		zerobased?: boolean;
 	};
 
 	radar?: {
@@ -342,44 +359,44 @@ export interface ChartOptions {
 				 */
 				show?: boolean;
 			};
+		};
 
-			direction?: {
+		direction?: {
+			/**
+			 * Set the direction to be drawn.
+			 */
+			clockwise: boolean;
+		};
+
+		level?: {
+			/**
+			 * Set the level depth.
+			 */
+			depth?: number;
+
+			/**
+			 * Show or hide level.
+			 */
+			show?: boolean;
+
+			text?: {
 				/**
-				 * Set the direction to be drawn.
+				 * Set format function for the level value.
 				 */
-				clockwise: boolean;
-			};
-
-			level?: {
-				/**
-				 * Set the level depth.
-				 */
-				depth?: number;
+				format?: (x: string) => string;
 
 				/**
-				 * Show or hide level.
+				 * Show or hide level text.
 				 */
 				show?: boolean;
+			};
+		}
 
-				text?: {
-					/**
-					 * Set format function for the level value.
-					 */
-					format?: (x: string) => string;
-
-					/**
-					 * Show or hide level text.
-					 */
-					show?: boolean;
-				};
-			}
-
-			size?: {
-				/**
-				 * Set size ratio.
-				 */
-				ratio?: number;
-			}
+		size?: {
+			/**
+			 * Set size ratio.
+			 */
+			ratio?: number;
 		}
 	};
 
@@ -405,6 +422,7 @@ export interface ChartOptions {
 			 */
 			ratio?: ((d: DataItem, radius: number, h: number) => void) | number
 		};
+
 		/**
 		 * Enable or disable expanding pie pieces.
 		 */
@@ -413,6 +431,11 @@ export interface ChartOptions {
 			 * Set expand transition time in ms.
 			 */
 			duration?: number;
+
+			/**
+			 * Set expand rate.
+			 */
+			rate?: number;
 		};
 
 		/**
@@ -457,9 +480,19 @@ export interface ChartOptions {
 		};
 
 		/**
-		 * Enable or disable expanding pie pieces.
+		 * Enable or disable expanding donut pieces.
 		 */
-		expand?: boolean;
+		expand?: boolean | {
+			/**
+			 * Set expand transition time in ms.
+			 */
+			duration?: number;
+
+			/**
+			 * Set expand rate.
+			 */
+			rate?: number;
+		};
 
 		/**
 		 * Set padding between data.
@@ -508,14 +541,24 @@ export interface ChartOptions {
 		};
 
 		/**
-		 * Enable or disable expanding gauge.
+		 * Enable or disable expanding gauge pieces.
 		 */
 		expand?: boolean | {
 			/**
-			 * Set the expand transition time in milliseconds.
+			 * Set expand transition time in ms.
 			 */
-			duration?: number
+			duration?: number;
+
+			/**
+			 * Set expand rate.
+			 */
+			rate?: number;
 		};
+
+		/**
+		 * Set type of the gauge.
+		 */
+		type?: GaugeTypes;
 
 		/**
 		 * Set min value of the gauge.
@@ -546,6 +589,13 @@ export interface ChartOptions {
 		 * Set width of gauge chart.
 		 */
 		width?: number;
+
+		/**
+		 * Set minimal width of gauge arcs until the innerRadius disappears.
+		 */
+		arcs?: {
+			minWidth: number;
+		}
 	};
 
 	spline?: {
@@ -1006,6 +1056,11 @@ export interface ZoomOptions {
 	 */
 	resetButton?: boolean | {
 		/**
+		 * Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
+		 */
+		onclick?(button: HTMLElement): void;
+
+		/**
 		 * Text value for zoom reset button.
 		 */
 		text?: string;
@@ -1083,9 +1138,21 @@ export interface Grid {
 
 	focus?: {
 		/**
+		 * Show edged focus grid line.
+		 * **NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+		 */
+		edge?: boolean;
+
+		/**
 		 * Show grids when focus.
 		 */
 		show?: boolean;
+
+		/**
+		 * Show y coordinate focus grid line.
+		 * **NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+		 */
+		y?: boolean;
 	};
 
 	lines?: {

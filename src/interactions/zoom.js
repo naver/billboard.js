@@ -12,7 +12,7 @@ import {zoom as d3Zoom} from "d3-zoom";
 import ChartInternal from "../internals/ChartInternal";
 import {document} from "../internals/browser";
 import CLASS from "../config/classes";
-import {extend, callFn, diffDomain, getMinMax, isDefined} from "../internals/util";
+import {extend, callFn, diffDomain, getMinMax, isDefined, isFunction} from "../internals/util";
 
 extend(ChartInternal.prototype, {
 	/**
@@ -42,7 +42,9 @@ extend(ChartInternal.prototype, {
 		const eventRects = $$.main.select(`.${CLASS.eventRects}`);
 
 		if (zoomEnabled && bind) {
-			$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
+			// Do not bind zoom event when subchart is shown
+			!$$.config.subchart_show &&
+				$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
 		} else if (bind === false) {
 			$$.api.unzoom();
 
@@ -352,7 +354,10 @@ extend(ChartInternal.prototype, {
 				$$.zoom.resetBtn = $$.selectChart.append("div")
 					.classed(CLASS.button, true)
 					.append("span")
-					.on("click", $$.api.unzoom.bind($$))
+					.on("click", function() {
+						isFunction(resetButton.onclick) && resetButton.onclick(this);
+						$$.api.unzoom.call($$);
+					})
 					.classed(CLASS.buttonZoomReset, true)
 					.text(resetButton.text || "Reset Zoom");
 			} else {

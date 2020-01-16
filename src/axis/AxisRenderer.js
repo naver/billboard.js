@@ -46,7 +46,6 @@ export default class AxisRenderer {
 		const scale = helperInst.scale;
 		const orient = config.orient;
 		const splitTickText = this.splitTickText.bind(this);
-
 		const isLeftRight = /^(left|right)$/.test(orient);
 		const isTopBottom = /^(top|bottom)$/.test(orient);
 
@@ -160,8 +159,8 @@ export default class AxisRenderer {
 					.attr("dx", (() => {
 						let dx = 0;
 
-						if (orient === "bottom" && rotate) {
-							dx = 8 * Math.sin(Math.PI * (rotate / 180));
+						if (/(top|bottom)/.test(orient) && rotate) {
+							dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
 						}
 
 						return dx + (tickTextPos.x || 0);
@@ -264,9 +263,19 @@ export default class AxisRenderer {
 		const {innerTickSize, orient, tickLength, tickOffset} = this.config;
 		const rotate = this.params.tickTextRotate;
 
-		const textAnchorForText = r => (!r ? "middle" : (r > 0 ? "start" : "end"));
+		const textAnchorForText = r => {
+			const value = ["start", "end"];
+
+			orient === "top" && value.reverse();
+
+			return !r ? "middle" : (r > 0 ? value[0] : value[1]);
+		};
 		const textTransform = r => (r ? `rotate(${r})` : null);
-		const yForText = r => (r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength);
+		const yForText = r => {
+			const r2 = r / (orient === "bottom" ? 15 : 23);
+
+			return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+		};
 
 		switch (orient) {
 			case "bottom":
@@ -288,8 +297,9 @@ export default class AxisRenderer {
 
 				textUpdate
 					.attr("x", 0)
-					.attr("y", -tickLength * 2)
-					.style("text-anchor", "middle");
+					.attr("y", -yForText(rotate) * 2)
+					.style("text-anchor", textAnchorForText(rotate))
+					.attr("transform", textTransform(rotate));
 				break;
 			case "left":
 				lineUpdate

@@ -32,7 +32,7 @@ extend(ChartInternal.prototype, {
 		$$.xgrid = d3SelectAll([]);
 
 		$$.initGridLines();
-		$$.initXYFocusGrid();
+		$$.initFocusGrid();
 	},
 
 	initGridLines() {
@@ -132,9 +132,7 @@ extend(ChartInternal.prototype, {
 		// hide if arc type
 		$$.grid.style("visibility", $$.hasArcType() ? "hidden" : "visible");
 
-		$$.main.select(`line.${CLASS.xgridFocus}`)
-			.style("visibility", "hidden");
-
+		$$.hideGridFocus();
 		$$.updateXGridLines(duration);
 		$$.updateYGridLines(duration);
 	},
@@ -276,7 +274,7 @@ extend(ChartInternal.prototype, {
 		];
 	},
 
-	initXYFocusGrid() {
+	initFocusGrid() {
 		const $$ = this;
 		const config = $$.config;
 		const isFront = config.grid_front;
@@ -297,40 +295,92 @@ extend(ChartInternal.prototype, {
 				.attr("class", CLASS.xgridFocus)
 				.append("line")
 				.attr("class", CLASS.xgridFocus);
+
+			// to show xy focus grid line, should be 'tooltip.grouped=false'
+			if (config.grid_focus_y && !config.tooltip_grouped) {
+				$$.grid.append("g")
+					.attr("class", CLASS.ygridFocus)
+					.append("line")
+					.attr("class", CLASS.ygridFocus);
+			}
 		}
 	},
 
-	showXGridFocus(selectedData) {
+	/**
+	 * Show grid focus line
+	 * @param {Array} selectedData
+	 * @private
+	 */
+	showGridFocus(selectedData) {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
-		const focusEl = $$.main.selectAll(`line.${CLASS.xgridFocus}`);
-		const xx = $$.xx.bind($$);
-
-		if (!config.tooltip_show) {
-			return;
-		}
 
 		// Hide when bubble/scatter/stanford plot exists
-		if ($$.hasType("bubble") || $$.hasType("scatter") || $$.hasArcType()) {
+		if (!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType()) {
 			return;
 		}
+
+		const focusEl = $$.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`);
+		const isEdge = config.grid_focus_edge && !config.tooltip_grouped;
+		const xx = $$.xx.bind($$);
 
 		focusEl
 			.style("visibility", "visible")
-			.data([dataToShow[0]])
-			.attr(isRotated ? "y1" : "x1", xx)
-			.attr(isRotated ? "y2" : "x2", xx);
+			.data(dataToShow.concat(dataToShow))
+			.each(function(d) {
+				const el = d3Select(this);
+				const pos = {
+					x: xx(d),
+					y: $$.getYScale(d.id)(d.value)
+				};
+				let xy;
+
+				if (el.classed(CLASS.xgridFocus)) {
+					// will contain 'x1, y1, x2, y2' order
+					xy = isRotated ?
+						[
+							null, // x1
+							pos.x, // y1
+							isEdge ? pos.y : $$.width, // x2
+							pos.x // y2
+						] : [
+							pos.x,
+							isEdge ? pos.y : null,
+							pos.x,
+							$$.height
+						];
+				} else {
+					const isY2 = $$.axis.getId(d.id) === "y2";
+
+					xy = isRotated ?
+						[
+							pos.y, // x1
+							isEdge && !isY2 ? pos.x : null, // y1
+							pos.y, // x2
+							isEdge && isY2 ? pos.x : $$.height // y2
+						] : [
+							isEdge && isY2 ? pos.x : null,
+							pos.y,
+							isEdge && !isY2 ? pos.x : $$.width,
+							pos.y
+						];
+				}
+
+				["x1", "y1", "x2", "y2"]
+					.forEach((v, i) => el.attr(v, xy[i]));
+			});
 
 		$$.smoothLines(focusEl, "grid");
 	},
 
-	hideXGridFocus() {
-		this.main.select(`line.${CLASS.xgridFocus}`).style("visibility", "hidden");
+	hideGridFocus() {
+		this.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
+			.style("visibility", "hidden");
 	},
 
-	updateXgridFocus() {
+	updategridFocus() {
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
 

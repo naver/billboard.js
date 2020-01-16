@@ -8,6 +8,7 @@
  */
 export default {
 	arc: "bb-arc",
+	arcLabelLine: "bb-arc-label-line",
 	arcs: "bb-arcs",
 	area: "bb-area",
 	areas: "bb-areas",
@@ -90,6 +91,7 @@ export default {
 	xgridLines: "bb-xgrid-lines",
 	xgrids: "bb-xgrids",
 	ygrid: "bb-ygrid",
+	ygridFocus: "bb-ygrid-focus",
 	ygridLine: "bb-ygrid-line",
 	ygridLines: "bb-ygrid-lines",
 	ygrids: "bb-ygrids",
@@ -97,5 +99,6 @@ export default {
 	zoomRect: "bb-zoom-rect",
 	EXPANDED: "_expanded_",
 	SELECTED: "_selected_",
-	INCLUDED: "_included_"
+	INCLUDED: "_included_",
+	TextOverlapping: "text-overlapping"
 };

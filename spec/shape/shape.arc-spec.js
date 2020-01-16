@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+/* global describe, beforeEach, it, expect */
+import {select as d3Select} from "d3-selection";
 import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
@@ -246,7 +248,7 @@ describe("SHAPE ARC", () => {
 
 			setTimeout(() => {
 				expect(data.attr("d"))
-					.to.match(/M-304,-3\..+A304,304,0,0,1,245\..+,-178\..+L237\..+,-172\..+A294,294,0,0,0,-294,-3\..+Z/);
+					.to.be.equal("M-304,-3.7229262694079536e-14A304,304,0,0,1,245.94116628998404,-178.68671669691184L237.85099634623455,-172.8088641739871A294,294,0,0,0,-294,-3.6004615894932184e-14Z");
 
 				expect(chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.equal("-.1em");
 
@@ -278,7 +280,7 @@ describe("SHAPE ARC", () => {
 			setTimeout(() => {
 				// This test has bee updated to make tests pass. @TODO double-check this test is accurate.
 				expect(data.attr("d"))
-					.to.equal("M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,-65.46525025833259,201.4813229771283L-62.375080314583116,191.97075781417675A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z");
+					.to.be.equal("M-211.85,-2.5944142439936676e-14A211.85,211.85,0,1,1,-65.46525025833259,201.4813229771283L-62.375080314583116,191.97075781417675A201.85,201.85,0,1,0,-201.85,-2.4719495640789325e-14Z");
 
 				done();
 			}, 500);
@@ -371,7 +373,7 @@ describe("SHAPE ARC", () => {
 				expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
 
 				// check background height
-				expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(400);
+				expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(300);
 
 				// with fullCircle option, only min text is showed
 				expect(min.empty()).to.be.false;
@@ -476,13 +478,161 @@ describe("SHAPE ARC", () => {
 			// gauge backgound shouldn't be aligned with the 'startingAngle' option
 			expect(
 				getBoundingRect(arc.select(`.${CLASS.chartArcsBackground}`).node()).width
-			).to.be.above(600);
+			).to.be.above(500);
 
 			expect(
 				arc.select(`.${CLASS.arc}-data`).datum().startAngle
 			).to.be.equal(
 				chart.config("gauge.startingAngle")
 			);
+		});
+	});
+
+	describe("show multi-arc-gauge", () => {
+		const args = {
+			data: {
+				columns: [
+					["padded1", 100],
+					["padded2", 90],
+					["padded3", 50],
+					["padded4", 20]
+				],
+				type: "gauge"
+			},
+			gauge: {
+				type: "multi",
+				label: {
+					format: function(value) {
+						return `${value}%`;
+					}
+				}
+			},
+			color: {
+				pattern: ["rgb(255,0,0)", "rgb(249,118,0)", "rgb(246,198,0)", "rgb(96,176,68)"],
+				threshold: {
+					values: [30, 80, 95]
+				}
+			}
+		};
+		const arcColor = ["rgb(96, 176, 68)", "rgb(246, 198, 0)", "rgb(249, 118, 0)", "rgb(255, 0, 0)"];
+		let chart;
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		it("each data_column should have one arc", () => {
+			const arc = chart.$.arc;
+			const chartArcs = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arc}`);
+
+			chartArcs.each(function(d, i) {
+				expect(d3Select(this).classed(`${CLASS.shape} ${CLASS.arc} ${CLASS.arc}-${args.data.columns[i][0]}`)).to.be.true;
+			});
+		});
+
+		it("each arc should have the color from color_pattern if color_treshold is given ", done => {
+			setTimeout(() => {
+				const arc = chart.$.arc;
+				const chartArcs = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arc}`);
+
+				chartArcs.each(function(d, i) {
+					expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
+				});
+
+				done();
+			}, 100);
+		});
+
+		it("each data_column should have one background", () => {
+			const arc = chart.$.arc;
+			const chartArcBackgrounds = arc.selectAll(`.${CLASS.chartArcs} path.${CLASS.chartArcsBackground}`);
+
+			chartArcBackgrounds.each(function(d, i) {
+				expect(d3Select(this).classed(`${CLASS.chartArcsBackground}-${i}`)).to.be.true;
+			});
+		});
+
+		it("each background should have the same color", () => {
+			const arc = chart.$.arc;
+			const chartArcBackgrounds = arc.selectAll(`.${CLASS.chartArcs} path.${CLASS.chartArcsBackground}`);
+
+			chartArcBackgrounds.each(function(d, i) {
+				expect(d3Select(this).style("fill")).to.be.equal("rgb(224, 224, 224)");
+			});
+		});
+
+		it("each data_column should have a label", done => {
+			setTimeout(() => {
+				const arc = chart.$.arc;
+				const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+
+				gaugeValues.each(function(d, i) {
+					expect(d3Select(this).text()).to.be.equal(`${args.data.columns[i][1]}%`);
+				});
+
+				done();
+			}, 100);
+		});
+
+		it("each label should have the same color", () => {
+			const arc = chart.$.arc;
+			const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+
+			gaugeValues.each(function(d, i) {
+				expect(d3Select(this).style("fill")).to.be.equal("rgb(0, 0, 0)");
+			});
+		});
+
+		it("each data_column should have a labelline", () => {
+			const arc = chart.$.arc;
+			const arcLabelLines = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arcLabelLine}`);
+
+			arcLabelLines.each(function(d, i) {
+				expect(d3Select(this).classed(`${CLASS.arcLabelLine} ${CLASS.target} ${CLASS.target}-${args.data.columns[i][0]}`)).to.be.true;
+			});
+		});
+
+		it("each labelline should have the color from color_pattern if color_treshold is given", () => {
+			const arc = chart.$.arc;
+			const arcLabelLines = arc.selectAll(`.${CLASS.chartArc} .${CLASS.arcLabelLine}`);
+
+			arcLabelLines.each(function(d, i) {
+				expect(d3Select(this).style("fill")).to.be.equal(arcColor[i]);
+			});
+		});
+
+		it("set new columns", () => {
+			args.data.columns = [
+				["padded1", 1],
+				["padded2", 14],
+				["padded3", 15],
+				["padded4", 16],
+				["padded5", 50],
+			];
+			expect(args.data.columns[1][1]).to.be.equal(14);
+		});
+
+		it("each overlapped text should be hidden", () => {
+			const arc = chart.$.arc;
+
+			chart.focus("padded3");
+
+			const gaugeValues = arc.selectAll(`${selector.arc} text.${CLASS.gaugeValue}`);
+			const gaugeValuesNodes = gaugeValues.nodes();
+
+			expect(gaugeValuesNodes[0].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[1].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
+			expect(gaugeValuesNodes[2].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[3].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
+			expect(gaugeValuesNodes[4].className.baseVal).to.be.equal("bb-gauge-value");
+
+			chart.focus("padded4");
+
+			expect(gaugeValuesNodes[0].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[1].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[2].className.baseVal).to.be.equal("bb-gauge-value text-overlapping");
+			expect(gaugeValuesNodes[3].className.baseVal).to.be.equal("bb-gauge-value");
+			expect(gaugeValuesNodes[4].className.baseVal).to.be.equal("bb-gauge-value");
 		});
 	});
 
@@ -747,6 +897,86 @@ describe("SHAPE ARC", () => {
 
 				done();
 			}, 100);
+		});
+	});
+
+	describe("check for expand rate", () => {
+		let chart;
+		let args = {
+			data: {
+				columns: [
+					["data1", 30],
+					["data2", 50]
+				],
+				type: "pie"
+			},
+			donut: {
+				expand: {
+					rate: 1.05
+				}
+			},
+			gauge: {
+				expand: {
+					rate: 1.05
+				}
+			},
+			pie: {
+				expand: {
+					rate: 1.05
+				}
+			},
+			transition: {
+				duration: 0
+			}
+		};
+
+		beforeEach(() => {
+			chart = util.generate(args);
+		});
+
+		const checkExpand = done => {
+			let path;
+			let length;
+
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					path = chart.$.arc
+						.select(`.${CLASS.arc}-data1`)
+						.node();
+
+					length = path.getTotalLength();
+
+					// when
+					chart.focus("data1");
+
+					resolve();
+				}, 300);
+			}).then(() => {
+				setTimeout(() => {
+					expect(path.getTotalLength()).to.be.greaterThan(length);
+					done();
+				}, 300);
+			});
+		};
+
+		it("check Pie's expand", done => {
+			checkExpand(done);
+		});
+
+		it("set options: data.type='donut'", done => {
+			args.data.type = "donut";
+		});
+
+		it("check Donut's expand", done => {
+			checkExpand(done);
+		});
+
+		it("set options: data.type='gauge'", done => {
+			args.data.type = "donut";
+		});
+
+		it("check Gauge's expand", done => {
+			checkExpand(done);
 		});
 	});
 });

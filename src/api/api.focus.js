@@ -37,7 +37,13 @@ extend(Chart.prototype, {
 
 		candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
 
-		$$.hasArcType() && $$.expandArc(targetIds);
+		if ($$.hasArcType()) {
+			$$.expandArc(targetIds);
+
+			$$.hasType("gauge") &&
+				$$.markOverlapped(targetIdsValue, $$, `.${CLASS.gaugeValue}`);
+		}
+
 		$$.toggleFocusLegend(targetIds, true);
 
 		$$.focusedTargetIds = targetIds;
@@ -69,7 +75,14 @@ extend(Chart.prototype, {
 		);
 
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
-		$$.hasArcType() && $$.unexpandArc(targetIds);
+
+		if ($$.hasArcType()) {
+			$$.unexpandArc(targetIds);
+
+			$$.hasType("gauge") &&
+				$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
+		}
+
 		$$.toggleFocusLegend(targetIds, false);
 
 		$$.focusedTargetIds = $$.focusedTargetIds.filter(id => targetIds.indexOf(id) < 0);

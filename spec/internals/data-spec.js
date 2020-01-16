@@ -1444,6 +1444,60 @@ describe("DATA", () => {
 
 				expect(texts.size()).to.be.equal(data.length);
 			});
+
+			it("should be zerobased", () => {
+				args.scatter = {zerobased: true};
+				chart = util.generate(args);
+
+				const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+				const tickElements = tickNodes.nodes();
+
+				const translateValues = [
+					"translate(0,426)",
+					"translate(0,389)",
+					"translate(0,352)",
+					"translate(0,314)",
+					"translate(0,277)",
+					"translate(0,240)",
+					"translate(0,202)",
+					"translate(0,165)",
+					"translate(0,127)",
+					"translate(0,90)",
+					"translate(0,53)",
+					"translate(0,15)"
+				];
+
+				tickNodes.each((data, index) => {
+					expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+				});
+			});
+
+			it("should not be zerobased", () => {
+				args.scatter = {zerobased: false};
+				chart = util.generate(args);
+
+				const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+				const tickElements = tickNodes.nodes();
+
+				const translateValues = [
+					"translate(0,402)",
+					"translate(0,367)",
+					"translate(0,331)",
+					"translate(0,296)",
+					"translate(0,260)",
+					"translate(0,225)",
+					"translate(0,189)",
+					"translate(0,154)",
+					"translate(0,118)",
+					"translate(0,83)",
+					"translate(0,47)",
+					"translate(0,12)"
+				];
+
+				tickNodes.each((data, index) => {
+					expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+				});
+			});
 		});
 
 		describe("on scatter + line type", () => {
@@ -1755,13 +1809,52 @@ describe("DATA", () => {
 			};
 		});
 
-		it("should be generating correct dashed path data", () => {
+		const checkPathLengths = expected => {
 			const line = chart.internal.main.select(`path.${CLASS.line}-data1`);
 			const path = line.attr("d");
-			const expected = {M: 118, L: 119};
 
 			expect(path.split("M").length).to.be.equal(expected.M);
 			expect(path.split("L").length).to.be.equal(expected.L);
+		}
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 118, L: 119});
+		});
+
+		it("set options for null data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, 100, 200, null, 100, 20, 30, null, null]
+					],
+					regions: {
+						data1: [
+							{
+								start: 0,
+								end: 2,
+								style: {
+									dasharray: "5 3"
+								}
+							},
+							{
+								start: 5
+							}
+						]
+					}
+				}
+			};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 38, L: 37});
+		});
+
+		it("set options line.connectNull=true", () => {
+			args.line = {connectNull: true};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 37, L: 38});
 		});
 	});
 
