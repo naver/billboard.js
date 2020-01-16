@@ -163,6 +163,7 @@ export default class Options {
 			 * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
 			 *  Specified function receives the zoomed domain.
 			 * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+			 * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
 			 * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
 			 * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
 			 * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
@@ -184,8 +185,14 @@ export default class Options {
 			 *      // show reset button when is zoomed-in
 			 *      resetButton: true,
 			 *
-			 *      // customized text value for reset zoom button
 			 *      resetButton: {
+			 *          // onclick callback when reset button is clicked
+			 *          onclick: function(button) {
+			 *            button; // Reset button element reference
+			 *            ...
+			 *          },
+			 *
+			 *          // customized text value for reset zoom button
 			 *          text: "Unzoom"
 			 *      }
 			 *  }
