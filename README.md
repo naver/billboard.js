@@ -5,24 +5,19 @@
 Branch for the `@next`(RC) channel release.
 
 ## Installation
+
+### Directly from the github repository
 ```sh
 # Run install command from shell
-$ npm install git+https://github.com/naver/billboard.js.git#nightly --save
+$ npm install git+https://github.com/naver/billboard.js.git#next --save
 ```
 
-### Next(Release Canditate) version
-
-Next version is the 'release candidate' build, prior the latest official release.
+### Installation with npm
+Specify billboard.js(package name) along with `@next` tag.
 
 ```sh
 # Run install command from shell
 $ npm install billboard.js@next --save
-```
-
-### Installation with npm
-
-```bash
-$ npm install billboard.js
 ```
 
 ## Using CDN
