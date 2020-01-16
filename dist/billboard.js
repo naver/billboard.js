@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200115124143
+ * @version 1.11.1-nightly-20200116124224
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2704,6 +2704,7 @@ var Options_Options = function Options() {
      * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
      *  Specified function receives the zoomed domain.
      * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+     * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
      * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
      * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
      * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
@@ -2725,8 +2726,14 @@ var Options_Options = function Options() {
      *      // show reset button when is zoomed-in
      *      resetButton: true,
      *
-     *      // customized text value for reset zoom button
      *      resetButton: {
+     *          // onclick callback when reset button is clicked
+     *          onclick: function(button) {
+     *            button; // Reset button element reference
+     *            ...
+     *          },
+     *
+     *          // customized text value for reset zoom button
      *          text: "Unzoom"
      *      }
      *  }
@@ -12154,7 +12161,9 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         resetButton = config.zoom_resetButton;
-    resetButton && config.zoom_enabled.type === "drag" && ($$.zoom.resetBtn ? $$.zoom.resetBtn.style("display", null) : $$.zoom.resetBtn = $$.selectChart.append("div").classed(config_classes.button, !0).append("span").on("click", $$.api.unzoom.bind($$)).classed(config_classes.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom"));
+    resetButton && config.zoom_enabled.type === "drag" && ($$.zoom.resetBtn ? $$.zoom.resetBtn.style("display", null) : $$.zoom.resetBtn = $$.selectChart.append("div").classed(config_classes.button, !0).append("span").on("click", function () {
+      isFunction(resetButton.onclick) && resetButton.onclick(this), $$.api.unzoom.call($$);
+    }).classed(config_classes.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom"));
   }
 });
 // CONCATENATED MODULE: ./src/internals/color.js
@@ -14570,7 +14579,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200115124143",
+  version: "1.11.1-nightly-20200116124224",
 
   /**
    * Generate chart
@@ -14669,7 +14678,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200115124143
+ * @version 1.11.1-nightly-20200116124224
  */
 
 
