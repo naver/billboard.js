@@ -1056,6 +1056,11 @@ export interface ZoomOptions {
 	 */
 	resetButton?: boolean | {
 		/**
+		 * Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
+		 */
+		onclick?(button: HTMLElement): void;
+
+		/**
 		 * Text value for zoom reset button.
 		 */
 		text?: string;

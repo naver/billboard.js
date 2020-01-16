@@ -315,6 +315,7 @@ describe("ZOOM", function() {
 	});
 
 	describe("zoom type drag", () => {
+		const spy = sinon.spy();
 		let clickedData;
 
 		before(() => {
@@ -410,6 +411,25 @@ describe("ZOOM", function() {
 
 			expect(resetBtn.empty()).to.be.false;
 			expect(resetBtn.text()).to.be.equal("test");
+		});
+
+		it("set options zoom.resetButton.onclick", () => {
+			args.zoom.resetButton.onclick = spy;
+		});
+
+		it("check for the reset zoom button onclick callback", () => {
+			// when
+			chart.zoom([0, 4]);
+
+			const resetBtn = chart.$.chart.select(`.${CLASS.buttonZoomReset}`).node();
+
+			util.fireEvent(resetBtn, "click", {
+				clientX: 0,
+				clientY: 0
+			}, chart);
+
+			expect(spy.calledOnce).to.be.true;
+			expect(spy.args[0][0]).to.be.equal(resetBtn);
 		});
 
 		it("set options zoom.rescale=true", () => {
