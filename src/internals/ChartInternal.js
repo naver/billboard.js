@@ -224,11 +224,6 @@ export default class ChartInternal {
 			);
 		}
 
-		// when gauge, hide legend // TODO: fix
-		if ($$.hasType("gauge")) {
-			config.legend_show = false;
-		}
-
 		// Init sizes and scales
 		$$.updateSizes();
 		$$.updateScales(true);
@@ -421,20 +416,16 @@ export default class ChartInternal {
 		const bg = $$.config.background;
 
 		if (notEmpty(bg)) {
-			const eventRect = $$.svg.select(`.${CLASS.eventRects}`);
-			let element;
+			const element = $$.svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
+				.insert(bg.imgUrl ? "image" : "rect", ":first-child");
 
 			if (bg.imgUrl) {
-				element = eventRect
-					.insert("image")
-					.attr("href", bg.imgUrl);
-			} else {
-				element = eventRect
-					.insert("rect")
-					.style("fill", bg.color || null);
+				element.attr("href", bg.imgUrl);
+			} else if (bg.color) {
+				element.style("fill", bg.color);
 			}
 
-			element && element
+			element
 				.attr("class", bg.class || null)
 				.attr("width", "100%")
 				.attr("height", "100%");
@@ -941,7 +932,7 @@ export default class ChartInternal {
 			y = asHalfPixel($$.margin2.top);
 		} else if (target === "legend") {
 			x = $$.margin3.left;
-			y = $$.margin3.top;
+			y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : $$.height + padding;

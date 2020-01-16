@@ -3103,6 +3103,11 @@ d3.select(".chart_area")
 					},
 					background: {
 						color: "lightcyan"
+					},
+					grid: {
+						y: {
+							show: true
+						}
 					}
 				}
 			},
@@ -3606,6 +3611,9 @@ d3.select(".chart_area")
 							}
 						},
 						width: 80
+					},
+					legend: {
+						show: false
 					}
 				}
 			}

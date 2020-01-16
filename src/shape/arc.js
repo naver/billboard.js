@@ -179,7 +179,7 @@ extend(ChartInternal.prototype, {
 		const updated = $$.updateAngle(d);
 		let translate = "";
 
-		if (updated && (!$$.hasType("gauge") || $$.hasMultiTargets())) {
+		if (updated && (!$$.hasType("gauge") || $$.data.targets.length > 1)) {
 			const c = this.svgArc.centroid(updated);
 			const x = isNaN(c[0]) ? 0 : c[0];
 			const y = isNaN(c[1]) ? 0 : c[1];
@@ -217,7 +217,7 @@ extend(ChartInternal.prototype, {
 			selection.each(function(d) {
 				const node = d3Select(this);
 				const updated = $$.updateAngle(d);
-				const value = updated ? updated.value : null;
+				const value = updated ? updated.value : d.value;
 				const ratio = $$.getRatio("arc", updated);
 				const id = d.data.id;
 				const hasGauge = $$.hasType("gauge");
@@ -496,12 +496,30 @@ extend(ChartInternal.prototype, {
 				};
 			})
 			.attr("transform", withTransform ? "scale(1)" : "")
-			.style("fill", d => ($$.levelColor ?
-				$$.levelColor(d.data.values[0].value) : $$.color(d.data.id))
-			)
+			.style("fill", d => {
+				let color;
+
+				if ($$.levelColor) {
+					color = $$.levelColor(d.data.values[0].value);
+
+					// update data's color
+					config.data_colors[d.data.id] = color;
+				} else {
+					color = $$.color(d.data.id);
+				}
+
+				return color;
+			})
 			// Where gauge reading color would receive customization.
 			.style("opacity", "1")
-			.call($$.endall, () => {
+			.call($$.endall, function() {
+				if ($$.levelColor) {
+					const path = d3Select(this);
+					const d = path.datum();
+
+					$$.updateLegendItemColor(d.data.id, path.style("fill"));
+				}
+
 				$$.transiting = false;
 			});
 
@@ -617,17 +635,21 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const main = $$.main;
 		const hasGauge = $$.hasType("gauge");
+		let text;
 
-		const text = main.selectAll(`.${CLASS.chartArc}`)
-			.select("text")
-			.style("opacity", "0")
-			.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null))
-			.call($$.textForArcLabel.bind($$))
-			.attr("transform", $$.transformForArcLabel.bind($$))
-			.style("font-size", d => ($$.isGaugeType(d.data) && !$$.hasMultiTargets() ? `${Math.round($$.radius / 5)}px` : ""))
-			.transition()
-			.duration(duration)
-			.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
+		// for gauge type, update text when has no title & multi data
+		if (!(hasGauge && $$.data.targets.length === 1 && config.gauge_title)) {
+			text = main.selectAll(`.${CLASS.chartArc}`)
+				.select("text")
+				.style("opacity", "0")
+				.attr("class", d => ($$.isGaugeType(d.data) ? CLASS.gaugeValue : null))
+				.call($$.textForArcLabel.bind($$))
+				.attr("transform", $$.transformForArcLabel.bind($$))
+				.style("font-size", d => ($$.isGaugeType(d.data) && $$.data.targets.length === 1 ? `${Math.round($$.radius / 5)}px` : null))
+				.transition()
+				.duration(duration)
+				.style("opacity", d => ($$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0"));
+		}
 
 		main.select(`.${CLASS.chartArcsTitle}`)
 			.style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0");
@@ -637,7 +659,7 @@ extend(ChartInternal.prototype, {
 			const startAngle = -1 * Math.PI / 2;
 			const endAngle = (isFullCircle ? -4 : -1) * startAngle;
 
-			isFullCircle && text.attr("dy", `${Math.round($$.radius / 14)}`);
+			isFullCircle && text && text.attr("dy", `${Math.round($$.radius / 14)}`);
 
 			$$.arcs.select(`.${CLASS.chartArcsBackground}`)
 				.attr("d", () => {
