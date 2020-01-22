@@ -3,8 +3,8 @@ const webpack = require("webpack");
 const fs = require("fs");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
-const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-const uglifyConfig = require("./uglify");
+const TerserPlugin = require("terser-webpack-plugin");
+const terserConfig = require("./terserConfig");
 const banner = require("./banner");
 
 const srcPath = "./src/plugin/";
@@ -46,7 +46,12 @@ const config = {
 module.exports = (common, env) => {
 	if (env && env.MIN) {
 		config.output.filename = config.output.filename.replace(".js", ".min.js");
-		config.plugins.unshift(new UglifyJSPlugin(uglifyConfig));
+
+		config.optimization = {
+			usedExports: true,
+			minimize: true,
+			minimizer: [new TerserPlugin(terserConfig)]
+		};
 	} else {
 		config.plugins.push(new CleanWebpackPlugin({
 			cleanOnceBeforeBuildPatterns: [distPath],
