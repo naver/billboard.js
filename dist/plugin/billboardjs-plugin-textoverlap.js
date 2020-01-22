@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200116124224
+ * @version 1.11.1-nightly-20200122124549
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -111,8 +111,7 @@ return /******/ (function(modules) { // webpackBootstrap
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _classCallCheck; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _classCallCheck; });
 function _classCallCheck(instance, Constructor) {
   if (!(instance instanceof Constructor)) {
     throw new TypeError("Cannot call a class as a function");
@@ -124,8 +123,7 @@ function _classCallCheck(instance, Constructor) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _createClass; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _createClass; });
 function _defineProperties(target, props) {
   for (var i = 0; i < props.length; i++) {
     var descriptor = props[i];
@@ -147,18 +145,17 @@ function _createClass(Constructor, protoProps, staticProps) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _possibleConstructorReturn; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _possibleConstructorReturn; });
 /* harmony import */ var _helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
 /* harmony import */ var _assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 
 
 function _possibleConstructorReturn(self, call) {
-  if (call && (Object(_helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__["default"])(call) === "object" || typeof call === "function")) {
+  if (call && (Object(_helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(call) === "object" || typeof call === "function")) {
     return call;
   }
 
-  return Object(_assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__["default"])(self);
+  return Object(_assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])(self);
 }
 
 /***/ }),
@@ -166,8 +163,7 @@ function _possibleConstructorReturn(self, call) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _typeof; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _typeof; });
 function _typeof(obj) {
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
@@ -187,8 +183,7 @@ function _typeof(obj) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _assertThisInitialized; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _assertThisInitialized; });
 function _assertThisInitialized(self) {
   if (self === void 0) {
     throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
@@ -202,8 +197,7 @@ function _assertThisInitialized(self) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _getPrototypeOf; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _getPrototypeOf; });
 function _getPrototypeOf(o) {
   _getPrototypeOf = Object.setPrototypeOf ? Object.getPrototypeOf : function _getPrototypeOf(o) {
     return o.__proto__ || Object.getPrototypeOf(o);
@@ -216,8 +210,7 @@ function _getPrototypeOf(o) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _defineProperty; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _defineProperty; });
 function _defineProperty(obj, key, value) {
   if (key in obj) {
     Object.defineProperty(obj, key, {
@@ -244,8 +237,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return Plugin; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Plugin; });
 /* harmony import */ var _babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
 /* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
 /* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
@@ -282,7 +274,7 @@ function () {
    */
   function Plugin() {
     var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
-    Object(_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__["default"])(this, Plugin), this.options = options;
+    Object(_babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(this, Plugin), this.options = options;
   }
   /**
    * Lifecycle hook for 'beforeInit' phase.
@@ -290,7 +282,7 @@ function () {
    */
 
 
-  return Object(_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__["default"])(Plugin, [{
+  return Object(_babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__[/* default */ "a"])(Plugin, [{
     key: "$beforeInit",
     value: function $beforeInit() {}
     /**
@@ -334,7 +326,7 @@ function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__["default"])(Plugin, "version", "1.11.1-nightly-20200116124224");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200122124549");
 
 
 
@@ -363,7 +355,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__18__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithHoles.js
 function _arrayWithHoles(arr) {
@@ -404,7 +395,7 @@ function _nonIterableRest() {
   throw new TypeError("Invalid attempt to destructure non-iterable instance");
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _slicedToArray; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _slicedToArray; });
 
 
 
@@ -469,7 +460,7 @@ var Plugin = __webpack_require__(9);
  * @private
  */
 var Options_Options = function Options() {
-  return Object(classCallCheck["default"])(this, Options), {
+  return Object(classCallCheck["a" /* default */])(this, Options), {
     /**
      * Set selector string for target text nodes
      * @name selector
@@ -573,10 +564,10 @@ function (_Plugin) {
   function TextOverlap(options) {
     var _this;
 
-    return Object(classCallCheck["default"])(this, TextOverlap), _this = Object(possibleConstructorReturn["default"])(this, Object(getPrototypeOf["default"])(TextOverlap).call(this, options)), _this.config = new Options_Options(), Object(possibleConstructorReturn["default"])(_this, Object(assertThisInitialized["default"])(_this));
+    return Object(classCallCheck["a" /* default */])(this, TextOverlap), _this = Object(possibleConstructorReturn["a" /* default */])(this, Object(getPrototypeOf["a" /* default */])(TextOverlap).call(this, options)), _this.config = new Options_Options(), Object(possibleConstructorReturn["a" /* default */])(_this, Object(assertThisInitialized["a" /* default */])(_this));
   }
 
-  return Object(inherits["default"])(TextOverlap, _Plugin), Object(createClass["default"])(TextOverlap, [{
+  return Object(inherits["a" /* default */])(TextOverlap, _Plugin), Object(createClass["a" /* default */])(TextOverlap, [{
     key: "$init",
     value: function $init() {
       var $$ = this.$$;
@@ -602,7 +593,7 @@ function (_Plugin) {
           _map = ["x", "y"].map(function (v) {
         return $$[v].domain();
       }),
-          _map2 = Object(slicedToArray["default"])(_map, 2),
+          _map2 = Object(slicedToArray["a" /* default */])(_map, 2),
           min = _map2[0],
           max = _map2[1],
           _ref = [max[0], min[1]];
@@ -629,11 +620,11 @@ function (_Plugin) {
         var cell = cells[i++];
 
         if (cell && this) {
-          var _cell$data = Object(slicedToArray["default"])(cell.data, 2),
+          var _cell$data = Object(slicedToArray["a" /* default */])(cell.data, 2),
               x = _cell$data[0],
               y = _cell$data[1],
               _d3PolygonCentroid = Object(external_commonjs_d3_polygon_commonjs2_d3_polygon_amd_d3_polygon_root_d3_["polygonCentroid"])(cell),
-              _d3PolygonCentroid2 = Object(slicedToArray["default"])(_d3PolygonCentroid, 2),
+              _d3PolygonCentroid2 = Object(slicedToArray["a" /* default */])(_d3PolygonCentroid, 2),
               cx = _d3PolygonCentroid2[0],
               cy = _d3PolygonCentroid2[1],
               angle = Math.round(Math.atan2(cy - y, cx - x) / Math.PI * 2),
@@ -646,7 +637,7 @@ function (_Plugin) {
       });
     }
   }]), TextOverlap;
-}(Plugin["default"]);
+}(Plugin["a" /* default */]);
 
 
 
@@ -655,7 +646,6 @@ function (_Plugin) {
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
-__webpack_require__.r(__webpack_exports__);
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/setPrototypeOf.js
 function _setPrototypeOf(o, p) {
@@ -667,7 +657,7 @@ function _setPrototypeOf(o, p) {
   return _setPrototypeOf(o, p);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return _inherits; });
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _inherits; });
 
 function _inherits(subClass, superClass) {
   if (typeof superClass !== "function" && superClass !== null) {
