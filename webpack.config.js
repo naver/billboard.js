@@ -2,7 +2,6 @@ const pkg = require("./package.json");
 const path = require("path");
 const webpack = require("webpack");
 const StringReplacePlugin = require("string-replace-webpack-plugin");
-const Stylish = require("webpack-stylish");
 const BundleAnalyzerPlugin = require("webpack-bundle-analyzer").BundleAnalyzerPlugin;
 const WebpackBar = require("webpackbar");
 
@@ -52,18 +51,22 @@ const config = {
 			{
 				test: /(\.js)$/,
 				loader: StringReplacePlugin.replace({
-					replacements: [{
-						pattern: /#__VERSION__#/ig,
-						replacement: () => pkg.version
-					}]
+					replacements: [
+						{
+							pattern: /#__VERSION__#/ig,
+							replacement: () => pkg.version
+						}
+					]
 				})
 			}
 		]
 	},
+	optimization: {
+		usedExports: true
+	},
 	plugins: [
 		new StringReplacePlugin(),
 		new webpack.optimize.ModuleConcatenationPlugin(),
-		new Stylish(),
 		new WebpackBar()
 	],
 	node: false,
