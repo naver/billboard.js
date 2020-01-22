@@ -1,7 +1,7 @@
 const merge = require("webpack-merge");
 const webpack = require("webpack");
-const UglifyJSPlugin = require("uglifyjs-webpack-plugin");
-const uglifyConfig = require("./uglify");
+const TerserPlugin = require("terser-webpack-plugin");
+const terserConfig = require("./terserConfig");
 const banner = require("./banner");
 
 const config = {
@@ -10,8 +10,12 @@ const config = {
 		"billboard.pkgd.min": ["core-js/stable", "./src/core.js"]
 	},
 	devtool: false,
+	optimization: {
+		usedExports: true,
+		minimize: true,
+		minimizer: [new TerserPlugin(terserConfig)]
+	},
 	plugins: [
-		new UglifyJSPlugin(uglifyConfig),
 		new webpack.BannerPlugin({
 			banner: banner.production + banner.packaged,
 			entryOnly: true
