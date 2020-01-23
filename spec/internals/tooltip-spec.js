@@ -100,82 +100,56 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("Tooltip callbacks", () => {
+		let called = [];
+		const spy = {
+			onshow: sinon.spy((ctx, data) => called.push({ctx, data, type: "onshow"})),
+			onshown: sinon.spy((ctx, data) => called.push({ctx, data, type: "onshown"})),
+			onhide: sinon.spy((ctx, data) => called.push({ctx, data, type: "onhide"})),
+			onhidden: sinon.spy((ctx, data) => called.push({ctx, data, type: "onhidden"}))
+		};
+
+		const check = fn => {
+			["show", "shown", "hide", "hidden"].forEach((v, i) => {
+				fn(`on${v}`, i);
+			});
+		}
+
 		before(() => {
-			args.tooltip.onshow = () => {
-				if (chart.internal.cache.callback_test === 0) {
-					chart.internal.cache.callback_test++;
-				}
-			};
-			args.tooltip.onshown = () => {
-				if (chart.internal.cache.callback_test === 1) {
-					chart.internal.cache.callback_test++;
-				}
-			};
-			args.tooltip.onhide = () => {
-				if (chart.internal.cache.callback_test === 2) {
-					chart.internal.cache.callback_test++;
-				}
-			};
-			args.tooltip.onhidden = () => {
-				if (chart.internal.cache.callback_test === 3) {
-					chart.internal.cache.callback_test++;
-				}
-			};
+			check((name) => {
+				args.tooltip[name] = spy[name];
+			});
 		});
 
-		after(() => {
-			args.tooltip.onshow = () => {};
-			args.tooltip.onshown = () => {};
-			args.tooltip.onhide = () => {};
-			args.tooltip.onhidden = () => {};
+		afterEach(() => {
+			called = [];
+
+			check((name) => {
+				spy[name].resetHistory();
+			});
 		});
 
 		it("chart tooltip onshow/onshown/onhide/onhidden functions should be called", () => {
-			chart.internal.cache.callback_test = 0;
+			const expectedData = JSON.stringify([
+				{x: 6, value: 100, id: 'data1', index: 2, name: 'data1'},
+				{x: 6, value: 10, id: 'data2', index: 2, name: 'data2'},
+				{x: 6, value: 110, id: 'data3', index: 2, name: 'data3'}
+			]);
+
 			checkCallback(chart, true);
-			let test = chart.internal.cache.callback_test;
-			expect(test).to.be.equal(4);
-		});
 
-		describe("show/shown should execute in proper order", () => {
-			before(() => {
-				chart.internal.cache.callback_test = 0;
-				chart.internal.cache.callback_test2 = 0;
-				args.tooltip.onshow = () => {
-					chart.internal.cache.callback_test++;
-				};
-				args.tooltip.onshown = () => {
-					chart.internal.cache.callback_test++;
-					chart.internal.cache.callback_test2 = chart.internal.cache.callback_test;
-				};
-			});
+			check((name, i) => {
+				const call = called[i];
 
-			it("onshown should execute after onshow", () => {
-				chart.internal.cache.callback_test = 0;
-				checkCallback(chart, false);
-				expect(chart.internal.cache.callback_test2).to.be.equal(2);
-			});
-		});
+				expect(spy[name].calledOnce).to.be.true;
 
-		describe("onhide/onhidden should execute in proper order", () => {
-			before(() => {
-				chart.internal.cache.callback_test = 0;
-				args.tooltip.onshow = () => {};
-				args.tooltip.onshown = () => {};
-				args.tooltip.onhide = () => {
-					chart.internal.cache.callback_test++;
-				};
-				args.tooltip.onhidden = () => {
-					chart.internal.cache.callback_test++;
-					chart.internal.cache.callback_test2 = chart.internal.cache.callback_test;
+				// check the call order: onshow -> onshown -> onhide -> onhidden
+				expect(call.type).to.be.equal(name);
 
-				};
-			});
+				// check the passed context argument
+				expect(call.ctx).to.be.equal(chart);
 
-			it("onhidden should execute after onhide", () => {
-				chart.internal.cache.callback_test = 0;
-				checkCallback(chart, true);
-				expect(chart.internal.cache.callback_test2).to.be.equal(2);
+				// check the passed data argument
+				expect(JSON.stringify(call.data)).to.be.equal(expectedData);
 			});
 		});
 	});

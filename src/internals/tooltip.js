@@ -301,7 +301,7 @@ extend(ChartInternal.prototype, {
 		if (!datum || datum.current !== dataStr) {
 			const index = selectedData.concat().sort()[0].index;
 
-			callFn(config.tooltip_onshow, $$);
+			callFn(config.tooltip_onshow, $$, $$.api, selectedData);
 
 			// set tooltip content
 			$$.tooltip
@@ -320,7 +320,7 @@ extend(ChartInternal.prototype, {
 					height: height = $$.tooltip.property("offsetHeight")
 				});
 
-			callFn(config.tooltip_onshown, $$);
+			callFn(config.tooltip_onshown, $$, $$.api, selectedData);
 			$$._handleLinkedCharts(true, index);
 		}
 
@@ -344,8 +344,10 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 
-		if (!config.tooltip_doNotHide || force) {
-			callFn(config.tooltip_onhide, $$);
+		if (this.tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+			const selectedData = JSON.parse(this.tooltip.datum().current);
+
+			callFn(config.tooltip_onhide, $$, $$.api, selectedData);
 
 			// hide tooltip
 			this.tooltip
@@ -353,7 +355,7 @@ extend(ChartInternal.prototype, {
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
-			callFn(config.tooltip_onhidden, $$);
+			callFn(config.tooltip_onhidden, $$, $$.api, selectedData);
 		}
 	},
 
