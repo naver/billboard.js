@@ -3777,13 +3777,40 @@ export default class Options {
 			 *      },
 			 *
 			 *      // fires prior tooltip is shown
-			 *      onshow: function() { ...},
+			 *      onshow: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
+			 *
 			 *      // fires prior tooltip is hidden
-			 *      onhide: function() { ... },
+			 *      onhide: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
+			 *
 			 *      // fires after tooltip is shown
-			 *      onshown: function() { ... },
+			 *      onshown: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
+			 *
 			 *      // fires after tooltip is hidden
-			 *      onhidden: function() { ... },
+			 *      onhidden: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
 			 *
 			 *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
 			 *      // Useful for timeseries correlation
