@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200122124549
+ * @version 1.11.1-nightly-20200123124624
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -26858,13 +26858,40 @@ var Options_Options = function Options() {
      *      },
      *
      *      // fires prior tooltip is shown
-     *      onshow: function() { ...},
+     *      onshow: function(ctx, selectedData) {
+     *      	ctx; // current chart instance
+     *
+     *      	// current dataset selected
+     *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+     *      	selectedData;
+     *      },
+     *
      *      // fires prior tooltip is hidden
-     *      onhide: function() { ... },
+     *      onhide: function(ctx, selectedData) {
+     *      	ctx; // current chart instance
+     *
+     *      	// current dataset selected
+     *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+     *      	selectedData;
+     *      },
+     *
      *      // fires after tooltip is shown
-     *      onshown: function() { ... },
+     *      onshown: function(ctx, selectedData) {
+     *      	ctx; // current chart instance
+     *
+     *      	// current dataset selected
+     *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+     *      	selectedData;
+     *      },
+     *
      *      // fires after tooltip is hidden
-     *      onhidden: function() { ... },
+     *      onhidden: function(ctx, selectedData) {
+     *      	ctx; // current chart instance
+     *
+     *      	// current dataset selected
+     *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+     *      	selectedData;
+     *      },
      *
      *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
      *      // Useful for timeseries correlation
@@ -33247,13 +33274,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
-        callFn(config.tooltip_onshow, $$), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
+        callFn(config.tooltip_onshow, $$, $$.api, selectedData), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
         .datum({
           index: index,
           current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
           height: height = $$.tooltip.property("offsetHeight")
-        }), callFn(config.tooltip_onshown, $$), $$._handleLinkedCharts(!0, index);
+        }), callFn(config.tooltip_onshown, $$, $$.api, selectedData), $$._handleLinkedCharts(!0, index);
       }
 
       if (!bindto) {
@@ -33273,8 +33300,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   hideTooltip: function hideTooltip(force) {
     var $$ = this,
         config = $$.config;
-    (!config.tooltip_doNotHide || force) && (callFn(config.tooltip_onhide, $$), this.tooltip.style("display", "none").style("visibility", "hidden") // for IE9
-    .datum(null), callFn(config.tooltip_onhidden, $$));
+
+    if (this.tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+      var selectedData = JSON.parse(this.tooltip.datum().current);
+      // hide tooltip
+      callFn(config.tooltip_onhide, $$, $$.api, selectedData), this.tooltip.style("display", "none").style("visibility", "hidden") // for IE9
+      .datum(null), callFn(config.tooltip_onhidden, $$, $$.api, selectedData);
+    }
   },
 
   /**
@@ -37437,7 +37469,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200122124549",
+  version: "1.11.1-nightly-20200123124624",
 
   /**
    * Generate chart
@@ -37536,7 +37568,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200122124549
+ * @version 1.11.1-nightly-20200123124624
  */
 
 
