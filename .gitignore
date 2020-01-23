@@ -1,7 +1,6 @@
 .DS_Store
 *.log
 *.iml
-*.ts
 /*.css
 /*.html
 /*.js
