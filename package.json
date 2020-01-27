@@ -81,7 +81,7 @@
     "@babel/runtime": "^7.8.3",
     "@commitlint/cli": "^8.3.5",
     "@commitlint/config-conventional": "^8.3.4",
-    "@semantic-release/changelog": "^3.0.6",
+    "@semantic-release/changelog": "^5.0.0",
     "@semantic-release/commit-analyzer": "^7.0.0",
     "@semantic-release/exec": "^4.0.0",
     "@semantic-release/git": "^8.0.0",
