@@ -105,7 +105,7 @@
     "cloc": "^2.5.1",
     "core-js": "^3.6.4",
     "coveralls": "^3.0.9",
-    "cross-env": "^6.0.3",
+    "cross-env": "^7.0.0",
     "css-loader": "^3.4.2",
     "d3-array": "^2.4.0",
     "d3-format": "^1.4.3",
