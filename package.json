@@ -85,7 +85,7 @@
     "@semantic-release/commit-analyzer": "^7.0.0",
     "@semantic-release/exec": "^4.0.0",
     "@semantic-release/git": "^8.0.0",
-    "@semantic-release/npm": "^6.0.0",
+    "@semantic-release/npm": "^7.0.0",
     "@semantic-release/release-notes-generator": "^7.3.5",
     "babel-eslint": "^10.0.3",
     "babel-helper-modules": "^6.0.0",
