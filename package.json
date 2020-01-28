@@ -55,6 +55,15 @@
     "types",
     "CONTRIBUTING.md"
   ],
+  "npmName": "billboard.js",
+  "npmFileMap": [
+    {
+      "basePath": "dist",
+      "files": [
+        "**/*"
+      ]
+    }
+  ],
   "author": "NAVER Corp.",
   "license": "MIT",
   "readmeFilename": "README.md",
