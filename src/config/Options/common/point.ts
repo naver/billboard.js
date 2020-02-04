@@ -1,0 +1,83 @@
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * point config options
+ */
+export default {
+    /**
+     * Set point options
+     * @name point
+     * @memberof Options
+     * @type {Object}
+     * @property {Boolean} [point.show=true] Whether to show each point in line.
+     * @property {Number|Function} [point.r=2.5] The radius size of each point.
+     *  - **NOTE:** Disabled for 'bubble' type
+     * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
+     * @property {Number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
+     *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+     * @property {Number} [point.sensitivity=10] The senstivity value for interaction boundary.
+     * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
+     * @property {String} [point.type="circle"] The type of point to be drawn
+     * - **NOTE:**
+     *   - If chart has 'bubble' type, only circle can be used.
+     *   - For IE, non circle point expansions are not supported due to lack of transform support.
+     * - **Available Values:**
+     *   - circle
+     *   - rectangle
+     * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
+     * - **NOTE:**
+     *   - This is an `experimental` feature and can have some unexpected behaviors.
+     *   - If chart has 'bubble' type, only circle can be used.
+     *   - For IE, non circle point expansions are not supported due to lack of transform support.
+     * - **Available Values:**
+     *   - circle
+     *   - rectangle
+     *   - svg shape tag interpreted as string<br>
+     *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+     * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
+     * @example
+     *  point: {
+     *      show: false,
+     *      r: 5,
+     *
+     *      // or customize the radius
+     *      r: function(d) {
+     *          ...
+     *          return r;
+     *      },
+     *
+     *      focus: {
+     *          expand: {
+     *              enabled: true,
+     *              r: 1
+     *          }
+     *      },
+     *      select: {
+     *          r: 3
+     *      },
+     *
+     *      // having lower value, means how closer to be for interaction
+     *      sensitivity: 3,
+     *
+     *      // valid values are "circle" or "rectangle"
+     *      type: "rectangle",
+     *
+     *      // or indicate as pattern
+     *      pattern: [
+     *        "circle",
+     *        "rectangle",
+     *        "<polygon points='0 6 4 0 -4 0'></polygon>"
+     *     ],
+     *  }
+     */
+    point_show: true,
+    point_r: 2.5,
+    point_sensitivity: 10,
+    point_focus_expand_enabled: true,
+    point_focus_expand_r: undefined,
+    point_pattern: [],
+    point_select_r: undefined,
+    point_type: "circle"
+};

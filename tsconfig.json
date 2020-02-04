@@ -1,0 +1,42 @@
+{
+	// https://www.typescriptlang.org/docs/handbook/compiler-options.html
+	"compilerOptions": {
+		"allowSyntheticDefaultImports": true,
+		// Process & infer types from .js files.
+		"allowJs": true,
+		"baseUrl": ".",
+		"lib": [
+			"DOM", "ES6"
+		],
+		"noFallthroughCasesInSwitch": true,
+		"noUnusedParameters": false,
+		"noImplicitReturns": false,
+		// Import non-ES modules as default imports.
+		"esModuleInterop": true,
+		"noUnusedLocals": true,
+		"noImplicitAny": false,
+		"noImplicitThis": false,
+		//"declarationDir": "dist/types",
+		//"declaration": true,
+		//"emitDeclarationOnly": true,
+		"module": "UMD",
+		"target": "ES5",
+		// Search under node_modules for non-relative imports.
+		"moduleResolution": "node",
+		// Don't emit; allow Babel to transform files.
+		"noEmit": true,
+		// Enable strictest settings like strictNullChecks & noImplicitAny.
+		"strict": true,
+		// Disallow features that require cross-file information for emit.
+		"isolatedModules": true,
+		"sourceMap": true,
+		"outDir": "./dist"
+	},
+	"include": [
+		"src/**/*.ts"
+	],
+	"exclude": [
+		"dist",
+		"node_modules"
+	]
+}

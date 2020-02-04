@@ -7,7 +7,7 @@ const TerserPlugin = require("terser-webpack-plugin");
 const terserConfig = require("./terserConfig");
 const banner = require("./banner");
 
-const srcPath = "./src/plugin/";
+const srcPath = "./src/Plugin/";
 const distPath = path.resolve(__dirname, "../dist/plugin/");
 
 // construct entry point
@@ -19,7 +19,7 @@ fs.readdirSync(path.resolve(__dirname, `.${srcPath}`), {
 	if (dirent.isDirectory()) {
 		const name = dirent.name;
 
-		entry[name] = `${srcPath}${name}/index.js`;
+		entry[name] = `${srcPath}${name}/index.ts`;
 	}
 });
 

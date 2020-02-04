@@ -9,7 +9,7 @@ const config = {
 	entry: {
 		billboard: [
 			"./src/scss/billboard.scss",
-			"./src/core.js"
+			"./src/index.ts"
 		]
 	},
 	output: {
@@ -33,23 +33,21 @@ const config = {
 		callback();
 	},
 	devtool: "cheap-module-source-map",
+	resolve: {
+		extensions: [".ts", ".js"]
+	},
 	module: {
 		rules: [
 			{
-				test: /(\.js)$/,
+				test: /(\.[jt]s)$/,
+				loader: "babel-loader",
 				exclude: {
 					test: /node_modules/,
 					not: [/(d3\-.*)$/]
-				},
-				use: {
-					loader: "babel-loader",
-					options: {
-						presets: ["@babel/preset-env"]
-					}
-				},
+				}
 			},
 			{
-				test: /(\.js)$/,
+				test: /(\.[jt]s)$/,
 				loader: StringReplacePlugin.replace({
 					replacements: [
 						{

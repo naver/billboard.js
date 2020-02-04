@@ -12,7 +12,7 @@ const config = {
 	entry: {
 		"billboard.min": [
 			"./src/scss/billboard.scss",
-			"./src/core.js"
+			"./src/index.ts"
 		]
 	},
 	module: {
