@@ -1023,7 +1023,7 @@ describe("AXIS", function() {
 				const box = chart.$.main.select(`.${CLASS.axisY2}`)
 					.node().getBoundingClientRect();
 
-				expect(box.width).to.be.closeTo(602, 1);
+				expect(box.width).to.be.closeTo(590, 1);
 			});
 
 		});
