@@ -28,9 +28,9 @@ export default class AxisRenderer {
 
 		config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
 
-		this.helper = new Helper(config, params);
 		this.config = config;
 		this.params = params;
+		this.helper = new Helper(this);
 	}
 
 	/**
@@ -106,7 +106,7 @@ export default class AxisRenderer {
 
 			if (tickShow.tick || tickShow.text) {
 				// count of tick data in array
-				const ticks = config.tickValues || helperInst.generateTicks(scale1);
+				const ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight);
 
 				// update selection
 				let tick = g.selectAll(".tick")
