@@ -275,16 +275,22 @@ export default {
 
     /**
      * Set the x values of ticks manually.<br><br>
-     * If this option is provided, the position of the ticks will be determined based on those values. This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+     * If this option is provided, the position of the ticks will be determined based on those values.<br>
+     * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
      * @name axis․x․tick․values
      * @memberof Options
-     * @type {Array}
+     * @type {Array|Function}
      * @default null
      * @example
      * axis: {
      *   x: {
      *     tick: {
-     *       values: [1, 2, 4, 8, 16, 32, ...]
+     *       values: [1, 2, 4, 8, 16, 32, ...],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
      *     }
      *   }
      * }

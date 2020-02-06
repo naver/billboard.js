@@ -204,13 +204,18 @@ export default {
      * Set y2 axis tick values manually.
      * @name axis․y2․tick․values
      * @memberof Options
-     * @type {Array}
+     * @type {Array|Function}
      * @default null
      * @example
      * axis: {
      *   y2: {
      *     tick: {
-     *       values: [100, 1000, 10000]
+     *       values: [100, 1000, 10000],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
      *     }
      *   }
      * }
@@ -271,6 +276,26 @@ export default {
      * }
      */
     axis_y2_tick_show: true,
+
+    /**
+     * Set axis tick step(interval) size.
+     * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
+     * @name axis․y2․tick․stepSize
+     * @memberof Options
+     * @type {Number}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       // tick value will step as indicated interval value.
+     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+     *       stepSize: 15
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_stepSize: null,
 
     /**
      * Show or hide y2 axis tick text.

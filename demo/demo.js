@@ -990,6 +990,32 @@ var demos = {
 				}
 			}
 		},
+		StepSizeForYAxis: {
+			options: {
+				data: {
+					columns: [
+						["data1", 40, 30, 30, 40, 250],
+						["data2", 130, 100, 140, 200, 150]
+					],
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					y: {
+						tick: {
+							stepSize: 33
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							stepSize: 20
+						}
+					}
+				}
+			}
+		},
 		RangeForYAxis: {
 			options: {
 				data: {
