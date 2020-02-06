@@ -308,6 +308,12 @@ export interface YTickConfiguration {
 		max?: number;
 	};
 
+	/**
+	 * Set axis tick step(interval) size.
+	 * - **NOTE:** Will be ignored if `axis[y|y2].tick.count` or `axis[y|y2].tick.values` options are set.
+	 */
+	stepSize?: number;
+
 	text?: {
 		/**
 		 * Set the x Axis tick text's position relatively its original position

@@ -196,6 +196,10 @@ export default class Axis {
 			orgXScale: $$.x
 		});
 
+		if (!isX) {
+			axisParams.tickStepSize = config[`axis_${type}_tick_stepSize`];
+		}
+
 		const axis = new AxisRenderer(axisParams)
 			.scale((isX && $$.zoomScale) || scale)
 			.orient(orient);
