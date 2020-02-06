@@ -185,6 +185,52 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("y/y2 Axes tick.stepSize", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 40, 30, 30, 40, 250],
+						["data2", 130, 100, 140, 200, 150],
+					],
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					y: {
+						tick: {
+							stepSize: 33
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							stepSize: 20
+						}
+					}
+				}
+			}
+		});
+
+		it("check if y/y2 ticks intervals are generated correctly", () => {
+			let startTick;
+
+			const check = (id, stepSize) => {
+				chart.$.main.selectAll(`.bb-axis-${id} .tick tspan`).each(function(d, i) {
+					if (i === 0) {
+						startTick = +this.textContent;
+					}
+
+					expect(+this.textContent).to.be.equal(i ? startTick + (stepSize * i) : startTick);
+				});
+			}
+
+			check("y", args.axis.y.tick.stepSize);
+			check("y2", args.axis.y2.tick.stepSize);
+		});
+	});
+
 	describe("axis label", () => {
 		before(() => {
 			args = {
