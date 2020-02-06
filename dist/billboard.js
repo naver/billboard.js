@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200128124903
+ * @version 1.11.1-nightly-20200206125455
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -414,6 +414,8 @@ function _toConsumableArray(arr) {
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
 function _typeof(obj) {
+  "@babel/helpers - typeof";
+
   if (typeof Symbol === "function" && typeof Symbol.iterator === "symbol") {
     _typeof = function _typeof(obj) {
       return typeof obj;
@@ -769,6 +771,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
 
 
 
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -780,11 +783,13 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
 var AxisRendererHelper_AxisRendererHelper =
 /*#__PURE__*/
 function () {
-  function AxisRendererHelper(config, params) {
+  function AxisRendererHelper(owner) {
     _classCallCheck(this, AxisRendererHelper);
 
-    var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])();
-    this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
+    var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])(),
+        config = owner.config,
+        params = owner.params;
+    this.owner = owner, this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = scale.rangeExtent ? scale.rangeExtent() : this.scaleExtent((params.orgXScale || scale).range());
   }
   /**
    * Compute a character dimension
@@ -819,17 +824,20 @@ function () {
     }
   }, {
     key: "generateTicks",
-    value: function generateTicks(scale) {
-      var ticks = [];
-      if (scale.ticks) return scale.ticks.apply(scale, _toConsumableArray(this.config.tickArguments || [])).map(function (v) {
+    value: function generateTicks(scale, isYAxes) {
+      var tickStepSize = this.owner.params.tickStepSize,
+          ticks = [];
+      // When 'axis[y|y2].tick.stepSize' option is set
+      if (isYAxes && tickStepSize) for (var _scale$domain = scale.domain(), _scale$domain2 = _slicedToArray(_scale$domain, 2), start = _scale$domain2[0], end = _scale$domain2[1], interval = start; interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) ticks = scale.ticks.apply(scale, _toConsumableArray(this.config.tickArguments || [])).map(function (v) {
         return (// round the tick value if is number
           isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
         );
-      });
+      });else {
+        for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
 
-      for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
-
-      return ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0])), ticks;
+        ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
+      }
+      return ticks;
     }
   }, {
     key: "copyScale",
@@ -915,7 +923,7 @@ function () {
       transition: null,
       noTransition: params.noTransition
     };
-    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.helper = new AxisRendererHelper_AxisRendererHelper(config, params), this.config = config, this.params = params;
+    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.config = config, this.params = params, this.helper = new AxisRendererHelper_AxisRendererHelper(this);
   }
   /**
    * Create axis element
@@ -971,7 +979,7 @@ function () {
           return isTopBottom ? "M".concat(range[0], ",").concat(outerTickSized, "V0H").concat(range[1], "V").concat(outerTickSized) : "M".concat(outerTickSized, ",").concat(range[0], "H0V").concat(range[1], "H").concat(outerTickSized);
         }), tickShow.tick || tickShow.text) {
           // count of tick data in array
-          var ticks = config.tickValues || helperInst.generateTicks(scale1),
+          var ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight),
               tick = g.selectAll(".tick").data(ticks, scale1),
               tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
               tickExit = tick.exit().remove(); // update selection
@@ -1328,8 +1336,9 @@ function () {
         tickWidth: config.axis_x_tick_width,
         tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
         orgXScale: $$.x
-      }),
-          axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
+      });
+      isX || (axisParams.tickStepSize = config["axis_".concat(type, "_tick_stepSize")]);
+      var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
       return isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
       }) : !isX && $$.isTimeSeriesY() && (axis.ticks(config.axis_y_tick_time_value), tickValues = null), tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
@@ -4304,16 +4313,22 @@ var Options_Options = function Options() {
 
     /**
      * Set the x values of ticks manually.<br><br>
-     * If this option is provided, the position of the ticks will be determined based on those values. This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+     * If this option is provided, the position of the ticks will be determined based on those values.<br>
+     * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
      * @name axis․x․tick․values
      * @memberof Options
-     * @type {Array}
+     * @type {Array|Function}
      * @default null
      * @example
      * axis: {
      *   x: {
      *     tick: {
-     *       values: [1, 2, 4, 8, 16, 32, ...]
+     *       values: [1, 2, 4, 8, 16, 32, ...],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
      *     }
      *   }
      * }
@@ -4847,13 +4862,18 @@ var Options_Options = function Options() {
      * Set y axis tick values manually.
      * @name axis․y․tick․values
      * @memberof Options
-     * @type {Array}
+     * @type {Array|Function}
      * @default null
      * @example
      * axis: {
      *   y: {
      *     tick: {
-     *       values: [100, 1000, 10000]
+     *       values: [100, 1000, 10000],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
      *     }
      *   }
      * }
@@ -4914,6 +4934,26 @@ var Options_Options = function Options() {
      * }
      */
     axis_y_tick_show: !0,
+
+    /**
+     * Set axis tick step(interval) size.
+     * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
+     * @name axis․y․tick․stepSize
+     * @memberof Options
+     * @type {Number}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+     * @example
+     * axis: {
+     *   y: {
+     *     tick: {
+     *       // tick value will step as indicated interval value.
+     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+     *       stepSize: 15
+     *     }
+     *   }
+     * }
+     */
+    axis_y_tick_stepSize: null,
 
     /**
     * Show or hide y axis tick text.
@@ -5262,13 +5302,18 @@ var Options_Options = function Options() {
      * Set y2 axis tick values manually.
      * @name axis․y2․tick․values
      * @memberof Options
-     * @type {Array}
+     * @type {Array|Function}
      * @default null
      * @example
      * axis: {
      *   y2: {
      *     tick: {
-     *       values: [100, 1000, 10000]
+     *       values: [100, 1000, 10000],
+     *
+     *       // an Array value should be returned
+     *       values: function() {
+     *       	return [ ... ];
+     *       }
      *     }
      *   }
      * }
@@ -5329,6 +5374,26 @@ var Options_Options = function Options() {
      * }
      */
     axis_y2_tick_show: !0,
+
+    /**
+     * Set axis tick step(interval) size.
+     * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
+     * @name axis․y2․tick․stepSize
+     * @memberof Options
+     * @type {Number}
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+     * @example
+     * axis: {
+     *   y2: {
+     *     tick: {
+     *       // tick value will step as indicated interval value.
+     *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+     *       stepSize: 15
+     *     }
+     *   }
+     * }
+     */
+    axis_y2_tick_stepSize: null,
 
     /**
      * Show or hide y2 axis tick text.
@@ -14611,7 +14676,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200128124903",
+  version: "1.11.1-nightly-20200206125455",
 
   /**
    * Generate chart
@@ -14710,7 +14775,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200128124903
+ * @version 1.11.1-nightly-20200206125455
  */
 
 
