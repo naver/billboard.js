@@ -138,6 +138,7 @@ extend(data, {
 
 	/**
 	 * Get and set axes of the data loaded in the chart.
+	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
 	 * @method data․axes
 	 * @instance
 	 * @memberof Chart

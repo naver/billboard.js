@@ -287,7 +287,7 @@ export default class Options {
 			onresize: undefined,
 
 			/**
-			 * SSet a callback to execute when screen resize finished.
+			 * Set a callback to execute when screen resize finished.
 			 * @name onresized
 			 * @memberof Options
 			 * @type {Function}
@@ -525,6 +525,7 @@ export default class Options {
 
 			/**
 			 * Set y axis the data related to. y and y2 can be used.
+			 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
 			 * @name data․axes
 			 * @memberof Options
 			 * @type {Object}
@@ -1755,16 +1756,22 @@ export default class Options {
 
 			/**
 			 * Set the x values of ticks manually.<br><br>
-			 * If this option is provided, the position of the ticks will be determined based on those values. This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+			 * If this option is provided, the position of the ticks will be determined based on those values.<br>
+			 * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
 			 * @name axis․x․tick․values
 			 * @memberof Options
-			 * @type {Array}
+			 * @type {Array|Function}
 			 * @default null
 			 * @example
 			 * axis: {
 			 *   x: {
 			 *     tick: {
-			 *       values: [1, 2, 4, 8, 16, 32, ...]
+			 *       values: [1, 2, 4, 8, 16, 32, ...],
+			 *
+			 *       // an Array value should be returned
+			 *       values: function() {
+			 *       	return [ ... ];
+			 *       }
 			 *     }
 			 *   }
 			 * }
@@ -2299,13 +2306,18 @@ export default class Options {
 			 * Set y axis tick values manually.
 			 * @name axis․y․tick․values
 			 * @memberof Options
-			 * @type {Array}
+			 * @type {Array|Function}
 			 * @default null
 			 * @example
 			 * axis: {
 			 *   y: {
 			 *     tick: {
-			 *       values: [100, 1000, 10000]
+			 *       values: [100, 1000, 10000],
+			 *
+			 *       // an Array value should be returned
+			 *       values: function() {
+			 *       	return [ ... ];
+			 *       }
 			 *     }
 			 *   }
 			 * }
@@ -2366,6 +2378,26 @@ export default class Options {
 			 * }
 			 */
 			axis_y_tick_show: true,
+
+			/**
+			 * Set axis tick step(interval) size.
+			 * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
+			 * @name axis․y․tick․stepSize
+			 * @memberof Options
+			 * @type {Number}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+			 * @example
+			 * axis: {
+			 *   y: {
+			 *     tick: {
+			 *       // tick value will step as indicated interval value.
+			 *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+			 *       stepSize: 15
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y_tick_stepSize: null,
 
 			/**
 			* Show or hide y axis tick text.
@@ -2711,13 +2743,18 @@ export default class Options {
 			 * Set y2 axis tick values manually.
 			 * @name axis․y2․tick․values
 			 * @memberof Options
-			 * @type {Array}
+			 * @type {Array|Function}
 			 * @default null
 			 * @example
 			 * axis: {
 			 *   y2: {
 			 *     tick: {
-			 *       values: [100, 1000, 10000]
+			 *       values: [100, 1000, 10000],
+			 *
+			 *       // an Array value should be returned
+			 *       values: function() {
+			 *       	return [ ... ];
+			 *       }
 			 *     }
 			 *   }
 			 * }
@@ -2778,6 +2815,26 @@ export default class Options {
 			 * }
 			 */
 			axis_y2_tick_show: true,
+
+			/**
+			 * Set axis tick step(interval) size.
+			 * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
+			 * @name axis․y2․tick․stepSize
+			 * @memberof Options
+			 * @type {Number}
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+			 * @example
+			 * axis: {
+			 *   y2: {
+			 *     tick: {
+			 *       // tick value will step as indicated interval value.
+			 *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+			 *       stepSize: 15
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_y2_tick_stepSize: null,
 
 			/**
 			 * Show or hide y2 axis tick text.
@@ -3777,13 +3834,40 @@ export default class Options {
 			 *      },
 			 *
 			 *      // fires prior tooltip is shown
-			 *      onshow: function() { ...},
+			 *      onshow: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
+			 *
 			 *      // fires prior tooltip is hidden
-			 *      onhide: function() { ... },
+			 *      onhide: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
+			 *
 			 *      // fires after tooltip is shown
-			 *      onshown: function() { ... },
+			 *      onshown: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
+			 *
 			 *      // fires after tooltip is hidden
-			 *      onhidden: function() { ... },
+			 *      onhidden: function(ctx, selectedData) {
+			 *      	ctx; // current chart instance
+			 *
+			 *      	// current dataset selected
+			 *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+			 *      	selectedData;
+			 *      },
 			 *
 			 *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
 			 *      // Useful for timeseries correlation

@@ -76,6 +76,15 @@ extend(ChartInternal.prototype, {
 
 		const targetsByAxisId = targets.filter(t => $$.axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
+
+		if (yTargets.length === 0) { // use domain of the other axis if target of axisId is none
+			return axisId === "y2" ?
+				$$.y.domain() :
+				// When all data bounds to y2, y Axis domain is called prior y2.
+				// So, it needs to call to get y2 domain here
+				$$.getYDomain(targets, "y2", xDomain);
+		}
+
 		const yMin = config[`axis_${axisId}_min`];
 		const yMax = config[`axis_${axisId}_max`];
 		let yDomainMin = $$.getYDomainMin(yTargets);
@@ -93,10 +102,6 @@ extend(ChartInternal.prototype, {
 			(isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin);
 		yDomainMax = isValue(yMax) ? yMax :
 			(isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax);
-
-		if (yTargets.length === 0) { // use current domain if target of axisId is none
-			return $$[axisId].domain();
-		}
 
 		if (isNaN(yDomainMin)) { // set minimum to zero when not number
 			yDomainMin = 0;

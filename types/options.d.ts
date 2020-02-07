@@ -930,22 +930,22 @@ export interface TooltipOptions {
 	/**
 	 * Set a callback that will be invoked before the tooltip is shown.
 	 */
-	onshow?(): void;
+	onshow?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set a callback that will be invoked before the tooltip is hidden.
 	 */
-	onhide?(): void;
+	onhide?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is shown
 	 */
-	onshown?(): void;
+	onshown?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set a callback that will be invoked after the tooltip is hidden.
 	 */
-	onhidden?(): void;
+	onhidden?(ctx: Chart, selectedData: DataItem): void;
 
 	/**
 	 * Set if tooltips on all visible charts with like x points are shown together when one is shown.
@@ -1300,6 +1300,7 @@ export interface Data {
 
 	/**
 	 * Set y axis the data related to. y and y2 can be used.
+	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
 	 */
 	axes?: { [key: string]: string };
 
