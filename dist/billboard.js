@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200206125455
+ * @version 1.11.1-nightly-20200207125440
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2837,7 +2837,7 @@ var Options_Options = function Options() {
     onresize: undefined,
 
     /**
-     * SSet a callback to execute when screen resize finished.
+     * Set a callback to execute when screen resize finished.
      * @name onresized
      * @memberof Options
      * @type {Function}
@@ -3077,6 +3077,7 @@ var Options_Options = function Options() {
 
     /**
      * Set y axis the data related to. y and y2 can be used.
+     * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
      * @name data․axes
      * @memberof Options
      * @type {Object}
@@ -6696,8 +6697,12 @@ extend(ChartInternal_ChartInternal.prototype, {
     var targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
     }),
-        yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
-        yMin = config["axis_".concat(axisId, "_min")],
+        yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
+    if (yTargets.length === 0) // use domain of the other axis if target of axisId is none
+      return axisId === "y2" ? $$.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
+      // So, it needs to call to get y2 domain here
+      $$.getYDomain(targets, "y2", xDomain);
+    var yMin = config["axis_".concat(axisId, "_min")],
         yMax = config["axis_".concat(axisId, "_max")],
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
@@ -6708,9 +6713,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         isInverted = config["axis_".concat(axisId, "_inverted")],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
-    if (yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
-      return $$[axisId].domain();
-    isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
+    yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
     var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
         isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
     (isValue(yMin) && isAllPositive || isValue(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
@@ -13941,6 +13944,7 @@ extend(api_data_data, {
 
   /**
    * Get and set axes of the data loaded in the chart.
+   * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
    * @method data․axes
    * @instance
    * @memberof Chart
@@ -14676,7 +14680,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200206125455",
+  version: "1.11.1-nightly-20200207125440",
 
   /**
    * Generate chart
@@ -14775,7 +14779,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200206125455
+ * @version 1.11.1-nightly-20200207125440
  */
 
 
