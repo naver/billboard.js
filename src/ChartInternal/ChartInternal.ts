@@ -84,30 +84,40 @@ export default class ChartInternal {
 	};
 
 	// selections
-	public selectChart;
-	public main;
-	public svg;
-	public axes = {
-		x: null,
-		y: null,
-		y2: null,
-		subX: d3SelectAll([])
+	public $el = {
+		chart: null, //$el.chart,
+		main: null,
+		svg: null,
+		axis: {  // axes
+			x: null,
+			y: null,
+			y2: null,
+			subX: d3SelectAll([])
+		},
+		defs: null,
+		tooltip: null,
+		legend: null,
+		title: null,
+
+		arcs: null,
+		bar: d3SelectAll([]), //mainBar,
+		line: d3SelectAll([]), //mainLine,
+		area: d3SelectAll([]), //mainArea,
+		circle: d3SelectAll([]), //mainCircle,
+		text: d3SelectAll([]), //mainText,
+		grid: {
+			main: d3SelectAll([]),  //grid
+			x: d3SelectAll([]), //xgrid,
+			y: d3SelectAll([]), //ygrid,
+			xLines: d3SelectAll([]), //xgridLines,
+			yLines: d3SelectAll([]), //ygridLines,
+		},
+		region: {
+			main: d3SelectAll([]), //region
+			list: null // mainRegion
+		},
+		eventRect: null
 	};
-	public defs;
-	public tooltip;
-	public legend;
-	public title;
-	public grid;
-	public arcs;
-	public mainBar;
-	public mainLine;
-	public mainArea;
-	public mainCircle;
-	public mainText;
-	public clipChart;
-	public clipXAxis;
-	public clipYAxis;
-	public clipGrid;
 
 	// Axis
 	public axis; // Axis
@@ -146,6 +156,8 @@ export default class ChartInternal {
 	public dataTimeFormat;
 	public axisTimeFormat;
 
+	public xgridAttr;
+
 	constructor(api) {
 		const $$ = this;
 
@@ -175,6 +187,7 @@ export default class ChartInternal {
 
 	init() {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 
 		$$.initParams();
@@ -190,14 +203,14 @@ export default class ChartInternal {
 		}
 
 		// select bind element
-		$$.selectChart = isFunction(bindto.element.node) ?
+		$el.chart = isFunction(bindto.element.node) ?
 			config.bindto.element : d3Select(bindto.element || []);
 
-		if ($$.selectChart.empty()) {
-			$$.selectChart = d3Select(document.body.appendChild(document.createElement("div")));
+		if ($el.chart.empty()) {
+			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
 		}
 
-		$$.selectChart.html("").classed(bindto.classname, true);
+		$el.chart.html("").classed(bindto.classname, true);
 		$$.initToRender();
 	}
 
@@ -210,7 +223,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 		const state = $$.state;
-		const target = $$.selectChart;
+		const target = $$.$el.chart;
 		const isHidden = () => target.style("display") === "none" || target.style("visibility") === "hidden";
 
 		const isLazy = config.render.lazy || isHidden();
@@ -285,6 +298,7 @@ export default class ChartInternal {
 
 	initWithData(data) {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const state = $$.state;
 
@@ -340,39 +354,39 @@ export default class ChartInternal {
 		}
 
 		// -- Basic Elements --
-		$$.svg = $$.selectChart.append("svg")
+		$el.svg = $el.chart.append("svg")
 			.style("overflow", "hidden")
 			.style("display", "block");
 
 		if (config.interaction_enabled && state.inputType) {
 			const isTouch = state.inputType === "touch";
 
-			$$.svg
+			$el.svg
 				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$, $$.api))
 				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$, $$.api));
 		}
 
-		config.svg_classname && $$.svg.attr("class", config.svg_classname);
+		config.svg_classname && $$.$el.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		$$.defs = $$.svg.append("defs");
+		$el.defs = $el.svg.append("defs");
 
-		$$.clipChart = $$.appendClip($$.defs, state.clip.id);
-		$$.clipXAxis = $$.appendClip($$.defs, state.clip.idXAxis);
-		$$.clipYAxis = $$.appendClip($$.defs, state.clipYAxis);
-		$$.clipGrid = $$.appendClip($$.defs, state.clip.idGrid);
+		$$.appendClip($el.defs, state.clip.id);
+		$$.appendClip($el.defs, state.clip.idXAxis);
+		$$.appendClip($el.defs, state.clipYAxis);
+		$$.appendClip($el.defs, state.clip.idGrid);
 
 		// set color patterns
 		if (isFunction(config.color_tiles) && $$.patterns) {
-			$$.patterns.forEach(p => $$.defs.append(() => p.node));
+			$$.patterns.forEach(p => $el.defs.append(() => p.node));
 		}
 
 		$$.updateSvgSize();
 
 		// Define regions
-		const main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
+		const main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
 
-		$$.main = main;
+		$el.main = main;
 
 		// initialize subchart when subchart show option is set
 		config.subchart_show && $$.initSubchart();
@@ -457,7 +471,7 @@ export default class ChartInternal {
 		$$.bindResize();
 
 		// export element of the chart
-		$$.api.element = $$.selectChart.node();
+		$$.api.element = $el.chart.node();
 
 		state.rendered = true;
 	}
@@ -474,27 +488,28 @@ export default class ChartInternal {
 
 	setChartElements() {
 		const $$ = this;
+		const {$el} = $$;
 
 		$$.api.$ = {
-			chart: $$.selectChart,
-			svg: $$.svg,
-			defs: $$.defs,
-			main: $$.main,
-			tooltip: $$.tooltip,
-			legend: $$.legend,
-			title: $$.title,
+			chart: $el.chart,
+			svg: $el.svg,
+			defs: $el.defs,
+			main: $el.main,
+			tooltip: $el.tooltip,
+			legend: $el.legend,
+			title: $el.title,
 			grid: $$.grid,
-			arc: $$.arcs,
+			arc: $$.$el.arcs,
 			bar: {
-				bars: $$.mainBar
+				bars: $$.$el.bar
 			},
 			line: {
-				lines: $$.mainLine,
-				areas: $$.mainArea,
-				circles: $$.mainCircle
+				lines: $el.line,
+				areas: $$.$el.area,
+				circles: $$.$el.circle
 			},
 			text: {
-				texts: $$.mainText
+				texts: $$.$el.text
 			}
 		};
 	}
@@ -508,7 +523,7 @@ export default class ChartInternal {
 		const bg = $$.config.background;
 
 		if (notEmpty(bg)) {
-			const element = $$.svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
+			const element = $$.$el.svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
 				.insert(bg.imgUrl ? "image" : "rect", ":first-child");
 
 			if (bg.imgUrl) {
@@ -544,12 +559,13 @@ export default class ChartInternal {
 		const $$ = this;
 		const state = $$.state;
 		const config = $$.config;
+		const $legend = $$.$el.legend;
 		const isRotated = config.axis_rotated;
 		const hasArc = $$.hasArcType();
 
 		const legend = {
-			width: $$.legend ? $$.getLegendWidth() : 0,
-			height: $$.legend ? $$.getLegendHeight() : 0
+			width: $legend ? $$.getLegendWidth() : 0,
+			height: $legend ? $$.getLegendHeight() : 0
 		};
 
 		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : legend.height;
@@ -677,7 +693,7 @@ export default class ChartInternal {
 	showTargets() {
 		const $$ = this;
 
-		$$.svg.selectAll(`.${CLASS.target}`)
+		$$.$el.svg.selectAll(`.${CLASS.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
 			.transition()
 			.duration($$.config.transition_duration)
@@ -716,8 +732,9 @@ export default class ChartInternal {
 
 	redraw(options = {}, transitionsValue?) {
 		const $$ = this;
+		const {$el} = $$;
 		const state = $$.state;
-		const main = $$.main;
+		const main = $el.main;
 		const config = $$.config;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
@@ -782,13 +799,13 @@ export default class ChartInternal {
 		$$.redrawTitle && $$.redrawTitle();
 
 		// arc
-		$$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
+		$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 		// radar
 		$$.radars && $$.redrawRadar(duration, durationForExit);
 
 		// circles for select
-		$$.mainText && main.selectAll(`.${CLASS.selectedCircles}`)
+		$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
 			.filter($$.isBarType.bind($$))
 			.selectAll("circle")
 			.remove();
@@ -1119,6 +1136,7 @@ export default class ChartInternal {
 
 	transformMain(withTransition, transitions) {
 		const $$ = this;
+		const {main} = $$.$el;
 		let xAxis;
 		let yAxis;
 		let y2Axis;
@@ -1126,7 +1144,7 @@ export default class ChartInternal {
 		if (transitions && transitions.axisX) {
 			xAxis = transitions.axisX;
 		} else {
-			xAxis = $$.main.select(`.${CLASS.axisX}`);
+			xAxis = main.select(`.${CLASS.axisX}`);
 
 			if (withTransition) {
 				xAxis = xAxis.transition();
@@ -1136,7 +1154,7 @@ export default class ChartInternal {
 		if (transitions && transitions.axisY) {
 			yAxis = transitions.axisY;
 		} else {
-			yAxis = $$.main.select(`.${CLASS.axisY}`);
+			yAxis = main.select(`.${CLASS.axisY}`);
 
 			if (withTransition) {
 				yAxis = yAxis.transition();
@@ -1146,21 +1164,21 @@ export default class ChartInternal {
 		if (transitions && transitions.axisY2) {
 			y2Axis = transitions.axisY2;
 		} else {
-			y2Axis = $$.main.select(`.${CLASS.axisY2}`);
+			y2Axis = main.select(`.${CLASS.axisY2}`);
 
 			if (withTransition) {
 				y2Axis = y2Axis.transition();
 			}
 		}
 
-		(withTransition ? $$.main.transition() : $$.main)
+		(withTransition ? main.transition() : main)
 			.attr("transform", $$.getTranslate("main"));
 
 		xAxis.attr("transform", $$.getTranslate("x"));
 		yAxis.attr("transform", $$.getTranslate("y"));
 		y2Axis.attr("transform", $$.getTranslate("y2"));
 
-		$$.main.select(`.${CLASS.chartArcs}`)
+		main.select(`.${CLASS.chartArcs}`)
 			.attr("transform", $$.getTranslate("arc"));
 	}
 
@@ -1172,13 +1190,14 @@ export default class ChartInternal {
 		$$.config.subchart_show &&
 			$$.transformContext(withTransition, transitions);
 
-		$$.legend && $$.transformLegend(withTransition);
+		$$.$el.legend && $$.transformLegend(withTransition);
 	}
 
 	updateSvgSize() {
 		const $$ = this;
 		const state = $$.state;
-		const brush = $$.svg.select(`.${CLASS.brush} .overlay`);
+		const {svg} = $$.$el;
+		const brush = svg.select(`.${CLASS.brush} .overlay`);
 		const brushSize = {width: 0, height: 0};
 
 		if (brush.size()) {
@@ -1186,49 +1205,50 @@ export default class ChartInternal {
 			brushSize.height = +brush.attr("height");
 		}
 
-		$$.svg
+		svg
 			.attr("width", state.currentWidth)
 			.attr("height", state.currentHeight);
 
-		$$.svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
+		svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
 			.select("rect")
 			.attr("width", state.width)
 			.attr("height", state.height);
 
-		$$.svg.select(`#${state.clip.idXAxis}`)
+		svg.select(`#${state.clip.idXAxis}`)
 			.select("rect")
 			.attr("x", $$.getXAxisClipX.bind($$))
 			.attr("y", $$.getXAxisClipY.bind($$))
 			.attr("width", $$.getXAxisClipWidth.bind($$))
 			.attr("height", $$.getXAxisClipHeight.bind($$));
 
-		$$.svg.select(`#${state.clip.idYAxis}`)
+		svg.select(`#${state.clip.idYAxis}`)
 			.select("rect")
 			.attr("x", $$.getYAxisClipX.bind($$))
 			.attr("y", $$.getYAxisClipY.bind($$))
 			.attr("width", $$.getYAxisClipWidth.bind($$))
 			.attr("height", $$.getYAxisClipHeight.bind($$));
 
-		state.clip.idSubchart && $$.svg.select(`#${state.clip.idSubchart}`)
+		state.clip.idSubchart && svg.select(`#${state.clip.idSubchart}`)
 			.select("rect")
 			.attr("width", state.width)
 			.attr("height", brushSize.height);
 
-		$$.svg.select(`.${CLASS.zoomRect}`)
+		svg.select(`.${CLASS.zoomRect}`)
 			.attr("width", state.width)
 			.attr("height", state.height);
 	}
 
 	updateDimension(withoutAxis) {
 		const $$ = this;
+		const {axis} = $$.$el;
 
 		if (!withoutAxis) {
 			if ($$.axis.x && $$.config.axis_rotated) {
-				$$.axis.x.create($$.axes.x);
-				$$.axis.subX.create($$.axes.subX);
+				$$.axis.x.create(axis.x);
+				$$.axis.subX.create(axis.subX);
 			} else {
-				$$.axis.y && $$.axis.y.create($$.axes.y);
-				$$.axis.y2 && $$.axis.y2.create($$.axes.y2);
+				$$.axis.y && $$.axis.y.create(axis.y);
+				$$.axis.y2 && $$.axis.y2.create(axis.y2);
 			}
 		}
 

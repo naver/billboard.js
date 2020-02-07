@@ -27,7 +27,7 @@ export default {
 		const $$ = this.internal;
 		const state = $$.state;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
-		const candidates = $$.svg.selectAll(
+		const candidates = $$.$el.svg.selectAll(
 			$$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
 		);
 
@@ -70,7 +70,7 @@ export default {
 		const $$ = this.internal;
 		const state = $$.state;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
-		const candidates = $$.svg.selectAll(
+		const candidates = $$.$el.svg.selectAll(
 			$$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
 		);
 
@@ -110,14 +110,14 @@ export default {
 		const $$ = this.internal;
 		const state = $$.state;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
-		const candidates = $$.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
+		const candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
 
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
 		$$.hasArcType() && $$.unexpandArc(targetIds);
 
 		if ($$.config.legend_show) {
 			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
-			$$.legend.selectAll($$.selectorLegends(targetIds))
+			$$.$el.legend.selectAll($$.selectorLegends(targetIds))
 				.filter(function() {
 					return d3Select(this).classed(CLASS.legendItemFocused);
 				})

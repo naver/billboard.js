@@ -28,7 +28,7 @@ export default {
 		const $$ = this.internal;
 		const dataPoint: DataItem[] = [];
 
-		$$.main.selectAll(`.${CLASS.shapes + $$.getTargetSelectorSuffix(targetId)}`)
+		$$.$el.main.selectAll(`.${CLASS.shapes + $$.getTargetSelectorSuffix(targetId)}`)
 			.selectAll(`.${CLASS.shape}`)
 			.filter(function() {
 				return d3Select(this).classed(CLASS.SELECTED);
@@ -70,7 +70,7 @@ export default {
 			return;
 		}
 
-		$$.main.selectAll(`.${CLASS.shapes}`)
+		$$.$el.main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
 			.each(function(d, i) {
 				const shape = d3Select(this);
@@ -120,7 +120,7 @@ export default {
 			return;
 		}
 
-		$$.main.selectAll(`.${CLASS.shapes}`)
+		$$.$el.main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
 			.each(function(d, i) {
 				const shape = d3Select(this);

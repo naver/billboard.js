@@ -18,6 +18,7 @@ export default {
 	 */
 	generateFlow(args) {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const state = $$.state;
 
@@ -41,14 +42,14 @@ export default {
 			const done = flow.done || function() {};
 			const wait = $$.generateWait();
 
-			const xgrid = $$.xgrid || d3SelectAll([]);
-			const xgridLines = $$.xgridLines || d3SelectAll([]);
-			const mainRegion = $$.mainRegion || d3SelectAll([]);
-			const mainText = $$.mainText || d3SelectAll([]);
-			const mainBar = $$.mainBar || d3SelectAll([]);
-			const mainLine = $$.mainLine || d3SelectAll([]);
-			const mainArea = $$.mainArea || d3SelectAll([]);
-			const mainCircle = $$.mainCircle || d3SelectAll([]);
+			const xgrid = $el.grid.x;
+			const xgridLines = $el.grid.xLines;
+			const mainRegion = $el.region.list;
+			const mainText = $el.text;
+			const mainBar = $el.bar;
+			const mainLine = $el.line;
+			const mainArea = $el.area;
+			const mainCircle = $el.circle;
 
 			// set flag
 			state.flowing = true;
@@ -96,7 +97,7 @@ export default {
 				.duration(durationForFlow);
 
 			wait.add([
-				$$.axes.x
+				$$.$el.axis.x
 					.transition(gt)
 					.call(g => $$.axis.x.setTransition(gt).create(g)),
 
@@ -152,12 +153,12 @@ export default {
 					}
 
 					["shapes", "texts", "eventRects"].forEach(v => {
-						$$.svg.selectAll(`.${CLASS[v]}`)
+						$el.svg.selectAll(`.${CLASS[v]}`)
 							.selectAll(target[v])
 							.remove();
 					});
 
-					$$.svg.select(`.${CLASS.xgrid}`)
+					$el.svg.select(`.${CLASS.xgrid}`)
 						.remove();
 				}
 

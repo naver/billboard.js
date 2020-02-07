@@ -94,7 +94,7 @@ extend(regions, {
 		const options = optionsValue || {};
 		const duration = getOption(options, "duration", config.transition_duration);
 		const classes = getOption(options, "classes", [CLASS.region]);
-		let regions = $$.main.select(`.${CLASS.regions}`)
+		let regions = $$.$el.main.select(`.${CLASS.regions}`)
 			.selectAll(classes.map(c => `.${c}`));
 
 		(duration ? regions.transition().duration(duration) : regions)

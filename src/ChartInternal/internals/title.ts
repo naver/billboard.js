@@ -35,11 +35,12 @@ export default {
 	 */
 	initTitle() {
 		const $$ = this;
+		const {$el} = $$;
 
 		if ($$.config.title_text) {
-			$$.title = $$.svg.append("g");
+			$el.title = $el.svg.append("g");
 
-			const text = $$.title
+			const text = $el.title
 				.append("text")
 				.style("text-anchor", getTextPos($$.config.title_position))
 				.attr("class", CLASS.title);
@@ -54,15 +55,16 @@ export default {
 	 */
 	redrawTitle() {
 		const $$ = this;
+		const {title} = $$.$el;
 		const {currentWidth} = $$.state;
 
-		if ($$.title) {
+		if (title) {
 			const y = $$.yForTitle.call($$);
 
-			if (/g/i.test($$.title.node().tagName)) {
-				$$.title.attr("transform", `translate(${getTextPos($$.config.title_position, currentWidth)}, ${y})`);
+			if (/g/i.test(title.node().tagName)) {
+				title.attr("transform", `translate(${getTextPos($$.config.title_position, currentWidth)}, ${y})`);
 			} else {
-				$$.title.attr("x", $$.xForTitle.call($$)).attr("y", y);
+				title.attr("x", $$.xForTitle.call($$)).attr("y", y);
 			}
 		}
 	},
@@ -77,7 +79,7 @@ export default {
 		const config = $$.config;
 		const {currentWidth} = $$.state;
 		const position = config.title_position || "left";
-		const textRectWidth = $$.getTextRect($$.title, CLASS.title).width;
+		const textRectWidth = $$.getTextRect($$.$el.title, CLASS.title).width;
 		let x;
 
 		if (/(right|center)/.test(position)) {
@@ -104,7 +106,7 @@ export default {
 		const $$ = this;
 
 		return ($$.config.title_padding.top || 0) +
-			$$.getTextRect($$.title, CLASS.title).height;
+			$$.getTextRect($$.$el.title, CLASS.title).height;
 	},
 
 	/**

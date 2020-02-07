@@ -22,12 +22,19 @@ $ npm install git+https://github.com/naver/billboard.js.git#v2 --save
 ## Breaking Changes
 
 ### Updates on private state variables
-Reorganized `state` variables. (Note: Even is accessible, do not use nor access private values)
+Reorganized `selection` and `state` variables. (Note: Even is accessible, do not use nor access private values)
+
+- All states are member of `state` prop.
+- All selections are member of `$el` prop.
+
 ```js
 const chart = bb.generate({});
 
 chart.internal.width;
-// --> chart.internal.state.width;
+// --> chart.internal.state.width
+
+chart.internal.selectChart;
+// --> chart.internal.$el.chart
 ```
 
 ### Do not extend APIs as own member

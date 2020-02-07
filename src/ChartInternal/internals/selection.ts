@@ -26,7 +26,7 @@ export default {
 		callFn(config.data_onselected, $$.api, d, target.node());
 
 		// add selected-circle on low layer g
-		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+		$$.$el.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
 			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.data([d])
 			.enter()
@@ -54,7 +54,7 @@ export default {
 		callFn($$.config.data_onunselected, $$.api, d, target.node());
 
 		// remove selected-circle from low layer g
-		$$.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+		$$.$el.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
 			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.transition()
 			.duration(100)
@@ -167,7 +167,7 @@ export default {
 					selector += $$.getTargetSelectorSuffix(d.id);
 				}
 
-				$$.main.selectAll(selector)
+				$$.$el.main.selectAll(selector)
 					.selectAll(`.${CLASS.shape}`)
 					.each(function(d, i) {
 						const shape = d3Select(this);

@@ -18,12 +18,13 @@ export default {
 	initTooltip() {
 		const $$ = this;
 		const config = $$.config;
+		const {$el} = $$;
 		const bindto = config.tooltip_contents.bindto;
 
-		$$.tooltip = d3Select(bindto);
+		$el.tooltip = d3Select(bindto);
 
-		if ($$.tooltip.empty()) {
-			$$.tooltip = $$.selectChart
+		if ($el.tooltip.empty()) {
+			$el.tooltip = $el.chart
 				.style("position", "relative")
 				.append("div")
 				.attr("class", CLASS.tooltipContainer)
@@ -50,7 +51,7 @@ export default {
 				config.tooltip_init_x = i;
 			}
 
-			$$.tooltip.html($$.getTooltipHTML(
+			$el.tooltip.html($$.getTooltipHTML(
 				$$.data.targets.map(d => $$.addName(d.values[config.tooltip_init_x])),
 				$$.axis.getXAxisTickFormat(),
 				$$.getYFormat($$.hasArcType(null, ["radar"])),
@@ -58,7 +59,7 @@ export default {
 			));
 
 			if (!bindto) {
-				$$.tooltip.style("top", config.tooltip_init_position.top)
+				$el.tooltip.style("top", config.tooltip_init_position.top)
 					.style("left", config.tooltip_init_position.left)
 					.style("display", "block");
 			}
@@ -284,6 +285,7 @@ export default {
 	showTooltip(selectedData, element) {
 		const $$ = this;
 		const config = $$.config;
+		const {tooltip} = $$.$el;
 		const bindto = config.tooltip_contents.bindto;
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
@@ -293,7 +295,7 @@ export default {
 			return;
 		}
 
-		const datum = $$.tooltip.datum();
+		const datum = tooltip.datum();
 		const dataStr = JSON.stringify(selectedData);
 		let width = (datum && datum.width) || 0;
 		let height = (datum && datum.height) || 0;
@@ -304,7 +306,7 @@ export default {
 			callFn(config.tooltip_onshow, $$, $$.api, selectedData);
 
 			// set tooltip content
-			$$.tooltip
+			tooltip
 				.html($$.getTooltipHTML(
 					selectedData,
 					$$.axis.getXAxisTickFormat(),
@@ -316,8 +318,8 @@ export default {
 				.datum({
 					index,
 					current: dataStr,
-					width: width = $$.tooltip.property("offsetWidth"),
-					height: height = $$.tooltip.property("offsetHeight")
+					width: width = tooltip.property("offsetWidth"),
+					height: height = tooltip.property("offsetHeight")
 				});
 
 			callFn(config.tooltip_onshown, $$, $$.api, selectedData);
@@ -329,7 +331,7 @@ export default {
 			const position = positionFunction.call(this, dataToShow, width, height, element);
 
 			// Set tooltip position
-			$$.tooltip
+			tooltip
 				.style("top", `${position.top}px`)
 				.style("left", `${position.left}px`);
 		}
@@ -343,14 +345,15 @@ export default {
 	hideTooltip(force) {
 		const $$ = this;
 		const config = $$.config;
+		const {tooltip} = $$.$el;
 
-		if (this.tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
-			const selectedData = JSON.parse(this.tooltip.datum().current);
+		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+			const selectedData = JSON.parse(tooltip.datum().current);
 
 			callFn(config.tooltip_onhide, $$, $$.api, selectedData);
 
 			// hide tooltip
-			this.tooltip
+			tooltip
 				.style("display", "none")
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
@@ -374,13 +377,13 @@ export default {
 
 			charts.forEach(c => {
 				if (c !== $$.api) {
-					const config = c.internal.config;
+					const {config} = c.internal;
 					const isLinked = config.tooltip_linked;
 					const name = config.tooltip_linked_name;
 					const isInDom = document.body.contains(c.element);
 
 					if (isLinked && linkedName === name && isInDom) {
-						const data = c.internal.tooltip.data()[0];
+						const data = c.internal.$el.tooltip.data()[0];
 						const isNotSameIndex = index !== (data && data.index);
 
 						// prevent throwing error for non-paired linked indexes

@@ -306,6 +306,7 @@ export default {
 
 	expandArc(targetIds) {
 		const $$ = this;
+		const {$el} = $$;
 		const {transiting} = $$.state;
 
 		// MEMO: avoid to cancel transition
@@ -314,7 +315,7 @@ export default {
 				if (!transiting) {
 					clearInterval(interval);
 
-					$$.legend.selectAll(`.${CLASS.legendItemFocused}`).size() > 0 &&
+					$el.legend.selectAll(`.${CLASS.legendItemFocused}`).size() > 0 &&
 						$$.expandArc(targetIds);
 				}
 			}, 10);
@@ -324,7 +325,7 @@ export default {
 
 		const newTargetIds = $$.mapToTargetIds(targetIds);
 
-		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
+		$el.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.each(function(d) {
 				if (!$$.shouldExpand(d.data.id)) {
 					return;
@@ -345,6 +346,7 @@ export default {
 
 	unexpandArc(targetIds) {
 		const $$ = this;
+		const {$el} = $$;
 
 		if ($$.state.transiting) {
 			return;
@@ -352,13 +354,13 @@ export default {
 
 		const newTargetIds = $$.mapToTargetIds(targetIds);
 
-		$$.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
+		$el.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.selectAll("path")
 			.transition()
 			.duration(d => $$.getExpandConfig(d.data.id, "duration"))
 			.attr("d", $$.svgArc);
 
-		$$.svg.selectAll(`${CLASS.arc}`)
+		$el.svg.selectAll(`${CLASS.arc}`)
 			.style("opacity", "1");
 	},
 
@@ -443,7 +445,7 @@ export default {
 
 	updateTargetsForArc(targets) {
 		const $$ = this;
-		const main = $$.main;
+		const {main} = $$.$el;
 		const hasGauge = $$.hasType("gauge");
 		const classChartArc = $$.classChartArc.bind($$);
 		const classArcs = $$.classArcs.bind($$);
@@ -471,8 +473,9 @@ export default {
 
 	initArc() {
 		const $$ = this;
+		const {$el} = $$;
 
-		$$.arcs = $$.main.select(`.${CLASS.chart}`)
+		$el.arcs = $el.main.select(`.${CLASS.chart}`)
 			.append("g")
 			.attr("class", CLASS.chartArcs)
 			.attr("transform", $$.getTranslate("arc"));
@@ -490,7 +493,7 @@ export default {
 		const hasGauge = $$.hasType("gauge");
 
 		if (title) {
-			const text = $$.arcs.append("text")
+			const text = $$.$el.arcs.append("text")
 				.attr("class", CLASS[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"])
 				.style("text-anchor", "middle");
 
@@ -508,7 +511,7 @@ export default {
 		const $$ = this;
 		const config = $$.config;
 		const state = $$.state;
-		const main = $$.main;
+		const {main} = $$.$el;
 		const hasInteraction = config.interaction_enabled;
 
 		let mainArc = main.selectAll(`.${CLASS.arcs}`)
@@ -614,7 +617,7 @@ export default {
 		const state = $$.state;
 		const hiddenTargetIds = $$.state.hiddenTargetIds;
 
-		const arcLabelLines = $$.main.selectAll(`.${CLASS.arcs}`)
+		const arcLabelLines = $$.$el.main.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arcLabelLine}`)
 			.data($$.arcData.bind($$));
 
@@ -753,7 +756,7 @@ export default {
 					unselectArc() : selectArc(this, arcData, id);
 			};
 
-			$$.svg
+			$$.$el.svg
 				.on("touchstart", handler)
 				.on("touchmove", handler);
 		}
@@ -763,7 +766,7 @@ export default {
 		const $$ = this;
 		const config = $$.config;
 		const state = $$.state;
-		const main = $$.main;
+		const {main, arcs} = $$.$el;
 		const hasGauge = $$.hasType("gauge");
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		let text;
@@ -797,7 +800,7 @@ export default {
 
 			isFullCircle && text && text.attr("dy", `${Math.round(state.radius / 14)}`);
 
-			let backgroundArc = $$.arcs.select(
+			let backgroundArc = $$.$el.arcs.select(
 				`${hasMultiArcGauge ? "g" : ""}.${CLASS.chartArcsBackground}`
 			);
 
@@ -840,18 +843,18 @@ export default {
 				});
 			}
 
-			$$.arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
+			arcs.select(`.${CLASS.chartArcsGaugeUnit}`)
 				.attr("dy", ".75em")
 				.text(config.gauge_label_show ? config.gauge_units : "");
 
 			if (config.gauge_label_show) {
-				$$.arcs.select(`.${CLASS.chartArcsGaugeMin}`)
+				arcs.select(`.${CLASS.chartArcsGaugeMin}`)
 					.attr("dx", `${-1 * (state.innerRadius + ((state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)))}px`)
 					.attr("dy", "1.2em")
 					.text($$.textForGaugeMinMax(config.gauge_min, false));
 
 				// show max text when isn't fullCircle
-				!isFullCircle && $$.arcs.select(`.${CLASS.chartArcsGaugeMax}`)
+				!isFullCircle && arcs.select(`.${CLASS.chartArcsGaugeMax}`)
 					.attr("dx", `${state.innerRadius + ((state.radius - state.innerRadius) / 2)}px`)
 					.attr("dy", "1.2em")
 					.text($$.textForGaugeMinMax(config.gauge_max, true));
@@ -862,7 +865,7 @@ export default {
 	initGauge() {
 		const $$ = this;
 		const config = $$.config;
-		const arcs = $$.arcs;
+		const {arcs} = $$.$el;
 		const appendText = className => {
 			arcs.append("text")
 				.attr("class", className)

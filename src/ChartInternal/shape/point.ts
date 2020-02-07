@@ -54,20 +54,21 @@ export default {
 			}
 		}
 
-		$$.defs.node().appendChild(clone);
+		$$.$el.defs.node().appendChild(clone);
 	},
 
 	pointFromDefs(id) {
-		return this.defs.select(`#${id}`);
+		return this.$el.defs.select(`#${id}`);
 	},
 
 	updatePointClass(d) {
 		const $$ = this;
+		const {circle} = $$.$el;
 		let pointClass = false;
 
-		if (isObject(d) || $$.mainCircle) {
+		if (isObject(d) || circle) {
 			pointClass = d === true ?
-				$$.mainCircle.attr("class", $$.classCircle.bind($$)) :
+				circle.attr("class", $$.classCircle.bind($$)) :
 				$$.classCircle(d);
 		}
 

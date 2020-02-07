@@ -185,7 +185,7 @@ function (_Plugin) {
   }, BubbleCompare.raiseFocusedBubbleLayer = function raiseFocusedBubbleLayer(d) {
     d.raise && Object(d3_selection__WEBPACK_IMPORTED_MODULE_3__["select"])(d.node().parentNode.parentNode).raise();
   }, _proto.changeCursorPoint = function changeCursorPoint() {
-    this.$$.svg.select(".bb-event-rect").style("cursor", "pointer");
+    this.$$.$el.svg.select(".bb-event-rect").style("cursor", "pointer");
   }, _proto.findClosest = function findClosest(values, pos) {
     var _this2 = this,
         $$ = this.$$;

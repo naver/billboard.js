@@ -37,7 +37,7 @@ export default {
 		const config = $$.config;
 
 		if ($$.hasType("radar")) {
-			$$.radars = $$.main.select(`.${CLASS.chart}`).append("g")
+			$$.radars = $$.$el.main.select(`.${CLASS.chart}`).append("g")
 				.attr("class", CLASS.chartRadars);
 
 			// level
@@ -124,13 +124,14 @@ export default {
 
 	redrawRadar(duration, durationForExit) {
 		const $$ = this;
+		const {main} = $$.$el;
 		const translate = $$.getTranslate("radar");
 
 		// Adjust radar, circles and texts' position
 		if (translate) {
 			$$.radars.attr("transform", translate);
-			$$.main.selectAll(`.${CLASS.circles}`).attr("transform", translate);
-			$$.main.select(`.${CLASS.chartTexts}`).attr("transform", translate);
+			main.selectAll(`.${CLASS.circles}`).attr("transform", translate);
+			main.select(`.${CLASS.chartTexts}`).attr("transform", translate);
 
 			$$.generateRadarPoints();
 			$$.updateRadarLevel();
@@ -300,6 +301,7 @@ export default {
 	bindEvent() {
 		const $$ = this;
 		const config = $$.config;
+		const {svg} = $$.$el;
 		const {inputType, transiting} = $$.state;
 
 		if (config.interaction_enabled) {
@@ -340,13 +342,13 @@ export default {
 
 					const index = getIndex();
 
-					$$.selectRectForSingle($$.svg.node(), null, index);
+					$$.selectRectForSingle(svg.node(), null, index);
 					isMouse ? $$.setOverOut(true, index) : $$.callOverOutForTouch(index);
 				})
 				.on("mouseout", isMouse ? hide : null);
 
 			if (!isMouse) {
-				$$.svg.on("touchstart", hide);
+				svg.on("touchstart", hide);
 			}
 		}
 	},

@@ -18,20 +18,21 @@ export default {
 	 */
 	initLegend() {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 
 		$$.legendItemTextBox = {};
 		$$.state.legendHasRendered = false;
-		$$.legend = $$.svg.append("g");
+		$el.legend = $$.$el.svg.append("g");
 
 		if (config.legend_show) {
-			$$.legend.attr("transform", $$.getTranslate("legend"));
+			$el.legend.attr("transform", $$.getTranslate("legend"));
 
 			// MEMO: call here to update legend box and translate for all
 			// MEMO: translate will be updated by this, so transform not needed in updateLegend()
 			$$.updateLegend();
 		} else {
-			$$.legend.style("visibility", "hidden");
+			$$.$el.legend.style("visibility", "hidden");
 			$$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
 		}
 	},
@@ -66,7 +67,7 @@ export default {
 		}
 
 		// toggle legend state
-		$$.legend.selectAll(`.${CLASS.legendItem}`)
+		$$.$el.legend.selectAll(`.${CLASS.legendItem}`)
 			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
 
 		// Update size and scale
@@ -114,7 +115,7 @@ export default {
 
 			$$.setLegendItem(legendItem);
 
-			$$.legend = wrapper;
+			$$.$el.legend = wrapper;
 		}
 	},
 
@@ -155,8 +156,9 @@ export default {
 	 */
 	transformLegend(withTransition) {
 		const $$ = this;
+		const {legend} = $$.$el;
 
-		(withTransition ? $$.legend.transition() : $$.legend)
+		(withTransition ? legend.transition() : legend)
 			.attr("transform", $$.getTranslate("legend"));
 	},
 
@@ -194,7 +196,7 @@ export default {
 	 * @param {String} color Color value
 	 */
 	updateLegendItemColor(id, color) {
-		this.legend.select(`.${CLASS.legendItem}-${id} line`)
+		this.$el.legend.select(`.${CLASS.legendItem}-${id} line`)
 			.style("stroke", color);
 	},
 
@@ -258,7 +260,7 @@ export default {
 		const $$ = this;
 		const targetIdz = $$.mapToTargetIds(targetIds);
 
-		$$.legend.selectAll(`.${CLASS.legendItem}`)
+		$$.$el.legend.selectAll(`.${CLASS.legendItem}`)
 			.filter(id => targetIdz.indexOf(id) >= 0)
 			.classed(CLASS.legendItemFocused, focus)
 			.transition()
@@ -276,7 +278,7 @@ export default {
 	revertLegend() {
 		const $$ = this;
 
-		$$.legend.selectAll(`.${CLASS.legendItem}`)
+		$$.$el.legend.selectAll(`.${CLASS.legendItem}`)
 			.classed(CLASS.legendItemFocused, false)
 			.transition()
 			.duration(100)
@@ -293,16 +295,17 @@ export default {
 	showLegend(targetIds) {
 		const $$ = this;
 		const config = $$.config;
+		const {legend} = $$.$el;
 
 		if (!config.legend_show) {
 			config.legend_show = true;
-			$$.legend.style("visibility", "visible");
+			legend.style("visibility", "visible");
 
 			!$$.state.legendHasRendered && $$.updateLegend();
 		}
 		$$.removeHiddenLegendIds(targetIds);
 
-		$$.legend.selectAll($$.selectorLegends(targetIds))
+		legend.selectAll($$.selectorLegends(targetIds))
 			.style("visibility", "visible")
 			.transition()
 			.style("opacity", function() {
@@ -318,14 +321,15 @@ export default {
 	hideLegend(targetIds) {
 		const $$ = this;
 		const config = $$.config;
+		const {legend} = $$.$el;
 
 		if (config.legend_show && isEmpty(targetIds)) {
 			config.legend_show = false;
-			$$.legend.style("visibility", "hidden");
+			legend.style("visibility", "hidden");
 		}
 
 		$$.addHiddenLegendIds(targetIds);
-		$$.legend.selectAll($$.selectorLegends(targetIds))
+		legend.selectAll($$.selectorLegends(targetIds))
 			.style("opacity", "0")
 			.style("visibility", "hidden");
 	},
@@ -547,8 +551,10 @@ export default {
 
 		const pos = -200;
 
+		const {legend} = $$.$el;
+
 		// Define g for legend area
-		const l = $$.legend.selectAll(`.${CLASS.legendItem}`)
+		const l = legend.selectAll(`.${CLASS.legendItem}`)
 			.data(targetIdz)
 			.enter()
 			.append("g");
@@ -611,15 +617,15 @@ export default {
 		}
 
 		// Set background for inset legend
-		background = $$.legend.select(`.${CLASS.legendBackground} rect`);
+		background = legend.select(`.${CLASS.legendBackground} rect`);
 
 		if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
-			background = $$.legend.insert("g", `.${CLASS.legendItem}`)
+			background = legend.insert("g", `.${CLASS.legendItem}`)
 				.attr("class", CLASS.legendBackground)
 				.append("rect");
 		}
 
-		const texts = $$.legend.selectAll("text")
+		const texts = legend.selectAll("text")
 			.data(targetIdz)
 			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id)) // MEMO: needed for update
 			.each(function(id, i) {
@@ -630,7 +636,7 @@ export default {
 			.attr("x", xForLegendText)
 			.attr("y", yForLegendText);
 
-		const rects = $$.legend.selectAll(`rect.${CLASS.legendItemEvent}`)
+		const rects = legend.selectAll(`rect.${CLASS.legendItemEvent}`)
 			.data(targetIdz);
 
 		(withTransition ? rects.transition() : rects)
@@ -641,7 +647,7 @@ export default {
 
 
 		if (usePoint) {
-			const tiles = $$.legend.selectAll(`.${CLASS.legendItemPoint}`)
+			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)
@@ -680,7 +686,7 @@ export default {
 						.attr("height", height);
 				});
 		} else {
-			const tiles = $$.legend.selectAll(`line.${CLASS.legendItemTile}`)
+			const tiles = legend.selectAll(`line.${CLASS.legendItemTile}`)
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)

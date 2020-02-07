@@ -69,6 +69,7 @@ export default {
 
 	unload(rawTargetIds, customDoneCb) {
 		const $$ = this;
+		const {$el} = $$;
 		const state = $$.state;
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
@@ -89,7 +90,7 @@ export default {
 			return;
 		}
 
-		$$.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)))
+		$el.svg.selectAll(targetIds.map(id => $$.selectorTarget(id)))
 			.transition()
 			.style("opacity", "0")
 			.remove()
@@ -99,8 +100,8 @@ export default {
 			// Reset fadein for future load
 			state.withoutFadeIn[id] = false;
 			// Remove target's elements
-			if ($$.legend) {
-				$$.legend.selectAll(`.${CLASS.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
+			if ($el.legend) {
+				$el.legend.selectAll(`.${CLASS.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
 			}
 			// Remove target
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);

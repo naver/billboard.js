@@ -17,7 +17,7 @@ export default {
 	drag(mouse) {
 		const $$ = this;
 		const config = $$.config;
-		const main = $$.main;
+		const {main} = $$.$el;
 		const state = $$.state;
 
 		if ($$.hasArcType() ||
@@ -95,7 +95,7 @@ export default {
 
 		$$.state.dragStart = mouse;
 
-		$$.main.select(`.${CLASS.chart}`)
+		$$.$el.main.select(`.${CLASS.chart}`)
 			.append("rect")
 			.attr("class", CLASS.dragarea)
 			.style("opacity", "0.1");
@@ -110,19 +110,20 @@ export default {
 	 */
 	dragend() {
 		const $$ = this;
+		const {main} = $$.$el;
 		const config = $$.config;
 
 		if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
 			return;
 		}
 
-		$$.main.select(`.${CLASS.dragarea}`)
+		main.select(`.${CLASS.dragarea}`)
 			.transition()
 			.duration(100)
 			.style("opacity", "0")
 			.remove();
 
-		$$.main.selectAll(`.${CLASS.shape}`)
+		main.selectAll(`.${CLASS.shape}`)
 			.classed(CLASS.INCLUDED, false);
 
 		$$.setDragStatus(false);

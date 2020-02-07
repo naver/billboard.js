@@ -10,7 +10,7 @@ export default {
 	initBar() {
 		const $$ = this;
 
-		$$.main.select(`.${CLASS.chart}`).append("g")
+		$$.$el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartBars);
 	},
 
@@ -20,7 +20,7 @@ export default {
 		const classChartBar = $$.classChartBar.bind($$);
 		const classBars = $$.classBars.bind($$);
 		const classFocus = $$.classFocus.bind($$);
-		const mainBarUpdate = $$.main.select(`.${CLASS.chartBars}`)
+		const mainBarUpdate = $$.$el.main.select(`.${CLASS.chartBars}`)
 			.selectAll(`.${CLASS.chartBar}`)
 			.data(targets)
 			.attr("class", d => classChartBar(d) + classFocus(d));
@@ -37,28 +37,31 @@ export default {
 
 	updateBar(durationForExit) {
 		const $$ = this;
+		const {$el} = $$;
 		const barData = $$.barData.bind($$);
 		const classBar = $$.classBar.bind($$);
 		const initialOpacity = $$.initialOpacity.bind($$);
 
-		$$.mainBar = $$.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
+		$el.bar = $el.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
 			.data(barData);
 
-		$$.mainBar.exit().transition()
+		$el.bar.exit().transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$$.mainBar = $$.mainBar.enter().append("path")
+		$el.bar = $el.bar.enter().append("path")
 			.attr("class", classBar)
 			.style("fill", $$.color)
-			.merge($$.mainBar)
+			.merge($el.bar)
 			.style("opacity", initialOpacity);
 	},
 
 	redrawBar(drawBar, withTransition) {
+		const {bar} = this.$el;
+
 		return [
-			(withTransition ? this.mainBar.transition(getRandom()) : this.mainBar)
+			(withTransition ? bar.transition(getRandom()) : bar)
 				.attr("d", drawBar)
 				.style("fill", this.color)
 				.style("opacity", "1")
@@ -102,10 +105,11 @@ export default {
 
 	getBars(i, id) {
 		const $$ = this;
+		const {main} = $$.$el;
 		const suffix = (isValue(i) ? `-${i}` : ``);
 
-		return (id ? $$.main
-			.selectAll(`.${CLASS.bars}${$$.getTargetSelectorSuffix(id)}`) : $$.main)
+		return (id ? main
+			.selectAll(`.${CLASS.bars}${$$.getTargetSelectorSuffix(id)}`) : main)
 			.selectAll(`.${CLASS.bar}${suffix}`);
 	},
 

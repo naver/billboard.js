@@ -19,7 +19,7 @@ export default class Elements {
 		this.owner = owner;
 
 		// MEMO: Avoid blocking eventRect
-		const elements = owner.$$.main.select(".bb-chart")
+		const elements = owner.$$.$el.main.select(".bb-chart")
 			.append("g")
 			.attr("class", CLASS.stanfordElements);
 
@@ -29,7 +29,7 @@ export default class Elements {
 
 	updateStanfordLines(duration) {
 		const $$ = this.owner.$$;
-		const main = $$.main;
+		const {main} = $$.$el;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const xvCustom = this.xvCustom.bind($$);
@@ -69,7 +69,7 @@ export default class Elements {
 
 	updateStanfordRegions(duration) {
 		const $$ = this.owner.$$;
-		const main = $$.main;
+		const {main} = $$.$el;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const xvCustom = this.xvCustom.bind($$);

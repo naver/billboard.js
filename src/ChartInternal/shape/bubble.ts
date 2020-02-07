@@ -28,14 +28,15 @@ export default {
 	 */
 	getBaseLength() {
 		const $$ = this;
+		const {axis} = $$.$el;
 		const cacheKey = "$baseLength";
 		let baseLength = $$.cache.get(cacheKey);
 
 		if (!baseLength) {
 			$$.cache.add(cacheKey, baseLength = getMinMax("min", [
-				$$.axes.x.select("path").node()
+				axis.x.select("path").node()
 					.getTotalLength(),
-				$$.axes.y.select("path").node()
+				axis.y.select("path").node()
 					.getTotalLength()
 			]));
 		}

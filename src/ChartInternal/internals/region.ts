@@ -9,43 +9,47 @@ import {isValue} from "../../module/util";
 export default {
 	initRegion() {
 		const $$ = this;
+		const {$el} = $$;
 
-		$$.region = $$.main.append("g")
+		$el.region.main = $el.main.append("g")
 			.attr("clip-path", $$.state.clip.path)
 			.attr("class", CLASS.regions);
 	},
 
 	updateRegion(duration) {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 
 		// hide if arc type
-		$$.region.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+		$el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
 
 		// select <g> element
-		$$.mainRegion = $$.main.select(`.${CLASS.regions}`)
+		let list = $el.main.select(`.${CLASS.regions}`)
 			.selectAll(`.${CLASS.region}`)
 			.data(config.regions);
 
-		$$.mainRegion.exit()
+		list.exit()
 			.transition()
 			.duration(duration)
 			.style("opacity", "0")
 			.remove();
 
-		$$.mainRegion = $$.mainRegion.enter()
+		list = list.enter()
 			.append("g")
-			.merge($$.mainRegion)
+			.merge(list)
 			.attr("class", $$.classRegion.bind($$));
 
-		$$.mainRegion
+		list
 			.append("rect")
 			.style("fill-opacity", "0");
+
+		$el.region.list = list;
 	},
 
 	redrawRegion(withTransition) {
 		const $$ = this;
-		let regions = $$.mainRegion.select("rect");
+		let regions = $$.$el.region.list.select("rect");
 
 		regions = (withTransition ? regions.transition() : regions)
 			.attr("x", $$.regionX.bind($$))

@@ -38,7 +38,7 @@ export default {
 
 		$$.redrawEventRect();
 
-		const eventRects = $$.main.select(`.${CLASS.eventRects}`);
+		const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`);
 
 		if (zoomEnabled && bind) {
 			// Do not bind zoom event when subchart is shown
@@ -289,7 +289,7 @@ export default {
 				$$.setDragStatus(true);
 
 				if (!zoomRect) {
-					zoomRect = $$.main.append("rect")
+					zoomRect = $$.$el.main.append("rect")
 						.attr("clip-path", state.clip.path)
 						.attr("class", CLASS.zoomBrush)
 						.attr("width", isRotated ? state.width : 0)
@@ -356,7 +356,7 @@ export default {
 
 		if (resetButton && config.zoom_enabled.type === "drag") {
 			if (!$$.zoom.resetBtn) {
-				$$.zoom.resetBtn = $$.selectChart.append("div")
+				$$.zoom.resetBtn = $$.$el.chart.append("div")
 					.classed(CLASS.button, true)
 					.append("span")
 					.on("click", function() {

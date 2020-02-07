@@ -32,7 +32,7 @@ export default {
 			$$.redrawForBrush();
 		};
 		const getBrushSize = () => {
-			const brush = $$.svg.select(`.${CLASS.brush} .overlay`);
+			const brush = $$.$el.svg.select(`.${CLASS.brush} .overlay`);
 			const brushSize = {width: 0, height: 0};
 
 			if (brush.size()) {
@@ -108,6 +108,7 @@ export default {
 	 */
 	initSubchart() {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const {clip} = $$.state;
 		const visibility = config.subchart_show ? "visible" : "hidden";
@@ -115,10 +116,10 @@ export default {
 		const clipPath = $$.getClipPath(clipId);
 
 		clip.idSubchart = clipId;
-		$$.appendClip($$.defs, clipId);
+		$$.appendClip($el.defs, clipId);
 		$$.initBrush();
 
-		$$.context = $$.svg.append("g").attr("transform", $$.getTranslate("context"));
+		$$.context = $el.svg.append("g").attr("transform", $$.getTranslate("context"));
 
 		const context = $$.context;
 
@@ -147,7 +148,7 @@ export default {
 
 		// ATTENTION: This must be called AFTER chart added
 		// Add Axis
-		$$.axes.subX= context.append("g")
+		$el.axis.subX = context.append("g")
 			.attr("class", CLASS.axisX)
 			.attr("transform", $$.getTranslate("subX"))
 			.attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis)

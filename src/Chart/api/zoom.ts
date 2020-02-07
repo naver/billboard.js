@@ -221,7 +221,7 @@ export default {
 			$$.zoom.resetBtn && $$.zoom.resetBtn.style("display", "none");
 
 			// reset transform
-			const eventRects = $$.main.select(`.${CLASS.eventRects}`);
+			const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`);
 
 			if (d3ZoomTransform(eventRects.node()) !== d3ZoomIdentity) {
 				$$.zoom.transform(eventRects, d3ZoomIdentity);

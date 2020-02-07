@@ -51,13 +51,14 @@ export default {
 
 	getCurrentPaddingTop() {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const axesLen = config.axis_y2_axes.length;
 
 		let padding = isValue(config.padding_top) ?
 			config.padding_top : 0;
 
-		if ($$.title && $$.title.node()) {
+		if ($el.title && $el.title.node()) {
 			padding += $$.getTitlePadding();
 		}
 
@@ -134,7 +135,7 @@ export default {
 	 */
 	getParentRectValue(key) {
 		const offsetName = `offset${capitalize(key)}`;
-		let parent = this.selectChart.node();
+		let parent = this.$el.chart.node();
 		let v;
 
 		while (!v && parent && parent.tagName !== "BODY") {
@@ -167,19 +168,20 @@ export default {
 	},
 
 	getParentHeight() {
-		const h = this.selectChart.style("height");
+		const h = this.$el.chart.style("height");
 
 		return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
 	},
 
 	getSvgLeft(withoutRecompute) {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
 		const leftAxisClass = config.axis_rotated ? CLASS.axisX : CLASS.axisY;
-		const leftAxis = $$.main.select(`.${leftAxisClass}`).node();
+		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
 		const svgRect = leftAxis && hasLeftAxisRect ? leftAxis.getBoundingClientRect() : {right: 0};
-		const chartRect = $$.selectChart.node().getBoundingClientRect();
+		const chartRect = $el.chart.node().getBoundingClientRect();
 		const hasArc = $$.hasArcType();
 		const svgLeft = svgRect.right - chartRect.left -
 			(hasArc ? 0 : $$.getCurrentPaddingLeft(withoutRecompute));

@@ -167,6 +167,7 @@ export default {
 	setOverColor(isOver, d) {
 		const $$ = this;
 		const config = $$.config;
+		const {main} = $$.$el;
 		const onover = config.color_onover;
 		let color = isOver ? onover : $$.color;
 
@@ -178,10 +179,10 @@ export default {
 
 		// when is Arc type
 		if (isObject(d)) {
-			$$.main.selectAll(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`)
+			main.selectAll(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`)
 				.style("fill", color(d));
 		} else {
-			$$.main.selectAll(`.${CLASS.shape}-${d}`)
+			main.selectAll(`.${CLASS.shape}-${d}`)
 				.style("fill", color);
 		}
 	}

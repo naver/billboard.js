@@ -2316,15 +2316,7 @@ var demos = {
 						chart.unload({
 							ids: "data1"
 						});
-					}, 2000),
-
-					setTimeout(function() {
-						chart.transform("pie");
-					}, 3000),
-
-					setTimeout(function() {
-						chart.transform("line");
-					}, 4000)
+					}, 2000)
 				];
 			}
 		},

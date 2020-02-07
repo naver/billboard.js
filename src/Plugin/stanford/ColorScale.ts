@@ -39,7 +39,7 @@ export default class ColorScale {
 			this.colorScale.remove();
 		}
 
-		this.colorScale = $$.svg.append("g")
+		this.colorScale = $$.$el.svg.append("g")
 			.attr("width", 50)
 			.attr("height", height)
 			.attr("class", CLASS.colorScale);

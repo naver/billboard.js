@@ -563,7 +563,7 @@ export default {
 		const lengths = [0, 0];
 		const paddingCoef = 1.3;
 
-		$$.selectChart.select("svg").selectAll(".dummy")
+		$$.$el.chart.select("svg").selectAll(".dummy")
 			.data([min, max])
 			.enter()
 			.append("text")
@@ -618,6 +618,7 @@ export default {
 
 	findClosest(values, pos) {
 		const $$ = this;
+		const {main} = $$.$el;
 		const data = values.filter(v => v && isValue(v.value));
 		let minDist = $$.config.point_sensitivity;
 		let closest;
@@ -626,7 +627,7 @@ export default {
 		data
 			.filter(v => $$.isBarType(v.id))
 			.forEach(v => {
-				const shape = $$.main.select(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}`).node();
+				const shape = main.select(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}`).node();
 
 				if (!closest && $$.isWithinBar(shape)) {
 					closest = v;

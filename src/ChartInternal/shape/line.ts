@@ -17,20 +17,21 @@ export default {
 	initLine() {
 		const $$ = this;
 
-		$$.main.select(`.${CLASS.chart}`).append("g")
+		$$.$el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartLines);
 	},
 
 	updateTargetsForLine(targets) {
 		const $$ = this;
 		const config = $$.config;
+		const {main} = $$.$el;
 		const classChartLine = $$.classChartLine.bind($$);
 		const classLines = $$.classLines.bind($$);
 		const classAreas = $$.classAreas.bind($$);
 		const classCircles = $$.classCircles.bind($$);
 		const classFocus = $$.classFocus.bind($$);
 
-		const mainLineUpdate = $$.main.select(`.${CLASS.chartLines}`)
+		const mainLineUpdate = main.select(`.${CLASS.chartLines}`)
 			.selectAll(`.${CLASS.chartLine}`)
 			.data(targets)
 			.attr("class", d => classChartLine(d) + classFocus(d));
@@ -60,7 +61,7 @@ export default {
 
 		// Update date for selected circles
 		targets.forEach(t => {
-			$$.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
+			main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
 				.selectAll(`${CLASS.selectedCircle}`)
 				.each(d => {
 					d.value = t.values[d.index].value;
@@ -73,30 +74,33 @@ export default {
 
 	updateLine(durationForExit) {
 		const $$ = this;
+		const {$el} = $$;
 
-		$$.mainLine = $$.main
+		$el.line = $el.main
 			.selectAll(`.${CLASS.lines}`)
 			.selectAll(`.${CLASS.line}`)
 			.data($$.lineData.bind($$));
 
-		$$.mainLine.exit().transition()
+		$el.line.exit().transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$$.mainLine = $$.mainLine.enter()
+		$el.line = $el.line.enter()
 			.append("path")
 			.attr("class", d => `${$$.classLine.bind($$)(d)} ${$$.extraLineClasses(d) || ""}`)
 			.style("stroke", $$.color)
-			.merge($$.mainLine)
+			.merge($el.line)
 			.style("opacity", $$.initialOpacity.bind($$))
 			.style("shape-rendering", d => ($$.isStepType(d) ? "crispEdges" : ""))
 			.attr("transform", null);
 	},
 
 	redrawLine(drawLine, withTransition) {
+		const {line} = this.$el;
+
 		return [
-			(withTransition ? this.mainLine.transition(getRandom()) : this.mainLine)
+			(withTransition ? line.transition(getRandom()) : line)
 				.attr("d", drawLine)
 				.style("stroke", this.color)
 				.style("opacity", "1")
@@ -350,12 +354,13 @@ export default {
 
 	updateAreaGradient() {
 		const $$ = this;
+		const {defs} = $$.$el;
 		const {datetimeId} = $$.state;
 
 		$$.data.targets.forEach(d => {
 			const id = `${datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)}`;
 
-			if ($$.isAreaType(d) && $$.defs.select(`#${id}`).empty()) {
+			if ($$.isAreaType(d) && defs.select(`#${id}`).empty()) {
 				const color = $$.color(d);
 				const {
 					x = [0, 0],
@@ -363,7 +368,7 @@ export default {
 					stops = [[0, color, 1], [1, color, 0]]
 				} = $$.config.area_linearGradient;
 
-				const linearGradient = $$.defs.append("linearGradient")
+				const linearGradient = defs.append("linearGradient")
 					.attr("id", `${id}`)
 					.attr("x1", x[0])
 					.attr("x2", x[1])
@@ -392,29 +397,30 @@ export default {
 
 	updateArea(durationForExit) {
 		const $$ = this;
+		const {$el} = $$;
 		const state = $$.state;
 
 		$$.config.area_linearGradient && $$.updateAreaGradient();
 
-		$$.mainArea = $$.main.selectAll(`.${CLASS.areas}`)
+		$el.area = $el.main.selectAll(`.${CLASS.areas}`)
 			.selectAll(`.${CLASS.area}`)
 			.data($$.lineData.bind($$));
 
-		$$.mainArea.exit().transition()
+		$el.area.exit().transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$$.mainArea = $$.mainArea.enter().append("path")
+		$el.area = $el.area.enter().append("path")
 			.attr("class", $$.classArea.bind($$))
 			.style("fill", $$.updateAreaColor.bind($$))
 			.style("opacity", function() {
 				state.orgAreaOpacity = d3Select(this).style("opacity");
 				return "0";
 			})
-			.merge($$.mainArea);
+			.merge($el.area);
 
-		$$.mainArea
+		$el.area
 			.style("opacity", state.orgAreaOpacity);
 	},
 
@@ -423,7 +429,7 @@ export default {
 		const {orgAreaOpacity} = $$.state;
 
 		return [
-			(withTransition ? $$.mainArea.transition(getRandom()) : $$.mainArea)
+			(withTransition ? $$.$el.area.transition(getRandom()) : $$.$el.area)
 				.attr("d", drawArea)
 				.style("fill", $$.updateAreaColor.bind($$))
 				.style("opacity", d => String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity))
@@ -534,30 +540,31 @@ export default {
 
 	updateCircle() {
 		const $$ = this;
+		const {$el} = $$;
 
 		if (!$$.config.point_show) {
 			return;
 		}
 
-		$$.mainCircle = $$.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
+		$el.circle = $el.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
 			.data(d => !$$.isBarType(d) && (
 				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
 			) && $$.labelishData(d));
 
-		$$.mainCircle.exit().remove();
+		$el.circle.exit().remove();
 
 		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
 
-		$$.mainCircle = $$.mainCircle.enter()
+		$el.circle = $el.circle.enter()
 			.append(fn)
-			.merge($$.mainCircle)
+			.merge($el.circle)
 			.style("stroke", $$.color)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 
 	redrawCircle(cx, cy, withTransition, flow) {
 		const $$ = this;
-		const selectedCircles = $$.main.selectAll(`.${CLASS.selectedCircle}`);
+		const selectedCircles = $$.$el.main.selectAll(`.${CLASS.selectedCircle}`);
 
 		if (!$$.config.point_show) {
 			return [];
@@ -565,7 +572,7 @@ export default {
 
 		const mainCircles: any[] = [];
 
-		$$.mainCircle.each(function(d) {
+		$$.$el.circle.each(function(d) {
 			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
 			const result = fn(d);
 
@@ -608,7 +615,7 @@ export default {
 		const $$ = this;
 		const suffix = (isValue(i) ? `-${i}` : ``);
 
-		return (id ? $$.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.main)
+		return (id ? $$.$el.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.$el.main)
 			.selectAll(`.${CLASS.circle}${suffix}`);
 	},
 

@@ -43,7 +43,7 @@ export default class Axis {
 		const config = $$.config;
 		const clip = $$.state.clip;
 		const isRotated = config.axis_rotated;
-		const main = $$.main;
+		const {main, axis} = $$.$el;
 		const target = ["x", "y"];
 
 		config.axis_y2_show && target.push("y2");
@@ -53,7 +53,7 @@ export default class Axis {
 			const axisId = v.toUpperCase();
 			const classLabel = CLASS[`axis${axisId}Label`];
 
-			$$.axes[v] = main.append("g")
+			axis[v] = main.append("g")
 				.attr("class", classAxis)
 				.attr("clip-path", () => {
 					let res = null;
@@ -69,7 +69,7 @@ export default class Axis {
 				.attr("transform", $$.getTranslate(v))
 				.style("visibility", config[`axis_${v}_show`] ? "visible" : "hidden");
 
-			$$.axes[v].append("text")
+			axis[v].append("text")
 				.attr("class", classLabel)
 				.attr("transform", ["rotate(-90)", null][
 					v === "x" ? +!isRotated : +isRotated
@@ -149,6 +149,7 @@ export default class Axis {
 	updateAxes() {
 		const $$ = this.owner;
 		const config = $$.config;
+		const {main} = $$.$el;
 
 		Object.keys(this.axesList).forEach(id => {
 			const axesConfig = config[`axis_${id}_axes`];
@@ -165,10 +166,10 @@ export default class Axis {
 				}
 
 				const className = `${this.getAxisClassName(id)}-${i + 1}`;
-				let g = $$.main.select(`.${className.replace(/\s/, ".")}`);
+				let g = main.select(`.${className.replace(/\s/, ".")}`);
 
 				if (g.empty()) {
-					g = $$.main.append("g")
+					g = main.append("g")
 						.attr("class", className)
 						.style("visibility", config[`axis_${id}_show`] ? "visible" : "hidden")
 						.call(v);
@@ -511,6 +512,7 @@ export default class Axis {
 	getMaxTickWidth(id: string, withoutRecompute?: boolean): number {
 		const $$ = this.owner;
 		const config = $$.config;
+		const {svg, chart} = $$.$el;
 		const currentTickMax = $$.state.currentMaxTickWidths[id];
 		let maxWidth = 0;
 
@@ -518,7 +520,7 @@ export default class Axis {
 			return currentTickMax.size;
 		}
 
-		if ($$.svg) {
+		if (svg) {
 			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 			const scale = $$[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
@@ -547,7 +549,7 @@ export default class Axis {
 
 			!isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
 
-			const dummy = $$.selectChart.append("svg")
+			const dummy = chart.append("svg")
 				.style("visibility", "hidden")
 				.style("position", "fixed")
 				.style("top", "0px")
@@ -572,10 +574,12 @@ export default class Axis {
 
 	updateLabels(withTransition) {
 		const $$ = this.owner;
+		const {main} = $$.$el;
+
 		const labels = {
-			X: $$.main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
-			Y: $$.main.select(`.${CLASS.axisY} .${CLASS.axisYLabel}`),
-			Y2: $$.main.select(`.${CLASS.axisY2} .${CLASS.axisY2Label}`)
+			X: main.select(`.${CLASS.axisX} .${CLASS.axisXLabel}`),
+			Y: main.select(`.${CLASS.axisY} .${CLASS.axisYLabel}`),
+			Y2: main.select(`.${CLASS.axisY2} .${CLASS.axisY2Label}`)
 		};
 
 		Object.keys(labels).filter(id => !labels[id].empty())
@@ -658,17 +662,17 @@ export default class Axis {
 
 	generateTransitions(duration) {
 		const $$ = this.owner;
-		const axes = $$.axes;
+		const axis = $$.$el.axis;
 
 		const [axisX, axisY, axisY2, axisSubX] = ["x", "y", "y2", "subX"]
 			.map(v => {
-				let axis = axes[v];
+				let ax = axis[v];
 
-				if (axis && duration) {
-					axis = axis.transition().duration(duration);
+				if (ax && duration) {
+					ax = ax.transition().duration(duration);
 				}
 
-				return axis;
+				return ax;
 			});
 
 		return {axisX, axisY, axisY2, axisSubX};
@@ -680,13 +684,14 @@ export default class Axis {
 
 		["x", "y", "y2", "subX"].forEach(id => {
 			const axis = $$.axis[id];
+			const $axis = $$.$el.axis[id];
 
 			if (axis) {
 				if (!isInit) {
 					axis.config.withoutTransition = !$$.config.transition_duration;
 				}
 
-				$$.axes[id].style("opacity", opacity);
+				$axis.style("opacity", opacity);
 				axis.create(transitions[`axis${capitalize(id)}`]);
 			}
 		});
@@ -709,7 +714,7 @@ export default class Axis {
 		let xDomainForZoom;
 
 		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
-			$$.x.domain([0, $$.axes.x.selectAll(".tick").size()]);
+			$$.x.domain([0, $$.$el.axis.x.selectAll(".tick").size()]);
 		}
 
 		if ($$.x && targetsToShow.length) {
@@ -778,7 +783,7 @@ export default class Axis {
 		const config = $$.config;
 
 		["subX", "x", "y", "y2"].forEach(type => {
-			const axis = $$.axes[type];
+			const axis = $$.$el.axis[type];
 
 			// subchart x axis should be aligned with x axis culling
 			const id = type === "subX" ? "x" : type;

@@ -16,11 +16,12 @@ export default {
 	 */
 	initText() {
 		const $$ = this;
+		const {$el} = $$;
 
-		$$.main.select(`.${CLASS.chart}`).append("g")
+		$el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartTexts);
 
-		$$.mainText = d3SelectAll([]);
+		$el.text = d3SelectAll([]);
 	},
 
 	/**
@@ -33,7 +34,7 @@ export default {
 		const classChartText = $$.classChartText.bind($$);
 		const classTexts = $$.classTexts.bind($$);
 		const classFocus = $$.classFocus.bind($$);
-		const mainTextUpdate = $$.main.select(`.${CLASS.chartTexts}`).selectAll(`.${CLASS.chartText}`)
+		const mainTextUpdate = $$.$el.main.select(`.${CLASS.chartTexts}`).selectAll(`.${CLASS.chartText}`)
 			.data(targets)
 			.attr("class", d => classChartText(d) + classFocus(d));
 
@@ -53,22 +54,23 @@ export default {
 	 */
 	updateText(durationForExit) {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const dataFn = $$.labelishData.bind($$);
 		const classText = $$.classText.bind($$);
 
-		$$.mainText = $$.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
+		$el.text = $el.main.selectAll(`.${CLASS.texts}`).selectAll(`.${CLASS.text}`)
 			.data(d => (this.isRadarType(d) ? d.values : dataFn(d)));
 
-		$$.mainText.exit()
+		$el.text.exit()
 			.transition()
 			.duration(durationForExit)
 			.style("fill-opacity", "0")
 			.remove();
 
-		$$.mainText = $$.mainText.enter()
+		$el.text = $el.text.enter()
 			.append("text")
-			.merge($$.mainText)
+			.merge($$.$el.text)
 			.attr("class", classText)
 			.attr("text-anchor", d => (config.axis_rotated ? (d.value < 0 ? "end" : "start") : "middle"))
 			.style("fill", $$.updateTextColor.bind($$))
@@ -108,7 +110,7 @@ export default {
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [
-			this.mainText.each(function() {
+			this.$el.text.each(function() {
 				const text = d3Select(this);
 
 				// do not apply transition for newly added text elements
@@ -141,7 +143,7 @@ export default {
 		let rect = $$.cache.get(cacheKey);
 
 		if (!rect) {
-			$$.svg.append("text")
+			$$.$el.svg.append("text")
 				.style("visibility", "hidden")
 				.style("font", d3Select(base).style("font"))
 				.classed(className, true)
@@ -346,7 +348,7 @@ export default {
 	 * @param {string} selector
 	 */
 	markOverlapped(id, $$, selector) {
-		const textNodes = $$.arcs.selectAll(selector);
+		const textNodes = $$.$el.arcs.selectAll(selector);
 		const filteredTextNodes = textNodes.filter(node => node.data.id !== id);
 		const textNode = textNodes.filter(node => node.data.id === id);
 		const translate = getTranslation(textNode.node());
@@ -377,7 +379,7 @@ export default {
 	 * @param {string} selector
 	 */
 	undoMarkOverlapped($$, selector) {
-		$$.arcs.selectAll(selector)
+		$$.$el.arcs.selectAll(selector)
 			.each(function() {
 				d3SelectAll([this, this.previousSibling])
 					.classed(CLASS.TextOverlapping, false);

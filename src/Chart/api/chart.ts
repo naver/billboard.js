@@ -80,17 +80,18 @@ export default {
 	 */
 	destroy(): null {
 		const $$ = this.internal;
+		const {$el} = $$;
 
 		if (notEmpty($$)) {
 			$$.callPluginHook("$willDestroy");
 			$$.charts.splice($$.charts.indexOf(this), 1);
 
 			// clear timers && pending transition
-			$$.svg.select("*").interrupt();
+			$el.svg.select("*").interrupt();
 			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
 
 			window.removeEventListener("resize", $$.resizeFunction);
-			$$.selectChart.classed("bb", false).html("");
+			$el.chart.classed("bb", false).html("");
 
 			// releasing references
 			Object.keys(this).forEach(key => {

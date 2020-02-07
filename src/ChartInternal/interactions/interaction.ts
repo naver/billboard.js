@@ -21,7 +21,7 @@ export default {
 	initEventRect() {
 		const $$ = this;
 
-		$$.main.select(`.${CLASS.chart}`)
+		$$.$el.main.select(`.${CLASS.chart}`)
 			.append("g")
 			.attr("class", CLASS.eventRects)
 			.style("fill-opacity", "0");
@@ -33,12 +33,13 @@ export default {
 	 */
 	redrawEventRect() {
 		const $$ = this;
+		const {$el} = $$;
 		const config = $$.config;
 		const isMultipleX = $$.isMultipleX();
 		let eventRectUpdate;
 
 		const zoomEnabled = config.zoom_enabled;
-		const eventRects = $$.main.select(`.${CLASS.eventRects}`)
+		const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`)
 			.style("cursor", zoomEnabled && zoomEnabled.type !== "drag" ? (
 				config.axis_rotated ? "ns-resize" : "ew-resize"
 			) : null)
@@ -49,17 +50,17 @@ export default {
 		eventRects.selectAll(`.${CLASS.eventRect}`).remove();
 
 		// open as public constiable
-		$$.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
+		$el.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
 
 		if (isMultipleX) {
-			eventRectUpdate = $$.eventRect.data([0]);
+			eventRectUpdate = $el.eventRect.data([0]);
 			// update
 			// enter: only one rect will be added
 			// exit: not needed because always only one rect exists
 			eventRectUpdate = $$.generateEventRectsForMultipleXs(eventRectUpdate.enter())
 				.merge(eventRectUpdate);
 		} else {
-			// Set data and update $$.eventRect
+			// Set data and update $el.eventRect
 			const xAxisTickValues = $$.getMaxDataCountTarget();
 
 			// update data's index value to be alinged with the x Axis
@@ -69,8 +70,8 @@ export default {
 
 			eventRects.datum(xAxisTickValues);
 
-			$$.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
-			eventRectUpdate = $$.eventRect.data(d => d);
+			$el.eventRect = eventRects.selectAll(`.${CLASS.eventRect}`);
+			eventRectUpdate = $el.eventRect.data(d => d);
 
 			// exit
 			eventRectUpdate.exit().remove();
@@ -80,10 +81,10 @@ export default {
 				.merge(eventRectUpdate);
 		}
 
-		$$.eventRect = eventRectUpdate;
+		$el.eventRect = eventRectUpdate;
 		$$.updateEventRect(eventRectUpdate);
 
-		if ($$.state.inputType === "touch" && !$$.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
+		if ($$.state.inputType === "touch" && !$el.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
 			$$.bindTouchOnEventRect(isMultipleX);
 		}
 	},
@@ -156,7 +157,7 @@ export default {
 		};
 
 		// bind touch events
-		$$.svg
+		$$.$el.svg
 			.on("touchstart.eventRect touchmove.eventRect", function() {
 				const eventRect = getEventRect();
 				const event = d3Event;
@@ -195,7 +196,7 @@ export default {
 		const config = $$.config;
 		const state = $$.state;
 		const xScale = $$.zoomScale || $$.x;
-		const eventRectData = eventRectUpdate || $$.eventRect.data(); // set update selection if null
+		const eventRectData = eventRectUpdate || $$.$el.eventRect.data(); // set update selection if null
 		const isRotated = config.axis_rotated;
 		let x;
 		let y;
@@ -291,7 +292,7 @@ export default {
 			}
 		}
 
-		$$.main.selectAll(`.${CLASS.shape}-${index}`)
+		$$.$el.main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function() {
 				d3Select(this).classed(CLASS.EXPANDED, true);
 
@@ -377,7 +378,7 @@ export default {
 
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-			$$.svg.select(`.${CLASS.eventRect}`).style("cursor", "pointer");
+			$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", "pointer");
 
 			if (!state.mouseover) {
 				config.data_onover.call($$.api, closest);
@@ -393,7 +394,7 @@ export default {
 	unselectRect() {
 		const $$ = this;
 
-		$$.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
+		$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
 		$$.hideTooltip();
 		$$._handleLinkedCharts(false);
@@ -410,6 +411,7 @@ export default {
 	setOverOut(isOver, d) {
 		const $$ = this;
 		const config = $$.config;
+		const {main} = $$.$el;
 		const isArc = isObject(d);
 
 		// Call event handler
@@ -419,12 +421,12 @@ export default {
 			config.color_onover && $$.setOverColor(isOver, d, isArc);
 
 			if (isArc) {
-				callback(d, $$.main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
+				callback(d, main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
 			} else if (!config.tooltip_grouped) {
 				const callee = $$.setOverOut;
 				let last = callee.last || [];
 
-				const shape = $$.main.selectAll(`.${CLASS.shape}-${d}`)
+				const shape = main.selectAll(`.${CLASS.shape}-${d}`)
 					.filter(function(d) {
 						return $$.isWithinShape(this, d);
 					});
@@ -448,7 +450,7 @@ export default {
 			} else {
 				isOver && $$.expandCirclesBars(d, null, true);
 
-				!$$.isMultipleX() && $$.main.selectAll(`.${CLASS.shape}-${d}`)
+				!$$.isMultipleX() && main.selectAll(`.${CLASS.shape}-${d}`)
 					.each(function(d) {
 						callback(d, this);
 					});
@@ -533,7 +535,7 @@ export default {
 					}
 
 					let index = d.index;
-					const eventRect = $$.svg.select(`.${CLASS.eventRect}-${index}`);
+					const eventRect = $$.$el.svg.select(`.${CLASS.eventRect}-${index}`);
 
 					if ($$.isStepType(d) &&
 						$$.config.line_step_type === "step-after" &&
@@ -578,7 +580,7 @@ export default {
 
 		const index = d.index;
 
-		$$.main.selectAll(`.${CLASS.shape}-${index}`)
+		$$.$el.main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function(d2) {
 				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
 					$$.toggleShape(this, d2, index);
@@ -646,7 +648,7 @@ export default {
 
 		// select if selection enabled
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
-			$$.main.selectAll(`.${CLASS.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
+			$$.$el.main.selectAll(`.${CLASS.shapes}${$$.getTargetSelectorSuffix(closest.id)}`)
 				.selectAll(`.${CLASS.shape}-${closest.index}`)
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
@@ -668,7 +670,7 @@ export default {
 		const $$ = this;
 		const isMultipleX = $$.isMultipleX();
 		const selector = `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
-		const eventRect = $$.main.select(selector).node();
+		const eventRect = $$.$el.main.select(selector).node();
 		const {width, left, top} = eventRect.getBoundingClientRect();
 		const x = left + (mouse ? mouse[0] : 0) + (
 			isMultipleX || $$.config.axis_rotated ? 0 : (width / 2)

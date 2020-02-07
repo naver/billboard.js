@@ -724,14 +724,14 @@ function () {
   function Elements(owner) {
     Object(defineProperty["a" /* default */])(this, "owner", void 0), this.owner = owner;
     // MEMO: Avoid blocking eventRect
-    var elements = owner.$$.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
+    var elements = owner.$$.$el.main.select(".bb-chart").append("g").attr("class", stanford_classes.stanfordElements);
     elements.append("g").attr("class", stanford_classes.stanfordLines), elements.append("g").attr("class", stanford_classes.stanfordRegions);
   }
 
   var _proto = Elements.prototype;
   return _proto.updateStanfordLines = function updateStanfordLines(duration) {
     var $$ = this.owner.$$,
-        main = $$.main,
+        main = $$.$el.main,
         config = $$.config,
         isRotated = config.axis_rotated,
         xvCustom = this.xvCustom.bind($$),
@@ -753,7 +753,7 @@ function () {
     }).transition().style("opacity", "1");
   }, _proto.updateStanfordRegions = function updateStanfordRegions(duration) {
     var $$ = this.owner.$$,
-        main = $$.main,
+        main = $$.$el.main,
         config = $$.config,
         isRotated = config.axis_rotated,
         xvCustom = this.xvCustom.bind($$),
@@ -844,7 +844,7 @@ function () {
         barHeight = 5,
         points = Object(external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_["range"])(config.padding_bottom, height, barHeight),
         inverseScale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleSequential"])(target.colors).domain([points[points.length - 1], points[0]]);
-    this.colorScale && this.colorScale.remove(), this.colorScale = $$.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale), this.colorScale.append("g").attr("transform", "translate(0, " + config.padding_top + ")").selectAll("bars").data(points).enter().append("rect").attr("y", function (d, i) {
+    this.colorScale && this.colorScale.remove(), this.colorScale = $$.$el.svg.append("g").attr("width", 50).attr("height", height).attr("class", stanford_classes.colorScale), this.colorScale.append("g").attr("transform", "translate(0, " + config.padding_top + ")").selectAll("bars").data(points).enter().append("rect").attr("y", function (d, i) {
       return i * barHeight;
     }).attr("x", 0).attr("width", barWidth).attr("height", barHeight).attr("fill", function (d) {
       return inverseScale(d);
