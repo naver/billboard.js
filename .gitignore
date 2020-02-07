@@ -1,6 +1,7 @@
 .DS_Store
 *.log
 *.iml
+package-lock.json
 /*.css
 /*.html
 /*.js
