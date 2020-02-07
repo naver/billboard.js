@@ -62,9 +62,9 @@
                 <li>
                     <a class="page-scroll" href="//github.com/naver/billboard.js" target="bb">GitHub</a>
                 </li>
-                <li>
+                <!-- <li>
                     <a class="page-scroll" href="./playground" target="bb">Playground</a>
-                </li>
+                </li> -->
             </ul>
         </div>
     </div>
@@ -211,9 +211,12 @@
             </div>
             <hr>
             <div class="media wow fadeIn">
-                <h3>Fully compatible with C3.js</h3>
+                <h3>Rich options</h3>
                 <div class="media-body media-middle">
-                    <p>billboard.js is forked from the popular C3.js project. You can migrate your C3.js based project to billboard.js with minimal code changes to take advantage of everything billboard.js brings.</p>
+                    <p>
+                        Combine hundreds of options to satisfy your needs.
+                        Checkout the <a href="./demo" target="bb">examples</a> to see in action!
+                    </p>
                 </div>
             </div>
         </div>
@@ -224,12 +227,17 @@
     <div class="container text-center">
         <div class="call-to-action">
             <h2 class="text-primary">Download</h2>
-            <h6 class="wide-space text-center">The current latest version is <span id="version">1.0</span>.</h6><br>
+            <h6 class="wide-space text-center">
+                The current latest version is <span id="version">1.0</span>.<br><br>
+                'pkgd' files are packaged with D3.js.
+            </h6><br>
+
 
             <h6 class="wide-space text-center">for DEVELOPMENT</h6>
             <hr>
             <p class="download">
                 <a href="./release/latest/dist/billboard.js" download class="btn btn-default btn-lg wow flipInX">billboard.js</a>
+                <a href="./release/latest/dist/billboard.pkgd.js" download class="btn btn-default btn-lg wow flipInX">billboard.pkgd.js</a>
                 <a href="./release/latest/dist/billboard.css" download class="btn btn-default btn-lg wow flipInX">billboard.css</a>
             </p>
 
@@ -237,19 +245,28 @@
             <hr>
             <p class="download">
                 <a href="./release/latest/dist/billboard.min.js" download class="btn btn-default btn-lg wow flipInX">billboard.min.js</a>
+                <a href="./release/latest/dist/billboard.pkgd.min.js" download class="btn btn-default btn-lg wow flipInX">billboard.pkgd.min.js</a>
                 <a href="./release/latest/dist/billboard.min.css" download class="btn btn-default btn-lg wow flipInX">billboard.min.css</a>
             </p>
 
             <h6 class="wide-space text-center">CSS Themes</h6>
             <hr>
             <p class="download">
-                <a href="./release/latest/dist/theme/insight.css" download class="btn btn-default btn-lg wow flipInX">insight.css</a>
-                <a href="./release/latest/dist/theme/insight.min.css" download class="btn btn-default btn-lg wow flipInX">insight.min.css</a>
+                <a href="./release/latest/dist/theme/insight.min.css" download class="btn btn-default btn-lg wow flipInX">insight</a>
+                <a href="./release/latest/dist/theme/graph.min.css" download class="btn btn-default btn-lg wow flipInX">graph</a>
+            </p>
+
+            <h6 class="wide-space text-center">Plugins</h6>
+            <hr>
+            <p class="download">
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-stanford.min.js" download class="btn btn-default btn-lg wow flipInX">Stanford</a>
+                <a href="./release/latest/dist/plugin/billboardjs-plugin-textoverlap.min.js" download class="btn btn-default btn-lg wow flipInX">TextOverlap</a>
             </p><br>
 
             <h6 class="wide-space text-center">or install from NPM</h6>
             <hr>
-            <pre style="width:280px"><code>$ npm install billboard.js</code></pre>
+            <pre style="width:280px"><code>$ npm install billboard.js
+$ npm install billboard.js@next</code></pre>
         </div>
     </div>
 </aside>

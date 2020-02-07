@@ -282,11 +282,11 @@ header .header-content .inner p {
 
 #video-background {
   position: absolute;
-  right: 0; 
+  right: 0;
   bottom: 0;
-  min-width: 100%; 
+  min-width: 100%;
   min-height: 100%;
-  width: auto; 
+  width: auto;
   height: auto;
   z-index: 1;
 }
@@ -334,7 +334,7 @@ header .header-content .inner p {
         max-width: 80%;
         font-size: 18px;
     }
-    
+
     section {
         min-height: 600px;
         padding: 100px 0;
@@ -651,4 +651,8 @@ code from : https://codepen.io/cesar2535/pen/ByYXpN
 
 .logo {
     width: 120px;
+}
+
+#version {
+    color: #6eff00;
 }
