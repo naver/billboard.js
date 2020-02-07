@@ -214,7 +214,7 @@ export default class Options {
 			onresize: undefined,
 
 			/**
-			 * SSet a callback to execute when screen resize finished.
+			 * Set a callback to execute when screen resize finished.
 			 * @name onresized
 			 * @memberof Options
 			 * @type {Function}

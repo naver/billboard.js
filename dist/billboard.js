@@ -1151,6 +1151,7 @@ function tplProcess(tpl, data) {
 
   /**
    * Set y axis the data related to. y and y2 can be used.
+  * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
    * @name data․axes
    * @memberof Options
    * @type {Object}
@@ -2080,16 +2081,22 @@ function tplProcess(tpl, data) {
 
   /**
    * Set the x values of ticks manually.<br><br>
-   * If this option is provided, the position of the ticks will be determined based on those values. This option works with timeseries data and the x values will be parsed accoding to the type of the value and data.xFormat option.
+   * If this option is provided, the position of the ticks will be determined based on those values.<br>
+   * This option works with `timeseries` data and the x values will be parsed accoding to the type of the value and data.xFormat option.
    * @name axis․x․tick․values
    * @memberof Options
-   * @type {Array}
+   * @type {Array|Function}
    * @default null
    * @example
    * axis: {
    *   x: {
    *     tick: {
-   *       values: [1, 2, 4, 8, 16, 32, ...]
+   *       values: [1, 2, 4, 8, 16, 32, ...],
+   *
+   *       // an Array value should be returned
+   *       values: function() {
+   *       	return [ ... ];
+   *       }
    *     }
    *   }
    * }
@@ -2633,13 +2640,18 @@ function tplProcess(tpl, data) {
    * Set y axis tick values manually.
    * @name axis․y․tick․values
    * @memberof Options
-   * @type {Array}
+   * @type {Array|Function}
    * @default null
    * @example
    * axis: {
    *   y: {
    *     tick: {
-   *       values: [100, 1000, 10000]
+   *       values: [100, 1000, 10000],
+   *
+   *       // an Array value should be returned
+   *       values: function() {
+   *       	return [ ... ];
+   *       }
    *     }
    *   }
    * }
@@ -2700,6 +2712,26 @@ function tplProcess(tpl, data) {
    * }
    */
   axis_y_tick_show: !0,
+
+  /**
+   * Set axis tick step(interval) size.
+   * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
+   * @name axis․y․tick․stepSize
+   * @memberof Options
+   * @type {Number}
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+   * @example
+   * axis: {
+   *   y: {
+   *     tick: {
+   *       // tick value will step as indicated interval value.
+   *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+   *       stepSize: 15
+   *     }
+   *   }
+   * }
+   */
+  axis_y_tick_stepSize: null,
 
   /**
   * Show or hide y axis tick text.
@@ -3058,13 +3090,18 @@ function tplProcess(tpl, data) {
    * Set y2 axis tick values manually.
    * @name axis․y2․tick․values
    * @memberof Options
-   * @type {Array}
+   * @type {Array|Function}
    * @default null
    * @example
    * axis: {
    *   y2: {
    *     tick: {
-   *       values: [100, 1000, 10000]
+   *       values: [100, 1000, 10000],
+   *
+   *       // an Array value should be returned
+   *       values: function() {
+   *       	return [ ... ];
+   *       }
    *     }
    *   }
    * }
@@ -3125,6 +3162,26 @@ function tplProcess(tpl, data) {
    * }
    */
   axis_y2_tick_show: !0,
+
+  /**
+   * Set axis tick step(interval) size.
+   * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
+   * @name axis․y2․tick․stepSize
+   * @memberof Options
+   * @type {Number}
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
+   * @example
+   * axis: {
+   *   y2: {
+   *     tick: {
+   *       // tick value will step as indicated interval value.
+   *       // ex) 'stepSize=15' ==> [0, 15, 30, 45, 60]
+   *       stepSize: 15
+   *     }
+   *   }
+   * }
+   */
+  axis_y2_tick_stepSize: null,
 
   /**
    * Show or hide y2 axis tick text.
@@ -4870,7 +4927,7 @@ var Options = function () {
     onresize: undefined,
 
     /**
-     * SSet a callback to execute when screen resize finished.
+     * Set a callback to execute when screen resize finished.
      * @name onresized
      * @memberof Options
      * @type {Function}
@@ -5162,10 +5219,12 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
 var AxisRendererHelper_AxisRendererHelper =
 /*#__PURE__*/
 function () {
-  function AxisRendererHelper(config, params) {
-    _defineProperty(this, "config", void 0), _defineProperty(this, "scale", void 0);
-    var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])();
-    this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = this.scaleExtent((params.orgXScale || scale).range());
+  function AxisRendererHelper(owner) {
+    _defineProperty(this, "owner", void 0), _defineProperty(this, "config", void 0), _defineProperty(this, "scale", void 0);
+    var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])(),
+        config = owner.config,
+        params = owner.params;
+    this.owner = owner, this.config = config, this.scale = scale, (config.noTransition || !params.config.transition_duration) && (config.withoutTransition = !0), config.range = this.scaleExtent((params.orgXScale || scale).range());
   }
   /**
    * Compute a character dimension
@@ -5209,17 +5268,20 @@ function () {
     var start = domain[0],
         stop = domain[domain.length - 1];
     return start < stop ? [start, stop] : [stop, start];
-  }, _proto.generateTicks = function generateTicks(scale) {
-    var ticks = [];
-    if (scale.ticks) return scale.ticks.apply(scale, this.config.tickArguments || []).map(function (v) {
+  }, _proto.generateTicks = function generateTicks(scale, isYAxes) {
+    var tickStepSize = this.owner.params.tickStepSize,
+        ticks = [];
+    // When 'axis[y|y2].tick.stepSize' option is set
+    if (isYAxes && tickStepSize) for (var _scale$domain = scale.domain(), start = _scale$domain[0], end = _scale$domain[1], interval = start; interval <= end;) ticks.push(interval), interval += tickStepSize;else if (scale.ticks) ticks = scale.ticks.apply(scale, this.config.tickArguments || []).map(function (v) {
       return (// round the tick value if is number
         isString(v) && isNumber(v) && !isNaN(v) && Math.round(v * 10) / 10 || v
       );
-    });
+    });else {
+      for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
 
-    for (var domain = scale.domain(), i = Math.ceil(domain[0]); i < domain[1]; i++) ticks.push(i);
-
-    return ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0])), ticks;
+      ticks.length > 0 && ticks[0] > 0 && ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
+    }
+    return ticks;
   }, _proto.copyScale = function copyScale() {
     var newScale = this.scale.copy();
     return newScale.domain().length || newScale.domain(this.scale.domain()), newScale;
@@ -5271,7 +5333,7 @@ function () {
       transition: null,
       noTransition: params.noTransition
     };
-    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.helper = new AxisRendererHelper_AxisRendererHelper(config, params), this.config = config, this.params = params;
+    config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding, this.config = config, this.params = params, this.helper = new AxisRendererHelper_AxisRendererHelper(this);
   }
   /**
    * Create axis element
@@ -5326,7 +5388,7 @@ function () {
         return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
       }), tickShow.tick || tickShow.text) {
         // count of tick data in array
-        var ticks = config.tickValues || helperInst.generateTicks(scale1),
+        var ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight),
             tick = g.selectAll(".tick").data(ticks, scale1),
             tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
             tickExit = tick.exit().remove(); // update selection
@@ -5637,8 +5699,9 @@ function () {
       tickWidth: config.axis_x_tick_width,
       tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
       orgXScale: $$.x
-    }),
-        axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
+    });
+    isX || (axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"]);
+    var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
     return isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
       return $$.parseDate(v);
     }) : !isX && $$.isTimeSeriesY() && (axis.ticks(config.axis_y_tick_time_value), tickValues = null), tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
@@ -8235,8 +8298,12 @@ var colorizePattern = function (pattern, color, id) {
     var targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
     }),
-        yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId,
-        yMin = config["axis_" + axisId + "_min"],
+        yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
+    if (yTargets.length === 0) // use domain of the other axis if target of axisId is none
+      return axisId === "y2" ? $$.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
+      // So, it needs to call to get y2 domain here
+      $$.getYDomain(targets, "y2", xDomain);
+    var yMin = config["axis_" + axisId + "_min"],
         yMax = config["axis_" + axisId + "_max"],
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
@@ -8247,9 +8314,7 @@ var colorizePattern = function (pattern, color, id) {
         isInverted = config["axis_" + axisId + "_inverted"],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
-    if (yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, yTargets.length === 0) // use current domain if target of axisId is none
-      return $$[axisId].domain();
-    isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
+    yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
     var isAllPositive = yDomainMin >= 0 && yDomainMax >= 0,
         isAllNegative = yDomainMin <= 0 && yDomainMax <= 0;
     (isValue(yMin) && isAllPositive || isValue(yMax) && isAllNegative) && (isZeroBased = !1), isZeroBased && (isAllPositive && (yDomainMin = 0), isAllNegative && (yDomainMax = 0));
@@ -13209,6 +13274,7 @@ extend(api_data_data, {
 
   /**
    * Get and set axes of the data loaded in the chart.
+   * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
    * @method data․axes
    * @instance
    * @memberof Chart

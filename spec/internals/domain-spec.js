@@ -176,4 +176,58 @@ describe("DOMAIN", function() {
 			expect(lastTickText).to.be.equal(70);
 		});
 	});
+
+	describe("axis.y/axis.y2 domain should be the same", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 300, 300, 1000, 4000, 1500, 2500],
+						["data2", 5000, 2000, 1000, 4000, 1500, 2500]
+					]
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				}
+			};
+		});
+
+		it("if there is no specified data.axes binding", () => {
+			const yDomain = chart.internal.y.domain();
+			const y2Domain = chart.internal.y2.domain();
+
+			expect(yDomain).to.be.deep.equal(y2Domain);
+		});
+
+		it("bind all data to y axis", () => {
+			args.data.axes = {
+				data1: "y",
+				data2: "y"
+			};
+		});
+
+		it("if all data is bound to y axis", () => {
+			const yDomain = chart.internal.y.domain();
+			const y2Domain = chart.internal.y2.domain();
+
+			expect(yDomain).to.be.deep.equal(y2Domain);
+		});
+
+		it("bind all data to y2 axis", () => {
+			args.data.axes = {
+				data1: "y2",
+				data2: "y2"
+			};
+		});
+
+		it("if all data is bound to y2 axis", () => {
+			const yDomain = chart.internal.y.domain();
+			const y2Domain = chart.internal.y2.domain();
+
+			expect(yDomain).to.be.deep.equal(y2Domain);
+		});
+
+	});
 });
