@@ -34,17 +34,17 @@ export default {
 
 	initGridLines() {
 		const $$ = this;
-		const {config, state: {clip}, $el: {grid}} = $$;
+		const {config, state: {clip}, $el: {gridLines, main}} = $$;
 
 		if (config.grid_x_lines.length || config.grid_y_lines.length) {
-			$$.gridLines = $$.$el.main.insert("g", `.${CLASS.chart}${config.grid_lines_front ? " + *" : ""}`)
+			gridLines.main = main.insert("g", `.${CLASS.chart}${config.grid_lines_front ? " + *" : ""}`)
 				.attr("clip-path", clip.pathGrid)
 				.attr("class", `${CLASS.grid} ${CLASS.gridLines}`);
 
-			$$.gridLines.append("g").attr("class", CLASS.xgridLines);
-			$$.gridLines.append("g").attr("class", CLASS.ygridLines);
+			gridLines.main.append("g").attr("class", CLASS.xgridLines);
+			gridLines.main.append("g").attr("class", CLASS.ygridLines);
 
-			grid.xLines = d3SelectAll([]);
+			gridLines.x = d3SelectAll([]);
 		}
 	},
 
@@ -123,11 +123,12 @@ export default {
 
 	updateGrid(duration) {
 		const $$ = this;
+		const {$el: {grid, gridLines}} = $$;
 
-		!$$.gridLines && $$.initGridLines();
+		!gridLines.main && $$.initGridLines();
 
 		// hide if arc type
-		$$.$el.grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+		grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
 
 		$$.hideGridFocus();
 		$$.updateXGridLines(duration);
@@ -141,12 +142,12 @@ export default {
 	 */
 	updateXGridLines(duration) {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, $el: {gridLines, main}} = $$;
 		const isRotated = config.axis_rotated;
 
 		config.grid_x_show && $$.updateXGrid();
 
-		let xLines = $el.main.select(`.${CLASS.xgridLines}`)
+		let xLines = main.select(`.${CLASS.xgridLines}`)
 			.selectAll(`.${CLASS.xgridLine}`)
 			.data(config.grid_x_lines);
 
@@ -180,7 +181,7 @@ export default {
 			.transition()
 			.style("opacity", "1");
 
-		$el.grid.xLines = xLines;
+		gridLines.x = xLines;
 	},
 
 	/**
@@ -245,7 +246,7 @@ export default {
 			.transition()
 			.style("opacity", "1");
 
-		$el.grid.yLines = ygridLines;
+		$el.gridLines.y = ygridLines;
 	},
 
 	redrawGrid(withTransition) {
@@ -253,12 +254,12 @@ export default {
 		const {
 			config: {axis_rotated: isRotated},
 			state: {width, height},
-			$el: {grid}
+			$el: {gridLines}
 		} = $$;
 		const xv = $$.xv.bind($$);
 
-		let lines = grid.xLines.select("line");
-		let texts = grid.xLines.select("text");
+		let lines = gridLines.x.select("line");
+		let texts = gridLines.x.select("text");
 
 		lines = (withTransition ? lines.transition() : lines)
 			.attr("x1", isRotated ? 0 : xv)
@@ -281,7 +282,7 @@ export default {
 		const $$ = this;
 		const {config, state: {clip}, $el} = $$;
 		const isFront = config.grid_front;
-		const className = `.${CLASS[isFront && $$.gridLines ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
+		const className = `.${CLASS[isFront && $el.grid.main ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
 
 		const grid = $el.grid.main = $el.main.insert("g", className)
 			.attr("clip-path", clip.pathGrid)

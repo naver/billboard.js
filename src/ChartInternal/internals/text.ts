@@ -15,13 +15,10 @@ export default {
 	 * @private
 	 */
 	initText() {
-		const $$ = this;
-		const {$el} = $$;
+		const {$el: {main}} = this;
 
-		$el.main.select(`.${CLASS.chart}`).append("g")
+		main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartTexts);
-
-		$el.text = d3SelectAll([]);
 	},
 
 	/**
@@ -129,7 +126,7 @@ export default {
 	 * @param {String} className
 	 * @returns {Object} value of element.getBoundingClientRect()
 	 */
-	getTextRect(element, className) {
+	getTextRect(element, className: string) {
 		const $$ = this;
 		let base = (element.node ? element.node() : element);
 

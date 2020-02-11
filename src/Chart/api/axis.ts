@@ -154,7 +154,7 @@ const axis = {
 	 * });
 	 */
 	range: function(range) {
-		const axis = this.axis;
+		const {axis} = this;
 
 		if (arguments.length) {
 			isDefined(range.max) && axis.max(range.max);

@@ -23,7 +23,7 @@ import {extend, isUndefined, isArray} from "../../module/util";
  * chart.data();
  */
 function data(targetIds) {
-	const targets = this.internal.data.targets;
+	const {targets} = this.internal.data;
 
 	if (!isUndefined(targetIds)) {
 		const ids = isArray(targetIds) ? targetIds : [targetIds];
@@ -108,9 +108,12 @@ extend(data, {
 	 *});
 	 */
 	names: function(names?: Array<{ [key: string]: string; }>): {[key: string]: string} {
-		this.internal.clearLegendItemTextBoxcache();
+		const $$ = this.internal;
 
-		return this.internal.updateDataAttributes("names", names);
+		// reset existing legend item dimension data
+		$$.getLegendItemTextBox();
+
+		return $$.updateDataAttributes("names", names);
 	},
 
 	/**

@@ -41,8 +41,7 @@ export default {
 	 */
 	getAxisSize(id) {
 		const $$ = this;
-		const {config} = $$;
-		const isRotated = config.axis_rotated;
+		const isRotated = $$.config.axis_rotated;
 
 		return (isRotated && id === "x") || (!isRotated && /y2?/.test(id)) ?
 			$$.getAxisWidthByAxisId(id, true) :

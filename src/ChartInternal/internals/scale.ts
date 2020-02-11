@@ -110,9 +110,9 @@ export default {
 	 */
 	updateScales(isInit, updateXDomain = true) {
 		const $$ = this;
-		const {config, org, scale, state: {
-			width, height, width2, height2
-		}} = $$;
+		const {axis, config, format, org, scale,
+			state: {width, height, width2, height2}
+		} = $$;
 		const isRotated = config.axis_rotated;
 
 		// update edges
@@ -135,26 +135,21 @@ export default {
 		const xDomain = updateXDomain && scale.x && scale.x.orgDomain();
 		const xSubDomain = updateXDomain && org.xDomain;
 
-		scale.x = $$.getX(min.x, max.x, xDomain, () => $$.axis.x.tickOffset());
-		scale.subX = $$.getX(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : $$.axis.subX.tickOffset()));
+		scale.x = $$.getX(min.x, max.x, xDomain, () => axis.x.tickOffset());
+		scale.subX = $$.getX(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : axis.subX.tickOffset()));
 
-		$$.format.xAxisTick = $$.axis.getXAxisTickFormat();
-		$$.axis.xTickValues = $$.axis.getTickValues("x");
+		format.xAxisTick = axis.getXAxisTickFormat();
+		axis.tick.x = axis.getTickValues("x");
 
-		$$.axis.x = $$.axis
-			.getAxis("x", scale.x, config.axis_x_tick_outer, isInit);
-
-		$$.axis.subX = $$.axis
-			.getAxis("subX", scale.subX, config.axis_x_tick_outer, isInit);
+		axis.x = axis.getAxis("x", scale.x, config.axis_x_tick_outer, isInit);
+		axis.subX = axis.getAxis("subX", scale.subX, config.axis_x_tick_outer, isInit);
 
 		// y Axis
 		scale.y = $$.getY(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
 		scale.subY = $$.getY(min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
 
-		$$.axis.yTickValues = $$.axis.getTickValues("y");
-
-		$$.axis.y = $$.axis
-			.getAxis("y", scale.y, config.axis_y_tick_outer, isInit);
+		axis.tick.y = axis.getTickValues("y");
+		axis.y = axis.getAxis("y", scale.y, config.axis_y_tick_outer, isInit);
 
 		// y2 Axis
 		if (config.axis_y2_show) {
@@ -162,10 +157,8 @@ export default {
 			scale.subY2 = $$.getY(min.subY, max.subY,
 				scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
 
-			$$.axis.y2TickValues = $$.axis.getTickValues("y2");
-
-			$$.axis.y2 = $$.axis
-				.getAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
+			axis.tick.y2 = axis.getTickValues("y2");
+			axis.y2 = axis.getAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
 		}
 
 		// update for arc

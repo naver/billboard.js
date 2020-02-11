@@ -16,17 +16,16 @@ function getFormat($$, typeValue, v) {
 export default {
 	getYFormat(forArc) {
 		const $$ = this;
-		let formatForY = $$.yFormat;
-		let formatForY2 = $$.y2Format;
+		let {yFormat, y2Format} = $$;
 
 		if (forArc && !$$.hasType("gauge")) {
-			formatForY = $$.defaultArcValueFormat;
-			formatForY2 = $$.defaultArcValueFormat;
+			yFormat = $$.defaultArcValueFormat;
+			y2Format = $$.defaultArcValueFormat;
 		}
 
 		return function(v, ratio, id) {
 			const format = $$.axis.getId(id) === "y2" ?
-				formatForY2 : formatForY;
+			y2Format : yFormat;
 
 			return format.call($$, v, ratio);
 		};

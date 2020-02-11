@@ -20,7 +20,6 @@ export default {
 		const $$ = this;
 		const {config, $el} = $$;
 
-		$$.legendItemTextBox = {};
 		$$.state.legendHasRendered = false;
 		$el.legend = $$.$el.svg.append("g");
 
@@ -45,7 +44,7 @@ export default {
 	 */
 	updateLegend(targetIds, options, transitions) {
 		const $$ = this;
-		const {config, scale} = $$;
+		const {config, state, scale, $el} = $$;
 		const optionz = options || {
 			withTransform: false,
 			withTransitionForTransform: false,
@@ -66,7 +65,7 @@ export default {
 		}
 
 		// toggle legend state
-		$$.$el.legend.selectAll(`.${CLASS.legendItem}`)
+		$el.legend.selectAll(`.${CLASS.legendItem}`)
 			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
 
 		// Update size and scale
@@ -76,7 +75,7 @@ export default {
 		// Update g positions
 		$$.transformAll(optionz.withTransitionForTransform, transitions);
 
-		$$.state.legendHasRendered = true;
+		state.legendHasRendered = true;
 	},
 
 	/**
@@ -85,7 +84,7 @@ export default {
 	 */
 	updateLegendTemplate() {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $el} = $$;
 		const wrapper = d3Select(config.legend_contents_bindto);
 		const template = config.legend_contents_template;
 
@@ -114,7 +113,7 @@ export default {
 
 			$$.setLegendItem(legendItem);
 
-			$$.$el.legend = wrapper;
+			$el.legend = wrapper;
 		}
 	},
 
@@ -333,11 +332,31 @@ export default {
 	},
 
 	/**
-	 * Clear the LegendItemTextBox cache.
-	 * @private
+	 * Get legend item textbox dimension
+	 * @param {String} id
+	 * @param {HTMLElement|d3.selection} textElement
 	 */
-	clearLegendItemTextBoxcache() {
-		this.legendItemTextBox = {};
+	getLegendItemTextBox(id?: string, textElement?) {
+		const $$ = this;
+		const {cache} = $$;
+		const cacheKey = "$legendItemTextBox";
+
+		if (id) {
+			let data = cache.get(cacheKey);
+
+			if (!data) {
+				data = {};
+			}
+
+			if (!data[id]) {
+				data[id] = $$.getTextRect(textElement, CLASS.legendItem);
+				cache.add(cacheKey, data);
+			}
+
+			return data[id];
+		} else {
+			cache.remove(cacheKey);
+		}
 	},
 
 	/**
@@ -436,19 +455,10 @@ export default {
 
 		const withTransition = options.withTransition;
 
-		const getTextBox = function(textElement, id) {
-			if (!$$.legendItemTextBox[id]) {
-				$$.legendItemTextBox[id] =
-					$$.getTextRect(textElement, CLASS.legendItem);
-			}
-
-			return $$.legendItemTextBox[id];
-		};
-
 		const updatePositions = function(textElement, id, index) {
 			const reset = index === 0;
 			const isLast = index === targetIdz.length - 1;
-			const box = getTextBox(textElement, id);
+			const box = $$.getLegendItemTextBox(id, textElement);
 			const itemWidth = box.width + tileWidth +
 				(isLast && !isLegendRightOrInset ? 0 : paddingRight) + config.legend_padding;
 			const itemHeight = box.height + paddingTop;

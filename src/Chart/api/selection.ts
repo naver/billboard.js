@@ -64,13 +64,13 @@ export default {
 	 */
 	select(ids?: string[] | string, indices?: number[], resetOther?: boolean) {
 		const $$ = this.internal;
-		const {config} = $$;
+		const {config, $el} = $$;
 
 		if (!config.data_selection_enabled) {
 			return;
 		}
 
-		$$.$el.main.selectAll(`.${CLASS.shapes}`)
+		$el.main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
 			.each(function(d, i) {
 				const shape = d3Select(this);
@@ -114,13 +114,13 @@ export default {
 	 */
 	unselect(ids?: string | string[], indices?: number[]) {
 		const $$ = this.internal;
-		const {config} = $$;
+		const {config, $el} = $$;
 
 		if (!config.data_selection_enabled) {
 			return;
 		}
 
-		$$.$el.main.selectAll(`.${CLASS.shapes}`)
+		$el.main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
 			.each(function(d, i) {
 				const shape = d3Select(this);

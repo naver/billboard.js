@@ -108,7 +108,7 @@ export default {
 	 */
 	dragend() {
 		const $$ = this;
-		const {config, $el: {main}} = $$.config;
+		const {config, $el: {main}} = $$;
 
 		if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
 			return;

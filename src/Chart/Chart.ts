@@ -124,23 +124,26 @@ function bindThis(fn, target, argThis) {
 
 // extend API as part of Chart class
 extend(Chart.prototype, [
-	apiAxis,
-	apiCategory,
+	// common
 	apiChart,
 	apiColor,
 	apiData,
 	apiExport,
-	apiFlow,
 	apiFocus,
+	apiLegend,
+	apiLoad,
+	apiShow,
+	apiTooltip,
+
+	// Axis based
+	apiAxis,
+	apiCategory,
+	apiFlow,
 	apiXGrid,
 	apiYGrid,
 	apiGroup,
-	apiLegend,
-	apiLoad,
 	apiRegion,
 	apiSelection,
-	apiShow,
-	apiTooltip,
 	apiX,
 	apiZoom
 ]);

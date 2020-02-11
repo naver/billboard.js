@@ -174,13 +174,11 @@ export default {
 				return out;
 			}, {});
 
-			let values;
-
-			if ($$.isStackNormalized()) {
-				values = rowValues.map(v => $$.getRatio("index", v, true));
-			} else {
-				values = rowValues.map(({value}) => value);
-			}
+			const values = rowValues.map(
+				$$.isStackNormalized() ?
+					v => $$.getRatio("index", v, true) :
+					({value}) => value
+			);
 
 			return {
 				id: target.id,

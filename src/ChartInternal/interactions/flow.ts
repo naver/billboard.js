@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {selectAll as d3SelectAll} from "d3-selection";
 import {easeLinear as d3EaseLinear} from "d3-ease";
 import {transition as d3Transition} from "d3-transition";
 import {diffDomain} from "../../module/util";
@@ -41,7 +40,7 @@ export default {
 			const wait = $$.generateWait();
 
 			const xgrid = $el.grid.x;
-			const xgridLines = $el.grid.xLines;
+			const xgridLines = $el.gridLines.x;
 			const mainRegion = $el.region.list;
 			const mainText = $el.text;
 			const mainBar = $el.bar;

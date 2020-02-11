@@ -181,18 +181,18 @@ export default {
 
 	updateXs(values) {
 		if (values.length) {
-			this.state.xs = values.map(v => v.x);
+			this.axis.xs = values.map(v => v.x);
 		}
 	},
 
 	getPrevX(i) {
-		const x = this.state.xs[i - 1];
+		const x = this.axis.xs[i - 1];
 
 		return isDefined(x) ? x : null;
 	},
 
 	getNextX(i) {
-		const x = this.state.xs[i + 1];
+		const x = this.axis.xs[i + 1];
 
 		return isDefined(x) ? x : null;
 	},

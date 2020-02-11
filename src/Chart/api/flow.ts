@@ -54,7 +54,7 @@ export default {
 	 *  }
 	 * });
 	 */
-	flow(args: any) {
+	flow(args) {
 		const $$ = this.internal;
 		let data;
 		let domain;

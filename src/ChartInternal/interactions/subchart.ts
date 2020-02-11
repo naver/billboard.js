@@ -21,7 +21,7 @@ export default {
 	 */
 	initBrush() {
 		const $$ = this;
-		const {config, scale} = $$;
+		const {config, scale, $el: {context}} = $$;
 		const isRotated = config.axis_rotated;
 
 		// set the brush
@@ -70,7 +70,7 @@ export default {
 			const extent = this.extent()();
 
 			if (extent[1].filter(v => isNaN(v)).length === 0) {
-				$$.context && $$.context.select(`.${CLASS.brush}`).call(this);
+				context && context.select(`.${CLASS.brush}`).call(this);
 			}
 
 			return this;
@@ -98,7 +98,7 @@ export default {
 
 		$$.brush.getSelection = () => (
 			// @ts-ignore
-			$$.context ? $$.context.select(`.${CLASS.brush}`) : d3Select([])
+			context ? context.select(`.${CLASS.brush}`) : d3Select([])
 		);
 	},
 
@@ -108,45 +108,45 @@ export default {
 	 */
 	initSubchart() {
 		const $$ = this;
-		const {config, state: {clip}, $el} = $$;
+		const {config, state: {clip}, $el: {defs, svg, subchart, axis}} = $$;
 		const visibility = config.subchart_show ? "visible" : "hidden";
 		const clipId = `${clip.id}-subchart`;
 		const clipPath = $$.getClipPath(clipId);
 
 		clip.idSubchart = clipId;
-		$$.appendClip($el.defs, clipId);
+		$$.appendClip(defs, clipId);
 		$$.initBrush();
 
-		$$.context = $el.svg.append("g").attr("transform", $$.getTranslate("context"));
+		subchart.main = svg.append("g").attr("transform", $$.getTranslate("context"));
 
-		const context = $$.context;
+		const {main} = subchart;
 
-		context.style("visibility", visibility);
+		main.style("visibility", visibility);
 
 		// Define g for chart area
-		context.append("g")
+		main.append("g")
 			.attr("clip-path", clipPath)
 			.attr("class", CLASS.chart);
 
 		// Define g for bar chart area
-		$$.hasType("bar") && context.select(`.${CLASS.chart}`)
+		$$.hasType("bar") && main.select(`.${CLASS.chart}`)
 			.append("g")
 			.attr("class", CLASS.chartBars);
 
 		// Define g for line chart area
-		context.select(`.${CLASS.chart}`)
+		main.select(`.${CLASS.chart}`)
 			.append("g")
 			.attr("class", CLASS.chartLines);
 
 		// Add extent rect for Brush
-		context.append("g")
+		main.append("g")
 			.attr("clip-path", clipPath)
 			.attr("class", CLASS.brush)
 			.call($$.brush);
 
 		// ATTENTION: This must be called AFTER chart added
 		// Add Axis
-		$el.axis.subX = context.append("g")
+		axis.subX = main.append("g")
 			.attr("class", CLASS.axisX)
 			.attr("transform", $$.getTranslate("subX"))
 			.attr("clip-path", config.axis_rotated ? "" : clip.pathXAxis)
@@ -160,7 +160,7 @@ export default {
 	 */
 	updateTargetsForSubchart(targets) {
 		const $$ = this;
-		const {config, context, state} = $$;
+		const {config, state, $el: {subchart: {main}}} = $$;
 		const classChartBar = $$.classChartBar.bind($$);
 		const classBars = $$.classBars.bind($$);
 		const classChartLine = $$.classChartLine.bind($$);
@@ -169,40 +169,40 @@ export default {
 
 		if (config.subchart_show) {
 			// -- Bar --//
-			const contextBarUpdate = context.select(`.${CLASS.chartBars}`)
+			const barUpdate = main.select(`.${CLASS.chartBars}`)
 				.selectAll(`.${CLASS.chartBar}`)
 				.data(targets)
 				.attr("class", classChartBar);
-			const contextBarEnter = contextBarUpdate.enter()
+			const barEnter = barUpdate.enter()
 				.append("g")
 				.style("opacity", "0")
 				.attr("class", classChartBar)
-				.merge(contextBarUpdate);
+				.merge(barUpdate);
 
 			// Bars for each data
-			contextBarEnter.append("g")
+			barEnter.append("g")
 				.attr("class", classBars);
 
 			// -- Line --//
-			const contextLineUpdate = context.select(`.${CLASS.chartLines}`)
+			const lineUpdate = main.select(`.${CLASS.chartLines}`)
 				.selectAll(`.${CLASS.chartLine}`)
 				.data(targets)
 				.attr("class", classChartLine);
-			const contextLineEnter = contextLineUpdate.enter().append("g")
+			const lineEnter = lineUpdate.enter().append("g")
 				.style("opacity", "0")
 				.attr("class", classChartLine)
-				.merge(contextLineUpdate);
+				.merge(lineUpdate);
 
 			// Lines for each data
-			contextLineEnter.append("g")
+			lineEnter.append("g")
 				.attr("class", classLines);
 
 			// Area
-			$$.hasType("area") && contextLineEnter.append("g")
+			$$.hasType("area") && lineEnter.append("g")
 				.attr("class", classAreas);
 
 			// -- Brush --//
-			context.selectAll(`.${CLASS.brush} rect`)
+			main.selectAll(`.${CLASS.brush} rect`)
 				.attr(config.axis_rotated ? "width" : "height", config.axis_rotated ? state.width2 : state.height2);
 		}
 	},
@@ -214,24 +214,25 @@ export default {
 	 */
 	updateBarForSubchart(durationForExit) {
 		const $$ = this;
+		const {$el: {subchart}} = $$;
 
-		$$.contextBar = $$.context.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
+		subchart.bar = subchart.main.selectAll(`.${CLASS.bars}`).selectAll(`.${CLASS.bar}`)
 			.data($$.barData.bind($$));
 
-		$$.contextBar
+		subchart.bar
 			.exit()
 			.transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$$.contextBar = $$.contextBar
+		subchart.bar = subchart.bar
 			.enter()
 			.append("path")
 			.attr("class", $$.classBar.bind($$))
 			.style("stroke", "none")
 			.style("fill", $$.color)
-			.merge($$.contextBar)
+			.merge(subchart.bar)
 			.style("opacity", $$.initialOpacity.bind($$));
 	},
 
@@ -243,11 +244,10 @@ export default {
 	 * @param {Number} transition duration
 	 */
 	redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
-		const contextBar = withTransition ?
-			this.contextBar.transition(getRandom()).duration(duration) :
-			this.contextBar;
+		const {bar} = this.$el.subchart;
 
-		contextBar.attr("d", drawBarOnSub)
+		(withTransition ? bar.transition(getRandom()).duration(duration) : bar)
+			.attr("d", drawBarOnSub)
 			.style("opacity", "1");
 	},
 
@@ -258,24 +258,25 @@ export default {
 	 */
 	updateLineForSubchart(durationForExit) {
 		const $$ = this;
+		const {$el: {subchart}} = $$;
 
-		$$.contextLine = $$.context.selectAll(`.${CLASS.lines}`)
+		subchart.line = subchart.main.selectAll(`.${CLASS.lines}`)
 			.selectAll(`.${CLASS.line}`)
 			.data($$.lineData.bind($$));
 
-		$$.contextLine
+		subchart.line
 			.exit()
 			.transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$$.contextLine = $$.contextLine
+		subchart.line = subchart.line
 			.enter()
 			.append("path")
 			.attr("class", $$.classLine.bind($$))
 			.style("stroke", $$.color)
-			.merge($$.contextLine)
+			.merge(subchart.line)
 			.style("opacity", $$.initialOpacity.bind($$));
 	},
 
@@ -287,11 +288,10 @@ export default {
 	 * @param {Number} transition duration
 	 */
 	redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
-		const contextLine = withTransition ?
-			this.contextLine.transition(getRandom()).duration(duration) :
-			this.contextLine;
+		const {line} = this.$el.subchart;
 
-		contextLine.attr("d", drawLineOnSub)
+		(withTransition ? line.transition(getRandom()).duration(duration) : line)
+			.attr("d", drawLineOnSub)
 			.style("opacity", "1");
 	},
 
@@ -302,19 +302,20 @@ export default {
 	 */
 	updateAreaForSubchart(durationForExit) {
 		const $$ = this;
+		const {$el: {subchart}} = $$;
 
-		$$.contextArea = $$.context.selectAll(`.${CLASS.areas}`)
+		subchart.area = subchart.main.selectAll(`.${CLASS.areas}`)
 			.selectAll(`.${CLASS.area}`)
 			.data($$.lineData.bind($$));
 
-		$$.contextArea
+		subchart.area
 			.exit()
 			.transition()
 			.duration(durationForExit)
 			.style("opacity", "0")
 			.remove();
 
-		$$.contextArea = $$.contextArea
+		subchart.area = subchart.area
 			.enter()
 			.append("path")
 			.attr("class", $$.classArea.bind($$))
@@ -323,7 +324,7 @@ export default {
 				$$.state.orgAreaOpacity = d3Select(this).style("opacity");
 				return "0";
 			})
-			.merge($$.contextArea)
+			.merge(subchart.area)
 			.style("opacity", "0");
 	},
 	/**
@@ -334,11 +335,10 @@ export default {
 	 * @param {Number} transition duration
 	 */
 	redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
-		const contextArea = withTransition ?
-			this.contextArea.transition(getRandom()).duration(duration) :
-			this.contextArea;
+		const {area} = this.$el.subchart;
 
-		contextArea.attr("d", drawAreaOnSub)
+		(withTransition ? area.transition(getRandom()).duration(duration) : area)
+			.attr("d", drawAreaOnSub)
 			.style("fill", this.color)
 			.style("opacity", this.state.orgAreaOpacity);
 	},
@@ -352,9 +352,9 @@ export default {
 	 */
 	redrawSubchart(withSubchart, duration, shape) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $el: {subchart: {main}}} = $$;
 
-		$$.context.style("visibility", config.subchart_show ? "visible" : "hidden");
+		main.style("visibility", config.subchart_show ? "visible" : "hidden");
 
 		// subchart
 		if (config.subchart_show) {
@@ -385,7 +385,7 @@ export default {
 	 */
 	redrawForBrush() {
 		const $$ = this;
-		const {config: {subchart_onbrush, zoom_rescale: withY}} = $$;
+		const {config: {subchart_onbrush, zoom_rescale: withY}, scale} = $$;
 
 		$$.redraw({
 			withTransition: false,
@@ -395,7 +395,7 @@ export default {
 			withDimension: false
 		});
 
-		subchart_onbrush.call($$.api, $$.scale.x.orgDomain());
+		subchart_onbrush.call($$.api, scale.x.orgDomain());
 	},
 
 	/**
@@ -406,16 +406,20 @@ export default {
 	 */
 	transformContext(withTransition, transitions) {
 		const $$ = this;
+		const {main} = $$.$el.subchart;
 		let subXAxis;
 
 		if (transitions && transitions.axisSubX) {
 			subXAxis = transitions.axisSubX;
 		} else {
-			subXAxis = $$.context.select(`.${CLASS.axisX}`);
-			if (withTransition) { subXAxis = subXAxis.transition(); }
+			subXAxis = main.select(`.${CLASS.axisX}`);
+
+			if (withTransition) {
+				subXAxis = subXAxis.transition();
+			}
 		}
 
-		$$.context.attr("transform", $$.getTranslate("context"));
+		main.attr("transform", $$.getTranslate("context"));
 		subXAxis.attr("transform", $$.getTranslate("subX"));
 	},
 
@@ -426,8 +430,8 @@ export default {
 	 */
 	getExtent() {
 		const $$ = this;
-		const {scale} = $$;
-		let extent = $$.config.axis_x_extent;
+		const {config, scale} = $$;
+		let extent = config.axis_x_extent;
 
 		if (extent) {
 			if (isFunction(extent)) {

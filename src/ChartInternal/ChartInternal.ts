@@ -9,10 +9,7 @@ import {
 	utcParse as d3UtcParse,
 	utcFormat as d3UtcFormat
 } from "d3-time-format";
-import {
-	select as d3Select,
-	selectAll as d3SelectAll
-} from "d3-selection";
+import {select as d3Select} from "d3-selection";
 import {transition as d3Transition} from "d3-transition";
 import CLASS from "../config/classes";
 import Store from "../config/Store";
@@ -20,6 +17,9 @@ import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
 import {extend, notEmpty, asHalfPixel, getOption, isArray, isFunction, isNumber, isObject, isString, isValue, callFn, sortValue} from "../module/util";
+
+// for Types
+import {Nodes} from "../types/ChartInternal";
 
 // Axis
 import Axis from "./Axis/Axis";
@@ -32,6 +32,7 @@ import dataLoad from "./data/data.load";
 // interactions
 import drag from "./interactions/drag";
 import flow from "./interactions/flow";
+import eventrect from "./interactions/eventrect";
 import interaction from "./interactions/interaction";
 import subchart from "./interactions/subchart";
 import zoom from "./interactions/zoom";
@@ -84,36 +85,45 @@ export default class ChartInternal {
 	};
 
 	// selections
-	public $el = {
-		chart: null, //$el.chart,
+	public $el: Nodes = {
+		chart: null,
 		main: null,
 		svg: null,
 		axis: {  // axes
 			x: null,
 			y: null,
 			y2: null,
-			subX: d3SelectAll([])
+			subX: null
 		},
 		defs: null,
 		tooltip: null,
 		legend: null,
 		title: null,
+		subchart: {
+			main: null,
+			bar: null,
+			line: null,
+			area: null
+		},
 
 		arcs: null,
-		bar: d3SelectAll([]), //mainBar,
-		line: d3SelectAll([]), //mainLine,
-		area: d3SelectAll([]), //mainArea,
-		circle: d3SelectAll([]), //mainCircle,
-		text: d3SelectAll([]), //mainText,
+		bar: null, //mainBar,
+		line: null, //mainLine,
+		area: null, //mainArea,
+		circle: null, //mainCircle,
+		text: null, //mainText,
 		grid: {
-			main: d3SelectAll([]),  //grid
-			x: d3SelectAll([]), //xgrid,
-			y: d3SelectAll([]), //ygrid,
-			xLines: d3SelectAll([]), //xgridLines,
-			yLines: d3SelectAll([]), //ygridLines,
+			main: null,  // grid (also focus)
+			x: null, // xgrid,
+			y: null, // ygrid,
+		},
+		gridLines: {
+			main: null,  // gridLines
+			x: null, // xgridLines,
+			y: null, // ygridLines
 		},
 		region: {
-			main: d3SelectAll([]), //region
+			main: null, //region
 			list: null // mainRegion
 		},
 		eventRect: null
@@ -144,14 +154,15 @@ export default class ChartInternal {
 	public patterns;
 	public levelColor;
 	public point;
+	public brush;
 
 	// format function
 	public format = {
 		extraLineClasses: null,
 		xAxisTick: null,
 		dataTime: null, // dataTimeFormat
-		defaultAxisTime: () => {}, // defaultAxisTimeFormat
-		axisTime: () => {} // axisTimeFormat
+		defaultAxisTime: null, // defaultAxisTimeFormat
+		axisTime: null // axisTimeFormat
 	};
 
 	constructor(api) {
@@ -201,11 +212,12 @@ export default class ChartInternal {
 		$el.chart = isFunction(bindto.element.node) ?
 			config.bindto.element : d3Select(bindto.element || []);
 
-		if ($el.chart.empty()) {
+		if (!$el.chart || $el.chart.empty()) {
 			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
 		}
 
 		$el.chart.html("").classed(bindto.classname, true);
+
 		$$.initToRender();
 	}
 
@@ -248,11 +260,12 @@ export default class ChartInternal {
 
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date()}`;
+
 		$$.initClip();
+		$$.point = $$.generatePoint();
 
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
-		$$.point = $$.generatePoint();
 
 		format.extraLineClasses = $$.generateExtraLineClass();
 		format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
@@ -265,7 +278,7 @@ export default class ChartInternal {
 			const isZoomed = isDragZoom ? zoom :
 				zoom && x.orgDomain().toString() !== zoom.domain().toString();
 
-			const specifier = (d.getMilliseconds() && ".%L") ||
+			const specifier: string = (d.getMilliseconds() && ".%L") ||
 				(d.getSeconds() && ".:%S") ||
 				(d.getMinutes() && "%I:%M") ||
 				(d.getHours() && "%I %p") ||
@@ -362,7 +375,7 @@ export default class ChartInternal {
 				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$, $$.api));
 		}
 
-		config.svg_classname && $$.$el.svg.attr("class", config.svg_classname);
+		config.svg_classname && $el.svg.attr("class", config.svg_classname);
 
 		// Define defs
 		$el.defs = $el.svg.append("defs");
@@ -416,7 +429,7 @@ export default class ChartInternal {
 		// Cover whole with rects for events
 		$$.initEventRect();
 
-		// Define g for chart
+
 		$$.initChartElements();
 
 		// Grids
@@ -474,8 +487,13 @@ export default class ChartInternal {
 
 	initChartElements() {
 		const $$ = this;
+		const types = ["Bar", "Line", "Bubble"];
 
-		["Bar", "Radar", "Line", "Bubble", "Arc", "Gauge", "Pie"].forEach(v => {
+		if ($$.hasArcType()) {
+			types.push("Radar", "Arc", "Gauge", "Pie");
+		}
+
+		types.forEach(v => {
 			$$[`init${v}`]();
 		});
 
@@ -1406,35 +1424,45 @@ export default class ChartInternal {
 }
 
 extend(ChartInternal.prototype, [
+	// common
 	dataConvert,
 	data,
 	dataLoad,
-	drag,
-	flow,
-	interaction,
-	subchart,
-	zoom,
-	category,
+
 	classModule,
-	clip,
 	color,
 	domain,
+	interaction,
 	format,
-	grid,
 	legend,
-	region,
 	scale,
-	selection,
 	size,
 	text,
 	title,
 	tooltip,
 	type,
-	arc,
+
+	// Axis based
+	category,
+	drag,
+	flow,
+	subchart,
+	zoom,
+
+	clip,
+	grid,
+	region,
+	selection,
+	eventrect,
+
 	bar,
 	bubble,
 	line,
 	point,
-	radar,
-	shape
+	shape,
+
+	// Non-Axis based
+	// Not necessary: defs, eventRect
+	arc,
+	radar
 ]);

@@ -50,11 +50,12 @@ export default {
 	 */
 	unselectPoint(target, d, i) {
 		const $$ = this;
+		const {config, $el} = $$;
 
-		callFn($$.config.data_onunselected, $$.api, d, target.node());
+		callFn(config.data_onunselected, $$.api, d, target.node());
 
 		// remove selected-circle from low layer g
-		$$.$el.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+		$el.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
 			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.transition()
 			.duration(100)

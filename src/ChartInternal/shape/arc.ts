@@ -66,13 +66,13 @@ export default {
 
 	getInnerRadius(d) {
 		const $$ = this;
-		let radius = $$.state.innerRadius;
+		let {innerRadius} = $$.state;
 
-		if (!isNumber(radius) && d) {
-			radius = radius[d.data.id] || 0;
+		if (!isNumber(innerRadius) && d) {
+			innerRadius = innerRadius[d.data.id] || 0;
 		}
 
-		return radius;
+		return innerRadius;
 	},
 
 	updateArc() {
@@ -609,7 +609,7 @@ export default {
 	redrawMultiArcGauge() {
 		const $$ = this;
 		const {config, state, $el} = $$;
-		const hiddenTargetIds = $$.state.hiddenTargetIds;
+		const {hiddenTargetIds} = $$.state;
 
 		const arcLabelLines = $el.main.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arcLabelLine}`)

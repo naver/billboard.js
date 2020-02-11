@@ -142,7 +142,7 @@ export default {
 		const $$ = this;
 		const {config, scale, org} = $$;
 		const event = d3Event;
-		const sourceEvent = event.sourceEvent;
+		const {sourceEvent} = event;
 
 		if (
 			!config.zoom_enabled ||
@@ -155,7 +155,7 @@ export default {
 
 		const isMousemove = sourceEvent.type === "mousemove";
 		const isZoomOut = sourceEvent.wheelDelta < 0;
-		const transform = event.transform;
+		const {transform} = event;
 
 		if (!isMousemove && isZoomOut && scale.x.domain().every((v, i) => v !== org.xDomain[i])) {
 			scale.x.domain(org.xDomain);
@@ -186,7 +186,7 @@ export default {
 	onZoomEnd() {
 		const $$ = this;
 		const {config, scale} = $$;
-		let startEvent = $$.zoom.startEvent;
+		let {startEvent} = $$.zoom;
 		let event = d3Event && d3Event.sourceEvent;
 
 		if ((startEvent && startEvent.type.indexOf("touch") > -1)) {

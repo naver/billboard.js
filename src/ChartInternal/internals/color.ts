@@ -46,7 +46,7 @@ export default {
 	 */
 	getColorFromCss() {
 		const cacheKey = "__colorPattern__";
-		const body = document.body;
+		const {body} = document;
 		let pattern = body[cacheKey];
 
 		if (!pattern) {

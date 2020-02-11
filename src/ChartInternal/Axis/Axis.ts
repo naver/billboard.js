@@ -16,6 +16,10 @@ import ChartInternal from "../ChartInternal";
 export default class Axis {
 	public owner: ChartInternal;
 	private axesList = {};
+	public tick = {
+		x: "", y: "", y2: ""
+	};
+	public xs = [];
 	private orient = {
 		x: "bottom",
 		y: "left",
@@ -192,7 +196,7 @@ export default class Axis {
 		const isCategory = isX && $$.isCategorized();
 		const orient = this.orient[name];
 		const tickFormat = isX ? $$.format.xAxisTick : config[`axis_${name}_tick_format`];
-		let tickValues = isX ? $$.axis.xTickValues : $$[`${name}AxisTickValues`];
+		let tickValues = isX ? $$.axis.tick.x : $$[`${name}AxisTickValues`];
 
 		const axisParams = mergeObj({
 			outerTick,
@@ -684,7 +688,7 @@ export default class Axis {
 			const axis = $$.axis[id];
 			const $axis = $el.axis[id];
 
-			if (axis) {
+			if (axis && $axis) {
 				if (!isInit) {
 					axis.config.withoutTransition = !config.transition_duration;
 				}

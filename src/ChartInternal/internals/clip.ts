@@ -7,7 +7,7 @@ import {document, window} from "../../module/browser";
 export default {
 	initClip() {
 		const $$ = this;
-		const clip = $$.state.clip;
+		const {clip} = $$.state;
 
 		// MEMO: clipId needs to be unique because it conflicts when multiple charts exist
 		clip.id = `${$$.state.datetimeId}-clip`;
@@ -97,6 +97,7 @@ export default {
 
 	getAxisClipHeight(forHorizontal) {
 		const {margin, height} = this.state;
+
 		// less than 20 is not enough to show the axis label 'outer' without legend
 		return (forHorizontal ? margin.bottom : (margin.top + height)) + 20;
 	},

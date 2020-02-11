@@ -18,7 +18,7 @@ export default {
 	initTooltip() {
 		const $$ = this;
 		const {config, $el} = $$;
-		const bindto = config.tooltip_contents.bindto;
+		const {bindto} = config.tooltip_contents;
 
 		$el.tooltip = d3Select(bindto);
 
@@ -284,7 +284,7 @@ export default {
 	showTooltip(selectedData, element) {
 		const $$ = this;
 		const {config, $el: {tooltip}} = $$;
-		const bindto = config.tooltip_contents.bindto;
+		const {bindto} = config.tooltip_contents;
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 		const positionFunction = config.tooltip_position || $$.tooltipPosition;
@@ -367,8 +367,7 @@ export default {
 	 */
 	_handleLinkedCharts(show, index) {
 		const $$ = this;
-		const {config} = $$;
-		const charts = $$.charts;
+		const {charts, config} = $$;
 
 		if (config.tooltip_linked && charts.length > 1) {
 			const linkedName = config.tooltip_linked_name;

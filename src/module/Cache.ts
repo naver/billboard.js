@@ -16,6 +16,7 @@ export default class Cache {
 	 */
 	add(key: string, value, isDataType = false) {
 		this.cache[key] = isDataType ? this.cloneTarget(value) : value;
+		return this.cache[key];
 	}
 
 	/**
