@@ -77,7 +77,7 @@ export default {
 
 	generateColor() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const colors = config.data_colors;
 		const callback = config.data_color;
 		const ids: string[] = [];
@@ -104,7 +104,7 @@ export default {
 
 		return function(d) {
 			const id: string = d.id || (d.data && d.data.id) || d;
-			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !$$.config.data_types[id];
+			const isLine = $$.isTypeOf(id, ["line", "spline", "step"]) || !config.data_types[id];
 			let color;
 
 			// if callback function is provided
@@ -134,7 +134,7 @@ export default {
 
 	generateLevelColor() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const colors = config.color_pattern;
 		const threshold = config.color_threshold;
 		const asValue = threshold.unit === "value";
@@ -166,8 +166,7 @@ export default {
 	 */
 	setOverColor(isOver, d) {
 		const $$ = this;
-		const config = $$.config;
-		const {main} = $$.$el;
+		const {config, $el: {main}} = $$;
 		const onover = config.color_onover;
 		let color = isOver ? onover : $$.color;
 

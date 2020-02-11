@@ -5,7 +5,7 @@
 import {isValue, isFunction, isObjectType} from "../../module/util";
 
 function getFormat($$, typeValue, v) {
-	const config = $$.config;
+	const {config} = $$;
 	const type = `axis_${typeValue}_tick_format`;
 	const format = config[type] ?
 		config[type] : $$.defaultValueFormat;

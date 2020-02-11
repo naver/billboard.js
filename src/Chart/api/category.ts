@@ -15,7 +15,7 @@ export default {
 	 */
 	category(i: number, category: string) {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$;
 
 		if (arguments.length > 1) {
 			config.axis_x_categories[i] = category;
@@ -38,7 +38,7 @@ export default {
 	 */
 	categories(categories: string[]) {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$;
 
 		if (!arguments.length) {
 			return config.axis_x_categories;

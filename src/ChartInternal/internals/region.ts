@@ -18,8 +18,7 @@ export default {
 
 	updateRegion(duration) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 
 		// hide if arc type
 		$el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
@@ -71,11 +70,11 @@ export default {
 
 	getRegionXY(type, d) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 		const isRotated = config.axis_rotated;
 		const isX = type === "x";
 		let key = "start";
-		let scale;
+		let currScale;
 		let pos = 0;
 
 		if (d.axis === "y" || d.axis === "y2") {
@@ -84,12 +83,12 @@ export default {
 			}
 
 			if ((isX ? isRotated : !isRotated) && key in d) {
-				scale = $$[d.axis];
-				pos = scale(d[key]);
+				currScale = scale[d.axis];
+				pos = currScale(d[key]);
 			}
 		} else if ((isX ? !isRotated : isRotated) && key in d) {
-			scale = $$.zoomScale || $$.x;
-			pos = scale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
+			currScale = scale.zoom || scale.x;
+			pos = currScale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
 		}
 
 		return pos;
@@ -105,13 +104,13 @@ export default {
 
 	getRegionSize(type, d) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale, state} = $$;
 		const isRotated = config.axis_rotated;
 		const isWidth = type === "width";
 		const start = $$[isWidth ? "regionX" : "regionY"](d);
-		let scale;
+		let currScale;
 		let key = "end";
-		let end = $$.state[type];
+		let end = state[type];
 
 		if (d.axis === "y" || d.axis === "y2") {
 			if (!isWidth) {
@@ -119,12 +118,12 @@ export default {
 			}
 
 			if ((isWidth ? isRotated : !isRotated) && key in d) {
-				scale = $$[d.axis];
-				end = scale(d[key]);
+				currScale = scale[d.axis];
+				end = currScale(d[key]);
 			}
 		} else if ((isWidth ? !isRotated : isRotated) && key in d) {
-			scale = $$.zoomScale || $$.x;
-			end = scale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
+			currScale = scale.zoom || scale.x;
+			end = currScale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
 		}
 
 		return end < start ? 0 : end - start;

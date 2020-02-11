@@ -18,8 +18,7 @@ export default {
 	 */
 	initLegend() {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 
 		$$.legendItemTextBox = {};
 		$$.state.legendHasRendered = false;
@@ -46,7 +45,7 @@ export default {
 	 */
 	updateLegend(targetIds, options, transitions) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 		const optionz = options || {
 			withTransform: false,
 			withTransitionForTransform: false,
@@ -71,7 +70,7 @@ export default {
 			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
 
 		// Update size and scale
-		$$.updateScales(false, !$$.zoomScale);
+		$$.updateScales(false, !scale.zoom);
 		$$.updateSvgSize();
 
 		// Update g positions
@@ -86,7 +85,7 @@ export default {
 	 */
 	updateLegendTemplate() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const wrapper = d3Select(config.legend_contents_bindto);
 		const template = config.legend_contents_template;
 
@@ -126,8 +125,9 @@ export default {
 	 */
 	updateSizeForLegend(size) {
 		const $$ = this;
-		const config = $$.config;
-		const {isLegendTop, isLegendLeft, isLegendRight, isLegendInset, currentWidth, currentHeight} = $$.state;
+		const {config, state: {
+			isLegendTop, isLegendLeft, isLegendRight, isLegendInset, currentWidth, currentHeight
+		}} = $$;
 		const {width, height} = size;
 
 		const insetLegendPosition = {
@@ -294,8 +294,7 @@ export default {
 	 */
 	showLegend(targetIds) {
 		const $$ = this;
-		const config = $$.config;
-		const {legend} = $$.$el;
+		const {config, $el: {legend}} = $$;
 
 		if (!config.legend_show) {
 			config.legend_show = true;
@@ -320,8 +319,7 @@ export default {
 	 */
 	hideLegend(targetIds) {
 		const $$ = this;
-		const config = $$.config;
-		const {legend} = $$.$el;
+		const {config, $el: {legend}} = $$;
 
 		if (config.legend_show && isEmpty(targetIds)) {
 			config.legend_show = false;
@@ -349,8 +347,7 @@ export default {
 	 */
 	setLegendItem(item) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isTouch = state.inputType === "touch";
 		const hasGauge = $$.hasType("gauge");
 
@@ -414,8 +411,7 @@ export default {
 	 */
 	updateLegendElement(targetIds, options) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const paddingTop = 4;
 		const paddingRight = 10;
 		const posMin = 10;
@@ -576,7 +572,7 @@ export default {
 			.attr("x", isLegendRightOrInset ? xForLegendRect : pos)
 			.attr("y", isLegendRightOrInset ? pos : yForLegendRect);
 
-		const usePoint = $$.config.legend_usePoint;
+		const usePoint = config.legend_usePoint;
 
 		if (usePoint) {
 			const ids: any[] = [];
@@ -653,7 +649,7 @@ export default {
 			(withTransition ? tiles.transition() : tiles)
 				.each(function() {
 					const nodeName = this.nodeName.toLowerCase();
-					const pointR = $$.config.point_r;
+					const pointR = config.point_r;
 					let x = "x";
 					let y = "y";
 					let xOffset = 2;

@@ -46,9 +46,7 @@ export default class AxisRenderer {
 	 */
 	create(g: d3Selection) {
 		const ctx = this;
-		const config = this.config;
-		const params = this.params;
-		const helperInst = this.helper;
+		const {config, params, helper: helperInst} = this;
 		const scale = helperInst.scale;
 		const orient = config.orient;
 		const splitTickText = this.splitTickText.bind(this);
@@ -228,7 +226,7 @@ export default class AxisRenderer {
 	 * @private
 	 */
 	getTickXY() {
-		const config = this.config;
+		const {config} = this;
 		const pos = {x: 0, y: 0};
 
 		if (this.params.isCategory) {
@@ -246,10 +244,9 @@ export default class AxisRenderer {
 	 * @private
 	 */
 	getTickSize(d) {
-		const scale = this.helper.scale;
-		const config = this.config;
-		const innerTickSize = config.innerTickSize;
-		const range = config.range;
+		const {scale} = this.helper;
+		const {config} = this;
+		const {innerTickSize, range} = config;
 
 		const tickPosition = scale(d) +
 			(config.tickCentered ? 0 : config.tickOffset);
@@ -332,7 +329,7 @@ export default class AxisRenderer {
 
 	// this should be called only when category axis
 	splitTickText(d, scale, ticks, isLeftRight, charWidth) {
-		const params = this.params;
+		const {params} = this;
 		const tickText = this.helper.textFormatted(d);
 		const splitted = isString(tickText) && tickText.indexOf("\n") > -1 ?
 			tickText.split("\n") : [];
@@ -408,17 +405,19 @@ export default class AxisRenderer {
 	}
 
 	tickFormat(format) {
+		const {config} = this;
+
 		if (!arguments.length) {
-			return this.config.tickFormat;
+			return config.tickFormat;
 		}
 
-		this.config.tickFormat = format;
+		config.tickFormat = format;
 
 		return this;
 	}
 
 	tickCentered(isCentered) {
-		const config = this.config;
+		const {config} = this;
 
 		if (!arguments.length) {
 			return config.tickCentered;
@@ -462,7 +461,7 @@ export default class AxisRenderer {
 	}
 
 	ticks(...args) {
-		const config = this.config;
+		const {config} = this;
 
 		if (!args.length) {
 			return config.tickArguments;
@@ -474,7 +473,7 @@ export default class AxisRenderer {
 	}
 
 	tickCulling(culling) {
-		const config = this.config;
+		const {config} = this;
 
 		if (!arguments.length) {
 			return config.tickCulling;
@@ -486,7 +485,7 @@ export default class AxisRenderer {
 	}
 
 	tickValues(x) {
-		const config = this.config;
+		const {config} = this;
 
 		if (isFunction(x)) {
 			config.tickValues = () => x(this.helper.scale.domain());

@@ -21,7 +21,7 @@ export default {
 	 */
 	initBrush() {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 		const isRotated = config.axis_rotated;
 
 		// set the brush
@@ -53,7 +53,7 @@ export default {
 			})
 			.on("brush", brushHandler)
 			.on("end", () => {
-				lastDomain = $$.x.orgDomain();
+				lastDomain = scale.x.orgDomain();
 			});
 
 		$$.brush.updateResize = function() {
@@ -62,7 +62,7 @@ export default {
 				const selection = this.getSelection();
 
 				lastDomain && d3BrushSelection(selection.node()) &&
-					this.move(selection, lastDomain.map($$.subX.orgScale()));
+					this.move(selection, lastDomain.map(scale.subX.orgScale()));
 			}, 0);
 		};
 
@@ -108,9 +108,7 @@ export default {
 	 */
 	initSubchart() {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
-		const {clip} = $$.state;
+		const {config, state: {clip}, $el} = $$;
 		const visibility = config.subchart_show ? "visible" : "hidden";
 		const clipId = `${clip.id}-subchart`;
 		const clipPath = $$.getClipPath(clipId);
@@ -162,9 +160,7 @@ export default {
 	 */
 	updateTargetsForSubchart(targets) {
 		const $$ = this;
-		const state = $$.state;
-		const context = $$.context;
-		const config = $$.config;
+		const {config, context, state} = $$;
 		const classChartBar = $$.classChartBar.bind($$);
 		const classBars = $$.classBars.bind($$);
 		const classChartLine = $$.classChartLine.bind($$);
@@ -356,7 +352,7 @@ export default {
 	 */
 	redrawSubchart(withSubchart, duration, shape) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		$$.context.style("visibility", config.subchart_show ? "visible" : "hidden");
 
@@ -389,16 +385,17 @@ export default {
 	 */
 	redrawForBrush() {
 		const $$ = this;
+		const {config: {subchart_onbrush, zoom_rescale: withY}} = $$;
 
 		$$.redraw({
 			withTransition: false,
-			withY: $$.config.zoom_rescale,
+			withY,
 			withSubchart: false,
 			withUpdateXDomain: true,
 			withDimension: false
 		});
 
-		$$.config.subchart_onbrush.call($$.api, $$.x.orgDomain());
+		subchart_onbrush.call($$.api, $$.scale.x.orgDomain());
 	},
 
 	/**
@@ -429,13 +426,14 @@ export default {
 	 */
 	getExtent() {
 		const $$ = this;
+		const {scale} = $$;
 		let extent = $$.config.axis_x_extent;
 
 		if (extent) {
 			if (isFunction(extent)) {
-				extent = extent($$.getXDomain($$.data.targets), $$.subX);
+				extent = extent($$.getXDomain($$.data.targets), scale.subX);
 			} else if ($$.isTimeSeries() && extent.every(isNaN)) {
-				extent = extent.map(v => $$.subX($$.parseDate(v)));
+				extent = extent.map(v => scale.subX($$.parseDate(v)));
 			}
 		}
 

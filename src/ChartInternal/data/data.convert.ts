@@ -134,7 +134,7 @@ export default {
 	},
 
 	convertJsonToData(json, keysParam) {
-		const config = this.config;
+		const {config} = this;
 		const newRows: string[][] = [];
 		let targetKeys: string[];
 		let data;
@@ -247,8 +247,7 @@ export default {
 
 	convertDataToTargets(data, appendXs) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isTimeSeries = $$.isTimeSeries();
 
 		const dataKeys = Object.keys(data[0] || {});

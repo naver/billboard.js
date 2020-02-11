@@ -20,7 +20,7 @@ export default {
 	 */
 	groups(groups: string[][]): string[][] {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$
 
 		if (isUndefined(groups)) {
 			return config.data_groups;

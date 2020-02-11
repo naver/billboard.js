@@ -18,9 +18,7 @@ export default {
 	 */
 	generateFlow(args) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state, $el} = $$;
 
 		return function() {
 			const targets = args.targets;
@@ -37,7 +35,7 @@ export default {
 			const flowLength = flow.length;
 			let flowStart = $$.getValueOnIndex($$.data.targets[0].values, flowIndex);
 			let flowEnd = $$.getValueOnIndex($$.data.targets[0].values, flowIndex + flowLength);
-			const orgDomain = $$.x.domain();
+			const orgDomain = $$.scale.x.domain();
 			const durationForFlow = flow.duration || duration;
 			const done = flow.done || function() {};
 			const wait = $$.generateWait();
@@ -65,26 +63,28 @@ export default {
 			// update elements related to x scale
 			if ($$.updateXGrid) { $$.updateXGrid(true); }
 
+			const {x} = $$.scale;
+
 			// generate transform to flow
 			if (!flow.orgDataCount) { // if empty
 				if ($$.data.targets[0].values.length !== 1) {
-					translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
+					translateX = x(orgDomain[0]) - x(domain[0]);
 				} else {
 					if ($$.isTimeSeries()) {
 						flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0);
 						flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1);
-						translateX = $$.x(flowStart.x) - $$.x(flowEnd.x);
+						translateX = x(flowStart.x) - x(flowEnd.x);
 					} else {
 						translateX = diffDomain(domain) / 2;
 					}
 				}
 			} else if (flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
-				translateX = $$.x(orgDomain[0]) - $$.x(domain[0]);
+				translateX = x(orgDomain[0]) - x(domain[0]);
 			} else {
 				if ($$.isTimeSeries()) {
-					translateX = ($$.x(orgDomain[0]) - $$.x(domain[0]));
+					translateX = (x(orgDomain[0]) - x(domain[0]));
 				} else {
-					translateX = ($$.x(flowStart.x) - $$.x(flowEnd.x));
+					translateX = (x(flowStart.x) - x(flowEnd.x));
 				}
 			}
 
@@ -165,7 +165,7 @@ export default {
 				// draw again for removing flowed elements and reverting attr
 				xgrid.size() && xgrid
 					.attr("transform", null)
-					.attr($$.xgridAttr);
+					.attr(state.xgridAttr);
 
 				xgridLines
 					.attr("transform", null);

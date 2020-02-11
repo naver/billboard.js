@@ -13,7 +13,7 @@ import {isValue, isDefined, isObjectType} from "../../module/util";
  * @private
  */
 function setMinMax($$, type: "min" | "max", value) {
-	const config = $$.config;
+	const {config} = $$;
 	const axisX = `axis_x_${type}`;
 	const axisY = `axis_y_${type}`;
 	const axisY2 = `axis_y2_${type}`;
@@ -45,7 +45,7 @@ function setMinMax($$, type: "min" | "max", value) {
  * @private
  */
 function getMinMax($$, type: "min" | "max"): {x: number, y: number, y2: number} {
-	const config = $$.config;
+	const {config} = $$;
 
 	return {
 		x: config[`axis_x_${type}`],

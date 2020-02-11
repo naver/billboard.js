@@ -17,8 +17,7 @@ export default {
 	 */
 	initTooltip() {
 		const $$ = this;
-		const config = $$.config;
-		const {$el} = $$;
+		const {config, $el} = $$;
 		const bindto = config.tooltip_contents.bindto;
 
 		$el.tooltip = d3Select(bindto);
@@ -74,7 +73,7 @@ export default {
 	 */
 	getTooltipHTML(...args) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		return isFunction(config.tooltip_contents) ?
 			config.tooltip_contents.call($$, ...args) : $$.getTooltipContent(...args);
@@ -91,7 +90,7 @@ export default {
 	 */
 	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const titleFormat = config.tooltip_format_title || defaultTitleFormat;
 		const nameFormat = config.tooltip_format_name || (name => name);
 		const valueFormat = config.tooltip_format_value || ($$.isStackNormalized() ? ((v, ratio) => `${(ratio * 100).toFixed(2)}%`) : defaultValueFormat);
@@ -228,7 +227,7 @@ export default {
 	 */
 	tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 		const {width, height, currentWidth, currentHeight, isLegendRight, inputType} = $$.state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
@@ -246,7 +245,7 @@ export default {
 				left += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
 		} else {
-			const dataScale = $$.x(dataToShow[0].x);
+			const dataScale = scale.x(dataToShow[0].x);
 
 			if (config.axis_rotated) {
 				top = dataScale + 20;
@@ -254,7 +253,7 @@ export default {
 				chartRight -= svgLeft;
 			} else {
 				top -= 5;
-				left = svgLeft + $$.getCurrentPaddingLeft(true) + 20 + ($$.zoomScale ? left : dataScale);
+				left = svgLeft + $$.getCurrentPaddingLeft(true) + 20 + (scale.zoom ? left : dataScale);
 			}
 		}
 
@@ -284,8 +283,7 @@ export default {
 	 */
 	showTooltip(selectedData, element) {
 		const $$ = this;
-		const config = $$.config;
-		const {tooltip} = $$.$el;
+		const {config, $el: {tooltip}} = $$;
 		const bindto = config.tooltip_contents.bindto;
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
@@ -344,8 +342,7 @@ export default {
 	 */
 	hideTooltip(force) {
 		const $$ = this;
-		const config = $$.config;
-		const {tooltip} = $$.$el;
+		const {config, $el: {tooltip}} = $$;
 
 		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
 			const selectedData = JSON.parse(tooltip.datum().current);
@@ -370,10 +367,11 @@ export default {
 	 */
 	_handleLinkedCharts(show, index) {
 		const $$ = this;
+		const {config} = $$;
 		const charts = $$.charts;
 
-		if ($$.config.tooltip_linked && charts.length > 1) {
-			const linkedName = $$.config.tooltip_linked_name;
+		if (config.tooltip_linked && charts.length > 1) {
+			const linkedName = config.tooltip_linked_name;
 
 			charts.forEach(c => {
 				if (c !== $$.api) {

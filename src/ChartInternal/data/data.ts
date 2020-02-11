@@ -24,7 +24,7 @@ import {
 export default {
 	isX(key) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const dataKey = config.data_x && key === config.data_x;
 		const existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
 
@@ -36,7 +36,7 @@ export default {
 	},
 
 	isStackNormalized(): boolean {
-		const config = this.config;
+		const {config} = this;
 
 		return !!(config.data_stack_normalize && config.data_groups.length);
 	},
@@ -48,7 +48,7 @@ export default {
 
 	getXKey(id) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		return config.data_x ?
 			config.data_x : (notEmpty(config.data_xs) ? config.data_xs[id] : null);
@@ -106,9 +106,10 @@ export default {
 
 	addXs(xs) {
 		const $$ = this;
+		const {config} = $$;
 
 		Object.keys(xs).forEach(id => {
-			$$.config.data_xs[id] = xs[id];
+			config.data_xs[id] = xs[id];
 		});
 	},
 
@@ -121,10 +122,11 @@ export default {
 
 	addName(data) {
 		const $$ = this;
+		const {config} = $$;
 		let name;
 
 		if (data) {
-			name = $$.config.data_names[data.id];
+			name = config.data_names[data.id];
 			data.name = name !== undefined ? name : data.id;
 		}
 
@@ -179,18 +181,18 @@ export default {
 
 	updateXs(values) {
 		if (values.length) {
-			this.xs = values.map(v => v.x);
+			this.state.xs = values.map(v => v.x);
 		}
 	},
 
 	getPrevX(i) {
-		const x = this.xs[i - 1];
+		const x = this.state.xs[i - 1];
 
 		return isDefined(x) ? x : null;
 	},
 
 	getNextX(i) {
-		const x = this.xs[i + 1];
+		const x = this.state.xs[i + 1];
 
 		return isDefined(x) ? x : null;
 	},
@@ -493,7 +495,7 @@ export default {
 	},
 
 	_checkOrder(type) {
-		const config = this.config;
+		const {config} = this;
 		const order = config.data_order;
 
 		return isString(order) && order.toLowerCase() === type;
@@ -515,7 +517,7 @@ export default {
 	 */
 	orderTargets(targetsValue) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const targets = [...targetsValue];
 		const orderAsc = $$.isOrderAsc();
 		const orderDesc = $$.isOrderDesc();
@@ -618,9 +620,9 @@ export default {
 
 	findClosest(values, pos) {
 		const $$ = this;
-		const {main} = $$.$el;
+		const {config, $el: {main}} = $$;
 		const data = values.filter(v => v && isValue(v.value));
-		let minDist = $$.config.point_sensitivity;
+		let minDist = config.point_sensitivity;
 		let closest;
 
 		// find mouseovering bar
@@ -651,12 +653,11 @@ export default {
 
 	dist(data, pos) {
 		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
-
+		const {config: {axis_rotated: isRotated}, scale} = $$;
 		const xIndex = isRotated ? 1 : 0;
 		const yIndex = isRotated ? 0 : 1;
 		const y = $$.circleY(data, data.index);
-		const x = ($$.zoomScale || $$.x)(data.x);
+		const x = (scale.zoom || scale.x)(data.x);
 
 		return Math.sqrt(Math.pow(x - pos[xIndex], 2) + Math.pow(y - pos[yIndex], 2));
 	},
@@ -669,7 +670,7 @@ export default {
 	 */
 	convertValuesToStep(values) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		const isRotated = config.axis_rotated;
 		const stepType = config.line_step_type;
@@ -730,7 +731,7 @@ export default {
 
 	updateDataAttributes(name, attrs) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const current = config[`data_${name}`];
 
 		if (isUndefined(attrs)) {
@@ -768,8 +769,7 @@ export default {
 	 */
 	getRatio(type, d, asPercent) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const api = $$.api;
 		let ratio = 0;
 

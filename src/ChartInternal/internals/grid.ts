@@ -34,8 +34,7 @@ export default {
 
 	initGridLines() {
 		const $$ = this;
-		const config = $$.config;
-		const {clip} = $$.state;
+		const {config, state: {clip}, $el: {grid}} = $$;
 
 		if (config.grid_x_lines.length || config.grid_y_lines.length) {
 			$$.gridLines = $$.$el.main.insert("g", `.${CLASS.chart}${config.grid_lines_front ? " + *" : ""}`)
@@ -45,21 +44,19 @@ export default {
 			$$.gridLines.append("g").attr("class", CLASS.xgridLines);
 			$$.gridLines.append("g").attr("class", CLASS.ygridLines);
 
-			$$.$el.grid.xLines = d3SelectAll([]);
+			grid.xLines = d3SelectAll([]);
 		}
 	},
 
 	updateXGrid(withoutUpdate) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
-		const {main, grid} = $$.$el;
+		const {config, scale, state, $el: {main, grid}} = $$;
 		const isRotated = config.axis_rotated;
-		const xgridData = $$.generateGridData(config.grid_x_type, $$.x);
+		const xgridData = $$.generateGridData(config.grid_x_type, scale.x);
 		const tickOffset = $$.isCategorized() ? $$.axis.x.tickOffset() : 0;
-		const pos = d => (($$.zoomScale || $$.x)(d) + tickOffset) * (isRotated ? -1 : 1);
+		const pos = d => ((scale.zoom || scale.x)(d) + tickOffset) * (isRotated ? -1 : 1);
 
-		$$.xgridAttr = isRotated ? {
+		state.xgridAttr = isRotated ? {
 			"x1": 0,
 			"x2": state.width,
 			"y1": pos,
@@ -86,8 +83,8 @@ export default {
 			grid.x.each(function() {
 				const grid = d3Select(this);
 
-				Object.keys($$.xgridAttr).forEach(id => {
-					grid.attr(id, $$.xgridAttr[id])
+				Object.keys(state.xgridAttr).forEach(id => {
+					grid.attr(id, state.xgridAttr[id])
 						.style("opacity", () => (
 							grid.attr(isRotated ? "y1" : "x1") === (isRotated ? state.height : 0) ?
 								"0" : "1"
@@ -99,12 +96,10 @@ export default {
 
 	updateYGrid() {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
-		const {grid, main} = $$.$el;
+		const {config, state, $el: {grid, main}} = $$;
 		const isRotated = config.axis_rotated;
-		const gridValues = $$.axis.y.tickValues() || $$.y.ticks(config.grid_y_ticks);
-		const pos = d => Math.ceil($$.y(d));
+		const gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks);
+		const pos = d => Math.ceil($$.scale.y(d));
 
 		grid.y = main.select(`.${CLASS.ygrids}`)
 			.selectAll(`.${CLASS.ygrid}`)
@@ -146,8 +141,7 @@ export default {
 	 */
 	updateXGridLines(duration) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 		const isRotated = config.axis_rotated;
 
 		config.grid_x_show && $$.updateXGrid();
@@ -196,9 +190,7 @@ export default {
 	 */
 	updateYGridLines(duration) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
-		const {width, height} = $$.state;
+		const {config, state: {width, height}, $el} = $$;
 		const isRotated = config.axis_rotated;
 
 		config.grid_y_show && $$.updateYGrid();
@@ -258,9 +250,11 @@ export default {
 
 	redrawGrid(withTransition) {
 		const $$ = this;
-		const {width, height} = $$.state;
-		const {grid} = $$.$el;
-		const isRotated = $$.config.axis_rotated;
+		const {
+			config: {axis_rotated: isRotated},
+			state: {width, height},
+			$el: {grid}
+		} = $$;
 		const xv = $$.xv.bind($$);
 
 		let lines = grid.xLines.select("line");
@@ -285,9 +279,7 @@ export default {
 
 	initFocusGrid() {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
-		const {clip} = $$.state;
+		const {config, state: {clip}, $el} = $$;
 		const isFront = config.grid_front;
 		const className = `.${CLASS[isFront && $$.gridLines ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
 
@@ -324,8 +316,7 @@ export default {
 	 */
 	showGridFocus(selectedData) {
 		const $$ = this;
-		const config = $$.config;
-		const {width, height} = $$.state;
+		const {config, state: {width, height}} = $$;
 		const isRotated = config.axis_rotated;
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
@@ -446,7 +437,7 @@ export default {
 
 	removeGridLines(params, forX) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const toRemove = $$.getGridFilterToRemove(params);
 		const toShow = line => !toRemove(line);
 		const classLines = forX ? CLASS.xgridLines : CLASS.ygridLines;

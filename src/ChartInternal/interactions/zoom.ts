@@ -21,7 +21,7 @@ export default {
 	initZoom() {
 		const $$ = this;
 
-		$$.zoomScale = null;
+		$$.scale.zoom = null;
 
 		$$.generateZoom();
 		$$.initZoomBehaviour();
@@ -34,15 +34,16 @@ export default {
 	 */
 	bindZoomEvent(bind = true) {
 		const $$ = this;
-		const zoomEnabled = $$.config.zoom_enabled;
+		const {config, $el: {main}} = $$;
+		const zoomEnabled = config.zoom_enabled;
 
 		$$.redrawEventRect();
 
-		const eventRects = $$.$el.main.select(`.${CLASS.eventRects}`);
+		const eventRects = main.select(`.${CLASS.eventRects}`);
 
 		if (zoomEnabled && bind) {
 			// Do not bind zoom event when subchart is shown
-			!$$.config.subchart_show &&
+			!config.subchart_show &&
 				$$.bindZoomOnEventRect(eventRects, zoomEnabled.type);
 		} else if (bind === false) {
 			$$.api.unzoom();
@@ -59,7 +60,7 @@ export default {
 	 */
 	generateZoom() {
 		const $$ = this;
-		const config = $$.config;
+		const {config, org, scale} = $$;
 
 		const zoom = d3Zoom().duration(0)
 			.on("start", $$.onZoomStart.bind($$))
@@ -76,7 +77,7 @@ export default {
 
 		// @ts-ignore
 		zoom.updateScaleExtent = function() {
-			const ratio = diffDomain($$.x.orgDomain()) / diffDomain($$.getZoomDomain());
+			const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
 			const extent = this.orgScaleExtent();
 
 			this.scaleExtent([extent[0] * ratio, extent[1] * ratio]);
@@ -92,25 +93,25 @@ export default {
 		// @ts-ignore
 		zoom.updateTransformScale = transform => {
 			// in case of resize, update range of orgXScale
-			$$.orgXScale && $$.orgXScale.range($$.x.range());
+			org.xScale && org.xScale.range(scale.x.range());
 
 			// rescale from the original scale
 			const newScale = transform[
 				config.axis_rotated ? "rescaleY" : "rescaleX"
-			]($$.orgXScale || $$.x);
+			](org.xScale || scale.x);
 
 			const domain = $$.trimXDomain(newScale.domain());
 			const rescale = config.zoom_rescale;
 
-			newScale.domain(domain, $$.orgXDomain);
+			newScale.domain(domain, org.xDomain);
 
-			$$.zoomScale = $$.getCustomizedScale(newScale);
-			$$.axis.x.scale($$.zoomScale);
+			scale.zoom = $$.getCustomizedScale(newScale);
+			$$.axis.x.scale(scale.zoom);
 
 			if (rescale) {
 				// copy current initial x scale in case of rescale option is used
-				!$$.orgXScale && ($$.orgXScale = $$.x.copy());
-				$$.x.domain(domain);
+				!org.xScale && (org.xScale = scale.x.copy());
+				scale.x.domain(domain);
 			}
 		};
 
@@ -139,7 +140,7 @@ export default {
 	 */
 	onZoom() {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale, org} = $$;
 		const event = d3Event;
 		const sourceEvent = event.sourceEvent;
 
@@ -147,7 +148,7 @@ export default {
 			!config.zoom_enabled ||
 			!event.sourceEvent ||
 			$$.filterTargetsToShow($$.data.targets).length === 0 ||
-			(!$$.zoomScale && sourceEvent.type.indexOf("touch") > -1 && sourceEvent.touches.length === 1)
+			(!scale.zoom && sourceEvent.type.indexOf("touch") > -1 && sourceEvent.touches.length === 1)
 		) {
 			return;
 		}
@@ -156,14 +157,14 @@ export default {
 		const isZoomOut = sourceEvent.wheelDelta < 0;
 		const transform = event.transform;
 
-		if (!isMousemove && isZoomOut && $$.x.domain().every((v, i) => v !== $$.orgXDomain[i])) {
-			$$.x.domain($$.orgXDomain);
+		if (!isMousemove && isZoomOut && scale.x.domain().every((v, i) => v !== org.xDomain[i])) {
+			scale.x.domain(org.xDomain);
 		}
 
 		$$.zoom.updateTransformScale(transform);
 
-		if ($$.isCategorized() && $$.x.orgDomain()[0] === $$.orgXDomain[0]) {
-			$$.x.domain([$$.orgXDomain[0] - 1e-10, $$.x.orgDomain()[1]]);
+		if ($$.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0]) {
+			scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]);
 		}
 
 		$$.redraw({
@@ -175,7 +176,7 @@ export default {
 		});
 
 		$$.state.cancelClick = isMousemove;
-		callFn(config.zoom_onzoom, $$.api, $$.zoomScale.domain());
+		callFn(config.zoom_onzoom, $$.api, scale.zoom.domain());
 	},
 
 	/**
@@ -184,6 +185,7 @@ export default {
 	 */
 	onZoomEnd() {
 		const $$ = this;
+		const {config, scale} = $$;
 		let startEvent = $$.zoom.startEvent;
 		let event = d3Event && d3Event.sourceEvent;
 
@@ -202,7 +204,7 @@ export default {
 		$$.redrawEventRect();
 		$$.updateZoom();
 
-		callFn($$.config.zoom_onzoomend, $$.api, $$[$$.zoomScale ? "zoomScale" : "subX"].domain());
+		callFn(config.zoom_onzoomend, $$.api, scale[scale.zoom ? "zoom" : "subX"].domain());
 	},
 
 	/**
@@ -212,8 +214,8 @@ export default {
 	 */
 	getZoomDomain() {
 		const $$ = this;
-		const config = $$.config;
-		let [min, max] = $$.orgXDomain;
+		const {config, org} = $$;
+		let [min, max] = org.xDomain;
 
 		if (isDefined(config.zoom_x_min)) {
 			min = getMinMax("min", [min, config.zoom_x_min]);
@@ -233,10 +235,11 @@ export default {
 	 */
 	updateZoom(force) {
 		const $$ = this;
+		let {subX, x, zoom} = $$.scale;
 
-		if ($$.zoomScale) {
-			const zoomDomain = $$.zoomScale.domain();
-			const xDomain = $$.subX.domain();
+		if (zoom) {
+			const zoomDomain = zoom.domain();
+			const xDomain = subX.domain();
 			const delta = 0.015; // arbitrary value
 
 			const isfullyShown = (zoomDomain[0] <= xDomain[0] || (zoomDomain[0] - delta) <= xDomain[0]) &&
@@ -244,9 +247,9 @@ export default {
 
 			// check if the zoomed chart is fully shown, then reset scale when zoom is out as initial
 			if (force || isfullyShown) {
-				$$.axis.x.scale($$.subX);
-				$$.x.domain($$.subX.orgDomain());
-				$$.zoomScale = null;
+				$$.axis.x.scale(subX);
+				x.domain(subX.orgDomain());
+				zoom = null;
 			}
 		}
 	},
@@ -270,8 +273,7 @@ export default {
 	 */
 	initZoomBehaviour() {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
 		let start = 0;
 		let end = 0;
@@ -315,7 +317,7 @@ export default {
 					.attr(prop.attr, Math.abs(end - start));
 			})
 			.on("end", function(d) {
-				const scale = $$.zoomScale || $$.x;
+				const scale = $$.scale.zoom || $$.scale.x;
 
 				$$.setDragStatus(false);
 
@@ -351,7 +353,7 @@ export default {
 
 	setZoomResetButton() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const resetButton = config.zoom_resetButton;
 
 		if (resetButton && config.zoom_enabled.type === "drag") {

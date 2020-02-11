@@ -60,7 +60,7 @@ const tooltip = {
 	 */
 	show: function(args) {
 		const $$ = this.internal;
-		const {inputType} = $$.state;
+		const {config, state: {inputType}} = $$;
 		let index;
 		let mouse;
 
@@ -75,9 +75,9 @@ const tooltip = {
 
 			if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
-				mouse = [$$.x(args.data.x), y];
+				mouse = [$$.scale.x(args.data.x), y];
 			} else {
-				if (!$$.config.tooltip_grouped) {
+				if (!config.tooltip_grouped) {
 					mouse = [0, y];
 				}
 

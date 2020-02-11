@@ -28,9 +28,8 @@ export default class Elements {
 	}
 
 	updateStanfordLines(duration) {
-		const $$ = this.owner.$$;
-		const {main} = $$.$el;
-		const config = $$.config;
+		const {$$} = this.owner;
+		const {config, $el: {main}} = $$;
 		const isRotated = config.axis_rotated;
 		const xvCustom = this.xvCustom.bind($$);
 		const yvCustom = this.yvCustom.bind($$);
@@ -68,9 +67,8 @@ export default class Elements {
 	}
 
 	updateStanfordRegions(duration) {
-		const $$ = this.owner.$$;
-		const {main} = $$.$el;
-		const config = $$.config;
+		const {$$} = this.owner;
+		const {config, $el: {main}} = $$;
 		const isRotated = config.axis_rotated;
 		const xvCustom = this.xvCustom.bind($$);
 		const yvCustom = this.yvCustom.bind($$);
@@ -147,12 +145,12 @@ export default class Elements {
 			value = $$.config.axis_x_categories.indexOf(d.value);
 		}
 
-		return Math.ceil($$.x(value));
+		return Math.ceil($$.scale.x(value));
 	}
 
 	yvCustom(d, xyValue) {
 		const $$ = this;
-		const yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y;
+		const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
 		const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
 
 		return Math.ceil(yScale(value));

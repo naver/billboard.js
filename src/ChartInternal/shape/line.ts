@@ -23,8 +23,7 @@ export default {
 
 	updateTargetsForLine(targets) {
 		const $$ = this;
-		const config = $$.config;
-		const {main} = $$.$el;
+		const {config, $el: {main}} = $$;
 		const classChartLine = $$.classChartLine.bind($$);
 		const classLines = $$.classLines.bind($$);
 		const classAreas = $$.classAreas.bind($$);
@@ -74,7 +73,7 @@ export default {
 
 	updateLine(durationForExit) {
 		const $$ = this;
-		const {$el} = $$;
+		const {format: {extraLineClasses}, $el} = $$;
 
 		$el.line = $el.main
 			.selectAll(`.${CLASS.lines}`)
@@ -88,7 +87,7 @@ export default {
 
 		$el.line = $el.line.enter()
 			.append("path")
-			.attr("class", d => `${$$.classLine.bind($$)(d)} ${$$.extraLineClasses(d) || ""}`)
+			.attr("class", d => `${$$.classLine.bind($$)(d)} ${extraLineClasses(d) || ""}`)
 			.style("stroke", $$.color)
 			.merge($el.line)
 			.style("opacity", $$.initialOpacity.bind($$))
@@ -148,7 +147,7 @@ export default {
 
 	generateDrawLine(lineIndices, isSub) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 		const lineConnectNull = config.line_connectNull;
 		const isRotated = config.axis_rotated;
 
@@ -170,7 +169,7 @@ export default {
 			line = line.defined(d => $$.getBaseValue(d) !== null);
 		}
 
-		const x = isSub ? $$.subX : $$.x;
+		const x = isSub ? scale.subX : scale.x;
 
 		return d => {
 			const y = yScaleGetter.call($$, d.id);
@@ -206,7 +205,7 @@ export default {
 
 	generateGetLinePoints(lineIndices, isSubValue) { // partial duplication of generateGetBarPoints
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const isSub = !!isSubValue;
 		const x = $$.getShapeX(0, lineIndices, isSub);
 		const y = $$.getShapeY(isSub);
@@ -240,7 +239,7 @@ export default {
 
 	lineWithRegions(d, x, y, _regions) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const isTimeSeries = $$.isTimeSeries();
 		const xOffset = $$.isCategorized() ? 0.5 : 0;
@@ -354,8 +353,7 @@ export default {
 
 	updateAreaGradient() {
 		const $$ = this;
-		const {defs} = $$.$el;
-		const {datetimeId} = $$.state;
+		const {config, state: {datetimeId}, $el: {defs}} = $$;
 
 		$$.data.targets.forEach(d => {
 			const id = `${datetimeId}-areaGradient${$$.getTargetSelectorSuffix(d.id)}`;
@@ -366,7 +364,7 @@ export default {
 					x = [0, 0],
 					y = [0, 1],
 					stops = [[0, color, 1], [1, color, 0]]
-				} = $$.config.area_linearGradient;
+				} = config.area_linearGradient;
 
 				const linearGradient = defs.append("linearGradient")
 					.attr("id", `${id}`)
@@ -397,10 +395,9 @@ export default {
 
 	updateArea(durationForExit) {
 		const $$ = this;
-		const {$el} = $$;
-		const state = $$.state;
+		const {config, state, $el} = $$;
 
-		$$.config.area_linearGradient && $$.updateAreaGradient();
+		config.area_linearGradient && $$.updateAreaGradient();
 
 		$el.area = $el.main.selectAll(`.${CLASS.areas}`)
 			.selectAll(`.${CLASS.area}`)
@@ -445,7 +442,7 @@ export default {
 	 */
 	generateDrawArea(areaIndices, isSub) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const lineConnectNull = config.line_connectNull;
 		const isRotated = config.axis_rotated;
 
@@ -495,7 +492,7 @@ export default {
 				path = area.curve($$.getCurve(d))(values);
 			} else {
 				if (values[0]) {
-					x0 = $$.x(values[0].x);
+					x0 = $$.scale.x(values[0].x);
 					y0 = $$.getYScale(d.id)(values[0].value);
 				}
 
@@ -509,7 +506,7 @@ export default {
 	generateGetAreaPoints(areaIndices, isSub) {
 		// partial duplication of generateGetBarPoints
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const x = $$.getShapeX(0, areaIndices, !!isSub);
 		const y = $$.getShapeY(!!isSub);
 		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
@@ -540,9 +537,9 @@ export default {
 
 	updateCircle() {
 		const $$ = this;
-		const {$el} = $$;
+		const {config, $el} = $$;
 
-		if (!$$.config.point_show) {
+		if (!config.point_show) {
 			return;
 		}
 
@@ -591,11 +588,12 @@ export default {
 
 	circleX(d) {
 		const $$ = this;
+		const {x, zoom} = $$.scale;
 		const hasValue = isValue(d.x);
 
-		return $$.config.zoom_enabled && $$.zoomScale ?
-			(hasValue ? $$.zoomScale(d.x) : null) :
-			(hasValue ? $$.x(d.x) : null);
+		return $$.config.zoom_enabled && zoom ?
+			(hasValue ? zoom(d.x) : null) :
+			(hasValue ? x(d.x) : null);
 	},
 
 	updateCircleY() {
@@ -667,7 +665,7 @@ export default {
 
 	pointR(d) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const pointR = config.point_r;
 		let r = pointR;
 
@@ -684,7 +682,7 @@ export default {
 
 	pointExpandedR(d) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
 
 		return config.point_focus_expand_enabled ?

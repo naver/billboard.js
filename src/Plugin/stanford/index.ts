@@ -115,7 +115,7 @@ export default class Stanford extends Plugin {
 	}
 
 	$beforeInit() {
-		const $$ = this.$$;
+		const {$$} = this;
 
 		// override on config values & methods
 		$$.config.data_xSort = false;
@@ -134,7 +134,7 @@ export default class Stanford extends Plugin {
 	}
 
 	$init() {
-		const $$ = this.$$;
+		const {$$} = this;
 
 		loadConfig.call(this, this.options);
 		$$.color = this.getStanfordPointColor.bind($$);
@@ -187,19 +187,19 @@ export default class Stanford extends Plugin {
 			value = $$.config.axis_x_categories.indexOf(d.value);
 		}
 
-		return Math.ceil($$.x(value));
+		return Math.ceil($$.scale.x(value));
 	}
 
 	yvCustom(d, xyValue) {
 		const $$ = this;
-		const yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y;
+		const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
 		const value = xyValue ? d[xyValue] : $$.getBaseValue(d);
 
 		return Math.ceil(yScale(value));
 	}
 
 	initStanfordData() {
-		const config = this.config;
+		const {config} = this;
 		const target = this.$$.data.targets[0];
 
 		// TODO STANFORD see if (data.js -> orderTargets)+ can be used instead
@@ -226,7 +226,7 @@ export default class Stanford extends Plugin {
 	}
 
 	setStanfordTooltip() {
-		const config = this.$$.config;
+		const {config} = this.$$;
 
 		if (isEmpty(config.tooltip_contents)) {
 			config.tooltip_contents = function(d, defaultTitleFormat, defaultValueFormat, color) {
@@ -234,7 +234,7 @@ export default class Stanford extends Plugin {
 
 				d.forEach(v => {
 					html += `<tr>
-							<th>${defaultTitleFormat(this.config.data_x)}</th>
+							<th>${defaultTitleFormat(config.data_x)}</th>
 							<th class="value">${defaultValueFormat(v.x)}</th>
 						</tr>
 						<tr>

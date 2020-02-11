@@ -19,7 +19,7 @@ import {extend} from "../../module/util";
  */
 function ygrids(grids: {value?: number, text?: string}[]) {
 	const $$ = this.internal;
-	const config = $$.config;
+	const {config} = $$
 
 	if (!grids) {
 		return config.grid_y_lines;

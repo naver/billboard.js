@@ -16,9 +16,7 @@ export default {
 	 */
 	drag(mouse) {
 		const $$ = this;
-		const config = $$.config;
-		const {main} = $$.$el;
-		const state = $$.state;
+		const {config, state, $el: {main}} = $$;
 
 		if ($$.hasArcType() ||
 			!config.data_selection_enabled || // do nothing if not selectable
@@ -87,15 +85,15 @@ export default {
 	 */
 	dragstart(mouse) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, state, $el: {main}} = $$;
 
 		if ($$.hasArcType() || !config.data_selection_enabled) {
 			return;
 		}
 
-		$$.state.dragStart = mouse;
+		state.dragStart = mouse;
 
-		$$.$el.main.select(`.${CLASS.chart}`)
+		main.select(`.${CLASS.chart}`)
 			.append("rect")
 			.attr("class", CLASS.dragarea)
 			.style("opacity", "0.1");
@@ -110,8 +108,7 @@ export default {
 	 */
 	dragend() {
 		const $$ = this;
-		const {main} = $$.$el;
-		const config = $$.config;
+		const {config, $el: {main}} = $$.config;
 
 		if ($$.hasArcType() || !config.data_selection_enabled) { // do nothing if not selectable
 			return;

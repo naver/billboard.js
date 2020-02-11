@@ -82,8 +82,9 @@ export default class TextOverlap extends Plugin {
 	 * @private
 	 */
 	generateVoronoi(data) {
-		const $$ = this.$$;
-		const [min, max] = ["x", "y"].map(v => $$[v].domain());
+		const {$$} = this;
+		const {scale} = $$;
+		const [min, max] = ["x", "y"].map(v => scale[v].domain());
 
 		[min[1], max[0]] = [max[0], min[1]];
 

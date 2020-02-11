@@ -24,7 +24,7 @@ export default {
 
 	getClipPath(id) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		if ((!config.clipPath && /-clip$/.test(id)) ||
 			(!config.axis_x_clipPath && /-clip-xaxis$/.test(id)) ||

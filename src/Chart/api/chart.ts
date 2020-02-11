@@ -20,7 +20,7 @@ export default {
 	 * });
 	 */
 	resize(size?: {width?: number, height?: number}) {
-		const config = this.internal.config;
+		const {config} = this.internal;
 
 		config.size_width = size ? size.width : null;
 		config.size_height = size ? size.height : null;
@@ -53,7 +53,7 @@ export default {
 				$$.axis && $$.axis.setOrient();
 			}
 
-			$$.zoomScale = null;
+			$$.scale.zoom = null;
 
 			soft ? $$.redraw({
 				withTransform: true,
@@ -128,17 +128,18 @@ export default {
 	 */
 	config(name: string, value?: any, redraw?: boolean): any {
 		const $$ = this.internal;
+		const {config} = $$;
 		const key = name && name.replace(/\./g, "_");
 		let res;
 
-		if (key in $$.config) {
+		if (key in config) {
 			if (isDefined(value)) {
-				$$.config[key] = value;
+				config[key] = value;
 				res = value;
 
 				redraw && this.flush();
 			} else {
-				res = $$.config[key];
+				res = config[key];
 			}
 		}
 

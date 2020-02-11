@@ -69,8 +69,7 @@ export default {
 
 	unload(rawTargetIds, customDoneCb) {
 		const $$ = this;
-		const {$el} = $$;
-		const state = $$.state;
+		const {state, $el} = $$;
 		let done = customDoneCb;
 		let targetIds = rawTargetIds;
 

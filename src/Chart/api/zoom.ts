@@ -39,40 +39,41 @@ function withinRange(domain: number[], range: number[]): boolean {
  */
 const zoom = function(domainValue?: number[]) {
 	const $$ = this.internal;
+	const {config, scale} = $$;
 	let domain = domainValue;
 	let resultDomain;
 
-	if ($$.config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
+	if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
 		const isTimeSeries = $$.isTimeSeries();
 
 		if (isTimeSeries) {
 			domain = domain.map(x => $$.parseDate(x));
 		}
 
-		if ($$.config.subchart_show) {
-			const xScale = $$.zoomScale || $$.x;
+		if (config.subchart_show) {
+			const xScale = scale.zoom || scale.x;
 
 			$$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]);
 			resultDomain = domain;
 		} else {
-			$$.x.domain(domain);
-			$$.zoomScale = $$.x;
-			$$.axis.x.scale($$.zoomScale);
+			scale.x.domain(domain);
+			scale.zoom = scale.x;
+			$$.axis.x.scale(scale.zoom);
 
-			resultDomain = $$.zoomScale.orgDomain();
+			resultDomain = scale.zoom.orgDomain();
 		}
 
 		$$.redraw({
 			withTransition: true,
-			withY: $$.config.zoom_rescale,
+			withY: config.zoom_rescale,
 			withDimension: false
 		});
 
 		$$.setZoomResetButton();
-		callFn($$.config.zoom_onzoom, this, resultDomain);
+		callFn(config.zoom_onzoom, this, resultDomain);
 	} else {
-		resultDomain = $$.zoomScale ?
-			$$.zoomScale.domain() : $$.x.orgDomain();
+		resultDomain = scale.zoom ?
+			scale.zoom.domain() : scale.x.orgDomain();
 	}
 
 	return resultDomain;
@@ -99,7 +100,7 @@ extend(zoom, {
 	 */
 	enable: function(enabled) {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$
 		let enableType: any = enabled;
 
 		if (enabled) {
@@ -132,10 +133,10 @@ extend(zoom, {
 	 */
 	max: function(max?: number): number {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config, org: {xDomain}} = $$;
 
 		if (max === 0 || max) {
-			config.zoom_x_max = getMinMax("max", [$$.orgXDomain[1], max]);
+			config.zoom_x_max = getMinMax("max", [xDomain[1], max]);
 		}
 
 		return config.zoom_x_max;
@@ -154,10 +155,10 @@ extend(zoom, {
 	 */
 	min: function(min?: number): number {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config, org: {xDomain}} = $$;
 
 		if (min === 0 || min) {
-			config.zoom_x_min = getMinMax("min", [$$.orgXDomain[0], min]);
+			config.zoom_x_min = getMinMax("min", [xDomain[0], min]);
 		}
 
 		return config.zoom_x_min;
@@ -210,9 +211,9 @@ export default {
 	 */
 	unzoom() {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$
 
-		if ($$.zoomScale) {
+		if ($$.scale.zoom) {
 			config.subchart_show ?
 				$$.brush.getSelection().call($$.brush.move, null) :
 				$$.zoom.updateTransformScale(d3ZoomIdentity);

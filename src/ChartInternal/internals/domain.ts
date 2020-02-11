@@ -7,7 +7,7 @@ import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, 
 export default {
 	getYDomainMinMax(targets, type) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const isMin = type === "min";
 
 		const dataGroups = config.data_groups;
@@ -67,7 +67,7 @@ export default {
 
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 
 		if ($$.isStackNormalized()) {
 			return [0, 100];
@@ -78,7 +78,7 @@ export default {
 
 		if (yTargets.length === 0) { // use domain of the other axis if target of axisId is none
 			return axisId === "y2" ?
-				$$.y.domain() :
+				scale.y.domain() :
 				// When all data bounds to y2, y Axis domain is called prior y2.
 				// So, it needs to call to get y2 domain here
 				$$.getYDomain(targets, "y2", xDomain);
@@ -140,7 +140,7 @@ export default {
 
 		// add padding for data label
 		if (showHorizontalDataLabel) {
-			const diff = diffDomain($$.y.range());
+			const diff = diffDomain(scale.y.range());
 			const ratio = $$.getDataLabelLength(yDomainMin, yDomainMax, "width")
 				.map(v => v / diff);
 
@@ -195,7 +195,7 @@ export default {
 
 	getXDomainPadding(domain) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const diff = domain[1] - domain[0];
 		const xPadding = config.axis_x_padding;
 		let maxDataCount;
@@ -257,31 +257,31 @@ export default {
 
 	updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, org, scale} = $$;
 		const zoomEnabled = config.zoom_enabled;
 
 		if (withUpdateOrgXDomain) {
-			$$.x.domain(domain || sortValue($$.getXDomain(targets)));
-			$$.orgXDomain = $$.x.domain();
+			scale.x.domain(domain || sortValue($$.getXDomain(targets)));
+			org.xDomain = scale.x.domain();
 
 			zoomEnabled && $$.zoom.updateScaleExtent();
 
-			$$.subX.domain($$.x.domain());
-			$$.brush && $$.brush.scale($$.subX);
+			scale.subX.domain(scale.x.domain());
+			$$.brush && $$.brush.scale(scale.subX);
 		}
 
 		if (withUpdateXDomain) {
 			const domainValue = domain || (!$$.brush || brushEmpty($$)) ?
-				$$.orgXDomain : getBrushSelection($$).map($$.subX.invert);
+				org.xDomain : getBrushSelection($$).map(scale.subX.invert);
 
-			$$.x.domain(domainValue);
+			scale.x.domain(domainValue);
 			zoomEnabled && $$.zoom.updateScaleExtent();
 		}
 
 		// Trim domain when too big by zoom mousemove event
-		withTrim && $$.x.domain($$.trimXDomain($$.x.orgDomain()));
+		withTrim && scale.x.domain($$.trimXDomain(scale.x.orgDomain()));
 
-		return $$.x.domain();
+		return scale.x.domain();
 	},
 
 	trimXDomain(domain) {

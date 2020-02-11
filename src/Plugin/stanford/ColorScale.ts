@@ -24,8 +24,7 @@ export default class ColorScale {
 	}
 
 	drawColorScale() {
-		const $$ = this.owner.$$;
-		const config = this.owner.config;
+		const {$$, config} = this.owner;
 		const target = $$.data.targets[0];
 		const height = $$.state.height - config.padding_bottom - config.padding_top;
 		const barWidth = config.scale_width;

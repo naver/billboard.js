@@ -13,7 +13,7 @@ export default {
 	 */
 	setContainerSize() {
 		const $$ = this;
-		const state = $$.state;
+		const {state} = $$;
 
 		state.currentWidth = $$.getCurrentWidth();
 		state.currentHeight = $$.getCurrentHeight();
@@ -27,7 +27,7 @@ export default {
 
 	getCurrentHeight() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const h = config.size_height || $$.getParentHeight();
 
 		return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
@@ -41,7 +41,7 @@ export default {
 	 */
 	getAxisSize(id) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const isRotated = config.axis_rotated;
 
 		return (isRotated && id === "x") || (!isRotated && /y2?/.test(id)) ?
@@ -51,8 +51,7 @@ export default {
 
 	getCurrentPaddingTop() {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 		const axesLen = config.axis_y2_axes.length;
 
 		let padding = isValue(config.padding_top) ?
@@ -71,7 +70,7 @@ export default {
 
 	getCurrentPaddingBottom() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const axisId = config.axis_rotated ? "y" : "x";
 		const axesLen = config[`axis_${axisId}_axes`].length;
 		const padding = isValue(config.padding_bottom) ?
@@ -84,7 +83,7 @@ export default {
 
 	getCurrentPaddingLeft(withoutRecompute) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const isRotated = config.axis_rotated;
 		const axisId = isRotated ? "x" : "y";
 		const axesLen = config[`axis_${axisId}_axes`].length;
@@ -107,7 +106,7 @@ export default {
 
 	getCurrentPaddingRight() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = config.axis_y2_axes.length;
@@ -175,8 +174,7 @@ export default {
 
 	getSvgLeft(withoutRecompute) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 		const hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
 		const leftAxisClass = config.axis_rotated ? CLASS.axisX : CLASS.axisY;
 		const leftAxis = $el.main.select(`.${leftAxisClass}`).node();
@@ -199,7 +197,7 @@ export default {
 
 	getHorizontalAxisHeight(id) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const {rotatedPadding, isLegendRight, isLegendInset} = $$.state;
 		const isRotated = config.axis_rotated;
 		let h = 30;

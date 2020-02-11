@@ -34,7 +34,7 @@ const cacheKey = "$radarPoints";
 export default {
 	initRadar() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		if ($$.hasType("radar")) {
 			$$.radars = $$.$el.main.select(`.${CLASS.chart}`).append("g")
@@ -58,9 +58,7 @@ export default {
 
 	getRadarSize() {
 		const $$ = this;
-		const config = $$.config;
-		const {arcWidth, arcHeight} = $$.state;
-
+		const {config, state: {arcWidth, arcHeight}} = $$;
 		const padding = config.axis_x_categories.length < 4 ? -20 : 10;
 		const size = (Math.min(arcWidth, arcHeight) - padding) / 2;
 
@@ -69,7 +67,7 @@ export default {
 
 	updateTargetsForRadar(targets) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		if (isEmpty(config.axis_x_categories)) {
 			config.axis_x_categories = getRange(0, getMinMax("max", targets.map(v => v.values.length)));
@@ -80,7 +78,7 @@ export default {
 
 	getRadarPosition(type, index, range, ratio) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const [width, height] = $$.getRadarSize();
 		const edge = config.axis_x_categories.length;
 		const isClockwise = config.radar_direction_clockwise;
@@ -157,7 +155,7 @@ export default {
 
 	updateRadarLevel() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const [width, height] = $$.getRadarSize();
 		const depth = config.radar_level_depth;
 		const edge = config.axis_x_categories.length;
@@ -226,7 +224,7 @@ export default {
 
 	updateRadarAxes() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const [width, height] = $$.getRadarSize();
 		const categories = config.axis_x_categories;
 
@@ -300,9 +298,7 @@ export default {
 
 	bindEvent() {
 		const $$ = this;
-		const config = $$.config;
-		const {svg} = $$.$el;
-		const {inputType, transiting} = $$.state;
+		const {config, state: {inputType, transiting}, $el: {svg}} = $$;
 
 		if (config.interaction_enabled) {
 			const isMouse = inputType === "mouse";

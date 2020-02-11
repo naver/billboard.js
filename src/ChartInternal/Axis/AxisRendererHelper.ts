@@ -135,7 +135,7 @@ export default class AxisRendererHelper {
 	}
 
 	transitionise(selection) {
-		const config = this.config;
+		const {config} = this;
 
 		return config.withoutTransition ?
 			selection.interrupt() : selection.transition(config.transition);

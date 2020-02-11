@@ -11,7 +11,7 @@ export default {
 	 */
 	initBubble() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		if ($$.hasType("bubble")) {
 			config.point_show = true;

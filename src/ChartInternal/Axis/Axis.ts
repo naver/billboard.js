@@ -40,10 +40,8 @@ export default class Axis {
 
 	init() {
 		const $$ = this.owner;
-		const config = $$.config;
-		const clip = $$.state.clip;
+		const {config, $el: {main, axis}, state: {clip}} = $$;
 		const isRotated = config.axis_rotated;
-		const {main, axis} = $$.$el;
 		const target = ["x", "y"];
 
 		config.axis_y2_show && target.push("y2");
@@ -108,7 +106,7 @@ export default class Axis {
 	 */
 	generateAxes(id: string) {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config} = $$;
 		const axes: any[] = [];
 		const axesConfig = config[`axis_${id}_axes`];
 		const isRotated = config.axis_rotated;
@@ -125,7 +123,7 @@ export default class Axis {
 		if (axesConfig.length) {
 			axesConfig.forEach(v => {
 				const tick = v.tick || {};
-				const scale = $$[id].copy();
+				const scale = $$.scale[id].copy();
 
 				v.domain && scale.domain(v.domain);
 
@@ -148,12 +146,11 @@ export default class Axis {
 	 */
 	updateAxes() {
 		const $$ = this.owner;
-		const config = $$.config;
-		const {main} = $$.$el;
+		const {config, $el: {main}} = $$;
 
 		Object.keys(this.axesList).forEach(id => {
 			const axesConfig = config[`axis_${id}_axes`];
-			const scale = $$[id].copy();
+			const scale = $$.scale[id].copy();
 			const range = scale.range();
 
 			this.axesList[id].forEach((v, i) => {
@@ -188,13 +185,13 @@ export default class Axis {
 	// called from : updateScales() & getMaxTickWidth()
 	getAxis(name, scale, outerTick, noTransition, noTickTextRotate): AxisRenderer {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config} = $$;
 		const isX = /^(x|subX)$/.test(name);
 		const type = isX ? "x" : name;
 
 		const isCategory = isX && $$.isCategorized();
 		const orient = this.orient[name];
-		const tickFormat = isX ? $$.axis.xTickFormat : config[`axis_${name}_tick_format`];
+		const tickFormat = isX ? $$.format.xAxisTick : config[`axis_${name}_tick_format`];
 		let tickValues = isX ? $$.axis.xTickValues : $$[`${name}AxisTickValues`];
 
 		const axisParams = mergeObj({
@@ -208,7 +205,7 @@ export default class Axis {
 			tickMultiline: config.axis_x_tick_multiline,
 			tickWidth: config.axis_x_tick_width,
 			tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
-			orgXScale: $$.x
+			orgXScale: $$.scale.x
 		});
 
 		if (!isX) {
@@ -216,7 +213,7 @@ export default class Axis {
 		}
 
 		const axis = new AxisRenderer(axisParams)
-			.scale((isX && $$.zoomScale) || scale)
+			.scale((isX && $$.scale.zoom) || scale)
 			.orient(orient);
 
 		if (isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
@@ -251,7 +248,7 @@ export default class Axis {
 
 	updateXAxisTickValues(targets, axis?): string[] {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config} = $$;
 		const fit = config.axis_x_tick_fit;
 		const count = config.axis_x_tick_count;
 		let values;
@@ -275,36 +272,36 @@ export default class Axis {
 	}
 
 	getId(id) {
-		const config = this.owner.config;
+		const {config} = this.owner;
 
 		return id in config.data_axes ? config.data_axes[id] : "y";
 	}
 
 	getXAxisTickFormat() {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config, format} = $$;
 		const tickFormat = config.axis_x_tick_format;
 		const isTimeSeries = $$.isTimeSeries();
 		const isCategorized = $$.isCategorized();
-		let format;
+		let currFormat;
 
 		if (tickFormat) {
 			if (isFunction(tickFormat)) {
-				format = tickFormat;
+				currFormat = tickFormat;
 			} else if (isTimeSeries) {
-				format = date => (date ? $$.axisTimeFormat(tickFormat)(date) : "");
+				currFormat = date => (date ? format.axisTime(tickFormat)(date) : "");
 			}
 		} else {
-			format = isTimeSeries ? $$.defaultAxisTimeFormat : (
+			currFormat = isTimeSeries ? format.defaultAxisTime : (
 				isCategorized ?
 					$$.categoryName : v => (v < 0 ? v.toFixed(0) : v)
 			);
 		}
 
-		return isFunction(format) ? v =>
-			format.apply($$, isCategorized ?
+		return isFunction(currFormat) ? v =>
+			currFormat.apply($$, isCategorized ?
 				[v, $$.categoryName(v)] : [v]
-			) : format;
+			) : currFormat;
 	}
 
 	getTickValues(id) {
@@ -330,7 +327,7 @@ export default class Axis {
 
 	setLabelText(id, text) {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config} = $$;
 		const option = this.getLabelOptionByAxisId(id);
 
 		if (isString(option)) {
@@ -460,7 +457,7 @@ export default class Axis {
 
 	dyForXAxisLabel() {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config} = $$;
 		const isInner = this.getXAxisLabelPosition().isInner;
 		const xHeight = config.axis_x_height;
 
@@ -511,8 +508,7 @@ export default class Axis {
 
 	getMaxTickWidth(id: string, withoutRecompute?: boolean): number {
 		const $$ = this.owner;
-		const config = $$.config;
-		const {svg, chart} = $$.$el;
+		const {config, $el: {svg, chart}} = $$;
 		const currentTickMax = $$.state.currentMaxTickWidths[id];
 		let maxWidth = 0;
 
@@ -523,7 +519,7 @@ export default class Axis {
 		if (svg) {
 			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
-			const scale = $$[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
+			const scale = $$.scale[id].copy().domain($$[`get${isYAxis ? "Y" : "X"}Domain`](targetsToShow, id));
 			const domain = scale.domain();
 
 			// do not compute if domain is same
@@ -607,7 +603,8 @@ export default class Axis {
 
 	convertPixelsToAxisPadding(pixels, domainLength) {
 		const $$ = this.owner;
-		const length = $$.config.axis_rotated ? $$.state.width : $$.state.height;
+		const {config, state: {width, height}} = $$;
+		const length = config.axis_rotated ? width : height;
 
 		return domainLength * (pixels / length);
 	}
@@ -680,15 +677,16 @@ export default class Axis {
 
 	redraw(transitions, isHidden, isInit) {
 		const $$ = this.owner;
-		const opacity 	= isHidden ? "0" : "1";
+		const {config, $el} = $$;
+		const opacity = isHidden ? "0" : "1";
 
 		["x", "y", "y2", "subX"].forEach(id => {
 			const axis = $$.axis[id];
-			const $axis = $$.$el.axis[id];
+			const $axis = $el.axis[id];
 
 			if (axis) {
 				if (!isInit) {
-					axis.config.withoutTransition = !$$.config.transition_duration;
+					axis.config.withoutTransition = !config.transition_duration;
 				}
 
 				$axis.style("opacity", opacity);
@@ -709,15 +707,15 @@ export default class Axis {
 	 */
 	redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
 		const $$ = this.owner;
-		const config = $$.config;
-		const hasZoom = !!$$.zoomScale;
+		const {config, scale, $el} = $$;
+		const hasZoom = !!scale.zoom;
 		let xDomainForZoom;
 
 		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
-			$$.x.domain([0, $$.$el.axis.x.selectAll(".tick").size()]);
+			scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]);
 		}
 
-		if ($$.x && targetsToShow.length) {
+		if (scale.x && targetsToShow.length) {
 			!hasZoom &&
 				$$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
 
@@ -730,11 +728,11 @@ export default class Axis {
 		}
 
 		if (config.zoom_rescale && !flow) {
-			xDomainForZoom = $$.x.orgDomain();
+			xDomainForZoom = scale.x.orgDomain();
 		}
 
 		["y", "y2"].forEach(key => {
-			const axis = $$[key];
+			const axis = scale[key];
 
 			if (axis) {
 				const tickValues = config[`axis_${key}_tick_values`];
@@ -769,8 +767,8 @@ export default class Axis {
 
 		// Update sub domain
 		if (wth.Y) {
-			$$.subY && $$.subY.domain($$.getYDomain(targetsToShow, "y"));
-			$$.subY2 && $$.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+			scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y"));
+			scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2"));
 		}
 	}
 
@@ -780,10 +778,10 @@ export default class Axis {
 	 */
 	setCulling() {
 		const $$ = this.owner;
-		const config = $$.config;
+		const {config, $el} = $$;
 
 		["subX", "x", "y", "y2"].forEach(type => {
-			const axis = $$.$el.axis[type];
+			const axis = $el.axis[type];
 
 			// subchart x axis should be aligned with x axis culling
 			const id = type === "subX" ? "x" : type;

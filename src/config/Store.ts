@@ -97,6 +97,14 @@ export default class state {
 			innerRadiusRatio: 0,
 			gaugeArcWidth: 0,
 			radiusExpanded: 0,
+
+			// xgrid attribute
+			xgridAttr: {
+				x1: null,
+				x2: null,
+				y1: null,
+				y2: null
+			}
 		};
 	}
 }

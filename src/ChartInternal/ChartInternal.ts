@@ -132,31 +132,27 @@ export default class ChartInternal {
 		subY2: null,
 		zoom: null
 	}
-	public x;
-	public y;
-	public y2;
-	public subX;
-	public subY;
-	public subY2;
-	public zoomScale;
 
-	// domain
-	public orgXDomain;
+	// original values
+	public org = {
+		xScale: null,
+		xDomain: null
+	};
 
-	// format function
+	// formatter function
 	public color;
 	public patterns;
 	public levelColor;
 	public point;
-	public extraLineClasses;
 
-	public xAxisTickValues
-	public yAxisTickValues
-	public xAxisTickFormat
-	public dataTimeFormat;
-	public axisTimeFormat;
-
-	public xgridAttr;
+	// format function
+	public format = {
+		extraLineClasses: null,
+		xAxisTick: null,
+		dataTime: null, // dataTimeFormat
+		defaultAxisTime: () => {}, // defaultAxisTimeFormat
+		axisTime: () => {} // axisTimeFormat
+	};
 
 	constructor(api) {
 		const $$ = this;
@@ -187,8 +183,7 @@ export default class ChartInternal {
 
 	init() {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 
 		$$.initParams();
 
@@ -221,10 +216,8 @@ export default class ChartInternal {
 	 */
 	initToRender(forced?: boolean) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
-		const target = $$.$el.chart;
-		const isHidden = () => target.style("display") === "none" || target.style("visibility") === "hidden";
+		const {config, state, $el: {chart}} = $$
+		const isHidden = () => chart.style("display") === "none" || chart.style("visibility") === "hidden";
 
 		const isLazy = config.render.lazy || isHidden();
 		const MutationObserver = window.MutationObserver;
@@ -235,7 +228,7 @@ export default class ChartInternal {
 					observer.disconnect();
 					!state.rendered && $$.initToRender(true);
 				}
-			}).observe(target.node(), {
+			}).observe(chart.node(), {
 				attributes: true,
 				attributeFilter: ["class", "style"]
 			});
@@ -250,8 +243,7 @@ export default class ChartInternal {
 
 	initParams() {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, format, state} = $$
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
@@ -262,16 +254,16 @@ export default class ChartInternal {
 		$$.levelColor = $$.generateLevelColor();
 		$$.point = $$.generatePoint();
 
-		$$.extraLineClasses = $$.generateExtraLineClass();
-
-		$$.dataTimeFormat = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
-		$$.axisTimeFormat = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
+		format.extraLineClasses = $$.generateExtraLineClass();
+		format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
+		format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
 		const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
 
-		$$.defaultAxisTimeFormat = d => {
-			const isZoomed = isDragZoom ? this.zoomScale :
-				this.zoomScale && $$.x.orgDomain().toString() !== this.zoomScale.domain().toString();
+		format.defaultAxisTime = d => {
+			const {x, zoom} = $$.scale;
+			const isZoomed = isDragZoom ? zoom :
+				zoom && x.orgDomain().toString() !== zoom.domain().toString();
 
 			const specifier = (d.getMilliseconds() && ".%L") ||
 				(d.getSeconds() && ".:%S") ||
@@ -281,7 +273,7 @@ export default class ChartInternal {
 				(isZoomed && d.getDate() === 1 && "%b\'%y") ||
 				(d.getMonth() && "%-m/%-d") || "%Y";
 
-			return $$.axisTimeFormat(specifier)(d);
+			return format.axisTime(specifier)(d);
 		};
 
 		state.isLegendRight = config.legend_position === "right";
@@ -298,9 +290,13 @@ export default class ChartInternal {
 
 	initWithData(data) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
-		const state = $$.state;
+		const {
+			config, state, $el,
+			scale: {
+				x, y, y2, subX, subY, subY2
+			},
+			org
+		} = $$;
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -335,22 +331,22 @@ export default class ChartInternal {
 		$$.updateScales(true);
 
 		// Set domains for each scale
-		if ($$.x) {
-			$$.x.domain(sortValue($$.getXDomain($$.data.targets)));
-			$$.subX.domain($$.x.domain());
+		if (x) {
+			x.domain(sortValue($$.getXDomain($$.data.targets)));
+			subX.domain(x.domain());
 
 			// Save original x domain for zoom update
-			$$.orgXDomain = $$.x.domain();
+			org.xDomain = x.domain();
 		}
 
-		if ($$.y) {
-			$$.y.domain($$.getYDomain($$.data.targets, "y"));
-			$$.subY.domain($$.y.domain());
+		if (y) {
+			y.domain($$.getYDomain($$.data.targets, "y"));
+			subY.domain(y.domain());
 		}
 
-		if ($$.y2) {
-			$$.y2.domain($$.getYDomain($$.data.targets, "y2"));
-			$$.subY2 && $$.subY2.domain($$.y2.domain());
+		if (y2) {
+			y2.domain($$.getYDomain($$.data.targets, "y2"));
+			subY2 && subY2.domain(y2.domain());
 		}
 
 		// -- Basic Elements --
@@ -498,18 +494,18 @@ export default class ChartInternal {
 			tooltip: $el.tooltip,
 			legend: $el.legend,
 			title: $el.title,
-			grid: $$.grid,
-			arc: $$.$el.arcs,
+			grid: $el.grid,
+			arc: $el.arcs,
 			bar: {
-				bars: $$.$el.bar
+				bars: $el.bar
 			},
 			line: {
 				lines: $el.line,
-				areas: $$.$el.area,
-				circles: $$.$el.circle
+				areas: $el.area,
+				circles: $el.circle
 			},
 			text: {
-				texts: $$.$el.text
+				texts: $el.text
 			}
 		};
 	}
@@ -520,10 +516,10 @@ export default class ChartInternal {
 	 */
 	setBackground() {
 		const $$ = this;
-		const bg = $$.config.background;
+		const {config: {background: bg}, $el: {svg}} = $$;
 
 		if (notEmpty(bg)) {
-			const element = $$.$el.svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
+			const element = svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
 				.insert(bg.imgUrl ? "image" : "rect", ":first-child");
 
 			if (bg.imgUrl) {
@@ -557,18 +553,16 @@ export default class ChartInternal {
 	 */
 	updateSizes(isInit) {
 		const $$ = this;
-		const state = $$.state;
-		const config = $$.config;
-		const $legend = $$.$el.legend;
+		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;
 		const hasArc = $$.hasArcType();
 
-		const legend = {
-			width: $legend ? $$.getLegendWidth() : 0,
-			height: $legend ? $$.getLegendHeight() : 0
+		const currLegend = {
+			width: legend ? $$.getLegendWidth() : 0,
+			height: legend ? $$.getLegendHeight() : 0
 		};
 
-		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : legend.height;
+		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
 		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
 
 		const subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
@@ -612,7 +606,7 @@ export default class ChartInternal {
 			left: 0
 		};
 
-		$$.updateSizeForLegend && $$.updateSizeForLegend(legend);
+		$$.updateSizeForLegend && $$.updateSizeForLegend(currLegend);
 
 		state.width = state.currentWidth - state.margin.left - state.margin.right;
 		state.height = state.currentHeight - state.margin.top - state.margin.bottom;
@@ -640,7 +634,7 @@ export default class ChartInternal {
 		}
 
 		// for arc
-		state.arcWidth = state.width - (state.isLegendRight ? legend.width + 10 : 0);
+		state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0);
 		state.arcHeight = state.height - (state.isLegendRight ? 0 : 10);
 
 		if ($$.hasType("gauge") && !config.gauge_fullCircle) {
@@ -732,10 +726,8 @@ export default class ChartInternal {
 
 	redraw(options = {}, transitionsValue?) {
 		const $$ = this;
-		const {$el} = $$;
-		const state = $$.state;
-		const main = $el.main;
-		const config = $$.config;
+		const {config, state, $el} = $$;
+		const {main} = $el;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 		const initializing = options.initializing;
@@ -831,8 +823,7 @@ export default class ChartInternal {
 	 */
 	generateRedrawList(targets, flow, duration, withSubchart) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const shape = $$.getDrawShape();
 
 		// subchart
@@ -929,7 +920,7 @@ export default class ChartInternal {
 
 	getRedrawList(shape, flow, flowFn, isTransition) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const hasArcType = $$.hasArcType();
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list = [];
@@ -963,7 +954,7 @@ export default class ChartInternal {
 
 	updateAndRedraw(options = {}) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		let transitions;
 
 		// same with redraw
@@ -1014,7 +1005,7 @@ export default class ChartInternal {
 
 	isCustomX() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
 	}
@@ -1025,8 +1016,7 @@ export default class ChartInternal {
 
 	getTranslate(target, index = 0) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
 		const hasGauge = $$.hasType("gauge");
 		let padding = 0;
@@ -1104,34 +1094,37 @@ export default class ChartInternal {
 	 */
 	xx(d) {
 		const $$ = this;
-		const fn = $$.config.zoom_enabled && $$.zoomScale ?
-			$$.zoomScale : this.x;
+		const {config, scale: {x, zoom}} = $$;
+		const fn = config.zoom_enabled && zoom ?
+			zoom : x;
 
 		return d ? fn(isValue(d.x) ? d.x : d) : null;
 	}
 
 	xv(d) {
 		const $$ = this;
+		const {config, scale: {x}} = $$;
 		let value = $$.getBaseValue(d);
 
 		if ($$.isTimeSeries()) {
 			value = $$.parseDate(value);
 		} else if ($$.isCategorized() && isString(value)) {
-			value = $$.config.axis_x_categories.indexOf(value);
+			value = config.axis_x_categories.indexOf(value);
 		}
 
-		return Math.ceil($$.x(value));
+		return Math.ceil(x(value));
 	}
 
 	yv(d) {
 		const $$ = this;
-		const yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y;
+		const {scale: {y, y2}} = $$;
+		const yScale = d.axis && d.axis === "y2" ? y2 : y;
 
 		return Math.ceil(yScale($$.getBaseValue(d)));
 	}
 
 	subxx(d) {
-		return d ? this.subX(d.x) : null;
+		return d ? this.scale.subX(d.x) : null;
 	}
 
 	transformMain(withTransition, transitions) {
@@ -1184,19 +1177,19 @@ export default class ChartInternal {
 
 	transformAll(withTransition, transitions) {
 		const $$ = this;
+		const {config, $el} = $$;
 
 		$$.transformMain(withTransition, transitions);
 
-		$$.config.subchart_show &&
+		config.subchart_show &&
 			$$.transformContext(withTransition, transitions);
 
-		$$.$el.legend && $$.transformLegend(withTransition);
+		$el.legend && $$.transformLegend(withTransition);
 	}
 
 	updateSvgSize() {
 		const $$ = this;
-		const state = $$.state;
-		const {svg} = $$.$el;
+		const {state, $el: {svg}} = $$;
 		const brush = svg.select(`.${CLASS.brush} .overlay`);
 		const brushSize = {width: 0, height: 0};
 
@@ -1240,10 +1233,10 @@ export default class ChartInternal {
 
 	updateDimension(withoutAxis) {
 		const $$ = this;
-		const {axis} = $$.$el;
+		const {config, $el: {axis}} = $$;
 
 		if (!withoutAxis) {
-			if ($$.axis.x && $$.config.axis_rotated) {
+			if ($$.axis.x && config.axis_rotated) {
 				$$.axis.x.create(axis.x);
 				$$.axis.subX.create(axis.subX);
 			} else {
@@ -1260,7 +1253,7 @@ export default class ChartInternal {
 
 	bindResize() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		$$.resizeFunction = $$.generateResize();
 		$$.resizeFunction.add(() => callFn(config.onresize, $$, $$.api));
@@ -1356,7 +1349,7 @@ export default class ChartInternal {
 		if (date instanceof Date) {
 			parsedDate = date;
 		} else if (isString(date)) {
-			parsedDate = $$.dataTimeFormat($$.config.data_xFormat)(date);
+			parsedDate = $$.format.dataTime($$.config.data_xFormat)(date);
 		} else if (isNumber(date) && !isNaN(date)) {
 			parsedDate = new Date(+date);
 		}
@@ -1375,7 +1368,7 @@ export default class ChartInternal {
 
 	convertInputType() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		let isMobile = false;
 
 		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop

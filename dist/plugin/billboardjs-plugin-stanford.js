@@ -731,8 +731,8 @@ function () {
   var _proto = Elements.prototype;
   return _proto.updateStanfordLines = function updateStanfordLines(duration) {
     var $$ = this.owner.$$,
-        main = $$.$el.main,
         config = $$.config,
+        main = $$.$el.main,
         isRotated = config.axis_rotated,
         xvCustom = this.xvCustom.bind($$),
         yvCustom = this.yvCustom.bind($$),
@@ -753,8 +753,8 @@ function () {
     }).transition().style("opacity", "1");
   }, _proto.updateStanfordRegions = function updateStanfordRegions(duration) {
     var $$ = this.owner.$$,
-        main = $$.$el.main,
         config = $$.config,
+        main = $$.$el.main,
         isRotated = config.axis_rotated,
         xvCustom = this.xvCustom.bind($$),
         yvCustom = this.yvCustom.bind($$),
@@ -791,10 +791,10 @@ function () {
   }, _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && Object(util["e" /* isString */])(value) && (value = $$.config.axis_x_categories.indexOf(d.value)), Math.ceil($$.x(value));
+    return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && Object(util["e" /* isString */])(value) && (value = $$.config.axis_x_categories.indexOf(d.value)), Math.ceil($$.scale.x(value));
   }, _proto.yvCustom = function yvCustom(d, xyValue) {
     var $$ = this,
-        yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y,
+        yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     return Math.ceil(yScale(value));
   }, Elements;
@@ -836,8 +836,9 @@ function () {
 
   var _proto = ColorScale.prototype;
   return _proto.drawColorScale = function drawColorScale() {
-    var $$ = this.owner.$$,
-        config = this.owner.config,
+    var _this$owner = this.owner,
+        $$ = _this$owner.$$,
+        config = _this$owner.config,
         target = $$.data.targets[0],
         height = $$.state.height - config.padding_bottom - config.padding_top,
         barWidth = config.scale_width,
@@ -1024,10 +1025,10 @@ function (_Plugin) {
   }, _proto.xvCustom = function xvCustom(d, xyValue) {
     var $$ = this,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
-    return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && Object(util["e" /* isString */])(value) && (value = $$.config.axis_x_categories.indexOf(d.value)), Math.ceil($$.x(value));
+    return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && Object(util["e" /* isString */])(value) && (value = $$.config.axis_x_categories.indexOf(d.value)), Math.ceil($$.scale.x(value));
   }, _proto.yvCustom = function yvCustom(d, xyValue) {
     var $$ = this,
-        yScale = d.axis && d.axis === "y2" ? $$.y2 : $$.y,
+        yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y,
         value = xyValue ? d[xyValue] : $$.getBaseValue(d);
     return Math.ceil(yScale(value));
   }, _proto.initStanfordData = function initStanfordData() {
@@ -1045,11 +1046,9 @@ function (_Plugin) {
   }, _proto.setStanfordTooltip = function setStanfordTooltip() {
     var config = this.$$.config;
     Object(util["b" /* isEmpty */])(config.tooltip_contents) && (config.tooltip_contents = function (d, defaultTitleFormat, defaultValueFormat, color) {
-      var _this3 = this,
-          html = "<table class=\"" + classes["a" /* default */].tooltip + "\"><tbody>";
-
+      var html = "<table class=\"" + classes["a" /* default */].tooltip + "\"><tbody>";
       return d.forEach(function (v) {
-        html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(_this3.config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + classes["a" /* default */].tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
+        html += "<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(config.data_x) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.x) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr>\n\t\t\t\t\t\t\t<th>" + defaultTitleFormat(v.id) + "</th>\n\t\t\t\t\t\t\t<th class=\"value\">" + defaultValueFormat(v.value) + "</th>\n\t\t\t\t\t\t</tr>\n\t\t\t\t\t\t<tr class=\"" + classes["a" /* default */].tooltipName + "-" + v.id + "\">\n\t\t\t\t\t\t\t<td class=\"name\"><span style=\"background-color:" + color(v) + "\"></span>" + defaultTitleFormat("Epochs") + "</td>\n\t\t\t\t\t\t\t<td class=\"value\">" + defaultValueFormat(v.epochs) + "</td>\n\t\t\t\t\t\t</tr>";
       }), html + "</tbody></table>";
     });
   }, _proto.countEpochsInRegion = function countEpochsInRegion(region) {

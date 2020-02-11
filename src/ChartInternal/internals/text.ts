@@ -54,8 +54,7 @@ export default {
 	 */
 	updateText(durationForExit) {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 		const dataFn = $$.labelishData.bind($$);
 		const classText = $$.classText.bind($$);
 
@@ -197,7 +196,7 @@ export default {
 	 */
 	getCenteredTextPos(d, points, textElement) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const isRotated = config.axis_rotated;
 
 		if (config.data_labels.centered && $$.isBarType(d)) {
@@ -249,8 +248,7 @@ export default {
 	 */
 	getXForText(points, d, textElement) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
 		let xPos;
 		let padding;
@@ -289,8 +287,7 @@ export default {
 	 */
 	getYForText(points, d, textElement) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
 		const r = config.point_r;
 		const rect = getBoundingRect(textElement);

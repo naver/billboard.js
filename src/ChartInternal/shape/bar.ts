@@ -16,7 +16,7 @@ export default {
 
 	updateTargetsForBar(targets) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const classChartBar = $$.classChartBar.bind($$);
 		const classBars = $$.classBars.bind($$);
 		const classFocus = $$.classFocus.bind($$);
@@ -70,11 +70,11 @@ export default {
 
 	getBarW(axis, barTargetsNum) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, scale} = $$;
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = config.data_groups.length;
-		const tickInterval = ($$.zoomScale || $$) && !$$.isCategorized() ?
-			$$.xx($$.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
+		const tickInterval = (scale.zoom || $$) && !$$.isCategorized() ?
+			$$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
 		let result;
 
 		const getWidth = (id?: string) => {
@@ -126,7 +126,7 @@ export default {
 
 	generateDrawBar(barIndices, isSub) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
 		const isRotated = config.axis_rotated;
 		const isGrouped = config.data_groups.length;
@@ -177,6 +177,7 @@ export default {
 
 	generateGetBarPoints(barIndices, isSub) {
 		const $$ = this;
+		const {config} = $$;
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
 		const barTargetsNum = $$.getIndicesMax(barIndices) + 1;
 		const barW = $$.getBarW(axis, barTargetsNum);
@@ -193,7 +194,7 @@ export default {
 			let posY = barY(d);
 
 			// fix posY not to overflow opposite quadrant
-			if ($$.config.axis_rotated && (
+			if (config.axis_rotated && (
 				(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
 			)) {
 				posY = y0;

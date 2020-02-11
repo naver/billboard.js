@@ -575,8 +575,9 @@ function (_Plugin) {
    */
   , _proto.generateVoronoi = function generateVoronoi(data) {
     var $$ = this.$$,
+        scale = $$.scale,
         _map = ["x", "y"].map(function (v) {
-      return $$[v].domain();
+      return scale[v].domain();
     }),
         min = _map[0],
         max = _map[1],

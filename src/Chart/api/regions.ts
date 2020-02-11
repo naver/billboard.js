@@ -21,7 +21,7 @@ import {getOption, extend} from "../../module/util";
  */
 function regions(regions: {axis?: string, start?: number, end?: number, class?: string}[]): {}[] {
 	const $$ = this.internal;
-	const config = $$.config;
+	const {config} = $$
 
 	if (!regions) {
 		return config.regions;
@@ -56,7 +56,7 @@ extend(regions, {
 	 */
 	add: function(regions) {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$
 
 		if (!regions) {
 			return config.regions;
@@ -89,7 +89,7 @@ extend(regions, {
 	 */
 	remove: function(optionsValue) {
 		const $$ = this.internal;
-		const config = $$.config;
+		const {config} = $$
 
 		const options = optionsValue || {};
 		const duration = getOption(options, "duration", config.transition_duration);

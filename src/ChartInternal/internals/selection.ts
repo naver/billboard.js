@@ -17,7 +17,7 @@ export default {
 	 */
 	selectPoint(target, d, i) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, $el: {main}} = $$;
 		const isRotated = config.axis_rotated;
 		const cx = (isRotated ? $$.circleY : $$.circleX).bind($$);
 		const cy = (isRotated ? $$.circleX : $$.circleY).bind($$);
@@ -26,7 +26,7 @@ export default {
 		callFn(config.data_onselected, $$.api, d, target.node());
 
 		// add selected-circle on low layer g
-		$$.$el.main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
+		main.select(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(d.id)}`)
 			.selectAll(`.${CLASS.selectedCircle}-${i}`)
 			.data([d])
 			.enter()
@@ -84,7 +84,7 @@ export default {
 	 */
 	selectPath(target, d) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		callFn(config.data_onselected, $$, d, target.node());
 
@@ -102,7 +102,7 @@ export default {
 	 */
 	unselectPath(target, d) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		callFn(config.data_onunselected, $$, d, target.node());
 
@@ -153,7 +153,7 @@ export default {
 	 */
 	toggleShape(that, d, i) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, $el: {main}} = $$;
 		const shape = d3Select(that);
 		const isSelected = shape.classed(CLASS.SELECTED);
 		const toggle = $$.getToggle(that, d).bind($$);
@@ -167,7 +167,7 @@ export default {
 					selector += $$.getTargetSelectorSuffix(d.id);
 				}
 
-				$$.$el.main.selectAll(selector)
+				main.selectAll(selector)
 					.selectAll(`.${CLASS.shape}`)
 					.each(function(d, i) {
 						const shape = d3Select(this);

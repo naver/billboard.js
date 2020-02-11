@@ -33,8 +33,7 @@ export default {
 	 */
 	redrawEventRect() {
 		const $$ = this;
-		const {$el} = $$;
-		const config = $$.config;
+		const {config, $el} = $$;
 		const isMultipleX = $$.isMultipleX();
 		let eventRectUpdate;
 
@@ -91,8 +90,7 @@ export default {
 
 	bindTouchOnEventRect(isMultipleX) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 
 		const getEventRect = () => {
 			const touch = d3Event.changedTouches[0];
@@ -193,9 +191,8 @@ export default {
 	 */
 	updateEventRect(eventRectUpdate) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
-		const xScale = $$.zoomScale || $$.x;
+		const {config, scale, state} = $$;
+		const xScale = scale.zoom || scale.x;
 		const eventRectData = eventRectUpdate || $$.$el.eventRect.data(); // set update selection if null
 		const isRotated = config.axis_rotated;
 		let x;
@@ -277,7 +274,7 @@ export default {
 
 	selectRectForSingle(context, eventRect, index) {
 		const $$ = this;
-		const config = $$.config;
+		const {config, $el: {main}} = $$;
 		const isSelectionEnabled = config.data_selection_enabled;
 		const isSelectionGrouped = config.data_selection_grouped;
 		const isTooltipGrouped = config.tooltip_grouped;
@@ -292,7 +289,7 @@ export default {
 			}
 		}
 
-		$$.$el.main.selectAll(`.${CLASS.shape}-${index}`)
+		main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function() {
 				d3Select(this).classed(CLASS.EXPANDED, true);
 
@@ -329,7 +326,7 @@ export default {
 
 	expandCirclesBars(index, id, reset) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		config.point_focus_expand_enabled &&
 			$$.expandCircles(index, id, reset);
@@ -339,8 +336,7 @@ export default {
 
 	selectRectForMultipleXs(context) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 		// do nothing when dragging
@@ -410,8 +406,7 @@ export default {
 	 */
 	setOverOut(isOver, d) {
 		const $$ = this;
-		const config = $$.config;
-		const {main} = $$.$el;
+		const {config, $el: {main}} = $$;
 		const isArc = isObject(d);
 
 		// Call event handler
@@ -483,7 +478,7 @@ export default {
 	 */
 	getDraggableSelection() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		return config.interaction_enabled && config.data_selection_draggable && $$.drag ?
 			d3Drag()
@@ -507,8 +502,7 @@ export default {
 	 */
 	generateEventRectsForSingleX(eventRectEnter) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 
 		const rect = eventRectEnter.append("rect")
 			.attr("class", $$.classEvent.bind($$))
@@ -526,7 +520,7 @@ export default {
 						return;
 					}
 
-					$$.config.tooltip_grouped && $$.setOverOut(true, d.index);
+					config.tooltip_grouped && $$.setOverOut(true, d.index);
 				})
 				.on("mousemove", function(d) {
 					// do nothing while dragging/flowing
@@ -538,8 +532,8 @@ export default {
 					const eventRect = $$.$el.svg.select(`.${CLASS.eventRect}-${index}`);
 
 					if ($$.isStepType(d) &&
-						$$.config.line_step_type === "step-after" &&
-						d3Mouse(this)[0] < $$.x($$.getXValue(d.id, index))
+						config.line_step_type === "step-after" &&
+						d3Mouse(this)[0] < $$.scale.x($$.getXValue(d.id, index))
 					) {
 						index -= 1;
 					}
@@ -549,13 +543,13 @@ export default {
 
 					// As of individual data point(or <path>) element can't bind mouseover/out event
 					// to determine current interacting element, so use 'mousemove' event instead.
-					if (!$$.config.tooltip_grouped) {
+					if (!config.tooltip_grouped) {
 						$$.setOverOut(index !== -1, d.index);
 					}
 				})
 				.on("mouseout", d => {
 					// chart is destroyed
-					if (!$$.config || $$.hasArcType()) {
+					if (!config || $$.hasArcType()) {
 						return;
 					}
 
@@ -569,8 +563,7 @@ export default {
 
 	clickHandlerForSingleX(d, ctx) {
 		const $$ = ctx;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 
 		if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
 			state.cancelClick && (state.cancelClick = false);
@@ -632,7 +625,7 @@ export default {
 
 	clickHandlerForMultipleXS(ctx) {
 		const $$ = ctx;
-		const config = $$.config;
+		const {config} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
 		if ($$.hasArcType(targetsToShow)) {

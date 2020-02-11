@@ -77,8 +77,7 @@ export default {
 
 	generatePoint() {
 		const $$ = this;
-		const config = $$.config;
-		const {datetimeId} = $$.state;
+		const {config, state: {datetimeId}} = $$;
 		const ids: string[] = [];
 		const pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
 

@@ -29,7 +29,7 @@ import {getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../mo
 export default {
 	getShapeIndices(typeFilter) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const xs = config.data_xs;
 		const hasXs = notEmpty(xs);
 		const indices = {};
@@ -100,8 +100,9 @@ export default {
 
 	getShapeX(offset, indices, isSub) {
 		const $$ = this;
-		const scale = isSub ? $$.subX : ($$.zoomScale || $$.x);
-		const barPadding = $$.config.bar_padding;
+		const {config, scale} = $$;
+		const currScale = isSub ? scale.subX : (scale.zoom || scale.x);
+		const barPadding = config.bar_padding;
 		const sum = (p, c) => p + c;
 		const halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
 
@@ -112,7 +113,7 @@ export default {
 			let x = 0;
 
 			if (notEmpty(d.x)) {
-				const xPos = scale(d.x);
+				const xPos = currScale(d.x);
 
 				if (halfWidth) {
 					x = xPos - (offset[d.id] || offset.width) +
@@ -280,13 +281,14 @@ export default {
 
 	getInterpolateType(d) {
 		const $$ = this;
-		const type = $$.config.spline_interpolation_type;
+		const {config} = $$;
+		const type = config.spline_interpolation_type;
 		const interpolation = $$.isInterpolationType(type) ? type : "cardinal";
 
 		return $$.isSplineType(d) ?
 			interpolation : (
 				$$.isStepType(d) ?
-					$$.config.line_step_type : "linear"
+					config.line_step_type : "linear"
 			);
 	}
 };

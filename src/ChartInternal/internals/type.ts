@@ -17,8 +17,7 @@ const TYPES: {[key: string]: string[]} = {
 export default {
 	setTargetType(targetIds, type) {
 		const $$ = this;
-		const config = $$.config;
-		const {withoutFadeIn} = $$.state;
+		const {config, state: {withoutFadeIn}} = $$;
 
 		$$.mapToTargetIds(targetIds).forEach(id => {
 			withoutFadeIn[id] = (type === config.data_types[id]);
@@ -32,7 +31,8 @@ export default {
 
 	hasType(type, targetsValue) {
 		const $$ = this;
-		const types = $$.config.data_types;
+		const {config} = $$;
+		const types = config.data_types;
 		const targets = targetsValue || $$.data.targets;
 		let has = false;
 
@@ -51,7 +51,7 @@ export default {
 				}
 			});
 		} else {
-			has = $$.config.data_type === type;
+			has = config.data_type === type;
 		}
 
 		return has;
@@ -162,7 +162,7 @@ export default {
 
 	// determine if is 'circle' data point
 	isCirclePoint() {
-		const config = this.config;
+		const {config} = this;
 		const pattern = config.point_pattern;
 
 		return config.point_type === "circle" &&

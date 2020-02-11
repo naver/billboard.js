@@ -18,7 +18,7 @@ import {callFn, isFunction, isNumber, isUndefined, setTextValue} from "../../mod
 export default {
 	initPie() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const dataType = config.data_type;
 		const padding = config.pie_padding;
 		const startingAngle = config[`${dataType}_startingAngle`] || 0;
@@ -39,8 +39,7 @@ export default {
 
 	updateRadius() {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state} = $$;
 		const radius = config.pie_innerRadius;
 		const padding = config.pie_padding;
 		const w = config.gauge_width || config.donut_width;
@@ -85,7 +84,7 @@ export default {
 
 	updateAngle(dValue) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		let pie = $$.pie;
 		let d = dValue;
 		let found = false;
@@ -151,7 +150,7 @@ export default {
 
 	getSvgArc() {
 		const $$ = this;
-		const state = $$.state;
+		const {state} = $$;
 		const ir = $$.getInnerRadius();
 		const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
@@ -190,7 +189,7 @@ export default {
 
 	getSvgArcExpanded(rate) {
 		const $$ = this;
-		const state = $$.state;
+		const {state} = $$;
 		const newRate = rate || 1;
 		const singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
@@ -225,8 +224,7 @@ export default {
 
 	transformForArcLabel(d) {
 		const $$ = this;
-		const config = $$.config;
-		const {radius, radiusExpanded} = $$.state;
+		const {config, state: {radius, radiusExpanded}} = $$;
 
 		const updated = $$.updateAngle(d);
 		let translate = "";
@@ -306,8 +304,7 @@ export default {
 
 	expandArc(targetIds) {
 		const $$ = this;
-		const {$el} = $$;
-		const {transiting} = $$.state;
+		const {state: {transiting}, $el} = $$;
 
 		// MEMO: avoid to cancel transition
 		if (transiting) {
@@ -346,21 +343,21 @@ export default {
 
 	unexpandArc(targetIds) {
 		const $$ = this;
-		const {$el} = $$;
+		const {state: {transiting}, $el: {svg}} = $$;
 
-		if ($$.state.transiting) {
+		if (transiting) {
 			return;
 		}
 
 		const newTargetIds = $$.mapToTargetIds(targetIds);
 
-		$el.svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
+		svg.selectAll($$.selectorTargets(newTargetIds, `.${CLASS.chartArc}`))
 			.selectAll("path")
 			.transition()
 			.duration(d => $$.getExpandConfig(d.data.id, "duration"))
 			.attr("d", $$.svgArc);
 
-		$el.svg.selectAll(`${CLASS.arc}`)
+		svg.selectAll(`${CLASS.arc}`)
 			.style("opacity", "1");
 	},
 
@@ -373,7 +370,7 @@ export default {
 	 */
 	getExpandConfig(id, key) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const def = {
 			duration: 50,
 			rate: 0.98
@@ -393,7 +390,7 @@ export default {
 
 	shouldExpand(id) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		return ($$.isDonutType(id) && config.donut_expand) ||
 			($$.isGaugeType(id) && config.gauge_expand) ||
@@ -402,7 +399,7 @@ export default {
 
 	shouldShowArcLabel() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 
 		return ["pie", "donut", "gauge"]
 			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
@@ -410,7 +407,7 @@ export default {
 
 	meetsArcLabelThreshold(ratio) {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		const threshold = $$.hasType("donut") ? config.donut_label_threshold : config.pie_label_threshold;
 
 		return ratio >= threshold;
@@ -418,7 +415,7 @@ export default {
 
 	getArcLabelFormat() {
 		const $$ = this;
-		const config = $$.config;
+		const {config} = $$;
 		let format = config.pie_label_format;
 
 		if ($$.hasType("gauge")) {
@@ -431,7 +428,7 @@ export default {
 	},
 
 	getGaugeLabelExtents() {
-		const config = this.config;
+		const {config} = this;
 
 		return config.gauge_label_extents;
 	},
@@ -509,9 +506,7 @@ export default {
 
 	redrawArc(duration, durationForExit, withTransform) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
-		const {main} = $$.$el;
+		const {config, state, $el: {main}} = $$;
 		const hasInteraction = config.interaction_enabled;
 
 		let mainArc = main.selectAll(`.${CLASS.arcs}`)
@@ -613,11 +608,10 @@ export default {
 
 	redrawMultiArcGauge() {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
+		const {config, state, $el} = $$;
 		const hiddenTargetIds = $$.state.hiddenTargetIds;
 
-		const arcLabelLines = $$.$el.main.selectAll(`.${CLASS.arcs}`)
+		const arcLabelLines = $el.main.selectAll(`.${CLASS.arcs}`)
 			.selectAll(`.${CLASS.arcLabelLine}`)
 			.data($$.arcData.bind($$));
 
@@ -662,7 +656,7 @@ export default {
 
 	bindArcEvent(arc) {
 		const $$ = this;
-		const state = $$.state;
+		const {config, state} = $$;
 		const isTouch = state.inputType === "touch";
 		const isMouse = state.inputType === "mouse";
 
@@ -692,7 +686,7 @@ export default {
 					arcData = $$.convertToArcData(updated);
 
 					$$.toggleShape && $$.toggleShape(this, arcData, i);
-					$$.config.data_onclick.call($$.api, arcData, this);
+					config.data_onclick.call($$.api, arcData, this);
 				}
 			});
 
@@ -764,9 +758,7 @@ export default {
 
 	redrawArcText(duration) {
 		const $$ = this;
-		const config = $$.config;
-		const state = $$.state;
-		const {main, arcs} = $$.$el;
+		const {config, state, $el: {main, arcs}} = $$;
 		const hasGauge = $$.hasType("gauge");
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 		let text;
@@ -864,8 +856,7 @@ export default {
 
 	initGauge() {
 		const $$ = this;
-		const config = $$.config;
-		const {arcs} = $$.$el;
+		const {config, $el: {arcs}} = $$;
 		const appendText = className => {
 			arcs.append("text")
 				.attr("class", className)

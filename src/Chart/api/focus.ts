@@ -25,7 +25,7 @@ export default {
 	 */
 	focus(targetIdsValue?: string | string[]) {
 		const $$ = this.internal;
-		const state = $$.state;
+		const {state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
 		const candidates = $$.$el.svg.selectAll(
 			$$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
@@ -68,7 +68,7 @@ export default {
 	 */
 	defocus(targetIdsValue?: string | string[]) {
 		const $$ = this.internal;
-		const state = $$.state;
+		const {state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
 		const candidates = $$.$el.svg.selectAll(
 			$$.selectorTargets(targetIds.filter($$.isTargetToShow, $$))
@@ -108,14 +108,14 @@ export default {
 	 */
 	revert(targetIdsValue?: string | string[]) {
 		const $$ = this.internal;
-		const state = $$.state;
+		const {config, state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
 		const candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
 
 		candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
 		$$.hasArcType() && $$.unexpandArc(targetIds);
 
-		if ($$.config.legend_show) {
+		if (config.legend_show) {
 			$$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
 			$$.$el.legend.selectAll($$.selectorLegends(targetIds))
 				.filter(function() {
