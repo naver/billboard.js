@@ -19,7 +19,7 @@ import {extend} from "../../module/util";
  */
 function xgrids(grids: {value?: number, text?: string}[]) {
 	const $$ = this.internal;
-	const {config} = $$
+	const {config} = $$;
 
 	if (!grids) {
 		return config.grid_x_lines;

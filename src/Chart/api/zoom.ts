@@ -100,7 +100,7 @@ extend(zoom, {
 	 */
 	enable: function(enabled) {
 		const $$ = this.internal;
-		const {config} = $$
+		const {config} = $$;
 		let enableType: any = enabled;
 
 		if (enabled) {
@@ -211,7 +211,7 @@ export default {
 	 */
 	unzoom() {
 		const $$ = this.internal;
-		const {config} = $$
+		const {config} = $$;
 
 		if ($$.scale.zoom) {
 			config.subchart_show ?

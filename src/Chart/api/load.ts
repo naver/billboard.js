@@ -76,7 +76,7 @@ export default {
 	 */
 	load(args) {
 		const $$ = this.internal;
-		const {config} = $$
+		const {config} = $$;
 
 		// update xs if specified
 		args.xs && $$.addXs(args.xs);

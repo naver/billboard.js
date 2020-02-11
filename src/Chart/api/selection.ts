@@ -64,7 +64,7 @@ export default {
 	 */
 	select(ids?: string[] | string, indices?: number[], resetOther?: boolean) {
 		const $$ = this.internal;
-		const {config} = $$
+		const {config} = $$;
 
 		if (!config.data_selection_enabled) {
 			return;
@@ -114,7 +114,7 @@ export default {
 	 */
 	unselect(ids?: string | string[], indices?: number[]) {
 		const $$ = this.internal;
-		const {config} = $$
+		const {config} = $$;
 
 		if (!config.data_selection_enabled) {
 			return;

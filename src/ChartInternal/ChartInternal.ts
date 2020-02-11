@@ -216,7 +216,7 @@ export default class ChartInternal {
 	 */
 	initToRender(forced?: boolean) {
 		const $$ = this;
-		const {config, state, $el: {chart}} = $$
+		const {config, state, $el: {chart}} = $$;
 		const isHidden = () => chart.style("display") === "none" || chart.style("visibility") === "hidden";
 
 		const isLazy = config.render.lazy || isHidden();
@@ -243,7 +243,7 @@ export default class ChartInternal {
 
 	initParams() {
 		const $$ = this;
-		const {config, format, state} = $$
+		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
