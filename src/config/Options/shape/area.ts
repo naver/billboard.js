@@ -54,5 +54,5 @@ export default {
      */
     area_zerobased: true,
     area_above: false,
-    area_linearGradient: false
+    area_linearGradient: <boolean|{x?: number[]; y?: number[]; stops?: [number, string|Function|null, number]}> false
 };

@@ -5,6 +5,8 @@
 /**
  * grid config options
  */
+type Lines = {value?: number; text?: string; class?: string; position?: string}[];
+
 export default {
     /**
      * Set related options
@@ -62,9 +64,9 @@ export default {
      */
     grid_x_show: false,
     grid_x_type: "tick",
-    grid_x_lines: [],
+    grid_x_lines: <Lines> [],
     grid_y_show: false,
-    grid_y_lines: [],
+    grid_y_lines: <Lines> [],
     grid_y_ticks: 10,
     grid_focus_edge: false,
     grid_focus_show: true,

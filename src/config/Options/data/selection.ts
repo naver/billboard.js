@@ -86,5 +86,39 @@ export default {
      *   }
      * }
      */
-    data_selection_draggable: false
+    data_selection_draggable: false,
+
+    /**
+     * Set a callback for on data selection.
+     * @name data․onselected
+     * @memberof Options
+     * @type {Function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onselected: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+     *        // element - <circle>
+     *        ...
+     *    }
+     * }
+     */
+    data_onselected: () => {},
+
+    /**
+     * Set a callback for on data un-selection.
+     * @name data․onunselected
+     * @memberof Options
+     * @type {Function}
+     * @default function() {}
+     * @example
+     * data: {
+     *     onunselected: function(d, element) {
+     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+     *        // element - <circle>
+     *        ...
+     *    }
+     * }
+     */
+    data_onunselected: () => {}
 };

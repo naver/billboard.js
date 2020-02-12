@@ -2,30 +2,34 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import data from "./data/data";
-import axis from "./axis/axis";
-
 // common
+import data from "./data/data";
 import color from "./common/color";
-import grid from "./common/grid";
 import interaction from "./common/interaction";
 import legend from "./common/legend";
-import point from "./common/point";
-import subchart from "./common/subchart";
 import title from "./common/title";
 import tooltip from "./common/tooltip";
+
+// Axis based
+import dataAxis from "./data/axis";
+import dataSelection from "./data/selection";
+import axis from "./axis/axis";
+import grid from "./common/grid";
+import point from "./common/point";
+import subchart from "./common/subchart";
 import zoom from "./common/zoom";
 
-// shape
 import area from "./shape/area";
 import bar from "./shape/bar";
 import bubble from "./shape/bubble";
+import line from "./shape/line";
+import spline from "./shape/spline";
+
+// Non-Axis based
 import donut from "./shape/donut";
 import gauge from "./shape/gauge";
-import line from "./shape/line";
 import pie from "./shape/pie";
 import radar from "./shape/radar";
-import spline from "./shape/spline";
 
 import {mergeObj} from "../../module/util";
 
@@ -37,8 +41,11 @@ import {mergeObj} from "../../module/util";
  */
 export default class Options {
 	constructor() {
-		const commonConfig = mergeObj({}, data, axis, color, grid, interaction, legend, point, subchart, title, tooltip, zoom);
-		const shapeConfig = mergeObj({}, area, bar, bubble, donut, gauge, line, pie, radar, spline);
+		const arcShapeConfig = [donut, gauge, pie, radar];
+		const axisConfig = [dataAxis, dataSelection, axis, grid, point, subchart, zoom];
+		const axisShapeConfig = [area, bar, bubble, line, spline];
+
+		const config = [data, color, interaction, legend, title, tooltip, ...arcShapeConfig, ...axisConfig, ...axisShapeConfig];
 
 		return mergeObj({
 			/**
@@ -67,7 +74,7 @@ export default class Options {
 			 *    classname: "bill-board"  // ex) <div id='chart' class='bill-board'>
 			 * }
 			 */
-			bindto: "#chart",
+			bindto: <string|{element: string; classname?: string}> "#chart",
 
 			/**
 			 * Set chart background.
@@ -87,7 +94,7 @@ export default class Options {
 			 *    imgUrl: "https://naver.github.io/billboard.js/img/logo/billboard.js.svg",
 			 * }
 			 */
-			background: {},
+			background: <{class?: string; color?: string; imgUrl?: string;}> {},
 
 			/**
 			 * Set 'clip-path' attribute for chart element
@@ -116,7 +123,7 @@ export default class Options {
              *   classname: "test_class"
 			 * }
 			 */
-			svg_classname: undefined,
+			svg_classname: <string|undefined> undefined,
 
 			/**
 			 * The desired size of the chart element.
@@ -133,8 +140,8 @@ export default class Options {
              *   height: 480
 			 * }
 			 */
-			size_width: undefined,
-			size_height: undefined,
+			size_width: <number|undefined> undefined,
+			size_height: <number|undefined> undefined,
 
 			/**
 			 * The padding of the chart element.
@@ -153,10 +160,10 @@ export default class Options {
              *   left: 20
 			 * }
 			 */
-			padding_left: undefined,
-			padding_right: undefined,
-			padding_top: undefined,
-			padding_bottom: undefined,
+			padding_left: <number|undefined> undefined,
+			padding_right: <number|undefined> undefined,
+			padding_top: <number|undefined> undefined,
+			padding_bottom: <number|undefined> undefined,
 
 			/**
 			 * Set chart resize options
@@ -183,7 +190,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onover: undefined,
+			onover: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback to execute when mouse/touch leaves the chart.
@@ -197,7 +204,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onout: undefined,
+			onout: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback to execute when user resizes the screen.
@@ -211,7 +218,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onresize: undefined,
+			onresize: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback to execute when screen resize finished.
@@ -225,7 +232,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onresized: undefined,
+			onresized: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback to execute before the chart is initialized
@@ -239,7 +246,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onbeforeinit: undefined,
+			onbeforeinit: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback to execute when the chart is initialized.
@@ -253,7 +260,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			oninit: undefined,
+			oninit: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback to execute after the chart is initialized
@@ -267,7 +274,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onafterinit: undefined,
+			onafterinit: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set a callback which is executed when the chart is rendered. Basically, this callback will be called in each time when the chart is redrawed.
@@ -281,7 +288,7 @@ export default class Options {
 			 *   ...
 			 * }
 			 */
-			onrendered: undefined,
+			onrendered: <(() => void)|undefined> undefined,
 
 			/**
 			 * Set duration of transition (in milliseconds) for chart animation.<br><br>
@@ -298,29 +305,29 @@ export default class Options {
 			transition_duration: 350,
 
 			/**
-				* Set scatter options
-				* @name scatter
-				* @memberof Options
-				* @type {Object}
-				* @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
-				* @example
-				*  scatter: {
-				*      connectNull: true,
-				*      step: {
-				*          type: "step-after"
-				*      },
-				*
-				*      // hide all data points ('point.show=false' also has similar effect)
-				*      point: false,
-				*
-				*      // show data points for only indicated datas
-				*      point: [
-				*          "data1", "data3"
-				*      ],
-				*
-				*      zerobased: false
-				*  }
-				*/
+			 * Set scatter options
+			 * @name scatter
+			 * @memberof Options
+			 * @type {Object}
+			 * @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+			 * @example
+			 *  scatter: {
+			 *      connectNull: true,
+			 *      step: {
+			 *          type: "step-after"
+			 *      },
+			 *
+			 *      // hide all data points ('point.show=false' also has similar effect)
+			 *      point: false,
+			 *
+			 *      // show data points for only indicated datas
+			 *      point: [
+			 *          "data1", "data3"
+			 *      ],
+			 *
+			 *      zerobased: false
+			 *  }
+			 */
 			scatter_zerobased: false,
 
 			/**
@@ -376,7 +383,7 @@ export default class Options {
 			 *  // call at any point when you want to render
 			 *  chart.flush();
 			 */
-			render: {},
+			render: <{lazy?: boolean; observe?: boolean;}> {},
 
 			/**
 			 * Show rectangles inside the chart.<br><br>
@@ -400,7 +407,7 @@ export default class Options {
 			 *    }
 			 *  ]
 			 */
-			regions: []
-		}, commonConfig, shapeConfig);
+			regions: <{axis?: string; start?: number; end?: number; class?: string;}[]> []
+		}, ...config);
 	}
 }

@@ -44,8 +44,8 @@ export default {
      *  }
      */
     line_connectNull: false,
-    line_step_type: "step",
+    line_step_type: <"step"|"step-before"|"step-after"> "step",
     line_zerobased: false,
-    line_classes: undefined,
-    line_point: true
+    line_classes: <string[]|undefined> undefined,
+    line_point: <string[]|boolean> true
 };

@@ -62,14 +62,14 @@ export default {
      *      }
      *  }
      */
-    zoom_enabled: undefined,
-    zoom_extent: undefined,
+    zoom_enabled: <{type: "wheel" | "drag"}|boolean|undefined> undefined,
+    zoom_extent: <number[]|undefined> undefined,
     zoom_privileged: false,
     zoom_rescale: false,
-    zoom_onzoom: undefined,
-    zoom_onzoomstart: undefined,
-    zoom_onzoomend: undefined,
-    zoom_resetButton: true,
-    zoom_x_min: undefined,
-    zoom_x_max: undefined
+    zoom_onzoom: <Function|undefined> undefined,
+    zoom_onzoomstart: <Function|undefined> undefined,
+    zoom_onzoomend: <Function|undefined> undefined,
+    zoom_resetButton: <{text: string;}|boolean> true,
+    zoom_x_min: <Number|Date|undefined> undefined,
+    zoom_x_max: <Number|Date|undefined> undefined
 };

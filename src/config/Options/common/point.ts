@@ -76,8 +76,8 @@ export default {
     point_r: 2.5,
     point_sensitivity: 10,
     point_focus_expand_enabled: true,
-    point_focus_expand_r: undefined,
-    point_pattern: [],
-    point_select_r: undefined,
+    point_focus_expand_r: <number|undefined> undefined,
+    point_pattern: <string[]> [],
+    point_select_r: <number|undefined> undefined,
     point_type: "circle"
 };

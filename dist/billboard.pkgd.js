@@ -17674,1271 +17674,16 @@ var Store_state = function () {
 };
 
 
-// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * data.selection config options
- */
-/* harmony default export */ var data_selection = ({
-  /**
-   * Set data selection enabled<br><br>
-   * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
-   * @name data․selection․enabled
-   * @memberof Options
-   * @type {Boolean}
-   * @default false
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
-   * @example
-   * data: {
-   *    selection: {
-   *       enabled: true
-   *    }
-   * }
-   */
-  data_selection_enabled: !1,
-
-  /**
-   * Set grouped selection enabled.<br><br>
-   * If this option set true, multiple data points that have same x value will be selected by one selection.
-   * @name data․selection․grouped
-   * @memberof Options
-   * @type {Boolean}
-   * @default false
-   * @example
-   * data: {
-   *    selection: {
-   *       grouped: true
-   *    }
-   * }
-   */
-  data_selection_grouped: !1,
-
-  /**
-   * Set a callback for each data point to determine if it's selectable or not.<br><br>
-   * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
-   * @name data․selection․isselectable
-   * @memberof Options
-   * @type {Function}
-   * @default function() { return true; }
-   * @example
-   * data: {
-   *    selection: {
-   *       isselectable: function(d) { ... }
-   *    }
-   * }
-   */
-  data_selection_isselectable: function data_selection_isselectable() {
-    return !0;
-  },
-
-  /**
-   * Set multiple data points selection enabled.<br><br>
-   * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
-   * @name data․selection․multiple
-   * @memberof Options
-   * @type {Boolean}
-   * @default true
-   * @example
-   * data: {
-   *    selection: {
-   *       multiple: false
-   *    }
-   * }
-   */
-  data_selection_multiple: !0,
-
-  /**
-   * Enable to select data points by dragging.
-   * If this option set true, data points can be selected by dragging.
-   * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
-   * @name data․selection․draggable
-   * @memberof Options
-   * @type {Boolean}
-   * @default false
-   * @example
-   * data: {
-   *    selection: {
-   *       draggable: true
-   *   }
-   * }
-   */
-  data_selection_draggable: !1
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
-
-function nopropagation() {
-  on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var noevent = (function () {
-  on_event.preventDefault(), on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
-
-
-/* harmony default export */ var nodrag = (function (view) {
-  var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", noevent, !0);
-  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
-});
-function yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", null);
-  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
-    selection.on("click.drag", null);
-  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
-}
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
-/* harmony default export */ var d3_drag_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
-function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
-  this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
-}
-
-DragEvent.prototype.on = function () {
-  var value = this._.on.apply(this._, arguments);
-
-  return value === this._ ? this : value;
-};
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
-
-
-
-
-
- // Ignore right-click, since that should open the context menu.
-
-function defaultFilter() {
-  return !on_event.ctrlKey && !on_event.button;
-}
-
-function defaultContainer() {
-  return this.parentNode;
-}
-
-function defaultSubject(d) {
-  return d == null ? {
-    x: on_event.x,
-    y: on_event.y
-  } : d;
-}
-
-function defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-}
-
-/* harmony default export */ var src_drag = (function () {
-  function drag(selection) {
-    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function mousedowned() {
-    if (!touchending && filter.apply(this, arguments)) {
-      var gesture = beforestart("mouse", container.apply(this, arguments), src_mouse, this, arguments);
-      gesture && (src_select(on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(on_event.view), nopropagation(), mousemoving = !1, mousedownx = on_event.clientX, mousedowny = on_event.clientY, gesture("start"));
-    }
-  }
-
-  function mousemoved() {
-    if (noevent(), !mousemoving) {
-      var dx = on_event.clientX - mousedownx,
-          dy = on_event.clientY - mousedowny;
-      mousemoving = dx * dx + dy * dy > clickDistance2;
-    }
-
-    gestures.mouse("drag");
-  }
-
-  function mouseupped() {
-    src_select(on_event.view).on("mousemove.drag mouseup.drag", null), yesdrag(on_event.view, mousemoving), noevent(), gestures.mouse("end");
-  }
-
-  function touchstarted() {
-    if (filter.apply(this, arguments)) {
-      var i,
-          gesture,
-          touches = on_event.changedTouches,
-          c = container.apply(this, arguments),
-          n = touches.length;
-
-      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, src_touch, this, arguments)) && (nopropagation(), gesture("start"));
-    }
-  }
-
-  function touchmoved() {
-    var i,
-        gesture,
-        touches = on_event.changedTouches,
-        n = touches.length;
-
-    for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (noevent(), gesture("drag"));
-  }
-
-  function touchended() {
-    var i,
-        gesture,
-        touches = on_event.changedTouches,
-        n = touches.length;
-
-    // Ghost clicks are delayed!
-    for (touchending && clearTimeout(touchending), touchending = setTimeout(function () {
-      touchending = null;
-    }, 500), i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (nopropagation(), gesture("end"));
-  }
-
-  function beforestart(id, container, point, that, args) {
-    var s,
-        dx,
-        dy,
-        p = point(container, id),
-        sublisteners = listeners.copy();
-    return customEvent(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
-      return (on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
-    }) ? function gesture(type) {
-      var n,
-          p0 = p;
-
-      switch (type) {
-        case "start":
-          gestures[id] = gesture, n = active++;
-          break;
-
-        case "end":
-          delete gestures[id], --active;
-        // nobreak
-
-        case "drag":
-          p = point(container, id), n = active;
-      }
-
-      customEvent(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
-    } : void 0;
-  }
-
-  var mousedownx,
-      mousedowny,
-      mousemoving,
-      touchending,
-      filter = defaultFilter,
-      container = defaultContainer,
-      subject = defaultSubject,
-      touchable = defaultTouchable,
-      gestures = {},
-      listeners = src_dispatch("start", "drag", "end"),
-      active = 0,
-      clickDistance2 = 0;
-  return drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : filter;
-  }, drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : container;
-  }, drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : subject;
-  }, drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : touchable;
-  }, drag.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? drag : value;
-  }, drag.clickDistance = function (_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
-  }, drag;
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
-
-
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
-/* harmony default export */ var d3_brush_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
-/* harmony default export */ var src_event = (function (target, type, selection) {
-  this.target = target, this.type = type, this.selection = selection;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
-
-function noevent_nopropagation() {
-  on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var src_noevent = (function () {
-  on_event.preventDefault(), on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
-
-
-
-
-
-
-
-
-var MODE_DRAG = {
-  name: "drag"
-},
-    MODE_SPACE = {
-  name: "space"
-},
-    MODE_HANDLE = {
-  name: "handle"
-},
-    MODE_CENTER = {
-  name: "center"
-};
-
-function number1(e) {
-  return [+e[0], +e[1]];
-}
-
-function number2(e) {
-  return [number1(e[0]), number1(e[1])];
-}
-
-function toucher(identifier) {
-  return function (target) {
-    return src_touch(target, on_event.touches, identifier);
-  };
-}
-
-var X = {
-  name: "x",
-  handles: ["w", "e"].map(brush_type),
-  input: function input(x, e) {
-    return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]];
-  },
-  output: function output(xy) {
-    return xy && [xy[0][0], xy[1][0]];
-  }
-},
-    Y = {
-  name: "y",
-  handles: ["n", "s"].map(brush_type),
-  input: function input(y, e) {
-    return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]];
-  },
-  output: function output(xy) {
-    return xy && [xy[0][1], xy[1][1]];
-  }
-},
-    XY = {
-  name: "xy",
-  handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(brush_type),
-  input: function input(xy) {
-    return xy == null ? null : number2(xy);
-  },
-  output: function output(xy) {
-    return xy;
-  }
-},
-    cursors = {
-  overlay: "crosshair",
-  selection: "move",
-  n: "ns-resize",
-  e: "ew-resize",
-  s: "ns-resize",
-  w: "ew-resize",
-  nw: "nwse-resize",
-  ne: "nesw-resize",
-  se: "nwse-resize",
-  sw: "nesw-resize"
-},
-    flipX = {
-  e: "w",
-  w: "e",
-  nw: "ne",
-  ne: "nw",
-  se: "sw",
-  sw: "se"
-},
-    flipY = {
-  n: "s",
-  s: "n",
-  nw: "sw",
-  ne: "se",
-  se: "ne",
-  sw: "nw"
-},
-    signsX = {
-  overlay: 1,
-  selection: 1,
-  n: null,
-  e: 1,
-  s: null,
-  w: -1,
-  nw: -1,
-  ne: 1,
-  se: 1,
-  sw: -1
-},
-    signsY = {
-  overlay: 1,
-  selection: 1,
-  n: -1,
-  e: null,
-  s: 1,
-  w: null,
-  nw: -1,
-  ne: -1,
-  se: 1,
-  sw: 1
-};
-
-function brush_type(t) {
-  return {
-    type: t
-  };
-} // Ignore right-click, since that should open the context menu.
-
-
-function brush_defaultFilter() {
-  return !on_event.ctrlKey && !on_event.button;
-}
-
-function defaultExtent() {
-  var svg = this.ownerSVGElement || this;
-  return svg.hasAttribute("viewBox") ? (svg = svg.viewBox.baseVal, [[svg.x, svg.y], [svg.x + svg.width, svg.y + svg.height]]) : [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
-}
-
-function brush_defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-} // Like d3.local, but with the name “__brush” rather than auto-generated.
-
-
-function brush_local(node) {
-  for (; !node.__brush;) if (!(node = node.parentNode)) return;
-
-  return node.__brush;
-}
-
-function brush_empty(extent) {
-  return extent[0][0] === extent[1][0] || extent[0][1] === extent[1][1];
-}
-
-function brushSelection(node) {
-  var state = node.__brush;
-  return state ? state.dim.output(state.selection) : null;
-}
-function brushX() {
-  return brush_brush(X);
-}
-function brushY() {
-  return brush_brush(Y);
-}
-/* harmony default export */ var src_brush = (function () {
-  return brush_brush(XY);
-});
-
-function brush_brush(dim) {
-  function brush(group) {
-    var overlay = group.property("__brush", initialize).selectAll(".overlay").data([brush_type("overlay")]);
-    overlay.enter().append("rect").attr("class", "overlay").attr("pointer-events", "all").attr("cursor", cursors.overlay).merge(overlay).each(function () {
-      var extent = brush_local(this).extent;
-      src_select(this).attr("x", extent[0][0]).attr("y", extent[0][1]).attr("width", extent[1][0] - extent[0][0]).attr("height", extent[1][1] - extent[0][1]);
-    }), group.selectAll(".selection").data([brush_type("selection")]).enter().append("rect").attr("class", "selection").attr("cursor", cursors.selection).attr("fill", "#777").attr("fill-opacity", .3).attr("stroke", "#fff").attr("shape-rendering", "crispEdges");
-    var handle = group.selectAll(".handle").data(dim.handles, function (d) {
-      return d.type;
-    });
-    handle.exit().remove(), handle.enter().append("rect").attr("class", function (d) {
-      return "handle handle--" + d.type;
-    }).attr("cursor", function (d) {
-      return cursors[d.type];
-    }), group.each(redraw).attr("fill", "none").attr("pointer-events", "all").on("mousedown.brush", started).filter(touchable).on("touchstart.brush", started).on("touchmove.brush", touchmoved).on("touchend.brush touchcancel.brush", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function redraw() {
-    var group = src_select(this),
-        selection = brush_local(this).selection;
-    selection ? (group.selectAll(".selection").style("display", null).attr("x", selection[0][0]).attr("y", selection[0][1]).attr("width", selection[1][0] - selection[0][0]).attr("height", selection[1][1] - selection[0][1]), group.selectAll(".handle").style("display", null).attr("x", function (d) {
-      return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2;
-    }).attr("y", function (d) {
-      return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2;
-    }).attr("width", function (d) {
-      return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize;
-    }).attr("height", function (d) {
-      return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize;
-    })) : group.selectAll(".selection,.handle").style("display", "none").attr("x", null).attr("y", null).attr("width", null).attr("height", null);
-  }
-
-  function emitter(that, args, clean) {
-    return !clean && that.__brush.emitter || new Emitter(that, args);
-  }
-
-  function Emitter(that, args) {
-    this.that = that, this.args = args, this.state = that.__brush, this.active = 0;
-  }
-
-  function started() {
-    function moved() {
-      var point1 = pointer(that);
-      !shifting || lockX || lockY || (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1]) ? lockY = !0 : lockX = !0), point = point1, moving = !0, src_noevent(), move();
-    }
-
-    function move() {
-      var t;
-
-      switch (dx = point[0] - point0[0], dy = point[1] - point0[1], mode) {
-        case MODE_SPACE:
-        case MODE_DRAG:
-          {
-            signX && (dx = Math.max(W - w0, Math.min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx), signY && (dy = Math.max(N - n0, Math.min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy);
-            break;
-          }
-
-        case MODE_HANDLE:
-          {
-            signX < 0 ? (dx = Math.max(W - w0, Math.min(E - w0, dx)), w1 = w0 + dx, e1 = e0) : signX > 0 && (dx = Math.max(W - e0, Math.min(E - e0, dx)), w1 = w0, e1 = e0 + dx), signY < 0 ? (dy = Math.max(N - n0, Math.min(S - n0, dy)), n1 = n0 + dy, s1 = s0) : signY > 0 && (dy = Math.max(N - s0, Math.min(S - s0, dy)), n1 = n0, s1 = s0 + dy);
-            break;
-          }
-
-        case MODE_CENTER:
-          {
-            signX && (w1 = Math.max(W, Math.min(E, w0 - dx * signX)), e1 = Math.max(W, Math.min(E, e0 + dx * signX))), signY && (n1 = Math.max(N, Math.min(S, n0 - dy * signY)), s1 = Math.max(N, Math.min(S, s0 + dy * signY)));
-            break;
-          }
-      }
-
-      e1 < w1 && (signX *= -1, t = w0, w0 = e0, e0 = t, t = w1, w1 = e1, e1 = t, type in flipX && overlay.attr("cursor", cursors[type = flipX[type]])), s1 < n1 && (signY *= -1, t = n0, n0 = s0, s0 = t, t = n1, n1 = s1, s1 = t, type in flipY && overlay.attr("cursor", cursors[type = flipY[type]])), state.selection && (selection = state.selection), lockX && (w1 = selection[0][0], e1 = selection[1][0]), lockY && (n1 = selection[0][1], s1 = selection[1][1]), (selection[0][0] !== w1 || selection[0][1] !== n1 || selection[1][0] !== e1 || selection[1][1] !== s1) && (state.selection = [[w1, n1], [e1, s1]], redraw.call(that), emit.brush());
-    }
-
-    function ended() {
-      if (noevent_nopropagation(), on_event.touches) {
-        if (on_event.touches.length) return;
-        touchending && clearTimeout(touchending), touchending = setTimeout(function () {
-          touchending = null;
-        }, 500);
-      } else yesdrag(on_event.view, moving), view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
-
-      group.attr("pointer-events", "all"), overlay.attr("cursor", cursors.overlay), state.selection && (selection = state.selection), brush_empty(selection) && (state.selection = null, redraw.call(that)), emit.end();
-    }
-
-    function keydowned() {
-      switch (on_event.keyCode) {
-        case 16:
-          {
-            shifting = signX && signY;
-            break;
-          }
-
-        case 18:
-          {
-            mode === MODE_HANDLE && (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER, move());
-            break;
-          }
-
-        case 32:
-          {
-            (mode === MODE_HANDLE || mode === MODE_CENTER) && (signX < 0 ? e0 = e1 - dx : signX > 0 && (w0 = w1 - dx), signY < 0 ? s0 = s1 - dy : signY > 0 && (n0 = n1 - dy), mode = MODE_SPACE, overlay.attr("cursor", cursors.selection), move());
-            break;
-          }
-
-        default:
-          return;
-      }
-
-      src_noevent();
-    }
-
-    function keyupped() {
-      switch (on_event.keyCode) {
-        case 16:
-          {
-            shifting && (lockX = lockY = shifting = !1, move());
-            break;
-          }
-
-        case 18:
-          {
-            mode === MODE_CENTER && (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE, move());
-            break;
-          }
-
-        case 32:
-          {
-            mode === MODE_SPACE && (on_event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
-            break;
-          }
-
-        default:
-          return;
-      }
-
-      src_noevent();
-    }
-
-    if ((!touchending || on_event.touches) && filter.apply(this, arguments)) {
-      var w0,
-          w1,
-          n0,
-          n1,
-          e0,
-          e1,
-          s0,
-          s1,
-          moving,
-          lockX,
-          lockY,
-          that = this,
-          type = on_event.target.__data__.type,
-          mode = (keys && on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && on_event.altKey ? MODE_CENTER : MODE_HANDLE,
-          signX = dim === Y ? null : signsX[type],
-          signY = dim === X ? null : signsY[type],
-          state = brush_local(that),
-          extent = state.extent,
-          selection = state.selection,
-          W = extent[0][0],
-          N = extent[0][1],
-          E = extent[1][0],
-          S = extent[1][1],
-          dx = 0,
-          dy = 0,
-          shifting = signX && signY && keys && on_event.shiftKey,
-          pointer = on_event.touches ? toucher(on_event.changedTouches[0].identifier) : src_mouse,
-          point0 = pointer(that),
-          point = point0,
-          emit = emitter(that, arguments, !0).beforestart();
-      type === "overlay" ? (selection && (moving = !0), state.selection = selection = [[w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]], [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]]) : (w0 = selection[0][0], n0 = selection[0][1], e0 = selection[1][0], s0 = selection[1][1]), w1 = w0, n1 = n0, e1 = e0, s1 = s0;
-      var group = src_select(that).attr("pointer-events", "none"),
-          overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
-      if (on_event.touches) emit.moved = moved, emit.ended = ended;else {
-        var view = src_select(on_event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
-        keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(on_event.view);
-      }
-      noevent_nopropagation(), interrupt(that), redraw.call(that), emit.start();
-    }
-  }
-
-  function touchmoved() {
-    emitter(this, arguments).moved();
-  }
-
-  function touchended() {
-    emitter(this, arguments).ended();
-  }
-
-  function initialize() {
-    var state = this.__brush || {
-      selection: null
-    };
-    return state.extent = number2(extent.apply(this, arguments)), state.dim = dim, state;
-  }
-
-  var touchending,
-      extent = defaultExtent,
-      filter = brush_defaultFilter,
-      touchable = brush_defaultTouchable,
-      keys = !0,
-      listeners = src_dispatch("start", "brush", "end"),
-      handleSize = 6;
-  return brush.move = function (group, selection) {
-    group.selection ? group.on("start.brush", function () {
-      emitter(this, arguments).beforestart().start();
-    }).on("interrupt.brush end.brush", function () {
-      emitter(this, arguments).end();
-    }).tween("brush", function () {
-      function tween(t) {
-        state.selection = t === 1 && selection1 === null ? null : i(t), redraw.call(that), emit.brush();
-      }
-
-      var that = this,
-          state = that.__brush,
-          emit = emitter(that, arguments),
-          selection0 = state.selection,
-          selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
-          i = src_value(selection0, selection1);
-      return selection0 !== null && selection1 !== null ? tween : tween(1);
-    }) : group.each(function () {
-      var that = this,
-          args = arguments,
-          state = that.__brush,
-          selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
-          emit = emitter(that, args).beforestart();
-      interrupt(that), state.selection = selection1 === null ? null : selection1, redraw.call(that), emit.start().brush().end();
-    });
-  }, brush.clear = function (group) {
-    brush.move(group, null);
-  }, Emitter.prototype = {
-    beforestart: function beforestart() {
-      return ++this.active === 1 && (this.state.emitter = this, this.starting = !0), this;
-    },
-    start: function start() {
-      return this.starting ? (this.starting = !1, this.emit("start")) : this.emit("brush"), this;
-    },
-    brush: function () {
-      return this.emit("brush"), this;
-    },
-    end: function end() {
-      return --this.active === 0 && (delete this.state.emitter, this.emit("end")), this;
-    },
-    emit: function emit(type) {
-      customEvent(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
-    }
-  }, brush.extent = function (_) {
-    return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
-  }, brush.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : filter;
-  }, brush.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : touchable;
-  }, brush.handleSize = function (_) {
-    return arguments.length ? (handleSize = +_, brush) : handleSize;
-  }, brush.keyModifiers = function (_) {
-    return arguments.length ? (keys = !!_, brush) : keys;
-  }, brush.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? brush : value;
-  }, brush;
-}
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
-
-// CONCATENATED MODULE: ./src/module/browser.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @module
- * @ignore
- */
-
-/* eslint-disable no-new-func, no-undef */
-
-
-var win = function () {
-  var def = function (o) {
-    return typeof o !== "undefined" && o;
-  };
-
-  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
-}(),
-    browser_doc = win && win.document;
-/* eslint-enable no-new-func, no-undef */
-// CONCATENATED MODULE: ./src/module/util.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-
-
-
-
-
-
-var isValue = function (v) {
-  return v || v === 0;
-},
-    isFunction = function (v) {
-  return typeof v === "function";
-},
-    isString = function (v) {
-  return typeof v === "string";
-},
-    isNumber = function (v) {
-  return typeof v === "number";
-},
-    isUndefined = function (v) {
-  return typeof v === "undefined";
-},
-    isDefined = function (v) {
-  return typeof v !== "undefined";
-},
-    isBoolean = function (v) {
-  return typeof v === "boolean";
-},
-    ceil10 = function (v) {
-  return Math.ceil(v / 10) * 10;
-},
-    asHalfPixel = function (n) {
-  return Math.ceil(n) + .5;
-},
-    diffDomain = function (d) {
-  return d[1] - d[0];
-},
-    isObjectType = function (v) {
-  return typeof v === "object";
-},
-    isEmpty = function (o) {
-  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-},
-    notEmpty = function (o) {
-  return !isEmpty(o);
-},
-    isArray = function (arr) {
-  return Array.isArray(arr);
-},
-    isObject = function (obj) {
-  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
-};
-
-function getOption(options, key, defaultValue) {
-  return isDefined(options[key]) ? options[key] : defaultValue;
-}
-
-function util_hasValue(dict, value) {
-  var found = !1;
-  return Object.keys(dict).forEach(function (key) {
-    return dict[key] === value && (found = !0);
-  }), found;
-}
-/**
- * Call function with arguments
- * @param {Function} fn Function to be called
- * @param {*} args Arguments
- * @return {Boolean} true: fn is function, false: fn is not function
- * @private
- */
-
-
-function callFn(fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
-
-  return isFn && fn.call.apply(fn, args), isFn;
-}
-/**
- * Replace tag sign to html entity
- * @param {String} str
- * @return {String}
- * @private
- */
-
-
-function sanitise(str) {
-  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
-}
-/**
- * Set text value. If there's multiline add nodes.
- * @param {d3Selection} node Text node
- * @param {String} text Text value string
- * @param {Array} dy dy value for multilined text
- * @param {Boolean} toMiddle To be alingned vertically middle
- * @private
- */
-
-
-function setTextValue(node, text, dy, toMiddle) {
-  if (dy === void 0 && (dy = [-1, 1]), toMiddle === void 0 && (toMiddle = !1), node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
-    var diff = [node.text(), text].map(function (v) {
-      return v.replace(/[\s\n]/g, "");
-    });
-
-    if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"),
-          len = toMiddle ? multiline.length - 1 : 1;
-      node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
-      });
-    }
-  }
-} // substitution of SVGPathSeg API polyfill
-
-
-function getRectSegList(path) {
-  /*
-   * seg1 ---------- seg2
-   *   |               |
-   *   |               |
-   *   |               |
-   * seg0 ---------- seg3
-   * */
-  var _path$getBBox = path.getBBox(),
-      x = _path$getBBox.x,
-      y = _path$getBBox.y,
-      width = _path$getBBox.width,
-      height = _path$getBBox.height;
-
-  return [{
-    x: x,
-    y: y + height
-  }, // seg0
-  {
-    x: x,
-    y: y
-  }, // seg1
-  {
-    x: x + width,
-    y: y
-  }, // seg2
-  {
-    x: x + width,
-    y: y + height
-  } // seg3
-  ];
-}
-
-function getPathBox(path) {
-  var _path$getBoundingClie = path.getBoundingClientRect(),
-      width = _path$getBoundingClie.width,
-      height = _path$getBoundingClie.height,
-      items = getRectSegList(path),
-      x = items[0].x,
-      y = Math.min(items[0].y, items[1].y);
-
-  return {
-    x: x,
-    y: y,
-    width: width,
-    height: height
-  };
-} // return brush selection array
-
-
-function getBrushSelection(ctx) {
-  var selection,
-      event = on_event,
-      main = ctx.context || ctx.main;
-  return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = brushSelection(selection)), selection;
-} // Get boundingClientRect. cache the evaluated value once it was called.
-
-
-var getBoundingRect = function (node) {
-  return node.rect || (node.rect = node.getBoundingClientRect());
-}; // retrun random number
-
-
-function getRandom(asStr) {
-  asStr === void 0 && (asStr = !0);
-  var rand = Math.random();
-  return asStr ? rand + "" : rand;
-}
-
-function brushEmpty(ctx) {
-  var selection = getBrushSelection(ctx);
-  return !selection || selection[0] === selection[1];
-}
-
-function util_extend(target, source) {
-  // exclude name with only numbers
-  for (var p in target === void 0 && (target = {}), isArray(source) && source.forEach(function (v) {
-    return util_extend(target, v);
-  }), source) /^\d+$/.test(p) || (target[p] = source[p]);
-
-  return target;
-}
-/**
- * Return first letter capitalized
- * @param {String} str
- * @return {String} capitalized string
- * @private
- */
-
-
-var capitalize = function (str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-},
-    toArray = function (v) {
-  return [].slice.call(v);
-};
-/**
- * Convert to array
- * @param {Object} v
- * @returns {Array}
- * @private
- */
-
-
-/**
- * Get css rules for specified stylesheets
- * @param {Array} styleSheets The stylesheets to get the rules from
- * @returns {Array}
- * @private
- */
-function getCssRules(styleSheets) {
-  var rules = [];
-  return styleSheets.forEach(function (sheet) {
-    try {
-      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
-    } catch (e) {
-      console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
-    }
-  }), rules;
-}
-/**
- * Gets the SVGMatrix of an SVGElement
- * @param {SVGElement} element
- * @return {SVGMatrix} matrix
- * @private
- */
-
-
-function getTranslation(node) {
-  var transform = node ? node.transform : null,
-      baseVal = transform ? transform.baseVal : [];
-  return baseVal.length ? baseVal.getItem(0).matrix : {
-    a: 0,
-    b: 0,
-    c: 0,
-    d: 0,
-    e: 0,
-    f: 0
-  };
-}
-/**
- * Get unique value from array
- * @param {Array} data
- * @return {Array} Unique array value
- * @private
- */
-
-
-function getUnique(data) {
-  var isDate = data[0] instanceof Date,
-      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
-    return self.indexOf(v) === i;
-  });
-  return isDate ? d.map(function (v) {
-    return new Date(v);
-  }) : d;
-}
-/**
- * Merge array
- * @param {Array} arr
- * @return {Array}
- * @private
- */
-
-
-function mergeArray(arr) {
-  return arr && arr.length ? arr.reduce(function (p, c) {
-    return p.concat(c);
-  }) : [];
-}
-/**
- * Merge object returning new object
- * @param {Object} target
- * @param {Object} objectN
- * @returns {Object} merged target object
- * @private
- */
-
-
-function mergeObj(target) {
-  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
-
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
-  var source = objectN.shift();
-  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
-    var value = source[key];
-    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
-  }), mergeObj.apply(void 0, [target].concat(objectN));
-}
-/**
- * Sort value
- * @param {Array} data value to be sorted
- * @param {Boolean} isAsc true: asc, false: desc
- * @return {Number|String|Date} sorted date
- * @private
- */
-
-
-function util_sortValue(data, isAsc) {
-  isAsc === void 0 && (isAsc = !0);
-  var fn;
-  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
-    return a - b;
-  } : function (a, b) {
-    return b - a;
-  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
-    return a - b;
-  } : !isAsc && (fn = function (a, b) {
-    return a > b && -1 || a < b && 1 || a === b && 0;
-  }), data.concat().sort(fn);
-}
-/**
- * Get min/max value
- * @param {String} type 'min' or 'max'
- * @param {Array} data Array data value
- * @retun {Number|Date|undefined}
- * @private
- */
-
-
-function getMinMax(type, data) {
-  var res = data.filter(function (v) {
-    return notEmpty(v);
-  });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = util_sortValue(res, type === "min")[0]) : res = undefined, res;
-}
-/**
- * Get range
- * @param {Number} start Start number
- * @param {Number} end End number
- * @return {Array}
- * @private
- */
-
-
-function getRange(start, end) {
-  var res = [];
-
-  for (var i = start; i < end; i++) res.push(i);
-
-  return res;
-} // emulate event
-
-
-var emulateEvent = {
-  mouse: function () {
-    var getParams = function () {
-      return {
-        bubbles: !1,
-        cancelable: !1,
-        screenX: 0,
-        screenY: 0,
-        clientX: 0,
-        clientY: 0
-      };
-    };
-
-    try {
-      return new MouseEvent("t"), function (el, eventType, params) {
-        params === void 0 && (params = getParams()), el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      // Polyfills DOM4 MouseEvent
-      return function (el, eventType, params) {
-        params === void 0 && (params = getParams());
-        var mouseEvent = browser_doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
-
-        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
-      };
-    }
-  }(),
-  touch: function touch(el, eventType, params) {
-    var touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: .5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: !0,
-      bubbles: !0,
-      shiftKey: !0,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
-  }
-};
-/**
- * Process the template  & return bound string
- * @param {String} tpl Template string
- * @param {Object} data Data value to be replaced
- * @return {String}
- * @private
- */
-
-function tplProcess(tpl, data) {
-  var res = tpl;
-
-  for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
-
-  return res;
-}
 // CONCATENATED MODULE: ./src/config/Options/data/data.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
-
 /**
  * data config options
  */
-
-/* harmony default export */ var data_data = (mergeObj({
-  /**
-   * Specify the key of x values in the data.<br><br>
-   * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
-   * @name data․x
-   * @memberof Options
-   * @type {String}
-   * @default undefined
-   * @example
-   * data: {
-   *   x: "date"
-   * }
-   */
-  data_x: undefined,
-
-  /**
-   * Specify the keys of the x values for each data.<br><br>
-   * This option can be used if we want to show the data that has different x values.
-   * @name data․xs
-   * @memberof Options
-   * @type {Object}
-   * @default {}
-   * @example
-   * data: {
-   *   xs: {
-   *      data1: "x1",
-   *      data2: "x2"
-   *   }
-   * }
-   */
-  data_xs: {},
-
-  /**
-   * Set a format specifier to parse string specifed as x.
-   * @name data․xFormat
-   * @memberof Options
-   * @type {String}
-   * @default %Y-%m-%d
-   * @example
-   * data: {
-   *    x: "x",
-   *    columns: [
-   *        ["x", "01012019", "02012019", "03012019"],
-   *        ["data1", 30, 200, 100]
-   *    ],
-   *    // Format specifier to parse as datetime for given 'x' string value
-   *    xFormat: "%m%d%Y"
-   * },
-   * axis: {
-   *    x: {
-   *        type: "timeseries"
-   *    }
-   * }
-   * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
-   */
-  data_xFormat: "%Y-%m-%d",
-
-  /**
-   * Set localtime format to parse x axis.
-   * @name data․xLocaltime
-   * @memberof Options
-   * @type {Boolean}
-   * @default true
-   * @example
-   * data: {
-   *   xLocaltime: false
-   * }
-   */
-  data_xLocaltime: !0,
-
-  /**
-   * Sort on x axis.
-   * @name data․xSort
-   * @memberof Options
-   * @type {Boolean}
-   * @default true
-   * @example
-   * data: {
-   *   xSort: false
-   * }
-   */
-  data_xSort: !0,
-
+/* harmony default export */ var data_data = ({
   /**
    * Converts data id value
    * @name data․idConverter
@@ -18997,39 +17742,6 @@ function tplProcess(tpl, data) {
   data_classes: {},
 
   /**
-   * Set groups for the data for stacking.
-   * @name data․groups
-   * @memberof Options
-   * @type {Array}
-   * @default []
-   * @example
-   * data: {
-   *   groups: [
-   *     ["data1", "data2"],
-   *     ["data3"]
-   *   ]
-   * }
-   */
-  data_groups: [],
-
-  /**
-   * Set y axis the data related to. y and y2 can be used.
-  * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
-   * @name data․axes
-   * @memberof Options
-   * @type {Object}
-   * @default {}
-   * @example
-   * data: {
-   *   axes: {
-   *     data1: "y",
-   *     data2: "y2"
-   *   }
-   * }
-   */
-  data_axes: {},
-
-  /**
    * Set chart type at once.<br><br>
    * If this option is specified, the type will be applied to every data. This setting can be overwritten by data.types.<br><br>
    * **Available Values:**
@@ -19078,77 +17790,6 @@ function tplProcess(tpl, data) {
   data_types: {},
 
   /**
-   * Set labels options
-   * @name data․labels
-   * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [data.labels=false] Show or hide labels on each data points
-   * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-   * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-   * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
-   *  - `v` is the value of the data point where the label is shown.
-   *  - `id` is the id of the data where the label is shown.
-   *  - `i` is the index of the data point where the label is shown.
-   *  - `j` is the sub index of the data point where the label is shown.<br><br>
-   * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {String|Object} [data.labels.colors] Set label text colors.
-   * @property {Object} [data.labels.position] Set each dataset position, relative the original.
-   * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-   * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
-   * @memberof Options
-   * @type {Object}
-   * @default {}
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-   * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
-   * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-   * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
-   * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
-   * @example
-   * data: {
-   *   labels: true,
-   *
-   *   // or set specific options
-   *   labels: {
-   *     format: function(v, id, i, j) { ... },
-   *
-   *     // it's possible to set for each data
-   *     format: {
-   *         data1: function(v, id, i, j) { ... },
-   *         ...
-   *     },
-   *
-   *     // align text to center of the 'bar' shape (works only for 'bar' type)
-   *     centered: true,
-   *
-   *     // apply for all label texts
-   *     colors: "red",
-   *
-   *     // or set different colors per dataset
-   *     // for not specified dataset, will have the default color value
-   *     colors: {
-   *        data1: "yellow",
-   *        data3: "green"
-   *     },
-   *
-   *     // set x, y coordinate position
-   *     position: {
-   *        x: -10,
-   *        y: 10
-   *     },
-   *
-   *     // or set x, y coordinate position by each dataset
-   *     position: {
-   *        data1: {x: 5, y: 5},
-   *        data2: {x: 10, y: -20}
-   *     }
-   *   }
-   * }
-   */
-  data_labels: {},
-  data_labels_colors: undefined,
-  data_labels_position: {},
-
-  /**
    *  This option changes the order of stacking data and pieces of pie/donut.
    *  - If `null` specified, it will be the order the data loaded.
    *  - If function specified, it will be used as [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)<br><br>
@@ -19187,36 +17828,6 @@ function tplProcess(tpl, data) {
    * }
    */
   data_order: "desc",
-
-  /**
-   * Define regions for each data.<br>
-   * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
-   * - The object type should be as:
-   *   - start {Number}: Start data point number. If not set, the start will be the first data point.
-   *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
-   *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
-   * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
-   * @name data․regions
-   * @memberof Options
-   * @type {Object}
-   * @default {}
-   * @example
-   * data: {
-   *   regions: {
-   *     data1: [{
-   *         start: 1,
-   *         end: 2,
-   *         style: {
-   *             dasharray: "5 2"
-   *         }
-   *     }, {
-   *         start: 3
-   *     }],
-   *     ...
-   *   }
-   * }
-   */
-  data_regions: {},
 
   /**
    * Set color converter function.<br><br>
@@ -19291,26 +17902,6 @@ function tplProcess(tpl, data) {
   data_filter: undefined,
 
   /**
-   * Set the stacking to be normalized
-   * - **NOTE:**
-   *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
-   *   - y Axis will be set in percentage value (0 ~ 100%)
-   *   - Must have postive values
-   * @name data․stack․normalize
-   * @memberof Options
-   * @type {Boolean}
-   * @default false
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
-   * @example
-   * data: {
-   *   stack: {
-   *      normalize: true
-   *   }
-   * }
-   */
-  data_stack_normalize: !1,
-
-  /**
    * Set a callback for click event on each data point.<br><br>
    * This callback will be called when each data point clicked and will receive `d` and element as the arguments.
    * - `d` is the data clicked and element is the element clicked.
@@ -19374,53 +17965,19 @@ function tplProcess(tpl, data) {
   data_onout: function data_onout() {},
 
   /**
-   * Set a callback for on data selection.
-   * @name data․onselected
-   * @memberof Options
-   * @type {Function}
-   * @default function() {}
-   * @example
-   * data: {
-   *     onselected: function(d, element) {
-   *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-   *        // element - <circle>
-   *        ...
-   *    }
-   * }
-   */
-  data_onselected: function data_onselected() {},
-
-  /**
-   * Set a callback for on data un-selection.
-   * @name data․onunselected
-   * @memberof Options
-   * @type {Function}
-   * @default function() {}
-   * @example
-   * data: {
-   *     onunselected: function(d, element) {
-   *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-   *        // element - <circle>
-   *        ...
-   *    }
-   * }
-   */
-  data_onunselected: function data_onunselected() {},
-
-  /**
-   * Set a callback for minimum data
-   * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
-   * @name data․onmin
-   * @memberof Options
-   * @type {Function}
-   * @default undefined
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
-   * @example
-   *  onmin: function(data) {
-   *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
-   *    ...
-   *  }
-   */
+  * Set a callback for minimum data
+  * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+  * @name data․onmin
+  * @memberof Options
+  * @type {Function}
+  * @default undefined
+  * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
+  * @example
+  *  onmin: function(data) {
+  *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+  *    ...
+  *  }
+  */
   data_onmin: undefined,
 
   /**
@@ -19476,7 +18033,7 @@ function tplProcess(tpl, data) {
    * Parse a JSON object for data. See also data.keys.
    * @name data․json
    * @memberof Options
-   * @type {Object}
+   * @type {Array}
    * @default undefined
    * @see [data․keys](#.data%25E2%2580%25A4keys)
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.JSONData)
@@ -19661,7 +18218,880 @@ function tplProcess(tpl, data) {
    * }
    */
   data_empty_label_text: ""
-}, data_selection));
+});
+// CONCATENATED MODULE: ./src/config/Options/common/color.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * color config options
+ */
+/* harmony default export */ var common_color = ({
+  /**
+   * Set color of the data values
+   * @name color
+   * @memberof Options
+   * @type {Object}
+   * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
+   * @property {Array} [color.pattern=[]] custom color pattern
+   * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
+   *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
+   *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
+   *    - `bb-colorize-pattern-red`
+   *    - `bb-colorize-pattern-fff`
+   * @property {Object} [color.threshold] color threshold for gauge and tooltip color
+   * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
+   * @property {Array} [color.threshold.values] Threshold values for each steps
+   * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+   * @example
+   *  color: {
+   *      pattern: ["#1f77b4", "#aec7e8", ...],
+   *
+   *      // Set colors' patterns
+   *      // it should return an array of SVGPatternElement
+   *      tiles: function() {
+   *         var pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
+   *         var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
+   *         var circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+   *
+   *         pattern.setAttribute("patternUnits", "userSpaceOnUse");
+   *         pattern.setAttribute("width", "32");
+   *         pattern.setAttribute("height", "32");
+   *
+   *         g.style.fill = "#000";
+   *         g.style.opacity = "0.2";
+   *
+   *         circle1.setAttribute("cx", "3");
+   *         circle1.setAttribute("cy", "3");
+   *         circle1.setAttribute("r", "3");
+   *
+   *         g.appendChild(circle1);
+   *         pattern.appendChild(g);
+   *
+   *         return [pattern];
+   *      },
+   *
+   *      // for threshold usage, pattern values should be set for each steps
+   *      pattern: ["grey", "green", "yellow", "orange", "red"],
+   *      threshold: {
+   *          unit: "value",
+   *
+   *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
+   *          values: [10, 20, 30, 40, 50],
+   *
+   *          // the equation for max:
+   *          // - unit == 'value': max => 30
+   *          // - unit != 'value': max => value*100/30
+   *          max: 30
+   *      },
+   *
+   *      // set all data to 'red'
+   *      onover: "red",
+   *
+   *      // set different color for data
+   *      onover: {
+   *          data1: "red",
+   *          data2: "yellow"
+   *      },
+   *
+   *      // will pass data object to the callback
+   *      onover: function(d) {
+   *          return d.id === "data1" ? "red" : "green";
+   *      }
+   *  }
+   */
+  color_pattern: [],
+  color_tiles: undefined,
+  color_threshold: {},
+  color_onover: undefined
+});
+// CONCATENATED MODULE: ./src/config/Options/common/interaction.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * interaction config options
+ */
+/* harmony default export */ var interaction = ({
+  /**
+   * Interaction options
+   * @name interaction
+   * @memberof Options
+   * @type {Object}
+   * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
+   *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
+   * @property {Boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
+   * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
+   * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
+   * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+   * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
+   * @example
+   * interaction: {
+   *    enabled: false,
+   *    brighten: false,
+   *    inputType: {
+   *        mouse: true,
+   *        touch: false
+   *
+   *        // or declare preventDefault explicitly.
+   *        // In this case touch inputType is enabled by default
+   *        touch: {
+   *            preventDefault: true
+   *
+   *            // or threshold pixel value (pixel moved from touchstart to touchmove)
+   *            preventDefault: 5
+   *        }
+   *    }
+   * }
+   */
+  interaction_enabled: !0,
+  interaction_brighten: !0,
+  interaction_inputType_mouse: !0,
+  interaction_inputType_touch: {}
+});
+// CONCATENATED MODULE: ./src/config/Options/common/legend.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * legend config options
+ */
+/* harmony default export */ var common_legend = ({
+  /**
+   * Legend options
+   * @name legend
+   * @memberof Options
+   * @type {Object}
+   * @property {Boolean} [legend.show=true] Show or hide legend.
+   * @property {Boolean} [legend.hide=false] Hide legend
+   *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
+   * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
+   * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
+   *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
+   *    - {=COLOR}: data color value
+   *    - {=TITLE}: data title value
+   *  - If set `function` value, will pass following arguments to the given function:
+   *   - title {String}: data's id value
+   *   - color {String}: color string
+   *   - data {Array}: data array
+   * @property {String} [legend.position=bottom] Change the position of legend.<br>
+   *  Available values are: `bottom`, `right` and `inset` are supported.
+   * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
+   *  This option accepts object that has the keys `anchor`, `x`, `y` and `step`.
+   *  - **anchor** decides the position of the legend:
+   *   - top-left
+   *   - top-right
+   *   - bottom-left
+   *   - bottom-right
+   *  - **x** and **y**:
+   *   - set the position of the legend based on the anchor.
+   *  - **step**:
+   *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
+   * @property {Boolean} [legend.equally=false] Set to all items have same width size.
+   * @property {Boolean} [legend.padding=0] Set padding value
+   * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
+   * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
+   * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
+   * @property {Number} [legend.item.tile.width=10] Set width of item tile element
+   * @property {Number} [legend.item.tile.height=10] Set height of item tile element
+   * @property {Boolean} [legend.usePoint=false] Whether to use custom points in legend.
+   * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
+   * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
+   * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
+   * @example
+   *  legend: {
+   *      show: true,
+   *      hide: true,
+   *      //or hide: "data1"
+   *      //or hide: ["data1", "data2"]
+   *      contents: {
+   *          bindto: "#legend",   // <ul id='legend'></ul>
+   *
+   *          // will be as: <li style='background-color:#1f77b4'>data1</li>
+   *          template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
+   *
+   *          // or using function
+   *          template: function(id, color, data) {
+   *               // if you want omit some legend, return falsy value
+   *               if (title !== "data1") {
+   *                    return "<li style='background-color:"+ color +">"+ title +"</li>";
+   *               }
+   *          }
+   *      },
+   *      position: "bottom",  // bottom, right, inset
+   *      inset: {
+   *          anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right
+   *          x: 20,
+   *          y: 10,
+   *          step: 2
+   *      },
+   *      equally: false,
+   *      padding: 10,
+   *      item: {
+   *          onclick: function(id) { ... },
+   *          onover: function(id) { ... },
+   *          onout: function(id) { ... },
+   *
+   *          // set tile's size
+   *          tile: {
+   *              width: 20,
+   *              height: 15
+   *          }
+   *      },
+   *      usePoint: true
+   *  }
+   */
+  legend_show: !0,
+  legend_hide: !1,
+  legend_contents_bindto: undefined,
+  legend_contents_template: undefined,
+  legend_position: "bottom",
+  legend_inset_anchor: "top-left",
+  legend_inset_x: 10,
+  legend_inset_y: 0,
+  legend_inset_step: undefined,
+  legend_item_onclick: undefined,
+  legend_item_onover: undefined,
+  legend_item_onout: undefined,
+  legend_equally: !1,
+  legend_padding: 0,
+  legend_item_tile_width: 10,
+  legend_item_tile_height: 10,
+  legend_usePoint: !1
+});
+// CONCATENATED MODULE: ./src/config/Options/common/title.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * title config options
+ */
+/* harmony default export */ var common_title = ({
+  /**
+   * Set title options
+   * @name title
+   * @memberof Options
+   * @type {Object}
+   * @property {String} [title.text] Title text. If contains `\n`, it's used as line break allowing multiline title.
+   * @property {Number} [title.padding.top=0] Top padding value.
+   * @property {Number} [title.padding.right=0] Right padding value.
+   * @property {Number} [title.padding.bottom=0] Bottom padding value.
+   * @property {Number} [title.padding.left=0] Left padding value.
+   * @property {String} [title.position=center] Available values are: 'center', 'right' and 'left'.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Title.MultilinedTitle)
+   * @example
+   *  title: {
+   *      text: "Title Text",
+   *
+   *      // or Multiline title text
+   *      text: "Main title text\nSub title text",
+   *
+   *      padding: {
+   *          top: 10,
+   *          right: 10,
+   *          bottom: 10,
+   *          left: 10
+   *      },
+   *      position: "center"
+   *  }
+   */
+  title_text: undefined,
+  title_padding: {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 0
+  },
+  title_position: "center"
+});
+// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * tooltip config options
+ */
+/* harmony default export */ var common_tooltip = ({
+  /**
+   * Tooltip options
+   * @name tooltip
+   * @memberof Options
+   * @type {Object}
+   * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
+   * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
+   * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
+   *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
+   * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
+   * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
+   * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
+   *  Specified function receives x of the data point to show.
+   * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
+   *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
+   * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
+   *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
+   *  If undefined returned, the row of that value will be skipped.
+   * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
+   *  This option can be used to modify the tooltip position by returning object that has top and left.
+   * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
+   *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
+   * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
+   *  - **NOTE:** When is specified, will not be updating tooltip's position.
+   * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+   *  Within template, below syntax will be replaced using template-like syntax string:
+   *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
+   *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
+   *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
+   *    - **{=TITLE}**: title value.
+   *    - **{=COLOR}**: data color.
+   *    - **{=VALUE}**: data value.
+   * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
+   *  - **NOTE:** It should contain `{ key: Array, ... }` value
+   *    - 'key' name is used as substitution within template as '{=KEY}'
+   *    - The value array length should match with the data length
+   * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
+   * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
+   * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
+   * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
+   * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
+   * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
+   * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
+   * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
+   *  **Available Values:**
+   *  - `desc`: In descending data value order
+   *  - `asc`: In ascending data value order
+   *  - `null`: It keeps the data display order<br>
+   *     **NOTE:** When `data.groups` is set, the order will follow as the stacked graph order.<br>
+   *      If want to order as data bound, set any value rather than asc, desc or null. (ex. empty string "")
+   *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
+   * @see [Demo: Hide Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.HideTooltip)
+   * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
+   * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
+   * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
+   * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
+   * @example
+   *  tooltip: {
+   *      show: true,
+   *      doNotHide: true,
+   *      grouped: false,
+   *      format: {
+   *          title: function(x) { return "Data " + x; },
+   *          name: function(name, ratio, id, index) { return name; },
+   *          value: function(value, ratio, id, index) { return ratio; }
+   *      },
+   *      position: function(data, width, height, element) {
+   *          return {top: 0, left: 0}
+   *      },
+   *
+   *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
+   *          return ... // formatted html as you want
+   *      },
+   *
+   *       // specify tooltip contents using template
+   *       // - example of HTML returned:
+   *       // <ul class="bb-tooltip">
+   *       //   <li class="bb-tooltip-name-data1"><span>250</span><br><span style="color:#00c73c">data1</span></li>
+   *       //   <li class="bb-tooltip-name-data2"><span>50</span><br><span style="color:#fa7171">data2</span></li>
+   *       // </ul>
+   *       contents: {
+   *      	bindto: "#tooltip",
+   *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+   *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
+   *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
+   *      		'}}</ul>'
+   *      }
+   *
+   *       // with additional text value
+   *       // - example of HTML returned:
+   *       // <ul class="bb-tooltip">
+   *       //   <li class="bb-tooltip-name-data1"><span>250</span><br>comment1<span style="color:#00c73c">data1</span>text1</li>
+   *       //   <li class="bb-tooltip-name-data2"><span>50</span><br>comment2<span style="color:#fa7171">data2</span>text2</li>
+   *       // </ul>
+   *       contents: {
+   *      	bindto: "#tooltip",
+   *      	text: {
+   *      		// a) 'key' name is used as substitution within template as '{=KEY}'
+   *      		// b) the length should match with the data length
+   *      		VAR1: ["text1", "text2"],
+   *      		VAR2: ["comment1", "comment2"],
+   *      	},
+   *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
+   *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span>{=VAR2}<br>' +
+   *      			'<span style=color:{=COLOR}>{=NAME}</span>{=VAR1}</li>' +
+   *      		'}}</ul>'
+   *      }
+   *
+   *      // sort tooltip data value display in ascending order
+   *      order: "asc",
+   *
+   *      // specifying sort function
+   *      order: function(a, b) {
+   *         // param data passed format
+   *         {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
+   *           ...
+   *      },
+   *
+   *      // show at the initialization
+   *      init: {
+   *          show: true,
+   *          x: 2,
+   *          position: {
+   *              top: "150px",
+   *              left: "250px"
+   *          }
+   *      },
+   *
+   *      // fires prior tooltip is shown
+   *      onshow: function(ctx, selectedData) {
+   *      	ctx; // current chart instance
+   *
+   *      	// current dataset selected
+   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+   *      	selectedData;
+   *      },
+   *
+   *      // fires prior tooltip is hidden
+   *      onhide: function(ctx, selectedData) {
+   *      	ctx; // current chart instance
+   *
+   *      	// current dataset selected
+   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+   *      	selectedData;
+   *      },
+   *
+   *      // fires after tooltip is shown
+   *      onshown: function(ctx, selectedData) {
+   *      	ctx; // current chart instance
+   *
+   *      	// current dataset selected
+   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+   *      	selectedData;
+   *      },
+   *
+   *      // fires after tooltip is hidden
+   *      onhidden: function(ctx, selectedData) {
+   *      	ctx; // current chart instance
+   *
+   *      	// current dataset selected
+   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
+   *      	selectedData;
+   *      },
+   *
+   *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
+   *      // Useful for timeseries correlation
+   *      linked: true,
+   *
+   *      // Specify name to interact those with the same name only.
+   *      linked: {
+   *          name: "some-group"
+   *      }
+   *  }
+   */
+  tooltip_show: !0,
+  tooltip_doNotHide: !1,
+  tooltip_grouped: !0,
+  tooltip_format_title: undefined,
+  tooltip_format_name: undefined,
+  tooltip_format_value: undefined,
+  tooltip_position: undefined,
+  tooltip_contents: {},
+  tooltip_init_show: !1,
+  tooltip_init_x: 0,
+  tooltip_init_position: {
+    top: "0px",
+    left: "50px"
+  },
+  tooltip_linked: !1,
+  tooltip_linked_name: "",
+  tooltip_onshow: function tooltip_onshow() {},
+  tooltip_onhide: function tooltip_onhide() {},
+  tooltip_onshown: function tooltip_onshown() {},
+  tooltip_onhidden: function tooltip_onhidden() {},
+  tooltip_order: null
+});
+// CONCATENATED MODULE: ./src/config/Options/data/axis.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Axis based chart data config options
+ */
+/* harmony default export */ var data_axis = ({
+  /**
+   * Specify the key of x values in the data.<br><br>
+   * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
+   * @name data․x
+   * @memberof Options
+   * @type {String}
+   * @default undefined
+   * @example
+   * data: {
+   *   x: "date"
+   * }
+   */
+  data_x: undefined,
+
+  /**
+   * Specify the keys of the x values for each data.<br><br>
+   * This option can be used if we want to show the data that has different x values.
+   * @name data․xs
+   * @memberof Options
+   * @type {Object}
+   * @default {}
+   * @example
+   * data: {
+   *   xs: {
+   *      data1: "x1",
+   *      data2: "x2"
+   *   }
+   * }
+   */
+  data_xs: {},
+
+  /**
+   * Set a format specifier to parse string specifed as x.
+   * @name data․xFormat
+   * @memberof Options
+   * @type {String}
+   * @default %Y-%m-%d
+   * @example
+   * data: {
+   *    x: "x",
+   *    columns: [
+   *        ["x", "01012019", "02012019", "03012019"],
+   *        ["data1", 30, 200, 100]
+   *    ],
+   *    // Format specifier to parse as datetime for given 'x' string value
+   *    xFormat: "%m%d%Y"
+   * },
+   * axis: {
+   *    x: {
+   *        type: "timeseries"
+   *    }
+   * }
+   * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
+   */
+  data_xFormat: "%Y-%m-%d",
+
+  /**
+   * Set localtime format to parse x axis.
+   * @name data․xLocaltime
+   * @memberof Options
+   * @type {Boolean}
+   * @default true
+   * @example
+   * data: {
+   *   xLocaltime: false
+   * }
+   */
+  data_xLocaltime: !0,
+
+  /**
+   * Sort on x axis.
+   * @name data․xSort
+   * @memberof Options
+   * @type {Boolean}
+   * @default true
+   * @example
+   * data: {
+   *   xSort: false
+   * }
+   */
+  data_xSort: !0,
+
+  /**
+   * Set groups for the data for stacking.
+   * @name data․groups
+   * @memberof Options
+   * @type {Array}
+   * @default []
+   * @example
+   * data: {
+   *   groups: [
+   *     ["data1", "data2"],
+   *     ["data3"]
+   *   ]
+   * }
+   */
+  data_groups: [],
+
+  /**
+   * Set y axis the data related to. y and y2 can be used.
+  * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
+   * @name data․axes
+   * @memberof Options
+   * @type {Object}
+   * @default {}
+   * @example
+   * data: {
+   *   axes: {
+   *     data1: "y",
+   *     data2: "y2"
+   *   }
+   * }
+   */
+  data_axes: {},
+
+  /**
+   * Set labels options
+   * @name data․labels
+   * @memberof Options
+   * @type {Object}
+   * @property {Boolean} [data.labels=false] Show or hide labels on each data points
+   * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+   * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
+   * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
+   *  - `v` is the value of the data point where the label is shown.
+   *  - `id` is the id of the data where the label is shown.
+   *  - `i` is the index of the data point where the label is shown.
+   *  - `j` is the sub index of the data point where the label is shown.<br><br>
+   * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
+   * @property {String|Object} [data.labels.colors] Set label text colors.
+   * @property {Object} [data.labels.position] Set each dataset position, relative the original.
+   * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
+   * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
+   * @memberof Options
+   * @type {Object}
+   * @default {}
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
+   * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
+   * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
+   * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
+   * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
+   * @example
+   * data: {
+   *   labels: true,
+   *
+   *   // or set specific options
+   *   labels: {
+   *     format: function(v, id, i, j) { ... },
+   *
+   *     // it's possible to set for each data
+   *     format: {
+   *         data1: function(v, id, i, j) { ... },
+   *         ...
+   *     },
+   *
+   *     // align text to center of the 'bar' shape (works only for 'bar' type)
+   *     centered: true,
+   *
+   *     // apply for all label texts
+   *     colors: "red",
+   *
+   *     // or set different colors per dataset
+   *     // for not specified dataset, will have the default color value
+   *     colors: {
+   *        data1: "yellow",
+   *        data3: "green"
+   *     },
+   *
+   *     // set x, y coordinate position
+   *     position: {
+   *        x: -10,
+   *        y: 10
+   *     },
+   *
+   *     // or set x, y coordinate position by each dataset
+   *     position: {
+   *        data1: {x: 5, y: 5},
+   *        data2: {x: 10, y: -20}
+   *     }
+   *   }
+   * }
+   */
+  data_labels: {},
+  data_labels_colors: undefined,
+  data_labels_position: {},
+
+  /**
+   * Define regions for each data.<br>
+   * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
+   * - The object type should be as:
+   *   - start {Number}: Start data point number. If not set, the start will be the first data point.
+   *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
+   *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+   * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
+   * @name data․regions
+   * @memberof Options
+   * @type {Object}
+   * @default {}
+   * @example
+   * data: {
+   *   regions: {
+   *     data1: [{
+   *         start: 1,
+   *         end: 2,
+   *         style: {
+   *             dasharray: "5 2"
+   *         }
+   *     }, {
+   *         start: 3
+   *     }],
+   *     ...
+   *   }
+   * }
+   */
+  data_regions: {},
+
+  /**
+   * Set the stacking to be normalized
+   * - **NOTE:**
+   *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
+   *   - y Axis will be set in percentage value (0 ~ 100%)
+   *   - Must have postive values
+   * @name data․stack․normalize
+   * @memberof Options
+   * @type {Boolean}
+   * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
+   * @example
+   * data: {
+   *   stack: {
+   *      normalize: true
+   *   }
+   * }
+   */
+  data_stack_normalize: !1
+});
+// CONCATENATED MODULE: ./src/config/Options/data/selection.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * data.selection config options
+ */
+/* harmony default export */ var data_selection = ({
+  /**
+   * Set data selection enabled<br><br>
+   * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
+   * @name data․selection․enabled
+   * @memberof Options
+   * @type {Boolean}
+   * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
+   * @example
+   * data: {
+   *    selection: {
+   *       enabled: true
+   *    }
+   * }
+   */
+  data_selection_enabled: !1,
+
+  /**
+   * Set grouped selection enabled.<br><br>
+   * If this option set true, multiple data points that have same x value will be selected by one selection.
+   * @name data․selection․grouped
+   * @memberof Options
+   * @type {Boolean}
+   * @default false
+   * @example
+   * data: {
+   *    selection: {
+   *       grouped: true
+   *    }
+   * }
+   */
+  data_selection_grouped: !1,
+
+  /**
+   * Set a callback for each data point to determine if it's selectable or not.<br><br>
+   * The callback will receive d as an argument and it has some parameters like id, value, index. This callback should return boolean.
+   * @name data․selection․isselectable
+   * @memberof Options
+   * @type {Function}
+   * @default function() { return true; }
+   * @example
+   * data: {
+   *    selection: {
+   *       isselectable: function(d) { ... }
+   *    }
+   * }
+   */
+  data_selection_isselectable: function data_selection_isselectable() {
+    return !0;
+  },
+
+  /**
+   * Set multiple data points selection enabled.<br><br>
+   * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
+   * @name data․selection․multiple
+   * @memberof Options
+   * @type {Boolean}
+   * @default true
+   * @example
+   * data: {
+   *    selection: {
+   *       multiple: false
+   *    }
+   * }
+   */
+  data_selection_multiple: !0,
+
+  /**
+   * Enable to select data points by dragging.
+   * If this option set true, data points can be selected by dragging.
+   * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
+   * @name data․selection․draggable
+   * @memberof Options
+   * @type {Boolean}
+   * @default false
+   * @example
+   * data: {
+   *    selection: {
+   *       draggable: true
+   *   }
+   * }
+   */
+  data_selection_draggable: !1,
+
+  /**
+   * Set a callback for on data selection.
+   * @name data․onselected
+   * @memberof Options
+   * @type {Function}
+   * @default function() {}
+   * @example
+   * data: {
+   *     onselected: function(d, element) {
+   *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+   *        // element - <circle>
+   *        ...
+   *    }
+   * }
+   */
+  data_onselected: function data_onselected() {},
+
+  /**
+   * Set a callback for on data un-selection.
+   * @name data․onunselected
+   * @memberof Options
+   * @type {Function}
+   * @default function() {}
+   * @example
+   * data: {
+   *     onunselected: function(d, element) {
+   *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
+   *        // element - <circle>
+   *        ...
+   *    }
+   * }
+   */
+  data_onunselected: function data_onunselected() {}
+});
 // CONCATENATED MODULE: ./src/config/Options/axis/x.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -21167,6 +20597,1083 @@ function tplProcess(tpl, data) {
    */
   axis_y2_axes: []
 });
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
+
+function nopropagation() {
+  on_event.stopImmediatePropagation();
+}
+/* harmony default export */ var noevent = (function () {
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
+
+
+/* harmony default export */ var nodrag = (function (view) {
+  var root = view.document.documentElement,
+      selection = src_select(view).on("dragstart.drag", noevent, !0);
+  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
+});
+function yesdrag(view, noclick) {
+  var root = view.document.documentElement,
+      selection = src_select(view).on("dragstart.drag", null);
+  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
+    selection.on("click.drag", null);
+  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
+}
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
+/* harmony default export */ var d3_drag_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
+function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
+  this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
+}
+
+DragEvent.prototype.on = function () {
+  var value = this._.on.apply(this._, arguments);
+
+  return value === this._ ? this : value;
+};
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
+
+
+
+
+
+ // Ignore right-click, since that should open the context menu.
+
+function defaultFilter() {
+  return !on_event.ctrlKey && !on_event.button;
+}
+
+function defaultContainer() {
+  return this.parentNode;
+}
+
+function defaultSubject(d) {
+  return d == null ? {
+    x: on_event.x,
+    y: on_event.y
+  } : d;
+}
+
+function defaultTouchable() {
+  return navigator.maxTouchPoints || "ontouchstart" in this;
+}
+
+/* harmony default export */ var src_drag = (function () {
+  function drag(selection) {
+    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  }
+
+  function mousedowned() {
+    if (!touchending && filter.apply(this, arguments)) {
+      var gesture = beforestart("mouse", container.apply(this, arguments), src_mouse, this, arguments);
+      gesture && (src_select(on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(on_event.view), nopropagation(), mousemoving = !1, mousedownx = on_event.clientX, mousedowny = on_event.clientY, gesture("start"));
+    }
+  }
+
+  function mousemoved() {
+    if (noevent(), !mousemoving) {
+      var dx = on_event.clientX - mousedownx,
+          dy = on_event.clientY - mousedowny;
+      mousemoving = dx * dx + dy * dy > clickDistance2;
+    }
+
+    gestures.mouse("drag");
+  }
+
+  function mouseupped() {
+    src_select(on_event.view).on("mousemove.drag mouseup.drag", null), yesdrag(on_event.view, mousemoving), noevent(), gestures.mouse("end");
+  }
+
+  function touchstarted() {
+    if (filter.apply(this, arguments)) {
+      var i,
+          gesture,
+          touches = on_event.changedTouches,
+          c = container.apply(this, arguments),
+          n = touches.length;
+
+      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, src_touch, this, arguments)) && (nopropagation(), gesture("start"));
+    }
+  }
+
+  function touchmoved() {
+    var i,
+        gesture,
+        touches = on_event.changedTouches,
+        n = touches.length;
+
+    for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (noevent(), gesture("drag"));
+  }
+
+  function touchended() {
+    var i,
+        gesture,
+        touches = on_event.changedTouches,
+        n = touches.length;
+
+    // Ghost clicks are delayed!
+    for (touchending && clearTimeout(touchending), touchending = setTimeout(function () {
+      touchending = null;
+    }, 500), i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (nopropagation(), gesture("end"));
+  }
+
+  function beforestart(id, container, point, that, args) {
+    var s,
+        dx,
+        dy,
+        p = point(container, id),
+        sublisteners = listeners.copy();
+    return customEvent(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
+      return (on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
+    }) ? function gesture(type) {
+      var n,
+          p0 = p;
+
+      switch (type) {
+        case "start":
+          gestures[id] = gesture, n = active++;
+          break;
+
+        case "end":
+          delete gestures[id], --active;
+        // nobreak
+
+        case "drag":
+          p = point(container, id), n = active;
+      }
+
+      customEvent(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+    } : void 0;
+  }
+
+  var mousedownx,
+      mousedowny,
+      mousemoving,
+      touchending,
+      filter = defaultFilter,
+      container = defaultContainer,
+      subject = defaultSubject,
+      touchable = defaultTouchable,
+      gestures = {},
+      listeners = src_dispatch("start", "drag", "end"),
+      active = 0,
+      clickDistance2 = 0;
+  return drag.filter = function (_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : filter;
+  }, drag.container = function (_) {
+    return arguments.length ? (container = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : container;
+  }, drag.subject = function (_) {
+    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : subject;
+  }, drag.touchable = function (_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : touchable;
+  }, drag.on = function () {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? drag : value;
+  }, drag.clickDistance = function (_) {
+    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
+  }, drag;
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
+
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
+/* harmony default export */ var d3_brush_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
+/* harmony default export */ var src_event = (function (target, type, selection) {
+  this.target = target, this.type = type, this.selection = selection;
+});
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
+
+function noevent_nopropagation() {
+  on_event.stopImmediatePropagation();
+}
+/* harmony default export */ var src_noevent = (function () {
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
+});
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
+
+
+
+
+
+
+
+
+var MODE_DRAG = {
+  name: "drag"
+},
+    MODE_SPACE = {
+  name: "space"
+},
+    MODE_HANDLE = {
+  name: "handle"
+},
+    MODE_CENTER = {
+  name: "center"
+};
+
+function number1(e) {
+  return [+e[0], +e[1]];
+}
+
+function number2(e) {
+  return [number1(e[0]), number1(e[1])];
+}
+
+function toucher(identifier) {
+  return function (target) {
+    return src_touch(target, on_event.touches, identifier);
+  };
+}
+
+var X = {
+  name: "x",
+  handles: ["w", "e"].map(brush_type),
+  input: function input(x, e) {
+    return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]];
+  },
+  output: function output(xy) {
+    return xy && [xy[0][0], xy[1][0]];
+  }
+},
+    Y = {
+  name: "y",
+  handles: ["n", "s"].map(brush_type),
+  input: function input(y, e) {
+    return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]];
+  },
+  output: function output(xy) {
+    return xy && [xy[0][1], xy[1][1]];
+  }
+},
+    XY = {
+  name: "xy",
+  handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(brush_type),
+  input: function input(xy) {
+    return xy == null ? null : number2(xy);
+  },
+  output: function output(xy) {
+    return xy;
+  }
+},
+    cursors = {
+  overlay: "crosshair",
+  selection: "move",
+  n: "ns-resize",
+  e: "ew-resize",
+  s: "ns-resize",
+  w: "ew-resize",
+  nw: "nwse-resize",
+  ne: "nesw-resize",
+  se: "nwse-resize",
+  sw: "nesw-resize"
+},
+    flipX = {
+  e: "w",
+  w: "e",
+  nw: "ne",
+  ne: "nw",
+  se: "sw",
+  sw: "se"
+},
+    flipY = {
+  n: "s",
+  s: "n",
+  nw: "sw",
+  ne: "se",
+  se: "ne",
+  sw: "nw"
+},
+    signsX = {
+  overlay: 1,
+  selection: 1,
+  n: null,
+  e: 1,
+  s: null,
+  w: -1,
+  nw: -1,
+  ne: 1,
+  se: 1,
+  sw: -1
+},
+    signsY = {
+  overlay: 1,
+  selection: 1,
+  n: -1,
+  e: null,
+  s: 1,
+  w: null,
+  nw: -1,
+  ne: -1,
+  se: 1,
+  sw: 1
+};
+
+function brush_type(t) {
+  return {
+    type: t
+  };
+} // Ignore right-click, since that should open the context menu.
+
+
+function brush_defaultFilter() {
+  return !on_event.ctrlKey && !on_event.button;
+}
+
+function defaultExtent() {
+  var svg = this.ownerSVGElement || this;
+  return svg.hasAttribute("viewBox") ? (svg = svg.viewBox.baseVal, [[svg.x, svg.y], [svg.x + svg.width, svg.y + svg.height]]) : [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
+}
+
+function brush_defaultTouchable() {
+  return navigator.maxTouchPoints || "ontouchstart" in this;
+} // Like d3.local, but with the name “__brush” rather than auto-generated.
+
+
+function brush_local(node) {
+  for (; !node.__brush;) if (!(node = node.parentNode)) return;
+
+  return node.__brush;
+}
+
+function brush_empty(extent) {
+  return extent[0][0] === extent[1][0] || extent[0][1] === extent[1][1];
+}
+
+function brushSelection(node) {
+  var state = node.__brush;
+  return state ? state.dim.output(state.selection) : null;
+}
+function brushX() {
+  return brush_brush(X);
+}
+function brushY() {
+  return brush_brush(Y);
+}
+/* harmony default export */ var src_brush = (function () {
+  return brush_brush(XY);
+});
+
+function brush_brush(dim) {
+  function brush(group) {
+    var overlay = group.property("__brush", initialize).selectAll(".overlay").data([brush_type("overlay")]);
+    overlay.enter().append("rect").attr("class", "overlay").attr("pointer-events", "all").attr("cursor", cursors.overlay).merge(overlay).each(function () {
+      var extent = brush_local(this).extent;
+      src_select(this).attr("x", extent[0][0]).attr("y", extent[0][1]).attr("width", extent[1][0] - extent[0][0]).attr("height", extent[1][1] - extent[0][1]);
+    }), group.selectAll(".selection").data([brush_type("selection")]).enter().append("rect").attr("class", "selection").attr("cursor", cursors.selection).attr("fill", "#777").attr("fill-opacity", .3).attr("stroke", "#fff").attr("shape-rendering", "crispEdges");
+    var handle = group.selectAll(".handle").data(dim.handles, function (d) {
+      return d.type;
+    });
+    handle.exit().remove(), handle.enter().append("rect").attr("class", function (d) {
+      return "handle handle--" + d.type;
+    }).attr("cursor", function (d) {
+      return cursors[d.type];
+    }), group.each(redraw).attr("fill", "none").attr("pointer-events", "all").on("mousedown.brush", started).filter(touchable).on("touchstart.brush", started).on("touchmove.brush", touchmoved).on("touchend.brush touchcancel.brush", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  }
+
+  function redraw() {
+    var group = src_select(this),
+        selection = brush_local(this).selection;
+    selection ? (group.selectAll(".selection").style("display", null).attr("x", selection[0][0]).attr("y", selection[0][1]).attr("width", selection[1][0] - selection[0][0]).attr("height", selection[1][1] - selection[0][1]), group.selectAll(".handle").style("display", null).attr("x", function (d) {
+      return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2;
+    }).attr("y", function (d) {
+      return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2;
+    }).attr("width", function (d) {
+      return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize;
+    }).attr("height", function (d) {
+      return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize;
+    })) : group.selectAll(".selection,.handle").style("display", "none").attr("x", null).attr("y", null).attr("width", null).attr("height", null);
+  }
+
+  function emitter(that, args, clean) {
+    return !clean && that.__brush.emitter || new Emitter(that, args);
+  }
+
+  function Emitter(that, args) {
+    this.that = that, this.args = args, this.state = that.__brush, this.active = 0;
+  }
+
+  function started() {
+    function moved() {
+      var point1 = pointer(that);
+      !shifting || lockX || lockY || (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1]) ? lockY = !0 : lockX = !0), point = point1, moving = !0, src_noevent(), move();
+    }
+
+    function move() {
+      var t;
+
+      switch (dx = point[0] - point0[0], dy = point[1] - point0[1], mode) {
+        case MODE_SPACE:
+        case MODE_DRAG:
+          {
+            signX && (dx = Math.max(W - w0, Math.min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx), signY && (dy = Math.max(N - n0, Math.min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy);
+            break;
+          }
+
+        case MODE_HANDLE:
+          {
+            signX < 0 ? (dx = Math.max(W - w0, Math.min(E - w0, dx)), w1 = w0 + dx, e1 = e0) : signX > 0 && (dx = Math.max(W - e0, Math.min(E - e0, dx)), w1 = w0, e1 = e0 + dx), signY < 0 ? (dy = Math.max(N - n0, Math.min(S - n0, dy)), n1 = n0 + dy, s1 = s0) : signY > 0 && (dy = Math.max(N - s0, Math.min(S - s0, dy)), n1 = n0, s1 = s0 + dy);
+            break;
+          }
+
+        case MODE_CENTER:
+          {
+            signX && (w1 = Math.max(W, Math.min(E, w0 - dx * signX)), e1 = Math.max(W, Math.min(E, e0 + dx * signX))), signY && (n1 = Math.max(N, Math.min(S, n0 - dy * signY)), s1 = Math.max(N, Math.min(S, s0 + dy * signY)));
+            break;
+          }
+      }
+
+      e1 < w1 && (signX *= -1, t = w0, w0 = e0, e0 = t, t = w1, w1 = e1, e1 = t, type in flipX && overlay.attr("cursor", cursors[type = flipX[type]])), s1 < n1 && (signY *= -1, t = n0, n0 = s0, s0 = t, t = n1, n1 = s1, s1 = t, type in flipY && overlay.attr("cursor", cursors[type = flipY[type]])), state.selection && (selection = state.selection), lockX && (w1 = selection[0][0], e1 = selection[1][0]), lockY && (n1 = selection[0][1], s1 = selection[1][1]), (selection[0][0] !== w1 || selection[0][1] !== n1 || selection[1][0] !== e1 || selection[1][1] !== s1) && (state.selection = [[w1, n1], [e1, s1]], redraw.call(that), emit.brush());
+    }
+
+    function ended() {
+      if (noevent_nopropagation(), on_event.touches) {
+        if (on_event.touches.length) return;
+        touchending && clearTimeout(touchending), touchending = setTimeout(function () {
+          touchending = null;
+        }, 500);
+      } else yesdrag(on_event.view, moving), view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
+
+      group.attr("pointer-events", "all"), overlay.attr("cursor", cursors.overlay), state.selection && (selection = state.selection), brush_empty(selection) && (state.selection = null, redraw.call(that)), emit.end();
+    }
+
+    function keydowned() {
+      switch (on_event.keyCode) {
+        case 16:
+          {
+            shifting = signX && signY;
+            break;
+          }
+
+        case 18:
+          {
+            mode === MODE_HANDLE && (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER, move());
+            break;
+          }
+
+        case 32:
+          {
+            (mode === MODE_HANDLE || mode === MODE_CENTER) && (signX < 0 ? e0 = e1 - dx : signX > 0 && (w0 = w1 - dx), signY < 0 ? s0 = s1 - dy : signY > 0 && (n0 = n1 - dy), mode = MODE_SPACE, overlay.attr("cursor", cursors.selection), move());
+            break;
+          }
+
+        default:
+          return;
+      }
+
+      src_noevent();
+    }
+
+    function keyupped() {
+      switch (on_event.keyCode) {
+        case 16:
+          {
+            shifting && (lockX = lockY = shifting = !1, move());
+            break;
+          }
+
+        case 18:
+          {
+            mode === MODE_CENTER && (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE, move());
+            break;
+          }
+
+        case 32:
+          {
+            mode === MODE_SPACE && (on_event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
+            break;
+          }
+
+        default:
+          return;
+      }
+
+      src_noevent();
+    }
+
+    if ((!touchending || on_event.touches) && filter.apply(this, arguments)) {
+      var w0,
+          w1,
+          n0,
+          n1,
+          e0,
+          e1,
+          s0,
+          s1,
+          moving,
+          lockX,
+          lockY,
+          that = this,
+          type = on_event.target.__data__.type,
+          mode = (keys && on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && on_event.altKey ? MODE_CENTER : MODE_HANDLE,
+          signX = dim === Y ? null : signsX[type],
+          signY = dim === X ? null : signsY[type],
+          state = brush_local(that),
+          extent = state.extent,
+          selection = state.selection,
+          W = extent[0][0],
+          N = extent[0][1],
+          E = extent[1][0],
+          S = extent[1][1],
+          dx = 0,
+          dy = 0,
+          shifting = signX && signY && keys && on_event.shiftKey,
+          pointer = on_event.touches ? toucher(on_event.changedTouches[0].identifier) : src_mouse,
+          point0 = pointer(that),
+          point = point0,
+          emit = emitter(that, arguments, !0).beforestart();
+      type === "overlay" ? (selection && (moving = !0), state.selection = selection = [[w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]], [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]]) : (w0 = selection[0][0], n0 = selection[0][1], e0 = selection[1][0], s0 = selection[1][1]), w1 = w0, n1 = n0, e1 = e0, s1 = s0;
+      var group = src_select(that).attr("pointer-events", "none"),
+          overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
+      if (on_event.touches) emit.moved = moved, emit.ended = ended;else {
+        var view = src_select(on_event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
+        keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(on_event.view);
+      }
+      noevent_nopropagation(), interrupt(that), redraw.call(that), emit.start();
+    }
+  }
+
+  function touchmoved() {
+    emitter(this, arguments).moved();
+  }
+
+  function touchended() {
+    emitter(this, arguments).ended();
+  }
+
+  function initialize() {
+    var state = this.__brush || {
+      selection: null
+    };
+    return state.extent = number2(extent.apply(this, arguments)), state.dim = dim, state;
+  }
+
+  var touchending,
+      extent = defaultExtent,
+      filter = brush_defaultFilter,
+      touchable = brush_defaultTouchable,
+      keys = !0,
+      listeners = src_dispatch("start", "brush", "end"),
+      handleSize = 6;
+  return brush.move = function (group, selection) {
+    group.selection ? group.on("start.brush", function () {
+      emitter(this, arguments).beforestart().start();
+    }).on("interrupt.brush end.brush", function () {
+      emitter(this, arguments).end();
+    }).tween("brush", function () {
+      function tween(t) {
+        state.selection = t === 1 && selection1 === null ? null : i(t), redraw.call(that), emit.brush();
+      }
+
+      var that = this,
+          state = that.__brush,
+          emit = emitter(that, arguments),
+          selection0 = state.selection,
+          selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
+          i = src_value(selection0, selection1);
+      return selection0 !== null && selection1 !== null ? tween : tween(1);
+    }) : group.each(function () {
+      var that = this,
+          args = arguments,
+          state = that.__brush,
+          selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
+          emit = emitter(that, args).beforestart();
+      interrupt(that), state.selection = selection1 === null ? null : selection1, redraw.call(that), emit.start().brush().end();
+    });
+  }, brush.clear = function (group) {
+    brush.move(group, null);
+  }, Emitter.prototype = {
+    beforestart: function beforestart() {
+      return ++this.active === 1 && (this.state.emitter = this, this.starting = !0), this;
+    },
+    start: function start() {
+      return this.starting ? (this.starting = !1, this.emit("start")) : this.emit("brush"), this;
+    },
+    brush: function () {
+      return this.emit("brush"), this;
+    },
+    end: function end() {
+      return --this.active === 0 && (delete this.state.emitter, this.emit("end")), this;
+    },
+    emit: function emit(type) {
+      customEvent(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
+    }
+  }, brush.extent = function (_) {
+    return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
+  }, brush.filter = function (_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : filter;
+  }, brush.touchable = function (_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : touchable;
+  }, brush.handleSize = function (_) {
+    return arguments.length ? (handleSize = +_, brush) : handleSize;
+  }, brush.keyModifiers = function (_) {
+    return arguments.length ? (keys = !!_, brush) : keys;
+  }, brush.on = function () {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? brush : value;
+  }, brush;
+}
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
+
+// CONCATENATED MODULE: ./src/module/browser.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @module
+ * @ignore
+ */
+
+/* eslint-disable no-new-func, no-undef */
+
+
+var win = function () {
+  var def = function (o) {
+    return typeof o !== "undefined" && o;
+  };
+
+  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+}(),
+    browser_doc = win && win.document;
+/* eslint-enable no-new-func, no-undef */
+// CONCATENATED MODULE: ./src/module/util.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+
+
+
+
+
+var isValue = function (v) {
+  return v || v === 0;
+},
+    isFunction = function (v) {
+  return typeof v === "function";
+},
+    isString = function (v) {
+  return typeof v === "string";
+},
+    isNumber = function (v) {
+  return typeof v === "number";
+},
+    isUndefined = function (v) {
+  return typeof v === "undefined";
+},
+    isDefined = function (v) {
+  return typeof v !== "undefined";
+},
+    isBoolean = function (v) {
+  return typeof v === "boolean";
+},
+    ceil10 = function (v) {
+  return Math.ceil(v / 10) * 10;
+},
+    asHalfPixel = function (n) {
+  return Math.ceil(n) + .5;
+},
+    diffDomain = function (d) {
+  return d[1] - d[0];
+},
+    isObjectType = function (v) {
+  return typeof v === "object";
+},
+    isEmpty = function (o) {
+  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+},
+    notEmpty = function (o) {
+  return !isEmpty(o);
+},
+    isArray = function (arr) {
+  return Array.isArray(arr);
+},
+    isObject = function (obj) {
+  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+};
+
+function getOption(options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+}
+
+function util_hasValue(dict, value) {
+  var found = !1;
+  return Object.keys(dict).forEach(function (key) {
+    return dict[key] === value && (found = !0);
+  }), found;
+}
+/**
+ * Call function with arguments
+ * @param {Function} fn Function to be called
+ * @param {*} args Arguments
+ * @return {Boolean} true: fn is function, false: fn is not function
+ * @private
+ */
+
+
+function callFn(fn) {
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+
+  return isFn && fn.call.apply(fn, args), isFn;
+}
+/**
+ * Replace tag sign to html entity
+ * @param {String} str
+ * @return {String}
+ * @private
+ */
+
+
+function sanitise(str) {
+  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+}
+/**
+ * Set text value. If there's multiline add nodes.
+ * @param {d3Selection} node Text node
+ * @param {String} text Text value string
+ * @param {Array} dy dy value for multilined text
+ * @param {Boolean} toMiddle To be alingned vertically middle
+ * @private
+ */
+
+
+function setTextValue(node, text, dy, toMiddle) {
+  if (dy === void 0 && (dy = [-1, 1]), toMiddle === void 0 && (toMiddle = !1), node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", (i === 0 ? dy[0] * len : dy[1]) + "em").text(v);
+      });
+    }
+  }
+} // substitution of SVGPathSeg API polyfill
+
+
+function getRectSegList(path) {
+  /*
+   * seg1 ---------- seg2
+   *   |               |
+   *   |               |
+   *   |               |
+   * seg0 ---------- seg3
+   * */
+  var _path$getBBox = path.getBBox(),
+      x = _path$getBBox.x,
+      y = _path$getBBox.y,
+      width = _path$getBBox.width,
+      height = _path$getBBox.height;
+
+  return [{
+    x: x,
+    y: y + height
+  }, // seg0
+  {
+    x: x,
+    y: y
+  }, // seg1
+  {
+    x: x + width,
+    y: y
+  }, // seg2
+  {
+    x: x + width,
+    y: y + height
+  } // seg3
+  ];
+}
+
+function getPathBox(path) {
+  var _path$getBoundingClie = path.getBoundingClientRect(),
+      width = _path$getBoundingClie.width,
+      height = _path$getBoundingClie.height,
+      items = getRectSegList(path),
+      x = items[0].x,
+      y = Math.min(items[0].y, items[1].y);
+
+  return {
+    x: x,
+    y: y,
+    width: width,
+    height: height
+  };
+} // return brush selection array
+
+
+function getBrushSelection(ctx) {
+  var selection,
+      event = on_event,
+      main = ctx.context || ctx.main;
+  return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = brushSelection(selection)), selection;
+} // Get boundingClientRect. cache the evaluated value once it was called.
+
+
+var getBoundingRect = function (node) {
+  return node.rect || (node.rect = node.getBoundingClientRect());
+}; // retrun random number
+
+
+function getRandom(asStr) {
+  asStr === void 0 && (asStr = !0);
+  var rand = Math.random();
+  return asStr ? rand + "" : rand;
+}
+
+function brushEmpty(ctx) {
+  var selection = getBrushSelection(ctx);
+  return !selection || selection[0] === selection[1];
+}
+
+function util_extend(target, source) {
+  // exclude name with only numbers
+  for (var p in target === void 0 && (target = {}), isArray(source) && source.forEach(function (v) {
+    return util_extend(target, v);
+  }), source) /^\d+$/.test(p) || (target[p] = source[p]);
+
+  return target;
+}
+/**
+ * Return first letter capitalized
+ * @param {String} str
+ * @return {String} capitalized string
+ * @private
+ */
+
+
+var capitalize = function (str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+},
+    toArray = function (v) {
+  return [].slice.call(v);
+};
+/**
+ * Convert to array
+ * @param {Object} v
+ * @returns {Array}
+ * @private
+ */
+
+
+/**
+ * Get css rules for specified stylesheets
+ * @param {Array} styleSheets The stylesheets to get the rules from
+ * @returns {Array}
+ * @private
+ */
+function getCssRules(styleSheets) {
+  var rules = [];
+  return styleSheets.forEach(function (sheet) {
+    try {
+      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
+    } catch (e) {
+      console.error("Error while reading rules from " + sheet.href + ": " + e.toString());
+    }
+  }), rules;
+}
+/**
+ * Gets the SVGMatrix of an SVGElement
+ * @param {SVGElement} element
+ * @return {SVGMatrix} matrix
+ * @private
+ */
+
+
+function getTranslation(node) {
+  var transform = node ? node.transform : null,
+      baseVal = transform ? transform.baseVal : [];
+  return baseVal.length ? baseVal.getItem(0).matrix : {
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+    e: 0,
+    f: 0
+  };
+}
+/**
+ * Get unique value from array
+ * @param {Array} data
+ * @return {Array} Unique array value
+ * @private
+ */
+
+
+function getUnique(data) {
+  var isDate = data[0] instanceof Date,
+      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
+    return self.indexOf(v) === i;
+  });
+  return isDate ? d.map(function (v) {
+    return new Date(v);
+  }) : d;
+}
+/**
+ * Merge array
+ * @param {Array} arr
+ * @return {Array}
+ * @private
+ */
+
+
+function mergeArray(arr) {
+  return arr && arr.length ? arr.reduce(function (p, c) {
+    return p.concat(c);
+  }) : [];
+}
+/**
+ * Merge object returning new object
+ * @param {Object} target
+ * @param {Object} objectN
+ * @returns {Object} merged target object
+ * @private
+ */
+
+
+function mergeObj(target) {
+  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}
+/**
+ * Sort value
+ * @param {Array} data value to be sorted
+ * @param {Boolean} isAsc true: asc, false: desc
+ * @return {Number|String|Date} sorted date
+ * @private
+ */
+
+
+function util_sortValue(data, isAsc) {
+  isAsc === void 0 && (isAsc = !0);
+  var fn;
+  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
+    return a - b;
+  } : function (a, b) {
+    return b - a;
+  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
+    return a - b;
+  } : !isAsc && (fn = function (a, b) {
+    return a > b && -1 || a < b && 1 || a === b && 0;
+  }), data.concat().sort(fn);
+}
+/**
+ * Get min/max value
+ * @param {String} type 'min' or 'max'
+ * @param {Array} data Array data value
+ * @retun {Number|Date|undefined}
+ * @private
+ */
+
+
+function getMinMax(type, data) {
+  var res = data.filter(function (v) {
+    return notEmpty(v);
+  });
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = util_sortValue(res, type === "min")[0]) : res = undefined, res;
+}
+/**
+ * Get range
+ * @param {Number} start Start number
+ * @param {Number} end End number
+ * @return {Array}
+ * @private
+ */
+
+
+function getRange(start, end) {
+  var res = [];
+
+  for (var i = start; i < end; i++) res.push(i);
+
+  return res;
+} // emulate event
+
+
+var emulateEvent = {
+  mouse: function () {
+    var getParams = function () {
+      return {
+        bubbles: !1,
+        cancelable: !1,
+        screenX: 0,
+        screenY: 0,
+        clientX: 0,
+        clientY: 0
+      };
+    };
+
+    try {
+      return new MouseEvent("t"), function (el, eventType, params) {
+        params === void 0 && (params = getParams()), el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      // Polyfills DOM4 MouseEvent
+      return function (el, eventType, params) {
+        params === void 0 && (params = getParams());
+        var mouseEvent = browser_doc.createEvent("MouseEvent"); // https://developer.mozilla.org/en-US/docs/Web/API/MouseEvent/initMouseEvent
+
+        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+      };
+    }
+  }(),
+  touch: function touch(el, eventType, params) {
+    var touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: .5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: !0,
+      bubbles: !0,
+      shiftKey: !0,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+};
+/**
+ * Process the template  & return bound string
+ * @param {String} tpl Template string
+ * @param {Object} data Data value to be replaced
+ * @return {String}
+ * @private
+ */
+
+function tplProcess(tpl, data) {
+  var res = tpl;
+
+  for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
+
+  return res;
+}
 // CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -21194,94 +21701,6 @@ function tplProcess(tpl, data) {
    */
   axis_rotated: !1
 }, axis_x, axis_y, axis_y2));
-// CONCATENATED MODULE: ./src/config/Options/common/color.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * color config options
- */
-/* harmony default export */ var common_color = ({
-  /**
-   * Set color of the data values
-   * @name color
-   * @memberof Options
-   * @type {Object}
-   * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
-   * @property {Array} [color.pattern=[]] custom color pattern
-   * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
-   *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
-   *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
-   *    - `bb-colorize-pattern-red`
-   *    - `bb-colorize-pattern-fff`
-   * @property {Object} [color.threshold] color threshold for gauge and tooltip color
-   * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
-   * @property {Array} [color.threshold.values] Threshold values for each steps
-   * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
-   * @example
-   *  color: {
-   *      pattern: ["#1f77b4", "#aec7e8", ...],
-   *
-   *      // Set colors' patterns
-   *      // it should return an array of SVGPatternElement
-   *      tiles: function() {
-   *         var pattern = document.createElementNS("http://www.w3.org/2000/svg", "pattern");
-   *         var g = document.createElementNS("http://www.w3.org/2000/svg", "g");
-   *         var circle1 = document.createElementNS("http://www.w3.org/2000/svg", "circle");
-   *
-   *         pattern.setAttribute("patternUnits", "userSpaceOnUse");
-   *         pattern.setAttribute("width", "32");
-   *         pattern.setAttribute("height", "32");
-   *
-   *         g.style.fill = "#000";
-   *         g.style.opacity = "0.2";
-   *
-   *         circle1.setAttribute("cx", "3");
-   *         circle1.setAttribute("cy", "3");
-   *         circle1.setAttribute("r", "3");
-   *
-   *         g.appendChild(circle1);
-   *         pattern.appendChild(g);
-   *
-   *         return [pattern];
-   *      },
-   *
-   *      // for threshold usage, pattern values should be set for each steps
-   *      pattern: ["grey", "green", "yellow", "orange", "red"],
-   *      threshold: {
-   *          unit: "value",
-   *
-   *          // when value is 20 => 'green', value is 40 => 'orange' will be set.
-   *          values: [10, 20, 30, 40, 50],
-   *
-   *          // the equation for max:
-   *          // - unit == 'value': max => 30
-   *          // - unit != 'value': max => value*100/30
-   *          max: 30
-   *      },
-   *
-   *      // set all data to 'red'
-   *      onover: "red",
-   *
-   *      // set different color for data
-   *      onover: {
-   *          data1: "red",
-   *          data2: "yellow"
-   *      },
-   *
-   *      // will pass data object to the callback
-   *      onover: function(d) {
-   *          return d.id === "data1" ? "red" : "green";
-   *      }
-   *  }
-   */
-  color_pattern: [],
-  color_tiles: undefined,
-  color_threshold: {},
-  color_onover: undefined
-});
 // CONCATENATED MODULE: ./src/config/Options/common/grid.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -21357,164 +21776,6 @@ function tplProcess(tpl, data) {
   grid_focus_y: !1,
   grid_front: !1,
   grid_lines_front: !0
-});
-// CONCATENATED MODULE: ./src/config/Options/common/interaction.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * interaction config options
- */
-/* harmony default export */ var interaction = ({
-  /**
-   * Interaction options
-   * @name interaction
-   * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
-   *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
-   * @property {Boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
-   * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
-   * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
-   * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
-   * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
-   * @example
-   * interaction: {
-   *    enabled: false,
-   *    brighten: false,
-   *    inputType: {
-   *        mouse: true,
-   *        touch: false
-   *
-   *        // or declare preventDefault explicitly.
-   *        // In this case touch inputType is enabled by default
-   *        touch: {
-   *            preventDefault: true
-   *
-   *            // or threshold pixel value (pixel moved from touchstart to touchmove)
-   *            preventDefault: 5
-   *        }
-   *    }
-   * }
-   */
-  interaction_enabled: !0,
-  interaction_brighten: !0,
-  interaction_inputType_mouse: !0,
-  interaction_inputType_touch: {}
-});
-// CONCATENATED MODULE: ./src/config/Options/common/legend.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * legend config options
- */
-/* harmony default export */ var common_legend = ({
-  /**
-   * Legend options
-   * @name legend
-   * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [legend.show=true] Show or hide legend.
-   * @property {Boolean} [legend.hide=false] Hide legend
-   *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
-   * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
-   * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
-   *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
-   *    - {=COLOR}: data color value
-   *    - {=TITLE}: data title value
-   *  - If set `function` value, will pass following arguments to the given function:
-   *   - title {String}: data's id value
-   *   - color {String}: color string
-   *   - data {Array}: data array
-   * @property {String} [legend.position=bottom] Change the position of legend.<br>
-   *  Available values are: `bottom`, `right` and `inset` are supported.
-   * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
-   *  This option accepts object that has the keys `anchor`, `x`, `y` and `step`.
-   *  - **anchor** decides the position of the legend:
-   *   - top-left
-   *   - top-right
-   *   - bottom-left
-   *   - bottom-right
-   *  - **x** and **y**:
-   *   - set the position of the legend based on the anchor.
-   *  - **step**:
-   *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
-   * @property {Boolean} [legend.equally=false] Set to all items have same width size.
-   * @property {Boolean} [legend.padding=0] Set padding value
-   * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
-   * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
-   * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
-   * @property {Number} [legend.item.tile.width=10] Set width of item tile element
-   * @property {Number} [legend.item.tile.height=10] Set height of item tile element
-   * @property {Boolean} [legend.usePoint=false] Whether to use custom points in legend.
-   * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
-   * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
-   * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
-   * @example
-   *  legend: {
-   *      show: true,
-   *      hide: true,
-   *      //or hide: "data1"
-   *      //or hide: ["data1", "data2"]
-   *      contents: {
-   *          bindto: "#legend",   // <ul id='legend'></ul>
-   *
-   *          // will be as: <li style='background-color:#1f77b4'>data1</li>
-   *          template: "<li style='background-color:{=COLOR}'>{=TITLE}</li>"
-   *
-   *          // or using function
-   *          template: function(id, color, data) {
-   *               // if you want omit some legend, return falsy value
-   *               if (title !== "data1") {
-   *                    return "<li style='background-color:"+ color +">"+ title +"</li>";
-   *               }
-   *          }
-   *      },
-   *      position: "bottom",  // bottom, right, inset
-   *      inset: {
-   *          anchor: "top-right"  // top-left, top-right, bottom-left, bottom-right
-   *          x: 20,
-   *          y: 10,
-   *          step: 2
-   *      },
-   *      equally: false,
-   *      padding: 10,
-   *      item: {
-   *          onclick: function(id) { ... },
-   *          onover: function(id) { ... },
-   *          onout: function(id) { ... },
-   *
-   *          // set tile's size
-   *          tile: {
-   *              width: 20,
-   *              height: 15
-   *          }
-   *      },
-   *      usePoint: true
-   *  }
-   */
-  legend_show: !0,
-  legend_hide: !1,
-  legend_contents_bindto: undefined,
-  legend_contents_template: undefined,
-  legend_position: "bottom",
-  legend_inset_anchor: "top-left",
-  legend_inset_x: 10,
-  legend_inset_y: 0,
-  legend_inset_step: undefined,
-  legend_item_onclick: undefined,
-  legend_item_onover: undefined,
-  legend_item_onout: undefined,
-  legend_equally: !1,
-  legend_padding: 0,
-  legend_item_tile_width: 10,
-  legend_item_tile_height: 10,
-  legend_usePoint: !1
 });
 // CONCATENATED MODULE: ./src/config/Options/common/point.ts
 /**
@@ -21650,259 +21911,6 @@ function tplProcess(tpl, data) {
   subchart_axis_x_tick_show: !0,
   subchart_axis_x_tick_text_show: !0,
   subchart_onbrush: function subchart_onbrush() {}
-});
-// CONCATENATED MODULE: ./src/config/Options/common/title.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * title config options
- */
-/* harmony default export */ var common_title = ({
-  /**
-   * Set title options
-   * @name title
-   * @memberof Options
-   * @type {Object}
-   * @property {String} [title.text] Title text. If contains `\n`, it's used as line break allowing multiline title.
-   * @property {Number} [title.padding.top=0] Top padding value.
-   * @property {Number} [title.padding.right=0] Right padding value.
-   * @property {Number} [title.padding.bottom=0] Bottom padding value.
-   * @property {Number} [title.padding.left=0] Left padding value.
-   * @property {String} [title.position=center] Available values are: 'center', 'right' and 'left'.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Title.MultilinedTitle)
-   * @example
-   *  title: {
-   *      text: "Title Text",
-   *
-   *      // or Multiline title text
-   *      text: "Main title text\nSub title text",
-   *
-   *      padding: {
-   *          top: 10,
-   *          right: 10,
-   *          bottom: 10,
-   *          left: 10
-   *      },
-   *      position: "center"
-   *  }
-   */
-  title_text: undefined,
-  title_padding: {
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0
-  },
-  title_position: "center"
-});
-// CONCATENATED MODULE: ./src/config/Options/common/tooltip.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * tooltip config options
- */
-/* harmony default export */ var common_tooltip = ({
-  /**
-   * Tooltip options
-   * @name tooltip
-   * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
-   * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
-   * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
-   *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
-   * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
-   * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
-   * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
-   *  Specified function receives x of the data point to show.
-   * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
-   *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-   * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
-   *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
-   *  If undefined returned, the row of that value will be skipped.
-   * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
-   *  This option can be used to modify the tooltip position by returning object that has top and left.
-   * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
-   *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
-   * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
-   *  - **NOTE:** When is specified, will not be updating tooltip's position.
-   * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
-   *  Within template, below syntax will be replaced using template-like syntax string:
-   *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
-   *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
-   *    - **{=CLASS_TOOLTIP_NAME}**: default tooltip data class name (ex. `bb-tooltip-name-data1`)
-   *    - **{=TITLE}**: title value.
-   *    - **{=COLOR}**: data color.
-   *    - **{=VALUE}**: data value.
-   * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
-   *  - **NOTE:** It should contain `{ key: Array, ... }` value
-   *    - 'key' name is used as substitution within template as '{=KEY}'
-   *    - The value array length should match with the data length
-   * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
-   * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
-   * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
-   * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
-   * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
-   * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
-   * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
-   * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
-   *  **Available Values:**
-   *  - `desc`: In descending data value order
-   *  - `asc`: In ascending data value order
-   *  - `null`: It keeps the data display order<br>
-   *     **NOTE:** When `data.groups` is set, the order will follow as the stacked graph order.<br>
-   *      If want to order as data bound, set any value rather than asc, desc or null. (ex. empty string "")
-   *  - `function(data1, data2) { ... }`: [Array.sort compareFunction](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#Parameters)
-   * @see [Demo: Hide Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.HideTooltip)
-   * @see [Demo: Tooltip Grouping](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipGrouping)
-   * @see [Demo: Tooltip Format](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipFormat)
-   * @see [Demo: Linked Tooltip](https://naver.github.io/billboard.js/demo/#Tooltip.LinkedTooltips)
-   * @see [Demo: Tooltip Template](https://naver.github.io/billboard.js/demo/#Tooltip.TooltipTemplate)
-   * @example
-   *  tooltip: {
-   *      show: true,
-   *      doNotHide: true,
-   *      grouped: false,
-   *      format: {
-   *          title: function(x) { return "Data " + x; },
-   *          name: function(name, ratio, id, index) { return name; },
-   *          value: function(value, ratio, id, index) { return ratio; }
-   *      },
-   *      position: function(data, width, height, element) {
-   *          return {top: 0, left: 0}
-   *      },
-   *
-   *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
-   *          return ... // formatted html as you want
-   *      },
-   *
-   *       // specify tooltip contents using template
-   *       // - example of HTML returned:
-   *       // <ul class="bb-tooltip">
-   *       //   <li class="bb-tooltip-name-data1"><span>250</span><br><span style="color:#00c73c">data1</span></li>
-   *       //   <li class="bb-tooltip-name-data2"><span>50</span><br><span style="color:#fa7171">data2</span></li>
-   *       // </ul>
-   *       contents: {
-   *      	bindto: "#tooltip",
-   *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
-   *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span><br>' +
-   *      			'<span style=color:{=COLOR}>{=NAME}</span></li>' +
-   *      		'}}</ul>'
-   *      }
-   *
-   *       // with additional text value
-   *       // - example of HTML returned:
-   *       // <ul class="bb-tooltip">
-   *       //   <li class="bb-tooltip-name-data1"><span>250</span><br>comment1<span style="color:#00c73c">data1</span>text1</li>
-   *       //   <li class="bb-tooltip-name-data2"><span>50</span><br>comment2<span style="color:#fa7171">data2</span>text2</li>
-   *       // </ul>
-   *       contents: {
-   *      	bindto: "#tooltip",
-   *      	text: {
-   *      		// a) 'key' name is used as substitution within template as '{=KEY}'
-   *      		// b) the length should match with the data length
-   *      		VAR1: ["text1", "text2"],
-   *      		VAR2: ["comment1", "comment2"],
-   *      	},
-   *      	template: '<ul class={=CLASS_TOOLTIP}>{{' +
-   *      			'<li class="{=CLASS_TOOLTIP_NAME}"><span>{=VALUE}</span>{=VAR2}<br>' +
-   *      			'<span style=color:{=COLOR}>{=NAME}</span>{=VAR1}</li>' +
-   *      		'}}</ul>'
-   *      }
-   *
-   *      // sort tooltip data value display in ascending order
-   *      order: "asc",
-   *
-   *      // specifying sort function
-   *      order: function(a, b) {
-   *         // param data passed format
-   *         {x: 5, value: 250, id: "data1", index: 5, name: "data1"}
-   *           ...
-   *      },
-   *
-   *      // show at the initialization
-   *      init: {
-   *          show: true,
-   *          x: 2,
-   *          position: {
-   *              top: "150px",
-   *              left: "250px"
-   *          }
-   *      },
-   *
-   *      // fires prior tooltip is shown
-   *      onshow: function(ctx, selectedData) {
-   *      	ctx; // current chart instance
-   *
-   *      	// current dataset selected
-   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
-   *      	selectedData;
-   *      },
-   *
-   *      // fires prior tooltip is hidden
-   *      onhide: function(ctx, selectedData) {
-   *      	ctx; // current chart instance
-   *
-   *      	// current dataset selected
-   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
-   *      	selectedData;
-   *      },
-   *
-   *      // fires after tooltip is shown
-   *      onshown: function(ctx, selectedData) {
-   *      	ctx; // current chart instance
-   *
-   *      	// current dataset selected
-   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
-   *      	selectedData;
-   *      },
-   *
-   *      // fires after tooltip is hidden
-   *      onhidden: function(ctx, selectedData) {
-   *      	ctx; // current chart instance
-   *
-   *      	// current dataset selected
-   *      	// ==> [{x: 4, value: 150, id: "data2", index: 4, name: "data2"}, ...]
-   *      	selectedData;
-   *      },
-   *
-   *      // Link any tooltips when multiple charts are on the screen where same x coordinates are available
-   *      // Useful for timeseries correlation
-   *      linked: true,
-   *
-   *      // Specify name to interact those with the same name only.
-   *      linked: {
-   *          name: "some-group"
-   *      }
-   *  }
-   */
-  tooltip_show: !0,
-  tooltip_doNotHide: !1,
-  tooltip_grouped: !0,
-  tooltip_format_title: undefined,
-  tooltip_format_name: undefined,
-  tooltip_format_value: undefined,
-  tooltip_position: undefined,
-  tooltip_contents: {},
-  tooltip_init_show: !1,
-  tooltip_init_x: 0,
-  tooltip_init_position: {
-    top: "0px",
-    left: "50px"
-  },
-  tooltip_linked: !1,
-  tooltip_linked_name: "",
-  tooltip_onshow: function tooltip_onshow() {},
-  tooltip_onhide: function tooltip_onhide() {},
-  tooltip_onshown: function tooltip_onshown() {},
-  tooltip_onhidden: function tooltip_onhidden() {},
-  tooltip_order: null
 });
 // CONCATENATED MODULE: ./src/config/Options/common/zoom.ts
 /**
@@ -22111,7 +22119,6 @@ function tplProcess(tpl, data) {
    */
   bar_padding: 0,
   bar_radius: undefined,
-  bar_radius_ratio: undefined,
   bar_sensitivity: 2,
   bar_width: undefined,
   bar_width_ratio: .6,
@@ -22152,6 +22159,104 @@ function tplProcess(tpl, data) {
    */
   bubble_maxR: 35,
   bubble_zerobased: !1
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * line config options
+ */
+/* harmony default export */ var shape_line = ({
+  /**
+   * Set line options
+   * @name line
+   * @memberof Options
+   * @type {Object}
+   * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
+   *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
+   * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
+   * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
+   * **Available values:**
+   * - step
+   * - step-before
+   * - step-after
+   * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+   * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
+   * @example
+   *  line: {
+   *      connectNull: true,
+   *      classes: [
+   *          "line-class1",
+   *          "line-class2"
+   *      ],
+   *      step: {
+   *          type: "step-after"
+   *      },
+   *
+   *      // hide all data points ('point.show=false' also has similar effect)
+   *      point: false,
+   *
+   *      // show data points for only indicated datas
+   *      point: [
+   *          "data1", "data3"
+   *      ],
+   *
+   *      zerobased: false
+   *  }
+   */
+  line_connectNull: !1,
+  line_step_type: "step",
+  line_zerobased: !1,
+  line_classes: undefined,
+  line_point: !0
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * x Axis config options
+ */
+/* harmony default export */ var shape_spline = ({
+  /**
+   * Set spline options
+   * - **Available interpolation type values:**
+   *  - basis (d3.curveBasis)
+   *  - basis-closed (d3.curveBasisClosed)
+   *  - basis-open (d3.curveBasisOpen)
+   *  - bundle (d3.curveBundle)
+   *  - cardinal (d3.curveCardinal)
+   *  - cardinal-closed (d3.curveCardinalClosed)
+   *  - cardinal-open (d3.curveCardinalOpen)
+   *  - catmull-rom (d3.curveCatmullRom)
+   *  - catmull-rom-closed (d3.curveCatmullRomClosed)
+   *  - catmull-rom-open (d3.curveCatmullRomOpen)
+   *  - monotone-x (d3.curveMonotoneX)
+   *  - monotone-y (d3.curveMonotoneY)
+   *  - natural (d3.curveNatural)
+   *  - linear-closed (d3.curveLinearClosed)
+   *  - linear (d3.curveLinear)
+   *  - step (d3.curveStep)
+   *  - step-after (d3.curveStepAfter)
+   *  - step-before (d3.curveStepBefore)
+   * @name spline
+   * @memberof Options
+   * @type {Object}
+   * @property {String} [spline.interpolation.type="cardinal"]
+   * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
+   * @example
+   *  spline: {
+   *      interpolation: {
+   *          type: "cardinal"
+   *      }
+   *  }
+   */
+  spline_interpolation_type: "cardinal"
 });
 // CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
 /**
@@ -22306,11 +22411,11 @@ function tplProcess(tpl, data) {
   gauge_fullCircle: !1,
   gauge_label_show: !0,
   gauge_label_format: undefined,
+  gauge_label_extents: undefined,
   gauge_min: 0,
   gauge_max: 100,
   gauge_type: "single",
   gauge_startingAngle: -1 * Math.PI / 2,
-  gauge_label_extents: undefined,
   gauge_title: "",
   gauge_units: undefined,
   gauge_width: undefined,
@@ -22318,59 +22423,6 @@ function tplProcess(tpl, data) {
   gauge_expand: {},
   gauge_expand_rate: .98,
   gauge_expand_duration: 50
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * line config options
- */
-/* harmony default export */ var shape_line = ({
-  /**
-   * Set line options
-   * @name line
-   * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
-   *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-   * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
-   * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
-   * **Available values:**
-   * - step
-   * - step-before
-   * - step-after
-   * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-   * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
-   * @example
-   *  line: {
-   *      connectNull: true,
-   *      classes: [
-   *          "line-class1",
-   *          "line-class2"
-   *      ],
-   *      step: {
-   *          type: "step-after"
-   *      },
-   *
-   *      // hide all data points ('point.show=false' also has similar effect)
-   *      point: false,
-   *
-   *      // show data points for only indicated datas
-   *      point: [
-   *          "data1", "data3"
-   *      ],
-   *
-   *      zerobased: false
-   *  }
-   */
-  line_connectNull: !1,
-  line_step_type: "step",
-  line_zerobased: !1,
-  line_classes: undefined,
-  line_point: !0
 });
 // CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
 /**
@@ -22533,73 +22585,31 @@ function tplProcess(tpl, data) {
   radar_size_ratio: .87,
   radar_direction_clockwise: !1
 });
-// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * x Axis config options
- */
-/* harmony default export */ var shape_spline = ({
-  /**
-   * Set spline options
-   * - **Available interpolation type values:**
-   *  - basis (d3.curveBasis)
-   *  - basis-closed (d3.curveBasisClosed)
-   *  - basis-open (d3.curveBasisOpen)
-   *  - bundle (d3.curveBundle)
-   *  - cardinal (d3.curveCardinal)
-   *  - cardinal-closed (d3.curveCardinalClosed)
-   *  - cardinal-open (d3.curveCardinalOpen)
-   *  - catmull-rom (d3.curveCatmullRom)
-   *  - catmull-rom-closed (d3.curveCatmullRomClosed)
-   *  - catmull-rom-open (d3.curveCatmullRomOpen)
-   *  - monotone-x (d3.curveMonotoneX)
-   *  - monotone-y (d3.curveMonotoneY)
-   *  - natural (d3.curveNatural)
-   *  - linear-closed (d3.curveLinearClosed)
-   *  - linear (d3.curveLinear)
-   *  - step (d3.curveStep)
-   *  - step-after (d3.curveStepAfter)
-   *  - step-before (d3.curveStepBefore)
-   * @name spline
-   * @memberof Options
-   * @type {Object}
-   * @property {String} [spline.interpolation.type="cardinal"]
-   * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
-   * @example
-   *  spline: {
-   *      interpolation: {
-   *          type: "cardinal"
-   *      }
-   *  }
-   */
-  spline_interpolation_type: "cardinal"
-});
 // CONCATENATED MODULE: ./src/config/Options/Options.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
- // common
-
+// common
 
 
 
 
 
-
-
-
- // shape
-
+ // Axis based
 
 
 
 
+
+
+
+
+
+
+
+
+ // Non-Axis based
 
 
 
@@ -22614,9 +22624,8 @@ function tplProcess(tpl, data) {
  */
 
 var Options = function () {
-  var commonConfig = mergeObj({}, data_data, axis_axis, common_color, common_grid, interaction, common_legend, common_point, common_subchart, common_title, common_tooltip, common_zoom),
-      shapeConfig = mergeObj({}, shape_area, shape_bar, bubble, donut, gauge, shape_line, shape_pie, radar, shape_spline);
-  return mergeObj({
+  var config = [data_data, common_color, interaction, common_legend, common_title, common_tooltip].concat([donut, gauge, shape_pie, radar], [data_axis, data_selection, axis_axis, common_grid, common_point, common_subchart, common_zoom], [shape_area, shape_bar, bubble, shape_line, shape_spline]);
+  return mergeObj.apply(void 0, [{
     /**
      * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
      * If other chart is set already, it will be replaced with the new one (only one chart can be set in one element).
@@ -22874,29 +22883,29 @@ var Options = function () {
     transition_duration: 350,
 
     /**
-    	* Set scatter options
-    	* @name scatter
-    	* @memberof Options
-    	* @type {Object}
-    	* @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
-    	* @example
-    	*  scatter: {
-    	*      connectNull: true,
-    	*      step: {
-    	*          type: "step-after"
-    	*      },
-    	*
-    	*      // hide all data points ('point.show=false' also has similar effect)
-    	*      point: false,
-    	*
-    	*      // show data points for only indicated datas
-    	*      point: [
-    	*          "data1", "data3"
-    	*      ],
-    	*
-    	*      zerobased: false
-    	*  }
-    	*/
+     * Set scatter options
+     * @name scatter
+     * @memberof Options
+     * @type {Object}
+     * @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+     * @example
+     *  scatter: {
+     *      connectNull: true,
+     *      step: {
+     *          type: "step-after"
+     *      },
+     *
+     *      // hide all data points ('point.show=false' also has similar effect)
+     *      point: false,
+     *
+     *      // show data points for only indicated datas
+     *      point: [
+     *          "data1", "data3"
+     *      ],
+     *
+     *      zerobased: false
+     *  }
+     */
     scatter_zerobased: !1,
 
     /**
@@ -22977,7 +22986,7 @@ var Options = function () {
      *  ]
      */
     regions: []
-  }, commonConfig, shapeConfig);
+  }].concat(config));
 };
 
 
@@ -25933,9 +25942,9 @@ var Axis_Axis =
 function () {
   function Axis(owner) {
     _defineProperty(this, "owner", void 0), _defineProperty(this, "axesList", {}), _defineProperty(this, "tick", {
-      x: "",
-      y: "",
-      y2: ""
+      x: null,
+      y: null,
+      y2: null
     }), _defineProperty(this, "xs", []), _defineProperty(this, "orient", {
       x: "bottom",
       y: "left",
@@ -26046,7 +26055,7 @@ function () {
         isCategory = isX && $$.isCategorized(),
         orient = this.orient[name],
         tickFormat = isX ? $$.format.xAxisTick : config["axis_" + name + "_tick_format"],
-        tickValues = isX ? $$.axis.tick.x : $$[name + "AxisTickValues"],
+        tickValues = $$.axis.tick[type],
         axisParams = mergeObj({
       outerTick: outerTick,
       noTransition: noTransition,
@@ -35100,6 +35109,7 @@ var radar_cacheKey = "$radarPoints";
 
 
 
+
 /**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
@@ -35107,7 +35117,6 @@ var radar_cacheKey = "$radarPoints";
  * @ignore
  * @private
  */
-
 var ChartInternal_ChartInternal =
 /*#__PURE__*/
 function () {

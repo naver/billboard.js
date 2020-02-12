@@ -68,13 +68,13 @@ export default {
      *  }
      */
     pie_label_show: true,
-    pie_label_format: undefined,
+    pie_label_format: <(() => number|string)|undefined> undefined,
     pie_label_threshold: 0.05,
-    pie_label_ratio: undefined,
-    pie_expand: {},
+    pie_label_ratio: <(() => number)|undefined> undefined,
+    pie_expand: <boolean|{rate?: number; duration?: number;}> {},
     pie_expand_rate: 0.98,
     pie_expand_duration: 50,
-    pie_innerRadius: 0,
+    pie_innerRadius: <number|{[key: string]: number}> 0,
     pie_padAngle: 0,
     pie_padding: 0,
     pie_startingAngle: 0

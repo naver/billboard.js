@@ -37,7 +37,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_max: undefined,
+    axis_y2_max: <number|undefined> undefined,
 
     /**
      * Set min value of y2 axis.
@@ -52,7 +52,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_min: undefined,
+    axis_y2_min: <number|undefined> undefined,
 
     /**
      * Change the direction of y2 axis.<br><br>
@@ -83,7 +83,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_center: undefined,
+    axis_y2_center: <number|undefined> undefined,
 
     /**
      * Show y2 axis inside of the chart.
@@ -124,7 +124,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_label: {},
+    axis_y2_label: <string|object> {},
 
     /**
      * Set formatter for y2 axis tick text.<br><br>
@@ -143,7 +143,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_tick_format: undefined,
+    axis_y2_tick_format: <Function|undefined> undefined,
 
     /**
      * Setting for culling ticks.<br><br>
@@ -220,7 +220,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_tick_values: null,
+    axis_y2_tick_values: <number[]|(()=> number[])|null> null,
 
     /**
      * Rotate y2 axis tick text.
@@ -257,7 +257,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_tick_count: undefined,
+    axis_y2_tick_count: <number|undefined> undefined,
 
     /**
      * Show or hide y2 axis tick line.
@@ -295,7 +295,7 @@ export default {
      *   }
      * }
      */
-    axis_y2_tick_stepSize: null,
+    axis_y2_tick_stepSize: <number|null> null,
 
     /**
      * Show or hide y2 axis tick text.
@@ -358,7 +358,7 @@ export default {
      *     padding: 10
      * }
      */
-    axis_y2_padding: {},
+    axis_y2_padding: <number|{top?: number; bottom?: number;}> {},
 
     /**
      * Set default range of y2 axis.<br><br>

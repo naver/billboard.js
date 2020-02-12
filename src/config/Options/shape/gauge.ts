@@ -69,17 +69,17 @@ export default {
      */
     gauge_fullCircle: false,
     gauge_label_show: true,
-    gauge_label_format: undefined,
+    gauge_label_format: <(() => string)|undefined> undefined,
+    gauge_label_extents: <(() => string)|undefined> undefined,
     gauge_min: 0,
     gauge_max: 100,
     gauge_type: "single",
     gauge_startingAngle: -1 * Math.PI / 2,
-    gauge_label_extents: undefined,
     gauge_title: "",
-    gauge_units: undefined,
-    gauge_width: undefined,
+    gauge_units: <string|undefined> undefined,
+    gauge_width: <number|undefined> undefined,
     gauge_arcs_minWidth: 5,
-    gauge_expand: {},
+    gauge_expand: <boolean|{duration: number}> {},
     gauge_expand_rate: 0.98,
     gauge_expand_duration: 50
 };

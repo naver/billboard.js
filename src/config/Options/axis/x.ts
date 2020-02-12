@@ -54,7 +54,7 @@ export default {
      *   }
      * }
      */
-    axis_x_type: "indexed",
+    axis_x_type: <"indexed"|"timeseries"|"category"> "indexed",
 
     /**
      * Set how to treat the timezone of x values.<br>
@@ -86,7 +86,7 @@ export default {
      *   }
      * }
      */
-    axis_x_categories: [],
+    axis_x_categories: <string[]> [],
 
     /**
      * centerize ticks on category axis.
@@ -132,7 +132,7 @@ export default {
      *   }
      * }
      */
-    axis_x_tick_format: undefined,
+    axis_x_tick_format: <Function|string|undefined> undefined,
 
     /**
      * Setting for culling ticks.<br><br>
@@ -190,7 +190,7 @@ export default {
      *   }
      * }
      */
-    axis_x_tick_count: undefined,
+    axis_x_tick_count: <number|undefined>undefined,
 
     /**
      * Show or hide x axis tick line.
@@ -295,7 +295,7 @@ export default {
      *   }
      * }
      */
-    axis_x_tick_values: null,
+    axis_x_tick_values: <(string|Date|number)[]|(()=> number[])|null> null,
 
     /**
      * Rotate x axis tick text.
@@ -382,7 +382,7 @@ export default {
      *   }
      * }
      */
-    axis_x_tick_width: null,
+    axis_x_tick_width: <number|null> null,
 
     /**
      * Set to display system tooltip(via 'title' attribute) for tick text
@@ -415,7 +415,7 @@ export default {
      *   }
      * }
      */
-    axis_x_max: undefined,
+    axis_x_max: <number|undefined> undefined,
 
     /**
      * Set min value of x axis range.
@@ -430,7 +430,7 @@ export default {
      *   }
      * }
      */
-    axis_x_min: undefined,
+    axis_x_min: <number|undefined> undefined,
 
     /**
      * Set padding for x axis.<br><br>
@@ -464,7 +464,7 @@ export default {
      *   }
      * }
      */
-    axis_x_padding: {},
+    axis_x_padding: <number|{left?: number; right?: number;}> {},
 
     /**
      * Set height of x axis.<br><br>
@@ -480,7 +480,7 @@ export default {
      *   }
      * }
      */
-    axis_x_height: undefined,
+    axis_x_height: <number|undefined> undefined,
 
     /**
      * Set default extent for subchart and zoom. This can be an array or function that returns an array.
@@ -510,7 +510,7 @@ export default {
      *   }
      * }
      */
-    axis_x_extent: undefined,
+    axis_x_extent: <(number|string)[]|Function|undefined> undefined,
 
     /**
      * Set label on x axis.<br><br>
@@ -592,5 +592,5 @@ export default {
      *    ]
      * }
      */
-    axis_x_axes: []
+    axis_x_axes: <object[]>[]
 };

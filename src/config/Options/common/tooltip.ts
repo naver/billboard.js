@@ -183,11 +183,11 @@ export default {
     tooltip_show: true,
     tooltip_doNotHide: false,
     tooltip_grouped: true,
-    tooltip_format_title: undefined,
-    tooltip_format_name: undefined,
-    tooltip_format_value: undefined,
-    tooltip_position: undefined,
-    tooltip_contents: {},
+    tooltip_format_title: <(() => string)|undefined> undefined,
+    tooltip_format_name: <(() => string)|undefined> undefined,
+    tooltip_format_value: <(() => number)|undefined> undefined,
+    tooltip_position: <(() => {top: number; left: number;})|undefined> undefined,
+    tooltip_contents: <(() => string)|{bindto: string; template: string; text?: {[key: string]: string[]}}> {},
     tooltip_init_show: false,
     tooltip_init_x: 0,
     tooltip_init_position: {
@@ -200,5 +200,5 @@ export default {
     tooltip_onhide: () => {},
     tooltip_onshown: () => {},
     tooltip_onhidden: () => {},
-    tooltip_order: null
+    tooltip_order: <string|Function|null> null
 };

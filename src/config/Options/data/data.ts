@@ -2,95 +2,12 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import dataSelection from "./selection";
-import {mergeObj} from "../../../module/util";
+import {ChartTypes} from "../../../../types/types";
 
 /**
  * data config options
  */
-export default mergeObj({
-    /**
-     * Specify the key of x values in the data.<br><br>
-     * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
-     * @name data․x
-     * @memberof Options
-     * @type {String}
-     * @default undefined
-     * @example
-     * data: {
-     *   x: "date"
-     * }
-     */
-    data_x: undefined,
-
-    /**
-     * Specify the keys of the x values for each data.<br><br>
-     * This option can be used if we want to show the data that has different x values.
-     * @name data․xs
-     * @memberof Options
-     * @type {Object}
-     * @default {}
-     * @example
-     * data: {
-     *   xs: {
-     *      data1: "x1",
-     *      data2: "x2"
-     *   }
-     * }
-     */
-    data_xs: {},
-
-    /**
-     * Set a format specifier to parse string specifed as x.
-     * @name data․xFormat
-     * @memberof Options
-     * @type {String}
-     * @default %Y-%m-%d
-     * @example
-     * data: {
-     *    x: "x",
-     *    columns: [
-     *        ["x", "01012019", "02012019", "03012019"],
-     *        ["data1", 30, 200, 100]
-     *    ],
-     *    // Format specifier to parse as datetime for given 'x' string value
-     *    xFormat: "%m%d%Y"
-     * },
-     * axis: {
-     *    x: {
-     *        type: "timeseries"
-     *    }
-     * }
-     * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
-     */
-    data_xFormat: "%Y-%m-%d",
-
-    /**
-     * Set localtime format to parse x axis.
-     * @name data․xLocaltime
-     * @memberof Options
-     * @type {Boolean}
-     * @default true
-     * @example
-     * data: {
-     *   xLocaltime: false
-     * }
-     */
-    data_xLocaltime: true,
-
-    /**
-     * Sort on x axis.
-     * @name data․xSort
-     * @memberof Options
-     * @type {Boolean}
-     * @default true
-     * @example
-     * data: {
-     *   xSort: false
-     * }
-     */
-    data_xSort: true,
-
+export default {
     /**
      * Converts data id value
      * @name data․idConverter
@@ -127,7 +44,7 @@ export default mergeObj({
      *   }
      * }
      */
-    data_names: {},
+    data_names: <{[key: string]: string}> {},
 
     /**
      * Set custom data class.<br><br>
@@ -144,40 +61,7 @@ export default mergeObj({
      *   }
      * }
      */
-    data_classes: {},
-
-    /**
-     * Set groups for the data for stacking.
-     * @name data․groups
-     * @memberof Options
-     * @type {Array}
-     * @default []
-     * @example
-     * data: {
-     *   groups: [
-     *     ["data1", "data2"],
-     *     ["data3"]
-     *   ]
-     * }
-     */
-    data_groups: [],
-
-    /**
-     * Set y axis the data related to. y and y2 can be used.
-	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
-     * @name data․axes
-     * @memberof Options
-     * @type {Object}
-     * @default {}
-     * @example
-     * data: {
-     *   axes: {
-     *     data1: "y",
-     *     data2: "y2"
-     *   }
-     * }
-     */
-    data_axes: {},
+    data_classes: <{[key: string]: string}> {},
 
     /**
      * Set chart type at once.<br><br>
@@ -207,7 +91,7 @@ export default mergeObj({
      *    type: "bar"
      * }
      */
-    data_type: undefined,
+    data_type: <ChartTypes|undefined> undefined,
 
     /**
      * Set chart type for each data.<br>
@@ -225,78 +109,7 @@ export default mergeObj({
      *   }
      * }
      */
-    data_types: {},
-
-    /**
-     * Set labels options
-     * @name data․labels
-     * @memberof Options
-     * @type {Object}
-     * @property {Boolean} [data.labels=false] Show or hide labels on each data points
-     * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
-     * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
-     * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
-     *  - `v` is the value of the data point where the label is shown.
-     *  - `id` is the id of the data where the label is shown.
-     *  - `i` is the index of the data point where the label is shown.
-     *  - `j` is the sub index of the data point where the label is shown.<br><br>
-     * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-     * @property {String|Object} [data.labels.colors] Set label text colors.
-     * @property {Object} [data.labels.position] Set each dataset position, relative the original.
-     * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-     * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
-     * @memberof Options
-     * @type {Object}
-     * @default {}
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
-     * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
-     * @see [Demo: label format](https://naver.github.io/billboard.js/demo/#Data.DataLabelFormat)
-     * @see [Demo: label overlap](https://naver.github.io/billboard.js/demo/#Data.DataLabelOverlap)
-     * @see [Demo: label position](https://naver.github.io/billboard.js/demo/#Data.DataLabelPosition)
-     * @example
-     * data: {
-     *   labels: true,
-     *
-     *   // or set specific options
-     *   labels: {
-     *     format: function(v, id, i, j) { ... },
-     *
-     *     // it's possible to set for each data
-     *     format: {
-     *         data1: function(v, id, i, j) { ... },
-     *         ...
-     *     },
-     *
-     *     // align text to center of the 'bar' shape (works only for 'bar' type)
-     *     centered: true,
-     *
-     *     // apply for all label texts
-     *     colors: "red",
-     *
-     *     // or set different colors per dataset
-     *     // for not specified dataset, will have the default color value
-     *     colors: {
-     *        data1: "yellow",
-     *        data3: "green"
-     *     },
-     *
-     *     // set x, y coordinate position
-     *     position: {
-     *        x: -10,
-     *        y: 10
-     *     },
-     *
-     *     // or set x, y coordinate position by each dataset
-     *     position: {
-     *        data1: {x: 5, y: 5},
-     *        data2: {x: 10, y: -20}
-     *     }
-     *   }
-     * }
-     */
-    data_labels: {},
-    data_labels_colors: undefined,
-    data_labels_position: {},
+    data_types: <{[key: string]: ChartTypes}> {},
 
     /**
      *  This option changes the order of stacking data and pieces of pie/donut.
@@ -336,37 +149,7 @@ export default mergeObj({
      *   }
      * }
      */
-    data_order: "desc",
-
-    /**
-     * Define regions for each data.<br>
-     * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
-     * - The object type should be as:
-     *   - start {Number}: Start data point number. If not set, the start will be the first data point.
-     *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
-     *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
-     * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
-     * @name data․regions
-     * @memberof Options
-     * @type {Object}
-     * @default {}
-     * @example
-     * data: {
-     *   regions: {
-     *     data1: [{
-     *         start: 1,
-     *         end: 2,
-     *         style: {
-     *             dasharray: "5 2"
-     *         }
-     *     }, {
-     *         start: 3
-     *     }],
-     *     ...
-     *   }
-     * }
-     */
-    data_regions: {},
+    data_order: <"desc"|"asc"|Function|null> "desc",
 
     /**
      * Set color converter function.<br><br>
@@ -381,7 +164,7 @@ export default mergeObj({
      *   color: function(color, d) { ... }
      * }
      */
-    data_color: undefined,
+    data_color: <Function|undefined> undefined,
 
     /**
      * Set color for each data.
@@ -400,7 +183,7 @@ export default mergeObj({
      *   }
      * }
      */
-    data_colors: {},
+    data_colors: <{[key: string]: string|(() => string);}> {},
 
     /**
      * Hide each data when the chart appears.<br><br>
@@ -418,7 +201,7 @@ export default mergeObj({
      *   hide: ["data1", ...]
      * }
      */
-    data_hide: false,
+    data_hide: <string[]|boolean> false,
 
     /**
      * Filter values to be shown
@@ -438,27 +221,7 @@ export default mergeObj({
      *      return v.id !== "data1";
      *   }
      */
-    data_filter: undefined,
-
-    /**
-     * Set the stacking to be normalized
-     * - **NOTE:**
-     *   - For stacking, '[data.groups](#.data%25E2%2580%25A4groups)' option should be set
-     *   - y Axis will be set in percentage value (0 ~ 100%)
-     *   - Must have postive values
-     * @name data․stack․normalize
-     * @memberof Options
-     * @type {Boolean}
-     * @default false
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
-     * @example
-     * data: {
-     *   stack: {
-     *      normalize: true
-     *   }
-     * }
-     */
-    data_stack_normalize: false,
+    data_filter: <(() => boolean)|undefined> undefined,
 
     /**
      * Set a callback for click event on each data point.<br><br>
@@ -523,41 +286,7 @@ export default mergeObj({
      */
     data_onout: () => {},
 
-    /**
-     * Set a callback for on data selection.
-     * @name data․onselected
-     * @memberof Options
-     * @type {Function}
-     * @default function() {}
-     * @example
-     * data: {
-     *     onselected: function(d, element) {
-     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-     *        // element - <circle>
-     *        ...
-     *    }
-     * }
-     */
-    data_onselected: () => {},
-
-    /**
-     * Set a callback for on data un-selection.
-     * @name data․onunselected
-     * @memberof Options
-     * @type {Function}
-     * @default function() {}
-     * @example
-     * data: {
-     *     onunselected: function(d, element) {
-     *        // d - ex) {x: 4, value: 150, id: "data1", index: 4, name: "data1"}
-     *        // element - <circle>
-     *        ...
-     *    }
-     * }
-     */
-    data_onunselected: () => {},
-
-    /**
+     /**
      * Set a callback for minimum data
      * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
      * @name data․onmin
@@ -571,7 +300,7 @@ export default mergeObj({
      *    ...
      *  }
      */
-    data_onmin: undefined,
+    data_onmin: <Function|undefined> undefined,
 
     /**
      * Set a callback for maximum data
@@ -587,7 +316,7 @@ export default mergeObj({
      *    ...
      *  }
      */
-    data_onmax: undefined,
+    data_onmax: <Function|undefined> undefined,
 
     /**
      * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
@@ -601,7 +330,7 @@ export default mergeObj({
      *     url: "/data/test.csv"
      * }
      */
-    data_url: undefined,
+    data_url: <string|undefined> undefined,
 
     /**
      * XHR header value
@@ -620,13 +349,13 @@ export default mergeObj({
      *     }
      * }
      */
-    data_headers: undefined,
+    data_headers: <object|undefined> undefined,
 
     /**
      * Parse a JSON object for data. See also data.keys.
      * @name data․json
      * @memberof Options
-     * @type {Object}
+     * @type {Array}
      * @default undefined
      * @see [data․keys](#.data%25E2%2580%25A4keys)
      * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.JSONData)
@@ -644,7 +373,7 @@ export default mergeObj({
      *     }
      * }
      */
-    data_json: undefined,
+    data_json: <object[]|undefined> undefined,
 
     /**
      * Load data from a multidimensional array, with the first element containing the data names, the following containing related data in that order.
@@ -705,7 +434,7 @@ export default mergeObj({
      *   }
      * }
      */
-    data_rows: undefined,
+    data_rows: <(string|number)[][]|undefined> undefined,
 
     /**
      * Load data from a multidimensional array, with each element containing an array consisting of a datum name and associated data values.
@@ -752,7 +481,7 @@ export default mergeObj({
      *   type: "bubble"
      * }
      */
-    data_columns: undefined,
+    data_columns: <(string|number)[][]|undefined> undefined,
 
     /**
      * Used if loading JSON via data.url.
@@ -769,7 +498,7 @@ export default mergeObj({
      *     mimeType: "json"
      * }
      */
-    data_mimeType: "csv",
+    data_mimeType: <"csv"|"json"|"tsv"> "csv",
 
     /**
      * Choose which JSON object keys correspond to desired data.
@@ -792,7 +521,7 @@ export default mergeObj({
      *     }
      * }
      */
-    data_keys: undefined,
+    data_keys: <{x?: string; value?: string[]}|undefined> undefined,
 
     /**
      * Set text label to be displayed when there's no data to show.
@@ -811,4 +540,4 @@ export default mergeObj({
      * }
      */
     data_empty_label_text: ""
-}, dataSelection);
+};

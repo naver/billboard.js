@@ -19,7 +19,7 @@ import Cache from "../module/Cache";
 import {extend, notEmpty, asHalfPixel, getOption, isArray, isFunction, isNumber, isObject, isString, isValue, callFn, sortValue} from "../module/util";
 
 // for Types
-import {Nodes} from "../types/ChartInternal";
+import {d3Selection} from "../../types/types";
 
 // Axis
 import Axis from "./Axis/Axis";
@@ -64,6 +64,8 @@ import point from "./shape/point";
 import radar from "./shape/radar";
 import shape from "./shape/shape";
 
+type N = d3Selection|null;
+
 /**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
@@ -85,7 +87,9 @@ export default class ChartInternal {
 	};
 
 	// selections
-	public $el: Nodes = {
+	public $el: {
+		[key: string]: N | {[key: string]: N}
+	} = {
 		chart: null,
 		main: null,
 		svg: null,
