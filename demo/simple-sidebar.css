@@ -8,6 +8,9 @@
  h1,h2,h3,h4,nav,.chart_area p,#wrapper #sidebar-wrapper{font-family:Raleway,sans-serif;font-weight:normal}
  body {
      overflow-x: hidden;
+
+    /* https://github.com/naver/billboard.js/issues/1237 */
+    overflow-y: scroll;
  }
 
  /* Toggle Styles */
