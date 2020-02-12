@@ -17,7 +17,7 @@ export default class Axis {
 	public owner: ChartInternal;
 	private axesList = {};
 	public tick = {
-		x: "", y: "", y2: ""
+		x: null, y: null, y2: null
 	};
 	public xs = [];
 	private orient = {
@@ -196,7 +196,7 @@ export default class Axis {
 		const isCategory = isX && $$.isCategorized();
 		const orient = this.orient[name];
 		const tickFormat = isX ? $$.format.xAxisTick : config[`axis_${name}_tick_format`];
-		let tickValues = isX ? $$.axis.tick.x : $$[`${name}AxisTickValues`];
+		let tickValues = $$.axis.tick[type];
 
 		const axisParams = mergeObj({
 			outerTick,

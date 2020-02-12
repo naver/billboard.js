@@ -18737,7 +18737,7 @@ function mergeObj(target) {
  */
 
 
-function sortValue(data, isAsc) {
+function util_sortValue(data, isAsc) {
   isAsc === void 0 && (isAsc = !0);
   var fn;
   return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
@@ -18763,7 +18763,7 @@ function getMinMax(type, data) {
   var res = data.filter(function (v) {
     return notEmpty(v);
   });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, res) : res[0] instanceof Date && (res = util_sortValue(res, type === "min")[0]) : res = undefined, res;
 }
 /**
  * Get range
@@ -26297,7 +26297,7 @@ function () {
     ["x", "y", "y2", "subX"].forEach(function (id) {
       var axis = $$.axis[id],
           $axis = $el.axis[id];
-      axis && (!isInit && (axis.config.withoutTransition = !config.transition_duration), $axis.style("opacity", opacity), axis.create(transitions["axis" + capitalize(id)]));
+      axis && $axis && (!isInit && (axis.config.withoutTransition = !config.transition_duration), $axis.style("opacity", opacity), axis.create(transitions["axis" + capitalize(id)]));
     }), this.updateAxes();
   }
   /**
@@ -26349,7 +26349,7 @@ function () {
       if (axis && toCull) {
         var intervalForCulling,
             tickText = axis.selectAll(".tick text"),
-            tickValues = sortValue(tickText.data()),
+            tickValues = util_sortValue(tickText.data()),
             tickSize = tickValues.length,
             cullingMax = config["axis_" + id + "_tick_culling_max"];
 
@@ -27019,7 +27019,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       return a.concat(b);
     }).map(function (v) {
       return v.x;
-    }), target = sortValue(getUnique(target)).map(function (x, index) {
+    }), target = util_sortValue(getUnique(target)).map(function (x, index) {
       return {
         x: x,
         index: index
@@ -27065,7 +27065,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       return new Date(+x);
     }) : xs.map(function (x) {
       return +x;
-    })), sortValue(xs);
+    })), util_sortValue(xs);
   },
   addHiddenTargetIds: function addHiddenTargetIds(targetIds) {
     this.state.hiddenTargetIds = this.state.hiddenTargetIds.concat(targetIds);
@@ -29368,7 +29368,7 @@ var colorizePattern = function (pattern, color, id) {
         scale = $$.scale,
         zoomEnabled = config.zoom_enabled;
 
-    if (withUpdateOrgXDomain && (scale.x.domain(domain || sortValue($$.getXDomain(targets))), org.xDomain = scale.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), scale.subX.domain(scale.x.domain()), $$.brush && $$.brush.scale(scale.subX)), withUpdateXDomain) {
+    if (withUpdateOrgXDomain && (scale.x.domain(domain || util_sortValue($$.getXDomain(targets))), org.xDomain = scale.x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), scale.subX.domain(scale.x.domain()), $$.brush && $$.brush.scale(scale.subX)), withUpdateXDomain) {
       var domainValue = domain || !$$.brush || brushEmpty($$) ? org.xDomain : getBrushSelection($$).map(scale.subX.invert);
       scale.x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
     } // Trim domain when too big by zoom mousemove event
@@ -31474,225 +31474,6 @@ var TYPES = {
     return ["basis", "basis-closed", "basis-open", "bundle", "cardinal", "cardinal-closed", "cardinal-open", "catmull-rom", "catmull-rom-closed", "catmull-rom-open", "linear", "linear-closed", "monotone-x", "monotone-y", "natural"].indexOf(type) >= 0;
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-
-/* harmony default export */ var ChartInternal_shape_bar = ({
-  initBar: function initBar() {
-    var $$ = this;
-    $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartBars);
-  },
-  updateTargetsForBar: function updateTargetsForBar(targets) {
-    var $$ = this,
-        config = $$.config,
-        classChartBar = $$.classChartBar.bind($$),
-        classBars = $$.classBars.bind($$),
-        classFocus = $$.classFocus.bind($$),
-        mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data(targets).attr("class", function (d) {
-      return classChartBar(d) + classFocus(d);
-    }),
-        mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
-    // Bars for each data
-    mainBarEnter.append("g").attr("class", classBars).style("cursor", function (d) {
-      return config.data_selection_isselectable(d) ? "pointer" : null;
-    });
-  },
-  updateBar: function updateBar(durationForExit) {
-    var $$ = this,
-        $el = $$.$el,
-        barData = $$.barData.bind($$),
-        classBar = $$.classBar.bind($$),
-        initialOpacity = $$.initialOpacity.bind($$);
-    $el.bar = $el.main.selectAll("." + config_classes.bars).selectAll("." + config_classes.bar).data(barData), $el.bar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.bar = $el.bar.enter().append("path").attr("class", classBar).style("fill", $$.color).merge($el.bar).style("opacity", initialOpacity);
-  },
-  redrawBar: function redrawBar(drawBar, withTransition) {
-    var bar = this.$el.bar;
-    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
-  },
-  getBarW: function getBarW(axis, barTargetsNum) {
-    var result,
-        $$ = this,
-        config = $$.config,
-        scale = $$.scale,
-        maxDataCount = $$.getMaxDataCount(),
-        isGrouped = config.data_groups.length,
-        tickInterval = (scale.zoom || $$) && !$$.isCategorized() ? $$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount),
-        getWidth = function (id) {
-      var width = id ? config.bar_width[id] : config.bar_width,
-          ratio = id ? width.ratio : config.bar_width_ratio,
-          max = id ? width.max : config.bar_width_max,
-          w = isNumber(width) ? width : barTargetsNum ? tickInterval * ratio / barTargetsNum : 0;
-      return max && w > max ? max : w;
-    };
-
-    return result = getWidth(), !isGrouped && isObjectType(config.bar_width) && (result = {
-      width: result,
-      total: []
-    }, $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
-      config.bar_width[v.id] && (result[v.id] = getWidth(v.id), result.total.push(result[v.id] || result.width));
-    })), result;
-  },
-  getBars: function getBars(i, id) {
-    var $$ = this,
-        main = $$.$el.main,
-        suffix = isValue(i) ? "-" + i : "";
-    return (id ? main.selectAll("." + config_classes.bars + $$.getTargetSelectorSuffix(id)) : main).selectAll("." + config_classes.bar + suffix);
-  },
-  expandBars: function expandBars(i, id, reset) {
-    var $$ = this;
-    reset && $$.unexpandBars(), $$.getBars(i, id).classed(config_classes.EXPANDED, !0);
-  },
-  unexpandBars: function unexpandBars(i) {
-    this.getBars(i).classed(config_classes.EXPANDED, !1);
-  },
-  generateDrawBar: function generateDrawBar(barIndices, isSub) {
-    var $$ = this,
-        config = $$.config,
-        getPoints = $$.generateGetBarPoints(barIndices, isSub),
-        isRotated = config.axis_rotated,
-        isGrouped = config.data_groups.length,
-        barRadius = config.bar_radius,
-        barRadiusRatio = config.bar_radius_ratio,
-        getRadius = isNumber(barRadius) && barRadius > 0 ? function () {
-      return barRadius;
-    } : isNumber(barRadiusRatio) ? function (w) {
-      return w * barRadiusRatio;
-    } : null;
-    return function (d, i) {
-      // 4 points that make a bar
-      var points = getPoints(d, i),
-          indexX = +isRotated,
-          indexY = +!indexX,
-          isNegative = d.value < 0,
-          pathRadius = ["", ""],
-          radius = 0; // switch points if axis is rotated, not applicable for sub chart
-
-      if (getRadius && !isGrouped) {
-        var index = isRotated ? indexY : indexX,
-            barW = points[2][index] - points[0][index];
-        radius = getRadius(barW);
-        var arc = "a" + radius + "," + radius + " " + (isNegative ? "1 0 0" : "0 0 1") + " ";
-        pathRadius[+!isRotated] = "" + arc + radius + "," + radius, pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"](), isNegative && pathRadius.reverse();
-      } // path string data shouldn't be containing new line chars
-      // https://github.com/naver/billboard.js/issues/530
-
-
-      var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
-      return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
-    };
-  },
-  generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
-    var $$ = this,
-        config = $$.config,
-        axis = isSub ? $$.axis.subX : $$.axis.x,
-        barTargetsNum = $$.getIndicesMax(barIndices) + 1,
-        barW = $$.getBarW(axis, barTargetsNum),
-        barX = $$.getShapeX(barW, barIndices, !!isSub),
-        barY = $$.getShapeY(!!isSub),
-        barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
-        yScale = isSub ? $$.getSubYScale : $$.getYScale;
-    return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
-          offset = barOffset(d, i) || y0,
-          width = isNumber(barW) ? barW : barW[d.id] || barW.width,
-          posX = barX(d),
-          posY = barY(d);
-      // 4 points that make a bar
-      return config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset, [[posX, offset], [posX, posY], [posX + width, posY], [posX + width, offset]];
-    };
-  },
-  isWithinBar: function isWithinBar(that) {
-    var mouse = src_mouse(that),
-        list = getRectSegList(that),
-        _list = list,
-        seg0 = _list[0],
-        seg1 = _list[1],
-        x = Math.min(seg0.x, seg1.x),
-        y = Math.min(seg0.y, seg1.y),
-        offset = this.config.bar_sensitivity,
-        _that$getBBox = that.getBBox(),
-        width = _that$getBBox.width,
-        height = _that$getBBox.height;
-
-    return x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
-  }
-});
-// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/* harmony default export */ var shape_bubble = ({
-  /**
-   * Initializer
-   * @private
-   */
-  initBubble: function initBubble() {
-    var $$ = this,
-        config = $$.config;
-    $$.hasType("bubble") && (config.point_show = !0, config.point_type = "circle", config.point_sensitivity = 25);
-  },
-
-  /**
-   * Get user agent's computed value for the total length of the path in user units
-   * https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/getTotalLength
-   * @return {Number}
-   * @private
-   */
-  getBaseLength: function getBaseLength() {
-    var $$ = this,
-        axis = $$.$el.axis,
-        cacheKey = "$baseLength",
-        baseLength = $$.cache.get(cacheKey);
-    return baseLength || $$.cache.add(cacheKey, baseLength = getMinMax("min", [axis.x.select("path").node().getTotalLength(), axis.y.select("path").node().getTotalLength()])), baseLength;
-  },
-
-  /**
-   * Get the radius value for bubble circle
-   * @param {Object} d
-   * @return {Number}
-   * @private
-  	 */
-  getBubbleR: function getBubbleR(d) {
-    var $$ = this,
-        maxR = $$.config.bubble_maxR;
-    isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
-    var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
-      return $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : isObject(d.value) ? d.value.mid : d.value;
-    })),
-        maxArea = maxR * maxR * Math.PI,
-        area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
-    return Math.sqrt(area / Math.PI);
-  },
-
-  /**
-   * Get bubble dimension data
-   * @param {Object|Array} d data value
-   * @param {String} type - y or z
-   * @return {Number}
-   * @private
-   */
-  getBubbleZData: function getBubbleZData(d, type) {
-    return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
-  },
-
-  /**
-   * Determine if bubble has dimension data
-   * @param {Object|array} d data value
-   * @return {Boolean}
-   * @private
-   */
-  isBubbleZType: function isBubbleZType(d) {
-    var $$ = this;
-    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
-  }
-});
 // CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
 var path_pi = Math.PI,
     path_tau = 2 * path_pi,
@@ -31810,7 +31591,7 @@ function asin(x) {
 
 
 
-function arcInnerRadius(d) {
+function arc_arcInnerRadius(d) {
   return d.innerRadius;
 }
 
@@ -31944,7 +31725,7 @@ function cornerTangents(x0, y0, x1, y1, r1, rc, cw) {
     return (context.closePath(), buffer) ? (context = null, buffer + "" || null) : void 0;
   }
 
-  var innerRadius = arcInnerRadius,
+  var innerRadius = arc_arcInnerRadius,
       outerRadius = arcOuterRadius,
       cornerRadius = d3_shape_src_constant(0),
       padRadius = null,
@@ -33505,6 +33286,727 @@ function ascending_sum(series) {
 
 
 
+// CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+
+
+
+/* harmony default export */ var shape_arc = ({
+  initPie: function initPie() {
+    var $$ = this,
+        config = $$.config,
+        dataType = config.data_type,
+        padding = config.pie_padding,
+        startingAngle = config[dataType + "_startingAngle"] || 0,
+        padAngle = ($$.hasType("pie") && padding ? padding * .01 : config[dataType + "_padAngle"]) || 0,
+        sortValue = $$.isOrderAsc() || $$.isOrderDesc() ? function (a, b) {
+      return $$.isOrderAsc() ? a - b : b - a;
+    } : null;
+    $$.pie = src_pie().startAngle(startingAngle).endAngle(startingAngle + 2 * Math.PI).padAngle(padAngle).sortValues(sortValue).value(function (d) {
+      return d.values.reduce(function (a, b) {
+        return a + b.value;
+      }, 0);
+    });
+  },
+  updateRadius: function updateRadius() {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        radius = config.pie_innerRadius,
+        padding = config.pie_padding,
+        w = config.gauge_width || config.donut_width,
+        gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length * config.gauge_arcs_minWidth;
+    state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() ? .85 : 1), state.radius = state.radiusExpanded * .95, state.innerRadiusRatio = w ? (state.radius - w) / state.radius : .6, state.gaugeArcWidth = w || (gaugeArcWidth <= state.radius - state.innerRadius ? state.radius - state.innerRadius : gaugeArcWidth <= state.radius ? gaugeArcWidth : state.radius);
+    var innerRadius = radius || (padding ? padding * (state.innerRadiusRatio + .1) : 0); // NOTE: innerRadius can be an object by user setting, only for 'pie' type
+
+    state.innerRadius = $$.hasType("donut") || $$.hasType("gauge") ? state.radius * state.innerRadiusRatio : innerRadius;
+  },
+  getInnerRadius: function getInnerRadius(d) {
+    var $$ = this,
+        innerRadius = $$.state.innerRadius;
+    return !isNumber(innerRadius) && d && (innerRadius = innerRadius[d.data.id] || 0), innerRadius;
+  },
+  updateArc: function updateArc() {
+    var $$ = this;
+    $$.svgArc = $$.getSvgArc(), $$.svgArcExpanded = $$.getSvgArcExpanded();
+  },
+  updateAngle: function updateAngle(dValue) {
+    var $$ = this,
+        config = $$.config,
+        pie = $$.pie,
+        d = dValue,
+        found = !1;
+    if (!config) return null;
+    var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
+        gStart = config.gauge_startingAngle;
+
+    if (d.data && $$.isGaugeType(d.data)) {
+      var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
+
+      totalSum > config.gauge_max && (config.gauge_max = totalSum);
+      var gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
+      pie = pie.startAngle(gStart).endAngle(gEnd + gStart);
+    }
+
+    if (pie($$.filterTargetsToShow()).forEach(function (t, i) {
+      found || t.data.id !== d.data.id || (found = !0, d = t, d.index = i);
+    }), isNaN(d.startAngle) && (d.startAngle = 0), isNaN(d.endAngle) && (d.endAngle = d.startAngle), d.data && $$.hasMultiArcGauge()) {
+      var maxValue = $$.getMinMaxData().max[0].value; // if gauge_max less than maxValue, make maxValue to max value
+
+      maxValue > config.gauge_max && (config.gauge_max = maxValue);
+      var gMin = config.gauge_min,
+          gMax = config.gauge_max,
+          gValue = d.value < gMin ? 0 : d.value < gMax ? d.value - gMin : gMax - gMin;
+      d.startAngle = gStart, d.endAngle = gStart + radius / (gMax - gMin) * gValue;
+    }
+
+    return found ? d : null;
+  },
+  getSvgArc: function getSvgArc() {
+    var $$ = this,
+        state = $$.state,
+        ir = $$.getInnerRadius(),
+        singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+        hasMultiArcGauge = $$.hasMultiArcGauge(),
+        arc = src_arc().outerRadius(function (d) {
+      return hasMultiArcGauge ? state.radius - singleArcWidth * d.index : state.radius;
+    }).innerRadius(function (d) {
+      return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : isNumber(ir) ? ir : 0;
+    }),
+        newArc = function (d, withoutUpdate) {
+      var path = "M 0 0";
+
+      if (d.value || d.data) {
+        isNumber(ir) || (arc = arc.innerRadius($$.getInnerRadius(d)));
+        var updated = !withoutUpdate && $$.updateAngle(d);
+        withoutUpdate ? path = arc(d) : updated && (path = arc(updated));
+      }
+
+      return path;
+    };
+
+    return newArc.centroid = arc.centroid, newArc;
+  },
+  getSvgArcExpanded: function getSvgArcExpanded(rate) {
+    var $$ = this,
+        state = $$.state,
+        newRate = rate || 1,
+        singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length,
+        hasMultiArcGauge = $$.hasMultiArcGauge(),
+        expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * .8 - (1 - newRate) * 100),
+        arc = src_arc().outerRadius(function (d) {
+      return hasMultiArcGauge ? state.radius - singleArcWidth * d.index + expandWidth : state.radiusExpanded * newRate;
+    }).innerRadius(function (d) {
+      return hasMultiArcGauge ? state.radius - singleArcWidth * (d.index + 1) : state.innerRadius;
+    });
+    return function (d) {
+      var updated = $$.updateAngle(d);
+      return updated ? (hasMultiArcGauge ? arc : arc.innerRadius($$.getInnerRadius(d)))(updated) : "M 0 0";
+    };
+  },
+  getArc: function getArc(d, withoutUpdate, force) {
+    return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
+  },
+  transformForArcLabel: function transformForArcLabel(d) {
+    var $$ = this,
+        config = $$.config,
+        _$$$state = $$.state,
+        radius = _$$$state.radius,
+        radiusExpanded = _$$$state.radiusExpanded,
+        updated = $$.updateAngle(d),
+        translate = "";
+    if (updated) if ($$.hasMultiArcGauge()) {
+      var y1 = Math.sin(updated.endAngle - Math.PI / 2),
+          x = Math.cos(updated.endAngle - Math.PI / 2) * (radiusExpanded + 25),
+          y = y1 * (radiusExpanded + 15 - Math.abs(y1 * 10)) + 3;
+      translate = "translate(" + x + "," + y + ")";
+    } else if (!$$.hasType("gauge") || $$.data.targets.length > 1) {
+      var c = this.svgArc.centroid(updated),
+          x = isNaN(c[0]) ? 0 : c[0],
+          y = isNaN(c[1]) ? 0 : c[1],
+          h = Math.sqrt(x * x + y * y),
+          ratio = $$.hasType("donut") && config.donut_label_ratio || $$.hasType("pie") && config.pie_label_ratio;
+      ratio = ratio ? isFunction(ratio) ? ratio(d, radius, h) : ratio : radius && (h ? (36 / radius > .375 ? 1.175 - 36 / radius : .8) * radius / h : 0), translate = "translate(" + x * ratio + "," + y * ratio + ")";
+    }
+    return translate;
+  },
+  convertToArcData: function convertToArcData(d) {
+    return this.addName({
+      id: d.data.id,
+      value: d.value,
+      ratio: this.getRatio("arc", d),
+      index: d.index
+    });
+  },
+  textForArcLabel: function textForArcLabel(selection) {
+    var $$ = this;
+    $$.shouldShowArcLabel() && selection.each(function (d) {
+      var node = src_select(this),
+          updated = $$.updateAngle(d),
+          value = updated ? updated.value : d.value,
+          ratio = $$.getRatio("arc", updated),
+          id = d.data.id,
+          hasGauge = $$.hasType("gauge"),
+          isUnderThreshold = hasGauge || $$.meetsArcLabelThreshold(ratio);
+
+      if (isUnderThreshold) {
+        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        setTextValue(node, text, [-1, 1], hasGauge);
+      }
+    });
+  },
+  textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
+    var format = this.getGaugeLabelExtents();
+    return format ? format(value, isMax) : value;
+  },
+  expandArc: function expandArc(targetIds) {
+    var $$ = this,
+        transiting = $$.state.transiting,
+        $el = $$.$el;
+
+    // MEMO: avoid to cancel transition
+    if (transiting) {
+      var interval = setInterval(function () {
+        transiting || (clearInterval(interval), $el.legend.selectAll("." + config_classes.legendItemFocused).size() > 0 && $$.expandArc(targetIds));
+      }, 10);
+      return;
+    }
+
+    var newTargetIds = $$.mapToTargetIds(targetIds);
+    $el.svg.selectAll($$.selectorTargets(newTargetIds, "." + config_classes.chartArc)).each(function (d) {
+      if ($$.shouldExpand(d.data.id)) {
+        var expandDuration = $$.getExpandConfig(d.data.id, "duration"),
+            svgArcExpandedSub = $$.getSvgArcExpanded($$.getExpandConfig(d.data.id, "rate"));
+        src_select(this).selectAll("path").transition().duration(expandDuration).attr("d", $$.svgArcExpanded).transition().duration(expandDuration * 2).attr("d", svgArcExpandedSub);
+      }
+    });
+  },
+  unexpandArc: function unexpandArc(targetIds) {
+    var $$ = this,
+        transiting = $$.state.transiting,
+        svg = $$.$el.svg;
+
+    if (!transiting) {
+      var newTargetIds = $$.mapToTargetIds(targetIds);
+      svg.selectAll($$.selectorTargets(newTargetIds, "." + config_classes.chartArc)).selectAll("path").transition().duration(function (d) {
+        return $$.getExpandConfig(d.data.id, "duration");
+      }).attr("d", $$.svgArc), svg.selectAll("" + config_classes.arc).style("opacity", "1");
+    }
+  },
+
+  /**
+   * Get expand config value
+   * @param {String} id data ID
+   * @param {String} key config key: 'duration | rate'
+   * @return {Number}
+   * @private
+   */
+  getExpandConfig: function getExpandConfig(id, key) {
+    var type,
+        $$ = this,
+        config = $$.config;
+    return $$.isDonutType(id) ? type = "donut" : $$.isGaugeType(id) ? type = "gauge" : $$.isPieType(id) && (type = "pie"), type ? config[type + "_expand_" + key] : {
+      duration: 50,
+      rate: .98
+    }[key];
+  },
+  shouldExpand: function shouldExpand(id) {
+    var $$ = this,
+        config = $$.config;
+    return $$.isDonutType(id) && config.donut_expand || $$.isGaugeType(id) && config.gauge_expand || $$.isPieType(id) && config.pie_expand;
+  },
+  shouldShowArcLabel: function shouldShowArcLabel() {
+    var $$ = this,
+        config = $$.config;
+    return ["pie", "donut", "gauge"].some(function (v) {
+      return $$.hasType(v) && config[v + "_label_show"];
+    });
+  },
+  meetsArcLabelThreshold: function meetsArcLabelThreshold(ratio) {
+    var $$ = this,
+        config = $$.config,
+        threshold = $$.hasType("donut") ? config.donut_label_threshold : config.pie_label_threshold;
+    return ratio >= threshold;
+  },
+  getArcLabelFormat: function getArcLabelFormat() {
+    var $$ = this,
+        config = $$.config,
+        format = config.pie_label_format;
+    return $$.hasType("gauge") ? format = config.gauge_label_format : $$.hasType("donut") && (format = config.donut_label_format), format;
+  },
+  getGaugeLabelExtents: function getGaugeLabelExtents() {
+    var config = this.config;
+    return config.gauge_label_extents;
+  },
+  getArcTitle: function getArcTitle() {
+    var $$ = this,
+        type = $$.hasType("donut") && "donut" || $$.hasType("gauge") && "gauge";
+    return type ? $$.config[type + "_title"] : "";
+  },
+  updateTargetsForArc: function updateTargetsForArc(targets) {
+    var $$ = this,
+        main = $$.$el.main,
+        hasGauge = $$.hasType("gauge"),
+        classChartArc = $$.classChartArc.bind($$),
+        classArcs = $$.classArcs.bind($$),
+        classFocus = $$.classFocus.bind($$),
+        mainPieUpdate = main.select("." + config_classes.chartArcs).selectAll("." + config_classes.chartArc).data($$.pie(targets)).attr("class", function (d) {
+      return classChartArc(d) + classFocus(d.data);
+    }),
+        mainPieEnter = mainPieUpdate.enter().append("g").attr("class", classChartArc);
+    mainPieEnter.append("g").attr("class", classArcs).merge(mainPieUpdate), mainPieEnter.append("text").attr("dy", hasGauge && !$$.hasMultiTargets() ? "-.1em" : ".35em").style("opacity", "0").style("text-anchor", "middle").style("pointer-events", "none");
+  },
+  initArc: function initArc() {
+    var $$ = this,
+        $el = $$.$el;
+    $el.arcs = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartArcs).attr("transform", $$.getTranslate("arc")), $$.setArcTitle();
+  },
+
+  /**
+   * Set arc title text
+   * @private
+   */
+  setArcTitle: function setArcTitle() {
+    var $$ = this,
+        title = $$.getArcTitle(),
+        hasGauge = $$.hasType("gauge");
+
+    if (title) {
+      var text = $$.$el.arcs.append("text").attr("class", config_classes[hasGauge ? "chartArcsGaugeTitle" : "chartArcsTitle"]).style("text-anchor", "middle");
+      hasGauge && text.attr("dy", "-0.3em").style("font-size", "27px"), setTextValue(text, title, hasGauge ? undefined : [-.6, 1.35], !0);
+    }
+  },
+  redrawArc: function redrawArc(duration, durationForExit, withTransform) {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        main = $$.$el.main,
+        hasInteraction = config.interaction_enabled,
+        mainArc = main.selectAll("." + config_classes.arcs).selectAll("." + config_classes.arc).data($$.arcData.bind($$));
+    // bind arc events
+    mainArc.exit().transition().duration(durationForExit).style("opacity", "0").remove(), mainArc = mainArc.enter().append("path").attr("class", $$.classArc.bind($$)).style("fill", function (d) {
+      return $$.color(d.data);
+    }).style("cursor", function (d) {
+      return hasInteraction && config.data_selection_isselectable(d) ? "pointer" : null;
+    }).style("opacity", "0").each(function (d) {
+      $$.isGaugeType(d.data) && (d.startAngle = config.gauge_startingAngle, d.endAngle = config.gauge_startingAngle), this._current = d;
+    }).merge(mainArc), $$.hasMultiArcGauge() && $$.redrawMultiArcGauge(), mainArc.attr("transform", function (d) {
+      return !$$.isGaugeType(d.data) && withTransform ? "scale(0)" : "";
+    }).style("opacity", function (d) {
+      return d === this._current ? "0" : "1";
+    }).each(function () {
+      state.transiting = !0;
+    }).transition().duration(duration).attrTween("d", function (d) {
+      var updated = $$.updateAngle(d);
+      if (!updated) return function () {
+        return "M 0 0";
+      };
+      isNaN(this._current.startAngle) && (this._current.startAngle = 0), isNaN(this._current.endAngle) && (this._current.endAngle = this._current.startAngle);
+      var interpolate = src_value(this._current, updated);
+      return this._current = interpolate(0), function (t) {
+        var interpolated = interpolate(t);
+        // data.id will be updated by interporator
+        return interpolated.data = d.data, $$.getArc(interpolated, !0);
+      };
+    }).attr("transform", withTransform ? "scale(1)" : "").style("fill", function (d) {
+      var color;
+      return $$.levelColor ? (color = $$.levelColor(d.data.values[0].value), config.data_colors[d.data.id] = color) : color = $$.color(d.data.id), color;
+    }) // Where gauge reading color would receive customization.
+    .style("opacity", "1").call($$.endall, function () {
+      if ($$.levelColor) {
+        var path = src_select(this),
+            d = path.datum();
+        $$.updateLegendItemColor(d.data.id, path.style("fill"));
+      }
+
+      state.transiting = !1, callFn(config.onrendered, $$, $$.api);
+    }), hasInteraction && $$.bindArcEvent(mainArc), $$.redrawArcText(duration);
+  },
+  redrawMultiArcGauge: function redrawMultiArcGauge() {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        $el = $$.$el,
+        hiddenTargetIds = $$.state.hiddenTargetIds,
+        arcLabelLines = $el.main.selectAll("." + config_classes.arcs).selectAll("." + config_classes.arcLabelLine).data($$.arcData.bind($$)),
+        mainArcLabelLine = arcLabelLines.enter().append("rect").attr("class", function (d) {
+      return config_classes.arcLabelLine + " " + config_classes.target + " " + config_classes.target + "-" + d.data.id;
+    }).merge(arcLabelLines);
+    mainArcLabelLine.style("fill", function (d) {
+      return $$.levelColor ? $$.levelColor(d.data.values[0].value) : $$.color(d.data);
+    }).style("display", config.gauge_label_show ? "" : "none").each(function (d) {
+      var lineLength = 0,
+          lineThickness = 2,
+          x = 0,
+          y = 0,
+          transform = "";
+
+      if (hiddenTargetIds.indexOf(d.data.id) < 0) {
+        var updated = $$.updateAngle(d),
+            innerLineLength = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length * (updated.index + 1),
+            lineAngle = updated.endAngle - Math.PI / 2,
+            arcInnerRadius = state.radius - innerLineLength,
+            linePositioningAngle = lineAngle - (arcInnerRadius === 0 ? 0 : 1 / arcInnerRadius);
+        lineLength = state.radiusExpanded - state.radius + innerLineLength, x = Math.cos(linePositioningAngle) * arcInnerRadius, y = Math.sin(linePositioningAngle) * arcInnerRadius, transform = "rotate(" + lineAngle * 180 / Math.PI + ", " + x + ", " + y + ")";
+      }
+
+      src_select(this).attr("x", x).attr("y", y).attr("width", lineLength).attr("height", lineThickness).attr("transform", transform).style("stroke-dasharray", "0, " + (lineLength + lineThickness) + ", 0");
+    });
+  },
+  bindArcEvent: function bindArcEvent(arc) {
+    function selectArc(_this, arcData, id) {
+      $$.expandArc(id), $$.api.focus(id), $$.toggleFocusLegend(id, !0), $$.showTooltip([arcData], _this);
+    }
+
+    function unselectArc(arcData) {
+      var id = arcData && arcData.id || undefined;
+      $$.unexpandArc(id), $$.api.revert(), $$.revertLegend(), $$.hideTooltip();
+    }
+
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        isTouch = state.inputType === "touch",
+        isMouse = state.inputType === "mouse";
+
+    // touch events
+    if (arc.on("click", function (d, i) {
+      var arcData,
+          updated = $$.updateAngle(d);
+      updated && (arcData = $$.convertToArcData(updated), $$.toggleShape && $$.toggleShape(this, arcData, i), config.data_onclick.call($$.api, arcData, this));
+    }), isMouse && arc.on("mouseover", function (d) {
+      if (!state.transiting) // skip while transiting
+        {
+          var updated = $$.updateAngle(d),
+              arcData = updated ? $$.convertToArcData(updated) : null,
+              id = arcData && arcData.id || undefined;
+          selectArc(this, arcData, id), $$.setOverOut(!0, arcData);
+        }
+    }).on("mouseout", function (d) {
+      if (!state.transiting) // skip while transiting
+        {
+          var updated = $$.updateAngle(d),
+              arcData = updated ? $$.convertToArcData(updated) : null;
+          unselectArc(), $$.setOverOut(!1, arcData);
+        }
+    }).on("mousemove", function (d) {
+      var updated = $$.updateAngle(d),
+          arcData = updated ? $$.convertToArcData(updated) : null;
+      $$.showTooltip([arcData], this);
+    }), isTouch && $$.hasArcType() && !$$.radars) {
+      var getEventArc = function () {
+        var touch = on_event.changedTouches[0],
+            eventArc = src_select(browser_doc.elementFromPoint(touch.clientX, touch.clientY));
+        return eventArc;
+      },
+          handler = function () {
+        if (!state.transiting) // skip while transiting
+          {
+            var eventArc = getEventArc(),
+                datum = eventArc.datum(),
+                updated = datum && datum.data && datum.data.id ? $$.updateAngle(datum) : null,
+                arcData = updated ? $$.convertToArcData(updated) : null,
+                id = arcData && arcData.id || undefined;
+            $$.callOverOutForTouch(arcData), isUndefined(id) ? unselectArc() : selectArc(this, arcData, id);
+          }
+      };
+
+      $$.$el.svg.on("touchstart", handler).on("touchmove", handler);
+    }
+  },
+  redrawArcText: function redrawArcText(duration) {
+    var text,
+        $$ = this,
+        config = $$.config,
+        state = $$.state,
+        _$$$$el = $$.$el,
+        main = _$$$$el.main,
+        arcs = _$$$$el.arcs,
+        hasGauge = $$.hasType("gauge"),
+        hasMultiArcGauge = $$.hasMultiArcGauge();
+
+    if (hasGauge && $$.data.targets.length === 1 && config.gauge_title || (text = main.selectAll("." + config_classes.chartArc).select("text").style("opacity", "0").attr("class", function (d) {
+      return $$.isGaugeType(d.data) ? config_classes.gaugeValue : null;
+    }).call($$.textForArcLabel.bind($$)).attr("transform", $$.transformForArcLabel.bind($$)).style("font-size", function (d) {
+      return $$.isGaugeType(d.data) && $$.data.targets.length === 1 && !hasMultiArcGauge ? Math.round(state.radius / 5) + "px" : null;
+    }).transition().duration(duration).style("opacity", function (d) {
+      return $$.isTargetToShow(d.data.id) && $$.isArcType(d.data) ? "1" : "0";
+    }), hasMultiArcGauge && text.attr("dy", "-.1em")), main.select("." + config_classes.chartArcsTitle).style("opacity", $$.hasType("donut") || hasGauge ? "1" : "0"), hasGauge) {
+      var isFullCircle = config.gauge_fullCircle,
+          startAngle = -1 * Math.PI / 2,
+          endAngle = (isFullCircle ? -4 : -1) * startAngle;
+      isFullCircle && text && text.attr("dy", "" + Math.round(state.radius / 14));
+      var backgroundArc = $$.$el.arcs.select((hasMultiArcGauge ? "g" : "") + "." + config_classes.chartArcsBackground);
+
+      if (hasMultiArcGauge) {
+        var index = 0;
+        backgroundArc = backgroundArc.selectAll("path." + config_classes.chartArcsBackground).data($$.data.targets), backgroundArc.enter().append("path").attr("class", function (d, i) {
+          return config_classes.chartArcsBackground + " " + config_classes.chartArcsBackground + "-" + i;
+        }).merge(backgroundArc).attr("d", function (d1) {
+          if (state.hiddenTargetIds.indexOf(d1.id) >= 0) return "M 0 0";
+          var d = {
+            data: [{
+              value: config.gauge_max
+            }],
+            startAngle: startAngle,
+            endAngle: endAngle,
+            index: index++
+          };
+          return $$.getArc(d, !0, !0);
+        }), backgroundArc.exit().remove();
+      } else backgroundArc.attr("d", function () {
+        var d = {
+          data: [{
+            value: config.gauge_max
+          }],
+          startAngle: startAngle,
+          endAngle: endAngle
+        };
+        return $$.getArc(d, !0, !0);
+      });
+
+      arcs.select("." + config_classes.chartArcsGaugeUnit).attr("dy", ".75em").text(config.gauge_label_show ? config.gauge_units : ""), config.gauge_label_show && (arcs.select("." + config_classes.chartArcsGaugeMin).attr("dx", -1 * (state.innerRadius + (state.radius - state.innerRadius) / (isFullCircle ? 1 : 2)) + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_min, !1)), !isFullCircle && arcs.select("." + config_classes.chartArcsGaugeMax).attr("dx", state.innerRadius + (state.radius - state.innerRadius) / 2 + "px").attr("dy", "1.2em").text($$.textForGaugeMinMax(config.gauge_max, !0)));
+    }
+  },
+  initGauge: function initGauge() {
+    var $$ = this,
+        config = $$.config,
+        arcs = $$.$el.arcs,
+        appendText = function (className) {
+      arcs.append("text").attr("class", className).style("text-anchor", "middle").style("pointer-events", "none");
+    };
+
+    $$.hasType("gauge") && (arcs.append($$.hasMultiArcGauge() ? "g" : "path").attr("class", config_classes.chartArcsBackground), config.gauge_units && appendText(config_classes.chartArcsGaugeUnit), config.gauge_label_show && (appendText(config_classes.chartArcsGaugeMin), !config.gauge_fullCircle && appendText(config_classes.chartArcsGaugeMax)));
+  },
+  getGaugeLabelHeight: function getGaugeLabelHeight() {
+    return this.config.gauge_label_show ? 20 : 0;
+  }
+});
+// CONCATENATED MODULE: ./src/ChartInternal/shape/bar.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+/* harmony default export */ var ChartInternal_shape_bar = ({
+  initBar: function initBar() {
+    var $$ = this;
+    $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartBars);
+  },
+  updateTargetsForBar: function updateTargetsForBar(targets) {
+    var $$ = this,
+        config = $$.config,
+        classChartBar = $$.classChartBar.bind($$),
+        classBars = $$.classBars.bind($$),
+        classFocus = $$.classFocus.bind($$),
+        mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data(targets).attr("class", function (d) {
+      return classChartBar(d) + classFocus(d);
+    }),
+        mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
+    // Bars for each data
+    mainBarEnter.append("g").attr("class", classBars).style("cursor", function (d) {
+      return config.data_selection_isselectable(d) ? "pointer" : null;
+    });
+  },
+  updateBar: function updateBar(durationForExit) {
+    var $$ = this,
+        $el = $$.$el,
+        barData = $$.barData.bind($$),
+        classBar = $$.classBar.bind($$),
+        initialOpacity = $$.initialOpacity.bind($$);
+    $el.bar = $el.main.selectAll("." + config_classes.bars).selectAll("." + config_classes.bar).data(barData), $el.bar.exit().transition().duration(durationForExit).style("opacity", "0").remove(), $el.bar = $el.bar.enter().append("path").attr("class", classBar).style("fill", $$.color).merge($el.bar).style("opacity", initialOpacity);
+  },
+  redrawBar: function redrawBar(drawBar, withTransition) {
+    var bar = this.$el.bar;
+    return [(withTransition ? bar.transition(getRandom()) : bar).attr("d", drawBar).style("fill", this.color).style("opacity", "1")];
+  },
+  getBarW: function getBarW(axis, barTargetsNum) {
+    var result,
+        $$ = this,
+        config = $$.config,
+        scale = $$.scale,
+        maxDataCount = $$.getMaxDataCount(),
+        isGrouped = config.data_groups.length,
+        tickInterval = (scale.zoom || $$) && !$$.isCategorized() ? $$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount),
+        getWidth = function (id) {
+      var width = id ? config.bar_width[id] : config.bar_width,
+          ratio = id ? width.ratio : config.bar_width_ratio,
+          max = id ? width.max : config.bar_width_max,
+          w = isNumber(width) ? width : barTargetsNum ? tickInterval * ratio / barTargetsNum : 0;
+      return max && w > max ? max : w;
+    };
+
+    return result = getWidth(), !isGrouped && isObjectType(config.bar_width) && (result = {
+      width: result,
+      total: []
+    }, $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
+      config.bar_width[v.id] && (result[v.id] = getWidth(v.id), result.total.push(result[v.id] || result.width));
+    })), result;
+  },
+  getBars: function getBars(i, id) {
+    var $$ = this,
+        main = $$.$el.main,
+        suffix = isValue(i) ? "-" + i : "";
+    return (id ? main.selectAll("." + config_classes.bars + $$.getTargetSelectorSuffix(id)) : main).selectAll("." + config_classes.bar + suffix);
+  },
+  expandBars: function expandBars(i, id, reset) {
+    var $$ = this;
+    reset && $$.unexpandBars(), $$.getBars(i, id).classed(config_classes.EXPANDED, !0);
+  },
+  unexpandBars: function unexpandBars(i) {
+    this.getBars(i).classed(config_classes.EXPANDED, !1);
+  },
+  generateDrawBar: function generateDrawBar(barIndices, isSub) {
+    var $$ = this,
+        config = $$.config,
+        getPoints = $$.generateGetBarPoints(barIndices, isSub),
+        isRotated = config.axis_rotated,
+        isGrouped = config.data_groups.length,
+        barRadius = config.bar_radius,
+        barRadiusRatio = config.bar_radius_ratio,
+        getRadius = isNumber(barRadius) && barRadius > 0 ? function () {
+      return barRadius;
+    } : isNumber(barRadiusRatio) ? function (w) {
+      return w * barRadiusRatio;
+    } : null;
+    return function (d, i) {
+      // 4 points that make a bar
+      var points = getPoints(d, i),
+          indexX = +isRotated,
+          indexY = +!indexX,
+          isNegative = d.value < 0,
+          pathRadius = ["", ""],
+          radius = 0; // switch points if axis is rotated, not applicable for sub chart
+
+      if (getRadius && !isGrouped) {
+        var index = isRotated ? indexY : indexX,
+            barW = points[2][index] - points[0][index];
+        radius = getRadius(barW);
+        var arc = "a" + radius + "," + radius + " " + (isNegative ? "1 0 0" : "0 0 1") + " ";
+        pathRadius[+!isRotated] = "" + arc + radius + "," + radius, pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"](), isNegative && pathRadius.reverse();
+      } // path string data shouldn't be containing new line chars
+      // https://github.com/naver/billboard.js/issues/530
+
+
+      var path = isRotated ? "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] : "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
+      return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
+    };
+  },
+  generateGetBarPoints: function generateGetBarPoints(barIndices, isSub) {
+    var $$ = this,
+        config = $$.config,
+        axis = isSub ? $$.axis.subX : $$.axis.x,
+        barTargetsNum = $$.getIndicesMax(barIndices) + 1,
+        barW = $$.getBarW(axis, barTargetsNum),
+        barX = $$.getShapeX(barW, barIndices, !!isSub),
+        barY = $$.getShapeY(!!isSub),
+        barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
+        yScale = isSub ? $$.getSubYScale : $$.getYScale;
+    return function (d, i) {
+      var y0 = yScale.call($$, d.id)(0),
+          offset = barOffset(d, i) || y0,
+          width = isNumber(barW) ? barW : barW[d.id] || barW.width,
+          posX = barX(d),
+          posY = barY(d);
+      // 4 points that make a bar
+      return config.axis_rotated && (d.value > 0 && posY < y0 || d.value < 0 && y0 < posY) && (posY = y0), posY -= y0 - offset, [[posX, offset], [posX, posY], [posX + width, posY], [posX + width, offset]];
+    };
+  },
+  isWithinBar: function isWithinBar(that) {
+    var mouse = src_mouse(that),
+        list = getRectSegList(that),
+        _list = list,
+        seg0 = _list[0],
+        seg1 = _list[1],
+        x = Math.min(seg0.x, seg1.x),
+        y = Math.min(seg0.y, seg1.y),
+        offset = this.config.bar_sensitivity,
+        _that$getBBox = that.getBBox(),
+        width = _that$getBBox.width,
+        height = _that$getBBox.height;
+
+    return x - offset < mouse[0] && mouse[0] < x + width + offset && y - offset < mouse[1] && mouse[1] < y + height + offset;
+  }
+});
+// CONCATENATED MODULE: ./src/ChartInternal/shape/bubble.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/* harmony default export */ var shape_bubble = ({
+  /**
+   * Initializer
+   * @private
+   */
+  initBubble: function initBubble() {
+    var $$ = this,
+        config = $$.config;
+    $$.hasType("bubble") && (config.point_show = !0, config.point_type = "circle", config.point_sensitivity = 25);
+  },
+
+  /**
+   * Get user agent's computed value for the total length of the path in user units
+   * https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/getTotalLength
+   * @return {Number}
+   * @private
+   */
+  getBaseLength: function getBaseLength() {
+    var $$ = this,
+        axis = $$.$el.axis,
+        cacheKey = "$baseLength",
+        baseLength = $$.cache.get(cacheKey);
+    return baseLength || $$.cache.add(cacheKey, baseLength = getMinMax("min", [axis.x.select("path").node().getTotalLength(), axis.y.select("path").node().getTotalLength()])), baseLength;
+  },
+
+  /**
+   * Get the radius value for bubble circle
+   * @param {Object} d
+   * @return {Number}
+   * @private
+  	 */
+  getBubbleR: function getBubbleR(d) {
+    var $$ = this,
+        maxR = $$.config.bubble_maxR;
+    isFunction(maxR) ? maxR = maxR(d) : !isNumber(maxR) && (maxR = $$.getBaseLength() / ($$.getMaxDataCount() * 2) + 12);
+    var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) {
+      return $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : isObject(d.value) ? d.value.mid : d.value;
+    })),
+        maxArea = maxR * maxR * Math.PI,
+        area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
+    return Math.sqrt(area / Math.PI);
+  },
+
+  /**
+   * Get bubble dimension data
+   * @param {Object|Array} d data value
+   * @param {String} type - y or z
+   * @return {Number}
+   * @private
+   */
+  getBubbleZData: function getBubbleZData(d, type) {
+    return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
+  },
+
+  /**
+   * Determine if bubble has dimension data
+   * @param {Object|array} d data value
+   * @return {Boolean}
+   * @private
+   */
+  isBubbleZType: function isBubbleZType(d) {
+    var $$ = this;
+    return $$.isBubbleType(d) && (isObject(d.value) && ("z" in d.value || "y" in d.value) || isArray(d.value) && d.value.length === 2);
+  }
+});
 // CONCATENATED MODULE: ./src/ChartInternal/shape/line.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -34095,6 +34597,262 @@ function ascending_sum(series) {
     }
   }
 });
+// CONCATENATED MODULE: ./src/ChartInternal/shape/radar.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+/**
+ * Get the position value
+ * @param {Boolean} isClockwise If the direction is clockwise
+ * @param {String} type Coordinate type 'x' or 'y'
+ * @param {Number} edge Number of edge
+ * @param {Number} pos The indexed position
+ * @param {Number} range
+ * @param {Number} ratio
+ * @return {number}
+ * @private
+ */
+
+function getPosition(isClockwise, type, edge, pos, range, ratio) {
+  var index = isClockwise && pos > 0 ? edge - pos : pos,
+      r = 2 * Math.PI,
+      func = type === "x" ? Math.sin : Math.cos;
+  return range * (1 - ratio * func(index * r / edge));
+} // cache key
+
+
+var radar_cacheKey = "$radarPoints";
+/* harmony default export */ var shape_radar = ({
+  initRadar: function initRadar() {
+    var $$ = this,
+        config = $$.config;
+    $$.hasType("radar") && ($$.radars = $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $$.radars.levels = $$.radars.append("g").attr("class", config_classes.levels), $$.radars.axes = $$.radars.append("g").attr("class", config_classes.axis), $$.radars.shapes = $$.radars.append("g").attr("class", config_classes.shapes), $$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value);
+  },
+  getRadarSize: function getRadarSize() {
+    var $$ = this,
+        config = $$.config,
+        _$$$state = $$.state,
+        arcWidth = _$$$state.arcWidth,
+        arcHeight = _$$$state.arcHeight,
+        padding = config.axis_x_categories.length < 4 ? -20 : 10,
+        size = (Math.min(arcWidth, arcHeight) - padding) / 2;
+    return [size, size];
+  },
+  updateTargetsForRadar: function updateTargetsForRadar(targets) {
+    var $$ = this,
+        config = $$.config;
+    isEmpty(config.axis_x_categories) && (config.axis_x_categories = getRange(0, getMinMax("max", targets.map(function (v) {
+      return v.values.length;
+    })))), $$.generateRadarPoints();
+  },
+  getRadarPosition: function getRadarPosition(type, index, range, ratio) {
+    var $$ = this,
+        config = $$.config,
+        _$$$getRadarSize = $$.getRadarSize(),
+        width = _$$$getRadarSize[0],
+        height = _$$$getRadarSize[1],
+        edge = config.axis_x_categories.length,
+        isClockwise = config.radar_direction_clockwise,
+        pos = toArray(type).map(function (v) {
+      return getPosition(isClockwise, v, edge, index, isDefined(range) ? range : type === "x" ? width : height, isNumber(ratio) ? ratio : config.radar_size_ratio);
+    });
+
+    return pos.length === 1 ? pos[0] : pos;
+  },
+
+  /**
+   * Generate data points
+   * @private
+   */
+  generateRadarPoints: function generateRadarPoints() {
+    var $$ = this,
+        targets = $$.data.targets,
+        _$$$getRadarSize2 = $$.getRadarSize(),
+        width = _$$$getRadarSize2[0],
+        height = _$$$getRadarSize2[1],
+        points = $$.cache.get(radar_cacheKey) || {},
+        size = points._size;
+
+    size && (size.width === width || size.height === height) || (targets.forEach(function (d) {
+      points[d.id] = d.values.map(function (v, i) {
+        return $$.getRadarPosition(["x", "y"], i, undefined, $$.getRatio("radar", v));
+      });
+    }), points._size = {
+      width: width,
+      height: height
+    }, $$.cache.add(radar_cacheKey, points));
+  },
+  redrawRadar: function redrawRadar(duration, durationForExit) {
+    var $$ = this,
+        main = $$.$el.main,
+        translate = $$.getTranslate("radar");
+    translate && ($$.radars.attr("transform", translate), main.selectAll("." + config_classes.circles).attr("transform", translate), main.select("." + config_classes.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(duration, durationForExit));
+  },
+  generateGetRadarPoints: function generateGetRadarPoints() {
+    var points = this.cache.get(radar_cacheKey);
+    return function (d, i) {
+      var point = points[d.id][i];
+      return [point, point, point, point];
+    };
+  },
+  updateRadarLevel: function updateRadarLevel() {
+    var $$ = this,
+        config = $$.config,
+        _$$$getRadarSize3 = $$.getRadarSize(),
+        width = _$$$getRadarSize3[0],
+        height = _$$$getRadarSize3[1],
+        depth = config.radar_level_depth,
+        edge = config.axis_x_categories.length,
+        showText = config.radar_level_text_show,
+        radarLevels = $$.radars.levels,
+        levelData = getRange(0, depth),
+        radius = config.radar_size_ratio * Math.min(width, height),
+        levelRatio = levelData.map(function (l) {
+      return radius * ((l + 1) / depth);
+    }),
+        levelTextFormat = config.radar_level_text_format,
+        points = levelData.map(function (v) {
+      var range = levelRatio[v],
+          pos = getRange(0, edge).map(function (i) {
+        return $$.getRadarPosition(["x", "y"], i, range, 1).join(",");
+      });
+      return pos.join(" ");
+    }),
+        level = radarLevels.selectAll("." + config_classes.level).data(levelData);
+
+    level.exit().remove();
+    var levelEnter = level.enter().append("g").attr("class", function (d, i) {
+      return config_classes.level + " " + config_classes.level + "-" + i;
+    });
+    levelEnter.append("polygon").style("visibility", config.radar_level_show ? null : "hidden"), showText && (radarLevels.select("text").empty() && radarLevels.append("text").attr("dx", "-.5em").attr("dy", "-.7em").style("text-anchor", "end").text(function () {
+      return levelTextFormat(0);
+    }), levelEnter.append("text").attr("dx", "-.5em").style("text-anchor", "end").text(function (d) {
+      return levelTextFormat($$.maxValue / levelData.length * (d + 1));
+    })), levelEnter.merge(level).attr("transform", function (d) {
+      return "translate(" + (width - levelRatio[d]) + ", " + (height - levelRatio[d]) + ")";
+    }).selectAll("polygon").attr("points", function (d) {
+      return points[d];
+    }), showText && radarLevels.selectAll("text").attr("x", function (d) {
+      return isUndefined(d) ? width : points[d].split(",")[0];
+    }).attr("y", function (d) {
+      return isUndefined(d) ? height : 0;
+    });
+  },
+  updateRadarAxes: function updateRadarAxes() {
+    var $$ = this,
+        config = $$.config,
+        _$$$getRadarSize4 = $$.getRadarSize(),
+        width = _$$$getRadarSize4[0],
+        height = _$$$getRadarSize4[1],
+        categories = config.axis_x_categories,
+        axis = $$.radars.axes.selectAll("g").data(categories);
+
+    axis.exit().remove();
+    var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
+      return config_classes.axis + "-" + i;
+    });
+
+    // axis text
+    if (config.radar_axis_line_show && axisEnter.append("line"), config.radar_axis_text_show && axisEnter.append("text"), axis = axisEnter.merge(axis), config.radar_axis_line_show && axis.select("line").attr("x1", width).attr("y1", height).attr("x2", function (d, i) {
+      return $$.getRadarPosition("x", i);
+    }).attr("y2", function (d, i) {
+      return $$.getRadarPosition("y", i);
+    }), config.radar_axis_text_show) {
+      var _config$radar_axis_te = config.radar_axis_text_position,
+          _config$radar_axis_te2 = _config$radar_axis_te.x,
+          x = _config$radar_axis_te2 === void 0 ? 0 : _config$radar_axis_te2,
+          _config$radar_axis_te3 = _config$radar_axis_te.y,
+          y = _config$radar_axis_te3 === void 0 ? 0 : _config$radar_axis_te3;
+      axis.select("text").style("text-anchor", "middle").attr("dy", ".5em").call(function (selection) {
+        selection.each(function (d) {
+          setTextValue(src_select(this), d + "", [-.6, 1.2]);
+        });
+      }).datum(function (d, i) {
+        return {
+          index: i
+        };
+      }).attr("transform", function (d) {
+        isUndefined(this.width) && (this.width = this.getBoundingClientRect().width / 2);
+        var posX = $$.getRadarPosition("x", d.index, undefined, 1),
+            posY = Math.round($$.getRadarPosition("y", d.index, undefined, 1));
+        return posX > width ? posX += this.width + x : Math.round(posX) < width && (posX -= this.width + x), posY > height ? (posY / 2 === height && this.firstChild.tagName === "tspan" && this.firstChild.setAttribute("dy", "0em"), posY += y) : posY < height && (posY -= y), "translate(" + posX + " " + posY + ")";
+      });
+    }
+
+    $$.bindEvent();
+  },
+  bindEvent: function bindEvent() {
+    var _this = this,
+        $$ = this,
+        config = $$.config,
+        _$$$state2 = $$.state,
+        inputType = _$$$state2.inputType,
+        transiting = _$$$state2.transiting,
+        svg = $$.$el.svg;
+
+    if (config.interaction_enabled) {
+      var isMouse = inputType === "mouse",
+          getIndex = function () {
+        var target = on_event.target; // in case of multilined axis text
+
+        /tspan/i.test(target.tagName) && (target = target.parentNode);
+        var d = src_select(target).datum();
+        return d && Object.keys(d).length === 1 ? d.index : undefined;
+      },
+          hide = function () {
+        var index = getIndex(),
+            noIndex = isUndefined(index);
+        (isMouse || noIndex) && (_this.hideTooltip(), _this.unexpandCircles(), isMouse ? $$.setOverOut(!1, index) : noIndex && $$.callOverOutForTouch());
+      };
+
+      $$.radars.select("." + config_classes.axis).on(isMouse ? "mouseover " : "touchstart", function () {
+        if (!transiting) // skip while transiting
+          {
+            var index = getIndex();
+            $$.selectRectForSingle(svg.node(), null, index), isMouse ? $$.setOverOut(!0, index) : $$.callOverOutForTouch(index);
+          }
+      }).on("mouseout", isMouse ? hide : null), isMouse || svg.on("touchstart", hide);
+    }
+  },
+  updateRadarShape: function updateRadarShape(duration, durationForExit) {
+    var $$ = this,
+        targets = $$.data.targets,
+        points = $$.cache.get(radar_cacheKey),
+        areas = $$.radars.shapes.selectAll("polygon").data(targets),
+        areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
+    areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", function (d) {
+      return $$.color(d);
+    }).style("stroke", function (d) {
+      return $$.color(d);
+    }).attr("points", function (d) {
+      return points[d.id].join(" ");
+    });
+  },
+
+  /**
+   * Get data point x coordinate
+   * @param {Object} d Data object
+   * @return {Number}
+   * @private
+   */
+  radarCircleX: function radarCircleX(d) {
+    return this.cache.get(radar_cacheKey)[d.id][d.index][0];
+  },
+
+  /**
+   * Get data point y coordinate
+   * @param {Object} d Data object
+   * @return {Number}
+   * @private
+   */
+  radarCircleY: function radarCircleY(d) {
+    return this.cache.get(radar_cacheKey)[d.id][d.index][1];
+  }
+});
 // CONCATENATED MODULE: ./src/ChartInternal/shape/shape.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -34302,8 +35060,9 @@ function ascending_sum(series) {
 
 
 
- // Axis
+ // for Types
 
+// Axis
  // data
 
 
@@ -34333,6 +35092,8 @@ function ascending_sum(series) {
 
 
  // shape
+
+
 
 
 
@@ -34369,7 +35130,6 @@ function () {
       targets: []
     }), _defineProperty(this, "$el", {
       chart: null,
-      //$el.chart,
       main: null,
       svg: null,
       axis: {
@@ -34377,7 +35137,7 @@ function () {
         x: null,
         y: null,
         y2: null,
-        subX: src_selectAll([])
+        subX: null
       },
       defs: null,
       tooltip: null,
@@ -34390,15 +35150,15 @@ function () {
         area: null
       },
       arcs: null,
-      bar: src_selectAll([]),
+      bar: null,
       //mainBar,
-      line: src_selectAll([]),
+      line: null,
       //mainLine,
-      area: src_selectAll([]),
+      area: null,
       //mainArea,
-      circle: src_selectAll([]),
+      circle: null,
       //mainCircle,
-      text: src_selectAll([]),
+      text: null,
       //mainText,
       grid: {
         main: null,
@@ -34417,7 +35177,7 @@ function () {
 
       },
       region: {
-        main: src_selectAll([]),
+        main: null,
         //region
         list: null // mainRegion
 
@@ -34439,9 +35199,9 @@ function () {
       xAxisTick: null,
       dataTime: null,
       // dataTimeFormat
-      defaultAxisTime: function defaultAxisTime() {},
+      defaultAxisTime: null,
       // defaultAxisTimeFormat
-      axisTime: function axisTime() {} // axisTimeFormat
+      axisTime: null // axisTimeFormat
 
     });
     var $$ = this;
@@ -34464,7 +35224,7 @@ function () {
       element: config.bindto,
       classname: "bb"
     };
-    isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $el.chart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element || []), $el.chart.empty() && ($el.chart = src_select(browser_doc.body.appendChild(browser_doc.createElement("div")))), $el.chart.html("").classed(bindto.classname, !0), $$.initToRender();
+    isObject(config.bindto) && (bindto.element = config.bindto.element || "#chart", bindto.classname = config.bindto.classname || bindto.classname), $el.chart = isFunction(bindto.element.node) ? config.bindto.element : src_select(bindto.element || []), (!$el.chart || $el.chart.empty()) && ($el.chart = src_select(browser_doc.body.appendChild(browser_doc.createElement("div")))), $el.chart.html("").classed(bindto.classname, !0), $$.initToRender();
   }
   /**
    * Initialize the rendering process
@@ -34521,7 +35281,7 @@ function () {
         subY2 = _$$$scale2.subY2,
         org = $$.org;
 
-    if ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom(), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0), x && (x.domain(sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
+    if ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom(), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter)), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0), x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
       var isTouch = state.inputType === "touch";
       $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
         return callFn(config.onover, $$, $$.api);
@@ -34530,7 +35290,7 @@ function () {
       });
     }
 
-    config.svg_classname && $$.$el.svg.attr("class", config.svg_classname), $el.defs = $el.svg.append("defs"), $$.appendClip($el.defs, state.clip.id), $$.appendClip($el.defs, state.clip.idXAxis), $$.appendClip($el.defs, state.clipYAxis), $$.appendClip($el.defs, state.clip.idGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+    config.svg_classname && $el.svg.attr("class", config.svg_classname), $el.defs = $el.svg.append("defs"), $$.appendClip($el.defs, state.clip.id), $$.appendClip($el.defs, state.clip.idXAxis), $$.appendClip($el.defs, state.clipYAxis), $$.appendClip($el.defs, state.clip.idGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
       return $el.defs.append(function () {
         return p.node;
       });
@@ -34555,9 +35315,9 @@ function () {
 
     $$.bindResize(), $$.api.element = $el.chart.node(), state.rendered = !0;
   }, _proto.initChartElements = function initChartElements() {
-    var $$ = this; //"Radar", "Arc", "Gauge", "Pie"
-
-    ["Bar", "Line", "Bubble"].forEach(function (v) {
+    var $$ = this,
+        types = ["Bar", "Line", "Bubble"];
+    $$.hasArcType() && types.push("Radar", "Arc", "Gauge", "Pie"), types.forEach(function (v) {
       $$["init" + v]();
     }), notEmpty($$.config.data_labels) && $$.initText();
   }, _proto.setChartElements = function setChartElements() {
@@ -35024,11 +35784,9 @@ function () {
 
 util_extend(ChartInternal_ChartInternal.prototype, [// common
 data_convert, ChartInternal_data_data, data_load, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_type, // Axis based
-category, interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, ChartInternal_shape_bar, shape_bubble, ChartInternal_shape_line, shape_point, shape_shape // Non-Axis based
+category, interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, ChartInternal_shape_bar, shape_bubble, ChartInternal_shape_line, shape_point, shape_shape, // Non-Axis based
 // Not necessary: defs, eventRect
-// arc,
-// radar
-]);
+shape_arc, shape_radar]);
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
