@@ -232,7 +232,7 @@ extend(ChartInternal.prototype, {
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
 		let [left, top] = d3Mouse(element);
-		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
+		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(true);
 
 		top += 20;
 

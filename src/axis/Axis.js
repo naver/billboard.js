@@ -505,6 +505,10 @@ export default class Axis {
 			return currentTickMax.size;
 		}
 
+		if (!$$.currentXAxisTickTextWidths) {
+			$$.currentXAxisTickTextWidths = {};
+		}
+
 		if ($$.svg) {
 			const isYAxis = /^y2?$/.test(id);
 			const targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -542,9 +546,17 @@ export default class Axis {
 
 			axis.create(dummy);
 
+			$$.currentXAxisTickTextWidths = {};
+
 			dummy.selectAll("text")
-				.each(function() {
-					maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+				.each(function(d, i) {
+					const currentTextWidth = this.getBoundingClientRect().width;
+
+					maxWidth = Math.max(maxWidth, currentTextWidth);
+					// cache tick text width for getXAxisTickTextY2Overflow()
+					if (id === "x") {
+						$$.currentXAxisTickTextWidths[i] = currentTextWidth;
+					}
 				});
 
 			dummy.remove();
@@ -555,6 +567,50 @@ export default class Axis {
 		}
 
 		return currentTickMax.size;
+	}
+
+	getXAxisTickTextY2Overflow(defaultPadding) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const widthWithoutPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft();
+		const tickTextWidths = $$.currentXAxisTickTextWidths || {};
+		const xAxisTickRotate = $$.getXAxisTickRotate();
+		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
+
+		if (
+			$$.svg &&
+			$$.isCategorized() &&
+			!config.axis_x_tick_culling &&
+			!config.axis_x_tick_multiline &&
+			positiveRotation
+		) {
+			const tickCount = Object.keys(tickTextWidths).length;
+			let maxOverflow = 0;
+
+			for (let i = 0; i < tickCount; i++) {
+				const tickIndex = i + 1;
+
+				const tickTextWidth = tickTextWidths[i];
+				const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidth;
+
+				const xAxisLengthWithoutTickTextWidth = widthWithoutPaddingLeft - rotatedTickTextWidth;
+
+				const ticksBeforeTickText = tickIndex - 0.5;
+				const tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
+
+				const remainingTicks = tickCount - tickIndex;
+				const remainingTickWidth = remainingTicks * tickLength;
+				const overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
+
+				maxOverflow = Math.max(maxOverflow, overflow);
+			}
+
+			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
+				defaultPadding; // for display inconsistencies between browsers
+
+			return Math.min(xAxisTickTextY2Overflow, widthWithoutPaddingLeft / 2);
+		}
+		return 0;
 	}
 
 	updateLabels(withTransition) {

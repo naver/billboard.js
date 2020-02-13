@@ -104,13 +104,15 @@ extend(ChartInternal.prototype, {
 		return padding + (axisWidth * axesLen);
 	},
 
-	getCurrentPaddingRight() {
+	getCurrentPaddingRight(withoutTickTextOverflow = false) {
 		const $$ = this;
 		const config = $$.config;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = config.axis_y2_axes.length;
 		const axisWidth = $$.getAxisWidthByAxisId("y2");
+		const xAxisTickTextOverflow = withoutTickTextOverflow ?
+			0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
 		let padding;
 
 		if (isValue(config.padding_right)) {
@@ -118,10 +120,10 @@ extend(ChartInternal.prototype, {
 		} else if (config.axis_rotated) {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
-			padding = 2 + legendWidthOnRight +
-				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
+			padding = Math.max(2 + legendWidthOnRight +
+				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0), xAxisTickTextOverflow);
 		} else {
-			padding = ceil10(axisWidth) + legendWidthOnRight;
+			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
 		}
 
 		return padding + (axisWidth * axesLen);
