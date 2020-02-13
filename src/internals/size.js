@@ -251,6 +251,11 @@ extend(ChartInternal.prototype, {
 	getXAxisTickRotate() {
 		const $$ = this;
 		const config = $$.config;
+		const targetsToShow = $$.filterTargetsToShow($$.data.targets).length;
+
+		if (!targetsToShow) {
+			return 0;
+		}
 
 		if ($$.svg && config.axis_x_tick_autorotate && $$.isCategorized()) {
 			return !config.axis_x_tick_multiline && !$$.needToRotateXAxisTickTexts() ?
@@ -271,6 +276,6 @@ extend(ChartInternal.prototype, {
 
 		const maxTickWidth = $$.axis.getMaxTickWidth("x");
 
-		return tickCount !== 0 && maxTickWidth > (xAxisLength / tickCount);
+		return maxTickWidth > (xAxisLength / tickCount);
 	},
 });
