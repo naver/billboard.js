@@ -931,6 +931,345 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis.x.tick.autorotate", () => {
+		const defaultPadding = 10;
+
+		function compare(expectedXAxisTickRotate, expectedXAxisBoundingClientRect, expectedHorizontalXAxisHeight, expectedXAxisTickTextY2Overflow) {
+			const internal = chart.internal;
+			const xAxisBoundingClientRect = internal.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
+			const horizontalXAxisHeight = internal.getHorizontalAxisHeight("x");
+			const xAxisTickRotate = internal.getXAxisTickRotate();
+
+			expect(xAxisTickRotate).to.be.equal(expectedXAxisTickRotate);
+			expect(xAxisBoundingClientRect.height).to.be.closeTo(expectedXAxisBoundingClientRect, 1);
+			expect(horizontalXAxisHeight).to.be.closeTo(expectedHorizontalXAxisHeight, 1);
+
+			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
+
+			expect(xAxisTickTextY2Overflow).to.be.closeTo(expectedXAxisTickTextY2Overflow, 1);
+		}
+
+		function compareOverflow(expectedOverflow) {
+			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
+
+			expect(xAxisTickTextY2Overflow).to.be.above(0, 5);
+			expect(xAxisTickTextY2Overflow).to.be.equal(expectedOverflow);
+		}
+
+		describe("`axis.x.type = category`", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						columns: [
+							[
+								"x",
+								"categoryname1",
+								"categoryname2",
+								"categoryname3",
+								"categoryname4",
+								"categoryname5",
+								"categoryname6",
+								"categoryname7"
+							],
+							["data1", 30, 200, 100, 400, 150, 250, 180]
+						]
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								rotate: 15,
+								autorotate: true,
+								centered: false,
+								multiline: false
+							}
+						}
+					}
+				};
+			});
+
+			it("should not rotate tick texts if there is enough space between ticks", () => {
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
+						const tick = d3Select(this);
+						const text = tick.select("text");
+						const tspan = text.select("tspan");
+
+						expect(text.attr("transform")).to.be.null;
+						expect(text.attr("y")).to.be.equal("9");
+						expect(tspan.attr("dx")).to.be.equal("0");
+					});
+
+				compare(0, 18.8125, 30, 0);
+			});
+
+			it("update args", () => {
+				args.data.columns[0] = [
+					"x",
+					"somecategoryname1",
+					"somecategoryname2",
+					"somecategoryname3",
+					"somecategoryname4",
+					"somecategoryname5",
+					"somecategoryname6",
+					"somecategoryname7"
+				]
+			});
+
+			it("should rotate tick texts if there is not enough space between ticks", () => {
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
+						const tick = d3Select(this);
+						const text = tick.select("text");
+						const tspan = text.select("tspan");
+
+						expect(text.attr("transform")).to.be.equal("rotate(15)");
+						expect(text.attr("y")).to.be.equal("9");
+						expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
+					});
+
+				compare(15, 45.525421142578125, 56.82012354874871, 70.72956162437113)
+			});
+
+			it("should resize when all data hidden", () => {
+				chart.hide("data1");
+
+				compare(0, 6, 30, 0)
+
+				chart.show("data1");
+			});
+
+			it("reset args", () => {
+				args.data.columns[0] = [
+					"x",
+					"somecategoryname1",
+					"somecategoryname2",
+					"somecategoryname3",
+					"somecategoryname4",
+					"somecategoryname5",
+					"somecategoryname6",
+					"somecategoryname7"
+				];
+				args.axis.x.tick.rotate = 0;
+			});
+
+			describe("xAxisTickTextY2Overflow", () => {
+				it("should be 0 if not rotated", () => {
+					const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
+
+					expect(xAxisTickTextY2Overflow).to.be.equal(0);
+				});
+
+				it("update config", () => {
+					args.axis.x.tick.rotate = 15;
+					args.data.columns[0] = [
+						"x",
+						"somecategoryname1",
+						"somecategoryname2",
+						"somecategoryname3",
+						"somecategoryname4",
+						"somecategoryname5",
+						"somecategoryname6",
+						"somecategoryname7"
+					];
+				});
+
+				it("should be above 0 if rotated", () => {
+					compareOverflow(70.72956162437113);
+				});
+
+				it("update config", () => {
+					args.axis.x.padding = {right: 2};
+				});
+
+				it("should be defaultPadding if padding right is set", () => {
+					compareOverflow(defaultPadding);
+				});
+
+				it("update config", () => {
+					args.axis.x.padding = {left: 2};
+				});
+
+				it("should be above defaultPadding if padding left is set", () => {
+					compareOverflow(79.79293033656657);
+				});
+
+				it("update config", () => {
+					args.axis.x.padding = 2;
+				});
+
+				it("should be above defaultPadding if padding is set", () => {
+					compareOverflow(defaultPadding);
+				});
+			});
+		});
+
+		describe("`axis.x.type = timeseries`", () => {
+			before(() => {
+				args = {
+					data: {
+						x: "x",
+						json: {
+							Temperature: ["29.39", "29.7", "29.37", "28.87", "28.62", "27.72", "27.61", "27.82", "27.48", "26.78", "26.62", "26.64", "26.29", "26.01", "25.84", "25.07", "24.85", "24.01", "23.83", "22.8", "23", "22.64", "22.77", "22.64", "22.64", "22.62", "22.51", "21.42", "21.18", "20.93", "20.66", "20.48", "20.7", "21.24", "22.14", "22.78", "23.43", "23.16", "27.48", "26.78", "26.62", "26.64", "26.29", "26.01", "25.84", "25.07", "24.85", "24.01"],
+							x: ["01-01-2015 00:00", "02-01-2015 00:00", "03-01-2015 00:00", "04-01-2015 00:00", "05-01-2015 00:00", "06-01-2015 00:00", "07-01-2015 00:00", "08-01-2015 00:00", "09-01-2015 00:00", "10-01-2015 00:00", "11-01-2015 00:00", "12-01-2015 00:00", "01-01-2016 00:00", "02-01-2016 00:00", "03-01-2016 00:00", "04-01-2016 00:00", "05-01-2016 00:00", "06-01-2016 00:00", "07-01-2016 00:00", "08-01-2016 00:00", "09-01-2016 00:00", "10-01-2016 00:00", "11-01-2016 00:00", "12-01-2016 00:00", "01-01-2017 00:00", "02-01-2017 00:00", "03-01-2017 00:00", "04-01-2017 00:00", "05-01-2017 00:00", "06-01-2017 00:00", "07-01-2017 00:00", "08-01-2017 00:00", "09-01-2017 00:00", "10-01-2017 00:00", "11-01-2017 00:00", "12-01-2017 00:00", "01-01-2018 00:00", "02-01-2018 00:00", "03-01-2018 00:00", "04-01-2018 00:00", "05-01-2018 00:00", "06-01-2018 00:00", "07-01-2018 00:00", "08-01-2018 00:00", "09-01-2018 00:00", "10-01-2018 00:00", "11-01-2018 00:00", "12-01-2018 00:00"]
+						},
+						type: "area",
+						xFormat: "%m-%d-%Y %H:%M"
+					},
+					axis: {
+						x: {
+							type: "timeseries",
+							tick: {
+								multiline: false,
+								culling: false,
+								autorotate: true,
+								rotate: 15,
+								count: 5,
+								format: "%Y-%m-%d %H:%M:%S",
+							},
+						}
+					}
+				};
+			});
+
+			it("should not rotate tick texts if there is enough space between ticks", () => {
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.null;
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("0");
+				});
+
+				compare(0, 18.8125, 30, 0);
+			});
+
+			it("update args", () => {
+				args.axis.x.tick.count = 10;
+			});
+
+			it("should rotate tick texts if there is not enough space between ticks", () => {
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function() {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					expect(text.attr("transform")).to.be.equal("rotate(15)");
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
+				});
+
+				compare(15, 45.145263671875, 56.439983076254386, 108.67536019184263)
+			});
+
+			it("should resize when all data hidden", () => {
+				chart.hide("Temperature");
+
+				compare(0, 6, 30, 0)
+			});
+
+			it("should resize when show hidden data", () => {
+				chart.show("Temperature");
+
+				compare(15, 45.145263671875, 56.439983076254386, 108.67536019184263)
+			});
+
+			it("update args", () => {
+				args.axis.x.tick.count = 0;
+			});
+
+			it("should rotate tick texts and show all 48 ticks", () => {
+				let shownTicks = 0;
+
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function(d, i) {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					shownTicks = i;
+
+					expect(text.attr("transform")).to.be.equal("rotate(15)");
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
+				});
+
+				expect(shownTicks + 1).to.be.equal(48);
+
+				compare(15, 45.145263671875, 56.439983076254386, 108.67536019184263)
+			});
+
+			it("update args", () => {
+				args.axis.x.tick.fit = false;
+			});
+
+			it("should rotate tick texts and show 16 ticks", () => {
+				let shownTicks = 0;
+
+				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function(d, i) {
+					const tick = d3Select(this);
+					const text = tick.select("text");
+					const tspan = text.select("tspan");
+
+					shownTicks = i;
+
+					expect(text.attr("transform")).to.be.equal("rotate(15)");
+					expect(text.attr("y")).to.be.equal("9");
+					expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
+				});
+
+				expect(shownTicks + 1).to.be.equal(16);
+
+				compare(15, 45.145263671875, 56.439983076254386, 91.96453886490406)
+			});
+
+			it("reset args", () => {
+				args.axis.x.tick.count = 5;
+				args.axis.x.tick.fit = true;
+			});
+
+			describe("xAxisTickTextY2Overflow", () => {
+				it("should be 0 if not rotated", () => {
+					const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
+
+					expect(xAxisTickTextY2Overflow).to.be.equal(0);
+				});
+
+				it("reset args", () => {
+					args.axis.x.tick.count = 10;
+				});
+
+				it("should be above 0 if not rotated", () => {
+					compareOverflow(108.67536019184263);
+				});
+
+				it("update config", () => {
+					args.axis.x.padding = { right: 1000*60*60*24*365 }; // 1 year
+				});
+
+				it("should be defaultPadding if padding right is set", () => {
+					compareOverflow(defaultPadding);
+				});
+
+				it("update config", () => {
+					args.axis.x.padding = { left: 1000*60*60*24*365 }; // 1 year
+				});
+
+				it("should be above 10 if padding left is set", () => {
+					compareOverflow(108.67536019184263);
+				});
+
+				it("update config", () => {
+					args.axis.x.padding = 1000*60*60*24*365; // 1 year
+				});
+
+				it("should be defaultPadding if padding is set", () => {
+					compareOverflow(defaultPadding);
+				});
+			});
+		});
+	});
+
 	describe("axis.y.tick.rotate", () => {
 		describe("y Axis", () => {
 			before(() => {
