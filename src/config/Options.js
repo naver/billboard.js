@@ -1783,11 +1783,12 @@ export default class Options {
 			 * - **NOTE:**
 			 *  > axis_x_tick_multiline must be set to `false` for autorotate to work.
 			 *  > axis_x_tick_culling must be set to `false` for autorotate to work.
-			 *  > axis_x_type must be set to `category` or `timeseries`  for autorotate to work.
+			 *  > axis_x_type must be set to `category` or `timeseries` for autorotate to work.
 			 * @name axis․x․tick․autorotate
 			 * @memberof Options
 			 * @type {Boolean}
 			 * @default false
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
 			 * @example
 			 * axis: {
 			 *   x: {

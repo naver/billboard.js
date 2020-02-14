@@ -1123,6 +1123,173 @@ var demos = {
 				}
 			}
 		},
+		XAxisTickAutorotate: [
+			{
+				options: {
+					title: {
+						text: "Category"
+					},
+					data: {
+						x: "x",
+						columns: [
+							[
+								"x",
+								"CATEGORY 0000",
+								"CATEGORY 0001",
+								"CATEGORY 0002",
+								"CATEGORY 0003",
+								"CATEGORY 0004",
+								"CATEGORY 0005",
+								"CATEGORY 0006",
+								"CATEGORY 0007",
+								"CATEGORY 0008",
+								"CATEGORY 0009"
+							],
+							["pv", 30, 200, 100, 400, 150, 250, 50, 350, 80, 90],
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								fit: true,
+								multiline: false,
+								autorotate: true,
+								rotate: 15,
+								culling: false
+							}
+						},
+						y2: {
+							show: false
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.resize({
+								width: window.innerWidth * 0.4
+							});
+						}, 2000),
+
+						setTimeout(function() {
+							chart.toggle("pv");
+						}, 4000),
+
+						setTimeout(function() {
+							chart.toggle("pv");
+						}, 6000),
+
+						setTimeout(function() {
+							chart.resize();
+						}, 8000),
+					];
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Timeseries"
+					},
+					data: {
+						json: {
+							Temperature: [
+								"29.39",
+								"29.7",
+								"29.37",
+								"28.87",
+								"28.62",
+								"27.72",
+								"27.61",
+								"27.82",
+								"27.48",
+								"26.78",
+								"26.62",
+								"26.64",
+								"26.29",
+								"26.01",
+								"25.84",
+								"25.07",
+								"24.85",
+								"24.01",
+								"23.83",
+								"22.8",
+								"23",
+								"22.64",
+								"22.77",
+								"22.64"
+							],
+							x: [
+								"01-01-2018 00:00",
+								"02-01-2018 00:00",
+								"03-01-2018 00:00",
+								"04-01-2018 00:00",
+								"05-01-2018 00:00",
+								"06-01-2018 00:00",
+								"07-01-2018 00:00",
+								"08-01-2018 00:00",
+								"09-01-2018 00:00",
+								"10-01-2018 00:00",
+								"11-01-2018 00:00",
+								"12-01-2018 00:00",
+								"01-01-2019 00:00",
+								"02-01-2019 00:00",
+								"03-01-2019 00:00",
+								"04-01-2019 00:00",
+								"05-01-2019 00:00",
+								"06-01-2019 00:00",
+								"07-01-2019 00:00",
+								"08-01-2019 00:00",
+								"09-01-2019 00:00",
+								"10-01-2019 00:00",
+								"11-01-2019 00:00",
+								"12-01-2019 00:00",
+							]
+						},
+						x: "x",
+						type: "area",
+						xFormat: "%m-%d-%Y %H:%M"
+					},
+					axis: {
+						x: {
+							tick: {
+								fit: true,
+								multiline: false,
+								autorotate: true,
+								rotate: 15,
+								culling: false,
+								count: 10,
+								format: "%m-%d-%Y %H:%M:%S"
+							},
+							type: "timeseries"
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+						setTimeout(function() {
+							chart.resize({
+								width: window.innerWidth * 0.4
+							});
+						}, 2000),
+
+						setTimeout(function() {
+							chart.toggle("Temperature");
+
+						}, 4000),
+
+						setTimeout(function() {
+							chart.toggle("Temperature");
+						}, 6000),
+
+						setTimeout(function() {
+							chart.resize();
+						}, 8000),
+					];
+				}
+			}
+		],
 		XAxisTickCount: {
 			options: {
 				data: {
