@@ -42,10 +42,21 @@ import {mergeObj} from "../../module/util";
 export default class Options {
 	constructor() {
 		const arcShapeConfig = [donut, gauge, pie, radar];
+
 		const axisConfig = [dataAxis, dataSelection, axis, grid, point, subchart, zoom];
 		const axisShapeConfig = [area, bar, bubble, line, spline];
 
-		const config = [data, color, interaction, legend, title, tooltip, ...arcShapeConfig, ...axisConfig, ...axisShapeConfig];
+		const config = [
+			data,
+			color,
+			interaction,
+			legend,
+			title,
+			tooltip,
+			...arcShapeConfig,
+			...axisConfig,
+			...axisShapeConfig
+		];
 
 		return mergeObj({
 			/**

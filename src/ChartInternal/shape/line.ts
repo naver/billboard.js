@@ -154,10 +154,20 @@ export default {
 		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 
-		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
-		const yValue = (d, i) => ($$.isGrouped(d.id) ?
-			getPoints(d, i)[0][1] :
-			yScaleGetter.call($$, d.id)($$.getBaseValue(d))
+		const xValue = d => {
+			const p = (isSub ? $$.subxx : $$.xx).call($$, d);
+
+			// if (d.value === 200) {
+			// 	console.log(p);
+			// }
+
+			return p;
+		};
+
+		const yValue = (d, i) => (
+			$$.isGrouped(d.id) ?
+				getPoints(d, i)[0][1] :
+				yScaleGetter.call($$, d.id)($$.getBaseValue(d))
 		);
 
 		let line = d3Line();
@@ -189,6 +199,7 @@ export default {
 					}
 
 					path = line.curve($$.getCurve(d))(values);
+
 				}
 			} else {
 				if (values[0]) {
@@ -533,189 +544,6 @@ export default {
 				[posX, offset] // needed for compatibility
 			];
 		};
-	},
-
-	updateCircle() {
-		const $$ = this;
-		const {config, $el} = $$;
-
-		if (!config.point_show) {
-			return;
-		}
-
-		$el.circle = $el.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data(d => !$$.isBarType(d) && (
-				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
-			) && $$.labelishData(d));
-
-		$el.circle.exit().remove();
-
-		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-
-		$el.circle = $el.circle.enter()
-			.append(fn)
-			.merge($el.circle)
-			.style("stroke", $$.color)
-			.style("opacity", $$.initialOpacityForCircle.bind($$));
-	},
-
-	redrawCircle(cx, cy, withTransition, flow) {
-		const $$ = this;
-		const selectedCircles = $$.$el.main.selectAll(`.${CLASS.selectedCircle}`);
-
-		if (!$$.config.point_show) {
-			return [];
-		}
-
-		const mainCircles: any[] = [];
-
-		$$.$el.circle.each(function(d) {
-			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
-			const result = fn(d);
-
-			mainCircles.push(result);
-		});
-
-		const posAttr = $$.isCirclePoint() ? "c" : "";
-
-		return [
-			mainCircles,
-			selectedCircles
-				.attr(`${posAttr}x`, cx)
-				.attr(`${posAttr}y`, cy)
-		];
-	},
-
-	circleX(d) {
-		const $$ = this;
-		const {x, zoom} = $$.scale;
-		const hasValue = isValue(d.x);
-
-		return $$.config.zoom_enabled && zoom ?
-			(hasValue ? zoom(d.x) : null) :
-			(hasValue ? x(d.x) : null);
-	},
-
-	updateCircleY() {
-		const $$ = this;
-		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
-
-		$$.circleY = (d, i) => {
-			const id = d.id;
-
-			return $$.isGrouped(id) ?
-				getPoints(d, i)[0][1] :
-				$$.getYScale(id)($$.getBaseValue(d));
-		};
-	},
-
-	getCircles(i, id) {
-		const $$ = this;
-		const suffix = (isValue(i) ? `-${i}` : ``);
-
-		return (id ? $$.$el.main.selectAll(`.${CLASS.circles}${$$.getTargetSelectorSuffix(id)}`) : $$.$el.main)
-			.selectAll(`.${CLASS.circle}${suffix}`);
-	},
-
-	expandCircles(i, id, reset) {
-		const $$ = this;
-		const r = $$.pointExpandedR.bind($$);
-
-		reset && $$.unexpandCircles();
-
-		const circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
-		const scale = r(circles) / $$.config.point_r;
-		const ratio = 1 - scale;
-
-		if ($$.isCirclePoint()) {
-			circles.attr("r", r);
-		} else {
-			// transform must be applied to each node individually
-			circles.each(function() {
-				const point = d3Select(this);
-
-				if (this.tagName === "circle") {
-					point.attr("r", r);
-				} else {
-					const {width, height} = this.getBBox();
-					const x = ratio * (+point.attr("x") + width / 2);
-					const y = ratio * (+point.attr("y") + height / 2);
-
-					point.attr("transform", `translate(${x} ${y}) scale(${scale})`);
-				}
-			});
-		}
-	},
-
-	unexpandCircles(i) {
-		const $$ = this;
-		const r = $$.pointR.bind($$);
-
-		const circles = $$.getCircles(i)
-			.filter(function() {
-				return d3Select(this).classed(CLASS.EXPANDED);
-			})
-			.classed(CLASS.EXPANDED, false);
-
-		circles.attr("r", r);
-
-		!$$.isCirclePoint() &&
-			circles.attr("transform", `scale(${r(circles) / $$.config.point_r})`);
-	},
-
-	pointR(d) {
-		const $$ = this;
-		const {config} = $$;
-		const pointR = config.point_r;
-		let r = pointR;
-
-		if ($$.isStepType(d)) {
-			r = 0;
-		} else if ($$.isBubbleType(d)) {
-			r = $$.getBubbleR(d);
-		} else if (isFunction(pointR)) {
-			r = pointR(d);
-		}
-
-		return r;
-	},
-
-	pointExpandedR(d) {
-		const $$ = this;
-		const {config} = $$;
-		const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
-
-		return config.point_focus_expand_enabled ?
-			(config.point_focus_expand_r || $$.pointR(d) * scale) : $$.pointR(d);
-	},
-
-	pointSelectR(d) {
-		const $$ = this;
-		const selectR = $$.config.point_select_r;
-
-		return isFunction(selectR) ?
-			selectR(d) : (selectR || $$.pointR(d) * 4);
-	},
-
-	isWithinCircle(node, r) {
-		const mouse = d3Mouse(node);
-		const element = d3Select(node);
-		const prefix = this.isCirclePoint() ? "c" : "";
-
-		let cx = +element.attr(`${prefix}x`);
-		let cy = +element.attr(`${prefix}y`);
-
-		// if node don't have cx/y or x/y attribute value
-		if (!(cx || cy) && node.nodeType === 1) {
-			const {x, y} = node.getBBox ? node.getBBox() : node.getBoundingClientRect();
-
-			cx = x;
-			cy = y;
-		}
-
-		return Math.sqrt(
-			Math.pow(cx - mouse[0], 2) + Math.pow(cy - mouse[1], 2)
-		) < (r || this.config.point_sensitivity);
 	},
 
 	isWithinStep(that, y) {

@@ -256,31 +256,31 @@ export default {
 
 	updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
 		const $$ = this;
-		const {config, org, scale} = $$;
+		const {config, org, scale: {x, subX}} = $$;
 		const zoomEnabled = config.zoom_enabled;
 
 		if (withUpdateOrgXDomain) {
-			scale.x.domain(domain || sortValue($$.getXDomain(targets)));
-			org.xDomain = scale.x.domain();
+			x.domain(domain || sortValue($$.getXDomain(targets)));
+			org.xDomain = x.domain();
 
 			zoomEnabled && $$.zoom.updateScaleExtent();
 
-			scale.subX.domain(scale.x.domain());
-			$$.brush && $$.brush.scale(scale.subX);
+			subX.domain(x.domain());
+			$$.brush && $$.brush.scale(subX);
 		}
 
 		if (withUpdateXDomain) {
 			const domainValue = domain || (!$$.brush || brushEmpty($$)) ?
-				org.xDomain : getBrushSelection($$).map(scale.subX.invert);
+				org.xDomain : getBrushSelection($$).map(subX.invert);
 
-			scale.x.domain(domainValue);
+			x.domain(domainValue);
 			zoomEnabled && $$.zoom.updateScaleExtent();
 		}
 
 		// Trim domain when too big by zoom mousemove event
-		withTrim && scale.x.domain($$.trimXDomain(scale.x.orgDomain()));
+		withTrim && x.domain($$.trimXDomain(x.orgDomain()));
 
-		return scale.x.domain();
+		return x.domain();
 	},
 
 	trimXDomain(domain) {

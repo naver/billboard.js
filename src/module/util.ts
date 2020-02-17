@@ -189,13 +189,13 @@ function getPathBox(path: SVGGraphicsElement): {x: number, y: number, width: num
 }
 
 // return brush selection array
-function getBrushSelection(ctx) {
-	let selection;
+function getBrushSelection({$el}) {
 	const event = d3Event;
-	const main = ctx.context || ctx.main;
+	const main = $el.context || $el.main;
+	let selection;
 
 	// check from event
-	if (event && event.constructor.name === "BrushEvent") {
+	if (event && event.type === "brush") {
 		selection = event.selection;
 	// check from brush area selection
 	} else if (main && (selection = main.select(`.${CLASS.brush}`).node())) {

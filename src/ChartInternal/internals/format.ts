@@ -24,8 +24,8 @@ export default {
 		}
 
 		return function(v, ratio, id) {
-			const format = $$.axis.getId(id) === "y2" ?
-			y2Format : yFormat;
+			const format = $$.axis && $$.axis.getId(id) === "y2" ?
+				y2Format : yFormat;
 
 			return format.call($$, v, ratio);
 		};

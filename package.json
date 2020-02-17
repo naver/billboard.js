@@ -101,6 +101,8 @@
     "@semantic-release/npm": "^7.0.0",
     "@semantic-release/release-notes-generator": "^9.0.0",
     "@types/d3": "^5.7.2",
+    "@typescript-eslint/eslint-plugin": "^2.19.2",
+    "@typescript-eslint/parser": "^2.19.2",
     "babel-eslint": "^10.0.3",
     "babel-helper-modules": "^6.0.0",
     "babel-loader": "^8.0.6",

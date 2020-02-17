@@ -30,41 +30,26 @@ import data from "./data/data";
 import dataLoad from "./data/data.load";
 
 // interactions
-import drag from "./interactions/drag";
-import flow from "./interactions/flow";
-import eventrect from "./interactions/eventrect";
 import interaction from "./interactions/interaction";
-import subchart from "./interactions/subchart";
-import zoom from "./interactions/zoom";
 
 // internals
-import category from "./internals/category";
 import classModule from "./internals/class";
-import clip from "./internals/clip";
 import color from "./internals/color";
 import domain from "./internals/domain";
 import format from "./internals/format";
-import grid from "./internals/grid";
 import legend from "./internals/legend";
-import region from "./internals/region";
 import scale from "./internals/scale";
-import selection from "./internals/selection";
 import size from "./internals/size";
 import text from "./internals/text";
 import title from "./internals/title";
 import tooltip from "./internals/tooltip";
 import type from "./internals/type";
 
-// shape
-import arc from "./shape/arc";
-import bar from "./shape/bar";
-import bubble from "./shape/bubble";
-import line from "./shape/line";
-import point from "./shape/point";
-import radar from "./shape/radar";
-import shape from "./shape/shape";
+import moduleAxis from "../config/resolver/axis";
+import moduleArc from "../config/resolver/arc";
 
 type N = d3Selection|null;
+type F = Function|null;
 
 /**
  * Internal chart class.
@@ -79,6 +64,7 @@ export default class ChartInternal {
 	public cache;  // cache instance
 	public state;  // state variables
 	public charts; // all Chart instances array within page (equivalent of 'bb.instances')
+	public isArc = false; // if is Arc type chart
 
 	// data object
 	public data = {
@@ -169,6 +155,8 @@ export default class ChartInternal {
 		axisTime: null // axisTimeFormat
 	};
 
+	public isAxis;
+
 	constructor(api) {
 		const $$ = this;
 
@@ -200,6 +188,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const {config, $el} = $$;
 
+		$$.isAxis = !$$.hasArcType();
 		$$.initParams();
 
 		const bindto = {
@@ -216,7 +205,7 @@ export default class ChartInternal {
 		$el.chart = isFunction(bindto.element.node) ?
 			config.bindto.element : d3Select(bindto.element || []);
 
-		if (!$el.chart || $el.chart.empty()) {
+		if ($el.chart.empty()) {
 			$el.chart = d3Select(document.body.appendChild(document.createElement("div")));
 		}
 
@@ -265,33 +254,40 @@ export default class ChartInternal {
 		// datetime to be used for uniqueness
 		state.datetimeId = `bb-${+new Date()}`;
 
-		$$.initClip();
-		$$.point = $$.generatePoint();
-
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
 
-		format.extraLineClasses = $$.generateExtraLineClass();
-		format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
-		format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
+		//@TODO:Axis & Radar
+		if ($$.isAxis || $$.hasType("radar")) {
+			$$.point = $$.generatePoint();
+		}
 
-		const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
+		if ($$.isAxis) {
+			$$.initClip();
+//			$$.point = $$.generatePoint();
 
-		format.defaultAxisTime = d => {
-			const {x, zoom} = $$.scale;
-			const isZoomed = isDragZoom ? zoom :
-				zoom && x.orgDomain().toString() !== zoom.domain().toString();
+			format.extraLineClasses = $$.generateExtraLineClass();
+			format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
+			format.axisTime = config.axis_x_localtime ? d3TimeFormat : d3UtcFormat;
 
-			const specifier: string = (d.getMilliseconds() && ".%L") ||
-				(d.getSeconds() && ".:%S") ||
-				(d.getMinutes() && "%I:%M") ||
-				(d.getHours() && "%I %p") ||
-				(d.getDate() !== 1 && "%b %d") ||
-				(isZoomed && d.getDate() === 1 && "%b\'%y") ||
-				(d.getMonth() && "%-m/%-d") || "%Y";
+			const isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
 
-			return format.axisTime(specifier)(d);
-		};
+			format.defaultAxisTime = d => {
+				const {x, zoom} = $$.scale;
+				const isZoomed = isDragZoom ? zoom :
+					zoom && x.orgDomain().toString() !== zoom.domain().toString();
+
+				const specifier: string = (d.getMilliseconds() && ".%L") ||
+					(d.getSeconds() && ".:%S") ||
+					(d.getMinutes() && "%I:%M") ||
+					(d.getHours() && "%I %p") ||
+					(d.getDate() !== 1 && "%b %d") ||
+					(isZoomed && d.getDate() === 1 && "%b\'%y") ||
+					(d.getMonth() && "%-m/%-d") || "%Y";
+
+				return format.axisTime(specifier)(d);
+			};
+		}
 
 		state.isLegendRight = config.legend_position === "right";
 		state.isLegendInset = config.legend_position === "inset";
@@ -318,8 +314,10 @@ export default class ChartInternal {
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
 
-		$$.axis = new Axis($$);
-		config.zoom_enabled && $$.initZoom();
+		if ($$.isAxis) {
+			$$.axis = new Axis($$);
+			config.zoom_enabled && $$.initZoom();
+		}
 
 		// Init data as targets
 		$$.data.xs = {};
@@ -382,12 +380,14 @@ export default class ChartInternal {
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		$el.defs = $el.svg.append("defs");
+		if ($$.isAxis) {
+			$el.defs = $el.svg.append("defs");
 
-		$$.appendClip($el.defs, state.clip.id);
-		$$.appendClip($el.defs, state.clip.idXAxis);
-		$$.appendClip($el.defs, state.clipYAxis);
-		$$.appendClip($el.defs, state.clip.idGrid);
+			$$.appendClip($el.defs, state.clip.id);
+			$$.appendClip($el.defs, state.clip.idXAxis);
+			$$.appendClip($el.defs, state.clipYAxis);
+			$$.appendClip($el.defs, state.clip.idGrid);
+		}
 
 		// set color patterns
 		if (isFunction(config.color_tiles) && $$.patterns) {
@@ -418,11 +418,13 @@ export default class ChartInternal {
 				.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
 		}
 
-		// Regions
-		$$.initRegion();
+		if ($$.isAxis) {
+			// Regions
+			$$.initRegion && $$.initRegion();
 
-		// Add Axis here, when clipPath is 'false'
-		!config.clipPath && $$.axis.init();
+			// Add Axis here, when clipPath is 'false'
+			!config.clipPath && $$.axis.init();
+		}
 
 		// Define g for chart area
 		main.append("g").attr("class", CLASS.chart)
@@ -430,26 +432,29 @@ export default class ChartInternal {
 
 		$$.callPluginHook("$init");
 
-		// Cover whole with rects for events
-		$$.initEventRect();
+		if ($$.isAxis) {
+			// Cover whole with rects for events
+			$$.initEventRect && $$.initEventRect();
 
+			// Grids
+			$$.initGrid && $$.initGrid();
+
+			// if zoom privileged, insert rect to forefront
+			// TODO: is this needed?
+			if ($$.isAxis) {
+				main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
+					.attr("class", CLASS.zoomRect)
+					.attr("width", $$.state.width)
+					.attr("height", $$.state.height)
+					.style("opacity", "0")
+					.on("dblclick.zoom", null);
+			}
+
+			// Add Axis here, when clipPath is 'true'
+			config.clipPath && $$.axis && $$.axis.init();
+		}
 
 		$$.initChartElements();
-
-		// Grids
-		$$.initGrid();
-
-		// if zoom privileged, insert rect to forefront
-		// TODO: is this needed?
-		main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
-			.attr("class", CLASS.zoomRect)
-			.attr("width", $$.state.width)
-			.attr("height", $$.state.height)
-			.style("opacity", "0")
-			.on("dblclick.zoom", null);
-
-		// Add Axis here, when clipPath is 'true'
-		config.clipPath && $$.axis.init();
 
 		// Set targets
 		$$.updateTargets($$.data.targets);
@@ -491,11 +496,8 @@ export default class ChartInternal {
 
 	initChartElements() {
 		const $$ = this;
-		const types = ["Bar", "Line", "Bubble"];
-
-		if ($$.hasArcType()) {
-			types.push("Radar", "Arc", "Gauge", "Pie");
-		}
+		const types = $$.isAxis ? ["Bar", "Bubble", "Line"] :
+			["Arc", "Gauge", "Pie", "Radar"];
 
 		types.forEach(v => {
 			$$[`init${v}`]();
@@ -681,22 +683,21 @@ export default class ChartInternal {
 		// Text
 		$$.updateTargetsForText(targets);
 
-		// Bar
-		$$.updateTargetsForBar(targets);
+		if ($$.isAxis) {
+			$$.updateTargetsForBar(targets); // Bar
+			$$.updateTargetsForLine(targets); // Line
 
-		// Line
-		$$.updateTargetsForLine(targets);
-
-		// Arc & Radar
-		$$.hasArcType(targets) && (
-			$$.hasType("radar") ?
-				$$.updateTargetsForRadar(targets) :
-				$$.updateTargetsForArc(targets)
-		);
-
-		// Sub Chart
-		$$.updateTargetsForSubchart &&
-			$$.updateTargetsForSubchart(targets);
+			// Sub Chart
+			$$.updateTargetsForSubchart &&
+				$$.updateTargetsForSubchart(targets);
+		} else {
+			// Arc & Radar
+			$$.hasArcType(targets) && (
+				$$.hasType("radar") ?
+					$$.updateTargetsForRadar(targets) :
+					$$.updateTargetsForArc(targets)
+			);
+		}
 
 		// Fade-in each chart
 		$$.showTargets();
@@ -758,7 +759,7 @@ export default class ChartInternal {
 		const duration = wth.Transition ? config.transition_duration : 0;
 		const durationForExit = wth.TransitionForExit ? duration : 0;
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
-		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
+		const transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
 
 		!(initializing && config.tooltip_init_show) &&
 			state.inputType === "touch" && $$.hideTooltip();
@@ -775,59 +776,66 @@ export default class ChartInternal {
 			$$.updateDimension(true);
 		}
 
+		//@TODO: Axis & Radar type
+		if ($$.isAxis || $$.hasType("radar")) {
+			$$.updateCircle();
+		}
+
 		// update axis
-		// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
-		$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
+		if ($$.isAxis) {
+			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
+			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
-		// update circleY based on updated parameters
-		$$.updateCircleY();
+			// update circleY based on updated parameters
+			$$.updateCircleY();
 
-		// xgrid focus
-		$$.updategridFocus();
+			// xgrid focus
+			$$.updategridFocus();
 
-		// Data empty label positioning and text.
-		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
-			.attr("x", state.width / 2)
-			.attr("y", state.height / 2)
-			.text(config.data_empty_label_text)
-			.style("display", targetsToShow.length ? "none" : null);
+			// Data empty label positioning and text.
+			config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
+				.attr("x", state.width / 2)
+				.attr("y", state.height / 2)
+				.text(config.data_empty_label_text)
+				.style("display", targetsToShow.length ? "none" : null);
 
-		// grid
-		$$.updateGrid(duration);
+			// grid
+			$$.updateGrid(duration);
 
-		// rect for regions
-		$$.updateRegion(duration);
+			// rect for regions
+			$$.updateRegion(duration);
 
-		// bars
-		$$.updateBar(durationForExit);
+			// bars
+			$$.updateBar(durationForExit);
 
-		// lines, areas and circles
-		$$.updateLine(durationForExit);
-		$$.updateArea(durationForExit);
-		$$.updateCircle();
+			// lines, areas and circles
+			$$.updateLine(durationForExit);
+			$$.updateArea(durationForExit);
+			//$$.updateCircle();
 
-		// text
-		$$.hasDataLabel() && $$.updateText(durationForExit);
+			// text
+			$$.hasDataLabel() && $$.updateText(durationForExit);
+
+			// circles for select
+			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
+				.filter($$.isBarType.bind($$))
+				.selectAll("circle")
+				.remove();
+
+			// event rects will redrawn when flow called
+			if (config.interaction_enabled && !flow && wth.EventRect) {
+				$$.bindZoomEvent();
+			}
+		} else {
+			// arc
+			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
+
+			// radar
+			$$.radars && $$.redrawRadar(duration, durationForExit);
+		}
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
-
-		// arc
-		$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
-
-		// radar
-		$$.radars && $$.redrawRadar(duration, durationForExit);
-
-		// circles for select
-		$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
-			.filter($$.isBarType.bind($$))
-			.selectAll("circle")
-			.remove();
-
-		// event rects will redrawn when flow called
-		if (config.interaction_enabled && !flow && wth.EventRect) {
-			$$.bindZoomEvent();
-		}
 
 		initializing && $$.setChartElements();
 
@@ -848,8 +856,11 @@ export default class ChartInternal {
 		const {config, state} = $$;
 		const shape = $$.getDrawShape();
 
-		// subchart
-		config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
+		if ($$.isAxis) {
+
+			// subchart
+			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
+		}
 
 		// generate flow
 		const flowFn = flow && $$.generateFlow({
@@ -928,14 +939,16 @@ export default class ChartInternal {
 			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
 		}
 
-		shape.pos = {
-			xForText: $$.generateXYForText(shape.indices, true),
-			yForText: $$.generateXYForText(shape.indices, false),
+		if ($$.isAxis || hasRadar) {
+			shape.pos = {
+				xForText: $$.generateXYForText(shape.indices, true),
+				yForText: $$.generateXYForText(shape.indices, false),
 
-			// generate circle x/y functions depending on updated params
-			cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
-			cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
-		};
+				// generate circle x/y functions depending on updated params
+				cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
+				cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
+			};
+		}
 
 		return shape;
 	}
@@ -943,11 +956,10 @@ export default class ChartInternal {
 	getRedrawList(shape, flow, flowFn, isTransition) {
 		const $$ = this;
 		const {config} = $$;
-		const hasArcType = $$.hasArcType();
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list = [];
 
-		if (!hasArcType) {
+		if ($$.isAxis) {
 			const {area, bar, line} = shape.type;
 
 			if (config.grid_x_lines.length || config.grid_y_lines.length) {
@@ -969,7 +981,7 @@ export default class ChartInternal {
 				list.push($$.redrawText(xForText, yForText, flow, isTransition));
 		}
 
-		(!hasArcType || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		($$.isAxis || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
 
 		return list;
 	}
@@ -1212,55 +1224,58 @@ export default class ChartInternal {
 	updateSvgSize() {
 		const $$ = this;
 		const {state, $el: {svg}} = $$;
-		const brush = svg.select(`.${CLASS.brush} .overlay`);
-		const brushSize = {width: 0, height: 0};
-
-		if (brush.size()) {
-			brushSize.width = +brush.attr("width");
-			brushSize.height = +brush.attr("height");
-		}
 
 		svg
 			.attr("width", state.currentWidth)
 			.attr("height", state.currentHeight);
 
-		svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
-			.select("rect")
-			.attr("width", state.width)
-			.attr("height", state.height);
+		if ($$.isAxis) {
+			const brush = svg.select(`.${CLASS.brush} .overlay`);
+			const brushSize = {width: 0, height: 0};
 
-		svg.select(`#${state.clip.idXAxis}`)
-			.select("rect")
-			.attr("x", $$.getXAxisClipX.bind($$))
-			.attr("y", $$.getXAxisClipY.bind($$))
-			.attr("width", $$.getXAxisClipWidth.bind($$))
-			.attr("height", $$.getXAxisClipHeight.bind($$));
+			if (brush.size()) {
+				brushSize.width = +brush.attr("width");
+				brushSize.height = +brush.attr("height");
+			}
 
-		svg.select(`#${state.clip.idYAxis}`)
-			.select("rect")
-			.attr("x", $$.getYAxisClipX.bind($$))
-			.attr("y", $$.getYAxisClipY.bind($$))
-			.attr("width", $$.getYAxisClipWidth.bind($$))
-			.attr("height", $$.getYAxisClipHeight.bind($$));
+			svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
+				.select("rect")
+				.attr("width", state.width)
+				.attr("height", state.height);
 
-		state.clip.idSubchart && svg.select(`#${state.clip.idSubchart}`)
-			.select("rect")
-			.attr("width", state.width)
-			.attr("height", brushSize.height);
+			svg.select(`#${state.clip.idXAxis}`)
+				.select("rect")
+				.attr("x", $$.getXAxisClipX.bind($$))
+				.attr("y", $$.getXAxisClipY.bind($$))
+				.attr("width", $$.getXAxisClipWidth.bind($$))
+				.attr("height", $$.getXAxisClipHeight.bind($$));
 
-		svg.select(`.${CLASS.zoomRect}`)
-			.attr("width", state.width)
-			.attr("height", state.height);
+			svg.select(`#${state.clip.idYAxis}`)
+				.select("rect")
+				.attr("x", $$.getYAxisClipX.bind($$))
+				.attr("y", $$.getYAxisClipY.bind($$))
+				.attr("width", $$.getYAxisClipWidth.bind($$))
+				.attr("height", $$.getYAxisClipHeight.bind($$));
+
+			state.clip.idSubchart && svg.select(`#${state.clip.idSubchart}`)
+				.select("rect")
+				.attr("width", state.width)
+				.attr("height", brushSize.height);
+
+			svg.select(`.${CLASS.zoomRect}`)
+				.attr("width", state.width)
+				.attr("height", state.height);
+		}
 	}
 
 	updateDimension(withoutAxis) {
 		const $$ = this;
 		const {config, $el: {axis}} = $$;
 
-		if (!withoutAxis) {
+		if ($$.isAxis && !withoutAxis) {
 			if ($$.axis.x && config.axis_rotated) {
 				$$.axis.x.create(axis.x);
-				$$.axis.subX.create(axis.subX);
+				$$.axis.subX && $$.axis.subX.create(axis.subX);
 			} else {
 				$$.axis.y && $$.axis.y.create(axis.y);
 				$$.axis.y2 && $$.axis.y2.create(axis.y2);
@@ -1432,7 +1447,6 @@ extend(ChartInternal.prototype, [
 	dataConvert,
 	data,
 	dataLoad,
-
 	classModule,
 	color,
 	domain,
@@ -1445,28 +1459,6 @@ extend(ChartInternal.prototype, [
 	title,
 	tooltip,
 	type,
-
-	// Axis based
-	category,
-	drag,
-	flow,
-	subchart,
-	zoom,
-
-	clip,
-	grid,
-	region,
-	selection,
-	eventrect,
-
-	bar,
-	bubble,
-	line,
-	point,
-	shape,
-
-	// Non-Axis based
-	// Not necessary: defs, eventRect
-	arc,
-	radar
+	...moduleArc.internal,
+	...moduleAxis.internal
 ]);

@@ -86,7 +86,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const axisId = isRotated ? "x" : "y";
 		const axesLen = config[`axis_${axisId}_axes`].length;
-		const axisWidth = $$.getAxisWidthByAxisId(axisId, withoutRecompute);
+		const axisWidth = $$.isAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
 		let padding;
 
 		if (isValue(config.padding_left)) {
@@ -114,9 +114,9 @@ export default {
 
 		if (isValue(config.padding_right)) {
 			padding = config.padding_right + 1; // 1 is needed not to hide tick line
-		} else if (config.axis_rotated) {
+		} else if ($$.axis && config.axis_rotated) {
 			padding = defaultPadding + legendWidthOnRight;
-		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
+		} else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) { // && !config.axis_rotated
 			padding = 2 + legendWidthOnRight +
 				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
 		} else {
@@ -188,10 +188,15 @@ export default {
 
 	getAxisWidthByAxisId(id, withoutRecompute) {
 		const $$ = this;
-		const position = $$.axis.getLabelPositionById(id);
 
-		return $$.axis.getMaxTickWidth(id, withoutRecompute) +
-			(position.isInner ? 20 : 40);
+		if ($$.axis) {
+			const position = $$.axis && $$.axis.getLabelPositionById(id);
+
+			return $$.axis.getMaxTickWidth(id, withoutRecompute) +
+				(position.isInner ? 20 : 40);
+		} else {
+			return 40;
+		}
 	},
 
 	getHorizontalAxisHeight(id) {

@@ -1,5 +1,5 @@
 {
-    "parser": "babel-eslint",
+    "parser": "@typescript-eslint/parser",
     "env": {
         "browser": true,
         "node": true,
@@ -23,6 +23,7 @@
                 "allow": ["error"]
             }
         ],
-        "array-element-newline": 0
+        "array-element-newline": 0,
+        "import/prefer-default-export": 0
     }
 }

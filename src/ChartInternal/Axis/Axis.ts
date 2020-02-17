@@ -269,16 +269,22 @@ export default class Axis {
 			axis.tickValues(values);
 		} else if ($$.axis.x) {
 			$$.axis.x.tickValues(values);
-			$$.axis.subX.tickValues(values);
+			$$.axis.subX && $$.axis.subX.tickValues(values);
 		}
 
 		return values;
 	}
 
 	getId(id) {
-		const {config} = this.owner;
+		const {config, scale} = this.owner;
+		let axis = config.data_axes[id];
 
-		return id in config.data_axes ? config.data_axes[id] : "y";
+		// when data.axes option has 'y2', but 'axis.y2.show=true' isn't set will return 'y'
+		if (!axis || !scale[axis]) {
+			axis = "y";
+		}
+
+		return axis;
 	}
 
 	getXAxisTickFormat() {
@@ -728,7 +734,7 @@ export default class Axis {
 			}
 		} else if ($$.axis.x) {
 			$$.axis.x.tickValues([]);
-			$$.axis.subX.tickValues([]);
+			$$.axis.subX && $$.axis.subX.tickValues([]);
 		}
 
 		if (config.zoom_rescale && !flow) {

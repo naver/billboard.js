@@ -209,7 +209,7 @@ export default {
 
 		// In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
 		// will take the 'mid' as the base value
-		if (value) {
+		if (value && $$.isAxis) {
 			if ($$.isAreaRangeType(data)) {
 				value = $$.getAreaRangeData(data, "mid");
 			} else if ($$.isBubbleZType(data)) {
@@ -449,7 +449,7 @@ export default {
 				} else if (isObject(value) && "high" in value) {
 					data.push(...Object.values(value));
 				} else if ($$.isBubbleZType(v)) {
-					data.push($$.getBubbleZData(value, "y"));
+					data.push($$.isAxis && $$.getBubbleZData(value, "y"));
 				} else {
 					if (isMultipleX) {
 						data[$$.getIndexByX(v.x, xs)] = value;

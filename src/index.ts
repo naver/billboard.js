@@ -5,6 +5,7 @@
 import Chart from "./chart/Chart";
 import {isObject, mergeObj} from "./module/util";
 
+// eslint-disable-next-line no-use-before-define
 export {bb, bb as default};
 
 let defaults = {};
@@ -52,7 +53,6 @@ const bb = {
 	generate(config) {
 		const options = mergeObj({}, defaults, config);
 		const inst = new Chart(options);
-
 
 		inst.internal.charts = this.instance;
 		this.instance.push(inst);
