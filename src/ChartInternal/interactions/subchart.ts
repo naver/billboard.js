@@ -21,7 +21,7 @@ export default {
 	 */
 	initBrush() {
 		const $$ = this;
-		const {config, scale, $el: {context}} = $$;
+		const {config, scale, $el: {subchart}} = $$;
 		const isRotated = config.axis_rotated;
 
 		// set the brush
@@ -70,7 +70,7 @@ export default {
 			const extent = this.extent()();
 
 			if (extent[1].filter(v => isNaN(v)).length === 0) {
-				context && context.select(`.${CLASS.brush}`).call(this);
+				subchart.main && subchart.main.select(`.${CLASS.brush}`).call(this);
 			}
 
 			return this;
@@ -98,7 +98,7 @@ export default {
 
 		$$.brush.getSelection = () => (
 			// @ts-ignore
-			context ? context.select(`.${CLASS.brush}`) : d3Select([])
+			subchart.main ? subchart.main.select(`.${CLASS.brush}`) : d3Select([])
 		);
 	},
 

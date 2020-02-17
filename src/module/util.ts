@@ -191,7 +191,7 @@ function getPathBox(path: SVGGraphicsElement): {x: number, y: number, width: num
 // return brush selection array
 function getBrushSelection({$el}) {
 	const event = d3Event;
-	const main = $el.context || $el.main;
+	const main = $el.subchart.main || $el.main;
 	let selection;
 
 	// check from event

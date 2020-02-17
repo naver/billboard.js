@@ -90,7 +90,7 @@ export default class ChartInternal {
 		legend: null,
 		title: null,
 		subchart: {
-			main: null,
+			main: null, // $$.context
 			bar: null,
 			line: null,
 			area: null

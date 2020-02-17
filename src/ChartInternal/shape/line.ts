@@ -154,16 +154,7 @@ export default {
 		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
 		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
 
-		const xValue = d => {
-			const p = (isSub ? $$.subxx : $$.xx).call($$, d);
-
-			// if (d.value === 200) {
-			// 	console.log(p);
-			// }
-
-			return p;
-		};
-
+		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (
 			$$.isGrouped(d.id) ?
 				getPoints(d, i)[0][1] :
