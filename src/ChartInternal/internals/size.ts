@@ -86,7 +86,7 @@ export default {
 		const isRotated = config.axis_rotated;
 		const axisId = isRotated ? "x" : "y";
 		const axesLen = config[`axis_${axisId}_axes`].length;
-		const axisWidth = $$.isAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
+		const axisWidth = $$.hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
 		let padding;
 
 		if (isValue(config.padding_left)) {

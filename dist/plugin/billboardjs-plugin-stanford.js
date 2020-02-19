@@ -1322,8 +1322,8 @@ function getBrushSelection(_ref) {
   var selection,
       $el = _ref.$el,
       event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
-      main = $el.context || $el.main;
-  return console.log(main), event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select("." + classes["a" /* default */].brush).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
+      main = $el.subchart.main || $el.main;
+  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + classes["a" /* default */].brush).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
 } // Get boundingClientRect. cache the evaluated value once it was called.
 
 

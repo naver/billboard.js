@@ -114,7 +114,7 @@ export default {
 			state: {width, height, width2, height2}
 		} = $$;
 
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			const isRotated = config.axis_rotated;
 
 			// update edges

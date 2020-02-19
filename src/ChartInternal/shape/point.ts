@@ -23,11 +23,71 @@ export default {
 			isFunction(pointType.create) && isFunction(pointType.update);
 	},
 
+	initialOpacityForCircle(d) {
+		const {withoutFadeIn} = this.state;
+
+		return this.getBaseValue(d) !== null &&
+			withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+	},
+
+	opacityForCircle(d) {
+		const opacity = this.config.point_show ? "1" : "0";
+
+		return isValue(this.getBaseValue(d)) ?
+			(this.isBubbleType(d) || this.isScatterType(d) ?
+				"0.5" : opacity) : "0";
+	},
+
+	initCircle() {
+		const $$ = this;
+		const {config, $el: {main}} = $$;
+
+		$$.point = $$.generatePoint();
+
+		if (config.point_show) {
+			main.select(`.${CLASS.chart}`)
+				.append("g")
+				.attr("class", CLASS.chartCircles);
+		}
+
+		$$.updateTargetForCircle();
+	},
+
+	updateTargetForCircle() {
+		return;
+		const $$ = this;
+		const {config, data, $el} = $$;
+		const targets = data.targets;
+		const classCircles = $$.classCircles.bind($$);
+
+		const mainPointUpdate = $el.main.select(`.${CLASS.chartCircles}`)
+			.selectAll(`.${CLASS.circles}`)
+			.data(targets)
+			.attr("class", d => classCircles(d));
+
+		// Circles for each data point on lines
+		config.data_selection_enabled && mainPointUpdate.append("g")
+			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
+
+		mainPointUpdate.enter().append("g")
+			.attr("class", classCircles)
+			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+
+		// Update date for selected circles
+		targets.forEach(t => {
+			$el.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
+				.selectAll(`${CLASS.selectedCircle}`)
+				.each(d => {
+					d.value = t.values[d.index].value;
+				});
+		});
+	},
+
 	updateCircle() {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {$el} = $$;
 
-		if (!config.point_show) {
+		if (!$$.config.point_show) {
 			return;
 		}
 
@@ -49,15 +109,16 @@ export default {
 
 	redrawCircle(cx, cy, withTransition, flow) {
 		const $$ = this;
-		const selectedCircles = $$.$el.main.selectAll(`.${CLASS.selectedCircle}`);
+		const {$el} = $$;
+		const selectedCircles = $el.main.selectAll(`.${CLASS.selectedCircle}`);
 
 		if (!$$.config.point_show) {
 			return [];
 		}
 
-		const mainCircles: any[] = [];
+		const mainCircles = [];
 
-		$$.$el.circle.each(function(d) {
+		$el.circle.each(function(d) {
 			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
 			const result = fn(d);
 
@@ -65,6 +126,66 @@ export default {
 		});
 
 		const posAttr = $$.isCirclePoint() ? "c" : "";
+
+		return [
+			mainCircles,
+			selectedCircles
+				.attr(`${posAttr}x`, cx)
+				.attr(`${posAttr}y`, cy)
+		];
+	},
+
+	_updateCircle() {
+		const $$ = this;
+		const {config, $el} = $$;
+
+		if (!config.point_show) {
+			return;
+		}
+
+		$el.circle = $el.main
+			.selectAll(`.${CLASS.circles}`)
+			.selectAll(`.${CLASS.circle}`)
+			.data(d => (!$$.isBarType(d) && (
+				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
+			) && $$.labelishData(d)));
+
+		$el.circle.exit().remove();
+
+		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
+
+		$el.circle = $el.circle.enter()
+			.append(fn)
+			.merge($el.circle)
+			.style("stroke", $$.color)
+			.style("opacity", $$.initialOpacityForCircle.bind($$));
+	},
+
+	_redrawCircle(cx, cy, withTransition, flow) {
+		const $$ = this;
+		const {state: {rendered}, $el: {circle, main}} = $$;
+		const selectedCircles = main.selectAll(`.${CLASS.selectedCircle}`);
+
+		if (!$$.config.point_show) {
+			return [];
+		}
+
+		const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles);
+		const posAttr = $$.isCirclePoint() ? "c" : "";
+
+		const t = getRandom();
+		const opacityStyleFn = $$.opacityForCircle.bind($$);
+
+		const mainCircles = [];
+
+		circle.each(function(d) {
+			let result = fn.bind(this)(d);
+
+			result = ((withTransition || !rendered) ? result.transition(t) : result)
+				.style("opacity", opacityStyleFn);
+
+			mainCircles.push(result);
+		});
 
 		return [
 			mainCircles,
@@ -347,6 +468,35 @@ export default {
 		},
 
 		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+			withTransition, flow, selectedCircles) {
+			const $$ = this;
+			let mainCircles = element;
+
+			// when '.load()' called, bubble size should be updated
+			if ($$.hasType("bubble")) {
+				mainCircles.attr("r", $$.pointR.bind($$));
+			}
+
+			if (withTransition) {
+				const transitionName = $$.getTransitionName();
+
+				flow && mainCircles.attr("cx", xPosFn);
+
+				if (mainCircles.attr("cx")) {
+					mainCircles = mainCircles.transition(transitionName);
+				}
+
+				selectedCircles.transition($$.getTransitionName());
+			}
+
+			return mainCircles
+				.attr("cx", xPosFn)
+				.attr("cy", yPosFn)
+				.style("opacity", opacityStyleFn)
+				.style("fill", fillStyleFn);
+		},
+
+		_update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
 			const $$ = this;
 			let mainCircles = element;

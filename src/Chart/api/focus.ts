@@ -36,7 +36,7 @@ export default {
 
 		candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
 
-		if ($$.hasArcType()) {
+		if ($$.hasArcType() && !$$.hasRadar) {
 			$$.expandArc(targetIds);
 
 			$$.hasType("gauge") &&

@@ -91,9 +91,9 @@ export default class ChartInternal {
 		title: null,
 		subchart: {
 			main: null, // $$.context
-			bar: null,
-			line: null,
-			area: null
+			bar: null, // $$.contextBar
+			line: null, // $$.contextLine
+			area: null // $$.contextArea
 		},
 
 		arcs: null,
@@ -155,7 +155,8 @@ export default class ChartInternal {
 		axisTime: null // axisTimeFormat
 	};
 
-	public isAxis;
+	public hasAxis;
+	public hasRadar;
 
 	constructor(api) {
 		const $$ = this;
@@ -188,7 +189,9 @@ export default class ChartInternal {
 		const $$ = this;
 		const {config, $el} = $$;
 
-		$$.isAxis = !$$.hasArcType();
+		$$.hasAxis = !$$.hasArcType();
+		$$.hasRadar = !$$.hasAxis && $$.hasType("radar");
+
 		$$.initParams();
 
 		const bindto = {
@@ -248,7 +251,7 @@ export default class ChartInternal {
 
 	initParams() {
 		const $$ = this;
-		const {config, format, state} = $$;
+		const {config, format, state, hasAxis, hasRadar} = $$;
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
@@ -257,12 +260,7 @@ export default class ChartInternal {
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
 
-		//@TODO:Axis & Radar
-		if ($$.isAxis || $$.hasType("radar")) {
-			$$.point = $$.generatePoint();
-		}
-
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			$$.initClip();
 //			$$.point = $$.generatePoint();
 
@@ -305,6 +303,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const {
 			config, state, $el,
+			hasAxis, hasRadar,
 			scale: {
 				x, y, y2, subX, subY, subY2
 			},
@@ -314,7 +313,7 @@ export default class ChartInternal {
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
 
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			$$.axis = new Axis($$);
 			config.zoom_enabled && $$.initZoom();
 		}
@@ -380,7 +379,7 @@ export default class ChartInternal {
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			$el.defs = $el.svg.append("defs");
 
 			$$.appendClip($el.defs, state.clip.id);
@@ -418,7 +417,7 @@ export default class ChartInternal {
 				.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
 		}
 
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			// Regions
 			$$.initRegion && $$.initRegion();
 
@@ -432,7 +431,7 @@ export default class ChartInternal {
 
 		$$.callPluginHook("$init");
 
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			// Cover whole with rects for events
 			$$.initEventRect && $$.initEventRect();
 
@@ -441,7 +440,7 @@ export default class ChartInternal {
 
 			// if zoom privileged, insert rect to forefront
 			// TODO: is this needed?
-			if ($$.isAxis) {
+			if ($$.hasAxis) {
 				main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
 					.attr("class", CLASS.zoomRect)
 					.attr("width", $$.state.width)
@@ -467,6 +466,12 @@ export default class ChartInternal {
 
 		// Set background
 		$$.setBackground();
+
+		//@TODO:Axis & Radar
+		if (hasAxis || hasRadar) {
+			$$.initCircle();
+			// $$.point = $$.generatePoint();
+		}
 
 		$$.redraw({
 			withTransition: false,
@@ -496,8 +501,16 @@ export default class ChartInternal {
 
 	initChartElements() {
 		const $$ = this;
-		const types = $$.isAxis ? ["Bar", "Bubble", "Line"] :
-			["Arc", "Gauge", "Pie", "Radar"];
+		const {hasAxis, hasRadar} = $$;
+		const types = [];
+
+		if (hasAxis) {
+			types.push("Bar", "Bubble", "Line");
+		} else if (hasRadar) {
+			types.push("Radar");
+		} else {
+			types.push("Arc", "Gauge", "Pie");
+		}
 
 		types.forEach(v => {
 			$$[`init${v}`]();
@@ -679,11 +692,17 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets) {
 		const $$ = this;
+		const {hasAxis, hasRadar} = $$;
 
 		// Text
 		$$.updateTargetsForText(targets);
 
-		if ($$.isAxis) {
+		// circle
+		if (hasAxis || hasRadar) {
+			$$.updateTargetForCircle();
+		}
+
+		if (hasAxis) {
 			$$.updateTargetsForBar(targets); // Bar
 			$$.updateTargetsForLine(targets); // Line
 
@@ -693,7 +712,7 @@ export default class ChartInternal {
 		} else {
 			// Arc & Radar
 			$$.hasArcType(targets) && (
-				$$.hasType("radar") ?
+				hasRadar ?
 					$$.updateTargetsForRadar(targets) :
 					$$.updateTargetsForArc(targets)
 			);
@@ -709,11 +728,12 @@ export default class ChartInternal {
 	 */
 	showTargets() {
 		const $$ = this;
+		const {config, $el} = $$;
 
-		$$.$el.svg.selectAll(`.${CLASS.target}`)
+		$el.svg.selectAll(`.${CLASS.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
 			.transition()
-			.duration($$.config.transition_duration)
+			.duration(config.transition_duration)
 			.style("opacity", "1");
 	}
 
@@ -776,13 +796,12 @@ export default class ChartInternal {
 			$$.updateDimension(true);
 		}
 
-		//@TODO: Axis & Radar type
-		if ($$.isAxis || $$.hasType("radar")) {
-			$$.updateCircle();
-		}
+		// if ($$.hasAxis || $$.hasRadar) {
+		// 	$$.updateCircle();
+		// }
 
 		// update axis
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
@@ -811,7 +830,7 @@ export default class ChartInternal {
 			// lines, areas and circles
 			$$.updateLine(durationForExit);
 			$$.updateArea(durationForExit);
-			//$$.updateCircle();
+			$$.updateCircle();
 
 			// text
 			$$.hasDataLabel() && $$.updateText(durationForExit);
@@ -833,6 +852,7 @@ export default class ChartInternal {
 			// radar
 			$$.radars && $$.redrawRadar(duration, durationForExit);
 		}
+
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
@@ -856,7 +876,7 @@ export default class ChartInternal {
 		const {config, state} = $$;
 		const shape = $$.getDrawShape();
 
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 
 			// subchart
 			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
@@ -914,7 +934,7 @@ export default class ChartInternal {
 	getDrawShape() {
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
-		const hasRadar = $$.hasType("radar");
+		const {hasRadar} = $$;
 		const shape = {type: {}, indices: {}, pos: {}};
 
 		// setup drawer - MEMO: these must be called after axis updated
@@ -939,7 +959,7 @@ export default class ChartInternal {
 			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
 		}
 
-		if ($$.isAxis || hasRadar) {
+		if ($$.hasAxis || hasRadar) {
 			shape.pos = {
 				xForText: $$.generateXYForText(shape.indices, true),
 				yForText: $$.generateXYForText(shape.indices, false),
@@ -955,11 +975,11 @@ export default class ChartInternal {
 
 	getRedrawList(shape, flow, flowFn, isTransition) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, hasAxis, hasRadar} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list = [];
 
-		if ($$.isAxis) {
+		if (hasAxis) {
 			const {area, bar, line} = shape.type;
 
 			if (config.grid_x_lines.length || config.grid_y_lines.length) {
@@ -981,7 +1001,7 @@ export default class ChartInternal {
 				list.push($$.redrawText(xForText, yForText, flow, isTransition));
 		}
 
-		($$.isAxis || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		(hasAxis || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
 
 		return list;
 	}
@@ -1034,7 +1054,7 @@ export default class ChartInternal {
 	}
 
 	isCategorized() {
-		return this.config.axis_x_type.indexOf("category") >= 0 || this.hasType("radar");
+		return this.config.axis_x_type.indexOf("category") >= 0 || this.hasRadar;
 	}
 
 	isCustomX() {
@@ -1100,25 +1120,6 @@ export default class ChartInternal {
 
 		return this.getBaseValue(d) !== null &&
 			withoutFadeIn[d.id] ? "1" : "0";
-	}
-
-	initialOpacityForCircle(d) {
-		const {withoutFadeIn} = this.state;
-
-		return this.getBaseValue(d) !== null &&
-			withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
-	}
-
-	opacityForCircle(d) {
-		const opacity = this.config.point_show ? "1" : "0";
-
-		return isValue(this.getBaseValue(d)) ?
-			(this.isBubbleType(d) || this.isScatterType(d) ?
-				"0.5" : opacity) : "0";
-	}
-
-	opacityForText() {
-		return this.hasDataLabel() ? "1" : "0";
 	}
 
 	/**
@@ -1215,7 +1216,7 @@ export default class ChartInternal {
 
 		$$.transformMain(withTransition, transitions);
 
-		config.subchart_show &&
+		$$.hasAxis && config.subchart_show &&
 			$$.transformContext(withTransition, transitions);
 
 		$el.legend && $$.transformLegend(withTransition);
@@ -1229,7 +1230,7 @@ export default class ChartInternal {
 			.attr("width", state.currentWidth)
 			.attr("height", state.currentHeight);
 
-		if ($$.isAxis) {
+		if ($$.hasAxis) {
 			const brush = svg.select(`.${CLASS.brush} .overlay`);
 			const brushSize = {width: 0, height: 0};
 
@@ -1272,7 +1273,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const {config, $el: {axis}} = $$;
 
-		if ($$.isAxis && !withoutAxis) {
+		if ($$.hasAxis && !withoutAxis) {
 			if ($$.axis.x && config.axis_rotated) {
 				$$.axis.x.create(axis.x);
 				$$.axis.subX && $$.axis.subX.create(axis.subX);

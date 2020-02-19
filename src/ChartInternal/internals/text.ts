@@ -10,6 +10,10 @@ import CLASS from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation} from "../../module/util";
 
 export default {
+	opacityForText() {
+		return this.hasDataLabel() ? "1" : "0";
+	},
+
 	/**
 	 * Initializes the text
 	 * @private
@@ -36,8 +40,8 @@ export default {
 			.attr("class", d => classChartText(d) + classFocus(d));
 
 		const mainTextEnter = mainTextUpdate.enter().append("g")
-			.attr("class", classChartText)
 			.style("opacity", "0")
+			.attr("class", classChartText)
 			.style("pointer-events", "none");
 
 		mainTextEnter.append("g")
@@ -102,7 +106,7 @@ export default {
 	 */
 	redrawText(x, y, forFlow, withTransition) {
 		const $$ = this;
-		const t: any = getRandom();
+		const t = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [

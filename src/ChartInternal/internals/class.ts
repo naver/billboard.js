@@ -54,7 +54,7 @@ export default {
 	},
 
 	classCircles(d) {
-		return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
+		return this.classTarget(d.id) + this.generateClass(CLASS.circles, d.id);
 	},
 
 	classBar(d) {
@@ -136,6 +136,7 @@ export default {
 		return targetId || targetId === 0 ?
 			`-${targetId}`.replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
 	},
+
 
 	selectorTarget(id, prefix) {
 		return `${prefix || ""}.${CLASS.target + this.getTargetSelectorSuffix(id)}`;

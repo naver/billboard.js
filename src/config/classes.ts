@@ -35,6 +35,7 @@ export default {
 	chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
 	chartBar: "bb-chart-bar",
 	chartBars: "bb-chart-bars",
+	chartCircles: "bb-chart-circles",
 	chartLine: "bb-chart-line",
 	chartLines: "bb-chart-lines",
 	chartRadar: "bb-chart-radar",

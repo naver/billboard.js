@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {selectAll as d3SelectAll} from "d3-selection";
 import {easeLinear as d3EaseLinear} from "d3-ease";
 import {transition as d3Transition} from "d3-transition";
 import {diffDomain} from "../../module/util";
@@ -17,61 +18,60 @@ export default {
 	 */
 	generateFlow(args) {
 		const $$ = this;
-		const {config, state, $el} = $$;
+		const {config, data, scale: {x}, state, $el} = $$;
 
 		return function() {
-			const targets = args.targets;
-			const flow = args.flow;
+			const {duration, flow, shape, targets, xv} = args;
+			const {bar: drawBar, line: drawLine, area: drawArea} = shape.type;
+			const {cx, cy, xForText, yForText} = shape.pos;
+			const {
+				done = () => {},
+				duration: durationForFlow = duration,
+				index: flowIndex,
+				length: flowLength
+			} = flow;
+			const wait = $$.generateWait();
+			const dataValues = data.targets[0].values;
 
-			const {bar: drawBar, line: drawLine, area: drawArea} = args.shape.type;
-			const {cx, cy, xForText, yForText} = args.shape.pos;
-			const xv = args.xv;
-			const duration = args.duration;
-
+			let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
+			let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
 			let translateX;
 			let scaleX = 1;
-			const flowIndex = flow.index;
-			const flowLength = flow.length;
-			let flowStart = $$.getValueOnIndex($$.data.targets[0].values, flowIndex);
-			let flowEnd = $$.getValueOnIndex($$.data.targets[0].values, flowIndex + flowLength);
-			const orgDomain = $$.scale.x.domain();
-			const durationForFlow = flow.duration || duration;
-			const done = flow.done || function() {};
-			const wait = $$.generateWait();
 
-			const xgrid = $el.grid.x;
-			const xgridLines = $el.gridLines.x;
-			const mainRegion = $el.region.list;
-			const mainText = $el.text;
-			const mainBar = $el.bar;
-			const mainLine = $el.line;
-			const mainArea = $el.area;
-			const mainCircle = $el.circle;
+			// elements
+			const xAxis = $el.axis.x;
+			const xgrid = $el.grid.x || d3SelectAll([]);
+			const xgridLines = $el.gridLines.x || d3SelectAll([]);
+			const mainRegion = $el.region.list || d3SelectAll([]);
+			const mainText = $el.text || d3SelectAll([]);
+			const mainBar = $el.bar || d3SelectAll([]);
+			const mainLine = $el.line || d3SelectAll([]);
+			const mainArea = $el.area || d3SelectAll([]);
+			const mainCircle = $el.circle || d3SelectAll([]);
 
 			// set flag
 			state.flowing = true;
 
 			// remove head data after rendered
-			$$.data.targets.forEach(d => {
+			data.targets.forEach(d => {
 				d.values.splice(0, flowLength);
 			});
 
 			// update x domain to generate axis elements for flow
+			const orgDomain = x.domain();
 			const domain = $$.updateXDomain(targets, true, true);
 
 			// update elements related to x scale
 			if ($$.updateXGrid) { $$.updateXGrid(true); }
 
-			const {x} = $$.scale;
-
 			// generate transform to flow
 			if (!flow.orgDataCount) { // if empty
-				if ($$.data.targets[0].values.length !== 1) {
+				if (dataValues.length !== 1) {
 					translateX = x(orgDomain[0]) - x(domain[0]);
 				} else {
 					if ($$.isTimeSeries()) {
-						flowStart = $$.getValueOnIndex($$.data.targets[0].values, 0);
-						flowEnd = $$.getValueOnIndex($$.data.targets[0].values, $$.data.targets[0].values.length - 1);
+						flowStart = $$.getValueOnIndex(dataValues, 0);
+						flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
 						translateX = x(flowStart.x) - x(flowEnd.x);
 					} else {
 						translateX = diffDomain(domain) / 2;
@@ -80,23 +80,21 @@ export default {
 			} else if (flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
 				translateX = x(orgDomain[0]) - x(domain[0]);
 			} else {
-				if ($$.isTimeSeries()) {
-					translateX = (x(orgDomain[0]) - x(domain[0]));
-				} else {
-					translateX = (x(flowStart.x) - x(flowEnd.x));
-				}
+				translateX = $$.isTimeSeries() ?
+					(x(orgDomain[0]) - x(domain[0])) :
+					(x(flowStart.x) - x(flowEnd.x));
 			}
 
 			scaleX = (diffDomain(orgDomain) / diffDomain(domain));
-			const transform = `translate(${translateX},0) scale(${scaleX},1)`;
 
 			$$.hideGridFocus();
 
+			const transform = `translate(${translateX},0) scale(${scaleX},1)`;
 			const gt = d3Transition().ease(d3EaseLinear)
 				.duration(durationForFlow);
 
 			wait.add([
-				$$.$el.axis.x
+				xAxis
 					.transition(gt)
 					.call(g => $$.axis.x.setTransition(gt).create(g)),
 
@@ -139,7 +137,7 @@ export default {
 
 				// remove flowed elements
 				if (flowLength) {
-					const target: any = {
+					const target = {
 						shapes: [],
 						texts: [],
 						eventRects: []
@@ -164,17 +162,17 @@ export default {
 				// draw again for removing flowed elements and reverting attr
 				xgrid.size() && xgrid
 					.attr("transform", null)
-					.attr(state.xgridAttr);
+					.attr($$.xgridAttr);
 
 				xgridLines
 					.attr("transform", null);
 
 				xgridLines.select("line")
 					.attr("x1", isRotated ? 0 : xv)
-					.attr("x2", isRotated ? state.width : xv);
+					.attr("x2", isRotated ? $$.width : xv);
 
 				xgridLines.select("text")
-					.attr("x", isRotated ? state.width : 0)
+					.attr("x", isRotated ? $$.width : 0)
 					.attr("y", xv);
 
 				mainBar

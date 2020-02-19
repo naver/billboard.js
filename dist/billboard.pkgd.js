@@ -21422,8 +21422,8 @@ function getBrushSelection(_ref) {
   var selection,
       $el = _ref.$el,
       event = on_event,
-      main = $el.context || $el.main;
-  return console.log(main), event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = brushSelection(selection)), selection;
+      main = $el.subchart.main || $el.main;
+  return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = brushSelection(selection)), selection;
 } // Get boundingClientRect. cache the evaluated value once it was called.
 
 
@@ -27975,7 +27975,7 @@ var colorizePattern = function (pattern, color, id) {
 
     if (withUpdateOrgXDomain && (x.domain(domain || util_sortValue($$.getXDomain(targets))), org.xDomain = x.domain(), zoomEnabled && $$.zoom.updateScaleExtent(), subX.domain(x.domain()), $$.brush && $$.brush.scale(subX)), withUpdateXDomain) {
       var domainValue = domain || !$$.brush || brushEmpty($$) ? org.xDomain : getBrushSelection($$).map(subX.invert);
-      console.log("-->", domain, !$$.brush, brushEmpty($$)), x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
+      x.domain(domainValue), zoomEnabled && $$.zoom.updateScaleExtent();
     } // Trim domain when too big by zoom mousemove event
 
 
@@ -31391,7 +31391,7 @@ util_extend(zoom_zoom, {
     var $$ = this,
         config = $$.config,
         scale = $$.scale,
-        context = $$.$el.context,
+        subchart = $$.$el.subchart,
         isRotated = config.axis_rotated;
     $$.brush = isRotated ? brushY() : brushX();
 
@@ -31427,7 +31427,7 @@ util_extend(zoom_zoom, {
       var extent = this.extent()();
       return extent[1].filter(function (v) {
         return isNaN(v);
-      }).length === 0 && context && context.select("." + config_classes.brush).call(this), this;
+      }).length === 0 && subchart.main && subchart.main.select("." + config_classes.brush).call(this), this;
     }, $$.brush.scale = function (scale) {
       var h = config.subchart_size_height || getBrushSize(),
           extent = $$.getExtent();
@@ -31439,7 +31439,7 @@ util_extend(zoom_zoom, {
       })), isRotated && extent[1].reverse(), this.extent(extent), this.update();
     }, $$.brush.getSelection = function () {
       return (// @ts-ignore
-        context ? context.select("." + config_classes.brush) : src_select([])
+        subchart.main ? subchart.main.select("." + config_classes.brush) : src_select([])
       );
     };
   },
@@ -34564,11 +34564,7 @@ function ascending_sum(series) {
         getPoints = $$.generateGetLinePoints(lineIndices, isSub),
         yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
         xValue = function (d) {
-      var p = (isSub ? $$.subxx : $$.xx).call($$, d); // if (d.value === 200) {
-      // 	console.log(p);
-      // }
-
-      return p;
+      return (isSub ? $$.subxx : $$.xx).call($$, d);
     },
         yValue = function (d, i) {
       return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getBaseValue(d));
@@ -36162,9 +36158,13 @@ function () {
       title: null,
       subchart: {
         main: null,
+        // $$.context
         bar: null,
+        // $$.contextBar
         line: null,
-        area: null
+        // $$.contextLine
+        area: null // $$.contextArea
+
       },
       arcs: null,
       bar: null,
