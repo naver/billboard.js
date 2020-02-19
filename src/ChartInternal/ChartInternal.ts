@@ -251,7 +251,7 @@ export default class ChartInternal {
 
 	initParams() {
 		const $$ = this;
-		const {config, format, state, hasAxis, hasRadar} = $$;
+		const {config, format, state} = $$;
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
@@ -259,6 +259,11 @@ export default class ChartInternal {
 
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
+
+		//@TODO:Axis & Radar
+		if ($$.hasAxis || $$.hasRadar) {
+			$$.point = $$.generatePoint();
+		}
 
 		if ($$.hasAxis) {
 			$$.initClip();
@@ -379,9 +384,9 @@ export default class ChartInternal {
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		if ($$.hasAxis) {
-			$el.defs = $el.svg.append("defs");
+		$el.defs = $el.svg.append("defs");
 
+		if ($$.hasAxis) {
 			$$.appendClip($el.defs, state.clip.id);
 			$$.appendClip($el.defs, state.clip.idXAxis);
 			$$.appendClip($el.defs, state.clipYAxis);
@@ -431,7 +436,7 @@ export default class ChartInternal {
 
 		$$.callPluginHook("$init");
 
-		if ($$.hasAxis) {
+		if (hasAxis) {
 			// Cover whole with rects for events
 			$$.initEventRect && $$.initEventRect();
 
@@ -440,14 +445,12 @@ export default class ChartInternal {
 
 			// if zoom privileged, insert rect to forefront
 			// TODO: is this needed?
-			if ($$.hasAxis) {
-				main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
-					.attr("class", CLASS.zoomRect)
-					.attr("width", $$.state.width)
-					.attr("height", $$.state.height)
-					.style("opacity", "0")
-					.on("dblclick.zoom", null);
-			}
+			main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
+				.attr("class", CLASS.zoomRect)
+				.attr("width", $$.state.width)
+				.attr("height", $$.state.height)
+				.style("opacity", "0")
+				.on("dblclick.zoom", null);
 
 			// Add Axis here, when clipPath is 'true'
 			config.clipPath && $$.axis && $$.axis.init();
@@ -467,7 +470,6 @@ export default class ChartInternal {
 		// Set background
 		$$.setBackground();
 
-		//@TODO:Axis & Radar
 		if (hasAxis || hasRadar) {
 			$$.initCircle();
 			// $$.point = $$.generatePoint();
@@ -702,6 +704,11 @@ export default class ChartInternal {
 			$$.updateTargetForCircle();
 		}
 
+		// circle
+		if (hasAxis || hasRadar) {
+			$$.updateTargetForCircle();
+		}
+
 		if (hasAxis) {
 			$$.updateTargetsForBar(targets); // Bar
 			$$.updateTargetsForLine(targets); // Line
@@ -796,9 +803,10 @@ export default class ChartInternal {
 			$$.updateDimension(true);
 		}
 
-		// if ($$.hasAxis || $$.hasRadar) {
-		// 	$$.updateCircle();
-		// }
+		//@TODO: Axis & Radar type
+		if ($$.hasAxis || $$.hasRadar) {
+			$$.updateCircle();
+		}
 
 		// update axis
 		if ($$.hasAxis) {
@@ -830,7 +838,7 @@ export default class ChartInternal {
 			// lines, areas and circles
 			$$.updateLine(durationForExit);
 			$$.updateArea(durationForExit);
-			$$.updateCircle();
+			//$$.updateCircle();
 
 			// text
 			$$.hasDataLabel() && $$.updateText(durationForExit);
@@ -852,7 +860,6 @@ export default class ChartInternal {
 			// radar
 			$$.radars && $$.redrawRadar(duration, durationForExit);
 		}
-
 
 		// title
 		$$.redrawTitle && $$.redrawTitle();
@@ -877,7 +884,6 @@ export default class ChartInternal {
 		const shape = $$.getDrawShape();
 
 		if ($$.hasAxis) {
-
 			// subchart
 			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 		}

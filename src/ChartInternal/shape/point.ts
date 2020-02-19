@@ -53,11 +53,10 @@ export default {
 		$$.updateTargetForCircle();
 	},
 
-	updateTargetForCircle() {
-		return;
+	updateTargetForCircle(t) {
 		const $$ = this;
 		const {config, data, $el} = $$;
-		const targets = data.targets;
+		const targets = t || data.targets;
 		const classCircles = $$.classCircles.bind($$);
 
 		const mainPointUpdate = $el.main.select(`.${CLASS.chartCircles}`)
@@ -85,9 +84,9 @@ export default {
 
 	updateCircle() {
 		const $$ = this;
-		const {$el} = $$;
+		const {config, $el} = $$;
 
-		if (!$$.config.point_show) {
+		if (!config.point_show) {
 			return;
 		}
 
@@ -109,60 +108,6 @@ export default {
 
 	redrawCircle(cx, cy, withTransition, flow) {
 		const $$ = this;
-		const {$el} = $$;
-		const selectedCircles = $el.main.selectAll(`.${CLASS.selectedCircle}`);
-
-		if (!$$.config.point_show) {
-			return [];
-		}
-
-		const mainCircles = [];
-
-		$el.circle.each(function(d) {
-			const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles).bind(this);
-			const result = fn(d);
-
-			mainCircles.push(result);
-		});
-
-		const posAttr = $$.isCirclePoint() ? "c" : "";
-
-		return [
-			mainCircles,
-			selectedCircles
-				.attr(`${posAttr}x`, cx)
-				.attr(`${posAttr}y`, cy)
-		];
-	},
-
-	_updateCircle() {
-		const $$ = this;
-		const {config, $el} = $$;
-
-		if (!config.point_show) {
-			return;
-		}
-
-		$el.circle = $el.main
-			.selectAll(`.${CLASS.circles}`)
-			.selectAll(`.${CLASS.circle}`)
-			.data(d => (!$$.isBarType(d) && (
-				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
-			) && $$.labelishData(d)));
-
-		$el.circle.exit().remove();
-
-		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-
-		$el.circle = $el.circle.enter()
-			.append(fn)
-			.merge($el.circle)
-			.style("stroke", $$.color)
-			.style("opacity", $$.initialOpacityForCircle.bind($$));
-	},
-
-	_redrawCircle(cx, cy, withTransition, flow) {
-		const $$ = this;
 		const {state: {rendered}, $el: {circle, main}} = $$;
 		const selectedCircles = main.selectAll(`.${CLASS.selectedCircle}`);
 
@@ -170,7 +115,7 @@ export default {
 			return [];
 		}
 
-		const fn = $$.point("update", $$, cx, cy, $$.opacityForCircle.bind($$), $$.color, withTransition, flow, selectedCircles);
+		const fn = $$.point("update", $$, cx, cy, $$.color, withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
 		const t = getRandom();
@@ -431,7 +376,7 @@ export default {
 				.node();
 		},
 
-		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+		update(element, xPosFn, yPosFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
 			const $$ = this;
 			const {width, height} = element.node().getBBox();
@@ -452,7 +397,6 @@ export default {
 			return mainCircles
 				.attr("x", xPosFn2)
 				.attr("y", yPosFn2)
-				.style("opacity", opacityStyleFn)
 				.style("fill", fillStyleFn);
 		}
 	},
@@ -467,7 +411,7 @@ export default {
 				.node();
 		},
 
-		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+		update(element, xPosFn, yPosFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
 			const $$ = this;
 			let mainCircles = element;
@@ -492,36 +436,6 @@ export default {
 			return mainCircles
 				.attr("cx", xPosFn)
 				.attr("cy", yPosFn)
-				.style("opacity", opacityStyleFn)
-				.style("fill", fillStyleFn);
-		},
-
-		_update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
-			withTransition, flow, selectedCircles) {
-			const $$ = this;
-			let mainCircles = element;
-
-			// when '.load()' called, bubble size should be updated
-			if ($$.hasType("bubble")) {
-				mainCircles.attr("r", $$.pointR.bind($$));
-			}
-
-			if (withTransition) {
-				const transitionName = $$.getTransitionName();
-
-				flow && mainCircles.attr("cx", xPosFn);
-
-				if (mainCircles.attr("cx")) {
-					mainCircles = mainCircles.transition(transitionName);
-				}
-
-				selectedCircles.transition($$.getTransitionName());
-			}
-
-			return mainCircles
-				.attr("cx", xPosFn)
-				.attr("cy", yPosFn)
-				.style("opacity", opacityStyleFn)
 				.style("fill", fillStyleFn);
 		}
 	},
@@ -539,7 +453,7 @@ export default {
 				.node();
 		},
 
-		update(element, xPosFn, yPosFn, opacityStyleFn, fillStyleFn,
+		update(element, xPosFn, yPosFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
 			const $$ = this;
 			const r = $$.config.point_r;
@@ -560,7 +474,6 @@ export default {
 			return mainCircles
 				.attr("x", rectXPosFn)
 				.attr("y", rectYPosFn)
-				.style("opacity", opacityStyleFn)
 				.style("fill", fillStyleFn);
 		}
 	}

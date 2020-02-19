@@ -138,18 +138,20 @@ export default {
 				// remove flowed elements
 				if (flowLength) {
 					const target = {
+						circles: [],
 						shapes: [],
 						texts: [],
 						eventRects: []
 					};
 
 					for (let i = 0; i < flowLength; i++) {
+						target.circles.push(`.${CLASS.circle}-${i}`);
 						target.shapes.push(`.${CLASS.shape}-${i}`);
 						target.texts.push(`.${CLASS.text}-${i}`);
 						target.eventRects.push(`.${CLASS.eventRect}-${i}`);
 					}
 
-					["shapes", "texts", "eventRects"].forEach(v => {
+					["circles", "shapes", "texts", "eventRects"].forEach(v => {
 						$el.svg.selectAll(`.${CLASS[v]}`)
 							.selectAll(target[v])
 							.remove();
@@ -162,17 +164,17 @@ export default {
 				// draw again for removing flowed elements and reverting attr
 				xgrid.size() && xgrid
 					.attr("transform", null)
-					.attr($$.xgridAttr);
+					.attr(state.xgridAttr);
 
 				xgridLines
 					.attr("transform", null);
 
 				xgridLines.select("line")
 					.attr("x1", isRotated ? 0 : xv)
-					.attr("x2", isRotated ? $$.width : xv);
+					.attr("x2", isRotated ? state.width : xv);
 
 				xgridLines.select("text")
-					.attr("x", isRotated ? $$.width : 0)
+					.attr("x", isRotated ? state.width : 0)
 					.attr("y", xv);
 
 				mainBar

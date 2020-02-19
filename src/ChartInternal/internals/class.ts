@@ -50,11 +50,11 @@ export default {
 	},
 
 	classCircle(d) {
-		return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
+		return this.generateClass(CLASS.circle, d.index);
 	},
 
 	classCircles(d) {
-		return this.classTarget(d.id) + this.generateClass(CLASS.circles, d.id);
+		return this.generateClass(CLASS.circles, d.id);
 	},
 
 	classBar(d) {
@@ -137,9 +137,12 @@ export default {
 			`-${targetId}`.replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
 	},
 
-
 	selectorTarget(id, prefix) {
-		return `${prefix || ""}.${CLASS.target + this.getTargetSelectorSuffix(id)}`;
+		const pfx = prefix || "";
+		const target = this.getTargetSelectorSuffix(id);
+
+		// select target & circle
+		return `${pfx}.${CLASS.target + target}, ${pfx}.${CLASS.circles + target}`;
 	},
 
 	selectorTargets(idsValue, prefix) {

@@ -23,57 +23,7 @@ export default {
 
 	updateTargetsForLine(targets) {
 		const $$ = this;
-		const {config, $el} = $$;
-		const classChartLine = $$.classChartLine.bind($$);
-		const classLines = $$.classLines.bind($$);
-		const classAreas = $$.classAreas.bind($$);
-		const classCircles = $$.classCircles.bind($$);
-		const classFocus = $$.classFocus.bind($$);
-
-		const mainLineUpdate = $el.main.select(`.${CLASS.chartLines}`)
-			.selectAll(`.${CLASS.chartLine}`)
-			.data(targets)
-			.attr("class", d => classChartLine(d) + classFocus(d));
-
-		const mainLineEnter = mainLineUpdate.enter().append("g")
-			.attr("class", classChartLine)
-			.style("opacity", "0")
-			.style("pointer-events", "none");
-
-		// Lines for each data
-		mainLineEnter.append("g")
-			.attr("class", classLines);
-
-		// Areas
-		mainLineEnter.append("g")
-			.attr("class", classAreas);
-
-		if (config.point_show) {
-			// Circles for each data point on lines
-			config.data_selection_enabled && mainLineEnter.append("g")
-				.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
-
-			mainLineEnter.append("g")
-				.attr("class", classCircles)
-				.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
-		}
-
-		// Update date for selected circles
-		targets.forEach(t => {
-			$el.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
-				.selectAll(`${CLASS.selectedCircle}`)
-				.each(d => {
-					d.value = t.values[d.index].value;
-				});
-		});
-
-		// MEMO: can not keep same color...
-		// mainLineUpdate.exit().remove();
-	},
-
-	_updateTargetsForLine(targets) {
-		const $$ = this;
-		const {main} = $$.$el;
+		const {$el: {main}} = $$;
 		const classChartLine = $$.classChartLine.bind($$);
 		const classLines = $$.classLines.bind($$);
 		const classAreas = $$.classAreas.bind($$);
@@ -96,25 +46,6 @@ export default {
 		// Areas
 		mainLineEnter.append("g")
 			.attr("class", classAreas);
-
-		// if (config.point_show) {
-		// 	// Circles for each data point on lines
-		// 	config.data_selection_enabled && mainLineEnter.append("g")
-		// 		.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
-
-		// 	mainLineEnter.append("g")
-		// 		.attr("class", classCircles)
-		// 		.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
-		// }
-
-		// // Update date for selected circles
-		// targets.forEach(t => {
-		// 	main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
-		// 		.selectAll(`${CLASS.selectedCircle}`)
-		// 		.each(d => {
-		// 			d.value = t.values[d.index].value;
-		// 		});
-		// });
 
 		// MEMO: can not keep same color...
 		// mainLineUpdate.exit().remove();
