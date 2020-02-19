@@ -387,10 +387,9 @@ export default class ChartInternal {
 		$el.defs = $el.svg.append("defs");
 
 		if ($$.hasAxis) {
-			$$.appendClip($el.defs, state.clip.id);
-			$$.appendClip($el.defs, state.clip.idXAxis);
-			$$.appendClip($el.defs, state.clipYAxis);
-			$$.appendClip($el.defs, state.clip.idGrid);
+			["id", "idXAxis", "idYAxis", "idGrid"].forEach(v => {
+				$$.appendClip($el.defs, state.clip[v]);
+			});
 		}
 
 		// set color patterns

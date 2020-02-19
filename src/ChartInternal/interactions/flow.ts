@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {selectAll as d3SelectAll} from "d3-selection";
 import {easeLinear as d3EaseLinear} from "d3-ease";
 import {transition as d3Transition} from "d3-transition";
 import {diffDomain} from "../../module/util";
@@ -11,43 +10,16 @@ import CLASS from "../../config/classes";
 export default {
 	/**
 	 * Generate flow
-	 * @memberof ChartInternal
-	 * @private
 	 * @param {Object} args
 	 * @return {Function}
+     * @private
 	 */
-	generateFlow(args) {
+	generateFlow(args): Function {
 		const $$ = this;
-		const {config, data, scale: {x}, state, $el} = $$;
+		const {data, state, $el} = $$;
 
 		return function() {
-			const {duration, flow, shape, targets, xv} = args;
-			const {bar: drawBar, line: drawLine, area: drawArea} = shape.type;
-			const {cx, cy, xForText, yForText} = shape.pos;
-			const {
-				done = () => {},
-				duration: durationForFlow = duration,
-				index: flowIndex,
-				length: flowLength
-			} = flow;
-			const wait = $$.generateWait();
-			const dataValues = data.targets[0].values;
-
-			let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
-			let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
-			let translateX;
-			let scaleX = 1;
-
-			// elements
-			const xAxis = $el.axis.x;
-			const xgrid = $el.grid.x || d3SelectAll([]);
-			const xgridLines = $el.gridLines.x || d3SelectAll([]);
-			const mainRegion = $el.region.list || d3SelectAll([]);
-			const mainText = $el.text || d3SelectAll([]);
-			const mainBar = $el.bar || d3SelectAll([]);
-			const mainLine = $el.line || d3SelectAll([]);
-			const mainArea = $el.area || d3SelectAll([]);
-			const mainCircle = $el.circle || d3SelectAll([]);
+			const flowLength = args.flow.length;
 
 			// set flag
 			state.flowing = true;
@@ -57,176 +29,210 @@ export default {
 				d.values.splice(0, flowLength);
 			});
 
-			// update x domain to generate axis elements for flow
-			const orgDomain = x.domain();
-			const domain = $$.updateXDomain(targets, true, true);
-
 			// update elements related to x scale
-			if ($$.updateXGrid) { $$.updateXGrid(true); }
-
-			// generate transform to flow
-			if (!flow.orgDataCount) { // if empty
-				if (dataValues.length !== 1) {
-					translateX = x(orgDomain[0]) - x(domain[0]);
-				} else {
-					if ($$.isTimeSeries()) {
-						flowStart = $$.getValueOnIndex(dataValues, 0);
-						flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
-						translateX = x(flowStart.x) - x(flowEnd.x);
-					} else {
-						translateX = diffDomain(domain) / 2;
-					}
-				}
-			} else if (flow.orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
-				translateX = x(orgDomain[0]) - x(domain[0]);
-			} else {
-				translateX = $$.isTimeSeries() ?
-					(x(orgDomain[0]) - x(domain[0])) :
-					(x(flowStart.x) - x(flowEnd.x));
+			if ($$.updateXGrid) {
+				$$.updateXGrid(true);
 			}
 
-			scaleX = (diffDomain(orgDomain) / diffDomain(domain));
+			// target elements
+			const elements = {};
 
-			$$.hideGridFocus();
+			["axis.x", "grid.x", "gridLines.x", "region.list", "text", "bar", "line", "area", "circle"]
+				.forEach(v => {
+					const name = v.split(".");
+					let node = $el[name[0]];
 
-			const transform = `translate(${translateX},0) scale(${scaleX},1)`;
-			const gt = d3Transition().ease(d3EaseLinear)
-				.duration(durationForFlow);
-
-			wait.add([
-				xAxis
-					.transition(gt)
-					.call(g => $$.axis.x.setTransition(gt).create(g)),
-
-				mainBar
-					.transition(gt)
-					.attr("transform", transform),
-
-				mainLine
-					.transition(gt)
-					.attr("transform", transform),
-
-				mainArea
-					.transition(gt)
-					.attr("transform", transform),
-
-				mainCircle
-					.transition(gt)
-					.attr("transform", transform),
-
-				mainText
-					.transition(gt)
-					.attr("transform", transform),
-
-				mainRegion
-					.filter($$.isRegionOnX)
-					.transition(gt)
-					.attr("transform", transform),
-
-				xgrid
-					.transition(gt)
-					.attr("transform", transform),
-
-				xgridLines
-					.transition(gt)
-					.attr("transform", transform),
-			]);
-
-			gt.call(wait, () => {
-				const isRotated = config.axis_rotated;
-
-				// remove flowed elements
-				if (flowLength) {
-					const target = {
-						circles: [],
-						shapes: [],
-						texts: [],
-						eventRects: []
-					};
-
-					for (let i = 0; i < flowLength; i++) {
-						target.circles.push(`.${CLASS.circle}-${i}`);
-						target.shapes.push(`.${CLASS.shape}-${i}`);
-						target.texts.push(`.${CLASS.text}-${i}`);
-						target.eventRects.push(`.${CLASS.eventRect}-${i}`);
+					if (node && name.length > 1) {
+						node = node[name[1]];
 					}
 
-					["circles", "shapes", "texts", "eventRects"].forEach(v => {
-						$el.svg.selectAll(`.${CLASS[v]}`)
-							.selectAll(target[v])
-							.remove();
-					});
+					if (node && node.size()) {
+						elements[v] = node;
+					}
+				});
 
-					$el.svg.select(`.${CLASS.xgrid}`)
-						.remove();
+			$$.hideGridFocus();
+			$$.setFlowList(elements, args);
+		};
+	},
+
+	/**
+	 * Set flow list
+	 * @param elements {Object} Target elements
+	 * @param args {Object}
+	 * @private
+	 */
+	setFlowList(elements, args): void {
+		const $$ = this;
+		const {flow, targets} = args;
+		const {
+			duration = args.duration,
+			index: flowIndex,
+			length: flowLength,
+			orgDataCount,
+		} = flow;
+
+		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
+		const wait = $$.generateWait();
+		const gt = d3Transition().ease(d3EaseLinear)
+			.duration(duration);
+
+		wait.add(Object.keys(elements).map(v => {
+			let n = elements[v];
+
+			if (v === "axis.x") {
+				n = n.transition(gt)
+					.call(g => $$.axis.x.setTransition(gt).create(g));
+			} else if (v === "region.list") {
+				n = n.filter($$.isRegionOnX)
+					.transition(gt)
+					.attr("transform", transform);
+			} else {
+				n = n.transition(gt).attr("transform", transform);
+			}
+
+			return n;
+		}));
+
+		gt.call(wait, () => {
+			$$.cleanUpFlow(elements, args);
+		});
+	},
+
+	/**
+	 * Clean up flow
+	 * @param elements {Object} Target elements
+	 * @param args {Object}
+	 * @private
+	 */
+	cleanUpFlow(elements, args): void {
+		const $$ = this;
+		const {config, state, $el: {svg}} = $$;
+		const isRotated = config.axis_rotated;
+
+		const {flow, shape, xv} = args;
+		const {cx, cy, xForText, yForText} = shape.pos;
+		const {
+			done = () => {},
+			length: flowLength
+		} = flow;
+
+		// Remove flowed elements
+		if (flowLength) {
+			["circle", "text", "shape", "eventRect"].forEach(v => {
+				const target = [];
+
+				for (let i = 0; i < flowLength; i++) {
+					target.push(`.${CLASS[v]}-${i}`);
 				}
 
-				// draw again for removing flowed elements and reverting attr
-				xgrid.size() && xgrid
-					.attr("transform", null)
-					.attr(state.xgridAttr);
+				svg.selectAll(`.${CLASS[`${v}s`]}`) // circles, shapes, texts, eventRects
+					.selectAll(target)
+					.remove();
+			});
 
-				xgridLines
-					.attr("transform", null);
+			svg.select(`.${CLASS.xgrid}`)
+				.remove();
+		}
 
-				xgridLines.select("line")
-					.attr("x1", isRotated ? 0 : xv)
+		// draw again for removing flowed elements and reverting attr
+		Object.keys(elements).forEach(v => {
+			const n = elements[v];
+
+			if (v !== "axis.x") {
+				n.attr("transform", null);
+			}
+
+			if (v === "grid.x") {
+				n.attr(state.xgridAttr);
+			} else if (v === "gridLines.x") {
+				n.attr("x1", isRotated ? 0 : xv)
+					.attr("x2", isRotated ? state.width : xv);
+			} else if (v === "gridLines.x") {
+				n.select("line").attr("x1", isRotated ? 0 : xv)
 					.attr("x2", isRotated ? state.width : xv);
 
-				xgridLines.select("text")
+				n.select("text")
 					.attr("x", isRotated ? state.width : 0)
 					.attr("y", xv);
-
-				mainBar
-					.attr("transform", null)
-					.attr("d", drawBar);
-
-				mainLine
-					.attr("transform", null)
-					.attr("d", drawLine);
-
-				mainArea
-					.attr("transform", null)
-					.attr("d", drawArea);
-
-				mainCircle
-					.attr("transform", null);
-
+			} else if (/^(area|bar|line)$/.test(v)) {
+				n.attr("d", shape.type[v]);
+			} else if (v === "text") {
+				n.attr("x", xForText)
+					.attr("y", yForText)
+					.style("fill-opacity", $$.opacityForText.bind($$));
+			} else if (v === "circle") {
 				if ($$.isCirclePoint()) {
-					mainCircle
-						.attr("cx", cx)
-						.attr("cy", cy);
+					n.attr("cx", cx).attr("cy", cy);
 				} else {
 					const xFunc = d => cx(d) - config.point_r;
 					const yFunc = d => cy(d) - config.point_r;
 
-					mainCircle
-						.attr("x", xFunc)
+					n.attr("x", xFunc)
 						.attr("y", yFunc)
 						.attr("cx", cx) // when pattern is used, it possibly contain 'circle' also.
 						.attr("cy", cy);
 				}
-
-				mainText
-					.attr("transform", null)
-					.attr("x", xForText)
-					.attr("y", yForText)
-					.style("fill-opacity", $$.opacityForText.bind($$));
-
-				mainRegion
-					.attr("transform", null);
-
-				mainRegion.select("rect").filter($$.isRegionOnX)
+			} else if (v === "region.list") {
+				n.select("rect").filter($$.isRegionOnX)
 					.attr("x", $$.regionX.bind($$))
 					.attr("width", $$.regionWidth.bind($$));
+			}
+		});
 
-				config.interaction_enabled && $$.redrawEventRect();
+		config.interaction_enabled && $$.redrawEventRect();
 
-				// callback for end of flow
-				done();
+		// callback for end of flow
+		done();
 
-				state.flowing = false;
-			});
-		};
+		state.flowing = false;
+	},
+
+	/**
+	 * Get flow transform value
+	 * @param targets
+	 * @param orgDataCount
+	 * @param flowIndex
+	 * @param flowLength
+	 * @return {String}
+	 * @private
+	 */
+	getFlowTransform(targets, orgDataCount, flowIndex, flowLength): string {
+		const $$ = this;
+		const {data, scale: {x}} = $$;
+		const dataValues = data.targets[0].values;
+
+		let flowStart = $$.getValueOnIndex(dataValues, flowIndex);
+		let flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength);
+		let translateX;
+
+		// update x domain to generate axis elements for flow
+		const orgDomain = x.domain();
+		const domain = $$.updateXDomain(targets, true, true);
+
+		// generate transform to flow
+		if (!orgDataCount) { // if empty
+			if (dataValues.length !== 1) {
+				translateX = x(orgDomain[0]) - x(domain[0]);
+			} else {
+				if ($$.isTimeSeries()) {
+					flowStart = $$.getValueOnIndex(dataValues, 0);
+					flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
+					translateX = x(flowStart.x) - x(flowEnd.x);
+				} else {
+					translateX = diffDomain(domain) / 2;
+				}
+			}
+		} else if (orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
+			translateX = x(orgDomain[0]) - x(domain[0]);
+		} else {
+			translateX = $$.isTimeSeries() ?
+				x(orgDomain[0]) - x(domain[0]) :
+				x(flowStart.x) - x(flowEnd.x);
+		}
+
+		const scaleX = (diffDomain(orgDomain) / diffDomain(domain));
+
+		return `translate(${translateX},0) scale(${scaleX},1)`;
 	}
 };
