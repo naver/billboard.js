@@ -576,10 +576,13 @@ export default class Axis {
 		const tickTextWidths = $$.currentXAxisTickTextWidths || {};
 		const xAxisTickRotate = $$.getXAxisTickRotate();
 		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
+		const isTimeSeries = $$.isTimeSeries();
+		const isCategorized = $$.isCategorized();
+		const allowedAxisTypes = isCategorized || isTimeSeries;
 
 		if (
 			$$.svg &&
-			$$.isCategorized() &&
+			allowedAxisTypes &&
 			!config.axis_x_tick_culling &&
 			!config.axis_x_tick_multiline &&
 			positiveRotation

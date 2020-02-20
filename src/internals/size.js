@@ -252,12 +252,13 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets).length;
+		const allowedAxisTypes = $$.isCategorized() || $$.isTimeSeries();
 
 		if (!targetsToShow) {
 			return 0;
 		}
 
-		if ($$.svg && config.axis_x_tick_autorotate && $$.isCategorized()) {
+		if ($$.svg && config.axis_x_tick_autorotate && allowedAxisTypes) {
 			return !config.axis_x_tick_multiline && !$$.needToRotateXAxisTickTexts() ?
 				0 : config.axis_x_tick_rotate;
 		} else {
@@ -267,7 +268,9 @@ extend(ChartInternal.prototype, {
 
 	needToRotateXAxisTickTexts() {
 		const $$ = this;
-		const tickCount = $$.getXDomainMax($$.data.targets) + 1;
+		const tickCount = $$.isTimeSeries() ?
+			Object.keys($$.currentXAxisTickTextWidths).length :
+			$$.getXDomainMax($$.data.targets) + 1;
 
 		const currentWidth = $$.currentWidth;
 		const currentPaddingLeft = $$.getCurrentPaddingLeft(false);
