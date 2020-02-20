@@ -239,6 +239,33 @@ describe("TOOLTIP", function() {
 			expect(top).to.be.equal(tooltipPos.top);
 			expect(left).to.be.equal(tooltipPos.left);
 		});
+
+		it("set option tooltip.position", () => {
+			args.tooltip.position = () => ({top: "10%", left: 20});
+		});
+
+		it("check tooltip's position unit", () => {
+			const pos = args.tooltip.position();
+			util.hoverChart(chart);
+
+			["top", "left"].forEach(v => {
+				expect(chart.$.tooltip.style(v)).to.be.equal(
+					pos[v] + (v === "left" ? "px" : "")
+				);
+			});
+		});
+
+		it("set option tooltip.position={unit: '%'}", () => {
+			args.tooltip.position = {unit: "%"};
+		});
+
+		it("check tooltip's position unit as percentage", () => {
+			util.hoverChart(chart);
+
+			["top", "left"].forEach(v => {
+				expect(/^\d+(\.\d+)?%$/.test(chart.$.tooltip.style(v))).to.be.true;
+			});
+		});
 	});
 
 	describe("tooltip order", () => {

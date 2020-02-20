@@ -861,15 +861,18 @@ export interface TooltipOptions {
 	order?: string | any[] | ((data1: any, data2: any) => number) | null;
 
 	/**
-	 * Set custom position for the tooltip.
+	 * Set custom position function for the tooltip.
 	 * This option can be used to modify the tooltip position by returning object that has top and left.
+	 *
+	 * Or set tooltip's position unit.
+	 * This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
 	 */
 	position?(
 		data: any,
 		width: number,
 		height: number,
 		element: any
-	): { top: number; left: number };
+	): { top: number; left: number } | { unit: string; };
 
 	/**
 	 * Set custom HTML for the tooltip.
