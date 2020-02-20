@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200212125716
+ * @version 1.11.1-nightly-20200220130029
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2078,7 +2078,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updategridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(duration, durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updategridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Generate redraw list
@@ -2187,10 +2187,10 @@ function () {
             area = _shape$type.area,
             bar = _shape$type.bar,
             line = _shape$type.line;
-        (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && (list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition))), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition));
+        (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && (list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition))), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
       }
 
-      return (!hasArcType || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
+      return (!hasArcType || $$.hasType("radar")) && (notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), list.push($$.redrawCircle(cx, cy, isTransition, flowFn))), list;
     }
   }, {
     key: "updateAndRedraw",
@@ -6288,8 +6288,10 @@ var Options_Options = function Options() {
      * @property {Function} [tooltip.format.value] Set format for the value of each data in tooltip.<br>
      *  Specified function receives name, ratio, id and index of the data point to show. ratio will be undefined if the chart is not donut/pie/gauge.
      *  If undefined returned, the row of that value will be skipped.
-     * @property {Function} [tooltip.position] Set custom position for the tooltip.<br>
+     * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
      *  This option can be used to modify the tooltip position by returning object that has top and left.
+     * @property {String} [tooltip.position.unit="px"] Set tooltip's position unit.
+     *  - **NOTE:** This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
      * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
      *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
      * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
@@ -6337,7 +6339,14 @@ var Options_Options = function Options() {
      *          value: function(value, ratio, id, index) { return ratio; }
      *      },
      *      position: function(data, width, height, element) {
-     *          return {top: 0, left: 0}
+     *      	// return with unit or without. If the value is number, is treated as 'px'.
+     *      	return {top: "10%", left: 20}  // top:10%; left: 20px;
+    		 *      },
+     *
+     *      position: {
+     *      	// set tooltip's position unit as '%', rather than 'px'.
+     *      	// ex) If want to keep the position on mobile device rotation, set as '%'.
+     *      	unit: "%"
     		 *      },
      *
     		 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
@@ -9800,10 +9809,10 @@ extend(ChartInternal_ChartInternal.prototype, {
       height: height
     }, $$.addCache(radar_cacheKey, points));
   },
-  redrawRadar: function redrawRadar(duration, durationForExit) {
+  redrawRadar: function redrawRadar(durationForExit) {
     var $$ = this,
         translate = $$.getTranslate("radar");
-    translate && ($$.radars.attr("transform", translate), $$.main.selectAll(".".concat(config_classes.circles)).attr("transform", translate), $$.main.select(".".concat(config_classes.chartTexts)).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(duration, durationForExit));
+    translate && ($$.radars.attr("transform", translate), $$.main.selectAll(".".concat(config_classes.circles)).attr("transform", translate), $$.main.select(".".concat(config_classes.chartTexts)).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(durationForExit));
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
     var $$ = this,
@@ -9930,17 +9939,13 @@ extend(ChartInternal_ChartInternal.prototype, {
       }).on("mouseout", isMouse ? hide : null), isMouse || $$.svg.on("touchstart", hide);
     }
   },
-  updateRadarShape: function updateRadarShape(duration, durationForExit) {
+  updateRadarShape: function updateRadarShape(durationForExit) {
     var $$ = this,
         targets = $$.data.targets,
         points = $$.getCache(radar_cacheKey),
         areas = $$.radars.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
-    areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", function (d) {
-      return $$.color(d);
-    }).style("stroke", function (d) {
-      return $$.color(d);
-    }).attr("points", function (d) {
+    areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", function (d) {
       return points[d.id].join(" ");
     });
   },
@@ -10041,10 +10046,10 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         t = getRandom(),
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
-    return [this.mainText.each(function () {
+    return [$$.mainText.each(function (d, i) {
       var text = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this); // do not apply transition for newly added text elements
 
-      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x).attr("y", y).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x.bind(this)(d, i)).attr("y", y.bind(this)(d, i)).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
     })];
   },
 
@@ -10830,14 +10835,16 @@ extend(ChartInternal_ChartInternal.prototype, {
         forArc = $$.hasArcType(null, ["radar"]),
         dataToShow = selectedData.filter(function (d) {
       return d && isValue($$.getBaseValue(d));
-    }),
-        positionFunction = config.tooltip_position || $$.tooltipPosition;
+    });
 
     if (dataToShow.length !== 0 && config.tooltip_show) {
       var datum = $$.tooltip.datum(),
           dataStr = JSON.stringify(selectedData),
-          width = datum && datum.width || 0,
-          height = datum && datum.height || 0;
+          _ref = datum || {},
+          _ref$width = _ref.width,
+          width = _ref$width === void 0 ? 0 : _ref$width,
+          _ref$height = _ref.height,
+          height = _ref$height === void 0 ? 0 : _ref$height;
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
@@ -10851,10 +10858,25 @@ extend(ChartInternal_ChartInternal.prototype, {
       }
 
       if (!bindto) {
+        var unit,
+            fn = config.tooltip_position;
+        isFunction(fn) || (unit = fn && fn.unit, fn = $$.tooltipPosition);
         // Get tooltip dimensions
-        var position = positionFunction.call(this, dataToShow, width, height, element); // Set tooltip position
+        var pos = fn.call(this, dataToShow, width, height, element);
+        ["top", "left"].forEach(function (v) {
+          var value = pos[v]; // when value is number
 
-        $$.tooltip.style("top", "".concat(position.top, "px")).style("left", "".concat(position.left, "px"));
+          if (/^\d+(\.\d+)?$/.test(value)) {
+            if (unit === "%") {
+              var size = $$[v === "top" ? "currentHeight" : "currentWidth"];
+              value = value / size * 100;
+            } else unit = "px";
+
+            value += unit;
+          }
+
+          $$.tooltip.style(v, value);
+        });
       }
     }
   },
@@ -14690,7 +14712,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200212125716",
+  version: "1.11.1-nightly-20200220130029",
 
   /**
    * Generate chart
@@ -14789,7 +14811,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200212125716
+ * @version 1.11.1-nightly-20200220130029
  */
 
 
