@@ -283,8 +283,8 @@ export default {
 	 */
 	showTooltip(selectedData, element) {
 		const $$ = this;
-		const config = $$.config;
-		const bindto = config.tooltip_contents.bindto;
+		const {config, state, $el: {tooltip}} = $$;
+		const {bindto} = config.tooltip_contents;
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
 
@@ -292,7 +292,7 @@ export default {
 			return;
 		}
 
-		const datum = $$.tooltip.datum();
+		const datum = tooltip.datum();
 		const dataStr = JSON.stringify(selectedData);
 		let {width = 0, height = 0} = datum || {};
 
@@ -302,10 +302,10 @@ export default {
 			callFn(config.tooltip_onshow, $$, $$.api, selectedData);
 
 			// set tooltip content
-			$$.tooltip
+			tooltip
 				.html($$.getTooltipHTML(
 					selectedData,
-					$$.axis.getXAxisTickFormat(),
+					$$.axis && $$.axis.getXAxisTickFormat(),
 					$$.getYFormat(forArc),
 					$$.color
 				))
@@ -314,8 +314,8 @@ export default {
 				.datum({
 					index,
 					current: dataStr,
-					width: width = $$.tooltip.property("offsetWidth"),
-					height: height = $$.tooltip.property("offsetHeight")
+					width: width = tooltip.property("offsetWidth"),
+					height: height = tooltip.property("offsetHeight")
 				});
 
 			callFn(config.tooltip_onshown, $$, $$.api, selectedData);
@@ -340,7 +340,7 @@ export default {
 				// when value is number
 				if (/^\d+(\.\d+)?$/.test(value)) {
 					if (unit === "%") {
-						const size = $$[v === "top" ? "currentHeight" : "currentWidth"];
+						const size = state[v === "top" ? "currentHeight" : "currentWidth"];
 
 						value = value / size * 100;
 					} else {
@@ -350,7 +350,7 @@ export default {
 					value += unit;
 				}
 
-				$$.tooltip.style(v, value);
+				tooltip.style(v, value);
 			});
 		}
 	},

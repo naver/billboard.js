@@ -19,9 +19,9 @@ export default {
 	 * @private
 	 */
 	initText() {
-		const {$el: {main}} = this;
+		const {$el} = this;
 
-		main.select(`.${CLASS.chart}`).append("g")
+		$el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartTexts);
 	},
 
@@ -110,13 +110,13 @@ export default {
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [
-			this.mainText.each(function() {
+			$$.$el.text.each(function(d, i) {
 				const text = d3Select(this);
 
 				// do not apply transition for newly added text elements
 				(withTransition && text.attr("x") ? text.transition(t) : text)
-					.attr("x", x)
-					.attr("y", y)
+					.attr("x", x.bind(this)(d, i))
+					.attr("y", y.bind(this)(d, i))
 					.style("fill", $$.updateTextColor.bind($$))
 					.style("fill-opacity", opacityForText);
 			})

@@ -805,6 +805,9 @@ export default class ChartInternal {
 		//@TODO: Axis & Radar type
 		if ($$.hasAxis || $$.hasRadar) {
 			$$.updateCircle();
+
+			// text
+			$$.hasDataLabel() && $$.updateText(durationForExit);
 		}
 
 		// update axis
@@ -839,9 +842,6 @@ export default class ChartInternal {
 			$$.updateArea(durationForExit);
 			//$$.updateCircle();
 
-			// text
-			$$.hasDataLabel() && $$.updateText(durationForExit);
-
 			// circles for select
 			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
 				.filter($$.isBarType.bind($$))
@@ -857,7 +857,7 @@ export default class ChartInternal {
 			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 			// radar
-			$.radars && $$.redrawRadar(durationForExit);
+			$$.radars && $$.redrawRadar(durationForExit);
 		}
 
 		// title
