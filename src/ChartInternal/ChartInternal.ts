@@ -857,7 +857,7 @@ export default class ChartInternal {
 			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 			// radar
-			$$.radars && $$.redrawRadar(duration, durationForExit);
+			$.radars && $$.redrawRadar(durationForExit);
 		}
 
 		// title
@@ -1001,12 +1001,14 @@ export default class ChartInternal {
 			}
 
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-
-			notEmpty(config.data_labels) &&
-				list.push($$.redrawText(xForText, yForText, flow, isTransition));
 		}
 
-		(hasAxis || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		if (hasAxis || hasRadar) {
+			notEmpty(config.data_labels) &&
+				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+
+			list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		}
 
 		return list;
 	}

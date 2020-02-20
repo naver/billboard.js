@@ -120,7 +120,7 @@ export default {
 		}
 	},
 
-	redrawRadar(duration, durationForExit) {
+	redrawRadar(durationForExit) {
 		const $$ = this;
 		const {main} = $$.$el;
 		const translate = $$.getTranslate("radar");
@@ -134,7 +134,7 @@ export default {
 			$$.generateRadarPoints();
 			$$.updateRadarLevel();
 			$$.updateRadarAxes();
-			$$.updateRadarShape(duration, durationForExit);
+			$$.updateRadarShape(durationForExit);
 		}
 	},
 
@@ -349,7 +349,7 @@ export default {
 		}
 	},
 
-	updateRadarShape(duration, durationForExit) {
+	updateRadarShape(durationForExit) {
 		const $$ = this;
 		const targets = $$.data.targets;
 		const points = $$.cache.get(cacheKey);
@@ -368,8 +368,8 @@ export default {
 		areasEnter
 			.append("polygon")
 			.merge(areas)
-			.style("fill", d => $$.color(d))
-			.style("stroke", d => $$.color(d))
+			.style("fill", $$.color)
+			.style("stroke", $$.color)
 			.attr("points", d => points[d.id].join(" "));
 	},
 

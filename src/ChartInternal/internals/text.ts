@@ -110,7 +110,7 @@ export default {
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [
-			this.$el.text.each(function() {
+			this.mainText.each(function() {
 				const text = d3Select(this);
 
 				// do not apply transition for newly added text elements

@@ -184,9 +184,17 @@ describe("SHAPE RADAR", () => {
 			};
 		});
 
-		it("check for multiline axis text", (d, i) => {
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
-				expect(this.childNodes.length).to.be.equal(i === 2 ? 1 : 2);
+		it("check for multiline axis text", () => {
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+				.each(function(d, i) {
+					expect(this.childNodes.length).to.be.equal(i === 2 ? 1 : 2);
+				});
+		});
+
+		it("check for data label text", () => {
+			chart.$.text.texts.each(function() {
+				expect(this.getAttribute("x")).to.not.be.empty;
+				expect(this.getAttribute("y")).to.not.be.empty;
 			});
 		});
 	});
