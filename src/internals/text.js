@@ -109,13 +109,13 @@ extend(ChartInternal.prototype, {
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [
-			this.mainText.each(function() {
+			$$.mainText.each(function(d, i) {
 				const text = d3Select(this);
 
 				// do not apply transition for newly added text elements
 				(withTransition && text.attr("x") ? text.transition(t) : text)
-					.attr("x", x)
-					.attr("y", y)
+					.attr("x", x.bind(this)(d, i))
+					.attr("y", y.bind(this)(d, i))
 					.style("fill", $$.updateTextColor.bind($$))
 					.style("fill-opacity", opacityForText);
 			})
