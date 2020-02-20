@@ -180,6 +180,8 @@ export default class Axis {
 		const isCategory = isX && $$.isCategorized();
 		const orient = $$[`${name}Orient`];
 		const tickFormat = isX ? $$.xAxisTickFormat : config[`axis_${name}_tick_format`];
+		const tickTextRotate = noTickTextRotate ? 0 :
+			isX ? $$.getXAxisTickRotate() : config[`axis_${type}_tick_rotate`];
 		let tickValues = isX ? $$.xAxisTickValues : $$[`${name}AxisTickValues`];
 
 		const axisParams = mergeObj({
@@ -187,7 +189,7 @@ export default class Axis {
 			noTransition,
 			config,
 			name,
-			tickTextRotate: noTickTextRotate ? 0 : config[`axis_${type}_tick_rotate`]
+			tickTextRotate
 		}, isX && {
 			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
@@ -790,6 +792,10 @@ export default class Axis {
 				} else {
 					tickText.style("display", "block");
 				}
+
+				// set/unset x_axis_tick_clippath
+				$$.svg.selectAll(`.${CLASS.axisX} .tick text`)
+					.attr("clip-path", () => ($$.xAxisTickClipPathMaxWidth ? $$.clipPathForXAxisTickTexts : null));
 			}
 		});
 	}

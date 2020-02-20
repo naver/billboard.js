@@ -14,12 +14,14 @@ extend(ChartInternal.prototype, {
 		$$.clipId = `${$$.datetimeId}-clip`;
 
 		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
+		$$.clipIdForXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
 		$$.clipIdForGrid = `${$$.clipId}-grid`;
 
 		// Define 'clip-path' attribute values
 		$$.clipPath = $$.getClipPath($$.clipId);
 		$$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis);
+		$$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts);
 		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
 		$$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid);
 	},
@@ -120,5 +122,36 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return $$.getAxisClipHeight($$.config.axis_rotated);
+	},
+
+	updateXAxisTickClip() {
+		const $$ = this;
+
+		$$.setXAxisTickClipWidth();
+		$$.setXAxisTickTextClipPathWidth();
+	},
+
+	setXAxisTickClipWidth() {
+		const $$ = this;
+		const config = $$.config;
+		const xAxisTickRotate = $$.getXAxisTickRotate();
+
+		if (!config.axis_x_tick_multiline && xAxisTickRotate) {
+			const sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
+
+			$$.xAxisTickClipPathMaxWidth = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+		} else {
+			$$.xAxisTickClipPathMaxWidth = null;
+		}
+	},
+
+	setXAxisTickTextClipPathWidth() {
+		const $$ = this;
+
+		if ($$.svg) {
+			$$.svg.select(`#${$$.clipIdForXAxisTickTexts} rect`)
+				.attr("width", $$.xAxisTickClipPathMaxWidth)
+				.attr("height", 30);
+		}
 	}
 });

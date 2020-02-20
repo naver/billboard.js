@@ -1779,6 +1779,30 @@ export default class Options {
 			axis_x_tick_values: null,
 
 			/**
+			 * Rotate x axis tick text if there is not enough space.
+			 * - **NOTE:**
+			 *  > axis_x_tick_multiline must be set to `false` for autorotate to work.
+			 *  > axis_x_tick_culling must be set to `false` for autorotate to work.
+			 *  > axis_x_type must be set to `category` for autorotate to work.
+			 * @name axis․x․tick․autorotate
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default false
+			 * @example
+			 * axis: {
+			 *   x: {
+			 *     tick: {
+			 *       rotate: 15,
+			 *       autorotate: true,
+			 *       multiline: false,
+			 *       culling: false
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_x_tick_autorotate: false,
+
+			/**
 			 * Rotate x axis tick text.
 			 * - If you set negative value, it will rotate to opposite direction.
 			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.

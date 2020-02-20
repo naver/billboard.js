@@ -199,6 +199,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
+		const xAxisTickRotate = $$.getXAxisTickRotate();
 		let h = 30;
 
 		if (id === "x" && !config.axis_x_show) {
@@ -223,11 +224,17 @@ extend(ChartInternal.prototype, {
 
 		// Calculate x/y axis height when tick rotated
 		if (
-			((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate
+			((id === "x" && !isRotated && xAxisTickRotate) || (/y2?/.test(id) && isRotated && rotate))
 		) {
 			h = 30 +
 				$$.axis.getMaxTickWidth(id) *
-				Math.cos(Math.PI * (90 - rotate) / 180);
+				Math.cos(Math.PI * (90 - (id === "x" ? xAxisTickRotate : rotate)) / 180);
+
+			if (!config.axis_x_tick_multiline && $$.currentHeight) {
+				if (h > $$.currentHeight / 2) {
+					h = $$.currentHeight / 2;
+				}
+			}
 		}
 
 		return h +
@@ -237,5 +244,31 @@ extend(ChartInternal.prototype, {
 
 	getEventRectWidth() {
 		return Math.max(0, this.xAxis.tickInterval());
-	}
+	},
+
+	getXAxisTickRotate() {
+		const $$ = this;
+		const config = $$.config;
+
+		if ($$.svg && config.axis_x_tick_autorotate && $$.isCategorized()) {
+			return !config.axis_x_tick_multiline && !$$.needToRotateXAxisTickTexts() ?
+				0 : config.axis_x_tick_rotate;
+		} else {
+			return config.axis_x_tick_rotate;
+		}
+	},
+
+	needToRotateXAxisTickTexts() {
+		const $$ = this;
+		const tickCount = $$.getXDomainMax($$.data.targets) + 1;
+
+		const currentWidth = $$.currentWidth;
+		const currentPaddingLeft = $$.getCurrentPaddingLeft(false);
+		const currentPaddingRight = $$.getCurrentPaddingRight(true);
+		const xAxisLength = currentWidth - currentPaddingLeft - currentPaddingRight;
+
+		const maxTickWidth = $$.axis.getMaxTickWidth("x");
+
+		return tickCount !== 0 && maxTickWidth > (xAxisLength / tickCount);
+	},
 });
