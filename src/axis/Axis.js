@@ -8,6 +8,7 @@ import {
 	axisLeft as d3AxisLeft,
 	axisRight as d3AxisRight
 } from "d3-axis";
+import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import CLASS from "../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, sortValue} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
@@ -179,6 +180,7 @@ export default class Axis {
 		const isCategory = isX && $$.isCategorized();
 		const orient = $$[`${name}Orient`];
 		const tickFormat = isX ? $$.xAxisTickFormat : config[`axis_${name}_tick_format`];
+		const tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
 		let tickValues = isX ? $$.xAxisTickValues : $$[`${name}AxisTickValues`];
 
 		const axisParams = mergeObj({
@@ -186,7 +188,7 @@ export default class Axis {
 			noTransition,
 			config,
 			name,
-			tickTextRotate: noTickTextRotate ? 0 : config[`axis_${type}_tick_rotate`]
+			tickTextRotate
 		}, isX && {
 			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
@@ -501,8 +503,14 @@ export default class Axis {
 			axis.create(dummy);
 
 			dummy.selectAll("text")
-				.each(function() {
-					maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+				.each(function(d, i) {
+					const currentTextWidth = this.getBoundingClientRect().width;
+
+					maxWidth = Math.max(maxWidth, currentTextWidth);
+					// cache tick text width for getXAxisTickTextY2Overflow()
+					if (id === "x") {
+						$$.currentMaxTickWidths.x.ticks[i] = currentTextWidth;
+					}
 				});
 
 			dummy.remove();
@@ -513,6 +521,114 @@ export default class Axis {
 		}
 
 		return currentTickMax.size;
+	}
+
+	getXAxisTickTextY2Overflow(defaultPadding) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
+		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
+
+		if (($$.isCategorized() || $$.isTimeSeries()) &&
+			config.axis_x_tick_fit &&
+			!config.axis_x_tick_culling &&
+			!config.axis_x_tick_multiline &&
+			positiveRotation
+		) {
+			const widthWithoutCurrentPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft();
+			const maxOverflow = this.getXAxisTickMaxOverflow(
+				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
+			);
+			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
+				defaultPadding; // for display inconsistencies between browsers
+
+			return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+		}
+
+		return 0;
+	}
+
+	getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const isTimeSeries = $$.isTimeSeries();
+
+		const tickTextWidths = $$.currentMaxTickWidths.x.ticks;
+		const tickCount = tickTextWidths.length;
+		const {left, right} = this.x.padding;
+		let maxOverflow = 0;
+
+		const remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? 0.5 : 0);
+
+		for (let i = 0; i < tickCount; i++) {
+			const tickIndex = i + 1;
+			const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i];
+			const ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + left;
+
+			// Skip ticks if there are no ticks before them
+			if (ticksBeforeTickText <= 0) {
+				continue;
+			}
+
+			const xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft - rotatedTickTextWidth;
+			const tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
+			const remainingTicks = remaining - tickIndex;
+
+			const paddingRightLength = right * tickLength;
+			const remainingTickWidth = (remainingTicks * tickLength) + paddingRightLength;
+			const overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
+
+			maxOverflow = Math.max(maxOverflow, overflow);
+		}
+
+		let tickOffset = 0;
+
+		if (!isTimeSeries) {
+			const scale = d3ScaleLinear()
+				.domain([
+					left * -1,
+					$$.getXDomainMax($$.data.targets) + 1 + right
+				])
+				.range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+
+			tickOffset = (Math.ceil((scale(1) - scale(0)) / 2));
+		}
+
+		return maxOverflow + tickOffset;
+	}
+
+	/**
+	 * Get x Axis padding
+	 * @param {Number} tickCount Tick count
+	 * @return {Object} Padding object values with 'left' & 'right' key
+	 * @private
+	 */
+	getXAxisPadding(tickCount) {
+		const $$ = this.owner;
+		let padding = $$.config.axis_x_padding;
+
+		if (isEmpty(padding)) {
+			padding = {left: 0, right: 0};
+		} else {
+			padding.left = padding.left || 0;
+			padding.right = padding.right || 0;
+		}
+
+		if ($$.isTimeSeries()) {
+			const firstX = +$$.getXDomainMin($$.data.targets);
+			const lastX = +$$.getXDomainMax($$.data.targets);
+			const timeDiff = lastX - firstX;
+
+			const range = timeDiff + padding.left + padding.right;
+			const relativeTickWidth = (timeDiff / tickCount) / range;
+
+			const left = padding.left / range / relativeTickWidth || 0;
+			const right = padding.right / range / relativeTickWidth || 0;
+
+			padding = {left, right};
+		}
+
+		return padding;
 	}
 
 	updateLabels(withTransition) {
@@ -748,6 +864,14 @@ export default class Axis {
 					});
 				} else {
 					tickText.style("display", "block");
+				}
+
+				// set/unset x_axis_tick_clippath
+				if (type === "x") {
+					const clipPath = $$.clipXAxisTickMaxWidth ? $$.clipXAxisTickTexts : null;
+
+					$$.svg.selectAll(`.${CLASS.axisX} .tick text`)
+						.attr("clip-path", clipPath);
 				}
 			}
 		});

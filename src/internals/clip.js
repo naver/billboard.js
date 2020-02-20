@@ -120,5 +120,47 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		return $$.getAxisClipHeight($$.config.axis_rotated);
+	},
+
+	updateXAxisTickClip() {
+		const $$ = this;
+		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
+
+		$$.clipIdForXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
+		$$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts);
+
+		if (!$$.config.axis_x_tick_multiline &&
+			$$.getAxisTickRotate("x") &&
+			newXAxisHeight !== $$.xAxisHeight
+		) {
+			$$.setXAxisTickClipWidth();
+			$$.setXAxisTickTextClipPathWidth();
+		}
+
+		$$.xAxisHeight = newXAxisHeight;
+	},
+
+	setXAxisTickClipWidth() {
+		const $$ = this;
+		const config = $$.config;
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
+
+		if (!config.axis_x_tick_multiline && xAxisTickRotate) {
+			const sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
+
+			$$.xAxisTickClipPathMaxWidth = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+		} else {
+			$$.xAxisTickClipPathMaxWidth = null;
+		}
+	},
+
+	setXAxisTickTextClipPathWidth() {
+		const $$ = this;
+
+		if ($$.svg) {
+			$$.svg.select(`#${$$.clipIdForXAxisTickTexts} rect`)
+				.attr("width", $$.xAxisTickClipPathMaxWidth)
+				.attr("height", 30);
+		}
 	}
 });

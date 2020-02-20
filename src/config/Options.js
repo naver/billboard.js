@@ -1779,9 +1779,37 @@ export default class Options {
 			axis_x_tick_values: null,
 
 			/**
+			 * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+			 * - **NOTE:** The conditions where `autorotate` is enabled are:
+			 *   - axis.x.type='category' or 'timeseries
+			 *   - axis.x.tick.multiline=false
+			 *   - axis.x.tick.culling=false
+			 *   - axis.x.tick.fit=true
+			 * @name axis․x․tick․autorotate
+			 * @memberof Options
+			 * @type {Boolean}
+			 * @default false
+			 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
+			 * @example
+			 * axis: {
+			 *   x: {
+			 *     tick: {
+			 *       rotate: 15,
+			 *       autorotate: true,
+			 *       multiline: false,
+			 *       culling: false,
+			 *       fit: true
+			 *     }
+			 *   }
+			 * }
+			 */
+			axis_x_tick_autorotate: false,
+
+			/**
 			 * Rotate x axis tick text.
 			 * - If you set negative value, it will rotate to opposite direction.
 			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
+			 * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
 			 * @name axis․x․tick․rotate
 			 * @memberof Options
 			 * @type {Number}
