@@ -572,8 +572,6 @@ export default class Axis {
 	getXAxisTickTextY2Overflow(defaultPadding) {
 		const $$ = this.owner;
 		const config = $$.config;
-		const widthWithoutPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft();
-		const tickTextWidths = $$.currentXAxisTickTextWidths || {};
 		const xAxisTickRotate = $$.getXAxisTickRotate();
 		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
 		const isTimeSeries = $$.isTimeSeries();
@@ -587,33 +585,111 @@ export default class Axis {
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {
-			const tickCount = Object.keys(tickTextWidths).length;
-			let maxOverflow = 0;
-
-			for (let i = 0; i < tickCount; i++) {
-				const tickIndex = i + 1;
-
-				const tickTextWidth = tickTextWidths[i];
-				const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidth;
-
-				const xAxisLengthWithoutTickTextWidth = widthWithoutPaddingLeft - rotatedTickTextWidth;
-
-				const ticksBeforeTickText = tickIndex - 0.5;
-				const tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
-
-				const remainingTicks = tickCount - tickIndex;
-				const remainingTickWidth = remainingTicks * tickLength;
-				const overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
-
-				maxOverflow = Math.max(maxOverflow, overflow);
-			}
-
+			const widthWithoutCurrentPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft();
+			const maxOverflow = this.getMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft);
 			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
 				defaultPadding; // for display inconsistencies between browsers
 
-			return Math.min(xAxisTickTextY2Overflow, widthWithoutPaddingLeft / 2);
+			return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
 		}
 		return 0;
+	}
+
+	getMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const isTimeSeries = $$.isTimeSeries();
+		const tickTextWidths = $$.currentXAxisTickTextWidths || {};
+		const tickCount = Object.keys(tickTextWidths).length;
+		const xAxisPadding = $$.axis.getXAxisPadding(tickCount, isTimeSeries);
+
+		let maxOverflow = 0;
+
+		for (let i = 0; i < tickCount; i++) {
+			const tickIndex = i + 1;
+
+			const tickTextWidth = tickTextWidths[i];
+			const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidth;
+			const xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft - rotatedTickTextWidth;
+			const ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + xAxisPadding.left;
+
+			// Skip ticks if there are no ticks before them
+			if (ticksBeforeTickText <= 0) {
+				continue;
+			}
+
+			const tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
+
+			const remainingTicks = tickCount - tickIndex -
+				(isTimeSeries && config.axis_x_tick_fit ? 0.5 : 0);
+
+			const paddingRightLength = xAxisPadding.right * tickLength;
+			const remainingTickWidth = (remainingTicks * tickLength) + paddingRightLength;
+			const overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
+
+			maxOverflow = Math.max(maxOverflow, overflow);
+		}
+
+		return maxOverflow;
+	}
+
+	getXAxisPadding(tickCount, isTimeSeries) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const fit = config.axis_x_tick_fit;
+		const oldPadding = $$.axis.calculateXAxisPadding(tickCount, isTimeSeries);
+		const newPadding = {...oldPadding};
+
+		if (!fit) {
+			newPadding.left = oldPadding.left % 1;
+			newPadding.right = oldPadding.right % 1;
+		}
+
+		return newPadding;
+	}
+
+	calculateXAxisPadding(tickCount, isTimeSeries) {
+		const $$ = this.owner;
+		const config = $$.config;
+		const padding = {left: 0, right: 0};
+
+		if (!tickCount || (!config.axis_x_padding && !Object.keys(config.axis_x_padding).length)) {
+			return padding;
+		}
+
+		let xAxisPaddingLeft;
+		let xAxisPaddingRight;
+
+		if (typeof config.axis_x_padding === "number") {
+			xAxisPaddingLeft = config.axis_x_padding;
+			xAxisPaddingRight = config.axis_x_padding;
+		} else {
+			xAxisPaddingLeft = config.axis_x_padding.left || 0;
+			xAxisPaddingRight = config.axis_x_padding.right || 0;
+		}
+
+		if (isTimeSeries) {
+			const xDomain = [$$.getXDomainMin($$.data.targets), $$.getXDomainMax($$.data.targets)];
+			const firstX = xDomain[0].getTime();
+			const lastX = xDomain[1].getTime();
+			const timeDiff = lastX - firstX;
+
+			const range = timeDiff + xAxisPaddingLeft + xAxisPaddingRight;
+			const relativePaddingLeft = xAxisPaddingLeft / range;
+			const relativePaddingRight = xAxisPaddingRight / range;
+
+			const relativeTickWidth = (timeDiff / tickCount) / range;
+
+			padding.left = relativePaddingLeft ?
+				relativePaddingLeft / relativeTickWidth : 0;
+			padding.right = relativePaddingRight ?
+				relativePaddingRight / relativeTickWidth : 0;
+		} else {
+			padding.left = xAxisPaddingLeft;
+			padding.right = xAxisPaddingRight;
+		}
+
+		return padding;
 	}
 
 	updateLabels(withTransition) {

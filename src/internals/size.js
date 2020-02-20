@@ -269,8 +269,11 @@ extend(ChartInternal.prototype, {
 	needToRotateXAxisTickTexts() {
 		const $$ = this;
 		const tickCount = $$.isTimeSeries() ?
-			Object.keys($$.currentXAxisTickTextWidths).length :
+			Object.keys($$.currentXAxisTickTextWidths).length - 1 :
 			$$.getXDomainMax($$.data.targets) + 1;
+
+		const xAxisPadding = $$.axis.getXAxisPadding(tickCount, $$.isTimeSeries());
+		const tickCountWithPadding = tickCount + xAxisPadding.left + xAxisPadding.right;
 
 		const currentWidth = $$.currentWidth;
 		const currentPaddingLeft = $$.getCurrentPaddingLeft(false);
@@ -278,7 +281,8 @@ extend(ChartInternal.prototype, {
 		const xAxisLength = currentWidth - currentPaddingLeft - currentPaddingRight;
 
 		const maxTickWidth = $$.axis.getMaxTickWidth("x");
+		const tickLength = xAxisLength / tickCountWithPadding;
 
-		return maxTickWidth > (xAxisLength / tickCount);
+		return maxTickWidth > tickLength;
 	},
 });
