@@ -287,7 +287,6 @@ extend(ChartInternal.prototype, {
 		const bindto = config.tooltip_contents.bindto;
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
-		const positionFunction = config.tooltip_position || $$.tooltipPosition;
 
 		if (dataToShow.length === 0 || !config.tooltip_show) {
 			return;
@@ -295,8 +294,7 @@ extend(ChartInternal.prototype, {
 
 		const datum = $$.tooltip.datum();
 		const dataStr = JSON.stringify(selectedData);
-		let width = (datum && datum.width) || 0;
-		let height = (datum && datum.height) || 0;
+		let {width = 0, height = 0} = datum || {};
 
 		if (!datum || datum.current !== dataStr) {
 			const index = selectedData.concat().sort()[0].index;
@@ -325,13 +323,35 @@ extend(ChartInternal.prototype, {
 		}
 
 		if (!bindto) {
-			// Get tooltip dimensions
-			const position = positionFunction.call(this, dataToShow, width, height, element);
+			let fn = config.tooltip_position;
+			let unit;
 
-			// Set tooltip position
-			$$.tooltip
-				.style("top", `${position.top}px`)
-				.style("left", `${position.left}px`);
+			if (!isFunction(fn)) {
+				unit = fn && fn.unit;
+				fn = $$.tooltipPosition;
+			}
+
+			// Get tooltip dimensions
+			const pos = fn.call(this, dataToShow, width, height, element);
+
+			["top", "left"].forEach(v => {
+				let value = pos[v];
+
+				// when value is number
+				if (/^\d+(\.\d+)?$/.test(value)) {
+					if (unit === "%") {
+						const size = $$[v === "top" ? "currentHeight" : "currentWidth"];
+
+						value = value / size * 100;
+					} else {
+						unit = "px";
+					}
+
+					value += unit;
+				}
+
+				$$.tooltip.style(v, value);
+			});
 		}
 	},
 
