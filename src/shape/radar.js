@@ -122,7 +122,7 @@ extend(ChartInternal.prototype, {
 		}
 	},
 
-	redrawRadar(duration, durationForExit) {
+	redrawRadar(durationForExit) {
 		const $$ = this;
 		const translate = $$.getTranslate("radar");
 
@@ -135,7 +135,7 @@ extend(ChartInternal.prototype, {
 			$$.generateRadarPoints();
 			$$.updateRadarLevel();
 			$$.updateRadarAxes();
-			$$.updateRadarShape(duration, durationForExit);
+			$$.updateRadarShape(durationForExit);
 		}
 	},
 
@@ -351,7 +351,7 @@ extend(ChartInternal.prototype, {
 		}
 	},
 
-	updateRadarShape(duration, durationForExit) {
+	updateRadarShape(durationForExit) {
 		const $$ = this;
 		const targets = $$.data.targets;
 		const points = $$.getCache(cacheKey);
@@ -370,8 +370,8 @@ extend(ChartInternal.prototype, {
 		areasEnter
 			.append("polygon")
 			.merge(areas)
-			.style("fill", d => $$.color(d))
-			.style("stroke", d => $$.color(d))
+			.style("fill", $$.color)
+			.style("stroke", $$.color)
 			.attr("points", d => points[d.id].join(" "));
 	},
 

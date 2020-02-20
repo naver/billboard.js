@@ -691,7 +691,7 @@ export default class ChartInternal {
 		$$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 		// radar
-		$$.radars && $$.redrawRadar(duration, durationForExit);
+		$$.radars && $$.redrawRadar(durationForExit);
 
 		// circles for select
 		$$.mainText && main.selectAll(`.${CLASS.selectedCircles}`)
@@ -839,12 +839,14 @@ export default class ChartInternal {
 			}
 
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-
-			notEmpty(config.data_labels) &&
-				list.push($$.redrawText(xForText, yForText, flow, isTransition));
 		}
 
-		(!hasArcType || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		if (!hasArcType || $$.hasType("radar")) {
+			notEmpty(config.data_labels) &&
+				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+
+			list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		}
 
 		return list;
 	}
