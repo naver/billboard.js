@@ -293,7 +293,7 @@ export default {
 
 		// convert to target
 		const targets = ids.map((id, index) => {
-			const convertedId = config.data_idConverter(id);
+			const convertedId = config.data_idConverter.bind($$.api)(id);
 			const xKey = $$.getXKey(id);
 			const isCategorized = $$.isCustomX() && $$.isCategorized();
 			const hasCategory = isCategorized && data.map(v => v.x)

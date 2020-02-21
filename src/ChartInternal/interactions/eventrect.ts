@@ -309,7 +309,7 @@ export default {
 			.call(selected => {
 				const d = selected.data();
 
-				if (isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable(d))) {
+				if (isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))) {
 					eventRect.style("cursor", "pointer");
 				}
 
@@ -481,7 +481,7 @@ export default {
 			.each(function(d2) {
 				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
 					$$.toggleShape(this, d2, index);
-					config.data_onclick.call($$.api, d2, this);
+					config.data_onclick.bind($$.api)(d2, this);
 				}
 			});
 	},
@@ -550,7 +550,7 @@ export default {
 				.each(function() {
 					if (config.data_selection_grouped || $$.isWithinShape(this, closest)) {
 						$$.toggleShape(this, closest, closest.index);
-						config.data_onclick.call($$.api, closest, this);
+						config.data_onclick.bind($$.api)(closest, this);
 					}
 				});
 		}

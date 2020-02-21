@@ -362,7 +362,7 @@ export default {
 					.classed(CLASS.button, true)
 					.append("span")
 					.on("click", function() {
-						isFunction(resetButton.onclick) && resetButton.onclick(this);
+						isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this);
 						$$.api.unzoom();
 					})
 					.classed(CLASS.buttonZoomReset, true)

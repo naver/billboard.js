@@ -86,7 +86,7 @@ export default {
 				}
 
 				if (isTargetId && isTargetIndex) {
-					if (config.data_selection_isselectable(d) && !isSelected) {
+					if (config.data_selection_isselectable.bind($$.api)(d) && !isSelected) {
 						toggle(true, shape.classed(CLASS.SELECTED, true), d, i);
 					}
 				} else if (isDefined(resetOther) && resetOther && isSelected) {
@@ -135,7 +135,7 @@ export default {
 					return;
 				}
 
-				if (isTargetId && isTargetIndex && config.data_selection_isselectable(d) && isSelected) {
+				if (isTargetId && isTargetIndex && config.data_selection_isselectable.bind($$.api)(d) && isSelected) {
 					toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
 				}
 			});

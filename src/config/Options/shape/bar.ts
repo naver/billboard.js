@@ -66,6 +66,7 @@ export default {
      */
     bar_padding: 0,
     bar_radius: <number|{ratio: number}|undefined> undefined,
+    bar_radius_ratio: <number|undefined> undefined,
     bar_sensitivity: 2,
     bar_width: <number|{ratio?: number; max?: number;}|undefined> undefined,
     bar_width_ratio: 0.6,

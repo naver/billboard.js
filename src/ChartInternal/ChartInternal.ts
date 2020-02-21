@@ -173,7 +173,7 @@ export default class ChartInternal {
 		$$.callPluginHook("$beforeInit");
 
 		// can do something
-		callFn($$.config.onbeforeinit, $$, $$.api);
+		callFn($$.config.onbeforeinit, $$.api);
 	}
 
 	afterInit() {
@@ -182,7 +182,7 @@ export default class ChartInternal {
 		$$.callPluginHook("$afterInit");
 
 		// can do something
-		callFn($$.config.onafterinit, $$, $$.api);
+		callFn($$.config.onafterinit, $$.api);
 	}
 
 	init() {
@@ -328,7 +328,7 @@ export default class ChartInternal {
 		$$.data.targets = $$.convertDataToTargets(data);
 
 		if (config.data_filter) {
-			$$.data.targets = $$.data.targets.filter(config.data_filter);
+			$$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api));
 		}
 
 		// Set targets to hide if needed
@@ -377,8 +377,8 @@ export default class ChartInternal {
 			const isTouch = state.inputType === "touch";
 
 			$el.svg
-				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$, $$.api))
-				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$, $$.api));
+				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$.api))
+				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$.api));
 		}
 
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
@@ -464,14 +464,13 @@ export default class ChartInternal {
 		$$.updateDimension();
 
 		// oninit callback
-		callFn(config.oninit, $$, $$.api);
+		callFn(config.oninit, $$.api);
 
 		// Set background
 		$$.setBackground();
 
-		if (hasAxis || hasRadar) {
+		if (config.point_show && (hasAxis || hasRadar)) {
 			$$.initCircle();
-			// $$.point = $$.generatePoint();
 		}
 
 		$$.redraw({
@@ -487,8 +486,8 @@ export default class ChartInternal {
 		if (config.data_onmin || config.data_onmax) {
 			const minMax = $$.getMinMaxData();
 
-			callFn(config.data_onmin, $$, minMax.min);
-			callFn(config.data_onmax, $$, minMax.max);
+			callFn(config.data_onmin, $$.api, minMax.min);
+			callFn(config.data_onmax, $$.api, minMax.max);
 		}
 
 		// Bind resize event
@@ -903,7 +902,7 @@ export default class ChartInternal {
 		// callback function after redraw ends
 		const afterRedraw = flow || config.onrendered ? () => {
 			flowFn && flowFn();
-			callFn(config.onrendered, $$, $$.api);
+			callFn(config.onrendered, $$.api);
 		} : null;
 
 		if (afterRedraw) {
@@ -1301,7 +1300,7 @@ export default class ChartInternal {
 		const {config} = $$;
 
 		$$.resizeFunction = $$.generateResize();
-		$$.resizeFunction.add(() => callFn(config.onresize, $$, $$.api));
+		$$.resizeFunction.add(() => callFn(config.onresize, $$.api));
 
 		if (config.resize_auto) {
 			$$.resizeFunction.add(() => {
@@ -1316,7 +1315,7 @@ export default class ChartInternal {
 			});
 		}
 
-		$$.resizeFunction.add(() => callFn(config.onresized, $$, $$.api));
+		$$.resizeFunction.add(() => callFn(config.onresized, $$.api));
 
 		// attach resize event
 		window.addEventListener("resize", $$.resizeFunction);

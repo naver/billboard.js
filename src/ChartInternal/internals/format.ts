@@ -65,6 +65,6 @@ export default {
 			}
 		}
 
-		return format;
+		return format.bind($$.api);
 	}
 };

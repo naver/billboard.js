@@ -356,7 +356,7 @@ export default {
 					.attr("y2", y[1]);
 
 				stops.forEach(v => {
-					const stopColor = isFunction(v[1]) ? v[1](d.id) : v[1];
+					const stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
 
 					linearGradient.append("stop")
 						.attr("offset", v[0])

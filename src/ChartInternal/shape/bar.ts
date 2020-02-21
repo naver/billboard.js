@@ -32,7 +32,7 @@ export default {
 		// Bars for each data
 		mainBarEnter.append("g")
 			.attr("class", classBars)
-			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+			.style("cursor", d => (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null));
 	},
 
 	updateBar(durationForExit) {

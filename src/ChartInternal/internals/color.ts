@@ -88,7 +88,7 @@ export default {
 		const originalColorPattern = pattern;
 
 		if (isFunction(config.color_tiles)) {
-			const tiles = config.color_tiles();
+			const tiles = config.color_tiles.bind($$.api)();
 
 			// Add background color to patterns
 			const colorizedPatterns = pattern.map((p, index) => {
@@ -109,7 +109,7 @@ export default {
 
 			// if callback function is provided
 			if (isFunction(colors[id])) {
-				color = colors[id](d);
+				color = colors[id].bind($$.api)(d);
 
 			// if specified, choose that color
 			} else if (colors[id]) {
@@ -128,7 +128,7 @@ export default {
 			}
 
 			return isFunction(callback) ?
-				callback(color, d) : color;
+				callback.bind($$.api)(color, d) : color;
 		};
 	},
 
@@ -174,6 +174,8 @@ export default {
 			color = ({id}) => (id in onover ? onover[id] : $$.color(id));
 		} else if (isString(color)) {
 			color = () => onover;
+		} else if (isFunction(onover)) {
+			color = color.bind($$.api);
 		}
 
 		// when is Arc type

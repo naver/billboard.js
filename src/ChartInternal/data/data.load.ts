@@ -48,7 +48,7 @@ export default {
 			withLegend: true
 		});
 
-		args.done && args.done();
+		args.done && args.done.call($$.api);
 	},
 
 	loadFromArgs(args) {

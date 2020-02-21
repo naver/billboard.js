@@ -134,7 +134,7 @@ export default class Axis {
 				axes.push(
 					d3Axis(scale)
 						.ticks(tick.count)
-						.tickFormat(tick.format || ((x: any) => x))
+						.tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : ((x: any) => x))
 						.tickValues(tick.values)
 						.tickSizeOuter(tick.outer === false ? 0 : 6)
 				);
@@ -195,7 +195,19 @@ export default class Axis {
 
 		const isCategory = isX && $$.isCategorized();
 		const orient = this.orient[name];
-		const tickFormat = isX ? $$.format.xAxisTick : config[`axis_${name}_tick_format`];
+
+		let tickFormat;
+
+		if (isX) {
+			tickFormat = $$.format.xAxisTick;
+		} else {
+			const fn = config[`axis_${name}_tick_format`];
+
+			if (isFunction(fn)) {
+				tickFormat = fn.bind($$.api);
+			}
+		}
+
 		let tickValues = $$.axis.tick[type];
 
 		const axisParams = mergeObj({
@@ -297,7 +309,7 @@ export default class Axis {
 
 		if (tickFormat) {
 			if (isFunction(tickFormat)) {
-				currFormat = tickFormat;
+				currFormat = tickFormat.bind($$.api);
 			} else if (isTimeSeries) {
 				currFormat = date => (date ? format.axisTime(tickFormat)(date) : "");
 			}
@@ -319,7 +331,7 @@ export default class Axis {
 		const tickValues = $$.config[`axis_${id}_tick_values`];
 		const axis = $$[`${id}Axis`];
 
-		return (isFunction(tickValues) ? tickValues() : tickValues) ||
+		return (isFunction(tickValues) ? tickValues.call($$.api) : tickValues) ||
 			(axis ? axis.tickValues() : undefined);
 	}
 

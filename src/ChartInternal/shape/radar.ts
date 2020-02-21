@@ -166,7 +166,7 @@ export default {
 
 		const radius = config.radar_size_ratio * Math.min(width, height);
 		const levelRatio = levelData.map(l => radius * ((l + 1) / depth));
-		const levelTextFormat = config.radar_level_text_format;
+		const levelTextFormat = (config.radar_level_text_format || function(){}).bind($$.api);
 
 		// Generate points
 		const points = levelData.map(v => {

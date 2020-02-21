@@ -73,7 +73,7 @@ export default {
 
 		mainCircleEnter.append("g")
 			.attr("class", classCircles)
-			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
+			.style("cursor", d => (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null));
 
 		// Update date for selected circles
 		targets.forEach(t => {
@@ -232,7 +232,7 @@ export default {
 		} else if ($$.isBubbleType(d)) {
 			r = $$.getBubbleR(d);
 		} else if (isFunction(pointR)) {
-			r = pointR(d);
+			r = pointR.bind($$.api)(d);
 		}
 
 		return r;

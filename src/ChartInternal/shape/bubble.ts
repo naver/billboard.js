@@ -55,7 +55,7 @@ export default {
 		let maxR = $$.config.bubble_maxR;
 
 		if (isFunction(maxR)) {
-			maxR = maxR(d);
+			maxR = maxR.bind($$.api)(d);
 		} else if (!isNumber(maxR)) {
 			maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
 		}

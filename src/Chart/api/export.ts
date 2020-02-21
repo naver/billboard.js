@@ -100,7 +100,7 @@ export default {
 				canvas.height = size.height;
 				ctx.drawImage(img, 0, 0);
 
-				callback(canvas.toDataURL(mimeType));
+				callback.bind(this)(canvas.toDataURL(mimeType));
 			};
 
 			img.src = svgDataUrl;

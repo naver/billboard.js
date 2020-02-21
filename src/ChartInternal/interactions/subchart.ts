@@ -400,7 +400,7 @@ export default {
 			withDimension: false
 		});
 
-		subchart_onbrush.call($$.api, scale.x.orgDomain());
+		subchart_onbrush.bind($$.api)(scale.x.orgDomain());
 	},
 
 	/**
@@ -440,7 +440,7 @@ export default {
 
 		if (extent) {
 			if (isFunction(extent)) {
-				extent = extent($$.getXDomain($$.data.targets), scale.subX);
+				extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
 			} else if ($$.isTimeSeries() && extent.every(isNaN)) {
 				extent = extent.map(v => scale.subX($$.parseDate(v)));
 			}

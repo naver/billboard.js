@@ -70,7 +70,7 @@ const zoom = function(domainValue?: number[]) {
 		});
 
 		$$.setZoomResetButton();
-		callFn(config.zoom_onzoom, this, resultDomain);
+		callFn(config.zoom_onzoom, $$.api, resultDomain);
 	} else {
 		resultDomain = scale.zoom ?
 			scale.zoom.domain() : scale.x.orgDomain();

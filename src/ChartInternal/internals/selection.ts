@@ -87,7 +87,7 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 
-		callFn(config.data_onselected, $$, d, target.node());
+		callFn(config.data_onselected, $$.api, d, target.node());
 
 		if (config.interaction_brighten) {
 			target.transition().duration(100)
@@ -105,7 +105,7 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 
-		callFn(config.data_onunselected, $$, d, target.node());
+		callFn(config.data_onunselected, $$.api, d, target.node());
 
 		if (config.interaction_brighten) {
 			target.transition().duration(100)
@@ -160,7 +160,7 @@ export default {
 		const toggle = $$.getToggle(that, d).bind($$);
 		let toggledShape;
 
-		if (config.data_selection_enabled && config.data_selection_isselectable(d)) {
+		if (config.data_selection_enabled && config.data_selection_isselectable.bind($$.api)(d)) {
 			if (!config.data_selection_multiple) {
 				let selector = `.${CLASS.shapes}`;
 

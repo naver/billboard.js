@@ -183,7 +183,7 @@ export default {
 		config.interaction_enabled && $$.redrawEventRect();
 
 		// callback for end of flow
-		done();
+		done.call($$.api);
 
 		state.flowing = false;
 	},

@@ -62,8 +62,8 @@ export default {
      *          // or using function
      *          template: function(id, color, data) {
      *               // if you want omit some legend, return falsy value
-     *               if (title !== "data1") {
-     *                    return "<li style='background-color:"+ color +">"+ title +"</li>";
+     *               if (id !== "data1") {
+     *                    return "<li style='background-color:"+ color +">"+ id +"</li>";
      *               }
      *          }
      *      },

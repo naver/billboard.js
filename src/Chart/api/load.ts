@@ -158,7 +158,7 @@ export default {
 			});
 
 			$$.cache.remove(ids);
-			args.done && args.done();
+			args.done && args.done.call(this);
 		});
 	}
 };

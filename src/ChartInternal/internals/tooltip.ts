@@ -76,7 +76,7 @@ export default {
 		const {config} = $$;
 
 		return isFunction(config.tooltip_contents) ?
-			config.tooltip_contents.call($$, ...args) : $$.getTooltipContent(...args);
+			config.tooltip_contents.bind($$.api)(...args) : $$.getTooltipContent(...args);
 	},
 
 	/**
@@ -90,10 +90,20 @@ export default {
 	 */
 	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
 		const $$ = this;
-		const {config} = $$;
-		const titleFormat = config.tooltip_format_title || defaultTitleFormat;
-		const nameFormat = config.tooltip_format_name || (name => name);
-		const valueFormat = config.tooltip_format_value || ($$.isStackNormalized() ? ((v, ratio) => `${(ratio * 100).toFixed(2)}%`) : defaultValueFormat);
+		const {api, config} = $$;
+
+		let [titleFormat, nameFormat, valueFormat] = ["title", "name", "value"].map(v => {
+			const fn = config[`tooltip_format_${v}`];
+
+			return isFunction(fn) ? fn.bind(api) : fn;
+		});
+
+		titleFormat = titleFormat || defaultTitleFormat;
+		nameFormat = nameFormat || (name => name);
+		valueFormat = valueFormat || (
+				$$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
+			);
+
 		const order = config.tooltip_order;
 		const getRowValue = row => ($$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row));
 		const getBgColor = $$.levelColor ? row => $$.levelColor(row.value) : row => color(row);
@@ -128,7 +138,7 @@ export default {
 				return isAscending ? v1 - v2 : v2 - v1;
 			});
 		} else if (isFunction(order)) {
-			d.sort(order);
+			d.sort(order.bind(api));
 		}
 
 		const tpl = $$.getTooltipContentTemplate(tplStr);
@@ -299,7 +309,7 @@ export default {
 		if (!datum || datum.current !== dataStr) {
 			const index = selectedData.concat().sort()[0].index;
 
-			callFn(config.tooltip_onshow, $$, $$.api, selectedData);
+			callFn(config.tooltip_onshow, $$.api, selectedData);
 
 			// set tooltip content
 			tooltip
@@ -318,7 +328,7 @@ export default {
 					height: height = tooltip.property("offsetHeight")
 				});
 
-			callFn(config.tooltip_onshown, $$, $$.api, selectedData);
+			callFn(config.tooltip_onshown, $$.api, selectedData);
 			$$._handleLinkedCharts(true, index);
 		}
 
@@ -326,13 +336,15 @@ export default {
 			let fn = config.tooltip_position;
 			let unit;
 
-			if (!isFunction(fn)) {
+			if (isFunction(fn)) {
+				fn = fn.bind($$.api);
+			} else {
 				unit = fn && fn.unit;
-				fn = $$.tooltipPosition;
+				fn = $$.tooltipPosition.bind($$);
 			}
 
 			// Get tooltip dimensions
-			const pos = fn.call(this, dataToShow, width, height, element);
+			const pos = fn(dataToShow, width, height, element);
 
 			["top", "left"].forEach(v => {
 				let value = pos[v];
@@ -367,7 +379,7 @@ export default {
 		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
 			const selectedData = JSON.parse(tooltip.datum().current);
 
-			callFn(config.tooltip_onhide, $$, $$.api, selectedData);
+			callFn(config.tooltip_onhide, $$.api, selectedData);
 
 			// hide tooltip
 			tooltip
@@ -375,7 +387,7 @@ export default {
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
-			callFn(config.tooltip_onhidden, $$, $$.api, selectedData);
+			callFn(config.tooltip_onhidden, $$.api, selectedData);
 		}
 	},
 

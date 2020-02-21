@@ -247,7 +247,7 @@ export default {
 					($$.hasType("pie") && config.pie_label_ratio);
 
 				if (ratio) {
-					ratio = isFunction(ratio) ? ratio(d, radius, h) : ratio;
+					ratio = isFunction(ratio) ? ratio.bind($$.api)(d, radius, h) : ratio;
 				} else {
 					ratio = radius && (
 						h ? (36 / radius > 0.375 ? 1.175 - 36 / radius : 0.8) * radius / h : 0
@@ -297,9 +297,11 @@ export default {
 	},
 
 	textForGaugeMinMax(value, isMax) {
-		const format = this.getGaugeLabelExtents();
+		const $$ = this;
+		const {config} = $$;
+		const format = config.gauge_label_extents;
 
-		return format ? format(value, isMax) : value;
+		return isFunction(format) ? format.bind($$.api)(value, isMax) : value;
 	},
 
 	expandArc(targetIds) {
@@ -424,13 +426,7 @@ export default {
 			format = config.donut_label_format;
 		}
 
-		return format;
-	},
-
-	getGaugeLabelExtents() {
-		const {config} = this;
-
-		return config.gauge_label_extents;
+		return isFunction(format) ? format.bind($$.api) : format;
 	},
 
 	getArcTitle() {
@@ -521,7 +517,7 @@ export default {
 		mainArc = mainArc.enter().append("path")
 			.attr("class", $$.classArc.bind($$))
 			.style("fill", d => $$.color(d.data))
-			.style("cursor", d => (hasInteraction && config.data_selection_isselectable(d) ? "pointer" : null))
+			.style("cursor", d => (hasInteraction && config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null))
 			.style("opacity", "0")
 			.each(function(d) {
 				if ($$.isGaugeType(d.data)) {
@@ -597,7 +593,7 @@ export default {
 				}
 
 				state.transiting = false;
-				callFn(config.onrendered, $$, $$.api);
+				callFn(config.onrendered, $$.api);
 			});
 
 		// bind arc events
@@ -686,7 +682,7 @@ export default {
 					arcData = $$.convertToArcData(updated);
 
 					$$.toggleShape && $$.toggleShape(this, arcData, i);
-					config.data_onclick.call($$.api, arcData, this);
+					config.data_onclick.bind($$.api)(arcData, this);
 				}
 			});
 

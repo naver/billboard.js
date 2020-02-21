@@ -43,7 +43,7 @@ export default {
 		// TODO: binary search when multiple xs
 		main.selectAll(`.${CLASS.shapes}`)
 			.selectAll(`.${CLASS.shape}`)
-			.filter(d => config.data_selection_isselectable(d))
+			.filter(d => config.data_selection_isselectable.bind($$.api)(d))
 			.each(function(d, i) {
 				const shape: d3Selection = d3Select(this);
 				const isSelected = shape.classed(CLASS.SELECTED);

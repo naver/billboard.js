@@ -95,7 +95,7 @@ export default {
 
 			targets.forEach(v => {
 				const content = isFunction(template) ?
-					template.call($$, v, $$.color(v), $$.api.data(v)[0].values) :
+					template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) :
 					tplProcess(template, {
 						COLOR: $$.color(v),
 						TITLE: v
@@ -366,7 +366,7 @@ export default {
 	 */
 	setLegendItem(item) {
 		const $$ = this;
-		const {config, state} = $$;
+		const {api, config, state} = $$;
 		const isTouch = state.inputType === "touch";
 		const hasGauge = $$.hasType("gauge");
 
@@ -380,13 +380,13 @@ export default {
 			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
 			.style("cursor", "pointer")
 			.on("click", id => {
-				if (!callFn(config.legend_item_onclick, $$, id)) {
+				if (!callFn(config.legend_item_onclick, api, id)) {
 					if (d3Event.altKey) {
-						$$.api.hide();
-						$$.api.show(id);
+						api.hide();
+						api.show(id);
 					} else {
-						$$.api.toggle(id);
-						!isTouch && $$.isTargetToShow(id) ? $$.api.focus(id) : $$.api.revert();
+						api.toggle(id);
+						!isTouch && $$.isTargetToShow(id) ? api.focus(id) : api.revert();
 					}
 				}
 
@@ -396,7 +396,7 @@ export default {
 		if (!isTouch) {
 			item
 				.on("mouseout", function(id) {
-					if (!callFn(config.legend_item_onout, $$, id)) {
+					if (!callFn(config.legend_item_onout, api, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, false);
 
 						if (hasGauge) {
@@ -407,7 +407,7 @@ export default {
 					}
 				})
 				.on("mouseover", function(id) {
-					if (!callFn(config.legend_item_onover, $$, id)) {
+					if (!callFn(config.legend_item_onover, api, id)) {
 						d3Select(this).classed(CLASS.legendItemFocused, true);
 
 						if (hasGauge) {
@@ -415,7 +415,7 @@ export default {
 						}
 
 						if (!state.transiting && $$.isTargetToShow(id)) {
-							$$.api.focus(id);
+							api.focus(id);
 						}
 					}
 				});

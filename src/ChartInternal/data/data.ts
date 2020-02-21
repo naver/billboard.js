@@ -531,7 +531,7 @@ export default {
 				return orderAsc ? t2Sum - t1Sum : t1Sum - t2Sum;
 			});
 		} else if (isFunction(config.data_order)) {
-			targets.sort(config.data_order);
+			targets.sort(config.data_order.bind($$.api));
 		} // TODO: accept name array for order
 
 		return targets;
