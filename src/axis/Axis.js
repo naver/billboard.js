@@ -180,8 +180,7 @@ export default class Axis {
 		const isCategory = isX && $$.isCategorized();
 		const orient = $$[`${name}Orient`];
 		const tickFormat = isX ? $$.xAxisTickFormat : config[`axis_${name}_tick_format`];
-		const tickTextRotate = noTickTextRotate ? 0 :
-			isX ? $$.getXAxisTickRotate() : config[`axis_${type}_tick_rotate`];
+		const tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
 		let tickValues = isX ? $$.xAxisTickValues : $$[`${name}AxisTickValues`];
 
 		const axisParams = mergeObj({
@@ -572,7 +571,7 @@ export default class Axis {
 	getXAxisTickTextY2Overflow(defaultPadding) {
 		const $$ = this.owner;
 		const config = $$.config;
-		const xAxisTickRotate = $$.getXAxisTickRotate();
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
 		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
 		const isTimeSeries = $$.isTimeSeries();
 		const isCategorized = $$.isCategorized();

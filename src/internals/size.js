@@ -201,7 +201,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
-		const xAxisTickRotate = $$.getXAxisTickRotate();
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
 		let h = 30;
 
 		if (id === "x" && !config.axis_x_show) {
@@ -248,21 +248,22 @@ extend(ChartInternal.prototype, {
 		return Math.max(0, this.xAxis.tickInterval());
 	},
 
-	getXAxisTickRotate() {
+	getAxisTickRotate(type) {
 		const $$ = this;
 		const config = $$.config;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets).length;
-		const allowedAxisTypes = $$.isCategorized() || $$.isTimeSeries();
 
 		if (!targetsToShow) {
 			return 0;
 		}
 
-		if ($$.svg && config.axis_x_tick_autorotate && allowedAxisTypes) {
+		const allowedXAxisTypes = $$.isCategorized() || $$.isTimeSeries();
+
+		if (type === "x" && $$.svg && config.axis_x_tick_autorotate && allowedXAxisTypes) {
 			return !config.axis_x_tick_multiline && !$$.needToRotateXAxisTickTexts() ?
 				0 : config.axis_x_tick_rotate;
 		} else {
-			return config.axis_x_tick_rotate;
+			return config[`axis_${type}_tick_rotate`];
 		}
 	},
 

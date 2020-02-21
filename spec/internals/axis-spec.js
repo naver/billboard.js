@@ -938,7 +938,7 @@ describe("AXIS", function() {
 			const internal = chart.internal;
 			const xAxisBoundingClientRect = internal.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
 			const horizontalXAxisHeight = internal.getHorizontalAxisHeight("x");
-			const xAxisTickRotate = internal.getXAxisTickRotate();
+			const xAxisTickRotate = internal.getAxisTickRotate("x");
 
 			expect(xAxisTickRotate).to.be.equal(expectedXAxisTickRotate);
 			expect(xAxisBoundingClientRect.height).to.be.closeTo(expectedXAxisBoundingClientRect, 1);

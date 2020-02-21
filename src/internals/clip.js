@@ -134,7 +134,7 @@ extend(ChartInternal.prototype, {
 	setXAxisTickClipWidth() {
 		const $$ = this;
 		const config = $$.config;
-		const xAxisTickRotate = $$.getXAxisTickRotate();
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
 
 		if (!config.axis_x_tick_multiline && xAxisTickRotate) {
 			const sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
