@@ -335,7 +335,7 @@ export interface Chart {
 		type?: string;
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
-		done?(): () => any;
+		done?: () => any;
 	}): void;
 
 	/**
