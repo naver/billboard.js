@@ -867,12 +867,12 @@ export interface TooltipOptions {
 	 * Or set tooltip's position unit.
 	 * This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
 	 */
-	position?(
+	position?: ((
 		data: any,
 		width: number,
 		height: number,
 		element: any
-	): { top: number; left: number } | { unit: string; };
+	) => { top: number; left: number }) | { unit: string; };
 
 	/**
 	 * Set custom HTML for the tooltip.
