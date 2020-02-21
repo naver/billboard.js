@@ -50,11 +50,11 @@ export default {
 	},
 
 	classCircle(d) {
-		return this.generateClass(CLASS.circle, d.index);
+		return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
 	},
 
 	classCircles(d) {
-		return this.generateClass(CLASS.circles, d.id);
+		return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
 	},
 
 	classBar(d) {

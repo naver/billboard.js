@@ -9,7 +9,7 @@ import {
 } from "d3-selection";
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
-import {getRandom, isFunction, isObject, isObjectType, isValue, toArray, notEmpty} from "../../module/util";
+import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isValue, toArray, notEmpty} from "../../module/util";
 
 export default {
 	hasValidPointType(type) {
@@ -55,26 +55,29 @@ export default {
 
 	updateTargetForCircle(t) {
 		const $$ = this;
-		const {config, data, $el} = $$;
+		const {config, data, $el: {main}} = $$;
 		const targets = t || data.targets;
 		const classCircles = $$.classCircles.bind($$);
 
-		const mainPointUpdate = $el.main.select(`.${CLASS.chartCircles}`)
+		const mainCircle = main.select(`.${CLASS.chartCircles}`)
+			.style("pointer-events", "none")
 			.selectAll(`.${CLASS.circles}`)
 			.data(targets)
-			.attr("class", d => classCircles(d));
+			.attr("class", classCircles);
+
+		const mainCircleEnter = mainCircle.enter();
 
 		// Circles for each data point on lines
-		config.data_selection_enabled && mainPointUpdate.append("g")
+		config.data_selection_enabled && mainCircleEnter.append("g")
 			.attr("class", d => $$.generateClass(CLASS.selectedCircles, d.id));
 
-		mainPointUpdate.enter().append("g")
+		mainCircleEnter.append("g")
 			.attr("class", classCircles)
 			.style("cursor", d => (config.data_selection_isselectable(d) ? "pointer" : null));
 
 		// Update date for selected circles
 		targets.forEach(t => {
-			$el.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
+			main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
 				.selectAll(`${CLASS.selectedCircle}`)
 				.each(d => {
 					d.value = t.values[d.index].value;
@@ -90,18 +93,19 @@ export default {
 			return;
 		}
 
-		$el.circle = $el.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
+		const circles = $el.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
 			.data(d => !$$.isBarType(d) && (
-				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
-			) && $$.labelishData(d));
+					!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
+				) && $$.labelishData(d)
+			);
 
-		$el.circle.exit().remove();
+			circles.exit().remove();
 
 		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
 
-		$el.circle = $el.circle.enter()
+		$el.circle = circles.enter()
 			.append(fn)
-			.merge($el.circle)
+			.merge(circles)
 			.style("stroke", $$.color)
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
@@ -261,7 +265,7 @@ export default {
 
 		// if node don't have cx/y or x/y attribute value
 		if (!(cx || cy) && node.nodeType === 1) {
-			const {x, y} = node.getBBox ? node.getBBox() : node.getBoundingClientRect();
+			const {x, y} = getBoundingRect(node);
 
 			cx = x;
 			cy = y;

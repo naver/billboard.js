@@ -52,6 +52,11 @@ export interface Chart {
 		 */
 		arc: d3Selection;
 
+		/**
+		 * Data point circle elements
+		 */
+		circles: d3Selection;
+
 		bar: {
 			/**
 			 * Bar elements
@@ -69,11 +74,6 @@ export interface Chart {
 			 * Areas elements
 			 */
 			areas: d3Selection;
-
-			/**
-			 * Data point circle elements
-			 */
-			circles: d3Selection;
 		};
 
 		text: {

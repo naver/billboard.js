@@ -1,4 +1,4 @@
-/**
+	/**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
@@ -89,7 +89,7 @@ export default {
 
 	bindTouchOnEventRect(isMultipleX) {
 		const $$ = this;
-		const {config, state} = $$;
+		const {config, state, $el: {svg}} = $$;
 
 		const getEventRect = () => {
 			const touch = d3Event.changedTouches[0];
@@ -154,7 +154,7 @@ export default {
 		};
 
 		// bind touch events
-		$$.$el.svg
+		svg
 			.on("touchstart.eventRect touchmove.eventRect", function() {
 				const eventRect = getEventRect();
 				const event = d3Event;
@@ -467,7 +467,7 @@ export default {
 
 	clickHandlerForSingleX(d, ctx) {
 		const $$ = ctx;
-		const {config, state} = $$;
+		const {config, state, $el: {main}} = $$;
 
 		if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
 			state.cancelClick && (state.cancelClick = false);
@@ -475,9 +475,9 @@ export default {
 			return;
 		}
 
-		const index = d.index;
+		const {index} = d;
 
-		$$.$el.main.selectAll(`.${CLASS.shape}-${index}`)
+		main.selectAll(`.${CLASS.shape}-${index}`)
 			.each(function(d2) {
 				if (config.data_selection_grouped || $$.isWithinShape(this, d2)) {
 					$$.toggleShape(this, d2, index);

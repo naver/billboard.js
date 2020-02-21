@@ -534,13 +534,13 @@ export default class ChartInternal {
 			title: $el.title,
 			grid: $el.grid,
 			arc: $el.arcs,
+			circles: $el.circle,
 			bar: {
 				bars: $el.bar
 			},
 			line: {
 				lines: $el.line,
-				areas: $el.area,
-				circles: $el.circle
+				areas: $el.area
 			},
 			text: {
 				texts: $el.text

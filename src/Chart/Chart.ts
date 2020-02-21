@@ -47,12 +47,12 @@ import moduleAxis from "../config/resolver/axis";
  * @property {d3.selection} $.title Title element
  * @property {d3.selection} $.grid Grid element
  * @property {d3.selection} $.arc Arc element
+ * @property {d3.selection} $.circles Data point circle elements
  * @property {Object} $.bar
  * @property {d3.selection} $.bar.bars Bar elements
  * @property {Object} $.line
  * @property {d3.selection} $.line.lines Line elements
  * @property {d3.selection} $.line.areas Areas elements
- * @property {d3.selection} $.line.circles Data point circle elements
  * @property {Object} $.text
  * @property {d3.selection} $.text.texts Data label text elements
  * @memberof Chart
