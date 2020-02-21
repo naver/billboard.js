@@ -314,6 +314,11 @@ export interface YTickConfiguration {
 	 */
 	stepSize?: number;
 
+	/**
+	 * Show or hide axis tick line.
+	 */
+	show?: boolean;
+
 	text?: {
 		/**
 		 * Set the x Axis tick text's position relatively its original position
