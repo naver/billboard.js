@@ -12,7 +12,7 @@ import {
 	brushSelection as d3BrushSelection
 } from "d3-brush";
 import CLASS from "../../config/classes";
-import {brushEmpty, capitalize, isArray, isFunction, getRandom} from "../../module/util";
+import {brushEmpty, capitalize, isArray, isFunction, getRandom, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -442,7 +442,9 @@ export default {
 			if (isFunction(extent)) {
 				extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
 			} else if ($$.isTimeSeries() && extent.every(isNaN)) {
-				extent = extent.map(v => scale.subX($$.parseDate(v)));
+				const fn = parseDate.bind($$);
+
+				extent = extent.map(v => scale.subX(fn(v)));
 			}
 		}
 

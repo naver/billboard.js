@@ -242,5 +242,174 @@ export default {
 
 	getEventRectWidth() {
 		return Math.max(0, this.axis.x.tickInterval());
+	},
+
+	updateDimension(withoutAxis) {
+		const $$ = this;
+		const {config, $el: {axis}} = $$;
+
+		if ($$.hasAxis && !withoutAxis) {
+			if ($$.axis.x && config.axis_rotated) {
+				$$.axis.x.create(axis.x);
+				$$.axis.subX && $$.axis.subX.create(axis.subX);
+			} else {
+				$$.axis.y && $$.axis.y.create(axis.y);
+				$$.axis.y2 && $$.axis.y2.create(axis.y2);
+			}
+		}
+
+		// pass 'withoutAxis' param to not animate at the init rendering
+		$$.updateScales(withoutAxis);
+		$$.updateSvgSize();
+		$$.transformAll(false);
+	},
+
+	updateSvgSize() {
+		const $$ = this;
+		const {state, $el: {svg}} = $$;
+
+		svg
+			.attr("width", state.currentWidth)
+			.attr("height", state.currentHeight);
+
+		if ($$.hasAxis) {
+			const brush = svg.select(`.${CLASS.brush} .overlay`);
+			const brushSize = {width: 0, height: 0};
+
+			if (brush.size()) {
+				brushSize.width = +brush.attr("width");
+				brushSize.height = +brush.attr("height");
+			}
+
+			svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
+				.select("rect")
+				.attr("width", state.width)
+				.attr("height", state.height);
+
+			svg.select(`#${state.clip.idXAxis}`)
+				.select("rect")
+				.attr("x", $$.getXAxisClipX.bind($$))
+				.attr("y", $$.getXAxisClipY.bind($$))
+				.attr("width", $$.getXAxisClipWidth.bind($$))
+				.attr("height", $$.getXAxisClipHeight.bind($$));
+
+			svg.select(`#${state.clip.idYAxis}`)
+				.select("rect")
+				.attr("x", $$.getYAxisClipX.bind($$))
+				.attr("y", $$.getYAxisClipY.bind($$))
+				.attr("width", $$.getYAxisClipWidth.bind($$))
+				.attr("height", $$.getYAxisClipHeight.bind($$));
+
+			state.clip.idSubchart && svg.select(`#${state.clip.idSubchart}`)
+				.select("rect")
+				.attr("width", state.width)
+				.attr("height", brushSize.height);
+
+			svg.select(`.${CLASS.zoomRect}`)
+				.attr("width", state.width)
+				.attr("height", state.height);
+		}
+	},
+
+	/**
+	 * Update size values
+	 * @param {Boolean} isInit If is called at initialization
+	 * @private
+	 */
+	updateSizes(isInit) {
+		const $$ = this;
+		const {config, state, $el: {legend}} = $$;
+		const isRotated = config.axis_rotated;
+		const hasArc = $$.hasArcType();
+
+		const currLegend = {
+			width: legend ? $$.getLegendWidth() : 0,
+			height: legend ? $$.getLegendHeight() : 0
+		};
+
+		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
+		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
+
+		const subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
+			xAxisHeight : 30;
+		const subchartHeight = config.subchart_show && !hasArc ?
+			(config.subchart_size_height + subchartXAxisHeight) : 0;
+
+		!isInit && $$.setContainerSize();
+
+		// for main
+		state.margin = isRotated ? {
+			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
+			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
+			left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
+		} : {
+			top: 4 + $$.getCurrentPaddingTop(), // for top tick text
+			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
+			left: hasArc ? 0 : $$.getCurrentPaddingLeft()
+		};
+
+		// for subchart
+		state.margin2 = isRotated ? {
+			top: state.margin.top,
+			right: NaN,
+			bottom: 20 + legendHeightForBottom,
+			left: $$.state.rotatedPadding.left
+		} : {
+			top: state.currentHeight - subchartHeight - legendHeightForBottom,
+			right: NaN,
+			bottom: subchartXAxisHeight + legendHeightForBottom,
+			left: state.margin.left
+		};
+
+		// for legend
+		state.margin3 = {
+			top: 0,
+			right: NaN,
+			bottom: 0,
+			left: 0
+		};
+
+		$$.updateSizeForLegend && $$.updateSizeForLegend(currLegend);
+
+		state.width = state.currentWidth - state.margin.left - state.margin.right;
+		state.height = state.currentHeight - state.margin.top - state.margin.bottom;
+
+		if (state.width < 0) {
+			state.width = 0;
+		}
+
+		if (state.height < 0) {
+			state.height = 0;
+		}
+
+		state.width2 = isRotated ?
+			state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width;
+
+		state.height2 = isRotated ?
+			state.height : state.currentHeight - state.margin2.top - state.margin2.bottom;
+
+		if (state.width2 < 0) {
+			state.width2 = 0;
+		}
+
+		if (state.height2 < 0) {
+			state.height2 = 0;
+		}
+
+		// for arc
+		state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0);
+		state.arcHeight = state.height - (state.isLegendRight ? 0 : 10);
+
+		if ($$.hasType("gauge") && !config.gauge_fullCircle) {
+			state.arcHeight += state.height - $$.getGaugeLabelHeight();
+		}
+
+		$$.updateRadius && $$.updateRadius();
+
+		if (state.isLegendRight && hasArc) {
+			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
+		}
 	}
 };

@@ -16,7 +16,7 @@ import Store from "../config/Store";
 import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
-import {extend, notEmpty, asHalfPixel, getOption, isArray, isFunction, isNumber, isObject, isString, isValue, callFn, sortValue} from "../module/util";
+import {extend, notEmpty, convertInputType, getOption, isArray, isFunction, isObject, isString, isTabVisible, isValue, callFn, parseDate, sortValue} from "../module/util";
 
 // for Types
 import {d3Selection} from "../../types/types";
@@ -43,6 +43,7 @@ import size from "./internals/size";
 import text from "./internals/text";
 import title from "./internals/title";
 import tooltip from "./internals/tooltip";
+import transform from "./internals/transform";
 import type from "./internals/type";
 
 import moduleAxis from "../config/resolver/axis";
@@ -301,7 +302,7 @@ export default class ChartInternal {
 			config.legend_inset_anchor === "bottom-left";
 
 		state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
-		state.inputType = $$.convertInputType();
+		state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
 	}
 
 	initWithData(data) {
@@ -583,119 +584,6 @@ export default class ChartInternal {
 		}
 	}
 
-	smoothLines(el, type) {
-		if (type === "grid") {
-			el.each(function() {
-				const g = d3Select(this);
-
-				["x1", "x2", "y1", "y2"]
-					.forEach(v => g.attr(v, Math.ceil(+g.attr(v))));
-			});
-		}
-	}
-
-	/**
-	 * Update size values
-	 * @param {Boolean} isInit If is called at initialization
-	 * @private
-	 */
-	updateSizes(isInit) {
-		const $$ = this;
-		const {config, state, $el: {legend}} = $$;
-		const isRotated = config.axis_rotated;
-		const hasArc = $$.hasArcType();
-
-		const currLegend = {
-			width: legend ? $$.getLegendWidth() : 0,
-			height: legend ? $$.getLegendHeight() : 0
-		};
-
-		const legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height;
-		const xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x");
-
-		const subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ?
-			xAxisHeight : 30;
-		const subchartHeight = config.subchart_show && !hasArc ?
-			(config.subchart_size_height + subchartXAxisHeight) : 0;
-
-		!isInit && $$.setContainerSize();
-
-		// for main
-		state.margin = isRotated ? {
-			top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
-			bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-			left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
-		} : {
-			top: 4 + $$.getCurrentPaddingTop(), // for top tick text
-			right: hasArc ? 0 : $$.getCurrentPaddingRight(),
-			bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-			left: hasArc ? 0 : $$.getCurrentPaddingLeft()
-		};
-
-		// for subchart
-		state.margin2 = isRotated ? {
-			top: state.margin.top,
-			right: NaN,
-			bottom: 20 + legendHeightForBottom,
-			left: $$.state.rotatedPadding.left
-		} : {
-			top: state.currentHeight - subchartHeight - legendHeightForBottom,
-			right: NaN,
-			bottom: subchartXAxisHeight + legendHeightForBottom,
-			left: state.margin.left
-		};
-
-		// for legend
-		state.margin3 = {
-			top: 0,
-			right: NaN,
-			bottom: 0,
-			left: 0
-		};
-
-		$$.updateSizeForLegend && $$.updateSizeForLegend(currLegend);
-
-		state.width = state.currentWidth - state.margin.left - state.margin.right;
-		state.height = state.currentHeight - state.margin.top - state.margin.bottom;
-
-		if (state.width < 0) {
-			state.width = 0;
-		}
-
-		if (state.height < 0) {
-			state.height = 0;
-		}
-
-		state.width2 = isRotated ?
-			state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width;
-
-		state.height2 = isRotated ?
-			state.height : state.currentHeight - state.margin2.top - state.margin2.bottom;
-
-		if (state.width2 < 0) {
-			state.width2 = 0;
-		}
-
-		if (state.height2 < 0) {
-			state.height2 = 0;
-		}
-
-		// for arc
-		state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0);
-		state.arcHeight = state.height - (state.isLegendRight ? 0 : 10);
-
-		if ($$.hasType("gauge") && !config.gauge_fullCircle) {
-			state.arcHeight += state.height - $$.getGaugeLabelHeight();
-		}
-
-		$$.updateRadius && $$.updateRadius();
-
-		if (state.isLegendRight && hasArc) {
-			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
-		}
-	}
-
 	/**
 	 * Update targeted element with given data
 	 * @param {Object} targets Data object formatted as 'target'
@@ -906,7 +794,7 @@ export default class ChartInternal {
 			shape,
 			xv: $$.xv.bind($$)
 		});
-		const isTransition = (duration || flowFn) && $$.isTabVisible();
+		const isTransition = (duration || flowFn) && isTabVisible();
 
 		// redraw list
 		const redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
@@ -1019,10 +907,6 @@ export default class ChartInternal {
 		});
 	}
 
-	isTimeSeries() {
-		return this.config.axis_x_type === "timeseries";
-	}
-
 	isCategorized() {
 		return this.config.axis_x_type.indexOf("category") >= 0 || this.hasRadar;
 	}
@@ -1034,55 +918,12 @@ export default class ChartInternal {
 		return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
 	}
 
-	isTimeSeriesY() {
-		return this.config.axis_y_type === "timeseries";
+	isTimeSeries(id = "x") {
+		return this.config[`axis_${id}_type`] === "timeseries";
 	}
 
-	getTranslate(target, index = 0) {
-		const $$ = this;
-		const {config, state} = $$;
-		const isRotated = config.axis_rotated;
-		const hasGauge = $$.hasType("gauge");
-		let padding = 0;
-		let x;
-		let y;
-
-		if (index && /^(x|y2?)$/.test(target)) {
-			padding = $$.getAxisSize(target) * index;
-		}
-
-		if (target === "main") {
-			x = asHalfPixel(state.margin.left);
-			y = asHalfPixel(state.margin.top);
-		} else if (target === "context") {
-			x = asHalfPixel(state.margin2.left);
-			y = asHalfPixel(state.margin2.top);
-		} else if (target === "legend") {
-			x = state.margin3.left;
-			y = state.margin3.top + (hasGauge ? 10 : 0);
-		} else if (target === "x") {
-			x = isRotated ? -padding : 0;
-			y = isRotated ? 0 : state.height + padding;
-		} else if (target === "y") {
-			x = isRotated ? 0 : -padding;
-			y = isRotated ? state.height + padding : 0;
-		} else if (target === "y2") {
-			x = isRotated ? 0 : state.width + padding;
-			y = isRotated ? 1 - padding : 0;
-		} else if (target === "subX") {
-			x = 0;
-			y = isRotated ? 0 : state.height2;
-		} else if (target === "arc") {
-			x = state.arcWidth / 2;
-			y = state.arcHeight / 2;
-		} else if (target === "radar") {
-			const [width] = $$.getRadarSize();
-
-			x = state.width / 2 - width;
-			y = asHalfPixel(state.margin.top);
-		}
-
-		return `translate(${x}, ${y})`;
+	isTimeSeriesY() {
+		return this.isTimeSeries("y");
 	}
 
 	initialOpacity(d) {
@@ -1112,7 +953,7 @@ export default class ChartInternal {
 		let value = $$.getBaseValue(d);
 
 		if ($$.isTimeSeries()) {
-			value = $$.parseDate(value);
+			value = parseDate.call($$, value);
 		} else if ($$.isCategorized() && isString(value)) {
 			value = config.axis_x_categories.indexOf(value);
 		}
@@ -1130,133 +971,6 @@ export default class ChartInternal {
 
 	subxx(d) {
 		return d ? this.scale.subX(d.x) : null;
-	}
-
-	transformMain(withTransition, transitions) {
-		const $$ = this;
-		const {main} = $$.$el;
-		let xAxis;
-		let yAxis;
-		let y2Axis;
-
-		if (transitions && transitions.axisX) {
-			xAxis = transitions.axisX;
-		} else {
-			xAxis = main.select(`.${CLASS.axisX}`);
-
-			if (withTransition) {
-				xAxis = xAxis.transition();
-			}
-		}
-
-		if (transitions && transitions.axisY) {
-			yAxis = transitions.axisY;
-		} else {
-			yAxis = main.select(`.${CLASS.axisY}`);
-
-			if (withTransition) {
-				yAxis = yAxis.transition();
-			}
-		}
-
-		if (transitions && transitions.axisY2) {
-			y2Axis = transitions.axisY2;
-		} else {
-			y2Axis = main.select(`.${CLASS.axisY2}`);
-
-			if (withTransition) {
-				y2Axis = y2Axis.transition();
-			}
-		}
-
-		(withTransition ? main.transition() : main)
-			.attr("transform", $$.getTranslate("main"));
-
-		xAxis.attr("transform", $$.getTranslate("x"));
-		yAxis.attr("transform", $$.getTranslate("y"));
-		y2Axis.attr("transform", $$.getTranslate("y2"));
-
-		main.select(`.${CLASS.chartArcs}`)
-			.attr("transform", $$.getTranslate("arc"));
-	}
-
-	transformAll(withTransition, transitions) {
-		const $$ = this;
-		const {config, $el} = $$;
-
-		$$.transformMain(withTransition, transitions);
-
-		$$.hasAxis && config.subchart_show &&
-			$$.transformContext(withTransition, transitions);
-
-		$el.legend && $$.transformLegend(withTransition);
-	}
-
-	updateSvgSize() {
-		const $$ = this;
-		const {state, $el: {svg}} = $$;
-
-		svg
-			.attr("width", state.currentWidth)
-			.attr("height", state.currentHeight);
-
-		if ($$.hasAxis) {
-			const brush = svg.select(`.${CLASS.brush} .overlay`);
-			const brushSize = {width: 0, height: 0};
-
-			if (brush.size()) {
-				brushSize.width = +brush.attr("width");
-				brushSize.height = +brush.attr("height");
-			}
-
-			svg.selectAll([`#${state.clip.id}`, `#${state.clip.idGrid}`])
-				.select("rect")
-				.attr("width", state.width)
-				.attr("height", state.height);
-
-			svg.select(`#${state.clip.idXAxis}`)
-				.select("rect")
-				.attr("x", $$.getXAxisClipX.bind($$))
-				.attr("y", $$.getXAxisClipY.bind($$))
-				.attr("width", $$.getXAxisClipWidth.bind($$))
-				.attr("height", $$.getXAxisClipHeight.bind($$));
-
-			svg.select(`#${state.clip.idYAxis}`)
-				.select("rect")
-				.attr("x", $$.getYAxisClipX.bind($$))
-				.attr("y", $$.getYAxisClipY.bind($$))
-				.attr("width", $$.getYAxisClipWidth.bind($$))
-				.attr("height", $$.getYAxisClipHeight.bind($$));
-
-			state.clip.idSubchart && svg.select(`#${state.clip.idSubchart}`)
-				.select("rect")
-				.attr("width", state.width)
-				.attr("height", brushSize.height);
-
-			svg.select(`.${CLASS.zoomRect}`)
-				.attr("width", state.width)
-				.attr("height", state.height);
-		}
-	}
-
-	updateDimension(withoutAxis) {
-		const $$ = this;
-		const {config, $el: {axis}} = $$;
-
-		if ($$.hasAxis && !withoutAxis) {
-			if ($$.axis.x && config.axis_rotated) {
-				$$.axis.x.create(axis.x);
-				$$.axis.subX && $$.axis.subX.create(axis.subX);
-			} else {
-				$$.axis.y && $$.axis.y.create(axis.y);
-				$$.axis.y2 && $$.axis.y2.create(axis.y2);
-			}
-		}
-
-		// pass 'withoutAxis' param to not animate at the init rendering
-		$$.updateScales(withoutAxis);
-		$$.updateSvgSize();
-		$$.transformAll(false);
 	}
 
 	bindResize() {
@@ -1350,52 +1064,6 @@ export default class ChartInternal {
 		return f;
 	}
 
-	parseDate(date: Date | string | number): Date {
-		const $$ = this;
-		let parsedDate;
-
-		if (date instanceof Date) {
-			parsedDate = date;
-		} else if (isString(date)) {
-			parsedDate = $$.format.dataTime($$.config.data_xFormat)(date);
-		} else if (isNumber(date) && !isNaN(date)) {
-			parsedDate = new Date(+date);
-		}
-
-		if (!parsedDate || isNaN(+parsedDate)) {
-			console && console.error &&
-				console.error(`Failed to parse x '${date}' to Date object`);
-		}
-
-		return parsedDate;
-	}
-
-	isTabVisible() {
-		return !document.hidden;
-	}
-
-	convertInputType() {
-		const $$ = this;
-		const {config} = $$;
-		let isMobile = false;
-
-		// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-		if (/Mobi/.test(window.navigator.userAgent) && config.interaction_inputType_touch) {
-			// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-			const hasTouchPoints = window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0;
-
-			// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-			// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-			const hasTouch = ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch));
-
-			isMobile = hasTouchPoints || hasTouch;
-		}
-
-		const hasMouse = config.interaction_inputType_mouse && !isMobile ? ("onmouseover" in window) : false;
-
-		return (hasMouse && "mouse") || (isMobile && "touch") || null;
-	}
-
 	/**
 	 * Call plugin hook
 	 * @param {String} phase The lifecycle phase
@@ -1429,6 +1097,7 @@ extend(ChartInternal.prototype, [
 	text,
 	title,
 	tooltip,
+	transform,
 	type,
 	...moduleArc.internal,
 	...moduleAxis.internal

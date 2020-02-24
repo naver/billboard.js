@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, sortValue} from "../../module/util";
+import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, parseDate, sortValue} from "../../module/util";
 
 export default {
 	getYDomainMinMax(targets, type) {
@@ -181,7 +181,7 @@ export default {
 		const value = $$.config[`axis_x_${type}`];
 
 		return isDefined(value) ?
-			($$.isTimeSeries() ? $$.parseDate(value) : value) :
+			($$.isTimeSeries() ? parseDate.call($$, value) : value) :
 			getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
 	},
 

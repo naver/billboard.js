@@ -10,7 +10,7 @@ import {
 } from "d3-axis";
 import AxisRenderer from "./AxisRenderer";
 import CLASS from "../../config/classes";
-import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, sortValue} from "../../module/util";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, parseDate, sortValue} from "../../module/util";
 import ChartInternal from "../ChartInternal";
 
 export default class Axis {
@@ -233,7 +233,9 @@ export default class Axis {
 			.orient(orient);
 
 		if (isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
-			tickValues = tickValues.map(v => $$.parseDate(v));
+			const fn = parseDate.bind($$);
+
+			tickValues = tickValues.map(v => fn(v));
 		} else if (!isX && $$.isTimeSeriesY()) {
 			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
 			axis.ticks(config.axis_y_tick_time_value);

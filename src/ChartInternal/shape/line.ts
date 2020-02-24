@@ -11,7 +11,7 @@ import {
 	select as d3Select
 } from "d3-selection";
 import CLASS from "../../config/classes";
-import {getRandom, isArray, isDefined, isFunction, isUndefined, isValue} from "../../module/util";
+import {getRandom, isArray, isDefined, isFunction, isUndefined, isValue, parseDate} from "../../module/util";
 
 export default {
 	initLine() {
@@ -252,7 +252,7 @@ export default {
 		// Check start/end of regions
 		if (isDefined(_regions)) {
 			const getValue = (v: Date | any, def: number): Date | any => (
-				isUndefined(v) ? def : (isTimeSeries ? $$.parseDate(v) : v)
+				isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)
 			);
 
 			for (let i = 0, reg; (reg = _regions[i]); i++) {

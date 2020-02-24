@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {isDefined, isValue} from "../../module/util";
+import {isDefined, isTabVisible, isValue, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -67,7 +67,7 @@ export default {
 			data = $$.convertData(args);
 		}
 
-		if (!data || !$$.isTabVisible()) {
+		if (!data || !isTabVisible()) {
 			return;
 		}
 
@@ -160,7 +160,7 @@ export default {
 		// Update length to flow if needed
 		if (isDefined(args.to)) {
 			length = 0;
-			to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to;
+			to = $$.isTimeSeries() ? parseDate.call($$, args.to) : args.to;
 
 			baseTarget.values.forEach(v => {
 				v.x < to && length++;

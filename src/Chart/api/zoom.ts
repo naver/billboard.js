@@ -4,7 +4,7 @@
  */
 import {zoomIdentity as d3ZoomIdentity, zoomTransform as d3ZoomTransform} from "d3-zoom";
 import CLASS from "../../config/classes";
-import {callFn, extend, getMinMax, isDefined, isObject, isString} from "../../module/util";
+import {callFn, extend, getMinMax, isDefined, isObject, isString, parseDate} from "../../module/util";
 
 /**
  * Check if the given domain is within zoom range
@@ -47,7 +47,9 @@ const zoom = function(domainValue?: number[]) {
 		const isTimeSeries = $$.isTimeSeries();
 
 		if (isTimeSeries) {
-			domain = domain.map(x => $$.parseDate(x));
+			const fn = parseDate.bind($$);
+
+			domain = domain.map(x => fn(x));
 		}
 
 		if (config.subchart_show) {

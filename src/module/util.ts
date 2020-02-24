@@ -15,6 +15,7 @@ export {
 	callFn,
 	capitalize,
 	ceil10,
+	convertInputType,
 	diffDomain,
 	emulateEvent,
 	extend,
@@ -39,11 +40,13 @@ export {
 	isObject,
 	isObjectType,
 	isString,
+	isTabVisible,
 	isUndefined,
 	isValue,
 	mergeArray,
 	mergeObj,
 	notEmpty,
+	parseDate,
 	sanitise,
 	setTextValue,
 	sortValue,
@@ -485,4 +488,66 @@ function tplProcess(tpl: string, data: object): string {
 	}
 
 	return res;
+}
+
+/**
+ * Get parsed date value
+ * (It must be called in 'ChartInternal' context)
+ * @param {Date|String|Number} date Value of date to be parsed
+ * @return {Date}
+ * @private
+ */
+function parseDate(date: Date | string | number): Date {
+	let parsedDate;
+
+	if (date instanceof Date) {
+		parsedDate = date;
+	} else if (isString(date)) {
+		const {config, format} = this;
+
+		parsedDate = format.dataTime(config.data_xFormat)(date);
+	} else if (isNumber(date) && !isNaN(date)) {
+		parsedDate = new Date(+date);
+	}
+
+	if (!parsedDate || isNaN(+parsedDate)) {
+		console && console.error &&
+			console.error(`Failed to parse x '${date}' to Date object`);
+	}
+
+	return parsedDate;
+}
+
+/**
+ * Return if the current doc is visible or not
+ * @return {boolean}
+ * @private
+ */
+function isTabVisible(): boolean {
+	return !document.hidden;
+}
+
+/**
+ * Get the current input type
+ * @return {String} "mouse" | "touch" | null
+ * @private
+ */
+function convertInputType(mouse, touch): "mouse" | "touch" | null {
+	let isMobile = false;
+
+	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+	if (/Mobi/.test(window.navigator.userAgent) && touch) {
+		// Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+		const hasTouchPoints = window.navigator && "maxTouchPoints" in window.navigator && window.navigator.maxTouchPoints > 0;
+
+		// Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+		// On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+		const hasTouch = ("ontouchmove" in window || (window.DocumentTouch && document instanceof window.DocumentTouch));
+
+		isMobile = hasTouchPoints || hasTouch;
+	}
+
+	const hasMouse = mouse && !isMobile ? ("onmouseover" in window) : false;
+
+	return (hasMouse && "mouse") || (isMobile && "touch") || null;
 }

@@ -12,17 +12,31 @@ import {isArray, isValue} from "../../module/util";
 // Grid position and text anchor helpers
 const getGridTextAnchor = d => isValue(d.position) || "end";
 const getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
-const getGridTextX = (isX, width, height) => d => {
-	let x = isX ? 0 : width;
 
-	if (d.position === "start") {
-		x = isX ? -height : 0;
-	} else if (d.position === "middle") {
-		x = (isX ? -height : width) / 2;
+function getGridTextX(isX, width, height) {
+	return d => {
+		let x = isX ? 0 : width;
+
+		if (d.position === "start") {
+			x = isX ? -height : 0;
+		} else if (d.position === "middle") {
+			x = (isX ? -height : width) / 2;
+		}
+
+		return x;
+	};
+}
+
+function smoothLines(el, type) {
+	if (type === "grid") {
+		el.each(function() {
+			const g = d3Select(this);
+
+			["x1", "x2", "y1", "y2"]
+				.forEach(v => g.attr(v, Math.ceil(+g.attr(v))));
+		});
 	}
-
-	return x;
-};
+}
 
 export default {
 	initGrid() {
@@ -118,7 +132,7 @@ export default {
 			.attr("y1", isRotated ? 0 : pos)
 			.attr("y2", isRotated ? state.height : pos);
 
-		$$.smoothLines(grid.y, "grid");
+		smoothLines(grid.y, "grid");
 	},
 
 	updateGrid(duration) {
@@ -376,7 +390,7 @@ export default {
 					.forEach((v, i) => el.attr(v, xy[i]));
 			});
 
-		$$.smoothLines(focusEl, "grid");
+		smoothLines(focusEl, "grid");
 	},
 
 	hideGridFocus() {

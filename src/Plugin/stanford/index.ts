@@ -16,7 +16,7 @@ import Plugin from "../Plugin";
 import Options from "./Options";
 import Elements from "./Elements";
 import ColorScale from "./ColorScale";
-import {compareEpochs, isEmpty, isFunction, isString, pointInRegion} from "./util";
+import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} from "./util";
 
 /**
  * Stanford diagram plugin
@@ -182,7 +182,7 @@ export default class Stanford extends Plugin {
 		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
 
 		if ($$.isTimeSeries()) {
-			value = $$.parseDate(value);
+			value = parseDate.call($$, value);
 		} else if ($$.isCategorized() && isString(value)) {
 			value = $$.config.axis_x_categories.indexOf(d.value);
 		}

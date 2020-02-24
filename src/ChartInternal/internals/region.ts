@@ -4,7 +4,7 @@
  */
 import {select as d3Select} from "d3-selection"; // selection
 import CLASS from "../../config/classes";
-import {isValue} from "../../module/util";
+import {isValue, parseDate} from "../../module/util";
 
 export default {
 	initRegion() {
@@ -88,7 +88,7 @@ export default {
 			}
 		} else if ((isX ? !isRotated : isRotated) && key in d) {
 			currScale = scale.zoom || scale.x;
-			pos = currScale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
+			pos = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
 		}
 
 		return pos;
@@ -123,7 +123,7 @@ export default {
 			}
 		} else if ((isWidth ? !isRotated : isRotated) && key in d) {
 			currScale = scale.zoom || scale.x;
-			end = currScale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key]);
+			end = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
 		}
 
 		return end < start ? 0 : end - start;

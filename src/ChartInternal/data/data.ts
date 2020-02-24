@@ -4,20 +4,21 @@
  */
 import CLASS from "../../config/classes";
 import {
-    getUnique,
-    hasValue,
-    isArray,
-    isBoolean,
-    isDefined,
-    isFunction,
-    isNumber,
-    isObject,
-    isObjectType,
-    isString,
-    isUndefined,
-    isValue,
-    mergeArray,
-    notEmpty,
+	getUnique,
+	hasValue,
+	isArray,
+	isBoolean,
+	isDefined,
+	isFunction,
+	isNumber,
+	isObject,
+	isObjectType,
+	isString,
+	isUndefined,
+	isValue,
+	mergeArray,
+	notEmpty,
+	parseDate,
 	sortValue
 } from "../../module/util";
 
@@ -171,7 +172,9 @@ export default {
 		let x = $$.isCategorized() ? index : (rawX || index);
 
 		if ($$.isTimeSeries()) {
-			x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index));
+			const fn = parseDate.bind($$);
+
+			x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
 		} else if ($$.isCustomX() && !$$.isCategorized()) {
 			x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
 		}

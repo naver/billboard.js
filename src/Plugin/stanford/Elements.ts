@@ -4,7 +4,7 @@
  */
 // @ts-nocheck
 import CLASS from "./classes";
-import {getCentroid, isString} from "./util";
+import {getCentroid, isString, parseDate} from "./util";
 
 /**
  * Stanford diagram plugin element class
@@ -140,7 +140,7 @@ export default class Elements {
 		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
 
 		if ($$.isTimeSeries()) {
-			value = $$.parseDate(value);
+			value = parseDate.call($$, value);
 		} else if ($$.isCategorized() && isString(value)) {
 			value = $$.config.axis_x_categories.indexOf(d.value);
 		}

@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined} from "../../module/util";
+import {isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined, parseDate} from "../../module/util";
 
 export default {
 	/**
@@ -39,7 +39,7 @@ export default {
 				let i;
 				let val;
 
-				config.tooltip_init_x = $$.parseDate(config.tooltip_init_x);
+				config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x);
 
 				for (i = 0; (val = targets.values[i]); i++) {
 					if ((val.x - config.tooltip_init_x) === 0) {
