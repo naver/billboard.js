@@ -91,10 +91,10 @@ export default {
 
 		if (isValue(config.padding_left)) {
 			padding = config.padding_left;
-		} else if (isRotated) {
+		} else if (hasAxis && isRotated) {
 			padding = !config.axis_x_show ?
 				1 : Math.max(ceil10(axisWidth), 40);
-		} else if (!config.axis_y_show || config.axis_y_inner) { // && !config.axis_rotated
+		} else if (hasAxis && (!config.axis_y_show || config.axis_y_inner)) { // && !config.axis_rotated
 			padding = $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
 		} else {
 			padding = ceil10(axisWidth);
