@@ -21,16 +21,17 @@ export default {
 		const {config, $el} = $$;
 
 		$$.state.legendHasRendered = false;
-		$el.legend = $$.$el.svg.append("g");
 
 		if (config.legend_show) {
-			$el.legend.attr("transform", $$.getTranslate("legend"));
+			if (!config.legend_contents_bindto) {
+				$el.legend = $$.$el.svg.append("g")
+					.attr("transform", $$.getTranslate("legend"));
+			}
 
 			// MEMO: call here to update legend box and translate for all
 			// MEMO: translate will be updated by this, so transform not needed in updateLegend()
 			$$.updateLegend();
 		} else {
-			$$.$el.legend.style("visibility", "hidden");
 			$$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
 		}
 	},
@@ -257,9 +258,10 @@ export default {
 	 */
 	toggleFocusLegend(targetIds, focus) {
 		const $$ = this;
+		const {legend} = $$.$el;
 		const targetIdz = $$.mapToTargetIds(targetIds);
 
-		$$.$el.legend.selectAll(`.${CLASS.legendItem}`)
+		legend && legend.selectAll(`.${CLASS.legendItem}`)
 			.filter(id => targetIdz.indexOf(id) >= 0)
 			.classed(CLASS.legendItemFocused, focus)
 			.transition()
@@ -276,8 +278,9 @@ export default {
 	 */
 	revertLegend() {
 		const $$ = this;
+		const {legend} = $$.$el;
 
-		$$.$el.legend.selectAll(`.${CLASS.legendItem}`)
+		legend && legend.selectAll(`.${CLASS.legendItem}`)
 			.classed(CLASS.legendItemFocused, false)
 			.transition()
 			.duration(100)
@@ -293,17 +296,21 @@ export default {
 	 */
 	showLegend(targetIds) {
 		const $$ = this;
-		const {config, $el: {legend}} = $$;
+		const {config, $el} = $$;
 
 		if (!config.legend_show) {
 			config.legend_show = true;
-			legend.style("visibility", "visible");
+
+			$el.legend ?
+				$el.legend.style("visibility", "visible") :
+				$$.initLegend();
 
 			!$$.state.legendHasRendered && $$.updateLegend();
 		}
+
 		$$.removeHiddenLegendIds(targetIds);
 
-		legend.selectAll($$.selectorLegends(targetIds))
+		$el.legend.selectAll($$.selectorLegends(targetIds))
 			.style("visibility", "visible")
 			.transition()
 			.style("opacity", function() {
@@ -430,7 +437,7 @@ export default {
 	 */
 	updateLegendElement(targetIds, options) {
 		const $$ = this;
-		const {config, state} = $$;
+		const {config, state, $el} = $$;
 		const paddingTop = 4;
 		const paddingRight = 10;
 		const posMin = 10;
@@ -557,10 +564,8 @@ export default {
 
 		const pos = -200;
 
-		const {legend} = $$.$el;
-
 		// Define g for legend area
-		const l = legend.selectAll(`.${CLASS.legendItem}`)
+		const l = $el.legend.selectAll(`.${CLASS.legendItem}`)
 			.data(targetIdz)
 			.enter()
 			.append("g");
@@ -623,7 +628,7 @@ export default {
 		}
 
 		// Set background for inset legend
-		background = legend.select(`.${CLASS.legendBackground} rect`);
+		background = $el.legend.select(`.${CLASS.legendBackground} rect`);
 
 		if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
 			background = legend.insert("g", `.${CLASS.legendItem}`)
@@ -631,7 +636,7 @@ export default {
 				.append("rect");
 		}
 
-		const texts = legend.selectAll("text")
+		const texts = $el.legend.selectAll("text")
 			.data(targetIdz)
 			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id)) // MEMO: needed for update
 			.each(function(id, i) {
@@ -642,7 +647,7 @@ export default {
 			.attr("x", xForLegendText)
 			.attr("y", yForLegendText);
 
-		const rects = legend.selectAll(`rect.${CLASS.legendItemEvent}`)
+		const rects = $el.legend.selectAll(`rect.${CLASS.legendItemEvent}`)
 			.data(targetIdz);
 
 		(withTransition ? rects.transition() : rects)
@@ -653,7 +658,7 @@ export default {
 
 
 		if (usePoint) {
-			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
+			const tiles = $el.legend.selectAll(`.${CLASS.legendItemPoint}`)
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)
@@ -692,7 +697,7 @@ export default {
 						.attr("height", height);
 				});
 		} else {
-			const tiles = legend.selectAll(`line.${CLASS.legendItemTile}`)
+			const tiles = $el.legend.selectAll(`line.${CLASS.legendItemTile}`)
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)

@@ -7623,7 +7623,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         config = $$.config,
         $el = $$.$el;
-    $$.state.legendHasRendered = !1, $el.legend = $$.$el.svg.append("g"), config.legend_show ? ($el.legend.attr("transform", $$.getTranslate("legend")), $$.updateLegend()) : ($$.$el.legend.style("visibility", "hidden"), $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets));
+    $$.state.legendHasRendered = !1, config.legend_show ? (!config.legend_contents_bindto && ($el.legend = $$.$el.svg.append("g").attr("transform", $$.getTranslate("legend"))), $$.updateLegend()) : $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
   },
 
   /**
@@ -7817,8 +7817,9 @@ function getFormat($$, typeValue, v) {
    */
   toggleFocusLegend: function toggleFocusLegend(targetIds, focus) {
     var $$ = this,
+        legend = $$.$el.legend,
         targetIdz = $$.mapToTargetIds(targetIds);
-    $$.$el.legend.selectAll("." + config_classes.legendItem).filter(function (id) {
+    legend && legend.selectAll("." + config_classes.legendItem).filter(function (id) {
       return targetIdz.indexOf(id) >= 0;
     }).classed(config_classes.legendItemFocused, focus).transition().duration(100).style("opacity", function () {
       return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend).call($$, Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this));
@@ -7830,8 +7831,9 @@ function getFormat($$, typeValue, v) {
    * @private
    */
   revertLegend: function revertLegend() {
-    var $$ = this;
-    $$.$el.legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemFocused, !1).transition().duration(100).style("opacity", function () {
+    var $$ = this,
+        legend = $$.$el.legend;
+    legend && legend.selectAll("." + config_classes.legendItem).classed(config_classes.legendItemFocused, !1).transition().duration(100).style("opacity", function () {
       return $$.opacityForLegend(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this));
     });
   },
@@ -7844,8 +7846,8 @@ function getFormat($$, typeValue, v) {
   showLegend: function showLegend(targetIds) {
     var $$ = this,
         config = $$.config,
-        legend = $$.$el.legend;
-    config.legend_show || (config.legend_show = !0, legend.style("visibility", "visible"), !$$.state.legendHasRendered && $$.updateLegend()), $$.removeHiddenLegendIds(targetIds), legend.selectAll($$.selectorLegends(targetIds)).style("visibility", "visible").transition().style("opacity", function () {
+        $el = $$.$el;
+    config.legend_show || (config.legend_show = !0, $el.legend ? $el.legend.style("visibility", "visible") : $$.initLegend(), !$$.state.legendHasRendered && $$.updateLegend()), $$.removeHiddenLegendIds(targetIds), $el.legend.selectAll($$.selectorLegends(targetIds)).style("visibility", "visible").transition().style("opacity", function () {
       return $$.opacityForLegend(Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this));
     });
   },
@@ -7920,6 +7922,7 @@ function getFormat($$, typeValue, v) {
         $$ = this,
         config = $$.config,
         state = $$.state,
+        $el = $$.$el,
         posMin = 10,
         tileWidth = config.legend_item_tile_width + 5,
         maxWidth = 0,
@@ -7996,8 +7999,7 @@ function getFormat($$, typeValue, v) {
       return yForLegend(id, i) + 4;
     },
         pos = -200,
-        legend = $$.$el.legend,
-        l = legend.selectAll("." + config_classes.legendItem).data(targetIdz).enter().append("g");
+        l = $el.legend.selectAll("." + config_classes.legendItem).data(targetIdz).enter().append("g");
 
     $$.setLegendItem(l), l.append("text").text(function (id) {
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
@@ -8023,22 +8025,22 @@ function getFormat($$, typeValue, v) {
     } else l.append("line").attr("class", config_classes.legendItemTile).style("stroke", $$.color).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height); // Set background for inset legend
 
 
-    background = legend.select("." + config_classes.legendBackground + " rect"), state.isLegendInset && maxWidth > 0 && background.size() === 0 && (background = legend.insert("g", "." + config_classes.legendItem).attr("class", config_classes.legendBackground).append("rect"));
-    var texts = legend.selectAll("text").data(targetIdz).text(function (id) {
+    background = $el.legend.select("." + config_classes.legendBackground + " rect"), state.isLegendInset && maxWidth > 0 && background.size() === 0 && (background = legend.insert("g", "." + config_classes.legendItem).attr("class", config_classes.legendBackground).append("rect"));
+    var texts = $el.legend.selectAll("text").data(targetIdz).text(function (id) {
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
     }) // MEMO: needed for update
     .each(function (id, i) {
       updatePositions(this, id, i);
     });
     (withTransition ? texts.transition() : texts).attr("x", xForLegendText).attr("y", yForLegendText);
-    var rects = legend.selectAll("rect." + config_classes.legendItemEvent).data(targetIdz);
+    var rects = $el.legend.selectAll("rect." + config_classes.legendItemEvent).data(targetIdz);
 
     if ((withTransition ? rects.transition() : rects).attr("width", function (id) {
       return widths[id];
     }).attr("height", function (id) {
       return heights[id];
     }).attr("x", xForLegendRect).attr("y", yForLegendRect), usePoint) {
-      var tiles = legend.selectAll("." + config_classes.legendItemPoint).data(targetIdz);
+      var tiles = $el.legend.selectAll("." + config_classes.legendItemPoint).data(targetIdz);
       (withTransition ? tiles.transition() : tiles).each(function () {
         var radius,
             width,
@@ -8066,7 +8068,7 @@ function getFormat($$, typeValue, v) {
         }).attr("r", radius).attr("width", width).attr("height", height);
       });
     } else {
-      var _tiles = legend.selectAll("line." + config_classes.legendItemTile).data(targetIdz);
+      var _tiles = $el.legend.selectAll("line." + config_classes.legendItemTile).data(targetIdz);
 
       (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.levelColor ? function (id) {
         return $$.levelColor($$.cache.get(id).values[0].value);
@@ -10671,8 +10673,11 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
   },
   expandCirclesBars: function expandCirclesBars(index, id, reset) {
     var $$ = this,
-        config = $$.config;
-    config.point_focus_expand_enabled && $$.expandCircles(index, id, reset), $$.expandBars(index, id, reset);
+        config = $$.config,
+        _$$$$el = $$.$el,
+        bar = _$$$$el.bar,
+        circle = _$$$$el.circle;
+    circle && config.point_focus_expand_enabled && $$.expandCircles(index, id, reset), bar && $$.expandBars(index, id, reset);
   },
   selectRectForMultipleXs: function selectRectForMultipleXs(context) {
     var $$ = this,
@@ -10699,8 +10704,12 @@ var external_commonjs_d3_ease_commonjs2_d3_ease_amd_d3_ease_root_d3_ = __webpack
    * @private
    */
   unselectRect: function unselectRect() {
-    var $$ = this;
-    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), $$.hideTooltip(), $$._handleLinkedCharts(!1), $$.unexpandCircles(), $$.unexpandBars();
+    var $$ = this,
+        _$$$$el2 = $$.$el,
+        bar = _$$$$el2.bar,
+        circle = _$$$$el2.circle,
+        tooltip = _$$$$el2.tooltip;
+    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), tooltip && ($$.hideTooltip(), $$._handleLinkedCharts(!1)), circle && $$.unexpandCircles(), bar && $$.unexpandBars();
   },
 
   /**
@@ -11403,9 +11412,15 @@ function smoothLines(el, type) {
 }
 
 /* harmony default export */ var internals_grid = ({
+  hasGrid: function hasGrid() {
+    var config = this.config;
+    return ["x", "y"].some(function (v) {
+      return config["grid_" + v + "_show"] || config["grid_" + v + "_lines"].length;
+    });
+  },
   initGrid: function initGrid() {
     var $$ = this;
-    $$.initGridLines(), $$.initFocusGrid();
+    $$.hasGrid() && $$.initGridLines(), $$.initFocusGrid();
   },
   initGridLines: function initGridLines() {
     var $$ = this,
@@ -11668,7 +11683,7 @@ function smoothLines(el, type) {
     var $$ = this,
         config = $$.config,
         $el = $$.$el;
-    $el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
+    $el.region.main || $$.initRegion(), $el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
     // select <g> element
     var list = $el.main.select("." + config_classes.regions).selectAll("." + config_classes.region).data(config.regions);
     list.exit().transition().duration(duration).style("opacity", "0").remove(), list = list.enter().append("g").merge(list).attr("class", $$.classRegion.bind($$)), list.append("rect").style("fill-opacity", "0"), $el.region.list = list;
@@ -12103,8 +12118,8 @@ var external_commonjs_d3_shape_commonjs2_d3_shape_amd_d3_shape_root_d3_ = __webp
 
 /* harmony default export */ var ChartInternal_shape_line = ({
   initLine: function initLine() {
-    var $$ = this;
-    $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartLines);
+    var $el = this.$el;
+    $el.line = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartLines);
   },
   updateTargetsForLine: function updateTargetsForLine(targets) {
     var $$ = this,
@@ -14016,8 +14031,8 @@ function () {
     var main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
 
     // data.onmin/max callback
-    if ($el.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", config_classes.text + " " + config_classes.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-    .attr("dominant-baseline", "middle"), hasAxis && ($$.initRegion && $$.initRegion(), !config.clipPath && $$.axis.init()), main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path), $$.callPluginHook("$init"), hasAxis && ($$.initEventRect && $$.initEventRect(), $$.initGrid && $$.initGrid(), config.clipPath && $$.axis && $$.axis.init()), $$.initChartElements(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$.api), $$.setBackground(), $$.redraw({
+    if ($el.main = main, config.subchart_show && $$.initSubchart(), config.tooltip_show && $$.initTooltip(), config.title_text && $$.initTitle(), config.legend_show && $$.initLegend(), config.data_empty_label_text && main.append("text").attr("class", config_classes.text + " " + config_classes.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+    .attr("dominant-baseline", "middle"), hasAxis && (config.regions.length && $$.initRegion(), !config.clipPath && $$.axis.init()), main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path), $$.callPluginHook("$init"), hasAxis && ($$.initEventRect && $$.initEventRect(), $$.initGrid(), config.clipPath && $$.axis && $$.axis.init()), $$.initChartElements(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$.api), $$.setBackground(), $$.redraw({
       withTransition: !1,
       withTransform: !0,
       withUpdateXDomain: !0,
@@ -14138,7 +14153,7 @@ function () {
         durationForExit = wth.TransitionForExit ? duration : 0,
         durationForAxis = wth.TransitionForAxis ? duration : 0,
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
-    initializing && config.tooltip_init_show || state.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    initializing && config.tooltip_init_show || state.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   }
   /**
    * Generate redraw list
@@ -14210,8 +14225,9 @@ function () {
     options === void 0 && (options = {});
     var transitions,
         $$ = this,
-        config = $$.config;
-    options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), options.withLegend && config.legend_show || (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
+        config = $$.config,
+        state = $$.state;
+    options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), options.withLegend && config.legend_show || (state.hasAxis && (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0)), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
   }, _proto.redrawWithoutRescale = function redrawWithoutRescale() {
     this.redraw({
       withY: !1,

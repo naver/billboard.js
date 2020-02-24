@@ -20,6 +20,10 @@ export default {
 		const $$ = this;
 		const {config, $el} = $$;
 
+		if (!$el.region.main) {
+			$$.initRegion();
+		}
+
 		// hide if arc type
 		$el.region.main.style("visibility", $$.hasArcType() ? "hidden" : "visible");
 

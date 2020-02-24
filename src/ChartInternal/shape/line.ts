@@ -15,9 +15,9 @@ import {getRandom, isArray, isDefined, isFunction, isUndefined, isValue, parseDa
 
 export default {
 	initLine() {
-		const $$ = this;
+		const {$el} = this;
 
-		$$.$el.main.select(`.${CLASS.chart}`).append("g")
+		$el.line = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartLines);
 	},
 

@@ -39,10 +39,17 @@ function smoothLines(el, type) {
 }
 
 export default {
+	hasGrid() {
+		const {config} = this;
+
+		return ["x", "y"]
+			.some(v => config[`grid_${v}_show`] || config[`grid_${v}_lines`].length);
+	},
+
 	initGrid() {
 		const $$ = this;
 
-		$$.initGridLines();
+		$$.hasGrid() && $$.initGridLines();
 		$$.initFocusGrid();
 	},
 

@@ -325,12 +325,12 @@ export default {
 
 	expandCirclesBars(index, id, reset) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $el: {bar, circle}} = $$;
 
-		config.point_focus_expand_enabled &&
+		circle && config.point_focus_expand_enabled &&
 			$$.expandCircles(index, id, reset);
 
-		$$.expandBars(index, id, reset);
+		bar && $$.expandBars(index, id, reset);
 	},
 
 	selectRectForMultipleXs(context) {
@@ -388,13 +388,18 @@ export default {
 	 */
 	unselectRect() {
 		const $$ = this;
+		const {$el: {bar, circle, tooltip}} = $$;
 
 		$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
-		$$.hideTooltip();
-		$$._handleLinkedCharts(false);
-		$$.unexpandCircles();
-		$$.unexpandBars();
+
+		if (tooltip) {
+			$$.hideTooltip();
+			$$._handleLinkedCharts(false);
+		}
+
+		circle && $$.unexpandCircles();
+		bar && $$.unexpandBars();
 	},
 
 	/**

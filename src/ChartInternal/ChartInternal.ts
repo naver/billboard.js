@@ -411,9 +411,9 @@ export default class ChartInternal {
 		// initialize subchart when subchart show option is set
 		config.subchart_show && $$.initSubchart();
 
-		$$.initTooltip && $$.initTooltip();
-		$$.initLegend && $$.initLegend();
-		$$.initTitle && $$.initTitle();
+		config.tooltip_show && $$.initTooltip();
+		config.title_text && $$.initTitle();
+		config.legend_show && $$.initLegend();
 
 		// -- Main Region --
 
@@ -427,7 +427,7 @@ export default class ChartInternal {
 
 		if (hasAxis) {
 			// Regions
-			$$.initRegion && $$.initRegion();
+			config.regions.length && $$.initRegion();
 
 			// Add Axis here, when clipPath is 'false'
 			!config.clipPath && $$.axis.init();
@@ -444,7 +444,7 @@ export default class ChartInternal {
 			$$.initEventRect && $$.initEventRect();
 
 			// Grids
-			$$.initGrid && $$.initGrid();
+			$$.initGrid();
 
 			// if zoom privileged, insert rect to forefront
 			// if (config.zoom_enabled) {
@@ -721,10 +721,10 @@ export default class ChartInternal {
 				.style("display", targetsToShow.length ? "none" : null);
 
 			// grid
-			$$.updateGrid(duration);
+			$$.hasGrid() && $$.updateGrid(duration);
 
 			// rect for regions
-			$$.updateRegion(duration);
+			config.regions.length && $$.updateRegion(duration);
 
 			// bars
 			$$.hasType("bar") && $$.updateBar(durationForExit);
@@ -863,7 +863,7 @@ export default class ChartInternal {
 
 	updateAndRedraw(options = {}) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state} = $$;
 		let transitions;
 
 		// same with redraw
@@ -879,9 +879,11 @@ export default class ChartInternal {
 
 		// MEMO: called in updateLegend in redraw if withLegend
 		if (!(options.withLegend && config.legend_show)) {
-			transitions = $$.axis.generateTransitions(
-				options.withTransitionForAxis ? config.transition_duration : 0
-			);
+			if (state.hasAxis) {
+				transitions = $$.axis.generateTransitions(
+					options.withTransitionForAxis ? config.transition_duration : 0
+				);
+			}
 
 			// Update scales
 			$$.updateScales();
