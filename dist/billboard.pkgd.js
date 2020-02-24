@@ -17598,6 +17598,11 @@ var Store_state = function () {
     arcHeight: 0,
     currentWidth: 0,
     currentHeight: 0,
+    currentData: {
+      max: 0
+    },
+    hasAxis: !1,
+    hasRadar: !1,
     // legend
     isLegendRight: !1,
     isLegendInset: !1,
@@ -21677,6 +21682,56 @@ function tplProcess(tpl, data) {
   for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
 
   return res;
+}
+/**
+ * Get parsed date value
+ * (It must be called in 'ChartInternal' context)
+ * @param {Date|String|Number} date Value of date to be parsed
+ * @return {Date}
+ * @private
+ */
+
+
+function parseDate(date) {
+  var parsedDate;
+  if (date instanceof Date) parsedDate = date;else if (isString(date)) {
+    var config = this.config,
+        format = this.format;
+    parsedDate = format.dataTime(config.data_xFormat)(date);
+  } else isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date));
+  return (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
+}
+/**
+ * Return if the current doc is visible or not
+ * @return {boolean}
+ * @private
+ */
+
+
+function isTabVisible() {
+  return !browser_doc.hidden;
+}
+/**
+ * Get the current input type
+ * @return {String} "mouse" | "touch" | null
+ * @private
+ */
+
+
+function convertInputType(mouse, touch) {
+  var isMobile = !1; // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+
+  if (/Mobi/.test(win.navigator.userAgent) && touch) {
+    // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+    var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
+        hasTouch = "ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+    // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+
+    isMobile = hasTouchPoints || hasTouch;
+  }
+
+  var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
+  return hasMouse && "mouse" || isMobile && "touch" || null;
 }
 // CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
 /**
@@ -26080,9 +26135,17 @@ function () {
     });
     isX || (axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"]);
     var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.scale.zoom || scale).orient(orient);
-    return isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
-      return $$.parseDate(v);
-    }) : !isX && $$.isTimeSeriesY() && (axis.ticks(config.axis_y_tick_time_value), tickValues = null), tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
+
+    if (isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
+      var _fn = parseDate.bind($$);
+
+      tickValues = tickValues.map(function (v) {
+        return _fn(v);
+      });
+    } else !isX && $$.isTimeSeriesY() && ( // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+    axis.ticks(config.axis_y_tick_time_value), tickValues = null);
+
+    return tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
       return x + "%";
     }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config["axis_" + type + "_tick_count"] && axis.ticks(config["axis_" + type + "_tick_count"]), axis;
   }, _proto.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
@@ -26887,7 +26950,13 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   generateTargetX: function generateTargetX(rawX, id, index) {
     var $$ = this,
         x = $$.isCategorized() ? index : rawX || index;
-    return $$.isTimeSeries() ? x = rawX ? $$.parseDate(rawX) : $$.parseDate($$.getXValue(id, index)) : $$.isCustomX() && !$$.isCategorized() && (x = isValue(rawX) ? +rawX : $$.getXValue(id, index)), x;
+
+    if ($$.isTimeSeries()) {
+      var fn = parseDate.bind($$);
+      x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
+    } else $$.isCustomX() && !$$.isCategorized() && (x = isValue(rawX) ? +rawX : $$.getXValue(id, index));
+
+    return x;
   },
   updateXs: function updateXs(values) {
     values.length && (this.axis.xs = values.map(function (v) {
@@ -26911,8 +26980,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    */
   getBaseValue: function getBaseValue(data) {
     var $$ = this,
+        hasAxis = $$.state.hasAxis,
         value = data.value;
-    return value && $$.hasAxis && ($$.isAreaRangeType(data) ? value = $$.getAreaRangeData(data, "mid") : $$.isBubbleZType(data) && (value = $$.getBubbleZData(value, "y"))), value;
+    return value && hasAxis && ($$.isAreaRangeType(data) ? value = $$.getAreaRangeData(data, "mid") : $$.isBubbleZType(data) && (value = $$.getBubbleZData(value, "y"))), value;
   },
 
   /**
@@ -27106,6 +27176,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   },
   getValuesAsIdKeyed: function getValuesAsIdKeyed(targets) {
     var $$ = this,
+        hasAxis = $$.state.hasAxis,
         ys = {},
         isMultipleX = $$.isMultipleX(),
         xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets).map(function (v) {
@@ -27115,7 +27186,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       var data = [];
       t.values.forEach(function (v) {
         var value = v.value;
-        isArray(value) ? data.push.apply(data, value) : isObject(value) && "high" in value ? data.push.apply(data, Object.values(value)) : $$.isBubbleZType(v) ? data.push($$.hasAxis && $$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
+        isArray(value) ? data.push.apply(data, value) : isObject(value) && "high" in value ? data.push.apply(data, Object.values(value)) : $$.isBubbleZType(v) ? data.push(hasAxis && $$.getBubbleZData(value, "y")) : isMultipleX ? data[$$.getIndexByX(v.x, xs)] = value : data.push(value);
       }), ys[t.id] = data;
     }), ys;
   },
@@ -27390,7 +27461,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         }
 
         d.ratio = isNumber(d.value) && _total && _total[d.index] > 0 ? d.value / _total[d.index] : 0, ratio = d.ratio;
-      } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0) + "") / $$.maxValue * config.radar_size_ratio);
+      } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0) + "") / state.currentData.max * config.radar_size_ratio);
     }
 
     return asPercent && ratio ? ratio * 100 : ratio;
@@ -27937,7 +28008,7 @@ var colorizePattern = function (pattern, color, id) {
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
     var $$ = this,
         value = $$.config["axis_x_" + type];
-    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : getMinMax(type, targets.map(function (t) {
+    return isDefined(value) ? $$.isTimeSeries() ? parseDate.call($$, value) : value : getMinMax(type, targets.map(function (t) {
       return getMinMax(type, t.values.map(function (v) {
         return v.x;
       }));
@@ -28617,9 +28688,10 @@ function getFormat($$, typeValue, v) {
         width = _$$$state.width,
         height = _$$$state.height,
         width2 = _$$$state.width2,
-        height2 = _$$$state.height2;
+        height2 = _$$$state.height2,
+        hasAxis = _$$$state.hasAxis;
 
-    if ($$.hasAxis) {
+    if (hasAxis) {
       var isRotated = config.axis_rotated,
           min = {
         x: isRotated ? 1 : 0,
@@ -28706,10 +28778,11 @@ function getFormat($$, typeValue, v) {
     var padding,
         $$ = this,
         config = $$.config,
+        hasAxis = $$.state.hasAxis,
         isRotated = config.axis_rotated,
         axisId = isRotated ? "x" : "y",
         axesLen = config["axis_" + axisId + "_axes"].length,
-        axisWidth = $$.hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
+        axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
     return padding = isValue(config.padding_left) ? config.padding_left : isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : !config.axis_y_show || config.axis_y_inner ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
   },
   getCurrentPaddingRight: function getCurrentPaddingRight() {
@@ -28798,6 +28871,81 @@ function getFormat($$, typeValue, v) {
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.axis.x.tickInterval());
+  },
+  updateDimension: function updateDimension(withoutAxis) {
+    var $$ = this,
+        config = $$.config,
+        hasAxis = $$.state.hasAxis,
+        axis = $$.$el.axis;
+    // pass 'withoutAxis' param to not animate at the init rendering
+    hasAxis && !withoutAxis && ($$.axis.x && config.axis_rotated ? ($$.axis.x.create(axis.x), $$.axis.subX && $$.axis.subX.create(axis.subX)) : ($$.axis.y && $$.axis.y.create(axis.y), $$.axis.y2 && $$.axis.y2.create(axis.y2))), $$.updateScales(withoutAxis), $$.updateSvgSize(), $$.transformAll(!1);
+  },
+  updateSvgSize: function updateSvgSize() {
+    var $$ = this,
+        state = $$.state,
+        svg = $$.$el.svg;
+
+    if (svg.attr("width", state.currentWidth).attr("height", state.currentHeight), state.hasAxis) {
+      var brush = svg.select("." + config_classes.brush + " .overlay"),
+          brushSize = {
+        width: 0,
+        height: 0
+      };
+      brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), svg.selectAll(["#" + state.clip.id, "#" + state.clip.idGrid]).select("rect").attr("width", state.width).attr("height", state.height), svg.select("#" + state.clip.idXAxis).select("rect").attr("x", $$.getXAxisClipX.bind($$)).attr("y", $$.getXAxisClipY.bind($$)).attr("width", $$.getXAxisClipWidth.bind($$)).attr("height", $$.getXAxisClipHeight.bind($$)), svg.select("#" + state.clip.idYAxis).select("rect").attr("x", $$.getYAxisClipX.bind($$)).attr("y", $$.getYAxisClipY.bind($$)).attr("width", $$.getYAxisClipWidth.bind($$)).attr("height", $$.getYAxisClipHeight.bind($$)), state.clip.idSubchart && svg.select("#" + state.clip.idSubchart).select("rect").attr("width", state.width).attr("height", brushSize.height), svg.select("." + config_classes.zoomRect).attr("width", state.width).attr("height", state.height);
+    }
+  },
+
+  /**
+   * Update size values
+   * @param {Boolean} isInit If is called at initialization
+   * @private
+   */
+  updateSizes: function updateSizes(isInit) {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        legend = $$.$el.legend,
+        isRotated = config.axis_rotated,
+        hasArc = $$.hasArcType(),
+        currLegend = {
+      width: legend ? $$.getLegendWidth() : 0,
+      height: legend ? $$.getLegendHeight() : 0
+    },
+        legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height,
+        xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
+        subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
+        subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
+    // for main
+    // for subchart
+    // for legend
+    // for arc
+    isInit || $$.setContainerSize(), state.margin = isRotated ? {
+      top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
+      right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+      bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
+      left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
+    } : {
+      top: 4 + $$.getCurrentPaddingTop(),
+      // for top tick text
+      right: hasArc ? 0 : $$.getCurrentPaddingRight(),
+      bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
+      left: hasArc ? 0 : $$.getCurrentPaddingLeft()
+    }, state.margin2 = isRotated ? {
+      top: state.margin.top,
+      right: NaN,
+      bottom: 20 + legendHeightForBottom,
+      left: $$.state.rotatedPadding.left
+    } : {
+      top: state.currentHeight - subchartHeight - legendHeightForBottom,
+      right: NaN,
+      bottom: subchartXAxisHeight + legendHeightForBottom,
+      left: state.margin.left
+    }, state.margin3 = {
+      top: 0,
+      right: NaN,
+      bottom: 0,
+      left: 0
+    }, $$.updateSizeForLegend && $$.updateSizeForLegend(currLegend), state.width = state.currentWidth - state.margin.left - state.margin.right, state.height = state.currentHeight - state.margin.top - state.margin.bottom, state.width < 0 && (state.width = 0), state.height < 0 && (state.height = 0), state.width2 = isRotated ? state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width, state.height2 = isRotated ? state.height : state.currentHeight - state.margin2.top - state.margin2.bottom, state.width2 < 0 && (state.width2 = 0), state.height2 < 0 && (state.height2 = 0), state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (state.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1);
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
@@ -29183,7 +29331,7 @@ function getTextPos(pos, width) {
             val,
             targets = $$.data.targets[0];
 
-        for (config.tooltip_init_x = $$.parseDate(config.tooltip_init_x), i = 0; (val = targets.values[i]) && val.x - config.tooltip_init_x !== 0; i++);
+        for (config.tooltip_init_x = parseDate.call($$, config.tooltip_init_x), i = 0; (val = targets.values[i]) && val.x - config.tooltip_init_x !== 0; i++);
 
         config.tooltip_init_x = i;
       }
@@ -29489,6 +29637,48 @@ function getTextPos(pos, width) {
     }
   }
 });
+// CONCATENATED MODULE: ./src/ChartInternal/internals/transform.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+/* harmony default export */ var internals_transform = ({
+  getTranslate: function getTranslate(target, index) {
+    index === void 0 && (index = 0);
+    var x,
+        y,
+        $$ = this,
+        config = $$.config,
+        state = $$.state,
+        isRotated = config.axis_rotated,
+        hasGauge = $$.hasType("gauge"),
+        padding = 0;
+    if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel(state.margin.left), y = asHalfPixel(state.margin.top);else if (target === "context") x = asHalfPixel(state.margin2.left), y = asHalfPixel(state.margin2.top);else if (target === "legend") x = state.margin3.left, y = state.margin3.top + (hasGauge ? 10 : 0);else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : state.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? state.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : state.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subX") x = 0, y = isRotated ? 0 : state.height2;else if (target === "arc") x = state.arcWidth / 2, y = state.arcHeight / 2;else if (target === "radar") {
+      var _$$$getRadarSize = $$.getRadarSize(),
+          width = _$$$getRadarSize[0];
+
+      x = state.width / 2 - width, y = asHalfPixel(state.margin.top);
+    }
+    return "translate(" + x + ", " + y + ")";
+  },
+  transformMain: function transformMain(withTransition, transitions) {
+    var xAxis,
+        yAxis,
+        y2Axis,
+        $$ = this,
+        main = $$.$el.main;
+    transitions && transitions.axisX ? xAxis = transitions.axisX : (xAxis = main.select("." + config_classes.axisX), withTransition && (xAxis = xAxis.transition())), transitions && transitions.axisY ? yAxis = transitions.axisY : (yAxis = main.select("." + config_classes.axisY), withTransition && (yAxis = yAxis.transition())), transitions && transitions.axisY2 ? y2Axis = transitions.axisY2 : (y2Axis = main.select("." + config_classes.axisY2), withTransition && (y2Axis = y2Axis.transition())), (withTransition ? main.transition() : main).attr("transform", $$.getTranslate("main")), xAxis.attr("transform", $$.getTranslate("x")), yAxis.attr("transform", $$.getTranslate("y")), y2Axis.attr("transform", $$.getTranslate("y2")), main.select("." + config_classes.chartArcs).attr("transform", $$.getTranslate("arc"));
+  },
+  transformAll: function transformAll(withTransition, transitions) {
+    var $$ = this,
+        config = $$.config,
+        hasAxis = $$.state.hasAxis,
+        $el = $$.$el;
+    $$.transformMain(withTransition, transitions), hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions), $el.legend && $$.transformLegend(withTransition);
+  }
+});
 // CONCATENATED MODULE: ./src/config/const.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -29563,6 +29753,10 @@ var TYPES = {
     var id = isString(d) ? d : d.id,
         dataType = this.config.data_types[id];
     return isArray(type) ? type.indexOf(dataType) >= 0 : dataType === type;
+  },
+  hasPointType: function hasPointType() {
+    var $$ = this;
+    return $$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter");
   },
 
   /**
@@ -29898,7 +30092,7 @@ var api_axis_axis = {
         length = 0,
         tail = 0;
 
-    if ((args.json || args.rows || args.columns) && (data = $$.convertData(args)), data && $$.isTabVisible()) {
+    if ((args.json || args.rows || args.columns) && (data = $$.convertData(args)), data && isTabVisible()) {
       var notfoundIds = [],
           orgDataCount = $$.getMaxDataCount(),
           targets = $$.convertDataToTargets(data, !0);
@@ -29941,7 +30135,7 @@ var api_axis_axis = {
       // const dataCount = $$.getMaxDataCount();
       var baseTarget = $$.data.targets[0],
           baseValue = baseTarget.values[0];
-      isDefined(args.to) ? (length = 0, to = $$.isTimeSeries() ? $$.parseDate(args.to) : args.to, baseTarget.values.forEach(function (v) {
+      isDefined(args.to) ? (length = 0, to = $$.isTimeSeries() ? parseDate.call($$, args.to) : args.to, baseTarget.values.forEach(function (v) {
         v.x < to && length++;
       })) : isDefined(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && $$.isTimeSeries() && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)]) : (diff = $$.isTimeSeries() ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x]), domain && $$.updateXDomain(null, !0, !0, !1, domain), $$.updateTargets($$.data.targets), $$.redraw({
         flow: {
@@ -30818,9 +31012,14 @@ var zoom_zoom = function (domainValue) {
   if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
     var isTimeSeries = $$.isTimeSeries();
 
-    if (isTimeSeries && (domain = domain.map(function (x) {
-      return $$.parseDate(x);
-    })), config.subchart_show) {
+    if (isTimeSeries) {
+      var fn = parseDate.bind($$);
+      domain = domain.map(function (x) {
+        return fn(x);
+      });
+    }
+
+    if (config.subchart_show) {
       var xScale = scale.zoom || scale.x;
       $$.brush.getSelection().call($$.brush.move, [xScale(domain[0]), xScale(domain[1])]), resultDomain = domain;
     } else scale.x.domain(domain), scale.zoom = scale.x, $$.axis.x.scale(scale.zoom), resultDomain = scale.zoom.orgDomain();
@@ -31530,17 +31729,19 @@ util_extend(zoom_zoom, {
    * @private
    */
   initSubchart: function initSubchart() {
-    var $$ = this;
+    var $$ = this,
+        config = $$.config,
+        _$$$state = $$.state,
+        clip = _$$$state.clip,
+        hasAxis = _$$$state.hasAxis,
+        _$$$$el = $$.$el,
+        defs = _$$$$el.defs,
+        svg = _$$$$el.svg,
+        subchart = _$$$$el.subchart,
+        axis = _$$$$el.axis;
 
-    if ($$.hasAxis) {
-      var config = $$.config,
-          clip = $$.state.clip,
-          _$$$$el = $$.$el,
-          defs = _$$$$el.defs,
-          svg = _$$$$el.svg,
-          subchart = _$$$$el.subchart,
-          axis = _$$$$el.axis,
-          visibility = config.subchart_show ? "visible" : "hidden",
+    if (hasAxis) {
+      var visibility = config.subchart_show ? "visible" : "hidden",
           clipId = clip.id + "-subchart",
           clipPath = $$.getClipPath(clipId);
       clip.idSubchart = clipId, $$.appendClip(defs, clipId), $$.initBrush(), subchart.main = svg.append("g").attr("transform", $$.getTranslate("context"));
@@ -31711,9 +31912,13 @@ util_extend(zoom_zoom, {
         config = $$.config,
         scale = $$.scale,
         extent = config.axis_x_extent;
-    return extent && (isFunction(extent) ? extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX) : $$.isTimeSeries() && extent.every(isNaN) && (extent = extent.map(function (v) {
-      return scale.subX($$.parseDate(v));
-    }))), extent;
+    if (extent) if (isFunction(extent)) extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);else if ($$.isTimeSeries() && extent.every(isNaN)) {
+      var fn = parseDate.bind($$);
+      extent = extent.map(function (v) {
+        return scale.subX(fn(v));
+      });
+    }
+    return extent;
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/zoom.ts
@@ -32053,13 +32258,23 @@ var getGridTextAnchor = function (d) {
 },
     getGridTextDx = function (d) {
   return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
-},
-    getGridTextX = function (isX, width, height) {
+};
+
+function getGridTextX(isX, width, height) {
   return function (d) {
     var x = isX ? 0 : width;
     return d.position === "start" ? x = isX ? -height : 0 : d.position === "middle" && (x = (isX ? -height : width) / 2), x;
   };
-};
+}
+
+function smoothLines(el, type) {
+  type === "grid" && el.each(function () {
+    var g = src_select(this);
+    ["x1", "x2", "y1", "y2"].forEach(function (v) {
+      return g.attr(v, Math.ceil(+g.attr(v)));
+    });
+  });
+}
 
 /* harmony default export */ var internals_grid = ({
   initGrid: function initGrid() {
@@ -32122,7 +32337,7 @@ var getGridTextAnchor = function (d) {
       return Math.ceil($$.scale.y(d));
     };
 
-    grid.y = main.select("." + config_classes.ygrids).selectAll("." + config_classes.ygrid).data(gridValues), grid.y.exit().remove(), grid.y = grid.y.enter().append("line").attr("class", config_classes.ygrid).merge(grid.y), grid.y.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : state.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? state.height : pos), $$.smoothLines(grid.y, "grid");
+    grid.y = main.select("." + config_classes.ygrids).selectAll("." + config_classes.ygrid).data(gridValues), grid.y.exit().remove(), grid.y = grid.y.enter().append("line").attr("class", config_classes.ygrid).merge(grid.y), grid.y.attr("x1", isRotated ? pos : 0).attr("x2", isRotated ? pos : state.width).attr("y1", isRotated ? 0 : pos).attr("y2", isRotated ? state.height : pos), smoothLines(grid.y, "grid");
   },
   updateGrid: function updateGrid(duration) {
     var $$ = this,
@@ -32254,7 +32469,7 @@ var getGridTextAnchor = function (d) {
         ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
           return el.attr(v, xy[i]);
         });
-      }), $$.smoothLines(focusEl, "grid");
+      }), smoothLines(focusEl, "grid");
     }
   },
   hideGridFocus: function hideGridFocus() {
@@ -32350,7 +32565,7 @@ var getGridTextAnchor = function (d) {
         isX = type === "x",
         key = "start",
         pos = 0;
-    return d.axis === "y" || d.axis === "y2" ? (!isX && (key = "end"), (isX ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], pos = currScale(d[key]))) : (isX ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, pos = currScale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key])), pos;
+    return d.axis === "y" || d.axis === "y2" ? (!isX && (key = "end"), (isX ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], pos = currScale(d[key]))) : (isX ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, pos = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key])), pos;
   },
   regionX: function regionX(d) {
     return this.getRegionXY("x", d);
@@ -32369,7 +32584,7 @@ var getGridTextAnchor = function (d) {
         start = $$[isWidth ? "regionX" : "regionY"](d),
         key = "end",
         end = state[type];
-    return d.axis === "y" || d.axis === "y2" ? (!isWidth && (key = "start"), (isWidth ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], end = currScale(d[key]))) : (isWidth ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, end = currScale($$.isTimeSeries() ? $$.parseDate(d[key]) : d[key])), end < start ? 0 : end - start;
+    return d.axis === "y" || d.axis === "y2" ? (!isWidth && (key = "start"), (isWidth ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], end = currScale(d[key]))) : (isWidth ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, end = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key])), end < start ? 0 : end - start;
   },
   regionWidth: function regionWidth(d) {
     return this.getRegionSize("width", d);
@@ -32540,10 +32755,12 @@ var getGridTextAnchor = function (d) {
   updateTargetsForBar: function updateTargetsForBar(targets) {
     var $$ = this,
         config = $$.config,
+        $el = $$.$el,
         classChartBar = $$.classChartBar.bind($$),
         classBars = $$.classBars.bind($$),
-        classFocus = $$.classFocus.bind($$),
-        mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data(targets).attr("class", function (d) {
+        classFocus = $$.classFocus.bind($$);
+    $el.bar || $$.initBar();
+    var mainBarUpdate = $$.$el.main.select("." + config_classes.chartBars).selectAll("." + config_classes.chartBar).data(targets).attr("class", function (d) {
       return classChartBar(d) + classFocus(d);
     }),
         mainBarEnter = mainBarUpdate.enter().append("g").attr("class", classChartBar).style("opacity", "0").style("pointer-events", "none");
@@ -34571,18 +34788,17 @@ function ascending_sum(series) {
   },
   updateTargetsForLine: function updateTargetsForLine(targets) {
     var $$ = this,
-        main = $$.$el.main,
+        $el = $$.$el,
         classChartLine = $$.classChartLine.bind($$),
         classLines = $$.classLines.bind($$),
-        classAreas = $$.classAreas.bind($$),
-        classFocus = $$.classFocus.bind($$),
-        mainLineUpdate = main.select("." + config_classes.chartLines).selectAll("." + config_classes.chartLine).data(targets).attr("class", function (d) {
+        classFocus = $$.classFocus.bind($$);
+    $el.line || $$.initLine();
+    var mainLineUpdate = $el.main.select("." + config_classes.chartLines).selectAll("." + config_classes.chartLine).data(targets).attr("class", function (d) {
       return classChartLine(d) + classFocus(d);
     }),
         mainLineEnter = mainLineUpdate.enter().append("g").attr("class", classChartLine).style("opacity", "0").style("pointer-events", "none");
     // Lines for each data
-    // Areas
-    mainLineEnter.append("g").attr("class", classLines), mainLineEnter.append("g").attr("class", classAreas);
+    mainLineEnter.append("g").attr("class", classLines), $$.hasTypeOf("Area") && mainLineEnter.append("g").attr("class", $$.classAreas.bind($$));
   },
   updateLine: function updateLine(durationForExit) {
     var $$ = this,
@@ -34699,7 +34915,7 @@ function ascending_sum(series) {
     // Check start/end of regions
     if (isDefined(_regions)) {
       var getValue = function (v, def) {
-        return isUndefined(v) ? def : isTimeSeries ? $$.parseDate(v) : v;
+        return isUndefined(v) ? def : isTimeSeries ? parseDate.call($$, v) : v;
       };
 
       for (var reg, i = 0; reg = _regions[i]; i++) {
@@ -34892,6 +35108,11 @@ function ascending_sum(series) {
 
 
 
+
+var getTransitionName = function () {
+  return getRandom();
+};
+
 /* harmony default export */ var shape_point = ({
   hasValidPointType: function hasValidPointType(type) {
     return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
@@ -34912,16 +35133,17 @@ function ascending_sum(series) {
     var $$ = this,
         config = $$.config,
         main = $$.$el.main;
-    $$.point = $$.generatePoint(), config.point_show && main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartCircles), $$.updateTargetForCircle();
+    $$.point = $$.generatePoint(), config.point_show && main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartCircles);
   },
   updateTargetForCircle: function updateTargetForCircle(t) {
     var $$ = this,
         config = $$.config,
         data = $$.data,
-        main = $$.$el.main,
+        $el = $$.$el,
         targets = t || data.targets,
-        classCircles = $$.classCircles.bind($$),
-        mainCircle = main.select("." + config_classes.chartCircles).style("pointer-events", "none").selectAll("." + config_classes.circles).data(targets).attr("class", classCircles),
+        classCircles = $$.classCircles.bind($$);
+    !$el.circle && config.point_show && $$.initCircle();
+    var mainCircle = $el.main.select("." + config_classes.chartCircles).style("pointer-events", "none").selectAll("." + config_classes.circles).data(targets).attr("class", classCircles),
         mainCircleEnter = mainCircle.enter();
     // Circles for each data point on lines
     // Update date for selected circles
@@ -34930,7 +35152,7 @@ function ascending_sum(series) {
     }), mainCircleEnter.append("g").attr("class", classCircles).style("cursor", function (d) {
       return config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null;
     }), targets.forEach(function (t) {
-      main.selectAll("." + config_classes.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + config_classes.selectedCircle).each(function (d) {
+      $el.main.selectAll("." + config_classes.selectedCircles + $$.getTargetSelectorSuffix(t.id)).selectAll("" + config_classes.selectedCircle).each(function (d) {
         d.value = t.values[d.index].value;
       });
     });
@@ -35104,9 +35326,6 @@ function ascending_sum(series) {
       };
     };
   },
-  getTransitionName: function getTransitionName() {
-    return getRandom();
-  },
   custom: {
     create: function create(element, id, sizeFn, fillStyleFn) {
       return element.append("use").attr("xlink:href", "#" + id).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
@@ -35122,8 +35341,8 @@ function ascending_sum(series) {
           mainCircles = element;
 
       if (withTransition) {
-        var transitionName = $$.getTransitionName();
-        flow && mainCircles.attr("x", xPosFn2), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+        var transitionName = getTransitionName();
+        flow && mainCircles.attr("x", xPosFn2), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition(getTransitionName());
       }
 
       return mainCircles.attr("x", xPosFn2).attr("y", function yPosFn2(d) {
@@ -35141,8 +35360,8 @@ function ascending_sum(series) {
           mainCircles = element;
 
       if ($$.hasType("bubble") && mainCircles.attr("r", $$.pointR.bind($$)), withTransition) {
-        var transitionName = $$.getTransitionName();
-        flow && mainCircles.attr("cx", xPosFn), mainCircles.attr("cx") && (mainCircles = mainCircles.transition(transitionName)), selectedCircles.transition($$.getTransitionName());
+        var transitionName = getTransitionName();
+        flow && mainCircles.attr("cx", xPosFn), mainCircles.attr("cx") && (mainCircles = mainCircles.transition(transitionName)), selectedCircles.transition(getTransitionName());
       }
 
       return mainCircles.attr("cx", xPosFn).attr("cy", yPosFn).style("fill", fillStyleFn);
@@ -35166,8 +35385,8 @@ function ascending_sum(series) {
           mainCircles = element;
 
       if (withTransition) {
-        var transitionName = $$.getTransitionName();
-        flow && mainCircles.attr("x", rectXPosFn), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition($$.getTransitionName());
+        var transitionName = getTransitionName();
+        flow && mainCircles.attr("x", rectXPosFn), mainCircles = mainCircles.transition(transitionName), selectedCircles.transition(getTransitionName());
       }
 
       return mainCircles.attr("x", rectXPosFn).attr("y", function rectYPosFn(d) {
@@ -35186,6 +35405,46 @@ function ascending_sum(series) {
 
 
 /* harmony default export */ var shape_shape = ({
+  /**
+   * Get the shape draw function
+   * @return {Object}
+   * @private
+   */
+  getDrawShape: function getDrawShape() {
+    var $$ = this,
+        isRotated = $$.config.axis_rotated,
+        hasRadar = $$.state.hasRadar,
+        shape = {
+      type: {},
+      indices: {},
+      pos: {}
+    };
+
+    // setup drawer - MEMO: these must be called after axis updated
+    if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+      var indices = $$.getShapeIndices($$.isLineType);
+
+      if (shape.indices.line = indices, shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, !1) : undefined, $$.hasTypeOf("Area")) {
+        var _indices = $$.getShapeIndices($$.isAreaType);
+
+        shape.indices.area = _indices, shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(_indices, !1) : undefined;
+      }
+    }
+
+    if ($$.hasType("bar")) {
+      var _indices2 = $$.getShapeIndices($$.isBarType);
+
+      shape.indices.bar = _indices2, shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(_indices2) : undefined;
+    }
+
+    return (!$$.hasArcType() || hasRadar) && (shape.pos = {
+      xForText: $$.generateXYForText(shape.indices, !0),
+      yForText: $$.generateXYForText(shape.indices, !1),
+      // generate circle x/y functions depending on updated params
+      cx: (hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX).bind($$),
+      cy: (hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY).bind($$)
+    }), shape;
+  },
   getShapeIndices: function getShapeIndices(typeFilter) {
     var $$ = this,
         config = $$.config,
@@ -35939,8 +36198,9 @@ var radar_cacheKey = "$radarPoints";
 /* harmony default export */ var shape_radar = ({
   initRadar: function initRadar() {
     var $$ = this,
-        config = $$.config;
-    $$.hasType("radar") && ($$.radars = $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $$.radars.levels = $$.radars.append("g").attr("class", config_classes.levels), $$.radars.axes = $$.radars.append("g").attr("class", config_classes.axis), $$.radars.shapes = $$.radars.append("g").attr("class", config_classes.shapes), $$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value);
+        config = $$.config,
+        currentData = $$.state.currentData;
+    $$.hasType("radar") && ($$.radars = $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $$.radars.levels = $$.radars.append("g").attr("class", config_classes.levels), $$.radars.axes = $$.radars.append("g").attr("class", config_classes.axis), $$.radars.shapes = $$.radars.append("g").attr("class", config_classes.shapes), currentData.max = config.radar_axis_max || $$.getMinMaxData().max[0].value);
   },
   getRadarSize: function getRadarSize() {
     var $$ = this,
@@ -36012,6 +36272,7 @@ var radar_cacheKey = "$radarPoints";
   updateRadarLevel: function updateRadarLevel() {
     var $$ = this,
         config = $$.config,
+        state = $$.state,
         _$$$getRadarSize3 = $$.getRadarSize(),
         width = _$$$getRadarSize3[0],
         height = _$$$getRadarSize3[1],
@@ -36041,7 +36302,7 @@ var radar_cacheKey = "$radarPoints";
     levelEnter.append("polygon").style("visibility", config.radar_level_show ? null : "hidden"), showText && (radarLevels.select("text").empty() && radarLevels.append("text").attr("dx", "-.5em").attr("dy", "-.7em").style("text-anchor", "end").text(function () {
       return levelTextFormat(0);
     }), levelEnter.append("text").attr("dx", "-.5em").style("text-anchor", "end").text(function (d) {
-      return levelTextFormat($$.maxValue / levelData.length * (d + 1));
+      return levelTextFormat(state.currentData.max / levelData.length * (d + 1));
     })), levelEnter.merge(level).attr("transform", function (d) {
       return "translate(" + (width - levelRatio[d]) + ", " + (height - levelRatio[d]) + ")";
     }).selectAll("polygon").attr("points", function (d) {
@@ -36215,6 +36476,7 @@ var radar_cacheKey = "$radarPoints";
 
 
 
+
 /**
  * Internal chart class.
  * - Note: Instantiated internally, not exposed for public.
@@ -36322,7 +36584,7 @@ function () {
       // defaultAxisTimeFormat
       axisTime: null // axisTimeFormat
 
-    }), _defineProperty(this, "hasAxis", void 0), _defineProperty(this, "hasRadar", void 0);
+    });
     var $$ = this;
     $$.api = api, $$.config = new Options(), $$.cache = new Cache_Cache(), $$.state = new Store_state();
   }
@@ -36337,8 +36599,9 @@ function () {
   }, _proto.init = function init() {
     var $$ = this,
         config = $$.config,
+        state = $$.state,
         $el = $$.$el;
-    $$.hasAxis = !$$.hasArcType(), $$.hasRadar = !$$.hasAxis && $$.hasType("radar"), $$.initParams();
+    state.hasAxis = !$$.hasArcType(), state.hasRadar = !state.hasAxis && $$.hasType("radar"), $$.initParams();
     var bindto = {
       element: config.bindto,
       classname: "bb"
@@ -36377,7 +36640,7 @@ function () {
         state = $$.state,
         isRotated = config.axis_rotated;
 
-    if (state.datetimeId = "bb-" + +new Date(), $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), ($$.hasAxis || $$.hasRadar) && ($$.point = $$.generatePoint()), $$.hasAxis) {
+    if (state.datetimeId = "bb-" + +new Date(), $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.hasPointType() && ($$.point = $$.generatePoint()), state.hasAxis) {
       $$.initClip(), format.extraLineClasses = $$.generateExtraLineClass(), format.dataTime = config.data_xLocaltime ? timeParse : utcParse, format.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
       var isDragZoom = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
 
@@ -36391,14 +36654,12 @@ function () {
       };
     }
 
-    state.isLegendRight = config.legend_position === "right", state.isLegendInset = config.legend_position === "inset", state.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", state.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30, state.inputType = $$.convertInputType();
+    state.isLegendRight = config.legend_position === "right", state.isLegendInset = config.legend_position === "inset", state.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", state.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30, state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
   }, _proto.initWithData = function initWithData(data) {
     var $$ = this,
         config = $$.config,
         state = $$.state,
         $el = $$.$el,
-        hasAxis = $$.hasAxis,
-        hasRadar = $$.hasRadar,
         _$$$scale2 = $$.scale,
         x = _$$$scale2.x,
         y = _$$$scale2.y,
@@ -36406,9 +36667,10 @@ function () {
         subX = _$$$scale2.subX,
         subY = _$$$scale2.subY,
         subY2 = _$$$scale2.subY2,
-        org = $$.org;
+        org = $$.org,
+        hasAxis = state.hasAxis;
 
-    if ($$.hasAxis && ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0), x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
+    if (hasAxis && ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0), x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
       var isTouch = state.inputType === "touch";
       $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
         return callFn(config.onover, $$.api);
@@ -36417,19 +36679,22 @@ function () {
       });
     }
 
-    config.svg_classname && $el.svg.attr("class", config.svg_classname), $el.defs = $el.svg.append("defs"), $$.hasAxis && ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
+    config.svg_classname && $el.svg.attr("class", config.svg_classname);
+    // Define defs
+    var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
+    (hasAxis || hasColorPatterns) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
       $$.appendClip($el.defs, state.clip[v]);
-    }), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+    }), hasColorPatterns && $$.patterns.forEach(function (p) {
       return $el.defs.append(function () {
         return p.node;
       });
-    }), $$.updateSvgSize();
+    })), $$.updateSvgSize();
     // Define regions
     var main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
 
     // data.onmin/max callback
     if ($el.main = main, config.subchart_show && $$.initSubchart(), $$.initTooltip && $$.initTooltip(), $$.initLegend && $$.initLegend(), $$.initTitle && $$.initTitle(), config.data_empty_label_text && main.append("text").attr("class", config_classes.text + " " + config_classes.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-    .attr("dominant-baseline", "middle"), $$.hasAxis && ($$.initRegion && $$.initRegion(), !config.clipPath && $$.axis.init()), main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path), $$.callPluginHook("$init"), hasAxis && ($$.initEventRect && $$.initEventRect(), $$.initGrid && $$.initGrid(), main.insert("rect", config.zoom_privileged ? null : "g." + config_classes.regions).attr("class", config_classes.zoomRect).attr("width", $$.state.width).attr("height", $$.state.height).style("opacity", "0").on("dblclick.zoom", null), config.clipPath && $$.axis && $$.axis.init()), $$.initChartElements(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$.api), $$.setBackground(), config.point_show && (hasAxis || hasRadar) && $$.initCircle(), $$.redraw({
+    .attr("dominant-baseline", "middle"), hasAxis && ($$.initRegion && $$.initRegion(), !config.clipPath && $$.axis.init()), main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path), $$.callPluginHook("$init"), hasAxis && ($$.initEventRect && $$.initEventRect(), $$.initGrid && $$.initGrid(), config.clipPath && $$.axis && $$.axis.init()), $$.initChartElements(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$.api), $$.setBackground(), $$.redraw({
       withTransition: !1,
       withTransform: !0,
       withUpdateXDomain: !0,
@@ -36445,10 +36710,11 @@ function () {
     $$.bindResize(), $$.api.element = $el.chart.node(), state.rendered = !0;
   }, _proto.initChartElements = function initChartElements() {
     var $$ = this,
-        hasAxis = $$.hasAxis,
-        hasRadar = $$.hasRadar,
+        _$$$state = $$.state,
+        hasAxis = _$$$state.hasAxis,
+        hasRadar = _$$$state.hasRadar,
         types = [];
-    hasAxis ? types.push("Bar", "Bubble", "Line") : hasRadar ? types.push("Radar") : types.push("Arc", "Gauge", "Pie"), types.forEach(function (v) {
+    hasAxis ? ($$.hasType("bar") && types.push("Bar"), $$.hasType("bubble") && types.push("Bubble"), $$.hasTypeOf("Line") && types.push("Line")) : (!hasRadar && types.push("Arc", "Pie"), $$.hasType("gauge") ? types.push("Gauge") : hasRadar && types.push("Radar")), types.forEach(function (v) {
       $$["init" + v]();
     }), notEmpty($$.config.data_labels) && $$.initText();
   }, _proto.setChartElements = function setChartElements() {
@@ -36490,61 +36756,6 @@ function () {
       var element = svg.select("." + config_classes[$$.hasArcType() ? "chart" : "regions"]).insert(bg.imgUrl ? "image" : "rect", ":first-child");
       bg.imgUrl ? element.attr("href", bg.imgUrl) : bg.color && element.style("fill", bg.color), element.attr("class", bg.class || null).attr("width", "100%").attr("height", "100%");
     }
-  }, _proto.smoothLines = function smoothLines(el, type) {
-    type === "grid" && el.each(function () {
-      var g = src_select(this);
-      ["x1", "x2", "y1", "y2"].forEach(function (v) {
-        return g.attr(v, Math.ceil(+g.attr(v)));
-      });
-    });
-  }
-  /**
-   * Update size values
-   * @param {Boolean} isInit If is called at initialization
-   * @private
-   */
-  , _proto.updateSizes = function updateSizes(isInit) {
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        legend = $$.$el.legend,
-        isRotated = config.axis_rotated,
-        hasArc = $$.hasArcType(),
-        currLegend = {
-      width: legend ? $$.getLegendWidth() : 0,
-      height: legend ? $$.getLegendHeight() : 0
-    },
-        legendHeightForBottom = state.isLegendRight || state.isLegendInset ? 0 : currLegend.height,
-        xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
-        subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
-        subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
-    isInit || $$.setContainerSize(), state.margin = isRotated ? {
-      top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
-      right: hasArc ? 0 : $$.getCurrentPaddingRight(),
-      bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-      left: subchartHeight + (hasArc ? 0 : $$.getCurrentPaddingLeft())
-    } : {
-      top: 4 + $$.getCurrentPaddingTop(),
-      // for top tick text
-      right: hasArc ? 0 : $$.getCurrentPaddingRight(),
-      bottom: xAxisHeight + subchartHeight + legendHeightForBottom + $$.getCurrentPaddingBottom(),
-      left: hasArc ? 0 : $$.getCurrentPaddingLeft()
-    }, state.margin2 = isRotated ? {
-      top: state.margin.top,
-      right: NaN,
-      bottom: 20 + legendHeightForBottom,
-      left: $$.state.rotatedPadding.left
-    } : {
-      top: state.currentHeight - subchartHeight - legendHeightForBottom,
-      right: NaN,
-      bottom: subchartXAxisHeight + legendHeightForBottom,
-      left: state.margin.left
-    }, state.margin3 = {
-      top: 0,
-      right: NaN,
-      bottom: 0,
-      left: 0
-    }, $$.updateSizeForLegend && $$.updateSizeForLegend(currLegend), state.width = state.currentWidth - state.margin.left - state.margin.right, state.height = state.currentHeight - state.margin.top - state.margin.bottom, state.width < 0 && (state.width = 0), state.height < 0 && (state.height = 0), state.width2 = isRotated ? state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width, state.height2 = isRotated ? state.height : state.currentHeight - state.margin2.top - state.margin2.bottom, state.width2 < 0 && (state.width2 = 0), state.height2 < 0 && (state.height2 = 0), state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (state.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1);
   }
   /**
    * Update targeted element with given data
@@ -36553,9 +36764,10 @@ function () {
    */
   , _proto.updateTargets = function updateTargets(targets) {
     var $$ = this,
-        hasAxis = $$.hasAxis,
-        hasRadar = $$.hasRadar;
-    $$.updateTargetsForText(targets), (hasAxis || hasRadar) && $$.updateTargetForCircle(), (hasAxis || hasRadar) && $$.updateTargetForCircle(), hasAxis ? ($$.updateTargetsForBar(targets), $$.updateTargetsForLine(targets), $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets)) : $$.hasArcType(targets) && (hasRadar ? $$.updateTargetsForRadar(targets) : $$.updateTargetsForArc(targets)), $$.showTargets();
+        _$$$state2 = $$.state,
+        hasAxis = _$$$state2.hasAxis,
+        hasRadar = _$$$state2.hasRadar;
+    $$.updateTargetsForText(targets), ($$.hasPointType() || hasRadar) && $$.updateTargetForCircle(), hasAxis ? ($$.hasType("bar") && $$.updateTargetsForBar(targets), $$.hasTypeOf("Line") && $$.updateTargetsForLine(targets), $$.updateTargetsForSubchart && $$.updateTargetsForSubchart(targets)) : $$.hasArcType(targets) && (hasRadar ? $$.updateTargetsForRadar(targets) : $$.updateTargetsForArc(targets)), $$.showTargets();
   }
   /**
    * Display targeted elements
@@ -36564,8 +36776,8 @@ function () {
   , _proto.showTargets = function showTargets() {
     var $$ = this,
         config = $$.config,
-        $el = $$.$el;
-    $el.svg.selectAll("." + config_classes.target).filter(function (d) {
+        svg = $$.$el.svg;
+    svg.selectAll("." + config_classes.target).filter(function (d) {
       return $$.isTargetToShow(d.id);
     }).transition().duration(config.transition_duration).style("opacity", "1");
   }, _proto.getWithOption = function getWithOption(options) {
@@ -36603,7 +36815,7 @@ function () {
         durationForExit = wth.TransitionForExit ? duration : 0,
         durationForAxis = wth.TransitionForAxis ? duration : 0,
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
-    initializing && config.tooltip_init_show || state.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), ($$.hasAxis || $$.hasRadar) && ($$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit)), $$.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    initializing && config.tooltip_init_show || state.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   }
   /**
    * Generate redraw list
@@ -36618,7 +36830,7 @@ function () {
         config = $$.config,
         state = $$.state,
         shape = $$.getDrawShape();
-    $$.hasAxis && config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
+    state.hasAxis && config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
     // generate flow
     var flowFn = flow && $$.generateFlow({
       targets: targets,
@@ -36627,7 +36839,7 @@ function () {
       shape: shape,
       xv: $$.xv.bind($$)
     }),
-        isTransition = (duration || flowFn) && $$.isTabVisible(),
+        isTransition = (duration || flowFn) && isTabVisible(),
         redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
         afterRedraw = flow || config.onrendered ? function () {
       flowFn && flowFn(), callFn(config.onrendered, $$.api);
@@ -36649,51 +36861,12 @@ function () {
     $$.mapToIds($$.data.targets).forEach(function (id) {
       state.withoutFadeIn[id] = !0;
     });
-  }
-  /**
-   * Get the shape draw function
-   * @return {Object}
-   * @private
-   */
-  , _proto.getDrawShape = function getDrawShape() {
-    var $$ = this,
-        isRotated = $$.config.axis_rotated,
-        hasRadar = $$.hasRadar,
-        shape = {
-      type: {},
-      indices: {},
-      pos: {}
-    };
-
-    // setup drawer - MEMO: these must be called after axis updated
-    if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
-      var indices = $$.getShapeIndices($$.isLineType);
-
-      if (shape.indices.line = indices, shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, !1) : undefined, $$.hasTypeOf("Area")) {
-        var _indices = $$.getShapeIndices($$.isAreaType);
-
-        shape.indices.area = _indices, shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(_indices, !1) : undefined;
-      }
-    }
-
-    if ($$.hasType("bar")) {
-      var _indices2 = $$.getShapeIndices($$.isBarType);
-
-      shape.indices.bar = _indices2, shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(_indices2) : undefined;
-    }
-
-    return ($$.hasAxis || hasRadar) && (shape.pos = {
-      xForText: $$.generateXYForText(shape.indices, !0),
-      yForText: $$.generateXYForText(shape.indices, !1),
-      // generate circle x/y functions depending on updated params
-      cx: (hasRadar ? $$.radarCircleX : isRotated ? $$.circleY : $$.circleX).bind($$),
-      cy: (hasRadar ? $$.radarCircleY : isRotated ? $$.circleX : $$.circleY).bind($$)
-    }), shape;
   }, _proto.getRedrawList = function getRedrawList(shape, flow, flowFn, isTransition) {
     var $$ = this,
         config = $$.config,
-        hasAxis = $$.hasAxis,
-        hasRadar = $$.hasRadar,
+        _$$$state3 = $$.state,
+        hasAxis = _$$$state3.hasAxis,
+        hasRadar = _$$$state3.hasRadar,
         _shape$pos = shape.pos,
         cx = _shape$pos.cx,
         cy = _shape$pos.cy,
@@ -36706,10 +36879,10 @@ function () {
           area = _shape$type.area,
           bar = _shape$type.bar,
           line = _shape$type.line;
-      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && (list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition))), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
     }
 
-    return (hasAxis || hasRadar) && (notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), list.push($$.redrawCircle(cx, cy, isTransition, flowFn))), list;
+    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
   }, _proto.updateAndRedraw = function updateAndRedraw(options) {
     options === void 0 && (options = {});
     var transitions,
@@ -36723,33 +36896,16 @@ function () {
       withEventRect: !1,
       withTransitionForAxis: !1
     });
-  }, _proto.isTimeSeries = function isTimeSeries() {
-    return this.config.axis_x_type === "timeseries";
   }, _proto.isCategorized = function isCategorized() {
-    return this.config.axis_x_type.indexOf("category") >= 0 || this.hasRadar;
+    return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
   }, _proto.isCustomX = function isCustomX() {
     var $$ = this,
         config = $$.config;
     return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+  }, _proto.isTimeSeries = function isTimeSeries(id) {
+    return id === void 0 && (id = "x"), this.config["axis_" + id + "_type"] === "timeseries";
   }, _proto.isTimeSeriesY = function isTimeSeriesY() {
-    return this.config.axis_y_type === "timeseries";
-  }, _proto.getTranslate = function getTranslate(target, index) {
-    index === void 0 && (index = 0);
-    var x,
-        y,
-        $$ = this,
-        config = $$.config,
-        state = $$.state,
-        isRotated = config.axis_rotated,
-        hasGauge = $$.hasType("gauge"),
-        padding = 0;
-    if (index && /^(x|y2?)$/.test(target) && (padding = $$.getAxisSize(target) * index), target === "main") x = asHalfPixel(state.margin.left), y = asHalfPixel(state.margin.top);else if (target === "context") x = asHalfPixel(state.margin2.left), y = asHalfPixel(state.margin2.top);else if (target === "legend") x = state.margin3.left, y = state.margin3.top + (hasGauge ? 10 : 0);else if (target === "x") x = isRotated ? -padding : 0, y = isRotated ? 0 : state.height + padding;else if (target === "y") x = isRotated ? 0 : -padding, y = isRotated ? state.height + padding : 0;else if (target === "y2") x = isRotated ? 0 : state.width + padding, y = isRotated ? 1 - padding : 0;else if (target === "subX") x = 0, y = isRotated ? 0 : state.height2;else if (target === "arc") x = state.arcWidth / 2, y = state.arcHeight / 2;else if (target === "radar") {
-      var _$$$getRadarSize = $$.getRadarSize(),
-          width = _$$$getRadarSize[0];
-
-      x = state.width / 2 - width, y = asHalfPixel(state.margin.top);
-    }
-    return "translate(" + x + ", " + y + ")";
+    return this.isTimeSeries("y");
   }, _proto.initialOpacity = function initialOpacity(d) {
     var withoutFadeIn = this.state.withoutFadeIn;
     return this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? "1" : "0";
@@ -36772,7 +36928,7 @@ function () {
         config = $$.config,
         x = $$.scale.x,
         value = $$.getBaseValue(d);
-    return $$.isTimeSeries() ? value = $$.parseDate(value) : $$.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(value)), Math.ceil(x(value));
+    return $$.isTimeSeries() ? value = parseDate.call($$, value) : $$.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(value)), Math.ceil(x(value));
   }, _proto.yv = function yv(d) {
     var $$ = this,
         _$$$scale4 = $$.scale,
@@ -36782,36 +36938,6 @@ function () {
     return Math.ceil(yScale($$.getBaseValue(d)));
   }, _proto.subxx = function subxx(d) {
     return d ? this.scale.subX(d.x) : null;
-  }, _proto.transformMain = function transformMain(withTransition, transitions) {
-    var xAxis,
-        yAxis,
-        y2Axis,
-        $$ = this,
-        main = $$.$el.main;
-    transitions && transitions.axisX ? xAxis = transitions.axisX : (xAxis = main.select("." + config_classes.axisX), withTransition && (xAxis = xAxis.transition())), transitions && transitions.axisY ? yAxis = transitions.axisY : (yAxis = main.select("." + config_classes.axisY), withTransition && (yAxis = yAxis.transition())), transitions && transitions.axisY2 ? y2Axis = transitions.axisY2 : (y2Axis = main.select("." + config_classes.axisY2), withTransition && (y2Axis = y2Axis.transition())), (withTransition ? main.transition() : main).attr("transform", $$.getTranslate("main")), xAxis.attr("transform", $$.getTranslate("x")), yAxis.attr("transform", $$.getTranslate("y")), y2Axis.attr("transform", $$.getTranslate("y2")), main.select("." + config_classes.chartArcs).attr("transform", $$.getTranslate("arc"));
-  }, _proto.transformAll = function transformAll(withTransition, transitions) {
-    var $$ = this,
-        config = $$.config,
-        $el = $$.$el;
-    $$.transformMain(withTransition, transitions), $$.hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions), $el.legend && $$.transformLegend(withTransition);
-  }, _proto.updateSvgSize = function updateSvgSize() {
-    var $$ = this,
-        state = $$.state,
-        svg = $$.$el.svg;
-
-    if (svg.attr("width", state.currentWidth).attr("height", state.currentHeight), $$.hasAxis) {
-      var brush = svg.select("." + config_classes.brush + " .overlay"),
-          brushSize = {
-        width: 0,
-        height: 0
-      };
-      brush.size() && (brushSize.width = +brush.attr("width"), brushSize.height = +brush.attr("height")), svg.selectAll(["#" + state.clip.id, "#" + state.clip.idGrid]).select("rect").attr("width", state.width).attr("height", state.height), svg.select("#" + state.clip.idXAxis).select("rect").attr("x", $$.getXAxisClipX.bind($$)).attr("y", $$.getXAxisClipY.bind($$)).attr("width", $$.getXAxisClipWidth.bind($$)).attr("height", $$.getXAxisClipHeight.bind($$)), svg.select("#" + state.clip.idYAxis).select("rect").attr("x", $$.getYAxisClipX.bind($$)).attr("y", $$.getYAxisClipY.bind($$)).attr("width", $$.getYAxisClipWidth.bind($$)).attr("height", $$.getYAxisClipHeight.bind($$)), state.clip.idSubchart && svg.select("#" + state.clip.idSubchart).select("rect").attr("width", state.width).attr("height", brushSize.height), svg.select("." + config_classes.zoomRect).attr("width", state.width).attr("height", state.height);
-    }
-  }, _proto.updateDimension = function updateDimension(withoutAxis) {
-    var $$ = this,
-        config = $$.config,
-        axis = $$.$el.axis;
-    $$.hasAxis && !withoutAxis && ($$.axis.x && config.axis_rotated ? ($$.axis.x.create(axis.x), $$.axis.subX && $$.axis.subX.create(axis.subX)) : ($$.axis.y && $$.axis.y.create(axis.y), $$.axis.y2 && $$.axis.y2.create(axis.y2))), $$.updateScales(withoutAxis), $$.updateSvgSize(), $$.transformAll(!1);
   }, _proto.bindResize = function bindResize() {
     var $$ = this,
         config = $$.config;
@@ -36873,29 +36999,6 @@ function () {
     return f.add = function (t) {
       isArray(t) ? transitionsToWait = transitionsToWait.concat(t) : transitionsToWait.push(t);
     }, f;
-  }, _proto.parseDate = function parseDate(date) {
-    var parsedDate,
-        $$ = this;
-    return date instanceof Date ? parsedDate = date : isString(date) ? parsedDate = $$.format.dataTime($$.config.data_xFormat)(date) : isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date)), (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
-  }, _proto.isTabVisible = function isTabVisible() {
-    return !browser_doc.hidden;
-  }, _proto.convertInputType = function convertInputType() {
-    var $$ = this,
-        config = $$.config,
-        isMobile = !1;
-
-    // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
-    if (/Mobi/.test(win.navigator.userAgent) && config.interaction_inputType_touch) {
-      // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
-      var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
-          hasTouch = "ontouchmove" in win || win.DocumentTouch && browser_doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
-      // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
-
-      isMobile = hasTouchPoints || hasTouch;
-    }
-
-    var hasMouse = config.interaction_inputType_mouse && !isMobile && "onmouseover" in win;
-    return hasMouse && "mouse" || isMobile && "touch" || null;
   }
   /**
    * Call plugin hook
@@ -36913,7 +37016,7 @@ function () {
 
 
 util_extend(ChartInternal_ChartInternal.prototype, [// common
-data_convert, ChartInternal_data_data, data_load, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_type].concat(resolver_arc.internal, resolver_axis.internal));
+data_convert, ChartInternal_data_data, data_load, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(resolver_arc.internal, resolver_axis.internal));
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -37386,7 +37489,7 @@ function nodeToSvgDataUrl(node, size) {
         state = $$.state,
         targetIds = $$.mapToTargetIds(targetIdsValue),
         candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-    this.revert(), this.defocus(), candidates.classed(config_classes.focused, !0).classed(config_classes.defocused, !1), $$.hasArcType() && !$$.hasRadar && ($$.expandArc(targetIds), $$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, "." + config_classes.gaugeValue)), $$.toggleFocusLegend(targetIds, !0), state.focusedTargetIds = targetIds, state.defocusedTargetIds = state.defocusedTargetIds.filter(function (id) {
+    this.revert(), this.defocus(), candidates.classed(config_classes.focused, !0).classed(config_classes.defocused, !1), $$.hasArcType() && !state.hasRadar && ($$.expandArc(targetIds), $$.hasType("gauge") && $$.markOverlapped(targetIdsValue, $$, "." + config_classes.gaugeValue)), $$.toggleFocusLegend(targetIds, !0), state.focusedTargetIds = targetIds, state.defocusedTargetIds = state.defocusedTargetIds.filter(function (id) {
       return targetIds.indexOf(id) < 0;
     });
   },

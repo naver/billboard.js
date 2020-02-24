@@ -668,6 +668,7 @@ var classes = __webpack_require__(10);
 /* unused harmony export callFn */
 /* unused harmony export capitalize */
 /* unused harmony export ceil10 */
+/* unused harmony export convertInputType */
 /* unused harmony export diffDomain */
 /* unused harmony export emulateEvent */
 /* unused harmony export extend */
@@ -692,11 +693,13 @@ var classes = __webpack_require__(10);
 /* unused harmony export isObject */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "d", function() { return isObjectType; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "e", function() { return isString; });
+/* unused harmony export isTabVisible */
 /* unused harmony export isUndefined */
 /* unused harmony export isValue */
 /* unused harmony export mergeArray */
 /* unused harmony export mergeObj */
 /* unused harmony export notEmpty */
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "f", function() { return parseDate; });
 /* unused harmony export sanitise */
 /* unused harmony export setTextValue */
 /* unused harmony export sortValue */
@@ -1127,6 +1130,56 @@ function tplProcess(tpl, data) {
   for (var x in data) res = res.replace(new RegExp("{=" + x + "}", "g"), data[x]);
 
   return res;
+}
+/**
+ * Get parsed date value
+ * (It must be called in 'ChartInternal' context)
+ * @param {Date|String|Number} date Value of date to be parsed
+ * @return {Date}
+ * @private
+ */
+
+
+function parseDate(date) {
+  var parsedDate;
+  if (date instanceof Date) parsedDate = date;else if (isString(date)) {
+    var config = this.config,
+        format = this.format;
+    parsedDate = format.dataTime(config.data_xFormat)(date);
+  } else isNumber(date) && !isNaN(date) && (parsedDate = new Date(+date));
+  return (!parsedDate || isNaN(+parsedDate)) && console && console.error && console.error("Failed to parse x '" + date + "' to Date object"), parsedDate;
+}
+/**
+ * Return if the current doc is visible or not
+ * @return {boolean}
+ * @private
+ */
+
+
+function isTabVisible() {
+  return !doc.hidden;
+}
+/**
+ * Get the current input type
+ * @return {String} "mouse" | "touch" | null
+ * @private
+ */
+
+
+function convertInputType(mouse, touch) {
+  var isMobile = !1; // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop
+
+  if (/Mobi/.test(win.navigator.userAgent) && touch) {
+    // Some Edge desktop return true: https://developer.microsoft.com/en-us/microsoft-edge/platform/issues/20417074/
+    var hasTouchPoints = win.navigator && "maxTouchPoints" in win.navigator && win.navigator.maxTouchPoints > 0,
+        hasTouch = "ontouchmove" in win || win.DocumentTouch && doc instanceof win.DocumentTouch; // Ref: https://github.com/Modernizr/Modernizr/blob/master/feature-detects/touchevents.js
+    // On IE11 with IE9 emulation mode, ('ontouchstart' in window) is returning true
+
+    isMobile = hasTouchPoints || hasTouch;
+  }
+
+  var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
+  return hasMouse && "mouse" || isMobile && "touch" || null;
 }
 
 /***/ })

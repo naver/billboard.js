@@ -4,26 +4,7 @@
  * @ignore
  */
 
-import {isEmpty, isFunction, isString} from "../../module/util";
-
-// function isEmpty(){};
-// function isFunction(){};
-// const isString = v => {};
-
-// const isFunction = (v: any): boolean => typeof v === "function";
-// function isString(v: any): boolean {
-// 	return typeof v === "string";
-// }
-// const isObjectType = (v: any): boolean => typeof v === "object";
-// const isUndefined = (v: any): boolean => typeof v === "undefined";
-// const isNumber = (v: any): boolean => typeof v === "number";
-
-// function isEmpty(o: any): boolean {
-// 	return isUndefined(o) || o === null ||
-// 	(isString(o) && o.length === 0) ||
-// 	(isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0) ||
-// 	(isNumber(o) && isNaN(o))
-// }
+import {isEmpty, isFunction, isString, parseDate} from "../../module/util";
 
 function pointInRegion(point, region) { // thanks to: http://bl.ocks.org/bycoffe/5575904
 	// ray-casting algorithm based on
@@ -109,5 +90,6 @@ export {
 	isEmpty,
 	isFunction,
 	isString,
+	parseDate,
 	pointInRegion
 };
