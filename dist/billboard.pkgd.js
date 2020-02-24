@@ -28137,7 +28137,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         config = $$.config,
         $el = $$.$el;
-    $$.state.legendHasRendered = !1, config.legend_show ? (!config.legend_contents_bindto && ($el.legend = $$.$el.svg.append("g").attr("transform", $$.getTranslate("legend"))), $$.updateLegend()) : $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
+    $$.legendItemTextBox = {}, $$.state.legendHasRendered = !1, config.legend_show ? (!config.legend_contents_bindto && ($el.legend = $$.$el.svg.append("g").attr("transform", $$.getTranslate("legend"))), $$.updateLegend()) : $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
   },
 
   /**
@@ -28386,7 +28386,7 @@ function getFormat($$, typeValue, v) {
   getLegendItemTextBox: function getLegendItemTextBox(id, textElement) {
     var $$ = this,
         cache = $$.cache,
-        cacheKey = "$legendItemTextBox";
+        cacheKey = "legendItemTextBox";
 
     if (id) {
       var data = cache.get(cacheKey);
@@ -29049,8 +29049,9 @@ function getFormat($$, typeValue, v) {
         base = element.node ? element.node() : element;
     /text/i.test(base.tagName) || (base = base.querySelector("text"));
     var text = base.textContent,
-        cacheKey = "$" + text.replace(/\W/g, "_"),
-        rect = $$.cache.get(cacheKey);
+        cacheKey = "textRect-" + text.replace(/\W/g, "_"),
+        rect = $$.cache.get(cacheKey); // do not prefix w/'$', to not be resetted cache in .load() call
+
     return rect || ($$.$el.svg.append("text").style("visibility", "hidden").style("font", src_select(base).style("font")).classed(className, !0).text(text).call(function (v) {
       rect = getBoundingRect(v.node());
     }).remove(), $$.cache.add(cacheKey, rect)), rect;

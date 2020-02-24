@@ -139,7 +139,9 @@ export default {
 		}
 
 		const text = base.textContent;
-		const cacheKey = `$${text.replace(/\W/g, "_")}`;
+
+		// do not prefix w/'$', to not be resetted cache in .load() call
+		const cacheKey = `textRect-${text.replace(/\W/g, "_")}`;
 		let rect = $$.cache.get(cacheKey);
 
 		if (!rect) {

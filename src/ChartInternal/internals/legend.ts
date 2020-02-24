@@ -20,6 +20,7 @@ export default {
 		const $$ = this;
 		const {config, $el} = $$;
 
+		$$.legendItemTextBox = {};
 		$$.state.legendHasRendered = false;
 
 		if (config.legend_show) {
@@ -346,7 +347,9 @@ export default {
 	getLegendItemTextBox(id?: string, textElement?) {
 		const $$ = this;
 		const {cache} = $$;
-		const cacheKey = "$legendItemTextBox";
+
+		// do not prefix w/'$', to not be resetted cache in .load() call
+		const cacheKey = "legendItemTextBox";
 
 		if (id) {
 			let data = cache.get(cacheKey);
