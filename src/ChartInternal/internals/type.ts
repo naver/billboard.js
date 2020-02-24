@@ -78,6 +78,12 @@ export default {
 			type.indexOf(dataType) >= 0 : dataType === type;
 	},
 
+	hasPointType() {
+		const $$ = this;
+
+		return $$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter");
+	},
+
 	/**
 	 * Check if contains arc types chart
 	 * @param {Object} targets

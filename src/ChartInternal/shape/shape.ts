@@ -27,6 +27,53 @@ import CLASS from "../../config/classes";
 import {getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../module/util";
 
 export default {
+	/**
+	 * Get the shape draw function
+	 * @return {Object}
+	 * @private
+	 */
+	getDrawShape() {
+		const $$ = this;
+		const isRotated = $$.config.axis_rotated;
+		const {hasRadar} = $$;
+		const shape = {type: {}, indices: {}, pos: {}};
+
+		// setup drawer - MEMO: these must be called after axis updated
+		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+			const indices = $$.getShapeIndices($$.isLineType);
+
+			shape.indices.line = indices;
+			shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
+
+			if ($$.hasTypeOf("Area")) {
+				const indices = $$.getShapeIndices($$.isAreaType);
+
+				shape.indices.area = indices;
+				shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices, false) : undefined;
+			}
+		}
+
+		if ($$.hasType("bar")) {
+			const indices = $$.getShapeIndices($$.isBarType);
+
+			shape.indices.bar = indices;
+			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
+		}
+
+		if (!$$.hasArcType() || hasRadar) {
+			shape.pos = {
+				xForText: $$.generateXYForText(shape.indices, true),
+				yForText: $$.generateXYForText(shape.indices, false),
+
+				// generate circle x/y functions depending on updated params
+				cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
+				cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
+			};
+		}
+
+		return shape;
+	},
+
 	getShapeIndices(typeFilter) {
 		const $$ = this;
 		const {config} = $$;

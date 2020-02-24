@@ -23,13 +23,16 @@ export default {
 
 	updateTargetsForLine(targets) {
 		const $$ = this;
-		const {$el: {main}} = $$;
+		const {$el} = $$;
 		const classChartLine = $$.classChartLine.bind($$);
 		const classLines = $$.classLines.bind($$);
-		const classAreas = $$.classAreas.bind($$);
 		const classFocus = $$.classFocus.bind($$);
 
-		const mainLineUpdate = main.select(`.${CLASS.chartLines}`)
+		if (!$el.line) {
+			$$.initLine();
+		}
+
+		const mainLineUpdate = $el.main.select(`.${CLASS.chartLines}`)
 			.selectAll(`.${CLASS.chartLine}`)
 			.data(targets)
 			.attr("class", d => classChartLine(d) + classFocus(d));
@@ -44,8 +47,10 @@ export default {
 			.attr("class", classLines);
 
 		// Areas
-		mainLineEnter.append("g")
-			.attr("class", classAreas);
+		if ($$.hasTypeOf("Area")) {
+			mainLineEnter.append("g")
+				.attr("class", $$.classAreas.bind($$));
+		}
 
 		// MEMO: can not keep same color...
 		// mainLineUpdate.exit().remove();

@@ -261,7 +261,7 @@ export default class ChartInternal {
 		$$.levelColor = $$.generateLevelColor();
 
 		//@TODO:Axis & Radar
-		if ($$.hasAxis || $$.hasRadar) {
+		if ($$.hasPointType()) {
 			$$.point = $$.generatePoint();
 		}
 
@@ -308,7 +308,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const {
 			config, state, $el,
-			hasAxis, hasRadar,
+			hasAxis,
 			scale: {
 				x, y, y2, subX, subY, subY2
 			},
@@ -384,17 +384,21 @@ export default class ChartInternal {
 		config.svg_classname && $el.svg.attr("class", config.svg_classname);
 
 		// Define defs
-		$el.defs = $el.svg.append("defs");
+		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if ($$.hasAxis) {
-			["id", "idXAxis", "idYAxis", "idGrid"].forEach(v => {
-				$$.appendClip($el.defs, state.clip[v]);
-			});
-		}
+		if ($$.hasAxis || hasColorPatterns) {
+			$el.defs = $el.svg.append("defs");
 
-		// set color patterns
-		if (isFunction(config.color_tiles) && $$.patterns) {
-			$$.patterns.forEach(p => $el.defs.append(() => p.node));
+			if ($$.hasAxis) {
+				["id", "idXAxis", "idYAxis", "idGrid"].forEach(v => {
+					$$.appendClip($el.defs, state.clip[v]);
+				});
+			}
+
+			// set color patterns
+			if (hasColorPatterns) {
+				$$.patterns.forEach(p => $el.defs.append(() => p.node));
+			}
 		}
 
 		$$.updateSvgSize();
@@ -443,13 +447,14 @@ export default class ChartInternal {
 			$$.initGrid && $$.initGrid();
 
 			// if zoom privileged, insert rect to forefront
-			// TODO: is this needed?
-			main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
-				.attr("class", CLASS.zoomRect)
-				.attr("width", $$.state.width)
-				.attr("height", $$.state.height)
-				.style("opacity", "0")
-				.on("dblclick.zoom", null);
+			// if (config.zoom_enabled) {
+			// 	main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
+			// 		.attr("class", CLASS.zoomRect)
+			// 		.attr("width", $$.state.width)
+			// 		.attr("height", $$.state.height)
+			// 		.style("opacity", "0")
+			// 		.on("dblclick.zoom", null);
+			// }
 
 			// Add Axis here, when clipPath is 'true'
 			config.clipPath && $$.axis && $$.axis.init();
@@ -468,10 +473,6 @@ export default class ChartInternal {
 
 		// Set background
 		$$.setBackground();
-
-		if (config.point_show && (hasAxis || hasRadar)) {
-			$$.initCircle();
-		}
 
 		$$.redraw({
 			withTransition: false,
@@ -501,15 +502,25 @@ export default class ChartInternal {
 
 	initChartElements() {
 		const $$ = this;
-		const {hasAxis, hasRadar} = $$;
+		const {hasRadar} = $$;
 		const types = [];
 
-		if (hasAxis) {
-			types.push("Bar", "Bubble", "Line");
-		} else if (hasRadar) {
-			types.push("Radar");
+		if ($$.hasTypeOf("Arc")) {
+			types.push("Arc");
+
+			if (!hasRadar) {
+				types.push("Pie");
+			}
+
+			if ($$.hasType("gauge")) {
+				types.push("Gauge");
+			} else if (hasRadar) {
+				types.push("Radar");
+			}
 		} else {
-			types.push("Arc", "Gauge", "Pie");
+			$$.hasType("bar") && types.push("Bar");
+			$$.hasType("bubble") && types.push("Bubble");
+			$$.hasTypeOf("Line") && types.push("Line");
 		}
 
 		types.forEach(v => {
@@ -698,18 +709,13 @@ export default class ChartInternal {
 		$$.updateTargetsForText(targets);
 
 		// circle
-		if (hasAxis || hasRadar) {
-			$$.updateTargetForCircle();
-		}
-
-		// circle
-		if (hasAxis || hasRadar) {
+		if ($$.hasPointType() || hasRadar) {
 			$$.updateTargetForCircle();
 		}
 
 		if (hasAxis) {
-			$$.updateTargetsForBar(targets); // Bar
-			$$.updateTargetsForLine(targets); // Line
+			$$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
+			$$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
 
 			// Sub Chart
 			$$.updateTargetsForSubchart &&
@@ -733,9 +739,9 @@ export default class ChartInternal {
 	 */
 	showTargets() {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, $el: {svg}} = $$;
 
-		$el.svg.selectAll(`.${CLASS.target}`)
+		svg.selectAll(`.${CLASS.target}`)
 			.filter(d => $$.isTargetToShow(d.id))
 			.transition()
 			.duration(config.transition_duration)
@@ -774,7 +780,7 @@ export default class ChartInternal {
 
 	redraw(options = {}, transitionsValue?) {
 		const $$ = this;
-		const {config, state, $el} = $$;
+		const {config, state, $el, hasRadar} = $$;
 		const {main} = $el;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
@@ -801,21 +807,23 @@ export default class ChartInternal {
 			$$.updateDimension(true);
 		}
 
-		//@TODO: Axis & Radar type
-		if ($$.hasAxis || $$.hasRadar) {
-			$$.updateCircle();
+		// text
+		$$.hasDataLabel() && $$.updateText(durationForExit);
 
-			// text
-			$$.hasDataLabel() && $$.updateText(durationForExit);
+		// update circleY based on updated parameters
+		if (!$$.hasArcType() || hasRadar) {
+			$$.updateCircleY();
+		}
+
+		//@TODO: Axis & Radar type
+		if ($$.hasPointType() || hasRadar) {
+			$$.updateCircle();
 		}
 
 		// update axis
 		if ($$.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-
-			// update circleY based on updated parameters
-			$$.updateCircleY();
 
 			// xgrid focus
 			$$.updategridFocus();
@@ -834,12 +842,16 @@ export default class ChartInternal {
 			$$.updateRegion(duration);
 
 			// bars
-			$$.updateBar(durationForExit);
+			$$.hasType("bar") && $$.updateBar(durationForExit);
 
 			// lines, areas and circles
-			$$.updateLine(durationForExit);
-			$$.updateArea(durationForExit);
-			//$$.updateCircle();
+			if ($$.hasTypeOf("Line")) {
+				$$.updateLine(durationForExit);
+			}
+
+			if ($$.hasTypeOf("Area")) {
+				$$.updateArea(durationForExit);
+			}
 
 			// circles for select
 			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
@@ -930,53 +942,6 @@ export default class ChartInternal {
 		});
 	}
 
-	/**
-	 * Get the shape draw function
-	 * @return {Object}
-	 * @private
-	 */
-	getDrawShape() {
-		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
-		const {hasRadar} = $$;
-		const shape = {type: {}, indices: {}, pos: {}};
-
-		// setup drawer - MEMO: these must be called after axis updated
-		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
-			const indices = $$.getShapeIndices($$.isLineType);
-
-			shape.indices.line = indices;
-			shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
-
-			if ($$.hasTypeOf("Area")) {
-				const indices = $$.getShapeIndices($$.isAreaType);
-
-				shape.indices.area = indices;
-				shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices, false) : undefined;
-			}
-		}
-
-		if ($$.hasType("bar")) {
-			const indices = $$.getShapeIndices($$.isBarType);
-
-			shape.indices.bar = indices;
-			shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
-		}
-
-		if ($$.hasAxis || hasRadar) {
-			shape.pos = {
-				xForText: $$.generateXYForText(shape.indices, true),
-				yForText: $$.generateXYForText(shape.indices, false),
-
-				// generate circle x/y functions depending on updated params
-				cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
-				cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
-			};
-		}
-
-		return shape;
-	}
-
 	getRedrawList(shape, flow, flowFn, isTransition) {
 		const $$ = this;
 		const {config, hasAxis, hasRadar} = $$;
@@ -994,18 +959,17 @@ export default class ChartInternal {
 				list.push($$.redrawRegion(isTransition));
 			}
 
-			if ($$.hasTypeOf("Line")) {
-				list.push($$.redrawLine(line, isTransition));
-				$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
-			}
-
+			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
+			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
 		}
 
-		if (hasAxis || hasRadar) {
+		if (!$$.hasArcType() || hasRadar) {
 			notEmpty(config.data_labels) &&
 				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+		}
 
+		if ($$.hasPointType() || hasRadar) {
 			list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
 		}
 

@@ -49,17 +49,19 @@ export default {
 				.append("g")
 				.attr("class", CLASS.chartCircles);
 		}
-
-		$$.updateTargetForCircle();
 	},
 
 	updateTargetForCircle(t) {
 		const $$ = this;
-		const {config, data, $el: {main}} = $$;
+		const {config, data, $el} = $$;
 		const targets = t || data.targets;
 		const classCircles = $$.classCircles.bind($$);
 
-		const mainCircle = main.select(`.${CLASS.chartCircles}`)
+		if (!$el.circle && config.point_show) {
+			$$.initCircle();
+		}
+
+		const mainCircle = $el.main.select(`.${CLASS.chartCircles}`)
 			.style("pointer-events", "none")
 			.selectAll(`.${CLASS.circles}`)
 			.data(targets)
@@ -77,7 +79,7 @@ export default {
 
 		// Update date for selected circles
 		targets.forEach(t => {
-			main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
+			$el.main.selectAll(`.${CLASS.selectedCircles}${$$.getTargetSelectorSuffix(t.id)}`)
 				.selectAll(`${CLASS.selectedCircle}`)
 				.each(d => {
 					d.value = t.values[d.index].value;
@@ -95,11 +97,11 @@ export default {
 
 		const circles = $el.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
 			.data(d => !$$.isBarType(d) && (
-					!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
-				) && $$.labelishData(d)
+				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
+			) && $$.labelishData(d)
 			);
 
-			circles.exit().remove();
+		circles.exit().remove();
 
 		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
 

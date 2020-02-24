@@ -16,14 +16,20 @@ export default {
 
 	updateTargetsForBar(targets) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $el} = $$;
 		const classChartBar = $$.classChartBar.bind($$);
 		const classBars = $$.classBars.bind($$);
 		const classFocus = $$.classFocus.bind($$);
+
+		if (!$el.bar) {
+			$$.initBar();
+		}
+
 		const mainBarUpdate = $$.$el.main.select(`.${CLASS.chartBars}`)
 			.selectAll(`.${CLASS.chartBar}`)
 			.data(targets)
 			.attr("class", d => classChartBar(d) + classFocus(d));
+
 		const mainBarEnter = mainBarUpdate.enter().append("g")
 			.attr("class", classChartBar)
 			.style("opacity", "0")
