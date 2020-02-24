@@ -208,11 +208,12 @@ export default {
 	 */
 	getBaseValue(data) {
 		const $$ = this;
-		let value = data.value;
+		const {hasAxis} = $$.state;
+		let {value} = data;
 
 		// In case of area-range, data is given as: [low, mid, high] or {low, mid, high}
 		// will take the 'mid' as the base value
-		if (value && $$.hasAxis) {
+		if (value && hasAxis) {
 			if ($$.isAreaRangeType(data)) {
 				value = $$.getAreaRangeData(data, "mid");
 			} else if ($$.isBubbleZType(data)) {
@@ -436,6 +437,7 @@ export default {
 
 	getValuesAsIdKeyed(targets) {
 		const $$ = this;
+		const {hasAxis} = $$.state;
 		const ys = {};
 		const isMultipleX = $$.isMultipleX();
 		const xs = isMultipleX ? $$.mapTargetsToUniqueXs(targets)
@@ -452,7 +454,7 @@ export default {
 				} else if (isObject(value) && "high" in value) {
 					data.push(...Object.values(value));
 				} else if ($$.isBubbleZType(v)) {
-					data.push($$.hasAxis && $$.getBubbleZData(value, "y"));
+					data.push(hasAxis && $$.getBubbleZData(value, "y"));
 				} else {
 					if (isMultipleX) {
 						data[$$.getIndexByX(v.x, xs)] = value;
@@ -817,7 +819,7 @@ export default {
 
 				ratio = d.ratio;
 			} else if (type === "radar") {
-				ratio = (parseFloat(String(Math.max(d.value, 0))) / $$.maxValue) * config.radar_size_ratio;
+				ratio = (parseFloat(String(Math.max(d.value, 0))) / state.currentData.max) * config.radar_size_ratio;
 			}
 		}
 

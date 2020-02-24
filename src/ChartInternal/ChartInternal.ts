@@ -156,13 +156,10 @@ export default class ChartInternal {
 		axisTime: null // axisTimeFormat
 	};
 
-	public hasAxis;
-	public hasRadar;
-
 	constructor(api) {
 		const $$ = this;
 
-		$$.api = api;
+		$$.api = api; // Chart instance
 		$$.config = new Options();
 		$$.cache = new Cache();
 		$$.state = new Store(); // status variables
@@ -188,10 +185,10 @@ export default class ChartInternal {
 
 	init() {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, state, $el} = $$;
 
-		$$.hasAxis = !$$.hasArcType();
-		$$.hasRadar = !$$.hasAxis && $$.hasType("radar");
+		state.hasAxis = !$$.hasArcType();
+		state.hasRadar = !state.hasAxis && $$.hasType("radar");
 
 		$$.initParams();
 
@@ -261,14 +258,12 @@ export default class ChartInternal {
 		$$.color = $$.generateColor();
 		$$.levelColor = $$.generateLevelColor();
 
-		//@TODO:Axis & Radar
 		if ($$.hasPointType()) {
 			$$.point = $$.generatePoint();
 		}
 
-		if ($$.hasAxis) {
+		if (state.hasAxis) {
 			$$.initClip();
-//			$$.point = $$.generatePoint();
 
 			format.extraLineClasses = $$.generateExtraLineClass();
 			format.dataTime = config.data_xLocaltime ? d3TimeParse : d3UtcParse;
@@ -298,28 +293,33 @@ export default class ChartInternal {
 
 		state.isLegendTop = config.legend_inset_anchor === "top-left" ||
 			config.legend_inset_anchor === "top-right";
+
 		state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
 			config.legend_inset_anchor === "bottom-left";
 
 		state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
-		state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
+
+		state.inputType = convertInputType(
+			config.interaction_inputType_mouse,
+			config.interaction_inputType_touch
+		);
 	}
 
 	initWithData(data) {
 		const $$ = this;
 		const {
 			config, state, $el,
-			hasAxis,
 			scale: {
 				x, y, y2, subX, subY, subY2
 			},
 			org
 		} = $$;
+		const {hasAxis} = state;
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
 
-		if ($$.hasAxis) {
+		if (hasAxis) {
 			$$.axis = new Axis($$);
 			config.zoom_enabled && $$.initZoom();
 		}
@@ -377,8 +377,7 @@ export default class ChartInternal {
 		if (config.interaction_enabled && state.inputType) {
 			const isTouch = state.inputType === "touch";
 
-			$el.svg
-				.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$.api))
+			$el.svg.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$.api))
 				.on(isTouch ? "touchend" : "mouseleave", () => callFn(config.onout, $$.api));
 		}
 
@@ -387,10 +386,10 @@ export default class ChartInternal {
 		// Define defs
 		const hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
 
-		if ($$.hasAxis || hasColorPatterns) {
+		if (hasAxis || hasColorPatterns) {
 			$el.defs = $el.svg.append("defs");
 
-			if ($$.hasAxis) {
+			if (hasAxis) {
 				["id", "idXAxis", "idYAxis", "idGrid"].forEach(v => {
 					$$.appendClip($el.defs, state.clip[v]);
 				});
@@ -426,7 +425,7 @@ export default class ChartInternal {
 				.attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
 		}
 
-		if ($$.hasAxis) {
+		if (hasAxis) {
 			// Regions
 			$$.initRegion && $$.initRegion();
 
@@ -503,14 +502,16 @@ export default class ChartInternal {
 
 	initChartElements() {
 		const $$ = this;
-		const {hasRadar} = $$;
+		const {hasAxis, hasRadar} = $$.state;
 		const types = [];
 
-		if ($$.hasTypeOf("Arc")) {
-			types.push("Arc");
-
+		if (hasAxis) {
+			$$.hasType("bar") && types.push("Bar");
+			$$.hasType("bubble") && types.push("Bubble");
+			$$.hasTypeOf("Line") && types.push("Line");
+		} else {
 			if (!hasRadar) {
-				types.push("Pie");
+				types.push("Arc", "Pie");
 			}
 
 			if ($$.hasType("gauge")) {
@@ -518,10 +519,6 @@ export default class ChartInternal {
 			} else if (hasRadar) {
 				types.push("Radar");
 			}
-		} else {
-			$$.hasType("bar") && types.push("Bar");
-			$$.hasType("bubble") && types.push("Bubble");
-			$$.hasTypeOf("Line") && types.push("Line");
 		}
 
 		types.forEach(v => {
@@ -591,7 +588,7 @@ export default class ChartInternal {
 	 */
 	updateTargets(targets) {
 		const $$ = this;
-		const {hasAxis, hasRadar} = $$;
+		const {hasAxis, hasRadar} = $$.state;
 
 		// Text
 		$$.updateTargetsForText(targets);
@@ -668,7 +665,7 @@ export default class ChartInternal {
 
 	redraw(options = {}, transitionsValue?) {
 		const $$ = this;
-		const {config, state, $el, hasRadar} = $$;
+		const {config, state, $el} = $$;
 		const {main} = $el;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
 
@@ -699,17 +696,17 @@ export default class ChartInternal {
 		$$.hasDataLabel() && $$.updateText(durationForExit);
 
 		// update circleY based on updated parameters
-		if (!$$.hasArcType() || hasRadar) {
+		if (!$$.hasArcType() || state.hasRadar) {
 			$$.updateCircleY();
 		}
 
 		//@TODO: Axis & Radar type
-		if ($$.hasPointType() || hasRadar) {
+		if ($$.hasPointType() || state.hasRadar) {
 			$$.updateCircle();
 		}
 
 		// update axis
-		if ($$.hasAxis) {
+		if (state.hasAxis) {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
@@ -781,7 +778,7 @@ export default class ChartInternal {
 		const {config, state} = $$;
 		const shape = $$.getDrawShape();
 
-		if ($$.hasAxis) {
+		if (state.hasAxis) {
 			// subchart
 			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
 		}
@@ -832,7 +829,7 @@ export default class ChartInternal {
 
 	getRedrawList(shape, flow, flowFn, isTransition) {
 		const $$ = this;
-		const {config, hasAxis, hasRadar} = $$;
+		const {config, state: {hasAxis, hasRadar}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list = [];
 
@@ -908,7 +905,7 @@ export default class ChartInternal {
 	}
 
 	isCategorized() {
-		return this.config.axis_x_type.indexOf("category") >= 0 || this.hasRadar;
+		return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
 	}
 
 	isCustomX() {

@@ -108,12 +108,12 @@ export default {
 	 */
 	initSubchart() {
 		const $$ = this;
+		const {config, state: {clip, hasAxis}, $el: {defs, svg, subchart, axis}} = $$;
 
-		if (!$$.hasAxis) {
+		if (!hasAxis) {
 			return;
 		}
 
-		const {config, state: {clip}, $el: {defs, svg, subchart, axis}} = $$;
 		const visibility = config.subchart_show ? "visible" : "hidden";
 		const clipId = `${clip.id}-subchart`;
 		const clipPath = $$.getClipPath(clipId);

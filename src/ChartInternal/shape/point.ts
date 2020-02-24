@@ -10,6 +10,9 @@ import {
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
 import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isValue, toArray, notEmpty} from "../../module/util";
+import {d3Selection} from "types/types";
+
+const getTransitionName = () => getRandom();
 
 export default {
 	hasValidPointType(type) {
@@ -130,7 +133,7 @@ export default {
 		const mainCircles = [];
 
 		circle.each(function(d) {
-			let result = fn.bind(this)(d);
+			let result: d3Selection = fn.bind(this)(d);
 
 			result = ((withTransition || !rendered) ? result.transition(t) : result)
 				.style("opacity", opacityStyleFn);
@@ -369,10 +372,6 @@ export default {
 		};
 	},
 
-	getTransitionName() {
-		return getRandom();
-	},
-
 	custom: {
 		create(element, id, sizeFn, fillStyleFn) {
 			return element.append("use")
@@ -392,12 +391,12 @@ export default {
 			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = $$.getTransitionName();
+				const transitionName = getTransitionName();
 
 				flow && mainCircles.attr("x", xPosFn2);
 
 				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles.transition($$.getTransitionName());
+				selectedCircles.transition(getTransitionName());
 			}
 
 			return mainCircles
@@ -428,7 +427,7 @@ export default {
 			}
 
 			if (withTransition) {
-				const transitionName = $$.getTransitionName();
+				const transitionName = getTransitionName();
 
 				flow && mainCircles.attr("cx", xPosFn);
 
@@ -436,7 +435,7 @@ export default {
 					mainCircles = mainCircles.transition(transitionName);
 				}
 
-				selectedCircles.transition($$.getTransitionName());
+				selectedCircles.transition(getTransitionName());
 			}
 
 			return mainCircles
@@ -469,12 +468,12 @@ export default {
 			let mainCircles = element;
 
 			if (withTransition) {
-				const transitionName = $$.getTransitionName();
+				const transitionName = getTransitionName();
 
 				flow && mainCircles.attr("x", rectXPosFn);
 
 				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles.transition($$.getTransitionName());
+				selectedCircles.transition(getTransitionName());
 			}
 
 			return mainCircles

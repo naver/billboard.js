@@ -111,10 +111,10 @@ export default {
 	updateScales(isInit, updateXDomain = true) {
 		const $$ = this;
 		const {axis, config, format, org, scale,
-			state: {width, height, width2, height2}
+			state: {width, height, width2, height2, hasAxis}
 		} = $$;
 
-		if ($$.hasAxis) {
+		if (hasAxis) {
 			const isRotated = config.axis_rotated;
 
 			// update edges

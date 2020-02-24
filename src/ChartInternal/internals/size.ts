@@ -82,11 +82,11 @@ export default {
 
 	getCurrentPaddingLeft(withoutRecompute) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
 		const axisId = isRotated ? "x" : "y";
 		const axesLen = config[`axis_${axisId}_axes`].length;
-		const axisWidth = $$.hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
+		const axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
 		let padding;
 
 		if (isValue(config.padding_left)) {
@@ -246,9 +246,9 @@ export default {
 
 	updateDimension(withoutAxis) {
 		const $$ = this;
-		const {config, $el: {axis}} = $$;
+		const {config, state: {hasAxis}, $el: {axis}} = $$;
 
-		if ($$.hasAxis && !withoutAxis) {
+		if (hasAxis && !withoutAxis) {
 			if ($$.axis.x && config.axis_rotated) {
 				$$.axis.x.create(axis.x);
 				$$.axis.subX && $$.axis.subX.create(axis.subX);
@@ -272,7 +272,7 @@ export default {
 			.attr("width", state.currentWidth)
 			.attr("height", state.currentHeight);
 
-		if ($$.hasAxis) {
+		if (state.hasAxis) {
 			const brush = svg.select(`.${CLASS.brush} .overlay`);
 			const brushSize = {width: 0, height: 0};
 

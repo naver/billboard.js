@@ -103,11 +103,11 @@ export default {
 
 	transformAll(withTransition, transitions) {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, state: {hasAxis}, $el} = $$;
 
 		$$.transformMain(withTransition, transitions);
 
-		$$.hasAxis && config.subchart_show &&
+		hasAxis && config.subchart_show &&
 			$$.transformContext(withTransition, transitions);
 
 		$el.legend && $$.transformLegend(withTransition);

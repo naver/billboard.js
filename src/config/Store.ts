@@ -32,6 +32,13 @@ export default class state {
 			currentWidth: 0,
 			currentHeight: 0,
 
+			currentData: {
+				max: 0
+			},
+
+			hasAxis: false,
+			hasRadar: false,
+
 			// legend
 			isLegendRight: false,
 			isLegendInset: false,

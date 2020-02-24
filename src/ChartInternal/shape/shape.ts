@@ -35,7 +35,7 @@ export default {
 	getDrawShape() {
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
-		const {hasRadar} = $$;
+		const {hasRadar} = $$.state;
 		const shape = {type: {}, indices: {}, pos: {}};
 
 		// setup drawer - MEMO: these must be called after axis updated

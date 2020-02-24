@@ -34,7 +34,7 @@ const cacheKey = "$radarPoints";
 export default {
 	initRadar() {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state: {currentData}} = $$;
 
 		if ($$.hasType("radar")) {
 			$$.radars = $$.$el.main.select(`.${CLASS.chart}`).append("g")
@@ -52,7 +52,7 @@ export default {
 			$$.radars.shapes = $$.radars.append("g")
 				.attr("class", CLASS.shapes);
 
-			$$.maxValue = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+			currentData.max = config.radar_axis_max || $$.getMinMaxData().max[0].value;
 		}
 	},
 
@@ -155,7 +155,7 @@ export default {
 
 	updateRadarLevel() {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state} = $$;
 		const [width, height] = $$.getRadarSize();
 		const depth = config.radar_level_depth;
 		const edge = config.axis_x_categories.length;
@@ -204,7 +204,7 @@ export default {
 				.attr("dx", "-.5em")
 				.style("text-anchor", "end")
 				.text(d => levelTextFormat(
-					$$.maxValue / levelData.length * (d + 1)
+					state.currentData.max / levelData.length * (d + 1)
 				));
 		}
 
