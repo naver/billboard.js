@@ -7,7 +7,7 @@ import {
 	mouse as d3Mouse
 } from "d3-selection";
 import ChartInternal from "./ChartInternal";
-import {document, window} from "./browser";
+import {document} from "./browser";
 import CLASS from "../config/classes";
 import {extend, isFunction, isObject, isString, isValue, callFn, sanitise, tplProcess, isUndefined} from "./util";
 
