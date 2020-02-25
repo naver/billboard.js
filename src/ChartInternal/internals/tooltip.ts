@@ -63,6 +63,8 @@ export default {
 					.style("display", "block");
 			}
 		}
+
+		$$.bindTooltipResizePos();
 	},
 
 	/**
@@ -302,9 +304,9 @@ export default {
 			return;
 		}
 
-		const datum = tooltip.datum();
-		const dataStr = JSON.stringify(selectedData);
+		let datum = tooltip.datum();
 		let {width = 0, height = 0} = datum || {};
+		const dataStr = JSON.stringify(selectedData);
 
 		if (!datum || datum.current !== dataStr) {
 			const index = selectedData.concat().sort()[0].index;
@@ -321,7 +323,7 @@ export default {
 				))
 				.style("display", null)
 				.style("visibility", null) // for IE9
-				.datum({
+				.datum(datum = {
 					index,
 					current: dataStr,
 					width: width = tooltip.property("offsetWidth"),
@@ -333,38 +335,47 @@ export default {
 		}
 
 		if (!bindto) {
-			let fn = config.tooltip_position;
-			let unit;
-
-			if (isFunction(fn)) {
-				fn = fn.bind($$.api);
-			} else {
-				unit = fn && fn.unit;
-				fn = $$.tooltipPosition.bind($$);
-			}
+			const fnPos = config.tooltip_position || $$.tooltipPosition;
 
 			// Get tooltip dimensions
-			const pos = fn(dataToShow, width, height, element);
+			const pos = fnPos.call(this, dataToShow, width, height, element);
 
 			["top", "left"].forEach(v => {
-				let value = pos[v];
+				const value = pos[v];
 
-				// when value is number
-				if (/^\d+(\.\d+)?$/.test(value)) {
-					if (unit === "%") {
-						const size = state[v === "top" ? "currentHeight" : "currentWidth"];
+				tooltip.style(v, `${value}px`);
 
-						value = value / size * 100;
-					} else {
-						unit = "px";
-					}
-
-					value += unit;
+				// Remember left pos in percentage to be used on resize call
+				if (v === "left" && !datum.xPosInPercent) {
+					datum.xPosInPercent = value / state.currentWidth * 100;
 				}
-
-				tooltip.style(v, value);
 			});
 		}
+	},
+
+	/**
+	 * Adjust tooltip position on resize event
+	 * @private
+	 */
+	bindTooltipResizePos() {
+		const $$ = this;
+		const {resizeFunction, state, $el: {tooltip}} = $$;
+
+		resizeFunction.add(() => {
+			if (tooltip.style("display") === "block") {
+				const {currentWidth} = state;
+				const {width, xPosInPercent} = tooltip.datum();
+				let value = currentWidth / 100 * xPosInPercent;
+				const diff = currentWidth - (value + width);
+
+				// if tooltip size overs current viewport size
+				if (diff < 0) {
+					value += diff;
+				}
+
+				tooltip.style("left", `${value}px`);
+			}
+		});
 	},
 
 	/**

@@ -872,7 +872,7 @@ export interface TooltipOptions {
 		width: number,
 		height: number,
 		element: any
-	) => { top: number; left: number }) | { unit: string; };
+	) => { top: number; left: number });
 
 	/**
 	 * Set custom HTML for the tooltip.
