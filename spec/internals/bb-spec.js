@@ -206,7 +206,7 @@ describe("Interface & initialization", () => {
 			container.style.width = width + "px";
 
 			// run the resize handler
-			chart.internal.api.internal.charts.forEach(c => {
+			chart.internal.charts.forEach(c => {
 				c.internal.resizeFunction();
 			});
 
