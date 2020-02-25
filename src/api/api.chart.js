@@ -88,7 +88,7 @@ extend(Chart.prototype, {
 
 			// clear timers && pending transition
 			$$.svg.select("*").interrupt();
-			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
+			$$.generateResize.timeout && window.clearTimeout($$.generateResize.timeout);
 
 			window.removeEventListener("resize", $$.resizeFunction);
 			$$.selectChart.classed("bb", false).html("");
