@@ -277,6 +277,9 @@ export default class ChartInternal {
 
 		$$.updateSvgSize();
 
+		// Bind resize event
+		$$.bindResize();
+
 		// Define regions
 		const main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
 
@@ -360,9 +363,6 @@ export default class ChartInternal {
 			callFn(config.data_onmin, $$, minMax.min);
 			callFn(config.data_onmax, $$, minMax.max);
 		}
-
-		// Bind resize event
-		$$.bindResize();
 
 		// export element of the chart
 		$$.api.element = $$.selectChart.node();
@@ -1142,40 +1142,43 @@ export default class ChartInternal {
 	bindResize() {
 		const $$ = this;
 		const config = $$.config;
+		const resizeFunction = $$.generateResize();
+		const list = [];
 
-		$$.resizeFunction = $$.generateResize();
-		$$.resizeFunction.add(() => callFn(config.onresize, $$, $$.api));
+		list.push(() => callFn(config.onresize, $$, $$.api));
 
 		if (config.resize_auto) {
-			$$.resizeFunction.add(() => {
-				if ($$.resizeTimeout) {
-					window.clearTimeout($$.resizeTimeout);
-					$$.resizeTimeout = null;
-				}
-
-				$$.resizeTimeout = window.setTimeout(() => {
-					$$.api.flush(false, true);
-				}, 200);
-			});
+			list.push(() => $$.api.flush(false, true));
 		}
 
-		$$.resizeFunction.add(() => callFn(config.onresized, $$, $$.api));
+		list.push(() => callFn(config.onresized, $$, $$.api));
+
+		// add resize functions
+		list.forEach(v => resizeFunction.add(v));
 
 		// attach resize event
-		window.addEventListener("resize", $$.resizeFunction);
+		window.addEventListener("resize", $$.resizeFunction = resizeFunction);
 	}
 
 	generateResize() {
-		const resizeFunctions = [];
+		const fn = [];
 
-		function callResizeFunctions() {
-			resizeFunctions.forEach(f => f());
+		function callResizeFn() {
+			// Delay all resize functions call, to prevent unintended excessive call from resize event
+			if (callResizeFn.timeout) {
+				window.clearTimeout(callResizeFn.timeout);
+				callResizeFn.timeout = null;
+			}
+
+			callResizeFn.timeout = window.setTimeout(() => {
+				fn.forEach(f => f());
+			}, 200);
 		}
 
-		callResizeFunctions.add = f => resizeFunctions.push(f);
-		callResizeFunctions.remove = f => resizeFunctions.splice(resizeFunctions.indexOf(f), 1);
+		callResizeFn.add = f => fn.push(f);
+		callResizeFn.remove = f => fn.splice(fn.indexOf(f), 1);
 
-		return callResizeFunctions;
+		return callResizeFn;
 	}
 
 	endall(transition, callback) {
