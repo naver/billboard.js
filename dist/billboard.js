@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200222130049
+ * @version 1.11.1-nightly-20200225130146
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1882,7 +1882,7 @@ function () {
         return $$.defs.append(function () {
           return p.node;
         });
-      }), $$.updateSvgSize();
+      }), $$.updateSvgSize(), $$.bindResize();
       // Define regions
       var main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
 
@@ -1898,10 +1898,10 @@ function () {
       }), config.data_onmin || config.data_onmax) {
         var minMax = $$.getMinMaxData();
         callFn(config.data_onmin, $$, minMax.min), callFn(config.data_onmax, $$, minMax.max);
-      } // Bind resize event
+      } // export element of the chart
 
 
-      $$.bindResize(), $$.api.element = $$.selectChart.node(), $$.rendered = !0;
+      $$.api.element = $$.selectChart.node(), $$.rendered = !0;
     }
   }, {
     key: "initChartElements",
@@ -2342,32 +2342,36 @@ function () {
     key: "bindResize",
     value: function bindResize() {
       var $$ = this,
-          config = $$.config;
-      $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
+          config = $$.config,
+          resizeFunction = $$.generateResize(),
+          list = [];
+      list.push(function () {
         return callFn(config.onresize, $$, $$.api);
-      }), config.resize_auto && $$.resizeFunction.add(function () {
-        $$.resizeTimeout && (win.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = win.setTimeout(function () {
-          $$.api.flush(!1, !0);
-        }, 200);
-      }), $$.resizeFunction.add(function () {
+      }), config.resize_auto && list.push(function () {
+        return $$.api.flush(!1, !0);
+      }), list.push(function () {
         return callFn(config.onresized, $$, $$.api);
-      }), win.addEventListener("resize", $$.resizeFunction);
+      }), list.forEach(function (v) {
+        return resizeFunction.add(v);
+      }), win.addEventListener("resize", $$.resizeFunction = resizeFunction);
     }
   }, {
     key: "generateResize",
     value: function generateResize() {
-      function callResizeFunctions() {
-        resizeFunctions.forEach(function (f) {
-          return f();
-        });
+      function callResizeFn() {
+        callResizeFn.timeout && (win.clearTimeout(callResizeFn.timeout), callResizeFn.timeout = null), callResizeFn.timeout = win.setTimeout(function () {
+          fn.forEach(function (f) {
+            return f();
+          });
+        }, 200);
       }
 
-      var resizeFunctions = [];
-      return callResizeFunctions.add = function (f) {
-        return resizeFunctions.push(f);
-      }, callResizeFunctions.remove = function (f) {
-        return resizeFunctions.splice(resizeFunctions.indexOf(f), 1);
-      }, callResizeFunctions;
+      var fn = [];
+      return callResizeFn.add = function (f) {
+        return fn.push(f);
+      }, callResizeFn.remove = function (f) {
+        return fn.splice(fn.indexOf(f), 1);
+      }, callResizeFn;
     }
   }, {
     key: "endall",
@@ -6290,8 +6294,6 @@ var Options_Options = function Options() {
      *  If undefined returned, the row of that value will be skipped.
      * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
      *  This option can be used to modify the tooltip position by returning object that has top and left.
-     * @property {String} [tooltip.position.unit="px"] Set tooltip's position unit.
-     *  - **NOTE:** This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
      * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
      *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
      * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
@@ -6342,13 +6344,6 @@ var Options_Options = function Options() {
      *      	// return with unit or without. If the value is number, is treated as 'px'.
      *      	return {top: "10%", left: 20}  // top:10%; left: 20px;
     		 *      },
-     *
-     *      position: {
-     *      	// set tooltip's position unit as '%', rather than 'px'.
-     *      	// ex) If want to keep the position on mobile device rotation, set as '%'.
-     *      	unit: "%"
-    		 *      },
-     *
     		 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
     		 *          return ... // formatted html as you want
      		 *      },
@@ -10654,6 +10649,8 @@ extend(ChartInternal_ChartInternal.prototype, {
         return $$.addName(d.values[config.tooltip_init_x]);
       }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), bindto || $$.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
     }
+
+    $$.bindTooltipResizePos();
   },
 
   /**
@@ -10839,17 +10836,17 @@ extend(ChartInternal_ChartInternal.prototype, {
 
     if (dataToShow.length !== 0 && config.tooltip_show) {
       var datum = $$.tooltip.datum(),
-          dataStr = JSON.stringify(selectedData),
           _ref = datum || {},
           _ref$width = _ref.width,
           width = _ref$width === void 0 ? 0 : _ref$width,
           _ref$height = _ref.height,
-          height = _ref$height === void 0 ? 0 : _ref$height;
+          height = _ref$height === void 0 ? 0 : _ref$height,
+          dataStr = JSON.stringify(selectedData);
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
         callFn(config.tooltip_onshow, $$, $$.api, selectedData), $$.tooltip.html($$.getTooltipHTML(selectedData, $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
-        .datum({
+        .datum(datum = {
           index: index,
           current: dataStr,
           width: width = $$.tooltip.property("offsetWidth"),
@@ -10858,27 +10855,37 @@ extend(ChartInternal_ChartInternal.prototype, {
       }
 
       if (!bindto) {
-        var unit,
-            fn = config.tooltip_position;
-        isFunction(fn) || (unit = fn && fn.unit, fn = $$.tooltipPosition);
-        // Get tooltip dimensions
-        var pos = fn.call(this, dataToShow, width, height, element);
+        var fnPos = config.tooltip_position || $$.tooltipPosition,
+            pos = fnPos.call(this, dataToShow, width, height, element); // Get tooltip dimensions
+
         ["top", "left"].forEach(function (v) {
-          var value = pos[v]; // when value is number
-
-          if (/^\d+(\.\d+)?$/.test(value)) {
-            if (unit === "%") {
-              var size = $$[v === "top" ? "currentHeight" : "currentWidth"];
-              value = value / size * 100;
-            } else unit = "px";
-
-            value += unit;
-          }
-
-          $$.tooltip.style(v, value);
+          var value = pos[v];
+          $$.tooltip.style(v, "".concat(value, "px")), v !== "left" || datum.xPosInPercent || (datum.xPosInPercent = value / $$.currentWidth * 100);
         });
       }
     }
+  },
+
+  /**
+   * Adjust tooltip position on resize event
+   * @private
+   */
+  bindTooltipResizePos: function bindTooltipResizePos() {
+    var $$ = this,
+        resizeFunction = $$.resizeFunction,
+        tooltip = $$.tooltip;
+    resizeFunction.add(function () {
+      if (tooltip.style("display") === "block") {
+        var currentWidth = $$.currentWidth,
+            _tooltip$datum = tooltip.datum(),
+            width = _tooltip$datum.width,
+            xPosInPercent = _tooltip$datum.xPosInPercent,
+            _value = currentWidth / 100 * xPosInPercent,
+            diff = currentWidth - (_value + width);
+
+        diff < 0 && (_value += diff), tooltip.style("left", "".concat(_value, "px"));
+      }
+    });
   },
 
   /**
@@ -14419,7 +14426,7 @@ extend(Chart_Chart.prototype, {
     var _this = this,
         $$ = this.internal;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), $$.svg.select("*").interrupt(), $$.generateResize.timeout && win.clearTimeout($$.generateResize.timeout), win.removeEventListener("resize", $$.resizeFunction), $$.selectChart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -14712,7 +14719,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200222130049",
+  version: "1.11.1-nightly-20200225130146",
 
   /**
    * Generate chart
@@ -14811,7 +14818,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200222130049
+ * @version 1.11.1-nightly-20200225130146
  */
 
 
