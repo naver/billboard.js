@@ -411,8 +411,6 @@ describe("LEGEND", () => {
 
 			expect(chart.internal.getCurrentWidth()).to.be.equal(newSize.width);
 			expect(chart.internal.getCurrentHeight()).to.be.equal(newSize.height);
-
-			chart.destroy();
 		});
 
 		it("set options data.type='pie'", () => {
@@ -432,8 +430,6 @@ describe("LEGEND", () => {
 			transform1.forEach((v, i) => {
 				expect(v).to.be.above(transform2[i]);
 			});
-
-			chart.destroy();
 		});
 	});
 
