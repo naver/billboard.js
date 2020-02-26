@@ -928,6 +928,40 @@ describe("INTERACTION", () => {
 					done();
 				});
 			});
+
+			it("set option onresized", () => {
+				args.onresized = sinon.spy();
+			});
+
+			it("check if tooltip visibility maintained and position updated after resize", done => {
+				// when
+				chart.tooltip.show({x:2});
+
+				const left = parseInt(chart.$.tooltip.style("left"));
+
+				// when
+				chart.resize({width: 300});
+
+				setTimeout(() => {
+					expect(args.onresized.calledOnce).to.be.true;
+					expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
+
+					done();
+				}, 300)
+			});
+
+			it("check if data point radius size rollsback after hide API is called", done => {
+				const x = 2;
+				chart.tooltip.show({x});
+				chart.tooltip.hide();
+
+				setTimeout(() => {
+					const points = chart.$.line.circles.filter(`.${CLASS.circle}-${x}`);
+
+					expect(+points.attr("r")).to.be.equal(chart.config("point.r"));
+					done();
+				}, 100);
+			});
 		});
 	});
 

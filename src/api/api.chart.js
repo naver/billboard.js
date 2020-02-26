@@ -21,12 +21,14 @@ extend(Chart.prototype, {
 	 * });
 	 */
 	resize(size) {
-		const config = this.internal.config;
+		const $$ = this.internal;
+		const {config, resizeFunction} = $$;
 
 		config.size_width = size ? size.width : null;
 		config.size_height = size ? size.height : null;
 
 		this.flush(false, true);
+		resizeFunction();
 	},
 
 	/**
