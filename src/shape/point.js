@@ -68,8 +68,9 @@ extend(ChartInternal.prototype, {
 
 		if (isObject(d) || $$.mainCircle) {
 			pointClass = d === true ?
-				$$.mainCircle.attr("class", $$.classCircle.bind($$)) :
-				$$.classCircle(d);
+				$$.mainCircle.call(node => {
+					node.classed($$.classCircle.bind($$)(node), true);
+				}) : $$.classCircle(d);
 		}
 
 		return pointClass;

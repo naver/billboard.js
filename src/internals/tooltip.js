@@ -375,20 +375,20 @@ extend(ChartInternal.prototype, {
 	 */
 	hideTooltip(force) {
 		const $$ = this;
-		const config = $$.config;
+		const {api, config, tooltip} = $$;
 
-		if (this.tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
 			const selectedData = JSON.parse(this.tooltip.datum().current);
 
-			callFn(config.tooltip_onhide, $$, $$.api, selectedData);
+			callFn(config.tooltip_onhide, $$, api, selectedData);
 
 			// hide tooltip
-			this.tooltip
+			tooltip
 				.style("display", "none")
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
-			callFn(config.tooltip_onhidden, $$, $$.api, selectedData);
+			callFn(config.tooltip_onhidden, $$, api, selectedData);
 		}
 	},
 

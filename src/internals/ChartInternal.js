@@ -635,9 +635,6 @@ export default class ChartInternal {
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
 		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
-		!(initializing && config.tooltip_init_show) &&
-			$$.inputType === "touch" && $$.hideTooltip();
-
 		$$.updateSizes(initializing);
 
 		// update legend and transform each g
