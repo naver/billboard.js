@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200225130146
+ * @version 1.11.1-nightly-20200226130240
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -2078,7 +2078,7 @@ function () {
           durationForExit = wth.TransitionForExit ? duration : 0,
           durationForAxis = wth.TransitionForAxis ? duration : 0,
           transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
-      initializing && config.tooltip_init_show || $$.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updategridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+      $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updateCircleY(), $$.updategridFocus(), config.data_empty_label_text && main.select("text.".concat(config_classes.text, ".").concat(config_classes.empty)).attr("x", $$.width / 2).attr("y", $$.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.updateGrid(duration), $$.updateRegion(duration), $$.updateBar(durationForExit), $$.updateLine(durationForExit), $$.updateArea(durationForExit), $$.updateCircle(), $$.hasDataLabel() && $$.updateText(durationForExit), $$.redrawTitle && $$.redrawTitle(), $$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit), $$.mainText && main.selectAll(".".concat(config_classes.selectedCircles)).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
     }
     /**
      * Generate redraw list
@@ -9584,6 +9584,7 @@ extend(ChartInternal_ChartInternal.prototype, {
 
 
 
+
 extend(ChartInternal_ChartInternal.prototype, {
   hasValidPointType: function hasValidPointType(type) {
     return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
@@ -9616,7 +9617,10 @@ extend(ChartInternal_ChartInternal.prototype, {
   updatePointClass: function updatePointClass(d) {
     var $$ = this,
         pointClass = !1;
-    return (isObject(d) || $$.mainCircle) && (pointClass = d === !0 ? $$.mainCircle.attr("class", $$.classCircle.bind($$)) : $$.classCircle(d)), pointClass;
+    return (isObject(d) || $$.mainCircle) && (pointClass = d === !0 ? $$.mainCircle.each(function (d) {
+      var className = $$.classCircle.bind($$)(d);
+      this.classList.contains(config_classes.EXPANDED) && (className += " ".concat(config_classes.EXPANDED)), this.setAttribute("class", className);
+    }) : $$.classCircle(d)), pointClass;
   },
   generatePoint: function generatePoint() {
     var $$ = this,
@@ -10895,13 +10899,15 @@ extend(ChartInternal_ChartInternal.prototype, {
    */
   hideTooltip: function hideTooltip(force) {
     var $$ = this,
-        config = $$.config;
+        api = $$.api,
+        config = $$.config,
+        tooltip = $$.tooltip;
 
-    if (this.tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+    if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
       var selectedData = JSON.parse(this.tooltip.datum().current);
       // hide tooltip
-      callFn(config.tooltip_onhide, $$, $$.api, selectedData), this.tooltip.style("display", "none").style("visibility", "hidden") // for IE9
-      .datum(null), callFn(config.tooltip_onhidden, $$, $$.api, selectedData);
+      callFn(config.tooltip_onhide, $$, api, selectedData), tooltip.style("display", "none").style("visibility", "hidden") // for IE9
+      .datum(null), callFn(config.tooltip_onhidden, $$, api, selectedData);
     }
   },
 
@@ -14384,8 +14390,10 @@ extend(Chart_Chart.prototype, {
    * });
    */
   resize: function resize(size) {
-    var config = this.internal.config;
-    config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0);
+    var $$ = this.internal,
+        config = $$.config,
+        resizeFunction = $$.resizeFunction;
+    config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0), resizeFunction();
   },
 
   /**
@@ -14471,7 +14479,7 @@ extend(Chart_Chart.prototype, {
  * @ignore
  */
 
-var tooltip = extend(function () {}, {
+var api_tooltip_tooltip = extend(function () {}, {
   /**
    * Show tooltip
    * @method tooltip․show
@@ -14546,12 +14554,13 @@ var tooltip = extend(function () {}, {
    * @memberof Chart
    */
   hide: function hide() {
-    var $$ = this.internal;
-    $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    var $$ = this.internal; // reset last touch point index
+
+    $$.inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 });
 extend(Chart_Chart.prototype, {
-  tooltip: tooltip
+  tooltip: api_tooltip_tooltip
 });
 // CONCATENATED MODULE: ./src/api/api.export.js
 /**
@@ -14719,7 +14728,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200225130146",
+  version: "1.11.1-nightly-20200226130240",
 
   /**
    * Generate chart
@@ -14818,7 +14827,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200225130146
+ * @version 1.11.1-nightly-20200226130240
  */
 
 
