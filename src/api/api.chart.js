@@ -22,13 +22,15 @@ extend(Chart.prototype, {
 	 */
 	resize(size) {
 		const $$ = this.internal;
-		const {config, resizeFunction} = $$;
+		const {config} = $$;
 
-		config.size_width = size ? size.width : null;
-		config.size_height = size ? size.height : null;
+		if ($$.rendered) {
+			config.size_width = size ? size.width : null;
+			config.size_height = size ? size.height : null;
 
-		this.flush(false, true);
-		resizeFunction();
+			this.flush(false, true);
+			$$.resizeFunction();
+		}
 	},
 
 	/**

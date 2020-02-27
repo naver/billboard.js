@@ -114,6 +114,7 @@ export default class ChartInternal {
 			const convertedData = $$.convertData(config, $$.initWithData);
 
 			convertedData && $$.initWithData(convertedData);
+			$$.afterInit();
 		}
 	}
 
