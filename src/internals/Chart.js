@@ -73,7 +73,6 @@ export default class Chart {
 		$$.loadConfig(config);
 		$$.beforeInit(config);
 		$$.init();
-		$$.afterInit(config);
 
 		// bind "this" to nested API
 		(function bindThis(fn, target, argThis) {

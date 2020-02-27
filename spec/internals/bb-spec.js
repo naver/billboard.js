@@ -354,6 +354,7 @@ describe("Interface & initialization", () => {
 	});
 
 	describe("check for lazy rendering", () => {
+		const spy = {};
 		const args = {
 			data: {
 				columns: [
@@ -361,6 +362,16 @@ describe("Interface & initialization", () => {
 				]
 			}
 		};
+
+		["afterinit", "rendered", "resize", "resized"].forEach(v => {
+			args[`on${v}`] = spy[v] = sinon.spy();
+		});
+
+		afterEach(() => {
+			for (let x in spy) {
+				spy[x].resetHistory();
+			}
+		});
 
 		it("check lazy rendering & mutation observer: style attribute", done => {
 			const el = document.body.querySelector("#chart");
@@ -372,11 +383,18 @@ describe("Interface & initialization", () => {
 
 			expect(el.innerHTML).to.be.empty;
 
+			for (let x in spy) {
+				expect(spy[x].called).to.be.false;
+			}
+
 			el.style.display = "block";
 
 			setTimeout(() => {
 				expect(el.innerHTML).to.be.not.empty;
 				el.style.display = "";
+
+				expect(spy.afterinit.called).to.be.true;
+				expect(spy.rendered.called).to.be.true;
 				done();
 			}, 500);
 		});
@@ -391,11 +409,53 @@ describe("Interface & initialization", () => {
 
 			expect(el.innerHTML).to.be.empty;
 
+			for (let x in spy) {
+				expect(spy[x].called).to.be.false;
+			}
+
 			el.classList.remove("hide");
 
 			setTimeout(() => {
 				expect(el.innerHTML).to.be.not.empty;
+				expect(spy.afterinit.called).to.be.true;
+				expect(spy.rendered.called).to.be.true;
 				done();
+			}, 500);
+		});
+
+		it("check lazy rendering on callbacks", done => {
+			const el = document.body.querySelector("#chart");
+
+			// hide to lazy render
+			el.style.display = "none";
+
+			chart = util.generate(args);
+
+			expect(el.innerHTML).to.be.empty;
+
+			// onresize, resized shouldn't be called on resize
+			chart.resize({width: 500});
+
+			for (let x in spy) {
+				expect(spy[x].called).to.be.false;
+			}
+
+			el.style.display = "block";
+
+			setTimeout(() => {
+				expect(el.innerHTML).to.be.not.empty;
+				el.style.display = "";
+
+				expect(spy.afterinit.called).to.be.true;
+				expect(spy.rendered.called).to.be.true;
+
+				chart.resize({width: 500});
+
+				setTimeout(() => {
+					expect(spy.resize.called).to.be.true;
+					expect(spy.resized.called).to.be.true;
+					done();
+				}, 300);				
 			}, 500);
 		});
 
@@ -412,11 +472,17 @@ describe("Interface & initialization", () => {
 			// chart shouldn't be rendered
 			expect(el.innerHTML).to.be.empty;
 
+			for (let x in spy) {
+				expect(spy[x].called).to.be.false;
+			}
+
 			// call to render
 			chart.flush();
 
 			setTimeout(() => {
 				expect(el.innerHTML).to.be.not.empty;
+				expect(spy.afterinit.called).to.be.true;
+				expect(spy.rendered.called).to.be.true;
 				done();
 			}, 500);
 		});
