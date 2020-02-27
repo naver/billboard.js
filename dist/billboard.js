@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200226130240
+ * @version 1.11.1-nightly-20200227130225
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1831,7 +1831,7 @@ function () {
         attributeFilter: ["class", "style"]
       }), !isLazy || forced) {
         var convertedData = $$.convertData(config, $$.initWithData);
-        convertedData && $$.initWithData(convertedData);
+        convertedData && $$.initWithData(convertedData), $$.afterInit();
       }
     }
   }, {
@@ -2541,7 +2541,7 @@ var Chart_Chart = function Chart(config) {
    */
 
   // bind "this" to nested API
-  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), $$.afterInit(config), function bindThis(fn, target, argThis) {
+  this.plugins = [], this.internal = $$, $$.loadConfig(config), $$.beforeInit(config), $$.init(), function bindThis(fn, target, argThis) {
     Object.keys(fn).forEach(function (key) {
       target[key] = fn[key].bind(argThis), Object.keys(fn[key]).length && bindThis(fn[key], target[key], argThis);
     });
@@ -14391,9 +14391,8 @@ extend(Chart_Chart.prototype, {
    */
   resize: function resize(size) {
     var $$ = this.internal,
-        config = $$.config,
-        resizeFunction = $$.resizeFunction;
-    config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0), resizeFunction();
+        config = $$.config;
+    $$.rendered && (config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0), $$.resizeFunction());
   },
 
   /**
@@ -14728,7 +14727,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200226130240",
+  version: "1.11.1-nightly-20200227130225",
 
   /**
    * Generate chart
@@ -14827,7 +14826,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200226130240
+ * @version 1.11.1-nightly-20200227130225
  */
 
 
