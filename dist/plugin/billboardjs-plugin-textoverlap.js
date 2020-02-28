@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200227130225
+ * @version 1.11.1-nightly-20200228130323
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -256,9 +256,7 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
-var Plugin =
-/*#__PURE__*/
-function () {
+var Plugin = /*#__PURE__*/function () {
   /**
    * Version info string for plugin
    * @name version
@@ -328,7 +326,7 @@ function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200227130225");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200228130323");
 
 
 
@@ -560,9 +558,7 @@ var Options_Options = function Options() {
  * })
  */
 
-var textoverlap_TextOverlap =
-/*#__PURE__*/
-function (_Plugin) {
+var textoverlap_TextOverlap = /*#__PURE__*/function (_Plugin) {
   function TextOverlap(options) {
     var _this;
 

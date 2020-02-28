@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200227130225
+ * @version 1.11.1-nightly-20200228130323
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -780,9 +780,7 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
 
 
 
-var AxisRendererHelper_AxisRendererHelper =
-/*#__PURE__*/
-function () {
+var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
   function AxisRendererHelper(owner) {
     _classCallCheck(this, AxisRendererHelper);
 
@@ -899,9 +897,7 @@ function () {
 
 
 
-var AxisRenderer_AxisRenderer =
-/*#__PURE__*/
-function () {
+var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
   function AxisRenderer() {
     var params = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
@@ -1219,9 +1215,7 @@ var isHorizontal = function ($$, forHorizontal) {
   return "".concat(config_classes.axis, " ").concat(config_classes["axis".concat(capitalize(id))]);
 };
 
-var Axis_Axis =
-/*#__PURE__*/
-function () {
+var Axis_Axis = /*#__PURE__*/function () {
   function Axis(owner) {
     _classCallCheck(this, Axis), this.owner = owner, this.setOrient();
   }
@@ -1573,8 +1567,9 @@ function () {
         })) return currentTickMax.size;
         currentTickMax.domain = domain;
         var axis = this.getAxis(id, scale, !1, !1, !0),
-            tickCount = config["axis_".concat(id, "_tick_count")];
-        tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+            tickCount = config["axis_".concat(id, "_tick_count")],
+            tickValues = config["axis_".concat(id, "_tick_values")];
+        !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
         axis.create(dummy), dummy.selectAll("text").each(function () {
           maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
@@ -1772,9 +1767,7 @@ function () {
  * @private
  */
 
-var ChartInternal_ChartInternal =
-/*#__PURE__*/
-function () {
+var ChartInternal_ChartInternal = /*#__PURE__*/function () {
   function ChartInternal(api) {
     _classCallCheck(this, ChartInternal);
 
@@ -5034,7 +5027,9 @@ var Options_Options = function Options() {
      * You can set padding for y axis to create more space on the edge of the axis.
      * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
      *
-     * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+     * - **NOTE:**
+     *   - Given values are translated relative to the y Axis domain value for padding
+     *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
      * @name axis․y․padding
      * @memberof Options
      * @type {Object|Number}
@@ -5446,8 +5441,13 @@ var Options_Options = function Options() {
     },
 
     /**
-     * Set the number of y2 axis ticks.
-     * - **NOTE:** This works in the same way as axis.y.tick.count.
+     * Set padding for y2 axis.<br><br>
+     * You can set padding for y2 axis to create more space on the edge of the axis.
+     * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+     *
+     * - **NOTE:**
+     *   - Given values are translated relative to the y2 Axis domain value for padding
+     *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
      * @name axis․y2․padding
      * @memberof Options
      * @type {Object|Number}
@@ -6696,7 +6696,8 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
     var $$ = this,
-        config = $$.config;
+        config = $$.config,
+        pfx = "axis_".concat(axisId);
     if ($$.isStackNormalized()) return [0, 100];
     var targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
@@ -6706,15 +6707,15 @@ extend(ChartInternal_ChartInternal.prototype, {
       return axisId === "y2" ? $$.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
       // So, it needs to call to get y2 domain here
       $$.getYDomain(targets, "y2", xDomain);
-    var yMin = config["axis_".concat(axisId, "_min")],
-        yMax = config["axis_".concat(axisId, "_max")],
+    var yMin = config["".concat(pfx, "_min")],
+        yMax = config["".concat(pfx, "_max")],
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
-        center = config["axis_".concat(axisId, "_center")],
+        center = config["".concat(pfx, "_center")],
         isZeroBased = ["area", "bar", "bubble", "line", "scatter"].some(function (v) {
       return $$.hasType(v, yTargets) && config["".concat(v, "_zerobased")];
     }),
-        isInverted = config["axis_".concat(axisId, "_inverted")],
+        isInverted = config["".concat(pfx, "_inverted")],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
     yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
@@ -6746,17 +6747,14 @@ extend(ChartInternal_ChartInternal.prototype, {
       ["bottom", "top"].forEach(function (v, i) {
         padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
       });
-    }
-
-    if (/^y2?$/.test(axisId)) {
-      var p = config["axis_".concat(axisId, "_padding")];
-      notEmpty(p) && ["bottom", "top"].forEach(function (v) {
-        padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
-      });
-    } // Bar/Area chart should be 0-based if all positive|negative
+    } // if padding is set, the domain will be updated relative the current domain value
+    // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
 
 
-    isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
+    var p = config["".concat(pfx, "_padding")];
+    notEmpty(p) && ["bottom", "top"].forEach(function (v) {
+      padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+    }), isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
     var domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
   },
@@ -8502,7 +8500,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
         gStart = config.gauge_startingAngle;
 
-    if (d.data && $$.isGaugeType(d.data)) {
+    if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
       var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
 
       totalSum > config.gauge_max && (config.gauge_max = totalSum);
@@ -14727,7 +14725,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200227130225",
+  version: "1.11.1-nightly-20200228130323",
 
   /**
    * Generate chart
@@ -14826,7 +14824,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200227130225
+ * @version 1.11.1-nightly-20200228130323
  */
 
 
