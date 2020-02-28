@@ -1826,4 +1826,36 @@ describe("AXIS", function() {
 			checkTickValues();
 		});
 	});
+	
+	describe("Axes tick padding", () => {
+		before(() => {
+			args = {
+				data: {      
+					columns: [
+						["data1", 4, 4, 3, 3]
+					]
+				},
+				axis: {      
+					y: {
+						max: 5,
+						tick: {
+							values: [0, 1, 2, 3, 4, 5],
+							count: 5
+						},
+						padding: {
+							top: 20
+						}
+					}
+				}
+			};
+		});
+
+		it("using both tick.values & count option not to make spaced left padding", () => {
+			const tickValues = chart.internal.axis.getTickValues("y");
+			const translateX = +(chart.$.main.attr("transform").match(/(\d+[\.\d]*)/) || [0])[0];
+
+			expect(tickValues.every(v => v % 1 === 0)).to.be.true;
+			expect(translateX).to.be.closeTo(30.5, 1);
+		});
+	});
 });

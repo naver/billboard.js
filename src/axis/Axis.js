@@ -518,10 +518,13 @@ export default class Axis {
 
 			const axis = this.getAxis(id, scale, false, false, true);
 			const tickCount = config[`axis_${id}_tick_count`];
+			const tickValues = config[`axis_${id}_tick_values`];
 
 			// Make to generate the final tick text to be rendered
 			// https://github.com/naver/billboard.js/issues/920
-			if (tickCount) {
+			// Do not generate if 'tick values' option is given
+			// https://github.com/naver/billboard.js/issues/1251
+			if (!tickValues && tickCount) {
 				axis.tickValues(
 					this.generateTickValues(
 						domain,
