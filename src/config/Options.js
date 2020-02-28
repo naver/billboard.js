@@ -2470,7 +2470,9 @@ export default class Options {
 			 * You can set padding for y axis to create more space on the edge of the axis.
 			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
 			 *
-			 * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+			 * - **NOTE:**
+			 *   - Given values are translated relative to the y Axis domain value for padding
+			 *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y․padding
 			 * @memberof Options
 			 * @type {Object|Number}
@@ -2879,8 +2881,13 @@ export default class Options {
 			axis_y2_tick_text_position: {x: 0, y: 0},
 
 			/**
-			 * Set the number of y2 axis ticks.
-			 * - **NOTE:** This works in the same way as axis.y.tick.count.
+			 * Set padding for y2 axis.<br><br>
+			 * You can set padding for y2 axis to create more space on the edge of the axis.
+			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+			 *
+			 * - **NOTE:**
+			 *   - Given values are translated relative to the y2 Axis domain value for padding
+			 *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y2․padding
 			 * @memberof Options
 			 * @type {Object|Number}
