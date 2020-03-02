@@ -181,11 +181,19 @@ extend(ChartInternal.prototype, {
 
 	getXDomainMinMax(targets, type) {
 		const $$ = this;
-		const value = $$.config[`axis_x_${type}`];
+		const configValue = $$.config[`axis_x_${type}`];
+		const dataValue = getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		let value = isObject(configValue) ? configValue.value : configValue;
 
-		return isDefined(value) ?
-			($$.isTimeSeries() ? $$.parseDate(value) : value) :
-			getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value;
+
+		if (isObject(configValue) && configValue.fit && (
+			(type === "min" && value < dataValue) || (type === "max" && value > dataValue)
+		)) {
+			value = undefined;
+		}
+
+		return isDefined(value) ? value : dataValue;
 	},
 
 	getXDomainMin(targets) {
