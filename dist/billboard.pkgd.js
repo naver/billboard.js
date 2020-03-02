@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200228130323
+ * @version 1.11.1-nightly-20200302130407
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -24962,12 +24962,22 @@ var Options_Options = function Options() {
      * Set max value of x axis range.
      * @name axis․x․max
      * @memberof Options
-     * @type {Number}
-     * @default undefined
+     * @property {Number} max Set the max value
+     * @property {Boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
+     * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
+     * @property {Number} [max.value] Set the max value
      * @example
      * axis: {
      *   x: {
-     *     max: 100
+     *     max: 100,
+     *
+     *     max: {
+     *       // 'fit=true' will make x axis max to be limited as the bound data value max when 'max.value' is greater.
+     *       // - when bound data max is '10' and max.value: '100' ==>  x axis max will be '10'
+     *       // - when bound data max is '1000' and max.value: '100' ==> x axis max will be '100'
+     *       fit: true,
+     *       value: 100
+     *     }
      *   }
      * }
      */
@@ -24977,12 +24987,22 @@ var Options_Options = function Options() {
      * Set min value of x axis range.
      * @name axis․x․min
      * @memberof Options
-     * @type {Number}
-     * @default undefined
+     * @property {Number} min Set the min value
+     * @property {Boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
+     * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
+     * @property {Number} [min.value] Set the min value
      * @example
      * axis: {
      *   x: {
-     *     min: -100
+     *     min: -100,
+     *
+     *     min: {
+     *       // 'fit=true' will make x axis min to be limited as the bound data value min when 'min.value' is lower.
+     *       // - when bound data min is '-10' and min.value: '-100' ==>  x axis min will be '-10'
+     *       // - when bound data min is '-1000' and min.value: '-100' ==> x axis min will be '-100'
+     *       fit: true,
+     *       value: -100
+     *     }
      *   }
      * }
      */
@@ -27281,12 +27301,14 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
     var $$ = this,
-        value = $$.config["axis_x_".concat(type)];
-    return isDefined(value) ? $$.isTimeSeries() ? $$.parseDate(value) : value : getMinMax(type, targets.map(function (t) {
+        configValue = $$.config["axis_x_".concat(type)],
+        dataValue = getMinMax(type, targets.map(function (t) {
       return getMinMax(type, t.values.map(function (v) {
         return v.x;
       }));
-    }));
+    })),
+        value = isObject(configValue) ? configValue.value : configValue;
+    return value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value, isObject(configValue) && configValue.fit && (type === "min" && value < dataValue || type === "max" && value > dataValue) && (value = undefined), isDefined(value) ? value : dataValue;
   },
   getXDomainMin: function getXDomainMin(targets) {
     return this.getXDomainMinMax(targets, "min");
@@ -37579,7 +37601,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200228130323",
+  version: "1.11.1-nightly-20200302130407",
 
   /**
    * Generate chart
@@ -37678,7 +37700,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200228130323
+ * @version 1.11.1-nightly-20200302130407
  */
 
 
