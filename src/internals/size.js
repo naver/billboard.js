@@ -251,17 +251,42 @@ extend(ChartInternal.prototype, {
 	getAxisTickRotate(type) {
 		const $$ = this;
 		const config = $$.config;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets).length;
 
-		if (!targetsToShow) {
+		if (!$$.filterTargetsToShow($$.data.targets).length) {
 			return 0;
 		}
 
 		const allowedXAxisTypes = $$.isCategorized() || $$.isTimeSeries();
 
-		if (type === "x" && $$.svg && config.axis_x_tick_autorotate && allowedXAxisTypes) {
-			return !config.axis_x_tick_multiline && !$$.needToRotateXAxisTickTexts() ?
-				0 : config.axis_x_tick_rotate;
+		let tickCount = 0;
+
+		if (config.axis_x_tick_fit && allowedXAxisTypes) {
+			$$.axis.x = {
+				padding: {left: 0, right: 0},
+				tickCount: 0
+			};
+
+			tickCount = $$.isTimeSeries() ?
+				Object.keys($$.currentXAxisTickTextWidths || {}).length - 1 :
+				$$.getXDomainMax($$.data.targets) + 1;
+
+			if (tickCount !== $$.axis.x.tickCount) {
+				$$.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+			}
+
+			$$.axis.x.tickCount = tickCount;
+		}
+
+		if (
+			type === "x" &&
+			$$.svg &&
+			config.axis_x_tick_fit &&
+			!config.axis_x_tick_multiline &&
+			config.axis_x_tick_autorotate &&
+			allowedXAxisTypes
+		) {
+			return $$.needToRotateXAxisTickTexts() ?
+				config.axis_x_tick_rotate : 0;
 		} else {
 			return config[`axis_${type}_tick_rotate`];
 		}
@@ -269,20 +294,13 @@ extend(ChartInternal.prototype, {
 
 	needToRotateXAxisTickTexts() {
 		const $$ = this;
-		const tickCount = $$.isTimeSeries() ?
-			Object.keys($$.currentXAxisTickTextWidths).length - 1 :
-			$$.getXDomainMax($$.data.targets) + 1;
-
-		const xAxisPadding = $$.axis.getXAxisPadding(tickCount, $$.isTimeSeries());
-		const tickCountWithPadding = tickCount + xAxisPadding.left + xAxisPadding.right;
-
-		const currentWidth = $$.currentWidth;
-		const currentPaddingLeft = $$.getCurrentPaddingLeft(false);
-		const currentPaddingRight = $$.getCurrentPaddingRight(true);
-		const xAxisLength = currentWidth - currentPaddingLeft - currentPaddingRight;
+		const xAxisLength = $$.currentWidth -
+			$$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
+		const tickCountWithPadding = $$.axis.x.tickCount +
+			$$.axis.x.padding.left + $$.axis.x.padding.right;
 
 		const maxTickWidth = $$.axis.getMaxTickWidth("x");
-		const tickLength = xAxisLength / tickCountWithPadding;
+		const tickLength = (xAxisLength / tickCountWithPadding) || 0;
 
 		return maxTickWidth > tickLength;
 	},

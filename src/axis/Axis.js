@@ -545,8 +545,6 @@ export default class Axis {
 
 			axis.create(dummy);
 
-			$$.currentXAxisTickTextWidths = {};
-
 			dummy.selectAll("text")
 				.each(function(d, i) {
 					const currentTextWidth = this.getBoundingClientRect().width;
@@ -580,6 +578,7 @@ export default class Axis {
 		if (
 			$$.svg &&
 			allowedAxisTypes &&
+			config.axis_x_tick_fit &&
 			!config.axis_x_tick_culling &&
 			!config.axis_x_tick_multiline &&
 			positiveRotation
@@ -600,8 +599,7 @@ export default class Axis {
 		const isTimeSeries = $$.isTimeSeries();
 		const tickTextWidths = $$.currentXAxisTickTextWidths || {};
 		const tickCount = Object.keys(tickTextWidths).length;
-		const xAxisPadding = $$.axis.getXAxisPadding(tickCount, isTimeSeries);
-
+		const xAxisPadding = $$.axis.x.padding;
 		let maxOverflow = 0;
 
 		for (let i = 0; i < tickCount; i++) {
@@ -632,63 +630,52 @@ export default class Axis {
 		return maxOverflow;
 	}
 
-	getXAxisPadding(tickCount, isTimeSeries) {
+	getXAxisPadding(tickCount) {
 		const $$ = this.owner;
-		const config = $$.config;
-		const fit = config.axis_x_tick_fit;
-		const oldPadding = $$.axis.calculateXAxisPadding(tickCount, isTimeSeries);
-		const newPadding = {...oldPadding};
+		let padding = this.getXAxisPaddingObject($$.config.axis_x_padding);
 
-		if (!fit) {
-			newPadding.left = oldPadding.left % 1;
-			newPadding.right = oldPadding.right % 1;
+		if ($$.isTimeSeries()) {
+			padding = this.getTimeSeriesXAxisPadding(tickCount, padding);
+		}
+
+		return padding;
+	}
+
+	getXAxisPaddingObject(oldPadding) {
+		const newPadding = {left: 0, right: 0};
+
+		if (typeof oldPadding === "object" && Object.keys(oldPadding).length === 0) {
+			return newPadding;
+		} else if (typeof oldPadding === "number") {
+			newPadding.left = oldPadding;
+			newPadding.right = oldPadding;
+		} else {
+			newPadding.left = oldPadding.left ? oldPadding.left : 0;
+			newPadding.right = oldPadding.right ? oldPadding.right : 0;
 		}
 
 		return newPadding;
 	}
 
-	calculateXAxisPadding(tickCount, isTimeSeries) {
+	getTimeSeriesXAxisPadding(tickCount, padding) {
 		const $$ = this.owner;
-		const config = $$.config;
-		const padding = {left: 0, right: 0};
+		const xDomain = [$$.getXDomainMin($$.data.targets), $$.getXDomainMax($$.data.targets)];
+		const firstX = xDomain[0].getTime();
+		const lastX = xDomain[1].getTime();
+		const timeDiff = lastX - firstX;
 
-		if (!tickCount || (!config.axis_x_padding && !Object.keys(config.axis_x_padding).length)) {
-			return padding;
-		}
+		const range = timeDiff + padding.left + padding.right;
+		const relativePaddingLeft = padding.left / range;
+		const relativePaddingRight = padding.right / range;
 
-		let xAxisPaddingLeft;
-		let xAxisPaddingRight;
+		const relativeTickWidth = (timeDiff / tickCount) / range;
 
-		if (typeof config.axis_x_padding === "number") {
-			xAxisPaddingLeft = config.axis_x_padding;
-			xAxisPaddingRight = config.axis_x_padding;
-		} else {
-			xAxisPaddingLeft = config.axis_x_padding.left || 0;
-			xAxisPaddingRight = config.axis_x_padding.right || 0;
-		}
+		const left = relativePaddingLeft ?
+			relativePaddingLeft / relativeTickWidth : 0;
+		const right = relativePaddingRight ?
+			relativePaddingRight / relativeTickWidth : 0;
 
-		if (isTimeSeries) {
-			const xDomain = [$$.getXDomainMin($$.data.targets), $$.getXDomainMax($$.data.targets)];
-			const firstX = xDomain[0].getTime();
-			const lastX = xDomain[1].getTime();
-			const timeDiff = lastX - firstX;
-
-			const range = timeDiff + xAxisPaddingLeft + xAxisPaddingRight;
-			const relativePaddingLeft = xAxisPaddingLeft / range;
-			const relativePaddingRight = xAxisPaddingRight / range;
-
-			const relativeTickWidth = (timeDiff / tickCount) / range;
-
-			padding.left = relativePaddingLeft ?
-				relativePaddingLeft / relativeTickWidth : 0;
-			padding.right = relativePaddingRight ?
-				relativePaddingRight / relativeTickWidth : 0;
-		} else {
-			padding.left = xAxisPaddingLeft;
-			padding.right = xAxisPaddingRight;
-		}
-
-		return padding;
+		return {left, right};
 	}
 
 	updateLabels(withTransition) {
