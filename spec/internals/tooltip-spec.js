@@ -198,6 +198,42 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("do not overlap data point", () => {
+			it("should show tooltip on proper position", done => {
+				const tooltip = chart.$.tooltip;
+				const circles = chart.$.line.circles;
+				const getCircleRectX = x => circles.filter(`.${CLASS.shape}-${x}`)
+					.node().getBoundingClientRect().x;
+
+				// when
+				let x = 8;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the right side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.above(getCircleRectX(3));
+
+				// when
+				x = 10;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the left side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.below(getCircleRectX(4));
+
+				// when
+				x = 12;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the left side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.below(getCircleRectX(5));
+			});
+		});
+
 		describe("when zoomed", () => {
 			before(() => {
 				args.zoom = {enabled: true};
