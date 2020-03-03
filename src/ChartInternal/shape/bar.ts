@@ -8,9 +8,9 @@ import {getRandom, getRectSegList, isNumber, isObjectType, isValue} from "../../
 
 export default {
 	initBar() {
-		const $$ = this;
+		const {$el} = this;
 
-		$$.$el.main.select(`.${CLASS.chart}`).append("g")
+		$el.bar = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartBars);
 	},
 

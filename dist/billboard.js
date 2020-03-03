@@ -11936,8 +11936,8 @@ var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webp
 
 /* harmony default export */ var ChartInternal_shape_bar = ({
   initBar: function initBar() {
-    var $$ = this;
-    $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartBars);
+    var $el = this.$el;
+    $el.bar = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartBars);
   },
   updateTargetsForBar: function updateTargetsForBar(targets) {
     var $$ = this,

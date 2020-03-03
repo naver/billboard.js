@@ -32807,8 +32807,8 @@ function smoothLines(el, type) {
 
 /* harmony default export */ var ChartInternal_shape_bar = ({
   initBar: function initBar() {
-    var $$ = this;
-    $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartBars);
+    var $el = this.$el;
+    $el.bar = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartBars);
   },
   updateTargetsForBar: function updateTargetsForBar(targets) {
     var $$ = this,
