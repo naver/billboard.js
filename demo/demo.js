@@ -1151,13 +1151,17 @@ var demos = {
 					},
 					axis: {
 						x: {
+							padding: {
+								left: 2
+							},
 							type: "category",
 							tick: {
 								fit: true,
 								multiline: false,
 								autorotate: true,
 								rotate: 15,
-								culling: false
+								culling: false,
+								count: 10,
 							}
 						},
 						y2: {
@@ -1253,13 +1257,14 @@ var demos = {
 					},
 					axis: {
 						x: {
+							padding: {left: 1000*60*60*24*180},
 							tick: {
 								fit: true,
 								multiline: false,
 								autorotate: true,
 								rotate: 15,
 								culling: false,
-								count: 10,
+								count: 8,
 								format: "%m-%d-%Y %H:%M:%S"
 							},
 							type: "timeseries"

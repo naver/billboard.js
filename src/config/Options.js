@@ -1783,6 +1783,7 @@ export default class Options {
 			 * - **NOTE:**
 			 *  > axis_x_tick_multiline must be set to `false` for autorotate to work.
 			 *  > axis_x_tick_culling must be set to `false` for autorotate to work.
+			 *  > axis_x_tick_fit must be set to `true` for autorotate to work.
 			 *  > axis_x_type must be set to `category` or `timeseries` for autorotate to work.
 			 * @name axis․x․tick․autorotate
 			 * @memberof Options
@@ -1797,6 +1798,7 @@ export default class Options {
 			 *       autorotate: true,
 			 *       multiline: false,
 			 *       culling: false
+			 *       fit: true
 			 *     }
 			 *   }
 			 * }
@@ -1807,6 +1809,7 @@ export default class Options {
 			 * Rotate x axis tick text.
 			 * - If you set negative value, it will rotate to opposite direction.
 			 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
+			 * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
 			 * @name axis․x․tick․rotate
 			 * @memberof Options
 			 * @type {Number}

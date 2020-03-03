@@ -1203,7 +1203,7 @@ describe("AXIS", function() {
 				args.axis.x.tick.fit = false;
 			});
 
-			it("should rotate tick texts and show 16 ticks", () => {
+			it("should rotate tick texts and show 16 ticks without overflow", () => {
 				let shownTicks = 0;
 
 				chart.$.main.selectAll(`.${CLASS.axisX} g.tick`).each(function(d, i) {
@@ -1220,7 +1220,7 @@ describe("AXIS", function() {
 
 				expect(shownTicks + 1).to.be.equal(16);
 
-				compare(15, 45.145263671875, 56.439983076254386, 91.96453886490406)
+				compare(15, 45.145263671875, 56.439983076254386, 0)
 			});
 
 			it("reset args", () => {
