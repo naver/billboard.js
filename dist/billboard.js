@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200302130407
+ * @version 1.11.1-nightly-20200303130446
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -10825,19 +10825,21 @@ extend(ChartInternal_ChartInternal.prototype, {
         _d3Mouse2 = _slicedToArray(_d3Mouse, 2),
         left = _d3Mouse2[0],
         top = _d3Mouse2[1],
-        chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
+        chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(),
+        chartLeft = $$.getCurrentPaddingLeft(!0),
+        size = 20;
 
     // Determine tooltip position
-    if (top += 20, $$.hasArcType()) {
+    if (top += size, $$.hasArcType()) {
       var raw = $$.inputType === "touch" || $$.hasType("radar");
       raw || (top += hasGauge ? $$.height : $$.height / 2, left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2);
     } else {
       var dataScale = $$.x(dataToShow[0].x);
-      config.axis_rotated ? (top = dataScale + 20, left += svgLeft + 100, chartRight -= svgLeft) : (top -= 5, left = svgLeft + $$.getCurrentPaddingLeft(!0) + 20 + ($$.zoomScale ? left : dataScale));
-    }
+      config.axis_rotated ? (top = dataScale + size, left += svgLeft + 100, chartRight -= svgLeft) : (top -= 5, left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale));
+    } // when tooltip left + tWidth > chart's width
 
-    var right = left + tWidth;
-    return right > chartRight && (left -= right - chartRight + 20), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
+
+    return left + tWidth + 15 > chartRight && (left -= svgLeft + tWidth + chartLeft), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
       top: top,
       left: left
     };
@@ -14747,7 +14749,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200302130407",
+  version: "1.11.1-nightly-20200303130446",
 
   /**
    * Generate chart
@@ -14846,7 +14848,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200302130407
+ * @version 1.11.1-nightly-20200303130446
  */
 
 
