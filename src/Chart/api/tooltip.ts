@@ -106,6 +106,9 @@ const tooltip = {
 	hide: function() {
 		const $$ = this.internal;
 
+		// reset last touch point index
+		$$.inputType === "touch" && $$.callOverOutForTouch();
+
 		$$.hideTooltip(true);
 		$$.hideGridFocus();
 		$$.unexpandCircles();

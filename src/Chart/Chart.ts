@@ -123,7 +123,6 @@ export default class Chart {
 
 		$$.beforeInit();
 		$$.init();
-		$$.afterInit();
 	}
 }
 

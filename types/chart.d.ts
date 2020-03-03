@@ -174,13 +174,17 @@ export interface Chart {
 		 * Get and set axis min value.
 		 * @param min If min is given, specified axis' min value will be updated. If no argument is given, the current min values for each axis will be returned.
 		 */
-		min(min?: number | { [key: string]: number }): number | { [key: string]: number };
+		min(min?: number | { [key: string]: number }): number | {
+			[key: string]: number | { fit?: boolean; value?: number; }
+		};
 
 		/**
 		 * Get and set axis max value.
 		 * @param max If max is given, specified axis' max value will be updated. If no argument is given, the current max values for each axis will be returned.
 		 */
-		max(max?: number | { [key: string]: number }): number | { [key: string]: number };
+		max(max?: number | { [key: string]: number }): number | {
+			[key: string]: number | { fit?: boolean; value?: number; }
+		};
 
 		/**
 		 * Get and set axis min and max value.

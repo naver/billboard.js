@@ -245,8 +245,10 @@ export default {
 		const svgLeft = $$.getSvgLeft(true);
 		let [left, top] = d3Mouse(element);
 		let chartRight = svgLeft + currentWidth - $$.getCurrentPaddingRight();
+		const chartLeft = $$.getCurrentPaddingLeft(true);
+		const size = 20;
 
-		top += 20;
+		top += size;
 
 		// Determine tooltip position
 		if ($$.hasArcType()) {
@@ -260,20 +262,18 @@ export default {
 			const dataScale = scale.x(dataToShow[0].x);
 
 			if (config.axis_rotated) {
-				top = dataScale + 20;
+				top = dataScale + size;
 				left += svgLeft + 100;
 				chartRight -= svgLeft;
 			} else {
 				top -= 5;
-				left = svgLeft + $$.getCurrentPaddingLeft(true) + 20 + (scale.zoom ? left : dataScale);
+				left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale);
 			}
 		}
 
-		const right = left + tWidth;
-
-		if (right > chartRight) {
-			// 20 is needed for Firefox to keep tooltip width
-			left -= right - chartRight + 20;
+		// when tooltip left + tWidth > chart's width
+		if ((left + tWidth + 15) > chartRight) {
+			left -= (svgLeft + tWidth + chartLeft);
 		}
 
 		if (top + tHeight > currentHeight) {
@@ -385,12 +385,12 @@ export default {
 	 */
 	hideTooltip(force) {
 		const $$ = this;
-		const {config, $el: {tooltip}} = $$;
+		const {api, config, $el: {tooltip}} = $$;
 
 		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
 			const selectedData = JSON.parse(tooltip.datum().current);
 
-			callFn(config.tooltip_onhide, $$.api, selectedData);
+			callFn(config.tooltip_onhide, api, selectedData);
 
 			// hide tooltip
 			tooltip
@@ -398,7 +398,7 @@ export default {
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
-			callFn(config.tooltip_onhidden, $$.api, selectedData);
+			callFn(config.tooltip_onhidden, api, selectedData);
 		}
 	},
 

@@ -20,12 +20,16 @@ export default {
 	 * });
 	 */
 	resize(size?: {width?: number, height?: number}) {
-		const {config} = this.internal;
+		const $$ = this.internal;
+		const {config, state} = $$;
 
-		config.size_width = size ? size.width : null;
-		config.size_height = size ? size.height : null;
+		if (state.rendered) {
+			config.size_width = size ? size.width : null;
+			config.size_height = size ? size.height : null;
 
-		this.flush(false, true);
+			this.flush(false, true);
+			$$.resizeFunction();
+		}
 	},
 
 	/**

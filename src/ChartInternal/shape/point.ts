@@ -328,8 +328,15 @@ export default {
 
 		if (isObject(d) || circle) {
 			pointClass = d === true ?
-				circle.attr("class", $$.classCircle.bind($$)) :
-				$$.classCircle(d);
+				circle.each(function(d) {
+					let className = $$.classCircle.bind($$)(d);
+
+					if (this.classList.contains(CLASS.EXPANDED)) {
+						className += ` ${CLASS.EXPANDED}`;
+					}
+
+					this.setAttribute("class", className);
+				}) : $$.classCircle(d);
 		}
 
 		return pointClass;

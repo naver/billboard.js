@@ -18548,8 +18548,6 @@ var Store_state = function () {
    *  If undefined returned, the row of that value will be skipped.
    * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
    *  This option can be used to modify the tooltip position by returning object that has top and left.
-   * @property {String} [tooltip.position.unit="px"] Set tooltip's position unit.
-   *  - **NOTE:** This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
    * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
    *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
    * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
@@ -19512,12 +19510,22 @@ var Store_state = function () {
    * Set max value of x axis range.
    * @name axis․x․max
    * @memberof Options
-   * @type {Number}
-   * @default undefined
+   * @property {Number} max Set the max value
+   * @property {Boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
+   * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
+   * @property {Number} [max.value] Set the max value
    * @example
    * axis: {
    *   x: {
-   *     max: 100
+   *     max: 100,
+   *
+   *     max: {
+   *       // 'fit=true' will make x axis max to be limited as the bound data value max when 'max.value' is greater.
+   *       // - when bound data max is '10' and max.value: '100' ==>  x axis max will be '10'
+   *       // - when bound data max is '1000' and max.value: '100' ==> x axis max will be '100'
+   *       fit: true,
+   *       value: 100
+   *     }
    *   }
    * }
    */
@@ -19527,12 +19535,22 @@ var Store_state = function () {
    * Set min value of x axis range.
    * @name axis․x․min
    * @memberof Options
-   * @type {Number}
-   * @default undefined
+   * @property {Number} min Set the min value
+   * @property {Boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
+   * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
+   * @property {Number} [min.value] Set the min value
    * @example
    * axis: {
    *   x: {
-   *     min: -100
+   *     min: -100,
+   *
+   *     min: {
+   *       // 'fit=true' will make x axis min to be limited as the bound data value min when 'min.value' is lower.
+   *       // - when bound data min is '-10' and min.value: '-100' ==>  x axis min will be '-10'
+   *       // - when bound data min is '-1000' and min.value: '-100' ==> x axis min will be '-100'
+   *       fit: true,
+   *       value: -100
+   *     }
    *   }
    * }
    */
@@ -20108,7 +20126,9 @@ var Store_state = function () {
    * You can set padding for y axis to create more space on the edge of the axis.
    * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
    *
-   * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+   * - **NOTE:**
+   *   - Given values are translated relative to the y Axis domain value for padding
+   *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
    * @name axis․y․padding
    * @memberof Options
    * @type {Object|Number}
@@ -20530,8 +20550,13 @@ var Store_state = function () {
   },
 
   /**
-   * Set the number of y2 axis ticks.
-   * - **NOTE:** This works in the same way as axis.y.tick.count.
+   * Set padding for y2 axis.<br><br>
+   * You can set padding for y2 axis to create more space on the edge of the axis.
+   * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+   *
+   * - **NOTE:**
+   *   - Given values are translated relative to the y2 Axis domain value for padding
+   *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
    * @name axis․y2․padding
    * @memberof Options
    * @type {Object|Number}
@@ -24508,7 +24533,7 @@ function band_point() {
 
 
 
-var continuous_unit = [0, 1];
+var unit = [0, 1];
 function continuous_identity(x) {
   return x;
 }
@@ -24571,8 +24596,8 @@ function transformer() {
       piecewise,
       output,
       input,
-      domain = continuous_unit,
-      range = continuous_unit,
+      domain = unit,
+      range = unit,
       interpolate = src_value,
       clamp = continuous_identity;
   return scale.invert = function (y) {
@@ -26294,8 +26319,9 @@ function () {
       })) return currentTickMax.size;
       currentTickMax.domain = domain;
       var axis = this.getAxis(id, scale, !1, !1, !0),
-          tickCount = config["axis_" + id + "_tick_count"];
-      tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+          tickCount = config["axis_" + id + "_tick_count"],
+          tickValues = config["axis_" + id + "_tick_values"];
+      !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
       var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
       axis.create(dummy), dummy.selectAll("text").each(function () {
         maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
@@ -27941,7 +27967,8 @@ var colorizePattern = function (pattern, color, id) {
   getYDomain: function getYDomain(targets, axisId, xDomain) {
     var $$ = this,
         config = $$.config,
-        scale = $$.scale;
+        scale = $$.scale,
+        pfx = "axis_" + axisId;
     if ($$.isStackNormalized()) return [0, 100];
     var targetsByAxisId = targets.filter(function (t) {
       return $$.axis.getId(t.id) === axisId;
@@ -27951,15 +27978,15 @@ var colorizePattern = function (pattern, color, id) {
       return axisId === "y2" ? scale.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
       // So, it needs to call to get y2 domain here
       $$.getYDomain(targets, "y2", xDomain);
-    var yMin = config["axis_" + axisId + "_min"],
-        yMax = config["axis_" + axisId + "_max"],
+    var yMin = config[pfx + "_min"],
+        yMax = config[pfx + "_max"],
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
-        center = config["axis_" + axisId + "_center"],
+        center = config[pfx + "_center"],
         isZeroBased = ["area", "bar", "bubble", "line", "scatter"].some(function (v) {
       return $$.hasType(v, yTargets) && config[v + "_zerobased"];
     }),
-        isInverted = config["axis_" + axisId + "_inverted"],
+        isInverted = config[pfx + "_inverted"],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
         showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
     yDomainMin = isValue(yMin) ? yMin : isValue(yMax) ? yDomainMin < yMax ? yDomainMin : yMax - 10 : yDomainMin, yDomainMax = isValue(yMax) ? yMax : isValue(yMin) ? yMin < yDomainMax ? yDomainMax : yMin + 10 : yDomainMax, isNaN(yDomainMin) && (yDomainMin = 0), isNaN(yDomainMax) && (yDomainMax = yDomainMin), yDomainMin === yDomainMax && (yDomainMin < 0 ? yDomainMax = 0 : yDomainMin = 0);
@@ -27991,28 +28018,27 @@ var colorizePattern = function (pattern, color, id) {
       ["bottom", "top"].forEach(function (v, i) {
         padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
       });
-    }
-
-    if (/^y2?$/.test(axisId)) {
-      var p = config["axis_" + axisId + "_padding"];
-      notEmpty(p) && ["bottom", "top"].forEach(function (v) {
-        padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
-      });
-    } // Bar/Area chart should be 0-based if all positive|negative
+    } // if padding is set, the domain will be updated relative the current domain value
+    // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
 
 
-    isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
+    var p = config[pfx + "_padding"];
+    notEmpty(p) && ["bottom", "top"].forEach(function (v) {
+      padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+    }), isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
     var domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
   },
   getXDomainMinMax: function getXDomainMinMax(targets, type) {
     var $$ = this,
-        value = $$.config["axis_x_" + type];
-    return isDefined(value) ? $$.isTimeSeries() ? parseDate.call($$, value) : value : getMinMax(type, targets.map(function (t) {
+        configValue = $$.config["axis_x_" + type],
+        dataValue = getMinMax(type, targets.map(function (t) {
       return getMinMax(type, t.values.map(function (v) {
         return v.x;
       }));
-    }));
+    })),
+        value = isObject(configValue) ? configValue.value : configValue;
+    return value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value, isObject(configValue) && configValue.fit && (type === "min" && value < dataValue || type === "max" && value > dataValue) && (value = undefined), isDefined(value) ? value : dataValue;
   },
   getXDomainMin: function getXDomainMin(targets) {
     return this.getXDomainMinMax(targets, "min");
@@ -28785,7 +28811,7 @@ function getFormat($$, typeValue, v) {
         axisId = isRotated ? "x" : "y",
         axesLen = config["axis_" + axisId + "_axes"].length,
         axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
-    return padding = isValue(config.padding_left) ? config.padding_left : isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : !config.axis_y_show || config.axis_y_inner ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
+    return padding = isValue(config.padding_left) ? config.padding_left : hasAxis && isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : hasAxis && (!config.axis_y_show || config.axis_y_inner) ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
   },
   getCurrentPaddingRight: function getCurrentPaddingRight() {
     var padding,
@@ -29343,6 +29369,8 @@ function getTextPos(pos, width) {
         return $$.addName(d.values[config.tooltip_init_x]);
       }), $$.axis.getXAxisTickFormat(), $$.getYFormat($$.hasArcType(null, ["radar"])), $$.color)), bindto || $el.tooltip.style("top", config.tooltip_init_position.top).style("left", config.tooltip_init_position.left).style("display", "block");
     }
+
+    $$.bindTooltipResizePos();
   },
 
   /**
@@ -29507,19 +29535,21 @@ function getTextPos(pos, width) {
         _d3Mouse = src_mouse(element),
         left = _d3Mouse[0],
         top = _d3Mouse[1],
-        chartRight = svgLeft + currentWidth - $$.getCurrentPaddingRight();
+        chartRight = svgLeft + currentWidth - $$.getCurrentPaddingRight(),
+        chartLeft = $$.getCurrentPaddingLeft(!0),
+        size = 20;
 
     // Determine tooltip position
-    if (top += 20, $$.hasArcType()) {
+    if (top += size, $$.hasArcType()) {
       var raw = inputType === "touch" || $$.hasType("radar");
       raw || (top += hasGauge ? height : height / 2, left += (width - (isLegendRight ? $$.getLegendWidth() : 0)) / 2);
     } else {
       var dataScale = scale.x(dataToShow[0].x);
-      config.axis_rotated ? (top = dataScale + 20, left += svgLeft + 100, chartRight -= svgLeft) : (top -= 5, left = svgLeft + $$.getCurrentPaddingLeft(!0) + 20 + (scale.zoom ? left : dataScale));
-    }
+      config.axis_rotated ? (top = dataScale + size, left += svgLeft + 100, chartRight -= svgLeft) : (top -= 5, left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale));
+    } // when tooltip left + tWidth > chart's width
 
-    var right = left + tWidth;
-    return right > chartRight && (left -= right - chartRight + 20), top + tHeight > currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
+
+    return left + tWidth + 15 > chartRight && (left -= svgLeft + tWidth + chartLeft), top + tHeight > currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
       top: top,
       left: left
     };
@@ -29544,17 +29574,17 @@ function getTextPos(pos, width) {
 
     if (dataToShow.length !== 0 && config.tooltip_show) {
       var datum = tooltip.datum(),
-          dataStr = JSON.stringify(selectedData),
           _ref = datum || {},
           _ref$width = _ref.width,
           width = _ref$width === void 0 ? 0 : _ref$width,
           _ref$height = _ref.height,
-          height = _ref$height === void 0 ? 0 : _ref$height;
+          height = _ref$height === void 0 ? 0 : _ref$height,
+          dataStr = JSON.stringify(selectedData);
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
         callFn(config.tooltip_onshow, $$.api, selectedData), tooltip.html($$.getTooltipHTML(selectedData, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
-        .datum({
+        .datum(datum = {
           index: index,
           current: dataStr,
           width: width = tooltip.property("offsetWidth"),
@@ -29563,27 +29593,38 @@ function getTextPos(pos, width) {
       }
 
       if (!bindto) {
-        var unit,
-            fn = config.tooltip_position;
-        isFunction(fn) ? fn = fn.bind($$.api) : (unit = fn && fn.unit, fn = $$.tooltipPosition.bind($$));
-        // Get tooltip dimensions
-        var pos = fn(dataToShow, width, height, element);
+        var fnPos = config.tooltip_position || $$.tooltipPosition,
+            pos = fnPos.call(this, dataToShow, width, height, element); // Get tooltip dimensions
+
         ["top", "left"].forEach(function (v) {
-          var value = pos[v]; // when value is number
-
-          if (/^\d+(\.\d+)?$/.test(value)) {
-            if (unit === "%") {
-              var size = state[v === "top" ? "currentHeight" : "currentWidth"];
-              value = value / size * 100;
-            } else unit = "px";
-
-            value += unit;
-          }
-
-          tooltip.style(v, value);
+          var value = pos[v];
+          tooltip.style(v, value + "px"), v !== "left" || datum.xPosInPercent || (datum.xPosInPercent = value / state.currentWidth * 100);
         });
       }
     }
+  },
+
+  /**
+   * Adjust tooltip position on resize event
+   * @private
+   */
+  bindTooltipResizePos: function bindTooltipResizePos() {
+    var $$ = this,
+        resizeFunction = $$.resizeFunction,
+        state = $$.state,
+        tooltip = $$.$el.tooltip;
+    resizeFunction.add(function () {
+      if (tooltip.style("display") === "block") {
+        var currentWidth = state.currentWidth,
+            _tooltip$datum = tooltip.datum(),
+            width = _tooltip$datum.width,
+            xPosInPercent = _tooltip$datum.xPosInPercent,
+            _value = currentWidth / 100 * xPosInPercent,
+            diff = currentWidth - (_value + width);
+
+        diff < 0 && (_value += diff), tooltip.style("left", _value + "px");
+      }
+    });
   },
 
   /**
@@ -29593,14 +29634,15 @@ function getTextPos(pos, width) {
    */
   hideTooltip: function hideTooltip(force) {
     var $$ = this,
+        api = $$.api,
         config = $$.config,
         tooltip = $$.$el.tooltip;
 
     if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
       var selectedData = JSON.parse(tooltip.datum().current);
       // hide tooltip
-      callFn(config.tooltip_onhide, $$.api, selectedData), tooltip.style("display", "none").style("visibility", "hidden") // for IE9
-      .datum(null), callFn(config.tooltip_onhidden, $$.api, selectedData);
+      callFn(config.tooltip_onhide, api, selectedData), tooltip.style("display", "none").style("visibility", "hidden") // for IE9
+      .datum(null), callFn(config.tooltip_onhidden, api, selectedData);
     }
   },
 
@@ -35316,7 +35358,10 @@ var getTransitionName = function () {
     var $$ = this,
         circle = $$.$el.circle,
         pointClass = !1;
-    return (isObject(d) || circle) && (pointClass = d === !0 ? circle.attr("class", $$.classCircle.bind($$)) : $$.classCircle(d)), pointClass;
+    return (isObject(d) || circle) && (pointClass = d === !0 ? circle.each(function (d) {
+      var className = $$.classCircle.bind($$)(d);
+      this.classList.contains(config_classes.EXPANDED) && (className += " " + config_classes.EXPANDED), this.setAttribute("class", className);
+    }) : $$.classCircle(d)), pointClass;
   },
   generatePoint: function generatePoint() {
     var $$ = this,
@@ -35742,7 +35787,7 @@ var getTransitionName = function () {
     var radius = Math.PI * (config.gauge_fullCircle ? 2 : 1),
         gStart = config.gauge_startingAngle;
 
-    if (d.data && $$.isGaugeType(d.data)) {
+    if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
       var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
 
       totalSum > config.gauge_max && (config.gauge_max = totalSum);
@@ -36647,7 +36692,7 @@ function () {
       attributeFilter: ["class", "style"]
     }), !isLazy || forced) {
       var convertedData = $$.convertData(config, $$.initWithData);
-      convertedData && $$.initWithData(convertedData);
+      convertedData && $$.initWithData(convertedData), $$.afterInit();
     }
   }, _proto.initParams = function initParams() {
     var $$ = this,
@@ -36704,7 +36749,7 @@ function () {
       return $el.defs.append(function () {
         return p.node;
       });
-    })), $$.updateSvgSize();
+    })), $$.updateSvgSize(), $$.bindResize();
     // Define regions
     var main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
 
@@ -36720,10 +36765,10 @@ function () {
     }), config.data_onmin || config.data_onmax) {
       var minMax = $$.getMinMaxData();
       callFn(config.data_onmin, $$.api, minMax.min), callFn(config.data_onmax, $$.api, minMax.max);
-    } // Bind resize event
+    } // export element of the chart
 
 
-    $$.bindResize(), $$.api.element = $el.chart.node(), state.rendered = !0;
+    $$.api.element = $el.chart.node(), state.rendered = !0;
   }, _proto.initChartElements = function initChartElements() {
     var $$ = this,
         _$$$state = $$.state,
@@ -36831,7 +36876,7 @@ function () {
         durationForExit = wth.TransitionForExit ? duration : 0,
         durationForAxis = wth.TransitionForAxis ? duration : 0,
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
-    initializing && config.tooltip_init_show || state.inputType !== "touch" || $$.hideTooltip(), $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   }
   /**
    * Generate redraw list
@@ -36957,29 +37002,33 @@ function () {
     return d ? this.scale.subX(d.x) : null;
   }, _proto.bindResize = function bindResize() {
     var $$ = this,
-        config = $$.config;
-    $$.resizeFunction = $$.generateResize(), $$.resizeFunction.add(function () {
-      return callFn(config.onresize, $$.api);
-    }), config.resize_auto && $$.resizeFunction.add(function () {
-      $$.resizeTimeout && (win.clearTimeout($$.resizeTimeout), $$.resizeTimeout = null), $$.resizeTimeout = win.setTimeout(function () {
-        $$.api.flush(!1, !0);
-      }, 200);
-    }), $$.resizeFunction.add(function () {
-      return callFn(config.onresized, $$.api);
-    }), win.addEventListener("resize", $$.resizeFunction);
+        config = $$.config,
+        resizeFunction = $$.generateResize(),
+        list = [];
+    list.push(function () {
+      return callFn(config.onresize, $$, $$.api);
+    }), config.resize_auto && list.push(function () {
+      return $$.api.flush(!1, !0);
+    }), list.push(function () {
+      return callFn(config.onresized, $$, $$.api);
+    }), list.forEach(function (v) {
+      return resizeFunction.add(v);
+    }), win.addEventListener("resize", $$.resizeFunction = resizeFunction);
   }, _proto.generateResize = function generateResize() {
-    function callResizeFunctions() {
-      resizeFunctions.forEach(function (f) {
-        return f();
-      });
+    function callResizeFn() {
+      callResizeFn.timeout && (win.clearTimeout(callResizeFn.timeout), callResizeFn.timeout = null), callResizeFn.timeout = win.setTimeout(function () {
+        fn.forEach(function (f) {
+          return f();
+        });
+      }, 200);
     }
 
-    var resizeFunctions = [];
-    return callResizeFunctions.add = function (f) {
-      return resizeFunctions.push(f);
-    }, callResizeFunctions.remove = function (f) {
-      return resizeFunctions.splice(resizeFunctions.indexOf(f), 1);
-    }, callResizeFunctions;
+    var fn = [];
+    return callResizeFn.add = function (f) {
+      return fn.push(f);
+    }, callResizeFn.remove = function (f) {
+      return fn.splice(fn.indexOf(f), 1);
+    }, callResizeFn;
   }, _proto.endall = function endall(transition, callback) {
     var n = 0;
     transition.each(function () {
@@ -37083,8 +37132,10 @@ function loadConfig(config) {
    * });
    */
   resize: function resize(size) {
-    var config = this.internal.config;
-    config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0);
+    var $$ = this.internal,
+        config = $$.config,
+        state = $$.state;
+    state.rendered && (config.size_width = size ? size.width : null, config.size_height = size ? size.height : null, this.flush(!1, !0), $$.resizeFunction());
   },
 
   /**
@@ -37128,7 +37179,7 @@ function loadConfig(config) {
         chart = _$$$$el.chart,
         svg = _$$$$el.svg;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), isDefined($$.resizeTimeout) && win.clearTimeout($$.resizeTimeout), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), $$.generateResize.timeout && win.clearTimeout($$.generateResize.timeout), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -37969,8 +38020,9 @@ var tooltip_tooltip = {
    * @memberof Chart
    */
   hide: function hide() {
-    var $$ = this.internal;
-    $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
+    var $$ = this.internal; // reset last touch point index
+
+    $$.inputType === "touch" && $$.callOverOutForTouch(), $$.hideTooltip(!0), $$.hideGridFocus(), $$.unexpandCircles(), $$.unexpandBars();
   }
 };
 /* harmony default export */ var api_tooltip = ({
@@ -38073,7 +38125,7 @@ function Chart(options) {
           hasChild = Object.keys(fn[key]).length > 0;
       isFunc && (!isChild && hasChild || isChild) ? target[key] = fn[key].bind(argThis) : !isFunc && (target[key] = {}), hasChild && bindThis(fn[key], target[key], argThis);
     });
-  }(Chart.prototype, this, this), loadConfig.call($$, options), $$.beforeInit(), $$.init(), $$.afterInit();
+  }(Chart.prototype, this, this), loadConfig.call($$, options), $$.beforeInit(), $$.init();
 }; // extend common APIs as part of Chart class
 
 

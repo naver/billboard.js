@@ -244,6 +244,7 @@ export default class ChartInternal {
 			const convertedData = $$.convertData(config, $$.initWithData);
 
 			convertedData && $$.initWithData(convertedData);
+			$$.afterInit();
 		}
 	}
 
@@ -676,9 +677,6 @@ export default class ChartInternal {
 		const durationForExit = wth.TransitionForExit ? duration : 0;
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
 		const transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
-
-		!(initializing && config.tooltip_init_show) &&
-			state.inputType === "touch" && $$.hideTooltip();
 
 		$$.updateSizes(initializing);
 

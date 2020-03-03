@@ -96,7 +96,7 @@ export default {
 		const radius = Math.PI * (config.gauge_fullCircle ? 2 : 1);
 		const gStart = config.gauge_startingAngle;
 
-		if (d.data && $$.isGaugeType(d.data)) {
+		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
 			const totalSum = $$.getTotalDataSum();
 
 			// if gauge_max less than totalSum, make totalSum to max value
