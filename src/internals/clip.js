@@ -14,14 +14,12 @@ extend(ChartInternal.prototype, {
 		$$.clipId = `${$$.datetimeId}-clip`;
 
 		$$.clipIdForXAxis = `${$$.clipId}-xaxis`;
-		$$.clipIdForXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
 		$$.clipIdForYAxis = `${$$.clipId}-yaxis`;
 		$$.clipIdForGrid = `${$$.clipId}-grid`;
 
 		// Define 'clip-path' attribute values
 		$$.clipPath = $$.getClipPath($$.clipId);
 		$$.clipPathForXAxis = $$.getClipPath($$.clipIdForXAxis);
-		$$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts);
 		$$.clipPathForYAxis = $$.getClipPath($$.clipIdForYAxis);
 		$$.clipPathForGrid = $$.getClipPath($$.clipIdForGrid);
 	},
@@ -126,9 +124,20 @@ extend(ChartInternal.prototype, {
 
 	updateXAxisTickClip() {
 		const $$ = this;
+		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
 
-		$$.setXAxisTickClipWidth();
-		$$.setXAxisTickTextClipPathWidth();
+		$$.clipIdForXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
+		$$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts);
+
+		if (!$$.config.axis_x_tick_multiline &&
+			$$.getAxisTickRotate("x") &&
+			newXAxisHeight !== $$.xAxisHeight
+		) {
+			$$.setXAxisTickClipWidth();
+			$$.setXAxisTickTextClipPathWidth();
+		}
+
+		$$.xAxisHeight = newXAxisHeight;
 	},
 
 	setXAxisTickClipWidth() {
