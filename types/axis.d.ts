@@ -40,13 +40,23 @@ export interface XAxisConfiguration {
 
 	/**
 	 * Set max value of x axis range.
+	 *
+	 * When specified `max.value` is greater than the bound data value, setting `max.fit=true` will make x axis max to be fitted to the bound data max value.
 	 */
-	max?: string | number | Date;
+	max?: string | number | Date | ({
+		fit?: boolean;
+		value?: string | number | Date;
+	});
 
 	/**
 	 * Set min value of x axis range.
+	 *
+	 * When specified `min.value` is lower than the bound data value, setting `min.fit=true` will make x axis min to be fitted to the bound data min value.
 	 */
-	min?: string | number | Date;
+	min?: string | number | Date | ({
+		fit?: boolean;
+		value?: string | number | Date;
+	});
 
 	/**
 	 * Set padding for x axis.
@@ -313,6 +323,11 @@ export interface YTickConfiguration {
 	 * - **NOTE:** Will be ignored if `axis[y|y2].tick.count` or `axis[y|y2].tick.values` options are set.
 	 */
 	stepSize?: number;
+
+	/**
+	 * Show or hide axis tick line.
+	 */
+	show?: boolean;
 
 	text?: {
 		/**

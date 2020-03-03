@@ -256,6 +256,31 @@ describe("SHAPE ARC", () => {
 			}, 500);
 		});
 
+
+		it("gauge max value should be equal to totalSum if gauge max < totalSum", () => {
+			const chart = util.generate({
+				gauge: {
+					width: 10,
+					max: 10,
+					expand: true
+				},
+				data: {
+					columns: [
+						["data1", 10],
+						["data2", 20],
+						["data3", 20],
+						["data4", 50]
+					],
+					type: "gauge"
+				}
+			});
+
+			const totalSum = chart.internal.getTotalDataSum();
+			const gaugeMax = chart.internal.config.gauge_max;
+
+			expect(gaugeMax).to.be.equal(totalSum);
+		});
+
 		it("should have correct d for 2 Pi radian gauge starting at Pi/2", done => {
 			const chart = util.generate({
 				gauge: {
@@ -519,6 +544,16 @@ describe("SHAPE ARC", () => {
 
 		beforeEach(() => {
 			chart = util.generate(args);
+		});
+
+		it("gauge max value should be below totalSum if more than 1 value", () => {
+			const maxValue = chart.internal.getMinMaxData().max[0].value;
+			const totalSum = chart.internal.getTotalDataSum();
+			const gaugeMax = chart.internal.config.gauge_max;
+
+			expect(chart.internal.data.targets.length).to.be.above(1);
+			expect(gaugeMax).to.be.below(totalSum);
+			expect(gaugeMax).to.be.equal(maxValue);
 		});
 
 		it("each data_column should have one arc", () => {

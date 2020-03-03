@@ -69,6 +69,7 @@ extend(ChartInternal.prototype, {
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
 		const config = $$.config;
+		const pfx = `axis_${axisId}`;
 
 		if ($$.isStackNormalized()) {
 			return [0, 100];
@@ -85,15 +86,15 @@ extend(ChartInternal.prototype, {
 				$$.getYDomain(targets, "y2", xDomain);
 		}
 
-		const yMin = config[`axis_${axisId}_min`];
-		const yMax = config[`axis_${axisId}_max`];
+		const yMin = config[`${pfx}_min`];
+		const yMax = config[`${pfx}_max`];
 		let yDomainMin = $$.getYDomainMin(yTargets);
 		let yDomainMax = $$.getYDomainMax(yTargets);
 
-		const center = config[`axis_${axisId}_center`];
+		const center = config[`${pfx}_center`];
 		let isZeroBased = ["area", "bar", "bubble", "line", "scatter"]
 			.some(v => $$.hasType(v, yTargets) && config[`${v}_zerobased`]);
-		const isInverted = config[`axis_${axisId}_inverted`];
+		const isInverted = config[`${pfx}_inverted`];
 		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
 		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
 
@@ -156,14 +157,15 @@ extend(ChartInternal.prototype, {
 			});
 		}
 
-		if (/^y2?$/.test(axisId)) {
-			const p = config[`axis_${axisId}_padding`];
 
-			if (notEmpty(p)) {
-				["bottom", "top"].forEach(v => {
-					padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
-				});
-			}
+		// if padding is set, the domain will be updated relative the current domain value
+		// ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
+		const p = config[`${pfx}_padding`];
+
+		if (notEmpty(p)) {
+			["bottom", "top"].forEach(v => {
+				padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+			});
 		}
 
 		// Bar/Area chart should be 0-based if all positive|negative
@@ -179,11 +181,19 @@ extend(ChartInternal.prototype, {
 
 	getXDomainMinMax(targets, type) {
 		const $$ = this;
-		const value = $$.config[`axis_x_${type}`];
+		const configValue = $$.config[`axis_x_${type}`];
+		const dataValue = getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		let value = isObject(configValue) ? configValue.value : configValue;
 
-		return isDefined(value) ?
-			($$.isTimeSeries() ? $$.parseDate(value) : value) :
-			getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value;
+
+		if (isObject(configValue) && configValue.fit && (
+			(type === "min" && value < dataValue) || (type === "max" && value > dataValue)
+		)) {
+			value = undefined;
+		}
+
+		return isDefined(value) ? value : dataValue;
 	},
 
 	getXDomainMin(targets) {
