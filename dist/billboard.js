@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200303130446
+ * @version 1.11.1-nightly-20200304092433
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1004,9 +1004,15 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
           var lineUpdate = tick.select("line"),
               textUpdate = tick.select("text");
 
-          if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
-            Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this).text(params.tickTitle[index]);
-          }), scale1.bandwidth) {
+          // Append <title> for tooltip display
+          if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
+            var title = textUpdate.select("title");
+            (title.empty() ? textUpdate.append("title") : title).text(function (index) {
+              return params.tickTitle[index];
+            });
+          }
+
+          if (scale1.bandwidth) {
             var x = scale1,
                 dx = x.bandwidth() / 2;
             scale0 = function (d) {
@@ -14749,7 +14755,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200303130446",
+  version: "1.11.1-nightly-20200304092433",
 
   /**
    * Generate chart
@@ -14848,7 +14854,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200303130446
+ * @version 1.11.1-nightly-20200304092433
  */
 
 
