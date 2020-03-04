@@ -606,7 +606,7 @@ describe("AXIS", function() {
 			});
 		});
 
-		describe.only("category axis", () => {
+		describe("category axis", () => {
 			describe("not rotated", () => {
 				before(() => {
 					args = {
