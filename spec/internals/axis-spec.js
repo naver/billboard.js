@@ -691,6 +691,21 @@ describe("AXIS", function() {
 					// check when toggling displaying data series
 					expect(() => chart.hide("data1")).to.not.throw();
 				});
+
+				it("shouldn't be addede duplicated tooltip <title> elements", done => {
+					chart.load({
+						columns: [
+							["data1", 130, 120, 150, 140]							
+						],
+						done: function() {
+							chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function() { 
+								expect(d3Select(this).selectAll("title").size()).to.be.equal(1);
+							});
+
+							done();
+						}
+					});
+				})
 			});
 
 			describe("rotated", () => {
