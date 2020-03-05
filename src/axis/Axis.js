@@ -8,6 +8,7 @@ import {
 	axisLeft as d3AxisLeft,
 	axisRight as d3AxisRight
 } from "d3-axis";
+import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import CLASS from "../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, sortValue} from "../internals/util";
 import AxisRenderer from "./AxisRenderer";
@@ -584,7 +585,9 @@ export default class Axis {
 			positiveRotation
 		) {
 			const widthWithoutCurrentPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft();
-			const maxOverflow = this.getMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft);
+			const maxOverflow = this.getMaxOverflow(
+				xAxisTickRotate, widthWithoutCurrentPaddingLeft, defaultPadding
+			);
 			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
 				defaultPadding; // for display inconsistencies between browsers
 
@@ -593,21 +596,24 @@ export default class Axis {
 		return 0;
 	}
 
-	getMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+	getMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft, defaultPadding) {
 		const $$ = this.owner;
 		const config = $$.config;
 		const isTimeSeries = $$.isTimeSeries();
 		const tickTextWidths = $$.currentXAxisTickTextWidths || {};
 		const tickCount = Object.keys(tickTextWidths).length;
-		const xAxisPadding = $$.axis.x.padding;
+		const xAxisPadding = this.x.padding;
 		let maxOverflow = 0;
+		let xAxisLengthWithoutTickTextWidth;
 
 		for (let i = 0; i < tickCount; i++) {
 			const tickIndex = i + 1;
-
 			const tickTextWidth = tickTextWidths[i];
 			const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidth;
-			const xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft - rotatedTickTextWidth;
+
+			xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft -
+				rotatedTickTextWidth - defaultPadding;
+
 			const ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + xAxisPadding.left;
 
 			// Skip ticks if there are no ticks before them
@@ -627,7 +633,20 @@ export default class Axis {
 			maxOverflow = Math.max(maxOverflow, overflow);
 		}
 
-		return maxOverflow;
+		let tickOffset = 0;
+
+		if (!isTimeSeries) {
+			const scale = d3ScaleLinear();
+			const domain0 = xAxisPadding.left * -1;
+			const domain1 = $$.getXDomainMax($$.data.targets) + 1 + xAxisPadding.right;
+
+			scale.domain([domain0, domain1]);
+			scale.range([0, widthWithoutCurrentPaddingLeft - maxOverflow - defaultPadding]);
+
+			tickOffset = (Math.ceil((scale(1) - scale(0)) / 2));
+		}
+
+		return maxOverflow + tickOffset;
 	}
 
 	getXAxisPadding(tickCount) {

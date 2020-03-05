@@ -1779,7 +1779,7 @@ export default class Options {
 			axis_x_tick_values: null,
 
 			/**
-			 * Rotate x axis tick text if there is not enough space.
+			 * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
 			 * - **NOTE:**
 			 *  > axis_x_tick_multiline must be set to `false` for autorotate to work.
 			 *  > axis_x_tick_culling must be set to `false` for autorotate to work.
@@ -1797,7 +1797,7 @@ export default class Options {
 			 *       rotate: 15,
 			 *       autorotate: true,
 			 *       multiline: false,
-			 *       culling: false
+			 *       culling: false,
 			 *       fit: true
 			 *     }
 			 *   }

@@ -266,9 +266,8 @@ extend(ChartInternal.prototype, {
 				tickCount: 0
 			};
 
-			tickCount = $$.isTimeSeries() ?
-				Object.keys($$.currentXAxisTickTextWidths || {}).length - 1 :
-				$$.getXDomainMax($$.data.targets) + 1;
+			tickCount = Object.keys($$.currentXAxisTickTextWidths || {}).length +
+			($$.isTimeSeries() ? -1 : 1);
 
 			if (tickCount !== $$.axis.x.tickCount) {
 				$$.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
@@ -282,6 +281,7 @@ extend(ChartInternal.prototype, {
 			$$.svg &&
 			config.axis_x_tick_fit &&
 			!config.axis_x_tick_multiline &&
+			!config.axis_x_tick_culling &&
 			config.axis_x_tick_autorotate &&
 			allowedXAxisTypes
 		) {
