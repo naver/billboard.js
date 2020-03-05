@@ -320,6 +320,7 @@ describe("AXIS", function() {
 						}
 					},
 					y: {
+						min: 1000,
 						tick: {
 							rotate: 60
 						},
@@ -342,37 +343,62 @@ describe("AXIS", function() {
 			}
 		});
 
-		const checkLabelPos = id => {
+		const getRect = id => {
 			const axis = chart.$.main.select(`.${CLASS[`axis${id.toUpperCase()}`]}`);
-			const tickRect = axis.select(".tick").node().getBoundingClientRect();
-			const labelRect = axis.select("text").node().getBoundingClientRect();
+			const tick = axis.select(".tick").node().getBoundingClientRect();
+			const label = axis.select("text").node().getBoundingClientRect();
 			
-			// label text is positioned below of tick text?
-			expect(labelRect.y).to.be[id == "y2" ? "below": "above"](tickRect.y + tickRect.height);
+			return {tick, label};
 		}
 
-		it("when legend is visible: x Axis label text is positioned below of tick text?", () => {
-			checkLabelPos("x");
+		it("when legend is visible: x Axis label text is positioned above of tick text?", () => {
+			const {label, tick} = getRect("x");
+
+			// label text is positioned above of tick text?
+			expect(label.y).to.be.above(tick.y + tick.height);
 		});
 
 		it("set option legend.show", () => {
 			args.legend = {show: false};
 		});
 
-		it("when legend is invisible: x Axis label text is positioned below of tick text?", () => {
-			checkLabelPos("x");
+		it("when legend is invisible: x Axis label text is positioned above of tick text?", () => {
+			const {label, tick} = getRect("x");
+
+			// label text is positioned above of tick text?
+			expect(label.y).to.be.above(tick.y + tick.height);
+		});
+
+		it("y Axis label text is positioned before the tick text?", () => {
+			const {label, tick} = getRect("y");
+
+			// label text is positioned below of tick text?
+			expect(label.x).to.be.below(tick.x);
+		});
+
+		it("y2 Axis label text is positioned after the tick text?", () => {
+			const {label, tick} = getRect("y2");
+
+			// label text is positioned above of tick text?
+			expect(label.x).to.be.above(tick.x);
 		});
 
 		it("set option legend.show", () => {
 			args.axis.rotated = true;
 		});
 
-		it("y Axis label text is positioned below of tick text?", () => {
-			checkLabelPos("y");
+		it("y Axis label text is positioned above of tick text?", () => {
+			const {label, tick} = getRect("y");
+
+			// label text is positioned above of tick text?
+			expect(label.y).to.be.above(tick.y + tick.height);
 		});
 
-		it("y2 Axis label text is positioned above of tick text?", () => {
-			checkLabelPos("y2");
+		it("y2 Axis label text is positioned below of tick text?", () => {
+			const {label, tick} = getRect("y2");
+
+			// label text is positioned below of tick text?
+			expect(label.y).to.be.below(tick.y + tick.height);
 		});
 	});
 

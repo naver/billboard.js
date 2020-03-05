@@ -405,42 +405,49 @@ export default class Axis {
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const isInner = this.getAxisLabelPosition(id).isInner;
+		const tickRotate = config[`axis_${id}_tick_rotate`] ? $$.getHorizontalAxisHeight(id) : 0;
+		const maxTickWidth = this.getMaxTickWidth(id);
+		let dy;
 
 		if (id === "x") {
 			const xHeight = config.axis_x_height;
 
 			if (isRotated) {
-				return isInner ? "1.2em" : -25 - this.getMaxTickWidth(id);
+				dy = isInner ? "1.2em" : -25 - maxTickWidth;
 			} else if (isInner) {
-				return "-0.5em";
+				dy = "-0.5em";
 			} else if (xHeight) {
-				return xHeight - 10;
-			} else if (config.axis_x_tick_rotate) {
-				return $$.getHorizontalAxisHeight(id) - 10;
+				dy = xHeight - 10;
+			} else if (tickRotate) {
+				dy = tickRotate - 10;
 			} else {
-				return "3em";
+				dy = "3em";
 			}
 		} else {
-			const dy = {
+			dy = {
 				y: ["-0.5em", 10, "3em", "1.2em", 10],
 				y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
 			}[id];
 
 			if (isRotated) {
 				if (isInner) {
-					return dy[0];
-				} else if ($$.config[`axis_${id}_tick_rotate`]) {
-					return $$.getHorizontalAxisHeight(id) * (id === "y2" ? -1 : 1) - dy[1];
+					dy = dy[0];
+				} else if (tickRotate) {
+					dy = tickRotate * (id === "y2" ? -1 : 1) - dy[1];
 				} else {
-					return dy[2];
+					dy = dy[2];
 				}
 			} else {
-				return isInner ?
-					dy[3] : dy[4] + (
-						$$.config[`axis_${id}_inner`] ? 0 : (this.getMaxTickWidth(id) + dy[4])
+				dy = isInner ?
+					dy[3] : (
+						dy[4] + (
+							config[`axis_${id}_inner`] ? 0 : (maxTickWidth + dy[4])
+						)
 					) * (id === "y" ? -1 : 1);
 			}
 		}
+
+		return dy;
 	}
 
 	getMaxTickWidth(id, withoutRecompute) {
