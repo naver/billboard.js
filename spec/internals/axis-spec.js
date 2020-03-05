@@ -7,6 +7,7 @@ import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import {timeMinute as d3TimeMinute} from "d3-time";
 import util from "../assets/util";
+import {getBoundingRect} from "../../src/internals/util";
 import bb from "../../src/core";
 import CLASS from "../../src/config/classes";
 import AxisRendererHelper from "../../src/axis/AxisRendererHelper";
@@ -293,6 +294,111 @@ describe("AXIS", function() {
  		it("check axis label position ==> x: inner-left, y/y2: inner-bottom", () => {
 			// x: inner-right, y/y2: inner-top
 			checkAnchor("start");
+		});
+	});
+
+	describe("axis outer label position", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "www.site1.com", "www.site2.com", "www.site3.com", "www.site4.com"],
+						["download", 3000, 2000, 1000, 4000],
+					],
+					type: "bar"
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: 70
+						},
+						label: {
+							text: "number",
+							position: "outer-center"
+						}
+					},
+					y: {
+						min: 1000,
+						tick: {
+							rotate: 60
+						},
+						label: {
+							text: "y text",
+							position: "outer-center"
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							rotate: 70
+						},
+						label: {
+							text: "number",
+							position: "outer-center"
+						}
+					}
+				}
+			}
+		});
+
+		const getRect = id => {
+			const axis = chart.$.main.select(`.${CLASS[`axis${id.toUpperCase()}`]}`);
+			const tick = axis.select(".tick").node().getBoundingClientRect();
+			const label = axis.select("text").node().getBoundingClientRect();
+			
+			return {tick, label};
+		}
+
+		it("when legend is visible: x Axis label text is positioned above of tick text?", () => {
+			const {label, tick} = getRect("x");
+
+			// label text is positioned above of tick text?
+			expect(label.y).to.be.above(tick.y + tick.height);
+		});
+
+		it("set option legend.show", () => {
+			args.legend = {show: false};
+		});
+
+		it("when legend is invisible: x Axis label text is positioned above of tick text?", () => {
+			const {label, tick} = getRect("x");
+
+			// label text is positioned above of tick text?
+			expect(label.y).to.be.above(tick.y + tick.height);
+		});
+
+		it("y Axis label text is positioned before the tick text?", () => {
+			const {label, tick} = getRect("y");
+
+			// label text is positioned below of tick text?
+			expect(label.x).to.be.below(tick.x);
+		});
+
+		it("y2 Axis label text is positioned after the tick text?", () => {
+			const {label, tick} = getRect("y2");
+
+			// label text is positioned above of tick text?
+			expect(label.x).to.be.above(tick.x);
+		});
+
+		it("set option legend.show", () => {
+			args.axis.rotated = true;
+		});
+
+		it("y Axis label text is positioned above of tick text?", () => {
+			const {label, tick} = getRect("y");
+
+			// label text is positioned above of tick text?
+			expect(label.y).to.be.above(tick.y + tick.height);
+		});
+
+		it("y2 Axis label text is positioned below of tick text?", () => {
+			const {label, tick} = getRect("y2");
+
+			// label text is positioned below of tick text?
+			expect(label.y).to.be.below(tick.y + tick.height);
 		});
 	});
 
@@ -690,6 +796,21 @@ describe("AXIS", function() {
 					// check when toggling displaying data series
 					expect(() => chart.hide("data1")).to.not.throw();
 				});
+
+				it("shouldn't be addede duplicated tooltip <title> elements", done => {
+					chart.load({
+						columns: [
+							["data1", 130, 120, 150, 140]							
+						],
+						done: function() {
+							chart.$.main.selectAll(`.${CLASS.axisX} .tick text`).each(function() { 
+								expect(d3Select(this).selectAll("title").size()).to.be.equal(1);
+							});
+
+							done();
+						}
+					});
+				})
 			});
 
 			describe("rotated", () => {
@@ -2163,6 +2284,117 @@ describe("AXIS", function() {
 
 		it("check tick values are culled when axis is rotated", () => {
 			checkTickValues();
+		});
+	});
+	
+	describe("Axes tick padding", () => {
+		before(() => {
+			args = {
+				data: {      
+					columns: [
+						["data1", 4, 4, 3, 3]
+					]
+				},
+				axis: {      
+					y: {
+						max: 5,
+						tick: {
+							values: [0, 1, 2, 3, 4, 5],
+							count: 5
+						},
+						padding: {
+							top: 20
+						}
+					}
+				}
+			};
+		});
+
+		it("using both tick.values & count option not to make spaced left padding", () => {
+			const tickValues = chart.internal.axis.getTickValues("y");
+			const translateX = +(chart.$.main.attr("transform").match(/(\d+[\.\d]*)/) || [0])[0];
+
+			expect(tickValues.every(v => v % 1 === 0)).to.be.true;
+			expect(translateX).to.be.closeTo(30.5, 1);
+		});
+	});
+
+	describe("axis min/max", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 100, 100],
+						["data2", 50, 20, 10, 50, 60]
+					]			
+				},
+				axis: {
+					x: {
+						min: {
+							fit: true,
+							value: -1
+						},
+						max: {
+							fit: true,
+							value: 10
+						}
+					}
+				}
+			}
+		});
+
+		it("check if x axis min/max is fitten.", () => {
+			const yAxisRect = getBoundingRect(chart.$.main.select(`.${CLASS.axisY}`).node());
+			const lineRect = getBoundingRect(chart.$.line.lines.node());
+
+			// check min
+			expect(lineRect.left).to.be.closeTo(yAxisRect.right, 10);
+
+			// check max
+			expect(lineRect.right).to.be.closeTo(chart.internal.currentWidth, 10);
+		});
+
+		it("set option axis.min/max.fit=false", () => {
+			args.axis.x.max.fit = args.axis.x.min.fit = false;
+		});
+
+		it("check if x axis min/max is not fitten.", () => {
+			const yAxisRect = getBoundingRect(chart.$.main.select(`.${CLASS.axisY}`).node());
+			const lineRect = getBoundingRect(chart.$.line.lines.node());
+
+			// check min
+			expect(lineRect.left - yAxisRect.right > 50).to.be.true;
+
+			// check max
+			expect(chart.internal.currentWidth - lineRect.right > 300).to.be.true;
+		});
+
+		it("set option axis.min/max.value", () => {
+			args.axis.x.min = {
+				fit: true,
+				value: 1
+			};
+
+			args.axis.x.max = {
+				fit: true,
+				value: 3
+			}
+		});
+
+		it("check if x axis min/max is not fitten.", () => {
+			const currWidth = chart.internal.currentWidth;
+
+			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
+				const xPos = +util.parseNum(this.getAttribute("transform")) / 10;
+
+				if (i === 0) { // check min
+					expect(xPos).to.be.below(0);
+				} else if (i === 4) { // check max 
+					expect(xPos).to.be.above(currWidth);
+				} else {
+					expect(xPos > 0 && xPos < currWidth).to.be.true;
+				}
+			});
 		});
 	});
 });

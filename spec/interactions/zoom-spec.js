@@ -921,11 +921,6 @@ describe("ZOOM", function() {
 			const tickTexts = chart.$.main.selectAll(`.${CLASS.axisY} .tick text`)
 				.filter(function() { return this.style.display === "block"});
 
-			tickTexts.each(function() {
-				console.log(this);
-			})
-
-
 			expect(tickTexts.size()).to.be.equal(args.axis.y.tick.culling.max);
 		});
 	});

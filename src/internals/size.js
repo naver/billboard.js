@@ -96,7 +96,7 @@ extend(ChartInternal.prototype, {
 			padding = !config.axis_x_show ?
 				1 : Math.max(ceil10(axisWidth), 40);
 		} else if (!config.axis_y_show || config.axis_y_inner) { // && !config.axis_rotated
-			padding = $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
+			padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
 		} else {
 			padding = ceil10(axisWidth);
 		}
@@ -121,7 +121,7 @@ extend(ChartInternal.prototype, {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
 			padding = Math.max(2 + legendWidthOnRight +
-				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0), xAxisTickTextOverflow);
+				($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow);
 		} else {
 			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
 		}

@@ -64,6 +64,8 @@ extend(ChartInternal.prototype, {
 					.style("display", "block");
 			}
 		}
+
+		$$.bindTooltipResizePos();
 	},
 
 	/**
@@ -233,8 +235,10 @@ extend(ChartInternal.prototype, {
 		const svgLeft = $$.getSvgLeft(true);
 		let [left, top] = d3Mouse(element);
 		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(true);
+		const chartLeft = $$.getCurrentPaddingLeft(true);
+		const size = 20;
 
-		top += 20;
+		top += size;
 
 		// Determine tooltip position
 		if ($$.hasArcType()) {
@@ -248,20 +252,18 @@ extend(ChartInternal.prototype, {
 			const dataScale = $$.x(dataToShow[0].x);
 
 			if (config.axis_rotated) {
-				top = dataScale + 20;
+				top = dataScale + size;
 				left += svgLeft + 100;
 				chartRight -= svgLeft;
 			} else {
 				top -= 5;
-				left = svgLeft + $$.getCurrentPaddingLeft(true) + 20 + ($$.zoomScale ? left : dataScale);
+				left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale);
 			}
 		}
 
-		const right = left + tWidth;
-
-		if (right > chartRight) {
-			// 20 is needed for Firefox to keep tooltip width
-			left -= right - chartRight + 20;
+		// when tooltip left + tWidth > chart's width
+		if ((left + tWidth + 15) > chartRight) {
+			left -= (svgLeft + tWidth + chartLeft);
 		}
 
 		if (top + tHeight > $$.currentHeight) {
@@ -292,9 +294,9 @@ extend(ChartInternal.prototype, {
 			return;
 		}
 
-		const datum = $$.tooltip.datum();
-		const dataStr = JSON.stringify(selectedData);
+		let datum = $$.tooltip.datum();
 		let {width = 0, height = 0} = datum || {};
+		const dataStr = JSON.stringify(selectedData);
 
 		if (!datum || datum.current !== dataStr) {
 			const index = selectedData.concat().sort()[0].index;
@@ -311,7 +313,7 @@ extend(ChartInternal.prototype, {
 				))
 				.style("display", null)
 				.style("visibility", null) // for IE9
-				.datum({
+				.datum(datum = {
 					index,
 					current: dataStr,
 					width: width = $$.tooltip.property("offsetWidth"),
@@ -323,36 +325,47 @@ extend(ChartInternal.prototype, {
 		}
 
 		if (!bindto) {
-			let fn = config.tooltip_position;
-			let unit;
-
-			if (!isFunction(fn)) {
-				unit = fn && fn.unit;
-				fn = $$.tooltipPosition;
-			}
+			const fnPos = config.tooltip_position || $$.tooltipPosition;
 
 			// Get tooltip dimensions
-			const pos = fn.call(this, dataToShow, width, height, element);
+			const pos = fnPos.call(this, dataToShow, width, height, element);
 
 			["top", "left"].forEach(v => {
-				let value = pos[v];
+				const value = pos[v];
 
-				// when value is number
-				if (/^\d+(\.\d+)?$/.test(value)) {
-					if (unit === "%") {
-						const size = $$[v === "top" ? "currentHeight" : "currentWidth"];
+				$$.tooltip.style(v, `${value}px`);
 
-						value = value / size * 100;
-					} else {
-						unit = "px";
-					}
-
-					value += unit;
+				// Remember left pos in percentage to be used on resize call
+				if (v === "left" && !datum.xPosInPercent) {
+					datum.xPosInPercent = value / $$.currentWidth * 100;
 				}
-
-				$$.tooltip.style(v, value);
 			});
 		}
+	},
+
+	/**
+	 * Adjust tooltip position on resize event
+	 * @private
+	 */
+	bindTooltipResizePos() {
+		const $$ = this;
+		const {resizeFunction, tooltip} = $$;
+
+		resizeFunction.add(() => {
+			if (tooltip.style("display") === "block") {
+				const {currentWidth} = $$;
+				const {width, xPosInPercent} = tooltip.datum();
+				let value = currentWidth / 100 * xPosInPercent;
+				const diff = currentWidth - (value + width);
+
+				// if tooltip size overs current viewport size
+				if (diff < 0) {
+					value += diff;
+				}
+
+				tooltip.style("left", `${value}px`);
+			}
+		});
 	},
 
 	/**
@@ -362,20 +375,20 @@ extend(ChartInternal.prototype, {
 	 */
 	hideTooltip(force) {
 		const $$ = this;
-		const config = $$.config;
+		const {api, config, tooltip} = $$;
 
-		if (this.tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
 			const selectedData = JSON.parse(this.tooltip.datum().current);
 
-			callFn(config.tooltip_onhide, $$, $$.api, selectedData);
+			callFn(config.tooltip_onhide, $$, api, selectedData);
 
 			// hide tooltip
-			this.tooltip
+			tooltip
 				.style("display", "none")
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
-			callFn(config.tooltip_onhidden, $$, $$.api, selectedData);
+			callFn(config.tooltip_onhidden, $$, api, selectedData);
 		}
 	},
 

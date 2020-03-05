@@ -1915,12 +1915,22 @@ export default class Options {
 			 * Set max value of x axis range.
 			 * @name axis․x․max
 			 * @memberof Options
-			 * @type {Number}
-			 * @default undefined
+			 * @property {Number} max Set the max value
+			 * @property {Boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
+			 * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
+			 * @property {Number} [max.value] Set the max value
 			 * @example
 			 * axis: {
 			 *   x: {
-			 *     max: 100
+			 *     max: 100,
+			 *
+			 *     max: {
+			 *       // 'fit=true' will make x axis max to be limited as the bound data value max when 'max.value' is greater.
+			 *       // - when bound data max is '10' and max.value: '100' ==>  x axis max will be '10'
+			 *       // - when bound data max is '1000' and max.value: '100' ==> x axis max will be '100'
+			 *       fit: true,
+			 *       value: 100
+			 *     }
 			 *   }
 			 * }
 			 */
@@ -1930,12 +1940,22 @@ export default class Options {
 			 * Set min value of x axis range.
 			 * @name axis․x․min
 			 * @memberof Options
-			 * @type {Number}
-			 * @default undefined
+			 * @property {Number} min Set the min value
+			 * @property {Boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
+			 * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
+			 * @property {Number} [min.value] Set the min value
 			 * @example
 			 * axis: {
 			 *   x: {
-			 *     min: -100
+			 *     min: -100,
+			 *
+			 *     min: {
+			 *       // 'fit=true' will make x axis min to be limited as the bound data value min when 'min.value' is lower.
+			 *       // - when bound data min is '-10' and min.value: '-100' ==>  x axis min will be '-10'
+			 *       // - when bound data min is '-1000' and min.value: '-100' ==> x axis min will be '-100'
+			 *       fit: true,
+			 *       value: -100
+			 *     }
 			 *   }
 			 * }
 			 */
@@ -2498,7 +2518,9 @@ export default class Options {
 			 * You can set padding for y axis to create more space on the edge of the axis.
 			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
 			 *
-			 * - **NOTE:** For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
+			 * - **NOTE:**
+			 *   - Given values are translated relative to the y Axis domain value for padding
+			 *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y․padding
 			 * @memberof Options
 			 * @type {Object|Number}
@@ -2907,8 +2929,13 @@ export default class Options {
 			axis_y2_tick_text_position: {x: 0, y: 0},
 
 			/**
-			 * Set the number of y2 axis ticks.
-			 * - **NOTE:** This works in the same way as axis.y.tick.count.
+			 * Set padding for y2 axis.<br><br>
+			 * You can set padding for y2 axis to create more space on the edge of the axis.
+			 * This option accepts object and it can include top and bottom. top, bottom will be treated as pixels.
+			 *
+			 * - **NOTE:**
+			 *   - Given values are translated relative to the y2 Axis domain value for padding
+			 *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 			 * @name axis․y2․padding
 			 * @memberof Options
 			 * @type {Object|Number}
@@ -3753,8 +3780,6 @@ export default class Options {
 			 *  If undefined returned, the row of that value will be skipped.
 			 * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
 			 *  This option can be used to modify the tooltip position by returning object that has top and left.
-			 * @property {String} [tooltip.position.unit="px"] Set tooltip's position unit.
-			 *  - **NOTE:** This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
 			 * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 			 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
 			 * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
@@ -3805,13 +3830,6 @@ export default class Options {
 			 *      	// return with unit or without. If the value is number, is treated as 'px'.
 			 *      	return {top: "10%", left: 20}  // top:10%; left: 20px;
   			 *      },
-			 *
-			 *      position: {
-			 *      	// set tooltip's position unit as '%', rather than 'px'.
-			 *      	// ex) If want to keep the position on mobile device rotation, set as '%'.
-			 *      	unit: "%"
-  			 *      },
-			 *
   			 *      contents: function(d, defaultTitleFormat, defaultValueFormat, color) {
   			 *          return ... // formatted html as you want
     		 *      },

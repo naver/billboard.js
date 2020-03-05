@@ -21,12 +21,16 @@ extend(Chart.prototype, {
 	 * });
 	 */
 	resize(size) {
-		const config = this.internal.config;
+		const $$ = this.internal;
+		const {config} = $$;
 
-		config.size_width = size ? size.width : null;
-		config.size_height = size ? size.height : null;
+		if ($$.rendered) {
+			config.size_width = size ? size.width : null;
+			config.size_height = size ? size.height : null;
 
-		this.flush(false, true);
+			this.flush(false, true);
+			$$.resizeFunction();
+		}
 	},
 
 	/**
@@ -88,7 +92,7 @@ extend(Chart.prototype, {
 
 			// clear timers && pending transition
 			$$.svg.select("*").interrupt();
-			isDefined($$.resizeTimeout) && window.clearTimeout($$.resizeTimeout);
+			$$.generateResize.timeout && window.clearTimeout($$.generateResize.timeout);
 
 			window.removeEventListener("resize", $$.resizeFunction);
 			$$.selectChart.classed("bb", false).html("");
