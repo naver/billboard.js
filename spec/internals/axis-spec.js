@@ -297,6 +297,85 @@ describe("AXIS", function() {
 		});
 	});
 
+	describe("axis outer label position", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "www.site1.com", "www.site2.com", "www.site3.com", "www.site4.com"],
+						["download", 3000, 2000, 1000, 4000],
+					],
+					type: "bar"
+				},
+				axis: {
+					x: {
+						type: "category",
+						tick: {
+							rotate: 70
+						},
+						label: {
+							text: "number",
+							position: "outer-center"
+						}
+					},
+					y: {
+						tick: {
+							rotate: 60
+						},
+						label: {
+							text: "y text",
+							position: "outer-center"
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							rotate: 70
+						},
+						label: {
+							text: "number",
+							position: "outer-center"
+						}
+					}
+				}
+			}
+		});
+
+		const checkLabelPos = id => {
+			const axis = chart.$.main.select(`.${CLASS[`axis${id.toUpperCase()}`]}`);
+			const tickRect = axis.select(".tick").node().getBoundingClientRect();
+			const labelRect = axis.select("text").node().getBoundingClientRect();
+			
+			// label text is positioned below of tick text?
+			expect(labelRect.y).to.be[id == "y2" ? "below": "above"](tickRect.y + tickRect.height);
+		}
+
+		it("when legend is visible: x Axis label text is positioned below of tick text?", () => {
+			checkLabelPos("x");
+		});
+
+		it("set option legend.show", () => {
+			args.legend = {show: false};
+		});
+
+		it("when legend is invisible: x Axis label text is positioned below of tick text?", () => {
+			checkLabelPos("x");
+		});
+
+		it("set option legend.show", () => {
+			args.axis.rotated = true;
+		});
+
+		it("y Axis label text is positioned below of tick text?", () => {
+			checkLabelPos("y");
+		});
+
+		it("y2 Axis label text is positioned above of tick text?", () => {
+			checkLabelPos("y2");
+		});
+	});
+
 	describe("axis y timeseries", () => {
 		before(() => {
 			args = {
