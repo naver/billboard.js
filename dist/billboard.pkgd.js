@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200305130556
+ * @version 1.11.1-nightly-20200305134913
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21985,21 +21985,23 @@ var Axis_Axis = /*#__PURE__*/function () {
   }, {
     key: "dyForAxisLabel",
     value: function dyForAxisLabel(id) {
-      var $$ = this.owner,
+      var dy,
+          $$ = this.owner,
           config = $$.config,
           isRotated = config.axis_rotated,
-          isInner = this.getAxisLabelPosition(id).isInner;
+          isInner = this.getAxisLabelPosition(id).isInner,
+          tickRotate = config["axis_".concat(id, "_tick_rotate")] ? $$.getHorizontalAxisHeight(id) : 0,
+          maxTickWidth = this.getMaxTickWidth(id);
 
       if (id === "x") {
         var xHeight = config.axis_x_height;
-        return isRotated ? isInner ? "1.2em" : -25 - this.getMaxTickWidth(id) : isInner ? "-0.5em" : xHeight ? xHeight - 10 : config.axis_x_tick_rotate ? $$.getHorizontalAxisHeight(id) - 10 : "3em";
-      }
-
-      var dy = {
+        dy = isRotated ? isInner ? "1.2em" : -25 - maxTickWidth : isInner ? "-0.5em" : xHeight ? xHeight - 10 : tickRotate ? tickRotate - 10 : "3em";
+      } else dy = {
         y: ["-0.5em", 10, "3em", "1.2em", 10],
         y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
-      }[id];
-      return isRotated ? isInner ? dy[0] : $$.config["axis_".concat(id, "_tick_rotate")] ? $$.getHorizontalAxisHeight(id) * (id === "y2" ? -1 : 1) - dy[1] : dy[2] : isInner ? dy[3] : dy[4] + ($$.config["axis_".concat(id, "_inner")] ? 0 : this.getMaxTickWidth(id) + dy[4]) * (id === "y" ? -1 : 1);
+      }[id], dy = isRotated ? isInner ? dy[0] : tickRotate ? tickRotate * (id === "y2" ? -1 : 1) - dy[1] : dy[2] : isInner ? dy[3] : (dy[4] + (config["axis_".concat(id, "_inner")] ? 0 : maxTickWidth + dy[4])) * (id === "y" ? -1 : 1);
+
+      return dy;
     }
   }, {
     key: "getMaxTickWidth",
@@ -37543,7 +37545,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200305130556",
+  version: "1.11.1-nightly-20200305134913",
 
   /**
    * Generate chart
@@ -37642,7 +37644,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200305130556
+ * @version 1.11.1-nightly-20200305134913
  */
 
 
