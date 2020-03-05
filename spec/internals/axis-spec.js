@@ -969,8 +969,7 @@ describe("AXIS", function() {
 								"categoryname3",
 								"categoryname4",
 								"categoryname5",
-								"categoryname6",
-								"categoryname7"
+								"categoryname6"
 							],
 							["data1", 30, 200, 100, 400, 150, 250, 180]
 						]
@@ -981,7 +980,9 @@ describe("AXIS", function() {
 							tick: {
 								rotate: 15,
 								autorotate: true,
+								fit: true,
 								centered: false,
+								culling: false,
 								multiline: false
 							}
 						}
@@ -1027,7 +1028,7 @@ describe("AXIS", function() {
 						expect(tspan.attr("dx")).to.be.equal("2.070552360820166");
 					});
 
-				compare(15, 45.525421142578125, 56.82012354874871, 70.72956162437113)
+				compare(15, 45.525421142578125, 56.82012354874871, 109.4987923936019)
 			});
 
 			it("should resize when all data hidden", () => {
@@ -1046,8 +1047,7 @@ describe("AXIS", function() {
 					"somecategoryname3",
 					"somecategoryname4",
 					"somecategoryname5",
-					"somecategoryname6",
-					"somecategoryname7"
+					"somecategoryname6"
 				];
 				args.axis.x.tick.rotate = 0;
 			});
@@ -1074,15 +1074,15 @@ describe("AXIS", function() {
 				});
 
 				it("should be above 0 if rotated", () => {
-					compareOverflow(70.72956162437113);
+					compareOverflow(109.4987923936019);
 				});
 
 				it("update config", () => {
 					args.axis.x.padding = {right: 2};
 				});
 
-				it("should be defaultPadding if padding right is set", () => {
-					compareOverflow(defaultPadding);
+				it("should be defaultPadding + tickOffset if padding right is set", () => {
+					compareOverflow(defaultPadding + 33);
 				});
 
 				it("update config", () => {
@@ -1090,7 +1090,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above defaultPadding if padding left is set", () => {
-					compareOverflow(79.79293033656657);
+					compareOverflow( 109.38116563068422);
 				});
 
 				it("update config", () => {
@@ -1098,7 +1098,7 @@ describe("AXIS", function() {
 				});
 
 				it("should be above defaultPadding if padding is set", () => {
-					compareOverflow(defaultPadding);
+					compareOverflow(37);
 				});
 			});
 		});
