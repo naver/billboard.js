@@ -195,10 +195,12 @@ export default class AxisRenderer {
 				ctx.setTickLineTextPosition(lineUpdate, textUpdate);
 
 				// Append <title> for tooltip display
-				params.tickTitle && textUpdate.append && textUpdate.append("title")
-					.each(function(index) {
-						d3Select(this).text(params.tickTitle[index]);
-					});
+				if (params.tickTitle) {
+					const title = textUpdate.select("title");
+
+					(title.empty() ? textUpdate.append("title") : title)
+						.text(index => params.tickTitle[index]);
+				}
 
 				if (scale1.bandwidth) {
 					const x = scale1;
