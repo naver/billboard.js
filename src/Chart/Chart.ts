@@ -17,7 +17,7 @@ import apiLoad from "./api/load";
 import apiShow from "./api/show";
 import apiTooltip from "./api/tooltip";
 
-import moduleAxis from "../config/resolver/axis";
+import {api as apiAxis} from "../config/resolver/axis";
 
 /**
  * Main chart class.
@@ -137,5 +137,5 @@ extend(Chart.prototype, [
 	apiLoad,
 	apiShow,
 	apiTooltip,
-	...moduleAxis.api
+	...apiAxis
 ]);

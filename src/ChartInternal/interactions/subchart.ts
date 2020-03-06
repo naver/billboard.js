@@ -441,7 +441,7 @@ export default {
 		if (extent) {
 			if (isFunction(extent)) {
 				extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);
-			} else if ($$.isTimeSeries() && extent.every(isNaN)) {
+			} else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
 				const fn = parseDate.bind($$);
 
 				extent = extent.map(v => scale.subX(fn(v)));

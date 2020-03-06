@@ -79,7 +79,7 @@ export default {
 		const {config, scale} = $$;
 		const maxDataCount = $$.getMaxDataCount();
 		const isGrouped = config.data_groups.length;
-		const tickInterval = (scale.zoom || $$) && !$$.isCategorized() ?
+		const tickInterval = (scale.zoom || $$) && !$$.axis.isCategorized() ?
 			$$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
 		let result;
 
@@ -190,10 +190,10 @@ export default {
 		const barX = $$.getShapeX(barW, barIndices, !!isSub);
 		const barY = $$.getShapeY(!!isSub);
 		const barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
-		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
+		const yScale = $$.getYScaleById.bind($$);
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id)(0);
+			const y0 = yScale(d.id, isSub)(0);
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
 			const width = isNumber(barW) ? barW : barW[d.id] || barW.width;
 			const posX = barX(d);

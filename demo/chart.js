@@ -180,7 +180,7 @@ var billboardDemo = {
 
 		inst.length && inst.forEach(function (c) {
 			var timer = c.timer;
-			var el = c.element;
+			var el = c.$.chart;
 
 			try {
 				timer && timer.forEach(function (v) {

@@ -90,7 +90,7 @@ export default {
 		});
 
 		// update categories if exists
-		if ("categories" in args && $$.isCategorized()) {
+		if ("categories" in args && $$.axis.isCategorized()) {
 			config.axis_x_categories = args.categories;
 		}
 

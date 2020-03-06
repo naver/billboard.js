@@ -9,9 +9,7 @@
 import arc from "../../ChartInternal/shape/arc";
 import radar from "../../ChartInternal/shape/radar";
 
-export default {
-	internal: [
-		arc,
-		radar
-	]
-};
+export const internal = [
+	arc,
+	radar
+];

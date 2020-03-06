@@ -168,7 +168,7 @@ export default {
 
 			return $$.isGrouped(id) ?
 				getPoints(d, i)[0][1] :
-				$$.getYScale(id)($$.getBaseValue(d));
+				$$.getYScaleById(id)($$.getBaseValue(d));
 		};
 	},
 

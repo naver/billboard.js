@@ -34,7 +34,7 @@ export default {
 
 		// Show tooltip if needed
 		if (config.tooltip_init_show) {
-			if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
+			if ($$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
 				const targets = $$.data.targets[0];
 				let i;
 				let val;
@@ -417,10 +417,10 @@ export default {
 
 			charts.forEach(c => {
 				if (c !== $$.api) {
-					const {config} = c.internal;
+					const {config, $el} = c.internal;
 					const isLinked = config.tooltip_linked;
 					const name = config.tooltip_linked_name;
-					const isInDom = document.body.contains(c.element);
+					const isInDom = document.body.contains($el.chart.node());
 
 					if (isLinked && linkedName === name && isInDom) {
 						const data = c.internal.$el.tooltip.data()[0];

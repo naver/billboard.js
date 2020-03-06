@@ -670,6 +670,7 @@ var classes = __webpack_require__(10);
 /* unused harmony export ceil10 */
 /* unused harmony export convertInputType */
 /* unused harmony export diffDomain */
+/* unused harmony export endall */
 /* unused harmony export emulateEvent */
 /* unused harmony export extend */
 /* unused harmony export getBrushSelection */
@@ -785,6 +786,24 @@ function callFn(fn) {
   for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
 
   return isFn && fn.call.apply(fn, args), isFn;
+}
+/**
+ * Call function after all transitions ends
+ * @param {d3.transition} transition
+ * @param {Fucntion} callback
+ * @private
+ */
+
+
+function endall(transition, callback) {
+  var n = 0;
+  transition.each(function () {
+    return ++n;
+  }).on("end", function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
+
+    --n || callback.apply.apply(callback, [this].concat(args));
+  });
 }
 /**
  * Replace tag sign to html entity
@@ -1005,7 +1024,7 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+  for (var _len3 = arguments.length, objectN = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) objectN[_key3 - 1] = arguments[_key3];
 
   if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
   var source = objectN.shift();

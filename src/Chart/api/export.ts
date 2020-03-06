@@ -84,9 +84,9 @@ export default {
 	 */
 	export(mimeType?: string, callback?: (dataUrl: string) => void): string {
 		const $$ = this.internal;
-		const {currentWidth: width, currentHeight: height} = $$.state;
-		const size = {width, height};
-		const svgDataUrl = nodeToSvgDataUrl(this.element, size);
+		const {state, $el: {chart}} = $$;
+		const {currentWidth: width, currentHeight: height} = state;
+		const svgDataUrl = nodeToSvgDataUrl(chart.node(), {width, height});
 
 		if (callback && isFunction(callback)) {
 			const img = new Image();
@@ -96,8 +96,8 @@ export default {
 				const canvas = document.createElement("canvas");
 				const ctx = canvas.getContext("2d");
 
-				canvas.width = size.width;
-				canvas.height = size.height;
+				canvas.width = width;
+				canvas.height = height;
 				ctx.drawImage(img, 0, 0);
 
 				callback.bind(this)(canvas.toDataURL(mimeType));

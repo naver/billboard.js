@@ -137,13 +137,13 @@ export default {
 		const isRotated = config.axis_rotated;
 
 		const getPoints = $$.generateGetLinePoints(lineIndices, isSub);
-		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
+		const yScale = $$.getYScaleById.bind($$);
 
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const yValue = (d, i) => (
 			$$.isGrouped(d.id) ?
 				getPoints(d, i)[0][1] :
-				yScaleGetter.call($$, d.id)($$.getBaseValue(d))
+				yScale(d.id, isSub)($$.getBaseValue(d))
 		);
 
 		let line = d3Line();
@@ -158,7 +158,7 @@ export default {
 		const x = isSub ? scale.subX : scale.x;
 
 		return d => {
-			const y = yScaleGetter.call($$, d.id);
+			const y = yScale(d.id, isSub);
 			let values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
 			let x0 = 0;
 			let y0 = 0;
@@ -197,10 +197,10 @@ export default {
 		const x = $$.getShapeX(0, lineIndices, isSub);
 		const y = $$.getShapeY(isSub);
 		const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
-		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
+		const yScale = $$.getYScaleById.bind($$);
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id)(0);
+			const y0 = yScale(d.id, isSub)(0);
 			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
 			let posY = y(d);
@@ -228,8 +228,8 @@ export default {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
-		const isTimeSeries = $$.isTimeSeries();
-		const xOffset = $$.isCategorized() ? 0.5 : 0;
+		const isTimeSeries = $$.axis.isTimeSeries();
+		const xOffset = $$.axis.isCategorized() ? 0.5 : 0;
 		const regions: any[] = [];
 		const dasharray = "2 2"; // default value
 
@@ -434,18 +434,18 @@ export default {
 		const isRotated = config.axis_rotated;
 
 		const getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
-		const yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale;
+		const yScale = $$.getYScaleById.bind($$);
 
 		const xValue = d => (isSub ? $$.subxx : $$.xx).call($$, d);
 		const value0 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[0][1] :
-			yScaleGetter.call($$, d.id)(
+			yScale(d.id, isSub)(
 				$$.isAreaRangeType(d) ?
 					$$.getAreaRangeData(d, "high") : 0
 			));
 		const value1 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[1][1] :
-			yScaleGetter.call($$, d.id)(
+			yScale(d.id, isSub)(
 				$$.isAreaRangeType(d) ?
 					$$.getAreaRangeData(d, "low") : d.value
 			));
@@ -480,7 +480,7 @@ export default {
 			} else {
 				if (values[0]) {
 					x0 = $$.scale.x(values[0].x);
-					y0 = $$.getYScale(d.id)(values[0].value);
+					y0 = $$.getYScaleById(d.id)(values[0].value);
 				}
 
 				path = isRotated ? `M ${y0} ${x0}` : `M ${x0} ${y0}`;
@@ -497,10 +497,10 @@ export default {
 		const x = $$.getShapeX(0, areaIndices, !!isSub);
 		const y = $$.getShapeY(!!isSub);
 		const areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
-		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
+		const yScale = $$.getYScaleById.bind($$);
 
 		return function(d, i) {
-			const y0 = yScale.call($$, d.id)(0);
+			const y0 = yScale(d.id, isSub)(0);
 			const offset = areaOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
 			let posY = y(d);

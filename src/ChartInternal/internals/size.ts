@@ -118,7 +118,7 @@ export default {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if ($$.axis && (!config.axis_y2_show || config.axis_y2_inner)) { // && !config.axis_rotated
 			padding = 2 + legendWidthOnRight +
-				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
+				($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0);
 		} else {
 			padding = ceil10(axisWidth) + legendWidthOnRight;
 		}

@@ -163,7 +163,7 @@ export default {
 
 		$$.zoom.updateTransformScale(transform);
 
-		if ($$.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0]) {
+		if ($$.axis.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0]) {
 			scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]);
 		}
 

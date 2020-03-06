@@ -36,36 +36,35 @@ import line from "../../ChartInternal/shape/line";
 import point from "../../ChartInternal/shape/point";
 import shape from "../../ChartInternal/shape/shape";
 
-export default {
-	api: [
-		apiAxis,
-		apiCategory,
-		apiFlow,
-		apiXGrid,
-		apiYGrid,
-		apiGroup,
-		apiRegion,
-		apiSelection,
-		apiX,
-		apiZoom
-	],
-	internal: [
-		category,
-		drag,
-		flow,
-		subchart,
-		zoom,
+export const api = [
+	apiAxis,
+	apiCategory,
+	apiFlow,
+	apiXGrid,
+	apiYGrid,
+	apiGroup,
+	apiRegion,
+	apiSelection,
+	apiX,
+	apiZoom
+];
 
-		clip,
-		grid,
-		region,
-		selection,
-		eventrect,
+export const internal = [
+	category,
+	drag,
+	flow,
+	subchart,
+	zoom,
 
-		bar,
-		bubble,
-		line,
-		point,
-		shape
-	]
-};
+	clip,
+	grid,
+	region,
+	selection,
+	eventrect,
+
+	bar,
+	bubble,
+	line,
+	point,
+	shape
+];

@@ -92,7 +92,7 @@ export default {
 			}
 		} else if ((isX ? !isRotated : isRotated) && key in d) {
 			currScale = scale.zoom || scale.x;
-			pos = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
+			pos = currScale($$.axis.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
 		}
 
 		return pos;
@@ -127,7 +127,7 @@ export default {
 			}
 		} else if ((isWidth ? !isRotated : isRotated) && key in d) {
 			currScale = scale.zoom || scale.x;
-			end = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
+			end = currScale($$.axis.isTimeSeries() ? parseDate.call($$, d[key]) : d[key]);
 		}
 
 		return end < start ? 0 : end - start;

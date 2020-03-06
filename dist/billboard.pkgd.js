@@ -15354,2110 +15354,6 @@ Local.prototype = local.prototype = {
 
 
 
-// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
-var noop = {
-  value: function value() {}
-};
-
-function dispatch_dispatch() {
-  for (var t, i = 0, n = arguments.length, _ = {}; i < n; ++i) {
-    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
-    _[t] = [];
-  }
-
-  return new Dispatch(_);
-}
-
-function Dispatch(_) {
-  this._ = _;
-}
-
-function dispatch_parseTypenames(typenames, types) {
-  return typenames.trim().split(/^|\s+/).map(function (t) {
-    var name = "",
-        i = t.indexOf(".");
-    if (i >= 0 && (name = t.slice(i + 1), t = t.slice(0, i)), t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
-    return {
-      type: t,
-      name: name
-    };
-  });
-}
-
-Dispatch.prototype = dispatch_dispatch.prototype = {
-  constructor: Dispatch,
-  on: function on(typename, callback) {
-    var t,
-        _ = this._,
-        T = dispatch_parseTypenames(typename + "", _),
-        i = -1,
-        n = T.length; // If no callback was specified, return the callback of the given type and name.
-
-    if (arguments.length < 2) {
-      for (; ++i < n;) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
-
-      return;
-    } // If a type was specified, set the callback for the given type and name.
-    // Otherwise, if a null callback was specified, remove callbacks of the given name.
-
-
-    if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
-
-    for (; ++i < n;) if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
-
-    return this;
-  },
-  copy: function () {
-    var copy = {},
-        _ = this._;
-
-    for (var t in _) copy[t] = _[t].slice();
-
-    return new Dispatch(copy);
-  },
-  call: function call(type, that) {
-    if ((n = arguments.length - 2) > 0) for (var n, t, args = Array(n), i = 0; i < n; ++i) args[i] = arguments[i + 2];
-    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-
-    for (t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
-  },
-  apply: function apply(type, that, args) {
-    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
-
-    for (var t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
-  }
-};
-
-function get(type, name) {
-  for (var c, i = 0, n = type.length; i < n; ++i) if ((c = type[i]).name === name) return c.value;
-}
-
-function set(type, name, callback) {
-  for (var i = 0, n = type.length; i < n; ++i) if (type[i].name === name) {
-    type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
-    break;
-  }
-
-  return callback != null && type.push({
-    name: name,
-    value: callback
-  }), type;
-}
-
-/* harmony default export */ var src_dispatch = (dispatch_dispatch);
-// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/index.js
-
-// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
-var // how frequently we check for clock skew
-taskHead,
-    taskTail,
-    timer_frame = 0,
-    // is an animation frame pending?
-timer_timeout = 0,
-    // is a timeout pending?
-timer_interval = 0,
-    // are any timers active?
-pokeDelay = 1e3,
-    clockLast = 0,
-    clockNow = 0,
-    clockSkew = 0,
-    clock = typeof performance === "object" && performance.now ? performance : Date,
-    setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function (f) {
-  setTimeout(f, 17);
-};
-function now() {
-  return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
-}
-
-function clearNow() {
-  clockNow = 0;
-}
-
-function Timer() {
-  this._call = this._time = this._next = null;
-}
-Timer.prototype = timer.prototype = {
-  constructor: Timer,
-  restart: function restart(callback, delay, time) {
-    if (typeof callback !== "function") throw new TypeError("callback is not a function");
-    time = (time == null ? now() : +time) + (delay == null ? 0 : +delay), this._next || taskTail === this || (taskTail ? taskTail._next = this : taskHead = this, taskTail = this), this._call = callback, this._time = time, sleep();
-  },
-  stop: function stop() {
-    this._call && (this._call = null, this._time = Infinity, sleep());
-  }
-};
-function timer(callback, delay, time) {
-  var t = new Timer();
-  return t.restart(callback, delay, time), t;
-}
-function timerFlush() {
-  now(), ++timer_frame;
-
-  for ( // Pretend we’ve set an alarm, if we haven’t already.
-  var e, t = taskHead; t;) (e = clockNow - t._time) >= 0 && t._call.call(null, e), t = t._next;
-
-  --timer_frame;
-}
-
-function wake() {
-  clockNow = (clockLast = clock.now()) + clockSkew, timer_frame = timer_timeout = 0;
-
-  try {
-    timerFlush();
-  } finally {
-    timer_frame = 0, nap(), clockNow = 0;
-  }
-}
-
-function poke() {
-  var now = clock.now(),
-      delay = now - clockLast;
-  delay > pokeDelay && (clockSkew -= delay, clockLast = now);
-}
-
-function nap() {
-  for (var t0, t2, t1 = taskHead, time = Infinity; t1;) t1._call ? (time > t1._time && (time = t1._time), t0 = t1, t1 = t1._next) : (t2 = t1._next, t1._next = null, t1 = t0 ? t0._next = t2 : taskHead = t2);
-
-  taskTail = t0, sleep(time);
-}
-
-function sleep(time) {
-  if (!timer_frame) {
-    timer_timeout && (timer_timeout = clearTimeout(timer_timeout));
-    var delay = time - clockNow; // Strictly less than if we recomputed clockNow.
-
-    delay > 24 ? (time < Infinity && (timer_timeout = setTimeout(wake, time - clock.now() - clockSkew)), timer_interval && (timer_interval = clearInterval(timer_interval))) : (!timer_interval && (clockLast = clock.now(), timer_interval = setInterval(poke, pokeDelay)), timer_frame = 1, setFrame(wake));
-  } // Soonest alarm already set, or will be.
-
-}
-// CONCATENATED MODULE: ./node_modules/d3-timer/src/timeout.js
-
-/* harmony default export */ var src_timeout = (function (callback, delay, time) {
-  var t = new Timer();
-  return delay = delay == null ? 0 : +delay, t.restart(function (elapsed) {
-    t.stop(), callback(elapsed + delay);
-  }, delay, time), t;
-});
-// CONCATENATED MODULE: ./node_modules/d3-timer/src/interval.js
-
-/* harmony default export */ var src_interval = (function (callback, delay, time) {
-  var t = new Timer(),
-      total = delay;
-  return delay == null ? (t.restart(callback, delay, time), t) : (delay = +delay, time = time == null ? now() : +time, t.restart(function tick(elapsed) {
-    elapsed += total, t.restart(tick, total += delay, time), callback(elapsed);
-  }, delay, time), t);
-});
-// CONCATENATED MODULE: ./node_modules/d3-timer/src/index.js
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/schedule.js
-
-
-var emptyOn = src_dispatch("start", "end", "cancel", "interrupt"),
-    emptyTween = [];
-var CREATED = 0;
-var SCHEDULED = 1;
-var STARTING = 2;
-var STARTED = 3;
-var RUNNING = 4;
-var ENDING = 5;
-var ENDED = 6;
-/* harmony default export */ var transition_schedule = (function (node, name, id, index, group, timing) {
-  var schedules = node.__transition;
-  if (!schedules) node.__transition = {};else if (id in schedules) return;
-  schedule_create(node, id, {
-    name: name,
-    index: index,
-    // For context during callback.
-    group: group,
-    // For context during callback.
-    on: emptyOn,
-    tween: emptyTween,
-    time: timing.time,
-    delay: timing.delay,
-    duration: timing.duration,
-    ease: timing.ease,
-    timer: null,
-    state: CREATED
-  });
-});
-function schedule_init(node, id) {
-  var schedule = schedule_get(node, id);
-  if (schedule.state > CREATED) throw new Error("too late; already scheduled");
-  return schedule;
-}
-function schedule_set(node, id) {
-  var schedule = schedule_get(node, id);
-  if (schedule.state > STARTED) throw new Error("too late; already running");
-  return schedule;
-}
-function schedule_get(node, id) {
-  var schedule = node.__transition;
-  if (!schedule || !(schedule = schedule[id])) throw new Error("transition not found");
-  return schedule;
-}
-
-function schedule_create(node, id, self) {
-  function start(elapsed) {
-    var i, j, n, o; // If the state is not SCHEDULED, then we previously errored on start.
-
-    if (self.state !== SCHEDULED) return stop();
-
-    for (i in schedules) if (o = schedules[i], o.name === self.name) {
-      // While this element already has a starting transition during this frame,
-      // defer starting an interrupting transition until that transition has a
-      // chance to tick (and possibly end); see d3/d3-transition#54!
-      if (o.state === STARTED) return src_timeout(start); // Interrupt the active transition, if any.
-
-      o.state === RUNNING ? (o.state = ENDED, o.timer.stop(), o.on.call("interrupt", node, node.__data__, o.index, o.group), delete schedules[i]) : +i < id && (o.state = ENDED, o.timer.stop(), o.on.call("cancel", node, node.__data__, o.index, o.group), delete schedules[i]);
-    } // Defer the first tick to end of the current frame; see d3/d3#1576.
-    // Note the transition may be canceled after start and before the first tick!
-    // Note this must be scheduled before the start event; see d3/d3-transition#16!
-    // Assuming this is successful, subsequent callbacks go straight to tick.
-
-
-    if (src_timeout(function () {
-      self.state === STARTED && (self.state = RUNNING, self.timer.restart(tick, self.delay, self.time), tick(elapsed));
-    }), self.state = STARTING, self.on.call("start", node, node.__data__, self.index, self.group), self.state === STARTING) {
-      for (self.state = STARTED, tween = Array(n = self.tween.length), (i = 0, j = -1); i < n; ++i) (o = self.tween[i].value.call(node, node.__data__, self.index, self.group)) && (tween[++j] = o);
-
-      tween.length = j + 1;
-    } // interrupted
-
-  }
-
-  function tick(elapsed) {
-    for (var t = elapsed < self.duration ? self.ease.call(null, elapsed / self.duration) : (self.timer.restart(stop), self.state = ENDING, 1), i = -1, n = tween.length; ++i < n;) tween[i].call(node, t); // Dispatch the end event.
-
-
-    self.state === ENDING && (self.on.call("end", node, node.__data__, self.index, self.group), stop());
-  }
-
-  function stop() {
-    for (var i in self.state = ENDED, self.timer.stop(), delete schedules[id], schedules) return; // eslint-disable-line no-unused-vars
-
-
-    delete node.__transition;
-  }
-
-  var tween,
-      schedules = node.__transition; // Initialize the self timer when the transition is created.
-  // Note the actual delay is not known until the first callback!
-
-  schedules[id] = self, self.timer = timer(function (elapsed) {
-    self.state = SCHEDULED, self.timer.restart(start, self.delay, self.time), self.delay <= elapsed && start(elapsed - self.delay);
-  }, 0, self.time);
-}
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/interrupt.js
-
-/* harmony default export */ var interrupt = (function (node, name) {
-  var schedule,
-      active,
-      i,
-      schedules = node.__transition,
-      empty = !0;
-
-  if (schedules) {
-    for (i in name = name == null ? null : name + "", schedules) {
-      if ((schedule = schedules[i]).name !== name) {
-        empty = !1;
-        continue;
-      }
-
-      active = schedule.state > STARTING && schedule.state < ENDING, schedule.state = ENDED, schedule.timer.stop(), schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group), delete schedules[i];
-    }
-
-    empty && delete node.__transition;
-  }
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
-
-/* harmony default export */ var selection_interrupt = (function (name) {
-  return this.each(function () {
-    interrupt(this, name);
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
-/* harmony default export */ var define = (function (constructor, factory, prototype) {
-  constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
-});
-function extend(parent, definition) {
-  var prototype = Object.create(parent.prototype);
-
-  for (var key in definition) prototype[key] = definition[key];
-
-  return prototype;
-}
-// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
-
-function Color() {}
-var _darker = .7;
-
-
-var _brighter = 1 / _darker;
-
-
-var reI = "\\s*([+-]?\\d+)\\s*",
-    reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
-    reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
-    reHex = /^#([0-9a-f]{3,8})$/,
-    reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
-    reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    reHslPercent = new RegExp("^hsl\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
-    reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
-    named = {
-  aliceblue: 0xf0f8ff,
-  antiquewhite: 0xfaebd7,
-  aqua: 65535,
-  aquamarine: 8388564,
-  azure: 0xf0ffff,
-  beige: 0xf5f5dc,
-  bisque: 0xffe4c4,
-  black: 0,
-  blanchedalmond: 0xffebcd,
-  blue: 255,
-  blueviolet: 9055202,
-  brown: 0xa52a2a,
-  burlywood: 0xdeb887,
-  cadetblue: 6266528,
-  chartreuse: 8388352,
-  chocolate: 0xd2691e,
-  coral: 0xff7f50,
-  cornflowerblue: 6591981,
-  cornsilk: 0xfff8dc,
-  crimson: 0xdc143c,
-  cyan: 65535,
-  darkblue: 139,
-  darkcyan: 35723,
-  darkgoldenrod: 0xb8860b,
-  darkgray: 0xa9a9a9,
-  darkgreen: 25600,
-  darkgrey: 0xa9a9a9,
-  darkkhaki: 0xbdb76b,
-  darkmagenta: 9109643,
-  darkolivegreen: 5597999,
-  darkorange: 0xff8c00,
-  darkorchid: 0x9932cc,
-  darkred: 9109504,
-  darksalmon: 0xe9967a,
-  darkseagreen: 9419919,
-  darkslateblue: 4734347,
-  darkslategray: 3100495,
-  darkslategrey: 3100495,
-  darkturquoise: 52945,
-  darkviolet: 9699539,
-  deeppink: 0xff1493,
-  deepskyblue: 49151,
-  dimgray: 6908265,
-  dimgrey: 6908265,
-  dodgerblue: 2003199,
-  firebrick: 0xb22222,
-  floralwhite: 0xfffaf0,
-  forestgreen: 2263842,
-  fuchsia: 0xff00ff,
-  gainsboro: 0xdcdcdc,
-  ghostwhite: 0xf8f8ff,
-  gold: 0xffd700,
-  goldenrod: 0xdaa520,
-  gray: 8421504,
-  green: 32768,
-  greenyellow: 0xadff2f,
-  grey: 8421504,
-  honeydew: 0xf0fff0,
-  hotpink: 0xff69b4,
-  indianred: 0xcd5c5c,
-  indigo: 4915330,
-  ivory: 0xfffff0,
-  khaki: 0xf0e68c,
-  lavender: 0xe6e6fa,
-  lavenderblush: 0xfff0f5,
-  lawngreen: 8190976,
-  lemonchiffon: 0xfffacd,
-  lightblue: 0xadd8e6,
-  lightcoral: 0xf08080,
-  lightcyan: 0xe0ffff,
-  lightgoldenrodyellow: 0xfafad2,
-  lightgray: 0xd3d3d3,
-  lightgreen: 9498256,
-  lightgrey: 0xd3d3d3,
-  lightpink: 0xffb6c1,
-  lightsalmon: 0xffa07a,
-  lightseagreen: 2142890,
-  lightskyblue: 8900346,
-  lightslategray: 7833753,
-  lightslategrey: 7833753,
-  lightsteelblue: 0xb0c4de,
-  lightyellow: 0xffffe0,
-  lime: 65280,
-  limegreen: 3329330,
-  linen: 0xfaf0e6,
-  magenta: 0xff00ff,
-  maroon: 8388608,
-  mediumaquamarine: 6737322,
-  mediumblue: 205,
-  mediumorchid: 0xba55d3,
-  mediumpurple: 9662683,
-  mediumseagreen: 3978097,
-  mediumslateblue: 8087790,
-  mediumspringgreen: 64154,
-  mediumturquoise: 4772300,
-  mediumvioletred: 0xc71585,
-  midnightblue: 1644912,
-  mintcream: 0xf5fffa,
-  mistyrose: 0xffe4e1,
-  moccasin: 0xffe4b5,
-  navajowhite: 0xffdead,
-  navy: 128,
-  oldlace: 0xfdf5e6,
-  olive: 8421376,
-  olivedrab: 7048739,
-  orange: 0xffa500,
-  orangered: 0xff4500,
-  orchid: 0xda70d6,
-  palegoldenrod: 0xeee8aa,
-  palegreen: 0x98fb98,
-  paleturquoise: 0xafeeee,
-  palevioletred: 0xdb7093,
-  papayawhip: 0xffefd5,
-  peachpuff: 0xffdab9,
-  peru: 0xcd853f,
-  pink: 0xffc0cb,
-  plum: 0xdda0dd,
-  powderblue: 0xb0e0e6,
-  purple: 8388736,
-  rebeccapurple: 6697881,
-  red: 0xff0000,
-  rosybrown: 0xbc8f8f,
-  royalblue: 4286945,
-  saddlebrown: 9127187,
-  salmon: 0xfa8072,
-  sandybrown: 0xf4a460,
-  seagreen: 3050327,
-  seashell: 0xfff5ee,
-  sienna: 0xa0522d,
-  silver: 0xc0c0c0,
-  skyblue: 8900331,
-  slateblue: 6970061,
-  slategray: 7372944,
-  slategrey: 7372944,
-  snow: 0xfffafa,
-  springgreen: 65407,
-  steelblue: 4620980,
-  tan: 0xd2b48c,
-  teal: 32896,
-  thistle: 0xd8bfd8,
-  tomato: 0xff6347,
-  turquoise: 4251856,
-  violet: 0xee82ee,
-  wheat: 0xf5deb3,
-  white: 0xffffff,
-  whitesmoke: 0xf5f5f5,
-  yellow: 0xffff00,
-  yellowgreen: 0x9acd32
-};
-define(Color, color_color, {
-  copy: function copy(channels) {
-    return Object.assign(new this.constructor(), this, channels);
-  },
-  displayable: function displayable() {
-    return this.rgb().displayable();
-  },
-  hex: color_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: color_formatHex,
-  formatHsl: color_formatHsl,
-  formatRgb: color_formatRgb,
-  toString: color_formatRgb
-});
-
-function color_formatHex() {
-  return this.rgb().formatHex();
-}
-
-function color_formatHsl() {
-  return hslConvert(this).formatHsl();
-}
-
-function color_formatRgb() {
-  return this.rgb().formatRgb();
-}
-
-function color_color(format) {
-  var m, l;
-  return format = (format + "").trim().toLowerCase(), (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
-  : l === 3 ? new Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) // #f00
-  : l === 8 ? new Rgb(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) // #ff000000
-  : l === 4 ? new Rgb(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) // #f000
-  : null // invalid hex
-  ) : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
-  : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
-  : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
-  : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
-  : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
-  : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
-  : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
-  : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0) : null;
-}
-
-function rgbn(n) {
-  return new Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
-}
-
-function rgba(r, g, b, a) {
-  return a <= 0 && (r = g = b = NaN), new Rgb(r, g, b, a);
-}
-
-function rgbConvert(o) {
-  return (o instanceof Color || (o = color_color(o)), !o) ? new Rgb() : (o = o.rgb(), new Rgb(o.r, o.g, o.b, o.opacity));
-}
-function color_rgb(r, g, b, opacity) {
-  return arguments.length === 1 ? rgbConvert(r) : new Rgb(r, g, b, opacity == null ? 1 : opacity);
-}
-function Rgb(r, g, b, opacity) {
-  this.r = +r, this.g = +g, this.b = +b, this.opacity = +opacity;
-}
-define(Rgb, color_rgb, extend(Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? _brighter : Math.pow(_brighter, k), new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? _darker : Math.pow(_darker, k), new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
-  },
-  rgb: function () {
-    return this;
-  },
-  displayable: function displayable() {
-    return -.5 <= this.r && this.r < 255.5 && -.5 <= this.g && this.g < 255.5 && -.5 <= this.b && this.b < 255.5 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  hex: rgb_formatHex,
-  // Deprecated! Use color.formatHex.
-  formatHex: rgb_formatHex,
-  formatRgb: rgb_formatRgb,
-  toString: rgb_formatRgb
-}));
-
-function rgb_formatHex() {
-  return "#" + hex(this.r) + hex(this.g) + hex(this.b);
-}
-
-function rgb_formatRgb() {
-  var a = this.opacity;
-  return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "rgb(" : "rgba(") + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.b) || 0)) + (a === 1 ? ")" : ", " + a + ")");
-}
-
-function hex(value) {
-  return value = Math.max(0, Math.min(255, Math.round(value) || 0)), (value < 16 ? "0" : "") + value.toString(16);
-}
-
-function hsla(h, s, l, a) {
-  return a <= 0 ? h = s = l = NaN : l <= 0 || l >= 1 ? h = s = NaN : s <= 0 && (h = NaN), new Hsl(h, s, l, a);
-}
-
-function hslConvert(o) {
-  if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
-  if (o instanceof Color || (o = color_color(o)), !o) return new Hsl();
-  if (o instanceof Hsl) return o;
-  o = o.rgb();
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      min = Math.min(r, g, b),
-      max = Math.max(r, g, b),
-      h = NaN,
-      s = max - min,
-      l = (max + min) / 2;
-  return s ? (h = r === max ? (g - b) / s + (g < b) * 6 : g === max ? (b - r) / s + 2 : (r - g) / s + 4, s /= l < .5 ? max + min : 2 - max - min, h *= 60) : s = l > 0 && l < 1 ? 0 : h, new Hsl(h, s, l, o.opacity);
-}
-function hsl(h, s, l, opacity) {
-  return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
-}
-
-function Hsl(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-
-define(Hsl, hsl, extend(Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? _brighter : Math.pow(_brighter, k), new Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? _darker : Math.pow(_darker, k), new Hsl(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function () {
-    var h = this.h % 360 + (this.h < 0) * 360,
-        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
-        l = this.l,
-        m2 = l + (l < .5 ? l : 1 - l) * s,
-        m1 = 2 * l - m2;
-    return new Rgb(hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2), hsl2rgb(h, m1, m2), hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2), this.opacity);
-  },
-  displayable: function displayable() {
-    return (0 <= this.s && this.s <= 1 || isNaN(this.s)) && 0 <= this.l && this.l <= 1 && 0 <= this.opacity && this.opacity <= 1;
-  },
-  formatHsl: function formatHsl() {
-    var a = this.opacity;
-    return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "hsl(" : "hsla(") + (this.h || 0) + ", " + (this.s || 0) * 100 + "%, " + (this.l || 0) * 100 + "%" + (a === 1 ? ")" : ", " + a + ")");
-  }
-}));
-
-/* From FvD 13.37, CSS Color Module Level 3 */
-function hsl2rgb(h, m1, m2) {
-  return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
-}
-// CONCATENATED MODULE: ./node_modules/d3-color/src/math.js
-var deg2rad = Math.PI / 180;
-var rad2deg = 180 / Math.PI;
-// CONCATENATED MODULE: ./node_modules/d3-color/src/lab.js
-
-
- // https://observablehq.com/@mbostock/lab-and-rgb
-
-var K = 18,
-    Xn = .96422,
-    Yn = 1,
-    Zn = .82521,
-    lab_t0 = 4 / 29,
-    lab_t1 = 6 / 29,
-    lab_t2 = 3 * lab_t1 * lab_t1,
-    t3 = lab_t1 * lab_t1 * lab_t1;
-
-function labConvert(o) {
-  if (o instanceof Lab) return new Lab(o.l, o.a, o.b, o.opacity);
-  if (o instanceof Hcl) return hcl2lab(o);
-  o instanceof Rgb || (o = rgbConvert(o));
-  var x,
-      z,
-      r = rgb2lrgb(o.r),
-      g = rgb2lrgb(o.g),
-      b = rgb2lrgb(o.b),
-      y = xyz2lab((.2225045 * r + .7168786 * g + .0606169 * b) / Yn);
-  return r === g && g === b ? x = z = y : (x = xyz2lab((.4360747 * r + .3850649 * g + .1430804 * b) / Xn), z = xyz2lab((.0139322 * r + .0971045 * g + .7141733 * b) / Zn)), new Lab(116 * y - 16, 500 * (x - y), 200 * (y - z), o.opacity);
-}
-
-function gray(l, opacity) {
-  return new Lab(l, 0, 0, opacity == null ? 1 : opacity);
-}
-function lab(l, a, b, opacity) {
-  return arguments.length === 1 ? labConvert(l) : new Lab(l, a, b, opacity == null ? 1 : opacity);
-}
-function Lab(l, a, b, opacity) {
-  this.l = +l, this.a = +a, this.b = +b, this.opacity = +opacity;
-}
-define(Lab, lab, extend(Color, {
-  brighter: function brighter(k) {
-    return new Lab(this.l + K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  darker: function darker(k) {
-    return new Lab(this.l - K * (k == null ? 1 : k), this.a, this.b, this.opacity);
-  },
-  rgb: function rgb() {
-    var y = (this.l + 16) / 116,
-        x = isNaN(this.a) ? y : y + this.a / 500,
-        z = isNaN(this.b) ? y : y - this.b / 200;
-    return x = Xn * lab2xyz(x), y = Yn * lab2xyz(y), z = Zn * lab2xyz(z), new Rgb(lrgb2rgb(3.1338561 * x - 1.6168667 * y - .4906146 * z), lrgb2rgb(-.9787684 * x + 1.9161415 * y + .033454 * z), lrgb2rgb(.0719453 * x - .2289914 * y + 1.4052427 * z), this.opacity);
-  }
-}));
-
-function xyz2lab(t) {
-  return t > t3 ? Math.pow(t, 1 / 3) : t / lab_t2 + lab_t0;
-}
-
-function lab2xyz(t) {
-  return t > lab_t1 ? t * t * t : lab_t2 * (t - lab_t0);
-}
-
-function lrgb2rgb(x) {
-  return 255 * (x <= .0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - .055);
-}
-
-function rgb2lrgb(x) {
-  return (x /= 255) <= .04045 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4);
-}
-
-function hclConvert(o) {
-  if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
-  if (o instanceof Lab || (o = labConvert(o)), o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
-  var h = Math.atan2(o.b, o.a) * rad2deg;
-  return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
-}
-
-function lch(l, c, h, opacity) {
-  return arguments.length === 1 ? hclConvert(l) : new Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function hcl(h, c, l, opacity) {
-  return arguments.length === 1 ? hclConvert(h) : new Hcl(h, c, l, opacity == null ? 1 : opacity);
-}
-function Hcl(h, c, l, opacity) {
-  this.h = +h, this.c = +c, this.l = +l, this.opacity = +opacity;
-}
-
-function hcl2lab(o) {
-  if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
-  var h = o.h * deg2rad;
-  return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
-}
-
-define(Hcl, hcl, extend(Color, {
-  brighter: function brighter(k) {
-    return new Hcl(this.h, this.c, this.l + K * (k == null ? 1 : k), this.opacity);
-  },
-  darker: function darker(k) {
-    return new Hcl(this.h, this.c, this.l - K * (k == null ? 1 : k), this.opacity);
-  },
-  rgb: function rgb() {
-    return hcl2lab(this).rgb();
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-color/src/cubehelix.js
-
-
-
-var A = -.14861,
-    B = +1.78277,
-    C = -.29227,
-    cubehelix_D = -.90649,
-    cubehelix_E = +1.97294,
-    ED = cubehelix_E * cubehelix_D,
-    EB = cubehelix_E * B,
-    BC_DA = B * C - cubehelix_D * A;
-
-function cubehelixConvert(o) {
-  if (o instanceof Cubehelix) return new Cubehelix(o.h, o.s, o.l, o.opacity);
-  o instanceof Rgb || (o = rgbConvert(o));
-  var r = o.r / 255,
-      g = o.g / 255,
-      b = o.b / 255,
-      l = (BC_DA * b + ED * r - EB * g) / (BC_DA + ED - EB),
-      bl = b - l,
-      k = (cubehelix_E * (g - l) - C * bl) / cubehelix_D,
-      s = Math.sqrt(k * k + bl * bl) / (cubehelix_E * l * (1 - l)),
-      // NaN if l=0 or l=1
-  h = s ? Math.atan2(k, bl) * rad2deg - 120 : NaN;
-  return new Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
-}
-
-function cubehelix_cubehelix(h, s, l, opacity) {
-  return arguments.length === 1 ? cubehelixConvert(h) : new Cubehelix(h, s, l, opacity == null ? 1 : opacity);
-}
-function Cubehelix(h, s, l, opacity) {
-  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
-}
-define(Cubehelix, cubehelix_cubehelix, extend(Color, {
-  brighter: function brighter(k) {
-    return k = k == null ? _brighter : Math.pow(_brighter, k), new Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  darker: function darker(k) {
-    return k = k == null ? _darker : Math.pow(_darker, k), new Cubehelix(this.h, this.s, this.l * k, this.opacity);
-  },
-  rgb: function rgb() {
-    var h = isNaN(this.h) ? 0 : (this.h + 120) * deg2rad,
-        l = +this.l,
-        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
-        cosh = Math.cos(h),
-        sinh = Math.sin(h);
-    return new Rgb(255 * (l + a * (A * cosh + B * sinh)), 255 * (l + a * (C * cosh + cubehelix_D * sinh)), 255 * (l + a * (cubehelix_E * cosh)), this.opacity);
-  }
-}));
-// CONCATENATED MODULE: ./node_modules/d3-color/src/index.js
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
-function basis(t1, v0, v1, v2, v3) {
-  var t2 = t1 * t1,
-      t3 = t2 * t1;
-  return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
-}
-/* harmony default export */ var src_basis = (function (values) {
-  var n = values.length - 1;
-  return function (t) {
-    var i = t <= 0 ? t = 0 : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
-        v1 = values[i],
-        v2 = values[i + 1],
-        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
-        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
-    return basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basisClosed.js
-
-/* harmony default export */ var basisClosed = (function (values) {
-  var n = values.length;
-  return function (t) {
-    var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
-        v0 = values[(i + n - 1) % n],
-        v1 = values[i % n],
-        v2 = values[(i + 1) % n],
-        v3 = values[(i + 2) % n];
-    return basis((t - i / n) * n, v0, v1, v2, v3);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
-/* harmony default export */ var src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
-
-
-function linear(a, d) {
-  return function (t) {
-    return a + t * d;
-  };
-}
-
-function exponential(a, b, y) {
-  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function (t) {
-    return Math.pow(a + t * b, y);
-  };
-}
-
-function color_hue(a, b) {
-  var d = b - a;
-  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : src_constant(isNaN(a) ? b : a);
-}
-function gamma(y) {
-  return (y = +y) === 1 ? nogamma : function (a, b) {
-    return b - a ? exponential(a, b, y) : src_constant(isNaN(a) ? b : a);
-  };
-}
-function nogamma(a, b) {
-  var d = b - a;
-  return d ? linear(a, d) : src_constant(isNaN(a) ? b : a);
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
-
-
-
-
-/* harmony default export */ var src_rgb = ((function rgbGamma(y) {
-  function rgb(start, end) {
-    var r = color((start = color_rgb(start)).r, (end = color_rgb(end)).r),
-        g = color(start.g, end.g),
-        b = color(start.b, end.b),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.r = r(t), start.g = g(t), start.b = b(t), start.opacity = opacity(t), start + "";
-    };
-  }
-
-  var color = gamma(y);
-  return rgb.gamma = rgbGamma, rgb;
-})(1));
-
-function rgbSpline(spline) {
-  return function (colors) {
-    var i,
-        color,
-        n = colors.length,
-        r = Array(n),
-        g = Array(n),
-        b = Array(n);
-
-    for (i = 0; i < n; ++i) color = color_rgb(colors[i]), r[i] = color.r || 0, g[i] = color.g || 0, b[i] = color.b || 0;
-
-    return r = spline(r), g = spline(g), b = spline(b), color.opacity = 1, function (t) {
-      return color.r = r(t), color.g = g(t), color.b = b(t), color + "";
-    };
-  };
-}
-
-var rgbBasis = rgbSpline(src_basis);
-var rgbBasisClosed = rgbSpline(basisClosed);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
-/* harmony default export */ var numberArray = (function (a, b) {
-  b || (b = []);
-  var i,
-      n = a ? Math.min(b.length, a.length) : 0,
-      c = b.slice();
-  return function (t) {
-    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
-
-    return c;
-  };
-});
-function isNumberArray(x) {
-  return ArrayBuffer.isView(x) && !(x instanceof DataView);
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/array.js
-
-
-/* harmony default export */ var src_array = (function (a, b) {
-  return (isNumberArray(b) ? numberArray : genericArray)(a, b);
-});
-function genericArray(a, b) {
-  var i,
-      nb = b ? b.length : 0,
-      na = a ? Math.min(nb, a.length) : 0,
-      x = Array(na),
-      c = Array(nb);
-
-  for (i = 0; i < na; ++i) x[i] = src_value(a[i], b[i]);
-
-  for (; i < nb; ++i) c[i] = b[i];
-
-  return function (t) {
-    for (i = 0; i < na; ++i) c[i] = x[i](t);
-
-    return c;
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/date.js
-/* harmony default export */ var src_date = (function (a, b) {
-  var d = new Date();
-  return a = +a, b = +b, function (t) {
-    return d.setTime(a * (1 - t) + b * t), d;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
-/* harmony default export */ var number = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return a * (1 - t) + b * t;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/object.js
-
-/* harmony default export */ var object = (function (a, b) {
-  var k,
-      i = {},
-      c = {};
-
-  for (k in (a === null || typeof a !== "object") && (a = {}), (b === null || typeof b !== "object") && (b = {}), b) k in a ? i[k] = src_value(a[k], b[k]) : c[k] = b[k];
-
-  return function (t) {
-    for (k in i) c[k] = i[k](t);
-
-    return c;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
-
-var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
-    reB = new RegExp(reA.source, "g");
-
-function string_zero(b) {
-  return function () {
-    return b;
-  };
-}
-
-function one(b) {
-  return function (t) {
-    return b(t) + "";
-  };
-}
-
-/* harmony default export */ var src_string = (function (a, b) {
-  var // scan index for next number in b
-  am,
-      // current match in a
-  bm,
-      // current match in b
-  bs,
-      bi = reA.lastIndex = reB.lastIndex = 0,
-      // string preceding current number in b, if any
-  i = -1,
-      // index in s
-  s = [],
-      // string constants and placeholders
-  q = []; // number interpolators
-  // Coerce inputs to strings.
-
-  // Interpolate pairs of numbers in a & b.
-  for (a += "", b += ""; (am = reA.exec(a)) && (bm = reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : // coalesce with previous string
-  s[++i] = bm : (s[++i] = null, q.push({
-    i: i,
-    x: number(am, bm)
-  })), bi = reB.lastIndex; // Add remains of b.
-
-
-  // Special optimization for only a single match.
-  // Otherwise, interpolate each of the numbers and rejoin the string.
-  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : // coalesce with previous string
-  s[++i] = bs), s.length < 2 ? q[0] ? one(q[0].x) : string_zero(b) : (b = q.length, function (t) {
-    for (var o, i = 0; i < b; ++i) s[(o = q[i]).i] = o.x(t);
-
-    return s.join("");
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/value.js
-
-
-
-
-
-
-
-
-
-/* harmony default export */ var src_value = (function (a, b) {
-  var c,
-      t = typeof b;
-  return b == null || t === "boolean" ? src_constant(b) : (t === "number" ? number : t === "string" ? (c = color_color(b)) ? (b = c, src_rgb) : src_string : b instanceof color_color ? src_rgb : b instanceof Date ? src_date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/discrete.js
-/* harmony default export */ var discrete = (function (range) {
-  var n = range.length;
-  return function (t) {
-    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hue.js
-
-/* harmony default export */ var src_hue = (function (a, b) {
-  var i = color_hue(+a, +b);
-  return function (t) {
-    var x = i(t);
-    return x - 360 * Math.floor(x / 360);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
-/* harmony default export */ var src_round = (function (a, b) {
-  return a = +a, b = +b, function (t) {
-    return Math.round(a * (1 - t) + b * t);
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
-var degrees = 180 / Math.PI;
-var identity = {
-  translateX: 0,
-  translateY: 0,
-  rotate: 0,
-  skewX: 0,
-  scaleX: 1,
-  scaleY: 1
-};
-/* harmony default export */ var decompose = (function (a, b, c, d, e, f) {
-  var scaleX, scaleY, skewX;
-  return (scaleX = Math.sqrt(a * a + b * b)) && (a /= scaleX, b /= scaleX), (skewX = a * c + b * d) && (c -= a * skewX, d -= b * skewX), (scaleY = Math.sqrt(c * c + d * d)) && (c /= scaleY, d /= scaleY, skewX /= scaleY), a * d < b * c && (a = -a, b = -b, skewX = -skewX, scaleX = -scaleX), {
-    translateX: e,
-    translateY: f,
-    rotate: Math.atan2(b, a) * degrees,
-    skewX: Math.atan(skewX) * degrees,
-    scaleX: scaleX,
-    scaleY: scaleY
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
-
-var cssNode, cssRoot, cssView, svgNode;
-function parseCss(value) {
-  return value === "none" ? identity : (cssNode || (cssNode = document.createElement("DIV"), cssRoot = document.documentElement, cssView = document.defaultView), cssNode.style.transform = value, value = cssView.getComputedStyle(cssRoot.appendChild(cssNode), null).getPropertyValue("transform"), cssRoot.removeChild(cssNode), value = value.slice(7, -1).split(","), decompose(+value[0], +value[1], +value[2], +value[3], +value[4], +value[5]));
-}
-function parseSvg(value) {
-  return value == null ? identity : (svgNode || (svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g")), svgNode.setAttribute("transform", value), !(value = svgNode.transform.baseVal.consolidate())) ? identity : (value = value.matrix, decompose(value.a, value.b, value.c, value.d, value.e, value.f));
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
-
-
-
-function interpolateTransform(parse, pxComma, pxParen, degParen) {
-  function pop(s) {
-    return s.length ? s.pop() + " " : "";
-  }
-
-  function translate(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push("translate(", null, pxComma, null, pxParen);
-      q.push({
-        i: i - 4,
-        x: number(xa, xb)
-      }, {
-        i: i - 2,
-        x: number(ya, yb)
-      });
-    } else (xb || yb) && s.push("translate(" + xb + pxComma + yb + pxParen);
-  }
-
-  function rotate(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "rotate(" + b + degParen) : (a - b > 180 ? b += 360 : b - a > 180 && (a += 360), q.push({
-      i: s.push(pop(s) + "rotate(", null, degParen) - 2,
-      x: number(a, b)
-    }));
-  }
-
-  function skewX(a, b, s, q) {
-    a === b ? b && s.push(pop(s) + "skewX(" + b + degParen) : q.push({
-      i: s.push(pop(s) + "skewX(", null, degParen) - 2,
-      x: number(a, b)
-    });
-  }
-
-  function scale(xa, ya, xb, yb, s, q) {
-    if (xa !== xb || ya !== yb) {
-      var i = s.push(pop(s) + "scale(", null, ",", null, ")");
-      q.push({
-        i: i - 4,
-        x: number(xa, xb)
-      }, {
-        i: i - 2,
-        x: number(ya, yb)
-      });
-    } else (xb !== 1 || yb !== 1) && s.push(pop(s) + "scale(" + xb + "," + yb + ")");
-  }
-
-  return function (a, b) {
-    var s = [],
-        // string constants and placeholders
-    q = []; // number interpolators
-
-    // gc
-    return a = parse(a), b = parse(b), translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q), rotate(a.rotate, b.rotate, s, q), skewX(a.skewX, b.skewX, s, q), scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q), a = b = null, function (t) {
-      for (var o, i = -1, n = q.length; ++i < n;) s[(o = q[i]).i] = o.x(t);
-
-      return s.join("");
-    };
-  };
-}
-
-var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
-var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/zoom.js
-var rho = Math.SQRT2,
-    rho2 = 2,
-    rho4 = 4,
-    epsilon2 = 1e-12;
-
-function zoom_cosh(x) {
-  return ((x = Math.exp(x)) + 1 / x) / 2;
-}
-
-function zoom_sinh(x) {
-  return ((x = Math.exp(x)) - 1 / x) / 2;
-}
-
-function tanh(x) {
-  return ((x = Math.exp(2 * x)) - 1) / (x + 1);
-} // p0 = [ux0, uy0, w0]
-// p1 = [ux1, uy1, w1]
-
-
-/* harmony default export */ var src_zoom = (function (p0, p1) {
-  var i,
-      S,
-      ux0 = p0[0],
-      uy0 = p0[1],
-      w0 = p0[2],
-      ux1 = p1[0],
-      uy1 = p1[1],
-      w1 = p1[2],
-      dx = ux1 - ux0,
-      dy = uy1 - uy0,
-      d2 = dx * dx + dy * dy; // Special case for u0 ≅ u1.
-
-  if (d2 < epsilon2) S = Math.log(w1 / w0) / rho, i = function (t) {
-    return [ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(rho * t * S)];
-  }; // General case.
-  else {
-      var d1 = Math.sqrt(d2),
-          b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
-          b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
-          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
-          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
-      S = (r1 - r0) / rho, i = function (t) {
-        var s = t * S,
-            coshr0 = zoom_cosh(r0),
-            u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - zoom_sinh(r0));
-        return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / zoom_cosh(rho * s + r0)];
-      };
-    }
-  return i.duration = S * 1e3, i;
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hsl.js
-
-
-
-function hsl_hsl(hue) {
-  return function (start, end) {
-    var h = hue((start = hsl(start)).h, (end = hsl(end)).h),
-        s = nogamma(start.s, end.s),
-        l = nogamma(start.l, end.l),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.s = s(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var src_hsl = (hsl_hsl(color_hue));
-var hslLong = hsl_hsl(nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/lab.js
-
-
-function lab_lab(start, end) {
-  var l = nogamma((start = lab(start)).l, (end = lab(end)).l),
-      a = nogamma(start.a, end.a),
-      b = nogamma(start.b, end.b),
-      opacity = nogamma(start.opacity, end.opacity);
-  return function (t) {
-    return start.l = l(t), start.a = a(t), start.b = b(t), start.opacity = opacity(t), start + "";
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hcl.js
-
-
-
-function hcl_hcl(hue) {
-  return function (start, end) {
-    var h = hue((start = hcl(start)).h, (end = hcl(end)).h),
-        c = nogamma(start.c, end.c),
-        l = nogamma(start.l, end.l),
-        opacity = nogamma(start.opacity, end.opacity);
-    return function (t) {
-      return start.h = h(t), start.c = c(t), start.l = l(t), start.opacity = opacity(t), start + "";
-    };
-  };
-}
-
-/* harmony default export */ var src_hcl = (hcl_hcl(color_hue));
-var hclLong = hcl_hcl(nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/cubehelix.js
-
-
-
-function src_cubehelix_cubehelix(hue) {
-  return function cubehelixGamma(y) {
-    function cubehelix(start, end) {
-      var h = hue((start = cubehelix_cubehelix(start)).h, (end = cubehelix_cubehelix(end)).h),
-          s = nogamma(start.s, end.s),
-          l = nogamma(start.l, end.l),
-          opacity = nogamma(start.opacity, end.opacity);
-      return function (t) {
-        return start.h = h(t), start.s = s(t), start.l = l(Math.pow(t, y)), start.opacity = opacity(t), start + "";
-      };
-    }
-
-    return y = +y, cubehelix.gamma = cubehelixGamma, cubehelix;
-  }(1);
-}
-
-/* harmony default export */ var src_cubehelix = (src_cubehelix_cubehelix(color_hue));
-var cubehelixLong = src_cubehelix_cubehelix(nogamma);
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/piecewise.js
-function piecewise_piecewise(interpolate, values) {
-  for (var i = 0, n = values.length - 1, v = values[0], I = Array(n < 0 ? 0 : n); i < n;) I[i] = interpolate(v, v = values[++i]);
-
-  return function (t) {
-    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
-    return I[i](t - i);
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/quantize.js
-/* harmony default export */ var quantize = (function (interpolator, n) {
-  for (var samples = Array(n), i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
-
-  return samples;
-});
-// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
-
-
-function tweenRemove(id, name) {
-  var tween0, tween1;
-  return function () {
-    var schedule = schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
-    // just assign the updated shared tween and we’re done!
-    // Otherwise, copy-on-write.
-
-    if (tween !== tween0) {
-      tween1 = tween0 = tween;
-
-      for (var i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
-        tween1 = tween1.slice(), tween1.splice(i, 1);
-        break;
-      }
-    }
-
-    schedule.tween = tween1;
-  };
-}
-
-function tweenFunction(id, name, value) {
-  var tween0, tween1;
-  if (typeof value !== "function") throw new Error();
-  return function () {
-    var schedule = schedule_set(this, id),
-        tween = schedule.tween; // If this node shared tween with the previous node,
-    // just assign the updated shared tween and we’re done!
-    // Otherwise, copy-on-write.
-
-    if (tween !== tween0) {
-      tween1 = (tween0 = tween).slice();
-
-      for (var t = {
-        name: name,
-        value: value
-      }, i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
-        tween1[i] = t;
-        break;
-      }
-
-      i === n && tween1.push(t);
-    }
-
-    schedule.tween = tween1;
-  };
-}
-
-/* harmony default export */ var transition_tween = (function (name, value) {
-  var id = this._id;
-
-  if (name += "", arguments.length < 2) {
-    for (var t, tween = schedule_get(this.node(), id).tween, i = 0, n = tween.length; i < n; ++i) if ((t = tween[i]).name === name) return t.value;
-
-    return null;
-  }
-
-  return this.each((value == null ? tweenRemove : tweenFunction)(id, name, value));
-});
-function tweenValue(transition, name, value) {
-  var id = transition._id;
-  return transition.each(function () {
-    var schedule = schedule_set(this, id);
-    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
-  }), function (node) {
-    return schedule_get(node, id).value[name];
-  };
-}
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
-
-
-/* harmony default export */ var transition_interpolate = (function (a, b) {
-  var c;
-  return (typeof b === "number" ? number : b instanceof color_color ? src_rgb : (c = color_color(b)) ? (b = c, src_rgb) : src_string)(a, b);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attr.js
-
-
-
-
-
-function attr_attrRemove(name) {
-  return function () {
-    this.removeAttribute(name);
-  };
-}
-
-function attr_attrRemoveNS(fullname) {
-  return function () {
-    this.removeAttributeNS(fullname.space, fullname.local);
-  };
-}
-
-function attr_attrConstant(name, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = this.getAttribute(name);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function attr_attrConstantNS(fullname, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = this.getAttributeNS(fullname.space, fullname.local);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function attr_attrFunction(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0,
-        string1,
-        value1 = value(this);
-    return value1 == null ? void this.removeAttribute(name) : (string0 = this.getAttribute(name), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
-  };
-}
-
-function attr_attrFunctionNS(fullname, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0,
-        string1,
-        value1 = value(this);
-    return value1 == null ? void this.removeAttributeNS(fullname.space, fullname.local) : (string0 = this.getAttributeNS(fullname.space, fullname.local), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
-  };
-}
-
-/* harmony default export */ var transition_attr = (function (name, value) {
-  var fullname = namespace(name),
-      i = fullname === "transform" ? interpolateTransformSvg : transition_interpolate;
-  return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
-
-
-function attrInterpolate(name, i) {
-  return function (t) {
-    this.setAttribute(name, i.call(this, t));
-  };
-}
-
-function attrInterpolateNS(fullname, i) {
-  return function (t) {
-    this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
-  };
-}
-
-function attrTweenNS(fullname, value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && attrInterpolateNS(fullname, i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-function attrTween(name, value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && attrInterpolate(name, i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var transition_attrTween = (function (name, value) {
-  var key = "attr." + name;
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  var fullname = namespace(name);
-  return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
-
-
-function delayFunction(id, value) {
-  return function () {
-    schedule_init(this, id).delay = +value.apply(this, arguments);
-  };
-}
-
-function delayConstant(id, value) {
-  return value = +value, function () {
-    schedule_init(this, id).delay = value;
-  };
-}
-
-/* harmony default export */ var transition_delay = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
-
-
-function durationFunction(id, value) {
-  return function () {
-    schedule_set(this, id).duration = +value.apply(this, arguments);
-  };
-}
-
-function durationConstant(id, value) {
-  return value = +value, function () {
-    schedule_set(this, id).duration = value;
-  };
-}
-
-/* harmony default export */ var transition_duration = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
-
-
-function easeConstant(id, value) {
-  if (typeof value !== "function") throw new Error();
-  return function () {
-    schedule_set(this, id).ease = value;
-  };
-}
-
-/* harmony default export */ var ease = (function (value) {
-  var id = this._id;
-  return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/filter.js
-
-
-/* harmony default export */ var transition_filter = (function (match) {
-  typeof match !== "function" && (match = matcher(match));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
-
-  return new Transition(subgroups, this._parents, this._name, this._id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
-
-/* harmony default export */ var transition_merge = (function (transition) {
-  if (transition._id !== this._id) throw new Error();
-
-  for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
-
-  for (; j < m0; ++j) merges[j] = groups0[j];
-
-  return new Transition(merges, this._parents, this._name, this._id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
-
-
-function on_start(name) {
-  return (name + "").trim().split(/^|\s+/).every(function (t) {
-    var i = t.indexOf(".");
-    return i >= 0 && (t = t.slice(0, i)), !t || t === "start";
-  });
-}
-
-function onFunction(id, name, listener) {
-  var on0,
-      on1,
-      sit = on_start(name) ? schedule_init : schedule_set;
-  return function () {
-    var schedule = sit(this, id),
-        on = schedule.on; // If this node shared a dispatch with the previous node,
-    // just assign the updated shared dispatch and we’re done!
-    // Otherwise, copy-on-write.
-
-    on !== on0 && (on1 = (on0 = on).copy()).on(name, listener), schedule.on = on1;
-  };
-}
-
-/* harmony default export */ var transition_on = (function (name, listener) {
-  var id = this._id;
-  return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/remove.js
-function removeFunction(id) {
-  return function () {
-    var parent = this.parentNode;
-
-    for (var i in this.__transition) if (+i !== id) return;
-
-    parent && parent.removeChild(this);
-  };
-}
-
-/* harmony default export */ var transition_remove = (function () {
-  return this.on("end.remove", removeFunction(this._id));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/select.js
-
-
-
-/* harmony default export */ var transition_select = (function (select) {
-  var name = this._name,
-      id = this._id;
-  typeof select !== "function" && (select = src_selector(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode, transition_schedule(subgroup[i], name, id, i, subgroup, schedule_get(node, id)));
-
-  return new Transition(subgroups, this._parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
-
-
-
-/* harmony default export */ var transition_selectAll = (function (select) {
-  var name = this._name,
-      id = this._id;
-  typeof select !== "function" && (select = selectorAll(select));
-
-  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
-    for (var child, children = select.call(node, node.__data__, i, group), inherit = schedule_get(node, id), k = 0, l = children.length; k < l; ++k) (child = children[k]) && transition_schedule(child, name, id, k, children, inherit);
-
-    subgroups.push(children), parents.push(node);
-  }
-
-  return new Transition(subgroups, parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
-
-var selection_Selection = src_selection.prototype.constructor;
-/* harmony default export */ var transition_selection = (function () {
-  return new selection_Selection(this._groups, this._parents);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/style.js
-
-
-
-
-
-
-function styleNull(name, interpolate) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0 = styleValue(this, name),
-        string1 = (this.style.removeProperty(name), styleValue(this, name));
-    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
-  };
-}
-
-function style_styleRemove(name) {
-  return function () {
-    this.style.removeProperty(name);
-  };
-}
-
-function style_styleConstant(name, interpolate, value1) {
-  var string00, interpolate0;
-  return function () {
-    var string0 = styleValue(this, name);
-    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
-  };
-}
-
-function style_styleFunction(name, interpolate, value) {
-  var string00, string10, interpolate0;
-  return function () {
-    var string0 = styleValue(this, name),
-        value1 = value(this),
-        string1 = value1 + "";
-    return value1 == null && (string1 = value1 = (this.style.removeProperty(name), styleValue(this, name))), string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
-  };
-}
-
-function styleMaybeRemove(id, name) {
-  var on0,
-      on1,
-      listener0,
-      remove,
-      key = "style." + name;
-  return function () {
-    var schedule = schedule_set(this, id),
-        on = schedule.on,
-        listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
-    // just assign the updated shared dispatch and we’re done!
-    // Otherwise, copy-on-write.
-
-    (on !== on0 || listener0 !== listener) && (on1 = (on0 = on).copy()).on("end." + key, listener0 = listener), schedule.on = on1;
-  };
-}
-
-/* harmony default export */ var transition_style = (function (name, value, priority) {
-  var i = (name += "") === "transform" ? interpolateTransformCss : transition_interpolate;
-  return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
-function styleInterpolate(name, i, priority) {
-  return function (t) {
-    this.style.setProperty(name, i.call(this, t), priority);
-  };
-}
-
-function styleTween(name, value, priority) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t = (i0 = i) && styleInterpolate(name, i, priority)), t;
-  }
-
-  var t, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var transition_styleTween = (function (name, value, priority) {
-  var key = "style." + (name += "");
-  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
-
-
-function text_textConstant(value) {
-  return function () {
-    this.textContent = value;
-  };
-}
-
-function text_textFunction(value) {
-  return function () {
-    var value1 = value(this);
-    this.textContent = value1 == null ? "" : value1;
-  };
-}
-
-/* harmony default export */ var transition_text = (function (value) {
-  return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/textTween.js
-function textInterpolate(i) {
-  return function (t) {
-    this.textContent = i.call(this, t);
-  };
-}
-
-function textTween(value) {
-  function tween() {
-    var i = value.apply(this, arguments);
-    return i !== i0 && (t0 = (i0 = i) && textInterpolate(i)), t0;
-  }
-
-  var t0, i0;
-  return tween._value = value, tween;
-}
-
-/* harmony default export */ var transition_textTween = (function (value) {
-  var key = "text";
-  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
-  if (value == null) return this.tween(key, null);
-  if (typeof value !== "function") throw new Error();
-  return this.tween(key, textTween(value));
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/transition.js
-
-
-/* harmony default export */ var transition_transition = (function () {
-  for (var name = this._name, id0 = this._id, id1 = newId(), groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
-    var inherit = schedule_get(node, id0);
-    transition_schedule(node, name, id1, i, group, {
-      time: inherit.time + inherit.delay + inherit.duration,
-      delay: 0,
-      duration: inherit.duration,
-      ease: inherit.ease
-    });
-  }
-
-  return new Transition(groups, this._parents, name, id1);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
-
-/* harmony default export */ var transition_end = (function () {
-  var on0,
-      on1,
-      that = this,
-      id = that._id,
-      size = that.size();
-  return new Promise(function (resolve, reject) {
-    var cancel = {
-      value: reject
-    },
-        end = {
-      value: function value() {
-        --size === 0 && resolve();
-      }
-    };
-    that.each(function () {
-      var schedule = schedule_set(this, id),
-          on = schedule.on; // If this node shared a dispatch with the previous node,
-      // just assign the updated shared dispatch and we’re done!
-      // Otherwise, copy-on-write.
-
-      on !== on0 && (on1 = (on0 = on).copy(), on1._.cancel.push(cancel), on1._.interrupt.push(cancel), on1._.end.push(end)), schedule.on = on1;
-    });
-  });
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-var transition_id = 0;
-function Transition(groups, parents, name, id) {
-  this._groups = groups, this._parents = parents, this._name = name, this._id = id;
-}
-function src_transition_transition(name) {
-  return src_selection().transition(name);
-}
-function newId() {
-  return ++transition_id;
-}
-var selection_prototype = src_selection.prototype;
-Transition.prototype = src_transition_transition.prototype = {
-  constructor: Transition,
-  select: transition_select,
-  selectAll: transition_selectAll,
-  filter: transition_filter,
-  merge: transition_merge,
-  selection: transition_selection,
-  transition: transition_transition,
-  call: selection_prototype.call,
-  nodes: selection_prototype.nodes,
-  node: selection_prototype.node,
-  size: selection_prototype.size,
-  empty: selection_prototype.empty,
-  each: selection_prototype.each,
-  on: transition_on,
-  attr: transition_attr,
-  attrTween: transition_attrTween,
-  style: transition_style,
-  styleTween: transition_styleTween,
-  text: transition_text,
-  textTween: transition_textTween,
-  remove: transition_remove,
-  tween: transition_tween,
-  delay: transition_delay,
-  duration: transition_duration,
-  ease: ease,
-  end: transition_end
-};
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/linear.js
-function linear_linear(t) {
-  return +t;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/quad.js
-function quadIn(t) {
-  return t * t;
-}
-function quadOut(t) {
-  return t * (2 - t);
-}
-function quadInOut(t) {
-  return ((t *= 2) <= 1 ? t * t : --t * (2 - t) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/cubic.js
-function cubicIn(t) {
-  return t * t * t;
-}
-function cubicOut(t) {
-  return --t * t * t + 1;
-}
-function cubicInOut(t) {
-  return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/poly.js
-var poly_exponent = 3;
-var polyIn = function custom(e) {
-  function polyIn(t) {
-    return Math.pow(t, e);
-  }
-
-  return e = +e, polyIn.exponent = custom, polyIn;
-}(3);
-var polyOut = function custom(e) {
-  function polyOut(t) {
-    return 1 - Math.pow(1 - t, e);
-  }
-
-  return e = +e, polyOut.exponent = custom, polyOut;
-}(3);
-var polyInOut = function custom(e) {
-  function polyInOut(t) {
-    return ((t *= 2) <= 1 ? Math.pow(t, e) : 2 - Math.pow(2 - t, e)) / 2;
-  }
-
-  return e = +e, polyInOut.exponent = custom, polyInOut;
-}(3);
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/sin.js
-var pi = Math.PI,
-    halfPi = pi / 2;
-function sinIn(t) {
-  return 1 - Math.cos(t * halfPi);
-}
-function sinOut(t) {
-  return Math.sin(t * halfPi);
-}
-function sinInOut(t) {
-  return (1 - Math.cos(pi * t)) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/exp.js
-function expIn(t) {
-  return Math.pow(2, 10 * t - 10);
-}
-function expOut(t) {
-  return 1 - Math.pow(2, -10 * t);
-}
-function expInOut(t) {
-  return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/circle.js
-function circleIn(t) {
-  return 1 - Math.sqrt(1 - t * t);
-}
-function circleOut(t) {
-  return Math.sqrt(1 - --t * t);
-}
-function circleInOut(t) {
-  return ((t *= 2) <= 1 ? 1 - Math.sqrt(1 - t * t) : Math.sqrt(1 - (t -= 2) * t) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/bounce.js
-var b1 = 4 / 11,
-    b2 = 6 / 11,
-    b3 = 8 / 11,
-    b4 = 3 / 4,
-    b5 = 9 / 11,
-    b6 = 10 / 11,
-    b7 = 15 / 16,
-    b8 = 21 / 22,
-    b9 = 63 / 64,
-    b0 = 1 / b1 / b1;
-function bounceIn(t) {
-  return 1 - bounceOut(1 - t);
-}
-function bounceOut(t) {
-  return (t = +t) < b1 ? b0 * t * t : t < b3 ? b0 * (t -= b2) * t + b4 : t < b6 ? b0 * (t -= b5) * t + b7 : b0 * (t -= b8) * t + b9;
-}
-function bounceInOut(t) {
-  return ((t *= 2) <= 1 ? 1 - bounceOut(1 - t) : bounceOut(t - 1) + 1) / 2;
-}
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/back.js
-var overshoot = 1.70158;
-var backIn = function custom(s) {
-  function backIn(t) {
-    return t * t * ((s + 1) * t - s);
-  }
-
-  return s = +s, backIn.overshoot = custom, backIn;
-}(overshoot);
-var backOut = function custom(s) {
-  function backOut(t) {
-    return --t * t * ((s + 1) * t + s) + 1;
-  }
-
-  return s = +s, backOut.overshoot = custom, backOut;
-}(overshoot);
-var backInOut = function custom(s) {
-  function backInOut(t) {
-    return ((t *= 2) < 1 ? t * t * ((s + 1) * t - s) : (t -= 2) * t * ((s + 1) * t + s) + 2) / 2;
-  }
-
-  return s = +s, backInOut.overshoot = custom, backInOut;
-}(overshoot);
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/elastic.js
-var tau = 2 * Math.PI,
-    amplitude = 1,
-    period = .3;
-var elasticIn = function custom(a, p) {
-  function elasticIn(t) {
-    return a * Math.pow(2, 10 * --t) * Math.sin((s - t) / p);
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
-  return elasticIn.amplitude = function (a) {
-    return custom(a, p * tau);
-  }, elasticIn.period = function (p) {
-    return custom(a, p);
-  }, elasticIn;
-}(1, period);
-var elasticOut = function custom(a, p) {
-  function elasticOut(t) {
-    return 1 - a * Math.pow(2, -10 * (t = +t)) * Math.sin((t + s) / p);
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
-  return elasticOut.amplitude = function (a) {
-    return custom(a, p * tau);
-  }, elasticOut.period = function (p) {
-    return custom(a, p);
-  }, elasticOut;
-}(1, period);
-var elasticInOut = function custom(a, p) {
-  function elasticInOut(t) {
-    return ((t = t * 2 - 1) < 0 ? a * Math.pow(2, 10 * t) * Math.sin((s - t) / p) : 2 - a * Math.pow(2, -10 * t) * Math.sin((s + t) / p)) / 2;
-  }
-
-  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
-  return elasticInOut.amplitude = function (a) {
-    return custom(a, p * tau);
-  }, elasticInOut.period = function (p) {
-    return custom(a, p);
-  }, elasticInOut;
-}(1, period);
-// CONCATENATED MODULE: ./node_modules/d3-ease/src/index.js
-
-
-
-
-
-
-
-
-
-
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
-
-
-
-
-var defaultTiming = {
-  time: null,
-  // Set on use.
-  delay: 0,
-  duration: 250,
-  ease: cubicInOut
-};
-
-function transition_inherit(node, id) {
-  for (var timing; !(timing = node.__transition) || !(timing = timing[id]);) if (!(node = node.parentNode)) return defaultTiming.time = now(), defaultTiming;
-
-  return timing;
-}
-
-/* harmony default export */ var selection_transition = (function (name) {
-  var id, timing;
-  name instanceof Transition ? (id = name._id, name = name._name) : (id = newId(), (timing = defaultTiming).time = now(), name = name == null ? null : name + "");
-
-  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) (node = group[i]) && transition_schedule(node, name, id, i, group, timing || transition_inherit(node, id));
-
-  return new Transition(groups, this._parents, name, id);
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
-
-
-
-src_selection.prototype.interrupt = selection_interrupt, src_selection.prototype.transition = selection_transition;
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/active.js
-
-
-var active_root = [null];
-/* harmony default export */ var src_active = (function (node, name) {
-  var schedule,
-      i,
-      schedules = node.__transition;
-  if (schedules) for (i in name = name == null ? null : name + "", schedules) if ((schedule = schedules[i]).state > SCHEDULED && schedule.name === name) return new Transition([[node]], active_root, name, +i);
-  return null;
-});
-// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
-
-
-
-
 // CONCATENATED MODULE: ./src/config/classes.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -20630,6 +18526,99 @@ var Store_state = function () {
    */
   axis_y2_axes: []
 });
+// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
+var noop = {
+  value: function value() {}
+};
+
+function dispatch_dispatch() {
+  for (var t, i = 0, n = arguments.length, _ = {}; i < n; ++i) {
+    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
+    _[t] = [];
+  }
+
+  return new Dispatch(_);
+}
+
+function Dispatch(_) {
+  this._ = _;
+}
+
+function dispatch_parseTypenames(typenames, types) {
+  return typenames.trim().split(/^|\s+/).map(function (t) {
+    var name = "",
+        i = t.indexOf(".");
+    if (i >= 0 && (name = t.slice(i + 1), t = t.slice(0, i)), t && !types.hasOwnProperty(t)) throw new Error("unknown type: " + t);
+    return {
+      type: t,
+      name: name
+    };
+  });
+}
+
+Dispatch.prototype = dispatch_dispatch.prototype = {
+  constructor: Dispatch,
+  on: function on(typename, callback) {
+    var t,
+        _ = this._,
+        T = dispatch_parseTypenames(typename + "", _),
+        i = -1,
+        n = T.length; // If no callback was specified, return the callback of the given type and name.
+
+    if (arguments.length < 2) {
+      for (; ++i < n;) if ((t = (typename = T[i]).type) && (t = get(_[t], typename.name))) return t;
+
+      return;
+    } // If a type was specified, set the callback for the given type and name.
+    // Otherwise, if a null callback was specified, remove callbacks of the given name.
+
+
+    if (callback != null && typeof callback !== "function") throw new Error("invalid callback: " + callback);
+
+    for (; ++i < n;) if (t = (typename = T[i]).type) _[t] = set(_[t], typename.name, callback);else if (callback == null) for (t in _) _[t] = set(_[t], typename.name, null);
+
+    return this;
+  },
+  copy: function () {
+    var copy = {},
+        _ = this._;
+
+    for (var t in _) copy[t] = _[t].slice();
+
+    return new Dispatch(copy);
+  },
+  call: function call(type, that) {
+    if ((n = arguments.length - 2) > 0) for (var n, t, args = Array(n), i = 0; i < n; ++i) args[i] = arguments[i + 2];
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+
+    for (t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
+  },
+  apply: function apply(type, that, args) {
+    if (!this._.hasOwnProperty(type)) throw new Error("unknown type: " + type);
+
+    for (var t = this._[type], i = 0, n = t.length; i < n; ++i) t[i].value.apply(that, args);
+  }
+};
+
+function get(type, name) {
+  for (var c, i = 0, n = type.length; i < n; ++i) if ((c = type[i]).name === name) return c.value;
+}
+
+function set(type, name, callback) {
+  for (var i = 0, n = type.length; i < n; ++i) if (type[i].name === name) {
+    type[i] = noop, type = type.slice(0, i).concat(type.slice(i + 1));
+    break;
+  }
+
+  return callback != null && type.push({
+    name: name,
+    value: callback
+  }), type;
+}
+
+/* harmony default export */ var src_dispatch = (dispatch_dispatch);
+// CONCATENATED MODULE: ./node_modules/d3-dispatch/src/index.js
+
 // CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
 
 function nopropagation() {
@@ -20654,7 +18643,7 @@ function yesdrag(view, noclick) {
   }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
 }
 // CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
-/* harmony default export */ var d3_drag_src_constant = (function (x) {
+/* harmony default export */ var src_constant = (function (x) {
   return function () {
     return x;
   };
@@ -20797,13 +18786,13 @@ function defaultTouchable() {
       active = 0,
       clickDistance2 = 0;
   return drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : filter;
+    return arguments.length ? (filter = typeof _ === "function" ? _ : src_constant(!!_), drag) : filter;
   }, drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : container;
+    return arguments.length ? (container = typeof _ === "function" ? _ : src_constant(_), drag) : container;
   }, drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : subject;
+    return arguments.length ? (subject = typeof _ === "function" ? _ : src_constant(_), drag) : subject;
   }, drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : touchable;
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : src_constant(!!_), drag) : touchable;
   }, drag.on = function () {
     var value = listeners.on.apply(listeners, arguments);
     return value === listeners ? drag : value;
@@ -20812,6 +18801,2017 @@ function defaultTouchable() {
   }, drag;
 });
 // CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
+
+
+// CONCATENATED MODULE: ./node_modules/d3-color/src/define.js
+/* harmony default export */ var define = (function (constructor, factory, prototype) {
+  constructor.prototype = factory.prototype = prototype, prototype.constructor = constructor;
+});
+function extend(parent, definition) {
+  var prototype = Object.create(parent.prototype);
+
+  for (var key in definition) prototype[key] = definition[key];
+
+  return prototype;
+}
+// CONCATENATED MODULE: ./node_modules/d3-color/src/color.js
+
+function Color() {}
+var _darker = .7;
+
+
+var _brighter = 1 / _darker;
+
+
+var reI = "\\s*([+-]?\\d+)\\s*",
+    reN = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*",
+    reP = "\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*",
+    reHex = /^#([0-9a-f]{3,8})$/,
+    reRgbInteger = new RegExp("^rgb\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*\\)$"),
+    reRgbPercent = new RegExp("^rgb\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
+    reRgbaInteger = new RegExp("^rgba\\(\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d+)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
+    reRgbaPercent = new RegExp("^rgba\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
+    reHslPercent = new RegExp("^hsl\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*\\)$"),
+    reHslaPercent = new RegExp("^hsla\\(\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)%\\s*,\\s*([+-]?\\d*\\.?\\d+(?:[eE][+-]?\\d+)?)\\s*\\)$"),
+    named = {
+  aliceblue: 0xf0f8ff,
+  antiquewhite: 0xfaebd7,
+  aqua: 65535,
+  aquamarine: 8388564,
+  azure: 0xf0ffff,
+  beige: 0xf5f5dc,
+  bisque: 0xffe4c4,
+  black: 0,
+  blanchedalmond: 0xffebcd,
+  blue: 255,
+  blueviolet: 9055202,
+  brown: 0xa52a2a,
+  burlywood: 0xdeb887,
+  cadetblue: 6266528,
+  chartreuse: 8388352,
+  chocolate: 0xd2691e,
+  coral: 0xff7f50,
+  cornflowerblue: 6591981,
+  cornsilk: 0xfff8dc,
+  crimson: 0xdc143c,
+  cyan: 65535,
+  darkblue: 139,
+  darkcyan: 35723,
+  darkgoldenrod: 0xb8860b,
+  darkgray: 0xa9a9a9,
+  darkgreen: 25600,
+  darkgrey: 0xa9a9a9,
+  darkkhaki: 0xbdb76b,
+  darkmagenta: 9109643,
+  darkolivegreen: 5597999,
+  darkorange: 0xff8c00,
+  darkorchid: 0x9932cc,
+  darkred: 9109504,
+  darksalmon: 0xe9967a,
+  darkseagreen: 9419919,
+  darkslateblue: 4734347,
+  darkslategray: 3100495,
+  darkslategrey: 3100495,
+  darkturquoise: 52945,
+  darkviolet: 9699539,
+  deeppink: 0xff1493,
+  deepskyblue: 49151,
+  dimgray: 6908265,
+  dimgrey: 6908265,
+  dodgerblue: 2003199,
+  firebrick: 0xb22222,
+  floralwhite: 0xfffaf0,
+  forestgreen: 2263842,
+  fuchsia: 0xff00ff,
+  gainsboro: 0xdcdcdc,
+  ghostwhite: 0xf8f8ff,
+  gold: 0xffd700,
+  goldenrod: 0xdaa520,
+  gray: 8421504,
+  green: 32768,
+  greenyellow: 0xadff2f,
+  grey: 8421504,
+  honeydew: 0xf0fff0,
+  hotpink: 0xff69b4,
+  indianred: 0xcd5c5c,
+  indigo: 4915330,
+  ivory: 0xfffff0,
+  khaki: 0xf0e68c,
+  lavender: 0xe6e6fa,
+  lavenderblush: 0xfff0f5,
+  lawngreen: 8190976,
+  lemonchiffon: 0xfffacd,
+  lightblue: 0xadd8e6,
+  lightcoral: 0xf08080,
+  lightcyan: 0xe0ffff,
+  lightgoldenrodyellow: 0xfafad2,
+  lightgray: 0xd3d3d3,
+  lightgreen: 9498256,
+  lightgrey: 0xd3d3d3,
+  lightpink: 0xffb6c1,
+  lightsalmon: 0xffa07a,
+  lightseagreen: 2142890,
+  lightskyblue: 8900346,
+  lightslategray: 7833753,
+  lightslategrey: 7833753,
+  lightsteelblue: 0xb0c4de,
+  lightyellow: 0xffffe0,
+  lime: 65280,
+  limegreen: 3329330,
+  linen: 0xfaf0e6,
+  magenta: 0xff00ff,
+  maroon: 8388608,
+  mediumaquamarine: 6737322,
+  mediumblue: 205,
+  mediumorchid: 0xba55d3,
+  mediumpurple: 9662683,
+  mediumseagreen: 3978097,
+  mediumslateblue: 8087790,
+  mediumspringgreen: 64154,
+  mediumturquoise: 4772300,
+  mediumvioletred: 0xc71585,
+  midnightblue: 1644912,
+  mintcream: 0xf5fffa,
+  mistyrose: 0xffe4e1,
+  moccasin: 0xffe4b5,
+  navajowhite: 0xffdead,
+  navy: 128,
+  oldlace: 0xfdf5e6,
+  olive: 8421376,
+  olivedrab: 7048739,
+  orange: 0xffa500,
+  orangered: 0xff4500,
+  orchid: 0xda70d6,
+  palegoldenrod: 0xeee8aa,
+  palegreen: 0x98fb98,
+  paleturquoise: 0xafeeee,
+  palevioletred: 0xdb7093,
+  papayawhip: 0xffefd5,
+  peachpuff: 0xffdab9,
+  peru: 0xcd853f,
+  pink: 0xffc0cb,
+  plum: 0xdda0dd,
+  powderblue: 0xb0e0e6,
+  purple: 8388736,
+  rebeccapurple: 6697881,
+  red: 0xff0000,
+  rosybrown: 0xbc8f8f,
+  royalblue: 4286945,
+  saddlebrown: 9127187,
+  salmon: 0xfa8072,
+  sandybrown: 0xf4a460,
+  seagreen: 3050327,
+  seashell: 0xfff5ee,
+  sienna: 0xa0522d,
+  silver: 0xc0c0c0,
+  skyblue: 8900331,
+  slateblue: 6970061,
+  slategray: 7372944,
+  slategrey: 7372944,
+  snow: 0xfffafa,
+  springgreen: 65407,
+  steelblue: 4620980,
+  tan: 0xd2b48c,
+  teal: 32896,
+  thistle: 0xd8bfd8,
+  tomato: 0xff6347,
+  turquoise: 4251856,
+  violet: 0xee82ee,
+  wheat: 0xf5deb3,
+  white: 0xffffff,
+  whitesmoke: 0xf5f5f5,
+  yellow: 0xffff00,
+  yellowgreen: 0x9acd32
+};
+define(Color, color_color, {
+  copy: function copy(channels) {
+    return Object.assign(new this.constructor(), this, channels);
+  },
+  displayable: function displayable() {
+    return this.rgb().displayable();
+  },
+  hex: color_formatHex,
+  // Deprecated! Use color.formatHex.
+  formatHex: color_formatHex,
+  formatHsl: color_formatHsl,
+  formatRgb: color_formatRgb,
+  toString: color_formatRgb
+});
+
+function color_formatHex() {
+  return this.rgb().formatHex();
+}
+
+function color_formatHsl() {
+  return hslConvert(this).formatHsl();
+}
+
+function color_formatRgb() {
+  return this.rgb().formatRgb();
+}
+
+function color_color(format) {
+  var m, l;
+  return format = (format + "").trim().toLowerCase(), (m = reHex.exec(format)) ? (l = m[1].length, m = parseInt(m[1], 16), l === 6 ? rgbn(m) // #ff0000
+  : l === 3 ? new Rgb(m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, (m & 15) << 4 | m & 15, 1) // #f00
+  : l === 8 ? new Rgb(m >> 24 & 255, m >> 16 & 255, m >> 8 & 255, (m & 255) / 255) // #ff000000
+  : l === 4 ? new Rgb(m >> 12 & 15 | m >> 8 & 240, m >> 8 & 15 | m >> 4 & 240, m >> 4 & 15 | m & 240, ((m & 15) << 4 | m & 15) / 255) // #f000
+  : null // invalid hex
+  ) : (m = reRgbInteger.exec(format)) ? new Rgb(m[1], m[2], m[3], 1) // rgb(255, 0, 0)
+  : (m = reRgbPercent.exec(format)) ? new Rgb(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, 1) // rgb(100%, 0%, 0%)
+  : (m = reRgbaInteger.exec(format)) ? rgba(m[1], m[2], m[3], m[4]) // rgba(255, 0, 0, 1)
+  : (m = reRgbaPercent.exec(format)) ? rgba(m[1] * 255 / 100, m[2] * 255 / 100, m[3] * 255 / 100, m[4]) // rgb(100%, 0%, 0%, 1)
+  : (m = reHslPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, 1) // hsl(120, 50%, 50%)
+  : (m = reHslaPercent.exec(format)) ? hsla(m[1], m[2] / 100, m[3] / 100, m[4]) // hsla(120, 50%, 50%, 1)
+  : named.hasOwnProperty(format) ? rgbn(named[format]) // eslint-disable-line no-prototype-builtins
+  : format === "transparent" ? new Rgb(NaN, NaN, NaN, 0) : null;
+}
+
+function rgbn(n) {
+  return new Rgb(n >> 16 & 255, n >> 8 & 255, n & 255, 1);
+}
+
+function rgba(r, g, b, a) {
+  return a <= 0 && (r = g = b = NaN), new Rgb(r, g, b, a);
+}
+
+function rgbConvert(o) {
+  return (o instanceof Color || (o = color_color(o)), !o) ? new Rgb() : (o = o.rgb(), new Rgb(o.r, o.g, o.b, o.opacity));
+}
+function color_rgb(r, g, b, opacity) {
+  return arguments.length === 1 ? rgbConvert(r) : new Rgb(r, g, b, opacity == null ? 1 : opacity);
+}
+function Rgb(r, g, b, opacity) {
+  this.r = +r, this.g = +g, this.b = +b, this.opacity = +opacity;
+}
+define(Rgb, color_rgb, extend(Color, {
+  brighter: function brighter(k) {
+    return k = k == null ? _brighter : Math.pow(_brighter, k), new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
+  },
+  darker: function darker(k) {
+    return k = k == null ? _darker : Math.pow(_darker, k), new Rgb(this.r * k, this.g * k, this.b * k, this.opacity);
+  },
+  rgb: function () {
+    return this;
+  },
+  displayable: function displayable() {
+    return -.5 <= this.r && this.r < 255.5 && -.5 <= this.g && this.g < 255.5 && -.5 <= this.b && this.b < 255.5 && 0 <= this.opacity && this.opacity <= 1;
+  },
+  hex: rgb_formatHex,
+  // Deprecated! Use color.formatHex.
+  formatHex: rgb_formatHex,
+  formatRgb: rgb_formatRgb,
+  toString: rgb_formatRgb
+}));
+
+function rgb_formatHex() {
+  return "#" + hex(this.r) + hex(this.g) + hex(this.b);
+}
+
+function rgb_formatRgb() {
+  var a = this.opacity;
+  return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "rgb(" : "rgba(") + Math.max(0, Math.min(255, Math.round(this.r) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.g) || 0)) + ", " + Math.max(0, Math.min(255, Math.round(this.b) || 0)) + (a === 1 ? ")" : ", " + a + ")");
+}
+
+function hex(value) {
+  return value = Math.max(0, Math.min(255, Math.round(value) || 0)), (value < 16 ? "0" : "") + value.toString(16);
+}
+
+function hsla(h, s, l, a) {
+  return a <= 0 ? h = s = l = NaN : l <= 0 || l >= 1 ? h = s = NaN : s <= 0 && (h = NaN), new Hsl(h, s, l, a);
+}
+
+function hslConvert(o) {
+  if (o instanceof Hsl) return new Hsl(o.h, o.s, o.l, o.opacity);
+  if (o instanceof Color || (o = color_color(o)), !o) return new Hsl();
+  if (o instanceof Hsl) return o;
+  o = o.rgb();
+  var r = o.r / 255,
+      g = o.g / 255,
+      b = o.b / 255,
+      min = Math.min(r, g, b),
+      max = Math.max(r, g, b),
+      h = NaN,
+      s = max - min,
+      l = (max + min) / 2;
+  return s ? (h = r === max ? (g - b) / s + (g < b) * 6 : g === max ? (b - r) / s + 2 : (r - g) / s + 4, s /= l < .5 ? max + min : 2 - max - min, h *= 60) : s = l > 0 && l < 1 ? 0 : h, new Hsl(h, s, l, o.opacity);
+}
+function hsl(h, s, l, opacity) {
+  return arguments.length === 1 ? hslConvert(h) : new Hsl(h, s, l, opacity == null ? 1 : opacity);
+}
+
+function Hsl(h, s, l, opacity) {
+  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
+}
+
+define(Hsl, hsl, extend(Color, {
+  brighter: function brighter(k) {
+    return k = k == null ? _brighter : Math.pow(_brighter, k), new Hsl(this.h, this.s, this.l * k, this.opacity);
+  },
+  darker: function darker(k) {
+    return k = k == null ? _darker : Math.pow(_darker, k), new Hsl(this.h, this.s, this.l * k, this.opacity);
+  },
+  rgb: function () {
+    var h = this.h % 360 + (this.h < 0) * 360,
+        s = isNaN(h) || isNaN(this.s) ? 0 : this.s,
+        l = this.l,
+        m2 = l + (l < .5 ? l : 1 - l) * s,
+        m1 = 2 * l - m2;
+    return new Rgb(hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2), hsl2rgb(h, m1, m2), hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2), this.opacity);
+  },
+  displayable: function displayable() {
+    return (0 <= this.s && this.s <= 1 || isNaN(this.s)) && 0 <= this.l && this.l <= 1 && 0 <= this.opacity && this.opacity <= 1;
+  },
+  formatHsl: function formatHsl() {
+    var a = this.opacity;
+    return a = isNaN(a) ? 1 : Math.max(0, Math.min(1, a)), (a === 1 ? "hsl(" : "hsla(") + (this.h || 0) + ", " + (this.s || 0) * 100 + "%, " + (this.l || 0) * 100 + "%" + (a === 1 ? ")" : ", " + a + ")");
+  }
+}));
+
+/* From FvD 13.37, CSS Color Module Level 3 */
+function hsl2rgb(h, m1, m2) {
+  return (h < 60 ? m1 + (m2 - m1) * h / 60 : h < 180 ? m2 : h < 240 ? m1 + (m2 - m1) * (240 - h) / 60 : m1) * 255;
+}
+// CONCATENATED MODULE: ./node_modules/d3-color/src/math.js
+var deg2rad = Math.PI / 180;
+var rad2deg = 180 / Math.PI;
+// CONCATENATED MODULE: ./node_modules/d3-color/src/lab.js
+
+
+ // https://observablehq.com/@mbostock/lab-and-rgb
+
+var K = 18,
+    Xn = .96422,
+    Yn = 1,
+    Zn = .82521,
+    lab_t0 = 4 / 29,
+    lab_t1 = 6 / 29,
+    lab_t2 = 3 * lab_t1 * lab_t1,
+    t3 = lab_t1 * lab_t1 * lab_t1;
+
+function labConvert(o) {
+  if (o instanceof Lab) return new Lab(o.l, o.a, o.b, o.opacity);
+  if (o instanceof Hcl) return hcl2lab(o);
+  o instanceof Rgb || (o = rgbConvert(o));
+  var x,
+      z,
+      r = rgb2lrgb(o.r),
+      g = rgb2lrgb(o.g),
+      b = rgb2lrgb(o.b),
+      y = xyz2lab((.2225045 * r + .7168786 * g + .0606169 * b) / Yn);
+  return r === g && g === b ? x = z = y : (x = xyz2lab((.4360747 * r + .3850649 * g + .1430804 * b) / Xn), z = xyz2lab((.0139322 * r + .0971045 * g + .7141733 * b) / Zn)), new Lab(116 * y - 16, 500 * (x - y), 200 * (y - z), o.opacity);
+}
+
+function gray(l, opacity) {
+  return new Lab(l, 0, 0, opacity == null ? 1 : opacity);
+}
+function lab(l, a, b, opacity) {
+  return arguments.length === 1 ? labConvert(l) : new Lab(l, a, b, opacity == null ? 1 : opacity);
+}
+function Lab(l, a, b, opacity) {
+  this.l = +l, this.a = +a, this.b = +b, this.opacity = +opacity;
+}
+define(Lab, lab, extend(Color, {
+  brighter: function brighter(k) {
+    return new Lab(this.l + K * (k == null ? 1 : k), this.a, this.b, this.opacity);
+  },
+  darker: function darker(k) {
+    return new Lab(this.l - K * (k == null ? 1 : k), this.a, this.b, this.opacity);
+  },
+  rgb: function rgb() {
+    var y = (this.l + 16) / 116,
+        x = isNaN(this.a) ? y : y + this.a / 500,
+        z = isNaN(this.b) ? y : y - this.b / 200;
+    return x = Xn * lab2xyz(x), y = Yn * lab2xyz(y), z = Zn * lab2xyz(z), new Rgb(lrgb2rgb(3.1338561 * x - 1.6168667 * y - .4906146 * z), lrgb2rgb(-.9787684 * x + 1.9161415 * y + .033454 * z), lrgb2rgb(.0719453 * x - .2289914 * y + 1.4052427 * z), this.opacity);
+  }
+}));
+
+function xyz2lab(t) {
+  return t > t3 ? Math.pow(t, 1 / 3) : t / lab_t2 + lab_t0;
+}
+
+function lab2xyz(t) {
+  return t > lab_t1 ? t * t * t : lab_t2 * (t - lab_t0);
+}
+
+function lrgb2rgb(x) {
+  return 255 * (x <= .0031308 ? 12.92 * x : 1.055 * Math.pow(x, 1 / 2.4) - .055);
+}
+
+function rgb2lrgb(x) {
+  return (x /= 255) <= .04045 ? x / 12.92 : Math.pow((x + .055) / 1.055, 2.4);
+}
+
+function hclConvert(o) {
+  if (o instanceof Hcl) return new Hcl(o.h, o.c, o.l, o.opacity);
+  if (o instanceof Lab || (o = labConvert(o)), o.a === 0 && o.b === 0) return new Hcl(NaN, 0 < o.l && o.l < 100 ? 0 : NaN, o.l, o.opacity);
+  var h = Math.atan2(o.b, o.a) * rad2deg;
+  return new Hcl(h < 0 ? h + 360 : h, Math.sqrt(o.a * o.a + o.b * o.b), o.l, o.opacity);
+}
+
+function lch(l, c, h, opacity) {
+  return arguments.length === 1 ? hclConvert(l) : new Hcl(h, c, l, opacity == null ? 1 : opacity);
+}
+function hcl(h, c, l, opacity) {
+  return arguments.length === 1 ? hclConvert(h) : new Hcl(h, c, l, opacity == null ? 1 : opacity);
+}
+function Hcl(h, c, l, opacity) {
+  this.h = +h, this.c = +c, this.l = +l, this.opacity = +opacity;
+}
+
+function hcl2lab(o) {
+  if (isNaN(o.h)) return new Lab(o.l, 0, 0, o.opacity);
+  var h = o.h * deg2rad;
+  return new Lab(o.l, Math.cos(h) * o.c, Math.sin(h) * o.c, o.opacity);
+}
+
+define(Hcl, hcl, extend(Color, {
+  brighter: function brighter(k) {
+    return new Hcl(this.h, this.c, this.l + K * (k == null ? 1 : k), this.opacity);
+  },
+  darker: function darker(k) {
+    return new Hcl(this.h, this.c, this.l - K * (k == null ? 1 : k), this.opacity);
+  },
+  rgb: function rgb() {
+    return hcl2lab(this).rgb();
+  }
+}));
+// CONCATENATED MODULE: ./node_modules/d3-color/src/cubehelix.js
+
+
+
+var A = -.14861,
+    B = +1.78277,
+    C = -.29227,
+    cubehelix_D = -.90649,
+    cubehelix_E = +1.97294,
+    ED = cubehelix_E * cubehelix_D,
+    EB = cubehelix_E * B,
+    BC_DA = B * C - cubehelix_D * A;
+
+function cubehelixConvert(o) {
+  if (o instanceof Cubehelix) return new Cubehelix(o.h, o.s, o.l, o.opacity);
+  o instanceof Rgb || (o = rgbConvert(o));
+  var r = o.r / 255,
+      g = o.g / 255,
+      b = o.b / 255,
+      l = (BC_DA * b + ED * r - EB * g) / (BC_DA + ED - EB),
+      bl = b - l,
+      k = (cubehelix_E * (g - l) - C * bl) / cubehelix_D,
+      s = Math.sqrt(k * k + bl * bl) / (cubehelix_E * l * (1 - l)),
+      // NaN if l=0 or l=1
+  h = s ? Math.atan2(k, bl) * rad2deg - 120 : NaN;
+  return new Cubehelix(h < 0 ? h + 360 : h, s, l, o.opacity);
+}
+
+function cubehelix_cubehelix(h, s, l, opacity) {
+  return arguments.length === 1 ? cubehelixConvert(h) : new Cubehelix(h, s, l, opacity == null ? 1 : opacity);
+}
+function Cubehelix(h, s, l, opacity) {
+  this.h = +h, this.s = +s, this.l = +l, this.opacity = +opacity;
+}
+define(Cubehelix, cubehelix_cubehelix, extend(Color, {
+  brighter: function brighter(k) {
+    return k = k == null ? _brighter : Math.pow(_brighter, k), new Cubehelix(this.h, this.s, this.l * k, this.opacity);
+  },
+  darker: function darker(k) {
+    return k = k == null ? _darker : Math.pow(_darker, k), new Cubehelix(this.h, this.s, this.l * k, this.opacity);
+  },
+  rgb: function rgb() {
+    var h = isNaN(this.h) ? 0 : (this.h + 120) * deg2rad,
+        l = +this.l,
+        a = isNaN(this.s) ? 0 : this.s * l * (1 - l),
+        cosh = Math.cos(h),
+        sinh = Math.sin(h);
+    return new Rgb(255 * (l + a * (A * cosh + B * sinh)), 255 * (l + a * (C * cosh + cubehelix_D * sinh)), 255 * (l + a * (cubehelix_E * cosh)), this.opacity);
+  }
+}));
+// CONCATENATED MODULE: ./node_modules/d3-color/src/index.js
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basis.js
+function basis(t1, v0, v1, v2, v3) {
+  var t2 = t1 * t1,
+      t3 = t2 * t1;
+  return ((1 - 3 * t1 + 3 * t2 - t3) * v0 + (4 - 6 * t2 + 3 * t3) * v1 + (1 + 3 * t1 + 3 * t2 - 3 * t3) * v2 + t3 * v3) / 6;
+}
+/* harmony default export */ var src_basis = (function (values) {
+  var n = values.length - 1;
+  return function (t) {
+    var i = t <= 0 ? t = 0 : t >= 1 ? (t = 1, n - 1) : Math.floor(t * n),
+        v1 = values[i],
+        v2 = values[i + 1],
+        v0 = i > 0 ? values[i - 1] : 2 * v1 - v2,
+        v3 = i < n - 1 ? values[i + 2] : 2 * v2 - v1;
+    return basis((t - i / n) * n, v0, v1, v2, v3);
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/basisClosed.js
+
+/* harmony default export */ var basisClosed = (function (values) {
+  var n = values.length;
+  return function (t) {
+    var i = Math.floor(((t %= 1) < 0 ? ++t : t) * n),
+        v0 = values[(i + n - 1) % n],
+        v1 = values[i % n],
+        v2 = values[(i + 1) % n],
+        v3 = values[(i + 2) % n];
+    return basis((t - i / n) * n, v0, v1, v2, v3);
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/constant.js
+/* harmony default export */ var d3_interpolate_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/color.js
+
+
+function linear(a, d) {
+  return function (t) {
+    return a + t * d;
+  };
+}
+
+function exponential(a, b, y) {
+  return a = Math.pow(a, y), b = Math.pow(b, y) - a, y = 1 / y, function (t) {
+    return Math.pow(a + t * b, y);
+  };
+}
+
+function color_hue(a, b) {
+  var d = b - a;
+  return d ? linear(a, d > 180 || d < -180 ? d - 360 * Math.round(d / 360) : d) : d3_interpolate_src_constant(isNaN(a) ? b : a);
+}
+function gamma(y) {
+  return (y = +y) === 1 ? nogamma : function (a, b) {
+    return b - a ? exponential(a, b, y) : d3_interpolate_src_constant(isNaN(a) ? b : a);
+  };
+}
+function nogamma(a, b) {
+  var d = b - a;
+  return d ? linear(a, d) : d3_interpolate_src_constant(isNaN(a) ? b : a);
+}
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/rgb.js
+
+
+
+
+/* harmony default export */ var src_rgb = ((function rgbGamma(y) {
+  function rgb(start, end) {
+    var r = color((start = color_rgb(start)).r, (end = color_rgb(end)).r),
+        g = color(start.g, end.g),
+        b = color(start.b, end.b),
+        opacity = nogamma(start.opacity, end.opacity);
+    return function (t) {
+      return start.r = r(t), start.g = g(t), start.b = b(t), start.opacity = opacity(t), start + "";
+    };
+  }
+
+  var color = gamma(y);
+  return rgb.gamma = rgbGamma, rgb;
+})(1));
+
+function rgbSpline(spline) {
+  return function (colors) {
+    var i,
+        color,
+        n = colors.length,
+        r = Array(n),
+        g = Array(n),
+        b = Array(n);
+
+    for (i = 0; i < n; ++i) color = color_rgb(colors[i]), r[i] = color.r || 0, g[i] = color.g || 0, b[i] = color.b || 0;
+
+    return r = spline(r), g = spline(g), b = spline(b), color.opacity = 1, function (t) {
+      return color.r = r(t), color.g = g(t), color.b = b(t), color + "";
+    };
+  };
+}
+
+var rgbBasis = rgbSpline(src_basis);
+var rgbBasisClosed = rgbSpline(basisClosed);
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/numberArray.js
+/* harmony default export */ var numberArray = (function (a, b) {
+  b || (b = []);
+  var i,
+      n = a ? Math.min(b.length, a.length) : 0,
+      c = b.slice();
+  return function (t) {
+    for (i = 0; i < n; ++i) c[i] = a[i] * (1 - t) + b[i] * t;
+
+    return c;
+  };
+});
+function isNumberArray(x) {
+  return ArrayBuffer.isView(x) && !(x instanceof DataView);
+}
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/array.js
+
+
+/* harmony default export */ var src_array = (function (a, b) {
+  return (isNumberArray(b) ? numberArray : genericArray)(a, b);
+});
+function genericArray(a, b) {
+  var i,
+      nb = b ? b.length : 0,
+      na = a ? Math.min(nb, a.length) : 0,
+      x = Array(na),
+      c = Array(nb);
+
+  for (i = 0; i < na; ++i) x[i] = src_value(a[i], b[i]);
+
+  for (; i < nb; ++i) c[i] = b[i];
+
+  return function (t) {
+    for (i = 0; i < na; ++i) c[i] = x[i](t);
+
+    return c;
+  };
+}
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/date.js
+/* harmony default export */ var src_date = (function (a, b) {
+  var d = new Date();
+  return a = +a, b = +b, function (t) {
+    return d.setTime(a * (1 - t) + b * t), d;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/number.js
+/* harmony default export */ var number = (function (a, b) {
+  return a = +a, b = +b, function (t) {
+    return a * (1 - t) + b * t;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/object.js
+
+/* harmony default export */ var object = (function (a, b) {
+  var k,
+      i = {},
+      c = {};
+
+  for (k in (a === null || typeof a !== "object") && (a = {}), (b === null || typeof b !== "object") && (b = {}), b) k in a ? i[k] = src_value(a[k], b[k]) : c[k] = b[k];
+
+  return function (t) {
+    for (k in i) c[k] = i[k](t);
+
+    return c;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/string.js
+
+var reA = /[-+]?(?:\d+\.?\d*|\.?\d+)(?:[eE][-+]?\d+)?/g,
+    reB = new RegExp(reA.source, "g");
+
+function string_zero(b) {
+  return function () {
+    return b;
+  };
+}
+
+function one(b) {
+  return function (t) {
+    return b(t) + "";
+  };
+}
+
+/* harmony default export */ var src_string = (function (a, b) {
+  var // scan index for next number in b
+  am,
+      // current match in a
+  bm,
+      // current match in b
+  bs,
+      bi = reA.lastIndex = reB.lastIndex = 0,
+      // string preceding current number in b, if any
+  i = -1,
+      // index in s
+  s = [],
+      // string constants and placeholders
+  q = []; // number interpolators
+  // Coerce inputs to strings.
+
+  // Interpolate pairs of numbers in a & b.
+  for (a += "", b += ""; (am = reA.exec(a)) && (bm = reB.exec(b));) (bs = bm.index) > bi && (bs = b.slice(bi, bs), s[i] ? s[i] += bs : // coalesce with previous string
+  s[++i] = bs), (am = am[0]) === (bm = bm[0]) ? s[i] ? s[i] += bm : // coalesce with previous string
+  s[++i] = bm : (s[++i] = null, q.push({
+    i: i,
+    x: number(am, bm)
+  })), bi = reB.lastIndex; // Add remains of b.
+
+
+  // Special optimization for only a single match.
+  // Otherwise, interpolate each of the numbers and rejoin the string.
+  return bi < b.length && (bs = b.slice(bi), s[i] ? s[i] += bs : // coalesce with previous string
+  s[++i] = bs), s.length < 2 ? q[0] ? one(q[0].x) : string_zero(b) : (b = q.length, function (t) {
+    for (var o, i = 0; i < b; ++i) s[(o = q[i]).i] = o.x(t);
+
+    return s.join("");
+  });
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/value.js
+
+
+
+
+
+
+
+
+
+/* harmony default export */ var src_value = (function (a, b) {
+  var c,
+      t = typeof b;
+  return b == null || t === "boolean" ? d3_interpolate_src_constant(b) : (t === "number" ? number : t === "string" ? (c = color_color(b)) ? (b = c, src_rgb) : src_string : b instanceof color_color ? src_rgb : b instanceof Date ? src_date : isNumberArray(b) ? numberArray : Array.isArray(b) ? genericArray : typeof b.valueOf !== "function" && typeof b.toString !== "function" || isNaN(b) ? object : number)(a, b);
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/discrete.js
+/* harmony default export */ var discrete = (function (range) {
+  var n = range.length;
+  return function (t) {
+    return range[Math.max(0, Math.min(n - 1, Math.floor(t * n)))];
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hue.js
+
+/* harmony default export */ var src_hue = (function (a, b) {
+  var i = color_hue(+a, +b);
+  return function (t) {
+    var x = i(t);
+    return x - 360 * Math.floor(x / 360);
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/round.js
+/* harmony default export */ var src_round = (function (a, b) {
+  return a = +a, b = +b, function (t) {
+    return Math.round(a * (1 - t) + b * t);
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/decompose.js
+var degrees = 180 / Math.PI;
+var identity = {
+  translateX: 0,
+  translateY: 0,
+  rotate: 0,
+  skewX: 0,
+  scaleX: 1,
+  scaleY: 1
+};
+/* harmony default export */ var decompose = (function (a, b, c, d, e, f) {
+  var scaleX, scaleY, skewX;
+  return (scaleX = Math.sqrt(a * a + b * b)) && (a /= scaleX, b /= scaleX), (skewX = a * c + b * d) && (c -= a * skewX, d -= b * skewX), (scaleY = Math.sqrt(c * c + d * d)) && (c /= scaleY, d /= scaleY, skewX /= scaleY), a * d < b * c && (a = -a, b = -b, skewX = -skewX, scaleX = -scaleX), {
+    translateX: e,
+    translateY: f,
+    rotate: Math.atan2(b, a) * degrees,
+    skewX: Math.atan(skewX) * degrees,
+    scaleX: scaleX,
+    scaleY: scaleY
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/parse.js
+
+var cssNode, cssRoot, cssView, svgNode;
+function parseCss(value) {
+  return value === "none" ? identity : (cssNode || (cssNode = document.createElement("DIV"), cssRoot = document.documentElement, cssView = document.defaultView), cssNode.style.transform = value, value = cssView.getComputedStyle(cssRoot.appendChild(cssNode), null).getPropertyValue("transform"), cssRoot.removeChild(cssNode), value = value.slice(7, -1).split(","), decompose(+value[0], +value[1], +value[2], +value[3], +value[4], +value[5]));
+}
+function parseSvg(value) {
+  return value == null ? identity : (svgNode || (svgNode = document.createElementNS("http://www.w3.org/2000/svg", "g")), svgNode.setAttribute("transform", value), !(value = svgNode.transform.baseVal.consolidate())) ? identity : (value = value.matrix, decompose(value.a, value.b, value.c, value.d, value.e, value.f));
+}
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/transform/index.js
+
+
+
+function interpolateTransform(parse, pxComma, pxParen, degParen) {
+  function pop(s) {
+    return s.length ? s.pop() + " " : "";
+  }
+
+  function translate(xa, ya, xb, yb, s, q) {
+    if (xa !== xb || ya !== yb) {
+      var i = s.push("translate(", null, pxComma, null, pxParen);
+      q.push({
+        i: i - 4,
+        x: number(xa, xb)
+      }, {
+        i: i - 2,
+        x: number(ya, yb)
+      });
+    } else (xb || yb) && s.push("translate(" + xb + pxComma + yb + pxParen);
+  }
+
+  function rotate(a, b, s, q) {
+    a === b ? b && s.push(pop(s) + "rotate(" + b + degParen) : (a - b > 180 ? b += 360 : b - a > 180 && (a += 360), q.push({
+      i: s.push(pop(s) + "rotate(", null, degParen) - 2,
+      x: number(a, b)
+    }));
+  }
+
+  function skewX(a, b, s, q) {
+    a === b ? b && s.push(pop(s) + "skewX(" + b + degParen) : q.push({
+      i: s.push(pop(s) + "skewX(", null, degParen) - 2,
+      x: number(a, b)
+    });
+  }
+
+  function scale(xa, ya, xb, yb, s, q) {
+    if (xa !== xb || ya !== yb) {
+      var i = s.push(pop(s) + "scale(", null, ",", null, ")");
+      q.push({
+        i: i - 4,
+        x: number(xa, xb)
+      }, {
+        i: i - 2,
+        x: number(ya, yb)
+      });
+    } else (xb !== 1 || yb !== 1) && s.push(pop(s) + "scale(" + xb + "," + yb + ")");
+  }
+
+  return function (a, b) {
+    var s = [],
+        // string constants and placeholders
+    q = []; // number interpolators
+
+    // gc
+    return a = parse(a), b = parse(b), translate(a.translateX, a.translateY, b.translateX, b.translateY, s, q), rotate(a.rotate, b.rotate, s, q), skewX(a.skewX, b.skewX, s, q), scale(a.scaleX, a.scaleY, b.scaleX, b.scaleY, s, q), a = b = null, function (t) {
+      for (var o, i = -1, n = q.length; ++i < n;) s[(o = q[i]).i] = o.x(t);
+
+      return s.join("");
+    };
+  };
+}
+
+var interpolateTransformCss = interpolateTransform(parseCss, "px, ", "px)", "deg)");
+var interpolateTransformSvg = interpolateTransform(parseSvg, ", ", ")", ")");
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/zoom.js
+var rho = Math.SQRT2,
+    rho2 = 2,
+    rho4 = 4,
+    epsilon2 = 1e-12;
+
+function zoom_cosh(x) {
+  return ((x = Math.exp(x)) + 1 / x) / 2;
+}
+
+function zoom_sinh(x) {
+  return ((x = Math.exp(x)) - 1 / x) / 2;
+}
+
+function tanh(x) {
+  return ((x = Math.exp(2 * x)) - 1) / (x + 1);
+} // p0 = [ux0, uy0, w0]
+// p1 = [ux1, uy1, w1]
+
+
+/* harmony default export */ var src_zoom = (function (p0, p1) {
+  var i,
+      S,
+      ux0 = p0[0],
+      uy0 = p0[1],
+      w0 = p0[2],
+      ux1 = p1[0],
+      uy1 = p1[1],
+      w1 = p1[2],
+      dx = ux1 - ux0,
+      dy = uy1 - uy0,
+      d2 = dx * dx + dy * dy; // Special case for u0 ≅ u1.
+
+  if (d2 < epsilon2) S = Math.log(w1 / w0) / rho, i = function (t) {
+    return [ux0 + t * dx, uy0 + t * dy, w0 * Math.exp(rho * t * S)];
+  }; // General case.
+  else {
+      var d1 = Math.sqrt(d2),
+          b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1),
+          b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1),
+          r0 = Math.log(Math.sqrt(b0 * b0 + 1) - b0),
+          r1 = Math.log(Math.sqrt(b1 * b1 + 1) - b1);
+      S = (r1 - r0) / rho, i = function (t) {
+        var s = t * S,
+            coshr0 = zoom_cosh(r0),
+            u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - zoom_sinh(r0));
+        return [ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / zoom_cosh(rho * s + r0)];
+      };
+    }
+  return i.duration = S * 1e3, i;
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hsl.js
+
+
+
+function hsl_hsl(hue) {
+  return function (start, end) {
+    var h = hue((start = hsl(start)).h, (end = hsl(end)).h),
+        s = nogamma(start.s, end.s),
+        l = nogamma(start.l, end.l),
+        opacity = nogamma(start.opacity, end.opacity);
+    return function (t) {
+      return start.h = h(t), start.s = s(t), start.l = l(t), start.opacity = opacity(t), start + "";
+    };
+  };
+}
+
+/* harmony default export */ var src_hsl = (hsl_hsl(color_hue));
+var hslLong = hsl_hsl(nogamma);
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/lab.js
+
+
+function lab_lab(start, end) {
+  var l = nogamma((start = lab(start)).l, (end = lab(end)).l),
+      a = nogamma(start.a, end.a),
+      b = nogamma(start.b, end.b),
+      opacity = nogamma(start.opacity, end.opacity);
+  return function (t) {
+    return start.l = l(t), start.a = a(t), start.b = b(t), start.opacity = opacity(t), start + "";
+  };
+}
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/hcl.js
+
+
+
+function hcl_hcl(hue) {
+  return function (start, end) {
+    var h = hue((start = hcl(start)).h, (end = hcl(end)).h),
+        c = nogamma(start.c, end.c),
+        l = nogamma(start.l, end.l),
+        opacity = nogamma(start.opacity, end.opacity);
+    return function (t) {
+      return start.h = h(t), start.c = c(t), start.l = l(t), start.opacity = opacity(t), start + "";
+    };
+  };
+}
+
+/* harmony default export */ var src_hcl = (hcl_hcl(color_hue));
+var hclLong = hcl_hcl(nogamma);
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/cubehelix.js
+
+
+
+function src_cubehelix_cubehelix(hue) {
+  return function cubehelixGamma(y) {
+    function cubehelix(start, end) {
+      var h = hue((start = cubehelix_cubehelix(start)).h, (end = cubehelix_cubehelix(end)).h),
+          s = nogamma(start.s, end.s),
+          l = nogamma(start.l, end.l),
+          opacity = nogamma(start.opacity, end.opacity);
+      return function (t) {
+        return start.h = h(t), start.s = s(t), start.l = l(Math.pow(t, y)), start.opacity = opacity(t), start + "";
+      };
+    }
+
+    return y = +y, cubehelix.gamma = cubehelixGamma, cubehelix;
+  }(1);
+}
+
+/* harmony default export */ var src_cubehelix = (src_cubehelix_cubehelix(color_hue));
+var cubehelixLong = src_cubehelix_cubehelix(nogamma);
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/piecewise.js
+function piecewise_piecewise(interpolate, values) {
+  for (var i = 0, n = values.length - 1, v = values[0], I = Array(n < 0 ? 0 : n); i < n;) I[i] = interpolate(v, v = values[++i]);
+
+  return function (t) {
+    var i = Math.max(0, Math.min(n - 1, Math.floor(t *= n)));
+    return I[i](t - i);
+  };
+}
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/quantize.js
+/* harmony default export */ var quantize = (function (interpolator, n) {
+  for (var samples = Array(n), i = 0; i < n; ++i) samples[i] = interpolator(i / (n - 1));
+
+  return samples;
+});
+// CONCATENATED MODULE: ./node_modules/d3-interpolate/src/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-timer/src/timer.js
+var // how frequently we check for clock skew
+taskHead,
+    taskTail,
+    timer_frame = 0,
+    // is an animation frame pending?
+timer_timeout = 0,
+    // is a timeout pending?
+timer_interval = 0,
+    // are any timers active?
+pokeDelay = 1e3,
+    clockLast = 0,
+    clockNow = 0,
+    clockSkew = 0,
+    clock = typeof performance === "object" && performance.now ? performance : Date,
+    setFrame = typeof window === "object" && window.requestAnimationFrame ? window.requestAnimationFrame.bind(window) : function (f) {
+  setTimeout(f, 17);
+};
+function now() {
+  return clockNow || (setFrame(clearNow), clockNow = clock.now() + clockSkew);
+}
+
+function clearNow() {
+  clockNow = 0;
+}
+
+function Timer() {
+  this._call = this._time = this._next = null;
+}
+Timer.prototype = timer.prototype = {
+  constructor: Timer,
+  restart: function restart(callback, delay, time) {
+    if (typeof callback !== "function") throw new TypeError("callback is not a function");
+    time = (time == null ? now() : +time) + (delay == null ? 0 : +delay), this._next || taskTail === this || (taskTail ? taskTail._next = this : taskHead = this, taskTail = this), this._call = callback, this._time = time, sleep();
+  },
+  stop: function stop() {
+    this._call && (this._call = null, this._time = Infinity, sleep());
+  }
+};
+function timer(callback, delay, time) {
+  var t = new Timer();
+  return t.restart(callback, delay, time), t;
+}
+function timerFlush() {
+  now(), ++timer_frame;
+
+  for ( // Pretend we’ve set an alarm, if we haven’t already.
+  var e, t = taskHead; t;) (e = clockNow - t._time) >= 0 && t._call.call(null, e), t = t._next;
+
+  --timer_frame;
+}
+
+function wake() {
+  clockNow = (clockLast = clock.now()) + clockSkew, timer_frame = timer_timeout = 0;
+
+  try {
+    timerFlush();
+  } finally {
+    timer_frame = 0, nap(), clockNow = 0;
+  }
+}
+
+function poke() {
+  var now = clock.now(),
+      delay = now - clockLast;
+  delay > pokeDelay && (clockSkew -= delay, clockLast = now);
+}
+
+function nap() {
+  for (var t0, t2, t1 = taskHead, time = Infinity; t1;) t1._call ? (time > t1._time && (time = t1._time), t0 = t1, t1 = t1._next) : (t2 = t1._next, t1._next = null, t1 = t0 ? t0._next = t2 : taskHead = t2);
+
+  taskTail = t0, sleep(time);
+}
+
+function sleep(time) {
+  if (!timer_frame) {
+    timer_timeout && (timer_timeout = clearTimeout(timer_timeout));
+    var delay = time - clockNow; // Strictly less than if we recomputed clockNow.
+
+    delay > 24 ? (time < Infinity && (timer_timeout = setTimeout(wake, time - clock.now() - clockSkew)), timer_interval && (timer_interval = clearInterval(timer_interval))) : (!timer_interval && (clockLast = clock.now(), timer_interval = setInterval(poke, pokeDelay)), timer_frame = 1, setFrame(wake));
+  } // Soonest alarm already set, or will be.
+
+}
+// CONCATENATED MODULE: ./node_modules/d3-timer/src/timeout.js
+
+/* harmony default export */ var src_timeout = (function (callback, delay, time) {
+  var t = new Timer();
+  return delay = delay == null ? 0 : +delay, t.restart(function (elapsed) {
+    t.stop(), callback(elapsed + delay);
+  }, delay, time), t;
+});
+// CONCATENATED MODULE: ./node_modules/d3-timer/src/interval.js
+
+/* harmony default export */ var src_interval = (function (callback, delay, time) {
+  var t = new Timer(),
+      total = delay;
+  return delay == null ? (t.restart(callback, delay, time), t) : (delay = +delay, time = time == null ? now() : +time, t.restart(function tick(elapsed) {
+    elapsed += total, t.restart(tick, total += delay, time), callback(elapsed);
+  }, delay, time), t);
+});
+// CONCATENATED MODULE: ./node_modules/d3-timer/src/index.js
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/schedule.js
+
+
+var emptyOn = src_dispatch("start", "end", "cancel", "interrupt"),
+    emptyTween = [];
+var CREATED = 0;
+var SCHEDULED = 1;
+var STARTING = 2;
+var STARTED = 3;
+var RUNNING = 4;
+var ENDING = 5;
+var ENDED = 6;
+/* harmony default export */ var transition_schedule = (function (node, name, id, index, group, timing) {
+  var schedules = node.__transition;
+  if (!schedules) node.__transition = {};else if (id in schedules) return;
+  schedule_create(node, id, {
+    name: name,
+    index: index,
+    // For context during callback.
+    group: group,
+    // For context during callback.
+    on: emptyOn,
+    tween: emptyTween,
+    time: timing.time,
+    delay: timing.delay,
+    duration: timing.duration,
+    ease: timing.ease,
+    timer: null,
+    state: CREATED
+  });
+});
+function schedule_init(node, id) {
+  var schedule = schedule_get(node, id);
+  if (schedule.state > CREATED) throw new Error("too late; already scheduled");
+  return schedule;
+}
+function schedule_set(node, id) {
+  var schedule = schedule_get(node, id);
+  if (schedule.state > STARTED) throw new Error("too late; already running");
+  return schedule;
+}
+function schedule_get(node, id) {
+  var schedule = node.__transition;
+  if (!schedule || !(schedule = schedule[id])) throw new Error("transition not found");
+  return schedule;
+}
+
+function schedule_create(node, id, self) {
+  function start(elapsed) {
+    var i, j, n, o; // If the state is not SCHEDULED, then we previously errored on start.
+
+    if (self.state !== SCHEDULED) return stop();
+
+    for (i in schedules) if (o = schedules[i], o.name === self.name) {
+      // While this element already has a starting transition during this frame,
+      // defer starting an interrupting transition until that transition has a
+      // chance to tick (and possibly end); see d3/d3-transition#54!
+      if (o.state === STARTED) return src_timeout(start); // Interrupt the active transition, if any.
+
+      o.state === RUNNING ? (o.state = ENDED, o.timer.stop(), o.on.call("interrupt", node, node.__data__, o.index, o.group), delete schedules[i]) : +i < id && (o.state = ENDED, o.timer.stop(), o.on.call("cancel", node, node.__data__, o.index, o.group), delete schedules[i]);
+    } // Defer the first tick to end of the current frame; see d3/d3#1576.
+    // Note the transition may be canceled after start and before the first tick!
+    // Note this must be scheduled before the start event; see d3/d3-transition#16!
+    // Assuming this is successful, subsequent callbacks go straight to tick.
+
+
+    if (src_timeout(function () {
+      self.state === STARTED && (self.state = RUNNING, self.timer.restart(tick, self.delay, self.time), tick(elapsed));
+    }), self.state = STARTING, self.on.call("start", node, node.__data__, self.index, self.group), self.state === STARTING) {
+      for (self.state = STARTED, tween = Array(n = self.tween.length), (i = 0, j = -1); i < n; ++i) (o = self.tween[i].value.call(node, node.__data__, self.index, self.group)) && (tween[++j] = o);
+
+      tween.length = j + 1;
+    } // interrupted
+
+  }
+
+  function tick(elapsed) {
+    for (var t = elapsed < self.duration ? self.ease.call(null, elapsed / self.duration) : (self.timer.restart(stop), self.state = ENDING, 1), i = -1, n = tween.length; ++i < n;) tween[i].call(node, t); // Dispatch the end event.
+
+
+    self.state === ENDING && (self.on.call("end", node, node.__data__, self.index, self.group), stop());
+  }
+
+  function stop() {
+    for (var i in self.state = ENDED, self.timer.stop(), delete schedules[id], schedules) return; // eslint-disable-line no-unused-vars
+
+
+    delete node.__transition;
+  }
+
+  var tween,
+      schedules = node.__transition; // Initialize the self timer when the transition is created.
+  // Note the actual delay is not known until the first callback!
+
+  schedules[id] = self, self.timer = timer(function (elapsed) {
+    self.state = SCHEDULED, self.timer.restart(start, self.delay, self.time), self.delay <= elapsed && start(elapsed - self.delay);
+  }, 0, self.time);
+}
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/interrupt.js
+
+/* harmony default export */ var interrupt = (function (node, name) {
+  var schedule,
+      active,
+      i,
+      schedules = node.__transition,
+      empty = !0;
+
+  if (schedules) {
+    for (i in name = name == null ? null : name + "", schedules) {
+      if ((schedule = schedules[i]).name !== name) {
+        empty = !1;
+        continue;
+      }
+
+      active = schedule.state > STARTING && schedule.state < ENDING, schedule.state = ENDED, schedule.timer.stop(), schedule.on.call(active ? "interrupt" : "cancel", node, node.__data__, schedule.index, schedule.group), delete schedules[i];
+    }
+
+    empty && delete node.__transition;
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/interrupt.js
+
+/* harmony default export */ var selection_interrupt = (function (name) {
+  return this.each(function () {
+    interrupt(this, name);
+  });
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/tween.js
+
+
+function tweenRemove(id, name) {
+  var tween0, tween1;
+  return function () {
+    var schedule = schedule_set(this, id),
+        tween = schedule.tween; // If this node shared tween with the previous node,
+    // just assign the updated shared tween and we’re done!
+    // Otherwise, copy-on-write.
+
+    if (tween !== tween0) {
+      tween1 = tween0 = tween;
+
+      for (var i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
+        tween1 = tween1.slice(), tween1.splice(i, 1);
+        break;
+      }
+    }
+
+    schedule.tween = tween1;
+  };
+}
+
+function tweenFunction(id, name, value) {
+  var tween0, tween1;
+  if (typeof value !== "function") throw new Error();
+  return function () {
+    var schedule = schedule_set(this, id),
+        tween = schedule.tween; // If this node shared tween with the previous node,
+    // just assign the updated shared tween and we’re done!
+    // Otherwise, copy-on-write.
+
+    if (tween !== tween0) {
+      tween1 = (tween0 = tween).slice();
+
+      for (var t = {
+        name: name,
+        value: value
+      }, i = 0, n = tween1.length; i < n; ++i) if (tween1[i].name === name) {
+        tween1[i] = t;
+        break;
+      }
+
+      i === n && tween1.push(t);
+    }
+
+    schedule.tween = tween1;
+  };
+}
+
+/* harmony default export */ var transition_tween = (function (name, value) {
+  var id = this._id;
+
+  if (name += "", arguments.length < 2) {
+    for (var t, tween = schedule_get(this.node(), id).tween, i = 0, n = tween.length; i < n; ++i) if ((t = tween[i]).name === name) return t.value;
+
+    return null;
+  }
+
+  return this.each((value == null ? tweenRemove : tweenFunction)(id, name, value));
+});
+function tweenValue(transition, name, value) {
+  var id = transition._id;
+  return transition.each(function () {
+    var schedule = schedule_set(this, id);
+    (schedule.value || (schedule.value = {}))[name] = value.apply(this, arguments);
+  }), function (node) {
+    return schedule_get(node, id).value[name];
+  };
+}
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/interpolate.js
+
+
+/* harmony default export */ var transition_interpolate = (function (a, b) {
+  var c;
+  return (typeof b === "number" ? number : b instanceof color_color ? src_rgb : (c = color_color(b)) ? (b = c, src_rgb) : src_string)(a, b);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attr.js
+
+
+
+
+
+function attr_attrRemove(name) {
+  return function () {
+    this.removeAttribute(name);
+  };
+}
+
+function attr_attrRemoveNS(fullname) {
+  return function () {
+    this.removeAttributeNS(fullname.space, fullname.local);
+  };
+}
+
+function attr_attrConstant(name, interpolate, value1) {
+  var string00, interpolate0;
+  return function () {
+    var string0 = this.getAttribute(name);
+    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
+  };
+}
+
+function attr_attrConstantNS(fullname, interpolate, value1) {
+  var string00, interpolate0;
+  return function () {
+    var string0 = this.getAttributeNS(fullname.space, fullname.local);
+    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
+  };
+}
+
+function attr_attrFunction(name, interpolate, value) {
+  var string00, string10, interpolate0;
+  return function () {
+    var string0,
+        string1,
+        value1 = value(this);
+    return value1 == null ? void this.removeAttribute(name) : (string0 = this.getAttribute(name), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
+  };
+}
+
+function attr_attrFunctionNS(fullname, interpolate, value) {
+  var string00, string10, interpolate0;
+  return function () {
+    var string0,
+        string1,
+        value1 = value(this);
+    return value1 == null ? void this.removeAttributeNS(fullname.space, fullname.local) : (string0 = this.getAttributeNS(fullname.space, fullname.local), string1 = value1 + "", string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1)));
+  };
+}
+
+/* harmony default export */ var transition_attr = (function (name, value) {
+  var fullname = namespace(name),
+      i = fullname === "transform" ? interpolateTransformSvg : transition_interpolate;
+  return this.attrTween(name, typeof value === "function" ? (fullname.local ? attr_attrFunctionNS : attr_attrFunction)(fullname, i, tweenValue(this, "attr." + name, value)) : value == null ? (fullname.local ? attr_attrRemoveNS : attr_attrRemove)(fullname) : (fullname.local ? attr_attrConstantNS : attr_attrConstant)(fullname, i, value));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/attrTween.js
+
+
+function attrInterpolate(name, i) {
+  return function (t) {
+    this.setAttribute(name, i.call(this, t));
+  };
+}
+
+function attrInterpolateNS(fullname, i) {
+  return function (t) {
+    this.setAttributeNS(fullname.space, fullname.local, i.call(this, t));
+  };
+}
+
+function attrTweenNS(fullname, value) {
+  function tween() {
+    var i = value.apply(this, arguments);
+    return i !== i0 && (t0 = (i0 = i) && attrInterpolateNS(fullname, i)), t0;
+  }
+
+  var t0, i0;
+  return tween._value = value, tween;
+}
+
+function attrTween(name, value) {
+  function tween() {
+    var i = value.apply(this, arguments);
+    return i !== i0 && (t0 = (i0 = i) && attrInterpolate(name, i)), t0;
+  }
+
+  var t0, i0;
+  return tween._value = value, tween;
+}
+
+/* harmony default export */ var transition_attrTween = (function (name, value) {
+  var key = "attr." + name;
+  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
+  var fullname = namespace(name);
+  return this.tween(key, (fullname.local ? attrTweenNS : attrTween)(fullname, value));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/delay.js
+
+
+function delayFunction(id, value) {
+  return function () {
+    schedule_init(this, id).delay = +value.apply(this, arguments);
+  };
+}
+
+function delayConstant(id, value) {
+  return value = +value, function () {
+    schedule_init(this, id).delay = value;
+  };
+}
+
+/* harmony default export */ var transition_delay = (function (value) {
+  var id = this._id;
+  return arguments.length ? this.each((typeof value === "function" ? delayFunction : delayConstant)(id, value)) : schedule_get(this.node(), id).delay;
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/duration.js
+
+
+function durationFunction(id, value) {
+  return function () {
+    schedule_set(this, id).duration = +value.apply(this, arguments);
+  };
+}
+
+function durationConstant(id, value) {
+  return value = +value, function () {
+    schedule_set(this, id).duration = value;
+  };
+}
+
+/* harmony default export */ var transition_duration = (function (value) {
+  var id = this._id;
+  return arguments.length ? this.each((typeof value === "function" ? durationFunction : durationConstant)(id, value)) : schedule_get(this.node(), id).duration;
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/ease.js
+
+
+function easeConstant(id, value) {
+  if (typeof value !== "function") throw new Error();
+  return function () {
+    schedule_set(this, id).ease = value;
+  };
+}
+
+/* harmony default export */ var ease = (function (value) {
+  var id = this._id;
+  return arguments.length ? this.each(easeConstant(id, value)) : schedule_get(this.node(), id).ease;
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/filter.js
+
+
+/* harmony default export */ var transition_filter = (function (match) {
+  typeof match !== "function" && (match = matcher(match));
+
+  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, subgroup = subgroups[j] = [], i = 0; i < n; ++i) (node = group[i]) && match.call(node, node.__data__, i, group) && subgroup.push(node);
+
+  return new Transition(subgroups, this._parents, this._name, this._id);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/merge.js
+
+/* harmony default export */ var transition_merge = (function (transition) {
+  if (transition._id !== this._id) throw new Error();
+
+  for (var groups0 = this._groups, groups1 = transition._groups, m0 = groups0.length, m1 = groups1.length, m = Math.min(m0, m1), merges = Array(m0), j = 0; j < m; ++j) for (var node, group0 = groups0[j], group1 = groups1[j], n = group0.length, merge = merges[j] = Array(n), i = 0; i < n; ++i) (node = group0[i] || group1[i]) && (merge[i] = node);
+
+  for (; j < m0; ++j) merges[j] = groups0[j];
+
+  return new Transition(merges, this._parents, this._name, this._id);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/on.js
+
+
+function on_start(name) {
+  return (name + "").trim().split(/^|\s+/).every(function (t) {
+    var i = t.indexOf(".");
+    return i >= 0 && (t = t.slice(0, i)), !t || t === "start";
+  });
+}
+
+function onFunction(id, name, listener) {
+  var on0,
+      on1,
+      sit = on_start(name) ? schedule_init : schedule_set;
+  return function () {
+    var schedule = sit(this, id),
+        on = schedule.on; // If this node shared a dispatch with the previous node,
+    // just assign the updated shared dispatch and we’re done!
+    // Otherwise, copy-on-write.
+
+    on !== on0 && (on1 = (on0 = on).copy()).on(name, listener), schedule.on = on1;
+  };
+}
+
+/* harmony default export */ var transition_on = (function (name, listener) {
+  var id = this._id;
+  return arguments.length < 2 ? schedule_get(this.node(), id).on.on(name) : this.each(onFunction(id, name, listener));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/remove.js
+function removeFunction(id) {
+  return function () {
+    var parent = this.parentNode;
+
+    for (var i in this.__transition) if (+i !== id) return;
+
+    parent && parent.removeChild(this);
+  };
+}
+
+/* harmony default export */ var transition_remove = (function () {
+  return this.on("end.remove", removeFunction(this._id));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/select.js
+
+
+
+/* harmony default export */ var transition_select = (function (select) {
+  var name = this._name,
+      id = this._id;
+  typeof select !== "function" && (select = src_selector(select));
+
+  for (var groups = this._groups, m = groups.length, subgroups = Array(m), j = 0; j < m; ++j) for (var node, subnode, group = groups[j], n = group.length, subgroup = subgroups[j] = Array(n), i = 0; i < n; ++i) (node = group[i]) && (subnode = select.call(node, node.__data__, i, group)) && ("__data__" in node && (subnode.__data__ = node.__data__), subgroup[i] = subnode, transition_schedule(subgroup[i], name, id, i, subgroup, schedule_get(node, id)));
+
+  return new Transition(subgroups, this._parents, name, id);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selectAll.js
+
+
+
+/* harmony default export */ var transition_selectAll = (function (select) {
+  var name = this._name,
+      id = this._id;
+  typeof select !== "function" && (select = selectorAll(select));
+
+  for (var groups = this._groups, m = groups.length, subgroups = [], parents = [], j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
+    for (var child, children = select.call(node, node.__data__, i, group), inherit = schedule_get(node, id), k = 0, l = children.length; k < l; ++k) (child = children[k]) && transition_schedule(child, name, id, k, children, inherit);
+
+    subgroups.push(children), parents.push(node);
+  }
+
+  return new Transition(subgroups, parents, name, id);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/selection.js
+
+var selection_Selection = src_selection.prototype.constructor;
+/* harmony default export */ var transition_selection = (function () {
+  return new selection_Selection(this._groups, this._parents);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/style.js
+
+
+
+
+
+
+function styleNull(name, interpolate) {
+  var string00, string10, interpolate0;
+  return function () {
+    var string0 = styleValue(this, name),
+        string1 = (this.style.removeProperty(name), styleValue(this, name));
+    return string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : interpolate0 = interpolate(string00 = string0, string10 = string1);
+  };
+}
+
+function style_styleRemove(name) {
+  return function () {
+    this.style.removeProperty(name);
+  };
+}
+
+function style_styleConstant(name, interpolate, value1) {
+  var string00, interpolate0;
+  return function () {
+    var string0 = styleValue(this, name);
+    return string0 === value1 + "" ? null : string0 === string00 ? interpolate0 : interpolate0 = interpolate(string00 = string0, value1);
+  };
+}
+
+function style_styleFunction(name, interpolate, value) {
+  var string00, string10, interpolate0;
+  return function () {
+    var string0 = styleValue(this, name),
+        value1 = value(this),
+        string1 = value1 + "";
+    return value1 == null && (string1 = value1 = (this.style.removeProperty(name), styleValue(this, name))), string0 === string1 ? null : string0 === string00 && string1 === string10 ? interpolate0 : (string10 = string1, interpolate0 = interpolate(string00 = string0, value1));
+  };
+}
+
+function styleMaybeRemove(id, name) {
+  var on0,
+      on1,
+      listener0,
+      remove,
+      key = "style." + name;
+  return function () {
+    var schedule = schedule_set(this, id),
+        on = schedule.on,
+        listener = schedule.value[key] == null ? remove || (remove = style_styleRemove(name)) : undefined; // If this node shared a dispatch with the previous node,
+    // just assign the updated shared dispatch and we’re done!
+    // Otherwise, copy-on-write.
+
+    (on !== on0 || listener0 !== listener) && (on1 = (on0 = on).copy()).on("end." + key, listener0 = listener), schedule.on = on1;
+  };
+}
+
+/* harmony default export */ var transition_style = (function (name, value, priority) {
+  var i = (name += "") === "transform" ? interpolateTransformCss : transition_interpolate;
+  return value == null ? this.styleTween(name, styleNull(name, i)).on("end.style." + name, style_styleRemove(name)) : typeof value === "function" ? this.styleTween(name, style_styleFunction(name, i, tweenValue(this, "style." + name, value))).each(styleMaybeRemove(this._id, name)) : this.styleTween(name, style_styleConstant(name, i, value), priority).on("end.style." + name, null);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/styleTween.js
+function styleInterpolate(name, i, priority) {
+  return function (t) {
+    this.style.setProperty(name, i.call(this, t), priority);
+  };
+}
+
+function styleTween(name, value, priority) {
+  function tween() {
+    var i = value.apply(this, arguments);
+    return i !== i0 && (t = (i0 = i) && styleInterpolate(name, i, priority)), t;
+  }
+
+  var t, i0;
+  return tween._value = value, tween;
+}
+
+/* harmony default export */ var transition_styleTween = (function (name, value, priority) {
+  var key = "style." + (name += "");
+  if (arguments.length < 2) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
+  return this.tween(key, styleTween(name, value, priority == null ? "" : priority));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/text.js
+
+
+function text_textConstant(value) {
+  return function () {
+    this.textContent = value;
+  };
+}
+
+function text_textFunction(value) {
+  return function () {
+    var value1 = value(this);
+    this.textContent = value1 == null ? "" : value1;
+  };
+}
+
+/* harmony default export */ var transition_text = (function (value) {
+  return this.tween("text", typeof value === "function" ? text_textFunction(tweenValue(this, "text", value)) : text_textConstant(value == null ? "" : value + ""));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/textTween.js
+function textInterpolate(i) {
+  return function (t) {
+    this.textContent = i.call(this, t);
+  };
+}
+
+function textTween(value) {
+  function tween() {
+    var i = value.apply(this, arguments);
+    return i !== i0 && (t0 = (i0 = i) && textInterpolate(i)), t0;
+  }
+
+  var t0, i0;
+  return tween._value = value, tween;
+}
+
+/* harmony default export */ var transition_textTween = (function (value) {
+  var key = "text";
+  if (arguments.length < 1) return (key = this.tween(key)) && key._value;
+  if (value == null) return this.tween(key, null);
+  if (typeof value !== "function") throw new Error();
+  return this.tween(key, textTween(value));
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/transition.js
+
+
+/* harmony default export */ var transition_transition = (function () {
+  for (var name = this._name, id0 = this._id, id1 = newId(), groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) if (node = group[i]) {
+    var inherit = schedule_get(node, id0);
+    transition_schedule(node, name, id1, i, group, {
+      time: inherit.time + inherit.delay + inherit.duration,
+      delay: 0,
+      duration: inherit.duration,
+      ease: inherit.ease
+    });
+  }
+
+  return new Transition(groups, this._parents, name, id1);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/end.js
+
+/* harmony default export */ var transition_end = (function () {
+  var on0,
+      on1,
+      that = this,
+      id = that._id,
+      size = that.size();
+  return new Promise(function (resolve, reject) {
+    var cancel = {
+      value: reject
+    },
+        end = {
+      value: function value() {
+        --size === 0 && resolve();
+      }
+    };
+    that.each(function () {
+      var schedule = schedule_set(this, id),
+          on = schedule.on; // If this node shared a dispatch with the previous node,
+      // just assign the updated shared dispatch and we’re done!
+      // Otherwise, copy-on-write.
+
+      on !== on0 && (on1 = (on0 = on).copy(), on1._.cancel.push(cancel), on1._.interrupt.push(cancel), on1._.end.push(end)), schedule.on = on1;
+    });
+  });
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/transition/index.js
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+var transition_id = 0;
+function Transition(groups, parents, name, id) {
+  this._groups = groups, this._parents = parents, this._name = name, this._id = id;
+}
+function src_transition_transition(name) {
+  return src_selection().transition(name);
+}
+function newId() {
+  return ++transition_id;
+}
+var selection_prototype = src_selection.prototype;
+Transition.prototype = src_transition_transition.prototype = {
+  constructor: Transition,
+  select: transition_select,
+  selectAll: transition_selectAll,
+  filter: transition_filter,
+  merge: transition_merge,
+  selection: transition_selection,
+  transition: transition_transition,
+  call: selection_prototype.call,
+  nodes: selection_prototype.nodes,
+  node: selection_prototype.node,
+  size: selection_prototype.size,
+  empty: selection_prototype.empty,
+  each: selection_prototype.each,
+  on: transition_on,
+  attr: transition_attr,
+  attrTween: transition_attrTween,
+  style: transition_style,
+  styleTween: transition_styleTween,
+  text: transition_text,
+  textTween: transition_textTween,
+  remove: transition_remove,
+  tween: transition_tween,
+  delay: transition_delay,
+  duration: transition_duration,
+  ease: ease,
+  end: transition_end
+};
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/linear.js
+function linear_linear(t) {
+  return +t;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/quad.js
+function quadIn(t) {
+  return t * t;
+}
+function quadOut(t) {
+  return t * (2 - t);
+}
+function quadInOut(t) {
+  return ((t *= 2) <= 1 ? t * t : --t * (2 - t) + 1) / 2;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/cubic.js
+function cubicIn(t) {
+  return t * t * t;
+}
+function cubicOut(t) {
+  return --t * t * t + 1;
+}
+function cubicInOut(t) {
+  return ((t *= 2) <= 1 ? t * t * t : (t -= 2) * t * t + 2) / 2;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/poly.js
+var poly_exponent = 3;
+var polyIn = function custom(e) {
+  function polyIn(t) {
+    return Math.pow(t, e);
+  }
+
+  return e = +e, polyIn.exponent = custom, polyIn;
+}(3);
+var polyOut = function custom(e) {
+  function polyOut(t) {
+    return 1 - Math.pow(1 - t, e);
+  }
+
+  return e = +e, polyOut.exponent = custom, polyOut;
+}(3);
+var polyInOut = function custom(e) {
+  function polyInOut(t) {
+    return ((t *= 2) <= 1 ? Math.pow(t, e) : 2 - Math.pow(2 - t, e)) / 2;
+  }
+
+  return e = +e, polyInOut.exponent = custom, polyInOut;
+}(3);
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/sin.js
+var pi = Math.PI,
+    halfPi = pi / 2;
+function sinIn(t) {
+  return 1 - Math.cos(t * halfPi);
+}
+function sinOut(t) {
+  return Math.sin(t * halfPi);
+}
+function sinInOut(t) {
+  return (1 - Math.cos(pi * t)) / 2;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/exp.js
+function expIn(t) {
+  return Math.pow(2, 10 * t - 10);
+}
+function expOut(t) {
+  return 1 - Math.pow(2, -10 * t);
+}
+function expInOut(t) {
+  return ((t *= 2) <= 1 ? Math.pow(2, 10 * t - 10) : 2 - Math.pow(2, 10 - 10 * t)) / 2;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/circle.js
+function circleIn(t) {
+  return 1 - Math.sqrt(1 - t * t);
+}
+function circleOut(t) {
+  return Math.sqrt(1 - --t * t);
+}
+function circleInOut(t) {
+  return ((t *= 2) <= 1 ? 1 - Math.sqrt(1 - t * t) : Math.sqrt(1 - (t -= 2) * t) + 1) / 2;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/bounce.js
+var b1 = 4 / 11,
+    b2 = 6 / 11,
+    b3 = 8 / 11,
+    b4 = 3 / 4,
+    b5 = 9 / 11,
+    b6 = 10 / 11,
+    b7 = 15 / 16,
+    b8 = 21 / 22,
+    b9 = 63 / 64,
+    b0 = 1 / b1 / b1;
+function bounceIn(t) {
+  return 1 - bounceOut(1 - t);
+}
+function bounceOut(t) {
+  return (t = +t) < b1 ? b0 * t * t : t < b3 ? b0 * (t -= b2) * t + b4 : t < b6 ? b0 * (t -= b5) * t + b7 : b0 * (t -= b8) * t + b9;
+}
+function bounceInOut(t) {
+  return ((t *= 2) <= 1 ? 1 - bounceOut(1 - t) : bounceOut(t - 1) + 1) / 2;
+}
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/back.js
+var overshoot = 1.70158;
+var backIn = function custom(s) {
+  function backIn(t) {
+    return t * t * ((s + 1) * t - s);
+  }
+
+  return s = +s, backIn.overshoot = custom, backIn;
+}(overshoot);
+var backOut = function custom(s) {
+  function backOut(t) {
+    return --t * t * ((s + 1) * t + s) + 1;
+  }
+
+  return s = +s, backOut.overshoot = custom, backOut;
+}(overshoot);
+var backInOut = function custom(s) {
+  function backInOut(t) {
+    return ((t *= 2) < 1 ? t * t * ((s + 1) * t - s) : (t -= 2) * t * ((s + 1) * t + s) + 2) / 2;
+  }
+
+  return s = +s, backInOut.overshoot = custom, backInOut;
+}(overshoot);
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/elastic.js
+var tau = 2 * Math.PI,
+    amplitude = 1,
+    period = .3;
+var elasticIn = function custom(a, p) {
+  function elasticIn(t) {
+    return a * Math.pow(2, 10 * --t) * Math.sin((s - t) / p);
+  }
+
+  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
+  return elasticIn.amplitude = function (a) {
+    return custom(a, p * tau);
+  }, elasticIn.period = function (p) {
+    return custom(a, p);
+  }, elasticIn;
+}(1, period);
+var elasticOut = function custom(a, p) {
+  function elasticOut(t) {
+    return 1 - a * Math.pow(2, -10 * (t = +t)) * Math.sin((t + s) / p);
+  }
+
+  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
+  return elasticOut.amplitude = function (a) {
+    return custom(a, p * tau);
+  }, elasticOut.period = function (p) {
+    return custom(a, p);
+  }, elasticOut;
+}(1, period);
+var elasticInOut = function custom(a, p) {
+  function elasticInOut(t) {
+    return ((t = t * 2 - 1) < 0 ? a * Math.pow(2, 10 * t) * Math.sin((s - t) / p) : 2 - a * Math.pow(2, -10 * t) * Math.sin((s + t) / p)) / 2;
+  }
+
+  var s = Math.asin(1 / (a = Math.max(1, a))) * (p /= tau);
+  return elasticInOut.amplitude = function (a) {
+    return custom(a, p * tau);
+  }, elasticInOut.period = function (p) {
+    return custom(a, p);
+  }, elasticInOut;
+}(1, period);
+// CONCATENATED MODULE: ./node_modules/d3-ease/src/index.js
+
+
+
+
+
+
+
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/transition.js
+
+
+
+
+var defaultTiming = {
+  time: null,
+  // Set on use.
+  delay: 0,
+  duration: 250,
+  ease: cubicInOut
+};
+
+function transition_inherit(node, id) {
+  for (var timing; !(timing = node.__transition) || !(timing = timing[id]);) if (!(node = node.parentNode)) return defaultTiming.time = now(), defaultTiming;
+
+  return timing;
+}
+
+/* harmony default export */ var selection_transition = (function (name) {
+  var id, timing;
+  name instanceof Transition ? (id = name._id, name = name._name) : (id = newId(), (timing = defaultTiming).time = now(), name = name == null ? null : name + "");
+
+  for (var groups = this._groups, m = groups.length, j = 0; j < m; ++j) for (var node, group = groups[j], n = group.length, i = 0; i < n; ++i) (node = group[i]) && transition_schedule(node, name, id, i, group, timing || transition_inherit(node, id));
+
+  return new Transition(groups, this._parents, name, id);
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/selection/index.js
+
+
+
+src_selection.prototype.interrupt = selection_interrupt, src_selection.prototype.transition = selection_transition;
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/active.js
+
+
+var active_root = [null];
+/* harmony default export */ var src_active = (function (node, name) {
+  var schedule,
+      i,
+      schedules = node.__transition;
+  if (schedules) for (i in name = name == null ? null : name + "", schedules) if ((schedule = schedules[i]).state > SCHEDULED && schedule.name === name) return new Transition([[node]], active_root, name, +i);
+  return null;
+});
+// CONCATENATED MODULE: ./node_modules/d3-transition/src/index.js
+
+
 
 
 // CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
@@ -21364,6 +21364,24 @@ function callFn(fn) {
   return isFn && fn.call.apply(fn, args), isFn;
 }
 /**
+ * Call function after all transitions ends
+ * @param {d3.transition} transition
+ * @param {Fucntion} callback
+ * @private
+ */
+
+
+function endall(transition, callback) {
+  var n = 0;
+  transition.each(function () {
+    return ++n;
+  }).on("end", function () {
+    for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
+
+    --n || callback.apply.apply(callback, [this].concat(args));
+  });
+}
+/**
  * Replace tag sign to html entity
  * @param {String} str
  * @return {String}
@@ -21582,7 +21600,7 @@ function mergeArray(arr) {
 
 
 function mergeObj(target) {
-  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+  for (var _len3 = arguments.length, objectN = Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) objectN[_key3 - 1] = arguments[_key3];
 
   if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
   var source = objectN.shift();
@@ -23156,6 +23174,66 @@ function () {
 }();
 
 
+// CONCATENATED MODULE: ./src/module/generator.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Generate resize queue function
+ * @private
+ */
+
+function generateResize() {
+  function callResizeFn() {
+    callResizeFn.timeout && (window.clearTimeout(callResizeFn.timeout), callResizeFn.timeout = null), callResizeFn.timeout = window.setTimeout(function () {
+      fn.forEach(function (f) {
+        return f();
+      });
+    }, 200);
+  }
+
+  var fn = [];
+  return callResizeFn.add = function (f) {
+    return fn.push(f);
+  }, callResizeFn.remove = function (f) {
+    return fn.splice(fn.indexOf(f), 1);
+  }, callResizeFn;
+}
+/**
+ * Generate transition queue function
+ * @private
+ */
+
+function generateWait() {
+  var transitionsToWait = [],
+      f = function (t, callback) {
+    function loop() {
+      for (var _t, done = 0, i = 0; _t = transitionsToWait[i]; i++) {
+        if (_t.empty()) {
+          done++;
+          continue;
+        }
+
+        try {
+          _t.transition();
+        } catch (e) {
+          done++;
+        }
+      }
+
+      timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
+    }
+
+    var timer;
+    loop();
+  };
+
+  return f.add = function (t) {
+    isArray(t) ? transitionsToWait = transitionsToWait.concat(t) : transitionsToWait.push(t);
+  }, f;
+}
 // CONCATENATED MODULE: ./node_modules/d3-axis/src/array.js
 var slice = Array.prototype.slice;
 // CONCATENATED MODULE: ./node_modules/d3-axis/src/identity.js
@@ -25808,12 +25886,12 @@ function () {
         innerTickSize = _config.innerTickSize,
         tickLength = _config.tickLength,
         range = _config.range,
-        name = params.name,
-        tickTextPos = name && /^(x|y|y2)$/.test(name) ? params.config["axis_" + name + "_tick_text_position"] : {
+        id = params.id,
+        tickTextPos = id && /^(x|y|y2)$/.test(id) ? params.config["axis_" + id + "_tick_text_position"] : {
       x: 0,
       y: 0
     },
-        prefix = name === "subX" ? "subchart_axis_x" : "axis_" + name,
+        prefix = id === "subX" ? "subchart_axis_x" : "axis_" + id,
         axisShow = params.config[prefix + "_show"],
         tickShow = {
       tick: !!axisShow && params.config[prefix + "_tick_show"],
@@ -25862,9 +25940,15 @@ function () {
         var lineUpdate = tick.select("line"),
             textUpdate = tick.select("text");
 
-        if (tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign), tickEnter.select("text").attr("" + axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle && textUpdate.append && textUpdate.append("title").each(function (index) {
-          src_select(this).text(params.tickTitle[index]);
-        }), scale1.bandwidth) {
+        // Append <title> for tooltip display
+        if (tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign), tickEnter.select("text").attr("" + axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
+          var title = textUpdate.select("title");
+          (title.empty() ? textUpdate.append("title") : title).text(function (index) {
+            return params.tickTitle[index];
+          });
+        }
+
+        if (scale1.bandwidth) {
           var x = scale1,
               dx = x.bandwidth() / 2;
           scale0 = function (d) {
@@ -26026,7 +26110,7 @@ var Axis_Axis =
 /*#__PURE__*/
 function () {
   function Axis(owner) {
-    _defineProperty(this, "owner", void 0), _defineProperty(this, "axesList", {}), _defineProperty(this, "tick", {
+    _defineProperty(this, "owner", void 0), _defineProperty(this, "x", void 0), _defineProperty(this, "subX", void 0), _defineProperty(this, "y", void 0), _defineProperty(this, "y2", void 0), _defineProperty(this, "axesList", {}), _defineProperty(this, "tick", {
       x: null,
       y: null,
       y2: null
@@ -26044,6 +26128,20 @@ function () {
   }, _proto.isHorizontal = function isHorizontal($$, forHorizontal) {
     var isRotated = $$.config.axis_rotated;
     return forHorizontal ? isRotated : !isRotated;
+  }, _proto.isCategorized = function isCategorized() {
+    var _this$owner = this.owner,
+        config = _this$owner.config,
+        state = _this$owner.state;
+    return config.axis_x_type.indexOf("category") >= 0 || state.hasRadar;
+  }, _proto.isCustomX = function isCustomX() {
+    var config = this.owner.config;
+    return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+  }, _proto.isTimeSeries = function isTimeSeries(id) {
+    id === void 0 && (id = "x");
+    var config = this.owner.config;
+    return config["axis_" + id + "_type"] === "timeseries";
+  }, _proto.isTimeSeriesY = function isTimeSeriesY() {
+    return this.isTimeSeries("y");
   }, _proto.init = function init() {
     var _this = this,
         $$ = this.owner,
@@ -26057,13 +26155,14 @@ function () {
 
     config.axis_y2_show && target.push("y2"), target.forEach(function (v) {
       var classAxis = _this.getAxisClassName(v),
-          axisId = v.toUpperCase(),
-          classLabel = config_classes["axis" + axisId + "Label"];
+          classLabel = config_classes["axis" + v.toUpperCase() + "Label"];
 
       axis[v] = main.append("g").attr("class", classAxis).attr("clip-path", function () {
         var res = null;
         return v === "x" ? res = clip.pathXAxis : v === "y" && config.axis_y_inner && (res = clip.pathYAxis), res;
-      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", _this["textAnchorFor" + axisId + "AxisLabel"].bind(_this)), _this.generateAxes(v);
+      }).attr("transform", $$.getTranslate(v)).style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden"), axis[v].append("text").attr("class", classLabel).attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated]).style("text-anchor", function () {
+        return _this.textAnchorForAxisLabel(v);
+      }), _this.generateAxes(v);
     });
   }
   /**
@@ -26128,28 +26227,42 @@ function () {
         }) || v.scale().range(range);
         var className = _this2.getAxisClassName(id) + "-" + (i + 1),
             g = main.select("." + className.replace(/\s/, "."));
-        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), $$.axis.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
+        g.empty() ? g = main.append("g").attr("class", className).style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden").call(v) : (axesConfig[i].domain && scale.domain(axesConfig[i].domain), _this2.x.helper.transitionise(g).call(v.scale(scale))), g.attr("transform", $$.getTranslate(id, i + 1));
       });
     });
-  } // called from : updateScales() & getMaxTickWidth()
-  , _proto.getAxis = function getAxis(name, scale, outerTick, noTransition, noTickTextRotate) {
+  }
+  /**
+   * Set Axis & tick values
+   * called from: updateScales()
+   * @param {String} id Axis id string
+   * @param {Array} args Arguments
+   * @private
+   */
+  , _proto.setAxis = function setAxis(id) {
+    id !== "subX" && (this.tick[id] = this.getTickValues(id));
+
+    for (var _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+
+    this[id] = this.getAxis.apply(this, [id].concat(args));
+  } // called from : getMaxTickWidth()
+  , _proto.getAxis = function getAxis(id, scale, outerTick, noTransition, noTickTextRotate) {
     var tickFormat,
         $$ = this.owner,
         config = $$.config,
-        isX = /^(x|subX)$/.test(name),
-        type = isX ? "x" : name,
-        isCategory = isX && $$.isCategorized(),
-        orient = this.orient[name];
+        isX = /^(x|subX)$/.test(id),
+        type = isX ? "x" : id,
+        isCategory = isX && this.isCategorized(),
+        orient = this.orient[id];
     if (isX) tickFormat = $$.format.xAxisTick;else {
-      var fn = config["axis_" + name + "_tick_format"];
+      var fn = config["axis_" + id + "_tick_format"];
       isFunction(fn) && (tickFormat = fn.bind($$.api));
     }
-    var tickValues = $$.axis.tick[type],
+    var tickValues = this.tick[type],
         axisParams = mergeObj({
       outerTick: outerTick,
       noTransition: noTransition,
       config: config,
-      name: name,
+      id: id,
       tickTextRotate: noTickTextRotate ? 0 : config["axis_" + type + "_tick_rotate"]
     }, isX && {
       isCategory: isCategory,
@@ -26161,13 +26274,13 @@ function () {
     isX || (axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"]);
     var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.scale.zoom || scale).orient(orient);
 
-    if (isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
+    if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
       var _fn = parseDate.bind($$);
 
       tickValues = tickValues.map(function (v) {
         return _fn(v);
       });
-    } else !isX && $$.isTimeSeriesY() && ( // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+    } else !isX && this.isTimeSeriesY() && ( // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
     axis.ticks(config.axis_y_tick_time_value), tickValues = null);
 
     return tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
@@ -26179,11 +26292,11 @@ function () {
         config = $$.config,
         fit = config.axis_x_tick_fit,
         count = config.axis_x_tick_count;
-    return (fit || count && fit) && (values = this.generateTickValues($$.mapTargetsToUniqueXs(targets), count, $$.isTimeSeries())), axis ? axis.tickValues(values) : $$.axis.x && ($$.axis.x.tickValues(values), $$.axis.subX && $$.axis.subX.tickValues(values)), values;
+    return (fit || count && fit) && (values = this.generateTickValues($$.mapTargetsToUniqueXs(targets), count, this.isTimeSeries())), axis ? axis.tickValues(values) : this.x && (this.x.tickValues(values), this.subX && this.subX.tickValues(values)), values;
   }, _proto.getId = function getId(id) {
-    var _this$owner = this.owner,
-        config = _this$owner.config,
-        scale = _this$owner.scale,
+    var _this$owner2 = this.owner,
+        config = _this$owner2.config,
+        scale = _this$owner2.scale,
         axis = config.data_axes[id];
     return axis && scale[axis] || (axis = "y"), axis;
   }, _proto.getXAxisTickFormat = function getXAxisTickFormat() {
@@ -26192,8 +26305,8 @@ function () {
         config = $$.config,
         format = $$.format,
         tickFormat = config.axis_x_tick_format,
-        isTimeSeries = $$.isTimeSeries(),
-        isCategorized = $$.isCategorized();
+        isTimeSeries = this.isTimeSeries(),
+        isCategorized = this.isCategorized();
     return tickFormat ? isFunction(tickFormat) ? currFormat = tickFormat.bind($$.api) : isTimeSeries && (currFormat = function (date) {
       return date ? format.axisTime(tickFormat)(date) : "";
     }) : currFormat = isTimeSeries ? format.defaultAxisTime : isCategorized ? $$.categoryName : function (v) {
@@ -26234,70 +26347,46 @@ function () {
       isMiddle: has("middle"),
       isBottom: has("bottom")
     };
-  }, _proto.getXAxisLabelPosition = function getXAxisLabelPosition() {
-    return this.getLabelPosition("x", ["inner-top", "inner-right"]);
-  }, _proto.getYAxisLabelPosition = function getYAxisLabelPosition() {
-    return this.getLabelPosition("y", ["inner-right", "inner-top"]);
-  }, _proto.getY2AxisLabelPosition = function getY2AxisLabelPosition() {
-    return this.getLabelPosition("y2", ["inner-right", "inner-top"]);
+  }, _proto.getAxisLabelPosition = function getAxisLabelPosition(id) {
+    return this.getLabelPosition(id, id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
   }, _proto.getLabelPositionById = function getLabelPositionById(id) {
-    return this["get" + id.toUpperCase() + "AxisLabelPosition"]();
-  }, _proto.textForXAxisLabel = function textForXAxisLabel() {
-    return this.getLabelText("x");
-  }, _proto.textForYAxisLabel = function textForYAxisLabel() {
-    return this.getLabelText("y");
-  }, _proto.textForY2AxisLabel = function textForY2AxisLabel() {
-    return this.getLabelText("y2");
-  }, _proto.xForAxisLabel = function xForAxisLabel(position, forHorizontal) {
-    forHorizontal === void 0 && (forHorizontal = !0);
+    return this.getAxisLabelPosition(id);
+  }, _proto.xForAxisLabel = function xForAxisLabel(id) {
     var $$ = this.owner,
         _$$$state = $$.state,
         width = _$$$state.width,
         height = _$$$state.height,
+        position = this.getAxisLabelPosition(id),
         x = position.isMiddle ? -height / 2 : 0;
-    return this.isHorizontal($$, forHorizontal) ? x = position.isLeft ? 0 : position.isCenter ? width / 2 : width : position.isBottom && (x = -$$.state.height), x;
-  }, _proto.dxForAxisLabel = function dxForAxisLabel(position, forHorizontal) {
-    forHorizontal === void 0 && (forHorizontal = !0);
+    return this.isHorizontal($$, id !== "x") ? x = position.isLeft ? 0 : position.isCenter ? width / 2 : width : position.isBottom && (x = -height), x;
+  }, _proto.dxForAxisLabel = function dxForAxisLabel(id) {
     var $$ = this.owner,
+        position = this.getAxisLabelPosition(id),
         dx = position.isBottom ? "0.5em" : "0";
-    return this.isHorizontal($$, forHorizontal) ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
-  }, _proto.textAnchorForAxisLabel = function textAnchorForAxisLabel(position, forHorizontal) {
-    forHorizontal === void 0 && (forHorizontal = !0);
+    return this.isHorizontal($$, id !== "x") ? dx = position.isLeft ? "0.5em" : position.isRight ? "-0.5em" : "0" : position.isTop && (dx = "-0.5em"), dx;
+  }, _proto.textAnchorForAxisLabel = function textAnchorForAxisLabel(id) {
     var $$ = this.owner,
+        position = this.getAxisLabelPosition(id),
         anchor = position.isMiddle ? "middle" : "end";
-    return this.isHorizontal($$, forHorizontal) ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
-  }, _proto.xForXAxisLabel = function xForXAxisLabel() {
-    return this.xForAxisLabel(this.getXAxisLabelPosition(), !1);
-  }, _proto.xForYAxisLabel = function xForYAxisLabel() {
-    return this.xForAxisLabel(this.getYAxisLabelPosition());
-  }, _proto.xForY2AxisLabel = function xForY2AxisLabel() {
-    return this.xForAxisLabel(this.getY2AxisLabelPosition());
-  }, _proto.dxForXAxisLabel = function dxForXAxisLabel() {
-    return this.dxForAxisLabel(this.getXAxisLabelPosition(), !1);
-  }, _proto.dxForYAxisLabel = function dxForYAxisLabel() {
-    return this.dxForAxisLabel(this.getYAxisLabelPosition());
-  }, _proto.dxForY2AxisLabel = function dxForY2AxisLabel() {
-    return this.dxForAxisLabel(this.getY2AxisLabelPosition());
-  }, _proto.dyForXAxisLabel = function dyForXAxisLabel() {
-    var $$ = this.owner,
+    return this.isHorizontal($$, id !== "x") ? anchor = position.isLeft ? "start" : position.isCenter ? "middle" : "end" : position.isBottom && (anchor = "start"), anchor;
+  }, _proto.dyForAxisLabel = function dyForAxisLabel(id) {
+    var dy,
+        $$ = this.owner,
         config = $$.config,
-        isInner = this.getXAxisLabelPosition().isInner,
-        xHeight = config.axis_x_height;
-    return config.axis_rotated ? isInner ? "1.2em" : -25 - this.getMaxTickWidth("x") : isInner ? "-0.5em" : xHeight ? xHeight - 10 : "3em";
-  }, _proto.dyForYAxisLabel = function dyForYAxisLabel() {
-    var $$ = this.owner,
-        isInner = this.getYAxisLabelPosition().isInner;
-    return $$.config.axis_rotated ? isInner ? "-0.5em" : "3em" : isInner ? "1.2em" : -10 - ($$.config.axis_y_inner ? 0 : this.getMaxTickWidth("y") + 10);
-  }, _proto.dyForY2AxisLabel = function dyForY2AxisLabel() {
-    var $$ = this.owner,
-        isInner = this.getY2AxisLabelPosition().isInner;
-    return $$.config.axis_rotated ? isInner ? "1.2em" : "-2.2em" : isInner ? "-0.5em" : 15 + ($$.config.axis_y2_inner ? 0 : this.getMaxTickWidth("y2") + 15);
-  }, _proto.textAnchorForXAxisLabel = function textAnchorForXAxisLabel() {
-    return this.textAnchorForAxisLabel(this.getXAxisLabelPosition(), !1);
-  }, _proto.textAnchorForYAxisLabel = function textAnchorForYAxisLabel() {
-    return this.textAnchorForAxisLabel(this.getYAxisLabelPosition());
-  }, _proto.textAnchorForY2AxisLabel = function textAnchorForY2AxisLabel() {
-    return this.textAnchorForAxisLabel(this.getY2AxisLabelPosition());
+        isRotated = config.axis_rotated,
+        isInner = this.getAxisLabelPosition(id).isInner,
+        tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0,
+        maxTickWidth = this.getMaxTickWidth(id);
+
+    if (id === "x") {
+      var xHeight = config.axis_x_height;
+      dy = isRotated ? isInner ? "1.2em" : -25 - maxTickWidth : isInner ? "-0.5em" : xHeight ? xHeight - 10 : tickRotate ? tickRotate - 10 : "3em";
+    } else dy = {
+      y: ["-0.5em", 10, "3em", "1.2em", 10],
+      y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
+    }[id], dy = isRotated ? isInner ? dy[0] : tickRotate ? tickRotate * (id === "y2" ? -1 : 1) - dy[1] : dy[2] : isInner ? dy[3] : (dy[4] + (config["axis_" + id + "_inner"] ? 0 : maxTickWidth + dy[4])) * (id === "y" ? -1 : 1);
+
+    return dy;
   }, _proto.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
     var $$ = this.owner,
         config = $$.config,
@@ -26321,7 +26410,7 @@ function () {
       var axis = this.getAxis(id, scale, !1, !1, !0),
           tickCount = config["axis_" + id + "_tick_count"],
           tickValues = config["axis_" + id + "_tick_values"];
-      !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
+      !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
       var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
       axis.create(dummy), dummy.selectAll("text").each(function () {
         maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
@@ -26334,17 +26423,24 @@ function () {
         $$ = this.owner,
         main = $$.$el.main,
         labels = {
-      X: main.select("." + config_classes.axisX + " ." + config_classes.axisXLabel),
-      Y: main.select("." + config_classes.axisY + " ." + config_classes.axisYLabel),
-      Y2: main.select("." + config_classes.axisY2 + " ." + config_classes.axisY2Label)
+      x: main.select("." + config_classes.axisX + " ." + config_classes.axisXLabel),
+      y: main.select("." + config_classes.axisY + " ." + config_classes.axisYLabel),
+      y2: main.select("." + config_classes.axisY2 + " ." + config_classes.axisY2Label)
     };
 
     Object.keys(labels).filter(function (id) {
       return !labels[id].empty();
     }).forEach(function (v) {
-      var node = labels[v],
-          axisLabel = v + "AxisLabel";
-      (withTransition ? node.transition() : node).attr("x", _this3["xFor" + axisLabel].bind(_this3)).attr("dx", _this3["dxFor" + axisLabel].bind(_this3)).attr("dy", _this3["dyFor" + axisLabel].bind(_this3)).text(_this3["textFor" + axisLabel].bind(_this3));
+      var node = labels[v];
+      (withTransition ? node.transition() : node).attr("x", function () {
+        return _this3.xForAxisLabel(v);
+      }).attr("dx", function () {
+        return _this3.dxForAxisLabel(v);
+      }).attr("dy", function () {
+        return _this3.dyForAxisLabel(v);
+      }).text(function () {
+        return _this3.getLabelText(v);
+      });
     });
   }, _proto.getPadding = function getPadding(padding, key, defaultValue, domainLength) {
     var p = isNumber(padding) ? padding : padding[key];
@@ -26370,7 +26466,7 @@ function () {
       var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
 
       if (targetCount === 1) tickValues = [values[0]];else if (targetCount === 2) tickValues = [values[0], values[values.length - 1]];else if (targetCount > 2) {
-        var isCategorized = this.owner.isCategorized();
+        var isCategorized = this.isCategorized();
 
         for (count = targetCount - 2, start = values[0], end = values[values.length - 1], interval = (end - start) / (count + 1), tickValues = [start], i = 0; i < count; i++) tickValue = +start + interval * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
 
@@ -26400,12 +26496,14 @@ function () {
       axisSubX: axisSubX
     };
   }, _proto.redraw = function redraw(transitions, isHidden, isInit) {
-    var $$ = this.owner,
+    var _this4 = this,
+        $$ = this.owner,
         config = $$.config,
         $el = $$.$el,
         opacity = isHidden ? "0" : "1";
+
     ["x", "y", "y2", "subX"].forEach(function (id) {
-      var axis = $$.axis[id],
+      var axis = _this4[id],
           $axis = $el.axis[id];
       axis && $axis && (!isInit && (axis.config.withoutTransition = !config.transition_duration), $axis.style("opacity", opacity), axis.create(transitions["axis" + capitalize(id)]));
     }), this.updateAxes();
@@ -26420,14 +26518,14 @@ function () {
    */
   , _proto.redrawAxis = function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
     var xDomainForZoom,
-        _this4 = this,
+        _this5 = this,
         $$ = this.owner,
         config = $$.config,
         scale = $$.scale,
         $el = $$.$el,
         hasZoom = !!scale.zoom;
 
-    !hasZoom && $$.isCategorized() && targetsToShow.length === 0 && scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]), scale.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && this.updateXAxisTickValues(targetsToShow)) : $$.axis.x && ($$.axis.x.tickValues([]), $$.axis.subX && $$.axis.subX.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = scale.x.orgDomain()), ["y", "y2"].forEach(function (key) {
+    !hasZoom && this.isCategorized() && targetsToShow.length === 0 && scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]), scale.x && targetsToShow.length ? (!hasZoom && $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain), !config.axis_x_tick_values && this.updateXAxisTickValues(targetsToShow)) : this.x && (this.x.tickValues([]), this.subX && this.subX.tickValues([])), config.zoom_rescale && !flow && (xDomainForZoom = scale.x.orgDomain()), ["y", "y2"].forEach(function (key) {
       var axis = scale[key];
 
       if (axis) {
@@ -26436,9 +26534,9 @@ function () {
 
         if (axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom)), !tickValues && tickCount) {
           var domain = axis.domain();
-          $$[key + "Axis"].tickValues(_this4.generateTickValues(domain, domain.every(function (v) {
+          $$[key + "Axis"].tickValues(_this5.generateTickValues(domain, domain.every(function (v) {
             return v === 0;
-          }) ? 1 : tickCount, $$.isTimeSeriesY()));
+          }) ? 1 : tickCount, _this5.isTimeSeriesY()));
         }
       }
     }), this.redraw(transitions, $$.hasArcType(), isInit), this.updateLabels(wth.Transition), (wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length && this.setCulling(), wth.Y && (scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y")), scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2")));
@@ -26796,20 +26894,24 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     }), newRows;
   },
   convertDataToTargets: function convertDataToTargets(data, appendXs) {
-    var xsData,
-        _this3 = this,
+    var _this3 = this,
         $$ = this,
+        axis = $$.axis,
         config = $$.config,
         state = $$.state,
-        isTimeSeries = $$.isTimeSeries(),
+        isCategorized = !1,
+        isTimeSeries = !1,
+        isCustomX = !1;
+
+    axis && (isCategorized = axis.isCategorized(), isTimeSeries = axis.isTimeSeries(), isCustomX = axis.isCustomX());
+    var xsData,
         dataKeys = Object.keys(data[0] || {}),
         ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [],
         xs = dataKeys.length ? dataKeys.filter($$.isX, $$) : [];
-
     ids.forEach(function (id) {
       var xKey = _this3.getXKey(id);
 
-      _this3.isCustomX() || isTimeSeries ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
+      isCustomX || isTimeSeries ? xs.indexOf(xKey) >= 0 ? xsData = (appendXs && $$.data.xs[id] || []).concat(data.map(function (d) {
         return d[xKey];
       }).filter(isValue).map(function (rawX, i) {
         return $$.generateTargetX(rawX, id, i);
@@ -26823,8 +26925,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     var targets = ids.map(function (id, index) {
       var convertedId = config.data_idConverter.bind($$.api)(id),
           xKey = $$.getXKey(id),
-          isCategorized = $$.isCustomX() && $$.isCategorized(),
-          hasCategory = isCategorized && data.map(function (v) {
+          isCategory = isCustomX && isCategorized,
+          hasCategory = isCategory && data.map(function (v) {
         return v.x;
       }).every(function (v) {
         return config.axis_x_categories.indexOf(v) > -1;
@@ -26836,7 +26938,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, isCategorized && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, isCategory && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
@@ -26975,12 +27077,13 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   },
   generateTargetX: function generateTargetX(rawX, id, index) {
     var $$ = this,
-        x = $$.isCategorized() ? index : rawX || index;
+        axis = $$.axis,
+        x = axis && axis.isCategorized() ? index : rawX || index;
 
-    if ($$.isTimeSeries()) {
+    if (axis && axis.isTimeSeries()) {
       var fn = parseDate.bind($$);
       x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
-    } else $$.isCustomX() && !$$.isCategorized() && (x = isValue(rawX) ? +rawX : $$.getXValue(id, index));
+    } else axis && axis.isCustomX() && !axis.isCategorized() && (x = isValue(rawX) ? +rawX : $$.getXValue(id, index));
 
     return x;
   },
@@ -27173,12 +27276,13 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   },
   mapTargetsToUniqueXs: function mapTargetsToUniqueXs(targets) {
     var $$ = this,
+        axis = $$.axis,
         xs = [];
     return targets && targets.length && (xs = getUnique(mergeArray(targets.map(function (t) {
       return t.values.map(function (v) {
         return +v.x;
       });
-    }))), xs = $$.isTimeSeries() ? xs.map(function (x) {
+    }))), xs = axis && axis.isTimeSeries() ? xs.map(function (x) {
       return new Date(+x);
     }) : xs.map(function (x) {
       return +x;
@@ -27380,10 +27484,11 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    */
   convertValuesToStep: function convertValuesToStep(values) {
     var $$ = this,
+        axis = $$.axis,
         config = $$.config,
         isRotated = config.axis_rotated,
         stepType = config.line_step_type,
-        isCategorized = $$.isCategorized(),
+        isCategorized = !!axis && axis.isCategorized(),
         converted = isArray(values) ? values.concat() : [values];
     if (!isRotated && !isCategorized) return values; // insert & append cloning first/last value to be fully rendered covering on each gap sides
 
@@ -27517,6 +27622,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
  * billboard.js project is licensed under the MIT license
  */
 
+
 /* harmony default export */ var data_load = ({
   load: function load(rawTargets, args) {
     var $$ = this,
@@ -27560,7 +27666,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       return $$.hasTarget($$.data.targets, id);
     }), targetIds && targetIds.length !== 0 ? void ($el.svg.selectAll(targetIds.map(function (id) {
       return $$.selectorTarget(id);
-    })).transition().style("opacity", "0").remove().call($$.endall, done), targetIds.forEach(function (id) {
+    })).transition().style("opacity", "0").remove().call(endall, done), targetIds.forEach(function (id) {
       state.withoutFadeIn[id] = !1, $el.legend && $el.legend.selectAll("." + config_classes.legendItem + $$.getTargetSelectorSuffix(id)).remove(), $$.data.targets = $$.data.targets.filter(function (t) {
         return t.id !== id;
       });
@@ -27926,6 +28032,7 @@ var colorizePattern = function (pattern, color, id) {
 /* harmony default export */ var internals_domain = ({
   getYDomainMinMax: function getYDomainMinMax(targets, type) {
     var $$ = this,
+        axis = $$.axis,
         config = $$.config,
         isMin = type === "min",
         dataGroups = config.data_groups,
@@ -27937,14 +28044,14 @@ var colorizePattern = function (pattern, color, id) {
           return ids.indexOf(v) >= 0;
         }), _idsInGroup.length === 0) return idsInGroup = _idsInGroup, "continue";
         var baseId = _idsInGroup[0],
-            baseAxisId = $$.axis.getId(baseId);
+            baseAxisId = axis.getId(baseId);
         hasValue && ys[baseId] && (ys[baseId] = ys[baseId].map(function (v) {
           return (isMin ? v < 0 : v > 0) ? v : 0;
         }));
 
         for (var id, _ret2, _loop2 = function (k, id) {
           if (!ys[id]) return "continue";
-          var axisId = $$.axis.getId(id);
+          var axisId = axis.getId(id);
           ys[id].forEach(function (v, i) {
             var val = +v,
                 meetCondition = isMin ? val > 0 : val < 0;
@@ -27966,12 +28073,13 @@ var colorizePattern = function (pattern, color, id) {
   },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
     var $$ = this,
+        axis = $$.axis,
         config = $$.config,
         scale = $$.scale,
         pfx = "axis_" + axisId;
     if ($$.isStackNormalized()) return [0, 100];
     var targetsByAxisId = targets.filter(function (t) {
-      return $$.axis.getId(t.id) === axisId;
+      return axis.getId(t.id) === axisId;
     }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
     if (yTargets.length === 0) // use domain of the other axis if target of axisId is none
@@ -28016,7 +28124,7 @@ var colorizePattern = function (pattern, color, id) {
     } else if (showVerticalDataLabel) {
       var lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
       ["bottom", "top"].forEach(function (v, i) {
-        padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+        padding[v] += axis.convertPixelsToAxisPadding(lengths[i], domainLength);
       });
     } // if padding is set, the domain will be updated relative the current domain value
     // ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
@@ -28024,7 +28132,7 @@ var colorizePattern = function (pattern, color, id) {
 
     var p = config[pfx + "_padding"];
     notEmpty(p) && ["bottom", "top"].forEach(function (v) {
-      padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+      padding[v] = axis.getPadding(p, v, padding[v], domainLength);
     }), isZeroBased && (isAllPositive && (padding.bottom = yDomainMin), isAllNegative && (padding.top = -yDomainMax));
     var domain = [yDomainMin - padding.bottom, yDomainMax + padding.top];
     return isInverted ? domain.reverse() : domain;
@@ -28038,7 +28146,7 @@ var colorizePattern = function (pattern, color, id) {
       }));
     })),
         value = isObject(configValue) ? configValue.value : configValue;
-    return value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value, isObject(configValue) && configValue.fit && (type === "min" && value < dataValue || type === "max" && value > dataValue) && (value = undefined), isDefined(value) ? value : dataValue;
+    return value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate(value) : value, isObject(configValue) && configValue.fit && (type === "min" && value < dataValue || type === "max" && value > dataValue) && (value = undefined), isDefined(value) ? value : dataValue;
   },
   getXDomainMin: function getXDomainMin(targets) {
     return this.getXDomainMinMax(targets, "min");
@@ -28050,10 +28158,11 @@ var colorizePattern = function (pattern, color, id) {
     var maxDataCount,
         padding,
         $$ = this,
+        axis = $$.axis,
         config = $$.config,
         diff = domain[1] - domain[0],
         xPadding = config.axis_x_padding;
-    $$.isCategorized() ? padding = 0 : $$.hasType("bar") ? (maxDataCount = $$.getMaxDataCount(), padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5) : padding = diff * .01;
+    axis.isCategorized() ? padding = 0 : $$.hasType("bar") ? (maxDataCount = $$.getMaxDataCount(), padding = maxDataCount > 1 ? diff / (maxDataCount - 1) / 2 : .5) : padding = diff * .01;
     var left = padding,
         right = padding;
     return isObject(xPadding) && notEmpty(xPadding) ? (left = isValue(xPadding.left) ? xPadding.left : padding, right = isValue(xPadding.right) ? xPadding.right : padding) : isNumber(config.axis_x_padding) && (left = xPadding, right = xPadding), {
@@ -28063,14 +28172,16 @@ var colorizePattern = function (pattern, color, id) {
   },
   getXDomain: function getXDomain(targets) {
     var $$ = this,
+        isCategorized = $$.axis.isCategorized(),
+        isTimeSeries = $$.axis.isTimeSeries(),
         xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)],
+        padding = $$.getXDomainPadding(xDomain),
         _xDomain = xDomain,
         firstX = _xDomain[0],
         lastX = _xDomain[1],
-        padding = $$.getXDomainPadding(xDomain),
         min = 0,
         max = 0;
-    return firstX - lastX !== 0 || $$.isCategorized() || ($$.isTimeSeries() ? (firstX = new Date(firstX.getTime() * .5), lastX = new Date(lastX.getTime() * 1.5)) : (firstX = firstX === 0 ? 1 : firstX * .5, lastX = lastX === 0 ? -1 : lastX * 1.5)), (firstX || firstX === 0) && (min = $$.isTimeSeries() ? new Date(firstX.getTime() - padding.left) : firstX - padding.left), (lastX || lastX === 0) && (max = $$.isTimeSeries() ? new Date(lastX.getTime() + padding.right) : lastX + padding.right), [min, max];
+    return firstX - lastX !== 0 || isCategorized || (isTimeSeries ? (firstX = new Date(firstX.getTime() * .5), lastX = new Date(lastX.getTime() * 1.5)) : (firstX = firstX === 0 ? 1 : firstX * .5, lastX = lastX === 0 ? -1 : lastX * 1.5)), (firstX || firstX === 0) && (min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left), (lastX || lastX === 0) && (max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right), [min, max];
   },
   updateXDomain: function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
     var $$ = this,
@@ -28618,11 +28729,130 @@ function getFormat($$, typeValue, v) {
     background && (withTransition ? background.transition() : background).attr("height", $$.getLegendHeight() - 12).attr("width", maxWidth * (step + 1) + 10), $$.updateLegendItemWidth(maxWidth), $$.updateLegendItemHeight(maxHeight), $$.updateLegendStep(step);
   }
 });
+// CONCATENATED MODULE: ./src/ChartInternal/internals/redraw.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+
+/* harmony default export */ var internals_redraw = ({
+  redraw: function redraw(options, transitionsValue) {
+    options === void 0 && (options = {});
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        $el = $$.$el,
+        main = $el.main,
+        targetsToShow = $$.filterTargetsToShow($$.data.targets),
+        initializing = options.initializing,
+        flow = options.flow,
+        wth = $$.getWithOption(options),
+        duration = wth.Transition ? config.transition_duration : 0,
+        durationForExit = wth.TransitionForExit ? duration : 0,
+        durationForAxis = wth.TransitionForAxis ? duration : 0,
+        transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
+    // text
+    // title
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+  },
+
+  /**
+   * Generate redraw list
+   * @param {Object} targets targets data to be shown
+   * @param {Object} flow
+   * @param {Object} duration
+   * @param {Boolean} withSubchart whether or not to show subchart
+   * @private
+   */
+  generateRedrawList: function generateRedrawList(targets, flow, duration, withSubchart) {
+    var $$ = this,
+        config = $$.config,
+        state = $$.state,
+        shape = $$.getDrawShape();
+    state.hasAxis && config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
+    // generate flow
+    var flowFn = flow && $$.generateFlow({
+      targets: targets,
+      flow: flow,
+      duration: flow.duration,
+      shape: shape,
+      xv: $$.xv.bind($$)
+    }),
+        isTransition = (duration || flowFn) && isTabVisible(),
+        redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
+        afterRedraw = flow || config.onrendered ? function () {
+      flowFn && flowFn(), callFn(config.onrendered, $$.api);
+    } : null;
+    if (afterRedraw) // Only use transition when current tab is visible.
+      if (isTransition && redrawList.length) {
+        // Wait for end of transitions for callback
+        var waitForDraw = generateWait(); // transition should be derived from one transition
+
+        src_transition_transition().duration(duration).each(function () {
+          redrawList.reduce(function (acc, t1) {
+            return acc.concat(t1);
+          }, []).forEach(function (t) {
+            return waitForDraw.add(t);
+          });
+        }).call(waitForDraw, afterRedraw);
+      } else state.transiting || afterRedraw(); // update fadein condition
+
+    $$.mapToIds($$.data.targets).forEach(function (id) {
+      state.withoutFadeIn[id] = !0;
+    });
+  },
+  getRedrawList: function getRedrawList(shape, flow, flowFn, isTransition) {
+    var $$ = this,
+        config = $$.config,
+        _$$$state = $$.state,
+        hasAxis = _$$$state.hasAxis,
+        hasRadar = _$$$state.hasRadar,
+        _shape$pos = shape.pos,
+        cx = _shape$pos.cx,
+        cy = _shape$pos.cy,
+        xForText = _shape$pos.xForText,
+        yForText = _shape$pos.yForText,
+        list = [];
+
+    if (hasAxis) {
+      var _shape$type = shape.type,
+          area = _shape$type.area,
+          bar = _shape$type.bar,
+          line = _shape$type.line;
+      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+    }
+
+    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
+  },
+  updateAndRedraw: function updateAndRedraw(options) {
+    options === void 0 && (options = {});
+    var transitions,
+        $$ = this,
+        config = $$.config,
+        state = $$.state;
+    // same with redraw
+    // NOT same with redraw
+    // Draw with new sizes & scales
+    options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), options.withLegend && config.legend_show || (state.hasAxis && (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0)), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
+  },
+  redrawWithoutRescale: function redrawWithoutRescale() {
+    this.redraw({
+      withY: !1,
+      withSubchart: !1,
+      withEventRect: !1,
+      withTransitionForAxis: !1
+    });
+  }
+});
 // CONCATENATED MODULE: ./src/ChartInternal/internals/scale.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 /* harmony default export */ var internals_scale = ({
   getScale: function getScale(min, max, forTimeseries) {
@@ -28638,9 +28868,9 @@ function getFormat($$, typeValue, v) {
    * @return {Function} scale
    * @private
    */
-  getX: function getX(min, max, domain, offset) {
+  getXScale: function getXScale(min, max, domain, offset) {
     var $$ = this,
-        scale = $$.scale.zoom || $$.getScale(min, max, $$.isTimeSeries());
+        scale = $$.scale.zoom || $$.getScale(min, max, $$.axis.isTimeSeries());
     return $$.getCustomizedScale(domain ? scale.domain(domain) : scale, offset);
   },
 
@@ -28652,9 +28882,23 @@ function getFormat($$, typeValue, v) {
    * @return {Function} scale
    * @private
    */
-  getY: function getY(min, max, domain) {
-    var scale = this.getScale(min, max, this.isTimeSeriesY());
+  getYScale: function getYScale(min, max, domain) {
+    var $$ = this,
+        scale = $$.getScale(min, max, $$.axis.isTimeSeriesY());
     return domain && scale.domain(domain), scale;
+  },
+
+  /**
+   * Get y Axis scale
+   * @param {String} id Axis id
+   * @param {Boolean} isSub Weather is sub Axis
+   * @private
+   */
+  getYScaleById: function getYScaleById(id, isSub) {
+    isSub === void 0 && (isSub = !1);
+    var isY2 = this.axis.getId(id) === "y2",
+        key = isSub ? isY2 ? "subY2" : "subY" : isY2 ? "y2" : "y";
+    return this.scale[key];
   },
 
   /**
@@ -28681,22 +28925,10 @@ function getFormat($$, typeValue, v) {
       return scaleValue.domain();
     }, scale.orgScale = function () {
       return scaleValue;
-    }, $$.isCategorized() && (scale.domain = function (domainValue) {
+    }, $$.axis.isCategorized() && (scale.domain = function (domainValue) {
       var domain = domainValue;
       return arguments.length ? (scaleValue.domain(domain), scale) : (domain = this.orgDomain(), [domain[0], domain[1] + 1]);
     }), scale;
-  },
-  getYScale: function getYScale(id) {
-    var _this$scale = this.scale,
-        y = _this$scale.y,
-        y2 = _this$scale.y2;
-    return this.axis.getId(id) === "y2" ? y2 : y;
-  },
-  getSubYScale: function getSubYScale(id) {
-    var _this$scale2 = this.scale,
-        subY = _this$scale2.subY,
-        subY2 = _this$scale2.subY2;
-    return this.axis.getId(id) === "y2" ? subY2 : subY;
   },
 
   /**
@@ -28737,13 +28969,47 @@ function getFormat($$, typeValue, v) {
           xSubDomain = updateXDomain && org.xDomain; // update edges
 
       // y Axis
-      scale.x = $$.getX(min.x, max.x, xDomain, function () {
+      scale.x = $$.getXScale(min.x, max.x, xDomain, function () {
         return axis.x.tickOffset();
-      }), scale.subX = $$.getX(min.x, max.x, xSubDomain, function (d) {
+      }), scale.subX = $$.getXScale(min.x, max.x, xSubDomain, function (d) {
         return d % 1 ? 0 : axis.subX.tickOffset();
-      }), format.xAxisTick = axis.getXAxisTickFormat(), axis.tick.x = axis.getTickValues("x"), axis.x = axis.getAxis("x", scale.x, config.axis_x_tick_outer, isInit), config.subchart_show && (axis.subX = axis.getAxis("subX", scale.subX, config.axis_x_tick_outer, isInit)), scale.y = $$.getY(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default), scale.subY = $$.getY(min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default), axis.tick.y = axis.getTickValues("y"), axis.y = axis.getAxis("y", scale.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && (scale.y2 = $$.getY(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default), scale.subY2 = $$.getY(min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default), axis.tick.y2 = axis.getTickValues("y2"), axis.y2 = axis.getAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit));
+      }), format.xAxisTick = axis.getXAxisTickFormat(), axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit), config.subchart_show && axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit), scale.y = $$.getYScale(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default), scale.subY = $$.getYScale(min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default), axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit), config.axis_y2_show && (scale.y2 = $$.getYScale(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default), scale.subY2 = $$.getYScale(min.subY, max.subY, scale.subY2 ? scale.subY2.domain() : config.axis_y2_default), axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit));
     } else // update for arc
     $$.updateArc && $$.updateArc();
+  },
+
+  /**
+   * Get the zoom or unzoomed scaled value
+   * @param {Date|Number|Object} d Data value
+   * @private
+   */
+  xx: function xx(d) {
+    var $$ = this,
+        config = $$.config,
+        _$$$scale = $$.scale,
+        x = _$$$scale.x,
+        zoom = _$$$scale.zoom,
+        fn = config.zoom_enabled && zoom ? zoom : x;
+    return d ? fn(isValue(d.x) ? d.x : d) : null;
+  },
+  xv: function xv(d) {
+    var $$ = this,
+        axis = $$.axis,
+        config = $$.config,
+        x = $$.scale.x,
+        value = $$.getBaseValue(d);
+    return axis.isTimeSeries() ? value = parseDate.call($$, value) : axis.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(value)), Math.ceil(x(value));
+  },
+  yv: function yv(d) {
+    var $$ = this,
+        _$$$scale2 = $$.scale,
+        y = _$$$scale2.y,
+        y2 = _$$$scale2.y2,
+        yScale = d.axis && d.axis === "y2" ? y2 : y;
+    return Math.ceil(yScale($$.getBaseValue(d)));
+  },
+  subxx: function subxx(d) {
+    return d ? this.scale.subX(d.x) : null;
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/internals/size.ts
@@ -28820,7 +29086,7 @@ function getFormat($$, typeValue, v) {
         legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = config.axis_y2_axes.length,
         axisWidth = $$.getAxisWidthByAxisId("y2");
-    return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? 10 + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? 2 + legendWidthOnRight + ($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? 10 + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
   },
 
   /**
@@ -29355,7 +29621,7 @@ function getTextPos(pos, width) {
 
     // Show tooltip if needed
     if ($el.tooltip = src_select(bindto), $el.tooltip.empty() && ($el.tooltip = $el.chart.style("position", "relative").append("div").attr("class", config_classes.tooltipContainer).style("position", "absolute").style("pointer-events", "none").style("display", "none")), config.tooltip_init_show) {
-      if ($$.isTimeSeries() && isString(config.tooltip_init_x)) {
+      if ($$.axis.isTimeSeries() && isString(config.tooltip_init_x)) {
         var i,
             val,
             targets = $$.data.targets[0];
@@ -29661,10 +29927,12 @@ function getTextPos(pos, width) {
       var linkedName = config.tooltip_linked_name;
       charts.forEach(function (c) {
         if (c !== $$.api) {
-          var _config = c.internal.config,
+          var _c$internal = c.internal,
+              _config = _c$internal.config,
+              $el = _c$internal.$el,
               isLinked = _config.tooltip_linked,
               name = _config.tooltip_linked_name,
-              isInDom = browser_doc.body.contains(c.element);
+              isInDom = browser_doc.body.contains($el.chart.node());
 
           if (isLinked && linkedName === name && isInDom) {
             var data = c.internal.$el.tooltip.data()[0],
@@ -30140,12 +30408,13 @@ var api_axis_axis = {
     if ((args.json || args.rows || args.columns) && (data = $$.convertData(args)), data && isTabVisible()) {
       var notfoundIds = [],
           orgDataCount = $$.getMaxDataCount(),
-          targets = $$.convertDataToTargets(data, !0);
+          targets = $$.convertDataToTargets(data, !0),
+          isTimeSeries = $$.axis.isTimeSeries();
       $$.data.targets.forEach(function (t) {
         for (var found = !1, i = 0; i < targets.length; i++) if (t.id === targets[i].id) {
           found = !0, t.values[t.values.length - 1] && (tail = t.values[t.values.length - 1].index + 1), length = targets[i].values.length;
 
-          for (var _j3 = 0; _j3 < length; _j3++) targets[i].values[_j3].index = tail + _j3, $$.isTimeSeries() || (targets[i].values[_j3].x = tail + _j3);
+          for (var _j3 = 0; _j3 < length; _j3++) targets[i].values[_j3].index = tail + _j3, isTimeSeries || (targets[i].values[_j3].x = tail + _j3);
 
           t.values = t.values.concat(targets[i].values), targets.splice(i, 1);
           break;
@@ -30159,7 +30428,7 @@ var api_axis_axis = {
           for (var _j4 = 0; _j4 < length; _j4++) t.values.push({
             id: t.id,
             index: tail + _j4,
-            x: $$.isTimeSeries() ? $$.getOtherTargetX(tail + _j4) : tail + _j4,
+            x: isTimeSeries ? $$.getOtherTargetX(tail + _j4) : tail + _j4,
             value: null
           });
         }
@@ -30167,12 +30436,12 @@ var api_axis_axis = {
         for (var missing = [], i = $$.data.targets[0].values[0].index; i < tail; i++) missing.push({
           id: t.id,
           index: i,
-          x: $$.isTimeSeries() ? $$.getOtherTargetX(i) : i,
+          x: isTimeSeries ? $$.getOtherTargetX(i) : i,
           value: null
         });
 
         t.values.forEach(function (v) {
-          v.index += tail, $$.isTimeSeries() || (v.x += tail);
+          v.index += tail, isTimeSeries || (v.x += tail);
         }), t.values = missing.concat(t.values);
       }), $$.data.targets = $$.data.targets.concat(targets);
       // add remained
@@ -30180,9 +30449,9 @@ var api_axis_axis = {
       // const dataCount = $$.getMaxDataCount();
       var baseTarget = $$.data.targets[0],
           baseValue = baseTarget.values[0];
-      isDefined(args.to) ? (length = 0, to = $$.isTimeSeries() ? parseDate.call($$, args.to) : args.to, baseTarget.values.forEach(function (v) {
+      isDefined(args.to) ? (length = 0, to = isTimeSeries ? parseDate.call($$, args.to) : args.to, baseTarget.values.forEach(function (v) {
         v.x < to && length++;
-      })) : isDefined(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && $$.isTimeSeries() && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)]) : (diff = $$.isTimeSeries() ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x]), domain && $$.updateXDomain(null, !0, !0, !1, domain), $$.updateTargets($$.data.targets), $$.redraw({
+      })) : isDefined(args.length) && (length = args.length), orgDataCount ? orgDataCount === 1 && isTimeSeries && (diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2, domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)]) : (diff = isTimeSeries ? baseTarget.values.length > 1 ? baseTarget.values[baseTarget.values.length - 1].x - baseValue.x : baseValue.x - $$.getXDomain($$.data.targets)[0] : 1, domain = [baseValue.x - diff, baseValue.x]), domain && $$.updateXDomain(null, !0, !0, !1, domain), $$.updateTargets($$.data.targets), $$.redraw({
         flow: {
           index: baseValue.index,
           length: length,
@@ -30609,11 +30878,13 @@ util_extend(regions_regions, {
    */
   x: function x(_x) {
     var $$ = this.internal,
-        isCategorized = $$.isCustomX() && $$.isCategorized();
-    return isArray(_x) && (isCategorized ? this.categories(_x) : ($$.updateTargetX($$.data.targets, _x), $$.redraw({
+        axis = $$.axis,
+        data = $$.data,
+        isCategorized = axis.isCustomX() && axis.isCategorized();
+    return isArray(_x) && (isCategorized ? this.categories(_x) : ($$.updateTargetX(data.targets, _x), $$.redraw({
       withUpdateOrgXDomain: !0,
       withUpdateXDomain: !0
-    }))), isCategorized ? this.categories() : $$.data.xs;
+    }))), isCategorized ? this.categories() : data.xs;
   },
 
   /**
@@ -31055,7 +31326,7 @@ var zoom_zoom = function (domainValue) {
       domain = domainValue;
 
   if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
-    var isTimeSeries = $$.isTimeSeries();
+    var isTimeSeries = $$.axis.isTimeSeries();
 
     if (isTimeSeries) {
       var fn = parseDate.bind($$);
@@ -31304,6 +31575,7 @@ util_extend(zoom_zoom, {
 
 
 
+
 /* harmony default export */ var interactions_flow = ({
   /**
    * Generate flow
@@ -31349,7 +31621,7 @@ util_extend(zoom_zoom, {
         flowLength = _flow.length,
         orgDataCount = _flow.orgDataCount,
         transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength),
-        wait = $$.generateWait(),
+        wait = generateWait(),
         gt = src_transition_transition().ease(linear_linear).duration(duration);
     wait.add(Object.keys(elements).map(function (v) {
       var n = elements[v];
@@ -31429,7 +31701,7 @@ util_extend(zoom_zoom, {
         flowEnd = $$.getValueOnIndex(dataValues, flowIndex + flowLength),
         orgDomain = x.domain(),
         domain = $$.updateXDomain(targets, !0, !0);
-    orgDataCount ? orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x) ? translateX = x(orgDomain[0]) - x(domain[0]) : translateX = $$.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x(flowStart.x) - x(flowEnd.x) : dataValues.length === 1 ? $$.isTimeSeries() ? (flowStart = $$.getValueOnIndex(dataValues, 0), flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1), translateX = x(flowStart.x) - x(flowEnd.x)) : translateX = diffDomain(domain) / 2 : translateX = x(orgDomain[0]) - x(domain[0]);
+    orgDataCount ? orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x) ? translateX = x(orgDomain[0]) - x(domain[0]) : translateX = $$.axis.isTimeSeries() ? x(orgDomain[0]) - x(domain[0]) : x(flowStart.x) - x(flowEnd.x) : dataValues.length === 1 ? $$.axis.isTimeSeries() ? (flowStart = $$.getValueOnIndex(dataValues, 0), flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1), translateX = x(flowStart.x) - x(flowEnd.x)) : translateX = diffDomain(domain) / 2 : translateX = x(orgDomain[0]) - x(domain[0]);
     var scaleX = diffDomain(orgDomain) / diffDomain(domain);
     return "translate(" + translateX + ",0) scale(" + scaleX + ",1)";
   }
@@ -31543,7 +31815,7 @@ util_extend(zoom_zoom, {
     if ($$.isMultipleX()) // TODO: rotated not supported yet
     x = 0, y = 0, w = state.width, h = state.height;else {
       var rectW, rectX;
-      if ($$.isCategorized()) rectW = $$.getEventRectWidth(), rectX = function (d) {
+      if ($$.axis.isCategorized()) rectW = $$.getEventRectWidth(), rectX = function (d) {
         return xScale(d.x) - rectW / 2;
       };else {
         var getPrevNextX = function (d) {
@@ -31964,7 +32236,7 @@ util_extend(zoom_zoom, {
         config = $$.config,
         scale = $$.scale,
         extent = config.axis_x_extent;
-    if (extent) if (isFunction(extent)) extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);else if ($$.isTimeSeries() && extent.every(isNaN)) {
+    if (extent) if (isFunction(extent)) extent = extent.bind($$.api)($$.getXDomain($$.data.targets), scale.subX);else if ($$.axis.isTimeSeries() && extent.every(isNaN)) {
       var fn = parseDate.bind($$);
       extent = extent.map(function (v) {
         return scale.subX(fn(v));
@@ -32075,7 +32347,7 @@ util_extend(zoom_zoom, {
           transform = event.transform;
       !isMousemove && isZoomOut && scale.x.domain().every(function (v, i) {
         return v !== org.xDomain[i];
-      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform), $$.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0] && scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]), $$.redraw({
+      }) && scale.x.domain(org.xDomain), $$.zoom.updateTransformScale(transform), $$.axis.isCategorized() && scale.x.orgDomain()[0] === org.xDomain[0] && scale.x.domain([org.xDomain[0] - 1e-10, scale.x.orgDomain()[1]]), $$.redraw({
         withTransition: !1,
         withY: config.zoom_rescale,
         withSubchart: !1,
@@ -32358,7 +32630,7 @@ function smoothLines(el, type) {
         grid = _$$$$el2.grid,
         isRotated = config.axis_rotated,
         xgridData = $$.generateGridData(config.grid_x_type, scale.x),
-        tickOffset = $$.isCategorized() ? $$.axis.x.tickOffset() : 0,
+        tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0,
         pos = function (d) {
       return ((scale.zoom || scale.x)(d) + tickOffset) * (isRotated ? -1 : 1);
     };
@@ -32510,7 +32782,7 @@ function smoothLines(el, type) {
             el = src_select(this),
             pos = {
           x: xx(d),
-          y: $$.getYScale(d.id)(d.value)
+          y: $$.getYScaleById(d.id)(d.value)
         };
         if (el.classed(config_classes.xgridFocus)) xy = isRotated ? [null, // x1
         pos.x, // y1
@@ -32623,7 +32895,7 @@ function smoothLines(el, type) {
         isX = type === "x",
         key = "start",
         pos = 0;
-    return d.axis === "y" || d.axis === "y2" ? (!isX && (key = "end"), (isX ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], pos = currScale(d[key]))) : (isX ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, pos = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key])), pos;
+    return d.axis === "y" || d.axis === "y2" ? (!isX && (key = "end"), (isX ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], pos = currScale(d[key]))) : (isX ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, pos = currScale($$.axis.isTimeSeries() ? parseDate.call($$, d[key]) : d[key])), pos;
   },
   regionX: function regionX(d) {
     return this.getRegionXY("x", d);
@@ -32642,7 +32914,7 @@ function smoothLines(el, type) {
         start = $$[isWidth ? "regionX" : "regionY"](d),
         key = "end",
         end = state[type];
-    return d.axis === "y" || d.axis === "y2" ? (!isWidth && (key = "start"), (isWidth ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], end = currScale(d[key]))) : (isWidth ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, end = currScale($$.isTimeSeries() ? parseDate.call($$, d[key]) : d[key])), end < start ? 0 : end - start;
+    return d.axis === "y" || d.axis === "y2" ? (!isWidth && (key = "start"), (isWidth ? isRotated : !isRotated) && key in d && (currScale = scale[d.axis], end = currScale(d[key]))) : (isWidth ? !isRotated : isRotated) && key in d && (currScale = scale.zoom || scale.x, end = currScale($$.axis.isTimeSeries() ? parseDate.call($$, d[key]) : d[key])), end < start ? 0 : end - start;
   },
   regionWidth: function regionWidth(d) {
     return this.getRegionSize("width", d);
@@ -32846,7 +33118,7 @@ function smoothLines(el, type) {
         scale = $$.scale,
         maxDataCount = $$.getMaxDataCount(),
         isGrouped = config.data_groups.length,
-        tickInterval = (scale.zoom || $$) && !$$.isCategorized() ? $$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount),
+        tickInterval = (scale.zoom || $$) && !$$.axis.isCategorized() ? $$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount),
         getWidth = function (id) {
       var width = id ? config.bar_width[id] : config.bar_width,
           ratio = id ? width.ratio : config.bar_width_ratio,
@@ -32920,9 +33192,9 @@ function smoothLines(el, type) {
         barX = $$.getShapeX(barW, barIndices, !!isSub),
         barY = $$.getShapeY(!!isSub),
         barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
-        yScale = isSub ? $$.getSubYScale : $$.getYScale;
+        yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
+      var y0 = yScale(d.id, isSub)(0),
           offset = barOffset(d, i) || y0,
           width = isNumber(barW) ? barW : barW[d.id] || barW.width,
           posX = barX(d),
@@ -34903,12 +35175,12 @@ function ascending_sum(series) {
         lineConnectNull = config.line_connectNull,
         isRotated = config.axis_rotated,
         getPoints = $$.generateGetLinePoints(lineIndices, isSub),
-        yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
+        yScale = $$.getYScaleById.bind($$),
         xValue = function (d) {
       return (isSub ? $$.subxx : $$.xx).call($$, d);
     },
         yValue = function (d, i) {
-      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.getBaseValue(d));
+      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.getBaseValue(d));
     },
         line = src_line();
 
@@ -34918,7 +35190,7 @@ function ascending_sum(series) {
     var x = isSub ? scale.subX : scale.x;
     return function (d) {
       var path,
-          y = yScaleGetter.call($$, d.id),
+          y = yScale(d.id, isSub),
           values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values,
           x0 = 0,
           y0 = 0;
@@ -34939,9 +35211,9 @@ function ascending_sum(series) {
         x = $$.getShapeX(0, lineIndices, isSub),
         y = $$.getShapeY(isSub),
         lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
-        yScale = isSub ? $$.getSubYScale : $$.getYScale;
+        yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
+      var y0 = yScale(d.id, isSub)(0),
           offset = lineOffset(d, i) || y0,
           posX = x(d),
           posY = y(d);
@@ -34960,8 +35232,8 @@ function ascending_sum(series) {
         $$ = this,
         config = $$.config,
         isRotated = config.axis_rotated,
-        isTimeSeries = $$.isTimeSeries(),
-        xOffset = $$.isCategorized() ? .5 : 0,
+        isTimeSeries = $$.axis.isTimeSeries(),
+        xOffset = $$.axis.isCategorized() ? .5 : 0,
         regions = [],
         dasharray = "2 2",
         isWithinRegions = function (withinX, withinRegions) {
@@ -35102,15 +35374,15 @@ function ascending_sum(series) {
         lineConnectNull = config.line_connectNull,
         isRotated = config.axis_rotated,
         getPoints = $$.generateGetAreaPoints(areaIndices, isSub),
-        yScaleGetter = isSub ? $$.getSubYScale : $$.getYScale,
+        yScale = $$.getYScaleById.bind($$),
         xValue = function (d) {
       return (isSub ? $$.subxx : $$.xx).call($$, d);
     },
         value0 = function (d, i) {
-      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : 0);
+      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScale(d.id, isSub)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : 0);
     },
         value1 = function (d, i) {
-      return $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "low") : d.value);
+      return $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScale(d.id, isSub)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "low") : d.value);
     };
 
     return function (d) {
@@ -35125,7 +35397,7 @@ function ascending_sum(series) {
         .y0(config.area_above ? 0 : value0).y1(value1), lineConnectNull || (area = area.defined(function (d) {
           return $$.getBaseValue(d) !== null;
         })), $$.isStepType(d) && (values = $$.convertValuesToStep(values)), path = area.curve($$.getCurve(d))(values);
-      } else values[0] && (x0 = $$.scale.x(values[0].x), y0 = $$.getYScale(d.id)(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+      } else values[0] && (x0 = $$.scale.x(values[0].x), y0 = $$.getYScaleById(d.id)(values[0].value)), path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
 
       return path || "M 0 0";
     };
@@ -35137,9 +35409,9 @@ function ascending_sum(series) {
         x = $$.getShapeX(0, areaIndices, !!isSub),
         y = $$.getShapeY(!!isSub),
         areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub),
-        yScale = isSub ? $$.getSubYScale : $$.getYScale;
+        yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
+      var y0 = yScale(d.id, isSub)(0),
           offset = areaOffset(d, i) || y0,
           posX = x(d),
           posY = y(d);
@@ -35261,7 +35533,7 @@ var getTransitionName = function () {
 
     $$.circleY = function (d, i) {
       var id = d.id;
-      return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScale(id)($$.getBaseValue(d));
+      return $$.isGrouped(id) ? getPoints(d, i)[0][1] : $$.getYScaleById(id)($$.getBaseValue(d));
     };
   },
   getCircles: function getCircles(i, id) {
@@ -35584,7 +35856,7 @@ var getTransitionName = function () {
         isStackNormalized = $$.isStackNormalized();
     return function (d) {
       var value = isStackNormalized ? $$.getRatio("index", d, !0) : $$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value;
-      return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(value);
+      return $$.getYScaleById(d.id, isSub)(value);
     };
   },
 
@@ -35633,7 +35905,7 @@ var getTransitionName = function () {
 
     return function (d, idx) {
       var ind = $$.getIndices(indices, d.id),
-          scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
+          scale = $$.getYScaleById(d.id, isSub),
           y0 = scale(0),
           dataXAsNumber = +d.x,
           offset = y0;
@@ -35653,7 +35925,7 @@ var getTransitionName = function () {
     var isWithin,
         $$ = this,
         shape = src_select(that);
-    return $$.isTargetToShow(d.id) ? $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScale(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
+    return $$.isTargetToShow(d.id) ? $$.hasValidPointType(that.nodeName) ? isWithin = $$.isStepType(d) ? $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) : $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0) : that.nodeName === "path" && (isWithin = !shape.classed(config_classes.bar) || $$.isWithinBar(that)) : isWithin = !1, isWithin;
   },
   getInterpolate: function getInterpolate(d) {
     var $$ = this,
@@ -35723,10 +35995,8 @@ var getTransitionName = function () {
 
 
 
-/* harmony default export */ var resolver_axis = ({
-  api: [api_axis, category, api_flow, grid_x, grid_y, api_group, api_regions, api_selection, api_x, api_zoom],
-  internal: [internals_category, interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, ChartInternal_shape_bar, shape_bubble, ChartInternal_shape_line, shape_point, shape_shape]
-});
+var axis_api = [api_axis, category, api_flow, grid_x, grid_y, api_group, api_regions, api_selection, api_x, api_zoom];
+var internal = [internals_category, interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, ChartInternal_shape_bar, shape_bubble, ChartInternal_shape_line, shape_point, shape_shape];
 // CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -36057,7 +36327,7 @@ var getTransitionName = function () {
       var color;
       return $$.levelColor ? (color = $$.levelColor(d.data.values[0].value), config.data_colors[d.data.id] = color) : color = $$.color(d.data.id), color;
     }) // Where gauge reading color would receive customization.
-    .style("opacity", "1").call($$.endall, function () {
+    .style("opacity", "1").call(endall, function () {
       if ($$.levelColor) {
         var path = src_select(this),
             d = path.datum();
@@ -36493,9 +36763,7 @@ var radar_cacheKey = "$radarPoints";
 // shape
 
 
-/* harmony default export */ var resolver_arc = ({
-  internal: [shape_arc, shape_radar]
-});
+var arc_internal = [shape_arc, shape_radar];
 // CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
 
 
@@ -36522,6 +36790,7 @@ var radar_cacheKey = "$radarPoints";
  // interactions
 
  // internals
+
 
 
 
@@ -36593,15 +36862,15 @@ function () {
       },
       arcs: null,
       bar: null,
-      //mainBar,
+      // mainBar,
       line: null,
-      //mainLine,
+      // mainLine,
       area: null,
-      //mainArea,
+      // mainArea,
       circle: null,
-      //mainCircle,
+      // mainCircle,
       text: null,
-      //mainText,
+      // mainText,
       grid: {
         main: null,
         // grid (also focus)
@@ -36620,7 +36889,7 @@ function () {
       },
       region: {
         main: null,
-        //region
+        // region
         list: null // mainRegion
 
       },
@@ -36765,10 +37034,9 @@ function () {
     }), config.data_onmin || config.data_onmax) {
       var minMax = $$.getMinMaxData();
       callFn(config.data_onmin, $$.api, minMax.min), callFn(config.data_onmax, $$.api, minMax.max);
-    } // export element of the chart
+    }
 
-
-    $$.api.element = $el.chart.node(), state.rendered = !0;
+    state.rendered = !0;
   }, _proto.initChartElements = function initChartElements() {
     var $$ = this,
         _$$$state = $$.state,
@@ -36811,11 +37079,12 @@ function () {
   , _proto.setBackground = function setBackground() {
     var $$ = this,
         bg = $$.config.background,
+        state = $$.state,
         svg = $$.$el.svg;
 
     if (notEmpty(bg)) {
-      var element = svg.select("." + config_classes[$$.hasArcType() ? "chart" : "regions"]).insert(bg.imgUrl ? "image" : "rect", ":first-child");
-      bg.imgUrl ? element.attr("href", bg.imgUrl) : bg.color && element.style("fill", bg.color), element.attr("class", bg.class || null).attr("width", "100%").attr("height", "100%");
+      var element = svg.select("g").insert(bg.imgUrl ? "image" : "rect", ":first-child");
+      bg.imgUrl ? element.attr("href", bg.imgUrl) : bg.color && element.style("fill", bg.color).attr("clip-path", state.clip.path), element.attr("class", bg.class || null).attr("width", "100%").attr("height", "100%");
     }
   }
   /**
@@ -36861,149 +37130,27 @@ function () {
       var defVal = withOptions[key];
       isString(defVal) && (defVal = withOptions[defVal]), withOptions[key] = getOption(options, "with" + key, defVal);
     }), withOptions;
-  }, _proto.redraw = function redraw(options, transitionsValue) {
-    options === void 0 && (options = {});
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        $el = $$.$el,
-        main = $el.main,
-        targetsToShow = $$.filterTargetsToShow($$.data.targets),
-        initializing = options.initializing,
-        flow = options.flow,
-        wth = $$.getWithOption(options),
-        duration = wth.Transition ? config.transition_duration : 0,
-        durationForExit = wth.TransitionForExit ? duration : 0,
-        durationForAxis = wth.TransitionForAxis ? duration : 0,
-        transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
-    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
-  }
-  /**
-   * Generate redraw list
-   * @param {Object} targets targets data to be shown
-   * @param {Object} flow
-   * @param {Object} duration
-   * @param {Boolean} withSubchart whether or not to show subchart
-   * @private
-   */
-  , _proto.generateRedrawList = function generateRedrawList(targets, flow, duration, withSubchart) {
-    var $$ = this,
-        config = $$.config,
-        state = $$.state,
-        shape = $$.getDrawShape();
-    state.hasAxis && config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
-    // generate flow
-    var flowFn = flow && $$.generateFlow({
-      targets: targets,
-      flow: flow,
-      duration: flow.duration,
-      shape: shape,
-      xv: $$.xv.bind($$)
-    }),
-        isTransition = (duration || flowFn) && isTabVisible(),
-        redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition),
-        afterRedraw = flow || config.onrendered ? function () {
-      flowFn && flowFn(), callFn(config.onrendered, $$.api);
-    } : null;
-    if (afterRedraw) // Only use transition when current tab is visible.
-      if (isTransition && redrawList.length) {
-        // Wait for end of transitions for callback
-        var waitForDraw = $$.generateWait(); // transition should be derived from one transition
-
-        src_transition_transition().duration(duration).each(function () {
-          redrawList.reduce(function (acc, t1) {
-            return acc.concat(t1);
-          }, []).forEach(function (t) {
-            return waitForDraw.add(t);
-          });
-        }).call(waitForDraw, afterRedraw);
-      } else state.transiting || afterRedraw(); // update fadein condition
-
-    $$.mapToIds($$.data.targets).forEach(function (id) {
-      state.withoutFadeIn[id] = !0;
-    });
-  }, _proto.getRedrawList = function getRedrawList(shape, flow, flowFn, isTransition) {
-    var $$ = this,
-        config = $$.config,
-        _$$$state3 = $$.state,
-        hasAxis = _$$$state3.hasAxis,
-        hasRadar = _$$$state3.hasRadar,
-        _shape$pos = shape.pos,
-        cx = _shape$pos.cx,
-        cy = _shape$pos.cy,
-        xForText = _shape$pos.xForText,
-        yForText = _shape$pos.yForText,
-        list = [];
-
-    if (hasAxis) {
-      var _shape$type = shape.type,
-          area = _shape$type.area,
-          bar = _shape$type.bar,
-          line = _shape$type.line;
-      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-    }
-
-    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
-  }, _proto.updateAndRedraw = function updateAndRedraw(options) {
-    options === void 0 && (options = {});
-    var transitions,
-        $$ = this,
-        config = $$.config,
-        state = $$.state;
-    options.withTransition = getOption(options, "withTransition", !0), options.withTransform = getOption(options, "withTransform", !1), options.withLegend = getOption(options, "withLegend", !1), options.withUpdateXDomain = !0, options.withUpdateOrgXDomain = !0, options.withTransitionForExit = !1, options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition), options.withLegend && config.legend_show || (state.hasAxis && (transitions = $$.axis.generateTransitions(options.withTransitionForAxis ? config.transition_duration : 0)), $$.updateScales(), $$.updateSvgSize(), $$.transformAll(options.withTransitionForTransform, transitions)), $$.redraw(options, transitions);
-  }, _proto.redrawWithoutRescale = function redrawWithoutRescale() {
-    this.redraw({
-      withY: !1,
-      withSubchart: !1,
-      withEventRect: !1,
-      withTransitionForAxis: !1
-    });
-  }, _proto.isCategorized = function isCategorized() {
-    return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
-  }, _proto.isCustomX = function isCustomX() {
-    var $$ = this,
-        config = $$.config;
-    return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
-  }, _proto.isTimeSeries = function isTimeSeries(id) {
-    return id === void 0 && (id = "x"), this.config["axis_" + id + "_type"] === "timeseries";
-  }, _proto.isTimeSeriesY = function isTimeSeriesY() {
-    return this.isTimeSeries("y");
-  }, _proto.initialOpacity = function initialOpacity(d) {
+  } // isCategorized() {
+  // 	return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
+  // }
+  // isCustomX() {
+  // 	const $$ = this;
+  // 	const {config} = $$;
+  // 	return !$$.axis.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+  // }
+  // isTimeSeries(id = "x") {
+  // 	return this.config[`axis_${id}_type`] === "timeseries";
+  // }
+  // isTimeSeriesY() {
+  // 	return this.isTimeSeries("y");
+  // }
+  , _proto.initialOpacity = function initialOpacity(d) {
     var withoutFadeIn = this.state.withoutFadeIn;
     return this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? "1" : "0";
-  }
-  /**
-   * Get the zoom or unzoomed scaled value
-   * @param {Date|Number|Object} d Data value
-   * @private
-   */
-  , _proto.xx = function xx(d) {
-    var $$ = this,
-        config = $$.config,
-        _$$$scale3 = $$.scale,
-        x = _$$$scale3.x,
-        zoom = _$$$scale3.zoom,
-        fn = config.zoom_enabled && zoom ? zoom : x;
-    return d ? fn(isValue(d.x) ? d.x : d) : null;
-  }, _proto.xv = function xv(d) {
-    var $$ = this,
-        config = $$.config,
-        x = $$.scale.x,
-        value = $$.getBaseValue(d);
-    return $$.isTimeSeries() ? value = parseDate.call($$, value) : $$.isCategorized() && isString(value) && (value = config.axis_x_categories.indexOf(value)), Math.ceil(x(value));
-  }, _proto.yv = function yv(d) {
-    var $$ = this,
-        _$$$scale4 = $$.scale,
-        y = _$$$scale4.y,
-        y2 = _$$$scale4.y2,
-        yScale = d.axis && d.axis === "y2" ? y2 : y;
-    return Math.ceil(yScale($$.getBaseValue(d)));
-  }, _proto.subxx = function subxx(d) {
-    return d ? this.scale.subX(d.x) : null;
   }, _proto.bindResize = function bindResize() {
     var $$ = this,
         config = $$.config,
-        resizeFunction = $$.generateResize(),
+        resizeFunction = generateResize(),
         list = [];
     list.push(function () {
       return callFn(config.onresize, $$, $$.api);
@@ -37014,57 +37161,6 @@ function () {
     }), list.forEach(function (v) {
       return resizeFunction.add(v);
     }), win.addEventListener("resize", $$.resizeFunction = resizeFunction);
-  }, _proto.generateResize = function generateResize() {
-    function callResizeFn() {
-      callResizeFn.timeout && (win.clearTimeout(callResizeFn.timeout), callResizeFn.timeout = null), callResizeFn.timeout = win.setTimeout(function () {
-        fn.forEach(function (f) {
-          return f();
-        });
-      }, 200);
-    }
-
-    var fn = [];
-    return callResizeFn.add = function (f) {
-      return fn.push(f);
-    }, callResizeFn.remove = function (f) {
-      return fn.splice(fn.indexOf(f), 1);
-    }, callResizeFn;
-  }, _proto.endall = function endall(transition, callback) {
-    var n = 0;
-    transition.each(function () {
-      return ++n;
-    }).on("end", function () {
-      for (var _len = arguments.length, args = Array(_len), _key = 0; _key < _len; _key++) args[_key] = arguments[_key];
-
-      --n || callback.apply.apply(callback, [this].concat(args));
-    });
-  }, _proto.generateWait = function generateWait() {
-    var transitionsToWait = [],
-        f = function (t, callback) {
-      function loop() {
-        for (var _t, done = 0, i = 0; _t = transitionsToWait[i]; i++) {
-          if (_t.empty()) {
-            done++;
-            continue;
-          }
-
-          try {
-            _t.transition();
-          } catch (e) {
-            done++;
-          }
-        }
-
-        timer && clearTimeout(timer), done === transitionsToWait.length ? callback && callback() : timer = setTimeout(loop, 50);
-      }
-
-      var timer;
-      loop();
-    };
-
-    return f.add = function (t) {
-      isArray(t) ? transitionsToWait = transitionsToWait.concat(t) : transitionsToWait.push(t);
-    }, f;
   }
   /**
    * Call plugin hook
@@ -37072,7 +37168,7 @@ function () {
    * @private
    */
   , _proto.callPluginHook = function callPluginHook(phase) {
-    for (var _this = this, _len2 = arguments.length, args = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) args[_key2 - 1] = arguments[_key2];
+    for (var _this = this, _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
 
     this.config.plugins.forEach(function (v) {
       phase === "$beforeInit" && (v.$$ = _this, _this.api.plugins.push(v)), v[phase].apply(v, args);
@@ -37082,7 +37178,7 @@ function () {
 
 
 util_extend(ChartInternal_ChartInternal.prototype, [// common
-data_convert, ChartInternal_data_data, data_load, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(resolver_arc.internal, resolver_axis.internal));
+data_convert, ChartInternal_data_data, data_load, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(arc_internal, internal));
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -37115,6 +37211,7 @@ function loadConfig(config) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 /* harmony default export */ var api_chart = ({
@@ -37179,7 +37276,7 @@ function loadConfig(config) {
         chart = _$$$$el.chart,
         svg = _$$$$el.svg;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), $$.generateResize.timeout && win.clearTimeout($$.generateResize.timeout), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), generateResize.timeout && win.clearTimeout(generateResize.timeout), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -37506,21 +37603,22 @@ function nodeToSvgDataUrl(node, size) {
   export: function _export(mimeType, callback) {
     var _this = this,
         $$ = this.internal,
-        _$$$state = $$.state,
-        width = _$$$state.currentWidth,
-        height = _$$$state.currentHeight,
-        size = {
+        state = $$.state,
+        chart = $$.$el.chart,
+        _state = state,
+        width = _state.currentWidth,
+        height = _state.currentHeight,
+        svgDataUrl = nodeToSvgDataUrl(chart.node(), {
       width: width,
       height: height
-    },
-        svgDataUrl = nodeToSvgDataUrl(this.element, size);
+    });
 
     if (callback && isFunction(callback)) {
       var img = new Image();
       img.crossOrigin = "Anonymous", img.onload = function () {
         var canvas = browser_doc.createElement("canvas"),
             ctx = canvas.getContext("2d");
-        canvas.width = size.width, canvas.height = size.height, ctx.drawImage(img, 0, 0), callback.bind(_this)(canvas.toDataURL(mimeType));
+        canvas.width = width, canvas.height = height, ctx.drawImage(img, 0, 0), callback.bind(_this)(canvas.toDataURL(mimeType));
       }, img.src = svgDataUrl;
     }
 
@@ -37771,7 +37869,7 @@ var legend_legend = {
     // update colors if exists
     args.xs && $$.addXs(args.xs), "names" in args && this.data.names(args.names), "classes" in args && Object.keys(args.classes).forEach(function (id) {
       config.data_classes[id] = args.classes[id];
-    }), "categories" in args && $$.isCategorized() && (config.axis_x_categories = args.categories), "axes" in args && Object.keys(args.axes).forEach(function (id) {
+    }), "categories" in args && $$.axis.isCategorized() && (config.axis_x_categories = args.categories), "axes" in args && Object.keys(args.axes).forEach(function (id) {
       config.data_axes[id] = args.axes[id];
     }), "colors" in args && Object.keys(args.colors).forEach(function (id) {
       config.data_colors[id] = args.colors[id];
@@ -37833,13 +37931,14 @@ var legend_legend = {
  * Show/Hide data series
  * @private
  */
+
 function showHide(show, targetIdsValue, options) {
   var $$ = this.internal,
       targetIds = $$.mapToTargetIds(targetIdsValue);
   $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
   var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds)),
       opacity = show ? "1" : "0";
-  targets.transition().style("opacity", opacity, "important").call($$.endall, function () {
+  targets.transition().style("opacity", opacity, "important").call(endall, function () {
     targets.style("opacity", null).style("opacity", opacity);
   }), options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds), $$.redraw({
     withUpdateOrgXDomain: !0,
@@ -38003,8 +38102,9 @@ var tooltip_tooltip = {
 
     // determine focus data
     if (args.mouse && (mouse = args.mouse), args.data) {
-      var y = $$.getYScale(args.data.id)(args.data.value);
-      $$.isMultipleX() ? mouse = [$$.scale.x(args.data.x), y] : (!config.tooltip_grouped && (mouse = [0, y]), index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x));
+      var data = args.data,
+          y = $$.getYScaleById(data.id)(data.value);
+      $$.isMultipleX() ? mouse = [$$.scale.x(data.x), y] : (!config.tooltip_grouped && (mouse = [0, y]), index = isValue(data.index) ? data.index : $$.getIndexByX(data.x));
     } else isDefined(args.x) ? index = $$.getIndexByX(args.x) : isDefined(args.index) && (index = args.index); // emulate events to show
 
 
@@ -38130,7 +38230,7 @@ function Chart(options) {
 
 
 
-util_extend(Chart_Chart.prototype, [api_chart, api_color, api_data, api_export, api_focus, api_legend, load, api_show, api_tooltip].concat(resolver_axis.api));
+util_extend(Chart_Chart.prototype, [api_chart, api_color, api_data, api_export, api_focus, api_legend, load, api_show, api_tooltip].concat(axis_api));
 // CONCATENATED MODULE: ./src/index.ts
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return bb; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "default", function() { return bb; });

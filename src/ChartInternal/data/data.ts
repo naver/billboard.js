@@ -169,13 +169,14 @@ export default {
 
 	generateTargetX(rawX, id, index) {
 		const $$ = this;
-		let x = $$.isCategorized() ? index : (rawX || index);
+		const {axis} = $$;
+		let x = axis && axis.isCategorized() ? index : (rawX || index);
 
-		if ($$.isTimeSeries()) {
+		if (axis && axis.isTimeSeries()) {
 			const fn = parseDate.bind($$);
 
 			x = rawX ? fn(rawX) : fn($$.getXValue(id, index));
-		} else if ($$.isCustomX() && !$$.isCategorized()) {
+		} else if (axis && axis.isCustomX() && !axis.isCategorized()) {
 			x = isValue(rawX) ? +rawX : $$.getXValue(id, index);
 		}
 
@@ -406,6 +407,7 @@ export default {
 
 	mapTargetsToUniqueXs(targets) {
 		const $$ = this;
+		const {axis} = $$;
 		let xs: any[] = [];
 
 		if (targets && targets.length) {
@@ -413,7 +415,7 @@ export default {
 				mergeArray(targets.map(t => t.values.map(v => +v.x)))
 			);
 
-			xs = $$.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
+			xs = axis && axis.isTimeSeries() ? xs.map(x => new Date(+x)) : xs.map(x => +x);
 		}
 
 		return sortValue(xs);
@@ -675,11 +677,11 @@ export default {
 	 */
 	convertValuesToStep(values) {
 		const $$ = this;
-		const {config} = $$;
+		const {axis, config} = $$;
 
 		const isRotated = config.axis_rotated;
 		const stepType = config.line_step_type;
-		const isCategorized = $$.isCategorized();
+		const isCategorized = axis ? axis.isCategorized() : false;
 
 		const converted = isArray(values) ? values.concat() : [values];
 
@@ -819,7 +821,9 @@ export default {
 
 				ratio = d.ratio;
 			} else if (type === "radar") {
-				ratio = (parseFloat(String(Math.max(d.value, 0))) / state.currentData.max) * config.radar_size_ratio;
+				ratio = (
+					parseFloat(String(Math.max(d.value, 0))) / state.currentData.max
+				) * config.radar_size_ratio;
 			}
 		}
 

@@ -209,7 +209,7 @@ export default {
 			let rectW;
 			let rectX;
 
-			if ($$.isCategorized()) {
+			if ($$.axis.isCategorized()) {
 				rectW = $$.getEventRectWidth();
 				rectX = d => xScale(d.x) - (rectW / 2);
 			} else {

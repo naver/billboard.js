@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {endall} from "../../module/util";
 
 /**
  * Show/Hide data series
@@ -18,7 +19,7 @@ function showHide(show, targetIdsValue, options) {
 
 	targets.transition()
 		.style("opacity", opacity, "important")
-		.call($$.endall, () => {
+		.call(endall, () => {
 			targets.style("opacity", null).style("opacity", opacity);
 		});
 

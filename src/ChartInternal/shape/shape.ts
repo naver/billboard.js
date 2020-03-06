@@ -197,7 +197,7 @@ export default {
 				$$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value
 			);
 
-			return (isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id))(value);
+			return $$.getYScaleById(d.id, isSub)(value);
 		};
 	},
 
@@ -248,7 +248,7 @@ export default {
 
 		return (d, idx) => {
 			const ind = $$.getIndices(indices, d.id);
-			const scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
+			const scale = $$.getYScaleById(d.id, isSub);
 			const y0 = scale(0);
 			const dataXAsNumber = Number(d.x);
 			let offset = y0;
@@ -289,7 +289,7 @@ export default {
 			isWithin = false;
 		} else if ($$.hasValidPointType(that.nodeName)) {
 			isWithin = $$.isStepType(d) ?
-				$$.isWithinStep(that, $$.getYScale(d.id)(d.value)) :
+				$$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
 				$$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
 		} else if (that.nodeName === "path") {
 			isWithin = shape.classed(CLASS.bar) ? $$.isWithinBar(that) : true;

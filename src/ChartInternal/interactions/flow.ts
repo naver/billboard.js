@@ -4,6 +4,7 @@
  */
 import {easeLinear as d3EaseLinear} from "d3-ease";
 import {transition as d3Transition} from "d3-transition";
+import {generateWait} from "../../module/generator";
 import {diffDomain} from "../../module/util";
 import CLASS from "../../config/classes";
 
@@ -73,7 +74,7 @@ export default {
 		} = flow;
 
 		const transform = $$.getFlowTransform(targets, orgDataCount, flowIndex, flowLength);
-		const wait = $$.generateWait();
+		const wait = generateWait();
 		const gt = d3Transition().ease(d3EaseLinear)
 			.duration(duration);
 
@@ -215,7 +216,7 @@ export default {
 			if (dataValues.length !== 1) {
 				translateX = x(orgDomain[0]) - x(domain[0]);
 			} else {
-				if ($$.isTimeSeries()) {
+				if ($$.axis.isTimeSeries()) {
 					flowStart = $$.getValueOnIndex(dataValues, 0);
 					flowEnd = $$.getValueOnIndex(dataValues, dataValues.length - 1);
 					translateX = x(flowStart.x) - x(flowEnd.x);
@@ -226,7 +227,7 @@ export default {
 		} else if (orgDataCount === 1 || (flowStart && flowStart.x) === (flowEnd && flowEnd.x)) {
 			translateX = x(orgDomain[0]) - x(domain[0]);
 		} else {
-			translateX = $$.isTimeSeries() ?
+			translateX = $$.axis.isTimeSeries() ?
 				x(orgDomain[0]) - x(domain[0]) :
 				x(flowStart.x) - x(flowEnd.x);
 		}

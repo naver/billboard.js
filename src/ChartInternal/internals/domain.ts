@@ -7,7 +7,7 @@ import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, 
 export default {
 	getYDomainMinMax(targets, type) {
 		const $$ = this;
-		const {config} = $$;
+		const {axis, config} = $$;
 		const isMin = type === "min";
 
 		const dataGroups = config.data_groups;
@@ -26,7 +26,7 @@ export default {
 				}
 
 				const baseId = idsInGroup[0];
-				const baseAxisId = $$.axis.getId(baseId);
+				const baseAxisId = axis.getId(baseId);
 
 				// Initialize base value. Set to 0 if not match with the condition
 				if (hasValue && ys[baseId]) {
@@ -40,7 +40,7 @@ export default {
 						continue;
 					}
 
-					const axisId = $$.axis.getId(id);
+					const axisId = axis.getId(id);
 
 					ys[id].forEach((v, i) => {
 						const val = +v;
@@ -67,14 +67,14 @@ export default {
 
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
-		const {config, scale} = $$;
+		const {axis, config, scale} = $$;
 		const pfx = `axis_${axisId}`;
 
 		if ($$.isStackNormalized()) {
 			return [0, 100];
 		}
 
-		const targetsByAxisId = targets.filter(t => $$.axis.getId(t.id) === axisId);
+		const targetsByAxisId = targets.filter(t => axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 
 		if (yTargets.length === 0) { // use domain of the other axis if target of axisId is none
@@ -152,7 +152,7 @@ export default {
 			const lengths = $$.getDataLabelLength(yDomainMin, yDomainMax, "height");
 
 			["bottom", "top"].forEach((v, i) => {
-				padding[v] += $$.axis.convertPixelsToAxisPadding(lengths[i], domainLength);
+				padding[v] += axis.convertPixelsToAxisPadding(lengths[i], domainLength);
 			});
 		}
 
@@ -162,7 +162,7 @@ export default {
 
 		if (notEmpty(p)) {
 			["bottom", "top"].forEach(v => {
-				padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+				padding[v] = axis.getPadding(p, v, padding[v], domainLength);
 			});
 		}
 
@@ -183,7 +183,7 @@ export default {
 		const dataValue = getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
 		let value = isObject(configValue) ? configValue.value : configValue;
 
-		value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value;
+		value = isDefined(value) && $$.axis.isTimeSeries() ? parseDate(value) : value;
 
 		if (isObject(configValue) && configValue.fit && (
 			(type === "min" && value < dataValue) || (type === "max" && value > dataValue)
@@ -204,13 +204,13 @@ export default {
 
 	getXDomainPadding(domain) {
 		const $$ = this;
-		const {config} = $$;
+		const {axis, config} = $$;
 		const diff = domain[1] - domain[0];
 		const xPadding = config.axis_x_padding;
 		let maxDataCount;
 		let padding;
 
-		if ($$.isCategorized()) {
+		if (axis.isCategorized()) {
 			padding = 0;
 		} else if ($$.hasType("bar")) {
 			maxDataCount = $$.getMaxDataCount();
@@ -235,15 +235,17 @@ export default {
 
 	getXDomain(targets) {
 		const $$ = this;
+		const isCategorized = $$.axis.isCategorized();
+		const isTimeSeries = $$.axis.isTimeSeries();
 		const xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)];
-		let [firstX, lastX] = xDomain;
 		const padding = $$.getXDomainPadding(xDomain);
+		let [firstX, lastX] = xDomain;
 		let min: Date | number = 0;
 		let max: Date | number = 0;
 
 		// show center of x domain if min and max are the same
-		if ((firstX - lastX) === 0 && !$$.isCategorized()) {
-			if ($$.isTimeSeries()) {
+		if ((firstX - lastX) === 0 && !isCategorized) {
+			if (isTimeSeries) {
 				firstX = new Date(firstX.getTime() * 0.5);
 				lastX = new Date(lastX.getTime() * 1.5);
 			} else {
@@ -253,11 +255,11 @@ export default {
 		}
 
 		if (firstX || firstX === 0) {
-			min = $$.isTimeSeries() ? new Date(firstX.getTime() - padding.left) : firstX - padding.left;
+			min = isTimeSeries ? new Date(firstX.getTime() - padding.left) : firstX - padding.left;
 		}
 
 		if (lastX || lastX === 0) {
-			max = $$.isTimeSeries() ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
+			max = isTimeSeries ? new Date(lastX.getTime() + padding.right) : lastX + padding.right;
 		}
 
 		return [min, max];

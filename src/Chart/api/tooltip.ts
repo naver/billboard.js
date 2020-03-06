@@ -71,17 +71,18 @@ const tooltip = {
 
 		// determine focus data
 		if (args.data) {
-			const y = $$.getYScale(args.data.id)(args.data.value);
+			const {data} = args;
+			const y = $$.getYScaleById(data.id)(data.value);
 
 			if ($$.isMultipleX()) {
 				// if multiple xs, target point will be determined by mouse
-				mouse = [$$.scale.x(args.data.x), y];
+				mouse = [$$.scale.x(data.x), y];
 			} else {
 				if (!config.tooltip_grouped) {
 					mouse = [0, y];
 				}
 
-				index = isValue(args.data.index) ? args.data.index : $$.getIndexByX(args.data.x);
+				index = isValue(data.index) ? data.index : $$.getIndexByX(data.x);
 			}
 		} else if (isDefined(args.x)) {
 			index = $$.getIndexByX(args.x);

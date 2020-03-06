@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
+import {endall} from "../../module/util";
 
 export default {
 	load(rawTargets, args) {
@@ -93,7 +94,7 @@ export default {
 			.transition()
 			.style("opacity", "0")
 			.remove()
-			.call($$.endall, done);
+			.call(endall, done);
 
 		targetIds.forEach(id => {
 			// Reset fadein for future load

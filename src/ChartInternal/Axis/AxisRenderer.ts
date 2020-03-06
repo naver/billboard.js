@@ -68,12 +68,12 @@ export default class AxisRenderer {
 		const {innerTickSize, tickLength, range} = config;
 
 		// // get the axis' tick position configuration
-		const name = params.name;
-		const tickTextPos = name && /^(x|y|y2)$/.test(name) ?
-			params.config[`axis_${name}_tick_text_position`] : {x: 0, y: 0};
+		const id = params.id;
+		const tickTextPos = id && /^(x|y|y2)$/.test(id) ?
+			params.config[`axis_${id}_tick_text_position`] : {x: 0, y: 0};
 
 		// tick visiblity
-		const prefix = name === "subX" ? `subchart_axis_x` : `axis_${name}`;
+		const prefix = id === "subX" ? `subchart_axis_x` : `axis_${id}`;
 		const axisShow = params.config[`${prefix}_show`];
 		const tickShow = {
 			tick: axisShow ? params.config[`${prefix}_tick_show`] : false,

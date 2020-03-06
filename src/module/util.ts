@@ -17,6 +17,7 @@ export {
 	ceil10,
 	convertInputType,
 	diffDomain,
+	endall,
 	emulateEvent,
 	extend,
 	getBrushSelection,
@@ -113,6 +114,22 @@ function callFn(fn, ...args): boolean {
 
 	isFn && fn.call(...args);
 	return isFn;
+}
+
+/**
+ * Call function after all transitions ends
+ * @param {d3.transition} transition
+ * @param {Fucntion} callback
+ * @private
+ */
+function endall(transition, callback: Function): void {
+	let n = 0;
+
+	transition
+		.each(() => ++n)
+		.on("end", function(...args) {
+			!--n && callback.apply(this, ...args);
+		});
 }
 
 /**

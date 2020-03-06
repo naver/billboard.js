@@ -44,7 +44,7 @@ const zoom = function(domainValue?: number[]) {
 	let resultDomain;
 
 	if (config.zoom_enabled && domain && withinRange(domain, $$.getZoomDomain())) {
-		const isTimeSeries = $$.isTimeSeries();
+		const isTimeSeries = $$.axis.isTimeSeries();
 
 		if (isTimeSeries) {
 			const fn = parseDate.bind($$);

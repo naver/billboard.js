@@ -137,12 +137,13 @@ export default class Elements {
 
 	xvCustom(d, xyValue) {
 		const $$ = this;
+		const {axis, config} = $$;
 		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
 
-		if ($$.isTimeSeries()) {
+		if (axis.isTimeSeries()) {
 			value = parseDate.call($$, value);
-		} else if ($$.isCategorized() && isString(value)) {
-			value = $$.config.axis_x_categories.indexOf(d.value);
+		} else if (axis.isCategorized() && isString(value)) {
+			value = config.axis_x_categories.indexOf(d.value);
 		}
 
 		return Math.ceil($$.scale.x(value));

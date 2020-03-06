@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {window} from "../../module/browser";
+import {generateResize} from "../../module/generator";
 import {notEmpty, isDefined} from "../../module/util";
 
 export default {
@@ -92,7 +93,7 @@ export default {
 
 			// clear timers && pending transition
 			svg.select("*").interrupt();
-			$$.generateResize.timeout && window.clearTimeout($$.generateResize.timeout);
+			generateResize.timeout && window.clearTimeout(generateResize.timeout);
 
 			window.removeEventListener("resize", $$.resizeFunction);
 			chart.classed("bb", false).html("");

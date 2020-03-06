@@ -10,13 +10,13 @@ import {
 	utcFormat as d3UtcFormat
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
-import {transition as d3Transition} from "d3-transition";
 import CLASS from "../config/classes";
 import Store from "../config/Store";
 import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
-import {extend, notEmpty, convertInputType, getOption, isArray, isFunction, isObject, isString, isTabVisible, isValue, callFn, parseDate, sortValue} from "../module/util";
+import {generateResize} from "../module/generator";
+import {extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
 // for Types
 import {d3Selection} from "../../types/types";
@@ -38,6 +38,7 @@ import color from "./internals/color";
 import domain from "./internals/domain";
 import format from "./internals/format";
 import legend from "./internals/legend";
+import redraw from "./internals/redraw";
 import scale from "./internals/scale";
 import size from "./internals/size";
 import text from "./internals/text";
@@ -46,8 +47,8 @@ import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
 import type from "./internals/type";
 
-import moduleAxis from "../config/resolver/axis";
-import moduleArc from "../config/resolver/arc";
+import {internal as axisInternal} from "../config/resolver/axis";
+import {internal as arcInternal} from "../config/resolver/arc";
 
 type N = d3Selection|null;
 type F = Function|null;
@@ -60,10 +61,10 @@ type F = Function|null;
  * @private
  */
 export default class ChartInternal {
-	public api;	   // API interface
+	public api;	// API interface
 	public config; // config object
-	public cache;  // cache instance
-	public state;  // state variables
+	public cache; // cache instance
+	public state; // state variables
 	public charts; // all Chart instances array within page (equivalent of 'bb.instances')
 	public isArc = false; // if is Arc type chart
 
@@ -80,7 +81,7 @@ export default class ChartInternal {
 		chart: null,
 		main: null,
 		svg: null,
-		axis: {  // axes
+		axis: { // axes
 			x: null,
 			y: null,
 			y2: null,
@@ -98,23 +99,23 @@ export default class ChartInternal {
 		},
 
 		arcs: null,
-		bar: null, //mainBar,
-		line: null, //mainLine,
-		area: null, //mainArea,
-		circle: null, //mainCircle,
-		text: null, //mainText,
+		bar: null, // mainBar,
+		line: null, // mainLine,
+		area: null, // mainArea,
+		circle: null, // mainCircle,
+		text: null, // mainText,
 		grid: {
-			main: null,  // grid (also focus)
+			main: null, // grid (also focus)
 			x: null, // xgrid,
 			y: null, // ygrid,
 		},
 		gridLines: {
-			main: null,  // gridLines
+			main: null, // gridLines
 			x: null, // xgridLines,
 			y: null, // ygridLines
 		},
 		region: {
-			main: null, //region
+			main: null, // region
 			list: null // mainRegion
 		},
 		eventRect: null
@@ -495,9 +496,6 @@ export default class ChartInternal {
 			callFn(config.data_onmax, $$.api, minMax.max);
 		}
 
-		// export element of the chart
-		$$.api.element = $el.chart.node();
-
 		state.rendered = true;
 	}
 
@@ -563,16 +561,18 @@ export default class ChartInternal {
 	 */
 	setBackground() {
 		const $$ = this;
-		const {config: {background: bg}, $el: {svg}} = $$;
+		const {config: {background: bg}, state, $el: {svg}} = $$;
 
 		if (notEmpty(bg)) {
-			const element = svg.select(`.${CLASS[$$.hasArcType() ? "chart" : "regions"]}`)
+			const element = svg.select("g")
 				.insert(bg.imgUrl ? "image" : "rect", ":first-child");
 
 			if (bg.imgUrl) {
 				element.attr("href", bg.imgUrl);
 			} else if (bg.color) {
-				element.style("fill", bg.color);
+				element
+					.style("fill", bg.color)
+					.attr("clip-path", state.clip.path);
 			}
 
 			element
@@ -664,264 +664,24 @@ export default class ChartInternal {
 		return withOptions;
 	}
 
-	redraw(options = {}, transitionsValue?) {
-		const $$ = this;
-		const {config, state, $el} = $$;
-		const {main} = $el;
-		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
+	// isCategorized() {
+	// 	return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
+	// }
 
-		const initializing = options.initializing;
-		const flow = options.flow;
-		const wth = $$.getWithOption(options);
-		const duration = wth.Transition ? config.transition_duration : 0;
-		const durationForExit = wth.TransitionForExit ? duration : 0;
-		const durationForAxis = wth.TransitionForAxis ? duration : 0;
-		const transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
+	// isCustomX() {
+	// 	const $$ = this;
+	// 	const {config} = $$;
 
-		$$.updateSizes(initializing);
+	// 	return !$$.axis.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+	// }
 
-		// update legend and transform each g
+	// isTimeSeries(id = "x") {
+	// 	return this.config[`axis_${id}_type`] === "timeseries";
+	// }
 
-		if (wth.Legend && config.legend_show) {
-			$$.updateLegend($$.mapToIds($$.data.targets), options, transitions);
-		} else if (wth.Dimension) {
-			// need to update dimension (e.g. axis.y.tick.values) because y tick values should change
-			// no need to update axis in it because they will be updated in redraw()
-			$$.updateDimension(true);
-		}
-
-		// text
-		$$.hasDataLabel() && $$.updateText(durationForExit);
-
-		// update circleY based on updated parameters
-		if (!$$.hasArcType() || state.hasRadar) {
-			$$.updateCircleY();
-		}
-
-		//@TODO: Axis & Radar type
-		if ($$.hasPointType() || state.hasRadar) {
-			$$.updateCircle();
-		}
-
-		// update axis
-		if (state.hasAxis) {
-			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
-			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
-
-			// xgrid focus
-			$$.updategridFocus();
-
-			// Data empty label positioning and text.
-			config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
-				.attr("x", state.width / 2)
-				.attr("y", state.height / 2)
-				.text(config.data_empty_label_text)
-				.style("display", targetsToShow.length ? "none" : null);
-
-			// grid
-			$$.hasGrid() && $$.updateGrid(duration);
-
-			// rect for regions
-			config.regions.length && $$.updateRegion(duration);
-
-			// bars
-			$$.hasType("bar") && $$.updateBar(durationForExit);
-
-			// lines, areas and circles
-			if ($$.hasTypeOf("Line")) {
-				$$.updateLine(durationForExit);
-			}
-
-			if ($$.hasTypeOf("Area")) {
-				$$.updateArea(durationForExit);
-			}
-
-			// circles for select
-			$el.text && main.selectAll(`.${CLASS.selectedCircles}`)
-				.filter($$.isBarType.bind($$))
-				.selectAll("circle")
-				.remove();
-
-			// event rects will redrawn when flow called
-			if (config.interaction_enabled && !flow && wth.EventRect) {
-				$$.bindZoomEvent();
-			}
-		} else {
-			// arc
-			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
-
-			// radar
-			$$.radars && $$.redrawRadar(durationForExit);
-		}
-
-		// title
-		$$.redrawTitle && $$.redrawTitle();
-
-		initializing && $$.setChartElements();
-
-		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
-		$$.callPluginHook("$redraw", options, duration);
-	}
-
-	/**
-	 * Generate redraw list
-	 * @param {Object} targets targets data to be shown
-	 * @param {Object} flow
-	 * @param {Object} duration
-	 * @param {Boolean} withSubchart whether or not to show subchart
-	 * @private
-	 */
-	generateRedrawList(targets, flow, duration, withSubchart) {
-		const $$ = this;
-		const {config, state} = $$;
-		const shape = $$.getDrawShape();
-
-		if (state.hasAxis) {
-			// subchart
-			config.subchart_show && $$.redrawSubchart(withSubchart, duration, shape);
-		}
-
-		// generate flow
-		const flowFn = flow && $$.generateFlow({
-			targets,
-			flow,
-			duration: flow.duration,
-			shape,
-			xv: $$.xv.bind($$)
-		});
-		const isTransition = (duration || flowFn) && isTabVisible();
-
-		// redraw list
-		const redrawList = $$.getRedrawList(shape, flow, flowFn, isTransition);
-
-		// callback function after redraw ends
-		const afterRedraw = flow || config.onrendered ? () => {
-			flowFn && flowFn();
-			callFn(config.onrendered, $$.api);
-		} : null;
-
-		if (afterRedraw) {
-			// Only use transition when current tab is visible.
-			if (isTransition && redrawList.length) {
-				// Wait for end of transitions for callback
-				const waitForDraw = $$.generateWait();
-
-				// transition should be derived from one transition
-				d3Transition().duration(duration)
-					.each(() => {
-						redrawList
-							.reduce((acc, t1) => acc.concat(t1), [])
-							.forEach(t => waitForDraw.add(t));
-					})
-					.call(waitForDraw, afterRedraw);
-			} else if (!state.transiting) {
-				afterRedraw();
-			}
-		}
-
-		// update fadein condition
-		$$.mapToIds($$.data.targets).forEach(id => {
-			state.withoutFadeIn[id] = true;
-		});
-	}
-
-	getRedrawList(shape, flow, flowFn, isTransition) {
-		const $$ = this;
-		const {config, state: {hasAxis, hasRadar}} = $$;
-		const {cx, cy, xForText, yForText} = shape.pos;
-		const list = [];
-
-		if (hasAxis) {
-			const {area, bar, line} = shape.type;
-
-			if (config.grid_x_lines.length || config.grid_y_lines.length) {
-				list.push($$.redrawGrid(isTransition));
-			}
-
-			if (config.regions.length) {
-				list.push($$.redrawRegion(isTransition));
-			}
-
-			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
-			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
-			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-		}
-
-		if (!$$.hasArcType() || hasRadar) {
-			notEmpty(config.data_labels) &&
-				list.push($$.redrawText(xForText, yForText, flow, isTransition));
-		}
-
-		if ($$.hasPointType() || hasRadar) {
-			list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
-		}
-
-		return list;
-	}
-
-	updateAndRedraw(options = {}) {
-		const $$ = this;
-		const {config, state} = $$;
-		let transitions;
-
-		// same with redraw
-		options.withTransition = getOption(options, "withTransition", true);
-		options.withTransform = getOption(options, "withTransform", false);
-		options.withLegend = getOption(options, "withLegend", false);
-
-		// NOT same with redraw
-		options.withUpdateXDomain = true;
-		options.withUpdateOrgXDomain = true;
-		options.withTransitionForExit = false;
-		options.withTransitionForTransform = getOption(options, "withTransitionForTransform", options.withTransition);
-
-		// MEMO: called in updateLegend in redraw if withLegend
-		if (!(options.withLegend && config.legend_show)) {
-			if (state.hasAxis) {
-				transitions = $$.axis.generateTransitions(
-					options.withTransitionForAxis ? config.transition_duration : 0
-				);
-			}
-
-			// Update scales
-			$$.updateScales();
-			$$.updateSvgSize();
-
-			// Update g positions
-			$$.transformAll(options.withTransitionForTransform, transitions);
-		}
-
-		// Draw with new sizes & scales
-		$$.redraw(options, transitions);
-	}
-
-	redrawWithoutRescale() {
-		this.redraw({
-			withY: false,
-			withSubchart: false,
-			withEventRect: false,
-			withTransitionForAxis: false
-		});
-	}
-
-	isCategorized() {
-		return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
-	}
-
-	isCustomX() {
-		const $$ = this;
-		const {config} = $$;
-
-		return !$$.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
-	}
-
-	isTimeSeries(id = "x") {
-		return this.config[`axis_${id}_type`] === "timeseries";
-	}
-
-	isTimeSeriesY() {
-		return this.isTimeSeries("y");
-	}
+	// isTimeSeriesY() {
+	// 	return this.isTimeSeries("y");
+	// }
 
 	initialOpacity(d) {
 		const {withoutFadeIn} = this.state;
@@ -930,50 +690,10 @@ export default class ChartInternal {
 			withoutFadeIn[d.id] ? "1" : "0";
 	}
 
-	/**
-	 * Get the zoom or unzoomed scaled value
-	 * @param {Date|Number|Object} d Data value
-	 * @private
-	 */
-	xx(d) {
-		const $$ = this;
-		const {config, scale: {x, zoom}} = $$;
-		const fn = config.zoom_enabled && zoom ?
-			zoom : x;
-
-		return d ? fn(isValue(d.x) ? d.x : d) : null;
-	}
-
-	xv(d) {
-		const $$ = this;
-		const {config, scale: {x}} = $$;
-		let value = $$.getBaseValue(d);
-
-		if ($$.isTimeSeries()) {
-			value = parseDate.call($$, value);
-		} else if ($$.isCategorized() && isString(value)) {
-			value = config.axis_x_categories.indexOf(value);
-		}
-
-		return Math.ceil(x(value));
-	}
-
-	yv(d) {
-		const $$ = this;
-		const {scale: {y, y2}} = $$;
-		const yScale = d.axis && d.axis === "y2" ? y2 : y;
-
-		return Math.ceil(yScale($$.getBaseValue(d)));
-	}
-
-	subxx(d) {
-		return d ? this.scale.subX(d.x) : null;
-	}
-
 	bindResize() {
 		const $$ = this;
 		const config = $$.config;
-		const resizeFunction = $$.generateResize();
+		const resizeFunction = generateResize();
 		const list = [];
 
 		list.push(() => callFn(config.onresize, $$, $$.api));
@@ -989,79 +709,6 @@ export default class ChartInternal {
 
 		// attach resize event
 		window.addEventListener("resize", $$.resizeFunction = resizeFunction);
-	}
-
-	generateResize() {
-		const fn = [];
-
-		function callResizeFn() {
-			// Delay all resize functions call, to prevent unintended excessive call from resize event
-			if (callResizeFn.timeout) {
-				window.clearTimeout(callResizeFn.timeout);
-				callResizeFn.timeout = null;
-			}
-
-			callResizeFn.timeout = window.setTimeout(() => {
-				fn.forEach(f => f());
-			}, 200);
-		}
-
-		callResizeFn.add = f => fn.push(f);
-		callResizeFn.remove = f => fn.splice(fn.indexOf(f), 1);
-
-		return callResizeFn;
-	}
-
-	endall(transition, callback) {
-		let n = 0;
-
-		transition
-			.each(() => ++n)
-			.on("end", function(...args) {
-				!--n && callback.apply(this, ...args);
-			});
-	}
-
-	generateWait() {
-		let transitionsToWait = [];
-		const f = function(t, callback) {
-			let timer;
-
-			function loop() {
-				let done = 0;
-
-				for (let i = 0, t; (t = transitionsToWait[i]); i++) {
-					if (t.empty()) {
-						done++;
-						continue;
-					}
-
-					try {
-						t.transition();
-					} catch (e) {
-						done++;
-					}
-				}
-
-				timer && clearTimeout(timer);
-
-				if (done === transitionsToWait.length) {
-					callback && callback();
-				} else {
-					timer = setTimeout(loop, 50);
-				}
-			}
-
-			loop();
-		};
-
-		f.add = function(t) {
-			isArray(t) ?
-				(transitionsToWait = transitionsToWait.concat(t)) :
-				transitionsToWait.push(t);
-		};
-
-		return f;
 	}
 
 	/**
@@ -1092,6 +739,7 @@ extend(ChartInternal.prototype, [
 	interaction,
 	format,
 	legend,
+	redraw,
 	scale,
 	size,
 	text,
@@ -1099,6 +747,6 @@ extend(ChartInternal.prototype, [
 	tooltip,
 	transform,
 	type,
-	...moduleArc.internal,
-	...moduleAxis.internal
+	...arcInternal,
+	...axisInternal
 ]);

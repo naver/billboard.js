@@ -21,13 +21,14 @@ export default {
 	 */
 	x(x) {
 		const $$ = this.internal;
-		const isCategorized = $$.isCustomX() && $$.isCategorized();
+		const {axis, data} = $$;
+		const isCategorized = axis.isCustomX() && axis.isCategorized();
 
 		if (isArray(x)) {
 			if (isCategorized) {
 				this.categories(x);
 			} else {
-				$$.updateTargetX($$.data.targets, x);
+				$$.updateTargetX(data.targets, x);
 
 				$$.redraw({
 					withUpdateOrgXDomain: true,
@@ -36,7 +37,7 @@ export default {
 			}
 		}
 
-		return isCategorized ? this.categories() : $$.data.xs;
+		return isCategorized ? this.categories() : data.xs;
 	},
 
 	/**

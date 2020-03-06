@@ -74,7 +74,7 @@ export default {
 		const {config, scale, state, $el: {main, grid}} = $$;
 		const isRotated = config.axis_rotated;
 		const xgridData = $$.generateGridData(config.grid_x_type, scale.x);
-		const tickOffset = $$.isCategorized() ? $$.axis.x.tickOffset() : 0;
+		const tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
 		const pos = d => ((scale.zoom || scale.x)(d) + tickOffset) * (isRotated ? -1 : 1);
 
 		state.xgridAttr = isRotated ? {
@@ -358,7 +358,7 @@ export default {
 				const el = d3Select(this);
 				const pos = {
 					x: xx(d),
-					y: $$.getYScale(d.id)(d.value)
+					y: $$.getYScaleById(d.id)(d.value)
 				};
 				let xy;
 

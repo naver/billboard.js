@@ -247,8 +247,16 @@ export default {
 
 	convertDataToTargets(data, appendXs) {
 		const $$ = this;
-		const {config, state} = $$;
-		const isTimeSeries = $$.isTimeSeries();
+		const {axis, config, state} = $$;
+		let isCategorized = false;
+		let isTimeSeries = false;
+		let isCustomX = false;
+
+		if (axis) {
+			isCategorized = axis.isCategorized();
+			isTimeSeries = axis.isTimeSeries();
+			isCustomX = axis.isCustomX();
+		}
 
 		const dataKeys = Object.keys(data[0] || {});
 		const ids = dataKeys.length ? dataKeys.filter($$.isNotX, $$) : [];
@@ -260,7 +268,7 @@ export default {
 		ids.forEach(id => {
 			const xKey = this.getXKey(id);
 
-			if (this.isCustomX() || isTimeSeries) {
+			if (isCustomX || isTimeSeries) {
 				// if included in input data
 				if (xs.indexOf(xKey) >= 0) {
 					xsData = ((appendXs && $$.data.xs[id]) || [])
@@ -295,8 +303,8 @@ export default {
 		const targets = ids.map((id, index) => {
 			const convertedId = config.data_idConverter.bind($$.api)(id);
 			const xKey = $$.getXKey(id);
-			const isCategorized = $$.isCustomX() && $$.isCategorized();
-			const hasCategory = isCategorized && data.map(v => v.x)
+			const isCategory = isCustomX && isCategorized;
+			const hasCategory = isCategory && data.map(v => v.x)
 				.every(v => config.axis_x_categories.indexOf(v) > -1);
 
 			return {
@@ -311,7 +319,7 @@ export default {
 						+value : (isArray(value) || isObject(value) ? value : null);
 
 					// use x as categories if custom x and categorized
-					if (isCategorized && index === 0 && !isUndefined(rawX)) {
+					if (isCategory && index === 0 && !isUndefined(rawX)) {
 						if (!hasCategory && index === 0 && i === 0) {
 							config.axis_x_categories = [];
 						}

@@ -74,6 +74,7 @@ export default {
 		const notfoundIds: string[] = [];
 		const orgDataCount = $$.getMaxDataCount();
 		const targets = $$.convertDataToTargets(data, true);
+		const isTimeSeries = $$.axis.isTimeSeries();
 
 		// Update/Add data
 		$$.data.targets.forEach(t => {
@@ -92,7 +93,7 @@ export default {
 					for (let j = 0; j < length; j++) {
 						targets[i].values[j].index = tail + j;
 
-						if (!$$.isTimeSeries()) {
+						if (!isTimeSeries) {
 							targets[i].values[j].x = tail + j;
 						}
 					}
@@ -116,7 +117,7 @@ export default {
 						t.values.push({
 							id: t.id,
 							index: tail + j,
-							x: $$.isTimeSeries() ? $$.getOtherTargetX(tail + j) : tail + j,
+							x: isTimeSeries ? $$.getOtherTargetX(tail + j) : tail + j,
 							value: null
 						});
 					}
@@ -133,7 +134,7 @@ export default {
 					missing.push({
 						id: t.id,
 						index: i,
-						x: $$.isTimeSeries() ? $$.getOtherTargetX(i) : i,
+						x: isTimeSeries ? $$.getOtherTargetX(i) : i,
 						value: null
 					});
 				}
@@ -141,7 +142,7 @@ export default {
 				t.values.forEach(v => {
 					v.index += tail;
 
-					if (!$$.isTimeSeries()) {
+					if (!isTimeSeries) {
 						v.x += tail;
 					}
 				});
@@ -160,7 +161,7 @@ export default {
 		// Update length to flow if needed
 		if (isDefined(args.to)) {
 			length = 0;
-			to = $$.isTimeSeries() ? parseDate.call($$, args.to) : args.to;
+			to = isTimeSeries ? parseDate.call($$, args.to) : args.to;
 
 			baseTarget.values.forEach(v => {
 				v.x < to && length++;
@@ -171,7 +172,7 @@ export default {
 
 		// If only one data, update the domain to flow from left edge of the chart
 		if (!orgDataCount) {
-			if ($$.isTimeSeries()) {
+			if (isTimeSeries) {
 				diff = baseTarget.values.length > 1 ?
 					baseTarget.values[baseTarget.values.length - 1].x - baseValue.x :
 					baseValue.x - $$.getXDomain($$.data.targets)[0];
@@ -180,7 +181,7 @@ export default {
 			}
 
 			domain = [baseValue.x - diff, baseValue.x];
-		} else if (orgDataCount === 1 && $$.isTimeSeries()) {
+		} else if (orgDataCount === 1 && isTimeSeries) {
 			diff = (baseTarget.values[baseTarget.values.length - 1].x - baseValue.x) / 2;
 			domain = [new Date(+baseValue.x - diff), new Date(+baseValue.x + diff)];
 		}

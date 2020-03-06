@@ -6,6 +6,7 @@ import {
 	scaleTime as d3ScaleTime,
 	scaleLinear as d3ScaleLinear
 } from "d3-scale";
+import {isString, isValue, parseDate} from "../../module/util";
 
 export default {
 	getScale(min, max, forTimeseries) {
@@ -23,9 +24,9 @@ export default {
 	 * @return {Function} scale
 	 * @private
 	 */
-	getX(min, max, domain, offset) {
+	getXScale(min, max, domain, offset) {
 		const $$ = this;
-		const scale = $$.scale.zoom || $$.getScale(min, max, $$.isTimeSeries());
+		const scale = $$.scale.zoom || $$.getScale(min, max, $$.axis.isTimeSeries());
 
 		return $$.getCustomizedScale(
 			domain ? scale.domain(domain) : scale,
@@ -41,12 +42,26 @@ export default {
 	 * @return {Function} scale
 	 * @private
 	 */
-	getY(min, max, domain) {
-		const scale = this.getScale(min, max, this.isTimeSeriesY());
+	getYScale(min, max, domain) {
+		const $$ = this;
+		const scale = $$.getScale(min, max, $$.axis.isTimeSeriesY());
 
 		domain && scale.domain(domain);
 
 		return scale;
+	},
+
+	/**
+	 * Get y Axis scale
+	 * @param {String} id Axis id
+	 * @param {Boolean} isSub Weather is sub Axis
+	 * @private
+	 */
+	getYScaleById(id: string, isSub = false) {
+		const isY2 = this.axis.getId(id) === "y2";
+		const key = isSub ? (isY2 ? "subY2" : "subY") : (isY2 ? "y2" : "y");
+
+		return this.scale[key];
 	},
 
 	/**
@@ -74,7 +89,7 @@ export default {
 		scale.orgScale = () => scaleValue;
 
 		// define custom domain() for categorized axis
-		if ($$.isCategorized()) {
+		if ($$.axis.isCategorized()) {
 			scale.domain = function(domainValue) {
 				let domain = domainValue;
 
@@ -91,16 +106,6 @@ export default {
 		}
 
 		return scale;
-	},
-
-	getYScale(id) {
-		const {y, y2} = this.scale;
-		return this.axis.getId(id) === "y2" ? y2 : y;
-	},
-
-	getSubYScale(id) {
-		const {subY, subY2} = this.scale;
-		return this.axis.getId(id) === "y2" ? subY2 : subY;
 	},
 
 	/**
@@ -130,44 +135,82 @@ export default {
 				y: isRotated ? width : 1,
 				subX: isRotated ? height : width,
 				subY: isRotated ? width2 : 1
-			}
+			};
 
 			// update scales
 			// x Axis
 			const xDomain = updateXDomain && scale.x && scale.x.orgDomain();
 			const xSubDomain = updateXDomain && org.xDomain;
 
-			scale.x = $$.getX(min.x, max.x, xDomain, () => axis.x.tickOffset());
-			scale.subX = $$.getX(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : axis.subX.tickOffset()));
+			scale.x = $$.getXScale(min.x, max.x, xDomain, () => axis.x.tickOffset());
+			scale.subX = $$.getXScale(min.x, max.x, xSubDomain, d => (d % 1 ? 0 : axis.subX.tickOffset()));
 
 			format.xAxisTick = axis.getXAxisTickFormat();
-			axis.tick.x = axis.getTickValues("x");
 
-			axis.x = axis.getAxis("x", scale.x, config.axis_x_tick_outer, isInit);
+			axis.setAxis("x", scale.x, config.axis_x_tick_outer, isInit);
 
 			if (config.subchart_show) {
-				axis.subX = axis.getAxis("subX", scale.subX, config.axis_x_tick_outer, isInit);
+				axis.setAxis("subX", scale.subX, config.axis_x_tick_outer, isInit);
 			}
 
 			// y Axis
-			scale.y = $$.getY(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
-			scale.subY = $$.getY(min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
+			scale.y = $$.getYScale(min.y, max.y, scale.y ? scale.y.domain() : config.axis_y_default);
+			scale.subY = $$.getYScale(
+				min.subY, max.subY, scale.subY ? scale.subY.domain() : config.axis_y_default);
 
-			axis.tick.y = axis.getTickValues("y");
-			axis.y = axis.getAxis("y", scale.y, config.axis_y_tick_outer, isInit);
+			axis.setAxis("y", scale.y, config.axis_y_tick_outer, isInit);
 
 			// y2 Axis
 			if (config.axis_y2_show) {
-				scale.y2 = $$.getY(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
-				scale.subY2 = $$.getY(min.subY, max.subY,
+				scale.y2 = $$.getYScale(min.y, max.y, scale.y2 ? scale.y2.domain() : config.axis_y2_default);
+				scale.subY2 = $$.getYScale(min.subY, max.subY,
 					scale.subY2 ? scale.subY2.domain() : config.axis_y2_default);
 
-				axis.tick.y2 = axis.getTickValues("y2");
-				axis.y2 = axis.getAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
+				axis.setAxis("y2", scale.y2, config.axis_y2_tick_outer, isInit);
 			}
 		} else {
 			// update for arc
 			$$.updateArc && $$.updateArc();
 		}
 	},
+
+	/**
+	 * Get the zoom or unzoomed scaled value
+	 * @param {Date|Number|Object} d Data value
+	 * @private
+	 */
+	xx(d): number {
+		const $$ = this;
+		const {config, scale: {x, zoom}} = $$;
+		const fn = config.zoom_enabled && zoom ?
+			zoom : x;
+
+		return d ? fn(isValue(d.x) ? d.x : d) : null;
+	},
+
+	xv(d): number {
+		const $$ = this;
+		const {axis, config, scale: {x}} = $$;
+		let value = $$.getBaseValue(d);
+
+		if (axis.isTimeSeries()) {
+			value = parseDate.call($$, value);
+		} else if (axis.isCategorized() && isString(value)) {
+			value = config.axis_x_categories.indexOf(value);
+		}
+
+		return Math.ceil(x(value));
+	},
+
+	yv(d): number {
+		const $$ = this;
+		const {scale: {y, y2}} = $$;
+		const yScale = d.axis && d.axis === "y2" ? y2 : y;
+
+		return Math.ceil(yScale($$.getBaseValue(d)));
+	},
+
+	subxx(d): number {
+		return d ? this.scale.subX(d.x) : null;
+	}
 };

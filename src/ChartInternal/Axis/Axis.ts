@@ -10,11 +10,16 @@ import {
 } from "d3-axis";
 import AxisRenderer from "./AxisRenderer";
 import CLASS from "../../config/classes";
-import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, parseDate, sortValue} from "../../module/util";
-import ChartInternal from "../ChartInternal";
+import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
 
 export default class Axis {
-	public owner: ChartInternal;
+	public owner;
+
+	public x;
+	public subX;
+	public y;
+	public y2;
+
 	private axesList = {};
 	public tick = {
 		x: null, y: null, y2: null
@@ -40,6 +45,28 @@ export default class Axis {
 		const isRotated = $$.config.axis_rotated;
 
 		return forHorizontal ? isRotated : !isRotated;
+	}
+
+	public isCategorized() {
+		const {config, state} = this.owner;
+
+		return config.axis_x_type.indexOf("category") >= 0 || state.hasRadar;
+	}
+
+	public isCustomX() {
+		const {config} = this.owner;
+
+		return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+	}
+
+	public isTimeSeries(id = "x") {
+		const {config} = this.owner;
+
+		return config[`axis_${id}_type`] === "timeseries";
+	}
+
+	public isTimeSeriesY() {
+		return this.isTimeSeries("y");
 	}
 
 	init() {
@@ -176,7 +203,7 @@ export default class Axis {
 				} else {
 					axesConfig[i].domain && scale.domain(axesConfig[i].domain);
 
-					$$.axis.x.helper.transitionise(g)
+					this.x.helper.transitionise(g)
 						.call(v.scale(scale));
 				}
 
@@ -185,35 +212,50 @@ export default class Axis {
 		});
 	}
 
-	// called from : updateScales() & getMaxTickWidth()
-	getAxis(name, scale, outerTick, noTransition, noTickTextRotate): AxisRenderer {
+	/**
+	 * Set Axis & tick values
+	 * called from: updateScales()
+	 * @param {String} id Axis id string
+	 * @param {Array} args Arguments
+	 * @private
+	 */
+	setAxis(id, ...args): void {
+		if (id !== "subX") {
+			this.tick[id] = this.getTickValues(id);
+		}
+
+		this[id] = this.getAxis(id, ...args);
+	}
+
+	// called from : getMaxTickWidth()
+	getAxis(id, scale, outerTick, noTransition, noTickTextRotate): AxisRenderer {
 		const $$ = this.owner;
 		const {config} = $$;
-		const isX = /^(x|subX)$/.test(name);
-		const type = isX ? "x" : name;
+		const isX = /^(x|subX)$/.test(id);
+		const type = isX ? "x" : id;
 
-		const isCategory = isX && $$.isCategorized();
-		const orient = this.orient[name];
+		const isCategory = isX && this.isCategorized();
+		const orient = this.orient[id];
 
 		let tickFormat;
 
 		if (isX) {
 			tickFormat = $$.format.xAxisTick;
 		} else {
-			const fn = config[`axis_${name}_tick_format`];
+			const fn = config[`axis_${id}_tick_format`];
 
 			if (isFunction(fn)) {
 				tickFormat = fn.bind($$.api);
 			}
 		}
 
-		let tickValues = $$.axis.tick[type];
+		let tickValues = this.tick[type];
 
 		const axisParams = mergeObj({
 			outerTick,
 			noTransition,
 			config,
-			name,
+			id,
 			tickTextRotate: noTickTextRotate ? 0 : config[`axis_${type}_tick_rotate`]
 		}, isX && {
 			isCategory,
@@ -231,11 +273,11 @@ export default class Axis {
 			.scale((isX && $$.scale.zoom) || scale)
 			.orient(orient);
 
-		if (isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues)) {
+		if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
 			const fn = parseDate.bind($$);
 
 			tickValues = tickValues.map(v => fn(v));
-		} else if (!isX && $$.isTimeSeriesY()) {
+		} else if (!isX && this.isTimeSeriesY()) {
 			// https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
 			axis.ticks(config.axis_y_tick_time_value);
 			tickValues = null;
@@ -274,21 +316,21 @@ export default class Axis {
 			values = this.generateTickValues(
 				$$.mapTargetsToUniqueXs(targets),
 				count,
-				$$.isTimeSeries()
+				this.isTimeSeries()
 			);
 		}
 
 		if (axis) {
 			axis.tickValues(values);
-		} else if ($$.axis.x) {
-			$$.axis.x.tickValues(values);
-			$$.axis.subX && $$.axis.subX.tickValues(values);
+		} else if (this.x) {
+			this.x.tickValues(values);
+			this.subX && this.subX.tickValues(values);
 		}
 
 		return values;
 	}
 
-	getId(id) {
+	getId(id: string): string {
 		const {config, scale} = this.owner;
 		let axis = config.data_axes[id];
 
@@ -300,12 +342,12 @@ export default class Axis {
 		return axis;
 	}
 
-	getXAxisTickFormat() {
+	getXAxisTickFormat(): Function {
 		const $$ = this.owner;
 		const {config, format} = $$;
 		const tickFormat = config.axis_x_tick_format;
-		const isTimeSeries = $$.isTimeSeries();
-		const isCategorized = $$.isCategorized();
+		const isTimeSeries = this.isTimeSeries();
+		const isCategorized = this.isCategorized();
 		let currFormat;
 
 		if (tickFormat) {
@@ -327,7 +369,7 @@ export default class Axis {
 			) : currFormat;
 	}
 
-	getTickValues(id) {
+	getTickValues(id: string) {
 		const $$ = this.owner;
 		const tickValues = $$.config[`axis_${id}_tick_values`];
 		const axis = $$[`${id}Axis`];
@@ -336,11 +378,11 @@ export default class Axis {
 			(axis ? axis.tickValues() : undefined);
 	}
 
-	getLabelOptionByAxisId(id) {
+	getLabelOptionByAxisId(id: string) {
 		return this.owner.config[`axis_${id}_label`];
 	}
 
-	getLabelText(id) {
+	getLabelText(id: string) {
 		const option = this.getLabelOptionByAxisId(id);
 
 		return isString(option) ? option : (
@@ -348,7 +390,7 @@ export default class Axis {
 		);
 	}
 
-	setLabelText(id, text) {
+	setLabelText(id: string, text: string) {
 		const $$ = this.owner;
 		const {config} = $$;
 		const option = this.getLabelOptionByAxisId(id);
@@ -360,7 +402,7 @@ export default class Axis {
 		}
 	}
 
-	getLabelPosition(id, defaultPosition) {
+	getLabelPosition(id: string, defaultPosition) {
 		const isRotated = this.owner.config.axis_rotated;
 		const option = this.getLabelOptionByAxisId(id);
 		const position = (isObjectType(option) && option.position) ?
@@ -380,15 +422,15 @@ export default class Axis {
 		};
 	}
 
-	getAxisLabelPosition(id) {
+	getAxisLabelPosition(id: string) {
 		return this.getLabelPosition(id, id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
 	}
 
-	getLabelPositionById(id) {
+	getLabelPositionById(id: string) {
 		return this.getAxisLabelPosition(id);
 	}
 
-	xForAxisLabel(id) {
+	xForAxisLabel(id: string) {
 		const $$ = this.owner;
 		const {state: {width, height}} = $$;
 		const position = this.getAxisLabelPosition(id);
@@ -405,7 +447,7 @@ export default class Axis {
 		return x;
 	}
 
-	dxForAxisLabel(id) {
+	dxForAxisLabel(id: string) {
 		const $$ = this.owner;
 		const position = this.getAxisLabelPosition(id);
 		let dx = position.isBottom ? "0.5em" : "0";
@@ -421,7 +463,7 @@ export default class Axis {
 		return dx;
 	}
 
-	textAnchorForAxisLabel(id) {
+	textAnchorForAxisLabel(id: string) {
 		const $$ = this.owner;
 		const position = this.getAxisLabelPosition(id);
 		let anchor = position.isMiddle ? "middle" : "end";
@@ -437,7 +479,7 @@ export default class Axis {
 		return anchor;
 	}
 
-	dyForAxisLabel(id) {
+	dyForAxisLabel(id: string) {
 		const $$ = this.owner;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
@@ -523,7 +565,7 @@ export default class Axis {
 					this.generateTickValues(
 						domain,
 						tickCount,
-						isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries()
+						isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()
 					));
 			}
 
@@ -610,7 +652,7 @@ export default class Axis {
 			} else if (targetCount === 2) {
 				tickValues = [values[0], values[values.length - 1]];
 			} else if (targetCount > 2) {
-				const isCategorized = this.owner.isCategorized();
+				const isCategorized = this.isCategorized();
 
 				count = targetCount - 2;
 				start = values[0];
@@ -664,7 +706,7 @@ export default class Axis {
 		const opacity = isHidden ? "0" : "1";
 
 		["x", "y", "y2", "subX"].forEach(id => {
-			const axis = $$.axis[id];
+			const axis = this[id];
 			const $axis = $el.axis[id];
 
 			if (axis && $axis) {
@@ -694,7 +736,7 @@ export default class Axis {
 		const hasZoom = !!scale.zoom;
 		let xDomainForZoom;
 
-		if (!hasZoom && $$.isCategorized() && targetsToShow.length === 0) {
+		if (!hasZoom && this.isCategorized() && targetsToShow.length === 0) {
 			scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]);
 		}
 
@@ -705,9 +747,9 @@ export default class Axis {
 			if (!config.axis_x_tick_values) {
 				this.updateXAxisTickValues(targetsToShow);
 			}
-		} else if ($$.axis.x) {
-			$$.axis.x.tickValues([]);
-			$$.axis.subX && $$.axis.subX.tickValues([]);
+		} else if (this.x) {
+			this.x.tickValues([]);
+			this.subX && this.subX.tickValues([]);
 		}
 
 		if (config.zoom_rescale && !flow) {
@@ -730,7 +772,7 @@ export default class Axis {
 						this.generateTickValues(
 							domain,
 							domain.every(v => v === 0) ? 1 : tickCount,
-							$$.isTimeSeriesY()
+							this.isTimeSeriesY()
 						)
 					);
 				}

@@ -13,7 +13,7 @@ import {
 import {interpolate as d3Interpolate} from "d3-interpolate";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {callFn, isFunction, isNumber, isUndefined, setTextValue} from "../../module/util";
+import {callFn, endall, isFunction, isNumber, isUndefined, setTextValue} from "../../module/util";
 
 export default {
 	initPie() {
@@ -46,7 +46,8 @@ export default {
 		const gaugeArcWidth = $$.filterTargetsToShow($$.data.targets).length *
 			config.gauge_arcs_minWidth;
 
-		state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * ($$.hasMultiArcGauge() ? 0.85 : 1);
+		state.radiusExpanded = Math.min(state.arcWidth, state.arcHeight) / 2 * (
+			$$.hasMultiArcGauge() ? 0.85 : 1);
 		state.radius = state.radiusExpanded * 0.95;
 		state.innerRadiusRatio = w ? (state.radius - w) / state.radius : 0.6;
 		state.gaugeArcWidth = w || (
@@ -156,8 +157,9 @@ export default {
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 
 		let arc = d3Arc()
-			.outerRadius((d: any) => (hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : state.radius))
-			.innerRadius((d: any) => (hasMultiArcGauge ?
+			.outerRadius(d => (
+				hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : state.radius))
+			.innerRadius(d => (hasMultiArcGauge ?
 				state.radius - singleArcWidth * (d.index + 1) :
 				isNumber(ir) ? ir : 0));
 
@@ -584,7 +586,7 @@ export default {
 			})
 			// Where gauge reading color would receive customization.
 			.style("opacity", "1")
-			.call($$.endall, function() {
+			.call(endall, function() {
 				if ($$.levelColor) {
 					const path = d3Select(this);
 					const d: any = path.datum();
