@@ -690,6 +690,41 @@ export interface ChartOptions {
 		 */
 		observe?: boolean;
 	};
+
+	title?: {
+		/**
+		 * Set the title text.
+		 * If contains \n, it's used as line break allowing multiline title.
+		 */
+		text?: string;
+
+		padding?: {
+			/**
+			 * Top padding value.
+			 */
+			top?: number;
+
+			/**
+			 * Bottom padding value.
+			 */
+			bottom?: number;
+
+			/**
+			 * Right padding value.
+			 */
+			right?: number;
+
+			/**
+			 * Left padding value.
+			 */
+			left?: number;
+		};
+
+		/**
+		 * Set the position. Default value is 'center'
+		 */
+		position?: "center" | "right" | "left";
+	}
 }
 
 export interface AreaLinearGradientOptions {
