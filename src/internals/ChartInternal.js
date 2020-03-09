@@ -655,9 +655,6 @@ export default class ChartInternal {
 		// update circleY based on updated parameters
 		$$.updateCircleY();
 
-		// xgrid focus
-		$$.updategridFocus();
-
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
 			.attr("x", $$.width / 2)
@@ -837,6 +834,7 @@ export default class ChartInternal {
 			}
 
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+			!flow && list.push($$.updategridFocus());
 		}
 
 		if (!hasArcType || $$.hasType("radar")) {

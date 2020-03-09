@@ -965,6 +965,41 @@ describe("INTERACTION", () => {
 		});
 	});
 
+	describe("check for touch move selection", () => {
+		const selection = [];
+
+		before(() => {
+			args = {
+				data: {	
+					columns: [
+						["data", 3000, 2000, 1000, 4000]
+					]
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				}
+			};
+		});
+
+		it("x focus grid position & visibility should be maintained after resize", done => {
+			chart.tooltip.show({x:2});
+			chart.resize({width:300});
+
+			setTimeout(() => {
+				const xGridFocus = chart.$.main.select(`.${CLASS.xgridFocus} line`);
+				const x = chart.internal.xx(xGridFocus.datum());
+
+				expect(x).to.be.equal(+xGridFocus.attr("x1"));
+				expect(x).to.be.equal(+xGridFocus.attr("x2"));
+				expect(xGridFocus.style("visibility")).to.be.equal("visible");
+
+				done();
+			}, 300);
+		});
+	});
+
 	describe("check for data.over/out", () => {
 		const spy1 = sinon.spy();
 		const spy2 = sinon.spy();

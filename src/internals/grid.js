@@ -376,19 +376,28 @@ extend(ChartInternal.prototype, {
 	},
 
 	hideGridFocus() {
-		this.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
+		const $$ = this;
+
+		$$.inputType === "mouse" && $$.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
 			.style("visibility", "hidden");
 	},
 
 	updategridFocus() {
 		const $$ = this;
-		const isRotated = $$.config.axis_rotated;
 
-		$$.main.select(`line.${CLASS.xgridFocus}`)
-			.attr("x1", isRotated ? 0 : -10)
-			.attr("x2", isRotated ? $$.width : -10)
-			.attr("y1", isRotated ? -10 : 0)
-			.attr("y2", isRotated ? -10 : $$.height);
+		if ($$.inputType === "touch") {
+			const d = $$.grid.select(`line.${CLASS.xgridFocus}`).datum();
+
+			d && $$.showGridFocus([d]);
+		} else {
+			const isRotated = $$.config.axis_rotated;
+
+			$$.main.select(`line.${CLASS.xgridFocus}`)
+				.attr("x1", isRotated ? 0 : -10)
+				.attr("x2", isRotated ? $$.width : -10)
+				.attr("y1", isRotated ? -10 : 0)
+				.attr("y2", isRotated ? -10 : $$.height);
+		}
 	},
 
 	generateGridData(type, scale) {
