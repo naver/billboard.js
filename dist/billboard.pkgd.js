@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200310130943
+ * @version 1.11.1-nightly-20200310144009
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21319,20 +21319,25 @@ var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
 
 
   return _createClass(AxisRendererHelper, [{
-    key: "axisX",
-    value: function axisX(selection, x) {
-      var _this = this;
+    key: "getTickTransformSetter",
 
-      selection.attr("transform", function (d) {
-        return "translate(".concat(Math.ceil(x(d) + _this.config.tickOffset), ",0)");
-      });
-    }
-  }, {
-    key: "axisY",
-    value: function axisY(selection, y) {
-      selection.attr("transform", function (d) {
-        return "translate(0,".concat(Math.ceil(y(d)), ")");
-      });
+    /**
+     * Get tick transform setter function
+     * @param {String} id Axis id
+     * @private
+     */
+    value: function getTickTransformSetter(id) {
+      var config = this.config,
+          fn = id === "x" ? function (value) {
+        return "translate(".concat(value + config.tickOffset, ",0)");
+      } : function (value) {
+        return "translate(0,".concat(value, ")");
+      };
+      return function (selection, scale) {
+        selection.attr("transform", function (d) {
+          return fn(Math.ceil(scale(d)));
+        });
+      };
     }
   }, {
     key: "scaleExtent",
@@ -21461,7 +21466,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
           splitTickText = this.splitTickText.bind(this),
           isLeftRight = /^(left|right)$/.test(orient),
           isTopBottom = /^(top|bottom)$/.test(orient),
-          tickTransform = helperInst[isTopBottom ? "axisX" : "axisY"],
+          tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y"),
           axisPx = tickTransform === helperInst.axisX ? "y" : "x",
           sign = /^(top|left)$/.test(orient) ? -1 : 1,
           rotate = params.tickTextRotate;
@@ -21526,7 +21531,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
               textUpdate = tick.select("text");
 
           // Append <title> for tooltip display
-          if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr("".concat(axisPx), tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
+          if (tickEnter.select("line").attr("".concat(axisPx, "2"), innerTickSize * sign), tickEnter.select("text").attr(axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
             var title = textUpdate.select("title");
             (title.empty() ? textUpdate.append("title") : title).text(function (index) {
               return params.tickTitle[index];
@@ -21539,9 +21544,9 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
             scale0 = function (d) {
               return x(d) + dx;
             }, scale1 = scale0;
-          } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
+          } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
 
-          tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
+          tickTransform(tickEnter, scale0), tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
         }
       }), this.g = $g;
     }
@@ -21863,11 +21868,13 @@ var Axis_Axis = /*#__PURE__*/function () {
       });
       isX || (axisParams.tickStepSize = config["axis_".concat(type, "_tick_stepSize")]);
       var axis = new AxisRenderer_AxisRenderer(axisParams).scale(isX && $$.zoomScale || scale).orient(orient);
-      return isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
+      isX && $$.isTimeSeries() && tickValues && !isFunction(tickValues) ? tickValues = tickValues.map(function (v) {
         return $$.parseDate(v);
       }) : !isX && $$.isTimeSeriesY() && (axis.ticks(config.axis_y_tick_time_value), tickValues = null), tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
         return "".concat(x, "%");
-      }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config["axis_".concat(type, "_tick_count")] && axis.ticks(config["axis_".concat(type, "_tick_count")]), axis;
+      }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1));
+      var tickCount = config["axis_".concat(type, "_tick_count")];
+      return tickCount && axis.ticks(tickCount), axis;
     }
   }, {
     key: "updateXAxisTickValues",
@@ -22020,9 +22027,7 @@ var Axis_Axis = /*#__PURE__*/function () {
             scale = $$[id].copy().domain($$["get".concat(isYAxis ? "Y" : "X", "Domain")](targetsToShow, id)),
             domain = scale.domain();
         // do not compute if domain is same
-        if (isArray(currentTickMax.domain) && currentTickMax.domain.every(function (v, i) {
-          return v === domain[i];
-        })) return currentTickMax.size;
+        if (domain[0] === domain[1] || isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1]) return currentTickMax.size;
         currentTickMax.domain = domain;
         var axis = this.getAxis(id, scale, !1, !1, !0),
             tickCount = config["axis_".concat(id, "_tick_count")],
@@ -29030,7 +29035,9 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         rotate = config["axis_".concat(id, "_tick_rotate")];
-    if (!$$.filterTargetsToShow($$.data.targets).length) return 0;
+    if (!$$.filterTargetsToShow($$.data.targets).length) // When data is hidden, it should maintain rotate value
+      // https://github.com/naver/billboard.js/issues/1278
+      return rotate;
 
     if (id === "x") {
       var isCategorized = $$.isCategorized(),
@@ -37731,7 +37738,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200310130943",
+  version: "1.11.1-nightly-20200310144009",
 
   /**
    * Generate chart
@@ -37830,7 +37837,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200310130943
+ * @version 1.11.1-nightly-20200310144009
  */
 
 
