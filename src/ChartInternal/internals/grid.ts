@@ -305,9 +305,11 @@ export default {
 		const isFront = config.grid_front;
 		const className = `.${CLASS[isFront && $el.grid.main ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
 
-		const grid = $el.grid.main = $el.main.insert("g", className)
+		const grid = $el.main.insert("g", className)
 			.attr("clip-path", clip.pathGrid)
 			.attr("class", CLASS.grid);
+
+		$el.grid.main = grid;
 
 		config.grid_x_show &&
 			grid.append("g").attr("class", CLASS.xgrids);
@@ -401,20 +403,30 @@ export default {
 	},
 
 	hideGridFocus() {
-		this.$el.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
+		const $$ = this;
+		const {state, $el} = $$;
+
+		state.inputType === "mouse" && $el.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
 			.style("visibility", "hidden");
 	},
 
 	updategridFocus() {
 		const $$ = this;
-		const {width, height} = $$.state;
-		const isRotated = $$.config.axis_rotated;
+		const {state: {inputType, width, height}, $el} = $$;
 
-		$$.$el.main.select(`line.${CLASS.xgridFocus}`)
-			.attr("x1", isRotated ? 0 : -10)
-			.attr("x2", isRotated ? width : -10)
-			.attr("y1", isRotated ? -10 : 0)
-			.attr("y2", isRotated ? -10 : height);
+		if (inputType === "touch") {
+			const d = $el.grid.main.select(`line.${CLASS.xgridFocus}`).datum();
+
+			d && $$.showGridFocus([d]);
+		} else {
+			const isRotated = $$.config.axis_rotated;
+
+			$el.main.select(`line.${CLASS.xgridFocus}`)
+				.attr("x1", isRotated ? 0 : -10)
+				.attr("x2", isRotated ? width : -10)
+				.attr("y1", isRotated ? -10 : 0)
+				.attr("y2", isRotated ? -10 : height);
+		}
 	},
 
 	generateGridData(type, scale) {

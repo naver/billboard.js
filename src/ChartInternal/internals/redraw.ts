@@ -52,9 +52,6 @@ export default {
 			// @TODO: Make 'init' state to be accessible everywhere not passing as argument.
 			$$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing);
 
-			// xgrid focus
-			$$.updategridFocus();
-
 			// Data empty label positioning and text.
 			config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
 				.attr("x", state.width / 2)
@@ -189,6 +186,7 @@ export default {
 			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
 			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+			!flow && list.push($$.updategridFocus());
 		}
 
 		if (!$$.hasArcType() || hasRadar) {

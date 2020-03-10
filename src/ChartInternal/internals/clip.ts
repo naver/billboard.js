@@ -124,5 +124,49 @@ export default {
 		const $$ = this;
 
 		return $$.getAxisClipHeight($$.config.axis_rotated);
+	},
+
+	updateXAxisTickClip() {
+		const $$ = this;
+		const {clip} = $$.state;
+		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
+
+		clip.idXAxisTickTexts = $$.getClipPath(`${clip.id}-xaxisticktexts`);
+
+		if (!$$.config.axis_x_tick_multiline &&
+			$$.getAxisTickRotate("x") &&
+			newXAxisHeight !== $$.xAxisHeight
+		) {
+			$$.setXAxisTickClipWidth();
+			$$.setXAxisTickTextClipPathWidth();
+		}
+
+		$$.xAxisHeight = newXAxisHeight;
+	},
+
+	setXAxisTickClipWidth() {
+		const $$ = this;
+		const {config, state: {currentMaxTickWidths}} = $$;
+
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
+
+		if (!config.axis_x_tick_multiline && xAxisTickRotate) {
+			const sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
+
+			currentMaxTickWidths.x.clipPath = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+		} else {
+			currentMaxTickWidths.x.clipPath = null;
+		}
+	},
+
+	setXAxisTickTextClipPathWidth() {
+		const $$ = this;
+		const {state: {clip, currentMaxTickWidths}, $el} = $$;
+
+		if ($el.svg) {
+			$el.svg.select(`#${clip.idXAxisTickTexts} rect`)
+				.attr("width", currentMaxTickWidths.x.clipPath)
+				.attr("height", 30);
+		}
 	}
 };

@@ -8,6 +8,7 @@ import {
 	axisLeft as d3AxisLeft,
 	axisRight as d3AxisRight
 } from "d3-axis";
+import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import AxisRenderer from "./AxisRenderer";
 import CLASS from "../../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
@@ -236,7 +237,7 @@ export default class Axis {
 
 		const isCategory = isX && this.isCategorized();
 		const orient = this.orient[id];
-
+		const tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
 		let tickFormat;
 
 		if (isX) {
@@ -256,7 +257,7 @@ export default class Axis {
 			noTransition,
 			config,
 			id,
-			tickTextRotate: noTickTextRotate ? 0 : config[`axis_${type}_tick_rotate`]
+			tickTextRotate
 		}, isX && {
 			isCategory,
 			tickMultiline: config.axis_x_tick_multiline,
@@ -531,8 +532,8 @@ export default class Axis {
 
 	getMaxTickWidth(id: string, withoutRecompute?: boolean): number {
 		const $$ = this.owner;
-		const {config, $el: {svg, chart}} = $$;
-		const currentTickMax = $$.state.currentMaxTickWidths[id];
+		const {config, state, $el: {svg, chart}} = $$;
+		const currentTickMax = state.currentMaxTickWidths[id];
 		let maxWidth = 0;
 
 		if (withoutRecompute || !config[`axis_${id}_show`]) {
@@ -580,8 +581,14 @@ export default class Axis {
 			axis.create(dummy);
 
 			dummy.selectAll("text")
-				.each(function() {
-					maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+				.each(function(d, i) {
+					const currentTextWidth = this.getBoundingClientRect().width;
+
+					maxWidth = Math.max(maxWidth, currentTextWidth);
+					// cache tick text width for getXAxisTickTextY2Overflow()
+					if (id === "x") {
+						currentTickMax.ticks[i] = currentTextWidth;
+					}
 				});
 
 			dummy.remove();
@@ -593,6 +600,115 @@ export default class Axis {
 
 		return currentTickMax.size;
 	}
+
+	getXAxisTickTextY2Overflow(defaultPadding) {
+		const $$ = this.owner;
+		const {axis, config, state} = $$;
+		const xAxisTickRotate = $$.getAxisTickRotate("x");
+		const positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
+
+		if ((axis.isCategorized() || axis.isTimeSeries()) &&
+			config.axis_x_tick_fit &&
+			!config.axis_x_tick_culling &&
+			!config.axis_x_tick_multiline &&
+			positiveRotation
+		) {
+			const widthWithoutCurrentPaddingLeft = state.currentWidth - $$.getCurrentPaddingLeft();
+			const maxOverflow = this.getXAxisTickMaxOverflow(
+				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
+			);
+			const xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
+				defaultPadding; // for display inconsistencies between browsers
+
+			return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+		}
+
+		return 0;
+	}
+
+	getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+		const $$ = this.owner;
+		const {axis, config, state} = $$;
+		const isTimeSeries = axis.isTimeSeries();
+
+		const tickTextWidths = state.currentMaxTickWidths.x.ticks;
+		const tickCount = tickTextWidths.length;
+		const {left, right} = state.axis.x.padding;
+		let maxOverflow = 0;
+
+		const remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? 0.5 : 0);
+
+		for (let i = 0; i < tickCount; i++) {
+			const tickIndex = i + 1;
+			const rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i];
+			const ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + left;
+
+			// Skip ticks if there are no ticks before them
+			if (ticksBeforeTickText <= 0) {
+				continue;
+			}
+
+			const xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft - rotatedTickTextWidth;
+			const tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
+			const remainingTicks = remaining - tickIndex;
+
+			const paddingRightLength = right * tickLength;
+			const remainingTickWidth = (remainingTicks * tickLength) + paddingRightLength;
+			const overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
+
+			maxOverflow = Math.max(maxOverflow, overflow);
+		}
+
+		let tickOffset = 0;
+
+		if (!isTimeSeries) {
+			const scale = d3ScaleLinear()
+				.domain([
+					left * -1,
+					$$.getXDomainMax($$.data.targets) + 1 + right
+				])
+				.range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+
+			tickOffset = (Math.ceil((scale(1) - scale(0)) / 2));
+		}
+
+		return maxOverflow + tickOffset;
+	}
+
+	/**
+	 * Get x Axis padding
+	 * @param {Number} tickCount Tick count
+	 * @return {Object} Padding object values with 'left' & 'right' key
+	 * @private
+	 */
+	getXAxisPadding(tickCount) {
+		const $$ = this.owner;
+		let padding = $$.config.axis_x_padding;
+
+		if (isEmpty(padding)) {
+			padding = {left: 0, right: 0};
+		} else {
+			padding.left = padding.left || 0;
+			padding.right = padding.right || 0;
+		}
+
+		if ($$.axis.isTimeSeries()) {
+			const firstX = +$$.getXDomainMin($$.data.targets);
+			const lastX = +$$.getXDomainMax($$.data.targets);
+			const timeDiff = lastX - firstX;
+
+			const range = timeDiff + padding.left + padding.right;
+			const relativeTickWidth = (timeDiff / tickCount) / range;
+
+			const left = padding.left / range / relativeTickWidth || 0;
+			const right = padding.right / range / relativeTickWidth || 0;
+
+			padding = {left, right};
+		}
+
+		return padding;
+	}
+
 
 	updateLabels(withTransition) {
 		const $$ = this.owner;
@@ -803,7 +919,7 @@ export default class Axis {
 	 */
 	setCulling() {
 		const $$ = this.owner;
-		const {config, $el} = $$;
+		const {config, state: {clip, currentMaxTickWidths}, $el} = $$;
 
 		["subX", "x", "y", "y2"].forEach(type => {
 			const axis = $el.axis[type];
@@ -832,6 +948,14 @@ export default class Axis {
 					});
 				} else {
 					tickText.style("display", "block");
+				}
+
+				// set/unset x_axis_tick_clippath
+				if (type === "x") {
+					const clipPath = currentMaxTickWidths.clipPath ? clip.idXAxisTickTexts : null;
+
+					$$.svg.selectAll(`.${CLASS.axisX} .tick text`)
+						.attr("clip-path", clipPath);
 				}
 			}
 		});

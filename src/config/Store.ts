@@ -49,12 +49,18 @@ export default class state {
 			legendItemHeight: 0,
 			legendHasRendered: false,
 
+			axis: {
+				x: {
+					padding: {left: 0, right: 0},
+					tickCount: 0
+				}
+			},
+
 			currentMaxTickWidths: {
-				x: {size: 0, domain: ""},
+				x: {size: 0, ticks: [], clipPath: 0, domain: ""},
 				y: {size: 0, domain: ""},
 				y2: {size: 0, domain: ""}
 			},
-
 			rotatedPadding: {
 				left: 30,
 				right: 0,
@@ -71,6 +77,7 @@ export default class state {
 				id: "",
 				idXAxis: "",
 				idYAxis: "",
+				idXAxisTickTexts: "",
 				idGrid: "",
 				idSubchart: "", // clipIdForSubchart
 				path: "",

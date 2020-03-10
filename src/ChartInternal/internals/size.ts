@@ -103,13 +103,15 @@ export default {
 		return padding + (axisWidth * axesLen);
 	},
 
-	getCurrentPaddingRight() {
+	getCurrentPaddingRight(withoutTickTextOverflow = false) {
 		const $$ = this;
 		const {config} = $$;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = config.axis_y2_axes.length;
 		const axisWidth = $$.getAxisWidthByAxisId("y2");
+		const xAxisTickTextOverflow = withoutTickTextOverflow ?
+			0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
 		let padding;
 
 		if (isValue(config.padding_right)) {
@@ -120,7 +122,7 @@ export default {
 			padding = 2 + legendWidthOnRight +
 				($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0);
 		} else {
-			padding = ceil10(axisWidth) + legendWidthOnRight;
+			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -202,7 +204,7 @@ export default {
 	getHorizontalAxisHeight(id) {
 		const $$ = this;
 		const {config} = $$;
-		const {rotatedPadding, isLegendRight, isLegendInset} = $$.state;
+		const {currentHeight, rotatedPadding, isLegendRight, isLegendInset} = $$.state;
 		const isRotated = config.axis_rotated;
 		let h = 30;
 
@@ -224,7 +226,7 @@ export default {
 			return rotatedPadding.top;
 		}
 
-		const rotate = config[`axis_${id}_tick_rotate`];
+		const rotate = $$.getAxisTickRotate(id);
 
 		// Calculate x/y axis height when tick rotated
 		if (
@@ -233,6 +235,12 @@ export default {
 			h = 30 +
 				$$.axis.getMaxTickWidth(id) *
 				Math.cos(Math.PI * (90 - rotate) / 180);
+
+			if (!config.axis_x_tick_multiline && currentHeight) {
+				if (h > currentHeight / 2) {
+					h = currentHeight / 2;
+				}
+			}
 		}
 
 		return h +
@@ -244,17 +252,81 @@ export default {
 		return Math.max(0, this.axis.x.tickInterval());
 	},
 
+	/**
+	 * Get axis tick test rotate value
+	 * @param {String} id
+	 * @return {Number} rotate value
+	 * @private
+	 */
+	getAxisTickRotate(id) {
+		const $$ = this;
+		const {axis, config, state, $el} = $$;
+		let rotate = config[`axis_${id}_tick_rotate`];
+
+		if (!$$.filterTargetsToShow($$.data.targets).length) {
+			return 0;
+		}
+
+		if (id === "x") {
+			const isCategorized = axis.isCategorized();
+			const isTimeSeries = axis.isTimeSeries();
+			const allowedXAxisTypes = isCategorized || isTimeSeries;
+			let tickCount = 0;
+
+			if (config.axis_x_tick_fit && allowedXAxisTypes) {
+				tickCount = state.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+
+				if (tickCount !== state.axis.x.tickCount) {
+					state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+				}
+
+				state.axis.x.tickCount = tickCount;
+			}
+
+			if ($el.svg &&
+				config.axis_x_tick_fit &&
+				!config.axis_x_tick_multiline &&
+				!config.axis_x_tick_culling &&
+				config.axis_x_tick_autorotate &&
+				allowedXAxisTypes
+			) {
+				rotate = $$.needToRotateXAxisTickTexts() ?
+					config.axis_x_tick_rotate : 0;
+			}
+		}
+
+		return rotate;
+	},
+
+	/**
+	 * Check weather axis tick text needs to be rotated
+	 * @private
+	 */
+	needToRotateXAxisTickTexts() {
+		const $$ = this;
+		const {state} = $$;
+		const xAxisLength = state.currentWidth -
+			$$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
+		const tickCountWithPadding = state.axis.x.tickCount +
+			state.axis.x.padding.left + state.axis.x.padding.right;
+
+		const maxTickWidth = $$.axis.getMaxTickWidth("x");
+		const tickLength = (xAxisLength / tickCountWithPadding) || 0;
+
+		return maxTickWidth > tickLength;
+	},
+
 	updateDimension(withoutAxis) {
 		const $$ = this;
-		const {config, state: {hasAxis}, $el: {axis}} = $$;
+		const {config, state: {hasAxis}, $el} = $$;
 
 		if (hasAxis && !withoutAxis) {
 			if ($$.axis.x && config.axis_rotated) {
-				$$.axis.x.create(axis.x);
-				$$.axis.subX && $$.axis.subX.create(axis.subX);
+				$$.axis.x.create($el.axis.x);
+				$$.axis.subX && $$.axis.subX.create($el.axis.subX);
 			} else {
-				$$.axis.y && $$.axis.y.create(axis.y);
-				$$.axis.y2 && $$.axis.y2.create(axis.y2);
+				$$.axis.y && $$.axis.y.create($el.axis.y);
+				$$.axis.y2 && $$.axis.y2.create($el.axis.y2);
 			}
 		}
 
@@ -322,6 +394,8 @@ export default {
 		const isRotated = config.axis_rotated;
 		const hasArc = $$.hasArcType();
 
+		!isInit && $$.setContainerSize();
+
 		const currLegend = {
 			width: legend ? $$.getLegendWidth() : 0,
 			height: legend ? $$.getLegendHeight() : 0
@@ -334,8 +408,6 @@ export default {
 			xAxisHeight : 30;
 		const subchartHeight = config.subchart_show && !hasArc ?
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
-
-		!isInit && $$.setContainerSize();
 
 		// for main
 		state.margin = isRotated ? {
