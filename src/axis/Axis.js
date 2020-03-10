@@ -868,7 +868,7 @@ export default class Axis {
 
 				// set/unset x_axis_tick_clippath
 				if (type === "x") {
-					const clipPath = $$.clipXAxisTickMaxWidth ? $$.clipXAxisTickTexts : null;
+					const clipPath = $$.clipXAxisTickMaxWidth ? $$.clipPathForXAxisTickTexts : null;
 
 					$$.svg.selectAll(`.${CLASS.axisX} .tick text`)
 						.attr("clip-path", clipPath);
