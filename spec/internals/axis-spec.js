@@ -65,6 +65,16 @@ describe("AXIS", function() {
 			expect(ticks.size()).to.be.equal(3);
 			expect(ticks.data()).to.be.deep.equal([0,3,5]);
 		});
+
+		it("x Axis ticks should be positioned correctly", () => {
+			const expectedXPos = [50, 349, 549];
+
+			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
+				expect(
+					util.parseNum(this.getAttribute("transform").split(",")[0])
+				).to.be.equal(expectedXPos[i]);
+			});
+		});
 	});
 
 	describe("axis.y.tick.count", () => {
@@ -1155,7 +1165,7 @@ describe("AXIS", function() {
 			it("should resize when all data hidden", () => {
 				chart.hide("data1");
 
-				compare(0, 6, 30, 0)
+				compare(args.axis.x.tick.rotate, 6, 57, 110);
 
 				chart.show("data1");
 			});
@@ -1222,6 +1232,18 @@ describe("AXIS", function() {
 					compareOverflow(37);
 				});
 			});
+
+			it("axis X should maintain its position on legend toggle", done => {
+				const axisXTransform = chart.$.main.select(`.${CLASS.axisX}`).attr("transform");
+
+				// when
+				chart.toggle();
+
+				setTimeout(() => {
+					expect(chart.$.main.select(`.${CLASS.axisX}`).attr("transform")).to.be.equal(axisXTransform);
+					done();
+				})
+			});
 		});
 
 		describe("`axis.x.type = timeseries`", () => {
@@ -1287,7 +1309,7 @@ describe("AXIS", function() {
 			it("should resize when all data hidden", () => {
 				chart.hide("Temperature");
 
-				compare(0, 6, 30, 0)
+				compare(args.axis.x.tick.rotate, 6, 70, 105);
 			});
 
 			it("should resize when show hidden data", () => {
@@ -1389,6 +1411,18 @@ describe("AXIS", function() {
 				it("should be defaultPadding if padding is set", () => {
 					compareOverflow(defaultPadding);
 				});
+			});
+
+			it("axis X should maintain its position on legend toggle", done => {
+				const axisXTransform = chart.$.main.select(`.${CLASS.axisX}`).attr("transform");
+
+				// when
+				chart.toggle();
+
+				setTimeout(() => {
+					expect(chart.$.main.select(`.${CLASS.axisX}`).attr("transform")).to.be.equal(axisXTransform);
+					done();
+				})
 			});
 		});
 	});

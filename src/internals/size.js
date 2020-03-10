@@ -260,7 +260,9 @@ extend(ChartInternal.prototype, {
 		let rotate = config[`axis_${id}_tick_rotate`];
 
 		if (!$$.filterTargetsToShow($$.data.targets).length) {
-			return 0;
+			// When data is hidden, it should maintain rotate value
+			// https://github.com/naver/billboard.js/issues/1278
+			return rotate;
 		}
 
 		if (id === "x") {
