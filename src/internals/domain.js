@@ -238,8 +238,7 @@ extend(ChartInternal.prototype, {
 	getXDomain(targets) {
 		const $$ = this;
 		const xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)];
-		let firstX = xDomain[0];
-		let lastX = xDomain[1];
+		let [firstX, lastX] = xDomain;
 		const padding = $$.getXDomainPadding(xDomain);
 		let min = 0;
 		let max = 0;

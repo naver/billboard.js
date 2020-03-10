@@ -104,13 +104,15 @@ extend(ChartInternal.prototype, {
 		return padding + (axisWidth * axesLen);
 	},
 
-	getCurrentPaddingRight() {
+	getCurrentPaddingRight(withoutTickTextOverflow = false) {
 		const $$ = this;
 		const config = $$.config;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = config.axis_y2_axes.length;
 		const axisWidth = $$.getAxisWidthByAxisId("y2");
+		const xAxisTickTextOverflow = withoutTickTextOverflow ?
+			0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
 		let padding;
 
 		if (isValue(config.padding_right)) {
@@ -121,7 +123,7 @@ extend(ChartInternal.prototype, {
 			padding = 2 + legendWidthOnRight +
 				($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0);
 		} else {
-			padding = ceil10(axisWidth) + legendWidthOnRight;
+			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -219,7 +221,8 @@ extend(ChartInternal.prototype, {
 			return $$.rotated_padding_top;
 		}
 
-		const rotate = config[`axis_${id}_tick_rotate`];
+		// const rotate = config[`axis_${id}_tick_rotate`];
+		const rotate = $$.getAxisTickRotate(id);
 
 		// Calculate x/y axis height when tick rotated
 		if (
@@ -228,6 +231,12 @@ extend(ChartInternal.prototype, {
 			h = 30 +
 				$$.axis.getMaxTickWidth(id) *
 				Math.cos(Math.PI * (90 - rotate) / 180);
+
+			if (!config.axis_x_tick_multiline && $$.currentHeight) {
+				if (h > $$.currentHeight / 2) {
+					h = $$.currentHeight / 2;
+				}
+			}
 		}
 
 		return h +
@@ -237,5 +246,73 @@ extend(ChartInternal.prototype, {
 
 	getEventRectWidth() {
 		return Math.max(0, this.xAxis.tickInterval());
-	}
+	},
+
+	/**
+	 * Get axis tick test rotate value
+	 * @param {String} id
+	 * @return {Number} rotate value
+	 * @private
+	 */
+	getAxisTickRotate(id) {
+		const $$ = this;
+		const config = $$.config;
+		let rotate = config[`axis_${id}_tick_rotate`];
+
+		if (!$$.filterTargetsToShow($$.data.targets).length) {
+			return 0;
+		}
+
+		if (id === "x") {
+			const isCategorized = $$.isCategorized();
+			const isTimeSeries = $$.isTimeSeries();
+			const allowedXAxisTypes = isCategorized || isTimeSeries;
+			let tickCount = 0;
+
+			if (config.axis_x_tick_fit && allowedXAxisTypes) {
+				$$.axis.x = {
+					padding: {left: 0, right: 0},
+					tickCount: 0
+				};
+
+				tickCount = $$.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+
+				if (tickCount !== $$.axis.x.tickCount) {
+					$$.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+				}
+
+				$$.axis.x.tickCount = tickCount;
+			}
+
+			if ($$.svg &&
+				config.axis_x_tick_fit &&
+				!config.axis_x_tick_multiline &&
+				!config.axis_x_tick_culling &&
+				config.axis_x_tick_autorotate &&
+				allowedXAxisTypes
+			) {
+				rotate = $$.needToRotateXAxisTickTexts() ?
+					config.axis_x_tick_rotate : 0;
+			}
+		}
+
+		return rotate;
+	},
+
+	/**
+	 * Check weather axis tick text needs to be rotated
+	 * @private
+	 */
+	needToRotateXAxisTickTexts() {
+		const $$ = this;
+		const xAxisLength = $$.currentWidth -
+			$$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
+		const tickCountWithPadding = $$.axis.x.tickCount +
+			$$.axis.x.padding.left + $$.axis.x.padding.right;
+
+		const maxTickWidth = $$.axis.getMaxTickWidth("x");
+		const tickLength = (xAxisLength / tickCountWithPadding) || 0;
+
+		return maxTickWidth > tickLength;
+	},
 });

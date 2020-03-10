@@ -229,8 +229,19 @@ export interface XTickConfiguration {
 	 * Rotate x axis tick text.
 	 * - If you set negative value, it will rotate to opposite direction.
 	 * - Applied when 'axis.rotated' option is 'false'.
+	 * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
 	 */
 	rotate?: number;
+
+	/**
+	 * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+	 * - **NOTE:** The conditions where `autorotate` is enabled are:
+	 *   - axis.x.type='category' or 'timeseries
+	 *   - axis.x.tick.multiline=false
+	 *   - axis.x.tick.culling=false
+	 *   - axis.x.tick.fit=true
+	 */
+	autorotate?: boolean;
 
 	/**
 	 * Show x axis outer tick.
