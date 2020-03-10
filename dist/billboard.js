@@ -5,15 +5,15 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200309130905
+ * @version 1.11.1-nightly-20200310130943
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
-		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
+		module.exports = factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-scale"), require("d3-brush"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease"));
 	else if(typeof define === 'function' && define.amd)
-		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-brush", "d3-scale", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
+		define(["d3-time-format", "d3-selection", "d3-transition", "d3-axis", "d3-scale", "d3-brush", "d3-dsv", "d3-drag", "d3-shape", "d3-interpolate", "d3-color", "d3-zoom", "d3-ease"], factory);
 	else {
-		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-brush"), require("d3-scale"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
+		var a = typeof exports === 'object' ? factory(require("d3-time-format"), require("d3-selection"), require("d3-transition"), require("d3-axis"), require("d3-scale"), require("d3-brush"), require("d3-dsv"), require("d3-drag"), require("d3-shape"), require("d3-interpolate"), require("d3-color"), require("d3-zoom"), require("d3-ease")) : factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
 		for(var i in a) (typeof exports === 'object' ? exports : root)[i] = a[i];
 	}
 })(this, function(__WEBPACK_EXTERNAL_MODULE__2__, __WEBPACK_EXTERNAL_MODULE__3__, __WEBPACK_EXTERNAL_MODULE__4__, __WEBPACK_EXTERNAL_MODULE__5__, __WEBPACK_EXTERNAL_MODULE__6__, __WEBPACK_EXTERNAL_MODULE__7__, __WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__9__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__14__) {
@@ -281,6 +281,9 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
 var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(5);
 
+// EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(6);
+
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -429,7 +432,7 @@ function _typeof(obj) {
   return _typeof(obj);
 }
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(6);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(7);
 
 // CONCATENATED MODULE: ./src/internals/browser.js
 /**
@@ -762,9 +765,6 @@ var isValue = function (v) {
   return res;
 };
 
-
-// EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(7);
 
 // CONCATENATED MODULE: ./src/axis/AxisRendererHelper.js
 
@@ -1213,6 +1213,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
 
 
 
+
 var isHorizontal = function ($$, forHorizontal) {
   var isRotated = $$.config.axis_rotated;
   return forHorizontal ? isRotated : !isRotated;
@@ -1324,13 +1325,14 @@ var Axis_Axis = /*#__PURE__*/function () {
           isCategory = isX && $$.isCategorized(),
           orient = $$["".concat(name, "Orient")],
           tickFormat = isX ? $$.xAxisTickFormat : config["axis_".concat(name, "_tick_format")],
+          tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type),
           tickValues = isX ? $$.xAxisTickValues : $$["".concat(name, "AxisTickValues")],
           axisParams = mergeObj({
         outerTick: outerTick,
         noTransition: noTransition,
         config: config,
         name: name,
-        tickTextRotate: noTickTextRotate ? 0 : config["axis_".concat(type, "_tick_rotate")]
+        tickTextRotate: tickTextRotate
       }, isX && {
         isCategory: isCategory,
         tickMultiline: config.axis_x_tick_multiline,
@@ -1506,12 +1508,87 @@ var Axis_Axis = /*#__PURE__*/function () {
             tickValues = config["axis_".concat(id, "_tick_values")];
         !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
-        axis.create(dummy), dummy.selectAll("text").each(function () {
-          maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+        axis.create(dummy), dummy.selectAll("text").each(function (d, i) {
+          var currentTextWidth = this.getBoundingClientRect().width;
+          maxWidth = Math.max(maxWidth, currentTextWidth), id === "x" && ($$.currentMaxTickWidths.x.ticks[i] = currentTextWidth);
         }), dummy.remove();
       }
 
       return maxWidth > 0 && (currentTickMax.size = maxWidth), currentTickMax.size;
+    }
+  }, {
+    key: "getXAxisTickTextY2Overflow",
+    value: function getXAxisTickTextY2Overflow(defaultPadding) {
+      var $$ = this.owner,
+          config = $$.config,
+          xAxisTickRotate = $$.getAxisTickRotate("x");
+
+      if (($$.isCategorized() || $$.isTimeSeries()) && config.axis_x_tick_fit && !config.axis_x_tick_culling && !config.axis_x_tick_multiline && xAxisTickRotate > 0 && xAxisTickRotate < 90) {
+        var widthWithoutCurrentPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft(),
+            maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding),
+            xAxisTickTextY2Overflow = Math.max(0, maxOverflow) + defaultPadding;
+        // for display inconsistencies between browsers
+        return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+      }
+
+      return 0;
+    }
+  }, {
+    key: "getXAxisTickMaxOverflow",
+    value: function getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+      for (var $$ = this.owner, config = $$.config, isTimeSeries = $$.isTimeSeries(), tickTextWidths = $$.currentMaxTickWidths.x.ticks, tickCount = tickTextWidths.length, _this$x$padding = this.x.padding, left = _this$x$padding.left, right = _this$x$padding.right, maxOverflow = 0, remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0), i = 0; i < tickCount; i++) {
+        var tickIndex = i + 1,
+            rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i],
+            ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : .5) + left;
+
+        // Skip ticks if there are no ticks before them
+        if (!(ticksBeforeTickText <= 0)) {
+          var tickLength = (widthWithoutCurrentPaddingLeft - rotatedTickTextWidth) / ticksBeforeTickText;
+          maxOverflow = Math.max(maxOverflow, rotatedTickTextWidth - tickLength / 2 - ((remaining - tickIndex) * tickLength + right * tickLength));
+        }
+      }
+
+      var tickOffset = 0;
+
+      if (!isTimeSeries) {
+        var scale = Object(external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_["scaleLinear"])().domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]).range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+        tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+      }
+
+      return maxOverflow + tickOffset;
+    }
+    /**
+     * Get x Axis padding
+     * @param {Number} tickCount Tick count
+     * @return {Object} Padding object values with 'left' & 'right' key
+     * @private
+     */
+
+  }, {
+    key: "getXAxisPadding",
+    value: function getXAxisPadding(tickCount) {
+      var $$ = this.owner,
+          padding = $$.config.axis_x_padding;
+
+      if (isEmpty(padding) ? padding = {
+        left: 0,
+        right: 0
+      } : (padding.left = padding.left || 0, padding.right = padding.right || 0), $$.isTimeSeries()) {
+        var firstX = +$$.getXDomainMin($$.data.targets),
+            lastX = +$$.getXDomainMax($$.data.targets),
+            timeDiff = lastX - firstX,
+            range = timeDiff + padding.left + padding.right,
+            relativeTickWidth = timeDiff / tickCount / range,
+            left = padding.left / range / relativeTickWidth || 0,
+            _right = padding.right / range / relativeTickWidth || 0;
+
+        padding = {
+          left: left,
+          right: _right
+        };
+      }
+
+      return padding;
     }
   }, {
     key: "updateLabels",
@@ -1676,7 +1753,13 @@ var Axis_Axis = /*#__PURE__*/function () {
             tickText.each(function (d) {
               this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
             });
-          } else tickText.style("display", "block");
+          } else tickText.style("display", "block"); // set/unset x_axis_tick_clippath
+
+
+          if (type === "x") {
+            var clipPath = $$.clipXAxisTickMaxWidth ? $$.clipPathForXAxisTickTexts : null;
+            $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).attr("clip-path", clipPath);
+          }
         }
       });
     }
@@ -1786,6 +1869,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
       }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
         x: {
           size: 0,
+          ticks: [],
           domain: ""
         },
         y: {
@@ -1813,7 +1897,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         });
       }
 
-      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipXAxisTickTexts = $$.appendClip($$.defs, $$.clipIdForXAxisTickTexts), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
         return $$.defs.append(function () {
           return p.node;
         });
@@ -1908,8 +1992,9 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
   }, {
     key: "updateSizes",
     value: function updateSizes(isInit) {
-      var $$ = this,
-          config = $$.config,
+      var $$ = this;
+      isInit || $$.setContainerSize();
+      var config = $$.config,
           isRotated = config.axis_rotated,
           hasArc = $$.hasArcType(),
           legend = {
@@ -1920,7 +2005,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
           xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
           subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
           subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
-      isInit || $$.setContainerSize(), $$.margin = isRotated ? {
+      $$.margin = isRotated ? {
         top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
         right: hasArc ? 0 : $$.getCurrentPaddingRight(),
         bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
@@ -1946,7 +2031,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         right: NaN,
         bottom: 0,
         left: 0
-      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
+      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1), !hasArc && config.axis_x_show && $$.updateXAxisTickClip();
     }
     /**
      * Update targeted element with given data
@@ -4276,9 +4361,37 @@ var Options_Options = function Options() {
     axis_x_tick_values: null,
 
     /**
+     * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+     * - **NOTE:** The conditions where `autorotate` is enabled are:
+     *   - axis.x.type='category' or 'timeseries
+     *   - axis.x.tick.multiline=false
+     *   - axis.x.tick.culling=false
+     *   - axis.x.tick.fit=true
+     * @name axis․x․tick․autorotate
+     * @memberof Options
+     * @type {Boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       rotate: 15,
+     *       autorotate: true,
+     *       multiline: false,
+     *       culling: false,
+     *       fit: true
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_autorotate: !1,
+
+    /**
      * Rotate x axis tick text.
      * - If you set negative value, it will rotate to opposite direction.
      * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
+     * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
      * @name axis․x․tick․rotate
      * @memberof Options
      * @type {Number}
@@ -6755,11 +6868,13 @@ extend(ChartInternal_ChartInternal.prototype, {
   getXDomain: function getXDomain(targets) {
     var $$ = this,
         xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)],
-        firstX = xDomain[0],
-        lastX = xDomain[1],
+        _xDomain2 = _slicedToArray(xDomain, 2),
+        firstX = _xDomain2[0],
+        lastX = _xDomain2[1],
         padding = $$.getXDomainPadding(xDomain),
         min = 0,
         max = 0;
+
     return firstX - lastX !== 0 || $$.isCategorized() || ($$.isTimeSeries() ? (firstX = new Date(firstX.getTime() * .5), lastX = new Date(lastX.getTime() * 1.5)) : (firstX = firstX === 0 ? 1 : firstX * .5, lastX = lastX === 0 ? -1 : lastX * 1.5)), (firstX || firstX === 0) && (min = $$.isTimeSeries() ? new Date(firstX.getTime() - padding.left) : firstX - padding.left), (lastX || lastX === 0) && (max = $$.isTimeSeries() ? new Date(lastX.getTime() + padding.right) : lastX + padding.right), [min, max];
   },
   updateXDomain: function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
@@ -8134,12 +8249,15 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   getCurrentPaddingRight: function getCurrentPaddingRight() {
     var padding,
+        withoutTickTextOverflow = !!(arguments.length > 0 && arguments[0] !== undefined) && arguments[0],
         $$ = this,
         config = $$.config,
+        defaultPadding = 10,
         legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = config.axis_y2_axes.length,
-        axisWidth = $$.getAxisWidthByAxisId("y2");
-    return padding = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? 10 + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
+        axisWidth = $$.getAxisWidthByAxisId("y2"),
+        xAxisTickTextOverflow = withoutTickTextOverflow ? 0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? defaultPadding + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
   },
 
   /**
@@ -8201,13 +8319,55 @@ extend(ChartInternal_ChartInternal.prototype, {
     if (id === "x" && !config.axis_x_show) return 8;
     if (id === "x" && config.axis_x_height) return config.axis_x_height;
     if (id === "y" && !config.axis_y_show) return !config.legend_show || $$.isLegendRight || $$.isLegendInset ? 1 : 10;
-    if (id === "y2" && !config.axis_y2_show) return $$.rotated_padding_top;
-    var rotate = config["axis_".concat(id, "_tick_rotate")]; // Calculate x/y axis height when tick rotated
+    if (id === "y2" && !config.axis_y2_show) return $$.rotated_padding_top; // const rotate = config[`axis_${id}_tick_rotate`];
 
-    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
+    var rotate = $$.getAxisTickRotate(id); // Calculate x/y axis height when tick rotated
+
+    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180), !config.axis_x_tick_multiline && $$.currentHeight && h > $$.currentHeight / 2 && (h = $$.currentHeight / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.xAxis.tickInterval());
+  },
+
+  /**
+   * Get axis tick test rotate value
+   * @param {String} id
+   * @return {Number} rotate value
+   * @private
+   */
+  getAxisTickRotate: function getAxisTickRotate(id) {
+    var $$ = this,
+        config = $$.config,
+        rotate = config["axis_".concat(id, "_tick_rotate")];
+    if (!$$.filterTargetsToShow($$.data.targets).length) return 0;
+
+    if (id === "x") {
+      var isCategorized = $$.isCategorized(),
+          isTimeSeries = $$.isTimeSeries(),
+          allowedXAxisTypes = isCategorized || isTimeSeries,
+          tickCount = 0;
+      config.axis_x_tick_fit && allowedXAxisTypes && ($$.axis.x = {
+        padding: {
+          left: 0,
+          right: 0
+        },
+        tickCount: 0
+      }, tickCount = $$.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1), tickCount !== $$.axis.x.tickCount && ($$.axis.x.padding = $$.axis.getXAxisPadding(tickCount)), $$.axis.x.tickCount = tickCount), $$.svg && config.axis_x_tick_fit && !config.axis_x_tick_multiline && !config.axis_x_tick_culling && config.axis_x_tick_autorotate && allowedXAxisTypes && (rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0);
+    }
+
+    return rotate;
+  },
+
+  /**
+   * Check weather axis tick text needs to be rotated
+   * @private
+   */
+  needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
+    var $$ = this,
+        xAxisLength = $$.currentWidth - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(!0),
+        tickCountWithPadding = $$.axis.x.tickCount + $$.axis.x.padding.left + $$.axis.x.padding.right,
+        maxTickWidth = $$.axis.getMaxTickWidth("x");
+    return maxTickWidth > (xAxisLength / tickCountWithPadding || 0);
   }
 });
 // EXTERNAL MODULE: external {"commonjs":"d3-shape","commonjs2":"d3-shape","amd":"d3-shape","root":"d3"}
@@ -10774,7 +10934,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         _d3Mouse2 = _slicedToArray(_d3Mouse, 2),
         left = _d3Mouse2[0],
         top = _d3Mouse2[1],
-        chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(),
+        chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(!0),
         chartLeft = $$.getCurrentPaddingLeft(!0),
         size = 20;
 
@@ -11512,6 +11672,25 @@ extend(ChartInternal_ChartInternal.prototype, {
   getYAxisClipHeight: function getYAxisClipHeight() {
     var $$ = this;
     return $$.getAxisClipHeight($$.config.axis_rotated);
+  },
+  updateXAxisTickClip: function updateXAxisTickClip() {
+    var $$ = this,
+        newXAxisHeight = $$.getHorizontalAxisHeight("x");
+    $$.clipIdForXAxisTickTexts = "".concat($$.clipId, "-xaxisticktexts"), $$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts), !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== $$.xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.xAxisHeight = newXAxisHeight;
+  },
+  setXAxisTickClipWidth: function setXAxisTickClipWidth() {
+    var $$ = this,
+        config = $$.config,
+        xAxisTickRotate = $$.getAxisTickRotate("x");
+
+    if (!config.axis_x_tick_multiline && xAxisTickRotate) {
+      var sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
+      $$.xAxisTickClipPathMaxWidth = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+    } else $$.xAxisTickClipPathMaxWidth = null;
+  },
+  setXAxisTickTextClipPathWidth: function setXAxisTickTextClipPathWidth() {
+    var $$ = this;
+    $$.svg && $$.svg.select("#".concat($$.clipIdForXAxisTickTexts, " rect")).attr("width", $$.xAxisTickClipPathMaxWidth).attr("height", 30);
   }
 });
 // CONCATENATED MODULE: ./src/internals/region.js
@@ -14698,7 +14877,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200309130905",
+  version: "1.11.1-nightly-20200310130943",
 
   /**
    * Generate chart
@@ -14797,7 +14976,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200309130905
+ * @version 1.11.1-nightly-20200310130943
  */
 
 

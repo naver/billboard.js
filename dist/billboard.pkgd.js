@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200309130905
+ * @version 1.11.1-nightly-20200310130943
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -17643,1096 +17643,6 @@ function axisLeft(scale) {
 }
 // CONCATENATED MODULE: ./node_modules/d3-axis/src/index.js
 
-// CONCATENATED MODULE: ./src/config/classes.js
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * CSS class names definition
- * @private
- */
-/* harmony default export */ var config_classes = ({
-  arc: "bb-arc",
-  arcLabelLine: "bb-arc-label-line",
-  arcs: "bb-arcs",
-  area: "bb-area",
-  areas: "bb-areas",
-  axis: "bb-axis",
-  axisX: "bb-axis-x",
-  axisXLabel: "bb-axis-x-label",
-  axisY: "bb-axis-y",
-  axisY2: "bb-axis-y2",
-  axisY2Label: "bb-axis-y2-label",
-  axisYLabel: "bb-axis-y-label",
-  bar: "bb-bar",
-  bars: "bb-bars",
-  brush: "bb-brush",
-  button: "bb-button",
-  buttonZoomReset: "bb-zoom-reset",
-  chart: "bb-chart",
-  chartArc: "bb-chart-arc",
-  chartArcs: "bb-chart-arcs",
-  chartArcsBackground: "bb-chart-arcs-background",
-  chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
-  chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
-  chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
-  chartArcsTitle: "bb-chart-arcs-title",
-  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
-  chartBar: "bb-chart-bar",
-  chartBars: "bb-chart-bars",
-  chartLine: "bb-chart-line",
-  chartLines: "bb-chart-lines",
-  chartRadar: "bb-chart-radar",
-  chartRadars: "bb-chart-radars",
-  chartText: "bb-chart-text",
-  chartTexts: "bb-chart-texts",
-  circle: "bb-circle",
-  circles: "bb-circles",
-  colorPattern: "bb-color-pattern",
-  colorScale: "bb-colorscale",
-  defocused: "bb-defocused",
-  dragarea: "bb-dragarea",
-  empty: "bb-empty",
-  eventRect: "bb-event-rect",
-  eventRects: "bb-event-rects",
-  eventRectsMultiple: "bb-event-rects-multiple",
-  eventRectsSingle: "bb-event-rects-single",
-  focused: "bb-focused",
-  gaugeValue: "bb-gauge-value",
-  grid: "bb-grid",
-  gridLines: "bb-grid-lines",
-  legendBackground: "bb-legend-background",
-  legendItem: "bb-legend-item",
-  legendItemEvent: "bb-legend-item-event",
-  legendItemFocused: "bb-legend-item-focused",
-  legendItemHidden: "bb-legend-item-hidden",
-  legendItemPoint: "bb-legend-item-point",
-  legendItemTile: "bb-legend-item-tile",
-  level: "bb-level",
-  levels: "bb-levels",
-  line: "bb-line",
-  lines: "bb-lines",
-  region: "bb-region",
-  regions: "bb-regions",
-  selectedCircle: "bb-selected-circle",
-  selectedCircles: "bb-selected-circles",
-  shape: "bb-shape",
-  shapes: "bb-shapes",
-  stanfordElements: "bb-stanford-elements",
-  stanfordLine: "bb-stanford-line",
-  stanfordLines: "bb-stanford-lines",
-  stanfordRegion: "bb-stanford-region",
-  stanfordRegions: "bb-stanford-regions",
-  target: "bb-target",
-  text: "bb-text",
-  texts: "bb-texts",
-  title: "bb-title",
-  tooltip: "bb-tooltip",
-  tooltipContainer: "bb-tooltip-container",
-  tooltipName: "bb-tooltip-name",
-  xgrid: "bb-xgrid",
-  xgridFocus: "bb-xgrid-focus",
-  xgridLine: "bb-xgrid-line",
-  xgridLines: "bb-xgrid-lines",
-  xgrids: "bb-xgrids",
-  ygrid: "bb-ygrid",
-  ygridFocus: "bb-ygrid-focus",
-  ygridLine: "bb-ygrid-line",
-  ygridLines: "bb-ygrid-lines",
-  ygrids: "bb-ygrids",
-  zoomBrush: "bb-zoom-brush",
-  zoomRect: "bb-zoom-rect",
-  EXPANDED: "_expanded_",
-  SELECTED: "_selected_",
-  INCLUDED: "_included_",
-  TextOverlapping: "text-overlapping"
-});
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
-
-    return arr2;
-  }
-}
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
-function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
-}
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
-function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
-}
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js
-
-
-
-function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
-}
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
-
-function nopropagation() {
-  on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var noevent = (function () {
-  on_event.preventDefault(), on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
-
-
-/* harmony default export */ var nodrag = (function (view) {
-  var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", noevent, !0);
-  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
-});
-function yesdrag(view, noclick) {
-  var root = view.document.documentElement,
-      selection = src_select(view).on("dragstart.drag", null);
-  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
-    selection.on("click.drag", null);
-  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
-}
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
-/* harmony default export */ var d3_drag_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
-function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
-  this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
-}
-
-DragEvent.prototype.on = function () {
-  var value = this._.on.apply(this._, arguments);
-
-  return value === this._ ? this : value;
-};
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
-
-
-
-
-
- // Ignore right-click, since that should open the context menu.
-
-function defaultFilter() {
-  return !on_event.ctrlKey && !on_event.button;
-}
-
-function defaultContainer() {
-  return this.parentNode;
-}
-
-function defaultSubject(d) {
-  return d == null ? {
-    x: on_event.x,
-    y: on_event.y
-  } : d;
-}
-
-function defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-}
-
-/* harmony default export */ var src_drag = (function () {
-  function drag(selection) {
-    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function mousedowned() {
-    if (!touchending && filter.apply(this, arguments)) {
-      var gesture = beforestart("mouse", container.apply(this, arguments), src_mouse, this, arguments);
-      gesture && (src_select(on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(on_event.view), nopropagation(), mousemoving = !1, mousedownx = on_event.clientX, mousedowny = on_event.clientY, gesture("start"));
-    }
-  }
-
-  function mousemoved() {
-    if (noevent(), !mousemoving) {
-      var dx = on_event.clientX - mousedownx,
-          dy = on_event.clientY - mousedowny;
-      mousemoving = dx * dx + dy * dy > clickDistance2;
-    }
-
-    gestures.mouse("drag");
-  }
-
-  function mouseupped() {
-    src_select(on_event.view).on("mousemove.drag mouseup.drag", null), yesdrag(on_event.view, mousemoving), noevent(), gestures.mouse("end");
-  }
-
-  function touchstarted() {
-    if (filter.apply(this, arguments)) {
-      var i,
-          gesture,
-          touches = on_event.changedTouches,
-          c = container.apply(this, arguments),
-          n = touches.length;
-
-      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, src_touch, this, arguments)) && (nopropagation(), gesture("start"));
-    }
-  }
-
-  function touchmoved() {
-    var i,
-        gesture,
-        touches = on_event.changedTouches,
-        n = touches.length;
-
-    for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (noevent(), gesture("drag"));
-  }
-
-  function touchended() {
-    var i,
-        gesture,
-        touches = on_event.changedTouches,
-        n = touches.length;
-
-    // Ghost clicks are delayed!
-    for (touchending && clearTimeout(touchending), touchending = setTimeout(function () {
-      touchending = null;
-    }, 500), i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (nopropagation(), gesture("end"));
-  }
-
-  function beforestart(id, container, point, that, args) {
-    var s,
-        dx,
-        dy,
-        p = point(container, id),
-        sublisteners = listeners.copy();
-    return customEvent(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
-      return (on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
-    }) ? function gesture(type) {
-      var n,
-          p0 = p;
-
-      switch (type) {
-        case "start":
-          gestures[id] = gesture, n = active++;
-          break;
-
-        case "end":
-          delete gestures[id], --active;
-        // nobreak
-
-        case "drag":
-          p = point(container, id), n = active;
-      }
-
-      customEvent(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
-    } : void 0;
-  }
-
-  var mousedownx,
-      mousedowny,
-      mousemoving,
-      touchending,
-      filter = defaultFilter,
-      container = defaultContainer,
-      subject = defaultSubject,
-      touchable = defaultTouchable,
-      gestures = {},
-      listeners = src_dispatch("start", "drag", "end"),
-      active = 0,
-      clickDistance2 = 0;
-  return drag.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : filter;
-  }, drag.container = function (_) {
-    return arguments.length ? (container = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : container;
-  }, drag.subject = function (_) {
-    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : subject;
-  }, drag.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : touchable;
-  }, drag.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? drag : value;
-  }, drag.clickDistance = function (_) {
-    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
-  }, drag;
-});
-// CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
-
-
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
-/* harmony default export */ var d3_brush_src_constant = (function (x) {
-  return function () {
-    return x;
-  };
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
-/* harmony default export */ var src_event = (function (target, type, selection) {
-  this.target = target, this.type = type, this.selection = selection;
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
-
-function noevent_nopropagation() {
-  on_event.stopImmediatePropagation();
-}
-/* harmony default export */ var src_noevent = (function () {
-  on_event.preventDefault(), on_event.stopImmediatePropagation();
-});
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
-
-
-
-
-
-
-
-
-var MODE_DRAG = {
-  name: "drag"
-},
-    MODE_SPACE = {
-  name: "space"
-},
-    MODE_HANDLE = {
-  name: "handle"
-},
-    MODE_CENTER = {
-  name: "center"
-};
-
-function number1(e) {
-  return [+e[0], +e[1]];
-}
-
-function number2(e) {
-  return [number1(e[0]), number1(e[1])];
-}
-
-function toucher(identifier) {
-  return function (target) {
-    return src_touch(target, on_event.touches, identifier);
-  };
-}
-
-var X = {
-  name: "x",
-  handles: ["w", "e"].map(brush_type),
-  input: function input(x, e) {
-    return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]];
-  },
-  output: function output(xy) {
-    return xy && [xy[0][0], xy[1][0]];
-  }
-},
-    Y = {
-  name: "y",
-  handles: ["n", "s"].map(brush_type),
-  input: function input(y, e) {
-    return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]];
-  },
-  output: function output(xy) {
-    return xy && [xy[0][1], xy[1][1]];
-  }
-},
-    XY = {
-  name: "xy",
-  handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(brush_type),
-  input: function input(xy) {
-    return xy == null ? null : number2(xy);
-  },
-  output: function output(xy) {
-    return xy;
-  }
-},
-    cursors = {
-  overlay: "crosshair",
-  selection: "move",
-  n: "ns-resize",
-  e: "ew-resize",
-  s: "ns-resize",
-  w: "ew-resize",
-  nw: "nwse-resize",
-  ne: "nesw-resize",
-  se: "nwse-resize",
-  sw: "nesw-resize"
-},
-    flipX = {
-  e: "w",
-  w: "e",
-  nw: "ne",
-  ne: "nw",
-  se: "sw",
-  sw: "se"
-},
-    flipY = {
-  n: "s",
-  s: "n",
-  nw: "sw",
-  ne: "se",
-  se: "ne",
-  sw: "nw"
-},
-    signsX = {
-  overlay: 1,
-  selection: 1,
-  n: null,
-  e: 1,
-  s: null,
-  w: -1,
-  nw: -1,
-  ne: 1,
-  se: 1,
-  sw: -1
-},
-    signsY = {
-  overlay: 1,
-  selection: 1,
-  n: -1,
-  e: null,
-  s: 1,
-  w: null,
-  nw: -1,
-  ne: -1,
-  se: 1,
-  sw: 1
-};
-
-function brush_type(t) {
-  return {
-    type: t
-  };
-} // Ignore right-click, since that should open the context menu.
-
-
-function brush_defaultFilter() {
-  return !on_event.ctrlKey && !on_event.button;
-}
-
-function defaultExtent() {
-  var svg = this.ownerSVGElement || this;
-  return svg.hasAttribute("viewBox") ? (svg = svg.viewBox.baseVal, [[svg.x, svg.y], [svg.x + svg.width, svg.y + svg.height]]) : [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
-}
-
-function brush_defaultTouchable() {
-  return navigator.maxTouchPoints || "ontouchstart" in this;
-} // Like d3.local, but with the name “__brush” rather than auto-generated.
-
-
-function brush_local(node) {
-  for (; !node.__brush;) if (!(node = node.parentNode)) return;
-
-  return node.__brush;
-}
-
-function brush_empty(extent) {
-  return extent[0][0] === extent[1][0] || extent[0][1] === extent[1][1];
-}
-
-function brushSelection(node) {
-  var state = node.__brush;
-  return state ? state.dim.output(state.selection) : null;
-}
-function brushX() {
-  return brush_brush(X);
-}
-function brushY() {
-  return brush_brush(Y);
-}
-/* harmony default export */ var src_brush = (function () {
-  return brush_brush(XY);
-});
-
-function brush_brush(dim) {
-  function brush(group) {
-    var overlay = group.property("__brush", initialize).selectAll(".overlay").data([brush_type("overlay")]);
-    overlay.enter().append("rect").attr("class", "overlay").attr("pointer-events", "all").attr("cursor", cursors.overlay).merge(overlay).each(function () {
-      var extent = brush_local(this).extent;
-      src_select(this).attr("x", extent[0][0]).attr("y", extent[0][1]).attr("width", extent[1][0] - extent[0][0]).attr("height", extent[1][1] - extent[0][1]);
-    }), group.selectAll(".selection").data([brush_type("selection")]).enter().append("rect").attr("class", "selection").attr("cursor", cursors.selection).attr("fill", "#777").attr("fill-opacity", .3).attr("stroke", "#fff").attr("shape-rendering", "crispEdges");
-    var handle = group.selectAll(".handle").data(dim.handles, function (d) {
-      return d.type;
-    });
-    handle.exit().remove(), handle.enter().append("rect").attr("class", function (d) {
-      return "handle handle--" + d.type;
-    }).attr("cursor", function (d) {
-      return cursors[d.type];
-    }), group.each(redraw).attr("fill", "none").attr("pointer-events", "all").on("mousedown.brush", started).filter(touchable).on("touchstart.brush", started).on("touchmove.brush", touchmoved).on("touchend.brush touchcancel.brush", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
-  }
-
-  function redraw() {
-    var group = src_select(this),
-        selection = brush_local(this).selection;
-    selection ? (group.selectAll(".selection").style("display", null).attr("x", selection[0][0]).attr("y", selection[0][1]).attr("width", selection[1][0] - selection[0][0]).attr("height", selection[1][1] - selection[0][1]), group.selectAll(".handle").style("display", null).attr("x", function (d) {
-      return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2;
-    }).attr("y", function (d) {
-      return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2;
-    }).attr("width", function (d) {
-      return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize;
-    }).attr("height", function (d) {
-      return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize;
-    })) : group.selectAll(".selection,.handle").style("display", "none").attr("x", null).attr("y", null).attr("width", null).attr("height", null);
-  }
-
-  function emitter(that, args, clean) {
-    return !clean && that.__brush.emitter || new Emitter(that, args);
-  }
-
-  function Emitter(that, args) {
-    this.that = that, this.args = args, this.state = that.__brush, this.active = 0;
-  }
-
-  function started() {
-    function moved() {
-      var point1 = pointer(that);
-      !shifting || lockX || lockY || (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1]) ? lockY = !0 : lockX = !0), point = point1, moving = !0, src_noevent(), move();
-    }
-
-    function move() {
-      var t;
-
-      switch (dx = point[0] - point0[0], dy = point[1] - point0[1], mode) {
-        case MODE_SPACE:
-        case MODE_DRAG:
-          {
-            signX && (dx = Math.max(W - w0, Math.min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx), signY && (dy = Math.max(N - n0, Math.min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy);
-            break;
-          }
-
-        case MODE_HANDLE:
-          {
-            signX < 0 ? (dx = Math.max(W - w0, Math.min(E - w0, dx)), w1 = w0 + dx, e1 = e0) : signX > 0 && (dx = Math.max(W - e0, Math.min(E - e0, dx)), w1 = w0, e1 = e0 + dx), signY < 0 ? (dy = Math.max(N - n0, Math.min(S - n0, dy)), n1 = n0 + dy, s1 = s0) : signY > 0 && (dy = Math.max(N - s0, Math.min(S - s0, dy)), n1 = n0, s1 = s0 + dy);
-            break;
-          }
-
-        case MODE_CENTER:
-          {
-            signX && (w1 = Math.max(W, Math.min(E, w0 - dx * signX)), e1 = Math.max(W, Math.min(E, e0 + dx * signX))), signY && (n1 = Math.max(N, Math.min(S, n0 - dy * signY)), s1 = Math.max(N, Math.min(S, s0 + dy * signY)));
-            break;
-          }
-      }
-
-      e1 < w1 && (signX *= -1, t = w0, w0 = e0, e0 = t, t = w1, w1 = e1, e1 = t, type in flipX && overlay.attr("cursor", cursors[type = flipX[type]])), s1 < n1 && (signY *= -1, t = n0, n0 = s0, s0 = t, t = n1, n1 = s1, s1 = t, type in flipY && overlay.attr("cursor", cursors[type = flipY[type]])), state.selection && (selection = state.selection), lockX && (w1 = selection[0][0], e1 = selection[1][0]), lockY && (n1 = selection[0][1], s1 = selection[1][1]), (selection[0][0] !== w1 || selection[0][1] !== n1 || selection[1][0] !== e1 || selection[1][1] !== s1) && (state.selection = [[w1, n1], [e1, s1]], redraw.call(that), emit.brush());
-    }
-
-    function ended() {
-      if (noevent_nopropagation(), on_event.touches) {
-        if (on_event.touches.length) return;
-        touchending && clearTimeout(touchending), touchending = setTimeout(function () {
-          touchending = null;
-        }, 500);
-      } else yesdrag(on_event.view, moving), view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
-
-      group.attr("pointer-events", "all"), overlay.attr("cursor", cursors.overlay), state.selection && (selection = state.selection), brush_empty(selection) && (state.selection = null, redraw.call(that)), emit.end();
-    }
-
-    function keydowned() {
-      switch (on_event.keyCode) {
-        case 16:
-          {
-            shifting = signX && signY;
-            break;
-          }
-
-        case 18:
-          {
-            mode === MODE_HANDLE && (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER, move());
-            break;
-          }
-
-        case 32:
-          {
-            (mode === MODE_HANDLE || mode === MODE_CENTER) && (signX < 0 ? e0 = e1 - dx : signX > 0 && (w0 = w1 - dx), signY < 0 ? s0 = s1 - dy : signY > 0 && (n0 = n1 - dy), mode = MODE_SPACE, overlay.attr("cursor", cursors.selection), move());
-            break;
-          }
-
-        default:
-          return;
-      }
-
-      src_noevent();
-    }
-
-    function keyupped() {
-      switch (on_event.keyCode) {
-        case 16:
-          {
-            shifting && (lockX = lockY = shifting = !1, move());
-            break;
-          }
-
-        case 18:
-          {
-            mode === MODE_CENTER && (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE, move());
-            break;
-          }
-
-        case 32:
-          {
-            mode === MODE_SPACE && (on_event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
-            break;
-          }
-
-        default:
-          return;
-      }
-
-      src_noevent();
-    }
-
-    if ((!touchending || on_event.touches) && filter.apply(this, arguments)) {
-      var w0,
-          w1,
-          n0,
-          n1,
-          e0,
-          e1,
-          s0,
-          s1,
-          moving,
-          lockX,
-          lockY,
-          that = this,
-          type = on_event.target.__data__.type,
-          mode = (keys && on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && on_event.altKey ? MODE_CENTER : MODE_HANDLE,
-          signX = dim === Y ? null : signsX[type],
-          signY = dim === X ? null : signsY[type],
-          state = brush_local(that),
-          extent = state.extent,
-          selection = state.selection,
-          W = extent[0][0],
-          N = extent[0][1],
-          E = extent[1][0],
-          S = extent[1][1],
-          dx = 0,
-          dy = 0,
-          shifting = signX && signY && keys && on_event.shiftKey,
-          pointer = on_event.touches ? toucher(on_event.changedTouches[0].identifier) : src_mouse,
-          point0 = pointer(that),
-          point = point0,
-          emit = emitter(that, arguments, !0).beforestart();
-      type === "overlay" ? (selection && (moving = !0), state.selection = selection = [[w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]], [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]]) : (w0 = selection[0][0], n0 = selection[0][1], e0 = selection[1][0], s0 = selection[1][1]), w1 = w0, n1 = n0, e1 = e0, s1 = s0;
-      var group = src_select(that).attr("pointer-events", "none"),
-          overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
-      if (on_event.touches) emit.moved = moved, emit.ended = ended;else {
-        var view = src_select(on_event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
-        keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(on_event.view);
-      }
-      noevent_nopropagation(), interrupt(that), redraw.call(that), emit.start();
-    }
-  }
-
-  function touchmoved() {
-    emitter(this, arguments).moved();
-  }
-
-  function touchended() {
-    emitter(this, arguments).ended();
-  }
-
-  function initialize() {
-    var state = this.__brush || {
-      selection: null
-    };
-    return state.extent = number2(extent.apply(this, arguments)), state.dim = dim, state;
-  }
-
-  var touchending,
-      extent = defaultExtent,
-      filter = brush_defaultFilter,
-      touchable = brush_defaultTouchable,
-      keys = !0,
-      listeners = src_dispatch("start", "brush", "end"),
-      handleSize = 6;
-  return brush.move = function (group, selection) {
-    group.selection ? group.on("start.brush", function () {
-      emitter(this, arguments).beforestart().start();
-    }).on("interrupt.brush end.brush", function () {
-      emitter(this, arguments).end();
-    }).tween("brush", function () {
-      function tween(t) {
-        state.selection = t === 1 && selection1 === null ? null : i(t), redraw.call(that), emit.brush();
-      }
-
-      var that = this,
-          state = that.__brush,
-          emit = emitter(that, arguments),
-          selection0 = state.selection,
-          selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
-          i = src_value(selection0, selection1);
-      return selection0 !== null && selection1 !== null ? tween : tween(1);
-    }) : group.each(function () {
-      var that = this,
-          args = arguments,
-          state = that.__brush,
-          selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
-          emit = emitter(that, args).beforestart();
-      interrupt(that), state.selection = selection1 === null ? null : selection1, redraw.call(that), emit.start().brush().end();
-    });
-  }, brush.clear = function (group) {
-    brush.move(group, null);
-  }, Emitter.prototype = {
-    beforestart: function beforestart() {
-      return ++this.active === 1 && (this.state.emitter = this, this.starting = !0), this;
-    },
-    start: function start() {
-      return this.starting ? (this.starting = !1, this.emit("start")) : this.emit("brush"), this;
-    },
-    brush: function () {
-      return this.emit("brush"), this;
-    },
-    end: function end() {
-      return --this.active === 0 && (delete this.state.emitter, this.emit("end")), this;
-    },
-    emit: function emit(type) {
-      customEvent(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
-    }
-  }, brush.extent = function (_) {
-    return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
-  }, brush.filter = function (_) {
-    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : filter;
-  }, brush.touchable = function (_) {
-    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : touchable;
-  }, brush.handleSize = function (_) {
-    return arguments.length ? (handleSize = +_, brush) : handleSize;
-  }, brush.keyModifiers = function (_) {
-    return arguments.length ? (keys = !!_, brush) : keys;
-  }, brush.on = function () {
-    var value = listeners.on.apply(listeners, arguments);
-    return value === listeners ? brush : value;
-  }, brush;
-}
-// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
-
-// CONCATENATED MODULE: ./src/internals/browser.js
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Window object
- * @module
- * @ignore
- */
-
-/* eslint-disable no-new-func, no-undef */
-var win = function () {
-  var def = function (o) {
-    return typeof o !== "undefined" && o;
-  };
-
-  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
-}(),
-    browser_doc = win && win.document;
-/* eslint-enable no-new-func, no-undef */
-
-
-
-// CONCATENATED MODULE: ./src/internals/util.js
-
-
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-
-
-
-
-
-var isValue = function (v) {
-  return v || v === 0;
-},
-    isFunction = function (v) {
-  return typeof v === "function";
-},
-    isString = function (v) {
-  return typeof v === "string";
-},
-    isNumber = function (v) {
-  return typeof v === "number";
-},
-    isUndefined = function (v) {
-  return typeof v === "undefined";
-},
-    isDefined = function (v) {
-  return typeof v !== "undefined";
-},
-    isBoolean = function (v) {
-  return typeof v === "boolean";
-},
-    ceil10 = function (v) {
-  return Math.ceil(v / 10) * 10;
-},
-    asHalfPixel = function (n) {
-  return Math.ceil(n) + .5;
-},
-    diffDomain = function (d) {
-  return d[1] - d[0];
-},
-    isObjectType = function (v) {
-  return _typeof(v) === "object";
-},
-    isEmpty = function (o) {
-  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
-},
-    notEmpty = function (o) {
-  return !isEmpty(o);
-},
-    isArray = function (arr) {
-  return arr && arr.constructor === Array;
-},
-    isObject = function (obj) {
-  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
-},
-    getOption = function (options, key, defaultValue) {
-  return isDefined(options[key]) ? options[key] : defaultValue;
-},
-    util_hasValue = function (dict, value) {
-  var found = !1;
-  return Object.keys(dict).forEach(function (key) {
-    return dict[key] === value && (found = !0);
-  }), found;
-},
-    callFn = function (fn) {
-  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
-
-  return isFn && fn.call.apply(fn, args), isFn;
-},
-    sanitise = function (str) {
-  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
-},
-    setTextValue = function (node, text) {
-  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1],
-      toMiddle = !!(arguments.length > 3 && arguments[3] !== undefined) && arguments[3];
-  if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
-    var diff = [node.text(), text].map(function (v) {
-      return v.replace(/[\s\n]/g, "");
-    });
-
-    if (diff[0] !== diff[1]) {
-      var multiline = text.split("\n"),
-          len = toMiddle ? multiline.length - 1 : 1;
-      node.html(""), multiline.forEach(function (v, i) {
-        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] * len : dy[1], "em")).text(v);
-      });
-    }
-  }
-},
-    getRectSegList = function (path) {
-  /*
-   * seg1 ---------- seg2
-   *   |               |
-   *   |               |
-   *   |               |
-   * seg0 ---------- seg3
-   * */
-  var _path$getBBox = path.getBBox(),
-      x = _path$getBBox.x,
-      y = _path$getBBox.y,
-      width = _path$getBBox.width,
-      height = _path$getBBox.height;
-
-  return [{
-    x: x,
-    y: y + height
-  }, // seg0
-  {
-    x: x,
-    y: y
-  }, // seg1
-  {
-    x: x + width,
-    y: y
-  }, // seg2
-  {
-    x: x + width,
-    y: y + height
-  } // seg3
-  ];
-},
-    getPathBox = function (path) {
-  var _path$getBoundingClie = path.getBoundingClientRect(),
-      width = _path$getBoundingClie.width,
-      height = _path$getBoundingClie.height,
-      items = getRectSegList(path),
-      x = items[0].x,
-      y = Math.min(items[0].y, items[1].y);
-
-  return {
-    x: x,
-    y: y,
-    width: width,
-    height: height
-  };
-},
-    getBrushSelection = function (ctx) {
-  var selection = null,
-      event = on_event,
-      main = ctx.context || ctx.main;
-  return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select(".".concat(config_classes.brush)).node()) && (selection = brushSelection(selection)), selection;
-},
-    getBoundingRect = function (node) {
-  return node.rect || (node.rect = node.getBoundingClientRect());
-},
-    getRandom = function () {
-  var asStr = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0];
-  return Math.random() + (asStr ? "" : 0);
-},
-    brushEmpty = function (ctx) {
-  var selection = getBrushSelection(ctx);
-  return !selection || selection[0] === selection[1];
-},
-    util_extend = function () {
-  var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
-      source = arguments.length > 1 ? arguments[1] : undefined;
-
-  for (var p in source) target[p] = source[p];
-
-  return target;
-},
-    capitalize = function (str) {
-  return str.charAt(0).toUpperCase() + str.slice(1);
-},
-    toArray = function (v) {
-  return [].slice.call(v);
-},
-    getCssRules = function (styleSheets) {
-  var rules = [];
-  return styleSheets.forEach(function (sheet) {
-    try {
-      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
-    } catch (e) {
-      console.error("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
-    }
-  }), rules;
-},
-    getTranslation = function (node) {
-  var transform = node ? node.transform : null,
-      baseVal = transform ? transform.baseVal : [];
-  return baseVal.length ? baseVal.getItem(0).matrix : {
-    a: 0,
-    b: 0,
-    c: 0,
-    d: 0,
-    e: 0,
-    f: 0
-  };
-},
-    getUnique = function (data) {
-  var isDate = data[0] instanceof Date,
-      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
-    return self.indexOf(v) === i;
-  });
-  return isDate ? d.map(function (v) {
-    return new Date(v);
-  }) : d;
-},
-    mergeArray = function (arr) {
-  return arr && arr.length ? arr.reduce(function (p, c) {
-    return p.concat(c);
-  }) : [];
-},
-    mergeObj = function (_mergeObj) {
-  function mergeObj() {
-    return _mergeObj.apply(this, arguments);
-  }
-
-  return mergeObj.toString = function () {
-    return _mergeObj.toString();
-  }, mergeObj;
-}(function (target) {
-  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
-
-  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
-  var source = objectN.shift();
-  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
-    var value = source[key];
-    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
-  }), mergeObj.apply(void 0, [target].concat(objectN));
-}),
-    sortValue = function (data) {
-  var fn,
-      isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
-  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
-    return a - b;
-  } : function (a, b) {
-    return b - a;
-  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
-    return a - b;
-  } : !isAsc && (fn = function (a, b) {
-    return a > b && -1 || a < b && 1 || a === b && 0;
-  }), data.concat().sort(fn);
-},
-    getMinMax = function (type, data) {
-  var res = data.filter(function (v) {
-    return notEmpty(v);
-  });
-  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, _toConsumableArray(res)) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
-},
-    getRange = function (start, end) {
-  var res = [];
-
-  for (var i = start; i < end; i++) res.push(i);
-
-  return res;
-},
-    emulateEvent = {
-  mouse: function () {
-    var getParams = function () {
-      return {
-        bubbles: !1,
-        cancelable: !1,
-        screenX: 0,
-        screenY: 0,
-        clientX: 0,
-        clientY: 0
-      };
-    };
-
-    try {
-      return new MouseEvent("t"), function (el, eventType) {
-        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams();
-        el.dispatchEvent(new MouseEvent(eventType, params));
-      };
-    } catch (e) {
-      // Polyfills DOM4 MouseEvent
-      return function (el, eventType) {
-        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
-            mouseEvent = browser_doc.createEvent("MouseEvent");
-        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
-        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
-      };
-    }
-  }(),
-  touch: function touch(el, eventType, params) {
-    var touchObj = new Touch(mergeObj({
-      identifier: Date.now(),
-      target: el,
-      radiusX: 2.5,
-      radiusY: 2.5,
-      rotationAngle: 10,
-      force: .5
-    }, params));
-    el.dispatchEvent(new TouchEvent(eventType, {
-      cancelable: !0,
-      bubbles: !0,
-      shiftKey: !0,
-      touches: [touchObj],
-      targetTouches: [],
-      changedTouches: [touchObj]
-    }));
-  }
-},
-    tplProcess = function (tpl, data) {
-  var res = tpl;
-
-  for (var x in data) res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
-
-  return res;
-};
-
-
 // CONCATENATED MODULE: ./node_modules/d3-array/src/ascending.js
 /* harmony default export */ var src_ascending = (function (a, b) {
   return a < b ? -1 : a > b ? 1 : a >= b ? 0 : NaN;
@@ -18819,6 +17729,31 @@ function count_count(values, valueof) {
   }
 
   return count;
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) {
+    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
+      arr2[i] = arr[i];
+    }
+
+    return arr2;
+  }
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
+function _iterableToArray(iter) {
+  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
+function _nonIterableSpread() {
+  throw new TypeError("Invalid attempt to spread non-iterable instance");
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js
+
+
+
+function _toConsumableArray(arr) {
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
 
@@ -21287,6 +20222,1071 @@ function divergingSqrt() {
 
 
 
+// CONCATENATED MODULE: ./src/config/classes.js
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * CSS class names definition
+ * @private
+ */
+/* harmony default export */ var config_classes = ({
+  arc: "bb-arc",
+  arcLabelLine: "bb-arc-label-line",
+  arcs: "bb-arcs",
+  area: "bb-area",
+  areas: "bb-areas",
+  axis: "bb-axis",
+  axisX: "bb-axis-x",
+  axisXLabel: "bb-axis-x-label",
+  axisY: "bb-axis-y",
+  axisY2: "bb-axis-y2",
+  axisY2Label: "bb-axis-y2-label",
+  axisYLabel: "bb-axis-y-label",
+  bar: "bb-bar",
+  bars: "bb-bars",
+  brush: "bb-brush",
+  button: "bb-button",
+  buttonZoomReset: "bb-zoom-reset",
+  chart: "bb-chart",
+  chartArc: "bb-chart-arc",
+  chartArcs: "bb-chart-arcs",
+  chartArcsBackground: "bb-chart-arcs-background",
+  chartArcsGaugeMax: "bb-chart-arcs-gauge-max",
+  chartArcsGaugeMin: "bb-chart-arcs-gauge-min",
+  chartArcsGaugeUnit: "bb-chart-arcs-gauge-unit",
+  chartArcsTitle: "bb-chart-arcs-title",
+  chartArcsGaugeTitle: "bb-chart-arcs-gauge-title",
+  chartBar: "bb-chart-bar",
+  chartBars: "bb-chart-bars",
+  chartLine: "bb-chart-line",
+  chartLines: "bb-chart-lines",
+  chartRadar: "bb-chart-radar",
+  chartRadars: "bb-chart-radars",
+  chartText: "bb-chart-text",
+  chartTexts: "bb-chart-texts",
+  circle: "bb-circle",
+  circles: "bb-circles",
+  colorPattern: "bb-color-pattern",
+  colorScale: "bb-colorscale",
+  defocused: "bb-defocused",
+  dragarea: "bb-dragarea",
+  empty: "bb-empty",
+  eventRect: "bb-event-rect",
+  eventRects: "bb-event-rects",
+  eventRectsMultiple: "bb-event-rects-multiple",
+  eventRectsSingle: "bb-event-rects-single",
+  focused: "bb-focused",
+  gaugeValue: "bb-gauge-value",
+  grid: "bb-grid",
+  gridLines: "bb-grid-lines",
+  legendBackground: "bb-legend-background",
+  legendItem: "bb-legend-item",
+  legendItemEvent: "bb-legend-item-event",
+  legendItemFocused: "bb-legend-item-focused",
+  legendItemHidden: "bb-legend-item-hidden",
+  legendItemPoint: "bb-legend-item-point",
+  legendItemTile: "bb-legend-item-tile",
+  level: "bb-level",
+  levels: "bb-levels",
+  line: "bb-line",
+  lines: "bb-lines",
+  region: "bb-region",
+  regions: "bb-regions",
+  selectedCircle: "bb-selected-circle",
+  selectedCircles: "bb-selected-circles",
+  shape: "bb-shape",
+  shapes: "bb-shapes",
+  stanfordElements: "bb-stanford-elements",
+  stanfordLine: "bb-stanford-line",
+  stanfordLines: "bb-stanford-lines",
+  stanfordRegion: "bb-stanford-region",
+  stanfordRegions: "bb-stanford-regions",
+  target: "bb-target",
+  text: "bb-text",
+  texts: "bb-texts",
+  title: "bb-title",
+  tooltip: "bb-tooltip",
+  tooltipContainer: "bb-tooltip-container",
+  tooltipName: "bb-tooltip-name",
+  xgrid: "bb-xgrid",
+  xgridFocus: "bb-xgrid-focus",
+  xgridLine: "bb-xgrid-line",
+  xgridLines: "bb-xgrid-lines",
+  xgrids: "bb-xgrids",
+  ygrid: "bb-ygrid",
+  ygridFocus: "bb-ygrid-focus",
+  ygridLine: "bb-ygrid-line",
+  ygridLines: "bb-ygrid-lines",
+  ygrids: "bb-ygrids",
+  zoomBrush: "bb-zoom-brush",
+  zoomRect: "bb-zoom-rect",
+  EXPANDED: "_expanded_",
+  SELECTED: "_selected_",
+  INCLUDED: "_included_",
+  TextOverlapping: "text-overlapping"
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/noevent.js
+
+function nopropagation() {
+  on_event.stopImmediatePropagation();
+}
+/* harmony default export */ var noevent = (function () {
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/nodrag.js
+
+
+/* harmony default export */ var nodrag = (function (view) {
+  var root = view.document.documentElement,
+      selection = src_select(view).on("dragstart.drag", noevent, !0);
+  "onselectstart" in root ? selection.on("selectstart.drag", noevent, !0) : (root.__noselect = root.style.MozUserSelect, root.style.MozUserSelect = "none");
+});
+function yesdrag(view, noclick) {
+  var root = view.document.documentElement,
+      selection = src_select(view).on("dragstart.drag", null);
+  noclick && (selection.on("click.drag", noevent, !0), setTimeout(function () {
+    selection.on("click.drag", null);
+  }, 0)), "onselectstart" in root ? selection.on("selectstart.drag", null) : (root.style.MozUserSelect = root.__noselect, delete root.__noselect);
+}
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/constant.js
+/* harmony default export */ var d3_drag_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/event.js
+function DragEvent(target, type, subject, id, active, x, y, dx, dy, dispatch) {
+  this.target = target, this.type = type, this.subject = subject, this.identifier = id, this.active = active, this.x = x, this.y = y, this.dx = dx, this.dy = dy, this._ = dispatch;
+}
+
+DragEvent.prototype.on = function () {
+  var value = this._.on.apply(this._, arguments);
+
+  return value === this._ ? this : value;
+};
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/drag.js
+
+
+
+
+
+ // Ignore right-click, since that should open the context menu.
+
+function defaultFilter() {
+  return !on_event.ctrlKey && !on_event.button;
+}
+
+function defaultContainer() {
+  return this.parentNode;
+}
+
+function defaultSubject(d) {
+  return d == null ? {
+    x: on_event.x,
+    y: on_event.y
+  } : d;
+}
+
+function defaultTouchable() {
+  return navigator.maxTouchPoints || "ontouchstart" in this;
+}
+
+/* harmony default export */ var src_drag = (function () {
+  function drag(selection) {
+    selection.on("mousedown.drag", mousedowned).filter(touchable).on("touchstart.drag", touchstarted).on("touchmove.drag", touchmoved).on("touchend.drag touchcancel.drag", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  }
+
+  function mousedowned() {
+    if (!touchending && filter.apply(this, arguments)) {
+      var gesture = beforestart("mouse", container.apply(this, arguments), src_mouse, this, arguments);
+      gesture && (src_select(on_event.view).on("mousemove.drag", mousemoved, !0).on("mouseup.drag", mouseupped, !0), nodrag(on_event.view), nopropagation(), mousemoving = !1, mousedownx = on_event.clientX, mousedowny = on_event.clientY, gesture("start"));
+    }
+  }
+
+  function mousemoved() {
+    if (noevent(), !mousemoving) {
+      var dx = on_event.clientX - mousedownx,
+          dy = on_event.clientY - mousedowny;
+      mousemoving = dx * dx + dy * dy > clickDistance2;
+    }
+
+    gestures.mouse("drag");
+  }
+
+  function mouseupped() {
+    src_select(on_event.view).on("mousemove.drag mouseup.drag", null), yesdrag(on_event.view, mousemoving), noevent(), gestures.mouse("end");
+  }
+
+  function touchstarted() {
+    if (filter.apply(this, arguments)) {
+      var i,
+          gesture,
+          touches = on_event.changedTouches,
+          c = container.apply(this, arguments),
+          n = touches.length;
+
+      for (i = 0; i < n; ++i) (gesture = beforestart(touches[i].identifier, c, src_touch, this, arguments)) && (nopropagation(), gesture("start"));
+    }
+  }
+
+  function touchmoved() {
+    var i,
+        gesture,
+        touches = on_event.changedTouches,
+        n = touches.length;
+
+    for (i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (noevent(), gesture("drag"));
+  }
+
+  function touchended() {
+    var i,
+        gesture,
+        touches = on_event.changedTouches,
+        n = touches.length;
+
+    // Ghost clicks are delayed!
+    for (touchending && clearTimeout(touchending), touchending = setTimeout(function () {
+      touchending = null;
+    }, 500), i = 0; i < n; ++i) (gesture = gestures[touches[i].identifier]) && (nopropagation(), gesture("end"));
+  }
+
+  function beforestart(id, container, point, that, args) {
+    var s,
+        dx,
+        dy,
+        p = point(container, id),
+        sublisteners = listeners.copy();
+    return customEvent(new DragEvent(drag, "beforestart", s, id, active, p[0], p[1], 0, 0, sublisteners), function () {
+      return (on_event.subject = s = subject.apply(that, args)) != null && (dx = s.x - p[0] || 0, dy = s.y - p[1] || 0, !0);
+    }) ? function gesture(type) {
+      var n,
+          p0 = p;
+
+      switch (type) {
+        case "start":
+          gestures[id] = gesture, n = active++;
+          break;
+
+        case "end":
+          delete gestures[id], --active;
+        // nobreak
+
+        case "drag":
+          p = point(container, id), n = active;
+      }
+
+      customEvent(new DragEvent(drag, type, s, id, n, p[0] + dx, p[1] + dy, p[0] - p0[0], p[1] - p0[1], sublisteners), sublisteners.apply, sublisteners, [type, that, args]);
+    } : void 0;
+  }
+
+  var mousedownx,
+      mousedowny,
+      mousemoving,
+      touchending,
+      filter = defaultFilter,
+      container = defaultContainer,
+      subject = defaultSubject,
+      touchable = defaultTouchable,
+      gestures = {},
+      listeners = src_dispatch("start", "drag", "end"),
+      active = 0,
+      clickDistance2 = 0;
+  return drag.filter = function (_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : filter;
+  }, drag.container = function (_) {
+    return arguments.length ? (container = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : container;
+  }, drag.subject = function (_) {
+    return arguments.length ? (subject = typeof _ === "function" ? _ : d3_drag_src_constant(_), drag) : subject;
+  }, drag.touchable = function (_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_drag_src_constant(!!_), drag) : touchable;
+  }, drag.on = function () {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? drag : value;
+  }, drag.clickDistance = function (_) {
+    return arguments.length ? (clickDistance2 = (_ = +_) * _, drag) : Math.sqrt(clickDistance2);
+  }, drag;
+});
+// CONCATENATED MODULE: ./node_modules/d3-drag/src/index.js
+
+
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/constant.js
+/* harmony default export */ var d3_brush_src_constant = (function (x) {
+  return function () {
+    return x;
+  };
+});
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/event.js
+/* harmony default export */ var src_event = (function (target, type, selection) {
+  this.target = target, this.type = type, this.selection = selection;
+});
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/noevent.js
+
+function noevent_nopropagation() {
+  on_event.stopImmediatePropagation();
+}
+/* harmony default export */ var src_noevent = (function () {
+  on_event.preventDefault(), on_event.stopImmediatePropagation();
+});
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/brush.js
+
+
+
+
+
+
+
+
+var MODE_DRAG = {
+  name: "drag"
+},
+    MODE_SPACE = {
+  name: "space"
+},
+    MODE_HANDLE = {
+  name: "handle"
+},
+    MODE_CENTER = {
+  name: "center"
+};
+
+function number1(e) {
+  return [+e[0], +e[1]];
+}
+
+function number2(e) {
+  return [number1(e[0]), number1(e[1])];
+}
+
+function toucher(identifier) {
+  return function (target) {
+    return src_touch(target, on_event.touches, identifier);
+  };
+}
+
+var X = {
+  name: "x",
+  handles: ["w", "e"].map(brush_type),
+  input: function input(x, e) {
+    return x == null ? null : [[+x[0], e[0][1]], [+x[1], e[1][1]]];
+  },
+  output: function output(xy) {
+    return xy && [xy[0][0], xy[1][0]];
+  }
+},
+    Y = {
+  name: "y",
+  handles: ["n", "s"].map(brush_type),
+  input: function input(y, e) {
+    return y == null ? null : [[e[0][0], +y[0]], [e[1][0], +y[1]]];
+  },
+  output: function output(xy) {
+    return xy && [xy[0][1], xy[1][1]];
+  }
+},
+    XY = {
+  name: "xy",
+  handles: ["n", "w", "e", "s", "nw", "ne", "sw", "se"].map(brush_type),
+  input: function input(xy) {
+    return xy == null ? null : number2(xy);
+  },
+  output: function output(xy) {
+    return xy;
+  }
+},
+    cursors = {
+  overlay: "crosshair",
+  selection: "move",
+  n: "ns-resize",
+  e: "ew-resize",
+  s: "ns-resize",
+  w: "ew-resize",
+  nw: "nwse-resize",
+  ne: "nesw-resize",
+  se: "nwse-resize",
+  sw: "nesw-resize"
+},
+    flipX = {
+  e: "w",
+  w: "e",
+  nw: "ne",
+  ne: "nw",
+  se: "sw",
+  sw: "se"
+},
+    flipY = {
+  n: "s",
+  s: "n",
+  nw: "sw",
+  ne: "se",
+  se: "ne",
+  sw: "nw"
+},
+    signsX = {
+  overlay: 1,
+  selection: 1,
+  n: null,
+  e: 1,
+  s: null,
+  w: -1,
+  nw: -1,
+  ne: 1,
+  se: 1,
+  sw: -1
+},
+    signsY = {
+  overlay: 1,
+  selection: 1,
+  n: -1,
+  e: null,
+  s: 1,
+  w: null,
+  nw: -1,
+  ne: -1,
+  se: 1,
+  sw: 1
+};
+
+function brush_type(t) {
+  return {
+    type: t
+  };
+} // Ignore right-click, since that should open the context menu.
+
+
+function brush_defaultFilter() {
+  return !on_event.ctrlKey && !on_event.button;
+}
+
+function defaultExtent() {
+  var svg = this.ownerSVGElement || this;
+  return svg.hasAttribute("viewBox") ? (svg = svg.viewBox.baseVal, [[svg.x, svg.y], [svg.x + svg.width, svg.y + svg.height]]) : [[0, 0], [svg.width.baseVal.value, svg.height.baseVal.value]];
+}
+
+function brush_defaultTouchable() {
+  return navigator.maxTouchPoints || "ontouchstart" in this;
+} // Like d3.local, but with the name “__brush” rather than auto-generated.
+
+
+function brush_local(node) {
+  for (; !node.__brush;) if (!(node = node.parentNode)) return;
+
+  return node.__brush;
+}
+
+function brush_empty(extent) {
+  return extent[0][0] === extent[1][0] || extent[0][1] === extent[1][1];
+}
+
+function brushSelection(node) {
+  var state = node.__brush;
+  return state ? state.dim.output(state.selection) : null;
+}
+function brushX() {
+  return brush_brush(X);
+}
+function brushY() {
+  return brush_brush(Y);
+}
+/* harmony default export */ var src_brush = (function () {
+  return brush_brush(XY);
+});
+
+function brush_brush(dim) {
+  function brush(group) {
+    var overlay = group.property("__brush", initialize).selectAll(".overlay").data([brush_type("overlay")]);
+    overlay.enter().append("rect").attr("class", "overlay").attr("pointer-events", "all").attr("cursor", cursors.overlay).merge(overlay).each(function () {
+      var extent = brush_local(this).extent;
+      src_select(this).attr("x", extent[0][0]).attr("y", extent[0][1]).attr("width", extent[1][0] - extent[0][0]).attr("height", extent[1][1] - extent[0][1]);
+    }), group.selectAll(".selection").data([brush_type("selection")]).enter().append("rect").attr("class", "selection").attr("cursor", cursors.selection).attr("fill", "#777").attr("fill-opacity", .3).attr("stroke", "#fff").attr("shape-rendering", "crispEdges");
+    var handle = group.selectAll(".handle").data(dim.handles, function (d) {
+      return d.type;
+    });
+    handle.exit().remove(), handle.enter().append("rect").attr("class", function (d) {
+      return "handle handle--" + d.type;
+    }).attr("cursor", function (d) {
+      return cursors[d.type];
+    }), group.each(redraw).attr("fill", "none").attr("pointer-events", "all").on("mousedown.brush", started).filter(touchable).on("touchstart.brush", started).on("touchmove.brush", touchmoved).on("touchend.brush touchcancel.brush", touchended).style("touch-action", "none").style("-webkit-tap-highlight-color", "rgba(0,0,0,0)");
+  }
+
+  function redraw() {
+    var group = src_select(this),
+        selection = brush_local(this).selection;
+    selection ? (group.selectAll(".selection").style("display", null).attr("x", selection[0][0]).attr("y", selection[0][1]).attr("width", selection[1][0] - selection[0][0]).attr("height", selection[1][1] - selection[0][1]), group.selectAll(".handle").style("display", null).attr("x", function (d) {
+      return d.type[d.type.length - 1] === "e" ? selection[1][0] - handleSize / 2 : selection[0][0] - handleSize / 2;
+    }).attr("y", function (d) {
+      return d.type[0] === "s" ? selection[1][1] - handleSize / 2 : selection[0][1] - handleSize / 2;
+    }).attr("width", function (d) {
+      return d.type === "n" || d.type === "s" ? selection[1][0] - selection[0][0] + handleSize : handleSize;
+    }).attr("height", function (d) {
+      return d.type === "e" || d.type === "w" ? selection[1][1] - selection[0][1] + handleSize : handleSize;
+    })) : group.selectAll(".selection,.handle").style("display", "none").attr("x", null).attr("y", null).attr("width", null).attr("height", null);
+  }
+
+  function emitter(that, args, clean) {
+    return !clean && that.__brush.emitter || new Emitter(that, args);
+  }
+
+  function Emitter(that, args) {
+    this.that = that, this.args = args, this.state = that.__brush, this.active = 0;
+  }
+
+  function started() {
+    function moved() {
+      var point1 = pointer(that);
+      !shifting || lockX || lockY || (Math.abs(point1[0] - point[0]) > Math.abs(point1[1] - point[1]) ? lockY = !0 : lockX = !0), point = point1, moving = !0, src_noevent(), move();
+    }
+
+    function move() {
+      var t;
+
+      switch (dx = point[0] - point0[0], dy = point[1] - point0[1], mode) {
+        case MODE_SPACE:
+        case MODE_DRAG:
+          {
+            signX && (dx = Math.max(W - w0, Math.min(E - e0, dx)), w1 = w0 + dx, e1 = e0 + dx), signY && (dy = Math.max(N - n0, Math.min(S - s0, dy)), n1 = n0 + dy, s1 = s0 + dy);
+            break;
+          }
+
+        case MODE_HANDLE:
+          {
+            signX < 0 ? (dx = Math.max(W - w0, Math.min(E - w0, dx)), w1 = w0 + dx, e1 = e0) : signX > 0 && (dx = Math.max(W - e0, Math.min(E - e0, dx)), w1 = w0, e1 = e0 + dx), signY < 0 ? (dy = Math.max(N - n0, Math.min(S - n0, dy)), n1 = n0 + dy, s1 = s0) : signY > 0 && (dy = Math.max(N - s0, Math.min(S - s0, dy)), n1 = n0, s1 = s0 + dy);
+            break;
+          }
+
+        case MODE_CENTER:
+          {
+            signX && (w1 = Math.max(W, Math.min(E, w0 - dx * signX)), e1 = Math.max(W, Math.min(E, e0 + dx * signX))), signY && (n1 = Math.max(N, Math.min(S, n0 - dy * signY)), s1 = Math.max(N, Math.min(S, s0 + dy * signY)));
+            break;
+          }
+      }
+
+      e1 < w1 && (signX *= -1, t = w0, w0 = e0, e0 = t, t = w1, w1 = e1, e1 = t, type in flipX && overlay.attr("cursor", cursors[type = flipX[type]])), s1 < n1 && (signY *= -1, t = n0, n0 = s0, s0 = t, t = n1, n1 = s1, s1 = t, type in flipY && overlay.attr("cursor", cursors[type = flipY[type]])), state.selection && (selection = state.selection), lockX && (w1 = selection[0][0], e1 = selection[1][0]), lockY && (n1 = selection[0][1], s1 = selection[1][1]), (selection[0][0] !== w1 || selection[0][1] !== n1 || selection[1][0] !== e1 || selection[1][1] !== s1) && (state.selection = [[w1, n1], [e1, s1]], redraw.call(that), emit.brush());
+    }
+
+    function ended() {
+      if (noevent_nopropagation(), on_event.touches) {
+        if (on_event.touches.length) return;
+        touchending && clearTimeout(touchending), touchending = setTimeout(function () {
+          touchending = null;
+        }, 500);
+      } else yesdrag(on_event.view, moving), view.on("keydown.brush keyup.brush mousemove.brush mouseup.brush", null);
+
+      group.attr("pointer-events", "all"), overlay.attr("cursor", cursors.overlay), state.selection && (selection = state.selection), brush_empty(selection) && (state.selection = null, redraw.call(that)), emit.end();
+    }
+
+    function keydowned() {
+      switch (on_event.keyCode) {
+        case 16:
+          {
+            shifting = signX && signY;
+            break;
+          }
+
+        case 18:
+          {
+            mode === MODE_HANDLE && (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER, move());
+            break;
+          }
+
+        case 32:
+          {
+            (mode === MODE_HANDLE || mode === MODE_CENTER) && (signX < 0 ? e0 = e1 - dx : signX > 0 && (w0 = w1 - dx), signY < 0 ? s0 = s1 - dy : signY > 0 && (n0 = n1 - dy), mode = MODE_SPACE, overlay.attr("cursor", cursors.selection), move());
+            break;
+          }
+
+        default:
+          return;
+      }
+
+      src_noevent();
+    }
+
+    function keyupped() {
+      switch (on_event.keyCode) {
+        case 16:
+          {
+            shifting && (lockX = lockY = shifting = !1, move());
+            break;
+          }
+
+        case 18:
+          {
+            mode === MODE_CENTER && (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE, move());
+            break;
+          }
+
+        case 32:
+          {
+            mode === MODE_SPACE && (on_event.altKey ? (signX && (e0 = e1 - dx * signX, w0 = w1 + dx * signX), signY && (s0 = s1 - dy * signY, n0 = n1 + dy * signY), mode = MODE_CENTER) : (signX < 0 ? e0 = e1 : signX > 0 && (w0 = w1), signY < 0 ? s0 = s1 : signY > 0 && (n0 = n1), mode = MODE_HANDLE), overlay.attr("cursor", cursors[type]), move());
+            break;
+          }
+
+        default:
+          return;
+      }
+
+      src_noevent();
+    }
+
+    if ((!touchending || on_event.touches) && filter.apply(this, arguments)) {
+      var w0,
+          w1,
+          n0,
+          n1,
+          e0,
+          e1,
+          s0,
+          s1,
+          moving,
+          lockX,
+          lockY,
+          that = this,
+          type = on_event.target.__data__.type,
+          mode = (keys && on_event.metaKey ? type = "overlay" : type) === "selection" ? MODE_DRAG : keys && on_event.altKey ? MODE_CENTER : MODE_HANDLE,
+          signX = dim === Y ? null : signsX[type],
+          signY = dim === X ? null : signsY[type],
+          state = brush_local(that),
+          extent = state.extent,
+          selection = state.selection,
+          W = extent[0][0],
+          N = extent[0][1],
+          E = extent[1][0],
+          S = extent[1][1],
+          dx = 0,
+          dy = 0,
+          shifting = signX && signY && keys && on_event.shiftKey,
+          pointer = on_event.touches ? toucher(on_event.changedTouches[0].identifier) : src_mouse,
+          point0 = pointer(that),
+          point = point0,
+          emit = emitter(that, arguments, !0).beforestart();
+      type === "overlay" ? (selection && (moving = !0), state.selection = selection = [[w0 = dim === Y ? W : point0[0], n0 = dim === X ? N : point0[1]], [e0 = dim === Y ? E : w0, s0 = dim === X ? S : n0]]) : (w0 = selection[0][0], n0 = selection[0][1], e0 = selection[1][0], s0 = selection[1][1]), w1 = w0, n1 = n0, e1 = e0, s1 = s0;
+      var group = src_select(that).attr("pointer-events", "none"),
+          overlay = group.selectAll(".overlay").attr("cursor", cursors[type]);
+      if (on_event.touches) emit.moved = moved, emit.ended = ended;else {
+        var view = src_select(on_event.view).on("mousemove.brush", moved, !0).on("mouseup.brush", ended, !0);
+        keys && view.on("keydown.brush", keydowned, !0).on("keyup.brush", keyupped, !0), nodrag(on_event.view);
+      }
+      noevent_nopropagation(), interrupt(that), redraw.call(that), emit.start();
+    }
+  }
+
+  function touchmoved() {
+    emitter(this, arguments).moved();
+  }
+
+  function touchended() {
+    emitter(this, arguments).ended();
+  }
+
+  function initialize() {
+    var state = this.__brush || {
+      selection: null
+    };
+    return state.extent = number2(extent.apply(this, arguments)), state.dim = dim, state;
+  }
+
+  var touchending,
+      extent = defaultExtent,
+      filter = brush_defaultFilter,
+      touchable = brush_defaultTouchable,
+      keys = !0,
+      listeners = src_dispatch("start", "brush", "end"),
+      handleSize = 6;
+  return brush.move = function (group, selection) {
+    group.selection ? group.on("start.brush", function () {
+      emitter(this, arguments).beforestart().start();
+    }).on("interrupt.brush end.brush", function () {
+      emitter(this, arguments).end();
+    }).tween("brush", function () {
+      function tween(t) {
+        state.selection = t === 1 && selection1 === null ? null : i(t), redraw.call(that), emit.brush();
+      }
+
+      var that = this,
+          state = that.__brush,
+          emit = emitter(that, arguments),
+          selection0 = state.selection,
+          selection1 = dim.input(typeof selection === "function" ? selection.apply(this, arguments) : selection, state.extent),
+          i = src_value(selection0, selection1);
+      return selection0 !== null && selection1 !== null ? tween : tween(1);
+    }) : group.each(function () {
+      var that = this,
+          args = arguments,
+          state = that.__brush,
+          selection1 = dim.input(typeof selection === "function" ? selection.apply(that, args) : selection, state.extent),
+          emit = emitter(that, args).beforestart();
+      interrupt(that), state.selection = selection1 === null ? null : selection1, redraw.call(that), emit.start().brush().end();
+    });
+  }, brush.clear = function (group) {
+    brush.move(group, null);
+  }, Emitter.prototype = {
+    beforestart: function beforestart() {
+      return ++this.active === 1 && (this.state.emitter = this, this.starting = !0), this;
+    },
+    start: function start() {
+      return this.starting ? (this.starting = !1, this.emit("start")) : this.emit("brush"), this;
+    },
+    brush: function () {
+      return this.emit("brush"), this;
+    },
+    end: function end() {
+      return --this.active === 0 && (delete this.state.emitter, this.emit("end")), this;
+    },
+    emit: function emit(type) {
+      customEvent(new src_event(brush, type, dim.output(this.state.selection)), listeners.apply, listeners, [type, this.that, this.args]);
+    }
+  }, brush.extent = function (_) {
+    return arguments.length ? (extent = typeof _ === "function" ? _ : d3_brush_src_constant(number2(_)), brush) : extent;
+  }, brush.filter = function (_) {
+    return arguments.length ? (filter = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : filter;
+  }, brush.touchable = function (_) {
+    return arguments.length ? (touchable = typeof _ === "function" ? _ : d3_brush_src_constant(!!_), brush) : touchable;
+  }, brush.handleSize = function (_) {
+    return arguments.length ? (handleSize = +_, brush) : handleSize;
+  }, brush.keyModifiers = function (_) {
+    return arguments.length ? (keys = !!_, brush) : keys;
+  }, brush.on = function () {
+    var value = listeners.on.apply(listeners, arguments);
+    return value === listeners ? brush : value;
+  }, brush;
+}
+// CONCATENATED MODULE: ./node_modules/d3-brush/src/index.js
+
+// CONCATENATED MODULE: ./src/internals/browser.js
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Window object
+ * @module
+ * @ignore
+ */
+
+/* eslint-disable no-new-func, no-undef */
+var win = function () {
+  var def = function (o) {
+    return typeof o !== "undefined" && o;
+  };
+
+  return def(self) || def(window) || def(global) || def(globalThis) || Function("return this")();
+}(),
+    browser_doc = win && win.document;
+/* eslint-enable no-new-func, no-undef */
+
+
+
+// CONCATENATED MODULE: ./src/internals/util.js
+
+
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+
+
+
+
+
+var isValue = function (v) {
+  return v || v === 0;
+},
+    isFunction = function (v) {
+  return typeof v === "function";
+},
+    isString = function (v) {
+  return typeof v === "string";
+},
+    isNumber = function (v) {
+  return typeof v === "number";
+},
+    isUndefined = function (v) {
+  return typeof v === "undefined";
+},
+    isDefined = function (v) {
+  return typeof v !== "undefined";
+},
+    isBoolean = function (v) {
+  return typeof v === "boolean";
+},
+    ceil10 = function (v) {
+  return Math.ceil(v / 10) * 10;
+},
+    asHalfPixel = function (n) {
+  return Math.ceil(n) + .5;
+},
+    diffDomain = function (d) {
+  return d[1] - d[0];
+},
+    isObjectType = function (v) {
+  return _typeof(v) === "object";
+},
+    isEmpty = function (o) {
+  return isUndefined(o) || o === null || isString(o) && o.length === 0 || isObjectType(o) && !(o instanceof Date) && Object.keys(o).length === 0 || isNumber(o) && isNaN(o);
+},
+    notEmpty = function (o) {
+  return !isEmpty(o);
+},
+    isArray = function (arr) {
+  return arr && arr.constructor === Array;
+},
+    isObject = function (obj) {
+  return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
+},
+    getOption = function (options, key, defaultValue) {
+  return isDefined(options[key]) ? options[key] : defaultValue;
+},
+    util_hasValue = function (dict, value) {
+  var found = !1;
+  return Object.keys(dict).forEach(function (key) {
+    return dict[key] === value && (found = !0);
+  }), found;
+},
+    callFn = function (fn) {
+  for (var isFn = isFunction(fn), _len = arguments.length, args = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) args[_key - 1] = arguments[_key];
+
+  return isFn && fn.call.apply(fn, args), isFn;
+},
+    sanitise = function (str) {
+  return isString(str) ? str.replace(/</g, "&lt;").replace(/>/g, "&gt;") : str;
+},
+    setTextValue = function (node, text) {
+  var dy = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : [-1, 1],
+      toMiddle = !!(arguments.length > 3 && arguments[3] !== undefined) && arguments[3];
+  if (node && isString(text)) if (text.indexOf("\n") === -1) node.text(text);else {
+    var diff = [node.text(), text].map(function (v) {
+      return v.replace(/[\s\n]/g, "");
+    });
+
+    if (diff[0] !== diff[1]) {
+      var multiline = text.split("\n"),
+          len = toMiddle ? multiline.length - 1 : 1;
+      node.html(""), multiline.forEach(function (v, i) {
+        node.append("tspan").attr("x", 0).attr("dy", "".concat(i === 0 ? dy[0] * len : dy[1], "em")).text(v);
+      });
+    }
+  }
+},
+    getRectSegList = function (path) {
+  /*
+   * seg1 ---------- seg2
+   *   |               |
+   *   |               |
+   *   |               |
+   * seg0 ---------- seg3
+   * */
+  var _path$getBBox = path.getBBox(),
+      x = _path$getBBox.x,
+      y = _path$getBBox.y,
+      width = _path$getBBox.width,
+      height = _path$getBBox.height;
+
+  return [{
+    x: x,
+    y: y + height
+  }, // seg0
+  {
+    x: x,
+    y: y
+  }, // seg1
+  {
+    x: x + width,
+    y: y
+  }, // seg2
+  {
+    x: x + width,
+    y: y + height
+  } // seg3
+  ];
+},
+    getPathBox = function (path) {
+  var _path$getBoundingClie = path.getBoundingClientRect(),
+      width = _path$getBoundingClie.width,
+      height = _path$getBoundingClie.height,
+      items = getRectSegList(path),
+      x = items[0].x,
+      y = Math.min(items[0].y, items[1].y);
+
+  return {
+    x: x,
+    y: y,
+    width: width,
+    height: height
+  };
+},
+    getBrushSelection = function (ctx) {
+  var selection = null,
+      event = on_event,
+      main = ctx.context || ctx.main;
+  return event && event.constructor.name === "BrushEvent" ? selection = event.selection : main && (selection = main.select(".".concat(config_classes.brush)).node()) && (selection = brushSelection(selection)), selection;
+},
+    getBoundingRect = function (node) {
+  return node.rect || (node.rect = node.getBoundingClientRect());
+},
+    getRandom = function () {
+  var asStr = !(arguments.length > 0 && arguments[0] !== undefined) || arguments[0];
+  return Math.random() + (asStr ? "" : 0);
+},
+    brushEmpty = function (ctx) {
+  var selection = getBrushSelection(ctx);
+  return !selection || selection[0] === selection[1];
+},
+    util_extend = function () {
+  var target = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {},
+      source = arguments.length > 1 ? arguments[1] : undefined;
+
+  for (var p in source) target[p] = source[p];
+
+  return target;
+},
+    capitalize = function (str) {
+  return str.charAt(0).toUpperCase() + str.slice(1);
+},
+    toArray = function (v) {
+  return [].slice.call(v);
+},
+    getCssRules = function (styleSheets) {
+  var rules = [];
+  return styleSheets.forEach(function (sheet) {
+    try {
+      sheet.cssRules && sheet.cssRules.length && (rules = rules.concat(toArray(sheet.cssRules)));
+    } catch (e) {
+      console.error("Error while reading rules from ".concat(sheet.href, ": ").concat(e.toString()));
+    }
+  }), rules;
+},
+    getTranslation = function (node) {
+  var transform = node ? node.transform : null,
+      baseVal = transform ? transform.baseVal : [];
+  return baseVal.length ? baseVal.getItem(0).matrix : {
+    a: 0,
+    b: 0,
+    c: 0,
+    d: 0,
+    e: 0,
+    f: 0
+  };
+},
+    getUnique = function (data) {
+  var isDate = data[0] instanceof Date,
+      d = (isDate ? data.map(Number) : data).filter(function (v, i, self) {
+    return self.indexOf(v) === i;
+  });
+  return isDate ? d.map(function (v) {
+    return new Date(v);
+  }) : d;
+},
+    mergeArray = function (arr) {
+  return arr && arr.length ? arr.reduce(function (p, c) {
+    return p.concat(c);
+  }) : [];
+},
+    mergeObj = function (_mergeObj) {
+  function mergeObj() {
+    return _mergeObj.apply(this, arguments);
+  }
+
+  return mergeObj.toString = function () {
+    return _mergeObj.toString();
+  }, mergeObj;
+}(function (target) {
+  for (var _len2 = arguments.length, objectN = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) objectN[_key2 - 1] = arguments[_key2];
+
+  if (!objectN.length || objectN.length === 1 && !objectN[0]) return target;
+  var source = objectN.shift();
+  return isObject(target) && isObject(source) && Object.keys(source).forEach(function (key) {
+    var value = source[key];
+    isObject(value) ? (!target[key] && (target[key] = {}), target[key] = mergeObj(target[key], value)) : target[key] = isArray(value) ? value.concat() : value;
+  }), mergeObj.apply(void 0, [target].concat(objectN));
+}),
+    sortValue = function (data) {
+  var fn,
+      isAsc = !(arguments.length > 1 && arguments[1] !== undefined) || arguments[1];
+  return data[0] instanceof Date ? fn = isAsc ? function (a, b) {
+    return a - b;
+  } : function (a, b) {
+    return b - a;
+  } : isAsc && !data.every(isNaN) ? fn = function (a, b) {
+    return a - b;
+  } : !isAsc && (fn = function (a, b) {
+    return a > b && -1 || a < b && 1 || a === b && 0;
+  }), data.concat().sort(fn);
+},
+    getMinMax = function (type, data) {
+  var res = data.filter(function (v) {
+    return notEmpty(v);
+  });
+  return res.length ? isNumber(res[0]) ? res = Math[type].apply(Math, _toConsumableArray(res)) : res[0] instanceof Date && (res = sortValue(res, type === "min")[0]) : res = undefined, res;
+},
+    getRange = function (start, end) {
+  var res = [];
+
+  for (var i = start; i < end; i++) res.push(i);
+
+  return res;
+},
+    emulateEvent = {
+  mouse: function () {
+    var getParams = function () {
+      return {
+        bubbles: !1,
+        cancelable: !1,
+        screenX: 0,
+        screenY: 0,
+        clientX: 0,
+        clientY: 0
+      };
+    };
+
+    try {
+      return new MouseEvent("t"), function (el, eventType) {
+        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams();
+        el.dispatchEvent(new MouseEvent(eventType, params));
+      };
+    } catch (e) {
+      // Polyfills DOM4 MouseEvent
+      return function (el, eventType) {
+        var params = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : getParams(),
+            mouseEvent = browser_doc.createEvent("MouseEvent");
+        mouseEvent.initMouseEvent(eventType, params.bubbles, params.cancelable, win, 0, // the event's mouse click count
+        params.screenX, params.screenY, params.clientX, params.clientY, !1, !1, !1, !1, 0, null), el.dispatchEvent(mouseEvent);
+      };
+    }
+  }(),
+  touch: function touch(el, eventType, params) {
+    var touchObj = new Touch(mergeObj({
+      identifier: Date.now(),
+      target: el,
+      radiusX: 2.5,
+      radiusY: 2.5,
+      rotationAngle: 10,
+      force: .5
+    }, params));
+    el.dispatchEvent(new TouchEvent(eventType, {
+      cancelable: !0,
+      bubbles: !0,
+      shiftKey: !0,
+      touches: [touchObj],
+      targetTouches: [],
+      changedTouches: [touchObj]
+    }));
+  }
+},
+    tplProcess = function (tpl, data) {
+  var res = tpl;
+
+  for (var x in data) res = res.replace(new RegExp("{=".concat(x, "}"), "g"), data[x]);
+
+  return res;
+};
+
+
 // CONCATENATED MODULE: ./src/axis/AxisRendererHelper.js
 
 
@@ -21734,6 +21734,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
 
 
 
+
 var isHorizontal = function ($$, forHorizontal) {
   var isRotated = $$.config.axis_rotated;
   return forHorizontal ? isRotated : !isRotated;
@@ -21845,13 +21846,14 @@ var Axis_Axis = /*#__PURE__*/function () {
           isCategory = isX && $$.isCategorized(),
           orient = $$["".concat(name, "Orient")],
           tickFormat = isX ? $$.xAxisTickFormat : config["axis_".concat(name, "_tick_format")],
+          tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type),
           tickValues = isX ? $$.xAxisTickValues : $$["".concat(name, "AxisTickValues")],
           axisParams = mergeObj({
         outerTick: outerTick,
         noTransition: noTransition,
         config: config,
         name: name,
-        tickTextRotate: noTickTextRotate ? 0 : config["axis_".concat(type, "_tick_rotate")]
+        tickTextRotate: tickTextRotate
       }, isX && {
         isCategory: isCategory,
         tickMultiline: config.axis_x_tick_multiline,
@@ -22027,12 +22029,87 @@ var Axis_Axis = /*#__PURE__*/function () {
             tickValues = config["axis_".concat(id, "_tick_values")];
         !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? $$.isTimeSeriesY() : $$.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
         var dummy = $$.selectChart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
-        axis.create(dummy), dummy.selectAll("text").each(function () {
-          maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+        axis.create(dummy), dummy.selectAll("text").each(function (d, i) {
+          var currentTextWidth = this.getBoundingClientRect().width;
+          maxWidth = Math.max(maxWidth, currentTextWidth), id === "x" && ($$.currentMaxTickWidths.x.ticks[i] = currentTextWidth);
         }), dummy.remove();
       }
 
       return maxWidth > 0 && (currentTickMax.size = maxWidth), currentTickMax.size;
+    }
+  }, {
+    key: "getXAxisTickTextY2Overflow",
+    value: function getXAxisTickTextY2Overflow(defaultPadding) {
+      var $$ = this.owner,
+          config = $$.config,
+          xAxisTickRotate = $$.getAxisTickRotate("x");
+
+      if (($$.isCategorized() || $$.isTimeSeries()) && config.axis_x_tick_fit && !config.axis_x_tick_culling && !config.axis_x_tick_multiline && xAxisTickRotate > 0 && xAxisTickRotate < 90) {
+        var widthWithoutCurrentPaddingLeft = $$.currentWidth - $$.getCurrentPaddingLeft(),
+            maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding),
+            xAxisTickTextY2Overflow = Math.max(0, maxOverflow) + defaultPadding;
+        // for display inconsistencies between browsers
+        return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+      }
+
+      return 0;
+    }
+  }, {
+    key: "getXAxisTickMaxOverflow",
+    value: function getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+      for (var $$ = this.owner, config = $$.config, isTimeSeries = $$.isTimeSeries(), tickTextWidths = $$.currentMaxTickWidths.x.ticks, tickCount = tickTextWidths.length, _this$x$padding = this.x.padding, left = _this$x$padding.left, right = _this$x$padding.right, maxOverflow = 0, remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0), i = 0; i < tickCount; i++) {
+        var tickIndex = i + 1,
+            rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i],
+            ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : .5) + left;
+
+        // Skip ticks if there are no ticks before them
+        if (!(ticksBeforeTickText <= 0)) {
+          var tickLength = (widthWithoutCurrentPaddingLeft - rotatedTickTextWidth) / ticksBeforeTickText;
+          maxOverflow = Math.max(maxOverflow, rotatedTickTextWidth - tickLength / 2 - ((remaining - tickIndex) * tickLength + right * tickLength));
+        }
+      }
+
+      var tickOffset = 0;
+
+      if (!isTimeSeries) {
+        var scale = src_linear_linear().domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]).range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+        tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+      }
+
+      return maxOverflow + tickOffset;
+    }
+    /**
+     * Get x Axis padding
+     * @param {Number} tickCount Tick count
+     * @return {Object} Padding object values with 'left' & 'right' key
+     * @private
+     */
+
+  }, {
+    key: "getXAxisPadding",
+    value: function getXAxisPadding(tickCount) {
+      var $$ = this.owner,
+          padding = $$.config.axis_x_padding;
+
+      if (isEmpty(padding) ? padding = {
+        left: 0,
+        right: 0
+      } : (padding.left = padding.left || 0, padding.right = padding.right || 0), $$.isTimeSeries()) {
+        var firstX = +$$.getXDomainMin($$.data.targets),
+            lastX = +$$.getXDomainMax($$.data.targets),
+            timeDiff = lastX - firstX,
+            range = timeDiff + padding.left + padding.right,
+            relativeTickWidth = timeDiff / tickCount / range,
+            left = padding.left / range / relativeTickWidth || 0,
+            _right = padding.right / range / relativeTickWidth || 0;
+
+        padding = {
+          left: left,
+          right: _right
+        };
+      }
+
+      return padding;
     }
   }, {
     key: "updateLabels",
@@ -22197,7 +22274,13 @@ var Axis_Axis = /*#__PURE__*/function () {
             tickText.each(function (d) {
               this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
             });
-          } else tickText.style("display", "block");
+          } else tickText.style("display", "block"); // set/unset x_axis_tick_clippath
+
+
+          if (type === "x") {
+            var clipPath = $$.clipXAxisTickMaxWidth ? $$.clipPathForXAxisTickTexts : null;
+            $$.svg.selectAll(".".concat(config_classes.axisX, " .tick text")).attr("clip-path", clipPath);
+          }
         }
       });
     }
@@ -22307,6 +22390,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
       }, $$.hiddenTargetIds = [], $$.hiddenLegendIds = [], $$.focusedTargetIds = [], $$.defocusedTargetIds = [], $$.isLegendRight = config.legend_position === "right", $$.isLegendInset = config.legend_position === "inset", $$.isLegendTop = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "top-right", $$.isLegendLeft = config.legend_inset_anchor === "top-left" || config.legend_inset_anchor === "bottom-left", $$.legendStep = 0, $$.legendItemWidth = 0, $$.legendItemHeight = 0, $$.currentMaxTickWidths = {
         x: {
           size: 0,
+          ticks: [],
           domain: ""
         },
         y: {
@@ -22334,7 +22418,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         });
       }
 
-      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipXAxisTickTexts = $$.appendClip($$.defs, $$.clipIdForXAxisTickTexts), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
         return $$.defs.append(function () {
           return p.node;
         });
@@ -22429,8 +22513,9 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
   }, {
     key: "updateSizes",
     value: function updateSizes(isInit) {
-      var $$ = this,
-          config = $$.config,
+      var $$ = this;
+      isInit || $$.setContainerSize();
+      var config = $$.config,
           isRotated = config.axis_rotated,
           hasArc = $$.hasArcType(),
           legend = {
@@ -22441,7 +22526,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
           xAxisHeight = isRotated || hasArc ? 0 : $$.getHorizontalAxisHeight("x"),
           subchartXAxisHeight = config.subchart_axis_x_show && config.subchart_axis_x_tick_text_show ? xAxisHeight : 30,
           subchartHeight = config.subchart_show && !hasArc ? config.subchart_size_height + subchartXAxisHeight : 0;
-      isInit || $$.setContainerSize(), $$.margin = isRotated ? {
+      $$.margin = isRotated ? {
         top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
         right: hasArc ? 0 : $$.getCurrentPaddingRight(),
         bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
@@ -22467,7 +22552,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         right: NaN,
         bottom: 0,
         left: 0
-      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1);
+      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1), !hasArc && config.axis_x_show && $$.updateXAxisTickClip();
     }
     /**
      * Update targeted element with given data
@@ -24797,9 +24882,37 @@ var Options_Options = function Options() {
     axis_x_tick_values: null,
 
     /**
+     * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+     * - **NOTE:** The conditions where `autorotate` is enabled are:
+     *   - axis.x.type='category' or 'timeseries
+     *   - axis.x.tick.multiline=false
+     *   - axis.x.tick.culling=false
+     *   - axis.x.tick.fit=true
+     * @name axis․x․tick․autorotate
+     * @memberof Options
+     * @type {Boolean}
+     * @default false
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
+     * @example
+     * axis: {
+     *   x: {
+     *     tick: {
+     *       rotate: 15,
+     *       autorotate: true,
+     *       multiline: false,
+     *       culling: false,
+     *       fit: true
+     *     }
+     *   }
+     * }
+     */
+    axis_x_tick_autorotate: !1,
+
+    /**
      * Rotate x axis tick text.
      * - If you set negative value, it will rotate to opposite direction.
      * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
+     * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
      * @name axis․x․tick․rotate
      * @memberof Options
      * @type {Number}
@@ -27276,11 +27389,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   getXDomain: function getXDomain(targets) {
     var $$ = this,
         xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)],
-        firstX = xDomain[0],
-        lastX = xDomain[1],
+        _xDomain2 = _slicedToArray(xDomain, 2),
+        firstX = _xDomain2[0],
+        lastX = _xDomain2[1],
         padding = $$.getXDomainPadding(xDomain),
         min = 0,
         max = 0;
+
     return firstX - lastX !== 0 || $$.isCategorized() || ($$.isTimeSeries() ? (firstX = new Date(firstX.getTime() * .5), lastX = new Date(lastX.getTime() * 1.5)) : (firstX = firstX === 0 ? 1 : firstX * .5, lastX = lastX === 0 ? -1 : lastX * 1.5)), (firstX || firstX === 0) && (min = $$.isTimeSeries() ? new Date(firstX.getTime() - padding.left) : firstX - padding.left), (lastX || lastX === 0) && (max = $$.isTimeSeries() ? new Date(lastX.getTime() + padding.right) : lastX + padding.right), [min, max];
   },
   updateXDomain: function updateXDomain(targets, withUpdateXDomain, withUpdateOrgXDomain, withTrim, domain) {
@@ -28825,12 +28940,15 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   },
   getCurrentPaddingRight: function getCurrentPaddingRight() {
     var padding,
+        withoutTickTextOverflow = !!(arguments.length > 0 && arguments[0] !== undefined) && arguments[0],
         $$ = this,
         config = $$.config,
+        defaultPadding = 10,
         legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = config.axis_y2_axes.length,
-        axisWidth = $$.getAxisWidthByAxisId("y2");
-    return padding = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? 10 + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
+        axisWidth = $$.getAxisWidthByAxisId("y2"),
+        xAxisTickTextOverflow = withoutTickTextOverflow ? 0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : config.axis_rotated ? defaultPadding + legendWidthOnRight : !config.axis_y2_show || config.axis_y2_inner ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
   },
 
   /**
@@ -28892,13 +29010,55 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     if (id === "x" && !config.axis_x_show) return 8;
     if (id === "x" && config.axis_x_height) return config.axis_x_height;
     if (id === "y" && !config.axis_y_show) return !config.legend_show || $$.isLegendRight || $$.isLegendInset ? 1 : 10;
-    if (id === "y2" && !config.axis_y2_show) return $$.rotated_padding_top;
-    var rotate = config["axis_".concat(id, "_tick_rotate")]; // Calculate x/y axis height when tick rotated
+    if (id === "y2" && !config.axis_y2_show) return $$.rotated_padding_top; // const rotate = config[`axis_${id}_tick_rotate`];
 
-    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
+    var rotate = $$.getAxisTickRotate(id); // Calculate x/y axis height when tick rotated
+
+    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180), !config.axis_x_tick_multiline && $$.currentHeight && h > $$.currentHeight / 2 && (h = $$.currentHeight / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.xAxis.tickInterval());
+  },
+
+  /**
+   * Get axis tick test rotate value
+   * @param {String} id
+   * @return {Number} rotate value
+   * @private
+   */
+  getAxisTickRotate: function getAxisTickRotate(id) {
+    var $$ = this,
+        config = $$.config,
+        rotate = config["axis_".concat(id, "_tick_rotate")];
+    if (!$$.filterTargetsToShow($$.data.targets).length) return 0;
+
+    if (id === "x") {
+      var isCategorized = $$.isCategorized(),
+          isTimeSeries = $$.isTimeSeries(),
+          allowedXAxisTypes = isCategorized || isTimeSeries,
+          tickCount = 0;
+      config.axis_x_tick_fit && allowedXAxisTypes && ($$.axis.x = {
+        padding: {
+          left: 0,
+          right: 0
+        },
+        tickCount: 0
+      }, tickCount = $$.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1), tickCount !== $$.axis.x.tickCount && ($$.axis.x.padding = $$.axis.getXAxisPadding(tickCount)), $$.axis.x.tickCount = tickCount), $$.svg && config.axis_x_tick_fit && !config.axis_x_tick_multiline && !config.axis_x_tick_culling && config.axis_x_tick_autorotate && allowedXAxisTypes && (rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0);
+    }
+
+    return rotate;
+  },
+
+  /**
+   * Check weather axis tick text needs to be rotated
+   * @private
+   */
+  needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
+    var $$ = this,
+        xAxisLength = $$.currentWidth - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(!0),
+        tickCountWithPadding = $$.axis.x.tickCount + $$.axis.x.padding.left + $$.axis.x.padding.right,
+        maxTickWidth = $$.axis.getMaxTickWidth("x");
+    return maxTickWidth > (xAxisLength / tickCountWithPadding || 0);
   }
 });
 // CONCATENATED MODULE: ./node_modules/d3-path/src/path.js
@@ -33271,7 +33431,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         _d3Mouse2 = _slicedToArray(_d3Mouse, 2),
         left = _d3Mouse2[0],
         top = _d3Mouse2[1],
-        chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(),
+        chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(!0),
         chartLeft = $$.getCurrentPaddingLeft(!0),
         size = 20;
 
@@ -34009,6 +34169,25 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   getYAxisClipHeight: function getYAxisClipHeight() {
     var $$ = this;
     return $$.getAxisClipHeight($$.config.axis_rotated);
+  },
+  updateXAxisTickClip: function updateXAxisTickClip() {
+    var $$ = this,
+        newXAxisHeight = $$.getHorizontalAxisHeight("x");
+    $$.clipIdForXAxisTickTexts = "".concat($$.clipId, "-xaxisticktexts"), $$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts), !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== $$.xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.xAxisHeight = newXAxisHeight;
+  },
+  setXAxisTickClipWidth: function setXAxisTickClipWidth() {
+    var $$ = this,
+        config = $$.config,
+        xAxisTickRotate = $$.getAxisTickRotate("x");
+
+    if (!config.axis_x_tick_multiline && xAxisTickRotate) {
+      var sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
+      $$.xAxisTickClipPathMaxWidth = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+    } else $$.xAxisTickClipPathMaxWidth = null;
+  },
+  setXAxisTickTextClipPathWidth: function setXAxisTickTextClipPathWidth() {
+    var $$ = this;
+    $$.svg && $$.svg.select("#".concat($$.clipIdForXAxisTickTexts, " rect")).attr("width", $$.xAxisTickClipPathMaxWidth).attr("height", 30);
   }
 });
 // CONCATENATED MODULE: ./src/internals/region.js
@@ -37552,7 +37731,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200309130905",
+  version: "1.11.1-nightly-20200310130943",
 
   /**
    * Generate chart
@@ -37651,7 +37830,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200309130905
+ * @version 1.11.1-nightly-20200310130943
  */
 
 
