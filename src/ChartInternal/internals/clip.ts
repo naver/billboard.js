@@ -131,6 +131,9 @@ export default {
 		const {clip} = $$.state;
 		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
 
+		clip.idXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
+		clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
+
 		clip.idXAxisTickTexts = $$.getClipPath(`${clip.id}-xaxisticktexts`);
 
 		if (!$$.config.axis_x_tick_multiline &&

@@ -83,6 +83,7 @@ export default class state {
 				path: "",
 				pathXAxis: "",
 				pathYAxis: "",
+				pathXAxisTickTexts: "",
 				pathGrid: ""
 			},
 
