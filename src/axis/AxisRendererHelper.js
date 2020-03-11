@@ -58,12 +58,20 @@ export default class AxisRendererHelper {
 		return size;
 	}
 
-	axisX(selection, x) {
-		selection.attr("transform", d => `translate(${Math.ceil(x(d) + this.config.tickOffset)},0)`);
-	}
+	/**
+	 * Get tick transform setter function
+	 * @param {String} id Axis id
+	 * @private
+	 */
+	getTickTransformSetter(id) {
+		const {config} = this;
+		const fn = id === "x" ?
+			value => `translate(${value + config.tickOffset},0)` :
+			value => `translate(0,${value})`;
 
-	axisY(selection, y) {
-		selection.attr("transform", d => `translate(0,${Math.ceil(y(d))})`);
+		return (selection, scale) => {
+			selection.attr("transform", d => fn(Math.ceil(scale(d))));
+		};
 	}
 
 	scaleExtent(domain) {

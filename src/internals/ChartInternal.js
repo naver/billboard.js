@@ -178,7 +178,7 @@ export default class ChartInternal {
 		$$.legendItemHeight = 0;
 
 		$$.currentMaxTickWidths = {
-			x: {size: 0, domain: ""},
+			x: {size: 0, ticks: [], domain: ""},
 			y: {size: 0, domain: ""},
 			y2: {size: 0, domain: ""}
 		};
@@ -268,6 +268,7 @@ export default class ChartInternal {
 
 		$$.clipChart = $$.appendClip($$.defs, $$.clipId);
 		$$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis);
+		$$.clipXAxisTickTexts = $$.appendClip($$.defs, $$.clipIdForXAxisTickTexts);
 		$$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis);
 		$$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid);
 
@@ -451,6 +452,9 @@ export default class ChartInternal {
 	 */
 	updateSizes(isInit) {
 		const $$ = this;
+
+		!isInit && $$.setContainerSize();
+
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const hasArc = $$.hasArcType();
@@ -467,8 +471,6 @@ export default class ChartInternal {
 			xAxisHeight : 30;
 		const subchartHeight = config.subchart_show && !hasArc ?
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
-
-		!isInit && $$.setContainerSize();
 
 		// for main
 		$$.margin = isRotated ? {
@@ -544,6 +546,8 @@ export default class ChartInternal {
 		if ($$.isLegendRight && hasArc) {
 			$$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1;
 		}
+
+		!hasArc && config.axis_x_show && $$.updateXAxisTickClip();
 	}
 
 	/**
@@ -654,9 +658,6 @@ export default class ChartInternal {
 
 		// update circleY based on updated parameters
 		$$.updateCircleY();
-
-		// xgrid focus
-		$$.updategridFocus();
 
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
@@ -837,6 +838,7 @@ export default class ChartInternal {
 			}
 
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+			!flow && list.push($$.updategridFocus());
 		}
 
 		if (!hasArcType || $$.hasType("radar")) {

@@ -30,13 +30,13 @@ const config = {
 };
 
 module.exports = (common, env) => {
-	if (env.plugin) {
+	if (env.PLUGIN) {
 		config.entry = plugin.entry;
 		config.output = plugin.output;
 		config.externals = plugin.externals;
 	}
 
-	return env.plugin ? merge.strategy({
+	return env.PLUGIN ? merge.strategy({
 		entry: "replace",
 		output: "replace"
 	})(common, config) : merge.smart(common, config);
