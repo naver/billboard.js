@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200310144009
+ * @version 1.11.1-nightly-20200311131025
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -200,7 +200,11 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__14__;
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
+// ESM COMPAT FLAG
 __webpack_require__.r(__webpack_exports__);
+
+// EXPORTS
+__webpack_require__.d(__webpack_exports__, "bb", function() { return /* binding */ bb; });
 
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
 function _classCallCheck(instance, Constructor) {
@@ -6774,6 +6778,18 @@ extend(ChartInternal_ChartInternal.prototype, {
   getYDomainMax: function getYDomainMax(targets) {
     return this.getYDomainMinMax(targets, "max");
   },
+
+  /**
+   * Check if hidden targets bound to the given axis id
+   * @return {Boolean}
+   * @private
+   */
+  isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
+    var $$ = this;
+    return $$.hiddenTargetIds.some(function (v) {
+      return $$.axis.getId(v) === id;
+    });
+  },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
     var $$ = this,
         config = $$.config,
@@ -6783,10 +6799,9 @@ extend(ChartInternal_ChartInternal.prototype, {
       return $$.axis.getId(t.id) === axisId;
     }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
-    if (yTargets.length === 0) // use domain of the other axis if target of axisId is none
-      return axisId === "y2" ? $$.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
-      // So, it needs to call to get y2 domain here
-      $$.getYDomain(targets, "y2", xDomain);
+    if (yTargets.length === 0) return $$.isHiddenTargetWithYDomain(axisId) ? $$[axisId].domain() : axisId === "y2" ? $$.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
+    // So, it needs to call to get y2 domain here
+    $$.getYDomain(targets, "y2", xDomain);
     var yMin = config["".concat(pfx, "_min")],
         yMax = config["".concat(pfx, "_max")],
         yDomainMin = $$.getYDomainMin(yTargets),
@@ -14815,7 +14830,6 @@ extend(Chart_Chart.prototype, {
   }
 });
 // CONCATENATED MODULE: ./src/core.js
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "bb", function() { return bb; });
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
@@ -14884,7 +14898,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200310144009",
+  version: "1.11.1-nightly-20200311131025",
 
   /**
    * Generate chart
@@ -14983,7 +14997,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200310144009
+ * @version 1.11.1-nightly-20200311131025
  */
 
 
