@@ -319,7 +319,7 @@ export default {
 						+value : (isArray(value) || isObject(value) ? value : null);
 
 					// use x as categories if custom x and categorized
-					if (isCategory && index === 0 && !isUndefined(rawX)) {
+					if ((isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX)) {
 						if (!hasCategory && index === 0 && i === 0) {
 							config.axis_x_categories = [];
 						}
