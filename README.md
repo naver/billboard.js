@@ -2,7 +2,7 @@
 
 [![Latest Version][badge-latest]][link-version] [![Next version][badge-next]][link-version] [![semantic-release][badge-semantic-release]][link-semantic-release]
 
-[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Greenkeeper][badge-gk]][link-gk]
+[![Build Status][badge-build-status]][link-build-status] [![Coverage Status][badge-coverage]][link-coverage] [![download][badge-download]][link-download] [![jsDelivr][badge-jsDelivr]][link-jsDelivr] [![gzip size][badge-gzip-size]][link-gzip-size] [![Known Vulnerabilities][badge-snyk]][link-snyk]
 
 billboard.js is a re-usable, easy interface JavaScript chart library, based on D3 v4+.
 > The name "billboard" comes from the famous `billboard chart` which everybody knows.<br>
@@ -305,7 +305,7 @@ THE SOFTWARE.
 [badge-jsDelivr]: https://data.jsdelivr.com/v1/package/npm/billboard.js/badge?style=rounded
 [badge-build-status]: https://travis-ci.org/naver/billboard.js.svg?branch=master
 [badge-coverage]: https://coveralls.io/repos/github/naver/billboard.js/badge.svg
-[badge-gk]: https://badges.greenkeeper.io/naver/billboard.js.svg
+[badge-snyk]: https://snyk.io/test/github/naver/billboard.js/badge.svg?targetFile=package.json
 [badge-gzip-size]: https://img.badgesize.io/https://unpkg.com/billboard.js/dist/billboard.min.js?compression=gzip
 [badge-latest]: https://img.shields.io/npm/v/billboard.js/latest.svg
 [badge-next]: https://img.shields.io/npm/v/billboard.js/next.svg
@@ -317,7 +317,7 @@ THE SOFTWARE.
 [link-version]: https://www.npmjs.com/package/billboard.js
 [link-build-status]: https://travis-ci.org/naver/billboard.js
 [link-coverage]: https://coveralls.io/github/naver/billboard.js
-[link-gk]: https://greenkeeper.io/
+[link-snyk]: https://snyk.io/test/github/naver/billboard.js?targetFile=package.json
 [link-gzip-size]: https://unpkg.com/billboard.js/dist/billboard.min.js
 [link-semantic-release]: https://github.com/semantic-release/semantic-release
 
