@@ -66,6 +66,18 @@ extend(ChartInternal.prototype, {
 		return this.getYDomainMinMax(targets, "max");
 	},
 
+	/**
+	 * Check if hidden targets bound to the given axis id
+	 * @return {Boolean}
+	 * @private
+	 */
+	isHiddenTargetWithYDomain(id) {
+		const $$ = this;
+
+		return $$.hiddenTargetIds
+			.some(v => $$.axis.getId(v) === id);
+	},
+
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
 		const config = $$.config;
@@ -78,12 +90,17 @@ extend(ChartInternal.prototype, {
 		const targetsByAxisId = targets.filter(t => $$.axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
 
-		if (yTargets.length === 0) { // use domain of the other axis if target of axisId is none
-			return axisId === "y2" ?
-				$$.y.domain() :
-				// When all data bounds to y2, y Axis domain is called prior y2.
-				// So, it needs to call to get y2 domain here
-				$$.getYDomain(targets, "y2", xDomain);
+		if (yTargets.length === 0) {
+			if ($$.isHiddenTargetWithYDomain(axisId)) {
+				return $$[axisId].domain();
+			} else {
+				// use domain of the other axis if target of axisId is none
+				return axisId === "y2" ?
+					$$.y.domain() :
+					// When all data bounds to y2, y Axis domain is called prior y2.
+					// So, it needs to call to get y2 domain here
+					$$.getYDomain(targets, "y2", xDomain);
+			}
 		}
 
 		const yMin = config[`${pfx}_min`];

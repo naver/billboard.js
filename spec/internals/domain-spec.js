@@ -229,5 +229,32 @@ describe("DOMAIN", function() {
 			expect(yDomain).to.be.deep.equal(y2Domain);
 		});
 
+		it("set option data.axes", () => {
+			args.data.axes = {
+				data2: "y2"
+			};
+		});
+
+		describe("check the domain value after the data toggle", () => {
+			const checkDomain = (dataId, axisId, done) => {
+				const domain = chart.internal[axisId].domain();
+
+				// when
+				chart.toggle(dataId);
+
+				setTimeout(() => {
+					expect(chart.internal[axisId].domain()).to.be.deep.equal(domain);
+					done();
+				}, 300);
+			};
+
+			it("y Axis domain should maintain", done => {
+				checkDomain("data1", "y", done);
+			});
+
+			it("y2 Axis domain should maintain", done => {
+				checkDomain("data2", "y2", done);
+			});
+		});
 	});
 });
