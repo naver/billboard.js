@@ -92,7 +92,7 @@ export default {
 			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 			// radar
-			$$.radars && $$.redrawRadar(durationForExit);
+			$el.radars && $$.redrawRadar(durationForExit);
 		}
 
 		// title

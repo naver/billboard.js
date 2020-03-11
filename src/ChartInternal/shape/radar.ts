@@ -34,22 +34,22 @@ const cacheKey = "$radarPoints";
 export default {
 	initRadar() {
 		const $$ = this;
-		const {config, state: {currentData}} = $$;
+		const {config, state: {currentData}, $el} = $$;
 
 		if ($$.hasType("radar")) {
-			$$.radars = $$.$el.main.select(`.${CLASS.chart}`).append("g")
+			$el.radars = $el.main.select(`.${CLASS.chart}`).append("g")
 				.attr("class", CLASS.chartRadars);
 
 			// level
-			$$.radars.levels = $$.radars.append("g")
+			$el.radars.levels = $el.radars.append("g")
 				.attr("class", CLASS.levels);
 
 			// axis
-			$$.radars.axes = $$.radars.append("g")
+			$el.radars.axes = $el.radars.append("g")
 				.attr("class", CLASS.axis);
 
 			// shapes
-			$$.radars.shapes = $$.radars.append("g")
+			$el.radars.shapes = $el.radars.append("g")
 				.attr("class", CLASS.shapes);
 
 			currentData.max = config.radar_axis_max || $$.getMinMaxData().max[0].value;
@@ -122,12 +122,12 @@ export default {
 
 	redrawRadar(durationForExit) {
 		const $$ = this;
-		const {main} = $$.$el;
+		const {radars, main} = $$.$el;
 		const translate = $$.getTranslate("radar");
 
 		// Adjust radar, circles and texts' position
 		if (translate) {
-			$$.radars.attr("transform", translate);
+			radars.attr("transform", translate);
 			main.selectAll(`.${CLASS.circles}`).attr("transform", translate);
 			main.select(`.${CLASS.chartTexts}`).attr("transform", translate);
 
@@ -155,18 +155,18 @@ export default {
 
 	updateRadarLevel() {
 		const $$ = this;
-		const {config, state} = $$;
+		const {config, state, $el: {radars}} = $$;
 		const [width, height] = $$.getRadarSize();
 		const depth = config.radar_level_depth;
 		const edge = config.axis_x_categories.length;
 		const showText = config.radar_level_text_show;
 
-		const radarLevels = $$.radars.levels;
+		const radarLevels = radars.levels;
 		const levelData = getRange(0, depth);
 
 		const radius = config.radar_size_ratio * Math.min(width, height);
 		const levelRatio = levelData.map(l => radius * ((l + 1) / depth));
-		const levelTextFormat = (config.radar_level_text_format || function(){}).bind($$.api);
+		const levelTextFormat = (config.radar_level_text_format || function() {}).bind($$.api);
 
 		// Generate points
 		const points = levelData.map(v => {
@@ -224,11 +224,11 @@ export default {
 
 	updateRadarAxes() {
 		const $$ = this;
-		const {config} = $$;
+		const {config, $el: {radars}} = $$;
 		const [width, height] = $$.getRadarSize();
 		const categories = config.axis_x_categories;
 
-		let axis = $$.radars.axes.selectAll("g")
+		let axis = radars.axes.selectAll("g")
 			.data(categories);
 
 		axis.exit().remove();
@@ -298,7 +298,7 @@ export default {
 
 	bindEvent() {
 		const $$ = this;
-		const {config, state: {inputType, transiting}, $el: {svg}} = $$;
+		const {config, state: {inputType, transiting}, $el: {radars, svg}} = $$;
 
 		if (config.interaction_enabled) {
 			const isMouse = inputType === "mouse";
@@ -310,7 +310,7 @@ export default {
 					target = target.parentNode;
 				}
 
-				const d: any = d3Select(target).datum();
+				const d = d3Select(target).datum();
 
 				return d && Object.keys(d).length === 1 ? d.index : undefined;
 			};
@@ -330,7 +330,7 @@ export default {
 				}
 			};
 
-			$$.radars.select(`.${CLASS.axis}`)
+			radars.select(`.${CLASS.axis}`)
 				.on(isMouse ? "mouseover " : "touchstart", () => {
 					if (transiting) { // skip while transiting
 						return;
@@ -354,7 +354,7 @@ export default {
 		const targets = $$.data.targets;
 		const points = $$.cache.get(cacheKey);
 
-		const areas = $$.radars.shapes
+		const areas = $$.$el.radars.shapes
 			.selectAll("polygon")
 			.data(targets);
 
