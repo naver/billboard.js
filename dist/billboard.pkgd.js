@@ -15508,9 +15508,20 @@ var Store_state = function () {
     legendItemWidth: 0,
     legendItemHeight: 0,
     legendHasRendered: !1,
+    axis: {
+      x: {
+        padding: {
+          left: 0,
+          right: 0
+        },
+        tickCount: 0
+      }
+    },
     currentMaxTickWidths: {
       x: {
         size: 0,
+        ticks: [],
+        clipPath: 0,
         domain: ""
       },
       y: {
@@ -15535,12 +15546,14 @@ var Store_state = function () {
       id: "",
       idXAxis: "",
       idYAxis: "",
+      idXAxisTickTexts: "",
       idGrid: "",
       idSubchart: "",
       // clipIdForSubchart
       path: "",
       pathXAxis: "",
       pathYAxis: "",
+      pathXAxisTickTexts: "",
       pathGrid: ""
     },
     // status
@@ -17299,9 +17312,37 @@ var Store_state = function () {
   axis_x_tick_values: null,
 
   /**
+   * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+   * - **NOTE:** The conditions where `autorotate` is enabled are:
+   *   - axis.x.type='category' or 'timeseries
+   *   - axis.x.tick.multiline=false
+   *   - axis.x.tick.culling=false
+   *   - axis.x.tick.fit=true
+   * @name axis․x․tick․autorotate
+   * @memberof Options
+   * @type {Boolean}
+   * @default false
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
+   * @example
+   * axis: {
+   *   x: {
+   *     tick: {
+   *       rotate: 15,
+   *       autorotate: true,
+   *       multiline: false,
+   *       culling: false,
+   *       fit: true
+   *     }
+   *   }
+   * }
+   */
+  axis_x_tick_autorotate: !1,
+
+  /**
    * Rotate x axis tick text.
    * - If you set negative value, it will rotate to opposite direction.
    * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `false`.
+   * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
    * @name axis․x․tick․rotate
    * @memberof Options
    * @type {Number}
@@ -25774,19 +25815,27 @@ function () {
     }), this.getSizeFor1Char = function () {
       return size;
     }, size;
-  };
+  }
+  /**
+   * Get tick transform setter function
+   * @param {String} id Axis id
+   * @private
+   */
+  ;
 
   var _proto = AxisRendererHelper.prototype;
-  return _proto.axisX = function axisX(selection, x) {
-    var _this = this;
-
-    selection.attr("transform", function (d) {
-      return "translate(" + Math.ceil(x(d) + _this.config.tickOffset) + ",0)";
-    });
-  }, _proto.axisY = function axisY(selection, y) {
-    selection.attr("transform", function (d) {
-      return "translate(0," + Math.ceil(y(d)) + ")";
-    });
+  return _proto.getTickTransformSetter = function getTickTransformSetter(id) {
+    var config = this.config,
+        fn = id === "x" ? function (value) {
+      return "translate(" + (value + config.tickOffset) + ",0)";
+    } : function (value) {
+      return "translate(0," + value + ")";
+    };
+    return function (selection, scale) {
+      selection.attr("transform", function (d) {
+        return fn(Math.ceil(scale(d)));
+      });
+    };
   }, _proto.scaleExtent = function scaleExtent(domain) {
     var start = domain[0],
         stop = domain[domain.length - 1];
@@ -25876,7 +25925,7 @@ function () {
         splitTickText = this.splitTickText.bind(this),
         isLeftRight = /^(left|right)$/.test(orient),
         isTopBottom = /^(top|bottom)$/.test(orient),
-        tickTransform = helperInst[isTopBottom ? "axisX" : "axisY"],
+        tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y"),
         axisPx = tickTransform === helperInst.axisX ? "y" : "x",
         sign = /^(top|left)$/.test(orient) ? -1 : 1,
         rotate = params.tickTextRotate;
@@ -25941,7 +25990,7 @@ function () {
             textUpdate = tick.select("text");
 
         // Append <title> for tooltip display
-        if (tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign), tickEnter.select("text").attr("" + axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
+        if (tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign), tickEnter.select("text").attr(axisPx, tickLength * sign), ctx.setTickLineTextPosition(lineUpdate, textUpdate), params.tickTitle) {
           var title = textUpdate.select("title");
           (title.empty() ? textUpdate.append("title") : title).text(function (index) {
             return params.tickTitle[index];
@@ -25954,9 +26003,9 @@ function () {
           scale0 = function (d) {
             return x(d) + dx;
           }, scale1 = scale0;
-        } else scale0.bandwidth ? scale0 = scale1 : tickTransform.call(helperInst, tickExit, scale1);
+        } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
 
-        tickTransform.call(helperInst, tickEnter, scale0), tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
+        tickTransform(tickEnter, scale0), tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
       }
     }), this.g = $g;
   }
@@ -26101,6 +26150,7 @@ function () {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 
@@ -26252,7 +26302,8 @@ function () {
         isX = /^(x|subX)$/.test(id),
         type = isX ? "x" : id,
         isCategory = isX && this.isCategorized(),
-        orient = this.orient[id];
+        orient = this.orient[id],
+        tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
     if (isX) tickFormat = $$.format.xAxisTick;else {
       var fn = config["axis_" + id + "_tick_format"];
       isFunction(fn) && (tickFormat = fn.bind($$.api));
@@ -26263,7 +26314,7 @@ function () {
       noTransition: noTransition,
       config: config,
       id: id,
-      tickTextRotate: noTickTextRotate ? 0 : config["axis_" + type + "_tick_rotate"]
+      tickTextRotate: tickTextRotate
     }, isX && {
       isCategory: isCategory,
       tickMultiline: config.axis_x_tick_multiline,
@@ -26283,9 +26334,11 @@ function () {
     } else !isX && this.isTimeSeriesY() && ( // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
     axis.ticks(config.axis_y_tick_time_value), tickValues = null);
 
-    return tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
+    tickValues && axis.tickValues(tickValues), axis.tickFormat(tickFormat || !isX && $$.isStackNormalized() && function (x) {
       return x + "%";
-    }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1)), config["axis_" + type + "_tick_count"] && axis.ticks(config["axis_" + type + "_tick_count"]), axis;
+    }), isCategory && (axis.tickCentered(config.axis_x_tick_centered), isEmpty(config.axis_x_tick_culling) && (config.axis_x_tick_culling = !1));
+    var tickCount = config["axis_" + type + "_tick_count"];
+    return tickCount && axis.ticks(tickCount), axis;
   }, _proto.updateXAxisTickValues = function updateXAxisTickValues(targets, axis) {
     var values,
         $$ = this.owner,
@@ -26390,10 +26443,11 @@ function () {
   }, _proto.getMaxTickWidth = function getMaxTickWidth(id, withoutRecompute) {
     var $$ = this.owner,
         config = $$.config,
+        state = $$.state,
         _$$$$el2 = $$.$el,
         svg = _$$$$el2.svg,
         chart = _$$$$el2.chart,
-        currentTickMax = $$.state.currentMaxTickWidths[id],
+        currentTickMax = state.currentMaxTickWidths[id],
         maxWidth = 0;
     if (withoutRecompute || !config["axis_" + id + "_show"]) return currentTickMax.size;
 
@@ -26403,21 +26457,87 @@ function () {
           scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id)),
           domain = scale.domain();
       // do not compute if domain is same
-      if (isArray(currentTickMax.domain) && currentTickMax.domain.every(function (v, i) {
-        return v === domain[i];
-      })) return currentTickMax.size;
+      if (domain[0] === domain[1] || isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1]) return currentTickMax.size;
       currentTickMax.domain = domain;
       var axis = this.getAxis(id, scale, !1, !1, !0),
           tickCount = config["axis_" + id + "_tick_count"],
           tickValues = config["axis_" + id + "_tick_values"];
       !tickValues && tickCount && axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries())), isYAxis || this.updateXAxisTickValues(targetsToShow, axis);
       var dummy = chart.append("svg").style("visibility", "hidden").style("position", "fixed").style("top", "0px").style("left", "0px");
-      axis.create(dummy), dummy.selectAll("text").each(function () {
-        maxWidth = Math.max(maxWidth, this.getBoundingClientRect().width);
+      axis.create(dummy), dummy.selectAll("text").each(function (d, i) {
+        var currentTextWidth = this.getBoundingClientRect().width;
+        maxWidth = Math.max(maxWidth, currentTextWidth), id === "x" && (currentTickMax.ticks[i] = currentTextWidth);
       }), dummy.remove();
     }
 
     return maxWidth > 0 && (currentTickMax.size = maxWidth), currentTickMax.size;
+  }, _proto.getXAxisTickTextY2Overflow = function getXAxisTickTextY2Overflow(defaultPadding) {
+    var $$ = this.owner,
+        axis = $$.axis,
+        config = $$.config,
+        state = $$.state,
+        xAxisTickRotate = $$.getAxisTickRotate("x");
+
+    if ((axis.isCategorized() || axis.isTimeSeries()) && config.axis_x_tick_fit && !config.axis_x_tick_culling && !config.axis_x_tick_multiline && xAxisTickRotate > 0 && xAxisTickRotate < 90) {
+      var widthWithoutCurrentPaddingLeft = state.currentWidth - $$.getCurrentPaddingLeft(),
+          maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding),
+          xAxisTickTextY2Overflow = Math.max(0, maxOverflow) + defaultPadding;
+      // for display inconsistencies between browsers
+      return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+    }
+
+    return 0;
+  }, _proto.getXAxisTickMaxOverflow = function getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+    for (var $$ = this.owner, axis = $$.axis, config = $$.config, state = $$.state, isTimeSeries = axis.isTimeSeries(), tickTextWidths = state.currentMaxTickWidths.x.ticks, tickCount = tickTextWidths.length, _state$axis$x$padding = state.axis.x.padding, left = _state$axis$x$padding.left, right = _state$axis$x$padding.right, maxOverflow = 0, remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? .5 : 0), i = 0; i < tickCount; i++) {
+      var tickIndex = i + 1,
+          rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i],
+          ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : .5) + left;
+
+      // Skip ticks if there are no ticks before them
+      if (!(ticksBeforeTickText <= 0)) {
+        var tickLength = (widthWithoutCurrentPaddingLeft - rotatedTickTextWidth) / ticksBeforeTickText;
+        maxOverflow = Math.max(maxOverflow, rotatedTickTextWidth - tickLength / 2 - ((remaining - tickIndex) * tickLength + right * tickLength));
+      }
+    }
+
+    var tickOffset = 0;
+
+    if (!isTimeSeries) {
+      var scale = src_linear_linear().domain([left * -1, $$.getXDomainMax($$.data.targets) + 1 + right]).range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+      tickOffset = Math.ceil((scale(1) - scale(0)) / 2);
+    }
+
+    return maxOverflow + tickOffset;
+  }
+  /**
+   * Get x Axis padding
+   * @param {Number} tickCount Tick count
+   * @return {Object} Padding object values with 'left' & 'right' key
+   * @private
+   */
+  , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
+    var $$ = this.owner,
+        padding = $$.config.axis_x_padding;
+
+    if (isEmpty(padding) ? padding = {
+      left: 0,
+      right: 0
+    } : (padding.left = padding.left || 0, padding.right = padding.right || 0), $$.axis.isTimeSeries()) {
+      var firstX = +$$.getXDomainMin($$.data.targets),
+          lastX = +$$.getXDomainMax($$.data.targets),
+          timeDiff = lastX - firstX,
+          range = timeDiff + padding.left + padding.right,
+          relativeTickWidth = timeDiff / tickCount / range,
+          left = padding.left / range / relativeTickWidth || 0,
+          _right = padding.right / range / relativeTickWidth || 0;
+
+      padding = {
+        left: left,
+        right: _right
+      };
+    }
+
+    return padding;
   }, _proto.updateLabels = function updateLabels(withTransition) {
     var _this3 = this,
         $$ = this.owner,
@@ -26548,6 +26668,9 @@ function () {
   , _proto.setCulling = function setCulling() {
     var $$ = this.owner,
         config = $$.config,
+        _$$$state3 = $$.state,
+        clip = _$$$state3.clip,
+        currentMaxTickWidths = _$$$state3.currentMaxTickWidths,
         $el = $$.$el;
     ["subX", "x", "y", "y2"].forEach(function (type) {
       var axis = $el.axis[type],
@@ -26570,7 +26693,13 @@ function () {
           tickText.each(function (d) {
             this.style.display = tickValues.indexOf(d) % intervalForCulling ? "none" : "block";
           });
-        } else tickText.style("display", "block");
+        } else tickText.style("display", "block"); // set/unset x_axis_tick_clippath
+
+
+        if (type === "x") {
+          var clipPath = currentMaxTickWidths.clipPath ? clip.pathXAxisTickTexts : null;
+          $$.svg.selectAll("." + config_classes.axisX + " .tick text").attr("clip-path", clipPath);
+        }
       }
     });
   }, Axis;
@@ -28756,7 +28885,7 @@ function getFormat($$, typeValue, v) {
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
     // text
     // title
-    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), $$.updategridFocus(), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   },
 
   /**
@@ -28822,7 +28951,7 @@ function getFormat($$, typeValue, v) {
           area = _shape$type.area,
           bar = _shape$type.bar,
           line = _shape$type.line;
-      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
+      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), flow || list.push($$.updategridFocus());
     }
 
     return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
@@ -29079,14 +29208,17 @@ function getFormat($$, typeValue, v) {
         axisWidth = hasAxis ? $$.getAxisWidthByAxisId(axisId, withoutRecompute) : 0;
     return padding = isValue(config.padding_left) ? config.padding_left : hasAxis && isRotated ? config.axis_x_show ? Math.max(ceil10(axisWidth), 40) : 1 : hasAxis && (!config.axis_y_show || config.axis_y_inner) ? $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1 : ceil10(axisWidth), padding + axisWidth * axesLen;
   },
-  getCurrentPaddingRight: function getCurrentPaddingRight() {
+  getCurrentPaddingRight: function getCurrentPaddingRight(withoutTickTextOverflow) {
+    withoutTickTextOverflow === void 0 && (withoutTickTextOverflow = !1);
     var padding,
         $$ = this,
         config = $$.config,
+        defaultPadding = 10,
         legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0,
         axesLen = config.axis_y2_axes.length,
-        axisWidth = $$.getAxisWidthByAxisId("y2");
-    return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? 10 + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : ceil10(axisWidth) + legendWidthOnRight, padding + axisWidth * axesLen;
+        axisWidth = $$.getAxisWidthByAxisId("y2"),
+        xAxisTickTextOverflow = withoutTickTextOverflow ? 0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? defaultPadding + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
   },
 
   /**
@@ -29150,6 +29282,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         config = $$.config,
         _$$$state = $$.state,
+        currentHeight = _$$$state.currentHeight,
         rotatedPadding = _$$$state.rotatedPadding,
         isLegendRight = _$$$state.isLegendRight,
         isLegendInset = _$$$state.isLegendInset,
@@ -29159,20 +29292,59 @@ function getFormat($$, typeValue, v) {
     if (id === "x" && config.axis_x_height) return config.axis_x_height;
     if (id === "y" && !config.axis_y_show) return !config.legend_show || isLegendRight || isLegendInset ? 1 : 10;
     if (id === "y2" && !config.axis_y2_show) return rotatedPadding.top;
-    var rotate = config["axis_" + id + "_tick_rotate"]; // Calculate x/y axis height when tick rotated
+    var rotate = $$.getAxisTickRotate(id); // Calculate x/y axis height when tick rotated
 
-    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
+    return (id === "x" && !isRotated || /y2?/.test(id) && isRotated) && rotate && (h = 30 + $$.axis.getMaxTickWidth(id) * Math.cos(Math.PI * (90 - rotate) / 180), !config.axis_x_tick_multiline && currentHeight && h > currentHeight / 2 && (h = currentHeight / 2)), h + ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) + (id !== "y2" || isRotated ? 0 : -10);
   },
   getEventRectWidth: function getEventRectWidth() {
     return Math.max(0, this.axis.x.tickInterval());
+  },
+
+  /**
+   * Get axis tick test rotate value
+   * @param {String} id
+   * @return {Number} rotate value
+   * @private
+   */
+  getAxisTickRotate: function getAxisTickRotate(id) {
+    var $$ = this,
+        axis = $$.axis,
+        config = $$.config,
+        state = $$.state,
+        $el = $$.$el,
+        rotate = config["axis_" + id + "_tick_rotate"];
+    if (!$$.filterTargetsToShow($$.data.targets).length) return 0;
+
+    if (id === "x") {
+      var isCategorized = axis.isCategorized(),
+          isTimeSeries = axis.isTimeSeries(),
+          allowedXAxisTypes = isCategorized || isTimeSeries,
+          tickCount = 0;
+      config.axis_x_tick_fit && allowedXAxisTypes && (tickCount = state.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1), tickCount !== state.axis.x.tickCount && (state.axis.x.padding = $$.axis.getXAxisPadding(tickCount)), state.axis.x.tickCount = tickCount), $el.svg && config.axis_x_tick_fit && !config.axis_x_tick_multiline && !config.axis_x_tick_culling && config.axis_x_tick_autorotate && allowedXAxisTypes && (rotate = $$.needToRotateXAxisTickTexts() ? config.axis_x_tick_rotate : 0);
+    }
+
+    return rotate;
+  },
+
+  /**
+   * Check weather axis tick text needs to be rotated
+   * @private
+   */
+  needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
+    var $$ = this,
+        state = $$.state,
+        xAxisLength = state.currentWidth - $$.getCurrentPaddingLeft(!1) - $$.getCurrentPaddingRight(!0),
+        tickCountWithPadding = state.axis.x.tickCount + state.axis.x.padding.left + state.axis.x.padding.right,
+        maxTickWidth = $$.axis.getMaxTickWidth("x");
+    return maxTickWidth > (xAxisLength / tickCountWithPadding || 0);
   },
   updateDimension: function updateDimension(withoutAxis) {
     var $$ = this,
         config = $$.config,
         hasAxis = $$.state.hasAxis,
-        axis = $$.$el.axis;
+        $el = $$.$el;
     // pass 'withoutAxis' param to not animate at the init rendering
-    hasAxis && !withoutAxis && ($$.axis.x && config.axis_rotated ? ($$.axis.x.create(axis.x), $$.axis.subX && $$.axis.subX.create(axis.subX)) : ($$.axis.y && $$.axis.y.create(axis.y), $$.axis.y2 && $$.axis.y2.create(axis.y2))), $$.updateScales(withoutAxis), $$.updateSvgSize(), $$.transformAll(!1);
+    hasAxis && !withoutAxis && ($$.axis.x && config.axis_rotated ? ($$.axis.x.create($el.axis.x), $$.axis.subX && $$.axis.subX.create($el.axis.subX)) : ($$.axis.y && $$.axis.y.create($el.axis.y), $$.axis.y2 && $$.axis.y2.create($el.axis.y2))), $$.updateScales(withoutAxis), $$.updateSvgSize(), $$.transformAll(!1);
   },
   updateSvgSize: function updateSvgSize() {
     var $$ = this,
@@ -29200,8 +29372,9 @@ function getFormat($$, typeValue, v) {
         state = $$.state,
         legend = $$.$el.legend,
         isRotated = config.axis_rotated,
-        hasArc = $$.hasArcType(),
-        currLegend = {
+        hasArc = $$.hasArcType();
+    isInit || $$.setContainerSize();
+    var currLegend = {
       width: legend ? $$.getLegendWidth() : 0,
       height: legend ? $$.getLegendHeight() : 0
     },
@@ -29213,7 +29386,7 @@ function getFormat($$, typeValue, v) {
     // for subchart
     // for legend
     // for arc
-    isInit || $$.setContainerSize(), state.margin = isRotated ? {
+    state.margin = isRotated ? {
       top: $$.getHorizontalAxisHeight("y2") + $$.getCurrentPaddingTop(),
       right: hasArc ? 0 : $$.getCurrentPaddingRight(),
       bottom: $$.getHorizontalAxisHeight("y") + legendHeightForBottom + $$.getCurrentPaddingBottom(),
@@ -29801,7 +29974,7 @@ function getTextPos(pos, width) {
         _d3Mouse = src_mouse(element),
         left = _d3Mouse[0],
         top = _d3Mouse[1],
-        chartRight = svgLeft + currentWidth - $$.getCurrentPaddingRight(),
+        chartRight = svgLeft + currentWidth - $$.getCurrentPaddingRight(!0),
         chartLeft = $$.getCurrentPaddingLeft(!0),
         size = 20;
 
@@ -32566,6 +32739,31 @@ util_extend(zoom_zoom, {
   getYAxisClipHeight: function getYAxisClipHeight() {
     var $$ = this;
     return $$.getAxisClipHeight($$.config.axis_rotated);
+  },
+  updateXAxisTickClip: function updateXAxisTickClip() {
+    var $$ = this,
+        clip = $$.state.clip,
+        newXAxisHeight = $$.getHorizontalAxisHeight("x");
+    clip.idXAxisTickTexts = $$.clipId + "-xaxisticktexts", clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts), !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== $$.xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.xAxisHeight = newXAxisHeight;
+  },
+  setXAxisTickClipWidth: function setXAxisTickClipWidth() {
+    var $$ = this,
+        config = $$.config,
+        currentMaxTickWidths = $$.state.currentMaxTickWidths,
+        xAxisTickRotate = $$.getAxisTickRotate("x");
+
+    if (!config.axis_x_tick_multiline && xAxisTickRotate) {
+      var sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
+      currentMaxTickWidths.x.clipPath = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+    } else currentMaxTickWidths.x.clipPath = null;
+  },
+  setXAxisTickTextClipPathWidth: function setXAxisTickTextClipPathWidth() {
+    var $$ = this,
+        _$$$state2 = $$.state,
+        clip = _$$$state2.clip,
+        currentMaxTickWidths = _$$$state2.currentMaxTickWidths,
+        $el = $$.$el;
+    $el.svg && $el.svg.select("#" + clip.idXAxisTickTexts + " rect").attr("width", currentMaxTickWidths.x.clipPath).attr("height", 30);
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/internals/grid.ts
@@ -32752,8 +32950,8 @@ function smoothLines(el, type) {
         $el = $$.$el,
         isFront = config.grid_front,
         className = "." + config_classes[isFront && $el.grid.main ? "gridLines" : "chart"] + (isFront ? " + *" : ""),
-        grid = $el.grid.main = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid);
-    config.grid_x_show && grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && (grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus), config.grid_focus_y && !config.tooltip_grouped && grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus));
+        grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid);
+    $el.grid.main = grid, config.grid_x_show && grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && (grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus), config.grid_focus_y && !config.tooltip_grouped && grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus));
   },
 
   /**
@@ -32803,15 +33001,26 @@ function smoothLines(el, type) {
     }
   },
   hideGridFocus: function hideGridFocus() {
-    this.$el.main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden");
+    var $$ = this,
+        state = $$.state,
+        $el = $$.$el;
+    state.inputType === "mouse" && $el.main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden");
   },
   updategridFocus: function updategridFocus() {
     var $$ = this,
         _$$$state4 = $$.state,
+        inputType = _$$$state4.inputType,
         width = _$$$state4.width,
         height = _$$$state4.height,
-        isRotated = $$.config.axis_rotated;
-    $$.$el.main.select("line." + config_classes.xgridFocus).attr("x1", isRotated ? 0 : -10).attr("x2", isRotated ? width : -10).attr("y1", isRotated ? -10 : 0).attr("y2", isRotated ? -10 : height);
+        $el = $$.$el;
+
+    if (inputType === "touch") {
+      var d = $el.grid.main.select("line." + config_classes.xgridFocus).datum();
+      d && $$.showGridFocus([d]);
+    } else {
+      var _isRotated = $$.config.axis_rotated;
+      $el.main.select("line." + config_classes.xgridFocus).attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : height);
+    }
   },
   generateGridData: function generateGridData(type, scale) {
     var $$ = this,
@@ -37012,7 +37221,7 @@ function () {
     config.svg_classname && $el.svg.attr("class", config.svg_classname);
     // Define defs
     var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
-    (hasAxis || hasColorPatterns) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
+    (hasAxis || hasColorPatterns) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idXAxisTickTexts", "idGrid"].forEach(function (v) {
       $$.appendClip($el.defs, state.clip[v]);
     }), hasColorPatterns && $$.patterns.forEach(function (p) {
       return $el.defs.append(function () {

@@ -1123,6 +1123,108 @@ var demos = {
 				}
 			}
 		},
+		XAxisTickAutorotate: [
+			{
+				options: {
+					title: {
+						text: "Category type x Axis"
+					},
+					data: {
+						x: "x",
+						columns: [
+							["x", "CATEGORY 0000", "CATEGORY 0001", "CATEGORY 0002", "CATEGORY 0003", "CATEGORY 0004", "CATEGORY 0005", "CATEGORY 0006", "CATEGORY 0007", "CATEGORY 0008", "CATEGORY 0009"],
+							["pv", 30, 200, 100, 400, 150, 250, 50, 350, 80, 90],
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								fit: true,
+								multiline: false,
+								autorotate: true,
+								rotate: 15,
+								culling: false,
+								count: 10,
+							}
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+setTimeout(function() {
+	chart.resize({width: window.innerWidth * 0.4});
+}, 1000),
+
+setTimeout(function() {chart.resize();}, 3000)
+					];
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Timeseries type x Axis"
+					},
+					data: {
+						json: {
+							Temperature: ["29.39", "29.7", "29.37", "28.87", "28.62", "27.72", "27.61", "27.82", "27.48", "26.78", "26.62", "26.64", "26.29", "26.01", "25.84", "25.07", "24.85", "24.01", "23.83", "22.8", "23", "22.64", "22.77", "22.64"],
+							x: [
+								"01-01-2018 00:00",
+								"02-01-2018 00:00",
+								"03-01-2018 00:00",
+								"04-01-2018 00:00",
+								"05-01-2018 00:00",
+								"06-01-2018 00:00",
+								"07-01-2018 00:00",
+								"08-01-2018 00:00",
+								"09-01-2018 00:00",
+								"10-01-2018 00:00",
+								"11-01-2018 00:00",
+								"12-01-2018 00:00",
+								"01-01-2019 00:00",
+								"02-01-2019 00:00",
+								"03-01-2019 00:00",
+								"04-01-2019 00:00",
+								"05-01-2019 00:00",
+								"06-01-2019 00:00",
+								"07-01-2019 00:00",
+								"08-01-2019 00:00",
+								"09-01-2019 00:00",
+								"10-01-2019 00:00",
+								"11-01-2019 00:00",
+								"12-01-2019 00:00"
+							]
+						},
+						x: "x",
+						type: "area",
+						xFormat: "%m-%d-%Y %H:%M"
+					},
+					axis: {
+						x: {
+							tick: {
+								fit: true,
+								multiline: false,
+								autorotate: true,
+								rotate: 15,
+								culling: false,
+								count: 8,
+								format: "%m-%d-%Y %H:%M:%S"
+							},
+							type: "timeseries"
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+setTimeout(function() {
+	chart.resize({width: window.innerWidth * 0.4});
+}, 1000),
+setTimeout(function() {chart.resize();}, 3000)
+					];
+				}
+			}
+		],
 		XAxisTickCount: {
 			options: {
 				data: {
@@ -2316,7 +2418,15 @@ var demos = {
 						chart.unload({
 							ids: "data1"
 						});
-					}, 2000)
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("pie");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform("line");
+					}, 4000)
 				];
 			}
 		},
@@ -4518,6 +4628,308 @@ d3.select(".chart_area")
 				"#styleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }",
 				"#styleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }"
 			]
+		}
+	},
+
+	Transform: {
+		ToLineChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				},
+				point: {
+					type: "rectangle"
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("line", "data1");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("line", "data2");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("bar");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform("line");
+					}, 4000)
+				];
+			}
+		},
+		ToSplineChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("spline", "data1");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("spline", "data2");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("bar");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform("spline");
+					}, 4000)
+				];
+			}
+		},
+		ToBarChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "line"
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("bar", "data1");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("bar", "data2");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("line");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform("bar");
+					}, 4000)
+				];
+			}
+		},
+		ToAreaChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("area", "data1");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("area", "data2");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("bar");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform("area");
+					}, 4000)
+				];
+			}
+		},
+		ToAreaSplineChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					],
+					type: "bar"
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform('area-spline', "data1");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform('area-spline', "data2");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("bar");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform('area-spline');
+					}, 4000)
+				];
+			}
+		},
+		ToScatterPlot: {
+			options: {
+				data: {
+					xs: {
+						setosa: "setosa_x",
+						versicolor: "versicolor_x",
+					},
+					// iris data from R
+					columns: [
+						[
+							"setosa_x",
+							3.5, 3.0, 3.2, 3.1, 3.6,
+							3.9, 3.4, 3.4, 2.9, 3.1,
+							3.7, 3.4, 3.0, 3.0, 4.0,
+							4.4, 3.9, 3.5, 3.8, 3.8,
+							3.4, 3.7, 3.6, 3.3, 3.4,
+							3.0, 3.4, 3.5, 3.4, 3.2,
+							3.1, 3.4, 4.1, 4.2, 3.1,
+							3.2, 3.5, 3.6, 3.0, 3.4,
+							3.5, 2.3, 3.2, 3.5, 3.8,
+							3.0, 3.8, 3.2, 3.7, 3.3
+						],
+						[
+							"versicolor_x",
+							3.2, 3.2, 3.1, 2.3, 2.8,
+							2.8, 3.3, 2.4, 2.9, 2.7,
+							2.0, 3.0, 2.2, 2.9, 2.9,
+							3.1, 3.0, 2.7, 2.2, 2.5,
+							3.2, 2.8, 2.5, 2.8, 2.9,
+							3.0, 2.8, 3.0, 2.9, 2.6,
+							2.4, 2.4, 2.7, 2.7, 3.0,
+							3.4, 3.1, 2.3, 3.0, 2.5,
+							2.6, 3.0, 2.6, 2.3, 2.7,
+							3.0, 2.9, 2.9, 2.5, 2.8
+						],
+						[
+							"setosa",
+							0.2, 0.2, 0.2, 0.2, 0.2,
+							0.4, 0.3, 0.2, 0.2, 0.1,
+							0.2, 0.2, 0.1, 0.1, 0.2,
+							0.4, 0.4, 0.3, 0.3, 0.3,
+							0.2, 0.4, 0.2, 0.5, 0.2,
+							0.2, 0.4, 0.2, 0.2, 0.2,
+							0.2, 0.4, 0.1, 0.2, 0.2,
+							0.2, 0.2, 0.1, 0.2, 0.2,
+							0.3, 0.3, 0.2, 0.6, 0.4,
+							0.3, 0.2, 0.2, 0.2, 0.2
+						],
+						[
+							"versicolor",
+							1.4, 1.5, 1.5, 1.3, 1.5,
+							1.3, 1.6, 1.0, 1.3, 1.4,
+							1.0, 1.5, 1.0, 1.4, 1.3,
+							1.4, 1.5, 1.0, 1.5, 1.1,
+							1.8, 1.3, 1.5, 1.2, 1.3,
+							1.4, 1.4, 1.7, 1.5, 1.0,
+							1.1, 1.0, 1.2, 1.6, 1.5,
+							1.6, 1.5, 1.3, 1.3, 1.3,
+							1.2, 1.4, 1.2, 1.0, 1.3,
+							1.2, 1.3, 1.3, 1.1, 1.3
+						],
+					],
+					type: "pie"
+				},
+				axis: {
+					x: {
+						label: "Sepal.Width",
+						tick: {
+							fit: false
+						}
+					},
+					y: {
+						label: "Petal.Width"
+					}
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("scatter");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("pie");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("scatter");
+					}, 3000)
+				]
+			}
+		},
+		ToPieChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("pie");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("line");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("pie");
+					}, 3000)
+				];
+			}
+		},
+		ToDonutChart: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250],
+						["data2", 130, 100, 140, 200, 150, 50]
+					]
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.transform("donut");
+					}, 1000),
+
+					setTimeout(function() {
+						chart.transform("line");
+					}, 2000),
+
+					setTimeout(function() {
+						chart.transform("pie");
+					}, 3000),
+
+					setTimeout(function() {
+						chart.transform("donut");
+					}, 4000)
+				];
+			}
 		}
 	}
 };

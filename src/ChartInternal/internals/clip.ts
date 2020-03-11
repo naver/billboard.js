@@ -134,8 +134,6 @@ export default {
 		clip.idXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
 		clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
 
-		clip.idXAxisTickTexts = $$.getClipPath(`${clip.id}-xaxisticktexts`);
-
 		if (!$$.config.axis_x_tick_multiline &&
 			$$.getAxisTickRotate("x") &&
 			newXAxisHeight !== $$.xAxisHeight

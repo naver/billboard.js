@@ -54,7 +54,7 @@ export default class AxisRenderer {
 		const isTopBottom = /^(top|bottom)$/.test(orient);
 
 		// line/text enter and path update
-		const tickTransform = helperInst[isTopBottom ? "axisX" : "axisY"];
+		const tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y");
 		const axisPx = tickTransform === helperInst.axisX ? "y" : "x";
 		const sign = /^(top|left)$/.test(orient) ? -1 : 1;
 
@@ -190,7 +190,7 @@ export default class AxisRenderer {
 				const textUpdate = tick.select("text");
 
 				tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
-				tickEnter.select("text").attr(`${axisPx}`, tickLength * sign);
+				tickEnter.select("text").attr(axisPx, tickLength * sign);
 
 				ctx.setTickLineTextPosition(lineUpdate, textUpdate);
 
@@ -211,11 +211,11 @@ export default class AxisRenderer {
 				} else if (scale0.bandwidth) {
 					scale0 = scale1;
 				} else {
-					tickTransform.call(helperInst, tickExit, scale1);
+					tickTransform(tickExit, scale1);
 				}
 
-				tickTransform.call(helperInst, tickEnter, scale0);
-				tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
+				tickTransform(tickEnter, scale0);
+				tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
 			}
 		});
 

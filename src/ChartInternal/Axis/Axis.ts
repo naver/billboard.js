@@ -301,7 +301,9 @@ export default class Axis {
 			}
 		}
 
-		config[`axis_${type}_tick_count`] && axis.ticks(config[`axis_${type}_tick_count`]);
+		const tickCount = config[`axis_${type}_tick_count`];
+
+		tickCount && axis.ticks(tickCount);
 
 		return axis;
 	}
@@ -547,7 +549,10 @@ export default class Axis {
 			const domain = scale.domain();
 
 			// do not compute if domain is same
-			if (isArray(currentTickMax.domain) && currentTickMax.domain.every((v, i) => v === domain[i])) {
+			if (
+				domain[0] === domain[1] ||
+				(isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])
+			) {
 				return currentTickMax.size;
 			} else {
 				currentTickMax.domain = domain;
@@ -954,7 +959,7 @@ export default class Axis {
 				if (type === "x") {
 					const clipPath = currentMaxTickWidths.clipPath ? clip.pathXAxisTickTexts : null;
 
-					$$.svg.selectAll(`.${CLASS.axisX} .tick text`)
+					$el.svg.selectAll(`.${CLASS.axisX} .tick text`)
 						.attr("clip-path", clipPath);
 				}
 			}
