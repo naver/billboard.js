@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import { Data } from "./options";
-import { ArrayOrString, d3Selection, DataArray, PrimitiveArray, TargetIds } from "./types";
+import { ArrayOrString, d3Selection, DataArray, DataItem, PrimitiveArray, TargetIds } from "./types";
 
 export interface Chart {
 	$: {
@@ -52,11 +52,6 @@ export interface Chart {
 		 */
 		arc: d3Selection;
 
-		/**
-		 * Data point circle elements
-		 */
-		circles: d3Selection;
-
 		bar: {
 			/**
 			 * Bar elements
@@ -74,6 +69,11 @@ export interface Chart {
 			 * Areas elements
 			 */
 			areas: d3Selection;
+
+			/**
+			 * Data point circle elements
+			 */
+			circles: d3Selection;
 		};
 
 		text: {
@@ -118,19 +118,19 @@ export interface Chart {
 		 * Get data loaded in the chart.
 		 * @param targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
 		 */
-		(targetIds?: ArrayOrString): Data;
+		(targetIds?: ArrayOrString): DataArray;
 
 		/**
 		 * Get data shown in the chart.
 		 * @param targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
 		 */
-		shown(targetIds?: ArrayOrString): Data;
+		shown(targetIds?: ArrayOrString): DataArray;
 
 		/**
 		 * Get values of the data loaded in the chart.
 		 * @param targetIds This API returns the values of specified target. If this argument is not given, null will be retruned.
 		 */
-		values(targetIds?: ArrayOrString): any[];
+		values(targetIds?: ArrayOrString): number[];
 
 		/**
 		 * Get and set names of the data loaded in the chart.
@@ -142,9 +142,7 @@ export interface Chart {
 		 * Get and set colors of the data loaded in the chart.
 		 * @param colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as data.colors.
 		 */
-		colors(colors?: {
-			[key: string]: string;
-		}): { [key: string]: string };
+		colors(colors?: { [key: string]: string; }): { [key: string]: string };
 
 		/**
 		 * Get and set axes of the data loaded in the chart.
@@ -155,12 +153,12 @@ export interface Chart {
 		/**
 		 * Get the minimum data value bound to the chart.
 		 */
-		min(): [{ x: number, value: number, id: string, index: number }];
+		min(): DataItem[];
 
 		/**
 		 * Get the maximum data value bound to the chart.
 		 */
-		max(): [{ x: number, value: number, id: string, index: number }];
+		max(): DataItem[];
 	};
 
 	axis: {

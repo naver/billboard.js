@@ -24,24 +24,6 @@ export type ChartTypes = "area"
 	| "step";
 export type GaugeTypes = "single"
 	| "multi";
-export type SplineTypes = "basis"
-	| "basis-closed"
-	| "basis-open"
-	| "bundle"
-	| "cardinal"
-	| "cardinal-closed"
-	| "cardinal-open"
-	| "catmull-rom"
-	| "catmull-rom-closed"
-	| "catmull-rom-open"
-	| "monotone-x"
-	| "monotone-y"
-	| "natural"
-	| "linear-closed"
-	| "linear"
-	| "step"
-	| "step-after"
-	| "step-before"
 
 export interface TargetIds {
 	ids: string[] | string;

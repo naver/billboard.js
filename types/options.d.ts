@@ -690,6 +690,41 @@ export interface ChartOptions {
 		 */
 		observe?: boolean;
 	};
+
+	title?: {
+		/**
+		 * Set the title text.
+		 * If contains \n, it's used as line break allowing multiline title.
+		 */
+		text?: string;
+
+		padding?: {
+			/**
+			 * Top padding value.
+			 */
+			top?: number;
+
+			/**
+			 * Bottom padding value.
+			 */
+			bottom?: number;
+
+			/**
+			 * Right padding value.
+			 */
+			right?: number;
+
+			/**
+			 * Left padding value.
+			 */
+			left?: number;
+		};
+
+		/**
+		 * Set the position. Default value is 'center'
+		 */
+		position?: "center" | "right" | "left";
+	}
 }
 
 export interface AreaLinearGradientOptions {
@@ -863,9 +898,6 @@ export interface TooltipOptions {
 	/**
 	 * Set custom position function for the tooltip.
 	 * This option can be used to modify the tooltip position by returning object that has top and left.
-	 *
-	 * Or set tooltip's position unit.
-	 * This option can't be used along with `tooltip.position` custom function. If want to specify unit in custom function, return value with desired unit.
 	 */
 	position?: ((
 		data: any,
