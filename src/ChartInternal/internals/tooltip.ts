@@ -103,8 +103,8 @@ export default {
 		titleFormat = titleFormat || defaultTitleFormat;
 		nameFormat = nameFormat || (name => name);
 		valueFormat = valueFormat || (
-				$$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
-			);
+			$$.isStackNormalized() ? (v, ratio) => `${(ratio * 100).toFixed(2)}%` : defaultValueFormat
+		);
 
 		const order = config.tooltip_order;
 		const getRowValue = row => ($$.axis && $$.isBubbleZType(row) ? $$.getBubbleZData(row.value, "z") : $$.getBaseValue(row));

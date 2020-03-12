@@ -25,7 +25,7 @@ function ygrids(grids: {value?: number, text?: string}[]) {
 		return config.grid_y_lines;
 	}
 
-	config.grid_y_lines = grids;http://jindo.com/git/billboard.js/demo/work/chart.html
+	config.grid_y_lines = grids;
 	$$.redrawWithoutRescale();
 
 	return config.grid_y_lines;

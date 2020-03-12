@@ -1,4 +1,4 @@
-	/**
+/**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
@@ -309,7 +309,9 @@ export default {
 			.call(selected => {
 				const d = selected.data();
 
-				if (isSelectionEnabled && (isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))) {
+				if (isSelectionEnabled &&
+					(isSelectionGrouped || config.data_selection_isselectable.bind($$.api)(d))
+				) {
 					eventRect.style("cursor", "pointer");
 				}
 

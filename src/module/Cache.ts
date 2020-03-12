@@ -4,6 +4,21 @@
  */
 import {toArray} from "./util";
 
+/**
+ * Constant for cache key
+ * - NOTE: Prefixed with '$', will be resetted when .load() is called
+ */
+export const KEY = {
+	bubbleBaseLength: "$baseLength",
+	colorPattern: "__colorPattern__",
+	dataMinMax: "$dataMinMax",
+	dataTotalSum: "$dataTotalSum",
+	dataTotalPerIndex: "$totalPerIndex",
+	legendItemTextBox: "legendItemTextBox",
+	radarPoints: "$radarPoints",
+	textRect: "textRect"
+};
+
 export default class Cache {
 	private cache = {};
 

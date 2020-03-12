@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  */
 import {select as d3Select} from "d3-selection";
+import {d3Selection} from "types/types";
 import CLASS from "../../config/classes";
 import {getPathBox} from "../../module/util";
-import {d3Selection} from "types/types";
 
 export default {
 	/**

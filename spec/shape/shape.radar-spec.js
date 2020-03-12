@@ -214,9 +214,10 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check if default indexed axis text are showing", () => {
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
-				expect(+this.textContent).to.be.equal(i);
-			});
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+				.each(function(d, i) {
+					expect(+this.textContent).to.be.equal(i);
+				});
 		});
 
 		it("set options", () => {
@@ -238,21 +239,22 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("check for the default text position", () => {
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} g`).each(function(d, i) {
-				const line = this.firstChild.getBoundingClientRect();
-				const text = this.lastChild.getBoundingClientRect();
-				let distance = 0;
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} g`)
+				.each(function(d, i) {
+					const line = this.firstChild.getBoundingClientRect();
+					const text = this.lastChild.getBoundingClientRect();
+					let distance = 0;
 
-				if (i === 0) {
-					distance = line.top - text.bottom;
-				} else if (i === 1) {
-					distance = text.left - line.right;
-				} else if (i === 2) {
-					distance = line.left - text.right;
-				}
+					if (i === 0) {
+						distance = line.top - text.bottom;
+					} else if (i === 1) {
+						distance = text.left - line.right;
+					} else if (i === 2) {
+						distance = line.left - text.right;
+					}
 
-				expect(distance).to.be.above(20);
-			});
+					expect(distance).to.be.above(20);
+				});
 		});
 
 		it("set options radar.axis.text.position", () => {
@@ -265,26 +267,28 @@ describe("SHAPE RADAR", () => {
 				}
 			};
 
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function() {
-				textPos.push(this.getBoundingClientRect());
-			});
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+				.each(function() {
+					textPos.push(this.getBoundingClientRect());
+				});
 		});
 
 		it("check for axis text position", () => {
 			const {x, y} = args.radar.axis.text.position;
 
-			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`).each(function(d, i) {
-				const rect = this.getBoundingClientRect();
-				let distance = 0;
+			chart.$.main.selectAll(`.${CLASS.chartRadars} .${CLASS.axis} text`)
+				.each(function(d, i) {
+					const rect = this.getBoundingClientRect();
+					let distance = 0;
 
-				if (i === 0) {
-					expect(rect.left).to.be.equal(textPos[i].left);
-					expect(textPos[i].top - y).to.be.equal(rect.top);
-				} else {
-					expect(Math.abs(rect.left - textPos[i].left)).to.be.equal(x);
-					expect(Math.abs(rect.top - textPos[i].top)).to.be.equal(y);
-				}
-			});
+					if (i === 0) {
+						expect(rect.left).to.be.equal(textPos[i].left);
+						expect(textPos[i].top - y).to.be.equal(rect.top);
+					} else {
+						expect(Math.abs(rect.left - textPos[i].left)).to.be.equal(x);
+						expect(Math.abs(rect.top - textPos[i].top)).to.be.equal(y);
+					}
+				});
 		});
 	});
 });

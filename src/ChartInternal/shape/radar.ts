@@ -6,6 +6,7 @@ import {
 	select as d3Select,
 	event as d3Event
 } from "d3-selection";
+import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
 import {getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextValue, toArray} from "../../module/util";
 
@@ -29,7 +30,7 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 }
 
 // cache key
-const cacheKey = "$radarPoints";
+const cacheKey = KEY.radarPoints;
 
 export default {
 	initRadar() {

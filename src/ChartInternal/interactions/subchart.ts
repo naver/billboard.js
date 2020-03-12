@@ -390,7 +390,7 @@ export default {
 	 */
 	redrawForBrush() {
 		const $$ = this;
-		const {config: {subchart_onbrush, zoom_rescale: withY}, scale} = $$;
+		const {config: {subchart_onbrush: onBrush, zoom_rescale: withY}, scale} = $$;
 
 		$$.redraw({
 			withTransition: false,
@@ -400,7 +400,7 @@ export default {
 			withDimension: false
 		});
 
-		subchart_onbrush.bind($$.api)(scale.x.orgDomain());
+		onBrush.bind($$.api)(scale.x.orgDomain());
 	},
 
 	/**

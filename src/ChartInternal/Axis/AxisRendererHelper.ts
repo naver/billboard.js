@@ -85,7 +85,7 @@ export default class AxisRendererHelper {
 
 	generateTicks(scale, isYAxes) {
 		const {tickStepSize} = this.owner.params;
-		let ticks = [];
+		let ticks: number[] = [];
 
 		// When 'axis[y|y2].tick.stepSize' option is set
 		if (isYAxes && tickStepSize) {

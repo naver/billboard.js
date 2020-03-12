@@ -6,6 +6,7 @@ import {
 	select as d3Select,
 	selectAll as d3SelectAll
 } from "d3-selection";
+import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation} from "../../module/util";
 
@@ -139,9 +140,7 @@ export default {
 		}
 
 		const text = base.textContent;
-
-		// do not prefix w/'$', to not be resetted cache in .load() call
-		const cacheKey = `textRect-${text.replace(/\W/g, "_")}`;
+		const cacheKey = `${KEY.textRect}-${text.replace(/\W/g, "_")}`;
 		let rect = $$.cache.get(cacheKey);
 
 		if (!rect) {

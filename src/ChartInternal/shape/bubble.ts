@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {KEY} from "../../module/Cache";
 import {getMinMax, isArray, isFunction, isNumber, isObject} from "../../module/util";
 
 export default {
@@ -29,7 +30,7 @@ export default {
 	getBaseLength() {
 		const $$ = this;
 		const {axis} = $$.$el;
-		const cacheKey = "$baseLength";
+		const cacheKey = KEY.bubbleBaseLength;
 		let baseLength = $$.cache.get(cacheKey);
 
 		if (!baseLength) {

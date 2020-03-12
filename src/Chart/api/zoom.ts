@@ -18,7 +18,7 @@ function withinRange(domain: number[], range: number[]): boolean {
 	return domain.every((v, i) => (
 		i === 0 ? (v >= min) : (v <= max)
 	));
-};
+}
 
 /**
  * Zoom by giving x domain.

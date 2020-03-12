@@ -5,9 +5,9 @@
  */
 import {event as d3Event} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
+import {d3Selection} from "types/types";
 import {document, window} from "./browser";
 import CLASS from "../config/classes";
-import {d3Selection} from "types/types";
 
 export {
 	asHalfPixel,
@@ -151,7 +151,12 @@ function sanitise(str: string): string {
  * @param {Boolean} toMiddle To be alingned vertically middle
  * @private
  */
-function setTextValue(node: d3Selection, text: string, dy: number[] = [-1, 1], toMiddle: boolean = false) {
+function setTextValue(
+	node: d3Selection,
+	text: string,
+	dy: number[] = [-1, 1],
+	toMiddle: boolean = false
+) {
 	if (!node || !isString(text)) {
 		return;
 	}
@@ -197,7 +202,9 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	];
 }
 
-function getPathBox(path: SVGGraphicsElement): {x: number, y: number, width: number, height: number} {
+function getPathBox(
+	path: SVGGraphicsElement
+): {x: number, y: number, width: number, height: number} {
 	const {width, height} = path.getBoundingClientRect();
 	const items = getRectSegList(path);
 	const x = items[0].x;

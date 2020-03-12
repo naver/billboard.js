@@ -29,8 +29,8 @@ function nodeToSvgDataUrl(node, size) {
 	const serializer = new XMLSerializer();
 	const clone = node.cloneNode(true);
 	const cssText = getCssRules(toArray(document.styleSheets))
-		.filter((r: any): any[] => r.cssText)
-		.map((r: any): any[]=> r.cssText);
+		.filter(r => r.cssText)
+		.map(r => r.cssText);
 
 	clone.setAttribute("xmlns", d3Namespaces.xhtml);
 

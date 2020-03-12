@@ -129,22 +129,10 @@ describe("SHAPE BUBBLE", () => {
 			chart = util.generate(args);
 
 			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
-			const tickElements = tickNodes.nodes();
+			const translateValues = [426, 377, 328, 279, 230, 181, 131, 82, 33];
 
-			const translateValues = [
-				"translate(0,426)",
-				"translate(0,377)",
-				"translate(0,328)",
-				"translate(0,279)",
-				"translate(0,230)",
-				"translate(0,181)",
-				"translate(0,131)",
-				"translate(0,82)",
-				"translate(0,33)"
-			];
-
-			tickNodes.each((data, index) => {
-				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+			tickNodes.each(function(d, i) {
+				expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
 			});
 		});
 
@@ -158,22 +146,10 @@ describe("SHAPE BUBBLE", () => {
 			chart = util.generate(args);
 
 			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
-			const tickElements = tickNodes.nodes();
+			const translateValues = [390, 345, 300, 255, 209, 164, 119, 74, 29];
 
-			const translateValues = [
-				"translate(0,390)",
-				"translate(0,345)",
-				"translate(0,300)",
-				"translate(0,255)",
-				"translate(0,209)",
-				"translate(0,164)",
-				"translate(0,119)",
-				"translate(0,74)",
-				"translate(0,29)"
-			];
-
-			tickNodes.each((data, index) => {
-				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+			tickNodes.each(function(d, i) {
+				expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
 			});
 		});
 	});

@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {KEY} from "../../module/Cache";
 import {extend, isUndefined, isArray} from "../../module/util";
 
 /**
@@ -110,8 +111,8 @@ extend(data, {
 	names: function(names?: Array<{ [key: string]: string; }>): {[key: string]: string} {
 		const $$ = this.internal;
 
-		// reset existing legend item dimension data
-		$$.getLegendItemTextBox();
+		// reset existing legend item dimension cache data
+		$$.cache.remove(KEY.legendItemTextBox);
 
 		return $$.updateDataAttributes("names", names);
 	},

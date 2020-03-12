@@ -6,6 +6,7 @@ import {select as d3Select} from "d3-selection";
 import {scaleOrdinal as d3ScaleOrdinal} from "d3-scale";
 import {document, window} from "../../module/browser";
 import CLASS from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {notEmpty, isFunction, isObject, isString} from "../../module/util";
 
 /**
@@ -45,7 +46,7 @@ export default {
 	 * @private
 	 */
 	getColorFromCss() {
-		const cacheKey = "__colorPattern__";
+		const cacheKey = KEY.colorPattern;
 		const {body} = document;
 		let pattern = body[cacheKey];
 

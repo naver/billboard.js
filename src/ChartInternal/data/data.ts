@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import CLASS from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {
 	getUnique,
 	hasValue,
@@ -253,7 +254,7 @@ export default {
 	 */
 	getMinMaxData() {
 		const $$ = this;
-		const cacheKey = "$minMaxData";
+		const cacheKey = KEY.dataMinMax;
 		let minMaxData = $$.cache.get(cacheKey);
 
 		if (!minMaxData) {
@@ -290,7 +291,7 @@ export default {
 	 */
 	getTotalPerIndex() {
 		const $$ = this;
-		const cacheKey = "$totalPerIndex";
+		const cacheKey = KEY.dataTotalPerIndex;
 		let sum = $$.cache.get(cacheKey);
 
 		if ($$.isStackNormalized() && !sum) {
@@ -317,7 +318,7 @@ export default {
 	 */
 	getTotalDataSum() {
 		const $$ = this;
-		const cacheKey = "$totalDataSum";
+		const cacheKey = KEY.dataTotalSum;
 		let totalDataSum = $$.cache.get(cacheKey);
 
 		if (!totalDataSum) {

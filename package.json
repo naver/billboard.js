@@ -19,7 +19,7 @@
     "build:plugin": "cross-env NODE_ENV=plugin webpack && cross-env NODE_ENV=plugin MIN=true webpack",
     "release": "semantic-release",
     "type-check": "tsc --noEmit",
-    "lint": "eslint src",
+    "lint": "eslint src --ext .ts",
     "loc": "cloc --by-file src",
     "test": "node --max-old-space-size=2048 ./node_modules/karma/bin/karma start",
     "test:chrome": "npm test -- --chrome",

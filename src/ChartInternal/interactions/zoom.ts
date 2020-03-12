@@ -235,7 +235,7 @@ export default {
 	 */
 	updateZoom(force) {
 		const $$ = this;
-		let {subX, x, zoom} = $$.scale;
+		const {subX, x, zoom} = $$.scale;
 
 		if (zoom) {
 			const zoomDomain = zoom.domain();
@@ -249,7 +249,7 @@ export default {
 			if (force || isfullyShown) {
 				$$.axis.x.scale(subX);
 				x.domain(subX.orgDomain());
-				zoom = null;
+				$$.scale.zoom = null;
 			}
 		}
 	},

@@ -135,7 +135,11 @@ export default {
 					return;
 				}
 
-				if (isTargetId && isTargetIndex && config.data_selection_isselectable.bind($$.api)(d) && isSelected) {
+				if (isTargetId &&
+					isTargetIndex &&
+					config.data_selection_isselectable.bind($$.api)(d) &&
+					isSelected
+				) {
 					toggle(false, shape.classed(CLASS.SELECTED, false), d, i);
 				}
 			});

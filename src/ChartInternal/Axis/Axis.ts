@@ -39,7 +39,7 @@ export default class Axis {
 	}
 
 	private getAxisClassName(id) {
-		return `${CLASS.axis} ${CLASS[`axis${capitalize(id)}`]}`
+		return `${CLASS.axis} ${CLASS[`axis${capitalize(id)}`]}`;
 	}
 
 	private isHorizontal($$, forHorizontal) {

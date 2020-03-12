@@ -6,6 +6,10 @@
         "mocha": true
     },
     "extends": "naver",
+    "plugins": [
+        "@typescript-eslint"
+    ],
+    "ignorePatterns": ["*.js", "node_modules"],
     "rules": {
         "linebreak-style": 0,
         "consistent-this": 0,

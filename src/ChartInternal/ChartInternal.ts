@@ -103,7 +103,7 @@ export default class ChartInternal {
 		line: null, // mainLine,
 		area: null, // mainArea,
 		circle: null, // mainCircle,
-		radars: null, 
+		radars: null,
 		text: null, // mainText,
 		grid: {
 			main: null, // grid (also focus)

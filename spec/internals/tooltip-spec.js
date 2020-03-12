@@ -198,6 +198,42 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("do not overlap data point", () => {
+			it("should show tooltip on proper position", done => {
+				const tooltip = chart.$.tooltip;
+				const circles = chart.$.line.circles;
+				const getCircleRectX = x => circles.filter(`.${CLASS.shape}-${x}`)
+					.node().getBoundingClientRect().x;
+
+				// when
+				let x = 8;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the right side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.above(getCircleRectX(3));
+
+				// when
+				x = 10;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the left side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.below(getCircleRectX(4));
+
+				// when
+				x = 12;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the left side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.below(getCircleRectX(5));
+			});
+		});
+
 		describe("when zoomed", () => {
 			before(() => {
 				args.zoom = {enabled: true};
@@ -241,30 +277,49 @@ describe("TOOLTIP", function() {
 		});
 
 		it("set option tooltip.position", () => {
-			args.tooltip.position = () => ({top: "10%", left: 20});
+			args.tooltip.position = () => ({
+				top: 50, left: 600
+			});
+
+			args.tooltip.doNotHide = true;
 		});
 
-		it("check tooltip's position unit", () => {
-			const pos = args.tooltip.position();
+		it("tooltip repositioning: when the pos is greater than the current width", done => {
 			util.hoverChart(chart);
 
-			["top", "left"].forEach(v => {
-				expect(chart.$.tooltip.style(v)).to.be.equal(
-					pos[v] + (v === "left" ? "px" : "")
-				);
+			const {tooltip} = chart.$;
+			const left = parseInt(tooltip.style("left"));
+
+			// do resize
+			chart.internal.resizeFunction();
+
+			setTimeout(() => {
+				expect(parseInt(tooltip.style("left"))).to.be.below(left);
+				done();
+			}, 200);
+		});
+
+		it("set option tooltip.position", () => {
+			args.tooltip.position = () => ({
+				top: 50, left: 300
 			});
 		});
 
-		it("set option tooltip.position={unit: '%'}", () => {
-			args.tooltip.position = {unit: "%"};
-		});
-
-		it("check tooltip's position unit as percentage", () => {
+		it("tooltip repositioning: when the chart width is increasing", done => {
+			chart.resize({width:450});
 			util.hoverChart(chart);
 
-			["top", "left"].forEach(v => {
-				expect(/^\d+(\.\d+)?%$/.test(chart.$.tooltip.style(v))).to.be.true;
-			});
+			const {tooltip} = chart.$;
+			const left = parseInt(tooltip.style("left"));
+
+			// do resize
+			chart.resize({width:640});
+			chart.internal.resizeFunction();
+
+			setTimeout(() => {
+				expect(parseInt(tooltip.style("left"))).to.be.above(left);
+				done();
+			}, 200);
 		});
 	});
 

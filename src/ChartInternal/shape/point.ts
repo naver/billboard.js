@@ -7,10 +7,10 @@ import {
 	mouse as d3Mouse,
 	select as d3Select
 } from "d3-selection";
+import {d3Selection} from "types/types";
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
 import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isValue, toArray, notEmpty} from "../../module/util";
-import {d3Selection} from "types/types";
 
 const getTransitionName = () => getRandom();
 
@@ -390,7 +390,6 @@ export default {
 
 		update(element, xPosFn, yPosFn, fillStyleFn,
 			withTransition, flow, selectedCircles) {
-			const $$ = this;
 			const {width, height} = element.node().getBBox();
 
 			const xPosFn2 = d => xPosFn(d) - width / 2;

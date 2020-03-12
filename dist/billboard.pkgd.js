@@ -15880,19 +15880,19 @@ var Store_state = function () {
   data_onout: function data_onout() {},
 
   /**
-  * Set a callback for minimum data
-  * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
-  * @name data․onmin
-  * @memberof Options
-  * @type {Function}
-  * @default undefined
-  * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
-  * @example
-  *  onmin: function(data) {
-  *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
-  *    ...
-  *  }
-  */
+   * Set a callback for minimum data
+   * - **NOTE:** For 'area-line-range' and 'area-spline-range', `mid` data will be taken for the comparison
+   * @name data․onmin
+   * @memberof Options
+   * @type {Function}
+   * @default undefined
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.OnMinMaxCallback)
+   * @example
+   *  onmin: function(data) {
+   *    // data - ex) [{x: 3, value: 400, id: "data1", index: 3}, ... ]
+   *    ...
+   *  }
+   */
   data_onmin: undefined,
 
   /**
@@ -16743,7 +16743,7 @@ var Store_state = function () {
 
   /**
    * Set y axis the data related to. y and y2 can be used.
-  * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
+   * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
    * @name data․axes
    * @memberof Options
    * @type {Object}
@@ -21827,8 +21827,8 @@ function convertInputType(mouse, touch) {
 
 
 /**
-* y Axis  config options
-*/
+ * y Axis  config options
+ */
 
 /* harmony default export */ var axis_axis = (mergeObj({
   /**
@@ -23142,6 +23142,21 @@ var Options = function () {
  * billboard.js project is licensed under the MIT license
  */
 
+/**
+ * Constant for cache key
+ * - NOTE: Prefixed with '$', will be resetted when .load() is called
+ */
+
+var KEY = {
+  bubbleBaseLength: "$baseLength",
+  colorPattern: "__colorPattern__",
+  dataMinMax: "$dataMinMax",
+  dataTotalSum: "$dataTotalSum",
+  dataTotalPerIndex: "$totalPerIndex",
+  legendItemTextBox: "legendItemTextBox",
+  radarPoints: "$radarPoints",
+  textRect: "textRect"
+};
 
 var Cache_Cache =
 /*#__PURE__*/
@@ -26698,7 +26713,7 @@ function () {
 
         if (type === "x") {
           var clipPath = currentMaxTickWidths.clipPath ? clip.pathXAxisTickTexts : null;
-          $$.svg.selectAll("." + config_classes.axisX + " .tick text").attr("clip-path", clipPath);
+          $el.svg.selectAll("." + config_classes.axisX + " .tick text").attr("clip-path", clipPath);
         }
       }
     });
@@ -27067,7 +27082,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
           var x,
               rawX = d[xKey],
               value = d[id];
-          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, isCategory && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
+          return value = value === null || isNaN(value) || isObject(value) ? isArray(value) || isObject(value) ? value : null : +value, (isCategory || state.hasRadar) && index === 0 && !isUndefined(rawX) ? (!hasCategory && index === 0 && i === 0 && (config.axis_x_categories = []), x = config.axis_x_categories.indexOf(rawX), x === -1 && (x = config.axis_x_categories.length, config.axis_x_categories.push(rawX))) : x = $$.generateTargetX(rawX, id, i), (isUndefined(value) || $$.data.xs[id].length <= i) && (x = undefined), {
             x: x,
             value: value,
             id: convertedId
@@ -27100,6 +27115,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 /* harmony default export */ var ChartInternal_data_data = ({
@@ -27271,7 +27287,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    */
   getMinMaxData: function getMinMaxData() {
     var $$ = this,
-        cacheKey = "$minMaxData",
+        cacheKey = KEY.dataMinMax,
         minMaxData = $$.cache.get(cacheKey);
 
     if (!minMaxData) {
@@ -27302,7 +27318,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    */
   getTotalPerIndex: function getTotalPerIndex() {
     var $$ = this,
-        sum = $$.cache.get("$totalPerIndex");
+        cacheKey = KEY.dataTotalPerIndex,
+        sum = $$.cache.get(cacheKey);
     return $$.isStackNormalized() && !sum && (sum = [], $$.data.targets.forEach(function (row) {
       row.values.forEach(function (v, i) {
         sum[i] || (sum[i] = 0), sum[i] += isNumber(v.value) ? v.value : 0;
@@ -27317,7 +27334,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    */
   getTotalDataSum: function getTotalDataSum() {
     var $$ = this,
-        cacheKey = "$totalDataSum",
+        cacheKey = KEY.dataTotalSum,
         totalDataSum = $$.cache.get(cacheKey);
 
     if (!totalDataSum) {
@@ -28038,6 +28055,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
 
 
+
 /**
  * Set pattern's background color
  * (it adds a <rect> element to simulate bg-color)
@@ -28067,8 +28085,9 @@ var colorizePattern = function (pattern, color, id) {
    * @private
    */
   getColorFromCss: function getColorFromCss() {
-    var body = browser_doc.body,
-        pattern = body["__colorPattern__"];
+    var cacheKey = KEY.colorPattern,
+        body = browser_doc.body,
+        pattern = body[cacheKey];
 
     if (!pattern) {
       var span = browser_doc.createElement("span");
@@ -28076,7 +28095,7 @@ var colorizePattern = function (pattern, color, id) {
       var content = win.getComputedStyle(span).backgroundImage;
       span.parentNode.removeChild(span), content.indexOf(";") > -1 && (pattern = content.replace(/url[^#]*|["'()]|(\s|%20)/g, "").split(";").map(function (v) {
         return v.trim().replace(/[\"'\s]/g, "");
-      }).filter(Boolean), body["__colorPattern__"] = pattern);
+      }).filter(Boolean), body[cacheKey] = pattern);
     }
 
     return pattern;
@@ -28200,6 +28219,18 @@ var colorizePattern = function (pattern, color, id) {
   getYDomainMax: function getYDomainMax(targets) {
     return this.getYDomainMinMax(targets, "max");
   },
+
+  /**
+   * Check if hidden targets bound to the given axis id
+   * @return {Boolean}
+   * @private
+   */
+  isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
+    var $$ = this;
+    return $$.state.hiddenTargetIds.some(function (v) {
+      return $$.axis.getId(v) === id;
+    });
+  },
   getYDomain: function getYDomain(targets, axisId, xDomain) {
     var $$ = this,
         axis = $$.axis,
@@ -28212,7 +28243,7 @@ var colorizePattern = function (pattern, color, id) {
     }),
         yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
     if (yTargets.length === 0) // use domain of the other axis if target of axisId is none
-      return axisId === "y2" ? scale.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
+      return $$.isHiddenTargetWithYDomain(axisId) ? scale[axisId].domain() : axisId === "y2" ? scale.y.domain() : // When all data bounds to y2, y Axis domain is called prior y2.
       // So, it needs to call to get y2 domain here
       $$.getYDomain(targets, "y2", xDomain);
     var yMin = config[pfx + "_min"],
@@ -28390,6 +28421,7 @@ function getFormat($$, typeValue, v) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 
 
@@ -28650,16 +28682,11 @@ function getFormat($$, typeValue, v) {
    * @param {HTMLElement|d3.selection} textElement
    */
   getLegendItemTextBox: function getLegendItemTextBox(id, textElement) {
-    var $$ = this,
+    var data,
+        $$ = this,
         cache = $$.cache,
-        cacheKey = "legendItemTextBox";
-
-    if (id) {
-      var data = cache.get(cacheKey);
-      return data || (data = {}), data[id] || (data[id] = $$.getTextRect(textElement, config_classes.legendItem), cache.add(cacheKey, data)), data[id];
-    }
-
-    cache.remove(cacheKey);
+        cacheKey = KEY.legendItemTextBox;
+    return id && (data = cache.get(cacheKey) || {}, !data[id] && (data[id] = $$.getTextRect(textElement, config_classes.legendItem), cache.add(cacheKey, data)), data = data[id]), data;
   },
 
   /**
@@ -28702,7 +28729,7 @@ function getFormat($$, typeValue, v) {
         $$ = this,
         config = $$.config,
         state = $$.state,
-        $el = $$.$el,
+        legend = $$.$el.legend,
         posMin = 10,
         tileWidth = config.legend_item_tile_width + 5,
         maxWidth = 0,
@@ -28779,7 +28806,7 @@ function getFormat($$, typeValue, v) {
       return yForLegend(id, i) + 4;
     },
         pos = -200,
-        l = $el.legend.selectAll("." + config_classes.legendItem).data(targetIdz).enter().append("g");
+        l = legend.selectAll("." + config_classes.legendItem).data(targetIdz).enter().append("g");
 
     $$.setLegendItem(l), l.append("text").text(function (id) {
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
@@ -28805,22 +28832,22 @@ function getFormat($$, typeValue, v) {
     } else l.append("line").attr("class", config_classes.legendItemTile).style("stroke", $$.color).style("pointer-events", "none").attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos).attr("y1", isLegendRightOrInset ? pos : yForLegendTile).attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos).attr("y2", isLegendRightOrInset ? pos : yForLegendTile).attr("stroke-width", config.legend_item_tile_height); // Set background for inset legend
 
 
-    background = $el.legend.select("." + config_classes.legendBackground + " rect"), state.isLegendInset && maxWidth > 0 && background.size() === 0 && (background = legend.insert("g", "." + config_classes.legendItem).attr("class", config_classes.legendBackground).append("rect"));
-    var texts = $el.legend.selectAll("text").data(targetIdz).text(function (id) {
+    background = legend.select("." + config_classes.legendBackground + " rect"), state.isLegendInset && maxWidth > 0 && background.size() === 0 && (background = legend.insert("g", "." + config_classes.legendItem).attr("class", config_classes.legendBackground).append("rect"));
+    var texts = legend.selectAll("text").data(targetIdz).text(function (id) {
       return isDefined(config.data_names[id]) ? config.data_names[id] : id;
     }) // MEMO: needed for update
     .each(function (id, i) {
       updatePositions(this, id, i);
     });
     (withTransition ? texts.transition() : texts).attr("x", xForLegendText).attr("y", yForLegendText);
-    var rects = $el.legend.selectAll("rect." + config_classes.legendItemEvent).data(targetIdz);
+    var rects = legend.selectAll("rect." + config_classes.legendItemEvent).data(targetIdz);
 
     if ((withTransition ? rects.transition() : rects).attr("width", function (id) {
       return widths[id];
     }).attr("height", function (id) {
       return heights[id];
     }).attr("x", xForLegendRect).attr("y", yForLegendRect), usePoint) {
-      var tiles = $el.legend.selectAll("." + config_classes.legendItemPoint).data(targetIdz);
+      var tiles = legend.selectAll("." + config_classes.legendItemPoint).data(targetIdz);
       (withTransition ? tiles.transition() : tiles).each(function () {
         var radius,
             width,
@@ -28848,7 +28875,7 @@ function getFormat($$, typeValue, v) {
         }).attr("r", radius).attr("width", width).attr("height", height);
       });
     } else {
-      var _tiles = $el.legend.selectAll("line." + config_classes.legendItemTile).data(targetIdz);
+      var _tiles = legend.selectAll("line." + config_classes.legendItemTile).data(targetIdz);
 
       (withTransition ? _tiles.transition() : _tiles).style("stroke", $$.levelColor ? function (id) {
         return $$.levelColor($$.cache.get(id).values[0].value);
@@ -28885,7 +28912,7 @@ function getFormat($$, typeValue, v) {
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
     // text
     // title
-    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $$.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   },
 
   /**
@@ -29423,6 +29450,7 @@ function getFormat($$, typeValue, v) {
 
 
 
+
 /* harmony default export */ var internals_text = ({
   opacityForText: function opacityForText() {
     return this.hasDataLabel() ? "1" : "0";
@@ -29514,9 +29542,8 @@ function getFormat($$, typeValue, v) {
         base = element.node ? element.node() : element;
     /text/i.test(base.tagName) || (base = base.querySelector("text"));
     var text = base.textContent,
-        cacheKey = "textRect-" + text.replace(/\W/g, "_"),
-        rect = $$.cache.get(cacheKey); // do not prefix w/'$', to not be resetted cache in .load() call
-
+        cacheKey = KEY.textRect + "-" + text.replace(/\W/g, "_"),
+        rect = $$.cache.get(cacheKey);
     return rect || ($$.$el.svg.append("text").style("visibility", "hidden").style("font", src_select(base).style("font")).classed(className, !0).text(text).call(function (v) {
       rect = getBoundingRect(v.node());
     }).remove(), $$.cache.add(cacheKey, rect)), rect;
@@ -30740,13 +30767,7 @@ util_extend(xgrids, {
 function ygrids(grids) {
   var $$ = this.internal,
       config = $$.config;
-  if (!grids) return config.grid_y_lines;
-  config.grid_y_lines = grids;
-
-  http: //jindo.com/git/billboard.js/demo/work/chart.html
-  $$.redrawWithoutRescale();
-
-  return config.grid_y_lines;
+  return grids ? (config.grid_y_lines = grids, $$.redrawWithoutRescale(), config.grid_y_lines) : config.grid_y_lines;
 }
 
 util_extend(ygrids, {
@@ -31473,7 +31494,6 @@ function withinRange(domain, range) {
     return i === 0 ? v >= min : v <= max;
   });
 }
-
 /**
  * Zoom by giving x domain.
  * - **NOTE:**
@@ -31491,6 +31511,8 @@ function withinRange(domain, range) {
  *  // Get the current zoomed domain
  *  chart.zoom();
  */
+
+
 var zoom_zoom = function (domainValue) {
   var resultDomain,
       $$ = this.internal,
@@ -31881,9 +31903,9 @@ util_extend(zoom_zoom, {
 });
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/eventrect.ts
 /**
-* Copyright (c) 2017 ~ present NAVER Corp.
-* billboard.js project is licensed under the MIT license
-*/
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 
 
 
@@ -32374,7 +32396,7 @@ util_extend(zoom_zoom, {
   redrawForBrush: function redrawForBrush() {
     var $$ = this,
         _$$$config = $$.config,
-        subchart_onbrush = _$$$config.subchart_onbrush,
+        onBrush = _$$$config.subchart_onbrush,
         withY = _$$$config.zoom_rescale,
         scale = $$.scale;
     $$.redraw({
@@ -32383,7 +32405,7 @@ util_extend(zoom_zoom, {
       withSubchart: !1,
       withUpdateXDomain: !0,
       withDimension: !1
-    }), subchart_onbrush.bind($$.api)(scale.x.orgDomain());
+    }), onBrush.bind($$.api)(scale.x.orgDomain());
   },
 
   /**
@@ -32577,7 +32599,7 @@ util_extend(zoom_zoom, {
           xDomain = subX.domain(),
           delta = .015,
           isfullyShown = (zoomDomain[0] <= xDomain[0] || zoomDomain[0] - delta <= xDomain[0]) && (xDomain[1] <= zoomDomain[1] || xDomain[1] <= zoomDomain[1] - delta);
-      (force || isfullyShown) && ($$.axis.x.scale(subX), x.domain(subX.orgDomain()), zoom = null);
+      (force || isfullyShown) && ($$.axis.x.scale(subX), x.domain(subX.orgDomain()), $$.scale.zoom = null);
     }
   },
 
@@ -33434,6 +33456,7 @@ function smoothLines(el, type) {
  * billboard.js project is licensed under the MIT license
  */
 
+
 /* harmony default export */ var shape_bubble = ({
   /**
    * Initializer
@@ -33454,7 +33477,7 @@ function smoothLines(el, type) {
   getBaseLength: function getBaseLength() {
     var $$ = this,
         axis = $$.$el.axis,
-        cacheKey = "$baseLength",
+        cacheKey = KEY.bubbleBaseLength,
         baseLength = $$.cache.get(cacheKey);
     return baseLength || $$.cache.add(cacheKey, baseLength = getMinMax("min", [axis.x.select("path").node().getTotalLength(), axis.y.select("path").node().getTotalLength()])), baseLength;
   },
@@ -35873,8 +35896,7 @@ var getTransitionName = function () {
       return element.append("use").attr("xlink:href", "#" + id).attr("class", this.updatePointClass.bind(this)).style("fill", fillStyleFn).node();
     },
     update: function update(element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-      var $$ = this,
-          _element$node$getBBox = element.node().getBBox(),
+      var _element$node$getBBox = element.node().getBBox(),
           width = _element$node$getBBox.width,
           height = _element$node$getBBox.height,
           xPosFn2 = function (d) {
@@ -36714,6 +36736,7 @@ var internal = [internals_category, interactions_drag, interactions_flow, intera
 
 
 
+
 /**
  * Get the position value
  * @param {Boolean} isClockwise If the direction is clockwise
@@ -36734,13 +36757,14 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 } // cache key
 
 
-var radar_cacheKey = "$radarPoints";
+var radar_cacheKey = KEY.radarPoints;
 /* harmony default export */ var shape_radar = ({
   initRadar: function initRadar() {
     var $$ = this,
         config = $$.config,
-        currentData = $$.state.currentData;
-    $$.hasType("radar") && ($$.radars = $$.$el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $$.radars.levels = $$.radars.append("g").attr("class", config_classes.levels), $$.radars.axes = $$.radars.append("g").attr("class", config_classes.axis), $$.radars.shapes = $$.radars.append("g").attr("class", config_classes.shapes), currentData.max = config.radar_axis_max || $$.getMinMaxData().max[0].value);
+        currentData = $$.state.currentData,
+        $el = $$.$el;
+    $$.hasType("radar") && ($el.radars = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $el.radars.levels = $el.radars.append("g").attr("class", config_classes.levels), $el.radars.axes = $el.radars.append("g").attr("class", config_classes.axis), $el.radars.shapes = $el.radars.append("g").attr("class", config_classes.shapes), currentData.max = config.radar_axis_max || $$.getMinMaxData().max[0].value);
   },
   getRadarSize: function getRadarSize() {
     var $$ = this,
@@ -36798,9 +36822,11 @@ var radar_cacheKey = "$radarPoints";
   },
   redrawRadar: function redrawRadar(durationForExit) {
     var $$ = this,
-        main = $$.$el.main,
+        _$$$$el = $$.$el,
+        radars = _$$$$el.radars,
+        main = _$$$$el.main,
         translate = $$.getTranslate("radar");
-    translate && ($$.radars.attr("transform", translate), main.selectAll("." + config_classes.circles).attr("transform", translate), main.select("." + config_classes.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(durationForExit));
+    translate && (radars.attr("transform", translate), main.selectAll("." + config_classes.circles).attr("transform", translate), main.select("." + config_classes.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(durationForExit));
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
     var points = this.cache.get(radar_cacheKey);
@@ -36813,13 +36839,14 @@ var radar_cacheKey = "$radarPoints";
     var $$ = this,
         config = $$.config,
         state = $$.state,
+        radars = $$.$el.radars,
         _$$$getRadarSize3 = $$.getRadarSize(),
         width = _$$$getRadarSize3[0],
         height = _$$$getRadarSize3[1],
         depth = config.radar_level_depth,
         edge = config.axis_x_categories.length,
         showText = config.radar_level_text_show,
-        radarLevels = $$.radars.levels,
+        radarLevels = radars.levels,
         levelData = getRange(0, depth),
         radius = config.radar_size_ratio * Math.min(width, height),
         levelRatio = levelData.map(function (l) {
@@ -36856,11 +36883,12 @@ var radar_cacheKey = "$radarPoints";
   updateRadarAxes: function updateRadarAxes() {
     var $$ = this,
         config = $$.config,
+        radars = $$.$el.radars,
         _$$$getRadarSize4 = $$.getRadarSize(),
         width = _$$$getRadarSize4[0],
         height = _$$$getRadarSize4[1],
         categories = config.axis_x_categories,
-        axis = $$.radars.axes.selectAll("g").data(categories);
+        axis = radars.axes.selectAll("g").data(categories);
 
     axis.exit().remove();
     var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
@@ -36903,7 +36931,9 @@ var radar_cacheKey = "$radarPoints";
         _$$$state2 = $$.state,
         inputType = _$$$state2.inputType,
         transiting = _$$$state2.transiting,
-        svg = $$.$el.svg;
+        _$$$$el2 = $$.$el,
+        radars = _$$$$el2.radars,
+        svg = _$$$$el2.svg;
 
     if (config.interaction_enabled) {
       var isMouse = inputType === "mouse",
@@ -36920,7 +36950,7 @@ var radar_cacheKey = "$radarPoints";
         (isMouse || noIndex) && (_this.hideTooltip(), _this.unexpandCircles(), isMouse ? $$.setOverOut(!1, index) : noIndex && $$.callOverOutForTouch());
       };
 
-      $$.radars.select("." + config_classes.axis).on(isMouse ? "mouseover " : "touchstart", function () {
+      radars.select("." + config_classes.axis).on(isMouse ? "mouseover " : "touchstart", function () {
         if (!transiting) // skip while transiting
           {
             var index = getIndex();
@@ -36933,7 +36963,7 @@ var radar_cacheKey = "$radarPoints";
     var $$ = this,
         targets = $$.data.targets,
         points = $$.cache.get(radar_cacheKey),
-        areas = $$.radars.shapes.selectAll("polygon").data(targets),
+        areas = $$.$el.radars.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
     areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", function (d) {
       return points[d.id].join(" ");
@@ -37078,6 +37108,7 @@ function () {
       // mainArea,
       circle: null,
       // mainCircle,
+      radars: null,
       text: null,
       // mainText,
       grid: {
@@ -37544,6 +37575,7 @@ function loadConfig(config) {
  * billboard.js project is licensed under the MIT license
  */
 
+
 /**
  * Get data loaded in the chart.
  * @method data
@@ -37649,9 +37681,9 @@ util_extend(api_data_data, {
    *});
    */
   names: function names(_names) {
-    var $$ = this.internal; // reset existing legend item dimension data
+    var $$ = this.internal; // reset existing legend item dimension cache data
 
-    return $$.getLegendItemTextBox(), $$.updateDataAttributes("names", _names);
+    return $$.cache.remove(KEY.legendItemTextBox), $$.updateDataAttributes("names", _names);
   },
 
   /**

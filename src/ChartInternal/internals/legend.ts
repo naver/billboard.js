@@ -9,6 +9,7 @@ import {
 } from "d3-selection";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess} from "../../module/util";
 
 export default {
@@ -347,26 +348,23 @@ export default {
 	getLegendItemTextBox(id?: string, textElement?) {
 		const $$ = this;
 		const {cache} = $$;
+		let data;
 
 		// do not prefix w/'$', to not be resetted cache in .load() call
-		const cacheKey = "legendItemTextBox";
+		const cacheKey = KEY.legendItemTextBox;
 
 		if (id) {
-			let data = cache.get(cacheKey);
-
-			if (!data) {
-				data = {};
-			}
+			data = cache.get(cacheKey) || {};
 
 			if (!data[id]) {
 				data[id] = $$.getTextRect(textElement, CLASS.legendItem);
 				cache.add(cacheKey, data);
 			}
 
-			return data[id];
-		} else {
-			cache.remove(cacheKey);
+			data = data[id];
 		}
+
+		return data;
 	},
 
 	/**
@@ -440,7 +438,7 @@ export default {
 	 */
 	updateLegendElement(targetIds, options) {
 		const $$ = this;
-		const {config, state, $el} = $$;
+		const {config, state, $el: {legend}} = $$;
 		const paddingTop = 4;
 		const paddingRight = 10;
 		const posMin = 10;
@@ -568,7 +566,7 @@ export default {
 		const pos = -200;
 
 		// Define g for legend area
-		const l = $el.legend.selectAll(`.${CLASS.legendItem}`)
+		const l = legend.selectAll(`.${CLASS.legendItem}`)
 			.data(targetIdz)
 			.enter()
 			.append("g");
@@ -631,7 +629,7 @@ export default {
 		}
 
 		// Set background for inset legend
-		background = $el.legend.select(`.${CLASS.legendBackground} rect`);
+		background = legend.select(`.${CLASS.legendBackground} rect`);
 
 		if (state.isLegendInset && maxWidth > 0 && background.size() === 0) {
 			background = legend.insert("g", `.${CLASS.legendItem}`)
@@ -639,7 +637,7 @@ export default {
 				.append("rect");
 		}
 
-		const texts = $el.legend.selectAll("text")
+		const texts = legend.selectAll("text")
 			.data(targetIdz)
 			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id)) // MEMO: needed for update
 			.each(function(id, i) {
@@ -650,7 +648,7 @@ export default {
 			.attr("x", xForLegendText)
 			.attr("y", yForLegendText);
 
-		const rects = $el.legend.selectAll(`rect.${CLASS.legendItemEvent}`)
+		const rects = legend.selectAll(`rect.${CLASS.legendItemEvent}`)
 			.data(targetIdz);
 
 		(withTransition ? rects.transition() : rects)
@@ -661,7 +659,7 @@ export default {
 
 
 		if (usePoint) {
-			const tiles = $el.legend.selectAll(`.${CLASS.legendItemPoint}`)
+			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)
@@ -700,7 +698,7 @@ export default {
 						.attr("height", height);
 				});
 		} else {
-			const tiles = $el.legend.selectAll(`line.${CLASS.legendItemTile}`)
+			const tiles = legend.selectAll(`line.${CLASS.legendItemTile}`)
 				.data(targetIdz);
 
 			(withTransition ? tiles.transition() : tiles)

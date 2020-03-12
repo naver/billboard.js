@@ -175,7 +175,6 @@ export default {
 					}
 
 					path = line.curve($$.getCurve(d))(values);
-
 				}
 			} else {
 				if (values[0]) {
