@@ -75,10 +75,10 @@ export default {
 	 */
 	getTooltipHTML(...args) {
 		const $$ = this;
-		const {config} = $$;
+		const {api, config} = $$;
 
 		return isFunction(config.tooltip_contents) ?
-			config.tooltip_contents.bind($$.api)(...args) : $$.getTooltipContent(...args);
+			config.tooltip_contents.bind(api)(...args) : $$.getTooltipContent(...args);
 	},
 
 	/**
@@ -316,10 +316,10 @@ export default {
 			// set tooltip content
 			tooltip
 				.html($$.getTooltipHTML(
-					selectedData,
-					$$.axis && $$.axis.getXAxisTickFormat(),
-					$$.getYFormat(forArc),
-					$$.color
+					selectedData, // data
+					$$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
+					$$.getYFormat(forArc), // defaultValueFormat
+					$$.color // color
 				))
 				.style("display", null)
 				.style("visibility", null) // for IE9

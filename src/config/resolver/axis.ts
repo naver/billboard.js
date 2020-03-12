@@ -24,7 +24,6 @@ import eventrect from "../../ChartInternal/interactions/eventrect";
 import subchart from "../../ChartInternal/interactions/subchart";
 import zoom from "../../ChartInternal/interactions/zoom";
 
-import category from "../../ChartInternal/internals/category";
 import clip from "../../ChartInternal/internals/clip";
 import grid from "../../ChartInternal/internals/grid";
 import region from "../../ChartInternal/internals/region";
@@ -50,7 +49,6 @@ export const api = [
 ];
 
 export const internal = [
-	category,
 	drag,
 	flow,
 	subchart,

@@ -28045,6 +28045,23 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     }) : null;
   }
 });
+// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/* harmony default export */ var category = ({
+  /**
+   * Category Name
+   * @private
+   * @param {Number} index
+   * @returns {String} gategory Name
+   */
+  categoryName: function categoryName(i) {
+    var categories = this.config.axis_x_categories;
+    return i < categories.length ? categories[i] : i;
+  }
+});
 // CONCATENATED MODULE: ./src/ChartInternal/internals/color.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -29847,8 +29864,9 @@ function getTextPos(pos, width) {
    */
   getTooltipHTML: function getTooltipHTML() {
     var $$ = this,
+        api = $$.api,
         config = $$.config;
-    return isFunction(config.tooltip_contents) ? config.tooltip_contents.bind($$.api).apply(void 0, arguments) : $$.getTooltipContent.apply($$, arguments);
+    return isFunction(config.tooltip_contents) ? config.tooltip_contents.bind(api).apply(void 0, arguments) : $$.getTooltipContent.apply($$, arguments);
   },
 
   /**
@@ -30049,7 +30067,11 @@ function getTextPos(pos, width) {
 
       if (!datum || datum.current !== dataStr) {
         var index = selectedData.concat().sort()[0].index;
-        callFn(config.tooltip_onshow, $$.api, selectedData), tooltip.html($$.getTooltipHTML(selectedData, $$.axis && $$.axis.getXAxisTickFormat(), $$.getYFormat(forArc), $$.color)).style("display", null).style("visibility", null) // for IE9
+        callFn(config.tooltip_onshow, $$.api, selectedData), tooltip.html($$.getTooltipHTML(selectedData, // data
+        $$.axis ? $$.axis.getXAxisTickFormat() : $$.categoryName.bind($$), // defaultTitleFormat
+        $$.getYFormat(forArc), // defaultValueFormat
+        $$.color // color
+        )).style("display", null).style("visibility", null) // for IE9
         .datum(datum = {
           index: index,
           current: dataStr,
@@ -30506,7 +30528,7 @@ var api_axis_axis = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* harmony default export */ var category = ({
+/* harmony default export */ var api_category = ({
   /**
    * Set specified category name on category axis.
    * @method category
@@ -32660,23 +32682,6 @@ util_extend(zoom_zoom, {
     resetButton && config.zoom_enabled.type === "drag" && ($$.zoom.resetBtn ? $$.zoom.resetBtn.style("display", null) : $$.zoom.resetBtn = $$.$el.chart.append("div").classed(config_classes.button, !0).append("span").on("click", function () {
       isFunction(resetButton.onclick) && resetButton.onclick.bind($$.api)(this), $$.api.unzoom();
     }).classed(config_classes.buttonZoomReset, !0).text(resetButton.text || "Reset Zoom"));
-  }
-});
-// CONCATENATED MODULE: ./src/ChartInternal/internals/category.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/* harmony default export */ var internals_category = ({
-  /**
-   * Category Name
-   * @private
-   * @param {Number} index
-   * @returns {String} gategory Name
-   */
-  categoryName: function categoryName(i) {
-    var categories = this.config.axis_x_categories;
-    return i < categories.length ? categories[i] : i;
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/internals/clip.ts
@@ -36225,9 +36230,8 @@ var getTransitionName = function () {
 
 
 
-
-var axis_api = [api_axis, category, api_flow, grid_x, grid_y, api_group, api_regions, api_selection, api_x, api_zoom];
-var internal = [internals_category, interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, ChartInternal_shape_bar, shape_bubble, ChartInternal_shape_line, shape_point, shape_shape];
+var axis_api = [api_axis, api_category, api_flow, grid_x, grid_y, api_group, api_regions, api_selection, api_x, api_zoom];
+var internal = [interactions_drag, interactions_flow, interactions_subchart, interactions_zoom, internals_clip, internals_grid, region, internals_selection, eventrect, ChartInternal_shape_bar, shape_bubble, ChartInternal_shape_line, shape_point, shape_shape];
 // CONCATENATED MODULE: ./src/ChartInternal/shape/arc.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -37031,6 +37035,8 @@ var arc_internal = [shape_arc, shape_radar];
  // internals
 
 
+ // used to retrieve radar Axis name
+
 
 
 
@@ -37418,7 +37424,7 @@ function () {
 
 
 util_extend(ChartInternal_ChartInternal.prototype, [// common
-data_convert, ChartInternal_data_data, data_load, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(arc_internal, internal));
+data_convert, ChartInternal_data_data, data_load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(arc_internal, internal));
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

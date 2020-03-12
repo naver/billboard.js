@@ -34,6 +34,7 @@ import interaction from "./interactions/interaction";
 
 // internals
 import classModule from "./internals/class";
+import category from "./internals/category"; // used to retrieve radar Axis name
 import color from "./internals/color";
 import domain from "./internals/domain";
 import format from "./internals/format";
@@ -734,6 +735,7 @@ extend(ChartInternal.prototype, [
 	dataConvert,
 	data,
 	dataLoad,
+	category,
 	classModule,
 	color,
 	domain,
