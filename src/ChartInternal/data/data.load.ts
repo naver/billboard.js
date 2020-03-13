@@ -49,6 +49,9 @@ export default {
 			withLegend: true
 		});
 
+		// Update current state chart type list after redraw
+		$$.updateTypes();
+
 		args.done && args.done.call($$.api);
 	},
 
@@ -99,12 +102,17 @@ export default {
 		targetIds.forEach(id => {
 			// Reset fadein for future load
 			state.withoutFadeIn[id] = false;
+
 			// Remove target's elements
 			if ($el.legend) {
 				$el.legend.selectAll(`.${CLASS.legendItem}${$$.getTargetSelectorSuffix(id)}`).remove();
 			}
+
 			// Remove target
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
 		});
+
+		// Update current state chart type list
+		$$.updateTypes();
 	}
 };

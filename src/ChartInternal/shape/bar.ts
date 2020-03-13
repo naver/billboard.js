@@ -10,7 +10,9 @@ export default {
 	initBar() {
 		const {$el} = this;
 
-		$el.bar = $el.main.select(`.${CLASS.chart}`).append("g")
+		$el.bar = $el.main.select(`.${CLASS.chart}`)
+			// should positioned at the beginning of the shape node to not overlap others
+			.insert("g", ":first-child")
 			.attr("class", CLASS.chartBars);
 	},
 

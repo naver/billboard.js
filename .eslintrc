@@ -1,13 +1,18 @@
 {
     "parser": "@typescript-eslint/parser",
+    "plugins": [
+        "@typescript-eslint"
+    ],
     "env": {
         "browser": true,
         "node": true,
         "mocha": true
     },
-    "extends": "naver",
-    "plugins": [
-        "@typescript-eslint"
+    "extends": [
+        //"eslint:recommended",
+        // "plugin:@typescript-eslint/eslint-recommended",
+        // "plugin:@typescript-eslint/recommended",
+        "naver"
     ],
     "ignorePatterns": ["*.js", "node_modules"],
     "rules": {

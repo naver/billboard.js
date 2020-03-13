@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 import ChartInternal from "../ChartInternal/ChartInternal";
-import {TYPES} from "../config/const";
 import {loadConfig} from "../config/config";
 import {extend, isFunction} from "../module/util";
 
@@ -84,7 +83,7 @@ export default class Chart {
 
 	constructor(options) {
 		const ctx = this;
-		const {type, types} = options.data;
+		// const {type, types} = options.data;
 		// let isArc = false;
 
 		// if (type) {

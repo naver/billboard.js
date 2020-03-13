@@ -3,12 +3,61 @@
  * billboard.js project is licensed under the MIT license
  */
 
-// defined chart types as category
-export const TYPES = {
-	Area: ["area", "area-spline", "area-spline-range", "area-line-range", "area-step"],
-	AreaRange: ["area-spline-range", "area-line-range"],
-	Arc: ["pie", "donut", "gauge", "radar"],
-	Line: ["line", "spline", "area", "area-spline", "area-spline-range", "area-line-range", "step", "area-step"],
-	Step: ["step", "area-step"],
-	Spline: ["spline", "area-spline", "area-spline-range"]
+// chart types
+export const TYPE = {
+	AREA: "area",
+	AREA_LINE_RANGE: "area-line-range",
+	AREA_SPLINE: "area-spline",
+	AREA_SPLINE_RANGE: "area-spline-range",
+	AREA_STEP: "area-step",
+	BAR: "bar",
+	BUBBLE: "bubble",
+	DONUT: "donut",
+	GAUGE: "gauge",
+	LINE: "line",
+	PIE: "pie",
+	RADAR: "radar",
+	SCATTER: "scatter",
+	SPLINE: "spline",
+	STEP: "step"
+};
+
+// chart types by category
+export const TYPE_BY_CATEGORY = {
+	Area: [
+		TYPE.AREA,
+		TYPE.AREA_SPLINE,
+		TYPE.AREA_SPLINE_RANGE,
+		TYPE.AREA_LINE_RANGE,
+		TYPE.AREA_STEP
+	],
+	AreaRange: [
+		TYPE.AREA_SPLINE_RANGE,
+		TYPE.AREA_LINE_RANGE
+	],
+	Arc: [
+		TYPE.PIE,
+		TYPE.DONUT,
+		TYPE.GAUGE,
+		TYPE.RADAR
+	],
+	Line: [
+		TYPE.LINE,
+		TYPE.SPLINE,
+		TYPE.AREA,
+		TYPE.AREA_SPLINE,
+		TYPE.AREA_SPLINE_RANGE,
+		TYPE.AREA_LINE_RANGE,
+		TYPE.STEP,
+		TYPE.AREA_STEP
+	],
+	Step: [
+		TYPE.STEP,
+		TYPE.AREA_STEP
+	],
+	Spline: [
+		TYPE.SPLINE,
+		TYPE.AREA_SPLINE,
+		TYPE.AREA_SPLINE_RANGE
+	]
 };

@@ -4,14 +4,12 @@
  */
 import {isDefined, isObjectType} from "../module/util";
 
-export {loadConfig};
-
 /**
  * Load configuration option
  * @param {Object} config User's generation config value
  * @private
  */
-function loadConfig(config) {
+export function loadConfig(config) {
 	const thisConfig = this.config;
 	let target;
 	let keys;

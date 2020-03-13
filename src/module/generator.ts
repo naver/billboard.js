@@ -10,15 +10,16 @@ import {isArray} from "./util";
  */
 export function generateResize(): Function {
 	const fn = [];
+	let timeout;
 
 	function callResizeFn() {
 		// Delay all resize functions call, to prevent unintended excessive call from resize event
-		if (callResizeFn.timeout) {
-			window.clearTimeout(callResizeFn.timeout);
-			callResizeFn.timeout = null;
+		if (timeout) {
+			window.clearTimeout(timeout);
+			timeout = null;
 		}
 
-		callResizeFn.timeout = window.setTimeout(() => {
+		timeout = window.setTimeout(() => {
 			fn.forEach(f => f());
 		}, 200);
 	}
@@ -33,7 +34,7 @@ export function generateResize(): Function {
  * Generate transition queue function
  * @private
  */
-export function generateWait(): void {
+export function generateWait(): Function {
 	let transitionsToWait = [];
 	const f = function(t, callback) {
 		let timer;

@@ -11,7 +11,7 @@ import {
 } from "d3-time-format";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../config/classes";
-import Store from "../config/Store";
+import Store from "../config/Store/Store";
 import Options from "../config/Options/Options";
 import {document, window} from "../module/browser";
 import Cache from "../module/Cache";
@@ -65,6 +65,7 @@ export default class ChartInternal {
 	public api;	// API interface
 	public config; // config object
 	public cache; // cache instance
+	public $el; // elements
 	public state; // state variables
 	public charts; // all Chart instances array within page (equivalent of 'bb.instances')
 	public isArc = false; // if is Arc type chart
@@ -73,54 +74,6 @@ export default class ChartInternal {
 	public data = {
 		xs: {},
 		targets: []
-	};
-
-	// selections
-	public $el: {
-		[key: string]: N | {[key: string]: N}
-	} = {
-		chart: null,
-		main: null,
-		svg: null,
-		axis: { // axes
-			x: null,
-			y: null,
-			y2: null,
-			subX: null
-		},
-		defs: null,
-		tooltip: null,
-		legend: null,
-		title: null,
-		subchart: {
-			main: null, // $$.context
-			bar: null, // $$.contextBar
-			line: null, // $$.contextLine
-			area: null // $$.contextArea
-		},
-
-		arcs: null,
-		bar: null, // mainBar,
-		line: null, // mainLine,
-		area: null, // mainArea,
-		circle: null, // mainCircle,
-		radars: null,
-		text: null, // mainText,
-		grid: {
-			main: null, // grid (also focus)
-			x: null, // xgrid,
-			y: null, // ygrid,
-		},
-		gridLines: {
-			main: null, // gridLines
-			x: null, // xgridLines,
-			y: null, // ygridLines
-		},
-		region: {
-			main: null, // region
-			list: null // mainRegion
-		},
-		eventRect: null
 	};
 
 	// Axis
@@ -165,7 +118,11 @@ export default class ChartInternal {
 		$$.api = api; // Chart instance
 		$$.config = new Options();
 		$$.cache = new Cache();
-		$$.state = new Store(); // status variables
+
+		const store = new Store();
+
+		$$.$el = store.getStore("element");
+		$$.state = store.getStore("state");
 	}
 
 	beforeInit() {
@@ -506,6 +463,8 @@ export default class ChartInternal {
 		const {hasAxis, hasRadar} = $$.state;
 		const types = [];
 
+		$$.updateTypes();
+
 		if (hasAxis) {
 			$$.hasType("bar") && types.push("Bar");
 			$$.hasType("bubble") && types.push("Bubble");
@@ -531,29 +490,30 @@ export default class ChartInternal {
 
 	setChartElements() {
 		const $$ = this;
-		const {$el} = $$;
+		const {$el: {
+			chart, svg, defs, main, tooltip, legend, title, grid,
+			arcs: arc,
+			circle: circles,
+			bar: bars,
+			line: lines,
+			area: areas,
+			text: texts
+		}} = $$;
 
 		$$.api.$ = {
-			chart: $el.chart,
-			svg: $el.svg,
-			defs: $el.defs,
-			main: $el.main,
-			tooltip: $el.tooltip,
-			legend: $el.legend,
-			title: $el.title,
-			grid: $el.grid,
-			arc: $el.arcs,
-			circles: $el.circle,
-			bar: {
-				bars: $el.bar
-			},
-			line: {
-				lines: $el.line,
-				areas: $el.area
-			},
-			text: {
-				texts: $el.text
-			}
+			chart,
+			svg,
+			defs,
+			main,
+			tooltip,
+			legend,
+			title,
+			grid,
+			arc,
+			circles,
+			bar: {bars},
+			line: {lines, areas},
+			text: {texts}
 		};
 	}
 
@@ -665,25 +625,6 @@ export default class ChartInternal {
 
 		return withOptions;
 	}
-
-	// isCategorized() {
-	// 	return this.config.axis_x_type.indexOf("category") >= 0 || this.state.hasRadar;
-	// }
-
-	// isCustomX() {
-	// 	const $$ = this;
-	// 	const {config} = $$;
-
-	// 	return !$$.axis.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
-	// }
-
-	// isTimeSeries(id = "x") {
-	// 	return this.config[`axis_${id}_type`] === "timeseries";
-	// }
-
-	// isTimeSeriesY() {
-	// 	return this.isTimeSeries("y");
-	// }
 
 	initialOpacity(d) {
 		const {withoutFadeIn} = this.state;

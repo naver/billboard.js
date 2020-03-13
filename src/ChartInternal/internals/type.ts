@@ -3,7 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 import {isString, isArray} from "../../module/util";
-import {TYPES} from "../../config/const";
+import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 
 export default {
 	setTargetType(targetIds, type) {
@@ -20,18 +20,48 @@ export default {
 		}
 	},
 
-	hasType(type, targetsValue) {
+	/**
+	 * Updte current used chart types
+	 */
+	updateTypes(): void {
 		const $$ = this;
-		const {config} = $$;
+		const {state} = $$;
+
+		Object.keys(TYPE).forEach(v => {
+			const t = TYPE[v];
+			const has = $$.hasType(t, null, true);
+			const idx = state.currentTypes.indexOf(t);
+
+			if (idx === -1 && has) {
+				state.currentTypes.push(t);
+			} else if (idx > -1 && !has) {
+				state.currentTypes.splice(idx, 1);
+			}
+		});
+	},
+
+	/**
+	 * Check if given chart types exists
+	 * @param {String} type Chart type
+	 * @param {Array} targetsValue Data array
+	 * @param {Boolean} checkFromData Force to check type cotains from data targets
+	 * @return {Boolean}
+	 * @private
+	 */
+	hasType(type: string, targetsValue?, checkFromData = false): boolean {
+		const $$ = this;
+		const {config, state: {currentTypes}} = $$;
 		const types = config.data_types;
 		const targets = targetsValue || $$.data.targets;
 		let has = false;
 
-		if (targets && targets.length) {
+		if (!checkFromData && currentTypes.length && currentTypes.indexOf(type) > -1) {
+			has = true;
+		} else if (targets && targets.length) {
 			targets.forEach(target => {
 				const t = types[target.id];
 
-				if ((t && t.indexOf(type) >= 0) || (!t && type === "line")) {
+				if (t === type || (!t && type === "line")) {
 					has = true;
 				}
 			});
@@ -57,7 +87,8 @@ export default {
 	 * @private
 	 */
 	hasTypeOf(type, targets, exclude = []) {
-		return !TYPES[type]
+		// 실제 노드 존재 여부도 확인필요
+		return !TYPE_BY_CATEGORY[type]
 			// @ts-ignore
 			.filter(v => exclude.indexOf(v) === -1)
 			.every(v => !this.hasType(v, targets));
@@ -103,23 +134,23 @@ export default {
 		const id = isString(d) ? d : d.id;
 
 		return !this.config.data_types[id] ||
-			this.isTypeOf(id, TYPES.Line);
+			this.isTypeOf(id, TYPE_BY_CATEGORY.Line);
 	},
 
 	isStepType(d) {
-		return this.isTypeOf(d, TYPES.Step);
+		return this.isTypeOf(d, TYPE_BY_CATEGORY.Step);
 	},
 
 	isSplineType(d) {
-		return this.isTypeOf(d, TYPES.Spline);
+		return this.isTypeOf(d, TYPE_BY_CATEGORY.Spline);
 	},
 
 	isAreaType(d) {
-		return this.isTypeOf(d, TYPES.Area);
+		return this.isTypeOf(d, TYPE_BY_CATEGORY.Area);
 	},
 
 	isAreaRangeType(d) {
-		return this.isTypeOf(d, TYPES.AreaRange);
+		return this.isTypeOf(d, TYPE_BY_CATEGORY.AreaRange);
 	},
 
 	isBarType(d) {
