@@ -386,7 +386,6 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
  * billboard.js project is licensed under the MIT license
  */
 
-
 /**
  * Load configuration option
  * @param {Object} config User's generation config value

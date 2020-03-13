@@ -366,7 +366,6 @@ Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_0__[/*
  * billboard.js project is licensed under the MIT license
  */
 
-
 /**
  * Load configuration option
  * @param {Object} config User's generation config value
