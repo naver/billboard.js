@@ -48,9 +48,10 @@ export default class AxisRendererHelper {
 						size.w = width;
 						size.h = height;
 					}
-
+				} catch (e) {
+				} finally {
 					el.text("");
-				} catch (e) {}
+				}
 			});
 
 		this.getSizeFor1Char = () => size;
