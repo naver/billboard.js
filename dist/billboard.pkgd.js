@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200311131025
+ * @version 1.11.1-nightly-20200316131335
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -22139,8 +22139,10 @@ var AxisRendererHelper_AxisRendererHelper = /*#__PURE__*/function () {
               width = _el$node$getBBox.width,
               height = _el$node$getBBox.height;
 
-          width && height && (size.w = width, size.h = height), el.text("");
-        } catch (e) {}
+          width && height && (size.w = width, size.h = height);
+        } catch (e) {} finally {
+          el.text("");
+        }
       }), this.getSizeFor1Char = function () {
         return size;
       }, size;
@@ -38487,7 +38489,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200311131025",
+  version: "1.11.1-nightly-20200316131335",
 
   /**
    * Generate chart
@@ -38586,7 +38588,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200311131025
+ * @version 1.11.1-nightly-20200316131335
  */
 
 
