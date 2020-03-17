@@ -18,9 +18,6 @@ import Cache from "../module/Cache";
 import {generateResize} from "../module/generator";
 import {extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
-// for Types
-import {d3Selection} from "../../types/types";
-
 // Axis
 import Axis from "./Axis/Axis";
 
@@ -50,9 +47,6 @@ import type from "./internals/type";
 
 import {internal as axisInternal} from "../config/resolver/axis";
 import {internal as arcInternal} from "../config/resolver/arc";
-
-type N = d3Selection|null;
-type F = Function|null;
 
 /**
  * Internal chart class.

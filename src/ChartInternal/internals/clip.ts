@@ -39,8 +39,8 @@ export default {
 		return `url(${(isIE9 ? "" : document.URL.split("#")[0])}#${id})`;
 	},
 
-	appendClip(parent, id) {
-		return parent.append("clipPath")
+	appendClip(parent, id): void {
+		id && parent.append("clipPath")
 			.attr("id", id)
 			.append("rect");
 	},
@@ -162,10 +162,10 @@ export default {
 
 	setXAxisTickTextClipPathWidth() {
 		const $$ = this;
-		const {state: {clip, currentMaxTickWidths}, $el} = $$;
+		const {state: {clip, currentMaxTickWidths}, $el: {svg}} = $$;
 
-		if ($el.svg) {
-			$el.svg.select(`#${clip.idXAxisTickTexts} rect`)
+		if (svg) {
+			svg.select(`#${clip.idXAxisTickTexts} rect`)
 				.attr("width", currentMaxTickWidths.x.clipPath)
 				.attr("height", 30);
 		}

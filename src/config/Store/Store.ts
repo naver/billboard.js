@@ -2,17 +2,21 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import element from "./element";
-import state from "./state";
-import {mergeObj} from "../../module/util";
+import Element from "./Element";
+import State from "./State";
+
+const classes = {
+	element: Element,
+	state: State
+};
 
 export default class Store {
 	private element;
 	private state;
 
 	constructor() {
-		this.element = mergeObj({}, element);
-		this.state = mergeObj({}, state);
+		this.element = new Element();
+		this.state = new State();
 	}
 
 	getStore(name) {

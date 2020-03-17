@@ -264,7 +264,9 @@ export default {
 		let rotate = config[`axis_${id}_tick_rotate`];
 
 		if (!$$.filterTargetsToShow($$.data.targets).length) {
-			return 0;
+			// When data is hidden, it should maintain rotate value
+			// https://github.com/naver/billboard.js/issues/1278
+			return rotate;
 		}
 
 		if (id === "x") {
@@ -482,6 +484,10 @@ export default {
 
 		if (state.isLegendRight && hasArc) {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
+		}
+
+		if (!hasArc && config.axis_x_show && config.axis_x_tick_culling) {
+			$$.updateXAxisTickClip();
 		}
 	}
 };
