@@ -22,8 +22,8 @@ export type ChartTypes = "area"
 	| "scatter"
 	| "spline"
 	| "step";
-export type GaugeTypes = "single"
-	| "multi";
+
+export type GaugeTypes = "single" | "multi";
 
 export interface TargetIds {
 	ids: string[] | string;
@@ -31,6 +31,7 @@ export interface TargetIds {
 
 export type DataArray = Array<{
 	id: string;
+	// eslint-disable-next-line
 	id_org: string;
 	values: DataItem[]
 }>;

@@ -12,12 +12,11 @@ import CLASS from "../../config/classes";
  * @return {String|Number} text-anchor value or position in pixel
  * @private
  */
-function getTextPos(pos = "left", width?: number) {
+function getTextPos(pos = "left", width?: number | any) {
 	const isNum = isNumber(width);
 	let position;
 
 	if (pos.indexOf("center") > -1) {
-		// @ts-ignore
 		position = isNum ? width / 2 : "middle";
 	} else if (pos.indexOf("right") > -1) {
 		position = isNum ? width : "end";

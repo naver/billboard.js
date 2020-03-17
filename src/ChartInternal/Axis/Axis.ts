@@ -225,6 +225,7 @@ export default class Axis {
 			this.tick[id] = this.getTickValues(id);
 		}
 
+		// @ts-ignore
 		this[id] = this.getAxis(id, ...args);
 	}
 

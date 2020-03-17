@@ -7,7 +7,7 @@ import {
 	mouse as d3Mouse,
 	select as d3Select
 } from "d3-selection";
-import {d3Selection} from "types/types";
+import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
 import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isValue, toArray, notEmpty} from "../../module/util";
@@ -127,13 +127,13 @@ export default {
 		const fn = $$.point("update", $$, cx, cy, $$.color, withTransition, flow, selectedCircles);
 		const posAttr = $$.isCirclePoint() ? "c" : "";
 
-		const t = getRandom();
+		const t: any = getRandom();
 		const opacityStyleFn = $$.opacityForCircle.bind($$);
 
-		const mainCircles = [];
+		const mainCircles: any[] = [];
 
 		circle.each(function(d) {
-			let result: d3Selection = fn.bind(this)(d);
+			let result: d3Selection | any = fn.bind(this)(d);
 
 			result = ((withTransition || !rendered) ? result.transition(t) : result)
 				.style("opacity", opacityStyleFn);

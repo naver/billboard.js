@@ -5,7 +5,7 @@
  */
 import {event as d3Event} from "d3-selection";
 import {brushSelection as d3BrushSelection} from "d3-brush";
-import {d3Selection} from "types/types";
+import {d3Selection} from "../../types/types";
 import {document, window} from "./browser";
 import CLASS from "../config/classes";
 
@@ -521,7 +521,7 @@ function tplProcess(tpl: string, data: object): string {
  * @return {Date}
  * @private
  */
-function parseDate(date: Date | string | number): Date {
+function parseDate(date: Date | string | number | any): Date {
 	let parsedDate;
 
 	if (date instanceof Date) {

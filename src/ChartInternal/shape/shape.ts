@@ -33,10 +33,16 @@ export default {
 	 * @private
 	 */
 	getDrawShape() {
+		type SHAPE = {
+			area?: any;
+			bar?: any;
+			line?: any;
+		};
+
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
 		const {hasRadar} = $$.state;
-		const shape = {type: {}, indices: {}, pos: {}};
+		const shape = {type: <SHAPE> {}, indices: <SHAPE> {}, pos: {}};
 
 		// setup drawer - MEMO: these must be called after axis updated
 		if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {

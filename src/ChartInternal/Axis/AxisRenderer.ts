@@ -4,7 +4,7 @@
  * @ignore
  */
 import {select as d3Select} from "d3-selection";
-import {d3Selection} from "types/types";
+import {d3Selection} from "../../../types/types";
 import Helper from "./AxisRendererHelper";
 import {isArray, toArray, isFunction, isString, isNumber} from "../../module/util";
 

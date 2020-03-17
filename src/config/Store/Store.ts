@@ -5,18 +5,17 @@
 import Element from "./Element";
 import State from "./State";
 
+// mapping
 const classes = {
 	element: Element,
 	state: State
 };
 
 export default class Store {
-	private element;
-	private state;
-
 	constructor() {
-		this.element = new Element();
-		this.state = new State();
+		Object.keys(classes).forEach(v => {
+			this[v] = new classes[v]();
+		});
 	}
 
 	getStore(name) {

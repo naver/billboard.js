@@ -138,7 +138,7 @@ export default class ChartInternal {
 	}
 
 	init() {
-		const $$ = this;
+		const $$ = <any> this;
 		const {config, state, $el} = $$;
 
 		state.hasAxis = !$$.hasArcType();
@@ -175,7 +175,7 @@ export default class ChartInternal {
 	 * @private
 	 */
 	initToRender(forced?: boolean) {
-		const $$ = this;
+		const $$ = <any> this;
 		const {config, state, $el: {chart}} = $$;
 		const isHidden = () => chart.style("display") === "none" || chart.style("visibility") === "hidden";
 
@@ -203,8 +203,8 @@ export default class ChartInternal {
 	}
 
 	initParams() {
-		const $$ = this;
-		const {config, format, state} = $$;
+		const $$ = <any> this;
+		const {config, format, state} = <any> $$;
 		const isRotated = config.axis_rotated;
 
 		// datetime to be used for uniqueness
@@ -261,7 +261,7 @@ export default class ChartInternal {
 	}
 
 	initWithData(data) {
-		const $$ = this;
+		const $$ = <any> this;
 		const {
 			config, state, $el,
 			scale: {
@@ -404,16 +404,6 @@ export default class ChartInternal {
 			// Grids
 			$$.initGrid();
 
-			// if zoom privileged, insert rect to forefront
-			// if (config.zoom_enabled) {
-			// 	main.insert("rect", config.zoom_privileged ? null : `g.${CLASS.regions}`)
-			// 		.attr("class", CLASS.zoomRect)
-			// 		.attr("width", $$.state.width)
-			// 		.attr("height", $$.state.height)
-			// 		.style("opacity", "0")
-			// 		.on("dblclick.zoom", null);
-			// }
-
 			// Add Axis here, when clipPath is 'true'
 			config.clipPath && $$.axis && $$.axis.init();
 		}
@@ -453,9 +443,9 @@ export default class ChartInternal {
 	}
 
 	initChartElements() {
-		const $$ = this;
+		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
-		const types = [];
+		const types: string[] = [];
 
 		$$.updateTypes();
 
@@ -544,7 +534,7 @@ export default class ChartInternal {
 	 * @private
 	 */
 	updateTargets(targets) {
-		const $$ = this;
+		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
 
 		// Text
@@ -580,7 +570,7 @@ export default class ChartInternal {
 	 * @private
 	 */
 	showTargets() {
-		const $$ = this;
+		const $$ = <any> this;
 		const {config, $el: {svg}} = $$;
 
 		svg.selectAll(`.${CLASS.target}`)
@@ -621,17 +611,18 @@ export default class ChartInternal {
 	}
 
 	initialOpacity(d) {
-		const {withoutFadeIn} = this.state;
+		const $$ = <any> this;
+		const {withoutFadeIn} = $$.state;
 
-		return this.getBaseValue(d) !== null &&
+		return $$.getBaseValue(d) !== null &&
 			withoutFadeIn[d.id] ? "1" : "0";
 	}
 
 	bindResize() {
-		const $$ = this;
+		const $$ = <any> this;
 		const config = $$.config;
 		const resizeFunction = generateResize();
-		const list = [];
+		const list: Function[] = [];
 
 		list.push(() => callFn(config.onresize, $$, $$.api));
 

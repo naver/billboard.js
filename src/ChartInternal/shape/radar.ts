@@ -311,7 +311,7 @@ export default {
 					target = target.parentNode;
 				}
 
-				const d = d3Select(target).datum();
+				const d: any = d3Select(target).datum();
 
 				return d && Object.keys(d).length === 1 ? d.index : undefined;
 			};

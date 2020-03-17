@@ -121,7 +121,7 @@ export default {
 		// Remove flowed elements
 		if (flowLength) {
 			["circle", "text", "shape", "eventRect"].forEach(v => {
-				const target = [];
+				const target: string[] = [];
 
 				for (let i = 0; i < flowLength; i++) {
 					target.push(`.${CLASS[v]}-${i}`);

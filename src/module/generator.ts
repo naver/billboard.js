@@ -2,27 +2,34 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {window} from "./browser";
 import {isArray} from "./util";
+
+const {setTimeout, clearTimeout} = window;
 
 /**
  * Generate resize queue function
  * @private
  */
-export function generateResize(): Function {
-	const fn = [];
+export function generateResize() {
+	const fn: any[] = [];
 	let timeout;
 
-	function callResizeFn() {
+	const callResizeFn = function() {
 		// Delay all resize functions call, to prevent unintended excessive call from resize event
-		if (timeout) {
-			window.clearTimeout(timeout);
-			timeout = null;
-		}
+		callResizeFn.clear();
 
-		timeout = window.setTimeout(() => {
-			fn.forEach(f => f());
+		timeout = setTimeout(() => {
+			fn.forEach((f: Function) => f());
 		}, 200);
 	}
+
+	callResizeFn.clear = () => {
+		if (timeout) {
+			clearTimeout(timeout);
+			timeout = null;
+		}
+	};
 
 	callResizeFn.add = f => fn.push(f);
 	callResizeFn.remove = f => fn.splice(fn.indexOf(f), 1);
@@ -34,22 +41,22 @@ export function generateResize(): Function {
  * Generate transition queue function
  * @private
  */
-export function generateWait(): Function {
-	let transitionsToWait = [];
+export function generateWait() {
+	let transitionsToWait: any = [];
 	const f = function(t, callback) {
 		let timer;
 
 		function loop() {
 			let done = 0;
 
-			for (let i = 0, t; (t = transitionsToWait[i]); i++) {
-				if (t.empty()) {
+			for (let i = 0, tr; (tr = transitionsToWait[i]); i++) {
+				if (tr.empty()) {
 					done++;
 					continue;
 				}
 
 				try {
-					t.transition();
+					tr.transition();
 				} catch (e) {
 					done++;
 				}

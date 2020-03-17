@@ -316,7 +316,7 @@ export default {
 					.attr(prop.axis, Math.min(start, end))
 					.attr(prop.attr, Math.abs(end - start));
 			})
-			.on("end", function(d) {
+			.on("end", function() {
 				const scale = $$.scale.zoom || $$.scale.x;
 
 				$$.setDragStatus(false);

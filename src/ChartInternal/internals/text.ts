@@ -107,7 +107,7 @@ export default {
 	 */
 	redrawText(x, y, forFlow, withTransition) {
 		const $$ = this;
-		const t = getRandom();
+		const t: any = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [

@@ -157,9 +157,9 @@ export default {
 		const hasMultiArcGauge = $$.hasMultiArcGauge();
 
 		let arc = d3Arc()
-			.outerRadius(d => (
+			.outerRadius((d: any) => (
 				hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : state.radius))
-			.innerRadius(d => (hasMultiArcGauge ?
+			.innerRadius((d: any) => (hasMultiArcGauge ?
 				state.radius - singleArcWidth * (d.index + 1) :
 				isNumber(ir) ? ir : 0));
 

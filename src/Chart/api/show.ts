@@ -100,7 +100,7 @@ export default {
 	 */
 	toggle(targetIds, options = {}) {
 		const $$ = this.internal;
-		const targets = {show: [], hide: []};
+		const targets = {show: <string[]> [], hide: <string[]> []};
 
 		// sort show & hide target ids
 		$$.mapToTargetIds(targetIds)

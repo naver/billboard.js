@@ -8,7 +8,7 @@ import {generateWait} from "../../module/generator";
 import {callFn, getOption, isTabVisible, notEmpty} from "../../module/util";
 
 export default {
-	redraw(options = {}, transitionsValue?) {
+	redraw(options: any = {}, transitionsValue?) {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const {main} = $el;
@@ -167,10 +167,10 @@ export default {
 	},
 
 	getRedrawList(shape, flow, flowFn, isTransition) {
-		const $$ = this;
+		const $$ = <any> this;
 		const {config, state: {hasAxis, hasRadar}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
-		const list = [];
+		const list: Function[] = [];
 
 		if (hasAxis) {
 			const {area, bar, line} = shape.type;
@@ -201,7 +201,7 @@ export default {
 		return list;
 	},
 
-	updateAndRedraw(options = {}) {
+	updateAndRedraw(options: any = {}) {
 		const $$ = this;
 		const {config, state} = $$;
 		let transitions;

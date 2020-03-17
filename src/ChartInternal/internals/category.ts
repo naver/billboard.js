@@ -9,7 +9,7 @@ export default {
 	 * @param {Number} index
 	 * @returns {String} gategory Name
 	 */
-	categoryName(i) {
+	categoryName(i: number): string {
 		const {axis_x_categories: categories} = this.config;
 
 		return i < categories.length ? categories[i] : i;

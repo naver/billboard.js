@@ -2,7 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {SplineTypes} from "../../../../types/types";
 /**
  * x Axis config options
  */
@@ -40,5 +39,5 @@ export default {
 	 *      }
 	 *  }
 	 */
-	spline_interpolation_type: <SplineTypes> "cardinal"
+	spline_interpolation_type: "cardinal"
 };
