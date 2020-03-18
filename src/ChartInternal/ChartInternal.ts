@@ -262,13 +262,7 @@ export default class ChartInternal {
 
 	initWithData(data) {
 		const $$ = <any> this;
-		const {
-			config, state, $el,
-			scale: {
-				x, y, y2, subX, subY, subY2
-			},
-			org
-		} = $$;
+		const {config, scale, state, $el, org} = $$;
 		const {hasAxis} = state;
 
 		// for arc type, set axes to not be shown
@@ -304,6 +298,9 @@ export default class ChartInternal {
 		// Init sizes and scales
 		$$.updateSizes();
 		$$.updateScales(true);
+
+		// retrieve scale after the 'updateScales()' is called
+		const {x, y, y2, subX, subY, subY2} = scale;
 
 		// Set domains for each scale
 		if (x) {
