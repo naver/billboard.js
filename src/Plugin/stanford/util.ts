@@ -11,6 +11,7 @@ import {isEmpty, isFunction, isString, parseDate} from "../../module/util";
  * @param {object} point Point
  * @param {Array} region Region
  * @returns {boolean}
+ * @private
  */
 function pointInRegion(point, region): boolean { // thanks to: http://bl.ocks.org/bycoffe/5575904
 	// ray-casting algorithm based on
@@ -41,6 +42,7 @@ function pointInRegion(point, region): boolean { // thanks to: http://bl.ocks.or
  * @param {object} a Target
  * @param {object} b Source
  * @returns {number}
+ * @private
  */
 function compareEpochs(a, b): number {
 	if (a.epochs < b.epochs) {
@@ -58,6 +60,7 @@ function compareEpochs(a, b): number {
  * Get region area
  * @param {Array} points Points
  * @returns {number}
+ * @private
  */
 function getRegionArea(points): number { // thanks to: https://stackoverflow.com/questions/16282330/find-centerpoint-of-polygon-in-javascript
 	let area = 0;
@@ -80,6 +83,7 @@ function getRegionArea(points): number { // thanks to: https://stackoverflow.com
  * Get centroid
  * @param {Array} points Points
  * @returns {object}
+ * @private
  */
 function getCentroid(points) {
 	const area = getRegionArea(points);

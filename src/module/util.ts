@@ -97,6 +97,7 @@ const isObject = (obj: any): boolean => obj && !obj.nodeType && isObjectType(obj
  * @param {string} key Key value
  * @param {*} defaultValue Default value
  * @returns {*}
+ * @private
  */
 function getOption(options: object, key: string, defaultValue): any {
 	return isDefined(options[key]) ? options[key] : defaultValue;
@@ -107,6 +108,7 @@ function getOption(options: object, key: string, defaultValue): any {
  * @param {object} dict Target object to be checked
  * @param {*} value Value to be checked
  * @returns {boolean}
+ * @private
  */
 function hasValue(dict: object, value: any): boolean {
 	let found = false;
@@ -201,6 +203,7 @@ function setTextValue(
  * Substitution of SVGPathSeg API polyfill
  * @param {SVGGraphicsElement} path Target svg element
  * @returns {Array}
+ * @private
  */
 function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	/*
@@ -224,6 +227,7 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
  * Get svg bounding path box dimension
  * @param {SVGGraphicsElement} path Target svg element
  * @returns {object}
+ * @private
  */
 function getPathBox(
 	path: SVGGraphicsElement
@@ -242,6 +246,7 @@ function getPathBox(
  * Return brush selection array
  * @param {object} $el Selection object
  * @returns {d3.brushSelection}
+ * @private
  */
 function getBrushSelection({$el}) {
 	const event = d3Event;
@@ -264,6 +269,7 @@ function getBrushSelection({$el}) {
  * Cache the evaluated value once it was called.
  * @param {HTMLElement} node Target element
  * @returns {object}
+ * @private
  */
 const getBoundingRect = (node): {
 	left: number, top: number, right: number, bottom: number,
@@ -274,6 +280,7 @@ const getBoundingRect = (node): {
  * Retrun random number
  * @param {boolean} asStr Convert returned value as string
  * @returns {number|string}
+ * @private
  */
 function getRandom(asStr: boolean = true): number | string {
 	const rand = Math.random();
@@ -285,6 +292,7 @@ function getRandom(asStr: boolean = true): number | string {
  * Check if brush is empty
  * @param {object} ctx Bursh context
  * @returns {boolean}
+ * @private
  */
 function brushEmpty(ctx): boolean {
 	const selection = getBrushSelection(ctx);
@@ -304,6 +312,7 @@ function brushEmpty(ctx): boolean {
  * @param {object} target Target object
  * @param {object} source Source object
  * @returns {object}
+ * @private
  */
 function extend(target = {}, source): object {
 	if (isArray(source)) {
