@@ -61,22 +61,22 @@ import {api as apiAxis} from "../config/resolver/axis";
  * chart.$.chart; // wrapper element
  * chart.$.line.circles;  // all data point circle elements
  */
+/**
+ * Plugin instance array
+ * @member {Array} plugins
+ * @memberof Chart
+ * @example
+ *  var chart = bb.generate({
+ *     ...
+ *     plugins: [
+ *        new bb.plugin.stanford({ ... }),
+ *        new PluginA()
+ *     ]
+ *  });
+ *
+ *  chart.plugins; // [Stanford, PluginA] - instance array
+ */
 export default class Chart {
-	/**
-	 * Plugin instance array
-	 * @member {Array} plugins
-	 * @memberof Chart
-	 * @example
-	 *  var chart = bb.generate({
-	 *     ...
-	 *     plugins: [
-	 *        new bb.plugin.stanford({ ... }),
-	 *        new PluginA()
-	 *     ]
-	 *  });
-	 *
-	 *  chart.plugins; // [Stanford, PluginA] - instance array
-	 */
 	public plugins = [];
 	public internal: ChartInternal;
 

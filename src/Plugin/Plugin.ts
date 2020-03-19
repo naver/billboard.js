@@ -6,19 +6,18 @@
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
+/**
+ * Version info string for plugin
+ * @name version
+ * @static
+ * @memberof Plugin
+ * @type {string}
+ * @example
+ *   bb.plugin.stanford.version;  // ex) 1.9.0
+ */
 export default class Plugin {
 	public $$;
 	public options;
-
-	/**
-	 * Version info string for plugin
-	 * @name version
-	 * @static
-	 * @memberof Plugin
-	 * @type {string}
-	 * @example
-	 *   bb.plugin.stanford.version;  // ex) 1.9.0
-	 */
 	static version = "#__VERSION__#";
 
 	/**
