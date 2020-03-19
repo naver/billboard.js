@@ -1132,8 +1132,8 @@ var demos = {
 					data: {
 						x: "x",
 						columns: [
-							["x", "CATEGORY 0000", "CATEGORY 0001", "CATEGORY 0002", "CATEGORY 0003", "CATEGORY 0004", "CATEGORY 0005", "CATEGORY 0006", "CATEGORY 0007", "CATEGORY 0008", "CATEGORY 0009"],
-							["pv", 30, 200, 100, 400, 150, 250, 50, 350, 80, 90],
+							["x", "CATEGORY 0000", "CATEGORY 0001", "CATEGORY 0002", "CATEGORY 0003", "CATEGORY 0004", "CATEGORY 0005"],
+							["pv", 30, 200, 100, 400, 150, 250],
 						],
 						type: "line"
 					},
