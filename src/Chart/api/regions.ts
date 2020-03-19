@@ -5,13 +5,15 @@
 import CLASS from "../../config/classes";
 import {getOption, extend} from "../../module/util";
 
+type regionsParam = {axis?: string, class?: string, start?: number, end?: number}[];
+
 /**
  * Update regions.
- * @method regions
+ * @function regions
  * @instance
  * @memberof Chart
  * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
- * @return {Array} regions
+ * @returns {Array} regions
  * @example
  * // Show 2 regions
  * chart.regions([
@@ -19,7 +21,7 @@ import {getOption, extend} from "../../module/util";
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-function regions(regions: {axis?: string, start?: number, end?: number, class?: string}[]): {}[] {
+function regions(regions: regionsParam): regionsParam {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -37,11 +39,11 @@ extend(regions, {
 	/**
 	 * Add new region.<br><br>
 	 * This API adds new region instead of replacing like regions.
-	 * @method regions․add
+	 * @function regions․add
 	 * @instance
 	 * @memberof Chart
-	 * @param {Array|Object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
-	 * @return {Array} regions
+	 * @param {Array|object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
+	 * @returns {Array} regions
 	 * @example
 	 * // Add a new region
 	 * chart.regions.add(
@@ -54,7 +56,7 @@ extend(regions, {
 	 *    {axis: "y", end: 50, class: "regionY"}
 	 *]);
 	 */
-	add: function(regions) {
+	add: function(regions: regionsParam): regionsParam {
 		const $$ = this.internal;
 		const {config} = $$;
 
@@ -71,11 +73,11 @@ extend(regions, {
 	/**
 	 * Remove regions.<br><br>
 	 * This API removes regions.
-	 * @method regions․remove
+	 * @function regions․remove
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} regions This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
-	 * @return {Array} regions Removed regions
+	 * @param {object} optionsValue This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
+	 * @returns {Array} regions Removed regions
 	 * @example
 	 * // regions that have 'region-A' or 'region-B' will be removed.
 	 * chart.regions.remove({
@@ -87,7 +89,7 @@ extend(regions, {
 	 * // all of regions will be removed.
 	 * chart.regions.remove();
 	 */
-	remove: function(optionsValue) {
+	remove: function(optionsValue: regionsParam): regionsParam {
 		const $$ = this.internal;
 		const {config} = $$;
 

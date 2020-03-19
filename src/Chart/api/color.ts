@@ -5,14 +5,15 @@
 export default {
 	/**
 	 * Get the color
-	 * @method color
+	 * @function color
 	 * @instance
 	 * @memberof Chart
-	 * @param {String} id id to get the color
+	 * @param {string} id id to get the color
+	 * @returns {string}
 	 * @example
 	 * chart.color("data1");
 	 */
-	color(id: string) {
+	color(id: string): string {
 		return this.internal.color(id); // more patterns
 	}
 };

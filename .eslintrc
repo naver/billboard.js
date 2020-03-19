@@ -1,6 +1,7 @@
 {
     "parser": "@typescript-eslint/parser",
     "plugins": [
+        "jsdoc",
         "@typescript-eslint"
     ],
     "env": {
@@ -12,6 +13,7 @@
         //"eslint:recommended",
         // "plugin:@typescript-eslint/eslint-recommended",
         // "plugin:@typescript-eslint/recommended",
+        "plugin:jsdoc/recommended",
         "naver"
     ],
     "ignorePatterns": ["*.js", "node_modules"],
@@ -28,7 +30,7 @@
         "no-useless-escape": 0,
         "no-loop-func": 0,
         "no-use-before-define": 0,
-        "no-console":[
+        "no-console": [
             "error", {
                 "allow": ["error"]
             }
@@ -36,10 +38,19 @@
         "array-element-newline": 0,
         "import/prefer-default-export": 0,
         "no-unused-vars": "off",
-        "@typescript-eslint/no-unused-vars": ["error", {
-            "vars": "all",
-            "args": "after-used",
-            "ignoreRestSiblings": false
-        }]
+        "@typescript-eslint/no-unused-vars": [
+            "error", {
+                "vars": "all",
+                "args": "after-used",
+                "ignoreRestSiblings": false
+            }
+        ],
+
+        // jsdoc rules
+        "jsdoc/newline-after-description": 0,
+        "jsdoc/require-returns-description": 0,
+        "jsdoc/no-undefined-types": 0,
+        "jsdoc/valid-types": 0,
+        "jsdoc/check-values": 0
     }
 }

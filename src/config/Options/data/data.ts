@@ -33,7 +33,7 @@ export default {
 	 * Set custom data name.
 	 * @name data․names
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
 	 * @example
@@ -51,7 +51,7 @@ export default {
 	 * If this option is specified, the element g for the data has an additional class that has the prefix 'bb-target-' (eg. bb-target-additional-data1-class).
 	 * @name data․classes
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @example
 	 * data: {
@@ -84,7 +84,7 @@ export default {
 	 * - step
 	 * @name data․type
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default line
 	 * @example
 	 * data: {
@@ -99,7 +99,7 @@ export default {
 	 * - **NOTE:** `radar` type can't be combined with other types.
 	 * @name data․types
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @example
 	 * data: {
@@ -123,7 +123,7 @@ export default {
 	 *  - `function(data1, data2) { ... }`: Array.sort compareFunction
 	 * @name data․order
 	 * @memberof Options
-	 * @type {String|Function|null}
+	 * @type {string|Function|null}
 	 * @default desc
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
 	 * @example
@@ -170,7 +170,7 @@ export default {
 	 * Set color for each data.
 	 * @name data․colors
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @example
 	 * data: {
@@ -190,7 +190,7 @@ export default {
 	 * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
 	 * @name data․hide
 	 * @memberof Options
-	 * @type {Boolean|Array}
+	 * @type {boolean|Array}
 	 * @default false
 	 * @example
 	 * data: {
@@ -322,7 +322,7 @@ export default {
 	 * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
 	 * @name data․url
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default undefined
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
 	 * @example
@@ -337,7 +337,7 @@ export default {
 	 * - **NOTE:** Should be used with `data.url` option
 	 * @name data․headers
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default undefined
 	 * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
 	 * @example
@@ -491,7 +491,7 @@ export default {
 	 *   - tsv
 	 * @name data․mimeType
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default csv
 	 * @example
 	 * data: {
@@ -505,7 +505,7 @@ export default {
 	 * - **NOTE:** Only for JSON object given as array.
 	 * @name data․keys
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default undefined
 	 * @example
 	 * data: {
@@ -528,7 +528,7 @@ export default {
 	 * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
 	 * @name data․empty․label․text
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default ""
 	 * @example
 	 * data: {

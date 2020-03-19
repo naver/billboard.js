@@ -15,25 +15,25 @@ import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isValue,
 const getTransitionName = () => getRandom();
 
 export default {
-	hasValidPointType(type) {
+	hasValidPointType(type?: string): boolean {
 		return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
 	},
 
-	hasValidPointDrawMethods(type) {
+	hasValidPointDrawMethods(type?: string): boolean {
 		const pointType = type || this.config.point_type;
 
 		return isObjectType(pointType) &&
 			isFunction(pointType.create) && isFunction(pointType.update);
 	},
 
-	initialOpacityForCircle(d) {
+	initialOpacityForCircle(d): "1" | "0" {
 		const {withoutFadeIn} = this.state;
 
 		return this.getBaseValue(d) !== null &&
 			withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
 	},
 
-	opacityForCircle(d) {
+	opacityForCircle(d): "0.5" | "1" | "0" {
 		const opacity = this.config.point_show ? "1" : "0";
 
 		return isValue(this.getBaseValue(d)) ?
@@ -41,7 +41,7 @@ export default {
 				"0.5" : opacity) : "0";
 	},
 
-	initCircle() {
+	initCircle(): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 
@@ -54,7 +54,7 @@ export default {
 		}
 	},
 
-	updateTargetForCircle(t) {
+	updateTargetForCircle(t): void {
 		const $$ = this;
 		const {config, data, $el} = $$;
 		const targets = t || data.targets;
@@ -90,7 +90,7 @@ export default {
 		});
 	},
 
-	updateCircle() {
+	updateCircle(): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -115,7 +115,7 @@ export default {
 			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 
-	redrawCircle(cx, cy, withTransition, flow) {
+	redrawCircle(cx: number, cy: number, withTransition: boolean, flow) {
 		const $$ = this;
 		const {state: {rendered}, $el: {circle, main}} = $$;
 		const selectedCircles = main.selectAll(`.${CLASS.selectedCircle}`);
@@ -149,7 +149,7 @@ export default {
 		];
 	},
 
-	circleX(d) {
+	circleX(d): number | null {
 		const $$ = this;
 		const {x, zoom} = $$.scale;
 		const hasValue = isValue(d.x);
@@ -159,7 +159,7 @@ export default {
 			(hasValue ? x(d.x) : null);
 	},
 
-	updateCircleY() {
+	updateCircleY(): void {
 		const $$ = this;
 		const getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
 
@@ -172,7 +172,7 @@ export default {
 		};
 	},
 
-	getCircles(i, id) {
+	getCircles(i: number, id: string) {
 		const $$ = this;
 		const suffix = (isValue(i) ? `-${i}` : ``);
 
@@ -180,7 +180,7 @@ export default {
 			.selectAll(`.${CLASS.circle}${suffix}`);
 	},
 
-	expandCircles(i, id, reset) {
+	expandCircles(i: number, id: string, reset?: boolean): void {
 		const $$ = this;
 		const r = $$.pointExpandedR.bind($$);
 
@@ -210,7 +210,7 @@ export default {
 		}
 	},
 
-	unexpandCircles(i) {
+	unexpandCircles(i): void {
 		const $$ = this;
 		const r = $$.pointR.bind($$);
 
@@ -226,7 +226,7 @@ export default {
 			circles.attr("transform", `scale(${r(circles) / $$.config.point_r})`);
 	},
 
-	pointR(d) {
+	pointR(d): number {
 		const $$ = this;
 		const {config} = $$;
 		const pointR = config.point_r;
@@ -243,7 +243,7 @@ export default {
 		return r;
 	},
 
-	pointExpandedR(d) {
+	pointExpandedR(d): number {
 		const $$ = this;
 		const {config} = $$;
 		const scale = $$.isBubbleType(d) ? 1.15 : 1.75;
@@ -252,7 +252,7 @@ export default {
 			(config.point_focus_expand_r || $$.pointR(d) * scale) : $$.pointR(d);
 	},
 
-	pointSelectR(d) {
+	pointSelectR(d): number {
 		const $$ = this;
 		const selectR = $$.config.point_select_r;
 
@@ -260,7 +260,7 @@ export default {
 			selectR(d) : (selectR || $$.pointR(d) * 4);
 	},
 
-	isWithinCircle(node, r) {
+	isWithinCircle(node, r?: number): boolean {
 		const mouse = d3Mouse(node);
 		const element = d3Select(node);
 		const prefix = this.isCirclePoint() ? "c" : "";
@@ -281,7 +281,7 @@ export default {
 		) < (r || this.config.point_sensitivity);
 	},
 
-	insertPointInfoDefs(point, id) {
+	insertPointInfoDefs(point, id: string): void {
 		const $$ = this;
 		const copyAttr = (from, target) => {
 			const attribs = from.attributes;
@@ -317,7 +317,7 @@ export default {
 		$$.$el.defs.node().appendChild(clone);
 	},
 
-	pointFromDefs(id) {
+	pointFromDefs(id: string) {
 		return this.$el.defs.select(`#${id}`);
 	},
 
@@ -342,7 +342,7 @@ export default {
 		return pointClass;
 	},
 
-	generatePoint() {
+	generatePoint(): Function {
 		const $$ = this;
 		const {config, state: {datetimeId}} = $$;
 		const ids: string[] = [];

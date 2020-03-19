@@ -10,13 +10,14 @@ export default {
 	 * Tooltip options
 	 * @name tooltip
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
-	 * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
-	 * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
+	 * @type {object}
+	 * @property {object} tooltip Tooltip object
+	 * @property {boolean} [tooltip.show=true] Show or hide tooltip.
+	 * @property {boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
+	 * @property {boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
 	 *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
-	 * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
-	 * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
+	 * @property {boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
+	 * @property {string} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
 	 * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
 	 *  Specified function receives x of the data point to show.
 	 * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
@@ -26,11 +27,11 @@ export default {
 	 *  If undefined returned, the row of that value will be skipped.
 	 * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
 	 *  This option can be used to modify the tooltip position by returning object that has top and left.
-	 * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
+	 * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
 	 *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
-	 * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
+	 * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
 	 *  - **NOTE:** When is specified, will not be updating tooltip's position.
-	 * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+	 * @property {string} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
 	 *  Within template, below syntax will be replaced using template-like syntax string:
 	 *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
 	 *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
@@ -38,18 +39,18 @@ export default {
 	 *    - **{=TITLE}**: title value.
 	 *    - **{=COLOR}**: data color.
 	 *    - **{=VALUE}**: data value.
-	 * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
+	 * @property {object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
 	 *  - **NOTE:** It should contain `{ key: Array, ... }` value
 	 *    - 'key' name is used as substitution within template as '{=KEY}'
 	 *    - The value array length should match with the data length
-	 * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
-	 * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
-	 * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
+	 * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
+	 * @property {number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
+	 * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
 	 * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
 	 * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
 	 * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
 	 * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
-	 * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
+	 * @property {string|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
 	 *  **Available Values:**
 	 *  - `desc`: In descending data value order
 	 *  - `asc`: In ascending data value order

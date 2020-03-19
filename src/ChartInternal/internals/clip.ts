@@ -5,7 +5,7 @@
 import {document, window} from "../../module/browser";
 
 export default {
-	initClip() {
+	initClip(): void {
 		const $$ = this;
 		const {clip} = $$.state;
 
@@ -22,7 +22,7 @@ export default {
 		clip.pathGrid = $$.getClipPath(clip.idGrid);
 	},
 
-	getClipPath(id) {
+	getClipPath(id: string): string | null {
 		const $$ = this;
 		const {config} = $$;
 
@@ -39,13 +39,13 @@ export default {
 		return `url(${(isIE9 ? "" : document.URL.split("#")[0])}#${id})`;
 	},
 
-	appendClip(parent, id): void {
+	appendClip(parent, id: string): void {
 		id && parent.append("clipPath")
 			.attr("id", id)
 			.append("rect");
 	},
 
-	getAxisClipX(forHorizontal) {
+	getAxisClipX(forHorizontal?: boolean): number {
 		const {margin} = this.state;
 		// axis line width + padding for left
 		const left = Math.max(30, margin.left);
@@ -53,38 +53,38 @@ export default {
 		return forHorizontal ? -(1 + left) : -(left - 1);
 	},
 
-	getAxisClipY(forHorizontal) {
+	getAxisClipY(forHorizontal?: boolean): number {
 		const {margin} = this.state;
 
 		return forHorizontal ? -20 : -margin.top;
 	},
 
-	getXAxisClipX() {
+	getXAxisClipX(): number {
 		const $$ = this;
 
 		return $$.getAxisClipX(!$$.config.axis_rotated);
 	},
 
-	getXAxisClipY() {
+	getXAxisClipY(): number {
 		const $$ = this;
 
 		return $$.getAxisClipY(!$$.config.axis_rotated);
 	},
 
-	getYAxisClipX() {
+	getYAxisClipX(): number {
 		const $$ = this;
 
 		return $$.config.axis_y_inner ?
 			-1 : $$.getAxisClipX($$.config.axis_rotated);
 	},
 
-	getYAxisClipY() {
+	getYAxisClipY(): number {
 		const $$ = this;
 
 		return $$.getAxisClipY($$.config.axis_rotated);
 	},
 
-	getAxisClipWidth(forHorizontal) {
+	getAxisClipWidth(forHorizontal?: boolean): number {
 		const $$ = this;
 		const {margin, width} = $$.state;
 		const left = Math.max(30, margin.left);
@@ -95,38 +95,38 @@ export default {
 			width + 2 + left + right : margin.left + 20;
 	},
 
-	getAxisClipHeight(forHorizontal) {
+	getAxisClipHeight(forHorizontal?: boolean): void {
 		const {margin, height} = this.state;
 
 		// less than 20 is not enough to show the axis label 'outer' without legend
 		return (forHorizontal ? margin.bottom : (margin.top + height)) + 20;
 	},
 
-	getXAxisClipWidth() {
+	getXAxisClipWidth(): number {
 		const $$ = this;
 
 		return $$.getAxisClipWidth(!$$.config.axis_rotated);
 	},
 
-	getXAxisClipHeight() {
+	getXAxisClipHeight(): number {
 		const $$ = this;
 
 		return $$.getAxisClipHeight(!$$.config.axis_rotated);
 	},
 
-	getYAxisClipWidth() {
+	getYAxisClipWidth(): number {
 		const $$ = this;
 
 		return $$.getAxisClipWidth($$.config.axis_rotated) + ($$.config.axis_y_inner ? 20 : 0);
 	},
 
-	getYAxisClipHeight() {
+	getYAxisClipHeight(): number {
 		const $$ = this;
 
 		return $$.getAxisClipHeight($$.config.axis_rotated);
 	},
 
-	updateXAxisTickClip() {
+	updateXAxisTickClip(): void {
 		const $$ = this;
 		const {clip} = $$.state;
 		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
@@ -145,7 +145,7 @@ export default {
 		$$.xAxisHeight = newXAxisHeight;
 	},
 
-	setXAxisTickClipWidth() {
+	setXAxisTickClipWidth(): void {
 		const $$ = this;
 		const {config, state: {currentMaxTickWidths}} = $$;
 
@@ -160,7 +160,7 @@ export default {
 		}
 	},
 
-	setXAxisTickTextClipPathWidth() {
+	setXAxisTickTextClipPathWidth(): void {
 		const $$ = this;
 		const {state: {clip, currentMaxTickWidths}, $el: {svg}} = $$;
 

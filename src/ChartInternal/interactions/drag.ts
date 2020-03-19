@@ -12,9 +12,9 @@ export default {
 	 * Called when dragging.
 	 * Data points can be selected.
 	 * @private
-	 * @param {Object} mouse Object
+	 * @param {object} mouse Object
 	 */
-	drag(mouse) {
+	drag(mouse): void {
 		const $$ = this;
 		const {config, state, $el: {main}} = $$;
 
@@ -81,9 +81,9 @@ export default {
 	 * Called when the drag starts.
 	 * Adds and Shows the drag area.
 	 * @private
-	 * @param {Object} mouse Object
+	 * @param {object} mouse Object
 	 */
-	dragstart(mouse) {
+	dragstart(mouse): void {
 		const $$ = this;
 		const {config, state, $el: {main}} = $$;
 
@@ -106,7 +106,7 @@ export default {
 	 * Removes the drag area.
 	 * @private
 	 */
-	dragend() {
+	dragend(): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 
@@ -126,7 +126,7 @@ export default {
 		$$.setDragStatus(false);
 	},
 
-	setDragStatus(isDragging) {
+	setDragStatus(isDragging: boolean): void {
 		this.dragging = isDragging;
 	}
 };

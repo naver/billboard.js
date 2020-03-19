@@ -10,7 +10,7 @@ export default {
 	 * Initializer
 	 * @private
 	 */
-	initBubble() {
+	initBubble(): void {
 		const $$ = this;
 		const {config} = $$;
 
@@ -24,10 +24,10 @@ export default {
 	/**
 	 * Get user agent's computed value for the total length of the path in user units
 	 * https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/getTotalLength
-	 * @return {Number}
+	 * @returns {number}
 	 * @private
 	 */
-	getBaseLength() {
+	getBaseLength(): number {
 		const $$ = this;
 		const {axis} = $$.$el;
 		const cacheKey = KEY.bubbleBaseLength;
@@ -47,11 +47,11 @@ export default {
 
 	/**
 	 * Get the radius value for bubble circle
-	 * @param {Object} d
-	 * @return {Number}
+	 * @param {object} d Data object
+	 * @returns {number}
 	 * @private
- 	 */
-	getBubbleR(d) {
+	 */
+	getBubbleR(d): number {
 		const $$ = this;
 		let maxR = $$.config.bubble_maxR;
 
@@ -75,22 +75,22 @@ export default {
 
 	/**
 	 * Get bubble dimension data
-	 * @param {Object|Array} d data value
-	 * @param {String} type - y or z
-	 * @return {Number}
+	 * @param {object|Array} d data value
+	 * @param {string} type - y or z
+	 * @returns {number}
 	 * @private
 	 */
-	getBubbleZData(d, type) {
+	getBubbleZData(d, type: "y" | "z"): number {
 		return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
 	},
 
 	/**
 	 * Determine if bubble has dimension data
-	 * @param {Object|array} d data value
-	 * @return {Boolean}
+	 * @param {object|Array} d data value
+	 * @returns {boolean}
 	 * @private
 	 */
-	isBubbleZType(d) {
+	isBubbleZType(d): boolean {
 		const $$ = this;
 
 		return $$.isBubbleType(d) && (

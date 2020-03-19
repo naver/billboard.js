@@ -3,10 +3,12 @@
  * billboard.js project is licensed under the MIT license
  */
 import {toArray} from "./util";
+import {DataRow} from "../../types/types";
 
 /**
  * Constant for cache key
  * - NOTE: Prefixed with '$', will be resetted when .load() is called
+ * @private
  */
 export const KEY = {
 	bubbleBaseLength: "$baseLength",
@@ -24,9 +26,10 @@ export default class Cache {
 
 	/**
 	 * Add cache
-	 * @param {String} key
-	 * @param {*} value
-	 * @param {Boolean} isDataType
+	 * @param {string} key Cache key
+	 * @param {*} value Value to be stored
+	 * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
+	 * @returns {*} Added data value
 	 * @private
 	 */
 	add(key: string, value, isDataType = false) {
@@ -36,7 +39,7 @@ export default class Cache {
 
 	/**
 	 * Remove cache
-	 * @param {String|Array} key
+	 * @param {string|Array} key Cache key
 	 * @private
 	 */
 	remove(key: string | string[]) {
@@ -45,12 +48,12 @@ export default class Cache {
 
 	/**
 	 * Get cahce
-	 * @param {String|Array} key
-	 * @param {Boolean} isDataType
-	 * @return {*}
+	 * @param {string|Array} key Cache key
+	 * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
+	 * @returns {*}
 	 * @private
 	 */
-	get(key, isDataType = false) {
+	get(key: string, isDataType = false): any | null {
 		if (isDataType) {
 			const targets: any[] = [];
 
@@ -67,11 +70,11 @@ export default class Cache {
 	}
 
 	/**
-	 * reset cached data
-	 * @param {Boolean} all true: reset all data, false: reset only '$' prefixed key data
+	 * Reset cached data
+	 * @param {boolean} all true: reset all data, false: reset only '$' prefixed key data
 	 * @private
- 	 */
-	reset(all?: boolean) {
+	 */
+	reset(all?: boolean): void {
 		const $$ = this;
 
 		for (const x in $$.cache) {
@@ -82,7 +85,14 @@ export default class Cache {
 		}
 	}
 
-	cloneTarget(target) {
+	/**
+	 * Clone data target object
+	 * @param {object} target Data object
+	 * @returns {object}
+	 * @private
+	 */
+	// eslint-disable-next-line camelcase
+	cloneTarget(target: DataRow): DataRow {
 		return {
 			id: target.id,
 			id_org: target.id_org,

@@ -60,7 +60,7 @@ export default class State {
 			},
 
 			currentMaxTickWidths: {
-				x: {size: 0, ticks: [], clipPath: 0, domain: ""},
+				x: {size: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
 				y: {size: 0, domain: ""},
 				y2: {size: 0, domain: ""}
 			},
@@ -104,13 +104,13 @@ export default class State {
 			orgAreaOpacity: "0.2",
 
 			// current used chart type list
-			currentTypes: [],
+			currentTypes: <string[]> [],
 
 			// ID strings
-			hiddenTargetIds: [],
-			hiddenLegendIds: [],
-			focusedTargetIds: [],
-			defocusedTargetIds: [],
+			hiddenTargetIds: <string[]> [],
+			hiddenLegendIds: <string[]> [],
+			focusedTargetIds: <string[]> [],
+			defocusedTargetIds: <string[]> [],
 
 			// value for Arc
 			radius: 0,
@@ -121,10 +121,10 @@ export default class State {
 
 			// xgrid attribute
 			xgridAttr: {
-				x1: null,
-				x2: null,
-				y1: null,
-				y2: null
+				x1: <number | null> null,
+				x2: <number | null> null,
+				y1: <number | null> null,
+				y2: <number | null> null
 			}
 		};
 	}

@@ -7,11 +7,11 @@ import {isUndefined} from "../../module/util";
 export default {
 	/**
 	 * Update groups for the targets.
-	 * @method groups
+	 * @function groups
 	 * @instance
 	 * @memberof Chart
 	 * @param {Array} groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
-	 * @return {Array} Grouped data names array
+	 * @returns {Array} Grouped data names array
 	 * @example
 	 *  // data1 and data2 will be a new group.
 	 *  chart.groups([

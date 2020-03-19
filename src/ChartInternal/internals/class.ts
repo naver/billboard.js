@@ -5,27 +5,27 @@
 import CLASS from "../../config/classes";
 
 export default {
-	generateClass(prefix, targetId) {
+	generateClass(prefix: string, targetId: string): string {
 		return ` ${prefix} ${prefix + this.getTargetSelectorSuffix(targetId)}`;
 	},
 
-	classText(d) {
+	classText(d): string {
 		return this.generateClass(CLASS.text, d.index);
 	},
 
-	classTexts(d) {
+	classTexts(d): string {
 		return this.generateClass(CLASS.texts, d.id);
 	},
 
-	classShape(d) {
+	classShape(d): string {
 		return this.generateClass(CLASS.shape, d.index);
 	},
 
-	classShapes(d) {
+	classShapes(d): string {
 		return this.generateClass(CLASS.shapes, d.id);
 	},
 
-	generateExtraLineClass() {
+	generateExtraLineClass(): Function {
 		const $$ = this;
 		const classes = $$.config.line_classes || [];
 		const ids: string[] = [];
@@ -41,47 +41,47 @@ export default {
 		};
 	},
 
-	classLine(d) {
+	classLine(d): string {
 		return this.classShape(d) + this.generateClass(CLASS.line, d.id);
 	},
 
-	classLines(d) {
+	classLines(d): string {
 		return this.classShapes(d) + this.generateClass(CLASS.lines, d.id);
 	},
 
-	classCircle(d) {
+	classCircle(d): string {
 		return this.classShape(d) + this.generateClass(CLASS.circle, d.index);
 	},
 
-	classCircles(d) {
+	classCircles(d): string {
 		return this.classShapes(d) + this.generateClass(CLASS.circles, d.id);
 	},
 
-	classBar(d) {
+	classBar(d): string {
 		return this.classShape(d) + this.generateClass(CLASS.bar, d.index);
 	},
 
-	classBars(d) {
+	classBars(d): string {
 		return this.classShapes(d) + this.generateClass(CLASS.bars, d.id);
 	},
 
-	classArc(d) {
+	classArc(d): string {
 		return this.classShape(d.data) + this.generateClass(CLASS.arc, d.data.id);
 	},
 
-	classArcs(d) {
+	classArcs(d): string {
 		return this.classShapes(d.data) + this.generateClass(CLASS.arcs, d.data.id);
 	},
 
-	classArea(d) {
+	classArea(d): string {
 		return this.classShape(d) + this.generateClass(CLASS.area, d.id);
 	},
 
-	classAreas(d) {
+	classAreas(d): string {
 		return this.classShapes(d) + this.generateClass(CLASS.areas, d.id);
 	},
 
-	classRegion(d, i) {
+	classRegion(d, i: number): string {
 		return `${this.generateClass(CLASS.region, i)} ${"class" in d ? d.class : ""}`;
 	},
 
@@ -89,7 +89,7 @@ export default {
 		return this.generateClass(CLASS.eventRect, d.index);
 	},
 
-	classTarget(id) {
+	classTarget(id: string): string {
 		const additionalClassSuffix = this.config.data_classes[id];
 		let additionalClass = "";
 
@@ -100,44 +100,44 @@ export default {
 		return this.generateClass(CLASS.target, id) + additionalClass;
 	},
 
-	classFocus(d) {
+	classFocus(d): string {
 		return this.classFocused(d) + this.classDefocused(d);
 	},
 
-	classFocused(d) {
+	classFocused(d): string {
 		return ` ${this.state.focusedTargetIds.indexOf(d.id) >= 0 ? CLASS.focused : ""}`;
 	},
 
-	classDefocused(d) {
+	classDefocused(d): string {
 		return ` ${this.state.defocusedTargetIds.indexOf(d.id) >= 0 ? CLASS.defocused : ""}`;
 	},
 
-	classChartText(d) {
+	classChartText(d): string {
 		return CLASS.chartText + this.classTarget(d.id);
 	},
 
-	classChartLine(d) {
+	classChartLine(d): string {
 		return CLASS.chartLine + this.classTarget(d.id);
 	},
 
-	classChartBar(d) {
+	classChartBar(d): string {
 		return CLASS.chartBar + this.classTarget(d.id);
 	},
 
-	classChartArc(d) {
+	classChartArc(d): string {
 		return CLASS.chartArc + this.classTarget(d.data.id);
 	},
 
-	classChartRadar(d) {
+	classChartRadar(d): string {
 		return CLASS.chartRadar + this.classTarget(d.id);
 	},
 
-	getTargetSelectorSuffix(targetId) {
+	getTargetSelectorSuffix(targetId?: string | number): string {
 		return targetId || targetId === 0 ?
 			`-${targetId}`.replace(/[\s?!@#$%^&*()_=+,.<>'":;\[\]\/|~`{}\\]/g, "-") : "";
 	},
 
-	selectorTarget(id, prefix) {
+	selectorTarget(id: string, prefix?: string): string {
 		const pfx = prefix || "";
 		const target = this.getTargetSelectorSuffix(id);
 
@@ -145,7 +145,7 @@ export default {
 		return `${pfx}.${CLASS.target + target}, ${pfx}.${CLASS.circles + target}`;
 	},
 
-	selectorTargets(idsValue, prefix) {
+	selectorTargets(idsValue, prefix: string): string[] | null {
 		const $$ = this;
 		const ids = idsValue || [];
 
@@ -153,11 +153,11 @@ export default {
 			ids.map(id => $$.selectorTarget(id, prefix)) : null;
 	},
 
-	selectorLegend(id) {
+	selectorLegend(id: string): string {
 		return `.${CLASS.legendItem + this.getTargetSelectorSuffix(id)}`;
 	},
 
-	selectorLegends(ids) {
+	selectorLegends(ids): string[] | null {
 		const $$ = this;
 
 		return ids && ids.length ?

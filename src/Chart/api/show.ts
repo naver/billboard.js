@@ -6,9 +6,12 @@ import {endall} from "../../module/util";
 
 /**
  * Show/Hide data series
+ * @param {boolean} show Show or hide
+ * @param {Array} targetIdsValue Target id values
+ * @param {object} options Options
  * @private
  */
-function showHide(show, targetIdsValue, options) {
+function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
 
@@ -35,15 +38,15 @@ function showHide(show, targetIdsValue, options) {
 export default {
 	/**
 	 * Show data series on chart
-	 * @method show
+	 * @function show
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} [targetIdsValue] The target id value.
-	 * @param {Object} [options] The object can consist with following members:<br>
+	 * @param {string|Array} [targetIdsValue] The target id value.
+	 * @param {object} [options] The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | default | Description |
 	 *    | --- | --- | --- | --- |
-	 *    | withLegend | Boolean | false | whether or not display legend |
+	 *    | withLegend | boolean | false | whether or not display legend |
 	 *
 	 * @example
 	 * // show 'data1'
@@ -52,21 +55,21 @@ export default {
 	 * // show 'data1' and 'data3'
 	 * chart.show(["data1", "data3"]);
 	 */
-	show(targetIdsValue?: string[] | string, options = {}) {
+	show(targetIdsValue?: string[] | string, options = {}): void {
 		showHide.call(this, true, targetIdsValue, options);
 	},
 
 	/**
 	 * Hide data series from chart
-	 * @method hide
+	 * @function hide
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} [targetIdsValue=all] The target id value.
-	 * @param {Object} [options] The object can consist with following members:<br>
+	 * @param {string|Array} [targetIdsValue] The target id value.
+	 * @param {object} [options] The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | default | Description |
 	 *    | --- | --- | --- | --- |
-	 *    | withLegend | Boolean | false | whether or not display legend |
+	 *    | withLegend | boolean | false | whether or not display legend |
 	 *
 	 * @example
 	 * // hide 'data1'
@@ -75,21 +78,21 @@ export default {
 	 * // hide 'data1' and 'data3'
 	 * chart.hide(["data1", "data3"]);
 	 */
-	hide(targetIdsValue, options = {}) {
+	hide(targetIdsValue?: string[], options = {}): void {
 		showHide.call(this, false, targetIdsValue, options);
 	},
 
 	/**
 	 * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
-	 * @method toggle
+	 * @function toggle
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} [targetIdsValue=all] The target id value.
-	 * @param {Object} [options] The object can consist with following members:<br>
+	 * @param {string|Array} [targetIds] The target id value.
+	 * @param {object} [options] The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | default | Description |
 	 *    | --- | --- | --- | --- |
-	 *    | withLegend | Boolean | false | whether or not display legend |
+	 *    | withLegend | boolean | false | whether or not display legend |
 	 *
 	 * @example
 	 * // toggle 'data1'
@@ -98,7 +101,7 @@ export default {
 	 * // toggle 'data1' and 'data3'
 	 * chart.toggle(["data1", "data3"]);
 	 */
-	toggle(targetIds, options = {}) {
+	toggle(targetIds: string|string[], options = {}): void {
 		const $$ = this.internal;
 		const targets = {show: <string[]> [], hide: <string[]> []};
 

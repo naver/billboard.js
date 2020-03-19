@@ -11,11 +11,11 @@ export default {
 	/**
 	 * Get selected data points.<br><br>
 	 * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
-	 * @method selected
+	 * @function selected
 	 * @instance
 	 * @memberof Chart
-	 * @param {String} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
-	 * @return {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
+	 * @param {string} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
+	 * @returns {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
 	 * @example
 	 *  // all selected data points will be returned.
 	 *  chart.selected();
@@ -40,12 +40,12 @@ export default {
 
 	/**
 	 * Set data points to be selected. (`[data.selection.enabled](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)`
-	 * @method select
+	 * @function select
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} [ids] id value to get selected.
+	 * @param {string|Array} [ids] id value to get selected.
 	 * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
-	 * @param {Boolean} [resetOther] Unselect already selected.
+	 * @param {boolean} [resetOther] Unselect already selected.
 	 * @example
 	 *  // select all data points
 	 *  chart.select();
@@ -62,7 +62,7 @@ export default {
 	 *  // select from 'data1', indices 0, 3 and 5
 	 *  chart.select("data1", [0, 3, 5]);
 	 */
-	select(ids?: string[] | string, indices?: number[], resetOther?: boolean) {
+	select(ids?: string[] | string, indices?: number[], resetOther?: boolean): void {
 		const $$ = this.internal;
 		const {config, $el} = $$;
 
@@ -97,10 +97,10 @@ export default {
 
 	/**
 	 * Set data points to be un-selected.
-	 * @method unselect
+	 * @function unselect
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} [ids] id value to be unselected.
+	 * @param {string|Array} [ids] id value to be unselected.
 	 * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
 	 * @example
 	 *  // unselect all data points
@@ -112,7 +112,7 @@ export default {
 	 *  // unselect from 'data1', indices 2
 	 *  chart.unselect("data1", [2]);
 	 */
-	unselect(ids?: string | string[], indices?: number[]) {
+	unselect(ids?: string | string[], indices?: number[]): void {
 		const $$ = this.internal;
 		const {config, $el} = $$;
 

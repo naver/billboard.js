@@ -6,8 +6,8 @@
  * Bubble compare plugin option class
  * @class BubblecompareOptions
  * @param {Options} options Bubblecompare plugin options
- * @extends Plugin
- * @return {BubblecompareOptions}
+ * @augments Plugin
+ * @returns {BubblecompareOptions}
  * @private
  */
 export default class Options {
@@ -43,7 +43,7 @@ export default class Options {
 			 * @default 1
 			 * @example
 			 *   expandScale: 1.2
-			*/
+			 */
 			expandScale: 1
 		};
 	}

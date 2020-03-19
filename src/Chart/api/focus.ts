@@ -5,14 +5,16 @@
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../config/classes";
 
+type focusParam = string | string[];
+
 export default {
 	/**
 	 * This API highlights specified targets and fade out the others.<br><br>
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
-	 * @method focus
+	 * @function focus
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} targetIdsValue Target ids to be highlighted.
+	 * @param {string|Array} targetIdsValue Target ids to be highlighted.
 	 * @example
 	 *  // data1 will be highlighted and the others will be faded out
 	 *  chart.focus("data1");
@@ -23,7 +25,7 @@ export default {
 	 * // all targets will be highlighted
 	 * chart.focus();
 	 */
-	focus(targetIdsValue?: string | string[]) {
+	focus(targetIdsValue?: focusParam): void {
 		const $$ = this.internal;
 		const {state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -52,10 +54,10 @@ export default {
 	/**
 	 * This API fades out specified targets and reverts the others.<br><br>
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
-	 * @method defocus
+	 * @function defocus
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} Target ids to be faded out.
+	 * @param {string|Array} targetIdsValue Target ids to be faded out.
 	 * @example
 	 * // data1 will be faded out and the others will be reverted.
 	 * chart.defocus("data1");
@@ -66,7 +68,7 @@ export default {
 	 * // all targets will be faded out.
 	 * chart.defocus();
 	 */
-	defocus(targetIdsValue?: string | string[]) {
+	defocus(targetIdsValue?: focusParam): void {
 		const $$ = this.internal;
 		const {state} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);
@@ -92,10 +94,10 @@ export default {
 	/**
 	 * This API reverts specified targets.<br><br>
 	 * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
-	 * @method revert
+	 * @function revert
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} Target ids to be reverted
+	 * @param {string|Array} targetIdsValue Target ids to be reverted
 	 * @example
 	 * // data1 will be reverted.
 	 * chart.revert("data1");
@@ -106,7 +108,7 @@ export default {
 	 * // all targets will be reverted.
 	 * chart.revert();
 	 */
-	revert(targetIdsValue?: string | string[]) {
+	revert(targetIdsValue?: focusParam): void {
 		const $$ = this.internal;
 		const {config, state, $el} = $$;
 		const targetIds = $$.mapToTargetIds(targetIdsValue);

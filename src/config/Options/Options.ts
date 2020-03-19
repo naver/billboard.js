@@ -65,9 +65,9 @@ export default class Options {
 			 * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
 			 * @name bindto
 			 * @memberof Options
-			 * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.
-			 * @property {String|HTMLElement|d3.selection} bindto.element=#chart Specify the element where chart will be drawn.
-			 * @property {String} [bindto.classname=bb] Specify the class name of bind element.<br>
+			 * @property {string|HTMLElement|d3.selection|object} [bindto="#chart"] Specify the element where chart will be drawn.
+			 * @property {string|HTMLElement|d3.selection} bindto.element="#chart" Specify the element where chart will be drawn.
+			 * @property {string} [bindto.classname=bb] Specify the class name of bind element.<br>
 			 *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
 			 * @default #chart
 			 * @example
@@ -91,9 +91,10 @@ export default class Options {
 			 * Set chart background.
 			 * @name background
 			 * @memberof Options
-			 * @property {String} background.class Specify the class name for background element.
-			 * @property {String} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
-			 * @property {String} background.imgUrl Specify the image url string for background.
+			 * @property {object} background background object
+			 * @property {string} background.class Specify the class name for background element.
+			 * @property {string} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
+			 * @property {string} background.imgUrl Specify the image url string for background.
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
 			 * @example
 			 * background: {
@@ -114,7 +115,7 @@ export default class Options {
 			 *  > Is to make chart element positioned over axis element.
 			 * @name clipPath
 			 * @memberof Options
-			 * @type {Boolean}
+			 * @type {boolean}
 			 * @default true
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
 			 * @example
@@ -127,11 +128,12 @@ export default class Options {
 			 * Set svg element's class name
 			 * @name svg
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {String} [svg.classname] class name for svg element
+			 * @type {object}
+			 * @property {object} [svg] svg object
+			 * @property {string} [svg.classname] class name for svg element
 			 * @example
 			 * svg: {
-             *   classname: "test_class"
+			 *   classname: "test_class"
 			 * }
 			 */
 			svg_classname: <string|undefined> undefined,
@@ -141,14 +143,15 @@ export default class Options {
 			 * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
 			 * @name size
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {Number} [size.width] width of the chart element
-			 * @property {Number} [size.height] height of the chart element
+			 * @type {object}
+			 * @property {object} [size] size object
+			 * @property {number} [size.width] width of the chart element
+			 * @property {number} [size.height] height of the chart element
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.ChartSize)
 			 * @example
 			 * size: {
-             *   width: 640,
-             *   height: 480
+			 *   width: 640,
+			 *   height: 480
 			 * }
 			 */
 			size_width: <number|undefined> undefined,
@@ -158,17 +161,18 @@ export default class Options {
 			 * The padding of the chart element.
 			 * @name padding
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {Number} [padding.top] padding on the top of chart
-			 * @property {Number} [padding.right] padding on the right of chart
-			 * @property {Number} [padding.bottom] padding on the bottom of chart
-			 * @property {Number} [padding.left] padding on the left of chart
+			 * @type {object}
+			 * @property {object} [padding] padding object
+			 * @property {number} [padding.top] padding on the top of chart
+			 * @property {number} [padding.right] padding on the right of chart
+			 * @property {number} [padding.bottom] padding on the bottom of chart
+			 * @property {number} [padding.left] padding on the left of chart
 			 * @example
 			 * padding: {
-             *   top: 20,
-             *   right: 20,
-             *   bottom: 20,
-             *   left: 20
+			 *   top: 20,
+			 *   right: 20,
+			 *   bottom: 20,
+			 *   left: 20
 			 * }
 			 */
 			padding_left: <number|undefined> undefined,
@@ -180,8 +184,9 @@ export default class Options {
 			 * Set chart resize options
 			 * @name resize
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {Boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+			 * @type {object}
+			 * @property {object} [resize] resize object
+			 * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
 			 * @example
 			 *  resize: {
 			 *      auto: false
@@ -306,8 +311,9 @@ export default class Options {
 			 * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
 			 * @name transition
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {Number} [transition.duration=350] duration in milliseconds
+			 * @type {object}
+			 * @property {object} [transition] transition object
+			 * @property {number} [transition.duration=350] duration in milliseconds
 			 * @example
 			 * transition: {
 			 *    duration: 500
@@ -319,8 +325,9 @@ export default class Options {
 			 * Set scatter options
 			 * @name scatter
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+			 * @type {object}
+			 * @property {object} [scatter] scatter object
+			 * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
 			 * @example
 			 *  scatter: {
 			 *      connectNull: true,
@@ -359,9 +366,10 @@ export default class Options {
 			 * Control the render timing
 			 * @name render
 			 * @memberof Options
-			 * @type {Object}
-			 * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
-			 * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+			 * @type {object}
+			 * @property {object} [render] render object
+			 * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+			 * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
 			 * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
 			 * @example
 			 *  render: {

@@ -10,18 +10,19 @@ export default {
 	 * Set donut options
 	 * @name donut
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
+	 * @type {object}
+	 * @property {object} donut Donut object
+	 * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
 	 * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
-	 * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
-	 * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
-	 * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
-	 * @property {Number} [donut.expand.rate=0.98] Set expand rate.
-	 * @property {Number} [donut.expand.duration=50] Set expand transition time in ms.
-	 * @property {Number} [donut.width] Set width of donut chart.
-	 * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
-	 * @property {Number} [donut.padAngle=0] Set padding between data.
-	 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
+	 * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+	 * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
+	 * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+	 * @property {number} [donut.expand.rate=0.98] Set expand rate.
+	 * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
+	 * @property {number} [donut.width] Set width of donut chart.
+	 * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+	 * @property {number} [donut.padAngle=0] Set padding between data.
+	 * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
 	 * @example
 	 *  donut: {
 	 *      label: {

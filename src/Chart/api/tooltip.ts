@@ -11,17 +11,17 @@ import {isValue, isDefined} from "../../module/util";
 const tooltip = {
 	/**
 	 * Show tooltip
-	 * @method tooltip․show
+	 * @function tooltip․show
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} args The object can consist with following members:<br>
+	 * @param {object} args The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | Description |
 	 *    | --- | --- | --- |
 	 *    | index | Number | Determine focus by index |
 	 *    | x | Number &vert; Date | Determine focus by x Axis index |
 	 *    | mouse | Array | Determine x and y coordinate value relative the targeted '.bb-event-rect' x Axis.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
-	 *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: data id<br>- value {Number}: The corresponding value for tooltip. |
+	 *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {number &verbar; Date}: x Axis value<br>- index {number}: x Axis index (useless for data.xs)<br>- id {string}: data id<br>- value {number}: The corresponding value for tooltip. |
 	 *
 	 * @example
 	 *  // show the 2nd x Axis coordinate tooltip
@@ -58,7 +58,7 @@ const tooltip = {
 	 *    }
 	 *  });
 	 */
-	show: function(args) {
+	show: function(args): void {
 		const $$ = this.internal;
 		const {config, state: {inputType}} = $$;
 		let index;
@@ -100,11 +100,11 @@ const tooltip = {
 
 	/**
 	 * Hide tooltip
-	 * @method tooltip․hide
+	 * @function tooltip․hide
 	 * @instance
 	 * @memberof Chart
 	 */
-	hide: function() {
+	hide: function(): void {
 		const $$ = this.internal;
 
 		// reset last touch point index

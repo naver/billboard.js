@@ -2,8 +2,10 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-
-// chart types
+/**
+ * Chart type constant
+ * @private
+ */
 export const TYPE = {
 	AREA: "area",
 	AREA_LINE_RANGE: "area-line-range",
@@ -22,7 +24,10 @@ export const TYPE = {
 	STEP: "step"
 };
 
-// chart types by category
+/**
+ * chart types by category
+ * @private
+ */
 export const TYPE_BY_CATEGORY = {
 	Area: [
 		TYPE.AREA,

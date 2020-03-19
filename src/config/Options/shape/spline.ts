@@ -29,8 +29,10 @@ export default {
 	 *  - step-before (d3.curveStepBefore)
 	 * @name spline
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {String} [spline.interpolation.type="cardinal"]
+	 * @type {object}
+	 * @property {object} spline Spline object
+	 * @property {object} spline.interpolation Spline interpolation object
+	 * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
 	 * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
 	 * @example
 	 *  spline: {

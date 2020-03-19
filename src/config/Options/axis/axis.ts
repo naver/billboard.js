@@ -16,7 +16,7 @@ export default mergeObj({
 	 * Switch x and y axis position.
 	 * @name axis․rotated
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * axis: {

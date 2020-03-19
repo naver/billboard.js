@@ -3,14 +3,15 @@
  * billboard.js project is licensed under the MIT license
  */
 import {isDefined, isObjectType} from "../module/util";
+import Options from "./Options/Options";
 
 /**
  * Load configuration option
- * @param {Object} config User's generation config value
+ * @param {object} config User's generation config value
  * @private
  */
-export function loadConfig(config) {
-	const thisConfig = this.config;
+export function loadConfig(config: Options): void {
+	const thisConfig: Options = this.config;
 	let target;
 	let keys;
 	let read;

@@ -29,9 +29,9 @@ import Options from "./Options";
  * @requires d3-selection
  * @requires d3-polygon
  * @requires d3-voronoi
- * @param {Object} options TextOverlap plugin options
- * @extends Plugin
- * @return {TextOverlap}
+ * @param {object} options TextOverlap plugin options
+ * @augments Plugin
+ * @returns {TextOverlap}
  * @example
  *  var chart = bb.generate({
  *     data: {
@@ -65,11 +65,11 @@ export default class TextOverlap extends Plugin {
 		return this;
 	}
 
-	$init() {
+	$init(): void {
 		loadConfig.call(this, this.options);
 	}
 
-	$redraw() {
+	$redraw(): void {
 		const text = d3SelectAll(this.config.selector);
 
 		!text.empty() && this.preventLabelOverlap(text);
@@ -77,8 +77,8 @@ export default class TextOverlap extends Plugin {
 
 	/**
 	 * Generates the voronoi layout for data labels
-	 * @param {Object} data Indices values
-	 * @returns {Object} Voronoi layout points and corresponding Data points
+	 * @param {object} data Indices values
+	 * @returns {object} Voronoi layout points and corresponding Data points
 	 * @private
 	 */
 	generateVoronoi(data) {
@@ -98,7 +98,7 @@ export default class TextOverlap extends Plugin {
 	 * @param {d3Selection} text target text selection
 	 * @private
 	 */
-	preventLabelOverlap(text) {
+	preventLabelOverlap(text): void {
 		const {extent, area} = this.config;
 		const cells = this.generateVoronoi(text.data().map(v => [v.x, v.value]));
 		let i = 0;

@@ -33,7 +33,7 @@ export {
 	getUnique,
 	hasValue,
 	isArray,
-	isBoolean,
+	isboolean,
 	isDefined,
 	isEmpty,
 	isFunction,
@@ -61,7 +61,7 @@ const isString = (v: any): boolean => typeof v === "string";
 const isNumber = (v: any): boolean => typeof v === "number";
 const isUndefined = (v: any): boolean => typeof v === "undefined";
 const isDefined = (v: any): boolean => typeof v !== "undefined";
-const isBoolean = (v: any): boolean => typeof v === "boolean";
+const isboolean = (v: any): boolean => typeof v === "boolean";
 const ceil10 = (v: any): number => Math.ceil(v / 10) * 10;
 const asHalfPixel = (n: any): number => Math.ceil(n) + 0.5;
 const diffDomain = (d: number[]): number => d[1] - d[0];
@@ -76,24 +76,38 @@ const notEmpty = (o: any): boolean => !isEmpty(o);
 
 /**
  * Check if is array
- * @param {Array} arr
- * @returns {Boolean}
+ * @param {Array} arr Data to be checked
+ * @returns {boolean}
  * @private
  */
 const isArray = (arr: any): boolean => Array.isArray(arr);
 
 /**
  * Check if is object
- * @param {Object} obj
- * @returns {Boolean}
+ * @param {object} obj Data to be checked
+ * @returns {boolean}
  * @private
  */
 const isObject = (obj: any): boolean => obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
 
+/**
+ * Get specified key value from object
+ * If default value is given, will return if given key value not found
+ * @param {object} options Source object
+ * @param {string} key Key value
+ * @param {*} defaultValue Default value
+ * @returns {*}
+ */
 function getOption(options: object, key: string, defaultValue): any {
 	return isDefined(options[key]) ? options[key] : defaultValue;
 }
 
+/**
+ * Check if value exist in the given object
+ * @param {object} dict Target object to be checked
+ * @param {*} value Value to be checked
+ * @returns {boolean}
+ */
 function hasValue(dict: object, value: any): boolean {
 	let found = false;
 
@@ -106,7 +120,7 @@ function hasValue(dict: object, value: any): boolean {
  * Call function with arguments
  * @param {Function} fn Function to be called
  * @param {*} args Arguments
- * @return {Boolean} true: fn is function, false: fn is not function
+ * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
 function callFn(fn, ...args): boolean {
@@ -118,24 +132,24 @@ function callFn(fn, ...args): boolean {
 
 /**
  * Call function after all transitions ends
- * @param {d3.transition} transition
- * @param {Fucntion} callback
+ * @param {d3.transition} transition Transition
+ * @param {Fucntion} cb Callback function
  * @private
  */
-function endall(transition, callback: Function): void {
+function endall(transition, cb: Function): void {
 	let n = 0;
 
 	transition
 		.each(() => ++n)
 		.on("end", function(...args) {
-			!--n && callback.apply(this, ...args);
+			!--n && cb.apply(this, ...args);
 		});
 }
 
 /**
  * Replace tag sign to html entity
- * @param {String} str
- * @return {String}
+ * @param {string} str Target string value
+ * @returns {string}
  * @private
  */
 function sanitise(str: string): string {
@@ -146,9 +160,9 @@ function sanitise(str: string): string {
 /**
  * Set text value. If there's multiline add nodes.
  * @param {d3Selection} node Text node
- * @param {String} text Text value string
+ * @param {string} text Text value string
  * @param {Array} dy dy value for multilined text
- * @param {Boolean} toMiddle To be alingned vertically middle
+ * @param {boolean} toMiddle To be alingned vertically middle
  * @private
  */
 function setTextValue(
@@ -183,7 +197,11 @@ function setTextValue(
 	}
 }
 
-// substitution of SVGPathSeg API polyfill
+/**
+ * Substitution of SVGPathSeg API polyfill
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {Array}
+ */
 function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	/*
 	 * seg1 ---------- seg2
@@ -202,6 +220,11 @@ function getRectSegList(path: SVGGraphicsElement): {x: number, y: number}[] {
 	];
 }
 
+/**
+ * Get svg bounding path box dimension
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {object}
+ */
 function getPathBox(
 	path: SVGGraphicsElement
 ): {x: number, y: number, width: number, height: number} {
@@ -215,7 +238,11 @@ function getPathBox(
 	};
 }
 
-// return brush selection array
+/**
+ * Return brush selection array
+ * @param {object} $el Selection object
+ * @returns {d3.brushSelection}
+ */
 function getBrushSelection({$el}) {
 	const event = d3Event;
 	const main = $el.subchart.main || $el.main;
@@ -232,17 +259,34 @@ function getBrushSelection({$el}) {
 	return selection;
 }
 
-// Get boundingClientRect. cache the evaluated value once it was called.
-const getBoundingRect = node => node.rect || (node.rect = node.getBoundingClientRect());
+/**
+ * Get boundingClientRect.
+ * Cache the evaluated value once it was called.
+ * @param {HTMLElement} node Target element
+ * @returns {object}
+ */
+const getBoundingRect = (node): {
+	left: number, top: number, right: number, bottom: number,
+	x: number, y: number, width: number, height: number
+} => node.rect || (node.rect = node.getBoundingClientRect());
 
-// retrun random number
+/**
+ * Retrun random number
+ * @param {boolean} asStr Convert returned value as string
+ * @returns {number|string}
+ */
 function getRandom(asStr: boolean = true): number | string {
 	const rand = Math.random();
 
 	return asStr ? String(rand) : rand;
 }
 
-function brushEmpty(ctx) {
+/**
+ * Check if brush is empty
+ * @param {object} ctx Bursh context
+ * @returns {boolean}
+ */
+function brushEmpty(ctx): boolean {
 	const selection = getBrushSelection(ctx);
 
 	if (selection) {
@@ -255,6 +299,12 @@ function brushEmpty(ctx) {
 	return true;
 }
 
+/**
+ * Extend target from source object
+ * @param {object} target Target object
+ * @param {object} source Source object
+ * @returns {object}
+ */
 function extend(target = {}, source): object {
 	if (isArray(source)) {
 		source.forEach(v => extend(target, v));
@@ -274,15 +324,15 @@ function extend(target = {}, source): object {
 
 /**
  * Return first letter capitalized
- * @param {String} str
- * @return {String} capitalized string
+ * @param {string} str Target string
+ * @returns {string} capitalized string
  * @private
  */
 const capitalize = (str: string): string => str.charAt(0).toUpperCase() + str.slice(1);
 
 /**
  * Convert to array
- * @param {Object} v
+ * @param {object} v Target to be converted
  * @returns {Array}
  * @private
  */
@@ -312,8 +362,8 @@ function getCssRules(styleSheets: any[]) {
 
 /**
  * Gets the SVGMatrix of an SVGElement
- * @param {SVGElement} element
- * @return {SVGMatrix} matrix
+ * @param {SVGElement} node Target node
+ * @returns {SVGMatrix} matrix
  * @private
  */
 function getTranslation(node) {
@@ -325,8 +375,8 @@ function getTranslation(node) {
 
 /**
  * Get unique value from array
- * @param {Array} data
- * @return {Array} Unique array value
+ * @param {Array} data Source data
+ * @returns {Array} Unique array value
  * @private
  */
 function getUnique(data: any[]): any[] {
@@ -339,8 +389,8 @@ function getUnique(data: any[]): any[] {
 
 /**
  * Merge array
- * @param {Array} arr
- * @return {Array}
+ * @param {Array} arr Source array
+ * @returns {Array}
  * @private
  */
 function mergeArray(arr: any[]): any[] {
@@ -349,9 +399,9 @@ function mergeArray(arr: any[]): any[] {
 
 /**
  * Merge object returning new object
- * @param {Object} target
- * @param {Object} objectN
- * @returns {Object} merged target object
+ * @param {object} target Target object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
  * @private
  */
 function mergeObj(target: object, ...objectN): any {
@@ -381,8 +431,8 @@ function mergeObj(target: object, ...objectN): any {
 /**
  * Sort value
  * @param {Array} data value to be sorted
- * @param {Boolean} isAsc true: asc, false: desc
- * @return {Number|String|Date} sorted date
+ * @param {boolean} isAsc true: asc, false: desc
+ * @returns {number|string|Date} sorted date
  * @private
  */
 function sortValue(data: any[], isAsc = true): any[] {
@@ -403,12 +453,12 @@ function sortValue(data: any[], isAsc = true): any[] {
 
 /**
  * Get min/max value
- * @param {String} type 'min' or 'max'
+ * @param {string} type 'min' or 'max'
  * @param {Array} data Array data value
- * @retun {Number|Date|undefined}
+ * @returns {number|Date|undefined}
  * @private
  */
-function getMinMax(type: "min" | "max", data: number[] | Date[] | any) {
+function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number | Date | undefined | any {
 	let res = data.filter(v => notEmpty(v));
 
 	if (res.length) {
@@ -426,9 +476,9 @@ function getMinMax(type: "min" | "max", data: number[] | Date[] | any) {
 
 /**
  * Get range
- * @param {Number} start Start number
- * @param {Number} end End number
- * @return {Array}
+ * @param {number} start Start number
+ * @param {number} end End number
+ * @returns {Array}
  * @private
  */
 function getRange(start: number, end: number): number[] {
@@ -499,9 +549,9 @@ const emulateEvent = {
 
 /**
  * Process the template  & return bound string
- * @param {String} tpl Template string
- * @param {Object} data Data value to be replaced
- * @return {String}
+ * @param {string} tpl Template string
+ * @param {object} data Data value to be replaced
+ * @returns {string}
  * @private
  */
 function tplProcess(tpl: string, data: object): string {
@@ -517,8 +567,8 @@ function tplProcess(tpl: string, data: object): string {
 /**
  * Get parsed date value
  * (It must be called in 'ChartInternal' context)
- * @param {Date|String|Number} date Value of date to be parsed
- * @return {Date}
+ * @param {Date|string|number} date Value of date to be parsed
+ * @returns {Date}
  * @private
  */
 function parseDate(date: Date | string | number | any): Date {
@@ -544,7 +594,7 @@ function parseDate(date: Date | string | number | any): Date {
 
 /**
  * Return if the current doc is visible or not
- * @return {boolean}
+ * @returns {boolean}
  * @private
  */
 function isTabVisible(): boolean {
@@ -553,10 +603,12 @@ function isTabVisible(): boolean {
 
 /**
  * Get the current input type
- * @return {String} "mouse" | "touch" | null
+ * @param {boolean} mouse Config value: interaction.inputType.mouse
+ * @param {boolean} touch Config value: interaction.inputType.touch
+ * @returns {string} "mouse" | "touch" | null
  * @private
  */
-function convertInputType(mouse, touch): "mouse" | "touch" | null {
+function convertInputType(mouse: boolean, touch: boolean): "mouse" | "touch" | null {
 	let isMobile = false;
 
 	// https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent#Mobile_Tablet_or_Desktop

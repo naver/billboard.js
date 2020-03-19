@@ -13,11 +13,11 @@ import {emulateEvent, isNumber, isObject} from "../../module/util";
 export default {
 	/**
 	 * Handle data.onover/out callback options
-	 * @param {Boolean} isOver
-	 * @param {Number|Object} d
+	 * @param {boolean} isOver Over or not
+	 * @param {number|object} d data object
 	 * @private
 	 */
-	setOverOut(isOver, d) {
+	setOverOut(isOver: boolean, d): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const isArc = isObject(d);
@@ -68,10 +68,10 @@ export default {
 
 	/**
 	 * Call data.onover/out callback for touch event
-	 * @param {Number|Object} d target index or data object for Arc type
+	 * @param {number|object} d target index or data object for Arc type
 	 * @private
 	 */
-	callOverOutForTouch(d) {
+	callOverOutForTouch(d): void {
 		const $$ = this;
 		const callee = $$.callOverOutForTouch;
 		const {last} = callee;
@@ -86,10 +86,10 @@ export default {
 
 	/**
 	 * Return draggable selection function
-	 * @return {Function}
+	 * @returns {Function}
 	 * @private
 	 */
-	getDraggableSelection() {
+	getDraggableSelection(): Function {
 		const $$ = this;
 		const {config} = $$;
 
@@ -109,11 +109,11 @@ export default {
 	/**
 	 * Dispatch a mouse event.
 	 * @private
-	 * @param {String} type event type
-	 * @param {Number} index Index of eventRect
+	 * @param {string} type event type
+	 * @param {number} index Index of eventRect
 	 * @param {Array} mouse x and y coordinate value
 	 */
-	dispatchEvent(type, index, mouse) {
+	dispatchEvent(type: string, index: number, mouse): void {
 		const $$ = this;
 		const isMultipleX = $$.isMultipleX();
 		const selector = `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;

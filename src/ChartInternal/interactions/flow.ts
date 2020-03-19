@@ -11,9 +11,9 @@ import CLASS from "../../config/classes";
 export default {
 	/**
 	 * Generate flow
-	 * @param {Object} args
-	 * @return {Function}
-     * @private
+	 * @param {object} args option object
+	 * @returns {Function}
+	 * @private
 	 */
 	generateFlow(args): Function {
 		const $$ = this;
@@ -59,8 +59,8 @@ export default {
 
 	/**
 	 * Set flow list
-	 * @param elements {Object} Target elements
-	 * @param args {Object}
+	 * @param {object} elements Target elements
+	 * @param {object} args option object
 	 * @private
 	 */
 	setFlowList(elements, args): void {
@@ -102,8 +102,8 @@ export default {
 
 	/**
 	 * Clean up flow
-	 * @param elements {Object} Target elements
-	 * @param args {Object}
+	 * @param {object} elements Target elements
+	 * @param {object} args option object
 	 * @private
 	 */
 	cleanUpFlow(elements, args): void {
@@ -191,11 +191,11 @@ export default {
 
 	/**
 	 * Get flow transform value
-	 * @param targets
-	 * @param orgDataCount
-	 * @param flowIndex
-	 * @param flowLength
-	 * @return {String}
+	 * @param {object} targets target
+	 * @param {number} orgDataCount original data count
+	 * @param {number} flowIndex flow index
+	 * @param {number} flowLength flow length
+	 * @returns {string}
 	 * @private
 	 */
 	getFlowTransform(targets, orgDataCount, flowIndex, flowLength): string {

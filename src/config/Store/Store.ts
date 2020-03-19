@@ -18,7 +18,7 @@ export default class Store {
 		});
 	}
 
-	getStore(name) {
+	getStore(name: string): Element | State {
 		return this[name];
 	}
 }

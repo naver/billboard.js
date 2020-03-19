@@ -18,12 +18,12 @@ import {isUndefined, isDefined, isObject, isValue, notEmpty, isArray, capitalize
 export default {
 	/**
 	 * Convert data according its type
-	 * @param {Object} args data object
+	 * @param {object} args data object
 	 * @param {Function} [callback] callback for url(XHR) type loading
-	 * @return {Object}
+	 * @returns {object}
 	 * @private
 	 */
-	convertData(args, callback) {
+	convertData(args, callback: Function): object {
 		let data;
 
 		if (args.bindto) {
@@ -58,14 +58,14 @@ export default {
 
 	/**
 	 * Convert URL data
-	 * @param {String} url Remote URL
-	 * @param {String} mimeType MIME type string: json | csv | tsv
-	 * @param {Object} headers Header object
-	 * @param {Object} keys Key object
+	 * @param {string} url Remote URL
+	 * @param {string} mimeType MIME type string: json | csv | tsv
+	 * @param {object} headers Header object
+	 * @param {object} keys Key object
 	 * @param {Function} done Callback function
 	 * @private
 	 */
-	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
+	convertUrlToData(url: string, mimeType = "csv", headers: object, keys: object, done: Function): void {
 		const req = new XMLHttpRequest();
 
 		req.open("GET", url);
@@ -97,10 +97,10 @@ export default {
 
 	/**
 	 * Convert CSV/TSV data
-	 * @param {Object} parser Parser object
-	 * @param {Object} xsv Data
+	 * @param {object} parser Parser object
+	 * @param {object} xsv Data
 	 * @private
-	 * @return {Object}
+	 * @returns {object}
 	 */
 	convertCsvTsvToData(parser, xsv) {
 		const rows = parser.rows(xsv);

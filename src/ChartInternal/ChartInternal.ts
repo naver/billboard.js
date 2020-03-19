@@ -119,7 +119,7 @@ export default class ChartInternal {
 		$$.state = store.getStore("state");
 	}
 
-	beforeInit() {
+	beforeInit(): void {
 		const $$ = this;
 
 		$$.callPluginHook("$beforeInit");
@@ -128,7 +128,7 @@ export default class ChartInternal {
 		callFn($$.config.onbeforeinit, $$.api);
 	}
 
-	afterInit() {
+	afterInit(): void {
 		const $$ = this;
 
 		$$.callPluginHook("$afterInit");
@@ -137,7 +137,7 @@ export default class ChartInternal {
 		callFn($$.config.onafterinit, $$.api);
 	}
 
-	init() {
+	init(): void {
 		const $$ = <any> this;
 		const {config, state, $el} = $$;
 
@@ -171,10 +171,10 @@ export default class ChartInternal {
 
 	/**
 	 * Initialize the rendering process
-	 * @param {Boolean} forced Force to render process
+	 * @param {boolean} forced Force to render process
 	 * @private
 	 */
-	initToRender(forced?: boolean) {
+	initToRender(forced?: boolean): void {
 		const $$ = <any> this;
 		const {config, state, $el: {chart}} = $$;
 		const isHidden = () => chart.style("display") === "none" || chart.style("visibility") === "hidden";
@@ -202,7 +202,7 @@ export default class ChartInternal {
 		}
 	}
 
-	initParams() {
+	initParams(): void {
 		const $$ = <any> this;
 		const {config, format, state} = <any> $$;
 		const isRotated = config.axis_rotated;
@@ -260,7 +260,7 @@ export default class ChartInternal {
 		);
 	}
 
-	initWithData(data) {
+	initWithData(data): void {
 		const $$ = <any> this;
 		const {config, scale, state, $el, org} = $$;
 		const {hasAxis} = state;
@@ -439,7 +439,7 @@ export default class ChartInternal {
 		state.rendered = true;
 	}
 
-	initChartElements() {
+	initChartElements(): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
 		const types: string[] = [];
@@ -469,7 +469,7 @@ export default class ChartInternal {
 		notEmpty($$.config.data_labels) && $$.initText();
 	}
 
-	setChartElements() {
+	setChartElements(): void {
 		const $$ = this;
 		const {$el: {
 			chart, svg, defs, main, tooltip, legend, title, grid,
@@ -502,7 +502,7 @@ export default class ChartInternal {
 	 * Set background element/image
 	 * @private
 	 */
-	setBackground() {
+	setBackground(): void {
 		const $$ = this;
 		const {config: {background: bg}, state, $el: {svg}} = $$;
 
@@ -527,10 +527,10 @@ export default class ChartInternal {
 
 	/**
 	 * Update targeted element with given data
-	 * @param {Object} targets Data object formatted as 'target'
+	 * @param {object} targets Data object formatted as 'target'
 	 * @private
 	 */
-	updateTargets(targets) {
+	updateTargets(targets): void {
 		const $$ = <any> this;
 		const {hasAxis, hasRadar} = $$.state;
 
@@ -566,7 +566,7 @@ export default class ChartInternal {
 	 * Display targeted elements
 	 * @private
 	 */
-	showTargets() {
+	showTargets(): void {
 		const $$ = <any> this;
 		const {config, $el: {svg}} = $$;
 
@@ -607,7 +607,7 @@ export default class ChartInternal {
 		return withOptions;
 	}
 
-	initialOpacity(d) {
+	initialOpacity(d): "1" | "0" {
 		const $$ = <any> this;
 		const {withoutFadeIn} = $$.state;
 
@@ -615,7 +615,7 @@ export default class ChartInternal {
 			withoutFadeIn[d.id] ? "1" : "0";
 	}
 
-	bindResize() {
+	bindResize(): void {
 		const $$ = <any> this;
 		const config = $$.config;
 		const resizeFunction = generateResize();
@@ -638,10 +638,11 @@ export default class ChartInternal {
 
 	/**
 	 * Call plugin hook
-	 * @param {String} phase The lifecycle phase
+	 * @param {string} phase The lifecycle phase
+	 * @param {Array} args Arguments
 	 * @private
 	 */
-	callPluginHook(phase, ...args) {
+	callPluginHook(phase, ...args): void {
 		this.config.plugins.forEach(v => {
 			if (phase === "$beforeInit") {
 				v.$$ = this;

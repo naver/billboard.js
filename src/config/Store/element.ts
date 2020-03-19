@@ -2,12 +2,18 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {d3Selection} from "../../../types/types";
+
+type T = d3Selection | null;
+
 /**
  * Elements reference
  */
 export default class Element {
 	constructor() {
-		return {
+		const element: {
+			[key: string]: T | {[key: string]: T}
+		} = {
 			chart: null,
 			main: null,
 			svg: null,
@@ -51,5 +57,7 @@ export default class Element {
 			},
 			eventRect: null
 		};
+
+		return element;
 	}
 }

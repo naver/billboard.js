@@ -8,7 +8,7 @@ import {generateWait} from "../../module/generator";
 import {callFn, getOption, isTabVisible, notEmpty} from "../../module/util";
 
 export default {
-	redraw(options: any = {}, transitionsValue?) {
+	redraw(options: any = {}, transitionsValue?): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const {main} = $el;
@@ -106,13 +106,13 @@ export default {
 
 	/**
 	 * Generate redraw list
-	 * @param {Object} targets targets data to be shown
-	 * @param {Object} flow
-	 * @param {Object} duration
-	 * @param {Boolean} withSubchart whether or not to show subchart
+	 * @param {object} targets targets data to be shown
+	 * @param {object} flow flow object
+	 * @param {number} duration duration value
+	 * @param {boolean} withSubchart whether or not to show subchart
 	 * @private
 	 */
-	generateRedrawList(targets, flow, duration, withSubchart) {
+	generateRedrawList(targets, flow: any, duration: number, withSubchart: boolean): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const shape = $$.getDrawShape();
@@ -166,7 +166,7 @@ export default {
 		});
 	},
 
-	getRedrawList(shape, flow, flowFn, isTransition) {
+	getRedrawList(shape, flow, flowFn, isTransition: boolean): Function[] {
 		const $$ = <any> this;
 		const {config, state: {hasAxis, hasRadar}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
@@ -201,7 +201,7 @@ export default {
 		return list;
 	},
 
-	updateAndRedraw(options: any = {}) {
+	updateAndRedraw(options: any = {}): void {
 		const $$ = this;
 		const {config, state} = $$;
 		let transitions;

@@ -13,9 +13,9 @@ import {notEmpty, isFunction, isObject, isString} from "../../module/util";
  * Set pattern's background color
  * (it adds a <rect> element to simulate bg-color)
  * @param {SVGPatternElement} pattern SVG pattern element
- * @param {String} color Color string
- * @param {String} id ID to be set
- * @return {{id: string, node: SVGPatternElement}}
+ * @param {string} color Color string
+ * @param {string} id ID to be set
+ * @returns {{id: string, node: SVGPatternElement}}
  * @private
  */
 const colorizePattern = (pattern, color, id: string) => {
@@ -42,10 +42,10 @@ export default {
 	/**
 	 * Get color pattern from CSS file
 	 * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
-	 * @return {Array}
+	 * @returns {Array}
 	 * @private
 	 */
-	getColorFromCss() {
+	getColorFromCss(): string[] {
 		const cacheKey = KEY.colorPattern;
 		const {body} = document;
 		let pattern = body[cacheKey];
@@ -76,7 +76,7 @@ export default {
 		return pattern;
 	},
 
-	generateColor() {
+	generateColor(): Function {
 		const $$ = this;
 		const {config} = $$;
 		const colors = config.data_colors;
@@ -133,7 +133,7 @@ export default {
 		};
 	},
 
-	generateLevelColor() {
+	generateLevelColor(): Function | null {
 		const $$ = this;
 		const {config} = $$;
 		const colors = config.color_pattern;
@@ -161,11 +161,11 @@ export default {
 	/**
 	 * Set the data over color.
 	 * When is out, will restate in its previous color value
-	 * @param {Boolean} isOver true: set overed color, false: restore
-	 * @param {Number|Object} d target index or data object for Arc type
+	 * @param {boolean} isOver true: set overed color, false: restore
+	 * @param {number|object} d target index or data object for Arc type
 	 * @private
 	 */
-	setOverColor(isOver, d) {
+	setOverColor(isOver: boolean, d): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const onover = config.color_onover;

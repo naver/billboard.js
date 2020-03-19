@@ -10,12 +10,13 @@ export default {
 	 * Set subchart options
 	 * @name subchart
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
-	 * @property {Boolean} [subchart.axis.x.show=true] Show or hide x axis.
-	 * @property {Boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
-	 * @property {Boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
-	 * @property {Number} [subchart.size.height] Change the height of the subchart.
+	 * @type {object}
+	 * @property {object} subchart Subchart object
+	 * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
+	 * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
+	 * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+	 * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+	 * @property {number} [subchart.size.height] Change the height of the subchart.
 	 * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
 	 *  Specified function receives the current zoomed x domain.
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)

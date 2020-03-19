@@ -132,7 +132,7 @@ export default class Axis {
 	/**
 	 * Generate axes
 	 * It's used when axis' axes option is set
-	 * @param {String} id Axis id
+	 * @param {string} id Axis id
 	 * @private
 	 */
 	generateAxes(id: string) {
@@ -216,7 +216,7 @@ export default class Axis {
 	/**
 	 * Set Axis & tick values
 	 * called from: updateScales()
-	 * @param {String} id Axis id string
+	 * @param {string} id Axis id string
 	 * @param {Array} args Arguments
 	 * @private
 	 */
@@ -683,8 +683,8 @@ export default class Axis {
 
 	/**
 	 * Get x Axis padding
-	 * @param {Number} tickCount Tick count
-	 * @return {Object} Padding object values with 'left' & 'right' key
+	 * @param {number} tickCount Tick count
+	 * @returns {object} Padding object values with 'left' & 'right' key
 	 * @private
 	 */
 	getXAxisPadding(tickCount) {
@@ -846,13 +846,14 @@ export default class Axis {
 
 	/**
 	 * Redraw axis
-	 * @param {Object} targetsToShow targets data to be shown
-	 * @param {Object} wth
-	 * @param {Ojbect} transitions
-	 * @param {Object} flow
+	 * @param {Array} targetsToShow targets data to be shown
+	 * @param {object} wth option object
+	 * @param {d3.Transition} transitions Transition object
+	 * @param {object} flow flow object
+	 * @param {boolean} isInit called from initialization
 	 * @private
 	 */
-	redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
+	redrawAxis(targetsToShow, wth, transitions, flow, isInit: boolean): void {
 		const $$ = this.owner;
 		const {config, scale, $el} = $$;
 		const hasZoom = !!scale.zoom;

@@ -11,7 +11,7 @@ export default {
 	 * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
 	 * @name axis․y․clipPath
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * // don't set 'clip-path' attribute
@@ -23,7 +23,7 @@ export default {
 	 * Show or hide y axis.
 	 * @name axis․y․show
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * axis: {
@@ -42,7 +42,7 @@ export default {
 	 *   - indexed
 	 * @name axis․y․type
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -58,7 +58,7 @@ export default {
 	 * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
 	 * @name axis․y․max
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -75,7 +75,7 @@ export default {
 	 *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
 	 * @name axis․y․min
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -91,7 +91,7 @@ export default {
 	 * If true set, the direction will be from the top to the bottom.
 	 * @name axis․y․inverted
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * axis: {
@@ -106,7 +106,7 @@ export default {
 	 * Set center value of y axis.
 	 * @name axis․y․center
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -121,7 +121,7 @@ export default {
 	 * Show y axis inside of the chart.
 	 * @name axis․y․inner
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * axis: {
@@ -137,7 +137,7 @@ export default {
 	 * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
 	 * @name axis․y․label
 	 * @memberof Options
-	 * @type {String|Object}
+	 * @type {string|object}
 	 * @default {}
 	 * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
 	 * @example
@@ -184,7 +184,7 @@ export default {
 	 * We can change the number of ticks to be shown by axis.y.tick.culling.max.
 	 * @name axis․y․tick․culling
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * axis: {
@@ -201,7 +201,7 @@ export default {
 	 * The number of tick texts will be adjusted to less than this value.
 	 * @name axis․y․tick․culling․max
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default 5
 	 * @example
 	 * axis: {
@@ -220,7 +220,7 @@ export default {
 	 * Show y axis outer tick.
 	 * @name axis․y․tick․outer
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * axis: {
@@ -261,7 +261,7 @@ export default {
 	 * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
 	 * @name axis․y․tick․rotate
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default 0
 	 * @example
 	 * axis: {
@@ -279,7 +279,7 @@ export default {
 	 * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
 	 * @name axis․y․tick․count
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -296,7 +296,7 @@ export default {
 	 * Show or hide y axis tick line.
 	 * @name axis․y․tick․show
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
 	 * @example
@@ -315,7 +315,7 @@ export default {
 	 * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
 	 * @name axis․y․tick․stepSize
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
 	 * @example
 	 * axis: {
@@ -331,30 +331,30 @@ export default {
 	axis_y_tick_stepSize: <number|null> null,
 
 	/**
-	* Show or hide y axis tick text.
-	* @name axis․y․tick․text․show
-	* @memberof Options
-	* @type {Boolean}
-	* @default true
-	* @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-	* @example
-	* axis: {
-	*   y: {
-	*     tick: {
-	*       text: {
-	*           show: false
-	*       }
-	*     }
-	*   }
-	* }
-	*/
+	 * Show or hide y axis tick text.
+	 * @name axis․y․tick․text․show
+	 * @memberof Options
+	 * @type {boolean}
+	 * @default true
+	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+	 * @example
+	 * axis: {
+	 *   y: {
+	 *     tick: {
+	 *       text: {
+	 *           show: false
+	 *       }
+	 *     }
+	 *   }
+	 * }
+	 */
 	axis_y_tick_text_show: true,
 
 	/**
 	 * Set the y Axis tick text's position relatively its original position
 	 * @name axis․y․tick․text․position
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {x: 0, y:0}
 	 * @example
 	 * axis: {
@@ -378,7 +378,8 @@ export default {
 	 * @name axis․y․tick․time
 	 * @memberof Options
 	 * @private
-	 * @type {Object}
+	 * @type {object}
+	 * @property {object} time time object
 	 * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
 	 * @example
 	 * axis: {
@@ -406,7 +407,7 @@ export default {
 	 *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
 	 * @name axis․y․padding
 	 * @memberof Options
-	 * @type {Object|Number}
+	 * @type {object|number}
 	 * @default {}
 	 * @example
 	 * axis: {
@@ -448,7 +449,7 @@ export default {
 	 * | Name | Type | Default | Description |
 	 * | --- | --- | --- | --- |
 	 * | domain | Array | - | Set the domain value |
-	 * | tick.outer | Boolean | true | Show outer tick |
+	 * | tick.outer | boolean | true | Show outer tick |
 	 * | tick.format | Function | - | Set formatter for tick text |
 	 * | tick.count | Number | - | Set the number of y axis ticks |
 	 * | tick.values | Array | - | Set tick values manually |

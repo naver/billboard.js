@@ -6,7 +6,7 @@ import CLASS from "../../config/classes";
 import {endall} from "../../module/util";
 
 export default {
-	load(rawTargets, args) {
+	load(rawTargets, args): void {
 		const $$ = this;
 		let targets = rawTargets;
 
@@ -55,7 +55,7 @@ export default {
 		args.done && args.done.call($$.api);
 	},
 
-	loadFromArgs(args) {
+	loadFromArgs(args): void {
 		const $$ = this;
 
 		// prevent load when chart is already destroyed
@@ -71,7 +71,7 @@ export default {
 		data && $$.load($$.convertDataToTargets(data), args);
 	},
 
-	unload(rawTargetIds, customDoneCb) {
+	unload(rawTargetIds, customDoneCb): void {
 		const $$ = this;
 		const {state, $el} = $$;
 		let done = customDoneCb;

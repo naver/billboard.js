@@ -5,6 +5,7 @@
 import {select as d3Select} from "d3-selection"; // selection
 import CLASS from "../../config/classes";
 import {isValue, parseDate} from "../../module/util";
+import {AxisType} from "../../../types/types";
 
 export default {
 	initRegion() {
@@ -16,7 +17,7 @@ export default {
 			.attr("class", CLASS.regions);
 	},
 
-	updateRegion(duration) {
+	updateRegion(duration: number): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -72,7 +73,7 @@ export default {
 		];
 	},
 
-	getRegionXY(type, d) {
+	getRegionXY(type: AxisType, d): number {
 		const $$ = this;
 		const {config, scale} = $$;
 		const isRotated = config.axis_rotated;
@@ -98,15 +99,15 @@ export default {
 		return pos;
 	},
 
-	regionX(d) {
+	regionX(d): number {
 		return this.getRegionXY("x", d);
 	},
 
-	regionY(d) {
+	regionY(d): number {
 		return this.getRegionXY("y", d);
 	},
 
-	getRegionSize(type, d) {
+	getRegionSize(type, d): number {
 		const $$ = this;
 		const {config, scale, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -133,15 +134,15 @@ export default {
 		return end < start ? 0 : end - start;
 	},
 
-	regionWidth(d) {
+	regionWidth(d): number {
 		return this.getRegionSize("width", d);
 	},
 
-	regionHeight(d) {
+	regionHeight(d): number {
 		return this.getRegionSize("height", d);
 	},
 
-	isRegionOnX(d) {
+	isRegionOnX(d): boolean {
 		return !d.axis || d.axis === "x";
 	},
 };

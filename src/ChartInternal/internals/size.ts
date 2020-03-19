@@ -5,13 +5,14 @@
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {isValue, ceil10, capitalize} from "../../module/util";
+import {AxisType} from "../../../types/types";
 
 export default {
 	/**
 	 * Update container size
 	 * @private
 	 */
-	setContainerSize() {
+	setContainerSize(): void {
 		const $$ = this;
 		const {state} = $$;
 
@@ -19,13 +20,13 @@ export default {
 		state.currentHeight = $$.getCurrentHeight();
 	},
 
-	getCurrentWidth() {
+	getCurrentWidth(): number {
 		const $$ = this;
 
 		return $$.config.size_width || $$.getParentWidth();
 	},
 
-	getCurrentHeight() {
+	getCurrentHeight(): number {
 		const $$ = this;
 		const {config} = $$;
 		const h = config.size_height || $$.getParentHeight();
@@ -35,11 +36,11 @@ export default {
 
 	/**
 	 * Get Axis size according its position
-	 * @param {String} id Axis id value - x, y or y2
-	 * @return {number} size Axis size value
+	 * @param {string} id Axis id value - x, y or y2
+	 * @returns {number} size Axis size value
 	 * @private
 	 */
-	getAxisSize(id) {
+	getAxisSize(id: AxisType): number {
 		const $$ = this;
 		const isRotated = $$.config.axis_rotated;
 
@@ -48,7 +49,7 @@ export default {
 			$$.getHorizontalAxisHeight(id);
 	},
 
-	getCurrentPaddingTop() {
+	getCurrentPaddingTop(): number {
 		const $$ = this;
 		const {config, $el} = $$;
 		const axesLen = config.axis_y2_axes.length;
@@ -67,7 +68,7 @@ export default {
 		return padding;
 	},
 
-	getCurrentPaddingBottom() {
+	getCurrentPaddingBottom(): number {
 		const $$ = this;
 		const {config} = $$;
 		const axisId = config.axis_rotated ? "y" : "x";
@@ -80,7 +81,7 @@ export default {
 		);
 	},
 
-	getCurrentPaddingLeft(withoutRecompute) {
+	getCurrentPaddingLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
 		const {config, state: {hasAxis}} = $$;
 		const isRotated = config.axis_rotated;
@@ -103,7 +104,7 @@ export default {
 		return padding + (axisWidth * axesLen);
 	},
 
-	getCurrentPaddingRight(withoutTickTextOverflow = false) {
+	getCurrentPaddingRight(withoutTickTextOverflow = false): number {
 		const $$ = this;
 		const {config} = $$;
 		const defaultPadding = 10;
@@ -130,10 +131,11 @@ export default {
 
 	/**
 	 * Get the parent rect element's size
-	 * @param {String} key property/attribute name
+	 * @param {string} key property/attribute name
+	 * @returns {number}
 	 * @private
 	 */
-	getParentRectValue(key) {
+	getParentRectValue(key): number {
 		const offsetName = `offset${capitalize(key)}`;
 		let parent = this.$el.chart.node();
 		let v;
@@ -163,17 +165,17 @@ export default {
 		return v;
 	},
 
-	getParentWidth() {
+	getParentWidth(): number {
 		return this.getParentRectValue("width");
 	},
 
-	getParentHeight() {
+	getParentHeight(): number {
 		const h = this.$el.chart.style("height");
 
 		return h.indexOf("px") > 0 ? parseInt(h, 10) : 0;
 	},
 
-	getSvgLeft(withoutRecompute) {
+	getSvgLeft(withoutRecompute?: boolean): number {
 		const $$ = this;
 		const {config, $el} = $$;
 		const hasLeftAxisRect = config.axis_rotated || (!config.axis_rotated && !config.axis_y_inner);
@@ -188,7 +190,7 @@ export default {
 		return svgLeft > 0 ? svgLeft : 0;
 	},
 
-	getAxisWidthByAxisId(id, withoutRecompute) {
+	getAxisWidthByAxisId(id: AxisType, withoutRecompute?: boolean): number {
 		const $$ = this;
 
 		if ($$.axis) {
@@ -201,7 +203,7 @@ export default {
 		}
 	},
 
-	getHorizontalAxisHeight(id) {
+	getHorizontalAxisHeight(id: AxisType): number {
 		const $$ = this;
 		const {config} = $$;
 		const {currentHeight, rotatedPadding, isLegendRight, isLegendInset} = $$.state;
@@ -248,17 +250,17 @@ export default {
 			(id === "y2" && !isRotated ? -10 : 0);
 	},
 
-	getEventRectWidth() {
+	getEventRectWidth(): number {
 		return Math.max(0, this.axis.x.tickInterval());
 	},
 
 	/**
 	 * Get axis tick test rotate value
-	 * @param {String} id
-	 * @return {Number} rotate value
+	 * @param {string} id Axis id
+	 * @returns {number} rotate value
 	 * @private
 	 */
-	getAxisTickRotate(id) {
+	getAxisTickRotate(id: AxisType): number {
 		const $$ = this;
 		const {axis, config, state, $el} = $$;
 		let rotate = config[`axis_${id}_tick_rotate`];
@@ -302,9 +304,10 @@ export default {
 
 	/**
 	 * Check weather axis tick text needs to be rotated
+	 * @returns {boolean}
 	 * @private
 	 */
-	needToRotateXAxisTickTexts() {
+	needToRotateXAxisTickTexts(): boolean {
 		const $$ = this;
 		const {state} = $$;
 		const xAxisLength = state.currentWidth -
@@ -318,7 +321,7 @@ export default {
 		return maxTickWidth > tickLength;
 	},
 
-	updateDimension(withoutAxis) {
+	updateDimension(withoutAxis?: boolean): void {
 		const $$ = this;
 		const {config, state: {hasAxis}, $el} = $$;
 
@@ -338,7 +341,7 @@ export default {
 		$$.transformAll(false);
 	},
 
-	updateSvgSize() {
+	updateSvgSize(): void {
 		const $$ = this;
 		const {state, $el: {svg}} = $$;
 
@@ -387,10 +390,10 @@ export default {
 
 	/**
 	 * Update size values
-	 * @param {Boolean} isInit If is called at initialization
+	 * @param {boolean} isInit If is called at initialization
 	 * @private
 	 */
-	updateSizes(isInit) {
+	updateSizes(isInit?: boolean): void {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const isRotated = config.axis_rotated;

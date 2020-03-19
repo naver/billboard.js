@@ -6,18 +6,20 @@ import {extend} from "../../module/util";
 
 /**
  * Update y grid lines.
- * @method ygrids
+ * @function ygrids
  * @instance
  * @memberof Chart
  * @param {Array} grids Y grid lines will be replaced with this argument. The format of this argument is the same as grid.y.lines.
+ * @returns {object}
  * @example
  *  // Show 2 y grid lines
  * chart.ygrids([
  *    {value: 100, text: "Label 1"},
  *    {value: 400, text: "Label 4"}
  * ]);
+ * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
-function ygrids(grids: {value?: number, text?: string}[]) {
+function ygrids(grids: {value?: number, text?: string}[]): {value?: number, text?: string}[] {
 	const $$ = this.internal;
 	const {config} = $$;
 
@@ -35,10 +37,11 @@ extend(ygrids, {
 	/**
 	 * Add y grid lines.<br>
 	 * This API adds new y grid lines instead of replacing like ygrids.
-	 * @method ygrids․add
+	 * @function ygrids․add
 	 * @instance
 	 * @memberof Chart
-	 * @param {Array|Object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
+	 * @param {Array|object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
+	 * @returns {object}
 	 * @example
 	 *  // Add a new x grid line
 	 * chart.ygrids.add(
@@ -51,7 +54,7 @@ extend(ygrids, {
 	 *   {value: 400, text: "Label 4"}
 	 * ]);
 	 */
-	add: function(grids: {value?: number, text?: string}[]) {
+	add: function(grids: {value?: number, text?: string}[]): {value?: number, text?: string}[] {
 		return this.ygrids(
 			this.internal.config.grid_y_lines
 				.concat(grids || [])
@@ -61,10 +64,10 @@ extend(ygrids, {
 	/**
 	 * Remove y grid lines.<br>
 	 * This API removes x grid lines.
-	 * @method ygrids․remove
+	 * @function ygrids․remove
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
+	 * @param {object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
 	 * @example
 	 * // y grid line on y = 200 will be removed
 	 * chart.ygrids.remove({value: 200});
@@ -77,7 +80,7 @@ extend(ygrids, {
 	 * // all of y grid lines will be removed
 	 * chart.ygrids.remove();
 	 */
-	remove: function(params?: {value?: number, class?: string}) { // TODO: multiple
+	remove: function(params?: {value?: number, class?: string}): void { // TODO: multiple
 		this.internal.removeGridLines(params, false);
 	}
 });

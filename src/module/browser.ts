@@ -4,8 +4,7 @@
  */
 /**
  * Window object
- * @module
- * @ignore
+ * @private
  */
 /* eslint-disable no-new-func, no-undef */
 export {win as window, doc as document};

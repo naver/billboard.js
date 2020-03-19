@@ -29,7 +29,7 @@ import {getUnique, isObjectType, isNumber, isUndefined, notEmpty} from "../../mo
 export default {
 	/**
 	 * Get the shape draw function
-	 * @return {Object}
+	 * @returns {object}
 	 * @private
 	 */
 	getDrawShape() {
@@ -125,12 +125,12 @@ export default {
 
 	/**
 	 * Get indices value based on data ID value
-	 * @param {Object} indices Indices object
-	 * @param {String} id Data id value
-	 * @return {Object} Indices object
+	 * @param {object} indices Indices object
+	 * @param {string} id Data id value
+	 * @returns {object} Indices object
 	 * @private
 	 */
-	getIndices(indices, id) {
+	getIndices(indices, id: string) {
 		const xs = this.config.data_xs;
 
 		return notEmpty(xs) ?
@@ -139,11 +139,11 @@ export default {
 
 	/**
 	 * Get indices max number
-	 * @param {Object} indices Indices object
-	 * @return {Number} Max number
+	 * @param {object} indices Indices object
+	 * @returns {number} Max number
 	 * @private
 	 */
-	getIndicesMax(indices) {
+	getIndicesMax(indices): number {
 		return notEmpty(this.config.data_xs) ?
 			// if is multiple xs, return total sum of xs' __max__ value
 			Object.keys(indices)
@@ -151,7 +151,7 @@ export default {
 				.reduce((acc, curr) => acc + curr) : indices.__max__;
 	},
 
-	getShapeX(offset, indices, isSub) {
+	getShapeX(offset, indices, isSub?: boolean): (d) => number {
 		const $$ = this;
 		const {config, scale} = $$;
 		const currScale = isSub ? scale.subX : (scale.zoom || scale.x);
@@ -194,7 +194,7 @@ export default {
 		};
 	},
 
-	getShapeY(isSub) {
+	getShapeY(isSub?: boolean): Function {
 		const $$ = this;
 		const isStackNormalized = $$.isStackNormalized();
 
@@ -209,8 +209,8 @@ export default {
 
 	/**
 	 * Get Shape's offset data
-	 * @param {function(Object): boolean} typeFilter
-	 * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+	 * @param {Function} typeFilter Type filter function
+	 * @returns {object}
 	 * @private
 	 */
 	getShapeOffsetData(typeFilter) {
@@ -248,7 +248,7 @@ export default {
 		return {indexMapByTargetId, shapeOffsetTargets};
 	},
 
-	getShapeOffset(typeFilter, indices, isSub) {
+	getShapeOffset(typeFilter, indices, isSub?: boolean): Function {
 		const $$ = this;
 		const {shapeOffsetTargets, indexMapByTargetId} = $$.getShapeOffsetData(typeFilter);
 
@@ -286,7 +286,7 @@ export default {
 		};
 	},
 
-	isWithinShape(that, d) {
+	isWithinShape(that, d): boolean {
 		const $$ = this;
 		const shape = d3Select(that);
 		let isWithin;

@@ -5,6 +5,7 @@
  */
 import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import {isDefined, isNumber, isString} from "../../module/util";
+import {d3Selection} from "../../../types/types";
 
 export default class AxisRendererHelper {
 	private owner;
@@ -29,8 +30,8 @@ export default class AxisRendererHelper {
 
 	/**
 	 * Compute a character dimension
-	 * @param {d3.selection} node
-	 * @return {{w: number, h: number}}
+	 * @param {d3.selection} node <g class=tick> node
+	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
 	static getSizeFor1Char(node) {
@@ -63,10 +64,11 @@ export default class AxisRendererHelper {
 
 	/**
 	 * Get tick transform setter function
-	 * @param {String} id Axis id
+	 * @param {string} id Axis id
+	 * @returns {Function} transfrom setter function
 	 * @private
 	 */
-	getTickTransformSetter(id) {
+	getTickTransformSetter(id: string): (selection: d3Selection, scale) => void {
 		const {config} = this;
 		const fn = id === "x" ?
 			value => `translate(${value + config.tickOffset},0)` :
@@ -77,14 +79,14 @@ export default class AxisRendererHelper {
 		};
 	}
 
-	scaleExtent(domain) {
+	scaleExtent(domain: [number, number]): [number, number] {
 		const start = domain[0];
 		const stop = domain[domain.length - 1];
 
 		return start < stop ? [start, stop] : [stop, start];
 	}
 
-	generateTicks(scale, isYAxes) {
+	generateTicks(scale, isYAxes: boolean): number[] {
 		const {tickStepSize} = this.owner.params;
 		let ticks: number[] = [];
 
@@ -131,7 +133,7 @@ export default class AxisRendererHelper {
 		return newScale;
 	}
 
-	textFormatted(v) {
+	textFormatted(v: string | number | any): string {
 		const tickFormat = this.config.tickFormat;
 
 		// to round float numbers from 'binary floating point'
@@ -143,7 +145,7 @@ export default class AxisRendererHelper {
 		return isDefined(formatted) ? formatted : "";
 	}
 
-	transitionise(selection) {
+	transitionise(selection): d3Selection {
 		const {config} = this;
 
 		return config.withoutTransition ?

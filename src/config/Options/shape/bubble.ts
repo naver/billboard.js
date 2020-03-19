@@ -10,9 +10,10 @@ export default {
 	 * Set bubble options
 	 * @name bubble
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
-	 * @property {Boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
+	 * @type {object}
+	 * @property {object} bubble bubble object
+	 * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
+	 * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
 	 * @example
 	 *  bubble: {
 	 *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.

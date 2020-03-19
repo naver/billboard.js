@@ -2,16 +2,19 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {DataItem} from "../../../types/types";
 import {KEY} from "../../module/Cache";
 import {extend, isUndefined, isArray} from "../../module/util";
 
+type dataParam = {x: number, value: number, id: string, index: number}[];
+
 /**
  * Get data loaded in the chart.
- * @method data
+ * @function data
  * @instance
  * @memberof Chart
- * @param {String|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
- * @return {Array} Data objects
+ * @param {string|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
+ * @returns {Array} Data objects
  * @example
  * // Get only data1 data
  * chart.data("data1");
@@ -23,11 +26,11 @@ import {extend, isUndefined, isArray} from "../../module/util";
  * // Get all data
  * chart.data();
  */
-function data(targetIds) {
+function data(targetIds: string|string[]): DataItem[] {
 	const {targets} = this.internal.data;
 
 	if (!isUndefined(targetIds)) {
-		const ids = isArray(targetIds) ? targetIds : [targetIds];
+		const ids: any = isArray(targetIds) ? targetIds : [targetIds];
 
 		return targets.filter(t => ids.some(v => v === t.id));
 	}
@@ -38,11 +41,11 @@ function data(targetIds) {
 extend(data, {
 	/**
 	 * Get data shown in the chart.
-	 * @method data․shown
+	 * @function data․shown
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
-	 * @return {Array} Data objects
+	 * @param {string|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
+	 * @returns {Array} Data objects
 	 * @example
 	 * // Get shown data by filtering to include only data1 data
 	 * chart.data.shown("data1");
@@ -54,27 +57,28 @@ extend(data, {
 	 * // Get all shown data
 	 * chart.data.shown();
 	 */
-	shown: function(targetIds: string | string[]) {
+	shown: function(targetIds: string | string[]): DataItem[] {
 		return this.internal.filterTargetsToShow(this.data(targetIds));
 	},
 
 	/**
 	 * Get values of the data loaded in the chart.
-	 * @method data․values
+	 * @function data․values
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
-	 * @return {Array} Data values
+	 * @param {string|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+	 * @param {boolean} [flat=true] Get flatten values
+	 * @returns {Array} Data values
 	 * @example
 	 * // Get data1 values
 	 * chart.data.values("data1");
 	 * // --> [10, 20, 30, 40]
 	 */
-	values: function(targetId?: string | string[], flat: boolean = true) {
+	values: function(targetIds?: string | string[], flat: boolean = true): number[]|number[][] {
 		let values;
 
-		if (targetId) {
-			const targets = this.data(targetId);
+		if (targetIds) {
+			const targets = this.data(targetIds);
 
 			if (targets && isArray(targets)) {
 				values = [];
@@ -92,11 +96,11 @@ extend(data, {
 
 	/**
 	 * Get and set names of the data loaded in the chart.
-	 * @method data․names
+	 * @function data․names
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
-	 * @return {Object} Corresponding names according its key value, if specified names values.
+	 * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+	 * @returns {object} Corresponding names according its key value, if specified names values.
 	 * @example
 	 * // Get current names
 	 * chart.data.names();
@@ -119,11 +123,11 @@ extend(data, {
 
 	/**
 	 * Get and set colors of the data loaded in the chart.
-	 * @method data․colors
+	 * @function data․colors
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
-	 * @return {Object} Corresponding data color value according its key value.
+	 * @param {object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
+	 * @returns {object} Corresponding data color value according its key value.
 	 * @example
 	 * // Get current colors
 	 * chart.data.colors();
@@ -135,18 +139,18 @@ extend(data, {
 	 *  data2: "#000000"
 	 * });
 	 */
-	colors: function(colors?: Array<{ [key: string]: string; }>) {
+	colors: function(colors?: Array<{ [key: string]: string; }>): { [key: string]: string } {
 		return this.internal.updateDataAttributes("colors", colors);
 	},
 
 	/**
 	 * Get and set axes of the data loaded in the chart.
 	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
-	 * @method data․axes
+	 * @function data․axes
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
-	 * @return {Object} Corresponding axes value for data, if specified axes value.
+	 * @param {object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
+	 * @returns {object} Corresponding axes value for data, if specified axes value.
 	 * @example
 	 * // Get current axes
 	 * chart.data.axes();
@@ -164,31 +168,31 @@ extend(data, {
 
 	/**
 	 * Get the minimum data value bound to the chart
-	 * @method data․min
+	 * @function data․min
 	 * @instance
 	 * @memberof Chart
-	 * @return {Array} Data objects
+	 * @returns {Array} Data objects
 	 * @example
 	 * // Get current axes
 	 * chart.data.min();
 	 * // --> [{x: 0, value: 30, id: "data1", index: 0}, ...]
 	 */
-	min: function(): { x: number, value: number, id: string, index: number }[] {
+	min: function(): dataParam {
 		return this.internal.getMinMaxData().min;
 	},
 
 	/**
 	 * Get the maximum data value bound to the chart
-	 * @method data․max
+	 * @function data․max
 	 * @instance
 	 * @memberof Chart
-	 * @return {Array} Data objects
+	 * @returns {Array} Data objects
 	 * @example
 	 * // Get current axes
 	 * chart.data.max();
 	 * // --> [{x: 3, value: 400, id: "data1", index: 3}, ...]
 	 */
-	max: function(): {x: number, value: number, id: string, index: number}[] {
+	max: function(): dataParam {
 		return this.internal.getMinMaxData().max;
 	}
 });

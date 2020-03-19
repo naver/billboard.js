@@ -10,18 +10,20 @@ export default {
 	 * Set pie options
 	 * @name pie
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
+	 * @type {object}
+	 * @property {object} pie Pie object
+	 * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
 	 * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-	 * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
-	 * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
-	 * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
-	 * @property {Number} [pie.expand.rate=0.98] Set expand rate.
-	 * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
-	 * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
-	 * @property {Number} [pie.padAngle=0] Set padding between data.
-	 * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
-	 * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
+	 * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+	 * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+	 * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
+	 * @property {number} [pie.expand.rate=0.98] Set expand rate.
+	 * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
+	 * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+	 * @property {number} [pie.padAngle=0] Set padding between data.
+	 * @property {number} [pie.padding=0] Sets the gap between pie arcs.
+	 * @property {object} donut Donut object
+	 * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
 	 * @example
 	 *  pie: {
 	 *      label: {

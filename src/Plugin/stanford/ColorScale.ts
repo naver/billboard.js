@@ -23,7 +23,7 @@ export default class ColorScale {
 		this.owner = owner;
 	}
 
-	drawColorScale() {
+	drawColorScale(): void {
 		const {$$, config} = this.owner;
 		const target = $$.data.targets[0];
 		const height = $$.state.height - config.padding_bottom - config.padding_top;
@@ -93,12 +93,12 @@ export default class ColorScale {
 		this.colorScale.attr("transform", `translate(${$$.state.currentWidth - this.xForColorScale()}, 0)`);
 	}
 
-	xForColorScale() {
+	xForColorScale(): number {
 		return this.owner.config.padding_right +
 			this.colorScale.node().getBBox().width;
 	}
 
-	getColorScalePadding() {
+	getColorScalePadding(): number {
 		return this.xForColorScale() + this.owner.config.padding_left + 20;
 	}
 }

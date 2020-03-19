@@ -14,14 +14,14 @@ import CLASS from "../../config/classes";
 import {getRandom, isArray, isDefined, isFunction, isUndefined, isValue, parseDate} from "../../module/util";
 
 export default {
-	initLine() {
+	initLine(): void {
 		const {$el} = this;
 
 		$el.line = $el.main.select(`.${CLASS.chart}`).append("g")
 			.attr("class", CLASS.chartLines);
 	},
 
-	updateTargetsForLine(targets) {
+	updateTargetsForLine(targets): void {
 		const $$ = this;
 		const {$el} = $$;
 		const classChartLine = $$.classChartLine.bind($$);
@@ -56,7 +56,7 @@ export default {
 		// mainLineUpdate.exit().remove();
 	},
 
-	updateLine(durationForExit) {
+	updateLine(durationForExit): void {
 		const $$ = this;
 		const {format: {extraLineClasses}, $el} = $$;
 
@@ -80,7 +80,7 @@ export default {
 			.attr("transform", null);
 	},
 
-	redrawLine(drawLine, withTransition) {
+	redrawLine(drawLine, withTransition?: boolean) {
 		const {line} = this.$el;
 
 		return [
@@ -94,10 +94,10 @@ export default {
 	/**
 	 * Get the curve interpolate
 	 * @param {Array} d Data object
-	 * @return {Function}
+	 * @returns {Function}
 	 * @private
 	 */
-	getCurve(d) {
+	getCurve(d): Function {
 		const $$ = this;
 		const isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
 
@@ -130,7 +130,7 @@ export default {
 		} : $$.getInterpolate(d);
 	},
 
-	generateDrawLine(lineIndices, isSub) {
+	generateDrawLine(lineIndices, isSub?: boolean): (d) => string {
 		const $$ = this;
 		const {config, scale} = $$;
 		const lineConnectNull = config.line_connectNull;
@@ -189,7 +189,7 @@ export default {
 		};
 	},
 
-	generateGetLinePoints(lineIndices, isSubValue) { // partial duplication of generateGetBarPoints
+	generateGetLinePoints(lineIndices, isSubValue?: boolean):Function { // partial duplication of generateGetBarPoints
 		const $$ = this;
 		const {config} = $$;
 		const isSub = !!isSubValue;
@@ -223,7 +223,7 @@ export default {
 		};
 	},
 
-	lineWithRegions(d, x, y, _regions) {
+	lineWithRegions(d, x, y, _regions): string {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
@@ -337,7 +337,7 @@ export default {
 		return path;
 	},
 
-	updateAreaGradient() {
+	updateAreaGradient(): void {
 		const $$ = this;
 		const {config, state: {datetimeId}, $el: {defs}} = $$;
 
@@ -371,7 +371,7 @@ export default {
 		});
 	},
 
-	updateAreaColor(d) {
+	updateAreaColor(d): string {
 		const $$ = this;
 
 		return $$.config.area_linearGradient ?
@@ -379,7 +379,7 @@ export default {
 			$$.color(d);
 	},
 
-	updateArea(durationForExit) {
+	updateArea(durationForExit: number): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 
@@ -407,7 +407,7 @@ export default {
 			.style("opacity", state.orgAreaOpacity);
 	},
 
-	redrawArea(drawArea, withTransition) {
+	redrawArea(drawArea, withTransition?: boolean) {
 		const $$ = this;
 		const {orgAreaOpacity} = $$.state;
 
@@ -421,12 +421,12 @@ export default {
 
 	/**
 	 * Generate area path data
-	 * @param areaIndices
-	 * @param isSub
-	 * @return {function(*=): (*|string)}
+	 * @param {object} areaIndices Indices
+	 * @param {boolean} isSub Weather is sub axis
+	 * @returns {Function}
 	 * @private
 	 */
-	generateDrawArea(areaIndices, isSub) {
+	generateDrawArea(areaIndices, isSub?: boolean): (d) => string {
 		const $$ = this;
 		const {config} = $$;
 		const lineConnectNull = config.line_connectNull;
@@ -489,7 +489,7 @@ export default {
 		};
 	},
 
-	generateGetAreaPoints(areaIndices, isSub) {
+	generateGetAreaPoints(areaIndices, isSub?: boolean): Function {
 		// partial duplication of generateGetBarPoints
 		const $$ = this;
 		const {config} = $$;
@@ -521,11 +521,11 @@ export default {
 		};
 	},
 
-	isWithinStep(that, y) {
+	isWithinStep(that, y: number): boolean {
 		return Math.abs(y - d3Mouse(that)[1]) < 30;
 	},
 
-	shouldDrawPointsForLine(d) {
+	shouldDrawPointsForLine(d): boolean {
 		const linePoint = this.config.line_point;
 
 		return linePoint === true ||

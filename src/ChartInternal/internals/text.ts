@@ -9,9 +9,11 @@ import {
 import {KEY} from "../../module/Cache";
 import CLASS from "../../config/classes";
 import {capitalize, getBoundingRect, getRandom, isNumber, isObject, isString, getTranslation} from "../../module/util";
+import {AxisType} from "../../../types/types";
+
 
 export default {
-	opacityForText() {
+	opacityForText(): "1" | "0" {
 		return this.hasDataLabel() ? "1" : "0";
 	},
 
@@ -19,7 +21,7 @@ export default {
 	 * Initializes the text
 	 * @private
 	 */
-	initText() {
+	initText(): void {
 		const {$el} = this;
 
 		$el.main.select(`.${CLASS.chart}`).append("g")
@@ -28,10 +30,10 @@ export default {
 
 	/**
 	 * Update chartText
+	 * @param {object} targets $$.data.targets
 	 * @private
-	 * @param {Object} $$.data.targets
 	 */
-	updateTargetsForText(targets) {
+	updateTargetsForText(targets): void {
 		const $$ = this;
 		const classChartText = $$.classChartText.bind($$);
 		const classTexts = $$.classTexts.bind($$);
@@ -51,10 +53,10 @@ export default {
 
 	/**
 	 * Update text
+	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
-	 * @param {Number} Fade-out transition duration
 	 */
-	updateText(durationForExit) {
+	updateText(durationForExit): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const dataFn = $$.labelishData.bind($$);
@@ -83,7 +85,7 @@ export default {
 			});
 	},
 
-	updateTextColor(d) {
+	updateTextColor(d): object | string {
 		const $$ = this;
 		const labelColors = $$.config.data_labels_colors;
 		let color;
@@ -101,17 +103,18 @@ export default {
 	 * Redraw chartText
 	 * @param {Function} x Positioning function for x
 	 * @param {Function} y Positioning function for y
-	 * @param {Boolean} forFlow
-	 * @param {Boolean} withTransition transition is enabled
+	 * @param {boolean} forFlow Weather is flow
+	 * @param {boolean} withTransition transition is enabled
+	 * @returns {Array}
 	 * @private
 	 */
-	redrawText(x, y, forFlow, withTransition) {
+	redrawText(x, y, forFlow?: boolean, withTransition?: boolean) {
 		const $$ = this;
 		const t: any = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
 		return [
-			$$.$el.text.each(function(d, i) {
+			$$.$el.text.each(function(d, i: number) {
 				const text = d3Select(this);
 
 				// do not apply transition for newly added text elements
@@ -126,12 +129,12 @@ export default {
 
 	/**
 	 * Gets the getBoundingClientRect value of the element
+	 * @param {HTMLElement|d3.selection} element Target element
+	 * @param {string} className Class name
+	 * @returns {object} value of element.getBoundingClientRect()
 	 * @private
-	 * @param {HTMLElement|d3.selection} element
-	 * @param {String} className
-	 * @returns {Object} value of element.getBoundingClientRect()
 	 */
-	getTextRect(element, className: string) {
+	getTextRect(element, className: string): object {
 		const $$ = this;
 		let base = (element.node ? element.node() : element);
 
@@ -162,12 +165,12 @@ export default {
 
 	/**
 	 * Gets the x or y coordinate of the text
-	 * @param {Object} indices Indices values
-	 * @param {Boolean} forX whether or not to x
-	 * @returns {Number} coordinates
+	 * @param {object} indices Indices values
+	 * @param {boolean} forX whether or not to x
+	 * @returns {number} coordinates
 	 * @private
 	 */
-	generateXYForText(indices, forX) {
+	generateXYForText(indices, forX?: boolean): (d, i) => number {
 		const $$ = this;
 		const types = Object.keys(indices);
 		const points = {};
@@ -190,13 +193,13 @@ export default {
 
 	/**
 	 * Get centerized text position for bar type data.label.text
-	 * @private
-	 * @param {Object} d Data object
+	 * @param {object} d Data object
 	 * @param {Array} points Data points position
 	 * @param {HTMLElement} textElement Data label text element
-	 * @returns {Number} Position value
+	 * @returns {number} Position value
+	 * @private
 	 */
-	getCenteredTextPos(d, points, textElement) {
+	getCenteredTextPos(d, points, textElement): number {
 		const $$ = this;
 		const {config} = $$;
 		const isRotated = config.axis_rotated;
@@ -229,12 +232,12 @@ export default {
 
 	/**
 	 * Get data.labels.position value
-	 * @param {String} id Data id value
-	 * @param {String} type x | y
-	 * @return {Number} Position value
+	 * @param {string} id Data id value
+	 * @param {string} type x | y
+	 * @returns {number} Position value
 	 * @private
 	 */
-	getTextPos(id, type) {
+	getTextPos(id, type): number {
 		const pos = this.config.data_labels_position;
 
 		return (id in pos ? pos[id] : pos)[type] || 0;
@@ -242,13 +245,13 @@ export default {
 
 	/**
 	 * Gets the x coordinate of the text
+	 * @param {object} points Data points position
+	 * @param {object} d Data object
+	 * @param {HTMLElement} textElement Data label text element
+	 * @returns {number} x coordinate
 	 * @private
-	 * @param {Object} points
-	 * @param {Object} data
-	 * @param {HTMLElement} element
-	 * @returns {Number} x coordinate
 	 */
-	getXForText(points, d, textElement) {
+	getXForText(points, d, textElement): number {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -281,13 +284,13 @@ export default {
 
 	/**
 	 * Gets the y coordinate of the text
+	 * @param {object} points Data points position
+	 * @param {object} d Data object
+	 * @param {HTMLElement} textElement Data label text element
+	 * @returns {number} y coordinate
 	 * @private
-	 * @param {Object} points
-	 * @param {Object} data
-	 * @param {HTMLElement} element
-	 * @returns {Number} y coordinate
 	 */
-	getYForText(points, d, textElement) {
+	getYForText(points, d, textElement): number {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -341,12 +344,12 @@ export default {
 	/**
 	 * Calculate if two or more text nodes are overlapping
 	 * Mark overlapping text nodes with "text-overlapping" class
+	 * @param {string} id Axis id
+	 * @param {ChartInternal} $$ ChartInternal context
+	 * @param {string} selector Selector string
 	 * @private
-	 * @param {number} id
-	 * @param {ChartInternal} $$
-	 * @param {string} selector
 	 */
-	markOverlapped(id, $$, selector) {
+	markOverlapped(id: AxisType, $$, selector: string): void {
 		const textNodes = $$.$el.arcs.selectAll(selector);
 		const filteredTextNodes = textNodes.filter(node => node.data.id !== id);
 		const textNode = textNodes.filter(node => node.data.id === id);
@@ -373,11 +376,11 @@ export default {
 	/**
 	 * Calculate if two or more text nodes are overlapping
 	 * Remove "text-overlapping" class on selected text nodes
+	 * @param {ChartInternal} $$ ChartInternal context
+	 * @param {string} selector Selector string
 	 * @private
-	 * @param {ChartInternal} $$
-	 * @param {string} selector
 	 */
-	undoMarkOverlapped($$, selector) {
+	undoMarkOverlapped($$, selector): void {
 		$$.$el.arcs.selectAll(selector)
 			.each(function() {
 				d3SelectAll([this, this.previousSibling])

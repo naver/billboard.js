@@ -10,17 +10,18 @@ export default {
 	 * Set line options
 	 * @name line
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
+	 * @type {object}
+	 * @property {object} line Line object
+	 * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
 	 *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
 	 * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
-	 * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
+	 * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
 	 * **Available values:**
 	 * - step
 	 * - step-before
 	 * - step-after
-	 * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-	 * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
+	 * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+	 * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
 	 * @example
 	 *  line: {
 	 *      connectNull: true,

@@ -8,10 +8,10 @@ export default {
 	/**
 	 * Flow data to the chart.<br><br>
 	 * By this API, you can append new data points to the chart.
-	 * @method flow
+	 * @function flow
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} args The object can consist with following members:<br>
+	 * @param {object} args The object can consist with following members:<br>
 	 *
 	 *    | Key | Type | Description |
 	 *    | --- | --- | --- |
@@ -49,12 +49,12 @@ export default {
 	 *        ["data3", 100, 100, 300, 500]
 	 *      ],
 	 *      length: 2,
-     *      duration: 1500
+	 *      duration: 1500
 	 *    });
 	 *  }
 	 * });
 	 */
-	flow(args) {
+	flow(args): void {
 		const $$ = this.internal;
 		let data;
 		let domain;

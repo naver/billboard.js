@@ -5,7 +5,7 @@
 import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, parseDate, sortValue} from "../../module/util";
 
 export default {
-	getYDomainMinMax(targets, type) {
+	getYDomainMinMax(targets, type: "min" | "max"): number | Date | undefined {
 		const $$ = this;
 		const {axis, config} = $$;
 		const isMin = type === "min";
@@ -57,27 +57,28 @@ export default {
 		return getMinMax(type, Object.keys(ys).map(key => getMinMax(type, ys[key])));
 	},
 
-	getYDomainMin(targets) {
+	getYDomainMin(targets): number {
 		return this.getYDomainMinMax(targets, "min");
 	},
 
-	getYDomainMax(targets) {
+	getYDomainMax(targets): number {
 		return this.getYDomainMinMax(targets, "max");
 	},
 
 	/**
 	 * Check if hidden targets bound to the given axis id
-	 * @return {Boolean}
+	 * @param {string} id ID to be checked
+	 * @returns {boolean}
 	 * @private
 	 */
-	isHiddenTargetWithYDomain(id) {
+	isHiddenTargetWithYDomain(id): boolean {
 		const $$ = this;
 
 		return $$.state.hiddenTargetIds
 			.some(v => $$.axis.getId(v) === id);
 	},
 
-	getYDomain(targets, axisId, xDomain) {
+	getYDomain(targets, axisId: string, xDomain) {
 		const $$ = this;
 		const {axis, config, scale} = $$;
 		const pfx = `axis_${axisId}`;

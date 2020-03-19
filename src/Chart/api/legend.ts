@@ -9,10 +9,10 @@
 const legend = {
 	/**
 	 * Show legend for each target.
-	 * @method legend․show
+	 * @function legend․show
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} targetIds
+	 * @param {string|Array} targetIds
 	 * - If targetIds is given, specified target's legend will be shown.
 	 * - If only one target is the candidate, String can be passed.
 	 * - If no argument is given, all of target's legend will be shown.
@@ -26,7 +26,7 @@ const legend = {
 	 * // Show all legend.
 	 * chart.legend.show();
 	 */
-	show: function(targetIds?: string | string[]) {
+	show: function(targetIds?: string | string[]): void {
 		const $$ = this.internal;
 
 		$$.showLegend($$.mapToTargetIds(targetIds));
@@ -35,10 +35,10 @@ const legend = {
 
 	/**
 	 * Hide legend for each target.
-	 * @method legend․hide
+	 * @function legend․hide
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Array} targetIds
+	 * @param {string|Array} targetIds
 	 * - If targetIds is given, specified target's legend will be hidden.
 	 * - If only one target is the candidate, String can be passed.
 	 * - If no argument is given, all of target's legend will be hidden.
@@ -52,7 +52,7 @@ const legend = {
 	 * // Hide all legend.
 	 * chart.legend.hide();
 	 */
-	hide: function(targetIds?: string | string[]) {
+	hide: function(targetIds?: string | string[]): void {
 		const $$ = this.internal;
 
 		$$.hideLegend($$.mapToTargetIds(targetIds));

@@ -12,16 +12,16 @@ import {getMinMax, getRange, isDefined, isEmpty, isNumber, isUndefined, setTextV
 
 /**
  * Get the position value
- * @param {Boolean} isClockwise If the direction is clockwise
- * @param {String} type Coordinate type 'x' or 'y'
- * @param {Number} edge Number of edge
- * @param {Number} pos The indexed position
- * @param {Number} range
- * @param {Number} ratio
- * @return {number}
+ * @param {boolean} isClockwise If the direction is clockwise
+ * @param {string} type Coordinate type 'x' or 'y'
+ * @param {number} edge Number of edge
+ * @param {number} pos The indexed position
+ * @param {number} range Range value
+ * @param {number} ratio Ratio value
+ * @returns {number}
  * @private
  */
-function getPosition(isClockwise, type, edge, pos, range, ratio) {
+function getPosition(isClockwise: boolean, type: "x" | "y", edge: number, pos: number, range: number, ratio: number): number {
 	const index = isClockwise && pos > 0 ? edge - pos : pos;
 	const r = 2 * Math.PI;
 	const func = type === "x" ? Math.sin : Math.cos;
@@ -33,7 +33,7 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 const cacheKey = KEY.radarPoints;
 
 export default {
-	initRadar() {
+	initRadar(): void {
 		const $$ = this;
 		const {config, state: {currentData}, $el} = $$;
 
@@ -57,7 +57,7 @@ export default {
 		}
 	},
 
-	getRadarSize() {
+	getRadarSize(): [number, number] {
 		const $$ = this;
 		const {config, state: {arcWidth, arcHeight}} = $$;
 		const padding = config.axis_x_categories.length < 4 ? -20 : 10;
@@ -66,7 +66,7 @@ export default {
 		return [size, size];
 	},
 
-	updateTargetsForRadar(targets) {
+	updateTargetsForRadar(targets): void {
 		const $$ = this;
 		const {config} = $$;
 
@@ -77,7 +77,7 @@ export default {
 		$$.generateRadarPoints();
 	},
 
-	getRadarPosition(type, index, range, ratio) {
+	getRadarPosition(type, index: number, range, ratio: number): number {
 		const $$ = this;
 		const {config} = $$;
 		const [width, height] = $$.getRadarSize();
@@ -100,7 +100,7 @@ export default {
 	 * Generate data points
 	 * @private
 	 */
-	generateRadarPoints() {
+	generateRadarPoints(): void {
 		const $$ = this;
 		const targets = $$.data.targets;
 
@@ -121,7 +121,7 @@ export default {
 		}
 	},
 
-	redrawRadar(durationForExit) {
+	redrawRadar(durationForExit: number): void {
 		const $$ = this;
 		const {radars, main} = $$.$el;
 		const translate = $$.getTranslate("radar");
@@ -139,7 +139,7 @@ export default {
 		}
 	},
 
-	generateGetRadarPoints() {
+	generateGetRadarPoints(): Function {
 		const points = this.cache.get(cacheKey);
 
 		return (d, i) => {
@@ -154,7 +154,7 @@ export default {
 		};
 	},
 
-	updateRadarLevel() {
+	updateRadarLevel(): void {
 		const $$ = this;
 		const {config, state, $el: {radars}} = $$;
 		const [width, height] = $$.getRadarSize();
@@ -223,7 +223,7 @@ export default {
 		}
 	},
 
-	updateRadarAxes() {
+	updateRadarAxes(): void {
 		const $$ = this;
 		const {config, $el: {radars}} = $$;
 		const [width, height] = $$.getRadarSize();
@@ -297,7 +297,7 @@ export default {
 		$$.bindEvent();
 	},
 
-	bindEvent() {
+	bindEvent(): void {
 		const $$ = this;
 		const {config, state: {inputType, transiting}, $el: {radars, svg}} = $$;
 
@@ -350,7 +350,7 @@ export default {
 		}
 	},
 
-	updateRadarShape(durationForExit) {
+	updateRadarShape(durationForExit): void {
 		const $$ = this;
 		const targets = $$.data.targets;
 		const points = $$.cache.get(cacheKey);
@@ -376,21 +376,21 @@ export default {
 
 	/**
 	 * Get data point x coordinate
-	 * @param {Object} d Data object
-	 * @return {Number}
+	 * @param {object} d Data object
+	 * @returns {number}
 	 * @private
 	 */
-	radarCircleX(d) {
+	radarCircleX(d): number {
 		return this.cache.get(cacheKey)[d.id][d.index][0];
 	},
 
 	/**
 	 * Get data point y coordinate
-	 * @param {Object} d Data object
-	 * @return {Number}
+	 * @param {object} d Data object
+	 * @returns {number}
 	 * @private
 	 */
-	radarCircleY(d) {
+	radarCircleY(d): number {
 		return this.cache.get(cacheKey)[d.id][d.index][1];
 	}
 };

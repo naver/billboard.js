@@ -14,9 +14,10 @@ import {interpolate as d3Interpolate} from "d3-interpolate";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
 import {callFn, endall, isFunction, isNumber, isUndefined, setTextValue} from "../../module/util";
+import {d3Selection} from "../../../types/types";
 
 export default {
-	initPie() {
+	initPie(): void {
 		const $$ = this;
 		const {config} = $$;
 		const dataType = config.data_type;
@@ -37,7 +38,7 @@ export default {
 			.value((d: any) => d.values.reduce((a, b) => a + b.value, 0));
 	},
 
-	updateRadius() {
+	updateRadius(): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const radius = config.pie_innerRadius;
@@ -65,7 +66,7 @@ export default {
 			state.radius * state.innerRadiusRatio : innerRadius;
 	},
 
-	getInnerRadius(d) {
+	getInnerRadius(d): number {
 		const $$ = this;
 		let {innerRadius} = $$.state;
 
@@ -76,7 +77,7 @@ export default {
 		return innerRadius;
 	},
 
-	updateArc() {
+	updateArc(): void {
 		const $$ = this;
 
 		$$.svgArc = $$.getSvgArc();
@@ -149,7 +150,7 @@ export default {
 		return found ? d : null;
 	},
 
-	getSvgArc() {
+	getSvgArc(): Function {
 		const $$ = this;
 		const {state} = $$;
 		const ir = $$.getInnerRadius();
@@ -189,7 +190,7 @@ export default {
 		return newArc;
 	},
 
-	getSvgArcExpanded(rate) {
+	getSvgArcExpanded(rate?: number): Function {
 		const $$ = this;
 		const {state} = $$;
 		const newRate = rate || 1;
@@ -220,11 +221,11 @@ export default {
 		};
 	},
 
-	getArc(d, withoutUpdate, force) {
+	getArc(d, withoutUpdate: boolean, force?: boolean): string {
 		return force || this.isArcType(d.data) ? this.svgArc(d, withoutUpdate) : "M 0 0";
 	},
 
-	transformForArcLabel(d) {
+	transformForArcLabel(d): string {
 		const $$ = this;
 		const {config, state: {radius, radiusExpanded}} = $$;
 
@@ -263,7 +264,7 @@ export default {
 		return translate;
 	},
 
-	convertToArcData(d) {
+	convertToArcData(d): object {
 		return this.addName({
 			id: d.data.id,
 			value: d.value,
@@ -272,7 +273,7 @@ export default {
 		});
 	},
 
-	textForArcLabel(selection) {
+	textForArcLabel(selection: d3Selection): void {
 		const $$ = this;
 
 		if ($$.shouldShowArcLabel()) {
@@ -298,7 +299,7 @@ export default {
 		}
 	},
 
-	textForGaugeMinMax(value, isMax) {
+	textForGaugeMinMax(value: number, isMax?: boolean): number | string {
 		const $$ = this;
 		const {config} = $$;
 		const format = config.gauge_label_extents;
@@ -306,7 +307,7 @@ export default {
 		return isFunction(format) ? format.bind($$.api)(value, isMax) : value;
 	},
 
-	expandArc(targetIds) {
+	expandArc(targetIds: string[]): void {
 		const $$ = this;
 		const {state: {transiting}, $el} = $$;
 
@@ -345,7 +346,7 @@ export default {
 			});
 	},
 
-	unexpandArc(targetIds) {
+	unexpandArc(targetIds: string[]): void {
 		const $$ = this;
 		const {state: {transiting}, $el: {svg}} = $$;
 
@@ -367,12 +368,12 @@ export default {
 
 	/**
 	 * Get expand config value
-	 * @param {String} id data ID
-	 * @param {String} key config key: 'duration | rate'
-	 * @return {Number}
+	 * @param {string} id data ID
+	 * @param {string} key config key: 'duration | rate'
+	 * @returns {number}
 	 * @private
 	 */
-	getExpandConfig(id, key) {
+	getExpandConfig(id: string, key: "duration" | "rate"): number {
 		const $$ = this;
 		const {config} = $$;
 		const def = {
@@ -392,7 +393,7 @@ export default {
 		return type ? config[`${type}_expand_${key}`] : def[key];
 	},
 
-	shouldExpand(id) {
+	shouldExpand(id: string): boolean {
 		const $$ = this;
 		const {config} = $$;
 
@@ -401,7 +402,7 @@ export default {
 			($$.isPieType(id) && config.pie_expand);
 	},
 
-	shouldShowArcLabel() {
+	shouldShowArcLabel(): boolean {
 		const $$ = this;
 		const {config} = $$;
 
@@ -409,7 +410,7 @@ export default {
 			.some(v => $$.hasType(v) && config[`${v}_label_show`]);
 	},
 
-	meetsArcLabelThreshold(ratio) {
+	meetsArcLabelThreshold(ratio: number): boolean {
 		const $$ = this;
 		const {config} = $$;
 		const threshold = $$.hasType("donut") ? config.donut_label_threshold : config.pie_label_threshold;
@@ -417,7 +418,7 @@ export default {
 		return ratio >= threshold;
 	},
 
-	getArcLabelFormat() {
+	getArcLabelFormat(): number | string {
 		const $$ = this;
 		const {config} = $$;
 		let format = config.pie_label_format;
@@ -431,14 +432,14 @@ export default {
 		return isFunction(format) ? format.bind($$.api) : format;
 	},
 
-	getArcTitle() {
+	getArcTitle(): string {
 		const $$ = this;
 		const type = ($$.hasType("donut") && "donut") || ($$.hasType("gauge") && "gauge");
 
 		return type ? $$.config[`${type}_title`] : "";
 	},
 
-	updateTargetsForArc(targets) {
+	updateTargetsForArc(targets): void {
 		const $$ = this;
 		const {main} = $$.$el;
 		const hasGauge = $$.hasType("gauge");
@@ -466,7 +467,7 @@ export default {
 		// mainPieUpdate.exit().remove();
 	},
 
-	initArc() {
+	initArc(): void {
 		const $$ = this;
 		const {$el} = $$;
 
@@ -502,7 +503,7 @@ export default {
 		}
 	},
 
-	redrawArc(duration, durationForExit, withTransform) {
+	redrawArc(duration: number, durationForExit: number, withTransform?: boolean): void {
 		const $$ = this;
 		const {config, state, $el: {main}} = $$;
 		const hasInteraction = config.interaction_enabled;
@@ -604,7 +605,7 @@ export default {
 		$$.redrawArcText(duration);
 	},
 
-	redrawMultiArcGauge() {
+	redrawMultiArcGauge(): void {
 		const $$ = this;
 		const {config, state, $el} = $$;
 		const {hiddenTargetIds} = $$.state;
@@ -652,12 +653,13 @@ export default {
 			});
 	},
 
-	bindArcEvent(arc) {
+	bindArcEvent(arc): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const isTouch = state.inputType === "touch";
 		const isMouse = state.inputType === "mouse";
 
+		// eslint-disable-next-line
 		function selectArc(_this, arcData, id) {
 			// transitions
 			$$.expandArc(id);
@@ -666,6 +668,7 @@ export default {
 			$$.showTooltip([arcData], _this);
 		}
 
+		// eslint-disable-next-line
 		function unselectArc(arcData?) {
 			const id = (arcData && arcData.id) || undefined;
 
@@ -754,7 +757,7 @@ export default {
 		}
 	},
 
-	redrawArcText(duration) {
+	redrawArcText(duration: number): void {
 		const $$ = this;
 		const {config, state, $el: {main, arcs}} = $$;
 		const hasGauge = $$.hasType("gauge");
@@ -852,7 +855,7 @@ export default {
 		}
 	},
 
-	initGauge() {
+	initGauge(): void {
 		const $$ = this;
 		const {config, $el: {arcs}} = $$;
 		const appendText = className => {
@@ -875,7 +878,7 @@ export default {
 		}
 	},
 
-	getGaugeLabelHeight() {
+	getGaugeLabelHeight(): 20 | 0 {
 		return this.config.gauge_label_show ? 20 : 0;
 	}
 };

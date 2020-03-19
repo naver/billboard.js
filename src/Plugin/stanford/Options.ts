@@ -6,14 +6,13 @@
  * Stanford diagram plugin option class
  * @class StanfordOptions
  * @param {Options} options Stanford plugin options
- * @extends Plugin
- * @return {StanfordOptions}
+ * @augments Plugin
+ * @returns {StanfordOptions}
  * @private
  */
 export default class Options {
 	constructor() {
 		return {
-
 			/**
 			 * Set the color of the color scale. This function receives a value between 0 and 1, and should return a color.
 			 * @name colors
@@ -35,14 +34,14 @@ export default class Options {
 			 * @default []
 			 * @example
 			 * 	epochs: [ 1, 1, 2, 2, ... ]
-			*/
-			epochs: [],
+			 */
+			epochs: <number[]> [],
 
 			/**
 			 * Show additional lines anywhere on the chart.
 			 * - Each line object should consist with following options:
 			 *
-		 	 * | Key | Type | Description |
+			 * | Key | Type | Description |
 			 * | --- | --- | --- |
 			 * | x1 | Number | Starting position on the x axis |
 			 * | y1 | Number | Starting position on the y axis |
@@ -64,11 +63,12 @@ export default class Options {
 			 * Set scale values
 			 * @name scale
 			 * @memberof plugin-stanford
-			 * @type {Object}
- 			 * @property {Number} [scale.min=undefined] Minimum value of the color scale. Default: lowest value in epochs
-			 * @property {Number} [scale.max=undefined] Maximum value of the color scale. Default: highest value in epochs
-			 * @property {Number} [scale.width=20] Width of the color scale
-			 * @property {String|Function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
+			 * @type {object}
+			 * @property {object} [scale] scale object
+			 * @property {number} [scale.min=undefined] Minimum value of the color scale. Default: lowest value in epochs
+			 * @property {number} [scale.max=undefined] Maximum value of the color scale. Default: highest value in epochs
+			 * @property {number} [scale.width=20] Width of the color scale
+			 * @property {string|Function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
 			 * @example
 			 *  scale: {
 			 *    max: 10000,
@@ -84,20 +84,21 @@ export default class Options {
 			 *    }
 			 *  },
 			 */
-			scale_min: undefined,
-			scale_max: undefined,
-			scale_width: 20,
-			scale_format: undefined,
+			scale_min: <number|undefined> undefined,
+			scale_max: <number|undefined> undefined,
+			scale_width: <number|undefined> 20,
+			scale_format: <number|undefined> undefined,
 
 			/**
 			 * The padding for color scale element
 			 * @name padding
 			 * @memberof plugin-stanford
-			 * @type {Object}
-			 * @property {Number} [padding.top=0] Top padding value.
-			 * @property {Number} [padding.right=0] Right padding value.
-			 * @property {Number} [padding.bottom=0] Bottom padding value.
-			 * @property {Number} [padding.left=0] Left padding value.
+			 * @type {object}
+			 * @property {object} [padding] padding object
+			 * @property {number} [padding.top=0] Top padding value.
+			 * @property {number} [padding.right=0] Right padding value.
+			 * @property {number} [padding.bottom=0] Bottom padding value.
+			 * @property {number} [padding.left=0] Left padding value.
 			 * @example
 			 *  padding: {
 			 *     top: 15,
@@ -138,7 +139,7 @@ export default class Options {
 			 *           },
 			 *           opacity: 0.2, // 0 to 1
 			 *           class: "test-polygon1"
-		 	 *       },
+			 *       },
 			 *       ...
 			 *   ]
 			 */

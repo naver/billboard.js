@@ -8,8 +8,8 @@ import {isFunction, toArray, getCssRules} from "../../module/util";
 
 /**
  * Encode to base64
- * @param {String} str
- * @return {String}
+ * @param {string} str string to be encoded
+ * @returns {string}
  * @private
  * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
  */
@@ -20,9 +20,9 @@ const b64EncodeUnicode = (str: string): string => btoa(
 
 /**
  * Convert svg node to data url
- * @param {HTMLElement} node
- * @param {object} size
- * @return {String}
+ * @param {HTMLElement} node target node
+ * @param {object} size object containing {width, height}
+ * @returns {string}
  * @private
  */
 function nodeToSvgDataUrl(node, size) {
@@ -61,12 +61,12 @@ export default {
 	 * - **NOTE:**
 	 *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
 	 *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
-	 * @method export
+	 * @function export
 	 * @instance
 	 * @memberof Chart
-	 * @param {String} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+	 * @param {string} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
 	 * @param {Function} [callback] The callback to be invoked when export is ready.
-	 * @return {String} dataURI
+	 * @returns {string} dataURI
 	 * @example
 	 *  chart.export();
 	 *  // --> "data:image/svg+xml;base64,PHN..."

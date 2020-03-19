@@ -6,7 +6,7 @@ import {isString, isArray} from "../../module/util";
 import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 
 export default {
-	setTargetType(targetIds, type) {
+	setTargetType(targetIds: string[], type: string): void {
 		const $$ = this;
 		const {config, state: {withoutFadeIn}} = $$;
 
@@ -22,6 +22,7 @@ export default {
 
 	/**
 	 * Updte current used chart types
+	 * @private
 	 */
 	updateTypes(): void {
 		const $$ = this;
@@ -42,10 +43,10 @@ export default {
 
 	/**
 	 * Check if given chart types exists
-	 * @param {String} type Chart type
+	 * @param {string} type Chart type
 	 * @param {Array} targetsValue Data array
-	 * @param {Boolean} checkFromData Force to check type cotains from data targets
-	 * @return {Boolean}
+	 * @param {boolean} checkFromData Force to check type cotains from data targets
+	 * @returns {boolean}
 	 * @private
 	 */
 	hasType(type: string, targetsValue?, checkFromData = false): boolean {
@@ -80,13 +81,13 @@ export default {
 
 	/**
 	 * Check if contains given chart types
-	 * @parma {String} type Type key
-	 * @param {Object} targets
+	 * @param {string} type Type key
+	 * @param {object} targets Target data
 	 * @param {Array} exclude Excluded types
-	 * @return {boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
-	hasTypeOf(type, targets, exclude = []) {
+	hasTypeOf(type, targets, exclude = []): boolean {
 		// 실제 노드 존재 여부도 확인필요
 		return !TYPE_BY_CATEGORY[type]
 			// @ts-ignore
@@ -96,12 +97,12 @@ export default {
 
 	/**
 	 * Check if given data is certain chart type
-	 * @param {Object} d Data object
-	 * @param {String|Array} type chart type
-	 * @return {Boolean}
+	 * @param {object} d Data object
+	 * @param {string|Array} type chart type
+	 * @returns {boolean}
 	 * @private
 	 */
-	isTypeOf(d, type) {
+	isTypeOf(d, type): boolean {
 		const id = isString(d) ? d : d.id;
 		const dataType = this.config.data_types[id];
 
@@ -109,7 +110,7 @@ export default {
 			type.indexOf(dataType) >= 0 : dataType === type;
 	},
 
-	hasPointType() {
+	hasPointType(): boolean {
 		const $$ = this;
 
 		return $$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter");
@@ -117,71 +118,71 @@ export default {
 
 	/**
 	 * Check if contains arc types chart
-	 * @param {Object} targets
+	 * @param {object} targets Target data
 	 * @param {Array} exclude Excluded types
-	 * @return {boolean}
+	 * @returns {boolean}
 	 * @private
 	 */
-	hasArcType(targets, exclude) {
+	hasArcType(targets, exclude): boolean {
 		return this.hasTypeOf("Arc", targets, exclude);
 	},
 
-	hasMultiArcGauge() {
+	hasMultiArcGauge(): boolean {
 		return this.hasType("gauge") && this.config.gauge_type === "multi";
 	},
 
-	isLineType(d) {
+	isLineType(d): boolean {
 		const id = isString(d) ? d : d.id;
 
 		return !this.config.data_types[id] ||
 			this.isTypeOf(id, TYPE_BY_CATEGORY.Line);
 	},
 
-	isStepType(d) {
+	isStepType(d): boolean {
 		return this.isTypeOf(d, TYPE_BY_CATEGORY.Step);
 	},
 
-	isSplineType(d) {
+	isSplineType(d): boolean {
 		return this.isTypeOf(d, TYPE_BY_CATEGORY.Spline);
 	},
 
-	isAreaType(d) {
+	isAreaType(d): boolean {
 		return this.isTypeOf(d, TYPE_BY_CATEGORY.Area);
 	},
 
-	isAreaRangeType(d) {
+	isAreaRangeType(d): boolean {
 		return this.isTypeOf(d, TYPE_BY_CATEGORY.AreaRange);
 	},
 
-	isBarType(d) {
+	isBarType(d): boolean {
 		return this.isTypeOf(d, "bar");
 	},
 
-	isBubbleType(d) {
+	isBubbleType(d): boolean {
 		return this.isTypeOf(d, "bubble");
 	},
 
-	isScatterType(d) {
+	isScatterType(d): boolean {
 		return this.isTypeOf(d, "scatter");
 	},
 
-	isPieType(d) {
+	isPieType(d): boolean {
 		return this.isTypeOf(d, "pie");
 	},
 
-	isGaugeType(d) {
+	isGaugeType(d): boolean {
 		return this.isTypeOf(d, "gauge");
 	},
 
-	isDonutType(d) {
+	isDonutType(d): boolean {
 		return this.isTypeOf(d, "donut");
 	},
 
-	isRadarType(d) {
+	isRadarType(d): boolean {
 		return this.isTypeOf(d, "radar");
 	},
 
-	isArcType(d) {
+	isArcType(d): boolean {
 		return this.isPieType(d) ||
 			this.isDonutType(d) ||
 			this.isGaugeType(d) ||
@@ -189,7 +190,7 @@ export default {
 	},
 
 	// determine if is 'circle' data point
-	isCirclePoint() {
+	isCirclePoint(): boolean {
 		const {config} = this;
 		const pattern = config.point_pattern;
 
@@ -211,8 +212,8 @@ export default {
 
 	/**
 	 * Get data adapt for data label showing
-	 * @param {Object} d Data object
-	 * @return {Array}
+	 * @param {object} d Data object
+	 * @returns {Array}
 	 * @private
 	 */
 	labelishData(d) {

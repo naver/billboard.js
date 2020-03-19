@@ -5,8 +5,10 @@
 import CLASS from "../../config/classes";
 import {asHalfPixel} from "../../module/util";
 
+type TranslateParam = "main" | "context" | "legend" | "x" | "y" | "y2" | "subX" | "arc" | "radar";
+
 export default {
-	getTranslate(target, index = 0) {
+	getTranslate(target: TranslateParam, index = 0): string {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -53,7 +55,7 @@ export default {
 		return `translate(${x}, ${y})`;
 	},
 
-	transformMain(withTransition, transitions) {
+	transformMain(withTransition: boolean, transitions): void {
 		const $$ = this;
 		const {main} = $$.$el;
 		let xAxis;
@@ -101,7 +103,7 @@ export default {
 			.attr("transform", $$.getTranslate("arc"));
 	},
 
-	transformAll(withTransition, transitions) {
+	transformAll(withTransition: boolean, transitions): void {
 		const $$ = this;
 		const {config, state: {hasAxis}, $el} = $$;
 

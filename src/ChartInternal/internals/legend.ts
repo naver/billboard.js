@@ -17,7 +17,7 @@ export default {
 	 * Initialize the legend.
 	 * @private
 	 */
-	initLegend() {
+	initLegend(): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -41,11 +41,11 @@ export default {
 	/**
 	 * Update legend element
 	 * @param {Array} targetIds ID's of target
-	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-	 * @param {Object} transitions Return value of the generateTransitions
+	 * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+	 * @param {object} transitions Return value of the generateTransitions
 	 * @private
 	 */
-	updateLegend(targetIds, options, transitions) {
+	updateLegend(targetIds, options, transitions): void {
 		const $$ = this;
 		const {config, state, scale, $el} = $$;
 		const optionz = options || {
@@ -85,7 +85,7 @@ export default {
 	 * Update legend using template option
 	 * @private
 	 */
-	updateLegendTemplate() {
+	updateLegendTemplate(): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const wrapper = d3Select(config.legend_contents_bindto);
@@ -122,10 +122,10 @@ export default {
 
 	/**
 	 * Update the size of the legend.
+	 * @param {Obejct} size Size object
 	 * @private
-	 * @param {Obejct} size S
 	 */
-	updateSizeForLegend(size) {
+	updateSizeForLegend(size): void {
 		const $$ = this;
 		const {config, state: {
 			isLegendTop, isLegendLeft, isLegendRight, isLegendInset, currentWidth, currentHeight
@@ -153,10 +153,10 @@ export default {
 
 	/**
 	 * Transform Legend
+	 * @param {boolean} withTransition whether or not to transition.
 	 * @private
-	 * @param {Boolean} whether or not to transition.
 	 */
-	transformLegend(withTransition) {
+	transformLegend(withTransition): void {
 		const $$ = this;
 		const {legend} = $$.$el;
 
@@ -166,48 +166,48 @@ export default {
 
 	/**
 	 * Update the legend step
+	 * @param {number} step Step value
 	 * @private
-	 * @param {Number} step
 	 */
-	updateLegendStep(step) {
+	updateLegendStep(step: number): void {
 		this.state.legendStep = step;
 	},
 
 	/**
 	 * Update legend item width
+	 * @param {number} width Width value
 	 * @private
-	 * @param {Number} width
 	 */
-	updateLegendItemWidth(w) {
-		this.state.legendItemWidth = w;
+	updateLegendItemWidth(width: number): void {
+		this.state.legendItemWidth = width;
 	},
 
 	/**
 	 * Update legend item height
+	 * @param {number} height Height value
 	 * @private
-	 * @param {Number} height
 	 */
-	updateLegendItemHeight(h) {
-		this.state.legendItemHeight = h;
+	updateLegendItemHeight(height): void {
+		this.state.legendItemHeight = height;
 	},
 
 	/**
 	 * Update legend item color
+	 * @param {string} id Corresponding data ID value
+	 * @param {string} color Color value
 	 * @private
-	 * @param {String} id Corresponding data ID value
-	 * @param {String} color Color value
 	 */
-	updateLegendItemColor(id, color) {
+	updateLegendItemColor(id: string, color: string): void {
 		this.$el.legend.select(`.${CLASS.legendItem}-${id} line`)
 			.style("stroke", color);
 	},
 
 	/**
 	 * Get the width of the legend
+	 * @returns {number} width
 	 * @private
-	 * @return {Number} width
 	 */
-	getLegendWidth() {
+	getLegendWidth(): number {
 		const $$ = this;
 		const {currentWidth, isLegendRight, isLegendInset, legendItemWidth, legendStep} = $$.state;
 
@@ -219,10 +219,10 @@ export default {
 
 	/**
 	 * Get the height of the legend
-	 * @return {Number} height
+	 * @returns {number} height
 	 * @private
 	 */
-	getLegendHeight() {
+	getLegendHeight(): number {
 		const $$ = this;
 		const {currentHeight, isLegendRight, legendItemHeight, legendStep} = $$.state;
 
@@ -234,31 +234,31 @@ export default {
 
 	/**
 	 * Get the opacity of the legend
+	 * @param {d3.selection} legendItem Legend item node
+	 * @returns {string|null} opacity
 	 * @private
-	 * @param {Object} d3.Select
-	 * @returns {Number} opacity
 	 */
-	opacityForLegend(legendItem) {
+	opacityForLegend(legendItem): string | null {
 		return legendItem.classed(CLASS.legendItemHidden) ? null : "1";
 	},
 
 	/**
 	 * Get the opacity of the legend that is unfocused
+	 * @param {d3.selection} legendItem Legend item node
+	 * @returns {string|null} opacity
 	 * @private
-	 * @param {Object} legendItem, d3.Select
-	 * @returns {Number} opacity
 	 */
-	opacityForUnfocusedLegend(legendItem) {
+	opacityForUnfocusedLegend(legendItem): string | null {
 		return legendItem.classed(CLASS.legendItemHidden) ? null : "0.3";
 	},
 
 	/**
 	 * Toggles the focus of the legend
+	 * @param {Array} targetIds ID's of target
+	 * @param {boolean} focus whether or not to focus.
 	 * @private
-	 * @param {Array} ID's of target
-	 * @param {Boolean} whether or not to focus.
 	 */
-	toggleFocusLegend(targetIds, focus) {
+	toggleFocusLegend(targetIds: string[], focus: boolean): void {
 		const $$ = this;
 		const {legend} = $$.$el;
 		const targetIdz = $$.mapToTargetIds(targetIds);
@@ -278,7 +278,7 @@ export default {
 	 * Revert the legend to its default state
 	 * @private
 	 */
-	revertLegend() {
+	revertLegend(): void {
 		const $$ = this;
 		const {legend} = $$.$el;
 
@@ -293,10 +293,10 @@ export default {
 
 	/**
 	 * Shows the legend
+	 * @param {Array} targetIds ID's of target
 	 * @private
-	 * @param {Array} ID's of target
 	 */
-	showLegend(targetIds) {
+	showLegend(targetIds: string[]): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -322,10 +322,10 @@ export default {
 
 	/**
 	 * Hide the legend
+	 * @param {Array} targetIds ID's of target
 	 * @private
-	 * @param {Array} ID's of target
 	 */
-	hideLegend(targetIds) {
+	hideLegend(targetIds: string[]): void {
 		const $$ = this;
 		const {config, $el: {legend}} = $$;
 
@@ -342,8 +342,10 @@ export default {
 
 	/**
 	 * Get legend item textbox dimension
-	 * @param {String} id
-	 * @param {HTMLElement|d3.selection} textElement
+	 * @param {string} id Data ID
+	 * @param {HTMLElement|d3.selection} textElement Text node element
+	 * @returns {object} Bounding rect
+	 * @private
 	 */
 	getLegendItemTextBox(id?: string, textElement?) {
 		const $$ = this;
@@ -369,10 +371,10 @@ export default {
 
 	/**
 	 * Set legend item style & bind events
+	 * @param {d3.selection} item Item node
 	 * @private
-	 * @param {d3.selection} item
 	 */
-	setLegendItem(item) {
+	setLegendItem(item): void {
 		const $$ = this;
 		const {api, config, state} = $$;
 		const isTouch = state.inputType === "touch";
@@ -433,10 +435,10 @@ export default {
 	/**
 	 * Update the legend
 	 * @param {Array} targetIds ID's of target
-	 * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
- 	 * @private
+	 * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+	 * @private
 	 */
-	updateLegendElement(targetIds, options) {
+	updateLegendElement(targetIds: string[], options): void {
 		const $$ = this;
 		const {config, state, $el: {legend}} = $$;
 		const paddingTop = 4;

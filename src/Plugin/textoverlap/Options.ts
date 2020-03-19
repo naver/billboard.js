@@ -6,8 +6,8 @@
  * TextOverlap plugin option class
  * @class TextOverlapOptions
  * @param {Options} options TextOverlap plugin options
- * @extends Plugin
- * @return {TextOverlapOptions}
+ * @augments Plugin
+ * @returns {TextOverlapOptions}
  * @private
  */
 export default class Options {
@@ -17,7 +17,7 @@ export default class Options {
 			 * Set selector string for target text nodes
 			 * @name selector
 			 * @memberof plugin-textoverlap
-			 * @type {String}
+			 * @type {string}
 			 * @default ".bb-texts text"
 			 * @example
 			 *  // selector for data label text nodes
@@ -29,7 +29,7 @@ export default class Options {
 			 * Set extent of label overlap prevention
 			 * @name extent
 			 * @memberof plugin-textoverlap
-			 * @type {Number}
+			 * @type {number}
 			 * @default 1
 			 * @example
 			 * 	extent: 1
@@ -40,7 +40,7 @@ export default class Options {
 			 * Set minimum area needed to show a data label
 			 * @name area
 			 * @memberof plugin-textoverlap
-			 * @type {Number}
+			 * @type {number}
 			 * @default 0
 			 * @example
 			 * 	area: 0

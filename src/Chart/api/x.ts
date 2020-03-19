@@ -7,11 +7,11 @@ import {isArray, isObject} from "../../module/util";
 export default {
 	/**
 	 * Get and set x values for the chart.
-	 * @method x
+	 * @function x
 	 * @instance
 	 * @memberof Chart
 	 * @param {Array} x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
-	 * @return {Object} xs
+	 * @returns {object} xs
 	 * @example
 	 *  // Get current x values
 	 *  chart.x();
@@ -19,7 +19,7 @@ export default {
 	 *  // Update x values for all targets
 	 *  chart.x([100, 200, 300, 400, ...]);
 	 */
-	x(x) {
+	x(x?: number[]): { [key: string] : number[] } {
 		const $$ = this.internal;
 		const {axis, data} = $$;
 		const isCategorized = axis.isCustomX() && axis.isCategorized();
@@ -42,11 +42,11 @@ export default {
 
 	/**
 	 * Get and set x values for the chart.
-	 * @method xs
+	 * @function xs
 	 * @instance
 	 * @memberof Chart
 	 * @param {Array} xs If xs is given, specified target's x values will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
-	 * @return {Object} xs
+	 * @returns {object} xs
 	 * @example
 	 *  // Get current x values
 	 *  chart.xs();
@@ -57,7 +57,7 @@ export default {
 	 *    data2: [100, 200, 300, 400, ...]
 	 *  });
 	 */
-	xs(xs) {
+	xs(xs?: { [key: string] : number[] }): { [key: string] : number[] } {
 		const $$ = this.internal;
 
 		if (isObject(xs)) {

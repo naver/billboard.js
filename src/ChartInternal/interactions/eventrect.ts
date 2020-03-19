@@ -9,7 +9,7 @@ import {
 } from "d3-selection";
 import {document} from "../../module/browser";
 import CLASS from "../../config/classes";
-import {isBoolean} from "../../module/util";
+import {isboolean} from "../../module/util";
 
 export default {
 	/**
@@ -17,7 +17,7 @@ export default {
 	 * Add a container for the zone that detects the event.
 	 * @private
 	 */
-	initEventRect() {
+	initEventRect(): void {
 		const $$ = this;
 
 		$$.$el.main.select(`.${CLASS.chart}`)
@@ -30,7 +30,7 @@ export default {
 	 * Redraws the area that detects the event.
 	 * @private
 	 */
-	redrawEventRect() {
+	redrawEventRect(): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const isMultipleX = $$.isMultipleX();
@@ -87,7 +87,7 @@ export default {
 		}
 	},
 
-	bindTouchOnEventRect(isMultipleX) {
+	bindTouchOnEventRect(isMultipleX: boolean): void {
 		const $$ = this;
 		const {config, state, $el: {svg}} = $$;
 
@@ -126,7 +126,7 @@ export default {
 		// call event.preventDefault()
 		// according 'interaction.inputType.touch.preventDefault' option
 		const preventDefault = config.interaction_inputType_touch.preventDefault;
-		const isPrevented = (isBoolean(preventDefault) && preventDefault) || false;
+		const isPrevented = (isboolean(preventDefault) && preventDefault) || false;
 		const preventThreshold = (!isNaN(preventDefault) && preventDefault) || null;
 		let startPx;
 
@@ -185,10 +185,10 @@ export default {
 
 	/**
 	 * Updates the location and size of the eventRect.
+	 * @param {object} eventRectUpdate d3.select(CLASS.eventRects) object.
 	 * @private
-	 * @param {Object} d3.select(CLASS.eventRects) object.
 	 */
-	updateEventRect(eventRectUpdate) {
+	updateEventRect(eventRectUpdate): void {
 		const $$ = this;
 		const {config, scale, state} = $$;
 		const xScale = scale.zoom || scale.x;
@@ -271,7 +271,7 @@ export default {
 			.attr("height", h);
 	},
 
-	selectRectForSingle(context, eventRect, index) {
+	selectRectForSingle(context, eventRect, index: number): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const isSelectionEnabled = config.data_selection_enabled;
@@ -325,7 +325,7 @@ export default {
 			});
 	},
 
-	expandCirclesBars(index, id, reset) {
+	expandCirclesBars(index: number, id: string, reset: boolean): void {
 		const $$ = this;
 		const {config, $el: {bar, circle}} = $$;
 
@@ -335,7 +335,7 @@ export default {
 		bar && $$.expandBars(index, id, reset);
 	},
 
-	selectRectForMultipleXs(context) {
+	selectRectForMultipleXs(context): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);
@@ -388,7 +388,7 @@ export default {
 	 * Unselect EventRect.
 	 * @private
 	 */
-	unselectRect() {
+	unselectRect(): void {
 		const $$ = this;
 		const {$el: {bar, circle, tooltip}} = $$;
 
@@ -407,9 +407,9 @@ export default {
 	/**
 	 * Create eventRect for each data on the x-axis.
 	 * Register touch and drag events.
+	 * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+	 * @returns {object} d3.select(CLASS.eventRects) object.
 	 * @private
-	 * @param {Object} d3.select(CLASS.eventRects) object.
-	 * @returns {Object} d3.select(CLASS.eventRects) object.
 	 */
 	generateEventRectsForSingleX(eventRectEnter) {
 		const $$ = this;
@@ -472,7 +472,7 @@ export default {
 		return rect;
 	},
 
-	clickHandlerForSingleX(d, ctx) {
+	clickHandlerForSingleX(d, ctx): void {
 		const $$ = ctx;
 		const {config, state, $el: {main}} = $$;
 
@@ -496,9 +496,9 @@ export default {
 	/**
 	 * Create an eventRect,
 	 * Register touch and drag events.
+	 * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+	 * @returns {object} d3.select(CLASS.eventRects) object.
 	 * @private
-	 * @param {Object} d3.select(CLASS.eventRects) object.
-	 * @returns {Object} d3.select(CLASS.eventRects) object.
 	 */
 	generateEventRectsForMultipleXs(eventRectEnter) {
 		const $$ = this;
@@ -534,7 +534,7 @@ export default {
 		return rect;
 	},
 
-	clickHandlerForMultipleXS(ctx) {
+	clickHandlerForMultipleXS(ctx): void {
 		const $$ = ctx;
 		const {config} = $$;
 		const targetsToShow = $$.filterTargetsToShow($$.data.targets);

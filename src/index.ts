@@ -17,7 +17,7 @@ let defaults = {};
 const bb = {
 	/**
 	 * Version information
-	 * @property {String} version version
+	 * @property {string} version version
 	 * @example
 	 *    bb.version;  // "1.0.0"
 	 * @memberof bb
@@ -26,9 +26,9 @@ const bb = {
 
 	/**
 	 * Generate chart
-	 * @param {Options} options chart options
+	 * @param {Options} config chart options
 	 * @memberof bb
-	 * @return {Chart}
+	 * @returns {Chart}
 	 * @see {@link Options} for different generation options
 	 * @see {@link Chart} for different methods API
 	 * @example
@@ -67,7 +67,7 @@ const bb = {
 	 *   - If is called multiple times, will override the last value.
 	 * @param {Options} options chart options
 	 * @memberof bb
-	 * @return {Options}
+	 * @returns {Options}
 	 * @see {@link Options}
 	 * @example
 	 * // Set same option value as for `.generate()`
@@ -105,7 +105,7 @@ const bb = {
 
 	/**
 	 * Namespace for plugins
-	 * @property {Object} plugin plugin namespace
+	 * @property {object} plugin plugin namespace
 	 * @example
 	 *  // Stanford diagram plugin
 	 *  bb.plugin.stanford;

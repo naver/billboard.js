@@ -8,8 +8,9 @@ import {callFn, extend, getMinMax, isDefined, isObject, isString, parseDate} fro
 
 /**
  * Check if the given domain is within zoom range
- * @param {Array} domain
- * @return {Boolean}
+ * @param {Array} domain domain value
+ * @param {Array} range zoom range value
+ * @returns {boolean}
  * @private
  */
 function withinRange(domain: number[], range: number[]): boolean {
@@ -25,11 +26,11 @@ function withinRange(domain: number[], range: number[]): boolean {
  * - **NOTE:**
  *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
- * @method zoom
+ * @function zoom
  * @instance
  * @memberof Chart
  * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
- * @return {Array} domain value in array
+ * @returns {Array} domain value in array
  * @example
  *  // Zoom to specified domain
  *  chart.zoom([10, 20]);
@@ -37,7 +38,7 @@ function withinRange(domain: number[], range: number[]): boolean {
  *  // Get the current zoomed domain
  *  chart.zoom();
  */
-const zoom = function(domainValue?: number[]) {
+const zoom = function(domainValue?: number[]): number[] {
 	const $$ = this.internal;
 	const {config, scale} = $$;
 	let domain = domainValue;
@@ -84,10 +85,10 @@ const zoom = function(domainValue?: number[]) {
 extend(zoom, {
 	/**
 	 * Enable and disable zooming.
-	 * @method zoom․enable
+	 * @function zoom․enable
 	 * @instance
 	 * @memberof Chart
-	 * @param {String|Boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
+	 * @param {string|boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
 	 * @example
 	 *  // Enable zooming using the mouse wheel
 	 *  chart.zoom.enable(true);
@@ -100,7 +101,7 @@ extend(zoom, {
 	 *  // Disable zooming
 	 *  chart.zoom.enable(false);
 	 */
-	enable: function(enabled) {
+	enable: function(enabled: boolean | "wheel" | "drag" | any): void {
 		const $$ = this.internal;
 		const {config} = $$;
 		let enableType: any = enabled;
@@ -124,11 +125,11 @@ extend(zoom, {
 
 	/**
 	 * Set or get x Axis maximum zoom range value
-	 * @method zoom․max
+	 * @function zoom․max
 	 * @instance
 	 * @memberof Chart
-	 * @param {Number} [max] maximum value to set for zoom
-	 * @return {Number} zoom max value
+	 * @param {number} [max] maximum value to set for zoom
+	 * @returns {number} zoom max value
 	 * @example
 	 *  // Set maximum range value
 	 *  chart.zoom.max(20);
@@ -146,11 +147,11 @@ extend(zoom, {
 
 	/**
 	 * Set or get x Axis minimum zoom range value
-	 * @method zoom․min
+	 * @function zoom․min
 	 * @instance
 	 * @memberof Chart
-	 * @param {Number} [min] minimum value to set for zoom
-	 * @return {Number} zoom min value
+	 * @param {number} [min] minimum value to set for zoom
+	 * @returns {number} zoom min value
 	 * @example
 	 *  // Set minimum range value
 	 *  chart.zoom.min(-1);
@@ -168,11 +169,11 @@ extend(zoom, {
 
 	/**
 	 * Set zoom range
-	 * @method zoom․range
+	 * @function zoom․range
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} [range]
-	 * @return {Object} zoom range value
+	 * @param {object} [range] zoom range
+	 * @returns {object} zoom range value
 	 * {
 	 *   min: 0,
 	 *   max: 100
@@ -183,7 +184,7 @@ extend(zoom, {
 	 *      max: 100
 	 *  });
 	 */
-	range: function(range) {
+	range: function(range): {min: (number|undefined)[], max: (number|undefined)[]} {
 		const zoom = this.zoom;
 
 		if (isObject(range)) {
@@ -205,13 +206,13 @@ export default {
 
 	/**
 	 * Unzoom zoomed area
-	 * @method unzoom
+	 * @function unzoom
 	 * @instance
 	 * @memberof Chart
 	 * @example
 	 *  chart.unzoom();
 	 */
-	unzoom() {
+	unzoom(): void {
 		const $$ = this.internal;
 		const {config} = $$;
 

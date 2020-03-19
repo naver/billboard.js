@@ -13,10 +13,10 @@ export default {
 	 *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
 	 *   - done will be called after data loaded, but it's not after rendering.
 	 *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
-	 * @method load
+	 * @function load
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} args The object can consist with following members:<br>
+	 * @param {object} args The object can consist with following members:<br>
 	 *
 	 *    | Key | Description |
 	 *    | --- | --- |
@@ -74,7 +74,7 @@ export default {
 	 *     ]
 	 * });
 	 */
-	load(args) {
+	load(args): void {
 		const $$ = this.internal;
 		const {config} = $$;
 
@@ -121,10 +121,10 @@ export default {
 	 * - <b>Note:</b>
 	 * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.<br>
 	 * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
-	 * @method unload
+	 * @function unload
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} args
+	 * @param {object} argsValue
 	 *  | key | Type | Description |
 	 *  | --- | --- | --- |
 	 *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
@@ -138,7 +138,7 @@ export default {
 	 *    }
 	 *  });
 	 */
-	unload(argsValue) {
+	unload(argsValue): void {
 		const $$ = this.internal;
 		let args = argsValue || {};
 

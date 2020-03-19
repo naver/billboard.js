@@ -5,15 +5,16 @@
 export default {
 	/**
 	 * Set specified category name on category axis.
-	 * @method category
+	 * @function category
 	 * @instance
 	 * @memberof Chart
-	 * @param {Number} i index of category to be changed
-	 * @param {String} category category value to be changed
+	 * @param {number} i index of category to be changed
+	 * @param {string} category category value to be changed
+	 * @returns {string}
 	 * @example
 	 * chart.category(2, "Category 3");
 	 */
-	category(i: number, category: string) {
+	category(i: number, category: string): string {
 		const $$ = this.internal;
 		const {config} = $$;
 
@@ -27,16 +28,17 @@ export default {
 
 	/**
 	 * Set category names on category axis.
-	 * @method categories
+	 * @function categories
 	 * @instance
 	 * @memberof Chart
 	 * @param {Array} categories This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
+	 * @returns {Array}
 	 * @example
 	 * chart.categories([
 	 *      "Category 1", "Category 2", ...
 	 * ]);
 	 */
-	categories(categories: string[]) {
+	categories(categories: string[]): string[] {
 		const $$ = this.internal;
 		const {config} = $$;
 

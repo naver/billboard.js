@@ -8,10 +8,10 @@ import {notEmpty, isDefined} from "../../module/util";
 export default {
 	/**
 	 * Resize the chart.
-	 * @method resize
+	 * @function resize
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} size This argument should include width and height in pixels.
+	 * @param {object} size This argument should include width and height in pixels.
 	 * @example
 	 * // Resize to 640x480
 	 * chart.resize({
@@ -19,7 +19,7 @@ export default {
 	 *    height: 480
 	 * });
 	 */
-	resize(size?: {width?: number, height?: number}) {
+	resize(size?: {width?: number, height?: number}): void {
 		const $$ = this.internal;
 		const {config, state} = $$;
 
@@ -34,23 +34,23 @@ export default {
 
 	/**
 	 * Force to redraw.
-	 * @method flush
+	 * @function flush
 	 * @instance
 	 * @memberof Chart
-	 * @param {Boolean} [soft] For soft redraw.
+	 * @param {boolean} [soft] For soft redraw.
 	 * @example
 	 * chart.flush();
 	 *
 	 * // for soft redraw
 	 * chart.flush(true);
 	 */
-	flush(soft?: boolean, _isFromResize?: boolean) {
+	flush(soft?: boolean): void {
 		const $$ = this.internal;
-
 
 		if ($$.state.rendered) {
 			// reset possible zoom scale when is called from resize event
-			if (_isFromResize) {
+			// eslint-disable-next-line prefer-rest-params
+			if (arguments[1]) { // arguments[1] is given when is called from resize
 				$$.brush && $$.brush.updateResize();
 			} else {
 				// re-update config info
@@ -76,9 +76,10 @@ export default {
 
 	/**
 	 * Reset the chart object and remove element and events completely.
-	 * @method destroy
+	 * @function destroy
 	 * @instance
 	 * @memberof Chart
+	 * @returns {null}
 	 * @example
 	 * chart.destroy();
 	 */
@@ -113,13 +114,14 @@ export default {
 
 	/**
 	 * Get or set single config option value.
-	 * @method config
+	 * @function config
 	 * @instance
 	 * @memberof Chart
-	 * @param {String} name The option key name.
+	 * @param {string} name The option key name.
 	 * @param {*} [value] The value accepted for indicated option.
-	 * @param {Boolean} [redraw] Set to redraw with the new option changes.
+	 * @param {boolean} [redraw] Set to redraw with the new option changes.
 	 * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+	 * @returns {*}
 	 * @example
 	 * // Getter
 	 * chart.config("gauge.max");

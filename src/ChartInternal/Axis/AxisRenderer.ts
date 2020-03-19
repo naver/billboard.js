@@ -41,10 +41,10 @@ export default class AxisRenderer {
 
 	/**
 	 * Create axis element
-	 * @param {d3.selection} g
+	 * @param {d3.selection} g Axis selection
 	 * @private
 	 */
-	create(g: d3Selection) {
+	create(g: d3Selection): void {
 		const ctx = this;
 		const {config, params, helper: helperInst} = this;
 		const scale = helperInst.scale;
@@ -224,10 +224,10 @@ export default class AxisRenderer {
 
 	/**
 	 * Get tick x/y coordinate
-	 * @return {{x: number, y: number}}
+	 * @returns {{x: number, y: number}}
 	 * @private
 	 */
-	getTickXY() {
+	getTickXY(): {x: number, y: number} {
 		const {config} = this;
 		const pos = {x: 0, y: 0};
 
@@ -241,11 +241,11 @@ export default class AxisRenderer {
 
 	/**
 	 * Get tick size
-	 * @param d
-	 * @return {number}
+	 * @param {object} d data object
+	 * @returns {number}
 	 * @private
 	 */
-	getTickSize(d) {
+	getTickSize(d): number {
 		const {scale} = this.helper;
 		const {config} = this;
 		const {innerTickSize, range} = config;
@@ -258,12 +258,11 @@ export default class AxisRenderer {
 
 	/**
 	 * Set tick's line & text position
-	 * @param lineUpdate
-	 * @param textUpdate
-	 * @param scale
+	 * @param {d3.selection} lineUpdate Line selection
+	 * @param {d3.selection} textUpdate Text selection
 	 * @private
 	 */
-	setTickLineTextPosition(lineUpdate, textUpdate) {
+	setTickLineTextPosition(lineUpdate, textUpdate): void {
 		const tickPos = this.getTickXY();
 		const {innerTickSize, orient, tickLength, tickOffset} = this.config;
 		const rotate = this.params.tickTextRotate;
@@ -353,6 +352,8 @@ export default class AxisRenderer {
 			);
 		}
 
+		// split given text by tick width size
+		// eslint-disable-next-line
 		function split(splitted, text) {
 			let subtext;
 			let spaceIndex;
@@ -381,7 +382,7 @@ export default class AxisRenderer {
 		return split(splitted, String(tickText));
 	}
 
-	scale(x) {
+	scale(x): AxisRenderer {
 		if (!arguments.length) {
 			return this.helper.scale;
 		}
@@ -391,7 +392,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	orient(x) {
+	orient(x): AxisRenderer {
 		if (!arguments.length) {
 			return this.config.orient;
 		}
@@ -406,7 +407,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickFormat(format) {
+	tickFormat(format): AxisRenderer {
 		const {config} = this;
 
 		if (!arguments.length) {
@@ -418,7 +419,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickCentered(isCentered) {
+	tickCentered(isCentered: boolean): AxisRenderer {
 		const {config} = this;
 
 		if (!arguments.length) {
@@ -433,20 +434,20 @@ export default class AxisRenderer {
 	/**
 	 * Return tick's offset value.
 	 * The value will be set for 'category' axis type.
-	 * @return {number}
+	 * @returns {number}
 	 * @private
 	 */
-	tickOffset() {
+	tickOffset(): number {
 		return this.config.tickOffset;
 	}
 
 	/**
 	 * Get tick interval count
 	 * @private
-	 * @param {Number} size Total data size
-	 * @return {number}
+	 * @param {number} size Total data size
+	 * @returns {number}
 	 */
-	tickInterval(size) {
+	tickInterval(size: number): number {
 		let interval;
 
 		if (this.params.isCategory) {
@@ -462,7 +463,7 @@ export default class AxisRenderer {
 		return interval === Infinity ? 0 : interval;
 	}
 
-	ticks(...args) {
+	ticks(...args): AxisRenderer {
 		const {config} = this;
 
 		if (!args.length) {
@@ -474,7 +475,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickCulling(culling) {
+	tickCulling(culling): AxisRenderer {
 		const {config} = this;
 
 		if (!arguments.length) {
@@ -486,7 +487,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	tickValues(x) {
+	tickValues(x): AxisRenderer {
 		const {config} = this;
 
 		if (isFunction(x)) {
@@ -502,7 +503,7 @@ export default class AxisRenderer {
 		return this;
 	}
 
-	setTransition(t) {
+	setTransition(t): AxisRenderer {
 		this.config.transition = t;
 
 		return this;

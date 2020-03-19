@@ -10,7 +10,7 @@ export default {
 	 * Set clip-path attribute for x axis element
 	 * @name axis․x․clipPath
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @see [Demo]()
 	 * @example
@@ -23,7 +23,7 @@ export default {
 	 * Show or hide x axis.
 	 * @name axis․x․show
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * axis: {
@@ -42,7 +42,7 @@ export default {
 	 * - indexed
 	 * @name axis․x․type
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default indexed
 	 * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
 	 * @see [Demo: timeseries](https://naver.github.io/billboard.js/demo/#Chart.TimeseriesChart)
@@ -61,7 +61,7 @@ export default {
 	 * If true, treat x value as localtime. If false, convert to UTC internally.
 	 * @name axis․x․localtime
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * axis: {
@@ -92,7 +92,7 @@ export default {
 	 * centerize ticks on category axis.
 	 * @name axis․x․tick․centered
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * axis: {
@@ -109,7 +109,7 @@ export default {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 * @name axis․x․tick․format
 	 * @memberof Options
-	 * @type {Function|String}
+	 * @type {Function|string}
 	 * @default undefined
 	 * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
 	 * @example
@@ -140,7 +140,7 @@ export default {
 	 * We can change the number of ticks to be shown by axis.x.tick.culling.max.
 	 * @name axis․x․tick․culling
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default
 	 * - true for indexed axis and timeseries axis
 	 * - false for category axis
@@ -159,7 +159,7 @@ export default {
 	 * The number of tick texts will be adjusted to less than this value.
 	 * @name axis․x․tick․culling․max
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default 10
 	 * @example
 	 * axis: {
@@ -179,7 +179,7 @@ export default {
 	 * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
 	 * @name axis․x․tick․count
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -196,7 +196,7 @@ export default {
 	 * Show or hide x axis tick line.
 	 * @name axis․x․tick․show
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
 	 * @example
@@ -214,7 +214,7 @@ export default {
 	 * Show or hide x axis tick text.
 	 * @name axis․x․tick․text․show
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
 	 * @example
@@ -234,7 +234,7 @@ export default {
 	 * Set the x Axis tick text's position relatively its original position
 	 * @name axis․x․tick․text․position
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {x: 0, y:0}
 	 * @example
 	 * axis: {
@@ -258,7 +258,7 @@ export default {
 	 * - **false**: ticks will be positioned according to x value of the data points.
 	 * @name axis․x․tick․fit
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickFitting)
 	 * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
@@ -306,7 +306,7 @@ export default {
 	 *   - axis.x.tick.fit=true
 	 * @name axis․x․tick․autorotate
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
 	 * @example
@@ -331,7 +331,7 @@ export default {
 	 * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
 	 * @name axis․x․tick․rotate
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default 0
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
 	 * @example
@@ -349,7 +349,7 @@ export default {
 	 * Show x axis outer tick.
 	 * @name axis․x․tick․outer
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * axis: {
@@ -368,7 +368,7 @@ export default {
 	 *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
 	 * @name axis․x․tick․multiline
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
 	 * @example
@@ -399,7 +399,7 @@ export default {
 	 *  > When x tick text contains `\n`, this option is ignored.
 	 * @name axis․x․tick․width
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default null
 	 * @example
 	 * axis: {
@@ -417,7 +417,7 @@ export default {
 	 * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
 	 * @name axis․x․tick․tooltip
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * axis: {
@@ -434,10 +434,10 @@ export default {
 	 * Set max value of x axis range.
 	 * @name axis․x․max
 	 * @memberof Options
-	 * @property {Number} max Set the max value
-	 * @property {Boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
+	 * @property {number} max Set the max value
+	 * @property {boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
 	 * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
-	 * @property {Number} [max.value] Set the max value
+	 * @property {number} [max.value] Set the max value
 	 * @example
 	 * axis: {
 	 *   x: {
@@ -459,10 +459,10 @@ export default {
 	 * Set min value of x axis range.
 	 * @name axis․x․min
 	 * @memberof Options
-	 * @property {Number} min Set the min value
-	 * @property {Boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
+	 * @property {number} min Set the min value
+	 * @property {boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
 	 * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
-	 * @property {Number} [min.value] Set the min value
+	 * @property {number} [min.value] Set the min value
 	 * @example
 	 * axis: {
 	 *   x: {
@@ -492,7 +492,7 @@ export default {
 	 *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
 	 * @name axis․x․padding
 	 * @memberof Options
-	 * @type {Object|Number}
+	 * @type {object|number}
 	 * @default {}
 	 * @example
 	 * axis: {
@@ -519,7 +519,7 @@ export default {
 	 * The height of x axis can be set manually by this option. If you need more space for x axis, please use this option for that. The unit is pixel.
 	 * @name axis․x․height
 	 * @memberof Options
-	 * @type {Number}
+	 * @type {number}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -583,7 +583,7 @@ export default {
 	 *    - outer-bottom
 	 * @name axis․x․label
 	 * @memberof Options
-	 * @type {String|Object}
+	 * @type {string|object}
 	 * @default undefined
 	 * @example
 	 * axis: {
@@ -612,7 +612,7 @@ export default {
 	 * | Name | Type | Default | Description |
 	 * | --- | --- | --- | --- |
 	 * | domain | Array | - | Set the domain value |
-	 * | tick.outer | Boolean | true | Show outer tick |
+	 * | tick.outer | boolean | true | Show outer tick |
 	 * | tick.format | Function | - | Set formatter for tick text |
 	 * | tick.count | Number | - | Set the number of y axis ticks |
 	 * | tick.values | Array | - | Set tick values manually |

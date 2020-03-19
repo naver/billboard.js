@@ -10,26 +10,27 @@ export default {
 	 * Set zoom options
 	 * @name zoom
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [zoom.enabled=false] Enable zooming.
-	 * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
+	 * @type {object}
+	 * @property {object} zoom Zoom object
+	 * @property {boolean} [zoom.enabled=false] Enable zooming.
+	 * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
 	 *  - **Available types:**
 	 *    - wheel
 	 *    - drag
-	 * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
+	 * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
 	 *  If true set, y domain will be updated according to the zoomed region.
 	 * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
-	 * @property {Number|Date} [zoom.x.min] Set x Axis minimum zoom range
-	 * @property {Number|Date} [zoom.x.max] Set x Axis maximum zoom range
+	 * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
+	 * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
 	 * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
 	 *  Specified function receives the zoom event.
 	 * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
 	 *  Specified function receives the zoomed domain.
 	 * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
 	 *  Specified function receives the zoomed domain.
-	 * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+	 * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
 	 * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
-	 * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
+	 * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
 	 * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
 	 * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
 	 * @example

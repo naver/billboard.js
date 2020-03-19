@@ -34,17 +34,17 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  *   - [d3-axis](https://github.com/d3/d3-axis)
  *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
- * @requies d3-selection
- * @requies d3-array
- * @requies d3-interpolate
- * @requies d3-color
- * @requies d3-scale
- * @requies d3-brush
- * @requies d3-axis
- * @requies d3-format
- * @param {Object} options Stanford plugin options
- * @extends Plugin
- * @return {Stanford}
+ * @requires d3-selection
+ * @requires d3-array
+ * @requires d3-interpolate
+ * @requires d3-color
+ * @requires d3-scale
+ * @requires d3-brush
+ * @requires d3-axis
+ * @requires d3-format
+ * @param {object} options Stanford plugin options
+ * @augments Plugin
+ * @returns {Stanford}
  * @example
  *  var chart = bb.generate({
  *     data: {
@@ -114,7 +114,7 @@ export default class Stanford extends Plugin {
 		return this;
 	}
 
-	$beforeInit() {
+	$beforeInit(): void {
 		const {$$} = this;
 
 		// override on config values & methods
@@ -133,7 +133,7 @@ export default class Stanford extends Plugin {
 		);
 	}
 
-	$init() {
+	$init(): void {
 		const {$$} = this;
 
 		loadConfig.call(this, this.options);
@@ -150,17 +150,17 @@ export default class Stanford extends Plugin {
 		this.$redraw();
 	}
 
-	$redraw(duration?: number) {
+	$redraw(duration?: number): void {
 		this.colorScale && this.colorScale.drawColorScale();
 		this.elements && this.elements.updateStanfordElements(duration);
 	}
 
 
-	getOptions() {
+	getOptions(): Options {
 		return new Options();
 	}
 
-	convertData() {
+	convertData(): void {
 		const data = this.$$.data.targets;
 		const epochs = this.options.epochs;
 
@@ -176,7 +176,7 @@ export default class Stanford extends Plugin {
 		});
 	}
 
-	xvCustom(d, xyValue) {
+	xvCustom(d, xyValue): number {
 		const $$ = this;
 		const {axis, config} = $$;
 		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
@@ -190,7 +190,7 @@ export default class Stanford extends Plugin {
 		return Math.ceil($$.scale.x(value));
 	}
 
-	yvCustom(d, xyValue) {
+	yvCustom(d, xyValue): number {
 		const $$ = this;
 		const {scale} = $$;
 		const yScale = d.axis && d.axis === "y2" ? scale.y2 : scale.y;
@@ -199,7 +199,7 @@ export default class Stanford extends Plugin {
 		return Math.ceil(yScale(value));
 	}
 
-	initStanfordData() {
+	initStanfordData(): void {
 		const {config} = this;
 		const target = this.$$.data.targets[0];
 
@@ -226,7 +226,7 @@ export default class Stanford extends Plugin {
 		return target.colorscale(d.epochs);
 	}
 
-	setStanfordTooltip() {
+	setStanfordTooltip(): string | undefined {
 		const {config} = this.$$;
 
 		if (isEmpty(config.tooltip_contents)) {
@@ -253,7 +253,7 @@ export default class Stanford extends Plugin {
 		}
 	}
 
-	countEpochsInRegion(region) {
+	countEpochsInRegion(region): {value: number, percentage: number} {
 		const $$ = this;
 		const target = $$.data.targets[0];
 

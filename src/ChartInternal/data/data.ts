@@ -8,7 +8,7 @@ import {
 	getUnique,
 	hasValue,
 	isArray,
-	isBoolean,
+	isboolean,
 	isDefined,
 	isFunction,
 	isNumber,
@@ -33,7 +33,7 @@ export default {
 		return dataKey || existValue;
 	},
 
-	isNotX(key) {
+	isNotX(key): boolean {
 		return !this.isX(key);
 	},
 
@@ -72,12 +72,12 @@ export default {
 
 	/**
 	 * Get index number based on given x Axis value
-	 * @param {Date|Number|String} x x Axis to be compared
+	 * @param {Date|number|string} x x Axis to be compared
 	 * @param {Array} basedX x Axis list to be based on
-	 * @return {Number} index number
+	 * @returns {number} index number
 	 * @private
 	 */
-	getIndexByX(x, basedX) {
+	getIndexByX(x, basedX: (string|Date)[]): number {
 		const $$ = this;
 
 		return basedX ?
@@ -85,7 +85,7 @@ export default {
 			($$.filterByX($$.data.targets, x)[0] || {index: null}).index;
 	},
 
-	getXValue(id, i) {
+	getXValue(id: string, i: number): number {
 		const $$ = this;
 
 		return id in $$.data.xs &&
@@ -93,20 +93,20 @@ export default {
 			isValue($$.data.xs[id][i]) ? $$.data.xs[id][i] : i;
 	},
 
-	getOtherTargetXs() {
+	getOtherTargetXs(): string | null {
 		const $$ = this;
 		const idsForX = Object.keys($$.data.xs);
 
 		return idsForX.length ? $$.data.xs[idsForX[0]] : null;
 	},
 
-	getOtherTargetX(index) {
+	getOtherTargetX(index: number): string | null {
 		const xs = this.getOtherTargetXs();
 
 		return xs && index < xs.length ? xs[index] : null;
 	},
 
-	addXs(xs) {
+	addXs(xs): void {
 		const $$ = this;
 		const {config} = $$;
 
@@ -115,7 +115,7 @@ export default {
 		});
 	},
 
-	isMultipleX() {
+	isMultipleX(): boolean {
 		return notEmpty(this.config.data_xs) ||
 			!this.config.data_xSort ||
 			this.hasType("bubble") ||
@@ -135,14 +135,14 @@ export default {
 		return data;
 	},
 
-	getAllValuesOnIndex(index) {
+	getAllValuesOnIndex(index: number) {
 		const $$ = this;
 
 		return $$.filterTargetsToShow($$.data.targets)
 			.map(t => $$.addName($$.getValueOnIndex(t.values, index)));
 	},
 
-	getValueOnIndex(values, index) {
+	getValueOnIndex(values, index: number) {
 		const valueOnIndex = values.filter(v => v.index === index);
 
 		return valueOnIndex.length ? valueOnIndex[0] : null;
@@ -168,7 +168,7 @@ export default {
 		});
 	},
 
-	generateTargetX(rawX, id, index) {
+	generateTargetX(rawX, id: string, index: number) {
 		const $$ = this;
 		const {axis} = $$;
 		let x = axis && axis.isCategorized() ? index : (rawX || index);
@@ -184,19 +184,19 @@ export default {
 		return x;
 	},
 
-	updateXs(values) {
+	updateXs(values): void {
 		if (values.length) {
 			this.axis.xs = values.map(v => v.x);
 		}
 	},
 
-	getPrevX(i) {
+	getPrevX(i: number): number[] | null {
 		const x = this.axis.xs[i - 1];
 
 		return isDefined(x) ? x : null;
 	},
 
-	getNextX(i) {
+	getNextX(i: number): number[] | null {
 		const x = this.axis.xs[i + 1];
 
 		return isDefined(x) ? x : null;
@@ -204,11 +204,11 @@ export default {
 
 	/**
 	 * Get base value isAreaRangeType
-	 * @param data Data object
-	 * @return {Number}
+	 * @param {object} data Data object
+	 * @returns {number}
 	 * @private
 	 */
-	getBaseValue(data) {
+	getBaseValue(data): number {
 		const $$ = this;
 		const {hasAxis} = $$.state;
 		let {value} = data;
@@ -229,9 +229,9 @@ export default {
 	 * Get min/max value from the data
 	 * @private
 	 * @param {Array} data array data to be evaluated
-	 * @return {{min: {Number}, max: {Number}}}
+	 * @returns {{min: {number}, max: {number}}}
 	 */
-	getMinMaxValue(data) {
+	getMinMaxValue(data): {min: number, max: number} {
 		const getBaseValue = this.getBaseValue.bind(this);
 		let min;
 		let max;
@@ -250,7 +250,7 @@ export default {
 	/**
 	 * Get the min/max data
 	 * @private
-	 * @return {{min: Array, max: Array}}
+	 * @returns {{min: Array, max: Array}}
 	 */
 	getMinMaxData() {
 		const $$ = this;
@@ -287,7 +287,7 @@ export default {
 	/**
 	 * Get sum of data per index
 	 * @private
-	 * @return {Array}
+	 * @returns {Array}
 	 */
 	getTotalPerIndex() {
 		const $$ = this;
@@ -313,10 +313,10 @@ export default {
 
 	/**
 	 * Get total data sum
-	 * @return {Number}
- 	 * @private
+	 * @returns {number}
+	 * @private
 	 */
-	getTotalDataSum() {
+	getTotalDataSum(): number {
 		const $$ = this;
 		const cacheKey = KEY.dataTotalSum;
 		let totalDataSum = $$.cache.get(cacheKey);
@@ -334,9 +334,9 @@ export default {
 
 	/**
 	 * Get filtered data by value
-	 * @param {Object} data
-	 * @param {Number} value
-	 * @return {Array} filtered array data
+	 * @param {object} data Data
+	 * @param {number} value Value to be filtered
+	 * @returns {Array} filtered array data
 	 * @private
 	 */
 	getFilteredDataByValue(data, value) {
@@ -345,10 +345,10 @@ export default {
 
 	/**
 	 * Return the max length of the data
-	 * @return {Number} max data length
+	 * @returns {number} max data length
 	 * @private
 	 */
-	getMaxDataCount() {
+	getMaxDataCount(): number {
 		return Math.max(...this.data.targets.map(t => t.values.length));
 	},
 
@@ -380,7 +380,7 @@ export default {
 		return ids ? (isArray(ids) ? ids.concat() : [ids]) : $$.mapToIds($$.data.targets);
 	},
 
-	hasTarget(targets, id) {
+	hasTarget(targets, id): boolean {
 		const ids = this.mapToIds(targets);
 
 		for (let i = 0, val; (val = ids[i]); i++) {
@@ -392,11 +392,11 @@ export default {
 		return false;
 	},
 
-	isTargetToShow(targetId) {
+	isTargetToShow(targetId): boolean {
 		return this.state.hiddenTargetIds.indexOf(targetId) < 0;
 	},
 
-	isLegendToShow(targetId) {
+	isLegendToShow(targetId): boolean {
 		return this.state.hiddenLegendIds.indexOf(targetId) < 0;
 	},
 
@@ -422,19 +422,19 @@ export default {
 		return sortValue(xs);
 	},
 
-	addHiddenTargetIds(targetIds) {
+	addHiddenTargetIds(targetIds): void {
 		this.state.hiddenTargetIds = this.state.hiddenTargetIds.concat(targetIds);
 	},
 
-	removeHiddenTargetIds(targetIds) {
+	removeHiddenTargetIds(targetIds): void {
 		this.state.hiddenTargetIds = this.state.hiddenTargetIds.filter(id => targetIds.indexOf(id) < 0);
 	},
 
-	addHiddenLegendIds(targetIds) {
+	addHiddenLegendIds(targetIds): void {
 		this.state.hiddenLegendIds = this.state.hiddenLegendIds.concat(targetIds);
 	},
 
-	removeHiddenLegendIds(targetIds) {
+	removeHiddenLegendIds(targetIds): void {
 		this.state.hiddenLegendIds = this.state.hiddenLegendIds.filter(id => targetIds.indexOf(id) < 0);
 	},
 
@@ -473,7 +473,7 @@ export default {
 		return ys;
 	},
 
-	checkValueInTargets(targets, checker) {
+	checkValueInTargets(targets, checker: Function): boolean {
 		const ids = Object.keys(targets);
 		let values;
 
@@ -490,37 +490,37 @@ export default {
 		return false;
 	},
 
-	hasMultiTargets() {
+	hasMultiTargets(): boolean {
 		return this.filterTargetsToShow().length > 1;
 	},
 
-	hasNegativeValueInTargets(targets) {
+	hasNegativeValueInTargets(targets): boolean {
 		return this.checkValueInTargets(targets, v => v < 0);
 	},
 
-	hasPositiveValueInTargets(targets) {
+	hasPositiveValueInTargets(targets): boolean {
 		return this.checkValueInTargets(targets, v => v > 0);
 	},
 
-	_checkOrder(type) {
+	_checkOrder(type: string): boolean {
 		const {config} = this;
 		const order = config.data_order;
 
 		return isString(order) && order.toLowerCase() === type;
 	},
 
-	isOrderDesc() {
+	isOrderDesc(): boolean {
 		return this._checkOrder("desc");
 	},
 
-	isOrderAsc() {
+	isOrderAsc(): boolean {
 		return this._checkOrder("asc");
 	},
 
 	/**
 	 * Sort targets data
-	 * @param {Array} targetsValue
-	 * @return {Array}
+	 * @param {Array} targetsValue Target value
+	 * @returns {Array}
 	 * @private
 	 */
 	orderTargets(targetsValue) {
@@ -564,7 +564,7 @@ export default {
 	hasDataLabel() {
 		const dataLabels = this.config.data_labels;
 
-		return (isBoolean(dataLabels) && dataLabels) ||
+		return (isboolean(dataLabels) && dataLabels) ||
 			(isObjectType(dataLabels) && notEmpty(dataLabels));
 	},
 
@@ -673,7 +673,7 @@ export default {
 	/**
 	 * Convert data for step type
 	 * @param {Array} values Object data values
-	 * @return {Array}
+	 * @returns {Array}
 	 * @private
 	 */
 	convertValuesToStep(values) {
@@ -769,10 +769,10 @@ export default {
 
 	/**
 	 * Get ratio value
-	 * @param {String} type Ratio for given type
-	 * @param {Object} d Data value object
-	 * @param {Boolean} asPercent Convert the return as percent or not
-	 * @return {Number} Ratio value
+	 * @param {string} type Ratio for given type
+	 * @param {object} d Data value object
+	 * @param {boolean} asPercent Convert the return as percent or not
+	 * @returns {number} Ratio value
 	 * @private
 	 */
 	getRatio(type, d, asPercent) {

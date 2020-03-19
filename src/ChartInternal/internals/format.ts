@@ -3,8 +3,17 @@
  * billboard.js project is licensed under the MIT license
  */
 import {isValue, isFunction, isObjectType} from "../../module/util";
+import {AxisType} from "../../../types/types";
 
-function getFormat($$, typeValue, v) {
+/**
+ * Get formatted
+ * @param {object} $$ Context
+ * @param {string} typeValue Axis type
+ * @param {number} v Value to be formatted
+ * @returns {number | string}
+ * @private
+ */
+function getFormat($$, typeValue: AxisType, v: number): number | string {
 	const {config} = $$;
 	const type = `axis_${typeValue}_tick_format`;
 	const format = config[type] ?
@@ -14,7 +23,7 @@ function getFormat($$, typeValue, v) {
 }
 
 export default {
-	getYFormat(forArc) {
+	getYFormat(forArc: boolean): Function {
 		const $$ = this;
 		let {yFormat, y2Format} = $$;
 
@@ -31,23 +40,23 @@ export default {
 		};
 	},
 
-	yFormat(v) {
+	yFormat(v: number): number | string {
 		return getFormat(this, "y", v);
 	},
 
-	y2Format(v) {
+	y2Format(v: number): number | string {
 		return getFormat(this, "y2", v);
 	},
 
-	defaultValueFormat(v) {
+	defaultValueFormat(v): number | string {
 		return isValue(v) ? +v : "";
 	},
 
-	defaultArcValueFormat(v, ratio) {
+	defaultArcValueFormat(v, ratio): string {
 		return `${(ratio * 100).toFixed(1)}%`;
 	},
 
-	dataLabelFormat(targetId) {
+	dataLabelFormat(targetId: string): Function {
 		const $$ = this;
 		const dataLabels = $$.config.data_labels;
 		const defaultFormat = v => (isValue(v) ? +v : "");

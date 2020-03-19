@@ -10,10 +10,11 @@ export default {
 	 * Set area options
 	 * @name area
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
-	 * @property {Boolean} [area.above=false] Set background area above the data chart line.
-	 * @property {Boolean|Object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
+	 * @type {object}
+	 * @property {object} area Area object
+	 * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
+	 * @property {boolean} [area.above=false] Set background area above the data chart line.
+	 * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
 	 * Or customize by giving below object value:
 	 *  - x {Array}: `x1`, `x2` value
 	 *  - y {Array}: `y1`, `y2` value

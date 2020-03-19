@@ -7,7 +7,7 @@ import CLASS from "../../config/classes";
 import {getRandom, getRectSegList, isNumber, isObjectType, isValue} from "../../module/util";
 
 export default {
-	initBar() {
+	initBar(): void {
 		const {$el} = this;
 
 		$el.bar = $el.main.select(`.${CLASS.chart}`)
@@ -16,7 +16,7 @@ export default {
 			.attr("class", CLASS.chartBars);
 	},
 
-	updateTargetsForBar(targets) {
+	updateTargetsForBar(targets): void {
 		const $$ = this;
 		const {config, $el} = $$;
 		const classChartBar = $$.classChartBar.bind($$);
@@ -43,7 +43,7 @@ export default {
 			.style("cursor", d => (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null));
 	},
 
-	updateBar(durationForExit) {
+	updateBar(durationForExit: number): void {
 		const $$ = this;
 		const {$el} = $$;
 		const barData = $$.barData.bind($$);
@@ -65,7 +65,7 @@ export default {
 			.style("opacity", initialOpacity);
 	},
 
-	redrawBar(drawBar, withTransition) {
+	redrawBar(drawBar, withTransition?: boolean) {
 		const {bar} = this.$el;
 
 		return [
@@ -76,7 +76,7 @@ export default {
 		];
 	},
 
-	getBarW(axis, barTargetsNum) {
+	getBarW(axis, barTargetsNum: number): number {
 		const $$ = this;
 		const {config, scale} = $$;
 		const maxDataCount = $$.getMaxDataCount();
@@ -111,7 +111,7 @@ export default {
 		return result;
 	},
 
-	getBars(i, id) {
+	getBars(i: number, id: string) {
 		const $$ = this;
 		const {main} = $$.$el;
 		const suffix = (isValue(i) ? `-${i}` : ``);
@@ -121,18 +121,18 @@ export default {
 			.selectAll(`.${CLASS.bar}${suffix}`);
 	},
 
-	expandBars(i, id, reset) {
+	expandBars(i: number, id: string, reset: boolean): void {
 		const $$ = this;
 
 		reset && $$.unexpandBars();
 		$$.getBars(i, id).classed(CLASS.EXPANDED, true);
 	},
 
-	unexpandBars(i) {
+	unexpandBars(i: number): void {
 		this.getBars(i).classed(CLASS.EXPANDED, false);
 	},
 
-	generateDrawBar(barIndices, isSub) {
+	generateDrawBar(barIndices, isSub?: boolean): Function {
 		const $$ = this;
 		const {config} = $$;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
@@ -183,7 +183,7 @@ export default {
 		};
 	},
 
-	generateGetBarPoints(barIndices, isSub) {
+	generateGetBarPoints(barIndices, isSub?: boolean): Function {
 		const $$ = this;
 		const {config} = $$;
 		const axis = isSub ? $$.axis.subX : $$.axis.x;
@@ -220,7 +220,7 @@ export default {
 		};
 	},
 
-	isWithinBar(that) {
+	isWithinBar(that): boolean {
 		const mouse = d3Mouse(that);
 		const list = getRectSegList(that);
 		const [seg0, seg1] = list;

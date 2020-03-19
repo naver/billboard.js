@@ -10,12 +10,12 @@ import {callFn} from "../../module/util";
 export default {
 	/**
 	 * Select a point
+	 * @param {object} target Target point
+	 * @param {object} d Data object
+	 * @param {number} i Index number
 	 * @private
-	 * @param {Object} target point
-	 * @param {Object} data
-	 * @param {Number} index
 	 */
-	selectPoint(target, d, i) {
+	selectPoint(target, d, i: number): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const isRotated = config.axis_rotated;
@@ -43,12 +43,12 @@ export default {
 
 	/**
 	 * Unelect a point
+	 * @param {object} target Target point
+	 * @param {object} d Data object
+	 * @param {number} i Index number
 	 * @private
-	 * @param {Object} target point
-	 * @param {Object} data
-	 * @param {Number} index
 	 */
-	unselectPoint(target, d, i) {
+	unselectPoint(target, d, i: number): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -65,13 +65,13 @@ export default {
 
 	/**
 	 * Toggles the selection of points
+	 * @param {boolean} selected whether or not to select.
+	 * @param {object} target Target object
+	 * @param {object} d Data object
+	 * @param {number} i Index number
 	 * @private
-	 * @param {Boolean} whether or not to select.
-	 * @param {Object} target point
-	 * @param {Object} data
-	 * @param {Number} index
 	 */
-	togglePoint(selected, target, d, i) {
+	togglePoint(selected, target, d, i: number): void {
 		const method = `${selected ? "" : "un"}selectPoint`;
 
 		this[method](target, d, i);
@@ -79,11 +79,11 @@ export default {
 
 	/**
 	 * Select a path
+	 * @param {object} target Target path
+	 * @param {object} d Data object
 	 * @private
-	 * @param {Object} target path
-	 * @param {Object} data
 	 */
-	selectPath(target, d) {
+	selectPath(target, d): void {
 		const $$ = this;
 		const {config} = $$;
 
@@ -98,10 +98,10 @@ export default {
 	/**
 	 * Unelect a path
 	 * @private
-	 * @param {Object} target path
-	 * @param {Object} data
+	 * @param {object} target Target path
+	 * @param {object} d Data object
 	 */
-	unselectPath(target, d) {
+	unselectPath(target, d): void {
 		const $$ = this;
 		const {config} = $$;
 
@@ -115,13 +115,13 @@ export default {
 
 	/**
 	 * Toggles the selection of lines
+	 * @param {boolean} selected whether or not to select.
+	 * @param {object} target Target object
+	 * @param {object} d Data object
+	 * @param {number} i Index number
 	 * @private
-	 * @param {Boolean} whether or not to select.
-	 * @param {Object} target shape
-	 * @param {Object} data
-	 * @param {Number} index
 	 */
-	togglePath(selected, target, d, i) {
+	togglePath(selected, target, d, i: number): void {
 		this[
 			`${selected ? "" : "un"}selectPath`
 		](target, d, i);
@@ -129,12 +129,12 @@ export default {
 
 	/**
 	 * Returns the toggle method of the target
-	 * @private
-	 * @param {Object} target shape
-	 * @param {Object} data
+	 * @param {object} that shape
+	 * @param {object} d Data object
 	 * @returns {Function} toggle method
+	 * @private
 	 */
-	getToggle(that, d) {
+	getToggle(that, d): Function {
 		const $$ = this;
 
 		return that.nodeName === "path" ?
@@ -147,12 +147,12 @@ export default {
 
 	/**
 	 * Toggles the selection of shapes
+	 * @param {object} that shape
+	 * @param {object} d Data object
+	 * @param {number} i Index number
 	 * @private
-	 * @param {Object} target shape
-	 * @param {Object} data
-	 * @param {Number} index
 	 */
-	toggleShape(that, d, i) {
+	toggleShape(that, d, i: number): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const shape = d3Select(that);

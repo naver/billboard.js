@@ -9,7 +9,7 @@ import {
 import {isString, isValue, parseDate} from "../../module/util";
 
 export default {
-	getScale(min, max, forTimeseries) {
+	getScale(min: number, max: number, forTimeseries?: boolean) {
 		return (forTimeseries ?
 			d3ScaleTime() : d3ScaleLinear()
 		).range([min, max]);
@@ -17,14 +17,14 @@ export default {
 
 	/**
 	 * Get x Axis scale function
-	 * @param {Number} min
-	 * @param {Number} max
-	 * @param {Number} domain
+	 * @param {number} min Min value
+	 * @param {number} max Max value
+	 * @param {Array} domain Domain value
 	 * @param {Function} offset The offset getter to be sum
-	 * @return {Function} scale
+	 * @returns {Function} scale
 	 * @private
 	 */
-	getXScale(min, max, domain, offset) {
+	getXScale(min: number, max: number, domain: number[], offset: Function) {
 		const $$ = this;
 		const scale = $$.scale.zoom || $$.getScale(min, max, $$.axis.isTimeSeries());
 
@@ -36,13 +36,13 @@ export default {
 
 	/**
 	 * Get y Axis scale function
-	 * @param {Number} min
-	 * @param {Number} max
-	 * @param {Number} domain
-	 * @return {Function} scale
+	 * @param {number} min Min value
+	 * @param {number} max Max value
+	 * @param {Array} domain Domain value
+	 * @returns {Function} Scale function
 	 * @private
 	 */
-	getYScale(min, max, domain) {
+	getYScale(min: number, max: number, domain: number[]): Function {
 		const $$ = this;
 		const scale = $$.getScale(min, max, $$.axis.isTimeSeriesY());
 
@@ -53,11 +53,12 @@ export default {
 
 	/**
 	 * Get y Axis scale
-	 * @param {String} id Axis id
-	 * @param {Boolean} isSub Weather is sub Axis
+	 * @param {string} id Axis id
+	 * @param {boolean} isSub Weather is sub Axis
+	 * @returns {Function} Scale function
 	 * @private
 	 */
-	getYScaleById(id: string, isSub = false) {
+	getYScaleById(id: string, isSub = false): Function {
 		const isY2 = this.axis.getId(id) === "y2";
 		const key = isSub ? (isY2 ? "subY2" : "subY") : (isY2 ? "y2" : "y");
 
@@ -66,12 +67,12 @@ export default {
 
 	/**
 	 * Get customized scale
-	 * @param {d3.scaleLinear|d3.scaleTime} scaleValue
+	 * @param {d3.scaleLinear|d3.scaleTime} scaleValue Scale function
 	 * @param {Function} offsetValue Offset getter to be sum
-	 * @return {} scale
+	 * @returns {Function} Scale function
 	 * @private
 	 */
-	getCustomizedScale(scaleValue, offsetValue) {
+	getCustomizedScale(scaleValue: Function | any, offsetValue): Function {
 		const $$ = this;
 		const offset = offsetValue || (() => $$.axis.x.tickOffset());
 		const scale = function(d, raw) {
@@ -110,10 +111,11 @@ export default {
 
 	/**
 	 * Update scale
+	 * @param {boolean} isInit Param is given at the init rendering
+	 * @param {boolean} updateXDomain If update x domain
 	 * @private
-	 * @param {Boolean} isInit - param is given at the init rendering
 	 */
-	updateScales(isInit, updateXDomain = true) {
+	updateScales(isInit: boolean, updateXDomain = true): void {
 		const $$ = this;
 		const {axis, config, format, org, scale,
 			state: {width, height, width2, height2, hasAxis}
@@ -176,10 +178,11 @@ export default {
 
 	/**
 	 * Get the zoom or unzoomed scaled value
-	 * @param {Date|Number|Object} d Data value
+	 * @param {Date|number|object} d Data value
+	 * @returns {number|null}
 	 * @private
 	 */
-	xx(d): number {
+	xx(d): number | null {
 		const $$ = this;
 		const {config, scale: {x, zoom}} = $$;
 		const fn = config.zoom_enabled && zoom ?
@@ -210,7 +213,7 @@ export default {
 		return Math.ceil(yScale($$.getBaseValue(d)));
 	},
 
-	subxx(d): number {
+	subxx(d): number | null {
 		return d ? this.scale.subX(d.x) : null;
 	}
 };

@@ -6,13 +6,12 @@ import {isValue, isDefined, isObjectType} from "../../module/util";
 
 /**
  * Set the min/max value
- * @param {Chart} $$
- * @param {String} type
- * @param {Object} value
- * @return {undefined}
+ * @param {Chart} $$ Chart instance
+ * @param {string} type Set type 'min' or 'max'
+ * @param {object} value Value to be set
  * @private
  */
-function setMinMax($$, type: "min" | "max", value) {
+function setMinMax($$, type: "min" | "max", value): void {
 	const {config} = $$;
 	const axisX = `axis_x_${type}`;
 	const axisY = `axis_y_${type}`;
@@ -33,15 +32,13 @@ function setMinMax($$, type: "min" | "max", value) {
 			withUpdateXDomain: true
 		});
 	}
-
-	return undefined;
 }
 
 /**
  * Get the min/max value
- * @param {Chart} $$
- * @param {String} type
- * @return {{x, y, y2}}
+ * @param {Chart} $$ Chart instance
+ * @param {string} type Set type 'min' or 'max'
+ * @returns {{x, y, y2}}
  * @private
  */
 function getMinMax($$, type: "min" | "max"): {x: number, y: number, y2: number} {
@@ -61,10 +58,10 @@ function getMinMax($$, type: "min" | "max"): {x: number, y: number, y2: number} 
 const axis = {
 	/**
 	 * Get and set axis labels.
-	 * @method axis․labels
+	 * @function axis․labels
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} labels specified axis' label to be updated.
+	 * @param {object} labels specified axis' label to be updated.
 	 * @example
 	 * // Update axis' label
 	 * chart.axis.labels({
@@ -72,7 +69,7 @@ const axis = {
 	 *   y: "New Y Axis Label"
 	 * });
 	 */
-	labels: function(labels: {x?: string, y?: string, y2?: string}) {
+	labels: function(labels: {x?: string, y?: string, y2?: string}): void {
 		const $$ = this.internal;
 
 		if (arguments.length) {
@@ -86,12 +83,13 @@ const axis = {
 
 	/**
 	 * Get and set axis min value.
-	 * @method axis․min
+	 * @function axis․min
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} min If min is given, specified axis' min value will be updated.<br>
+	 * @param {object} min If min is given, specified axis' min value will be updated.<br>
 	 *     If no argument is given, the min values set on generating option for each axis will be returned.
 	 *     If not set any min values on generation, it will return `undefined`.
+	 * @returns {object|undefined}
 	 * @example
 	 * // Update axis' min
 	 * chart.axis.min({
@@ -100,7 +98,7 @@ const axis = {
 	 *   y2: 100
 	 * });
 	 */
-	min: function(min?: number) {
+	min: function(min?: number): object|void {
 		const $$ = this.internal;
 
 		return isValue(min) ?
@@ -110,12 +108,13 @@ const axis = {
 
 	/**
 	 * Get and set axis max value.
-	 * @method axis․max
+	 * @function axis․max
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} max If max is given, specified axis' max value will be updated.<br>
+	 * @param {object} max If max is given, specified axis' max value will be updated.<br>
 	 *     If no argument is given, the max values set on generating option for each axis will be returned.
 	 *     If not set any max values on generation, it will return `undefined`.
+	 * @returns {object|undefined}
 	 * @example
 	 * // Update axis' label
 	 * chart.axis.max({
@@ -124,7 +123,7 @@ const axis = {
 	 *    y2: 10000
 	 * });
 	 */
-	max: function(max?: number) {
+	max: function(max?: number): object|void {
 		const $$ = this.internal;
 
 		return arguments.length ?
@@ -134,10 +133,11 @@ const axis = {
 
 	/**
 	 * Get and set axis min and max value.
-	 * @method axis․range
+	 * @function axis․range
 	 * @instance
 	 * @memberof Chart
-	 * @param {Object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+	 * @param {object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+	 * @returns {object|undefined}
 	 * @example
 	 * // Update axis' label
 	 * chart.axis.range({
@@ -153,7 +153,7 @@ const axis = {
 	 *   },
 	 * });
 	 */
-	range: function(range) {
+	range: function(range): object|void {
 		const {axis} = this;
 
 		if (arguments.length) {

@@ -11,9 +11,9 @@ import Plugin from "../Plugin";
  *   - [d3-selection](https://github.com/d3/d3-selection)
  * @class plugin-bubblecompare
  * @requires d3-selection
- * @param {Object} options bubble compare plugin options
- * @extends Plugin
- * @return {BubbleCompare}
+ * @param {object} options bubble compare plugin options
+ * @augments Plugin
+ * @returns {BubbleCompare}
  * @example
  *  var chart = bb.generate({
  *     data: {
@@ -29,7 +29,7 @@ import Plugin from "../Plugin";
  *        }),
  *     ]
  *  });
-  * @example
+ * @example
  *	import {bb} from "billboard.js";
  * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
  *
@@ -50,7 +50,7 @@ export default class BubbleCompare extends Plugin {
 		return this;
 	}
 
-	$init() {
+	$init(): void {
 		const {$$} = this;
 
 		$$.findClosest = this.findClosest.bind(this);
@@ -58,7 +58,7 @@ export default class BubbleCompare extends Plugin {
 		$$.pointExpandedR = this.pointExpandedR.bind(this);
 	}
 
-	pointExpandedR(d) {
+	pointExpandedR(d): number {
 		const baseR = this.getBubbleR(d);
 		const {expandScale = 1} = this.options;
 
@@ -68,15 +68,15 @@ export default class BubbleCompare extends Plugin {
 		return baseR * expandScale;
 	}
 
-	static raiseFocusedBubbleLayer(d) {
+	static raiseFocusedBubbleLayer(d): void {
 		d.raise && d3Select(d.node().parentNode.parentNode).raise();
 	}
 
-	changeCursorPoint() {
+	changeCursorPoint(): void {
 		this.$$.$el.svg.select(`.bb-event-rect`).style("cursor", "pointer");
 	}
 
-	findClosest(values, pos) {
+	findClosest(values, pos): number {
 		const {$$} = this;
 
 		return values
@@ -88,7 +88,7 @@ export default class BubbleCompare extends Plugin {
 			}, 0);
 	}
 
-	getBubbleR(d) {
+	getBubbleR(d): number {
 		const {minR, maxR} = this.options;
 		const curVal = this.getZData(d);
 
@@ -107,7 +107,7 @@ export default class BubbleCompare extends Plugin {
 		return Math.abs(size) * (maxR - minR) + minR;
 	}
 
-	getZData(d) {
+	getZData(d): number {
 		return this.$$.isBubbleZType(d) ?
 			this.$$.getBubbleZData(d.value, "z") :
 			d.value;

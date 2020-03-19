@@ -5,9 +5,9 @@
 export default {
 	/**
 	 * Category Name
+	 * @param {number} i Index number
+	 * @returns {string} category Name
 	 * @private
-	 * @param {Number} index
-	 * @returns {String} gategory Name
 	 */
 	categoryName(i: number): string {
 		const {axis_x_categories: categories} = this.config;

@@ -18,7 +18,7 @@ export default {
 	 * Initialize zoom.
 	 * @private
 	 */
-	initZoom() {
+	initZoom(): void {
 		const $$ = this;
 
 		$$.scale.zoom = null;
@@ -29,10 +29,10 @@ export default {
 
 	/**
 	 * Bind zoom event
-	 * @param {Boolean} bind Weather bind or unbound
+	 * @param {boolean} bind Weather bind or unbound
 	 * @private
 	 */
-	bindZoomEvent(bind = true) {
+	bindZoomEvent(bind = true): void {
 		const $$ = this;
 		const {config, $el: {main}} = $$;
 		const zoomEnabled = config.zoom_enabled;
@@ -58,7 +58,7 @@ export default {
 	 * Generate zoom
 	 * @private
 	 */
-	generateZoom() {
+	generateZoom(): void {
 		const $$ = this;
 		const {config, org, scale} = $$;
 
@@ -69,14 +69,14 @@ export default {
 
 		// get zoom extent
 		// @ts-ignore
-		zoom.orgScaleExtent = () => {
+		zoom.orgScaleExtent = (): [number, number] => {
 			const extent = config.zoom_extent || [1, 10];
 
 			return [extent[0], Math.max($$.getMaxDataCount() / extent[1], extent[1])];
 		};
 
 		// @ts-ignore
-		zoom.updateScaleExtent = function() {
+		zoom.updateScaleExtent = function(): zoom {
 			const ratio = diffDomain($$.scale.x.orgDomain()) / diffDomain($$.getZoomDomain());
 			const extent = this.orgScaleExtent();
 
@@ -87,11 +87,11 @@ export default {
 
 		/**
 		 * Update scale according zoom transform value
-		 * @param {Object} transform
+		 * @param {object} transform transform object
 		 * @private
 		 */
 		// @ts-ignore
-		zoom.updateTransformScale = transform => {
+		zoom.updateTransformScale = (transform: object): void => {
 			// in case of resize, update range of orgXScale
 			org.xScale && org.xScale.range(scale.x.range());
 
@@ -122,7 +122,7 @@ export default {
 	 * 'start' event listener
 	 * @private
 	 */
-	onZoomStart() {
+	onZoomStart(): void {
 		const $$ = this;
 		const event = d3Event.sourceEvent;
 
@@ -138,7 +138,7 @@ export default {
 	 * 'zoom' event listener
 	 * @private
 	 */
-	onZoom() {
+	onZoom(): void {
 		const $$ = this;
 		const {config, scale, org} = $$;
 		const event = d3Event;
@@ -183,7 +183,7 @@ export default {
 	 * 'end' event listener
 	 * @private
 	 */
-	onZoomEnd() {
+	onZoomEnd(): void {
 		const $$ = this;
 		const {config, scale} = $$;
 		let {startEvent} = $$.zoom;
@@ -210,9 +210,9 @@ export default {
 	/**
 	 * Get zoom domain
 	 * @returns {Array} zoom domain
- 	 * @private
+	 * @private
 	 */
-	getZoomDomain() {
+	getZoomDomain(): [number, number] {
 		const $$ = this;
 		const {config, org} = $$;
 		let [min, max] = org.xDomain;
@@ -230,10 +230,10 @@ export default {
 
 	/**
 	 * Update zoom
-	 * @param {Boolean} force Force unzoom
+	 * @param {boolean} force Force unzoom
 	 * @private
 	 */
-	updateZoom(force) {
+	updateZoom(force: boolean): void {
 		const $$ = this;
 		const {subX, x, zoom} = $$.scale;
 
@@ -256,9 +256,11 @@ export default {
 
 	/**
 	 * Attach zoom event on <rect>
+	 * @param {d3.selection} eventRects evemt <rect> element
+	 * @param {string} type zoom type
 	 * @private
 	 */
-	bindZoomOnEventRect(eventRects, type) {
+	bindZoomOnEventRect(eventRects, type: "drag" | "wheel"): void {
 		const $$ = this;
 		const behaviour = type === "drag" ? $$.zoomBehaviour : $$.zoom;
 
@@ -271,7 +273,7 @@ export default {
 	 * Initialize the drag behaviour used for zooming.
 	 * @private
 	 */
-	initZoomBehaviour() {
+	initZoomBehaviour(): void {
 		const $$ = this;
 		const {config, state} = $$;
 		const isRotated = config.axis_rotated;
@@ -351,7 +353,7 @@ export default {
 			});
 	},
 
-	setZoomResetButton() {
+	setZoomResetButton(): void {
 		const $$ = this;
 		const {config} = $$;
 		const resetButton = config.zoom_resetButton;

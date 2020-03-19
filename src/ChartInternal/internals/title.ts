@@ -7,12 +7,12 @@ import CLASS from "../../config/classes";
 
 /**
  * Get the text position
- * @param {String} pos right, left or center
- * @param {Number} width chart width
- * @return {String|Number} text-anchor value or position in pixel
+ * @param {string} pos right, left or center
+ * @param {number} width chart width
+ * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
-function getTextPos(pos = "left", width?: number | any) {
+function getTextPos(pos = "left", width?: number | any): number | "start" | "middle" | "end" {
 	const isNum = isNumber(width);
 	let position;
 
@@ -32,7 +32,7 @@ export default {
 	 * Initializes the title
 	 * @private
 	 */
-	initTitle() {
+	initTitle(): void {
 		const $$ = this;
 		const {config, $el} = $$;
 
@@ -52,7 +52,7 @@ export default {
 	 * Redraw title
 	 * @private
 	 */
-	redrawTitle() {
+	redrawTitle(): void {
 		const $$ = this;
 		const {config, state: {currentWidth}, $el: {title}} = $$;
 
@@ -69,10 +69,10 @@ export default {
 
 	/**
 	 * Returns the x attribute value of the title
+	 * @returns {number} x attribute value
 	 * @private
-	 * @returns {Number} x attribute value
 	 */
-	xForTitle() {
+	xForTitle(): number {
 		const $$ = this;
 		const {config, state: {currentWidth}} = $$;
 		const position = config.title_position || "left";
@@ -96,10 +96,10 @@ export default {
 
 	/**
 	 * Returns the y attribute value of the title
+	 * @returns {number} y attribute value
 	 * @private
-	 * @returns {Number} y attribute value
 	 */
-	yForTitle() {
+	yForTitle(): number {
 		const $$ = this;
 
 		return ($$.config.title_padding.top || 0) +
@@ -108,10 +108,10 @@ export default {
 
 	/**
 	 * Get title padding
+	 * @returns {number} padding value
 	 * @private
-	 * @returns {Number} padding value
 	 */
-	getTitlePadding() {
+	getTitlePadding(): number {
 		const $$ = this;
 
 		return $$.yForTitle() + ($$.config.title_padding.bottom || 0);

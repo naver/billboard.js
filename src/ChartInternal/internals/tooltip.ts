@@ -69,11 +69,11 @@ export default {
 
 	/**
 	 * Get the tooltip HTML string
-	 * @param  {...any} args
+	 * @param  {Array} args Arguments
+	 * @returns {string} Formatted HTML string
 	 * @private
-	 * @return {String} Formatted HTML string
 	 */
-	getTooltipHTML(...args) {
+	getTooltipHTML(...args): string {
 		const $$ = this;
 		const {api, config} = $$;
 
@@ -83,14 +83,14 @@ export default {
 
 	/**
 	 * Returns the tooltip content(HTML string)
-	 * @param {Object} d data
+	 * @param {object} d data
 	 * @param {Function} defaultTitleFormat Default title format
 	 * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
 	 * @param {Function} color Color function
-	 * @returns {String} html
+	 * @returns {string} html
 	 * @private
 	 */
-	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
+	getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color): string {
 		const $$ = this;
 		const {api, config} = $$;
 
@@ -212,11 +212,11 @@ export default {
 
 	/**
 	 * Get the content template string
-	 * @param {String} tplStr
-	 * @return {String} Template string
+	 * @param {string} tplStr Tempalte string
+	 * @returns {Array} Template string
 	 * @private
 	 */
-	getTooltipContentTemplate(tplStr) {
+	getTooltipContentTemplate(tplStr): string[] {
 		return (tplStr || `<table class="{=CLASS_TOOLTIP}"><tbody>
 				{=TITLE}
 				{{<tr class="{=CLASS_TOOLTIP_NAME}">
@@ -230,14 +230,15 @@ export default {
 
 	/**
 	 * Returns the position of the tooltip
-	 * @param {Object} dataToShow data
-	 * @param {String} tWidth Width value of tooltip element
-	 * @param {String} tHeight Height value of tooltip element
-	 * @param {HTMLElement} element
-	 * @returns {Object} top, left value
+	 * @param {object} dataToShow data
+	 * @param {string} tWidth Width value of tooltip element
+	 * @param {string} tHeight Height value of tooltip element
+	 * @param {HTMLElement} element Tooltip element
+	 * @returns {object} top, left value
 	 * @private
 	 */
-	tooltipPosition(dataToShow, tWidth, tHeight, element) {
+	tooltipPosition(dataToShow, tWidth: number, tHeight: number, element):
+		{top: number, left: number} {
 		const $$ = this;
 		const {config, scale} = $$;
 		const {width, height, currentWidth, currentHeight, isLegendRight, inputType} = $$.state;
@@ -289,11 +290,11 @@ export default {
 
 	/**
 	 * Show the tooltip
+	 * @param {object} selectedData Data object
+	 * @param {HTMLElement} element Tooltip element
 	 * @private
-	 * @param {Object} selectedData
-	 * @param {HTMLElement} element
 	 */
-	showTooltip(selectedData, element) {
+	showTooltip(selectedData, element): void {
 		const $$ = this;
 		const {config, state, $el: {tooltip}} = $$;
 		const {bindto} = config.tooltip_contents;
@@ -357,7 +358,7 @@ export default {
 	 * Adjust tooltip position on resize event
 	 * @private
 	 */
-	bindTooltipResizePos() {
+	bindTooltipResizePos(): void {
 		const $$ = this;
 		const {resizeFunction, state, $el: {tooltip}} = $$;
 
@@ -380,10 +381,10 @@ export default {
 
 	/**
 	 * Hide the tooltip
-	 * @param {Boolean} force Force to hide
+	 * @param {boolean} force Force to hide
 	 * @private
 	 */
-	hideTooltip(force) {
+	hideTooltip(force?: boolean): void {
 		const $$ = this;
 		const {api, config, $el: {tooltip}} = $$;
 
@@ -404,11 +405,11 @@ export default {
 
 	/**
 	 * Toggle display for linked chart instances
-	 * @param {Boolean} show true: show, false: hide
-	 * @param {Number} index x Axis index
+	 * @param {boolean} show true: show, false: hide
+	 * @param {number} index x Axis index
 	 * @private
 	 */
-	_handleLinkedCharts(show, index) {
+	_handleLinkedCharts(show: boolean, index: number): void {
 		const $$ = this;
 		const {charts, config} = $$;
 

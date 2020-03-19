@@ -11,7 +11,7 @@ export default {
 	 * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
 	 * @name data․selection․enabled
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
 	 * @example
@@ -28,7 +28,7 @@ export default {
 	 * If this option set true, multiple data points that have same x value will be selected by one selection.
 	 * @name data․selection․grouped
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * data: {
@@ -60,7 +60,7 @@ export default {
 	 * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
 	 * @name data․selection․multiple
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * data: {
@@ -77,7 +77,7 @@ export default {
 	 * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
 	 * @name data․selection․draggable
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @example
 	 * data: {

@@ -15,7 +15,7 @@ export default class Plugin {
 	 * @name version
 	 * @static
 	 * @memberof Plugin
-	 * @type {String}
+	 * @type {string}
 	 * @example
 	 *   bb.plugin.stanford.version;  // ex) 1.9.0
 	 */
@@ -23,7 +23,7 @@ export default class Plugin {
 
 	/**
 	 * Constructor
-	 * @param {Any} config config option object
+	 * @param {Any} options config option object
 	 * @private
 	 */
 	constructor(options = {}) {

@@ -9,6 +9,7 @@ const {setTimeout, clearTimeout} = window;
 
 /**
  * Generate resize queue function
+ * @returns {Fucntion}
  * @private
  */
 export function generateResize() {
@@ -22,7 +23,7 @@ export function generateResize() {
 		timeout = setTimeout(() => {
 			fn.forEach((f: Function) => f());
 		}, 200);
-	}
+	};
 
 	callResizeFn.clear = () => {
 		if (timeout) {
@@ -39,6 +40,7 @@ export function generateResize() {
 
 /**
  * Generate transition queue function
+ * @returns {Function}
  * @private
  */
 export function generateWait() {
@@ -46,6 +48,7 @@ export function generateWait() {
 	const f = function(t, callback) {
 		let timer;
 
+		// eslint-disable-next-line
 		function loop() {
 			let done = 0;
 

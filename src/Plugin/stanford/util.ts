@@ -6,7 +6,13 @@
 
 import {isEmpty, isFunction, isString, parseDate} from "../../module/util";
 
-function pointInRegion(point, region) { // thanks to: http://bl.ocks.org/bycoffe/5575904
+/**
+ * Check if point is in region
+ * @param {object} point Point
+ * @param {Array} region Region
+ * @returns {boolean}
+ */
+function pointInRegion(point, region): boolean { // thanks to: http://bl.ocks.org/bycoffe/5575904
 	// ray-casting algorithm based on
 	// http://www.ecse.rpi.edu/Homepages/wrf/Research/Short_Notes/pnpoly.html
 	const x = point.x;
@@ -30,7 +36,13 @@ function pointInRegion(point, region) { // thanks to: http://bl.ocks.org/bycoffe
 	return inside;
 }
 
-function compareEpochs(a, b) {
+/**
+ * Compare epochs
+ * @param {object} a Target
+ * @param {object} b Source
+ * @returns {number}
+ */
+function compareEpochs(a, b): number {
 	if (a.epochs < b.epochs) {
 		return -1;
 	}
@@ -42,7 +54,12 @@ function compareEpochs(a, b) {
 	return 0;
 }
 
-function getRegionArea(points) { // thanks to: https://stackoverflow.com/questions/16282330/find-centerpoint-of-polygon-in-javascript
+/**
+ * Get region area
+ * @param {Array} points Points
+ * @returns {number}
+ */
+function getRegionArea(points): number { // thanks to: https://stackoverflow.com/questions/16282330/find-centerpoint-of-polygon-in-javascript
 	let area = 0;
 	let point1;
 	let point2;
@@ -59,6 +76,11 @@ function getRegionArea(points) { // thanks to: https://stackoverflow.com/questio
 	return area;
 }
 
+/**
+ * Get centroid
+ * @param {Array} points Points
+ * @returns {object}
+ */
 function getCentroid(points) {
 	const area = getRegionArea(points);
 

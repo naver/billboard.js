@@ -12,20 +12,24 @@ export default {
 	 * Set related options
 	 * @name grid
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
-	 * @property {Boolean} [x.show=false] Show grids along x axis.
+	 * @type {object}
+	 * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
+	 * @property {object} x Grid x object
+	 * @property {boolean} [x.show=false] Show grids along x axis.
 	 * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
 	 *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
 	 *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
-	 * @property {Boolean} [y.show=false] Show grids along x axis.
+	 * @property {object} y Grid y object
+	 * @property {boolean} [y.show=false] Show grids along x axis.
 	 * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
 	 *  This option accepts array including object that has value, text, position and class.
-	 * @property {Number} [y.ticks=10] Number of y grids to be shown.
-	 * @property {Boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-	 * @property {Boolean} [focus.show=true] Show grid line when focus.
-	 * @property {Boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-	 * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
+	 * @property {number} [y.ticks=10] Number of y grids to be shown.
+	 * @property {object} focus Grid focus object
+	 * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+	 * @property {boolean} [focus.show=true] Show grid line when focus.
+	 * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+	 * @property {object} lines Grid lines object
+	 * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
 	 * @default undefined
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
 	 * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)

@@ -11,7 +11,7 @@ export default {
 	 * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
 	 * @name data․x
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default undefined
 	 * @example
 	 * data: {
@@ -25,7 +25,7 @@ export default {
 	 * This option can be used if we want to show the data that has different x values.
 	 * @name data․xs
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @example
 	 * data: {
@@ -41,7 +41,7 @@ export default {
 	 * Set a format specifier to parse string specifed as x.
 	 * @name data․xFormat
 	 * @memberof Options
-	 * @type {String}
+	 * @type {string}
 	 * @default %Y-%m-%d
 	 * @example
 	 * data: {
@@ -66,7 +66,7 @@ export default {
 	 * Set localtime format to parse x axis.
 	 * @name data․xLocaltime
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * data: {
@@ -79,7 +79,7 @@ export default {
 	 * Sort on x axis.
 	 * @name data․xSort
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default true
 	 * @example
 	 * data: {
@@ -109,7 +109,7 @@ export default {
 	 * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
 	 * @name data․axes
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @example
 	 * data: {
@@ -125,9 +125,10 @@ export default {
 	 * Set labels options
 	 * @name data․labels
 	 * @memberof Options
-	 * @type {Object}
-	 * @property {Boolean} [data.labels=false] Show or hide labels on each data points
-	 * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+	 * @type {object}
+	 * @property {object} data Data object
+	 * @property {boolean} [data.labels=false] Show or hide labels on each data points
+	 * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
 	 * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
 	 * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
 	 *  - `v` is the value of the data point where the label is shown.
@@ -135,12 +136,12 @@ export default {
 	 *  - `i` is the index of the data point where the label is shown.
 	 *  - `j` is the sub index of the data point where the label is shown.<br><br>
 	 * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-	 * @property {String|Object} [data.labels.colors] Set label text colors.
-	 * @property {Object} [data.labels.position] Set each dataset position, relative the original.
-	 * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-	 * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
+	 * @property {string|object} [data.labels.colors] Set label text colors.
+	 * @property {object} [data.labels.position] Set each dataset position, relative the original.
+	 * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
+	 * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
 	 * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
@@ -202,13 +203,13 @@ export default {
 	 * Define regions for each data.<br>
 	 * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
 	 * - The object type should be as:
-	 *   - start {Number}: Start data point number. If not set, the start will be the first data point.
-	 *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
-	 *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+	 *   - start {number}: Start data point number. If not set, the start will be the first data point.
+	 *   - [end] {number}: End data point number. If not set, the end will be the last data point.
+	 *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
 	 * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
 	 * @name data․regions
 	 * @memberof Options
-	 * @type {Object}
+	 * @type {object}
 	 * @default {}
 	 * @example
 	 * data: {
@@ -236,7 +237,7 @@ export default {
 	 *   - Must have postive values
 	 * @name data․stack․normalize
 	 * @memberof Options
-	 * @type {Boolean}
+	 * @type {boolean}
 	 * @default false
 	 * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
 	 * @example

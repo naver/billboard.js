@@ -19,7 +19,7 @@ export default {
 	 * Initialize the brush.
 	 * @private
 	 */
-	initBrush() {
+	initBrush(): void {
 		const $$ = this;
 		const {config, scale, $el: {subchart}} = $$;
 		const isRotated = config.axis_rotated;
@@ -106,7 +106,7 @@ export default {
 	 * Initialize the subchart.
 	 * @private
 	 */
-	initSubchart() {
+	initSubchart(): void {
 		const $$ = this;
 		const {config, state: {clip, hasAxis}, $el: {defs, svg, subchart, axis}} = $$;
 
@@ -160,10 +160,10 @@ export default {
 
 	/**
 	 * Update sub chart
+	 * @param {object} targets $$.data.targets
 	 * @private
-	 * @param {Object} $$.data.targets
 	 */
-	updateTargetsForSubchart(targets) {
+	updateTargetsForSubchart(targets): void {
 		const $$ = this;
 		const {config, state, $el: {subchart: {main}}} = $$;
 		const classChartBar = $$.classChartBar.bind($$);
@@ -214,10 +214,10 @@ export default {
 
 	/**
 	 * Update the bar of the sub chart
+	 * @param {object} durationForExit Transition duration
 	 * @private
-	 * @param {Object} durationForExit
 	 */
-	updateBarForSubchart(durationForExit) {
+	updateBarForSubchart(durationForExit): void {
 		const $$ = this;
 		const {$el: {subchart}} = $$;
 
@@ -243,12 +243,12 @@ export default {
 
 	/**
 	 * Redraw the bar of the subchart
+	 * @param {string} drawBarOnSub path in subchart line
+	 * @param {boolean} withTransition whether or not to transition
+	 * @param {number} duration transition duration
 	 * @private
-	 * @param {String} path in subchart bar
-	 * @param {Boolean} whether or not to transition.
-	 * @param {Number} transition duration
 	 */
-	redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
+	redrawBarForSubchart(drawBarOnSub: string, withTransition: boolean, duration: number): void {
 		const {bar} = this.$el.subchart;
 
 		(withTransition ? bar.transition(getRandom()).duration(duration) : bar)
@@ -258,10 +258,10 @@ export default {
 
 	/**
 	 * Update the line of the sub chart
+	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
-	 * @param {Number} Fade-out transition duration
 	 */
-	updateLineForSubchart(durationForExit) {
+	updateLineForSubchart(durationForExit): void {
 		const $$ = this;
 		const {$el: {subchart}} = $$;
 
@@ -288,11 +288,11 @@ export default {
 	/**
 	 * Redraw the line of the subchart
 	 * @private
-	 * @param {String} path in subchart line
-	 * @param {Boolean} whether or not to transition
-	 * @param {Number} transition duration
+	 * @param {string} drawLineOnSub path in subchart line
+	 * @param {boolean} withTransition whether or not to transition
+	 * @param {number} duration transition duration
 	 */
-	redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
+	redrawLineForSubchart(drawLineOnSub: string, withTransition: boolean, duration: number): void {
 		const {line} = this.$el.subchart;
 
 		(withTransition ? line.transition(getRandom()).duration(duration) : line)
@@ -302,10 +302,10 @@ export default {
 
 	/**
 	 * Update the area of the sub chart
+	 * @param {number} durationForExit Fade-out transition duration
 	 * @private
-	 * @param {Number} Fade-out transition duration
 	 */
-	updateAreaForSubchart(durationForExit) {
+	updateAreaForSubchart(durationForExit): void {
 		const $$ = this;
 		const {$el: {subchart}} = $$;
 
@@ -332,14 +332,15 @@ export default {
 			.merge(subchart.area)
 			.style("opacity", "0");
 	},
+
 	/**
 	 * Redraw the area of the subchart
 	 * @private
-	 * @param {String} path in subchart line
-	 * @param {Boolean} whether or not to transition
-	 * @param {Number} transition duration
+	 * @param {string} drawAreaOnSub path in subchart line
+	 * @param {boolean} withTransition whether or not to transition
+	 * @param {number} duration transition duration
 	 */
-	redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
+	redrawAreaForSubchart(drawAreaOnSub: string, withTransition: boolean, duration: number): void {
 		const {area} = this.$el.subchart;
 
 		(withTransition ? area.transition(getRandom()).duration(duration) : area)
@@ -351,11 +352,11 @@ export default {
 	/**
 	 * Redraw subchart.
 	 * @private
-	 * @param {Boolean} withSubchart whether or not to show subchart
-	 * @param {Number} duration duration
-	 * @param {Object} shape Shape's info
+	 * @param {boolean} withSubchart whether or not to show subchart
+	 * @param {number} duration duration
+	 * @param {object} shape Shape's info
 	 */
-	redrawSubchart(withSubchart, duration, shape) {
+	redrawSubchart(withSubchart: boolean, duration: number, shape): void {
 		const $$ = this;
 		const {config, $el: {subchart: {main}}} = $$;
 
@@ -405,11 +406,11 @@ export default {
 
 	/**
 	 * Transform context
+	 * @param {boolean} withTransition indicates transition is enabled
+	 * @param {object} transitions The return value of the generateTransitions method of Axis.
 	 * @private
-	 * @param {Boolean} indicates transition is enabled
-	 * @param {Object} The return value of the generateTransitions method of Axis.
 	 */
-	transformContext(withTransition, transitions) {
+	transformContext(withTransition, transitions): void {
 		const $$ = this;
 		const {main} = $$.$el.subchart;
 		let subXAxis;
@@ -430,10 +431,10 @@ export default {
 
 	/**
 	 * Get extent value
-	 * @private
 	 * @returns {Array} default extent
+	 * @private
 	 */
-	getExtent() {
+	getExtent(): number[] {
 		const $$ = this;
 		const {config, scale} = $$;
 		let extent = config.axis_x_extent;

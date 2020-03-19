@@ -27,7 +27,7 @@ export default class Elements {
 		elements.append("g").attr("class", CLASS.stanfordRegions);
 	}
 
-	updateStanfordLines(duration) {
+	updateStanfordLines(duration: number): void {
 		const {$$} = this.owner;
 		const {config, $el: {main}} = $$;
 		const isRotated = config.axis_rotated;
@@ -66,7 +66,7 @@ export default class Elements {
 			.style("opacity", "1");
 	}
 
-	updateStanfordRegions(duration) {
+	updateStanfordRegions(duration: number): void {
 		const {$$} = this.owner;
 		const {config, $el: {main}} = $$;
 		const isRotated = config.axis_rotated;
@@ -130,12 +130,12 @@ export default class Elements {
 			.style("opacity", "1");
 	}
 
-	updateStanfordElements(duration = 0) {
+	updateStanfordElements(duration = 0): void {
 		this.updateStanfordLines(duration);
 		this.updateStanfordRegions(duration);
 	}
 
-	xvCustom(d, xyValue) {
+	xvCustom(d, xyValue): number {
 		const $$ = this;
 		const {axis, config} = $$;
 		let value = xyValue ? d[xyValue] : $$.getBaseValue(d);
@@ -149,7 +149,7 @@ export default class Elements {
 		return Math.ceil($$.scale.x(value));
 	}
 
-	yvCustom(d, xyValue) {
+	yvCustom(d, xyValue): number {
 		const $$ = this;
 		const yScale = d.axis && d.axis === "y2" ? $$.scale.y2 : $$.scale.y;
 		const value = xyValue ? d[xyValue] : $$.getBaseValue(d);

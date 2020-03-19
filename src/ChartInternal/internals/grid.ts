@@ -13,7 +13,15 @@ import {isArray, isValue} from "../../module/util";
 const getGridTextAnchor = d => isValue(d.position) || "end";
 const getGridTextDx = d => (d.position === "start" ? 4 : (d.position === "middle" ? 0 : -4));
 
-function getGridTextX(isX, width, height) {
+/**
+ * Get grid text x value getter function
+ * @param {boolean} isX Is x Axis
+ * @param {number} width Width value
+ * @param {number} height Height value
+ * @returns {Function}
+ * @private
+ */
+function getGridTextX(isX, width, height): Function {
 	return d => {
 		let x = isX ? 0 : width;
 
@@ -27,7 +35,13 @@ function getGridTextX(isX, width, height) {
 	};
 }
 
-function smoothLines(el, type) {
+/**
+ * Update coordinate attributes value
+ * @param {d3.selection} el Target node
+ * @param {string} type Type
+ * @private
+ */
+function smoothLines(el, type: string): void {
 	if (type === "grid") {
 		el.each(function() {
 			const g = d3Select(this);
@@ -39,7 +53,7 @@ function smoothLines(el, type) {
 }
 
 export default {
-	hasGrid() {
+	hasGrid(): boolean {
 		const {config} = this;
 
 		return ["x", "y"]
@@ -53,7 +67,7 @@ export default {
 		$$.initFocusGrid();
 	},
 
-	initGridLines() {
+	initGridLines(): void {
 		const $$ = this;
 		const {config, state: {clip}, $el: {gridLines, main}} = $$;
 
@@ -69,7 +83,7 @@ export default {
 		}
 	},
 
-	updateXGrid(withoutUpdate) {
+	updateXGrid(withoutUpdate): void {
 		const $$ = this;
 		const {config, scale, state, $el: {main, grid}} = $$;
 		const isRotated = config.axis_rotated;
@@ -115,7 +129,7 @@ export default {
 		}
 	},
 
-	updateYGrid() {
+	updateYGrid(): void {
 		const $$ = this;
 		const {config, state, $el: {grid, main}} = $$;
 		const isRotated = config.axis_rotated;
@@ -158,10 +172,10 @@ export default {
 
 	/**
 	 * Update X Grid lines
-	 * @param {Number} duration
+	 * @param {number} duration Dration value
 	 * @private
 	 */
-	updateXGridLines(duration) {
+	updateXGridLines(duration: number): void {
 		const $$ = this;
 		const {config, $el: {gridLines, main}} = $$;
 		const isRotated = config.axis_rotated;
@@ -207,10 +221,10 @@ export default {
 
 	/**
 	 * Update Y Grid lines
-	 * @param {Number} duration
+	 * @param {number} duration Duration value
 	 * @private
 	 */
-	updateYGridLines(duration) {
+	updateYGridLines(duration: number): void {
 		const $$ = this;
 		const {config, state: {width, height}, $el} = $$;
 		const isRotated = config.axis_rotated;
@@ -270,7 +284,7 @@ export default {
 		$el.gridLines.y = ygridLines;
 	},
 
-	redrawGrid(withTransition) {
+	redrawGrid(withTransition: boolean): any[] {
 		const $$ = this;
 		const {
 			config: {axis_rotated: isRotated},
@@ -299,7 +313,7 @@ export default {
 		];
 	},
 
-	initFocusGrid() {
+	initFocusGrid(): void {
 		const $$ = this;
 		const {config, state: {clip}, $el} = $$;
 		const isFront = config.grid_front;
@@ -335,10 +349,10 @@ export default {
 
 	/**
 	 * Show grid focus line
-	 * @param {Array} selectedData
+	 * @param {Array} selectedData Selected data
 	 * @private
 	 */
-	showGridFocus(selectedData) {
+	showGridFocus(selectedData): void {
 		const $$ = this;
 		const {config, state: {width, height}} = $$;
 		const isRotated = config.axis_rotated;
@@ -402,7 +416,7 @@ export default {
 		smoothLines(focusEl, "grid");
 	},
 
-	hideGridFocus() {
+	hideGridFocus(): void {
 		const $$ = this;
 		const {state, $el} = $$;
 
@@ -410,7 +424,7 @@ export default {
 			.style("visibility", "hidden");
 	},
 
-	updategridFocus() {
+	updategridFocus(): void {
 		const $$ = this;
 		const {state: {inputType, width, height}, $el} = $$;
 
@@ -429,7 +443,7 @@ export default {
 		}
 	},
 
-	generateGridData(type, scale) {
+	generateGridData(type: string, scale) {
 		const $$ = this;
 		const tickNum = $$.$el.main.select(`.${CLASS.axisX}`)
 			.selectAll(".tick")
@@ -455,7 +469,7 @@ export default {
 		return gridData;
 	},
 
-	getGridFilterToRemove(params) {
+	getGridFilterToRemove(params): Function {
 		return params ? line => {
 			let found = false;
 
@@ -469,7 +483,7 @@ export default {
 		} : () => true;
 	},
 
-	removeGridLines(params, forX) {
+	removeGridLines(params, forX?: boolean): void {
 		const $$ = this;
 		const {config} = $$;
 		const toRemove = $$.getGridFilterToRemove(params);

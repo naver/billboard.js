@@ -32,11 +32,11 @@ import {api as apiAxis} from "../config/resolver/axis";
  *   ]}
  * }
  * @see {@link bb.generate} for the initialization.
-*/
+ */
 /**
  * Access instance's primary node elements
- * @member {Object} $
- * @property {Object} $
+ * @member {object} $
+ * @property {object} $ Access instance's primary node elements
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
  * @property {d3.selection} $.defs Definition element
@@ -47,12 +47,12 @@ import {api as apiAxis} from "../config/resolver/axis";
  * @property {d3.selection} $.grid Grid element
  * @property {d3.selection} $.arc Arc element
  * @property {d3.selection} $.circles Data point circle elements
- * @property {Object} $.bar
+ * @property {object} $.bar Bar element object
  * @property {d3.selection} $.bar.bars Bar elements
- * @property {Object} $.line
+ * @property {object} $.line Line element object
  * @property {d3.selection} $.line.lines Line elements
  * @property {d3.selection} $.line.areas Areas elements
- * @property {Object} $.text
+ * @property {object} $.text Text element object
  * @property {d3.selection} $.text.texts Data label text elements
  * @memberof Chart
  * @example
@@ -66,7 +66,6 @@ export default class Chart {
 	 * Plugin instance array
 	 * @member {Array} plugins
 	 * @memberof Chart
-	 * @instance
 	 * @example
 	 *  var chart = bb.generate({
 	 *     ...
