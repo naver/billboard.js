@@ -120,8 +120,10 @@ extend(ChartInternal.prototype, {
 		} else if (config.axis_rotated) {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
-			padding = 2 + legendWidthOnRight +
-				($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0);
+			padding = Math.max(
+				2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0),
+				xAxisTickTextOverflow
+			);
 		} else {
 			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
 		}
