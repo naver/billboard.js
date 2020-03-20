@@ -928,6 +928,75 @@ describe("INTERACTION", () => {
 					done();
 				});
 			});
+
+			it("set option onresized", () => {
+				args.onresized = sinon.spy();
+			});
+
+			it("check if tooltip visibility maintained and position updated after resize", done => {
+				// when
+				chart.tooltip.show({x:2});
+
+				const left = parseInt(chart.$.tooltip.style("left"));
+
+				// when
+				chart.resize({width: 300});
+
+				setTimeout(() => {
+					expect(args.onresized.calledOnce).to.be.true;
+					expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
+
+					done();
+				}, 300)
+			});
+
+			it("check if data point radius size rollsback after hide API is called", done => {
+				const x = 2;
+				chart.tooltip.show({x});
+				chart.tooltip.hide();
+
+				setTimeout(() => {
+					const points = chart.$.line.circles.filter(`.${CLASS.circle}-${x}`);
+
+					expect(+points.attr("r")).to.be.equal(chart.config("point.r"));
+					done();
+				}, 100);
+			});
+		});
+	});
+
+	describe("check for touch move selection", () => {
+		const selection = [];
+
+		before(() => {
+			args = {
+				data: {	
+					columns: [
+						["data", 3000, 2000, 1000, 4000]
+					]
+				},
+				interaction: {
+					inputType: {
+						touch: true
+					}
+				}
+			};
+		});
+
+		it("x focus grid position & visibility should be maintained after resize", done => {
+			chart.tooltip.show({x:2});
+			chart.resize({width:300});
+
+			setTimeout(() => {
+				const xGridFocus = chart.$.main.select(`.${CLASS.xgridFocus} line`);
+				const x = chart.internal.xx(xGridFocus.datum());
+
+				expect(x).to.be.equal(+xGridFocus.attr("x1"));
+				expect(x).to.be.equal(+xGridFocus.attr("x2"));
+				expect(xGridFocus.style("visibility")).to.be.equal("visible");
+
+				done();
+			}, 300);
 		});
 	});
 
@@ -1010,6 +1079,96 @@ describe("INTERACTION", () => {
 			util.fireEvent(text, "mouseout");
 			expect(spy2.calledTwice).to.be.true;
 			expect(main.selectAll(`.${CLASS.EXPANDED}`).size()).to.be.equal(0);
+		});
+	});
+
+	describe("check for arc data name", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["catégorie 1", 20],
+						["catégorie 2 2", 80]
+					],
+					type: "pie"
+				}
+			};
+		});
+
+		it("should not throw error", () => {
+			expect(() => {
+				chart.internal.setOverOut(true, {
+					id: "catégorie 1"
+				});
+
+				chart.internal.setOverOut(true, {
+					id: "catégorie 2 2"
+				});
+			}).to.not.throw();
+		});
+	});
+
+	describe("check for bubble null data", () => {
+		before(() => {
+			args = {
+				data: {
+					json: [
+					   {
+						  "x":1,
+						  "b":null,
+						  "a":[1,2]
+					   },
+					   {
+						  "x":2,
+						  "b":null,
+						  "a":[3,1]
+					   },
+					   {
+						  "x":3,
+						  "b":[0,2],
+						  "a":null
+					   },
+					   {
+						  "x":4,
+						  "b":[3,2],
+						  "a":[7,5]
+					   },
+					   {
+						  "x":5,
+						  "b":[5,3],
+						  "a":[2,10]
+					   }
+					],
+					keys: {
+					   "x":"x",
+					   "value":[
+						  "a",
+						  "b"
+					   ]
+					},
+					type: "bubble"
+				}
+			};
+		});
+
+		it("should show tooltip", () => {
+			const point = chart.$.line.circles.filter(v => v.id === "b" && v.index === 2);
+			const r = +point.attr("r");
+
+			// when
+			chart.tooltip.show({
+				mouse: [308.5, 400]
+			});
+
+			chart.$.tooltip.selectAll(".name, .value").each(function() {
+				if (this.classList.contains("name")) {
+					expect(this.textContent).to.be.equal("b");
+				} else if (this.classList.contains("value")) {
+					expect(+this.textContent).to.be.equal(2);
+				}
+			});
+
+			expect(+point.attr("r")).to.be.above(r);
 		});
 	});
 });

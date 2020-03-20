@@ -28,9 +28,9 @@ export default class AxisRenderer {
 
 		config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
 
-		this.helper = new Helper(config, params);
 		this.config = config;
 		this.params = params;
+		this.helper = new Helper(this);
 	}
 
 	/**
@@ -46,12 +46,11 @@ export default class AxisRenderer {
 		const scale = helperInst.scale;
 		const orient = config.orient;
 		const splitTickText = this.splitTickText.bind(this);
-
 		const isLeftRight = /^(left|right)$/.test(orient);
 		const isTopBottom = /^(top|bottom)$/.test(orient);
 
 		// line/text enter and path update
-		const tickTransform = helperInst[isTopBottom ? "axisX" : "axisY"];
+		const tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y");
 		const axisPx = tickTransform === helperInst.axisX ? "y" : "x";
 		const sign = /^(top|left)$/.test(orient) ? -1 : 1;
 
@@ -107,7 +106,7 @@ export default class AxisRenderer {
 
 			if (tickShow.tick || tickShow.text) {
 				// count of tick data in array
-				const ticks = config.tickValues || helperInst.generateTicks(scale1);
+				const ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight);
 
 				// update selection
 				let tick = g.selectAll(".tick")
@@ -160,8 +159,8 @@ export default class AxisRenderer {
 					.attr("dx", (() => {
 						let dx = 0;
 
-						if (orient === "bottom" && rotate) {
-							dx = 8 * Math.sin(Math.PI * (rotate / 180));
+						if (/(top|bottom)/.test(orient) && rotate) {
+							dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
 						}
 
 						return dx + (tickTextPos.x || 0);
@@ -187,15 +186,17 @@ export default class AxisRenderer {
 				const textUpdate = tick.select("text");
 
 				tickEnter.select("line").attr(`${axisPx}2`, innerTickSize * sign);
-				tickEnter.select("text").attr(`${axisPx}`, tickLength * sign);
+				tickEnter.select("text").attr(axisPx, tickLength * sign);
 
 				ctx.setTickLineTextPosition(lineUpdate, textUpdate);
 
 				// Append <title> for tooltip display
-				params.tickTitle && textUpdate.append && textUpdate.append("title")
-					.each(function(index) {
-						d3Select(this).text(params.tickTitle[index]);
-					});
+				if (params.tickTitle) {
+					const title = textUpdate.select("title");
+
+					(title.empty() ? textUpdate.append("title") : title)
+						.text(index => params.tickTitle[index]);
+				}
 
 				if (scale1.bandwidth) {
 					const x = scale1;
@@ -206,11 +207,11 @@ export default class AxisRenderer {
 				} else if (scale0.bandwidth) {
 					scale0 = scale1;
 				} else {
-					tickTransform.call(helperInst, tickExit, scale1);
+					tickTransform(tickExit, scale1);
 				}
 
-				tickTransform.call(helperInst, tickEnter, scale0);
-				tickTransform.call(helperInst, helperInst.transitionise(tick).style("opacity", "1"), scale1);
+				tickTransform(tickEnter, scale0);
+				tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
 			}
 		});
 
@@ -264,9 +265,19 @@ export default class AxisRenderer {
 		const {innerTickSize, orient, tickLength, tickOffset} = this.config;
 		const rotate = this.params.tickTextRotate;
 
-		const textAnchorForText = r => (!r ? "middle" : (r > 0 ? "start" : "end"));
+		const textAnchorForText = r => {
+			const value = ["start", "end"];
+
+			orient === "top" && value.reverse();
+
+			return !r ? "middle" : (r > 0 ? value[0] : value[1]);
+		};
 		const textTransform = r => (r ? `rotate(${r})` : null);
-		const yForText = r => (r ? 11.5 - 2.5 * (r / 15) * (r > 0 ? 1 : -1) : tickLength);
+		const yForText = r => {
+			const r2 = r / (orient === "bottom" ? 15 : 23);
+
+			return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+		};
 
 		switch (orient) {
 			case "bottom":
@@ -288,8 +299,9 @@ export default class AxisRenderer {
 
 				textUpdate
 					.attr("x", 0)
-					.attr("y", -tickLength * 2)
-					.style("text-anchor", "middle");
+					.attr("y", -yForText(rotate) * 2)
+					.style("text-anchor", textAnchorForText(rotate))
+					.attr("transform", textTransform(rotate));
 				break;
 			case "left":
 				lineUpdate

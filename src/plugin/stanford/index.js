@@ -21,15 +21,33 @@ import {pointInRegion, compareEpochs} from "./util";
  * Stanford diagram plugin
  * - **NOTE:**
  *   - Plugins aren't built-in. Need to be loaded or imported to be used.
+ *   - Non required modules from billboard.js core, need to be installed separately.
  *   - Is preferable use `scatter` as data.type
+ * - **Required modules:**
+ *   - [d3-selection](https://github.com/d3/d3-selection)
+ *   - [d3-array](https://github.com/d3/d3-array)
+ *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
+ *   - [d3-color](https://github.com/d3/d3-color)
+ *   - [d3-scale](https://github.com/d3/d3-scale)
+ *   - [d3-brush](https://github.com/d3/d3-brush)
+ *   - [d3-axis](https://github.com/d3/d3-axis)
+ *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
+ * @requies d3-selection
+ * @requies d3-array
+ * @requies d3-interpolate
+ * @requies d3-color
+ * @requies d3-scale
+ * @requies d3-brush
+ * @requies d3-axis
+ * @requies d3-format
  * @param {Object} options Stanford plugin options
  * @extends Plugin
  * @return {Stanford}
  * @example
  *  var chart = bb.generate({
  *     data: {
- *     	  columns: [ ... ],
+ *        columns: [ ... ],
  *        type: "scatter"
  *     }
  *     ...
@@ -58,12 +76,12 @@ import {pointInRegion, compareEpochs} from "./util";
  *           regions: [
  *           	{
  *               	points: [ // add points counter-clockwise
- *               		{ x: 0, y: 0 },
- *               		{ x: 40, y: 40 },
- *               		{ x: 0, y: 40 }
+ *               	    { x: 0, y: 0 },
+ *               	    { x: 40, y: 40 },
+ *               	    { x: 0, y: 40 }
  *               	],
  *               	text: function (value, percentage) {
- *               		return `Normal Operations: ${value} (${percentage}%)`;
+ *               	    return `Normal Operations: ${value} (${percentage}%)`;
  *               	},
  *               	opacity: 0.2, // 0 to 1
  *               	class: "test-polygon1"
@@ -73,6 +91,15 @@ import {pointInRegion, compareEpochs} from "./util";
  *        }
  *     ]
  *  });
+ * @example
+ *	import {bb} from "billboard.js";
+ * import Stanford from "billboard.js/dist/billboardjs-plugin-stanford";
+ *
+ * bb.generate({
+ *     plugins: [
+ *        new Stanford({ ... })
+ *     ]
+ * })
  */
 export default class Stanford extends Plugin {
 	constructor(options) {
@@ -88,7 +115,7 @@ export default class Stanford extends Plugin {
 		// override on config values & methods
 		$$.config.data_xSort = false;
 		$$.isMultipleX = () => true;
-		$$.showXGridFocus = () => {};
+		$$.showGridFocus = () => {};
 		$$.labelishData = d => d.values;
 		$$.opacityForCircle = () => 1;
 

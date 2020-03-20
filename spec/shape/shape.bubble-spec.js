@@ -118,6 +118,40 @@ describe("SHAPE BUBBLE", () => {
 				chart.internal.getBubbleR({value})
 			);
 		});
+
+		it("set options [bubble.zerobased=true]", () => {
+			args.bubble = {
+				zerobased: true
+			};
+		});
+
+		it("should be zerobased", () => {
+			chart = util.generate(args);
+
+			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const translateValues = [426, 377, 328, 279, 230, 181, 131, 82, 33];
+
+			tickNodes.each(function(d, i) {
+				expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
+			});
+		});
+
+		it("set options [bubble.zerobased=false]", () => {
+			args.bubble = {
+				zerobased: false
+			};
+		});
+
+		it("should not be zerobased", () => {
+			chart = util.generate(args);
+
+			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const translateValues = [390, 345, 300, 255, 209, 164, 119, 74, 29];
+
+			tickNodes.each(function(d, i) {
+				expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
+			});
+		});
 	});
 
 	describe("with dimension data", () => {

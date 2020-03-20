@@ -64,6 +64,8 @@ extend(ChartInternal.prototype, {
 					.style("display", "block");
 			}
 		}
+
+		$$.bindTooltipResizePos();
 	},
 
 	/**
@@ -229,43 +231,43 @@ extend(ChartInternal.prototype, {
 	tooltipPosition(dataToShow, tWidth, tHeight, element) {
 		const $$ = this;
 		const config = $$.config;
-		let [left, top] = d3Mouse(element);
-
+		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
-		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight();
+		let [left, top] = d3Mouse(element);
+		let chartRight = svgLeft + $$.currentWidth - $$.getCurrentPaddingRight(true);
+		const chartLeft = $$.getCurrentPaddingLeft(true);
+		const size = 20;
 
-		top += 20;
+		top += size;
 
 		// Determine tooltip position
 		if ($$.hasArcType()) {
 			const raw = $$.inputType === "touch" || $$.hasType("radar");
 
 			if (!raw) {
-				top += $$.height / 2;
+				top += hasGauge ? $$.height : $$.height / 2;
 				left += ($$.width - ($$.isLegendRight ? $$.getLegendWidth() : 0)) / 2;
 			}
 		} else {
 			const dataScale = $$.x(dataToShow[0].x);
 
 			if (config.axis_rotated) {
-				top = dataScale + 20;
+				top = dataScale + size;
 				left += svgLeft + 100;
 				chartRight -= svgLeft;
 			} else {
 				top -= 5;
-				left = svgLeft + $$.getCurrentPaddingLeft(true) + 20 + ($$.zoomScale ? left : dataScale);
+				left = svgLeft + chartLeft + size + ($$.zoomScale ? left : dataScale);
 			}
 		}
 
-		const right = left + tWidth;
-
-		if (right > chartRight) {
-			// 20 is needed for Firefox to keep tooltip width
-			left -= right - chartRight + 20;
+		// when tooltip left + tWidth > chart's width
+		if ((left + tWidth + 15) > chartRight) {
+			left -= (svgLeft + tWidth + chartLeft);
 		}
 
 		if (top + tHeight > $$.currentHeight) {
-			top -= tHeight + 30;
+			top -= hasGauge ? tHeight * 3 : tHeight + 30;
 		}
 
 		if (top < 0) {
@@ -287,21 +289,19 @@ extend(ChartInternal.prototype, {
 		const bindto = config.tooltip_contents.bindto;
 		const forArc = $$.hasArcType(null, ["radar"]);
 		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
-		const positionFunction = config.tooltip_position || $$.tooltipPosition;
 
 		if (dataToShow.length === 0 || !config.tooltip_show) {
 			return;
 		}
 
-		const datum = $$.tooltip.datum();
+		let datum = $$.tooltip.datum();
+		let {width = 0, height = 0} = datum || {};
 		const dataStr = JSON.stringify(selectedData);
-		let width = (datum && datum.width) || 0;
-		let height = (datum && datum.height) || 0;
 
 		if (!datum || datum.current !== dataStr) {
 			const index = selectedData.concat().sort()[0].index;
 
-			callFn(config.tooltip_onshow, $$);
+			callFn(config.tooltip_onshow, $$, $$.api, selectedData);
 
 			// set tooltip content
 			$$.tooltip
@@ -313,26 +313,59 @@ extend(ChartInternal.prototype, {
 				))
 				.style("display", null)
 				.style("visibility", null) // for IE9
-				.datum({
+				.datum(datum = {
 					index,
 					current: dataStr,
 					width: width = $$.tooltip.property("offsetWidth"),
 					height: height = $$.tooltip.property("offsetHeight")
 				});
 
-			callFn(config.tooltip_onshown, $$);
+			callFn(config.tooltip_onshown, $$, $$.api, selectedData);
 			$$._handleLinkedCharts(true, index);
 		}
 
 		if (!bindto) {
-			// Get tooltip dimensions
-			const position = positionFunction.call(this, dataToShow, width, height, element);
+			const fnPos = config.tooltip_position || $$.tooltipPosition;
 
-			// Set tooltip position
-			$$.tooltip
-				.style("top", `${position.top}px`)
-				.style("left", `${position.left}px`);
+			// Get tooltip dimensions
+			const pos = fnPos.call(this, dataToShow, width, height, element);
+
+			["top", "left"].forEach(v => {
+				const value = pos[v];
+
+				$$.tooltip.style(v, `${value}px`);
+
+				// Remember left pos in percentage to be used on resize call
+				if (v === "left" && !datum.xPosInPercent) {
+					datum.xPosInPercent = value / $$.currentWidth * 100;
+				}
+			});
 		}
+	},
+
+	/**
+	 * Adjust tooltip position on resize event
+	 * @private
+	 */
+	bindTooltipResizePos() {
+		const $$ = this;
+		const {resizeFunction, tooltip} = $$;
+
+		resizeFunction.add(() => {
+			if (tooltip.style("display") === "block") {
+				const {currentWidth} = $$;
+				const {width, xPosInPercent} = tooltip.datum();
+				let value = currentWidth / 100 * xPosInPercent;
+				const diff = currentWidth - (value + width);
+
+				// if tooltip size overs current viewport size
+				if (diff < 0) {
+					value += diff;
+				}
+
+				tooltip.style("left", `${value}px`);
+			}
+		});
 	},
 
 	/**
@@ -342,18 +375,20 @@ extend(ChartInternal.prototype, {
 	 */
 	hideTooltip(force) {
 		const $$ = this;
-		const config = $$.config;
+		const {api, config, tooltip} = $$;
 
-		if (!config.tooltip_doNotHide || force) {
-			callFn(config.tooltip_onhide, $$);
+		if (tooltip.style("display") !== "none" && (!config.tooltip_doNotHide || force)) {
+			const selectedData = JSON.parse(this.tooltip.datum().current);
+
+			callFn(config.tooltip_onhide, $$, api, selectedData);
 
 			// hide tooltip
-			this.tooltip
+			tooltip
 				.style("display", "none")
 				.style("visibility", "hidden") // for IE9
 				.datum(null);
 
-			callFn(config.tooltip_onhidden, $$);
+			callFn(config.tooltip_onhidden, $$, api, selectedData);
 		}
 	},
 

@@ -1444,6 +1444,30 @@ describe("DATA", () => {
 
 				expect(texts.size()).to.be.equal(data.length);
 			});
+
+			it("should be zerobased", () => {
+				args.scatter = {zerobased: true};
+				chart = util.generate(args);
+
+				const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+				const translateValues = [426, 389, 352, 314, 277, 240, 202, 165, 127, 90, 53, 15];
+
+				tickNodes.each(function(d, i) {
+					expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
+				});
+			});
+
+			it("should not be zerobased", () => {
+				args.scatter = {zerobased: false};
+				chart = util.generate(args);
+
+				const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+				const translateValues = [402, 367, 331, 296, 260, 225, 189, 154, 118, 83, 47, 12];
+
+				tickNodes.each(function(d, i) {
+					expect(util.parseNum(this.getAttribute("transform"))).to.be.closeTo(translateValues[i], 1);
+				});
+			});
 		});
 
 		describe("on scatter + line type", () => {
@@ -1755,13 +1779,52 @@ describe("DATA", () => {
 			};
 		});
 
-		it("should be generating correct dashed path data", () => {
+		const checkPathLengths = expected => {
 			const line = chart.internal.main.select(`path.${CLASS.line}-data1`);
 			const path = line.attr("d");
-			const expected = {M: 118, L: 119};
 
 			expect(path.split("M").length).to.be.equal(expected.M);
 			expect(path.split("L").length).to.be.equal(expected.L);
+		}
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 118, L: 119});
+		});
+
+		it("set options for null data", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", null, 100, 200, null, 100, 20, 30, null, null]
+					],
+					regions: {
+						data1: [
+							{
+								start: 0,
+								end: 2,
+								style: {
+									dasharray: "5 3"
+								}
+							},
+							{
+								start: 5
+							}
+						]
+					}
+				}
+			};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 38, L: 37});
+		});
+
+		it("set options line.connectNull=true", () => {
+			args.line = {connectNull: true};
+		});
+
+		it("should be generating correct dashed path data", () => {
+			checkPathLengths({M: 37, L: 38});
 		});
 	});
 

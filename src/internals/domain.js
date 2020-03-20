@@ -66,9 +66,22 @@ extend(ChartInternal.prototype, {
 		return this.getYDomainMinMax(targets, "max");
 	},
 
+	/**
+	 * Check if hidden targets bound to the given axis id
+	 * @return {Boolean}
+	 * @private
+	 */
+	isHiddenTargetWithYDomain(id) {
+		const $$ = this;
+
+		return $$.hiddenTargetIds
+			.some(v => $$.axis.getId(v) === id);
+	},
+
 	getYDomain(targets, axisId, xDomain) {
 		const $$ = this;
 		const config = $$.config;
+		const pfx = `axis_${axisId}`;
 
 		if ($$.isStackNormalized()) {
 			return [0, 100];
@@ -76,14 +89,29 @@ extend(ChartInternal.prototype, {
 
 		const targetsByAxisId = targets.filter(t => $$.axis.getId(t.id) === axisId);
 		const yTargets = xDomain ? $$.filterByXDomain(targetsByAxisId, xDomain) : targetsByAxisId;
-		const yMin = config[`axis_${axisId}_min`];
-		const yMax = config[`axis_${axisId}_max`];
+
+		if (yTargets.length === 0) {
+			if ($$.isHiddenTargetWithYDomain(axisId)) {
+				return $$[axisId].domain();
+			} else {
+				// use domain of the other axis if target of axisId is none
+				return axisId === "y2" ?
+					$$.y.domain() :
+					// When all data bounds to y2, y Axis domain is called prior y2.
+					// So, it needs to call to get y2 domain here
+					$$.getYDomain(targets, "y2", xDomain);
+			}
+		}
+
+		const yMin = config[`${pfx}_min`];
+		const yMax = config[`${pfx}_max`];
 		let yDomainMin = $$.getYDomainMin(yTargets);
 		let yDomainMax = $$.getYDomainMax(yTargets);
 
-		const center = config[`axis_${axisId}_center`];
-		let isZeroBased = ($$.hasType("bar", yTargets) && config.bar_zerobased) || ($$.hasType("area", yTargets) && config.area_zerobased);
-		const isInverted = config[`axis_${axisId}_inverted`];
+		const center = config[`${pfx}_center`];
+		let isZeroBased = ["area", "bar", "bubble", "line", "scatter"]
+			.some(v => $$.hasType(v, yTargets) && config[`${v}_zerobased`]);
+		const isInverted = config[`${pfx}_inverted`];
 		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
 		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;
 
@@ -92,10 +120,6 @@ extend(ChartInternal.prototype, {
 			(isValue(yMax) ? (yDomainMin < yMax ? yDomainMin : yMax - 10) : yDomainMin);
 		yDomainMax = isValue(yMax) ? yMax :
 			(isValue(yMin) ? (yMin < yDomainMax ? yDomainMax : yMin + 10) : yDomainMax);
-
-		if (yTargets.length === 0) { // use current domain if target of axisId is none
-			return $$[axisId].domain();
-		}
 
 		if (isNaN(yDomainMin)) { // set minimum to zero when not number
 			yDomainMin = 0;
@@ -150,14 +174,15 @@ extend(ChartInternal.prototype, {
 			});
 		}
 
-		if (/^y2?$/.test(axisId)) {
-			const p = config[`axis_${axisId}_padding`];
 
-			if (notEmpty(p)) {
-				["bottom", "top"].forEach(v => {
-					padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
-				});
-			}
+		// if padding is set, the domain will be updated relative the current domain value
+		// ex) $$.height=300, padding.top=150, domainLength=4  --> domain=6
+		const p = config[`${pfx}_padding`];
+
+		if (notEmpty(p)) {
+			["bottom", "top"].forEach(v => {
+				padding[v] = $$.axis.getPadding(p, v, padding[v], domainLength);
+			});
 		}
 
 		// Bar/Area chart should be 0-based if all positive|negative
@@ -173,11 +198,19 @@ extend(ChartInternal.prototype, {
 
 	getXDomainMinMax(targets, type) {
 		const $$ = this;
-		const value = $$.config[`axis_x_${type}`];
+		const configValue = $$.config[`axis_x_${type}`];
+		const dataValue = getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		let value = isObject(configValue) ? configValue.value : configValue;
 
-		return isDefined(value) ?
-			($$.isTimeSeries() ? $$.parseDate(value) : value) :
-			getMinMax(type, targets.map(t => getMinMax(type, t.values.map(v => v.x))));
+		value = isDefined(value) && $$.isTimeSeries() ? $$.parseDate(value) : value;
+
+		if (isObject(configValue) && configValue.fit && (
+			(type === "min" && value < dataValue) || (type === "max" && value > dataValue)
+		)) {
+			value = undefined;
+		}
+
+		return isDefined(value) ? value : dataValue;
 	},
 
 	getXDomainMin(targets) {
@@ -222,8 +255,7 @@ extend(ChartInternal.prototype, {
 	getXDomain(targets) {
 		const $$ = this;
 		const xDomain = [$$.getXDomainMin(targets), $$.getXDomainMax(targets)];
-		let firstX = xDomain[0];
-		let lastX = xDomain[1];
+		let [firstX, lastX] = xDomain;
 		const padding = $$.getXDomainPadding(xDomain);
 		let min = 0;
 		let max = 0;

@@ -411,8 +411,6 @@ describe("LEGEND", () => {
 
 			expect(chart.internal.getCurrentWidth()).to.be.equal(newSize.width);
 			expect(chart.internal.getCurrentHeight()).to.be.equal(newSize.height);
-
-			chart.destroy();
 		});
 
 		it("set options data.type='pie'", () => {
@@ -432,8 +430,6 @@ describe("LEGEND", () => {
 			transform1.forEach((v, i) => {
 				expect(v).to.be.above(transform2[i]);
 			});
-
-			chart.destroy();
 		});
 	});
 
@@ -474,6 +470,79 @@ describe("LEGEND", () => {
 			});
 
 			expect(nodes.size()).to.be.equal(chart.data().length);
+		});
+	});
+
+	describe('legend item tile coloring with color_treshold', () => {
+		before(function () {
+			args = {
+				data: {
+					columns: [
+						["padded1", 100],
+						["padded2", 90],
+						["padded3", 50],
+						["padded4", 20]
+					]
+				},
+				color: {
+					pattern: ["#FF0000", "#F97600", "#F6C600", "#60B044"],
+					threshold: {
+						values: [30, 80, 95]
+					}
+				},
+				type: "gauge",
+				gauge: {
+					type: "multi"
+				},
+			};
+		});
+
+		// espacially for gauges with multiple arcs to have the same coloring between legend tiles, tooltip tiles and arc
+		it('selects the color from color_pattern if color_treshold is given', function () {
+			const tileColor = [];
+
+			chart.internal.svg.selectAll(".bb-legend-item-tile").each(function () {
+				tileColor.push(d3Select(this).style('stroke'));
+			});
+
+			expect(tileColor[0]).to.be.equal('rgb(96, 176, 68)');
+			expect(tileColor[1]).to.be.equal('rgb(246, 198, 0)');
+			expect(tileColor[2]).to.be.equal('rgb(249, 118, 0)');
+			expect(tileColor[3]).to.be.equal('rgb(255, 0, 0)');
+		});
+	});
+
+	describe("legend item tile coloring without color_treshold", () => {
+		before(function() {
+			args = {
+				data: {
+					columns: [
+						["padded1", 100],
+						["padded2", 90],
+						["padded3", 50],
+						["padded4", 20]
+					],
+					colors: {
+						"padded1": "#60b044",
+						"padded4": "#8b008b"
+					}
+				}
+			};
+		});
+
+		it("selects the color from data_colors, data_color or default", function() {
+			const tileColor = [];
+
+			chart.internal.svg.selectAll(".bb-legend-item-tile")
+				.each(function() {
+					tileColor.push(d3Select(this)
+						.style("stroke"));
+				});
+
+			expect(tileColor[0]).to.be.equal("rgb(96, 176, 68)");
+			expect(tileColor[1]).to.be.equal("rgb(0, 199, 60)");
+			expect(tileColor[2]).to.be.equal("rgb(250, 113, 113)");
+			expect(tileColor[3]).to.be.equal("rgb(139, 0, 139)");
 		});
 	});
 });

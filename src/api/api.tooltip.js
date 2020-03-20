@@ -21,8 +21,8 @@ const tooltip = extend(() => {}, {
 	 *    | --- | --- | --- |
 	 *    | index | Number | Determine focus by index |
 	 *    | x | Number &vert; Date | Determine focus by x Axis index |
-	 *    | mouse | Array | Determine x and y coordinate value relative the targeted x Axis element.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
-	 *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: Axis id. 'y' or 'y2'(default 'y')<br>- value {Number}: The corresponding value for tooltip. |
+	 *    | mouse | Array | Determine x and y coordinate value relative the targeted '.bb-event-rect' x Axis.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
+	 *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: data id<br>- value {Number}: The corresponding value for tooltip. |
 	 *
 	 * @example
 	 *  // show the 2nd x Axis coordinate tooltip
@@ -30,9 +30,9 @@ const tooltip = extend(() => {}, {
 	 *    index: 1
 	 *  });
 	 *
-	 *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate relative the x Axis element.
+	 *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate of '.bb-event-rect' of the x Axis.
 	 *  chart.tooltip.show({
-	 *    data: {x: 2},
+	 *    x: 2,
 	 *    mouse: [50, 100]
 	 *  });
 	 *
@@ -45,7 +45,7 @@ const tooltip = extend(() => {}, {
 	 *  chart.tooltip.show({
 	 *    data: {
 	 *        x: 3,  // x Axis value
-	 *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+	 *        id: "data1",  // data id
 	 *        value: 500  // data value
 	 *    }
 	 *  });
@@ -54,7 +54,7 @@ const tooltip = extend(() => {}, {
 	 *  chart.tooltip.show({
 	 *    data: {
 	 *        index: 3,  // or 'x' key value
-	 *        id: "y",  // axis id. 'y' or 'y2' (default 'y')
+	 *        id: "data1",  // data id
 	 *        value: 500  // data value
 	 *    }
 	 *  });
@@ -106,8 +106,11 @@ const tooltip = extend(() => {}, {
 	hide: function() {
 		const $$ = this.internal;
 
+		// reset last touch point index
+		$$.inputType === "touch" && $$.callOverOutForTouch();
+
 		$$.hideTooltip(true);
-		$$.hideXGridFocus();
+		$$.hideGridFocus();
 		$$.unexpandCircles();
 		$$.unexpandBars();
 	}

@@ -371,4 +371,57 @@ describe("API zoom", function() {
 			}, 300);
 		});
 	});
+
+	describe("bar's width based on ratio", () => {
+		before(() => {
+			chart = util.generate({
+				data: {
+					columns: [
+						["data1", 30, 200, 100, 400, 150, 250]
+					],
+					type: "bar"
+				},
+				bar: {
+					width: {
+						ratio: 0.8
+					}
+				},
+				zoom: {
+					enabled: true
+				}
+			});
+		});
+
+		it("check bar's width for zoom in/out API call", done => {
+			const len = [];
+
+			chart.$.bar.bars.each(function() {
+				len.push(this.getTotalLength());
+			});
+
+			// when
+			chart.zoom([1, 2]);
+
+			new Promise((resolve, reject) => {
+				setTimeout(() => {
+					chart.$.bar.bars.each(function(d, i) {
+						expect(this.getTotalLength()).to.be.greaterThan(len[i]);
+					});
+
+					resolve();
+				}, 300);
+			}).then(() => {
+				// when
+				chart.unzoom();
+			}).then(() => {
+				setTimeout(() => {
+					chart.$.bar.bars.each(function(d, i) {
+						expect(this.getTotalLength()).to.be.equal(len[i]);
+					});
+
+					done();
+				}, 300);
+			});
+		});
+	});
 });

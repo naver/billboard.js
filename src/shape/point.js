@@ -6,6 +6,7 @@ import {
 	namespaces as d3Namespaces,
 	select as d3Select
 } from "d3-selection";
+import CLASS from "../config/classes";
 import ChartInternal from "../internals/ChartInternal";
 import {document} from "../internals/browser";
 import {getRandom, isFunction, isObject, isObjectType, toArray, extend, notEmpty} from "../internals/util";
@@ -68,8 +69,15 @@ extend(ChartInternal.prototype, {
 
 		if (isObject(d) || $$.mainCircle) {
 			pointClass = d === true ?
-				$$.mainCircle.attr("class", $$.classCircle.bind($$)) :
-				$$.classCircle(d);
+				$$.mainCircle.each(function(d) {
+					let className = $$.classCircle.bind($$)(d);
+
+					if (this.classList.contains(CLASS.EXPANDED)) {
+						className += ` ${CLASS.EXPANDED}`;
+					}
+
+					this.setAttribute("class", className);
+				}) : $$.classCircle(d);
 		}
 
 		return pointClass;

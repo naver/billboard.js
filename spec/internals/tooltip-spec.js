@@ -100,82 +100,56 @@ describe("TOOLTIP", function() {
 	});
 
 	describe("Tooltip callbacks", () => {
+		let called = [];
+		const spy = {
+			onshow: sinon.spy((ctx, data) => called.push({ctx, data, type: "onshow"})),
+			onshown: sinon.spy((ctx, data) => called.push({ctx, data, type: "onshown"})),
+			onhide: sinon.spy((ctx, data) => called.push({ctx, data, type: "onhide"})),
+			onhidden: sinon.spy((ctx, data) => called.push({ctx, data, type: "onhidden"}))
+		};
+
+		const check = fn => {
+			["show", "shown", "hide", "hidden"].forEach((v, i) => {
+				fn(`on${v}`, i);
+			});
+		}
+
 		before(() => {
-			args.tooltip.onshow = () => {
-				if (chart.internal.cache.callback_test === 0) {
-					chart.internal.cache.callback_test++;
-				}
-			};
-			args.tooltip.onshown = () => {
-				if (chart.internal.cache.callback_test === 1) {
-					chart.internal.cache.callback_test++;
-				}
-			};
-			args.tooltip.onhide = () => {
-				if (chart.internal.cache.callback_test === 2) {
-					chart.internal.cache.callback_test++;
-				}
-			};
-			args.tooltip.onhidden = () => {
-				if (chart.internal.cache.callback_test === 3) {
-					chart.internal.cache.callback_test++;
-				}
-			};
+			check((name) => {
+				args.tooltip[name] = spy[name];
+			});
 		});
 
-		after(() => {
-			args.tooltip.onshow = () => {};
-			args.tooltip.onshown = () => {};
-			args.tooltip.onhide = () => {};
-			args.tooltip.onhidden = () => {};
+		afterEach(() => {
+			called = [];
+
+			check((name) => {
+				spy[name].resetHistory();
+			});
 		});
 
 		it("chart tooltip onshow/onshown/onhide/onhidden functions should be called", () => {
-			chart.internal.cache.callback_test = 0;
+			const expectedData = JSON.stringify([
+				{x: 6, value: 100, id: 'data1', index: 2, name: 'data1'},
+				{x: 6, value: 10, id: 'data2', index: 2, name: 'data2'},
+				{x: 6, value: 110, id: 'data3', index: 2, name: 'data3'}
+			]);
+
 			checkCallback(chart, true);
-			let test = chart.internal.cache.callback_test;
-			expect(test).to.be.equal(4);
-		});
 
-		describe("show/shown should execute in proper order", () => {
-			before(() => {
-				chart.internal.cache.callback_test = 0;
-				chart.internal.cache.callback_test2 = 0;
-				args.tooltip.onshow = () => {
-					chart.internal.cache.callback_test++;
-				};
-				args.tooltip.onshown = () => {
-					chart.internal.cache.callback_test++;
-					chart.internal.cache.callback_test2 = chart.internal.cache.callback_test;
-				};
-			});
+			check((name, i) => {
+				const call = called[i];
 
-			it("onshown should execute after onshow", () => {
-				chart.internal.cache.callback_test = 0;
-				checkCallback(chart, false);
-				expect(chart.internal.cache.callback_test2).to.be.equal(2);
-			});
-		});
+				expect(spy[name].calledOnce).to.be.true;
 
-		describe("onhide/onhidden should execute in proper order", () => {
-			before(() => {
-				chart.internal.cache.callback_test = 0;
-				args.tooltip.onshow = () => {};
-				args.tooltip.onshown = () => {};
-				args.tooltip.onhide = () => {
-					chart.internal.cache.callback_test++;
-				};
-				args.tooltip.onhidden = () => {
-					chart.internal.cache.callback_test++;
-					chart.internal.cache.callback_test2 = chart.internal.cache.callback_test;
+				// check the call order: onshow -> onshown -> onhide -> onhidden
+				expect(call.type).to.be.equal(name);
 
-				};
-			});
+				// check the passed context argument
+				expect(call.ctx).to.be.equal(chart);
 
-			it("onhidden should execute after onhide", () => {
-				chart.internal.cache.callback_test = 0;
-				checkCallback(chart, true);
-				expect(chart.internal.cache.callback_test2).to.be.equal(2);
+				// check the passed data argument
+				expect(JSON.stringify(call.data)).to.be.equal(expectedData);
 			});
 		});
 	});
@@ -224,6 +198,42 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("do not overlap data point", () => {
+			it("should show tooltip on proper position", done => {
+				const tooltip = chart.$.tooltip;
+				const circles = chart.$.line.circles;
+				const getCircleRectX = x => circles.filter(`.${CLASS.shape}-${x}`)
+					.node().getBoundingClientRect().x;
+
+				// when
+				let x = 8;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the right side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.above(getCircleRectX(3));
+
+				// when
+				x = 10;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the left side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.below(getCircleRectX(4));
+
+				// when
+				x = 12;
+				chart.tooltip.show({x});
+
+				// tooltip should locate on the left side of data point
+				expect(
+					util.parseNum(tooltip.style("left")) + util.parseNum(tooltip.style("width"))
+				).to.be.below(getCircleRectX(5));
+			});
+		});
+
 		describe("when zoomed", () => {
 			before(() => {
 				args.zoom = {enabled: true};
@@ -264,6 +274,52 @@ describe("TOOLTIP", function() {
 
 			expect(top).to.be.equal(tooltipPos.top);
 			expect(left).to.be.equal(tooltipPos.left);
+		});
+
+		it("set option tooltip.position", () => {
+			args.tooltip.position = () => ({
+				top: 50, left: 600
+			});
+
+			args.tooltip.doNotHide = true;
+		});
+
+		it("tooltip repositioning: when the pos is greater than the current width", done => {
+			util.hoverChart(chart);
+
+			const {tooltip} = chart.$;
+			const left = parseInt(tooltip.style("left"));
+
+			// do resize
+			chart.internal.resizeFunction();
+
+			setTimeout(() => {
+				expect(parseInt(tooltip.style("left"))).to.be.below(left);
+				done();
+			}, 200);
+		});
+
+		it("set option tooltip.position", () => {
+			args.tooltip.position = () => ({
+				top: 50, left: 300
+			});
+		});
+
+		it("tooltip repositioning: when the chart width is increasing", done => {
+			chart.resize({width:450});
+			util.hoverChart(chart);
+
+			const {tooltip} = chart.$;
+			const left = parseInt(tooltip.style("left"));
+
+			// do resize
+			chart.resize({width:640});
+			chart.internal.resizeFunction();
+
+			setTimeout(() => {
+				expect(parseInt(tooltip.style("left"))).to.be.above(left);
+				done();
+			}, 200);
 		});
 	});
 

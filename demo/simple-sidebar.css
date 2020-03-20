@@ -8,6 +8,9 @@
 h1,h2,h3,h4,nav,.chart_area p,#wrapper #sidebar-wrapper{font-family:Raleway,sans-serif;font-weight:normal}
 body {
     overflow-x: hidden;
+
+    /* https://github.com/naver/billboard.js/issues/1237 */
+    overflow-y: scroll;
 }
 
 /* Toggle Styles */
@@ -371,3 +374,5 @@ div.row {
 /* Background */
 .myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
 
+/* FocusedGridLines */
+#focusedGridLines_1 line.bb-xgrid-focus, #focusedGridLines_1 line.bb-ygrid-focus { stroke: blue; stroke-dasharray: 2 2; }

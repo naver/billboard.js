@@ -7,9 +7,11 @@ import {scaleLinear as d3ScaleLinear} from "d3-scale";
 import {isDefined, isNumber, isString} from "../internals/util";
 
 export default class AxisRendererHelper {
-	constructor(config, params) {
+	constructor(owner) {
 		const scale = d3ScaleLinear();
+		const {config, params} = owner;
 
+		this.owner = owner;
 		this.config = config;
 		this.scale = scale;
 
@@ -46,9 +48,10 @@ export default class AxisRendererHelper {
 						size.w = width;
 						size.h = height;
 					}
-
+				} catch (e) {
+				} finally {
 					el.text("");
-				} catch (e) {}
+				}
 			});
 
 		this.getSizeFor1Char = () => size;
@@ -56,12 +59,20 @@ export default class AxisRendererHelper {
 		return size;
 	}
 
-	axisX(selection, x) {
-		selection.attr("transform", d => `translate(${Math.ceil(x(d) + this.config.tickOffset)},0)`);
-	}
+	/**
+	 * Get tick transform setter function
+	 * @param {String} id Axis id
+	 * @private
+	 */
+	getTickTransformSetter(id) {
+		const {config} = this;
+		const fn = id === "x" ?
+			value => `translate(${value + config.tickOffset},0)` :
+			value => `translate(0,${value})`;
 
-	axisY(selection, y) {
-		selection.attr("transform", d => `translate(0,${Math.ceil(y(d))})`);
+		return (selection, scale) => {
+			selection.attr("transform", d => fn(Math.ceil(scale(d))));
+		};
 	}
 
 	scaleExtent(domain) {
@@ -71,11 +82,21 @@ export default class AxisRendererHelper {
 		return start < stop ? [start, stop] : [stop, start];
 	}
 
-	generateTicks(scale) {
-		const ticks = [];
+	generateTicks(scale, isYAxes) {
+		const {tickStepSize} = this.owner.params;
+		let ticks = [];
 
-		if (scale.ticks) {
-			return scale.ticks(
+		// When 'axis[y|y2].tick.stepSize' option is set
+		if (isYAxes && tickStepSize) {
+			const [start, end] = scale.domain();
+			let interval = start;
+
+			while (interval <= end) {
+				ticks.push(interval);
+				interval += tickStepSize;
+			}
+		} else if (scale.ticks) {
+			ticks = scale.ticks(
 				...(this.config.tickArguments || [])
 			).map(v => (
 				// round the tick value if is number
@@ -83,16 +104,16 @@ export default class AxisRendererHelper {
 					Math.round(v * 10) / 10
 				) || v
 			));
-		}
+		} else {
+			const domain = scale.domain();
 
-		const domain = scale.domain();
+			for (let i = Math.ceil(domain[0]); i < domain[1]; i++) {
+				ticks.push(i);
+			}
 
-		for (let i = Math.ceil(domain[0]); i < domain[1]; i++) {
-			ticks.push(i);
-		}
-
-		if (ticks.length > 0 && ticks[0] > 0) {
-			ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
+			if (ticks.length > 0 && ticks[0] > 0) {
+				ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
+			}
 		}
 
 		return ticks;

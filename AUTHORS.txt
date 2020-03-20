@@ -35,3 +35,7 @@ Kimberly Baum <https://github.com/kimberlybaum>
 Dylan Praul <dylan.praul@gmail.com>
 Christophe Coevoet <stof@notk.org>
 Jung Hoon Park <jhpark@neurophet.com>
+Kamil Michalski <Kamil.Michalski@hksinformatik.de>
+Zhongde Liu <zhongdeliu@googlemail.com>
+Wonju Jeon <wonju.jeon@navercorp.com>
+ECrownofFire <ECrownofFire@gmail.com>

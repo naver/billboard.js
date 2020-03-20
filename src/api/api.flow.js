@@ -294,7 +294,7 @@ extend(ChartInternal.prototype, {
 			scaleX = (diffDomain(orgDomain) / diffDomain(domain));
 			const transform = `translate(${translateX},0) scale(${scaleX},1)`;
 
-			$$.hideXGridFocus();
+			$$.hideGridFocus();
 
 			const gt = d3Transition().ease(d3EaseLinear)
 				.duration(durationForFlow);

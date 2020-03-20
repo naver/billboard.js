@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import { Selection } from "d3-selection";  /* tslint:disable-line */
+import {Selection} from "d3-selection"; /* tslint:disable-line */
 
 export type PrimitiveArray = Array<string | boolean | number | Date | null>;
 export type ArrayOrString = string[] | string;
@@ -22,6 +22,8 @@ export type ChartTypes = "area"
 	| "scatter"
 	| "spline"
 	| "step";
+export type GaugeTypes = "single"
+	| "multi";
 
 export interface TargetIds {
 	ids: string[] | string;

@@ -32,6 +32,7 @@ $font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
 
 .bb-legend-item-title,
 .bb-xgrid-focus,
+.bb-ygrid-focus,
 .bb-ygrid,
 .bb-event-rect,
 .bb-bars path {
@@ -69,13 +70,9 @@ $font-family: "Meiryo", sans-serif, Arial, "nanumgothic", "Dotum";
     line {
         stroke: #f1f1f1;
     }
-
-    .bb-ygrid:last-child {
-        stroke: #e9e9e9;
-    }
 }
 
-.bb-xgrid-focus line {
+.bb-xgrid-focus line, .bb-ygrid-focus line {
     stroke: #ddd;
 }
 
@@ -132,7 +129,13 @@ rect.bb-circle, use.bb-circle {
         }
     }
 
-    &.bb-defocused { opacity: 0.3 !important; }
+    &.bb-defocused {
+        opacity: 0.3 !important;
+
+        .text-overlapping {
+            opacity: .05 !important;
+        }
+    }
 }
 
 /*-- Region --*/
@@ -309,6 +312,11 @@ rect.bb-circle, use.bb-circle {
     path {
         stroke: #fff;
     }
+
+	rect {
+		stroke: #fff;
+		stroke-width: 1;
+	}
 
     text {
         fill: #fff;

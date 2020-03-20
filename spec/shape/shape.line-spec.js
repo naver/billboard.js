@@ -498,6 +498,54 @@ describe("SHAPE LINE", () => {
 			expect(chart.internal.config.line_classes).to.include('line-class-1');
 			expect(chart.internal.config.line_classes).to.include('line-class-2');
 		});
+
+		it("should not be zerobased", () => {
+			args.line.zerobased = false;
+			chart = util.generate(args);
+
+			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickElements = tickNodes.nodes();
+
+			const translateValues = [
+				"translate(0,391)",
+				"translate(0,347)",
+				"translate(0,303)",
+				"translate(0,258)",
+				"translate(0,214)",
+				"translate(0,170)",
+				"translate(0,125)",
+				"translate(0,81)",
+				"translate(0,37)"
+			];
+
+			tickNodes.each((data, index) => {
+				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+			});
+		});
+
+		it("should be zerobased", () => {
+			args.line.zerobased = true;
+			chart = util.generate(args);
+
+			const tickNodes = chart.$.svg.select(`.${CLASS.axisY}`).selectAll("g.tick");
+			const tickElements = tickNodes.nodes();
+
+			const translateValues = [
+				"translate(0,426)",
+				"translate(0,378)",
+				"translate(0,330)",
+				"translate(0,282)",
+				"translate(0,233)",
+				"translate(0,185)",
+				"translate(0,137)",
+				"translate(0,88)",
+				"translate(0,40)"
+			];
+
+			tickNodes.each((data, index) => {
+				expect(d3Select(tickElements[index]).attr("transform")).to.be.equal(translateValues[index]);
+			});
+		});
 	});
 
 	describe("area linear gradient", () => {

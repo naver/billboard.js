@@ -40,13 +40,23 @@ export interface XAxisConfiguration {
 
 	/**
 	 * Set max value of x axis range.
+	 *
+	 * When specified `max.value` is greater than the bound data value, setting `max.fit=true` will make x axis max to be fitted to the bound data max value.
 	 */
-	max?: string | number | Date;
+	max?: string | number | Date | ({
+		fit?: boolean;
+		value?: string | number | Date;
+	});
 
 	/**
 	 * Set min value of x axis range.
+	 *
+	 * When specified `min.value` is lower than the bound data value, setting `min.fit=true` will make x axis min to be fitted to the bound data min value.
 	 */
-	min?: string | number | Date;
+	min?: string | number | Date | ({
+		fit?: boolean;
+		value?: string | number | Date;
+	});
 
 	/**
 	 * Set padding for x axis.
@@ -56,7 +66,7 @@ export interface XAxisConfiguration {
 	padding?: {
 		left?: number;
 		right?: number;
-	};
+	} | number;
 
 	/**
 	 * Set height of x axis.
@@ -150,7 +160,7 @@ export interface YAxisConfiguration {
 	padding?: {
 		top?: number;
 		bottom?: number;
-	};
+	} | number;
 
 	/**
 	 * Set default range of y axis.
@@ -216,9 +226,22 @@ export interface XTickConfiguration {
 	values?: number[] | string[];
 
 	/**
-	 * Rotate x axis tick text. If you set negative value, it will rotate to opposite direction.
+	 * Rotate x axis tick text.
+	 * - If you set negative value, it will rotate to opposite direction.
+	 * - Applied when 'axis.rotated' option is 'false'.
+	 * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
 	 */
 	rotate?: number;
+
+	/**
+	 * Rotate x axis tick text if there is not enough space for 'category' and 'timeseries' type axis.
+	 * - **NOTE:** The conditions where `autorotate` is enabled are:
+	 *   - axis.x.type='category' or 'timeseries
+	 *   - axis.x.tick.multiline=false
+	 *   - axis.x.tick.culling=false
+	 *   - axis.x.tick.fit=true
+	 */
+	autorotate?: boolean;
 
 	/**
 	 * Show x axis outer tick.
@@ -275,6 +298,13 @@ export interface YTickConfiguration {
 	values?: number[];
 
 	/**
+	 * Rotate y(or y2) axis tick text.
+	 * - If you set negative value, it will rotate to opposite direction.
+	 * - Applied when 'axis.rotated' option is 'true'.
+	 */
+	rotate?: number;
+
+	/**
 	 * The number of y axis ticks to show.
 	 * The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely.
 	 * In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
@@ -298,6 +328,17 @@ export interface YTickConfiguration {
 		 */
 		max?: number;
 	};
+
+	/**
+	 * Set axis tick step(interval) size.
+	 * - **NOTE:** Will be ignored if `axis[y|y2].tick.count` or `axis[y|y2].tick.values` options are set.
+	 */
+	stepSize?: number;
+
+	/**
+	 * Show or hide axis tick line.
+	 */
+	show?: boolean;
 
 	text?: {
 		/**

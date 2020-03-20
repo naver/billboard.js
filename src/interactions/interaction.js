@@ -81,6 +81,7 @@ extend(ChartInternal.prototype, {
 				.merge(eventRectUpdate);
 		}
 
+		$$.eventRect = eventRectUpdate;
 		$$.updateEventRect(eventRectUpdate);
 
 		if ($$.inputType === "touch" && !$$.svg.on("touchstart.eventRect") && !$$.hasArcType()) {
@@ -193,7 +194,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const xScale = $$.zoomScale || $$.x;
-		const eventRectData = eventRectUpdate || $$.eventRect.data();// set update selection if null
+		const eventRectData = eventRectUpdate || $$.eventRect.data(); // set update selection if null
 		const isRotated = config.axis_rotated;
 		let x;
 		let y;
@@ -282,7 +283,7 @@ extend(ChartInternal.prototype, {
 
 		if (isTooltipGrouped) {
 			$$.showTooltip(selectedData, context);
-			$$.showXGridFocus(selectedData);
+			$$.showGridFocus(selectedData);
 
 			if (!isSelectionEnabled || isSelectionGrouped) {
 				return;
@@ -298,7 +299,7 @@ extend(ChartInternal.prototype, {
 				}
 
 				if (!isTooltipGrouped) {
-					$$.hideXGridFocus();
+					$$.hideGridFocus();
 					$$.hideTooltip();
 
 					!isSelectionGrouped && $$.expandCirclesBars(index);
@@ -316,7 +317,7 @@ extend(ChartInternal.prototype, {
 
 				if (!isTooltipGrouped) {
 					$$.showTooltip(d, context);
-					$$.showXGridFocus(d);
+					$$.showGridFocus(d);
 
 					$$.unexpandCircles();
 					selected.each(d => $$.expandCirclesBars(index, d.id));
@@ -370,7 +371,7 @@ extend(ChartInternal.prototype, {
 		$$.expandCirclesBars(closest.index, closest.id, true);
 
 		// Show xgrid focus line
-		$$.showXGridFocus(selectedData);
+		$$.showGridFocus(selectedData);
 
 		// Show cursor as pointer if point is close to mouse position
 		if ($$.isBarType(closest.id) || $$.dist(closest, mouse) < config.point_sensitivity) {
@@ -391,7 +392,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		$$.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
-		$$.hideXGridFocus();
+		$$.hideGridFocus();
 		$$.hideTooltip();
 		$$._handleLinkedCharts(false);
 		$$.unexpandCircles();
@@ -416,7 +417,7 @@ extend(ChartInternal.prototype, {
 			config.color_onover && $$.setOverColor(isOver, d, isArc);
 
 			if (isArc) {
-				callback(d, $$.main.select(`.${CLASS.arc}-${d.id}`).node());
+				callback(d, $$.main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
 			} else if (!config.tooltip_grouped) {
 				const callee = $$.setOverOut;
 				let last = callee.last || [];
@@ -658,7 +659,9 @@ extend(ChartInternal.prototype, {
 		const selector = `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
 		const eventRect = $$.main.select(selector).node();
 		const {width, left, top} = eventRect.getBoundingClientRect();
-		const x = left + (mouse ? mouse[0] : 0) + (isMultipleX ? 0 : (width / 2));
+		const x = left + (mouse ? mouse[0] : 0) + (
+			isMultipleX || $$.config.axis_rotated ? 0 : (width / 2)
+		);
 		const y = top + (mouse ? mouse[1] : 0);
 		const params = {
 			screenX: x,

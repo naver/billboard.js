@@ -11,6 +11,30 @@ import {
 import ChartInternal from "../internals/ChartInternal";
 import {isUndefined, isDefined, isObject, isValue, notEmpty, extend, isArray, capitalize} from "../internals/util";
 
+/**
+ * Convert CSV/TSV data
+ * @param {Object} parser Parser object
+ * @param {Object} xsv Data
+ * @private
+ * @return {Object}
+ */
+const convertCsvTsvToData = (parser, xsv) => {
+	const rows = parser.rows(xsv);
+	let d;
+
+	if (rows.length === 1) {
+		d = [{}];
+
+		rows[0].forEach(id => {
+			d[0][id] = null;
+		});
+	} else {
+		d = parser.parse(xsv);
+	}
+
+	return d;
+};
+
 extend(ChartInternal.prototype, {
 	/**
 	 * Convert data according its type
@@ -53,6 +77,15 @@ extend(ChartInternal.prototype, {
 		return isArray(data) && data;
 	},
 
+	/**
+	 * Convert URL data
+	 * @param {String} url Remote URL
+	 * @param {String} mimeType MIME type string: json | csv | tsv
+	 * @param {Object} headers Header object
+	 * @param {Object} keys Key object
+	 * @param {Function} done Callback function
+	 * @private
+	 */
 	convertUrlToData(url, mimeType = "csv", headers, keys, done) {
 		const req = new XMLHttpRequest();
 
@@ -83,32 +116,15 @@ extend(ChartInternal.prototype, {
 		req.send();
 	},
 
-	_convertCsvTsvToData(parser, xsv) {
-		const rows = parser.rows(xsv);
-		let d;
-
-		if (rows.length === 1) {
-			d = [{}];
-
-			rows[0].forEach(id => {
-				d[0][id] = null;
-			});
-		} else {
-			d = parser.parse(xsv);
-		}
-
-		return d;
-	},
-
 	convertCsvToData(xsv) {
-		return this._convertCsvTsvToData({
+		return convertCsvTsvToData({
 			rows: d3CsvParseRows,
 			parse: d3CsvParse
 		}, xsv);
 	},
 
 	convertTsvToData(tsv) {
-		return this._convertCsvTsvToData({
+		return convertCsvTsvToData({
 			rows: d3TsvParseRows,
 			parse: d3TsvParse
 		}, tsv);
@@ -183,19 +199,21 @@ extend(ChartInternal.prototype, {
 		const keys = rows[0];
 		const newRows = [];
 
-		for (let i = 1, len1 = rows.length; i < len1; i++) {
-			const newRow = {};
+		rows.forEach((row, i) => {
+			if (i > 0) {
+				const newRow = {};
 
-			for (let j = 0, len2 = rows[i].length; j < len2; j++) {
-				if (isUndefined(rows[i][j])) {
-					throw new Error(`Source data is missing a component at (${i}, ${j})!`);
-				}
+				row.forEach((v, j) => {
+					if (isUndefined(v)) {
+						throw new Error(`Source data is missing a component at (${i}, ${j})!`);
+					}
 
-				newRow[keys[j]] = rows[i][j];
+					newRow[keys[j]] = v;
+				});
+
+				newRows.push(newRow);
 			}
-
-			newRows.push(newRow);
-		}
+		});
 
 		return newRows;
 	},
@@ -203,21 +221,23 @@ extend(ChartInternal.prototype, {
 	convertColumnsToData(columns) {
 		const newRows = [];
 
-		for (let i = 0, len1 = columns.length; i < len1; i++) {
-			const key = columns[i][0];
+		columns.forEach((col, i) => {
+			const key = col[0];
 
-			for (let j = 1, len2 = columns[i].length; j < len2; j++) {
-				if (isUndefined(newRows[j - 1])) {
-					newRows[j - 1] = {};
+			col.forEach((v, j) => {
+				if (j > 0) {
+					if (isUndefined(newRows[j - 1])) {
+						newRows[j - 1] = {};
+					}
+
+					if (isUndefined(v)) {
+						throw new Error(`Source data is missing a component at (${i}, ${j})!`);
+					}
+
+					newRows[j - 1][key] = v;
 				}
-
-				if (isUndefined(columns[i][j])) {
-					throw new Error(`Source data is missing a component at (${i}, ${j})!`);
-				}
-
-				newRows[j - 1][key] = columns[i][j];
-			}
-		}
+			});
+		});
 
 		return newRows;
 	},
@@ -285,7 +305,7 @@ extend(ChartInternal.prototype, {
 					let x;
 
 					value = value !== null && !isNaN(value) && !isObject(value) ?
-						+d[id] : (isArray(value) || isObject(value) ? value : null);
+						+value : (isArray(value) || isObject(value) ? value : null);
 
 					// use x as categories if custom x and categorized
 					if (isCategorized && index === 0 && !isUndefined(rawX)) {
@@ -304,7 +324,7 @@ extend(ChartInternal.prototype, {
 					}
 
 					// mark as x = undefined if value is undefined and filter to remove after mapped
-					if (isUndefined(d[id]) || $$.data.xs[id].length <= i) {
+					if (isUndefined(value) || $$.data.xs[id].length <= i) {
 						x = undefined;
 					}
 

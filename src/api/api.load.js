@@ -74,6 +74,16 @@ extend(Chart.prototype, {
 	 *       // {"data1": 10, "data2": 13}, {"data1": 20, "data2": 30}}
 	 *     ]
 	 * });
+	 * @example
+	 * chart.load({
+	 *     json: [
+	 *          {name: "www.site1.com", upload: 800, download: 500, total: 400},
+	 *     ],
+	 *     keys: {
+	 *         x: "name",
+	 *         value: ["upload", "download"]
+	 *     }
+	 * });
 	 */
 	load(args) {
 		const $$ = this.internal;

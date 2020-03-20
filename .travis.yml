@@ -5,8 +5,7 @@ dist: trusty # needs Ubuntu Trusty
 sudo: false  # no need for virtualization.
 
 before_install:
-  - npm install -g npm@latest
-  - npm install -g greenkeeper-lockfile@1
+  - npm install -g npm@latest  
 install:
   - npm install
 
@@ -15,12 +14,6 @@ cache:
   npm: true
   directories:
     - $HOME/.npm
-
-before_script:
-  - greenkeeper-lockfile-update
-
-after_script:
-  - greenkeeper-lockfile-upload
 
 stages:
   - lint

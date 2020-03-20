@@ -17,7 +17,7 @@ import {transition as d3Transition} from "d3-transition";
 import Axis from "../axis/Axis";
 import CLASS from "../config/classes";
 import {document, window} from "../internals/browser";
-import {notEmpty, asHalfPixel, getOption, isValue, isArray, isFunction, isString, isNumber, isObject, callFn, sortValue} from "./util";
+import {notEmpty, asHalfPixel, getOption, isArray, isFunction, isNumber, isObject, isString, isValue, callFn, sortValue} from "./util";
 
 /**
  * Internal chart class.
@@ -114,6 +114,7 @@ export default class ChartInternal {
 			const convertedData = $$.convertData(config, $$.initWithData);
 
 			convertedData && $$.initWithData(convertedData);
+			$$.afterInit();
 		}
 	}
 
@@ -177,7 +178,7 @@ export default class ChartInternal {
 		$$.legendItemHeight = 0;
 
 		$$.currentMaxTickWidths = {
-			x: {size: 0, domain: ""},
+			x: {size: 0, ticks: [], domain: ""},
 			y: {size: 0, domain: ""},
 			y2: {size: 0, domain: ""}
 		};
@@ -267,6 +268,7 @@ export default class ChartInternal {
 
 		$$.clipChart = $$.appendClip($$.defs, $$.clipId);
 		$$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis);
+		$$.clipXAxisTickTexts = $$.appendClip($$.defs, $$.clipIdForXAxisTickTexts);
 		$$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis);
 		$$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid);
 
@@ -276,6 +278,9 @@ export default class ChartInternal {
 		}
 
 		$$.updateSvgSize();
+
+		// Bind resize event
+		$$.bindResize();
 
 		// Define regions
 		const main = $$.svg.append("g").attr("transform", $$.getTranslate("main"));
@@ -361,9 +366,6 @@ export default class ChartInternal {
 			callFn(config.data_onmax, $$, minMax.max);
 		}
 
-		// Bind resize event
-		$$.bindResize();
-
 		// export element of the chart
 		$$.api.element = $$.selectChart.node();
 
@@ -436,10 +438,9 @@ export default class ChartInternal {
 		if (type === "grid") {
 			el.each(function() {
 				const g = d3Select(this);
-				const [x1, x2, y1, y2] = ["x1", "x2", "y1", "y2"]
-					.map(v => Math.ceil(g.attr(v)));
 
-				g.attr({x1, x2, y1, y2});
+				["x1", "x2", "y1", "y2"]
+					.forEach(v => g.attr(v, Math.ceil(g.attr(v))));
 			});
 		}
 	}
@@ -451,6 +452,9 @@ export default class ChartInternal {
 	 */
 	updateSizes(isInit) {
 		const $$ = this;
+
+		!isInit && $$.setContainerSize();
+
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
 		const hasArc = $$.hasArcType();
@@ -467,8 +471,6 @@ export default class ChartInternal {
 			xAxisHeight : 30;
 		const subchartHeight = config.subchart_show && !hasArc ?
 			(config.subchart_size_height + subchartXAxisHeight) : 0;
-
-		!isInit && $$.setContainerSize();
 
 		// for main
 		$$.margin = isRotated ? {
@@ -544,6 +546,8 @@ export default class ChartInternal {
 		if ($$.isLegendRight && hasArc) {
 			$$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1;
 		}
+
+		!hasArc && config.axis_x_show && $$.updateXAxisTickClip();
 	}
 
 	/**
@@ -636,9 +640,6 @@ export default class ChartInternal {
 		const durationForAxis = wth.TransitionForAxis ? duration : 0;
 		const transitions = transitionsValue || $$.axis.generateTransitions(durationForAxis);
 
-		!(initializing && config.tooltip_init_show) &&
-			$$.inputType === "touch" && $$.hideTooltip();
-
 		$$.updateSizes(initializing);
 
 		// update legend and transform each g
@@ -657,9 +658,6 @@ export default class ChartInternal {
 
 		// update circleY based on updated parameters
 		$$.updateCircleY();
-
-		// xgrid focus
-		$$.updateXgridFocus();
 
 		// Data empty label positioning and text.
 		config.data_empty_label_text && main.select(`text.${CLASS.text}.${CLASS.empty}`)
@@ -692,7 +690,7 @@ export default class ChartInternal {
 		$$.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 		// radar
-		$$.radars && $$.redrawRadar(duration, durationForExit);
+		$$.radars && $$.redrawRadar(durationForExit);
 
 		// circles for select
 		$$.mainText && main.selectAll(`.${CLASS.selectedCircles}`)
@@ -748,7 +746,7 @@ export default class ChartInternal {
 
 		if (afterRedraw) {
 			// Only use transition when current tab is visible.
-			if (isTransition) {
+			if (isTransition && redrawList.length) {
 				// Wait for end of transitions for callback
 				const waitForDraw = $$.generateWait();
 
@@ -760,7 +758,7 @@ export default class ChartInternal {
 							.forEach(t => waitForDraw.add(t));
 					})
 					.call(waitForDraw, afterRedraw);
-			} else {
+			} else if (!$$.transiting) {
 				afterRedraw();
 			}
 		}
@@ -840,12 +838,15 @@ export default class ChartInternal {
 			}
 
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-
-			notEmpty(config.data_labels) &&
-				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+			!flow && list.push($$.updategridFocus());
 		}
 
-		(!hasArcType || $$.hasType("radar")) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		if (!hasArcType || $$.hasType("radar")) {
+			notEmpty(config.data_labels) &&
+				list.push($$.redrawText(xForText, yForText, flow, isTransition));
+
+			list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+		}
 
 		return list;
 	}
@@ -916,6 +917,7 @@ export default class ChartInternal {
 		const $$ = this;
 		const config = $$.config;
 		const isRotated = config.axis_rotated;
+		const hasGauge = $$.hasType("gauge");
 		let padding = 0;
 		let x;
 		let y;
@@ -932,7 +934,7 @@ export default class ChartInternal {
 			y = asHalfPixel($$.margin2.top);
 		} else if (target === "legend") {
 			x = $$.margin3.left;
-			y = $$.margin3.top + ($$.hasType("gauge") ? 10 : 0);
+			y = $$.margin3.top + (hasGauge ? 10 : 0);
 		} else if (target === "x") {
 			x = isRotated ? -padding : 0;
 			y = isRotated ? 0 : $$.height + padding;
@@ -980,11 +982,17 @@ export default class ChartInternal {
 		return this.hasDataLabel() ? "1" : "0";
 	}
 
+	/**
+	 * Get the zoom or unzoomed scaled value
+	 * @param {Date|Number|Object} d Data value
+	 * @private
+	 */
 	xx(d) {
-		const fn = this.config.zoom_enabled && this.zoomScale ?
-			this.zoomScale : this.x;
+		const $$ = this;
+		const fn = $$.config.zoom_enabled && $$.zoomScale ?
+			$$.zoomScale : this.x;
 
-		return d ? fn(d.x) : null;
+		return d ? fn(isValue(d.x) ? d.x : d) : null;
 	}
 
 	xv(d) {
@@ -1134,40 +1142,43 @@ export default class ChartInternal {
 	bindResize() {
 		const $$ = this;
 		const config = $$.config;
+		const resizeFunction = $$.generateResize();
+		const list = [];
 
-		$$.resizeFunction = $$.generateResize();
-		$$.resizeFunction.add(() => callFn(config.onresize, $$, $$.api));
+		list.push(() => callFn(config.onresize, $$, $$.api));
 
 		if (config.resize_auto) {
-			$$.resizeFunction.add(() => {
-				if ($$.resizeTimeout) {
-					window.clearTimeout($$.resizeTimeout);
-					$$.resizeTimeout = null;
-				}
-
-				$$.resizeTimeout = window.setTimeout(() => {
-					$$.api.flush(false, true);
-				}, 200);
-			});
+			list.push(() => $$.api.flush(false, true));
 		}
 
-		$$.resizeFunction.add(() => callFn(config.onresized, $$, $$.api));
+		list.push(() => callFn(config.onresized, $$, $$.api));
+
+		// add resize functions
+		list.forEach(v => resizeFunction.add(v));
 
 		// attach resize event
-		window.addEventListener("resize", $$.resizeFunction);
+		window.addEventListener("resize", $$.resizeFunction = resizeFunction);
 	}
 
 	generateResize() {
-		const resizeFunctions = [];
+		const fn = [];
 
-		function callResizeFunctions() {
-			resizeFunctions.forEach(f => f());
+		function callResizeFn() {
+			// Delay all resize functions call, to prevent unintended excessive call from resize event
+			if (callResizeFn.timeout) {
+				window.clearTimeout(callResizeFn.timeout);
+				callResizeFn.timeout = null;
+			}
+
+			callResizeFn.timeout = window.setTimeout(() => {
+				fn.forEach(f => f());
+			}, 200);
 		}
 
-		callResizeFunctions.add = f => resizeFunctions.push(f);
-		callResizeFunctions.remove = f => resizeFunctions.splice(resizeFunctions.indexOf(f), 1);
+		callResizeFn.add = f => fn.push(f);
+		callResizeFn.remove = f => fn.splice(fn.indexOf(f), 1);
 
-		return callResizeFunctions;
+		return callResizeFn;
 	}
 
 	endall(transition, callback) {

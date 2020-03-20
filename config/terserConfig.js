@@ -1,17 +1,17 @@
 module.exports = {
 	test: /\.min\.js$/,
-	uglifyOptions: {  // https://github.com/mishoo/UglifyJS2/tree/harmony#minify-options
+	terserOptions: { // https://github.com/terser/terser#minify-options
 		ecma: 5,
 		ie8: false,
 		output: {
 			beautify: false,
-			comments: false
+			comments: /^\/*!/,
 		},
-		keep_fnames: true,
 		warnings: false,
 		dead_code: true,
 		unused: true
 	},
+	extractComments: false,
 	cache: true,
 	parallel: true,
 	sourceMap: true

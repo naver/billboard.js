@@ -990,6 +990,32 @@ var demos = {
 				}
 			}
 		},
+		StepSizeForYAxis: {
+			options: {
+				data: {
+					columns: [
+						["data1", 40, 30, 30, 40, 250],
+						["data2", 130, 100, 140, 200, 150]
+					],
+					axes: {
+						data2: "y2"
+					}
+				},
+				axis: {
+					y: {
+						tick: {
+							stepSize: 33
+						}
+					},
+					y2: {
+						show: true,
+						tick: {
+							stepSize: 20
+						}
+					}
+				}
+			}
+		},
 		RangeForYAxis: {
 			options: {
 				data: {
@@ -1097,6 +1123,108 @@ var demos = {
 				}
 			}
 		},
+		XAxisTickAutorotate: [
+			{
+				options: {
+					title: {
+						text: "Category type x Axis"
+					},
+					data: {
+						x: "x",
+						columns: [
+							["x", "CATEGORY 0000", "CATEGORY 0001", "CATEGORY 0002", "CATEGORY 0003", "CATEGORY 0004", "CATEGORY 0005"],
+							["pv", 30, 200, 100, 400, 150, 250],
+						],
+						type: "line"
+					},
+					axis: {
+						x: {
+							type: "category",
+							tick: {
+								fit: true,
+								multiline: false,
+								autorotate: true,
+								rotate: 15,
+								culling: false,
+								count: 10,
+							}
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+setTimeout(function() {
+	chart.resize({width: window.innerWidth * 0.4});
+}, 1000),
+
+setTimeout(function() {chart.resize();}, 3000)
+					];
+				}
+			},
+			{
+				options: {
+					title: {
+						text: "Timeseries type x Axis"
+					},
+					data: {
+						json: {
+							Temperature: ["29.39", "29.7", "29.37", "28.87", "28.62", "27.72", "27.61", "27.82", "27.48", "26.78", "26.62", "26.64", "26.29", "26.01", "25.84", "25.07", "24.85", "24.01", "23.83", "22.8", "23", "22.64", "22.77", "22.64"],
+							x: [
+								"01-01-2018 00:00",
+								"02-01-2018 00:00",
+								"03-01-2018 00:00",
+								"04-01-2018 00:00",
+								"05-01-2018 00:00",
+								"06-01-2018 00:00",
+								"07-01-2018 00:00",
+								"08-01-2018 00:00",
+								"09-01-2018 00:00",
+								"10-01-2018 00:00",
+								"11-01-2018 00:00",
+								"12-01-2018 00:00",
+								"01-01-2019 00:00",
+								"02-01-2019 00:00",
+								"03-01-2019 00:00",
+								"04-01-2019 00:00",
+								"05-01-2019 00:00",
+								"06-01-2019 00:00",
+								"07-01-2019 00:00",
+								"08-01-2019 00:00",
+								"09-01-2019 00:00",
+								"10-01-2019 00:00",
+								"11-01-2019 00:00",
+								"12-01-2019 00:00"
+							]
+						},
+						x: "x",
+						type: "area",
+						xFormat: "%m-%d-%Y %H:%M"
+					},
+					axis: {
+						x: {
+							tick: {
+								fit: true,
+								multiline: false,
+								autorotate: true,
+								rotate: 15,
+								culling: false,
+								count: 8,
+								format: "%m-%d-%Y %H:%M:%S"
+							},
+							type: "timeseries"
+						}
+					}
+				},
+				func: function(chart) {
+					chart.timer = [
+setTimeout(function() {
+	chart.resize({width: window.innerWidth * 0.4});
+}, 1000),
+setTimeout(function() {chart.resize();}, 3000)
+					];
+				}
+			}
+		],
 		XAxisTickCount: {
 			options: {
 				data: {
@@ -2069,6 +2197,60 @@ var demos = {
 	},
 
 	Grid: {
+		FocusedGridLines: [
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						axes: {
+							data1: "y",
+							data2: "y2"
+						}
+					},
+					axis: {
+						y2: {
+							show: true
+						}
+					},
+					tooltip: {
+						grouped: false
+					},
+					grid: {
+						focus: {
+							show: true,
+							y: true,
+							edge: true
+						}
+					}
+				},
+				style: [
+					"#focusedGridLines_1 line.bb-xgrid-focus, #focusedGridLines_1 line.bb-ygrid-focus { stroke: blue; stroke-dasharray: 2 2; }"
+				]
+			},
+			{
+				options: {
+					data: {
+						columns: [
+							["data1", 300, 350, 300, 120, 220, 250],
+							["data2", 130, 100, 140, 200, 150, 50]
+						],
+						type: "scatter"
+					},
+					tooltip: {
+						grouped: false
+					},
+					grid: {
+						focus: {
+							show: true,
+							y: true
+						}
+					}
+				}
+			}
+		],
 		GridLines: {
 			options: {
 				data: {
@@ -2518,12 +2700,7 @@ d3.select(".chart_area")
 						["data4", 30, 35, 20, 38, 19, 28, 5.6, 8, 5.5, 22],
 						["data5", 13, 10, 10, 20, 8, 5, 20, 13, 18.5, 9.8]
 					],
-					labels:{
-						overlap: {
-							extent: 8,
-							area : 3
-						}
-					}
+					labels: true
 				},
 				_plugins: [{
 					textoverlap: {
@@ -2533,9 +2710,52 @@ d3.select(".chart_area")
 					}
 				}]
 			}
+		},
+		BubbleCompare: {
+			description: "Compare data 3-dimensional ways: x-axis, y-axis &s bubble-size.<br>&rarr; <b>Value x:</b> population density / <b>Value y:</b> Area / <b>Value z:</b> population.<br><br>Must load or import plugin before the use.",
+			options: {
+				data: {
+					"type": "bubble",
+					"xs": {
+						"Country-A": "x0",
+						"Country-B": "x1",
+						"Country-C": "x2",
+						"Country-D": "x3",
+						"Country-E": "x4"
+					},
+					// value x: population density
+					// value y: Area
+					// value z: population
+					"columns": [
+						["x0", 30],
+						["x1", 515],
+						["x2", 319],
+						["x3", 337],
+						["x4", 164],
+						["Country-A", {"y": 9631418, "z": 295734134}],
+						["Country-B", {"y": 100210, "z": 51635256}],
+						["Country-C", {"y": 547030, "z": 67022000}],
+						["Country-D", {"y": 377835, "z": 127417244}],
+						["Country-E", {"y": 464, "z": 76177}],
+					]
+				},
+				axis: {
+					x: {padding: {left: 100, right: 20}},
+					y: {padding: {top: 150, bottom: 100}},
+				},
+				tooltip: {
+					format: {
+						value: function(x) {
+						  return x.toLocaleString();
+					      }
+					}
+				},
+				_plugins: [{
+					bubblecompare: {minR: 11, maxR: 74, expandScale: 1.1}
+				}]
+			}
 		}
 	},
-
 	Point: {
 		RectanglePoints: {
 			options: {
@@ -3158,8 +3378,8 @@ d3.select(".chart_area")
 						observe: false
 					}
 				},
-				func: function(chart) {
-					setTimeout(function() { chart.flush(); }, 1000)
+				func: function(chart2) {
+					setTimeout(function() { chart2.flush(); }, 1000)
 				}
 			}
 		],
@@ -3617,7 +3837,52 @@ d3.select(".chart_area")
 					}
 				}
 			}
-		]
+		],
+		GaugeTypeMulti: {
+			options: {
+				data: {
+					columns: [
+						["data0", -100],
+						["data1", -50],
+						["data2", -25],
+						["data3", 0],
+						["data4", 25],
+						["data5", 50],
+						["data6", 100]
+					],
+					type: "gauge"
+				},
+				gauge: {
+					type: "multi",
+					max: 100, // 100 is default
+					min: -100, // 0 is default, //can handle negative min e.g. vacuum / voltage / current flow / rate of change
+					arcs: {
+						minWidth: 5
+					},
+				},
+				color: {
+					pattern: ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#4B0082", "#EE82EE"],
+					threshold: {
+						values: [-50, -25, 0, 25, 50, 75, 100]
+					}
+				},
+				size: {
+					height: 300
+				}
+			},
+			func: function(chart) {
+				chart.timer = [
+					setTimeout(function() {
+						chart.load({
+							columns: [
+								["data7", -68],
+								["data8", 72],
+							]
+						});
+					}, 2000),
+				];
+			}
+		},
 	},
 	LineChartOptions: {
 		HidePoints: {
@@ -3790,6 +4055,23 @@ d3.select(".chart_area")
 				},
 				pie: {
 					startingAngle: 1
+				}
+			}
+		},
+		ExpandRate: {
+			options: {
+				data: {
+					columns: [
+						["data1", 30],
+						["data2", 45],
+						["data3", 25]
+					],
+					type: "pie"
+				},
+				pie: {
+					expand: {
+						rate: 1.007
+					}
 				}
 			}
 		}

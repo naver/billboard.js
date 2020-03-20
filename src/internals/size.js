@@ -96,7 +96,7 @@ extend(ChartInternal.prototype, {
 			padding = !config.axis_x_show ?
 				1 : Math.max(ceil10(axisWidth), 40);
 		} else if (!config.axis_y_show || config.axis_y_inner) { // && !config.axis_rotated
-			padding = $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
+			padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
 		} else {
 			padding = ceil10(axisWidth);
 		}
@@ -104,13 +104,15 @@ extend(ChartInternal.prototype, {
 		return padding + (axisWidth * axesLen);
 	},
 
-	getCurrentPaddingRight() {
+	getCurrentPaddingRight(withoutTickTextOverflow = false) {
 		const $$ = this;
 		const config = $$.config;
 		const defaultPadding = 10;
 		const legendWidthOnRight = $$.isLegendRight ? $$.getLegendWidth() + 20 : 0;
 		const axesLen = config.axis_y2_axes.length;
 		const axisWidth = $$.getAxisWidthByAxisId("y2");
+		const xAxisTickTextOverflow = withoutTickTextOverflow ?
+			0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
 		let padding;
 
 		if (isValue(config.padding_right)) {
@@ -118,10 +120,12 @@ extend(ChartInternal.prototype, {
 		} else if (config.axis_rotated) {
 			padding = defaultPadding + legendWidthOnRight;
 		} else if (!config.axis_y2_show || config.axis_y2_inner) { // && !config.axis_rotated
-			padding = 2 + legendWidthOnRight +
-				($$.axis.getY2AxisLabelPosition().isOuter ? 20 : 0);
+			padding = Math.max(
+				2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0),
+				xAxisTickTextOverflow
+			);
 		} else {
-			padding = ceil10(axisWidth) + legendWidthOnRight;
+			padding = Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow);
 		}
 
 		return padding + (axisWidth * axesLen);
@@ -219,12 +223,22 @@ extend(ChartInternal.prototype, {
 			return $$.rotated_padding_top;
 		}
 
+		// const rotate = config[`axis_${id}_tick_rotate`];
+		const rotate = $$.getAxisTickRotate(id);
+
 		// Calculate x/y axis height when tick rotated
-		if ((id === "x" && !isRotated && config.axis_x_tick_rotate) ||
-			(id === "y" && isRotated && config.axis_y_tick_rotate)) {
+		if (
+			((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate
+		) {
 			h = 30 +
 				$$.axis.getMaxTickWidth(id) *
-				Math.cos(Math.PI * (90 - config[`axis_${id}_tick_rotate`]) / 180);
+				Math.cos(Math.PI * (90 - rotate) / 180);
+
+			if (!config.axis_x_tick_multiline && $$.currentHeight) {
+				if (h > $$.currentHeight / 2) {
+					h = $$.currentHeight / 2;
+				}
+			}
 		}
 
 		return h +
@@ -234,5 +248,75 @@ extend(ChartInternal.prototype, {
 
 	getEventRectWidth() {
 		return Math.max(0, this.xAxis.tickInterval());
-	}
+	},
+
+	/**
+	 * Get axis tick test rotate value
+	 * @param {String} id
+	 * @return {Number} rotate value
+	 * @private
+	 */
+	getAxisTickRotate(id) {
+		const $$ = this;
+		const config = $$.config;
+		let rotate = config[`axis_${id}_tick_rotate`];
+
+		if (!$$.filterTargetsToShow($$.data.targets).length) {
+			// When data is hidden, it should maintain rotate value
+			// https://github.com/naver/billboard.js/issues/1278
+			return rotate;
+		}
+
+		if (id === "x") {
+			const isCategorized = $$.isCategorized();
+			const isTimeSeries = $$.isTimeSeries();
+			const allowedXAxisTypes = isCategorized || isTimeSeries;
+			let tickCount = 0;
+
+			if (config.axis_x_tick_fit && allowedXAxisTypes) {
+				$$.axis.x = {
+					padding: {left: 0, right: 0},
+					tickCount: 0
+				};
+
+				tickCount = $$.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+
+				if (tickCount !== $$.axis.x.tickCount) {
+					$$.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+				}
+
+				$$.axis.x.tickCount = tickCount;
+			}
+
+			if ($$.svg &&
+				config.axis_x_tick_fit &&
+				!config.axis_x_tick_multiline &&
+				!config.axis_x_tick_culling &&
+				config.axis_x_tick_autorotate &&
+				allowedXAxisTypes
+			) {
+				rotate = $$.needToRotateXAxisTickTexts() ?
+					config.axis_x_tick_rotate : 0;
+			}
+		}
+
+		return rotate;
+	},
+
+	/**
+	 * Check weather axis tick text needs to be rotated
+	 * @private
+	 */
+	needToRotateXAxisTickTexts() {
+		const $$ = this;
+		const xAxisLength = $$.currentWidth -
+			$$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
+		const tickCountWithPadding = $$.axis.x.tickCount +
+			$$.axis.x.padding.left + $$.axis.x.padding.right;
+
+		const maxTickWidth = $$.axis.getMaxTickWidth("x");
+		const tickLength = (xAxisLength / tickCountWithPadding) || 0;
+
+		return maxTickWidth > tickLength;
+	},
 });

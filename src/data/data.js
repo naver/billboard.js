@@ -628,12 +628,13 @@ extend(ChartInternal.prototype, {
 
 	findClosest(values, pos) {
 		const $$ = this;
+		const data = values.filter(v => v && isValue(v.value));
 		let minDist = $$.config.point_sensitivity;
 		let closest;
 
 		// find mouseovering bar
-		values
-			.filter(v => v && $$.isBarType(v.id))
+		data
+			.filter(v => $$.isBarType(v.id))
 			.forEach(v => {
 				const shape = $$.main.select(`.${CLASS.bars}${$$.getTargetSelectorSuffix(v.id)} .${CLASS.bar}-${v.index}`).node();
 
@@ -643,8 +644,8 @@ extend(ChartInternal.prototype, {
 			});
 
 		// find closest point from non-bar
-		values
-			.filter(v => v && !$$.isBarType(v.id))
+		data
+			.filter(v => !$$.isBarType(v.id))
 			.forEach(v => {
 				const d = $$.dist(v, pos);
 
