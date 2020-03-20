@@ -8,13 +8,13 @@
  h1,h2,h3,h4,nav,.chart_area p,#wrapper #sidebar-wrapper{font-family:Raleway,sans-serif;font-weight:normal}
  body {
      overflow-x: hidden;
-
-    /* https://github.com/naver/billboard.js/issues/1237 */
-    overflow-y: scroll;
+ 
+     /* https://github.com/naver/billboard.js/issues/1237 */
+     overflow-y: scroll;
  }
-
+ 
  /* Toggle Styles */
-
+ 
  #wrapper {
      padding-left: 0;
      -webkit-transition: all 0.5s ease;
@@ -22,7 +22,7 @@
      -o-transition: all 0.5s ease;
      transition: all 0.5s ease;
  }
-
+ 
  #sidebar-wrapper {
      position: fixed;
      z-index: 100;
@@ -36,38 +36,38 @@
      -o-transition: all 0.5s ease;
      transition: all 0.5s ease;
  }
-
+ 
  #sidebar-wrapper .link {
      font-family: Raleway;
      text-align: center;
      color: #fff;
  }
-
+ 
  #sidebar-wrapper .link a {
      color: #b9fff6;
  }
-
+ 
  #sidebar-wrapper .link a.github {
      padding-left: 20px;
      background: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2016%2016%22%20fill-rule%3D%22evenodd%22%20clip-rule%3D%22evenodd%22%20stroke-linejoin%3D%22round%22%20stroke-miterlimit%3D%221.414%22%20fill%3D%22%23b9fff6%22%3E%3Cpath%20d%3D%22M8%200C3.58%200%200%203.582%200%208c0%203.535%202.292%206.533%205.47%207.59.4.075.547-.172.547-.385%200-.19-.007-.693-.01-1.36-2.226.483-2.695-1.073-2.695-1.073-.364-.924-.89-1.17-.89-1.17-.725-.496.056-.486.056-.486.803.056%201.225.824%201.225.824.714%201.223%201.873.87%202.33.665.072-.517.278-.87.507-1.07-1.777-.2-3.644-.888-3.644-3.953%200-.873.31-1.587.823-2.147-.09-.202-.36-1.015.07-2.117%200%200%20.67-.215%202.2.82.64-.178%201.32-.266%202-.27.68.004%201.36.092%202%20.27%201.52-1.035%202.19-.82%202.19-.82.43%201.102.16%201.915.08%202.117.51.56.82%201.274.82%202.147%200%203.073-1.87%203.75-3.65%203.947.28.24.54.73.54%201.48%200%201.07-.01%201.93-.01%202.19%200%20.21.14.46.55.38C13.71%2014.53%2016%2011.53%2016%208c0-4.418-3.582-8-8-8%22/%3E%3C/svg%3E") no-repeat;
  }
-
+ 
  #page-content-wrapper {
      width: 100%;
      position: absolute;
      padding: 15px;
      left: 0;
  }
-
+ 
  #wrapper.toggled {
      padding-left: 250px;
  }
-
+ 
  #wrapper.toggled #sidebar-wrapper {
      width: 250px;
  }
-
-
+ 
+ 
  /* Sidebar Styles */
  .sidebar-nav {
      position: absolute;
@@ -78,19 +78,19 @@
      list-style: none;
      font-family:Raleway,sans-serif;
  }
-
+ 
  .sidebar-nav h4 {
      color:#fff;
      margin: 15px;
      color: #f1eb0c;
      font-size: 19px;
  }
-
+ 
  .sidebar-nav li {
      line-height: 25px;
      list-style: none;
  }
-
+ 
  .sidebar-nav li a {
      display: block;
      text-decoration: none;
@@ -98,97 +98,97 @@
      font-size:14px;
      padding-left: 10px;
  }
-
+ 
  .sidebar-nav li a.selected{
      color: #f30505;
      background-color: #ccc;
  }
-
+ 
  .sidebar-nav li a:hover {
      text-decoration: none;
      color: #fff;
      background: rgba(255,255,255,0.2);
  }
-
+ 
  .sidebar-nav li a:active,
  .sidebar-nav li a:focus {
      text-decoration: none;
  }
-
+ 
  .sidebar-brand {
      color: #fff;
      font-weight: bold;
      margin-left: 15px;
      text-shadow: rgb(18, 128, 106) 1px 1px, rgb(18, 128, 106) 2px 2px, rgb(18, 128, 106) 3px 3px, rgb(18, 128, 106) 4px 4px, rgb(18, 128, 106) 5px 5px, rgb(18, 128, 106) 6px 6px, rgb(18, 128, 106) 7px 7px, rgb(18, 128, 106) 8px 8px, rgb(18, 128, 106) 9px 9px, rgb(18, 128, 106) 10px 10px, rgb(18, 128, 106) 11px 11px, rgb(18, 128, 106) 12px 12px, rgb(18, 128, 106) 13px 13px, rgb(18, 128, 106) 14px 14px, rgb(18, 128, 106) 15px 15px, rgb(18, 128, 106) 16px 16px, rgb(18, 128, 106) 17px 17px, rgb(18, 128, 106) 18px 18px, rgb(18, 128, 106) 19px 19px, rgb(18, 128, 106) 20px 20px, rgb(18, 128, 106) 21px 21px, rgb(18, 128, 106) 22px 22px, rgb(18, 128, 106) 23px 23px, rgb(18, 128, 106) 24px 24px, rgb(18, 128, 106) 25px 25px, rgb(18, 128, 106) 26px 26px, rgb(18, 128, 106) 27px 27px, rgb(18, 128, 106) 28px 28px, rgb(18, 128, 106) 29px 29px, rgb(18, 128, 106) 30px 30px, rgb(18, 128, 106) 31px 31px, rgb(18, 128, 106) 32px 32px, rgb(18, 128, 106) 33px 33px, rgb(18, 128, 106) 34px 34px, rgb(18, 128, 106) 35px 35px, rgb(18, 128, 106) 36px 36px, rgb(18, 128, 106) 37px 37px, rgb(18, 128, 106) 38px 38px, rgb(18, 128, 106) 39px 39px, rgb(18, 128, 106) 40px 40px, rgb(18, 128, 106) 41px 41px, rgb(18, 128, 106) 42px 42px, rgb(18, 128, 106) 43px 43px, rgb(18, 128, 106) 44px 44px, rgb(18, 128, 106) 45px 45px, rgb(18, 128, 106) 46px 46px, rgb(18, 128, 106) 47px 47px, rgb(18, 128, 106) 48px 48px, rgb(18, 128, 106) 49px 49px, rgb(18, 128, 106) 50px 50px, rgb(18, 128, 106) 51px 51px, rgb(18, 128, 106) 52px 52px, rgb(18, 128, 106) 53px 53px, rgb(18, 128, 106) 54px 54px, rgb(18, 128, 106) 55px 55px, rgb(18, 128, 106) 56px 56px, rgb(18, 128, 106) 57px 57px, rgb(18, 128, 106) 58px 58px, rgb(18, 128, 106) 59px 59px, rgb(18, 128, 106) 60px 60px, rgb(18, 128, 106) 61px 61px, rgb(18, 128, 106) 62px 62px, rgb(18, 128, 106) 63px 63px, rgb(18, 128, 106) 64px 64px, rgb(18, 128, 106) 65px 65px, rgb(18, 128, 106) 66px 66px, rgb(18, 128, 106) 67px 67px, rgb(18, 128, 106) 68px 68px, rgb(18, 128, 106) 69px 69px, rgb(18, 128, 106) 70px 70px, rgb(18, 128, 106) 71px 71px, rgb(18, 128, 106) 72px 72px, rgb(18, 128, 106) 73px 73px, rgb(18, 128, 106) 74px 74px, rgb(18, 128, 106) 75px 75px, rgb(18, 128, 106) 76px 76px, rgb(18, 128, 106) 77px 77px, rgb(18, 128, 106) 78px 78px, rgb(18, 128, 106) 79px 79px, rgb(18, 128, 106) 80px 80px, rgb(18, 128, 106) 81px 81px, rgb(18, 128, 106) 82px 82px, rgb(18, 128, 106) 83px 83px, rgb(18, 128, 106) 84px 84px, rgb(18, 128, 106) 85px 85px, rgb(18, 128, 106) 86px 86px, rgb(18, 128, 106) 87px 87px, rgb(18, 128, 106) 88px 88px, rgb(18, 128, 106) 89px 89px, rgb(18, 128, 106) 90px 90px, rgb(18, 128, 106) 91px 91px, rgb(18, 128, 106) 92px 92px, rgb(18, 128, 106) 93px 93px, rgb(18, 128, 106) 94px 94px, rgb(18, 128, 106) 95px 95px, rgb(18, 128, 106) 96px 96px, rgb(18, 128, 106) 97px 97px, rgb(18, 128, 106) 98px 98px, rgb(18, 128, 106) 99px 99px, rgb(18, 128, 106) 100px 100px;
  }
-
+ 
  .sidebar-nav > .sidebar-brand a {
      color: #999999;
  }
-
+ 
  .sidebar-nav > .sidebar-brand a:hover {
      color: #fff;
      background: none;
  }
-
+ 
  pre {
      border: 0;
      padding: 0;
  }
-
+ 
  .chart_area iframe {
      width: 100%;
      height: calc(100vh - 150px);
      border: solid 1px #000;
      box-shadow: 5px 5px 10px #888;
  }
-
+ 
  .code {
      display: none;
  }
-
+ 
  .code p {
      font-family: Raleway;
      font-size: 13px;
      margin-bottom: 3px;
  }
-
+ 
  .code .html {
      background-color: #eefbff;
  }
-
+ 
  .code .js {
      position: relative;
      font-family: Raleway;
      font-size: 11px;
  }
-
+ 
  .code .js .focus {
      background-color: #e9e9e9;
  }
-
+ 
  .code .js .button {
      border: solid 1px #000;
      cursor: pointer;
      outline: none;
  }
-
+ 
  button.js {
      background-color: #f0db4f;
      color: #000;
  }
-
+ 
  button.ts {
      background-color: #007acc;
      color: #fff;
  }
-
+ 
  .editor {
      position: absolute;
      top: -20px;
      right: 0;
  }
-
+ 
  .code .button.clipboard {
      border: none;
      padding: 5px 13px;
@@ -198,68 +198,68 @@
      top: 10px;
      right: 10px;
  }
-
+ 
  .button.editor:hover {
      background-color: red;
      color: #fff;
  }
-
+ 
  .button.clipboard:hover {
      background-color: #16a085;
      color: #fff;
  }
-
+ 
  div.row {
      min-width: 300px;
  }
-
+ 
  @media(min-width:768px) {
      #menu-toggle {
          display: none;
      }
-
+ 
      #wrapper {
          padding-left: 250px;
      }
-
+ 
      #wrapper #sidebar-wrapper {
          width: 250px;
      }
-
+ 
      #page-content-wrapper {
          padding: 20px;
          position: relative;
      }
-
+ 
      #wrapper #page-content-wrapper {
          position: relative;
          margin-right: 0;
      }
-
+ 
      .by_text::after {
          content: 'item from the left list';
      }
  }
-
+ 
  @media(max-width:768px) {
      #menu-toggle {
          display: inline-block;
          float: right;
      }
-
+ 
      #wrapper {
          padding-left: 0;
      }
-
+ 
      .by_text::after {
          content: ' button';
      }
-
+ 
      .editor {
          display: none;
      }
  }
-
+ 
  /* Style For Custom Legend */
  .legend span {
      width: 33.333333%;
@@ -268,25 +268,25 @@
      cursor: pointer;
      color: white;
  }
-
+ 
  /* for IE10+ */
  @media all and (-ms-high-contrast:none) {
      #sidebar-wrapper .link a.github {
          background-position-x: -23px;
      }
  }
-
+ 
  #theme {
      text-align: center;
      color: #fff;
  }
-
+ 
  #theme select {
      padding: 2px;
      color: #000;
      font-size: 12px;
  }
-
+ 
  #launch {
      color: #fff;
      text-align: center;
@@ -298,7 +298,7 @@
      position: relative;
      width: 85%;
  }
-
+ 
  #launch button {
      cursor: pointer;
      display: inline-block;
@@ -311,18 +311,18 @@
      border-width: 1px;
      border-color: #fff;
  }
-
+ 
  .item_count {
      font-size: 1.5em;
      color: red;
      font-weight: bold;
      text-decoration: underline;
  }
-
+ 
  /* Style For Region */
  #styleForRegion .bb-region-0 {fill:red;}
  #styleForRegion .bb-region.foo {fill:green;}
-
+ 
  /* Style For Grid */
  #styleForGrid .bb-xgrid-line line {stroke: blue;}
  #styleForGrid .bb-xgrid-line.grid4 line {stroke: pink;}
@@ -330,32 +330,32 @@
  #styleForGrid .bb-ygrid-line line {stroke: red;}
  #styleForGrid .bb-ygrid-line.grid800 line {stroke: green;}
  #styleForGrid .bb-ygrid-line.grid800 text {fill: green;}
-
+ 
  /* Style For Regions */
  #regions .fill_green { fill: green; }
  #regions .fill_red { fill: red; }
-
+ 
  /* Style For Donut */
  #labelRatio .bb-chart-arc text {fill: #f00;font-size: 15px;font-weight: bold;}
-
+ 
  /* Style For Lines */
  #styleForLines .line-class-data1 { stroke-dasharray: 3 4; stroke-width: 3px; }
  #styleForLines .line-class-data2 { stroke-dasharray: 2 4; stroke-width: 2px; }
-
+ 
  /* Style For Radars */
  #radarAxis .bb-levels polygon { stroke-dasharray: 1 3; stroke-width: 1px; }
-
+ 
  /* Style For tick position */
  #xAxisTickPosition .bb-axis-x line, #xAxisTickPosition .bb-axis-x path { visibility: hidden; }
-
+ 
  #multilinedTitle .bb-title tspan:first-child { font-size: 17px; font-weight: bold; }
-
+ 
  #rotatedAxisGroupedBar .base-line line { stroke-width: 3px; stroke: #000; }
-
+ 
  #tooltip {font-size: 13px;padding: 0;margin-bottom: 80px;}
  #tooltip li {list-style: none;float: left; padding: 0 10px;}
  #tooltip li span:first-child {font-size: 16px;}
-
+ 
  /* Stanford Diagram region styles */
  #stanfordDiagram .test-polygon1 { fill: white; }
  #stanfordDiagram .test-polygon1 text { fill: black; }
@@ -367,9 +367,13 @@
  #stanfordDiagram .test-polygon4 text { fill: black; }
  #stanfordDiagram .test-polygon5 { fill: orange; }
  #stanfordDiagram .test-polygon5 text { fill: black; }
-
+ 
  /* Lazy Render */
-#lazyRender_1 { display: none; }
-
-/* Background */
-.myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
+ #lazyRender_1 { display: none; }
+ 
+ /* Background */
+ .myBgClass { transform: scale(0.9) translate(15px, -10px); opacity: 0.1; }
+ 
+ /* FocusedGridLines */
+ #focusedGridLines_1 line.bb-xgrid-focus, #focusedGridLines_1 line.bb-ygrid-focus { stroke: blue; stroke-dasharray: 2 2; }
+ 
