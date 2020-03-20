@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200319131523
+ * @version 1.11.1-nightly-20200320131558
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -326,7 +326,7 @@ var Plugin = /*#__PURE__*/function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200319131523");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200320131558");
 
 
 
@@ -1339,14 +1339,14 @@ var ColorScale_ColorScale = /*#__PURE__*/function () {
  *   - [d3-axis](https://github.com/d3/d3-axis)
  *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
- * @requies d3-selection
- * @requies d3-array
- * @requies d3-interpolate
- * @requies d3-color
- * @requies d3-scale
- * @requies d3-brush
- * @requies d3-axis
- * @requies d3-format
+ * @requires d3-selection
+ * @requires d3-array
+ * @requires d3-interpolate
+ * @requires d3-color
+ * @requires d3-scale
+ * @requires d3-brush
+ * @requires d3-axis
+ * @requires d3-format
  * @param {Object} options Stanford plugin options
  * @extends Plugin
  * @return {Stanford}
