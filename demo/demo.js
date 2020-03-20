@@ -3860,12 +3860,6 @@ d3.select(".chart_area")
 						minWidth: 5
 					},
 				},
-				color: {
-					pattern: ["#FF0000", "#FFA500", "#FFFF00", "#008000", "#0000FF", "#4B0082", "#EE82EE"],
-					threshold: {
-						values: [-50, -25, 0, 25, 50, 75, 100]
-					}
-				},
 				size: {
 					height: 300
 				}
