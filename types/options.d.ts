@@ -724,7 +724,7 @@ export interface ChartOptions {
 		 * Set the position. Default value is 'center'
 		 */
 		position?: "center" | "right" | "left";
-	}
+	};
 }
 
 export interface AreaLinearGradientOptions {
