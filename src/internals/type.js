@@ -59,7 +59,7 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Check if contains given chart types
-	 * @parma {String} type Type key
+	 * @param {String} type Type key
 	 * @param {Object} targets
 	 * @param {Array} exclude Excluded types
 	 * @return {boolean}

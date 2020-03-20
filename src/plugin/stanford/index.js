@@ -33,14 +33,14 @@ import {pointInRegion, compareEpochs} from "./util";
  *   - [d3-axis](https://github.com/d3/d3-axis)
  *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
- * @requies d3-selection
- * @requies d3-array
- * @requies d3-interpolate
- * @requies d3-color
- * @requies d3-scale
- * @requies d3-brush
- * @requies d3-axis
- * @requies d3-format
+ * @requires d3-selection
+ * @requires d3-array
+ * @requires d3-interpolate
+ * @requires d3-color
+ * @requires d3-scale
+ * @requires d3-brush
+ * @requires d3-axis
+ * @requires d3-format
  * @param {Object} options Stanford plugin options
  * @extends Plugin
  * @return {Stanford}
