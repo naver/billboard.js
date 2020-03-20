@@ -317,7 +317,7 @@ const sortValue = (data, isAsc = true) => {
  * Get min/max value
  * @param {String} type 'min' or 'max'
  * @param {Array} data Array data value
- * @retun {Number|Date|undefined}
+ * @return {Number|Date|undefined}
  * @private
  */
 const getMinMax = (type, data) => {
