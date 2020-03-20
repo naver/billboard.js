@@ -177,6 +177,9 @@
 	} else {
 		fallback.ready(function() {
             fallback.load({
+                plugins_bubblecompare: path.map(function(p) {
+                    return p + "plugin/billboardjs-plugin-bubblecompare.js"
+                }),
                 plugins_stanford: path.map(function(p) {
                     return p + "plugin/billboardjs-plugin-stanford.js"
                 }),
