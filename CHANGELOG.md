@@ -1,3 +1,11 @@
+## [1.12.1](https://github.com/naver/billboard.js/compare/1.12.0...1.12.1) (2020-03-23)
+
+
+### Bug Fixes
+
+* **axis:** Fix x Axis spacing and legend toggle error ([7c68e8d](https://github.com/naver/billboard.js/commit/7c68e8d09add52d005b64d5b6889f19fbb4ca9c2)), closes [#1278](https://github.com/naver/billboard.js/issues/1278) [/github.com/naver/billboard.js/pull/1250#issuecomment-601505201](https://github.com//github.com/naver/billboard.js/pull/1250/issues/issuecomment-601505201)
+* **point:** Replace the use of classList ([#1289](https://github.com/naver/billboard.js/issues/1289)) ([f3bd0e2](https://github.com/naver/billboard.js/commit/f3bd0e22b4b48e354bcafb62d62416a92ef3da6d)), closes [#1287](https://github.com/naver/billboard.js/issues/1287)
+
 # [1.12.0](https://github.com/naver/billboard.js/compare/1.11.1...1.12.0) (2020-03-20)
 
 
