@@ -1242,7 +1242,7 @@ describe("AXIS", function() {
 				setTimeout(() => {
 					expect(chart.$.main.select(`.${CLASS.axisX}`).attr("transform")).to.be.equal(axisXTransform);
 					done();
-				})
+				}, 200)
 			});
 		});
 
@@ -1309,7 +1309,7 @@ describe("AXIS", function() {
 			it("should resize when all data hidden", () => {
 				chart.hide("Temperature");
 
-				compare(args.axis.x.tick.rotate, 6, 70, 105);
+				compare(args.axis.x.tick.rotate, 6, 57, 108);
 			});
 
 			it("should resize when show hidden data", () => {
@@ -1422,7 +1422,7 @@ describe("AXIS", function() {
 				setTimeout(() => {
 					expect(chart.$.main.select(`.${CLASS.axisX}`).attr("transform")).to.be.equal(axisXTransform);
 					done();
-				})
+				}, 200)
 			});
 		});
 	});
