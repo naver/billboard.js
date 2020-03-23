@@ -2433,4 +2433,41 @@ describe("AXIS", function() {
 			});
 		});
 	});
+
+	describe("Evaluating x Axis width size", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "2013-01-01", "2013-01-02", "2013-01-03", "2013-01-04", "2013-01-05", "2013-01-06"],
+						["data1", 30, 200, 100, 400, 150, 250],
+					]
+				},
+				axis: {
+					x: {
+						type: "timeseries",
+						tick: {
+							format: "%Y-%m-%d",
+							count: 5
+						}
+					}
+				}
+			}
+		});
+
+		it("When all data is hidden, should return cached width", done => {
+			const xTickWidthSize = 20;
+
+			// hide all
+			chart.toggle();
+
+			setTimeout(() => {
+				chart.internal.currentMaxTickWidths.x.size = xTickWidthSize;
+
+				expect(+chart.internal.axis.getMaxTickWidth("x")).to.be.equal(xTickWidthSize);
+				done();
+			}, 200);
+		});
+	})
 });
