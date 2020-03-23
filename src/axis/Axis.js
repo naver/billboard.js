@@ -460,7 +460,7 @@ export default class Axis {
 		const currentTickMax = $$.currentMaxTickWidths[id];
 		let maxWidth = 0;
 
-		if (withoutRecompute || !config[`axis_${id}_show`]) {
+		if (withoutRecompute || !config[`axis_${id}_show`] || $$.filterTargetsToShow().length === 0) {
 			return currentTickMax.size;
 		}
 
@@ -471,8 +471,7 @@ export default class Axis {
 			const domain = scale.domain();
 
 			// do not compute if domain is same
-			if (
-				domain[0] === domain[1] ||
+			if (domain[0] === domain[1] ||
 				(isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])
 			) {
 				return currentTickMax.size;
