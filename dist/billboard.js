@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200320131558
+ * @version 1.11.1-nightly-20200323131726
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1504,7 +1504,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           config = $$.config,
           currentTickMax = $$.currentMaxTickWidths[id],
           maxWidth = 0;
-      if (withoutRecompute || !config["axis_".concat(id, "_show")]) return currentTickMax.size;
+      if (withoutRecompute || !config["axis_".concat(id, "_show")] || $$.filterTargetsToShow().length === 0) return currentTickMax.size;
 
       if ($$.svg) {
         var isYAxis = /^y2?$/.test(id),
@@ -8361,9 +8361,6 @@ extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         config = $$.config,
         rotate = config["axis_".concat(id, "_tick_rotate")];
-    if (!$$.filterTargetsToShow($$.data.targets).length) // When data is hidden, it should maintain rotate value
-      // https://github.com/naver/billboard.js/issues/1278
-      return rotate;
 
     if (id === "x") {
       var isCategorized = $$.isCategorized(),
@@ -9765,7 +9762,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         pointClass = !1;
     return (isObject(d) || $$.mainCircle) && (pointClass = d === !0 ? $$.mainCircle.each(function (d) {
       var className = $$.classCircle.bind($$)(d);
-      this.classList.contains(config_classes.EXPANDED) && (className += " ".concat(config_classes.EXPANDED)), this.setAttribute("class", className);
+      this.getAttribute("class").indexOf(config_classes.EXPANDED) > -1 && (className += " ".concat(config_classes.EXPANDED)), this.setAttribute("class", className);
     }) : $$.classCircle(d)), pointClass;
   },
   generatePoint: function generatePoint() {
@@ -14900,7 +14897,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200320131558",
+  version: "1.11.1-nightly-20200323131726",
 
   /**
    * Generate chart
@@ -14999,7 +14996,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200320131558
+ * @version 1.11.1-nightly-20200323131726
  */
 
 
