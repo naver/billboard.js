@@ -331,7 +331,7 @@ export default {
 				circle.each(function(d) {
 					let className = $$.classCircle.bind($$)(d);
 
-					if (this.classList.contains(CLASS.EXPANDED)) {
+					if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
 						className += ` ${CLASS.EXPANDED}`;
 					}
 

@@ -267,12 +267,6 @@ export default {
 		const {axis, config, state, $el} = $$;
 		let rotate = config[`axis_${id}_tick_rotate`];
 
-		if (!$$.filterTargetsToShow($$.data.targets).length) {
-			// When data is hidden, it should maintain rotate value
-			// https://github.com/naver/billboard.js/issues/1278
-			return rotate;
-		}
-
 		if (id === "x") {
 			const isCategorized = axis.isCategorized();
 			const isTimeSeries = axis.isTimeSeries();
