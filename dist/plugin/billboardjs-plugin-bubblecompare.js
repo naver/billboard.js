@@ -133,9 +133,9 @@ __webpack_require__.r(__webpack_exports__);
  *   - [d3-selection](https://github.com/d3/d3-selection)
  * @class plugin-bubblecompare
  * @requires d3-selection
- * @param {Object} options bubble compare plugin options
- * @extends Plugin
- * @return {BubbleCompare}
+ * @param {object} options bubble compare plugin options
+ * @augments Plugin
+ * @returns {BubbleCompare}
  * @example
  *  var chart = bb.generate({
  *     data: {
@@ -151,7 +151,7 @@ __webpack_require__.r(__webpack_exports__);
  *        }),
  *     ]
  *  });
-  * @example
+ * @example
  *	import {bb} from "billboard.js";
  * import BubbleCompare from "billboard.js/dist/billboardjs-plugin-bubblecompare";
  *
@@ -297,22 +297,22 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
+
+/**
+ * Version info string for plugin
+ * @name version
+ * @static
+ * @memberof Plugin
+ * @type {string}
+ * @example
+ *   bb.plugin.stanford.version;  // ex) 1.9.0
+ */
 var Plugin =
 /*#__PURE__*/
 function () {
   /**
-   * Version info string for plugin
-   * @name version
-   * @static
-   * @memberof Plugin
-   * @type {String}
-   * @example
-   *   bb.plugin.stanford.version;  // ex) 1.9.0
-   */
-
-  /**
    * Constructor
-   * @param {Any} config config option object
+   * @param {Any} options config option object
    * @private
    */
   function Plugin(options) {

@@ -177,22 +177,22 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__4__;
  * Base class to generate billboard.js plugin
  * @class Plugin
  */
+
+/**
+ * Version info string for plugin
+ * @name version
+ * @static
+ * @memberof Plugin
+ * @type {string}
+ * @example
+ *   bb.plugin.stanford.version;  // ex) 1.9.0
+ */
 var Plugin =
 /*#__PURE__*/
 function () {
   /**
-   * Version info string for plugin
-   * @name version
-   * @static
-   * @memberof Plugin
-   * @type {String}
-   * @example
-   *   bb.plugin.stanford.version;  // ex) 1.9.0
-   */
-
-  /**
    * Constructor
-   * @param {Any} config config option object
+   * @param {Any} options config option object
    * @private
    */
   function Plugin(options) {
@@ -386,12 +386,12 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__9__;
  * billboard.js project is licensed under the MIT license
  */
 
+
 /**
  * Load configuration option
- * @param {Object} config User's generation config value
+ * @param {object} config User's generation config value
  * @private
  */
-
 function loadConfig(config) {
   var target,
       keys,
@@ -474,8 +474,8 @@ var Plugin = __webpack_require__(5);
  * Stanford diagram plugin option class
  * @class StanfordOptions
  * @param {Options} options Stanford plugin options
- * @extends Plugin
- * @return {StanfordOptions}
+ * @augments Plugin
+ * @returns {StanfordOptions}
  * @private
  */
 var Options = function () {
@@ -501,14 +501,14 @@ var Options = function () {
      * @default []
      * @example
      * 	epochs: [ 1, 1, 2, 2, ... ]
-    */
+     */
     epochs: [],
 
     /**
      * Show additional lines anywhere on the chart.
      * - Each line object should consist with following options:
      *
-    	 * | Key | Type | Description |
+     * | Key | Type | Description |
      * | --- | --- | --- |
      * | x1 | Number | Starting position on the x axis |
      * | y1 | Number | Starting position on the y axis |
@@ -530,11 +530,12 @@ var Options = function () {
      * Set scale values
      * @name scale
      * @memberof plugin-stanford
-     * @type {Object}
-    	 * @property {Number} [scale.min=undefined] Minimum value of the color scale. Default: lowest value in epochs
-     * @property {Number} [scale.max=undefined] Maximum value of the color scale. Default: highest value in epochs
-     * @property {Number} [scale.width=20] Width of the color scale
-     * @property {String|Function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
+     * @type {object}
+     * @property {object} [scale] scale object
+     * @property {number} [scale.min=undefined] Minimum value of the color scale. Default: lowest value in epochs
+     * @property {number} [scale.max=undefined] Maximum value of the color scale. Default: highest value in epochs
+     * @property {number} [scale.width=20] Width of the color scale
+     * @property {string|Function} [scale.format=undefined] Format of the axis of the color scale. Use 'pow10' to format as powers of 10 or a custom function. Example: d3.format("d")
      * @example
      *  scale: {
      *    max: 10000,
@@ -559,11 +560,12 @@ var Options = function () {
      * The padding for color scale element
      * @name padding
      * @memberof plugin-stanford
-     * @type {Object}
-     * @property {Number} [padding.top=0] Top padding value.
-     * @property {Number} [padding.right=0] Right padding value.
-     * @property {Number} [padding.bottom=0] Bottom padding value.
-     * @property {Number} [padding.left=0] Left padding value.
+     * @type {object}
+     * @property {object} [padding] padding object
+     * @property {number} [padding.top=0] Top padding value.
+     * @property {number} [padding.right=0] Right padding value.
+     * @property {number} [padding.bottom=0] Bottom padding value.
+     * @property {number} [padding.left=0] Left padding value.
      * @example
      *  padding: {
      *     top: 15,
@@ -604,7 +606,7 @@ var Options = function () {
      *           },
      *           opacity: 0.2, // 0 to 1
      *           class: "test-polygon1"
-    	 *       },
+     *       },
      *       ...
      *   ]
      */
@@ -641,6 +643,13 @@ var util = __webpack_require__(19);
  * @ignore
  */
 
+/**
+ * Check if point is in region
+ * @param {object} point Point
+ * @param {Array} region Region
+ * @returns {boolean}
+ * @private
+ */
 
 function pointInRegion(point, region) {
   // thanks to: http://bl.ocks.org/bycoffe/5575904
@@ -660,10 +669,25 @@ function pointInRegion(point, region) {
 
   return inside;
 }
+/**
+ * Compare epochs
+ * @param {object} a Target
+ * @param {object} b Source
+ * @returns {number}
+ * @private
+ */
+
 
 function compareEpochs(a, b) {
   return a.epochs < b.epochs ? -1 : a.epochs > b.epochs ? 1 : 0;
 }
+/**
+ * Get region area
+ * @param {Array} points Points
+ * @returns {number}
+ * @private
+ */
+
 
 function getRegionArea(points) {
   // thanks to: https://stackoverflow.com/questions/16282330/find-centerpoint-of-polygon-in-javascript
@@ -671,6 +695,13 @@ function getRegionArea(points) {
 
   return area /= 2, area;
 }
+/**
+ * Get centroid
+ * @param {Array} points Points
+ * @returns {object}
+ * @private
+ */
+
 
 function getCentroid(points) {
   for (var f, area = getRegionArea(points), x = 0, y = 0, i = 0, l = points.length, j = l - 1; i < l; j = i, i++) {
@@ -897,17 +928,17 @@ function () {
  *   - [d3-axis](https://github.com/d3/d3-axis)
  *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
- * @requies d3-selection
- * @requies d3-array
- * @requies d3-interpolate
- * @requies d3-color
- * @requies d3-scale
- * @requies d3-brush
- * @requies d3-axis
- * @requies d3-format
- * @param {Object} options Stanford plugin options
- * @extends Plugin
- * @return {Stanford}
+ * @requires d3-selection
+ * @requires d3-array
+ * @requires d3-interpolate
+ * @requires d3-color
+ * @requires d3-scale
+ * @requires d3-brush
+ * @requires d3-axis
+ * @requires d3-format
+ * @param {object} options Stanford plugin options
+ * @augments Plugin
+ * @returns {Stanford}
  * @example
  *  var chart = bb.generate({
  *     data: {
@@ -1080,8 +1111,7 @@ var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webp
 
 /**
  * Window object
- * @module
- * @ignore
+ * @private
  */
 
 /* eslint-disable no-new-func, no-undef */
@@ -1123,7 +1153,7 @@ var classes = __webpack_require__(10);
 /* unused harmony export getUnique */
 /* unused harmony export hasValue */
 /* unused harmony export isArray */
-/* unused harmony export isBoolean */
+/* unused harmony export isboolean */
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return isDefined; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "b", function() { return isEmpty; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "c", function() { return isFunction; });
@@ -1172,7 +1202,7 @@ var isValue = function (v) {
     isDefined = function (v) {
   return typeof v !== "undefined";
 },
-    isBoolean = function (v) {
+    isboolean = function (v) {
   return typeof v === "boolean";
 },
     ceil10 = function (v) {
@@ -1200,9 +1230,26 @@ var isValue = function (v) {
   return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
 };
 
+/**
+ * Get specified key value from object
+ * If default value is given, will return if given key value not found
+ * @param {object} options Source object
+ * @param {string} key Key value
+ * @param {*} defaultValue Default value
+ * @returns {*}
+ * @private
+ */
 function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
+/**
+ * Check if value exist in the given object
+ * @param {object} dict Target object to be checked
+ * @param {*} value Value to be checked
+ * @returns {boolean}
+ * @private
+ */
+
 
 function hasValue(dict, value) {
   var found = !1;
@@ -1214,7 +1261,7 @@ function hasValue(dict, value) {
  * Call function with arguments
  * @param {Function} fn Function to be called
  * @param {*} args Arguments
- * @return {Boolean} true: fn is function, false: fn is not function
+ * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
 
@@ -1226,26 +1273,26 @@ function callFn(fn) {
 }
 /**
  * Call function after all transitions ends
- * @param {d3.transition} transition
- * @param {Fucntion} callback
+ * @param {d3.transition} transition Transition
+ * @param {Fucntion} cb Callback function
  * @private
  */
 
 
-function endall(transition, callback) {
+function endall(transition, cb) {
   var n = 0;
   transition.each(function () {
     return ++n;
   }).on("end", function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
 
-    --n || callback.apply.apply(callback, [this].concat(args));
+    --n || cb.apply.apply(cb, [this].concat(args));
   });
 }
 /**
  * Replace tag sign to html entity
- * @param {String} str
- * @return {String}
+ * @param {string} str Target string value
+ * @returns {string}
  * @private
  */
 
@@ -1256,9 +1303,9 @@ function sanitise(str) {
 /**
  * Set text value. If there's multiline add nodes.
  * @param {d3Selection} node Text node
- * @param {String} text Text value string
+ * @param {string} text Text value string
  * @param {Array} dy dy value for multilined text
- * @param {Boolean} toMiddle To be alingned vertically middle
+ * @param {boolean} toMiddle To be alingned vertically middle
  * @private
  */
 
@@ -1277,7 +1324,13 @@ function setTextValue(node, text, dy, toMiddle) {
       });
     }
   }
-} // substitution of SVGPathSeg API polyfill
+}
+/**
+ * Substitution of SVGPathSeg API polyfill
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {Array}
+ * @private
+ */
 
 
 function getRectSegList(path) {
@@ -1312,6 +1365,13 @@ function getRectSegList(path) {
   } // seg3
   ];
 }
+/**
+ * Get svg bounding path box dimension
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {object}
+ * @private
+ */
+
 
 function getPathBox(path) {
   var _path$getBoundingClie = path.getBoundingClientRect(),
@@ -1327,7 +1387,13 @@ function getPathBox(path) {
     width: width,
     height: height
   };
-} // return brush selection array
+}
+/**
+ * Return brush selection array
+ * @param {object} $el Selection object
+ * @returns {d3.brushSelection}
+ * @private
+ */
 
 
 function getBrushSelection(_ref) {
@@ -1336,12 +1402,25 @@ function getBrushSelection(_ref) {
       event = external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["event"],
       main = $el.subchart.main || $el.main;
   return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + classes["a" /* default */].brush).node()) && (selection = Object(external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_["brushSelection"])(selection)), selection;
-} // Get boundingClientRect. cache the evaluated value once it was called.
+}
+/**
+ * Get boundingClientRect.
+ * Cache the evaluated value once it was called.
+ * @param {HTMLElement} node Target element
+ * @returns {object}
+ * @private
+ */
 
 
 var getBoundingRect = function (node) {
   return node.rect || (node.rect = node.getBoundingClientRect());
-}; // retrun random number
+};
+/**
+ * Retrun random number
+ * @param {boolean} asStr Convert returned value as string
+ * @returns {number|string}
+ * @private
+ */
 
 
 function getRandom(asStr) {
@@ -1349,11 +1428,26 @@ function getRandom(asStr) {
   var rand = Math.random();
   return asStr ? rand + "" : rand;
 }
+/**
+ * Check if brush is empty
+ * @param {object} ctx Bursh context
+ * @returns {boolean}
+ * @private
+ */
+
 
 function brushEmpty(ctx) {
   var selection = getBrushSelection(ctx);
   return !selection || selection[0] === selection[1];
 }
+/**
+ * Extend target from source object
+ * @param {object} target Target object
+ * @param {object} source Source object
+ * @returns {object}
+ * @private
+ */
+
 
 function extend(target, source) {
   // exclude name with only numbers
@@ -1365,8 +1459,8 @@ function extend(target, source) {
 }
 /**
  * Return first letter capitalized
- * @param {String} str
- * @return {String} capitalized string
+ * @param {string} str Target string
+ * @returns {string} capitalized string
  * @private
  */
 
@@ -1379,7 +1473,7 @@ var capitalize = function (str) {
 };
 /**
  * Convert to array
- * @param {Object} v
+ * @param {object} v Target to be converted
  * @returns {Array}
  * @private
  */
@@ -1403,8 +1497,8 @@ function getCssRules(styleSheets) {
 }
 /**
  * Gets the SVGMatrix of an SVGElement
- * @param {SVGElement} element
- * @return {SVGMatrix} matrix
+ * @param {SVGElement} node Target node
+ * @returns {SVGMatrix} matrix
  * @private
  */
 
@@ -1423,8 +1517,8 @@ function getTranslation(node) {
 }
 /**
  * Get unique value from array
- * @param {Array} data
- * @return {Array} Unique array value
+ * @param {Array} data Source data
+ * @returns {Array} Unique array value
  * @private
  */
 
@@ -1440,8 +1534,8 @@ function getUnique(data) {
 }
 /**
  * Merge array
- * @param {Array} arr
- * @return {Array}
+ * @param {Array} arr Source array
+ * @returns {Array}
  * @private
  */
 
@@ -1453,9 +1547,9 @@ function mergeArray(arr) {
 }
 /**
  * Merge object returning new object
- * @param {Object} target
- * @param {Object} objectN
- * @returns {Object} merged target object
+ * @param {object} target Target object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
  * @private
  */
 
@@ -1473,8 +1567,8 @@ function mergeObj(target) {
 /**
  * Sort value
  * @param {Array} data value to be sorted
- * @param {Boolean} isAsc true: asc, false: desc
- * @return {Number|String|Date} sorted date
+ * @param {boolean} isAsc true: asc, false: desc
+ * @returns {number|string|Date} sorted date
  * @private
  */
 
@@ -1494,9 +1588,9 @@ function sortValue(data, isAsc) {
 }
 /**
  * Get min/max value
- * @param {String} type 'min' or 'max'
+ * @param {string} type 'min' or 'max'
  * @param {Array} data Array data value
- * @retun {Number|Date|undefined}
+ * @returns {number|Date|undefined}
  * @private
  */
 
@@ -1509,9 +1603,9 @@ function getMinMax(type, data) {
 }
 /**
  * Get range
- * @param {Number} start Start number
- * @param {Number} end End number
- * @return {Array}
+ * @param {number} start Start number
+ * @param {number} end End number
+ * @returns {Array}
  * @private
  */
 
@@ -1574,9 +1668,9 @@ var emulateEvent = {
 };
 /**
  * Process the template  & return bound string
- * @param {String} tpl Template string
- * @param {Object} data Data value to be replaced
- * @return {String}
+ * @param {string} tpl Template string
+ * @param {object} data Data value to be replaced
+ * @returns {string}
  * @private
  */
 
@@ -1590,8 +1684,8 @@ function tplProcess(tpl, data) {
 /**
  * Get parsed date value
  * (It must be called in 'ChartInternal' context)
- * @param {Date|String|Number} date Value of date to be parsed
- * @return {Date}
+ * @param {Date|string|number} date Value of date to be parsed
+ * @returns {Date}
  * @private
  */
 
@@ -1607,7 +1701,7 @@ function parseDate(date) {
 }
 /**
  * Return if the current doc is visible or not
- * @return {boolean}
+ * @returns {boolean}
  * @private
  */
 
@@ -1617,7 +1711,9 @@ function isTabVisible() {
 }
 /**
  * Get the current input type
- * @return {String} "mouse" | "touch" | null
+ * @param {boolean} mouse Config value: interaction.inputType.mouse
+ * @param {boolean} touch Config value: interaction.inputType.touch
+ * @returns {string} "mouse" | "touch" | null
  * @private
  */
 

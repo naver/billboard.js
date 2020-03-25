@@ -15737,7 +15737,7 @@ function () {
    * Set custom data name.
    * @name data․names
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataName)
    * @example
@@ -15755,7 +15755,7 @@ function () {
    * If this option is specified, the element g for the data has an additional class that has the prefix 'bb-target-' (eg. bb-target-additional-data1-class).
    * @name data․classes
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @example
    * data: {
@@ -15788,7 +15788,7 @@ function () {
    * - step
    * @name data․type
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default line
    * @example
    * data: {
@@ -15803,7 +15803,7 @@ function () {
    * - **NOTE:** `radar` type can't be combined with other types.
    * @name data․types
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @example
    * data: {
@@ -15827,7 +15827,7 @@ function () {
    *  - `function(data1, data2) { ... }`: Array.sort compareFunction
    * @name data․order
    * @memberof Options
-   * @type {String|Function|null}
+   * @type {string|Function|null}
    * @default desc
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataOrder)
    * @example
@@ -15874,7 +15874,7 @@ function () {
    * Set color for each data.
    * @name data․colors
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @example
    * data: {
@@ -15894,7 +15894,7 @@ function () {
    * If true specified, all of data will be hidden. If multiple ids specified as an array, those will be hidden.
    * @name data․hide
    * @memberof Options
-   * @type {Boolean|Array}
+   * @type {boolean|Array}
    * @default false
    * @example
    * data: {
@@ -16026,7 +16026,7 @@ function () {
    * Load a CSV or JSON file from a URL. NOTE that this will not work if loading via the "file://" protocol as the most browsers will block XMLHTTPRequests.
    * @name data․url
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default undefined
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.LoadData)
    * @example
@@ -16041,7 +16041,7 @@ function () {
    * - **NOTE:** Should be used with `data.url` option
    * @name data․headers
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default undefined
    * @see https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest/setRequestHeader
    * @example
@@ -16195,7 +16195,7 @@ function () {
    *   - tsv
    * @name data․mimeType
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default csv
    * @example
    * data: {
@@ -16209,7 +16209,7 @@ function () {
    * - **NOTE:** Only for JSON object given as array.
    * @name data․keys
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default undefined
    * @example
    * data: {
@@ -16232,7 +16232,7 @@ function () {
    * - ex. Toggling all visible data to not be shown, unloading all current data, etc.
    * @name data․empty․label․text
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default ""
    * @example
    * data: {
@@ -16259,18 +16259,19 @@ function () {
    * Set color of the data values
    * @name color
    * @memberof Options
-   * @type {Object}
-   * @property {String|Object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
+   * @type {object}
+   * @property {object} color color object
+   * @property {string|object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
    * @property {Array} [color.pattern=[]] custom color pattern
    * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
    *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
    *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
    *    - `bb-colorize-pattern-red`
    *    - `bb-colorize-pattern-fff`
-   * @property {Object} [color.threshold] color threshold for gauge and tooltip color
-   * @property {String} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
+   * @property {object} [color.threshold] color threshold for gauge and tooltip color
+   * @property {string} [color.threshold.unit] If set to `value`, the threshold will be based on the data value. Otherwise it'll be based on equation of the `threshold.max` option value.
    * @property {Array} [color.threshold.values] Threshold values for each steps
-   * @property {Number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
+   * @property {number} [color.threshold.max=100] The base value to determine threshold step value condition. When the given value is 15 and max 10, then the value for threshold is `15*100/10`.
    * @example
    *  color: {
    *      pattern: ["#1f77b4", "#aec7e8", ...],
@@ -16347,13 +16348,14 @@ function () {
    * Interaction options
    * @name interaction
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
+   * @type {object}
+   * @property {object} interaction Intersection object
+   * @property {boolean} [interaction.enabled=true] Indicate if the chart should have interactions.<br>
    *     If `false` is set, all of interactions (showing/hiding tooltip, selection, mouse events, etc) will be disabled.
-   * @property {Boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
-   * @property {Boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
-   * @property {Boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
-   * @property {Boolean|Number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
+   * @property {boolean} [interaction.brighten=true] Make brighter for the selected area (ex. 'pie' type data selected area)
+   * @property {boolean} [interaction.inputType.mouse=true] enable or disable mouse interaction
+   * @property {boolean} [interaction.inputType.touch=true] enable or disable  touch interaction
+   * @property {boolean|number} [interaction.inputType.touch.preventDefault=false] enable or disable to call event.preventDefault on touchstart & touchmove event. It's usually used to prevent document scrolling.
    * @see [Demo: touch.preventDefault](https://naver.github.io/billboard.js/demo/#Interaction.PreventScrollOnTouch)
    * @example
    * interaction: {
@@ -16393,22 +16395,23 @@ function () {
    * Legend options
    * @name legend
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [legend.show=true] Show or hide legend.
-   * @property {Boolean} [legend.hide=false] Hide legend
+   * @type {object}
+   * @property {object} legend Legend object
+   * @property {boolean} [legend.show=true] Show or hide legend.
+   * @property {boolean} [legend.hide=false] Hide legend
    *  If true given, all legend will be hidden. If string or array given, only the legend that has the id will be hidden.
-   * @property {String|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
-   * @property {String|Function} [legend.contents.template=undefined] Set item's template.<br>
+   * @property {string|HTMLElement} [legend.contents.bindto=undefined] Set CSS selector or element reference to bind legend items.
+   * @property {string|Function} [legend.contents.template=undefined] Set item's template.<br>
    *  - If set `string` value, within template the 'color' and 'title' can be replaced using template-like syntax string:
    *    - {=COLOR}: data color value
    *    - {=TITLE}: data title value
    *  - If set `function` value, will pass following arguments to the given function:
-   *   - title {String}: data's id value
-   *   - color {String}: color string
+   *   - title {string}: data's id value
+   *   - color {string}: color string
    *   - data {Array}: data array
-   * @property {String} [legend.position=bottom] Change the position of legend.<br>
+   * @property {string} [legend.position=bottom] Change the position of legend.<br>
    *  Available values are: `bottom`, `right` and `inset` are supported.
-   * @property {Object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
+   * @property {object} [legend.inset={anchor: 'top-left',x: 10,y: 0,step: undefined}] Change inset legend attributes.<br>
    *  This option accepts object that has the keys `anchor`, `x`, `y` and `step`.
    *  - **anchor** decides the position of the legend:
    *   - top-left
@@ -16419,14 +16422,14 @@ function () {
    *   - set the position of the legend based on the anchor.
    *  - **step**:
    *   - defines the max step the legend has (e.g. If 2 set and legend has 3 legend item, the legend 2 columns).
-   * @property {Boolean} [legend.equally=false] Set to all items have same width size.
-   * @property {Boolean} [legend.padding=0] Set padding value
+   * @property {boolean} [legend.equally=false] Set to all items have same width size.
+   * @property {boolean} [legend.padding=0] Set padding value
    * @property {Function} [legend.item.onclick=undefined] Set click event handler to the legend item.
    * @property {Function} [legend.item.onover=undefined] Set mouse/touch over event handler to the legend item.
    * @property {Function} [legend.item.onout=undefined] Set mouse/touch out event handler to the legend item.
-   * @property {Number} [legend.item.tile.width=10] Set width of item tile element
-   * @property {Number} [legend.item.tile.height=10] Set height of item tile element
-   * @property {Boolean} [legend.usePoint=false] Whether to use custom points in legend.
+   * @property {number} [legend.item.tile.width=10] Set width of item tile element
+   * @property {number} [legend.item.tile.height=10] Set height of item tile element
+   * @property {boolean} [legend.usePoint=false] Whether to use custom points in legend.
    * @see [Demo: position](https://naver.github.io/billboard.js/demo/#Legend.LegendPosition)
    * @see [Demo: contents.template](https://naver.github.io/billboard.js/demo/#Legend.LegendTemplate1)
    * @see [Demo: usePoint](https://naver.github.io/billboard.js/demo/#Legend.usePoint)
@@ -16505,13 +16508,14 @@ function () {
    * Set title options
    * @name title
    * @memberof Options
-   * @type {Object}
-   * @property {String} [title.text] Title text. If contains `\n`, it's used as line break allowing multiline title.
-   * @property {Number} [title.padding.top=0] Top padding value.
-   * @property {Number} [title.padding.right=0] Right padding value.
-   * @property {Number} [title.padding.bottom=0] Bottom padding value.
-   * @property {Number} [title.padding.left=0] Left padding value.
-   * @property {String} [title.position=center] Available values are: 'center', 'right' and 'left'.
+   * @type {object}
+   * @property {object} title Title object
+   * @property {string} [title.text] Title text. If contains `\n`, it's used as line break allowing multiline title.
+   * @property {number} [title.padding.top=0] Top padding value.
+   * @property {number} [title.padding.right=0] Right padding value.
+   * @property {number} [title.padding.bottom=0] Bottom padding value.
+   * @property {number} [title.padding.left=0] Left padding value.
+   * @property {string} [title.position=center] Available values are: 'center', 'right' and 'left'.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Title.MultilinedTitle)
    * @example
    *  title: {
@@ -16552,13 +16556,14 @@ function () {
    * Tooltip options
    * @name tooltip
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [tooltip.show=true] Show or hide tooltip.
-   * @property {Boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
-   * @property {Boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
+   * @type {object}
+   * @property {object} tooltip Tooltip object
+   * @property {boolean} [tooltip.show=true] Show or hide tooltip.
+   * @property {boolean} [tooltip.doNotHide=false] Make tooltip keep showing not hiding on interaction.
+   * @property {boolean} [tooltip.grouped=true] Set if tooltip is grouped or not for the data points.
    *   - **NOTE:** The overlapped data points will be displayed as grouped even if set false.
-   * @property {Boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
-   * @property {String} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
+   * @property {boolean} [tooltip.linked=false] Set if tooltips on all visible charts with like x points are shown together when one is shown.
+   * @property {string} [tooltip.linked.name=""] Groping name for linked tooltip.<br>If specified, linked tooltip will be groped interacting to be worked only with the same name.
    * @property {Function} [tooltip.format.title] Set format for the title of tooltip.<br>
    *  Specified function receives x of the data point to show.
    * @property {Function} [tooltip.format.name] Set format for the name of each data in tooltip.<br>
@@ -16568,11 +16573,11 @@ function () {
    *  If undefined returned, the row of that value will be skipped.
    * @property {Function} [tooltip.position] Set custom position function for the tooltip.<br>
    *  This option can be used to modify the tooltip position by returning object that has top and left.
-   * @property {Function|Object} [tooltip.contents] Set custom HTML for the tooltip.<br>
+   * @property {Function|object} [tooltip.contents] Set custom HTML for the tooltip.<br>
    *  Specified function receives data, defaultTitleFormat, defaultValueFormat and color of the data point to show. If tooltip.grouped is true, data includes multiple data points.
-   * @property {String|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
+   * @property {string|HTMLElement} [tooltip.contents.bindto=undefined] Set CSS selector or element reference to bind tooltip.
    *  - **NOTE:** When is specified, will not be updating tooltip's position.
-   * @property {String} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
+   * @property {string} [tooltip.contents.template=undefined] Set tooltip's template.<br><br>
    *  Within template, below syntax will be replaced using template-like syntax string:
    *    - **{{ ... }}**: the doubly curly brackets indicate loop block for data rows.
    *    - **{=CLASS_TOOLTIP}**: default tooltip class name `bb-tooltip`.
@@ -16580,18 +16585,18 @@ function () {
    *    - **{=TITLE}**: title value.
    *    - **{=COLOR}**: data color.
    *    - **{=VALUE}**: data value.
-   * @property {Object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
+   * @property {object} [tooltip.contents.text=undefined] Set additional text content within data loop, using template syntax.
    *  - **NOTE:** It should contain `{ key: Array, ... }` value
    *    - 'key' name is used as substitution within template as '{=KEY}'
    *    - The value array length should match with the data length
-   * @property {Boolean} [tooltip.init.show=false] Show tooltip at the initialization.
-   * @property {Number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
-   * @property {Object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
+   * @property {boolean} [tooltip.init.show=false] Show tooltip at the initialization.
+   * @property {number} [tooltip.init.x=0] Set x Axis index to be shown at the initialization.
+   * @property {object} [tooltip.init.position={top: "0px",left: "50px"}] Set the position of tooltip at the initialization.
    * @property {Function} [tooltip.onshow] Set a callback that will be invoked before the tooltip is shown.
    * @property {Function} [tooltip.onhide] Set a callback that will be invoked before the tooltip is hidden.
    * @property {Function} [tooltip.onshown] Set a callback that will be invoked after the tooltip is shown
    * @property {Function} [tooltip.onhidden] Set a callback that will be invoked after the tooltip is hidden.
-   * @property {String|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
+   * @property {string|Function|null} [tooltip.order=null] Set tooltip data display order.<br><br>
    *  **Available Values:**
    *  - `desc`: In descending data value order
    *  - `asc`: In ascending data value order
@@ -16759,7 +16764,7 @@ function () {
    * We can show the data with non-index x values by this option. This option is required when the type of x axis is timeseries. If this option is set on category axis, the values of the data on the key will be used for category names.
    * @name data․x
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default undefined
    * @example
    * data: {
@@ -16773,7 +16778,7 @@ function () {
    * This option can be used if we want to show the data that has different x values.
    * @name data․xs
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @example
    * data: {
@@ -16789,7 +16794,7 @@ function () {
    * Set a format specifier to parse string specifed as x.
    * @name data․xFormat
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default %Y-%m-%d
    * @example
    * data: {
@@ -16814,7 +16819,7 @@ function () {
    * Set localtime format to parse x axis.
    * @name data․xLocaltime
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * data: {
@@ -16827,7 +16832,7 @@ function () {
    * Sort on x axis.
    * @name data․xSort
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * data: {
@@ -16857,7 +16862,7 @@ function () {
    * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
    * @name data․axes
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @example
    * data: {
@@ -16873,9 +16878,10 @@ function () {
    * Set labels options
    * @name data․labels
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [data.labels=false] Show or hide labels on each data points
-   * @property {Boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
+   * @type {object}
+   * @property {object} data Data object
+   * @property {boolean} [data.labels=false] Show or hide labels on each data points
+   * @property {boolean} [data.labels.centered=false] Centerize labels on `bar` shape. (**NOTE:** works only for 'bar' type)
    * @property {Function} [data.labels.format] Set formatter function for data labels.<br>
    * The formatter function receives 4 arguments such as v, id, i, j and it must return a string that will be shown as the label. The arguments are:<br>
    *  - `v` is the value of the data point where the label is shown.
@@ -16883,12 +16889,12 @@ function () {
    *  - `i` is the index of the data point where the label is shown.
    *  - `j` is the sub index of the data point where the label is shown.<br><br>
    * Formatter function can be defined for each data by specifying as an object and D3 formatter function can be set (ex. d3.format('$'))
-   * @property {String|Object} [data.labels.colors] Set label text colors.
-   * @property {Object} [data.labels.position] Set each dataset position, relative the original.
-   * @property {Number} [data.labels.position.x=0] x coordinate position, relative the original.
-   * @property {Number} [data.labels.position.y=0] y coordinate position, relative the original.
+   * @property {string|object} [data.labels.colors] Set label text colors.
+   * @property {object} [data.labels.position] Set each dataset position, relative the original.
+   * @property {number} [data.labels.position.x=0] x coordinate position, relative the original.
+   * @property {number} [data.labels.position.y=0] y coordinate position, relative the original.
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataLabel)
    * @see [Demo: label colors](https://naver.github.io/billboard.js/demo/#Data.DataLabelColors)
@@ -16944,13 +16950,13 @@ function () {
    * Define regions for each data.<br>
    * The values must be an array for each data and it should include an object that has `start`, `end` and `style`.
    * - The object type should be as:
-   *   - start {Number}: Start data point number. If not set, the start will be the first data point.
-   *   - [end] {Number}: End data point number. If not set, the end will be the last data point.
-   *   - [style.dasharray="2 2"] {Object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
+   *   - start {number}: Start data point number. If not set, the start will be the first data point.
+   *   - [end] {number}: End data point number. If not set, the end will be the last data point.
+   *   - [style.dasharray="2 2"] {object}: The first number specifies a distance for the filled area, and the second a distance for the unfilled area.
    * - **NOTE:** Currently this option supports only line chart and dashed style. If this option specified, the line will be dashed only in the regions.
    * @name data․regions
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {}
    * @example
    * data: {
@@ -16978,7 +16984,7 @@ function () {
    *   - Must have postive values
    * @name data․stack․normalize
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataStackNormalized)
    * @example
@@ -17005,7 +17011,7 @@ function () {
    * If this option is set true, we can select the data points and get/set its state of selection by API (e.g. select, unselect, selected).
    * @name data․selection․enabled
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataSelection)
    * @example
@@ -17022,7 +17028,7 @@ function () {
    * If this option set true, multiple data points that have same x value will be selected by one selection.
    * @name data․selection․grouped
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * data: {
@@ -17056,7 +17062,7 @@ function () {
    * If this option set true, multile data points can have the selected state at the same time. If false set, only one data point can have the selected state and the others will be unselected when the new data point is selected.
    * @name data․selection․multiple
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * data: {
@@ -17073,7 +17079,7 @@ function () {
    * - **NOTE:** If this option set true, scrolling on the chart will be disabled because dragging event will handle the event.
    * @name data․selection․draggable
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * data: {
@@ -17132,7 +17138,7 @@ function () {
    * Set clip-path attribute for x axis element
    * @name axis․x․clipPath
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo]()
    * @example
@@ -17145,7 +17151,7 @@ function () {
    * Show or hide x axis.
    * @name axis․x․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * axis: {
@@ -17164,7 +17170,7 @@ function () {
    * - indexed
    * @name axis․x․type
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default indexed
    * @see [Demo: indexed](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
    * @see [Demo: timeseries](https://naver.github.io/billboard.js/demo/#Chart.TimeseriesChart)
@@ -17183,7 +17189,7 @@ function () {
    * If true, treat x value as localtime. If false, convert to UTC internally.
    * @name axis․x․localtime
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * axis: {
@@ -17214,7 +17220,7 @@ function () {
    * centerize ticks on category axis.
    * @name axis․x․tick․centered
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -17231,7 +17237,7 @@ function () {
    * A function to format tick value. Format string is also available for timeseries data.
    * @name axis․x․tick․format
    * @memberof Options
-   * @type {Function|String}
+   * @type {Function|string}
    * @default undefined
    * @see [D3's time specifier](https://github.com/d3/d3-time-format#locale_format)
    * @example
@@ -17262,7 +17268,7 @@ function () {
    * We can change the number of ticks to be shown by axis.x.tick.culling.max.
    * @name axis․x․tick․culling
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default
    * - true for indexed axis and timeseries axis
    * - false for category axis
@@ -17281,7 +17287,7 @@ function () {
    * The number of tick texts will be adjusted to less than this value.
    * @name axis․x․tick․culling․max
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default 10
    * @example
    * axis: {
@@ -17301,7 +17307,7 @@ function () {
    * This option hides tick lines together with tick text. If this option is used on timeseries axis, the ticks position will be determined precisely and not nicely positioned (e.g. it will have rough second value).
    * @name axis․x․tick․count
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -17318,7 +17324,7 @@ function () {
    * Show or hide x axis tick line.
    * @name axis․x․tick․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
    * @example
@@ -17336,7 +17342,7 @@ function () {
    * Show or hide x axis tick text.
    * @name axis․x․tick․text․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
    * @example
@@ -17356,7 +17362,7 @@ function () {
    * Set the x Axis tick text's position relatively its original position
    * @name axis․x․tick․text․position
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {x: 0, y:0}
    * @example
    * axis: {
@@ -17383,7 +17389,7 @@ function () {
    * - **false**: ticks will be positioned according to x value of the data points.
    * @name axis․x․tick․fit
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickFitting)
    * @see [Demo: for timeseries zoom](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickTimeseries)
@@ -17431,7 +17437,7 @@ function () {
    *   - axis.x.tick.fit=true
    * @name axis․x․tick․autorotate
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickAutorotate)
    * @example
@@ -17456,7 +17462,7 @@ function () {
    * - As long as `axis_x_tick_fit` is set to `true` it will calculate an overflow for the y2 axis and add this value to the right padding.
    * @name axis․x․tick․rotate
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default 0
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.RotateXAxisTickText)
    * @example
@@ -17474,7 +17480,7 @@ function () {
    * Show x axis outer tick.
    * @name axis․x․tick․outer
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * axis: {
@@ -17493,7 +17499,7 @@ function () {
    *  > When x tick text contains `\n`, it's used as line break and 'axis.x.tick.width' option is ignored.
    * @name axis․x․tick․multiline
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.XAxisTickMultiline)
    * @example
@@ -17523,7 +17529,7 @@ function () {
    *  > When x tick text contains `\n`, this option is ignored.
    * @name axis․x․tick․width
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default null
    * @example
    * axis: {
@@ -17541,7 +17547,7 @@ function () {
    * - **NOTE:** Only available for category axis type (`axis.x.type='category'`)
    * @name axis․x․tick․tooltip
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -17558,10 +17564,10 @@ function () {
    * Set max value of x axis range.
    * @name axis․x․max
    * @memberof Options
-   * @property {Number} max Set the max value
-   * @property {Boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
+   * @property {number} max Set the max value
+   * @property {boolean} [max.fit=false] When specified `max.value` is greater than the bound data value, setting `true` will make x axis max to be fitted to the bound data max value.
    * - **NOTE:** If the bound data max value is greater than the `max.value`, the x axis max will be limited as the given `max.value`.
-   * @property {Number} [max.value] Set the max value
+   * @property {number} [max.value] Set the max value
    * @example
    * axis: {
    *   x: {
@@ -17583,10 +17589,10 @@ function () {
    * Set min value of x axis range.
    * @name axis․x․min
    * @memberof Options
-   * @property {Number} min Set the min value
-   * @property {Boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
+   * @property {number} min Set the min value
+   * @property {boolean} [min.fit=false] When specified `min.value` is lower than the bound data value, setting `true` will make x axis min to be fitted to the bound data min value.
    * - **NOTE:** If the bound data min value is lower than the `min.value`, the x axis min will be limited as the given `min.value`.
-   * @property {Number} [min.value] Set the min value
+   * @property {number} [min.value] Set the min value
    * @example
    * axis: {
    *   x: {
@@ -17616,7 +17622,7 @@ function () {
    *     ex. the given value `1000*60*60*24`, which is numeric time equivalent of a day, is same as the width of 1 tick width
    * @name axis․x․padding
    * @memberof Options
-   * @type {Object|Number}
+   * @type {object|number}
    * @default {}
    * @example
    * axis: {
@@ -17643,7 +17649,7 @@ function () {
    * The height of x axis can be set manually by this option. If you need more space for x axis, please use this option for that. The unit is pixel.
    * @name axis․x․height
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -17707,7 +17713,7 @@ function () {
    *    - outer-bottom
    * @name axis․x․label
    * @memberof Options
-   * @type {String|Object}
+   * @type {string|object}
    * @default undefined
    * @example
    * axis: {
@@ -17736,7 +17742,7 @@ function () {
    * | Name | Type | Default | Description |
    * | --- | --- | --- | --- |
    * | domain | Array | - | Set the domain value |
-   * | tick.outer | Boolean | true | Show outer tick |
+   * | tick.outer | boolean | true | Show outer tick |
    * | tick.format | Function | - | Set formatter for tick text |
    * | tick.count | Number | - | Set the number of y axis ticks |
    * | tick.values | Array | - | Set tick values manually |
@@ -17781,7 +17787,7 @@ function () {
    * - **NOTE**: `clip-path` attribute for y Axis is set only when `axis.y.inner` option is true.
    * @name axis․y․clipPath
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * // don't set 'clip-path' attribute
@@ -17793,7 +17799,7 @@ function () {
    * Show or hide y axis.
    * @name axis․y․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * axis: {
@@ -17812,7 +17818,7 @@ function () {
    *   - indexed
    * @name axis․y․type
    * @memberof Options
-   * @type {String}
+   * @type {string}
    * @default undefined
    * @example
    * axis: {
@@ -17828,7 +17834,7 @@ function () {
    * - **NOTE:** Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
    * @name axis․y․max
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -17845,7 +17851,7 @@ function () {
    *   Padding will be added based on this value, so if you don't need the padding, please set axis.y.padding to disable it (e.g. axis.y.padding = 0).
    * @name axis․y․min
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -17861,7 +17867,7 @@ function () {
    * If true set, the direction will be from the top to the bottom.
    * @name axis․y․inverted
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -17876,7 +17882,7 @@ function () {
    * Set center value of y axis.
    * @name axis․y․center
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -17891,7 +17897,7 @@ function () {
    * Show y axis inside of the chart.
    * @name axis․y․inner
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -17907,7 +17913,7 @@ function () {
    * You can set y axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
    * @name axis․y․label
    * @memberof Options
-   * @type {String|Object}
+   * @type {string|object}
    * @default {}
    * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
    * @example
@@ -17954,7 +17960,7 @@ function () {
    * We can change the number of ticks to be shown by axis.y.tick.culling.max.
    * @name axis․y․tick․culling
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -17971,7 +17977,7 @@ function () {
    * The number of tick texts will be adjusted to less than this value.
    * @name axis․y․tick․culling․max
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default 5
    * @example
    * axis: {
@@ -17990,7 +17996,7 @@ function () {
    * Show y axis outer tick.
    * @name axis․y․tick․outer
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * axis: {
@@ -18031,7 +18037,7 @@ function () {
    * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
    * @name axis․y․tick․rotate
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default 0
    * @example
    * axis: {
@@ -18049,7 +18055,7 @@ function () {
    * - **NOTE:** The position of the ticks will be calculated precisely, so the values on the ticks will not be rounded nicely. In the case, axis.y.tick.format or axis.y.tick.values will be helpful.
    * @name axis․y․tick․count
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -18066,7 +18072,7 @@ function () {
    * Show or hide y axis tick line.
    * @name axis․y․tick․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
    * @example
@@ -18085,7 +18091,7 @@ function () {
    * - **NOTE:** Will be ignored if `axis.y.tick.count` or `axis.y.tick.values` options are set.
    * @name axis․y․tick․stepSize
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
    * @example
    * axis: {
@@ -18101,30 +18107,30 @@ function () {
   axis_y_tick_stepSize: null,
 
   /**
-  * Show or hide y axis tick text.
-  * @name axis․y․tick․text․show
-  * @memberof Options
-  * @type {Boolean}
-  * @default true
-  * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
-  * @example
-  * axis: {
-  *   y: {
-  *     tick: {
-  *       text: {
-  *           show: false
-  *       }
-  *     }
-  *   }
-  * }
-  */
+   * Show or hide y axis tick text.
+   * @name axis․y․tick․text․show
+   * @memberof Options
+   * @type {boolean}
+   * @default true
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
+   * @example
+   * axis: {
+   *   y: {
+   *     tick: {
+   *       text: {
+   *           show: false
+   *       }
+   *     }
+   *   }
+   * }
+   */
   axis_y_tick_text_show: !0,
 
   /**
    * Set the y Axis tick text's position relatively its original position
    * @name axis․y․tick․text․position
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {x: 0, y:0}
    * @example
    * axis: {
@@ -18151,7 +18157,8 @@ function () {
    * @name axis․y․tick․time
    * @memberof Options
    * @private
-   * @type {Object}
+   * @type {object}
+   * @property {object} time time object
    * @property {Function} [time.value] D3's time interval function (https://github.com/d3/d3-time#intervals)
    * @example
    * axis: {
@@ -18179,7 +18186,7 @@ function () {
    *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
    * @name axis․y․padding
    * @memberof Options
-   * @type {Object|Number}
+   * @type {object|number}
    * @default {}
    * @example
    * axis: {
@@ -18221,7 +18228,7 @@ function () {
    * | Name | Type | Default | Description |
    * | --- | --- | --- | --- |
    * | domain | Array | - | Set the domain value |
-   * | tick.outer | Boolean | true | Show outer tick |
+   * | tick.outer | boolean | true | Show outer tick |
    * | tick.format | Function | - | Set formatter for tick text |
    * | tick.count | Number | - | Set the number of y axis ticks |
    * | tick.values | Array | - | Set tick values manually |
@@ -18268,7 +18275,7 @@ function () {
    *   - If need to use 'y2' related options while y2 isn't visible, set the value `true` and control visibility by css display property.
    * @name axis․y2․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -18283,7 +18290,7 @@ function () {
    * Set max value of y2 axis.
    * @name axis․y2․max
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -18298,7 +18305,7 @@ function () {
    * Set min value of y2 axis.
    * @name axis․y2․min
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -18314,7 +18321,7 @@ function () {
    * If true set, the direction will be from the top to the bottom.
    * @name axis․y2․inverted
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -18329,7 +18336,7 @@ function () {
    * Set center value of y2 axis.
    * @name axis․y2․center
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -18344,7 +18351,7 @@ function () {
    * Show y2 axis inside of the chart.
    * @name axis․y2․inner
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -18360,7 +18367,7 @@ function () {
    * You can set y2 axis label and change its position by this option. This option works in the same way as [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label).
    * @name axis․y2․label
    * @memberof Options
-   * @type {String|Object}
+   * @type {string|object}
    * @default {}
    * @see [axis.x.label](#.axis%25E2%2580%25A4x%25E2%2580%25A4label) for position string value.
    * @example
@@ -18406,7 +18413,7 @@ function () {
    * We can change the number of ticks to be shown by axis.y.tick.culling.max.
    * @name axis․y2․tick․culling
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -18423,7 +18430,7 @@ function () {
    * The number of tick texts will be adjusted to less than this value.
    * @name axis․y2․tick․culling․max
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default 5
    * @example
    * axis: {
@@ -18442,7 +18449,7 @@ function () {
    * Show or hide y2 axis outer tick.
    * @name axis․y2․tick․outer
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @example
    * axis: {
@@ -18483,7 +18490,7 @@ function () {
    * - Applied when [`axis.rotated`](#.axis%25E2%2580%25A4rotated) option is `true`.
    * @name axis․y2․tick․rotate
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default 0
    * @example
    * axis: {
@@ -18501,7 +18508,7 @@ function () {
    * - **NOTE:** This works in the same way as axis.y.tick.count.
    * @name axis․y2․tick․count
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @default undefined
    * @example
    * axis: {
@@ -18518,7 +18525,7 @@ function () {
    * Show or hide y2 axis tick line.
    * @name axis․y2․tick․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
    * @example
@@ -18537,7 +18544,7 @@ function () {
    * - **NOTE:** Will be ignored if `axis.y2.tick.count` or `axis.y2.tick.values` options are set.
    * @name axis․y2․tick․stepSize
    * @memberof Options
-   * @type {Number}
+   * @type {number}
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.StepSizeForYAxis)
    * @example
    * axis: {
@@ -18556,7 +18563,7 @@ function () {
    * Show or hide y2 axis tick text.
    * @name axis․y2․tick․text․show
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default true
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Axis.HideTickLineText)
    * @example
@@ -18576,7 +18583,7 @@ function () {
    * Set the y2 Axis tick text's position relatively its original position
    * @name axis․y2․tick․text․position
    * @memberof Options
-   * @type {Object}
+   * @type {object}
    * @default {x: 0, y:0}
    * @example
    * axis: {
@@ -18607,7 +18614,7 @@ function () {
    *   - For area and bar type charts, [area.zerobased](#.area) or [bar.zerobased](#.bar) options should be set to 'false` to get padded bottom.
    * @name axis․y2․padding
    * @memberof Options
-   * @type {Object|Number}
+   * @type {object|number}
    * @default {}
    * @example
    * axis: {
@@ -18648,7 +18655,7 @@ function () {
    * | Name | Type | Default | Description |
    * | --- | --- | --- | --- |
    * | domain | Array | - | Set the domain value |
-   * | tick.outer | Boolean | true | Show outer tick |
+   * | tick.outer | boolean | true | Show outer tick |
    * | tick.format | Function | - | Set formatter for tick text |
    * | tick.count | Number | - | Set the number of y axis ticks |
    * | tick.values | Array | - | Set tick values manually |
@@ -21417,8 +21424,7 @@ function brush_brush(dim) {
 
 /**
  * Window object
- * @module
- * @ignore
+ * @private
  */
 
 /* eslint-disable no-new-func, no-undef */
@@ -21463,7 +21469,7 @@ var isValue = function (v) {
     isDefined = function (v) {
   return typeof v !== "undefined";
 },
-    isBoolean = function (v) {
+    isboolean = function (v) {
   return typeof v === "boolean";
 },
     ceil10 = function (v) {
@@ -21491,9 +21497,26 @@ var isValue = function (v) {
   return obj && !obj.nodeType && isObjectType(obj) && !isArray(obj);
 };
 
+/**
+ * Get specified key value from object
+ * If default value is given, will return if given key value not found
+ * @param {object} options Source object
+ * @param {string} key Key value
+ * @param {*} defaultValue Default value
+ * @returns {*}
+ * @private
+ */
 function getOption(options, key, defaultValue) {
   return isDefined(options[key]) ? options[key] : defaultValue;
 }
+/**
+ * Check if value exist in the given object
+ * @param {object} dict Target object to be checked
+ * @param {*} value Value to be checked
+ * @returns {boolean}
+ * @private
+ */
+
 
 function util_hasValue(dict, value) {
   var found = !1;
@@ -21505,7 +21528,7 @@ function util_hasValue(dict, value) {
  * Call function with arguments
  * @param {Function} fn Function to be called
  * @param {*} args Arguments
- * @return {Boolean} true: fn is function, false: fn is not function
+ * @returns {boolean} true: fn is function, false: fn is not function
  * @private
  */
 
@@ -21517,26 +21540,26 @@ function callFn(fn) {
 }
 /**
  * Call function after all transitions ends
- * @param {d3.transition} transition
- * @param {Fucntion} callback
+ * @param {d3.transition} transition Transition
+ * @param {Fucntion} cb Callback function
  * @private
  */
 
 
-function endall(transition, callback) {
+function endall(transition, cb) {
   var n = 0;
   transition.each(function () {
     return ++n;
   }).on("end", function () {
     for (var _len2 = arguments.length, args = Array(_len2), _key2 = 0; _key2 < _len2; _key2++) args[_key2] = arguments[_key2];
 
-    --n || callback.apply.apply(callback, [this].concat(args));
+    --n || cb.apply.apply(cb, [this].concat(args));
   });
 }
 /**
  * Replace tag sign to html entity
- * @param {String} str
- * @return {String}
+ * @param {string} str Target string value
+ * @returns {string}
  * @private
  */
 
@@ -21547,9 +21570,9 @@ function sanitise(str) {
 /**
  * Set text value. If there's multiline add nodes.
  * @param {d3Selection} node Text node
- * @param {String} text Text value string
+ * @param {string} text Text value string
  * @param {Array} dy dy value for multilined text
- * @param {Boolean} toMiddle To be alingned vertically middle
+ * @param {boolean} toMiddle To be alingned vertically middle
  * @private
  */
 
@@ -21568,7 +21591,13 @@ function setTextValue(node, text, dy, toMiddle) {
       });
     }
   }
-} // substitution of SVGPathSeg API polyfill
+}
+/**
+ * Substitution of SVGPathSeg API polyfill
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {Array}
+ * @private
+ */
 
 
 function getRectSegList(path) {
@@ -21603,6 +21632,13 @@ function getRectSegList(path) {
   } // seg3
   ];
 }
+/**
+ * Get svg bounding path box dimension
+ * @param {SVGGraphicsElement} path Target svg element
+ * @returns {object}
+ * @private
+ */
+
 
 function getPathBox(path) {
   var _path$getBoundingClie = path.getBoundingClientRect(),
@@ -21618,7 +21654,13 @@ function getPathBox(path) {
     width: width,
     height: height
   };
-} // return brush selection array
+}
+/**
+ * Return brush selection array
+ * @param {object} $el Selection object
+ * @returns {d3.brushSelection}
+ * @private
+ */
 
 
 function getBrushSelection(_ref) {
@@ -21627,12 +21669,25 @@ function getBrushSelection(_ref) {
       event = on_event,
       main = $el.subchart.main || $el.main;
   return event && event.type === "brush" ? selection = event.selection : main && (selection = main.select("." + config_classes.brush).node()) && (selection = brushSelection(selection)), selection;
-} // Get boundingClientRect. cache the evaluated value once it was called.
+}
+/**
+ * Get boundingClientRect.
+ * Cache the evaluated value once it was called.
+ * @param {HTMLElement} node Target element
+ * @returns {object}
+ * @private
+ */
 
 
 var getBoundingRect = function (node) {
   return node.rect || (node.rect = node.getBoundingClientRect());
-}; // retrun random number
+};
+/**
+ * Retrun random number
+ * @param {boolean} asStr Convert returned value as string
+ * @returns {number|string}
+ * @private
+ */
 
 
 function getRandom(asStr) {
@@ -21640,11 +21695,26 @@ function getRandom(asStr) {
   var rand = Math.random();
   return asStr ? rand + "" : rand;
 }
+/**
+ * Check if brush is empty
+ * @param {object} ctx Bursh context
+ * @returns {boolean}
+ * @private
+ */
+
 
 function brushEmpty(ctx) {
   var selection = getBrushSelection(ctx);
   return !selection || selection[0] === selection[1];
 }
+/**
+ * Extend target from source object
+ * @param {object} target Target object
+ * @param {object} source Source object
+ * @returns {object}
+ * @private
+ */
+
 
 function util_extend(target, source) {
   // exclude name with only numbers
@@ -21656,8 +21726,8 @@ function util_extend(target, source) {
 }
 /**
  * Return first letter capitalized
- * @param {String} str
- * @return {String} capitalized string
+ * @param {string} str Target string
+ * @returns {string} capitalized string
  * @private
  */
 
@@ -21670,7 +21740,7 @@ var capitalize = function (str) {
 };
 /**
  * Convert to array
- * @param {Object} v
+ * @param {object} v Target to be converted
  * @returns {Array}
  * @private
  */
@@ -21694,8 +21764,8 @@ function getCssRules(styleSheets) {
 }
 /**
  * Gets the SVGMatrix of an SVGElement
- * @param {SVGElement} element
- * @return {SVGMatrix} matrix
+ * @param {SVGElement} node Target node
+ * @returns {SVGMatrix} matrix
  * @private
  */
 
@@ -21714,8 +21784,8 @@ function getTranslation(node) {
 }
 /**
  * Get unique value from array
- * @param {Array} data
- * @return {Array} Unique array value
+ * @param {Array} data Source data
+ * @returns {Array} Unique array value
  * @private
  */
 
@@ -21731,8 +21801,8 @@ function getUnique(data) {
 }
 /**
  * Merge array
- * @param {Array} arr
- * @return {Array}
+ * @param {Array} arr Source array
+ * @returns {Array}
  * @private
  */
 
@@ -21744,9 +21814,9 @@ function mergeArray(arr) {
 }
 /**
  * Merge object returning new object
- * @param {Object} target
- * @param {Object} objectN
- * @returns {Object} merged target object
+ * @param {object} target Target object
+ * @param {object} objectN Source object
+ * @returns {object} merged target object
  * @private
  */
 
@@ -21764,8 +21834,8 @@ function mergeObj(target) {
 /**
  * Sort value
  * @param {Array} data value to be sorted
- * @param {Boolean} isAsc true: asc, false: desc
- * @return {Number|String|Date} sorted date
+ * @param {boolean} isAsc true: asc, false: desc
+ * @returns {number|string|Date} sorted date
  * @private
  */
 
@@ -21785,9 +21855,9 @@ function util_sortValue(data, isAsc) {
 }
 /**
  * Get min/max value
- * @param {String} type 'min' or 'max'
+ * @param {string} type 'min' or 'max'
  * @param {Array} data Array data value
- * @retun {Number|Date|undefined}
+ * @returns {number|Date|undefined}
  * @private
  */
 
@@ -21800,9 +21870,9 @@ function getMinMax(type, data) {
 }
 /**
  * Get range
- * @param {Number} start Start number
- * @param {Number} end End number
- * @return {Array}
+ * @param {number} start Start number
+ * @param {number} end End number
+ * @returns {Array}
  * @private
  */
 
@@ -21865,9 +21935,9 @@ var emulateEvent = {
 };
 /**
  * Process the template  & return bound string
- * @param {String} tpl Template string
- * @param {Object} data Data value to be replaced
- * @return {String}
+ * @param {string} tpl Template string
+ * @param {object} data Data value to be replaced
+ * @returns {string}
  * @private
  */
 
@@ -21881,8 +21951,8 @@ function tplProcess(tpl, data) {
 /**
  * Get parsed date value
  * (It must be called in 'ChartInternal' context)
- * @param {Date|String|Number} date Value of date to be parsed
- * @return {Date}
+ * @param {Date|string|number} date Value of date to be parsed
+ * @returns {Date}
  * @private
  */
 
@@ -21898,7 +21968,7 @@ function parseDate(date) {
 }
 /**
  * Return if the current doc is visible or not
- * @return {boolean}
+ * @returns {boolean}
  * @private
  */
 
@@ -21908,7 +21978,9 @@ function isTabVisible() {
 }
 /**
  * Get the current input type
- * @return {String} "mouse" | "touch" | null
+ * @param {boolean} mouse Config value: interaction.inputType.mouse
+ * @param {boolean} touch Config value: interaction.inputType.touch
+ * @returns {string} "mouse" | "touch" | null
  * @private
  */
 
@@ -21946,7 +22018,7 @@ function convertInputType(mouse, touch) {
    * Switch x and y axis position.
    * @name axis․rotated
    * @memberof Options
-   * @type {Boolean}
+   * @type {boolean}
    * @default false
    * @example
    * axis: {
@@ -21969,20 +22041,24 @@ function convertInputType(mouse, touch) {
    * Set related options
    * @name grid
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
-   * @property {Boolean} [x.show=false] Show grids along x axis.
+   * @type {object}
+   * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
+   * @property {object} x Grid x object
+   * @property {boolean} [x.show=false] Show grids along x axis.
    * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
    *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
    *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
-   * @property {Boolean} [y.show=false] Show grids along x axis.
+   * @property {object} y Grid y object
+   * @property {boolean} [y.show=false] Show grids along x axis.
    * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
    *  This option accepts array including object that has value, text, position and class.
-   * @property {Number} [y.ticks=10] Number of y grids to be shown.
-   * @property {Boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-   * @property {Boolean} [focus.show=true] Show grid line when focus.
-   * @property {Boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-   * @property {Boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
+   * @property {number} [y.ticks=10] Number of y grids to be shown.
+   * @property {object} focus Grid focus object
+   * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+   * @property {boolean} [focus.show=true] Show grid line when focus.
+   * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+   * @property {object} lines Grid lines object
+   * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
    * @default undefined
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
    * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
@@ -22045,16 +22121,17 @@ function convertInputType(mouse, touch) {
    * Set point options
    * @name point
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [point.show=true] Whether to show each point in line.
-   * @property {Number|Function} [point.r=2.5] The radius size of each point.
+   * @type {object}
+   * @property {object} point Point object
+   * @property {boolean} [point.show=true] Whether to show each point in line.
+   * @property {number|Function} [point.r=2.5] The radius size of each point.
    *  - **NOTE:** Disabled for 'bubble' type
-   * @property {Boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-   * @property {Number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
+   * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
+   * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
    *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
-   * @property {Number} [point.sensitivity=10] The senstivity value for interaction boundary.
-   * @property {Number} [point.select.r=point.r*4] The radius size of each point on selected.
-   * @property {String} [point.type="circle"] The type of point to be drawn
+   * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
+   * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
+   * @property {string} [point.type="circle"] The type of point to be drawn
    * - **NOTE:**
    *   - If chart has 'bubble' type, only circle can be used.
    *   - For IE, non circle point expansions are not supported due to lack of transform support.
@@ -22130,12 +22207,13 @@ function convertInputType(mouse, touch) {
    * Set subchart options
    * @name subchart
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
-   * @property {Boolean} [subchart.axis.x.show=true] Show or hide x axis.
-   * @property {Boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
-   * @property {Boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
-   * @property {Number} [subchart.size.height] Change the height of the subchart.
+   * @type {object}
+   * @property {object} subchart Subchart object
+   * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
+   * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
+   * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+   * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+   * @property {number} [subchart.size.height] Change the height of the subchart.
    * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
    *  Specified function receives the current zoomed x domain.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
@@ -22180,26 +22258,27 @@ function convertInputType(mouse, touch) {
    * Set zoom options
    * @name zoom
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [zoom.enabled=false] Enable zooming.
-   * @property {String} [zoom.enabled.type='wheel'] Set zoom interaction type.
+   * @type {object}
+   * @property {object} zoom Zoom object
+   * @property {boolean} [zoom.enabled=false] Enable zooming.
+   * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
    *  - **Available types:**
    *    - wheel
    *    - drag
-   * @property {Boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
+   * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
    *  If true set, y domain will be updated according to the zoomed region.
    * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
-   * @property {Number|Date} [zoom.x.min] Set x Axis minimum zoom range
-   * @property {Number|Date} [zoom.x.max] Set x Axis maximum zoom range
+   * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
+   * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
    * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
    *  Specified function receives the zoom event.
    * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
    *  Specified function receives the zoomed domain.
    * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
    *  Specified function receives the zoomed domain.
-   * @property {Boolean|Object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+   * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
    * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
-   * @property {String} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
+   * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
    * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
    * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
    * @example
@@ -22257,10 +22336,11 @@ function convertInputType(mouse, touch) {
    * Set area options
    * @name area
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
-   * @property {Boolean} [area.above=false] Set background area above the data chart line.
-   * @property {Boolean|Object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
+   * @type {object}
+   * @property {object} area Area object
+   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
+   * @property {boolean} [area.above=false] Set background area above the data chart line.
+   * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
    * Or customize by giving below object value:
    *  - x {Array}: `x1`, `x2` value
    *  - y {Array}: `y1`, `y2` value
@@ -22317,22 +22397,23 @@ function convertInputType(mouse, touch) {
    * Set bar options
    * @name bar
    * @memberof Options
-   * @type {Object}
-   * @property {Number} [bar.padding=0] The padding pixel value between each bar.
-   * @property {Number} [bar.radius] Set the radius of bar edge in pixel.
+   * @type {object}
+   * @property {object} bar Bar object
+   * @property {number} [bar.padding=0] The padding pixel value between each bar.
+   * @property {number} [bar.radius] Set the radius of bar edge in pixel.
    * - **NOTE:** Works only for non-stacked bar
-   * @property {Number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
-   * @property {Number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-   * @property {Number} [bar.width] Change the width of bar chart.
-   * @property {Number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
-   * @property {Number} [bar.width.max] The maximum width value for ratio.
-   * @property {Number} [bar.width.dataname] Change the width of bar for indicated dataset only.
+   * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
+   * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
+   * @property {number} [bar.width] Change the width of bar chart.
+   * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
+   * @property {number} [bar.width.max] The maximum width value for ratio.
+   * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
    * - **NOTE:**
    *   - Works only for non-stacked bar
    *   - Bars are centered accoding its total width value
-   * @property {Number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-   * @property {Number} [bar.width.dataname.max] The maximum width value for ratio.
-   * @property {Boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+   * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+   * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
+   * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
    * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
    * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
    * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
@@ -22394,9 +22475,10 @@ function convertInputType(mouse, touch) {
    * Set bubble options
    * @name bubble
    * @memberof Options
-   * @type {Object}
-   * @property {Number|Function} [bubble.maxR=35] Set the max bubble radius value
-   * @property {Boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
+   * @type {object}
+   * @property {object} bubble bubble object
+   * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
+   * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
    * @example
    *  bubble: {
    *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
@@ -22429,17 +22511,18 @@ function convertInputType(mouse, touch) {
    * Set line options
    * @name line
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
+   * @type {object}
+   * @property {object} line Line object
+   * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
    *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
    * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
-   * @property {Boolean} [line.step.type=step] Change step type for step chart.<br>
+   * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
    * **Available values:**
    * - step
    * - step-before
    * - step-after
-   * @property {Boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-   * @property {Boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
+   * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+   * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
    * @example
    *  line: {
    *      connectNull: true,
@@ -22501,8 +22584,10 @@ function convertInputType(mouse, touch) {
    *  - step-before (d3.curveStepBefore)
    * @name spline
    * @memberof Options
-   * @type {Object}
-   * @property {String} [spline.interpolation.type="cardinal"]
+   * @type {object}
+   * @property {object} spline Spline object
+   * @property {object} spline.interpolation Spline interpolation object
+   * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
    * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
    * @example
    *  spline: {
@@ -22527,18 +22612,19 @@ function convertInputType(mouse, touch) {
    * Set donut options
    * @name donut
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [donut.label.show=true] Show or hide label on each donut piece.
+   * @type {object}
+   * @property {object} donut Donut object
+   * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
    * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
-   * @property {Number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
-   * @property {Number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
-   * @property {Boolean} [donut.expand=true] Enable or disable expanding donut pieces.
-   * @property {Number} [donut.expand.rate=0.98] Set expand rate.
-   * @property {Number} [donut.expand.duration=50] Set expand transition time in ms.
-   * @property {Number} [donut.width] Set width of donut chart.
-   * @property {String} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
-   * @property {Number} [donut.padAngle=0] Set padding between data.
-   * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
+   * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+   * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+   * @property {number} [donut.expand.rate=0.98] Set expand rate.
+   * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
+   * @property {number} [donut.width] Set width of donut chart.
+   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+   * @property {number} [donut.padAngle=0] Set padding between data.
+   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
    * @example
    *  donut: {
    *      label: {
@@ -22606,25 +22692,26 @@ function convertInputType(mouse, touch) {
    * Set gauge options
    * @name gauge
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
-   * @property {Boolean} [gauge.label.show=true] Show or hide label on gauge.
+   * @type {object}
+   * @property {object} gauge Gauge object
+   * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
+   * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
    * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
    * @property {Function} [gauge.label.extents] Set customized min/max label text.
-   * @property {Boolean} [gauge.expand=true] Enable or disable expanding gauge.
-   * @property {Number} [gauge.expand.rate=0.98] Set expand rate.
-   * @property {Number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
-   * @property {Number} [gauge.min=0] Set min value of the gauge.
-   * @property {Number} [gauge.max=100] Set max value of the gauge.
-   * @property {Number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
-   * @property {String} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
-   * @property {String} [gauge.units] Set units of the gauge.
-   * @property {Number} [gauge.width] Set width of gauge chart.
-   * @property {String} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+   * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
+   * @property {number} [gauge.expand.rate=0.98] Set expand rate.
+   * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+   * @property {number} [gauge.min=0] Set min value of the gauge.
+   * @property {number} [gauge.max=100] Set max value of the gauge.
+   * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
+   * @property {string} [gauge.units] Set units of the gauge.
+   * @property {number} [gauge.width] Set width of gauge chart.
+   * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
    * **Available Values:**
    * - single
    * - multi
-   * @property {String} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+   * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
    * @example
    *  gauge: {
    *      fullCircle: false,
@@ -22693,18 +22780,20 @@ function convertInputType(mouse, touch) {
    * Set pie options
    * @name pie
    * @memberof Options
-   * @type {Object}
-   * @property {Boolean} [pie.label.show=true] Show or hide label on each pie piece.
+   * @type {object}
+   * @property {object} pie Pie object
+   * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
    * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-   * @property {Number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
-   * @property {Number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
-   * @property {Boolean|Object} [pie.expand=true] Enable or disable expanding pie pieces.
-   * @property {Number} [pie.expand.rate=0.98] Set expand rate.
-   * @property {Number} [pie.expand.duration=50] Set expand transition time in ms.
-   * @property {Number|Object} [pie.innerRadius=0] Sets the inner radius of pie arc.
-   * @property {Number} [pie.padAngle=0] Set padding between data.
-   * @property {Number} [pie.padding=0] Sets the gap between pie arcs.
-   * @property {Number} [donut.startingAngle=0] Set starting angle where data draws.
+   * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+   * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
+   * @property {number} [pie.expand.rate=0.98] Set expand rate.
+   * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
+   * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+   * @property {number} [pie.padAngle=0] Set padding between data.
+   * @property {number} [pie.padding=0] Sets the gap between pie arcs.
+   * @property {object} donut Donut object
+   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
    * @example
    *  pie: {
    *      label: {
@@ -22778,18 +22867,19 @@ function convertInputType(mouse, touch) {
    *  > When x tick text contains `\n`, it's used as line break.
    * @name radar
    * @memberof Options
-   * @type {Object}
-   * @property {Number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
-   * @property {Boolean} [radar.axis.line.show=true] Show or hide axis line.
-   * @property {Number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
-   * @property {NUmber} [radar.axis.text.position.y=0] y coordinate position, relative the original.
-   * @property {Boolean} [radar.axis.text.show=true] Show or hide axis text.
-   * @property {Boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
-   * @property {Number} [radar.level.depth=3] Set the level depth.
-   * @property {Boolean} [radar.level.show=true] Show or hide level.
+   * @type {object}
+   * @property {object} radar Radar object
+   * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
+   * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
+   * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+   * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
+   * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
+   * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
+   * @property {number} [radar.level.depth=3] Set the level depth.
+   * @property {boolean} [radar.level.show=true] Show or hide level.
    * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
-   * @property {Boolean} [radar.level.text.show=true] Show or hide level text.
-   * @property {Number} [radar.size.ratio=0.87] Set size ratio.
+   * @property {boolean} [radar.level.text.show=true] Show or hide level text.
+   * @property {number} [radar.size.ratio=0.87] Set size ratio.
    * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
    * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
    * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
@@ -22887,9 +22977,9 @@ var Options = function () {
      * - **NOTE:** In case of element doesn't exist or not specified, will add a `<div>` element to the body.
      * @name bindto
      * @memberof Options
-     * @property {String|HTMLElement|d3.selection} bindto=#chart Specify the element where chart will be drawn.
-     * @property {String|HTMLElement|d3.selection} bindto.element=#chart Specify the element where chart will be drawn.
-     * @property {String} [bindto.classname=bb] Specify the class name of bind element.<br>
+     * @property {string|HTMLElement|d3.selection|object} [bindto="#chart"] Specify the element where chart will be drawn.
+     * @property {string|HTMLElement|d3.selection} bindto.element="#chart" Specify the element where chart will be drawn.
+     * @property {string} [bindto.classname=bb] Specify the class name of bind element.<br>
      *     **NOTE:** When class name isn't `bb`, then you also need to update the default CSS to be rendered correctly.
      * @default #chart
      * @example
@@ -22913,9 +23003,10 @@ var Options = function () {
      * Set chart background.
      * @name background
      * @memberof Options
-     * @property {String} background.class Specify the class name for background element.
-     * @property {String} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
-     * @property {String} background.imgUrl Specify the image url string for background.
+     * @property {object} background background object
+     * @property {string} background.class Specify the class name for background element.
+     * @property {string} background.color Specify the fill color for background element.<br>**NOTE:** Will be ignored if `imgUrl` option is set.
+     * @property {string} background.imgUrl Specify the image url string for background.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.Background)
      * @example
      * background: {
@@ -22936,7 +23027,7 @@ var Options = function () {
      *  > Is to make chart element positioned over axis element.
      * @name clipPath
      * @memberof Options
-     * @type {Boolean}
+     * @type {boolean}
      * @default true
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.clipPath)
      * @example
@@ -22949,11 +23040,12 @@ var Options = function () {
      * Set svg element's class name
      * @name svg
      * @memberof Options
-     * @type {Object}
-     * @property {String} [svg.classname] class name for svg element
+     * @type {object}
+     * @property {object} [svg] svg object
+     * @property {string} [svg.classname] class name for svg element
      * @example
      * svg: {
-              *   classname: "test_class"
+     *   classname: "test_class"
      * }
      */
     svg_classname: undefined,
@@ -22963,14 +23055,15 @@ var Options = function () {
      * If value is not specified, the width of the chart will be calculated by the size of the parent element it's appended to.
      * @name size
      * @memberof Options
-     * @type {Object}
-     * @property {Number} [size.width] width of the chart element
-     * @property {Number} [size.height] height of the chart element
+     * @type {object}
+     * @property {object} [size] size object
+     * @property {number} [size.width] width of the chart element
+     * @property {number} [size.height] height of the chart element
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.ChartSize)
      * @example
      * size: {
-              *   width: 640,
-              *   height: 480
+     *   width: 640,
+     *   height: 480
      * }
      */
     size_width: undefined,
@@ -22980,17 +23073,18 @@ var Options = function () {
      * The padding of the chart element.
      * @name padding
      * @memberof Options
-     * @type {Object}
-     * @property {Number} [padding.top] padding on the top of chart
-     * @property {Number} [padding.right] padding on the right of chart
-     * @property {Number} [padding.bottom] padding on the bottom of chart
-     * @property {Number} [padding.left] padding on the left of chart
+     * @type {object}
+     * @property {object} [padding] padding object
+     * @property {number} [padding.top] padding on the top of chart
+     * @property {number} [padding.right] padding on the right of chart
+     * @property {number} [padding.bottom] padding on the bottom of chart
+     * @property {number} [padding.left] padding on the left of chart
      * @example
      * padding: {
-              *   top: 20,
-              *   right: 20,
-              *   bottom: 20,
-              *   left: 20
+     *   top: 20,
+     *   right: 20,
+     *   bottom: 20,
+     *   left: 20
      * }
      */
     padding_left: undefined,
@@ -23002,8 +23096,9 @@ var Options = function () {
      * Set chart resize options
      * @name resize
      * @memberof Options
-     * @type {Object}
-     * @property {Boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
+     * @type {object}
+     * @property {object} [resize] resize object
+     * @property {boolean} [resize.auto=true] Set chart resize automatically on viewport changes.
      * @example
      *  resize: {
      *      auto: false
@@ -23128,8 +23223,9 @@ var Options = function () {
      * - **NOTE:** If `0 `or `null` set, transition will be skipped. So, this makes initial rendering faster especially in case you have a lot of data.
      * @name transition
      * @memberof Options
-     * @type {Object}
-     * @property {Number} [transition.duration=350] duration in milliseconds
+     * @type {object}
+     * @property {object} [transition] transition object
+     * @property {number} [transition.duration=350] duration in milliseconds
      * @example
      * transition: {
      *    duration: 500
@@ -23141,8 +23237,9 @@ var Options = function () {
      * Set scatter options
      * @name scatter
      * @memberof Options
-     * @type {Object}
-     * @property {Boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
+     * @type {object}
+     * @property {object} [scatter] scatter object
+     * @property {boolean} [scatter.zerobased=false] Set if min or max value will be 0 on scatter chart.
      * @example
      *  scatter: {
      *      connectNull: true,
@@ -23181,9 +23278,10 @@ var Options = function () {
      * Control the render timing
      * @name render
      * @memberof Options
-     * @type {Object}
-     * @property {Boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
-     * @property {Boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
+     * @type {object}
+     * @property {object} [render] render object
+     * @property {boolean} [render.lazy=true] Make to not render at initialization (enabled by default when bind element's visibility is hidden).
+     * @property {boolean} [render.observe=true] Observe bind element's visibility(`display` or `visiblity` inline css property or class value) & render when is visible automatically (for IEs, only works IE11+). When set to **false**, call [`.flush()`](./Chart.html#flush) to render.
      * @see [Demo](https://naver.github.io/billboard.js/demo/#ChartOptions.LazyRender)
      * @example
      *  render: {
@@ -23253,11 +23351,12 @@ var Options = function () {
  * billboard.js project is licensed under the MIT license
  */
 
+
 /**
  * Constant for cache key
  * - NOTE: Prefixed with '$', will be resetted when .load() is called
+ * @private
  */
-
 var KEY = {
   bubbleBaseLength: "$baseLength",
   colorPattern: "__colorPattern__",
@@ -23280,9 +23379,10 @@ function () {
   return _proto.add =
   /**
    * Add cache
-   * @param {String} key
-   * @param {*} value
-   * @param {Boolean} isDataType
+   * @param {string} key Cache key
+   * @param {*} value Value to be stored
+   * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
+   * @returns {*} Added data value
    * @private
    */
   function add(key, value, isDataType) {
@@ -23290,7 +23390,7 @@ function () {
   }
   /**
    * Remove cache
-   * @param {String|Array} key
+   * @param {string|Array} key Cache key
    * @private
    */
   , _proto.remove = function remove(key) {
@@ -23302,9 +23402,9 @@ function () {
   }
   /**
    * Get cahce
-   * @param {String|Array} key
-   * @param {Boolean} isDataType
-   * @return {*}
+   * @param {string|Array} key Cache key
+   * @param {boolean} isDataType Weather the cache is data typed '{id:'data', id_org: 'data', values: [{x:0, index:0,...}, ...]}'
+   * @returns {*}
    * @private
    */
   , _proto.get = function get(key, isDataType) {
@@ -23317,15 +23417,23 @@ function () {
     return this.cache[key] || null;
   }
   /**
-   * reset cached data
-   * @param {Boolean} all true: reset all data, false: reset only '$' prefixed key data
+   * Reset cached data
+   * @param {boolean} all true: reset all data, false: reset only '$' prefixed key data
    * @private
-  	 */
+   */
   , _proto.reset = function reset(all) {
     var $$ = this;
 
     for (var x in $$.cache) (all || /^\$/.test(x)) && ($$.cache[x] = null);
-  }, _proto.cloneTarget = function cloneTarget(target) {
+  }
+  /**
+   * Clone data target object
+   * @param {object} target Data object
+   * @returns {object}
+   * @private
+   */
+  // eslint-disable-next-line camelcase
+  , _proto.cloneTarget = function cloneTarget(target) {
     return {
       id: target.id,
       id_org: target.id_org,
@@ -23352,21 +23460,24 @@ var generator_setTimeout = win.setTimeout,
     generator_clearTimeout = win.clearTimeout;
 /**
  * Generate resize queue function
+ * @returns {Fucntion}
  * @private
  */
 
 function generateResize() {
-  function callResizeFn() {
-    timeout && (generator_clearTimeout(timeout), timeout = null), timeout = generator_setTimeout(function () {
+  var timeout,
+      fn = [],
+      callResizeFn = function () {
+    callResizeFn.clear(), timeout = generator_setTimeout(function () {
       fn.forEach(function (f) {
         return f();
       });
     }, 200);
-  }
+  };
 
-  var timeout,
-      fn = [];
-  return callResizeFn.add = function (f) {
+  return callResizeFn.clear = function () {
+    timeout && (generator_clearTimeout(timeout), timeout = null);
+  }, callResizeFn.add = function (f) {
     return fn.push(f);
   }, callResizeFn.remove = function (f) {
     return fn.splice(fn.indexOf(f), 1);
@@ -23374,12 +23485,14 @@ function generateResize() {
 }
 /**
  * Generate transition queue function
+ * @returns {Function}
  * @private
  */
 
 function generateWait() {
   var transitionsToWait = [],
       f = function (t, callback) {
+    // eslint-disable-next-line
     function loop() {
       for (var tr, done = 0, i = 0; tr = transitionsToWait[i]; i++) {
         if (tr.empty()) {
@@ -25922,8 +26035,8 @@ function () {
   }
   /**
    * Compute a character dimension
-   * @param {d3.selection} node
-   * @return {{w: number, h: number}}
+   * @param {d3.selection} node <g class=tick> node
+   * @returns {{w: number, h: number}}
    * @private
    */
 
@@ -25950,7 +26063,8 @@ function () {
   }
   /**
    * Get tick transform setter function
-   * @param {String} id Axis id
+   * @param {string} id Axis id
+   * @returns {Function} transfrom setter function
    * @private
    */
   ;
@@ -26041,7 +26155,7 @@ function () {
   }
   /**
    * Create axis element
-   * @param {d3.selection} g
+   * @param {d3.selection} g Axis selection
    * @private
    */
 
@@ -26143,7 +26257,7 @@ function () {
   }
   /**
    * Get tick x/y coordinate
-   * @return {{x: number, y: number}}
+   * @returns {{x: number, y: number}}
    * @private
    */
   , _proto.getTickXY = function getTickXY() {
@@ -26156,8 +26270,8 @@ function () {
   }
   /**
    * Get tick size
-   * @param d
-   * @return {number}
+   * @param {object} d data object
+   * @returns {number}
    * @private
    */
   , _proto.getTickSize = function getTickSize(d) {
@@ -26171,9 +26285,8 @@ function () {
   }
   /**
    * Set tick's line & text position
-   * @param lineUpdate
-   * @param textUpdate
-   * @param scale
+   * @param {d3.selection} lineUpdate Line selection
+   * @param {d3.selection} textUpdate Text selection
    * @private
    */
   , _proto.setTickLineTextPosition = function setTickLineTextPosition(lineUpdate, textUpdate) {
@@ -26199,6 +26312,8 @@ function () {
     orient === "bottom" ? (lineUpdate.attr("x1", tickPos.x).attr("x2", tickPos.x).attr("y2", this.getTickSize.bind(this)), textUpdate.attr("x", 0).attr("y", yForText(rotate)).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "top" ? (lineUpdate.attr("x2", 0).attr("y2", -innerTickSize), textUpdate.attr("x", 0).attr("y", -yForText(rotate) * 2).style("text-anchor", textAnchorForText(rotate)).attr("transform", textTransform(rotate))) : orient === "left" ? (lineUpdate.attr("x2", -innerTickSize).attr("y1", tickPos.y).attr("y2", tickPos.y), textUpdate.attr("x", -tickLength).attr("y", tickOffset).style("text-anchor", "end")) : orient === "right" ? (lineUpdate.attr("x2", innerTickSize).attr("y2", 0), textUpdate.attr("x", tickLength).attr("y", 0).style("text-anchor", "start")) : void 0;
   } // this should be called only when category axis
   , _proto.splitTickText = function splitTickText(d, scale, ticks, isLeftRight, charWidth) {
+    // split given text by tick width size
+    // eslint-disable-next-line
     function split(splitted, text) {
       for (var subtext, spaceIndex, textWidth, i = 1; i < text.length; i++) // if text width gets over tick width, split by space index or current index
       if (text.charAt(i) === " " && (spaceIndex = i), subtext = text.substr(0, i + 1), textWidth = charWidth * subtext.length, tickWidth < textWidth) return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
@@ -26232,7 +26347,7 @@ function () {
   /**
    * Return tick's offset value.
    * The value will be set for 'category' axis type.
-   * @return {number}
+   * @returns {number}
    * @private
    */
   , _proto.tickOffset = function tickOffset() {
@@ -26241,8 +26356,8 @@ function () {
   /**
    * Get tick interval count
    * @private
-   * @param {Number} size Total data size
-   * @return {number}
+   * @param {number} size Total data size
+   * @returns {number}
    */
   , _proto.tickInterval = function tickInterval(size) {
     var interval;
@@ -26367,7 +26482,7 @@ function () {
   /**
    * Generate axes
    * It's used when axis' axes option is set
-   * @param {String} id Axis id
+   * @param {string} id Axis id
    * @private
    */
   , _proto.generateAxes = function generateAxes(id) {
@@ -26416,7 +26531,7 @@ function () {
   /**
    * Set Axis & tick values
    * called from: updateScales()
-   * @param {String} id Axis id string
+   * @param {string} id Axis id string
    * @param {Array} args Arguments
    * @private
    */
@@ -26581,7 +26696,7 @@ function () {
         chart = _$$$$el2.chart,
         currentTickMax = state.currentMaxTickWidths[id],
         maxWidth = 0;
-    if (withoutRecompute || !config["axis_" + id + "_show"]) return currentTickMax.size;
+    if (withoutRecompute || !config["axis_" + id + "_show"] || $$.filterTargetsToShow().length === 0) return currentTickMax.size;
 
     if (svg) {
       var isYAxis = /^y2?$/.test(id),
@@ -26643,8 +26758,8 @@ function () {
   }
   /**
    * Get x Axis padding
-   * @param {Number} tickCount Tick count
-   * @return {Object} Padding object values with 'left' & 'right' key
+   * @param {number} tickCount Tick count
+   * @returns {object} Padding object values with 'left' & 'right' key
    * @private
    */
   , _proto.getXAxisPadding = function getXAxisPadding(tickCount) {
@@ -26762,10 +26877,11 @@ function () {
   }
   /**
    * Redraw axis
-   * @param {Object} targetsToShow targets data to be shown
-   * @param {Object} wth
-   * @param {Ojbect} transitions
-   * @param {Object} flow
+   * @param {Array} targetsToShow targets data to be shown
+   * @param {object} wth option object
+   * @param {d3.Transition} transitions Transition object
+   * @param {object} flow flow object
+   * @param {boolean} isInit called from initialization
    * @private
    */
   , _proto.redrawAxis = function redrawAxis(targetsToShow, wth, transitions, flow, isInit) {
@@ -27030,9 +27146,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 /* harmony default export */ var data_convert = ({
   /**
    * Convert data according its type
-   * @param {Object} args data object
+   * @param {object} args data object
    * @param {Function} [callback] callback for url(XHR) type loading
-   * @return {Object}
+   * @returns {object}
    * @private
    */
   convertData: function convertData(args, callback) {
@@ -27046,10 +27162,10 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Convert URL data
-   * @param {String} url Remote URL
-   * @param {String} mimeType MIME type string: json | csv | tsv
-   * @param {Object} headers Header object
-   * @param {Object} keys Key object
+   * @param {string} url Remote URL
+   * @param {string} mimeType MIME type string: json | csv | tsv
+   * @param {object} headers Header object
+   * @param {object} keys Key object
    * @param {Function} done Callback function
    * @private
    */
@@ -27070,10 +27186,10 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Convert CSV/TSV data
-   * @param {Object} parser Parser object
-   * @param {Object} xsv Data
+   * @param {object} parser Parser object
+   * @param {object} xsv Data
    * @private
-   * @return {Object}
+   * @returns {object}
    */
   convertCsvTsvToData: function convertCsvTsvToData(parser, xsv) {
     var d,
@@ -27271,9 +27387,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Get index number based on given x Axis value
-   * @param {Date|Number|String} x x Axis to be compared
+   * @param {Date|number|string} x x Axis to be compared
    * @param {Array} basedX x Axis list to be based on
-   * @return {Number} index number
+   * @returns {number} index number
    * @private
    */
   getIndexByX: function getIndexByX(x, basedX) {
@@ -27365,8 +27481,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Get base value isAreaRangeType
-   * @param data Data object
-   * @return {Number}
+   * @param {object} data Data object
+   * @returns {number}
    * @private
    */
   getBaseValue: function getBaseValue(data) {
@@ -27380,7 +27496,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    * Get min/max value from the data
    * @private
    * @param {Array} data array data to be evaluated
-   * @return {{min: {Number}, max: {Number}}}
+   * @returns {{min: {number}, max: {number}}}
    */
   getMinMaxValue: function getMinMaxValue(data) {
     var min,
@@ -27400,7 +27516,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   /**
    * Get the min/max data
    * @private
-   * @return {{min: Array, max: Array}}
+   * @returns {{min: Array, max: Array}}
    */
   getMinMaxData: function getMinMaxData() {
     var $$ = this,
@@ -27431,7 +27547,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   /**
    * Get sum of data per index
    * @private
-   * @return {Array}
+   * @returns {Array}
    */
   getTotalPerIndex: function getTotalPerIndex() {
     var $$ = this,
@@ -27446,8 +27562,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Get total data sum
-   * @return {Number}
-  	 * @private
+   * @returns {number}
+   * @private
    */
   getTotalDataSum: function getTotalDataSum() {
     var $$ = this,
@@ -27470,9 +27586,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Get filtered data by value
-   * @param {Object} data
-   * @param {Number} value
-   * @return {Array} filtered array data
+   * @param {object} data Data
+   * @param {number} value Value to be filtered
+   * @returns {Array} filtered array data
    * @private
    */
   getFilteredDataByValue: function getFilteredDataByValue(data, value) {
@@ -27485,7 +27601,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Return the max length of the data
-   * @return {Number} max data length
+   * @returns {number} max data length
    * @private
    */
   getMaxDataCount: function getMaxDataCount() {
@@ -27622,8 +27738,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Sort targets data
-   * @param {Array} targetsValue
-   * @return {Array}
+   * @param {Array} targetsValue Target value
+   * @returns {Array}
    * @private
    */
   orderTargets: function orderTargets(targetsValue) {
@@ -27670,7 +27786,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   },
   hasDataLabel: function hasDataLabel() {
     var dataLabels = this.config.data_labels;
-    return isBoolean(dataLabels) && dataLabels || isObjectType(dataLabels) && notEmpty(dataLabels);
+    return isboolean(dataLabels) && dataLabels || isObjectType(dataLabels) && notEmpty(dataLabels);
   },
   getDataLabelLength: function getDataLabelLength(min, max, key) {
     var $$ = this,
@@ -27742,7 +27858,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   /**
    * Convert data for step type
    * @param {Array} values Object data values
-   * @return {Array}
+   * @returns {Array}
    * @private
    */
   convertValuesToStep: function convertValuesToStep(values) {
@@ -27817,10 +27933,10 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Get ratio value
-   * @param {String} type Ratio for given type
-   * @param {Object} d Data value object
-   * @param {Boolean} asPercent Convert the return as percent or not
-   * @return {Number} Ratio value
+   * @param {string} type Ratio for given type
+   * @param {object} d Data value object
+   * @param {boolean} asPercent Convert the return as percent or not
+   * @returns {number} Ratio value
    * @private
    */
   getRatio: function getRatio(type, d, asPercent) {
@@ -27950,8 +28066,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 /* harmony default export */ var interactions_interaction = ({
   /**
    * Handle data.onover/out callback options
-   * @param {Boolean} isOver
-   * @param {Number|Object} d
+   * @param {boolean} isOver Over or not
+   * @param {number|object} d data object
    * @private
    */
   setOverOut: function setOverOut(isOver, d) {
@@ -27986,7 +28102,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Call data.onover/out callback for touch event
-   * @param {Number|Object} d target index or data object for Arc type
+   * @param {number|object} d target index or data object for Arc type
    * @private
    */
   callOverOutForTouch: function callOverOutForTouch(d) {
@@ -27998,7 +28114,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Return draggable selection function
-   * @return {Function}
+   * @returns {Function}
    * @private
    */
   getDraggableSelection: function getDraggableSelection() {
@@ -28018,8 +28134,8 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   /**
    * Dispatch a mouse event.
    * @private
-   * @param {String} type event type
-   * @param {Number} index Index of eventRect
+   * @param {string} type event type
+   * @param {number} index Index of eventRect
    * @param {Array} mouse x and y coordinate value
    */
   dispatchEvent: function dispatchEvent(type, index, mouse) {
@@ -28172,9 +28288,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 /* harmony default export */ var category = ({
   /**
    * Category Name
+   * @param {number} i Index number
+   * @returns {string} category Name
    * @private
-   * @param {Number} index
-   * @returns {String} gategory Name
    */
   categoryName: function categoryName(i) {
     var categories = this.config.axis_x_categories;
@@ -28196,9 +28312,9 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
  * Set pattern's background color
  * (it adds a <rect> element to simulate bg-color)
  * @param {SVGPatternElement} pattern SVG pattern element
- * @param {String} color Color string
- * @param {String} id ID to be set
- * @return {{id: string, node: SVGPatternElement}}
+ * @param {string} color Color string
+ * @param {string} id ID to be set
+ * @returns {{id: string, node: SVGPatternElement}}
  * @private
  */
 
@@ -28217,7 +28333,7 @@ var colorizePattern = function (pattern, color, id) {
   /**
    * Get color pattern from CSS file
    * CSS should be defined as: background-image: url("#00c73c;#fa7171; ...");
-   * @return {Array}
+   * @returns {Array}
    * @private
    */
   getColorFromCss: function getColorFromCss() {
@@ -28289,8 +28405,8 @@ var colorizePattern = function (pattern, color, id) {
   /**
    * Set the data over color.
    * When is out, will restate in its previous color value
-   * @param {Boolean} isOver true: set overed color, false: restore
-   * @param {Number|Object} d target index or data object for Arc type
+   * @param {boolean} isOver true: set overed color, false: restore
+   * @param {number|object} d target index or data object for Arc type
    * @private
    */
   setOverColor: function setOverColor(isOver, d) {
@@ -28358,7 +28474,8 @@ var colorizePattern = function (pattern, color, id) {
 
   /**
    * Check if hidden targets bound to the given axis id
-   * @return {Boolean}
+   * @param {string} id ID to be checked
+   * @returns {boolean}
    * @private
    */
   isHiddenTargetWithYDomain: function isHiddenTargetWithYDomain(id) {
@@ -28510,6 +28627,14 @@ var colorizePattern = function (pattern, color, id) {
  */
 
 
+/**
+ * Get formatted
+ * @param {object} $$ Context
+ * @param {string} typeValue Axis type
+ * @param {number} v Value to be formatted
+ * @returns {number | string}
+ * @private
+ */
 function getFormat($$, typeValue, v) {
   var config = $$.config,
       type = "axis_" + typeValue + "_tick_format",
@@ -28577,8 +28702,8 @@ function getFormat($$, typeValue, v) {
   /**
    * Update legend element
    * @param {Array} targetIds ID's of target
-   * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-   * @param {Object} transitions Return value of the generateTransitions
+   * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+   * @param {object} transitions Return value of the generateTransitions
    * @private
    */
   updateLegend: function updateLegend(targetIds, options, transitions) {
@@ -28631,8 +28756,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update the size of the legend.
+   * @param {Obejct} size Size object
    * @private
-   * @param {Obejct} size S
    */
   updateSizeForLegend: function updateSizeForLegend(size) {
     var $$ = this,
@@ -28660,8 +28785,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Transform Legend
+   * @param {boolean} withTransition whether or not to transition.
    * @private
-   * @param {Boolean} whether or not to transition.
    */
   transformLegend: function transformLegend(withTransition) {
     var $$ = this,
@@ -28671,8 +28796,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update the legend step
+   * @param {number} step Step value
    * @private
-   * @param {Number} step
    */
   updateLegendStep: function updateLegendStep(step) {
     this.state.legendStep = step;
@@ -28680,27 +28805,27 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update legend item width
+   * @param {number} width Width value
    * @private
-   * @param {Number} width
    */
-  updateLegendItemWidth: function updateLegendItemWidth(w) {
-    this.state.legendItemWidth = w;
+  updateLegendItemWidth: function updateLegendItemWidth(width) {
+    this.state.legendItemWidth = width;
   },
 
   /**
    * Update legend item height
+   * @param {number} height Height value
    * @private
-   * @param {Number} height
    */
-  updateLegendItemHeight: function updateLegendItemHeight(h) {
-    this.state.legendItemHeight = h;
+  updateLegendItemHeight: function updateLegendItemHeight(height) {
+    this.state.legendItemHeight = height;
   },
 
   /**
    * Update legend item color
+   * @param {string} id Corresponding data ID value
+   * @param {string} color Color value
    * @private
-   * @param {String} id Corresponding data ID value
-   * @param {String} color Color value
    */
   updateLegendItemColor: function updateLegendItemColor(id, color) {
     this.$el.legend.select("." + config_classes.legendItem + "-" + id + " line").style("stroke", color);
@@ -28708,8 +28833,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get the width of the legend
+   * @returns {number} width
    * @private
-   * @return {Number} width
    */
   getLegendWidth: function getLegendWidth() {
     var $$ = this,
@@ -28724,7 +28849,7 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get the height of the legend
-   * @return {Number} height
+   * @returns {number} height
    * @private
    */
   getLegendHeight: function getLegendHeight() {
@@ -28739,9 +28864,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get the opacity of the legend
+   * @param {d3.selection} legendItem Legend item node
+   * @returns {string|null} opacity
    * @private
-   * @param {Object} d3.Select
-   * @returns {Number} opacity
    */
   opacityForLegend: function opacityForLegend(legendItem) {
     return legendItem.classed(config_classes.legendItemHidden) ? null : "1";
@@ -28749,9 +28874,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get the opacity of the legend that is unfocused
+   * @param {d3.selection} legendItem Legend item node
+   * @returns {string|null} opacity
    * @private
-   * @param {Object} legendItem, d3.Select
-   * @returns {Number} opacity
    */
   opacityForUnfocusedLegend: function opacityForUnfocusedLegend(legendItem) {
     return legendItem.classed(config_classes.legendItemHidden) ? null : "0.3";
@@ -28759,9 +28884,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Toggles the focus of the legend
+   * @param {Array} targetIds ID's of target
+   * @param {boolean} focus whether or not to focus.
    * @private
-   * @param {Array} ID's of target
-   * @param {Boolean} whether or not to focus.
    */
   toggleFocusLegend: function toggleFocusLegend(targetIds, focus) {
     var $$ = this,
@@ -28788,8 +28913,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Shows the legend
+   * @param {Array} targetIds ID's of target
    * @private
-   * @param {Array} ID's of target
    */
   showLegend: function showLegend(targetIds) {
     var $$ = this,
@@ -28802,8 +28927,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Hide the legend
+   * @param {Array} targetIds ID's of target
    * @private
-   * @param {Array} ID's of target
    */
   hideLegend: function hideLegend(targetIds) {
     var $$ = this,
@@ -28814,8 +28939,10 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get legend item textbox dimension
-   * @param {String} id
-   * @param {HTMLElement|d3.selection} textElement
+   * @param {string} id Data ID
+   * @param {HTMLElement|d3.selection} textElement Text node element
+   * @returns {object} Bounding rect
+   * @private
    */
   getLegendItemTextBox: function getLegendItemTextBox(id, textElement) {
     var data,
@@ -28827,8 +28954,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Set legend item style & bind events
+   * @param {d3.selection} item Item node
    * @private
-   * @param {d3.selection} item
    */
   setLegendItem: function setLegendItem(item) {
     var $$ = this,
@@ -28855,8 +28982,8 @@ function getFormat($$, typeValue, v) {
   /**
    * Update the legend
    * @param {Array} targetIds ID's of target
-   * @param {Object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
-  	 * @private
+   * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+   * @private
    */
   updateLegendElement: function updateLegendElement(targetIds, options) {
     var xForLegend,
@@ -29053,10 +29180,10 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Generate redraw list
-   * @param {Object} targets targets data to be shown
-   * @param {Object} flow
-   * @param {Object} duration
-   * @param {Boolean} withSubchart whether or not to show subchart
+   * @param {object} targets targets data to be shown
+   * @param {object} flow flow object
+   * @param {number} duration duration value
+   * @param {boolean} withSubchart whether or not to show subchart
    * @private
    */
   generateRedrawList: function generateRedrawList(targets, flow, duration, withSubchart) {
@@ -29153,11 +29280,11 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get x Axis scale function
-   * @param {Number} min
-   * @param {Number} max
-   * @param {Number} domain
+   * @param {number} min Min value
+   * @param {number} max Max value
+   * @param {Array} domain Domain value
    * @param {Function} offset The offset getter to be sum
-   * @return {Function} scale
+   * @returns {Function} scale
    * @private
    */
   getXScale: function getXScale(min, max, domain, offset) {
@@ -29168,10 +29295,10 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get y Axis scale function
-   * @param {Number} min
-   * @param {Number} max
-   * @param {Number} domain
-   * @return {Function} scale
+   * @param {number} min Min value
+   * @param {number} max Max value
+   * @param {Array} domain Domain value
+   * @returns {Function} Scale function
    * @private
    */
   getYScale: function getYScale(min, max, domain) {
@@ -29182,8 +29309,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get y Axis scale
-   * @param {String} id Axis id
-   * @param {Boolean} isSub Weather is sub Axis
+   * @param {string} id Axis id
+   * @param {boolean} isSub Weather is sub Axis
+   * @returns {Function} Scale function
    * @private
    */
   getYScaleById: function getYScaleById(id, isSub) {
@@ -29195,9 +29323,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get customized scale
-   * @param {d3.scaleLinear|d3.scaleTime} scaleValue
+   * @param {d3.scaleLinear|d3.scaleTime} scaleValue Scale function
    * @param {Function} offsetValue Offset getter to be sum
-   * @return {} scale
+   * @returns {Function} Scale function
    * @private
    */
   getCustomizedScale: function getCustomizedScale(scaleValue, offsetValue) {
@@ -29225,8 +29353,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update scale
+   * @param {boolean} isInit Param is given at the init rendering
+   * @param {boolean} updateXDomain If update x domain
    * @private
-   * @param {Boolean} isInit - param is given at the init rendering
    */
   updateScales: function updateScales(isInit, updateXDomain) {
     updateXDomain === void 0 && (updateXDomain = !0);
@@ -29272,7 +29401,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get the zoom or unzoomed scaled value
-   * @param {Date|Number|Object} d Data value
+   * @param {Date|number|object} d Data value
+   * @returns {number|null}
    * @private
    */
   xx: function xx(d) {
@@ -29335,8 +29465,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get Axis size according its position
-   * @param {String} id Axis id value - x, y or y2
-   * @return {number} size Axis size value
+   * @param {string} id Axis id value - x, y or y2
+   * @returns {number} size Axis size value
    * @private
    */
   getAxisSize: function getAxisSize(id) {
@@ -29381,12 +29511,13 @@ function getFormat($$, typeValue, v) {
         axesLen = config.axis_y2_axes.length,
         axisWidth = $$.getAxisWidthByAxisId("y2"),
         xAxisTickTextOverflow = withoutTickTextOverflow ? 0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
-    return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? defaultPadding + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? 2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
+    return padding = isValue(config.padding_right) ? config.padding_right + 1 : $$.axis && config.axis_rotated ? defaultPadding + legendWidthOnRight : $$.axis && (!config.axis_y2_show || config.axis_y2_inner) ? Math.max(2 + legendWidthOnRight + ($$.axis.getAxisLabelPosition("y2").isOuter ? 20 : 0), xAxisTickTextOverflow) : Math.max(ceil10(axisWidth) + legendWidthOnRight, xAxisTickTextOverflow), padding + axisWidth * axesLen;
   },
 
   /**
    * Get the parent rect element's size
-   * @param {String} key property/attribute name
+   * @param {string} key property/attribute name
+   * @returns {number}
    * @private
    */
   getParentRectValue: function getParentRectValue(key) {
@@ -29465,8 +29596,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get axis tick test rotate value
-   * @param {String} id
-   * @return {Number} rotate value
+   * @param {string} id Axis id
+   * @returns {number} rotate value
    * @private
    */
   getAxisTickRotate: function getAxisTickRotate(id) {
@@ -29476,9 +29607,6 @@ function getFormat($$, typeValue, v) {
         state = $$.state,
         $el = $$.$el,
         rotate = config["axis_" + id + "_tick_rotate"];
-    if (!$$.filterTargetsToShow($$.data.targets).length) // When data is hidden, it should maintain rotate value
-      // https://github.com/naver/billboard.js/issues/1278
-      return rotate;
 
     if (id === "x") {
       var isCategorized = axis.isCategorized(),
@@ -29493,6 +29621,7 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Check weather axis tick text needs to be rotated
+   * @returns {boolean}
    * @private
    */
   needToRotateXAxisTickTexts: function needToRotateXAxisTickTexts() {
@@ -29528,7 +29657,7 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update size values
-   * @param {Boolean} isInit If is called at initialization
+   * @param {boolean} isInit If is called at initialization
    * @private
    */
   updateSizes: function updateSizes(isInit) {
@@ -29605,8 +29734,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update chartText
+   * @param {object} targets $$.data.targets
    * @private
-   * @param {Object} $$.data.targets
    */
   updateTargetsForText: function updateTargetsForText(targets) {
     var $$ = this,
@@ -29622,8 +29751,8 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Update text
+   * @param {number} durationForExit Fade-out transition duration
    * @private
-   * @param {Number} Fade-out transition duration
    */
   updateText: function updateText(durationForExit) {
     var _this = this,
@@ -29653,8 +29782,9 @@ function getFormat($$, typeValue, v) {
    * Redraw chartText
    * @param {Function} x Positioning function for x
    * @param {Function} y Positioning function for y
-   * @param {Boolean} forFlow
-   * @param {Boolean} withTransition transition is enabled
+   * @param {boolean} forFlow Weather is flow
+   * @param {boolean} withTransition transition is enabled
+   * @returns {Array}
    * @private
    */
   redrawText: function redrawText(x, y, forFlow, withTransition) {
@@ -29670,10 +29800,10 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Gets the getBoundingClientRect value of the element
+   * @param {HTMLElement|d3.selection} element Target element
+   * @param {string} className Class name
+   * @returns {object} value of element.getBoundingClientRect()
    * @private
-   * @param {HTMLElement|d3.selection} element
-   * @param {String} className
-   * @returns {Object} value of element.getBoundingClientRect()
    */
   getTextRect: function getTextRect(element, className) {
     var $$ = this,
@@ -29689,9 +29819,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Gets the x or y coordinate of the text
-   * @param {Object} indices Indices values
-   * @param {Boolean} forX whether or not to x
-   * @returns {Number} coordinates
+   * @param {object} indices Indices values
+   * @param {boolean} forX whether or not to x
+   * @returns {number} coordinates
    * @private
    */
   generateXYForText: function generateXYForText(indices, forX) {
@@ -29709,11 +29839,11 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get centerized text position for bar type data.label.text
-   * @private
-   * @param {Object} d Data object
+   * @param {object} d Data object
    * @param {Array} points Data points position
    * @param {HTMLElement} textElement Data label text element
-   * @returns {Number} Position value
+   * @returns {number} Position value
+   * @private
    */
   getCenteredTextPos: function getCenteredTextPos(d, points, textElement) {
     var $$ = this,
@@ -29738,9 +29868,9 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Get data.labels.position value
-   * @param {String} id Data id value
-   * @param {String} type x | y
-   * @return {Number} Position value
+   * @param {string} id Data id value
+   * @param {string} type x | y
+   * @returns {number} Position value
    * @private
    */
   getTextPos: function getTextPos(id, type) {
@@ -29750,11 +29880,11 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Gets the x coordinate of the text
+   * @param {object} points Data points position
+   * @param {object} d Data object
+   * @param {HTMLElement} textElement Data label text element
+   * @returns {number} x coordinate
    * @private
-   * @param {Object} points
-   * @param {Object} data
-   * @param {HTMLElement} element
-   * @returns {Number} x coordinate
    */
   getXForText: function getXForText(points, d, textElement) {
     var xPos,
@@ -29775,11 +29905,11 @@ function getFormat($$, typeValue, v) {
 
   /**
    * Gets the y coordinate of the text
+   * @param {object} points Data points position
+   * @param {object} d Data object
+   * @param {HTMLElement} textElement Data label text element
+   * @returns {number} y coordinate
    * @private
-   * @param {Object} points
-   * @param {Object} data
-   * @param {HTMLElement} element
-   * @returns {Number} y coordinate
    */
   getYForText: function getYForText(points, d, textElement) {
     var yPos,
@@ -29806,10 +29936,10 @@ function getFormat($$, typeValue, v) {
   /**
    * Calculate if two or more text nodes are overlapping
    * Mark overlapping text nodes with "text-overlapping" class
+   * @param {string} id Axis id
+   * @param {ChartInternal} $$ ChartInternal context
+   * @param {string} selector Selector string
    * @private
-   * @param {number} id
-   * @param {ChartInternal} $$
-   * @param {string} selector
    */
   markOverlapped: function markOverlapped(id, $$, selector) {
     var textNodes = $$.$el.arcs.selectAll(selector),
@@ -29837,9 +29967,9 @@ function getFormat($$, typeValue, v) {
   /**
    * Calculate if two or more text nodes are overlapping
    * Remove "text-overlapping" class on selected text nodes
+   * @param {ChartInternal} $$ ChartInternal context
+   * @param {string} selector Selector string
    * @private
-   * @param {ChartInternal} $$
-   * @param {string} selector
    */
   undoMarkOverlapped: function undoMarkOverlapped($$, selector) {
     $$.$el.arcs.selectAll(selector).each(function () {
@@ -29856,9 +29986,9 @@ function getFormat($$, typeValue, v) {
 
 /**
  * Get the text position
- * @param {String} pos right, left or center
- * @param {Number} width chart width
- * @return {String|Number} text-anchor value or position in pixel
+ * @param {string} pos right, left or center
+ * @param {number} width chart width
+ * @returns {string|number} text-anchor value or position in pixel
  * @private
  */
 
@@ -29904,8 +30034,8 @@ function getTextPos(pos, width) {
 
   /**
    * Returns the x attribute value of the title
+   * @returns {number} x attribute value
    * @private
-   * @returns {Number} x attribute value
    */
   xForTitle: function xForTitle() {
     var x,
@@ -29919,8 +30049,8 @@ function getTextPos(pos, width) {
 
   /**
    * Returns the y attribute value of the title
+   * @returns {number} y attribute value
    * @private
-   * @returns {Number} y attribute value
    */
   yForTitle: function yForTitle() {
     var $$ = this;
@@ -29929,8 +30059,8 @@ function getTextPos(pos, width) {
 
   /**
    * Get title padding
+   * @returns {number} padding value
    * @private
-   * @returns {Number} padding value
    */
   getTitlePadding: function getTitlePadding() {
     var $$ = this;
@@ -29979,9 +30109,9 @@ function getTextPos(pos, width) {
 
   /**
    * Get the tooltip HTML string
-   * @param  {...any} args
+   * @param  {Array} args Arguments
+   * @returns {string} Formatted HTML string
    * @private
-   * @return {String} Formatted HTML string
    */
   getTooltipHTML: function getTooltipHTML() {
     var $$ = this,
@@ -29992,11 +30122,11 @@ function getTextPos(pos, width) {
 
   /**
    * Returns the tooltip content(HTML string)
-   * @param {Object} d data
+   * @param {object} d data
    * @param {Function} defaultTitleFormat Default title format
    * @param {Function} defaultValueFormat Default format for each data value in the tooltip.
    * @param {Function} color Color function
-   * @returns {String} html
+   * @returns {string} html
    * @private
    */
   getTooltipContent: function getTooltipContent(d, defaultTitleFormat, defaultValueFormat, color) {
@@ -30107,8 +30237,8 @@ function getTextPos(pos, width) {
 
   /**
    * Get the content template string
-   * @param {String} tplStr
-   * @return {String} Template string
+   * @param {string} tplStr Tempalte string
+   * @returns {Array} Template string
    * @private
    */
   getTooltipContentTemplate: function getTooltipContentTemplate(tplStr) {
@@ -30117,11 +30247,11 @@ function getTextPos(pos, width) {
 
   /**
    * Returns the position of the tooltip
-   * @param {Object} dataToShow data
-   * @param {String} tWidth Width value of tooltip element
-   * @param {String} tHeight Height value of tooltip element
-   * @param {HTMLElement} element
-   * @returns {Object} top, left value
+   * @param {object} dataToShow data
+   * @param {string} tWidth Width value of tooltip element
+   * @param {string} tHeight Height value of tooltip element
+   * @param {HTMLElement} element Tooltip element
+   * @returns {object} top, left value
    * @private
    */
   tooltipPosition: function tooltipPosition(dataToShow, tWidth, tHeight, element) {
@@ -30162,9 +30292,9 @@ function getTextPos(pos, width) {
 
   /**
    * Show the tooltip
+   * @param {object} selectedData Data object
+   * @param {HTMLElement} element Tooltip element
    * @private
-   * @param {Object} selectedData
-   * @param {HTMLElement} element
    */
   showTooltip: function showTooltip(selectedData, element) {
     var $$ = this,
@@ -30238,7 +30368,7 @@ function getTextPos(pos, width) {
 
   /**
    * Hide the tooltip
-   * @param {Boolean} force Force to hide
+   * @param {boolean} force Force to hide
    * @private
    */
   hideTooltip: function hideTooltip(force) {
@@ -30257,8 +30387,8 @@ function getTextPos(pos, width) {
 
   /**
    * Toggle display for linked chart instances
-   * @param {Boolean} show true: show, false: hide
-   * @param {Number} index x Axis index
+   * @param {boolean} show true: show, false: hide
+   * @param {number} index x Axis index
    * @private
    */
   _handleLinkedCharts: function _handleLinkedCharts(show, index) {
@@ -30340,7 +30470,11 @@ function getTextPos(pos, width) {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-// chart types
+
+/**
+ * Chart type constant
+ * @private
+ */
 var TYPE = {
   AREA: "area",
   AREA_LINE_RANGE: "area-line-range",
@@ -30357,7 +30491,11 @@ var TYPE = {
   SCATTER: "scatter",
   SPLINE: "spline",
   STEP: "step"
-}; // chart types by category
+};
+/**
+ * chart types by category
+ * @private
+ */
 
 var TYPE_BY_CATEGORY = {
   Area: [TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.AREA_STEP],
@@ -30386,6 +30524,7 @@ var TYPE_BY_CATEGORY = {
 
   /**
    * Updte current used chart types
+   * @private
    */
   updateTypes: function updateTypes() {
     var $$ = this,
@@ -30400,10 +30539,10 @@ var TYPE_BY_CATEGORY = {
 
   /**
    * Check if given chart types exists
-   * @param {String} type Chart type
+   * @param {string} type Chart type
    * @param {Array} targetsValue Data array
-   * @param {Boolean} checkFromData Force to check type cotains from data targets
-   * @return {Boolean}
+   * @param {boolean} checkFromData Force to check type cotains from data targets
+   * @returns {boolean}
    * @private
    */
   hasType: function hasType(type, targetsValue, checkFromData) {
@@ -30424,10 +30563,10 @@ var TYPE_BY_CATEGORY = {
 
   /**
    * Check if contains given chart types
-   * @parma {String} type Type key
-   * @param {Object} targets
+   * @param {string} type Type key
+   * @param {object} targets Target data
    * @param {Array} exclude Excluded types
-   * @return {boolean}
+   * @returns {boolean}
    * @private
    */
   hasTypeOf: function hasTypeOf(type, targets, exclude) {
@@ -30444,9 +30583,9 @@ var TYPE_BY_CATEGORY = {
 
   /**
    * Check if given data is certain chart type
-   * @param {Object} d Data object
-   * @param {String|Array} type chart type
-   * @return {Boolean}
+   * @param {object} d Data object
+   * @param {string|Array} type chart type
+   * @returns {boolean}
    * @private
    */
   isTypeOf: function isTypeOf(d, type) {
@@ -30461,9 +30600,9 @@ var TYPE_BY_CATEGORY = {
 
   /**
    * Check if contains arc types chart
-   * @param {Object} targets
+   * @param {object} targets Target data
    * @param {Array} exclude Excluded types
-   * @return {boolean}
+   * @returns {boolean}
    * @private
    */
   hasArcType: function hasArcType(targets, exclude) {
@@ -30530,8 +30669,8 @@ var TYPE_BY_CATEGORY = {
 
   /**
    * Get data adapt for data label showing
-   * @param {Object} d Data object
-   * @return {Array}
+   * @param {object} d Data object
+   * @returns {Array}
    * @private
    */
   labelishData: function labelishData(d) {
@@ -30553,10 +30692,9 @@ var TYPE_BY_CATEGORY = {
 
 /**
  * Set the min/max value
- * @param {Chart} $$
- * @param {String} type
- * @param {Object} value
- * @return {undefined}
+ * @param {Chart} $$ Chart instance
+ * @param {string} type Set type 'min' or 'max'
+ * @param {object} value Value to be set
  * @private
  */
 
@@ -30564,16 +30702,16 @@ function setMinMax($$, type, value) {
   var config = $$.config,
       axisY = "axis_y_" + type,
       axisY2 = "axis_y2_" + type;
-  return isDefined(value) && (isObjectType(value) ? (isValue(value.x) && (config["axis_x_" + type] = value.x), isValue(value.y) && (config[axisY] = value.y), isValue(value.y2) && (config[axisY2] = value.y2)) : (config[axisY] = value, config[axisY2] = value), $$.redraw({
+  isDefined(value) && (isObjectType(value) ? (isValue(value.x) && (config["axis_x_" + type] = value.x), isValue(value.y) && (config[axisY] = value.y), isValue(value.y2) && (config[axisY2] = value.y2)) : (config[axisY] = value, config[axisY2] = value), $$.redraw({
     withUpdateOrgXDomain: !0,
     withUpdateXDomain: !0
-  })), undefined;
+  }));
 }
 /**
  * Get the min/max value
- * @param {Chart} $$
- * @param {String} type
- * @return {{x, y, y2}}
+ * @param {Chart} $$ Chart instance
+ * @param {string} type Set type 'min' or 'max'
+ * @returns {{x, y, y2}}
  * @private
  */
 
@@ -30595,10 +30733,10 @@ function axis_getMinMax($$, type) {
 var api_axis_axis = {
   /**
    * Get and set axis labels.
-   * @method axis․labels
+   * @function axis․labels
    * @instance
    * @memberof Chart
-   * @param {Object} labels specified axis' label to be updated.
+   * @param {object} labels specified axis' label to be updated.
    * @example
    * // Update axis' label
    * chart.axis.labels({
@@ -30615,12 +30753,13 @@ var api_axis_axis = {
 
   /**
    * Get and set axis min value.
-   * @method axis․min
+   * @function axis․min
    * @instance
    * @memberof Chart
-   * @param {Object} min If min is given, specified axis' min value will be updated.<br>
+   * @param {object} min If min is given, specified axis' min value will be updated.<br>
    *     If no argument is given, the min values set on generating option for each axis will be returned.
    *     If not set any min values on generation, it will return `undefined`.
+   * @returns {object|undefined}
    * @example
    * // Update axis' min
    * chart.axis.min({
@@ -30636,12 +30775,13 @@ var api_axis_axis = {
 
   /**
    * Get and set axis max value.
-   * @method axis․max
+   * @function axis․max
    * @instance
    * @memberof Chart
-   * @param {Object} max If max is given, specified axis' max value will be updated.<br>
+   * @param {object} max If max is given, specified axis' max value will be updated.<br>
    *     If no argument is given, the max values set on generating option for each axis will be returned.
    *     If not set any max values on generation, it will return `undefined`.
+   * @returns {object|undefined}
    * @example
    * // Update axis' label
    * chart.axis.max({
@@ -30657,10 +30797,11 @@ var api_axis_axis = {
 
   /**
    * Get and set axis min and max value.
-   * @method axis․range
+   * @function axis․range
    * @instance
    * @memberof Chart
-   * @param {Object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+   * @param {object} range If range is given, specified axis' min and max value will be updated. If no argument is given, the current min and max values for each axis will be returned.
+   * @returns {object|undefined}
    * @example
    * // Update axis' label
    * chart.axis.range({
@@ -30696,11 +30837,12 @@ var api_axis_axis = {
 /* harmony default export */ var api_category = ({
   /**
    * Set specified category name on category axis.
-   * @method category
+   * @function category
    * @instance
    * @memberof Chart
-   * @param {Number} i index of category to be changed
-   * @param {String} category category value to be changed
+   * @param {number} i index of category to be changed
+   * @param {string} category category value to be changed
+   * @returns {string}
    * @example
    * chart.category(2, "Category 3");
    */
@@ -30712,10 +30854,11 @@ var api_axis_axis = {
 
   /**
    * Set category names on category axis.
-   * @method categories
+   * @function categories
    * @instance
    * @memberof Chart
    * @param {Array} categories This must be an array that includes category names in string. If category names are included in the date by data.x option, this is not required.
+   * @returns {Array}
    * @example
    * chart.categories([
    *      "Category 1", "Category 2", ...
@@ -30737,10 +30880,10 @@ var api_axis_axis = {
   /**
    * Flow data to the chart.<br><br>
    * By this API, you can append new data points to the chart.
-   * @method flow
+   * @function flow
    * @instance
    * @memberof Chart
-   * @param {Object} args The object can consist with following members:<br>
+   * @param {object} args The object can consist with following members:<br>
    *
    *    | Key | Type | Description |
    *    | --- | --- | --- |
@@ -30778,7 +30921,7 @@ var api_axis_axis = {
    *        ["data3", 100, 100, 300, 500]
    *      ],
    *      length: 2,
-      *      duration: 1500
+   *      duration: 1500
    *    });
    *  }
    * });
@@ -30860,20 +31003,22 @@ var api_axis_axis = {
  * billboard.js project is licensed under the MIT license
  */
 
+
 /**
  * Update x grid lines.
- * @method xgrids
+ * @function xgrids
  * @instance
  * @memberof Chart
  * @param {Array} grids X grid lines will be replaced with this argument. The format of this argument is the same as grid.x.lines.
+ * @returns {object}
  * @example
  *  // Show 2 x grid lines
  * chart.xgrids([
  *    {value: 1, text: "Label 1"},
  *    {value: 4, text: "Label 4"}
  * ]);
+ * // --> Returns: [{value: 1, text: "Label 1"}, {value: 4, text: "Label 4"}]
  */
-
 function xgrids(grids) {
   var $$ = this.internal,
       config = $$.config;
@@ -30884,10 +31029,11 @@ util_extend(xgrids, {
   /**
    * Add x grid lines.<br>
    * This API adds new x grid lines instead of replacing like xgrids.
-   * @method xgrids․add
+   * @function xgrids․add
    * @instance
    * @memberof Chart
-   * @param {Array|Object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
+   * @param {Array|object} grids New x grid lines will be added. The format of this argument is the same as grid.x.lines and it's possible to give an Object if only one line will be added.
+   * @returns {object}
    * @example
    *  // Add a new x grid line
    * chart.xgrids.add(
@@ -30907,10 +31053,10 @@ util_extend(xgrids, {
   /**
    * Remove x grid lines.<br>
    * This API removes x grid lines.
-   * @method xgrids․remove
+   * @function xgrids․remove
    * @instance
    * @memberof Chart
-   * @param {Object} params This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
+   * @param {object} params This argument should include value or class. If value is given, the x grid lines that have specified x value will be removed. If class is given, the x grid lines that have specified class will be removed. If args is not given, all of x grid lines will be removed.
    * @example
    * // x grid line on x = 2 will be removed
    * chart.xgrids.remove({value: 2});
@@ -30939,16 +31085,18 @@ util_extend(xgrids, {
 
 /**
  * Update y grid lines.
- * @method ygrids
+ * @function ygrids
  * @instance
  * @memberof Chart
  * @param {Array} grids Y grid lines will be replaced with this argument. The format of this argument is the same as grid.y.lines.
+ * @returns {object}
  * @example
  *  // Show 2 y grid lines
  * chart.ygrids([
  *    {value: 100, text: "Label 1"},
  *    {value: 400, text: "Label 4"}
  * ]);
+ * // --> Returns: [{value: 100, text: "Label 1"}, {value: 400, text: "Label 4"}]
  */
 
 function ygrids(grids) {
@@ -30961,10 +31109,11 @@ util_extend(ygrids, {
   /**
    * Add y grid lines.<br>
    * This API adds new y grid lines instead of replacing like ygrids.
-   * @method ygrids․add
+   * @function ygrids․add
    * @instance
    * @memberof Chart
-   * @param {Array|Object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
+   * @param {Array|object} grids New y grid lines will be added. The format of this argument is the same as grid.y.lines and it's possible to give an Object if only one line will be added.
+   * @returns {object}
    * @example
    *  // Add a new x grid line
    * chart.ygrids.add(
@@ -30984,10 +31133,10 @@ util_extend(ygrids, {
   /**
    * Remove y grid lines.<br>
    * This API removes x grid lines.
-   * @method ygrids․remove
+   * @function ygrids․remove
    * @instance
    * @memberof Chart
-   * @param {Object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
+   * @param {object} params This argument should include value or class. If value is given, the y grid lines that have specified y value will be removed. If class is given, the y grid lines that have specified class will be removed. If args is not given, all of y grid lines will be removed.
    * @example
    * // y grid line on y = 200 will be removed
    * chart.ygrids.remove({value: 200});
@@ -31017,11 +31166,11 @@ util_extend(ygrids, {
 /* harmony default export */ var api_group = ({
   /**
    * Update groups for the targets.
-   * @method groups
+   * @function groups
    * @instance
    * @memberof Chart
    * @param {Array} groups This argument needs to be an Array that includes one or more Array that includes target ids to be grouped.
-   * @return {Array} Grouped data names array
+   * @returns {Array} Grouped data names array
    * @example
    *  // data1 and data2 will be a new group.
    *  chart.groups([
@@ -31041,13 +31190,14 @@ util_extend(ygrids, {
  */
 
 
+
 /**
  * Update regions.
- * @method regions
+ * @function regions
  * @instance
  * @memberof Chart
  * @param {Array} regions Regions will be replaced with this argument. The format of this argument is the same as regions.
- * @return {Array} regions
+ * @returns {Array} regions
  * @example
  * // Show 2 regions
  * chart.regions([
@@ -31055,7 +31205,6 @@ util_extend(ygrids, {
  *    {axis: "y", end: 50, class: "regionY"}
  * ]);
  */
-
 function regions_regions(regions) {
   var $$ = this.internal,
       config = $$.config;
@@ -31066,11 +31215,11 @@ util_extend(regions_regions, {
   /**
    * Add new region.<br><br>
    * This API adds new region instead of replacing like regions.
-   * @method regions․add
+   * @function regions․add
    * @instance
    * @memberof Chart
-   * @param {Array|Object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
-   * @return {Array} regions
+   * @param {Array|object} regions New region will be added. The format of this argument is the same as regions and it's possible to give an Object if only one region will be added.
+   * @returns {Array} regions
    * @example
    * // Add a new region
    * chart.regions.add(
@@ -31092,11 +31241,11 @@ util_extend(regions_regions, {
   /**
    * Remove regions.<br><br>
    * This API removes regions.
-   * @method regions․remove
+   * @function regions․remove
    * @instance
    * @memberof Chart
-   * @param {Object} regions This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
-   * @return {Array} regions Removed regions
+   * @param {object} optionsValue This argument should include classes. If classes is given, the regions that have one of the specified classes will be removed. If args is not given, all of regions will be removed.
+   * @returns {Array} regions Removed regions
    * @example
    * // regions that have 'region-A' or 'region-B' will be removed.
    * chart.regions.remove({
@@ -31140,11 +31289,11 @@ util_extend(regions_regions, {
   /**
    * Get selected data points.<br><br>
    * By this API, you can get selected data points information. To use this API, data.selection.enabled needs to be set true.
-   * @method selected
+   * @function selected
    * @instance
    * @memberof Chart
-   * @param {String} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
-   * @return {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
+   * @param {string} [targetId] You can filter the result by giving target id that you want to get. If not given, all of data points will be returned.
+   * @returns {Array} dataPoint Array of the data points.<br>ex.) `[{x: 1, value: 200, id: "data1", index: 1, name: "data1"}, ...]`
    * @example
    *  // all selected data points will be returned.
    *  chart.selected();
@@ -31165,12 +31314,12 @@ util_extend(regions_regions, {
 
   /**
    * Set data points to be selected. (`[data.selection.enabled](Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled) option should be set true to use this method)`
-   * @method select
+   * @function select
    * @instance
    * @memberof Chart
-   * @param {String|Array} [ids] id value to get selected.
+   * @param {string|Array} [ids] id value to get selected.
    * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
-   * @param {Boolean} [resetOther] Unselect already selected.
+   * @param {boolean} [resetOther] Unselect already selected.
    * @example
    *  // select all data points
    *  chart.select();
@@ -31205,10 +31354,10 @@ util_extend(regions_regions, {
 
   /**
    * Set data points to be un-selected.
-   * @method unselect
+   * @function unselect
    * @instance
    * @memberof Chart
-   * @param {String|Array} [ids] id value to be unselected.
+   * @param {string|Array} [ids] id value to be unselected.
    * @param {Array} [indices] The index array of data points. If falsy value given, will select all data points.
    * @example
    *  // unselect all data points
@@ -31245,11 +31394,11 @@ util_extend(regions_regions, {
 /* harmony default export */ var api_x = ({
   /**
    * Get and set x values for the chart.
-   * @method x
+   * @function x
    * @instance
    * @memberof Chart
    * @param {Array} x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
-   * @return {Object} xs
+   * @returns {object} xs
    * @example
    *  // Get current x values
    *  chart.x();
@@ -31270,11 +31419,11 @@ util_extend(regions_regions, {
 
   /**
    * Get and set x values for the chart.
-   * @method xs
+   * @function xs
    * @instance
    * @memberof Chart
    * @param {Array} xs If xs is given, specified target's x values will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
-   * @return {Object} xs
+   * @returns {object} xs
    * @example
    *  // Get current x values
    *  chart.xs();
@@ -31669,8 +31818,9 @@ function defaultConstrain(transform, extent, translateExtent) {
 
 /**
  * Check if the given domain is within zoom range
- * @param {Array} domain
- * @return {Boolean}
+ * @param {Array} domain domain value
+ * @param {Array} range zoom range value
+ * @returns {boolean}
  * @private
  */
 
@@ -31686,11 +31836,11 @@ function withinRange(domain, range) {
  * - **NOTE:**
  *  - For `wheel` type zoom, the minimum zoom range will be set as the given domain. To get the initial state, [.unzoom()](#unzoom) should be called.
  *  - To be used [zoom.enabled](Options.html#.zoom) option should be set as `truthy`.
- * @method zoom
+ * @function zoom
  * @instance
  * @memberof Chart
  * @param {Array} domainValue If domain is given, the chart will be zoomed to the given domain. If no argument is given, the current zoomed domain will be returned.
- * @return {Array} domain value in array
+ * @returns {Array} domain value in array
  * @example
  *  // Zoom to specified domain
  *  chart.zoom([10, 20]);
@@ -31735,10 +31885,10 @@ var zoom_zoom = function (domainValue) {
 util_extend(zoom_zoom, {
   /**
    * Enable and disable zooming.
-   * @method zoom․enable
+   * @function zoom․enable
    * @instance
    * @memberof Chart
-   * @param {String|Boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
+   * @param {string|boolean} enabled Possible string values are "wheel" or "drag". If enabled is true, "wheel" will be used. If false is given, zooming will be disabled.<br>When set to false, the current zooming status will be reset.
    * @example
    *  // Enable zooming using the mouse wheel
    *  chart.zoom.enable(true);
@@ -31762,11 +31912,11 @@ util_extend(zoom_zoom, {
 
   /**
    * Set or get x Axis maximum zoom range value
-   * @method zoom․max
+   * @function zoom․max
    * @instance
    * @memberof Chart
-   * @param {Number} [max] maximum value to set for zoom
-   * @return {Number} zoom max value
+   * @param {number} [max] maximum value to set for zoom
+   * @returns {number} zoom max value
    * @example
    *  // Set maximum range value
    *  chart.zoom.max(20);
@@ -31780,11 +31930,11 @@ util_extend(zoom_zoom, {
 
   /**
    * Set or get x Axis minimum zoom range value
-   * @method zoom․min
+   * @function zoom․min
    * @instance
    * @memberof Chart
-   * @param {Number} [min] minimum value to set for zoom
-   * @return {Number} zoom min value
+   * @param {number} [min] minimum value to set for zoom
+   * @returns {number} zoom min value
    * @example
    *  // Set minimum range value
    *  chart.zoom.min(-1);
@@ -31798,11 +31948,11 @@ util_extend(zoom_zoom, {
 
   /**
    * Set zoom range
-   * @method zoom․range
+   * @function zoom․range
    * @instance
    * @memberof Chart
-   * @param {Object} [range]
-   * @return {Object} zoom range value
+   * @param {object} [range] zoom range
+   * @returns {object} zoom range value
    * {
    *   min: 0,
    *   max: 100
@@ -31833,7 +31983,7 @@ util_extend(zoom_zoom, {
 
   /**
    * Unzoom zoomed area
-   * @method unzoom
+   * @function unzoom
    * @instance
    * @memberof Chart
    * @example
@@ -31869,7 +32019,7 @@ util_extend(zoom_zoom, {
    * Called when dragging.
    * Data points can be selected.
    * @private
-   * @param {Object} mouse Object
+   * @param {object} mouse Object
    */
   drag: function drag(mouse) {
     var $$ = this,
@@ -31923,7 +32073,7 @@ util_extend(zoom_zoom, {
    * Called when the drag starts.
    * Adds and Shows the drag area.
    * @private
-   * @param {Object} mouse Object
+   * @param {object} mouse Object
    */
   dragstart: function dragstart(mouse) {
     var $$ = this,
@@ -31961,9 +32111,9 @@ util_extend(zoom_zoom, {
 /* harmony default export */ var interactions_flow = ({
   /**
    * Generate flow
-   * @param {Object} args
-   * @return {Function}
-      * @private
+   * @param {object} args option object
+   * @returns {Function}
+   * @private
    */
   generateFlow: function generateFlow(args) {
     var $$ = this,
@@ -31988,8 +32138,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Set flow list
-   * @param elements {Object} Target elements
-   * @param args {Object}
+   * @param {object} elements Target elements
+   * @param {object} args option object
    * @private
    */
   setFlowList: function setFlowList(elements, args) {
@@ -32017,8 +32167,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Clean up flow
-   * @param elements {Object} Target elements
-   * @param args {Object}
+   * @param {object} elements Target elements
+   * @param {object} args option object
    * @private
    */
   cleanUpFlow: function cleanUpFlow(elements, args) {
@@ -32066,11 +32216,11 @@ util_extend(zoom_zoom, {
 
   /**
    * Get flow transform value
-   * @param targets
-   * @param orgDataCount
-   * @param flowIndex
-   * @param flowLength
-   * @return {String}
+   * @param {object} targets target
+   * @param {number} orgDataCount original data count
+   * @param {number} flowIndex flow index
+   * @param {number} flowLength flow length
+   * @returns {string}
    * @private
    */
   getFlowTransform: function getFlowTransform(targets, orgDataCount, flowIndex, flowLength) {
@@ -32152,7 +32302,7 @@ util_extend(zoom_zoom, {
       }
     },
         preventDefault = config.interaction_inputType_touch.preventDefault,
-        isPrevented = isBoolean(preventDefault) && preventDefault || !1,
+        isPrevented = isboolean(preventDefault) && preventDefault || !1,
         preventThreshold = !isNaN(preventDefault) && preventDefault || null,
         preventEvent = function (event) {
       var eventType = event.type,
@@ -32179,8 +32329,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Updates the location and size of the eventRect.
+   * @param {object} eventRectUpdate d3.select(CLASS.eventRects) object.
    * @private
-   * @param {Object} d3.select(CLASS.eventRects) object.
    */
   updateEventRect: function updateEventRect(eventRectUpdate) {
     var x,
@@ -32286,9 +32436,9 @@ util_extend(zoom_zoom, {
   /**
    * Create eventRect for each data on the x-axis.
    * Register touch and drag events.
+   * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+   * @returns {object} d3.select(CLASS.eventRects) object.
    * @private
-   * @param {Object} d3.select(CLASS.eventRects) object.
-   * @returns {Object} d3.select(CLASS.eventRects) object.
    */
   generateEventRectsForSingleX: function generateEventRectsForSingleX(eventRectEnter) {
     var $$ = this,
@@ -32325,9 +32475,9 @@ util_extend(zoom_zoom, {
   /**
    * Create an eventRect,
    * Register touch and drag events.
+   * @param {object} eventRectEnter d3.select(CLASS.eventRects) object.
+   * @returns {object} d3.select(CLASS.eventRects) object.
    * @private
-   * @param {Object} d3.select(CLASS.eventRects) object.
-   * @returns {Object} d3.select(CLASS.eventRects) object.
    */
   generateEventRectsForMultipleXs: function generateEventRectsForMultipleXs(eventRectEnter) {
     var $$ = this,
@@ -32458,8 +32608,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Update sub chart
+   * @param {object} targets $$.data.targets
    * @private
-   * @param {Object} $$.data.targets
    */
   updateTargetsForSubchart: function updateTargetsForSubchart(targets) {
     var $$ = this,
@@ -32489,8 +32639,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Update the bar of the sub chart
+   * @param {object} durationForExit Transition duration
    * @private
-   * @param {Object} durationForExit
    */
   updateBarForSubchart: function updateBarForSubchart(durationForExit) {
     var $$ = this,
@@ -32500,10 +32650,10 @@ util_extend(zoom_zoom, {
 
   /**
    * Redraw the bar of the subchart
+   * @param {string} drawBarOnSub path in subchart line
+   * @param {boolean} withTransition whether or not to transition
+   * @param {number} duration transition duration
    * @private
-   * @param {String} path in subchart bar
-   * @param {Boolean} whether or not to transition.
-   * @param {Number} transition duration
    */
   redrawBarForSubchart: function redrawBarForSubchart(drawBarOnSub, withTransition, duration) {
     var bar = this.$el.subchart.bar;
@@ -32512,8 +32662,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Update the line of the sub chart
+   * @param {number} durationForExit Fade-out transition duration
    * @private
-   * @param {Number} Fade-out transition duration
    */
   updateLineForSubchart: function updateLineForSubchart(durationForExit) {
     var $$ = this,
@@ -32524,9 +32674,9 @@ util_extend(zoom_zoom, {
   /**
    * Redraw the line of the subchart
    * @private
-   * @param {String} path in subchart line
-   * @param {Boolean} whether or not to transition
-   * @param {Number} transition duration
+   * @param {string} drawLineOnSub path in subchart line
+   * @param {boolean} withTransition whether or not to transition
+   * @param {number} duration transition duration
    */
   redrawLineForSubchart: function redrawLineForSubchart(drawLineOnSub, withTransition, duration) {
     var line = this.$el.subchart.line;
@@ -32535,8 +32685,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Update the area of the sub chart
+   * @param {number} durationForExit Fade-out transition duration
    * @private
-   * @param {Number} Fade-out transition duration
    */
   updateAreaForSubchart: function updateAreaForSubchart(durationForExit) {
     var $$ = this,
@@ -32549,9 +32699,9 @@ util_extend(zoom_zoom, {
   /**
    * Redraw the area of the subchart
    * @private
-   * @param {String} path in subchart line
-   * @param {Boolean} whether or not to transition
-   * @param {Number} transition duration
+   * @param {string} drawAreaOnSub path in subchart line
+   * @param {boolean} withTransition whether or not to transition
+   * @param {number} duration transition duration
    */
   redrawAreaForSubchart: function redrawAreaForSubchart(drawAreaOnSub, withTransition, duration) {
     var area = this.$el.subchart.area;
@@ -32561,9 +32711,9 @@ util_extend(zoom_zoom, {
   /**
    * Redraw subchart.
    * @private
-   * @param {Boolean} withSubchart whether or not to show subchart
-   * @param {Number} duration duration
-   * @param {Object} shape Shape's info
+   * @param {boolean} withSubchart whether or not to show subchart
+   * @param {number} duration duration
+   * @param {object} shape Shape's info
    */
   redrawSubchart: function redrawSubchart(withSubchart, duration, shape) {
     var $$ = this,
@@ -32597,9 +32747,9 @@ util_extend(zoom_zoom, {
 
   /**
    * Transform context
+   * @param {boolean} withTransition indicates transition is enabled
+   * @param {object} transitions The return value of the generateTransitions method of Axis.
    * @private
-   * @param {Boolean} indicates transition is enabled
-   * @param {Object} The return value of the generateTransitions method of Axis.
    */
   transformContext: function transformContext(withTransition, transitions) {
     var subXAxis,
@@ -32610,8 +32760,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Get extent value
-   * @private
    * @returns {Array} default extent
+   * @private
    */
   getExtent: function getExtent() {
     var $$ = this,
@@ -32650,7 +32800,7 @@ util_extend(zoom_zoom, {
 
   /**
    * Bind zoom event
-   * @param {Boolean} bind Weather bind or unbound
+   * @param {boolean} bind Weather bind or unbound
    * @private
    */
   bindZoomEvent: function bindZoomEvent(bind) {
@@ -32680,7 +32830,7 @@ util_extend(zoom_zoom, {
 
     /**
      * Update scale according zoom transform value
-     * @param {Object} transform
+     * @param {object} transform transform object
      * @private
      */
     // @ts-ignore
@@ -32757,7 +32907,7 @@ util_extend(zoom_zoom, {
   /**
    * Get zoom domain
    * @returns {Array} zoom domain
-  	 * @private
+   * @private
    */
   getZoomDomain: function getZoomDomain() {
     var $$ = this,
@@ -32771,7 +32921,7 @@ util_extend(zoom_zoom, {
 
   /**
    * Update zoom
-   * @param {Boolean} force Force unzoom
+   * @param {boolean} force Force unzoom
    * @private
    */
   updateZoom: function updateZoom(force) {
@@ -32792,6 +32942,8 @@ util_extend(zoom_zoom, {
 
   /**
    * Attach zoom event on <rect>
+   * @param {d3.selection} eventRects evemt <rect> element
+   * @param {string} type zoom type
    * @private
    */
   bindZoomOnEventRect: function bindZoomOnEventRect(eventRects, type) {
@@ -32974,12 +33126,27 @@ var getGridTextAnchor = function (d) {
   return d.position === "start" ? 4 : d.position === "middle" ? 0 : -4;
 };
 
+/**
+ * Get grid text x value getter function
+ * @param {boolean} isX Is x Axis
+ * @param {number} width Width value
+ * @param {number} height Height value
+ * @returns {Function}
+ * @private
+ */
 function getGridTextX(isX, width, height) {
   return function (d) {
     var x = isX ? 0 : width;
     return d.position === "start" ? x = isX ? -height : 0 : d.position === "middle" && (x = (isX ? -height : width) / 2), x;
   };
 }
+/**
+ * Update coordinate attributes value
+ * @param {d3.selection} el Target node
+ * @param {string} type Type
+ * @private
+ */
+
 
 function smoothLines(el, type) {
   type === "grid" && el.each(function () {
@@ -33070,7 +33237,7 @@ function smoothLines(el, type) {
 
   /**
    * Update X Grid lines
-   * @param {Number} duration
+   * @param {number} duration Dration value
    * @private
    */
   updateXGridLines: function updateXGridLines(duration) {
@@ -33095,7 +33262,7 @@ function smoothLines(el, type) {
 
   /**
    * Update Y Grid lines
-   * @param {Number} duration
+   * @param {number} duration Duration value
    * @private
    */
   updateYGridLines: function updateYGridLines(duration) {
@@ -33148,7 +33315,7 @@ function smoothLines(el, type) {
 
   /**
    * Show grid focus line
-   * @param {Array} selectedData
+   * @param {Array} selectedData Selected data
    * @private
    */
   showGridFocus: function showGridFocus(selectedData) {
@@ -33339,10 +33506,10 @@ function smoothLines(el, type) {
 /* harmony default export */ var internals_selection = ({
   /**
    * Select a point
+   * @param {object} target Target point
+   * @param {object} d Data object
+   * @param {number} i Index number
    * @private
-   * @param {Object} target point
-   * @param {Object} data
-   * @param {Number} index
    */
   selectPoint: function selectPoint(target, d, i) {
     var $$ = this,
@@ -33362,10 +33529,10 @@ function smoothLines(el, type) {
 
   /**
    * Unelect a point
+   * @param {object} target Target point
+   * @param {object} d Data object
+   * @param {number} i Index number
    * @private
-   * @param {Object} target point
-   * @param {Object} data
-   * @param {Number} index
    */
   unselectPoint: function unselectPoint(target, d, i) {
     var $$ = this,
@@ -33377,11 +33544,11 @@ function smoothLines(el, type) {
 
   /**
    * Toggles the selection of points
+   * @param {boolean} selected whether or not to select.
+   * @param {object} target Target object
+   * @param {object} d Data object
+   * @param {number} i Index number
    * @private
-   * @param {Boolean} whether or not to select.
-   * @param {Object} target point
-   * @param {Object} data
-   * @param {Number} index
    */
   togglePoint: function togglePoint(selected, target, d, i) {
     var method = (selected ? "" : "un") + "selectPoint";
@@ -33390,9 +33557,9 @@ function smoothLines(el, type) {
 
   /**
    * Select a path
+   * @param {object} target Target path
+   * @param {object} d Data object
    * @private
-   * @param {Object} target path
-   * @param {Object} data
    */
   selectPath: function selectPath(target, d) {
     var $$ = this,
@@ -33405,8 +33572,8 @@ function smoothLines(el, type) {
   /**
    * Unelect a path
    * @private
-   * @param {Object} target path
-   * @param {Object} data
+   * @param {object} target Target path
+   * @param {object} d Data object
    */
   unselectPath: function unselectPath(target, d) {
     var $$ = this,
@@ -33418,11 +33585,11 @@ function smoothLines(el, type) {
 
   /**
    * Toggles the selection of lines
+   * @param {boolean} selected whether or not to select.
+   * @param {object} target Target object
+   * @param {object} d Data object
+   * @param {number} i Index number
    * @private
-   * @param {Boolean} whether or not to select.
-   * @param {Object} target shape
-   * @param {Object} data
-   * @param {Number} index
    */
   togglePath: function togglePath(selected, target, d, i) {
     this[(selected ? "" : "un") + "selectPath"](target, d, i);
@@ -33430,10 +33597,10 @@ function smoothLines(el, type) {
 
   /**
    * Returns the toggle method of the target
-   * @private
-   * @param {Object} target shape
-   * @param {Object} data
+   * @param {object} that shape
+   * @param {object} d Data object
    * @returns {Function} toggle method
+   * @private
    */
   getToggle: function getToggle(that, d) {
     var $$ = this;
@@ -33443,10 +33610,10 @@ function smoothLines(el, type) {
 
   /**
    * Toggles the selection of shapes
+   * @param {object} that shape
+   * @param {object} d Data object
+   * @param {number} i Index number
    * @private
-   * @param {Object} target shape
-   * @param {Object} data
-   * @param {Number} index
    */
   toggleShape: function toggleShape(that, d, i) {
     var toggledShape,
@@ -33642,7 +33809,7 @@ function smoothLines(el, type) {
   /**
    * Get user agent's computed value for the total length of the path in user units
    * https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/getTotalLength
-   * @return {Number}
+   * @returns {number}
    * @private
    */
   getBaseLength: function getBaseLength() {
@@ -33655,10 +33822,10 @@ function smoothLines(el, type) {
 
   /**
    * Get the radius value for bubble circle
-   * @param {Object} d
-   * @return {Number}
+   * @param {object} d Data object
+   * @returns {number}
    * @private
-  	 */
+   */
   getBubbleR: function getBubbleR(d) {
     var $$ = this,
         maxR = $$.config.bubble_maxR;
@@ -33673,9 +33840,9 @@ function smoothLines(el, type) {
 
   /**
    * Get bubble dimension data
-   * @param {Object|Array} d data value
-   * @param {String} type - y or z
-   * @return {Number}
+   * @param {object|Array} d data value
+   * @param {string} type - y or z
+   * @returns {number}
    * @private
    */
   getBubbleZData: function getBubbleZData(d, type) {
@@ -33684,8 +33851,8 @@ function smoothLines(el, type) {
 
   /**
    * Determine if bubble has dimension data
-   * @param {Object|array} d data value
-   * @return {Boolean}
+   * @param {object|Array} d data value
+   * @returns {boolean}
    * @private
    */
   isBubbleZType: function isBubbleZType(d) {
@@ -35551,7 +35718,7 @@ function ascending_sum(series) {
   /**
    * Get the curve interpolate
    * @param {Array} d Data object
-   * @return {Function}
+   * @returns {Function}
    * @private
    */
   getCurve: function getCurve(d) {
@@ -35766,9 +35933,9 @@ function ascending_sum(series) {
 
   /**
    * Generate area path data
-   * @param areaIndices
-   * @param isSub
-   * @return {function(*=): (*|string)}
+   * @param {object} areaIndices Indices
+   * @param {boolean} isSub Weather is sub axis
+   * @returns {Function}
    * @private
    */
   generateDrawArea: function generateDrawArea(areaIndices, isSub) {
@@ -36035,7 +36202,7 @@ var getTransitionName = function () {
         pointClass = !1;
     return (isObject(d) || circle) && (pointClass = d === !0 ? circle.each(function (d) {
       var className = $$.classCircle.bind($$)(d);
-      this.classList.contains(config_classes.EXPANDED) && (className += " " + config_classes.EXPANDED), this.setAttribute("class", className);
+      this.getAttribute("class").indexOf(config_classes.EXPANDED) > -1 && (className += " " + config_classes.EXPANDED), this.setAttribute("class", className);
     }) : $$.classCircle(d)), pointClass;
   },
   generatePoint: function generatePoint() {
@@ -36142,7 +36309,7 @@ var getTransitionName = function () {
 /* harmony default export */ var shape_shape = ({
   /**
    * Get the shape draw function
-   * @return {Object}
+   * @returns {object}
    * @private
    */
   getDrawShape: function getDrawShape() {
@@ -36203,9 +36370,9 @@ var getTransitionName = function () {
 
   /**
    * Get indices value based on data ID value
-   * @param {Object} indices Indices object
-   * @param {String} id Data id value
-   * @return {Object} Indices object
+   * @param {object} indices Indices object
+   * @param {string} id Data id value
+   * @returns {object} Indices object
    * @private
    */
   getIndices: function getIndices(indices, id) {
@@ -36215,8 +36382,8 @@ var getTransitionName = function () {
 
   /**
    * Get indices max number
-   * @param {Object} indices Indices object
-   * @return {Number} Max number
+   * @param {object} indices Indices object
+   * @returns {number} Max number
    * @private
    */
   getIndicesMax: function getIndicesMax(indices) {
@@ -36264,8 +36431,8 @@ var getTransitionName = function () {
 
   /**
    * Get Shape's offset data
-   * @param {function(Object): boolean} typeFilter
-   * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
+   * @param {Function} typeFilter Type filter function
+   * @returns {object}
    * @private
    */
   getShapeOffsetData: function getShapeOffsetData(typeFilter) {
@@ -36616,9 +36783,9 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
 
   /**
    * Get expand config value
-   * @param {String} id data ID
-   * @param {String} key config key: 'duration | rate'
-   * @return {Number}
+   * @param {string} id data ID
+   * @param {string} key config key: 'duration | rate'
+   * @returns {number}
    * @private
    */
   getExpandConfig: function getExpandConfig(id, key) {
@@ -36770,9 +36937,11 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
     });
   },
   bindArcEvent: function bindArcEvent(arc) {
+    // eslint-disable-next-line
     function selectArc(_this, arcData, id) {
       $$.expandArc(id), $$.api.focus(id), $$.toggleFocusLegend(id, !0), $$.showTooltip([arcData], _this);
-    }
+    } // eslint-disable-next-line
+
 
     function unselectArc(arcData) {
       var id = arcData && arcData.id || undefined;
@@ -36909,13 +37078,13 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
 
 /**
  * Get the position value
- * @param {Boolean} isClockwise If the direction is clockwise
- * @param {String} type Coordinate type 'x' or 'y'
- * @param {Number} edge Number of edge
- * @param {Number} pos The indexed position
- * @param {Number} range
- * @param {Number} ratio
- * @return {number}
+ * @param {boolean} isClockwise If the direction is clockwise
+ * @param {string} type Coordinate type 'x' or 'y'
+ * @param {number} edge Number of edge
+ * @param {number} pos The indexed position
+ * @param {number} range Range value
+ * @param {number} ratio Ratio value
+ * @returns {number}
  * @private
  */
 
@@ -37142,8 +37311,8 @@ var radar_cacheKey = KEY.radarPoints;
 
   /**
    * Get data point x coordinate
-   * @param {Object} d Data object
-   * @return {Number}
+   * @param {object} d Data object
+   * @returns {number}
    * @private
    */
   radarCircleX: function radarCircleX(d) {
@@ -37152,8 +37321,8 @@ var radar_cacheKey = KEY.radarPoints;
 
   /**
    * Get data point y coordinate
-   * @param {Object} d Data object
-   * @return {Number}
+   * @param {object} d Data object
+   * @returns {number}
    * @private
    */
   radarCircleY: function radarCircleY(d) {
@@ -37293,7 +37462,7 @@ function () {
   }
   /**
    * Initialize the rendering process
-   * @param {Boolean} forced Force to render process
+   * @param {boolean} forced Force to render process
    * @private
    */
   , _proto.initToRender = function initToRender(forced) {
@@ -37318,9 +37487,10 @@ function () {
     }
   }, _proto.initParams = function initParams() {
     var $$ = this,
-        config = $$.config,
-        format = $$.format,
-        state = $$.state,
+        _ref = $$,
+        config = _ref.config,
+        format = _ref.format,
+        state = _ref.state,
         isRotated = config.axis_rotated;
 
     if (state.datetimeId = "bb-" + +new Date(), $$.color = $$.generateColor(), $$.levelColor = $$.generateLevelColor(), $$.hasPointType() && ($$.point = $$.generatePoint()), state.hasAxis) {
@@ -37341,19 +37511,21 @@ function () {
   }, _proto.initWithData = function initWithData(data) {
     var $$ = this,
         config = $$.config,
+        scale = $$.scale,
         state = $$.state,
         $el = $$.$el,
-        _$$$scale2 = $$.scale,
-        x = _$$$scale2.x,
-        y = _$$$scale2.y,
-        y2 = _$$$scale2.y2,
-        subX = _$$$scale2.subX,
-        subY = _$$$scale2.subY,
-        subY2 = _$$$scale2.subY2,
         org = $$.org,
         hasAxis = state.hasAxis;
+    hasAxis && ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0);
+    // retrieve scale after the 'updateScales()' is called
+    var x = scale.x,
+        y = scale.y,
+        y2 = scale.y2,
+        subX = scale.subX,
+        subY = scale.subY,
+        subY2 = scale.subY2; // Set domains for each scale
 
-    if (hasAxis && ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0), x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
+    if (x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
       var isTouch = state.inputType === "touch";
       $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
         return callFn(config.onover, $$.api);
@@ -37456,7 +37628,7 @@ function () {
   }
   /**
    * Update targeted element with given data
-   * @param {Object} targets Data object formatted as 'target'
+   * @param {object} targets Data object formatted as 'target'
    * @private
    */
   , _proto.updateTargets = function updateTargets(targets) {
@@ -37498,8 +37670,9 @@ function () {
       isString(defVal) && (defVal = withOptions[defVal]), withOptions[key] = getOption(options, "with" + key, defVal);
     }), withOptions;
   }, _proto.initialOpacity = function initialOpacity(d) {
-    var withoutFadeIn = this.state.withoutFadeIn;
-    return this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? "1" : "0";
+    var $$ = this,
+        withoutFadeIn = $$.state.withoutFadeIn;
+    return $$.getBaseValue(d) !== null && withoutFadeIn[d.id] ? "1" : "0";
   }, _proto.bindResize = function bindResize() {
     var $$ = this,
         config = $$.config,
@@ -37517,7 +37690,8 @@ function () {
   }
   /**
    * Call plugin hook
-   * @param {String} phase The lifecycle phase
+   * @param {string} phase The lifecycle phase
+   * @param {Array} args Arguments
    * @private
    */
   , _proto.callPluginHook = function callPluginHook(phase) {
@@ -37538,12 +37712,12 @@ data_convert, ChartInternal_data_data, data_load, category, internals_class, int
  * billboard.js project is licensed under the MIT license
  */
 
+
 /**
  * Load configuration option
- * @param {Object} config User's generation config value
+ * @param {object} config User's generation config value
  * @private
  */
-
 function loadConfig(config) {
   var target,
       keys,
@@ -37565,14 +37739,13 @@ function loadConfig(config) {
  */
 
 
-
 /* harmony default export */ var api_chart = ({
   /**
    * Resize the chart.
-   * @method resize
+   * @function resize
    * @instance
    * @memberof Chart
-   * @param {Object} size This argument should include width and height in pixels.
+   * @param {object} size This argument should include width and height in pixels.
    * @example
    * // Resize to 640x480
    * chart.resize({
@@ -37589,19 +37762,19 @@ function loadConfig(config) {
 
   /**
    * Force to redraw.
-   * @method flush
+   * @function flush
    * @instance
    * @memberof Chart
-   * @param {Boolean} [soft] For soft redraw.
+   * @param {boolean} [soft] For soft redraw.
    * @example
    * chart.flush();
    *
    * // for soft redraw
    * chart.flush(true);
    */
-  flush: function flush(soft, _isFromResize) {
+  flush: function flush(soft) {
     var $$ = this.internal;
-    $$.state.rendered ? (_isFromResize ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.scale.zoom = null, soft ? $$.redraw({
+    $$.state.rendered ? (arguments[1] ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.scale.zoom = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,
@@ -37615,9 +37788,10 @@ function loadConfig(config) {
 
   /**
    * Reset the chart object and remove element and events completely.
-   * @method destroy
+   * @function destroy
    * @instance
    * @memberof Chart
+   * @returns {null}
    * @example
    * chart.destroy();
    */
@@ -37628,7 +37802,7 @@ function loadConfig(config) {
         chart = _$$$$el.chart,
         svg = _$$$$el.svg;
 
-    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), generateResize.timeout && win.clearTimeout(generateResize.timeout), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
+    return notEmpty($$) && ($$.callPluginHook("$willDestroy"), $$.charts.splice($$.charts.indexOf(this), 1), svg.select("*").interrupt(), $$.resizeFunction.clear(), win.removeEventListener("resize", $$.resizeFunction), chart.classed("bb", !1).html(""), Object.keys(this).forEach(function (key) {
       key === "internal" && Object.keys($$).forEach(function (k) {
         $$[k] = null;
       }), _this[key] = null, delete _this[key];
@@ -37637,13 +37811,14 @@ function loadConfig(config) {
 
   /**
    * Get or set single config option value.
-   * @method config
+   * @function config
    * @instance
    * @memberof Chart
-   * @param {String} name The option key name.
+   * @param {string} name The option key name.
    * @param {*} [value] The value accepted for indicated option.
-   * @param {Boolean} [redraw] Set to redraw with the new option changes.
+   * @param {boolean} [redraw] Set to redraw with the new option changes.
    * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+   * @returns {*}
    * @example
    * // Getter
    * chart.config("gauge.max");
@@ -37670,10 +37845,11 @@ function loadConfig(config) {
 /* harmony default export */ var api_color = ({
   /**
    * Get the color
-   * @method color
+   * @function color
    * @instance
    * @memberof Chart
-   * @param {String} id id to get the color
+   * @param {string} id id to get the color
+   * @returns {string}
    * @example
    * chart.color("data1");
    */
@@ -37688,13 +37864,14 @@ function loadConfig(config) {
  */
 
 
+
 /**
  * Get data loaded in the chart.
- * @method data
+ * @function data
  * @instance
  * @memberof Chart
- * @param {String|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
- * @return {Array} Data objects
+ * @param {string|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
+ * @returns {Array} Data objects
  * @example
  * // Get only data1 data
  * chart.data("data1");
@@ -37706,7 +37883,6 @@ function loadConfig(config) {
  * // Get all data
  * chart.data();
  */
-
 function api_data_data(targetIds) {
   var targets = this.internal.data.targets;
 
@@ -37725,11 +37901,11 @@ function api_data_data(targetIds) {
 util_extend(api_data_data, {
   /**
    * Get data shown in the chart.
-   * @method data․shown
+   * @function data․shown
    * @instance
    * @memberof Chart
-   * @param {String|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
-   * @return {Array} Data objects
+   * @param {string|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
+   * @returns {Array} Data objects
    * @example
    * // Get shown data by filtering to include only data1 data
    * chart.data.shown("data1");
@@ -37747,22 +37923,23 @@ util_extend(api_data_data, {
 
   /**
    * Get values of the data loaded in the chart.
-   * @method data․values
+   * @function data․values
    * @instance
    * @memberof Chart
-   * @param {String|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
-   * @return {Array} Data values
+   * @param {string|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+   * @param {boolean} [flat=true] Get flatten values
+   * @returns {Array} Data values
    * @example
    * // Get data1 values
    * chart.data.values("data1");
    * // --> [10, 20, 30, 40]
    */
-  values: function (targetId, flat) {
+  values: function (targetIds, flat) {
     flat === void 0 && (flat = !0);
     var values;
 
-    if (targetId) {
-      var targets = this.data(targetId);
+    if (targetIds) {
+      var targets = this.data(targetIds);
       targets && isArray(targets) && (values = [], targets.forEach(function (v) {
         var dataValue = v.values.map(function (d) {
           return d.value;
@@ -37776,11 +37953,11 @@ util_extend(api_data_data, {
 
   /**
    * Get and set names of the data loaded in the chart.
-   * @method data․names
+   * @function data․names
    * @instance
    * @memberof Chart
-   * @param {Object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
-   * @return {Object} Corresponding names according its key value, if specified names values.
+   * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+   * @returns {object} Corresponding names according its key value, if specified names values.
    * @example
    * // Get current names
    * chart.data.names();
@@ -37800,11 +37977,11 @@ util_extend(api_data_data, {
 
   /**
    * Get and set colors of the data loaded in the chart.
-   * @method data․colors
+   * @function data․colors
    * @instance
    * @memberof Chart
-   * @param {Object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
-   * @return {Object} Corresponding data color value according its key value.
+   * @param {object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
+   * @returns {object} Corresponding data color value according its key value.
    * @example
    * // Get current colors
    * chart.data.colors();
@@ -37823,11 +38000,11 @@ util_extend(api_data_data, {
   /**
    * Get and set axes of the data loaded in the chart.
    * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
-   * @method data․axes
+   * @function data․axes
    * @instance
    * @memberof Chart
-   * @param {Object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
-   * @return {Object} Corresponding axes value for data, if specified axes value.
+   * @param {object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
+   * @returns {object} Corresponding axes value for data, if specified axes value.
    * @example
    * // Get current axes
    * chart.data.axes();
@@ -37845,10 +38022,10 @@ util_extend(api_data_data, {
 
   /**
    * Get the minimum data value bound to the chart
-   * @method data․min
+   * @function data․min
    * @instance
    * @memberof Chart
-   * @return {Array} Data objects
+   * @returns {Array} Data objects
    * @example
    * // Get current axes
    * chart.data.min();
@@ -37860,10 +38037,10 @@ util_extend(api_data_data, {
 
   /**
    * Get the maximum data value bound to the chart
-   * @method data․max
+   * @function data․max
    * @instance
    * @memberof Chart
-   * @return {Array} Data objects
+   * @returns {Array} Data objects
    * @example
    * // Get current axes
    * chart.data.max();
@@ -37886,8 +38063,8 @@ util_extend(api_data_data, {
 
 /**
  * Encode to base64
- * @param {String} str
- * @return {String}
+ * @param {string} str string to be encoded
+ * @returns {string}
  * @private
  * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
  */
@@ -37899,9 +38076,9 @@ var b64EncodeUnicode = function (str) {
 };
 /**
  * Convert svg node to data url
- * @param {HTMLElement} node
- * @param {object} size
- * @return {String}
+ * @param {HTMLElement} node target node
+ * @param {object} size object containing {width, height}
+ * @returns {string}
  * @private
  */
 
@@ -37932,12 +38109,12 @@ function nodeToSvgDataUrl(node, size) {
    * - **NOTE:**
    *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
    *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
-   * @method export
+   * @function export
    * @instance
    * @memberof Chart
-   * @param {String} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+   * @param {string} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
    * @param {Function} [callback] The callback to be invoked when export is ready.
-   * @return {String} dataURI
+   * @returns {string} dataURI
    * @example
    *  chart.export();
    *  // --> "data:image/svg+xml;base64,PHN..."
@@ -37989,10 +38166,10 @@ function nodeToSvgDataUrl(node, size) {
   /**
    * This API highlights specified targets and fade out the others.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
-   * @method focus
+   * @function focus
    * @instance
    * @memberof Chart
-   * @param {String|Array} targetIdsValue Target ids to be highlighted.
+   * @param {string|Array} targetIdsValue Target ids to be highlighted.
    * @example
    *  // data1 will be highlighted and the others will be faded out
    *  chart.focus("data1");
@@ -38016,10 +38193,10 @@ function nodeToSvgDataUrl(node, size) {
   /**
    * This API fades out specified targets and reverts the others.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
-   * @method defocus
+   * @function defocus
    * @instance
    * @memberof Chart
-   * @param {String|Array} Target ids to be faded out.
+   * @param {string|Array} targetIdsValue Target ids to be faded out.
    * @example
    * // data1 will be faded out and the others will be reverted.
    * chart.defocus("data1");
@@ -38043,10 +38220,10 @@ function nodeToSvgDataUrl(node, size) {
   /**
    * This API reverts specified targets.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
-   * @method revert
+   * @function revert
    * @instance
    * @memberof Chart
-   * @param {String|Array} Target ids to be reverted
+   * @param {string|Array} targetIdsValue Target ids to be reverted
    * @example
    * // data1 will be reverted.
    * chart.revert("data1");
@@ -38083,10 +38260,10 @@ function nodeToSvgDataUrl(node, size) {
 var legend_legend = {
   /**
    * Show legend for each target.
-   * @method legend․show
+   * @function legend․show
    * @instance
    * @memberof Chart
-   * @param {String|Array} targetIds
+   * @param {string|Array} targetIds
    * - If targetIds is given, specified target's legend will be shown.
    * - If only one target is the candidate, String can be passed.
    * - If no argument is given, all of target's legend will be shown.
@@ -38109,10 +38286,10 @@ var legend_legend = {
 
   /**
    * Hide legend for each target.
-   * @method legend․hide
+   * @function legend․hide
    * @instance
    * @memberof Chart
-   * @param {String|Array} targetIds
+   * @param {string|Array} targetIds
    * - If targetIds is given, specified target's legend will be hidden.
    * - If only one target is the candidate, String can be passed.
    * - If no argument is given, all of target's legend will be hidden.
@@ -38151,10 +38328,10 @@ var legend_legend = {
    *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
    *   - done will be called after data loaded, but it's not after rendering.
    *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
-   * @method load
+   * @function load
    * @instance
    * @memberof Chart
-   * @param {Object} args The object can consist with following members:<br>
+   * @param {object} args The object can consist with following members:<br>
    *
    *    | Key | Description |
    *    | --- | --- |
@@ -38237,10 +38414,10 @@ var legend_legend = {
    * - <b>Note:</b>
    * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.<br>
    * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
-   * @method unload
+   * @function unload
    * @instance
    * @memberof Chart
-   * @param {Object} args
+   * @param {object} argsValue
    *  | key | Type | Description |
    *  | --- | --- | --- |
    *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
@@ -38282,6 +38459,9 @@ var legend_legend = {
 
 /**
  * Show/Hide data series
+ * @param {boolean} show Show or hide
+ * @param {Array} targetIdsValue Target id values
+ * @param {object} options Options
  * @private
  */
 
@@ -38303,15 +38483,15 @@ function showHide(show, targetIdsValue, options) {
 /* harmony default export */ var api_show = ({
   /**
    * Show data series on chart
-   * @method show
+   * @function show
    * @instance
    * @memberof Chart
-   * @param {String|Array} [targetIdsValue] The target id value.
-   * @param {Object} [options] The object can consist with following members:<br>
+   * @param {string|Array} [targetIdsValue] The target id value.
+   * @param {object} [options] The object can consist with following members:<br>
    *
    *    | Key | Type | default | Description |
    *    | --- | --- | --- | --- |
-   *    | withLegend | Boolean | false | whether or not display legend |
+   *    | withLegend | boolean | false | whether or not display legend |
    *
    * @example
    * // show 'data1'
@@ -38326,15 +38506,15 @@ function showHide(show, targetIdsValue, options) {
 
   /**
    * Hide data series from chart
-   * @method hide
+   * @function hide
    * @instance
    * @memberof Chart
-   * @param {String|Array} [targetIdsValue=all] The target id value.
-   * @param {Object} [options] The object can consist with following members:<br>
+   * @param {string|Array} [targetIdsValue] The target id value.
+   * @param {object} [options] The object can consist with following members:<br>
    *
    *    | Key | Type | default | Description |
    *    | --- | --- | --- | --- |
-   *    | withLegend | Boolean | false | whether or not display legend |
+   *    | withLegend | boolean | false | whether or not display legend |
    *
    * @example
    * // hide 'data1'
@@ -38349,15 +38529,15 @@ function showHide(show, targetIdsValue, options) {
 
   /**
    * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
-   * @method toggle
+   * @function toggle
    * @instance
    * @memberof Chart
-   * @param {String|Array} [targetIdsValue=all] The target id value.
-   * @param {Object} [options] The object can consist with following members:<br>
+   * @param {string|Array} [targetIds] The target id value.
+   * @param {object} [options] The object can consist with following members:<br>
    *
    *    | Key | Type | default | Description |
    *    | --- | --- | --- | --- |
-   *    | withLegend | Boolean | false | whether or not display legend |
+   *    | withLegend | boolean | false | whether or not display legend |
    *
    * @example
    * // toggle 'data1'
@@ -38399,17 +38579,17 @@ function showHide(show, targetIdsValue, options) {
 var tooltip_tooltip = {
   /**
    * Show tooltip
-   * @method tooltip․show
+   * @function tooltip․show
    * @instance
    * @memberof Chart
-   * @param {Object} args The object can consist with following members:<br>
+   * @param {object} args The object can consist with following members:<br>
    *
    *    | Key | Type | Description |
    *    | --- | --- | --- |
    *    | index | Number | Determine focus by index |
    *    | x | Number &vert; Date | Determine focus by x Axis index |
    *    | mouse | Array | Determine x and y coordinate value relative the targeted '.bb-event-rect' x Axis.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
-   *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {Number &verbar; Date}: x Axis value<br>- index {Number}: x Axis index (useless for data.xs)<br>- id {String}: data id<br>- value {Number}: The corresponding value for tooltip. |
+   *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {number &verbar; Date}: x Axis value<br>- index {number}: x Axis index (useless for data.xs)<br>- id {string}: data id<br>- value {number}: The corresponding value for tooltip. |
    *
    * @example
    *  // show the 2nd x Axis coordinate tooltip
@@ -38468,7 +38648,7 @@ var tooltip_tooltip = {
 
   /**
    * Hide tooltip
-   * @method tooltip․hide
+   * @function tooltip․hide
    * @instance
    * @memberof Chart
    */
@@ -38515,12 +38695,12 @@ var tooltip_tooltip = {
  *   ]}
  * }
  * @see {@link bb.generate} for the initialization.
-*/
+ */
 
 /**
  * Access instance's primary node elements
- * @member {Object} $
- * @property {Object} $
+ * @member {object} $
+ * @property {object} $ Access instance's primary node elements
  * @property {d3.selection} $.chart Wrapper element
  * @property {d3.selection} $.svg Main svg element
  * @property {d3.selection} $.defs Definition element
@@ -38531,12 +38711,12 @@ var tooltip_tooltip = {
  * @property {d3.selection} $.grid Grid element
  * @property {d3.selection} $.arc Arc element
  * @property {d3.selection} $.circles Data point circle elements
- * @property {Object} $.bar
+ * @property {object} $.bar Bar element object
  * @property {d3.selection} $.bar.bars Bar elements
- * @property {Object} $.line
+ * @property {object} $.line Line element object
  * @property {d3.selection} $.line.lines Line elements
  * @property {d3.selection} $.line.areas Areas elements
- * @property {Object} $.text
+ * @property {object} $.text Text element object
  * @property {d3.selection} $.text.texts Data label text elements
  * @memberof Chart
  * @example
@@ -38546,12 +38726,10 @@ var tooltip_tooltip = {
  * chart.$.line.circles;  // all data point circle elements
  */
 
-var Chart_Chart =
 /**
  * Plugin instance array
  * @member {Array} plugins
  * @memberof Chart
- * @instance
  * @example
  *  var chart = bb.generate({
  *     ...
@@ -38563,7 +38741,8 @@ var Chart_Chart =
  *
  *  chart.plugins; // [Stanford, PluginA] - instance array
  */
-function Chart(options) {
+
+var Chart_Chart = function Chart(options) {
   _defineProperty(this, "plugins", []), _defineProperty(this, "internal", void 0);
   var ctx = this,
       $$ = new ChartInternal_ChartInternal(ctx); // const {type, types} = options.data;
@@ -38608,7 +38787,7 @@ var _defaults = {},
     bb = {
   /**
    * Version information
-   * @property {String} version version
+   * @property {string} version version
    * @example
    *    bb.version;  // "1.0.0"
    * @memberof bb
@@ -38617,9 +38796,9 @@ var _defaults = {},
 
   /**
    * Generate chart
-   * @param {Options} options chart options
+   * @param {Options} config chart options
    * @memberof bb
-   * @return {Chart}
+   * @returns {Chart}
    * @see {@link Options} for different generation options
    * @see {@link Chart} for different methods API
    * @example
@@ -38654,7 +38833,7 @@ var _defaults = {},
    *   - If is called multiple times, will override the last value.
    * @param {Options} options chart options
    * @memberof bb
-   * @return {Options}
+   * @returns {Options}
    * @see {@link Options}
    * @example
    * // Set same option value as for `.generate()`
@@ -38688,7 +38867,7 @@ var _defaults = {},
 
   /**
    * Namespace for plugins
-   * @property {Object} plugin plugin namespace
+   * @property {object} plugin plugin namespace
    * @example
    *  // Stanford diagram plugin
    *  bb.plugin.stanford;
