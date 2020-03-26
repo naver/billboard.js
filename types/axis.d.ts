@@ -81,6 +81,7 @@ export interface XAxisConfiguration {
 	 */
 	extent?: number[] | string[] | (
 		(
+			this: void,
 			domain: Date|string|number[],
 			scale: (value: any) => number
 		) => number[]
@@ -189,8 +190,8 @@ export interface XTickConfiguration {
 	 * A function to format tick value. Format string is also available for timeseries data.
 	 */
 	format?: string
-		| ((x: number | Date) => string | number)
-		| ((index: number, categoryName: string) => string);
+		| ((this: void, x: number | Date) => string | number)
+		| ((this: void, index: number, categoryName: string) => string);
 
 	/**
 	 * Setting for culling ticks.
@@ -315,7 +316,7 @@ export interface YTickConfiguration {
 	 * Set formatter for y axis tick text.
 	 * This option accepts d3.format object as well as a function you define.
 	 */
-	format?(x: number): string;
+	format?(this: void, x: number): string;
 
 	/**
 	 * Setting for culling ticks.
@@ -370,7 +371,7 @@ export interface AxesConfiguration {
 		/**
 		 * Set formatter for tick text
 		 */
-		format?: (x: string) => string;
+		format?: (this: void, x: string) => string;
 
 		/**
 		 * Set the number of y axis ticks

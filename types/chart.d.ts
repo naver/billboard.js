@@ -337,7 +337,7 @@ export interface Chart {
 		type?: string;
 		types?: { [key: string]: string };
 		unload?: boolean | ArrayOrString;
-		done?: () => any;
+		done?: (this: void) => any;
 	}): void;
 
 	/**
@@ -352,7 +352,7 @@ export interface Chart {
 	 *   - If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.
 	 *   - done will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
 	 */
-	unload(targetIds?: TargetIds, done?: () => any): any;
+	unload(targetIds?: TargetIds, done?: (this: void) => any): any;
 
 	/**
 	 * Flow data to the chart. By this API, you can append new data points to the chart.
@@ -383,7 +383,7 @@ export interface Chart {
 		to?: any;
 		length?: number;
 		duration?: number;
-		done?(): any;
+		done?(this: void): any;
 	}): void;
 
 	/**
@@ -446,7 +446,7 @@ export interface Chart {
 
 	/**
 	 * Get and set x values for the chart.
-	 * @param x If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
+	 * @param xs If x is given, x values of every target will be updated. If no argument is given, current x values will be returned as an Object whose keys are the target ids.
 	 */
 	xs(xs?: {
 		[key: string]: PrimitiveArray;
@@ -482,7 +482,7 @@ export interface Chart {
 	 * @param mimeType The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
 	 * @param callback The callback to be invoked when export is ready.
 	 */
-	export(mimeType?: string, callback?: (dataUrl: string) => string): string;
+	export(mimeType?: string, callback?: (this: void, dataUrl: string) => string): string;
 
 	/**
 	 * Get or set single config option value.
