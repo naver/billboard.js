@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200323131726
+ * @version 1.11.1-nightly-20200330132151
  * @requires billboard.js
  * @summary billboard.js plugin
  */
@@ -18,7 +18,7 @@
 		exports["stanford"] = factory(require("d3-selection"), require("d3-array"), require("d3-interpolate"), require("d3-color"), require("d3-scale"), require("d3-brush"), require("d3-axis"), require("d3-format"));
 	else
 		root["bb"] = root["bb"] || {}, root["bb"]["plugin"] = root["bb"]["plugin"] || {}, root["bb"]["plugin"]["stanford"] = factory(root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"], root["d3"]);
-})(this, function(__WEBPACK_EXTERNAL_MODULE__8__, __WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__11__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__14__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__) {
+})(this, function(__WEBPACK_EXTERNAL_MODULE__10__, __WEBPACK_EXTERNAL_MODULE__12__, __WEBPACK_EXTERNAL_MODULE__13__, __WEBPACK_EXTERNAL_MODULE__14__, __WEBPACK_EXTERNAL_MODULE__15__, __WEBPACK_EXTERNAL_MODULE__16__, __WEBPACK_EXTERNAL_MODULE__17__, __WEBPACK_EXTERNAL_MODULE__18__) {
 return /******/ (function(modules) { // webpackBootstrap
 /******/ 	// The module cache
 /******/ 	var installedModules = {};
@@ -102,12 +102,45 @@ return /******/ (function(modules) { // webpackBootstrap
 /******/
 /******/
 /******/ 	// Load entry module and return exports
-/******/ 	return __webpack_require__(__webpack_require__.s = 19);
+/******/ 	return __webpack_require__(__webpack_require__.s = 21);
 /******/ })
 /************************************************************************/
 /******/ ([
 /* 0 */,
 /* 1 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _unsupportedIterableToArray; });
+/* harmony import */ var _arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(2);
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return Object(_arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return Object(_arrayLikeToArray__WEBPACK_IMPORTED_MODULE_0__[/* default */ "a"])(o, minLen);
+}
+
+/***/ }),
+/* 2 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _arrayLikeToArray; });
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+
+/***/ }),
+/* 3 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -119,7 +152,7 @@ function _classCallCheck(instance, Constructor) {
 }
 
 /***/ }),
-/* 2 */
+/* 4 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -141,12 +174,26 @@ function _createClass(Constructor, protoProps, staticProps) {
 }
 
 /***/ }),
-/* 3 */
+/* 5 */
+/***/ (function(module, __webpack_exports__, __webpack_require__) {
+
+"use strict";
+/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _assertThisInitialized; });
+function _assertThisInitialized(self) {
+  if (self === void 0) {
+    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
+  }
+
+  return self;
+}
+
+/***/ }),
+/* 6 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _possibleConstructorReturn; });
-/* harmony import */ var _helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(4);
+/* harmony import */ var _helpers_esm_typeof__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(7);
 /* harmony import */ var _assertThisInitialized__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(5);
 
 
@@ -159,7 +206,7 @@ function _possibleConstructorReturn(self, call) {
 }
 
 /***/ }),
-/* 4 */
+/* 7 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -181,21 +228,7 @@ function _typeof(obj) {
 }
 
 /***/ }),
-/* 5 */
-/***/ (function(module, __webpack_exports__, __webpack_require__) {
-
-"use strict";
-/* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return _assertThisInitialized; });
-function _assertThisInitialized(self) {
-  if (self === void 0) {
-    throw new ReferenceError("this hasn't been initialised - super() hasn't been called");
-  }
-
-  return self;
-}
-
-/***/ }),
-/* 6 */
+/* 8 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -208,7 +241,7 @@ function _getPrototypeOf(o) {
 }
 
 /***/ }),
-/* 7 */
+/* 9 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -229,20 +262,20 @@ function _defineProperty(obj, key, value) {
 }
 
 /***/ }),
-/* 8 */
+/* 10 */
 /***/ (function(module, exports) {
 
-module.exports = __WEBPACK_EXTERNAL_MODULE__8__;
+module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
 
 /***/ }),
-/* 9 */
+/* 11 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return Plugin; });
-/* harmony import */ var _babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(1);
-/* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(2);
-/* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(7);
+/* harmony import */ var _babel_runtime_helpers_esm_classCallCheck__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(3);
+/* harmony import */ var _babel_runtime_helpers_esm_createClass__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(4);
+/* harmony import */ var _babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(9);
 
 
 
@@ -326,21 +359,9 @@ var Plugin = /*#__PURE__*/function () {
   }]), Plugin;
 }();
 
-Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200323131726");
+Object(_babel_runtime_helpers_esm_defineProperty__WEBPACK_IMPORTED_MODULE_2__[/* default */ "a"])(Plugin, "version", "1.11.1-nightly-20200330132151");
 
 
-
-/***/ }),
-/* 10 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__10__;
-
-/***/ }),
-/* 11 */
-/***/ (function(module, exports) {
-
-module.exports = __WEBPACK_EXTERNAL_MODULE__11__;
 
 /***/ }),
 /* 12 */
@@ -373,9 +394,21 @@ module.exports = __WEBPACK_EXTERNAL_MODULE__15__;
 module.exports = __WEBPACK_EXTERNAL_MODULE__16__;
 
 /***/ }),
-/* 17 */,
-/* 18 */,
-/* 19 */
+/* 17 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__17__;
+
+/***/ }),
+/* 18 */
+/***/ (function(module, exports) {
+
+module.exports = __WEBPACK_EXTERNAL_MODULE__18__;
+
+/***/ }),
+/* 19 */,
+/* 20 */,
+/* 21 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -386,34 +419,34 @@ __webpack_require__.r(__webpack_exports__);
 __webpack_require__.d(__webpack_exports__, "default", function() { return /* binding */ stanford_Stanford; });
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/classCallCheck.js
-var classCallCheck = __webpack_require__(1);
+var classCallCheck = __webpack_require__(3);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
-var createClass = __webpack_require__(2);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
-var possibleConstructorReturn = __webpack_require__(3);
-
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
-var getPrototypeOf = __webpack_require__(6);
+var createClass = __webpack_require__(4);
 
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/assertThisInitialized.js
 var assertThisInitialized = __webpack_require__(5);
 
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/possibleConstructorReturn.js
+var possibleConstructorReturn = __webpack_require__(6);
+
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/getPrototypeOf.js
+var getPrototypeOf = __webpack_require__(8);
+
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/inherits.js + 1 modules
-var inherits = __webpack_require__(22);
+var inherits = __webpack_require__(24);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-array","commonjs2":"d3-array","amd":"d3-array","root":"d3"}
-var external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_ = __webpack_require__(10);
+var external_commonjs_d3_array_commonjs2_d3_array_amd_d3_array_root_d3_ = __webpack_require__(12);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-interpolate","commonjs2":"d3-interpolate","amd":"d3-interpolate","root":"d3"}
-var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(11);
+var external_commonjs_d3_interpolate_commonjs2_d3_interpolate_amd_d3_interpolate_root_d3_ = __webpack_require__(13);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-color","commonjs2":"d3-color","amd":"d3-color","root":"d3"}
-var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(12);
+var external_commonjs_d3_color_commonjs2_d3_color_amd_d3_color_root_d3_ = __webpack_require__(14);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-scale","commonjs2":"d3-scale","amd":"d3-scale","root":"d3"}
-var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(13);
+var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webpack_require__(15);
 
 // CONCATENATED MODULE: ./src/config/classes.js
 /**
@@ -521,39 +554,41 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   INCLUDED: "_included_",
   TextOverlapping: "text-overlapping"
 });
-// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
+var arrayLikeToArray = __webpack_require__(2);
 
-    return arr2;
-  }
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
+
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return Object(arrayLikeToArray["a" /* default */])(arr);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
+// EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
+var unsupportedIterableToArray = __webpack_require__(1);
+
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js
 
 
 
+
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || Object(unsupportedIterableToArray["a" /* default */])(arr) || _nonIterableSpread();
 }
 // EXTERNAL MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
-var esm_typeof = __webpack_require__(4);
+var esm_typeof = __webpack_require__(7);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-selection","commonjs2":"d3-selection","amd":"d3-selection","root":"d3"}
-var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(8);
+var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_ = __webpack_require__(10);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-brush","commonjs2":"d3-brush","amd":"d3-brush","root":"d3"}
-var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(14);
+var external_commonjs_d3_brush_commonjs2_d3_brush_amd_d3_brush_root_d3_ = __webpack_require__(16);
 
 // CONCATENATED MODULE: ./src/internals/browser.js
 /**
@@ -888,7 +923,7 @@ var isValue = function (v) {
 
 
 // EXTERNAL MODULE: ./src/plugin/Plugin.js
-var Plugin = __webpack_require__(9);
+var Plugin = __webpack_require__(11);
 
 // CONCATENATED MODULE: ./src/plugin/stanford/Options.js
 
@@ -1224,10 +1259,10 @@ var Elements_Elements = /*#__PURE__*/function () {
 
 
 // EXTERNAL MODULE: external {"commonjs":"d3-axis","commonjs2":"d3-axis","amd":"d3-axis","root":"d3"}
-var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(15);
+var external_commonjs_d3_axis_commonjs2_d3_axis_amd_d3_axis_root_d3_ = __webpack_require__(17);
 
 // EXTERNAL MODULE: external {"commonjs":"d3-format","commonjs2":"d3-format","amd":"d3-format","root":"d3"}
-var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(16);
+var external_commonjs_d3_format_commonjs2_d3_format_amd_d3_format_root_d3_ = __webpack_require__(18);
 
 // CONCATENATED MODULE: ./src/plugin/stanford/ColorScale.js
 
@@ -1307,6 +1342,10 @@ var ColorScale_ColorScale = /*#__PURE__*/function () {
 
 
 
+
+function _createSuper(Derived) { return function () { var result, Super = Object(getPrototypeOf["a" /* default */])(Derived); if (_isNativeReflectConstruct()) { var NewTarget = Object(getPrototypeOf["a" /* default */])(this).constructor; result = Reflect.construct(Super, arguments, NewTarget); } else result = Super.apply(this, arguments); return Object(possibleConstructorReturn["a" /* default */])(this, result); }; }
+
+function _isNativeReflectConstruct() { if (typeof Reflect === "undefined" || !Reflect.construct) return !1; if (Reflect.construct.sham) return !1; if (typeof Proxy === "function") return !0; try { return Date.prototype.toString.call(Reflect.construct(Date, [], function () {})), !0; } catch (e) { return !1; } }
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -1412,10 +1451,14 @@ var stanford_Stanford = /*#__PURE__*/function (_Plugin) {
   function Stanford(options) {
     var _this;
 
-    return Object(classCallCheck["a" /* default */])(this, Stanford), _this = Object(possibleConstructorReturn["a" /* default */])(this, Object(getPrototypeOf["a" /* default */])(Stanford).call(this, options)), _this.config = new Options_Options(), Object(possibleConstructorReturn["a" /* default */])(_this, Object(assertThisInitialized["a" /* default */])(_this));
+    return Object(classCallCheck["a" /* default */])(this, Stanford), _this = _super.call(this, options), _this.config = new Options_Options(), Object(possibleConstructorReturn["a" /* default */])(_this, Object(assertThisInitialized["a" /* default */])(_this));
   }
 
-  return Object(inherits["a" /* default */])(Stanford, _Plugin), Object(createClass["a" /* default */])(Stanford, [{
+  Object(inherits["a" /* default */])(Stanford, _Plugin);
+
+  var _super = _createSuper(Stanford);
+
+  return Object(createClass["a" /* default */])(Stanford, [{
     key: "$beforeInit",
     value: function $beforeInit() {
       var _this2 = this,
@@ -1529,9 +1572,9 @@ var stanford_Stanford = /*#__PURE__*/function (_Plugin) {
 
 
 /***/ }),
-/* 20 */,
-/* 21 */,
-/* 22 */
+/* 22 */,
+/* 23 */,
+/* 24 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";

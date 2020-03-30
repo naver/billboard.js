@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200323131726
+ * @version 1.11.1-nightly-20200330132151
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -124,7 +124,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 __webpack_require__(1);
 __webpack_require__(375);
-module.exports = __webpack_require__(379);
+module.exports = __webpack_require__(378);
 
 
 /***/ }),
@@ -13547,747 +13547,12 @@ try {
 /* 376 */
 /***/ (function(module, exports, __webpack_require__) {
 
-module.exports = __webpack_require__(377);
+module.exports = __webpack_require__(375);
 
 
 /***/ }),
-/* 377 */
-/***/ (function(module, exports, __webpack_require__) {
-
-/**
- * Copyright (c) 2014-present, Facebook, Inc.
- *
- * This source code is licensed under the MIT license found in the
- * LICENSE file in the root directory of this source tree.
- */
-
-var runtime = (function (exports) {
-  "use strict";
-
-  var Op = Object.prototype;
-  var hasOwn = Op.hasOwnProperty;
-  var undefined; // More compressible than void 0.
-  var $Symbol = typeof Symbol === "function" ? Symbol : {};
-  var iteratorSymbol = $Symbol.iterator || "@@iterator";
-  var asyncIteratorSymbol = $Symbol.asyncIterator || "@@asyncIterator";
-  var toStringTagSymbol = $Symbol.toStringTag || "@@toStringTag";
-
-  function wrap(innerFn, outerFn, self, tryLocsList) {
-    // If outerFn provided and outerFn.prototype is a Generator, then outerFn.prototype instanceof Generator.
-    var protoGenerator = outerFn && outerFn.prototype instanceof Generator ? outerFn : Generator;
-    var generator = Object.create(protoGenerator.prototype);
-    var context = new Context(tryLocsList || []);
-
-    // The ._invoke method unifies the implementations of the .next,
-    // .throw, and .return methods.
-    generator._invoke = makeInvokeMethod(innerFn, self, context);
-
-    return generator;
-  }
-  exports.wrap = wrap;
-
-  // Try/catch helper to minimize deoptimizations. Returns a completion
-  // record like context.tryEntries[i].completion. This interface could
-  // have been (and was previously) designed to take a closure to be
-  // invoked without arguments, but in all the cases we care about we
-  // already have an existing method we want to call, so there's no need
-  // to create a new function object. We can even get away with assuming
-  // the method takes exactly one argument, since that happens to be true
-  // in every case, so we don't have to touch the arguments object. The
-  // only additional allocation required is the completion record, which
-  // has a stable shape and so hopefully should be cheap to allocate.
-  function tryCatch(fn, obj, arg) {
-    try {
-      return { type: "normal", arg: fn.call(obj, arg) };
-    } catch (err) {
-      return { type: "throw", arg: err };
-    }
-  }
-
-  var GenStateSuspendedStart = "suspendedStart";
-  var GenStateSuspendedYield = "suspendedYield";
-  var GenStateExecuting = "executing";
-  var GenStateCompleted = "completed";
-
-  // Returning this object from the innerFn has the same effect as
-  // breaking out of the dispatch switch statement.
-  var ContinueSentinel = {};
-
-  // Dummy constructor functions that we use as the .constructor and
-  // .constructor.prototype properties for functions that return Generator
-  // objects. For full spec compliance, you may wish to configure your
-  // minifier not to mangle the names of these two functions.
-  function Generator() {}
-  function GeneratorFunction() {}
-  function GeneratorFunctionPrototype() {}
-
-  // This is a polyfill for %IteratorPrototype% for environments that
-  // don't natively support it.
-  var IteratorPrototype = {};
-  IteratorPrototype[iteratorSymbol] = function () {
-    return this;
-  };
-
-  var getProto = Object.getPrototypeOf;
-  var NativeIteratorPrototype = getProto && getProto(getProto(values([])));
-  if (NativeIteratorPrototype &&
-      NativeIteratorPrototype !== Op &&
-      hasOwn.call(NativeIteratorPrototype, iteratorSymbol)) {
-    // This environment has a native %IteratorPrototype%; use it instead
-    // of the polyfill.
-    IteratorPrototype = NativeIteratorPrototype;
-  }
-
-  var Gp = GeneratorFunctionPrototype.prototype =
-    Generator.prototype = Object.create(IteratorPrototype);
-  GeneratorFunction.prototype = Gp.constructor = GeneratorFunctionPrototype;
-  GeneratorFunctionPrototype.constructor = GeneratorFunction;
-  GeneratorFunctionPrototype[toStringTagSymbol] =
-    GeneratorFunction.displayName = "GeneratorFunction";
-
-  // Helper for defining the .next, .throw, and .return methods of the
-  // Iterator interface in terms of a single ._invoke method.
-  function defineIteratorMethods(prototype) {
-    ["next", "throw", "return"].forEach(function(method) {
-      prototype[method] = function(arg) {
-        return this._invoke(method, arg);
-      };
-    });
-  }
-
-  exports.isGeneratorFunction = function(genFun) {
-    var ctor = typeof genFun === "function" && genFun.constructor;
-    return ctor
-      ? ctor === GeneratorFunction ||
-        // For the native GeneratorFunction constructor, the best we can
-        // do is to check its .name property.
-        (ctor.displayName || ctor.name) === "GeneratorFunction"
-      : false;
-  };
-
-  exports.mark = function(genFun) {
-    if (Object.setPrototypeOf) {
-      Object.setPrototypeOf(genFun, GeneratorFunctionPrototype);
-    } else {
-      genFun.__proto__ = GeneratorFunctionPrototype;
-      if (!(toStringTagSymbol in genFun)) {
-        genFun[toStringTagSymbol] = "GeneratorFunction";
-      }
-    }
-    genFun.prototype = Object.create(Gp);
-    return genFun;
-  };
-
-  // Within the body of any async function, `await x` is transformed to
-  // `yield regeneratorRuntime.awrap(x)`, so that the runtime can test
-  // `hasOwn.call(value, "__await")` to determine if the yielded value is
-  // meant to be awaited.
-  exports.awrap = function(arg) {
-    return { __await: arg };
-  };
-
-  function AsyncIterator(generator, PromiseImpl) {
-    function invoke(method, arg, resolve, reject) {
-      var record = tryCatch(generator[method], generator, arg);
-      if (record.type === "throw") {
-        reject(record.arg);
-      } else {
-        var result = record.arg;
-        var value = result.value;
-        if (value &&
-            typeof value === "object" &&
-            hasOwn.call(value, "__await")) {
-          return PromiseImpl.resolve(value.__await).then(function(value) {
-            invoke("next", value, resolve, reject);
-          }, function(err) {
-            invoke("throw", err, resolve, reject);
-          });
-        }
-
-        return PromiseImpl.resolve(value).then(function(unwrapped) {
-          // When a yielded Promise is resolved, its final value becomes
-          // the .value of the Promise<{value,done}> result for the
-          // current iteration.
-          result.value = unwrapped;
-          resolve(result);
-        }, function(error) {
-          // If a rejected Promise was yielded, throw the rejection back
-          // into the async generator function so it can be handled there.
-          return invoke("throw", error, resolve, reject);
-        });
-      }
-    }
-
-    var previousPromise;
-
-    function enqueue(method, arg) {
-      function callInvokeWithMethodAndArg() {
-        return new PromiseImpl(function(resolve, reject) {
-          invoke(method, arg, resolve, reject);
-        });
-      }
-
-      return previousPromise =
-        // If enqueue has been called before, then we want to wait until
-        // all previous Promises have been resolved before calling invoke,
-        // so that results are always delivered in the correct order. If
-        // enqueue has not been called before, then it is important to
-        // call invoke immediately, without waiting on a callback to fire,
-        // so that the async generator function has the opportunity to do
-        // any necessary setup in a predictable way. This predictability
-        // is why the Promise constructor synchronously invokes its
-        // executor callback, and why async functions synchronously
-        // execute code before the first await. Since we implement simple
-        // async functions in terms of async generators, it is especially
-        // important to get this right, even though it requires care.
-        previousPromise ? previousPromise.then(
-          callInvokeWithMethodAndArg,
-          // Avoid propagating failures to Promises returned by later
-          // invocations of the iterator.
-          callInvokeWithMethodAndArg
-        ) : callInvokeWithMethodAndArg();
-    }
-
-    // Define the unified helper method that is used to implement .next,
-    // .throw, and .return (see defineIteratorMethods).
-    this._invoke = enqueue;
-  }
-
-  defineIteratorMethods(AsyncIterator.prototype);
-  AsyncIterator.prototype[asyncIteratorSymbol] = function () {
-    return this;
-  };
-  exports.AsyncIterator = AsyncIterator;
-
-  // Note that simple async functions are implemented on top of
-  // AsyncIterator objects; they just return a Promise for the value of
-  // the final result produced by the iterator.
-  exports.async = function(innerFn, outerFn, self, tryLocsList, PromiseImpl) {
-    if (PromiseImpl === void 0) PromiseImpl = Promise;
-
-    var iter = new AsyncIterator(
-      wrap(innerFn, outerFn, self, tryLocsList),
-      PromiseImpl
-    );
-
-    return exports.isGeneratorFunction(outerFn)
-      ? iter // If outerFn is a generator, return the full iterator.
-      : iter.next().then(function(result) {
-          return result.done ? result.value : iter.next();
-        });
-  };
-
-  function makeInvokeMethod(innerFn, self, context) {
-    var state = GenStateSuspendedStart;
-
-    return function invoke(method, arg) {
-      if (state === GenStateExecuting) {
-        throw new Error("Generator is already running");
-      }
-
-      if (state === GenStateCompleted) {
-        if (method === "throw") {
-          throw arg;
-        }
-
-        // Be forgiving, per 25.3.3.3.3 of the spec:
-        // https://people.mozilla.org/~jorendorff/es6-draft.html#sec-generatorresume
-        return doneResult();
-      }
-
-      context.method = method;
-      context.arg = arg;
-
-      while (true) {
-        var delegate = context.delegate;
-        if (delegate) {
-          var delegateResult = maybeInvokeDelegate(delegate, context);
-          if (delegateResult) {
-            if (delegateResult === ContinueSentinel) continue;
-            return delegateResult;
-          }
-        }
-
-        if (context.method === "next") {
-          // Setting context._sent for legacy support of Babel's
-          // function.sent implementation.
-          context.sent = context._sent = context.arg;
-
-        } else if (context.method === "throw") {
-          if (state === GenStateSuspendedStart) {
-            state = GenStateCompleted;
-            throw context.arg;
-          }
-
-          context.dispatchException(context.arg);
-
-        } else if (context.method === "return") {
-          context.abrupt("return", context.arg);
-        }
-
-        state = GenStateExecuting;
-
-        var record = tryCatch(innerFn, self, context);
-        if (record.type === "normal") {
-          // If an exception is thrown from innerFn, we leave state ===
-          // GenStateExecuting and loop back for another invocation.
-          state = context.done
-            ? GenStateCompleted
-            : GenStateSuspendedYield;
-
-          if (record.arg === ContinueSentinel) {
-            continue;
-          }
-
-          return {
-            value: record.arg,
-            done: context.done
-          };
-
-        } else if (record.type === "throw") {
-          state = GenStateCompleted;
-          // Dispatch the exception by looping back around to the
-          // context.dispatchException(context.arg) call above.
-          context.method = "throw";
-          context.arg = record.arg;
-        }
-      }
-    };
-  }
-
-  // Call delegate.iterator[context.method](context.arg) and handle the
-  // result, either by returning a { value, done } result from the
-  // delegate iterator, or by modifying context.method and context.arg,
-  // setting context.delegate to null, and returning the ContinueSentinel.
-  function maybeInvokeDelegate(delegate, context) {
-    var method = delegate.iterator[context.method];
-    if (method === undefined) {
-      // A .throw or .return when the delegate iterator has no .throw
-      // method always terminates the yield* loop.
-      context.delegate = null;
-
-      if (context.method === "throw") {
-        // Note: ["return"] must be used for ES3 parsing compatibility.
-        if (delegate.iterator["return"]) {
-          // If the delegate iterator has a return method, give it a
-          // chance to clean up.
-          context.method = "return";
-          context.arg = undefined;
-          maybeInvokeDelegate(delegate, context);
-
-          if (context.method === "throw") {
-            // If maybeInvokeDelegate(context) changed context.method from
-            // "return" to "throw", let that override the TypeError below.
-            return ContinueSentinel;
-          }
-        }
-
-        context.method = "throw";
-        context.arg = new TypeError(
-          "The iterator does not provide a 'throw' method");
-      }
-
-      return ContinueSentinel;
-    }
-
-    var record = tryCatch(method, delegate.iterator, context.arg);
-
-    if (record.type === "throw") {
-      context.method = "throw";
-      context.arg = record.arg;
-      context.delegate = null;
-      return ContinueSentinel;
-    }
-
-    var info = record.arg;
-
-    if (! info) {
-      context.method = "throw";
-      context.arg = new TypeError("iterator result is not an object");
-      context.delegate = null;
-      return ContinueSentinel;
-    }
-
-    if (info.done) {
-      // Assign the result of the finished delegate to the temporary
-      // variable specified by delegate.resultName (see delegateYield).
-      context[delegate.resultName] = info.value;
-
-      // Resume execution at the desired location (see delegateYield).
-      context.next = delegate.nextLoc;
-
-      // If context.method was "throw" but the delegate handled the
-      // exception, let the outer generator proceed normally. If
-      // context.method was "next", forget context.arg since it has been
-      // "consumed" by the delegate iterator. If context.method was
-      // "return", allow the original .return call to continue in the
-      // outer generator.
-      if (context.method !== "return") {
-        context.method = "next";
-        context.arg = undefined;
-      }
-
-    } else {
-      // Re-yield the result returned by the delegate method.
-      return info;
-    }
-
-    // The delegate iterator is finished, so forget it and continue with
-    // the outer generator.
-    context.delegate = null;
-    return ContinueSentinel;
-  }
-
-  // Define Generator.prototype.{next,throw,return} in terms of the
-  // unified ._invoke helper method.
-  defineIteratorMethods(Gp);
-
-  Gp[toStringTagSymbol] = "Generator";
-
-  // A Generator should always return itself as the iterator object when the
-  // @@iterator function is called on it. Some browsers' implementations of the
-  // iterator prototype chain incorrectly implement this, causing the Generator
-  // object to not be returned from this call. This ensures that doesn't happen.
-  // See https://github.com/facebook/regenerator/issues/274 for more details.
-  Gp[iteratorSymbol] = function() {
-    return this;
-  };
-
-  Gp.toString = function() {
-    return "[object Generator]";
-  };
-
-  function pushTryEntry(locs) {
-    var entry = { tryLoc: locs[0] };
-
-    if (1 in locs) {
-      entry.catchLoc = locs[1];
-    }
-
-    if (2 in locs) {
-      entry.finallyLoc = locs[2];
-      entry.afterLoc = locs[3];
-    }
-
-    this.tryEntries.push(entry);
-  }
-
-  function resetTryEntry(entry) {
-    var record = entry.completion || {};
-    record.type = "normal";
-    delete record.arg;
-    entry.completion = record;
-  }
-
-  function Context(tryLocsList) {
-    // The root entry object (effectively a try statement without a catch
-    // or a finally block) gives us a place to store values thrown from
-    // locations where there is no enclosing try statement.
-    this.tryEntries = [{ tryLoc: "root" }];
-    tryLocsList.forEach(pushTryEntry, this);
-    this.reset(true);
-  }
-
-  exports.keys = function(object) {
-    var keys = [];
-    for (var key in object) {
-      keys.push(key);
-    }
-    keys.reverse();
-
-    // Rather than returning an object with a next method, we keep
-    // things simple and return the next function itself.
-    return function next() {
-      while (keys.length) {
-        var key = keys.pop();
-        if (key in object) {
-          next.value = key;
-          next.done = false;
-          return next;
-        }
-      }
-
-      // To avoid creating an additional object, we just hang the .value
-      // and .done properties off the next function object itself. This
-      // also ensures that the minifier will not anonymize the function.
-      next.done = true;
-      return next;
-    };
-  };
-
-  function values(iterable) {
-    if (iterable) {
-      var iteratorMethod = iterable[iteratorSymbol];
-      if (iteratorMethod) {
-        return iteratorMethod.call(iterable);
-      }
-
-      if (typeof iterable.next === "function") {
-        return iterable;
-      }
-
-      if (!isNaN(iterable.length)) {
-        var i = -1, next = function next() {
-          while (++i < iterable.length) {
-            if (hasOwn.call(iterable, i)) {
-              next.value = iterable[i];
-              next.done = false;
-              return next;
-            }
-          }
-
-          next.value = undefined;
-          next.done = true;
-
-          return next;
-        };
-
-        return next.next = next;
-      }
-    }
-
-    // Return an iterator with no values.
-    return { next: doneResult };
-  }
-  exports.values = values;
-
-  function doneResult() {
-    return { value: undefined, done: true };
-  }
-
-  Context.prototype = {
-    constructor: Context,
-
-    reset: function(skipTempReset) {
-      this.prev = 0;
-      this.next = 0;
-      // Resetting context._sent for legacy support of Babel's
-      // function.sent implementation.
-      this.sent = this._sent = undefined;
-      this.done = false;
-      this.delegate = null;
-
-      this.method = "next";
-      this.arg = undefined;
-
-      this.tryEntries.forEach(resetTryEntry);
-
-      if (!skipTempReset) {
-        for (var name in this) {
-          // Not sure about the optimal order of these conditions:
-          if (name.charAt(0) === "t" &&
-              hasOwn.call(this, name) &&
-              !isNaN(+name.slice(1))) {
-            this[name] = undefined;
-          }
-        }
-      }
-    },
-
-    stop: function() {
-      this.done = true;
-
-      var rootEntry = this.tryEntries[0];
-      var rootRecord = rootEntry.completion;
-      if (rootRecord.type === "throw") {
-        throw rootRecord.arg;
-      }
-
-      return this.rval;
-    },
-
-    dispatchException: function(exception) {
-      if (this.done) {
-        throw exception;
-      }
-
-      var context = this;
-      function handle(loc, caught) {
-        record.type = "throw";
-        record.arg = exception;
-        context.next = loc;
-
-        if (caught) {
-          // If the dispatched exception was caught by a catch block,
-          // then let that catch block handle the exception normally.
-          context.method = "next";
-          context.arg = undefined;
-        }
-
-        return !! caught;
-      }
-
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        var record = entry.completion;
-
-        if (entry.tryLoc === "root") {
-          // Exception thrown outside of any try block that could handle
-          // it, so set the completion value of the entire function to
-          // throw the exception.
-          return handle("end");
-        }
-
-        if (entry.tryLoc <= this.prev) {
-          var hasCatch = hasOwn.call(entry, "catchLoc");
-          var hasFinally = hasOwn.call(entry, "finallyLoc");
-
-          if (hasCatch && hasFinally) {
-            if (this.prev < entry.catchLoc) {
-              return handle(entry.catchLoc, true);
-            } else if (this.prev < entry.finallyLoc) {
-              return handle(entry.finallyLoc);
-            }
-
-          } else if (hasCatch) {
-            if (this.prev < entry.catchLoc) {
-              return handle(entry.catchLoc, true);
-            }
-
-          } else if (hasFinally) {
-            if (this.prev < entry.finallyLoc) {
-              return handle(entry.finallyLoc);
-            }
-
-          } else {
-            throw new Error("try statement without catch or finally");
-          }
-        }
-      }
-    },
-
-    abrupt: function(type, arg) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc <= this.prev &&
-            hasOwn.call(entry, "finallyLoc") &&
-            this.prev < entry.finallyLoc) {
-          var finallyEntry = entry;
-          break;
-        }
-      }
-
-      if (finallyEntry &&
-          (type === "break" ||
-           type === "continue") &&
-          finallyEntry.tryLoc <= arg &&
-          arg <= finallyEntry.finallyLoc) {
-        // Ignore the finally entry if control is not jumping to a
-        // location outside the try/catch block.
-        finallyEntry = null;
-      }
-
-      var record = finallyEntry ? finallyEntry.completion : {};
-      record.type = type;
-      record.arg = arg;
-
-      if (finallyEntry) {
-        this.method = "next";
-        this.next = finallyEntry.finallyLoc;
-        return ContinueSentinel;
-      }
-
-      return this.complete(record);
-    },
-
-    complete: function(record, afterLoc) {
-      if (record.type === "throw") {
-        throw record.arg;
-      }
-
-      if (record.type === "break" ||
-          record.type === "continue") {
-        this.next = record.arg;
-      } else if (record.type === "return") {
-        this.rval = this.arg = record.arg;
-        this.method = "return";
-        this.next = "end";
-      } else if (record.type === "normal" && afterLoc) {
-        this.next = afterLoc;
-      }
-
-      return ContinueSentinel;
-    },
-
-    finish: function(finallyLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.finallyLoc === finallyLoc) {
-          this.complete(entry.completion, entry.afterLoc);
-          resetTryEntry(entry);
-          return ContinueSentinel;
-        }
-      }
-    },
-
-    "catch": function(tryLoc) {
-      for (var i = this.tryEntries.length - 1; i >= 0; --i) {
-        var entry = this.tryEntries[i];
-        if (entry.tryLoc === tryLoc) {
-          var record = entry.completion;
-          if (record.type === "throw") {
-            var thrown = record.arg;
-            resetTryEntry(entry);
-          }
-          return thrown;
-        }
-      }
-
-      // The context.catch method must only be called with a location
-      // argument that corresponds to a known catch block.
-      throw new Error("illegal catch attempt");
-    },
-
-    delegateYield: function(iterable, resultName, nextLoc) {
-      this.delegate = {
-        iterator: values(iterable),
-        resultName: resultName,
-        nextLoc: nextLoc
-      };
-
-      if (this.method === "next") {
-        // Deliberately forget the last sent value so that we don't
-        // accidentally pass it on to the delegate.
-        this.arg = undefined;
-      }
-
-      return ContinueSentinel;
-    }
-  };
-
-  // Regardless of whether this script is executing as a CommonJS module
-  // or not, return the runtime object so that we can declare the variable
-  // regeneratorRuntime in the outer scope, which allows this module to be
-  // injected easily by `bin/regenerator --include-runtime script.js`.
-  return exports;
-
-}(
-  // If this script is executing as a CommonJS module, use module.exports
-  // as the regeneratorRuntime namespace. Otherwise create a new empty
-  // object. Either way, the resulting object will be used to initialize
-  // the regeneratorRuntime variable at the top of this file.
-   true ? module.exports : undefined
-));
-
-try {
-  regeneratorRuntime = runtime;
-} catch (accidentalStrictMode) {
-  // This module should not be running in strict mode, so the above
-  // assignment should always work unless something is misconfigured. Just
-  // in case runtime.js accidentally runs in strict mode, we can escape
-  // strict mode using a global Function call. This could conceivably fail
-  // if a Content Security Policy forbids using Function, but in that case
-  // the proper solution is to fix the accidental strict mode problem. If
-  // you've misconfigured your bundler to force strict mode and applied a
-  // CSP to forbid Function, and you're not willing to fix either of those
-  // problems, please detail your unique predicament in a GitHub issue.
-  Function("r", "regeneratorRuntime = r")(runtime);
-}
-
-
-/***/ }),
-/* 378 */,
-/* 379 */
+/* 377 */,
+/* 378 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -14309,10 +13574,7 @@ function _arrayWithHoles(arr) {
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -14337,16 +13599,37 @@ function _iterableToArrayLimit(arr, i) {
 
   return _arr;
 }
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
 
 
 
+
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
 function _defineProperties(target, props) {
@@ -18425,77 +17708,69 @@ var bisectRight = ascendingBisect.right;
 var bisectLeft = ascendingBisect.left;
 /* harmony default export */ var bisect = (bisectRight);
 // CONCATENATED MODULE: ./node_modules/d3-array/src/count.js
+function _createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = count_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function count_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return count_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? count_arrayLikeToArray(o, minLen) : void 0; } }
+
+function count_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function count_count(values, valueof) {
   var count = 0;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = _createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         value != null && (value = +value) >= value && ++count;
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = _createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value && ++count;
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
   return count;
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
 
-    return arr2;
-  }
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js
 
 
 
+
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
 
@@ -18556,6 +17831,12 @@ function cumsum(values, valueof) {
   return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/variance.js
+function variance_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = variance_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function variance_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return variance_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? variance_arrayLikeToArray(o, minLen) : void 0; } }
+
+function variance_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function variance(values, valueof) {
   var delta,
       count = 0,
@@ -18563,44 +17844,34 @@ function variance(values, valueof) {
       sum = 0;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = variance_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         value != null && (value = +value) >= value && (delta = value - mean, mean += delta / ++count, sum += delta * (value - mean));
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = variance_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value && (delta = _value - mean, mean += delta / ++count, sum += delta * (_value - mean));
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
@@ -18613,48 +17884,44 @@ function deviation(values, valueof) {
   return v ? Math.sqrt(v) : v;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
+function extent_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = extent_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function extent_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return extent_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? extent_arrayLikeToArray(o, minLen) : void 0; } }
+
+function extent_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 /* harmony default export */ var src_extent = (function (values, valueof) {
   var min, max;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = extent_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         value != null && (min === undefined ? value >= value && (min = max = value) : (min > value && (min = value), max < value && (max = value)));
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = extent_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (min === undefined ? _value >= _value && (min = max = _value) : (min > _value && (min = _value), max < _value && (max = _value)));
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
@@ -18665,6 +17932,13 @@ function deviation(values, valueof) {
   return x;
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/group.js
+
+
+function group_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = group_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function group_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return group_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? group_arrayLikeToArray(o, minLen) : void 0; } }
+
+function group_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
 
 
 function group_group(values) {
@@ -18695,12 +17969,11 @@ function nest(values, map, reduce, keys) {
         keyof = keys[i++],
         index = -1;
 
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = group_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value,
             key = keyof(value, ++index, values),
             _group = groups.get(key);
@@ -18708,21 +17981,16 @@ function nest(values, map, reduce, keys) {
         _group ? _group.push(value) : groups.set(key, [value]);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = group_createForOfIteratorHelper(groups);
 
     try {
-      for (var _step2, _iterator2 = groups[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _step2$value = _slicedToArray(_step2.value, 2),
             key = _step2$value[0],
             _values = _step2$value[1];
@@ -18730,13 +17998,9 @@ function nest(values, map, reduce, keys) {
         groups.set(key, regroup(_values, i));
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
 
     return map(groups);
@@ -18846,96 +18110,88 @@ function tickStep(start, stop, count) {
   }, histogram;
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
+function max_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = max_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function max_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return max_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? max_arrayLikeToArray(o, minLen) : void 0; } }
+
+function max_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function max_max(values, valueof) {
   var max;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = max_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         value != null && (max < value || max === undefined && value >= value) && (max = value);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = max_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (max < _value || max === undefined && _value >= _value) && (max = _value);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
   return max;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
+function min_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = min_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function min_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return min_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? min_arrayLikeToArray(o, minLen) : void 0; } }
+
+function min_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function min_min(values, valueof) {
   var min;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = min_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         value != null && (min > value || min === undefined && value >= value) && (min = value);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = min_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (min > _value || min === undefined && _value >= _value) && (min = _value);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
@@ -18987,25 +18243,31 @@ var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
 
 var _marked = /*#__PURE__*/regenerator_default.a.mark(numbers);
 
+function number_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = number_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function number_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return number_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? number_arrayLikeToArray(o, minLen) : void 0; } }
+
+function number_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 /* harmony default export */ var src_number = (function (x) {
   return x === null ? NaN : +x;
 });
 function numbers(values, valueof) {
-  var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _step, _iterator, value, index, _iteratorNormalCompletion2, _didIteratorError2, _iteratorError2, _step2, _iterator2, _value;
+  var _step, _iterator, value, index, _step2, _iterator2, _value;
 
   return regenerator_default.a.wrap(function (_context) {
     for (;;) switch (_context.prev = _context.next) {
       case 0:
         if (valueof !== undefined) {
-          _context.next = 28;
+          _context.next = 22;
           break;
         }
 
-        _iteratorNormalCompletion = !0, _didIteratorError = !1, _iteratorError = undefined, _context.prev = 2, _iterator = values[Symbol.iterator]();
+        _iterator = number_createForOfIteratorHelper(values), _context.prev = 2, _iterator.s();
 
       case 4:
-        if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-          _context.next = 13;
+        if ((_step = _iterator.n()).done) {
+          _context.next = 12;
           break;
         }
 
@@ -19017,86 +18279,58 @@ function numbers(values, valueof) {
         return _context.next = 10, value;
 
       case 10:
-        _iteratorNormalCompletion = !0, _context.next = 4;
+        _context.next = 4;
         break;
 
-      case 13:
-        _context.next = 18;
+      case 12:
+        _context.next = 17;
         break;
 
-      case 15:
-        _context.prev = 15, _context.t1 = _context["catch"](2), _didIteratorError = !0, _iteratorError = _context.t1;
+      case 14:
+        _context.prev = 14, _context.t1 = _context["catch"](2), _iterator.e(_context.t1);
 
-      case 18:
-        _context.prev = 18, _context.prev = 19, _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
+      case 17:
+        return _context.prev = 17, _iterator.f(), _context.finish(17);
 
-      case 21:
-        if (_context.prev = 21, !_didIteratorError) {
-          _context.next = 24;
-          break;
-        }
+      case 20:
+        _context.next = 42;
+        break;
 
-        throw _iteratorError;
-
-      case 24:
-        return _context.finish(21);
-
-      case 25:
-        return _context.finish(18);
+      case 22:
+        index = -1, _iterator2 = number_createForOfIteratorHelper(values), _context.prev = 24, _iterator2.s();
 
       case 26:
-        _context.next = 54;
-        break;
-
-      case 28:
-        index = -1, _iteratorNormalCompletion2 = !0, _didIteratorError2 = !1, _iteratorError2 = undefined, _context.prev = 30, _iterator2 = values[Symbol.iterator]();
-
-      case 32:
-        if (_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done) {
-          _context.next = 41;
+        if ((_step2 = _iterator2.n()).done) {
+          _context.next = 34;
           break;
         }
 
         if (_value = _step2.value, _context.t2 = (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value, !_context.t2) {
-          _context.next = 38;
+          _context.next = 32;
           break;
         }
 
-        return _context.next = 38, _value;
+        return _context.next = 32, _value;
 
-      case 38:
-        _iteratorNormalCompletion2 = !0, _context.next = 32;
+      case 32:
+        _context.next = 26;
         break;
 
-      case 41:
-        _context.next = 46;
+      case 34:
+        _context.next = 39;
         break;
 
-      case 43:
-        _context.prev = 43, _context.t3 = _context["catch"](30), _didIteratorError2 = !0, _iteratorError2 = _context.t3;
+      case 36:
+        _context.prev = 36, _context.t3 = _context["catch"](24), _iterator2.e(_context.t3);
 
-      case 46:
-        _context.prev = 46, _context.prev = 47, _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
+      case 39:
+        return _context.prev = 39, _iterator2.f(), _context.finish(39);
 
-      case 49:
-        if (_context.prev = 49, !_didIteratorError2) {
-          _context.next = 52;
-          break;
-        }
-
-        throw _iteratorError2;
-
-      case 52:
-        return _context.finish(49);
-
-      case 53:
-        return _context.finish(46);
-
-      case 54:
+      case 42:
       case "end":
         return _context.stop();
     }
-  }, _marked, null, [[2, 15, 18, 26], [19,, 21, 25], [30, 43, 46, 54], [47,, 49, 53]]);
+  }, _marked, null, [[2, 14, 17, 20], [24, 36, 39, 42]]);
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/quantile.js
 
@@ -19142,97 +18376,89 @@ function quantileSorted(values, p) {
   return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(count_count(values), -1 / 3)));
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/maxIndex.js
+function maxIndex_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = maxIndex_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function maxIndex_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return maxIndex_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? maxIndex_arrayLikeToArray(o, minLen) : void 0; } }
+
+function maxIndex_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function maxIndex(values, valueof) {
   var max,
       maxIndex = -1,
       index = -1;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = maxIndex_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         ++index, value != null && (max < value || max === undefined && value >= value) && (max = value, maxIndex = index);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = maxIndex_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (max < _value || max === undefined && _value >= _value) && (max = _value, maxIndex = index);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
   return maxIndex;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/mean.js
+function mean_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = mean_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function mean_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return mean_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? mean_arrayLikeToArray(o, minLen) : void 0; } }
+
+function mean_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function mean(values, valueof) {
   var count = 0,
       sum = 0;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = mean_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         value != null && (value = +value) >= value && (++count, sum += value);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = mean_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value && (++count, sum += _value);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
@@ -19248,131 +18474,120 @@ function mean(values, valueof) {
 
 var merge_marked = /*#__PURE__*/regenerator_default.a.mark(flatten);
 
+function merge_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = merge_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function merge_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return merge_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? merge_arrayLikeToArray(o, minLen) : void 0; } }
+
+function merge_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function flatten(arrays) {
-  var _iteratorNormalCompletion, _didIteratorError, _iteratorError, _step, _iterator, array;
+  var _step, _iterator, array;
 
   return regenerator_default.a.wrap(function (_context) {
     for (;;) switch (_context.prev = _context.next) {
       case 0:
-        _iteratorNormalCompletion = !0, _didIteratorError = !1, _iteratorError = undefined, _context.prev = 1, _iterator = arrays[Symbol.iterator]();
+        _iterator = merge_createForOfIteratorHelper(arrays), _context.prev = 1, _iterator.s();
 
       case 3:
-        if (_iteratorNormalCompletion = (_step = _iterator.next()).done) {
-          _context.next = 9;
+        if ((_step = _iterator.n()).done) {
+          _context.next = 8;
           break;
         }
 
         return array = _step.value, _context.delegateYield(array, "t0", 6);
 
       case 6:
-        _iteratorNormalCompletion = !0, _context.next = 3;
+        _context.next = 3;
         break;
 
-      case 9:
-        _context.next = 14;
+      case 8:
+        _context.next = 13;
         break;
 
-      case 11:
-        _context.prev = 11, _context.t1 = _context["catch"](1), _didIteratorError = !0, _iteratorError = _context.t1;
+      case 10:
+        _context.prev = 10, _context.t1 = _context["catch"](1), _iterator.e(_context.t1);
 
-      case 14:
-        _context.prev = 14, _context.prev = 15, _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
+      case 13:
+        return _context.prev = 13, _iterator.f(), _context.finish(13);
 
-      case 17:
-        if (_context.prev = 17, !_didIteratorError) {
-          _context.next = 20;
-          break;
-        }
-
-        throw _iteratorError;
-
-      case 20:
-        return _context.finish(17);
-
-      case 21:
-        return _context.finish(14);
-
-      case 22:
+      case 16:
       case "end":
         return _context.stop();
     }
-  }, merge_marked, null, [[1, 11, 14, 22], [15,, 17, 21]]);
+  }, merge_marked, null, [[1, 10, 13, 16]]);
 }
 
 function merge_merge(arrays) {
   return Array.from(flatten(arrays));
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/minIndex.js
+function minIndex_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = minIndex_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function minIndex_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return minIndex_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? minIndex_arrayLikeToArray(o, minLen) : void 0; } }
+
+function minIndex_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function minIndex(values, valueof) {
   var min,
       minIndex = -1,
       index = -1;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = minIndex_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         ++index, value != null && (min > value || min === undefined && value >= value) && (min = value, minIndex = index);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = minIndex_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = valueof(_value, ++index, values)) != null && (min > _value || min === undefined && _value >= _value) && (min = _value, minIndex = index);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
   return minIndex;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
+function pairs_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = pairs_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function pairs_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return pairs_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? pairs_arrayLikeToArray(o, minLen) : void 0; } }
+
+function pairs_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function pairs(values) {
   var previous,
+      _step,
       pairof = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : pair,
       pairs = [],
       first = !1,
-      _iteratorNormalCompletion = !0,
-      _didIteratorError = !1,
-      _iteratorError = undefined;
+      _iterator = pairs_createForOfIteratorHelper(values);
 
   try {
-    for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var value = _step.value;
       first && pairs.push(pairof(previous, value)), previous = value, first = !0;
     }
   } catch (err) {
-    _didIteratorError = !0, _iteratorError = err;
+    _iterator.e(err);
   } finally {
-    try {
-      _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-    } finally {
-      if (_didIteratorError) throw _iteratorError;
-    }
+    _iterator.f();
   }
 
   return pairs;
@@ -19387,6 +18602,12 @@ function pair(a, b) {
   });
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/least.js
+function least_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = least_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function least_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return least_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? least_arrayLikeToArray(o, minLen) : void 0; } }
+
+function least_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 function least(values) {
   var min,
@@ -19396,49 +18617,45 @@ function least(values) {
   if (compare.length === 1) {
     var minValue;
 
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = least_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var element = _step.value,
             value = compare(element);
         (defined ? src_ascending(value, minValue) < 0 : src_ascending(value, value) === 0) && (min = element, minValue = value, defined = !0);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = least_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var value = _step2.value;
         (defined ? compare(value, min) < 0 : compare(value, value) === 0) && (min = value, defined = !0);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
   return min;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/leastIndex.js
+function leastIndex_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = leastIndex_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function leastIndex_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return leastIndex_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? leastIndex_arrayLikeToArray(o, minLen) : void 0; } }
+
+function leastIndex_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 function leastIndex(values) {
@@ -19448,28 +18665,29 @@ function leastIndex(values) {
       min = -1,
       index = -1;
 
-  var _iteratorNormalCompletion = !0,
-      _didIteratorError = !1,
-      _iteratorError = undefined;
+  var _step,
+      _iterator = leastIndex_createForOfIteratorHelper(values);
 
   try {
-    for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var value = _step.value;
       ++index, (min < 0 ? compare(value, value) === 0 : compare(value, minValue) < 0) && (minValue = value, min = index);
     }
   } catch (err) {
-    _didIteratorError = !0, _iteratorError = err;
+    _iterator.e(err);
   } finally {
-    try {
-      _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-    } finally {
-      if (_didIteratorError) throw _iteratorError;
-    }
+    _iterator.f();
   }
 
   return min;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/greatest.js
+function greatest_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = greatest_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function greatest_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return greatest_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? greatest_arrayLikeToArray(o, minLen) : void 0; } }
+
+function greatest_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 function greatest(values) {
   var max,
@@ -19479,49 +18697,45 @@ function greatest(values) {
   if (compare.length === 1) {
     var maxValue;
 
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = greatest_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var element = _step.value,
             value = compare(element);
         (defined ? src_ascending(value, maxValue) > 0 : src_ascending(value, value) === 0) && (max = element, maxValue = value, defined = !0);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = greatest_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var value = _step2.value;
         (defined ? compare(value, max) > 0 : compare(value, value) === 0) && (max = value, defined = !0);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
   return max;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/greatestIndex.js
+function greatestIndex_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = greatestIndex_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function greatestIndex_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return greatestIndex_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? greatestIndex_arrayLikeToArray(o, minLen) : void 0; } }
+
+function greatestIndex_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 function greatestIndex(values) {
@@ -19531,23 +18745,18 @@ function greatestIndex(values) {
       max = -1,
       index = -1;
 
-  var _iteratorNormalCompletion = !0,
-      _didIteratorError = !1,
-      _iteratorError = undefined;
+  var _step,
+      _iterator = greatestIndex_createForOfIteratorHelper(values);
 
   try {
-    for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+    for (_iterator.s(); !(_step = _iterator.n()).done;) {
       var value = _step.value;
       ++index, (max < 0 ? compare(value, value) === 0 : compare(value, maxValue) > 0) && (maxValue = value, max = index);
     }
   } catch (err) {
-    _didIteratorError = !0, _iteratorError = err;
+    _iterator.e(err);
   } finally {
-    try {
-      _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-    } finally {
-      if (_didIteratorError) throw _iteratorError;
-    }
+    _iterator.f();
   }
 
   return max;
@@ -19565,48 +18774,44 @@ function shuffle(array) {
   return array;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/sum.js
+function sum_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = sum_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function sum_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return sum_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? sum_arrayLikeToArray(o, minLen) : void 0; } }
+
+function sum_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 function sum_sum(values, valueof) {
   var sum = 0;
 
   if (valueof === undefined) {
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = sum_createForOfIteratorHelper(values);
 
     try {
-      for (var _step, _iterator = values[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value;
         (value = +value) && (sum += value);
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
   } else {
     var index = -1;
 
-    var _iteratorNormalCompletion2 = !0,
-        _didIteratorError2 = !1,
-        _iteratorError2 = undefined;
+    var _step2,
+        _iterator2 = sum_createForOfIteratorHelper(values);
 
     try {
-      for (var _step2, _iterator2 = values[Symbol.iterator](); !(_iteratorNormalCompletion2 = (_step2 = _iterator2.next()).done); _iteratorNormalCompletion2 = !0) {
+      for (_iterator2.s(); !(_step2 = _iterator2.n()).done;) {
         var _value = _step2.value;
         (_value = +valueof(_value, ++index, values)) && (sum += _value);
       }
     } catch (err) {
-      _didIteratorError2 = !0, _iteratorError2 = err;
+      _iterator2.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion2 || _iterator2["return"] == null || _iterator2["return"]();
-      } finally {
-        if (_didIteratorError2) throw _iteratorError2;
-      }
+      _iterator2.f();
     }
   }
 
@@ -19707,6 +18912,12 @@ function initInterpolator(domain, interpolator) {
   return this;
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
+function ordinal_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = ordinal_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function ordinal_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return ordinal_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? ordinal_arrayLikeToArray(o, minLen) : void 0; } }
+
+function ordinal_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 var implicit = Symbol("implicit");
 function ordinal() {
@@ -19730,24 +18941,19 @@ function ordinal() {
     if (!arguments.length) return domain.slice();
     domain = [], index = new Map();
 
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = ordinal_createForOfIteratorHelper(_);
 
     try {
-      for (var _step, _iterator = _[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) {
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
         var value = _step.value,
             key = value + "";
         index.has(key) || index.set(key, domain.push(value));
       }
     } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
+      _iterator.e(err);
     } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
-      }
+      _iterator.f();
     }
 
     return scale;
@@ -20534,6 +19740,12 @@ function radial() {
   }, initRange.apply(scale, arguments), linearish(scale);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/quantile.js
+function quantile_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = quantile_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function quantile_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return quantile_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? quantile_arrayLikeToArray(o, minLen) : void 0; } }
+
+function quantile_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 function quantile_quantile() {
@@ -20561,20 +19773,18 @@ function quantile_quantile() {
     if (!arguments.length) return domain.slice();
     domain = [];
 
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = quantile_createForOfIteratorHelper(_);
 
     try {
-      for (var _step, d, _iterator = _[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) d = _step.value, d == null || isNaN(d = +d) || domain.push(d);
-    } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
-    } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var d = _step.value;
+        d == null || isNaN(d = +d) || domain.push(d);
       }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
     }
 
     return domain.sort(src_ascending), rescale();
@@ -20820,6 +20030,12 @@ function sequentialSqrt() {
   return sequentialPow.apply(null, arguments).exponent(.5);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/sequentialQuantile.js
+function sequentialQuantile_createForOfIteratorHelper(o) { if (typeof Symbol === "undefined" || o[Symbol.iterator] == null) { if (Array.isArray(o) || (o = sequentialQuantile_unsupportedIterableToArray(o))) { var i = 0, F = function () {}; return { s: F, n: function n() { return i >= o.length ? { done: !0 } : { done: !1, value: o[i++] }; }, e: function e(_e) { throw _e; }, f: F }; } throw new TypeError("Invalid attempt to iterate non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method."); } var it, err, normalCompletion = !0, didErr = !1; return { s: function s() { it = o[Symbol.iterator](); }, n: function n() { var step = it.next(); return normalCompletion = step.done, step; }, e: function e(_e2) { didErr = !0, err = _e2; }, f: function f() { try { normalCompletion || it["return"] == null || it["return"](); } finally { if (didErr) throw err; } } }; }
+
+function sequentialQuantile_unsupportedIterableToArray(o, minLen) { if (o) { if (typeof o === "string") return sequentialQuantile_arrayLikeToArray(o, minLen); var n = Object.prototype.toString.call(o).slice(8, -1); return n === "Object" && o.constructor && (n = o.constructor.name), n === "Map" || n === "Set" ? Array.from(n) : n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n) ? sequentialQuantile_arrayLikeToArray(o, minLen) : void 0; } }
+
+function sequentialQuantile_arrayLikeToArray(arr, len) { (len == null || len > arr.length) && (len = arr.length); for (var i = 0, arr2 = Array(len); i < len; i++) arr2[i] = arr[i]; return arr2; }
+
 
 
 
@@ -20834,20 +20050,18 @@ function sequentialQuantile() {
     if (!arguments.length) return domain.slice();
     domain = [];
 
-    var _iteratorNormalCompletion = !0,
-        _didIteratorError = !1,
-        _iteratorError = undefined;
+    var _step,
+        _iterator = sequentialQuantile_createForOfIteratorHelper(_);
 
     try {
-      for (var _step, d, _iterator = _[Symbol.iterator](); !(_iteratorNormalCompletion = (_step = _iterator.next()).done); _iteratorNormalCompletion = !0) d = _step.value, d == null || isNaN(d = +d) || domain.push(d);
-    } catch (err) {
-      _didIteratorError = !0, _iteratorError = err;
-    } finally {
-      try {
-        _iteratorNormalCompletion || _iterator["return"] == null || _iterator["return"]();
-      } finally {
-        if (_didIteratorError) throw _iteratorError;
+      for (_iterator.s(); !(_step = _iterator.n()).done;) {
+        var d = _step.value;
+        d == null || isNaN(d = +d) || domain.push(d);
       }
+    } catch (err) {
+      _iterator.e(err);
+    } finally {
+      _iterator.f();
     }
 
     return domain.sort(src_ascending), scale;
@@ -38489,7 +37703,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200323131726",
+  version: "1.11.1-nightly-20200330132151",
 
   /**
    * Generate chart
@@ -38588,7 +37802,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200323131726
+ * @version 1.11.1-nightly-20200330132151
  */
 
 

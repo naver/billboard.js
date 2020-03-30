@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200323131726
+ * @version 1.11.1-nightly-20200330132151
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -218,10 +218,7 @@ function _arrayWithHoles(arr) {
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArrayLimit.js
 function _iterableToArrayLimit(arr, i) {
-  if (!(Symbol.iterator in Object(arr) || Object.prototype.toString.call(arr) === "[object Arguments]")) {
-    return;
-  }
-
+  if (typeof Symbol === "undefined" || !(Symbol.iterator in Object(arr))) return;
   var _arr = [];
   var _n = true;
   var _d = false;
@@ -246,16 +243,37 @@ function _iterableToArrayLimit(arr, i) {
 
   return _arr;
 }
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayLikeToArray.js
+function _arrayLikeToArray(arr, len) {
+  if (len == null || len > arr.length) len = arr.length;
+
+  for (var i = 0, arr2 = new Array(len); i < len; i++) {
+    arr2[i] = arr[i];
+  }
+
+  return arr2;
+}
+// CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/unsupportedIterableToArray.js
+
+function _unsupportedIterableToArray(o, minLen) {
+  if (!o) return;
+  if (typeof o === "string") return _arrayLikeToArray(o, minLen);
+  var n = Object.prototype.toString.call(o).slice(8, -1);
+  if (n === "Object" && o.constructor) n = o.constructor.name;
+  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
+}
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
 function _nonIterableRest() {
-  throw new TypeError("Invalid attempt to destructure non-iterable instance");
+  throw new TypeError("Invalid attempt to destructure non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/slicedToArray.js
 
 
 
+
 function _slicedToArray(arr, i) {
-  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest();
+  return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _unsupportedIterableToArray(arr, i) || _nonIterableRest();
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/createClass.js
 function _defineProperties(target, props) {
@@ -395,29 +413,25 @@ var external_commonjs_d3_scale_commonjs2_d3_scale_amd_d3_scale_root_d3_ = __webp
   TextOverlapping: "text-overlapping"
 });
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/arrayWithoutHoles.js
-function _arrayWithoutHoles(arr) {
-  if (Array.isArray(arr)) {
-    for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) {
-      arr2[i] = arr[i];
-    }
 
-    return arr2;
-  }
+function _arrayWithoutHoles(arr) {
+  if (Array.isArray(arr)) return _arrayLikeToArray(arr);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/iterableToArray.js
 function _iterableToArray(iter) {
-  if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === "[object Arguments]") return Array.from(iter);
+  if (typeof Symbol !== "undefined" && Symbol.iterator in Object(iter)) return Array.from(iter);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableSpread.js
 function _nonIterableSpread() {
-  throw new TypeError("Invalid attempt to spread non-iterable instance");
+  throw new TypeError("Invalid attempt to spread non-iterable instance.\nIn order to be iterable, non-array objects must have a [Symbol.iterator]() method.");
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/toConsumableArray.js
 
 
 
+
 function _toConsumableArray(arr) {
-  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread();
+  return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _unsupportedIterableToArray(arr) || _nonIterableSpread();
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/typeof.js
 function _typeof(obj) {
@@ -14897,7 +14911,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200323131726",
+  version: "1.11.1-nightly-20200330132151",
 
   /**
    * Generate chart
@@ -14996,7 +15010,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200323131726
+ * @version 1.11.1-nightly-20200330132151
  */
 
 
