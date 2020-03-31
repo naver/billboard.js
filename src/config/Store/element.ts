@@ -7,7 +7,10 @@ import {d3Selection} from "../../../types/types";
 type T = d3Selection | null;
 
 /**
- * Elements reference
+ * Elements class.
+ * @class Elements
+ * @ignore
+ * @private
  */
 export default class Element {
 	constructor() {

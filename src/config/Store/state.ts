@@ -3,7 +3,10 @@
  * billboard.js project is licensed under the MIT license
  */
 /**
- * State variables
+ * State class.
+ * @class State
+ * @ignore
+ * @private
  */
 export default class State {
 	constructor() {

@@ -11,6 +11,12 @@ const classes = {
 	state: State
 };
 
+/**
+ * Internal store class.
+ * @class Store
+ * @ignore
+ * @private
+ */
 export default class Store {
 	constructor() {
 		Object.keys(classes).forEach(v => {
