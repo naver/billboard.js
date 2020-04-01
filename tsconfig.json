@@ -16,6 +16,9 @@
 	"include": [
 		"src/**/*.ts"
 	],
+	"exclude": [
+		"spec/**/*.ts"
+	],
 	"noEmit": true,
 	"forceConsistentCasingInFileNames": true
 }

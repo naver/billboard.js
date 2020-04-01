@@ -1,13 +1,16 @@
+// file extension to be tested
+const fileExtensions = /(\.[jt]s)$/;
+
 module.exports = function(config) {
 	const karmaConfig = {
 		frameworks: ["mocha", "chai", "sinon"],
 		files: [
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/hammer-simulator/index.js",
-			"./spec/assets/hammer-simulator.run.js",
+			"./spec/assets/hammer-simulator.run.ts",
 			"./src/scss/billboard.scss",
 			"./spec/assets/common.css",
-			"./spec/**/*-spec.js",
+			"./spec/**/*-spec.ts",
 			{
 				pattern: "./spec/assets/data/*",
 				watched: false,
@@ -26,35 +29,36 @@ module.exports = function(config) {
 			devtool: "inline-source-map",
 			mode: "development",
 			stats: "none",
+			resolve: {
+				extensions: [".ts", ".js"]
+			},
 			module: {
 				rules: [
 					{
-						test: /\.js$/,
+						test: fileExtensions,
 						exclude: /node_modules/,
 						use: {
 							loader: "babel-loader",
 							options: {
 								presets: [
-									[
-										"@babel/preset-env", {
-											loose: true,
-											modules: false
-										}
-									]
+									"@babel/typescript",
+									"@babel/env"
 								],
-								plugins: ["add-module-exports"]
+								plugins: [
+									"add-module-exports"
+								]
 							}
 						}
 					}
 				]
-			}
+			},
 		},
 
 		// preprocess matching files before serving them to the browser
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"./src/scss/billboard.scss": ["scss"],
-			"./spec/**/*-spec.js": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
+			"./spec/**/*-spec.ts": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
 		},
 
 		scssPreprocessor: {
@@ -89,7 +93,7 @@ module.exports = function(config) {
 		};
 
 		karmaConfig.webpack.module.rules.unshift({
-			test: /\.js$/,
+			test: fileExtensions,
 			exclude: /(node_modules|test)/,
 			use: {
 				loader: "istanbul-instrumenter-loader",
