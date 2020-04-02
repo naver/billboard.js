@@ -2,8 +2,8 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-/* global sandbox, window */
 /* eslint-disable */
+ /* global sandbox, window */
 import simulant from "simulant";
 import bb from "../../src/core";
 import CLASS from "../../src/config/classes";
