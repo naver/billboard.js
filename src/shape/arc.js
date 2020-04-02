@@ -271,25 +271,26 @@ extend(ChartInternal.prototype, {
 
 	textForArcLabel(selection) {
 		const $$ = this;
+		const hasGauge = $$.hasType("gauge");
 
 		if ($$.shouldShowArcLabel()) {
 			selection.each(function(d) {
 				const node = d3Select(this);
 				const updated = $$.updateAngle(d);
-				const value = updated ? updated.value : d.value;
 				const ratio = $$.getRatio("arc", updated);
-				const id = d.data.id;
-				const hasGauge = $$.hasType("gauge");
 				const isUnderThreshold = !(
 					!hasGauge && !$$.meetsArcLabelThreshold(ratio)
 				);
 
 				if (isUnderThreshold) {
+					const {value} = updated || d;
 					const text = (
 						$$.getArcLabelFormat() || $$.defaultArcValueFormat
-					)(value, ratio, id).toString();
+					)(value, ratio, d.data.id).toString();
 
 					setTextValue(node, text, [-1, 1], hasGauge);
+				} else {
+					node.text("");
 				}
 			});
 		}
