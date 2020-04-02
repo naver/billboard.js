@@ -96,7 +96,7 @@ export default {
 			padding = !config.axis_x_show ?
 				1 : Math.max(ceil10(axisWidth), 40);
 		} else if (hasAxis && (!config.axis_y_show || config.axis_y_inner)) { // && !config.axis_rotated
-			padding = $$.axis.getYAxisLabelPosition().isOuter ? 30 : 1;
+			padding = $$.axis.getAxisLabelPosition("y").isOuter ? 30 : 1;
 		} else {
 			padding = ceil10(axisWidth);
 		}

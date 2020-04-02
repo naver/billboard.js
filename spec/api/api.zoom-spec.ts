@@ -270,7 +270,7 @@ describe("API zoom", function() {
 		});
 
 		it("should be disabled & enabled zoom", () => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const domain = [1, 2];
 
 			// when disable zoom
@@ -326,7 +326,7 @@ describe("API zoom", function() {
 			expect(Math.round(zoomRange[0])).to.be.equal(range);
 
 			setTimeout(() => {
-				expect(+chart.internal.main.select(`.${CLASS.axisX} .tick`).attr("transform").match(/\d+/)[0]).to.be.above(250);
+				expect(+chart.internal.$el.main.select(`.${CLASS.axisX} .tick`).attr("transform").match(/\d+/)[0]).to.be.above(250);
 				done();
 			}, 300);
 		});
@@ -338,7 +338,7 @@ describe("API zoom", function() {
 			expect(Math.round(zoomRange[1])).to.be.equal(range);
 
 			setTimeout(() => {
-				const tick = chart.internal.main.selectAll(`.${CLASS.axisX} .tick`);
+				const tick = chart.internal.$el.main.selectAll(`.${CLASS.axisX} .tick`);
 
 				expect(+tick.filter(`:nth-child(${tick.size() + 1})`).attr("transform").match(/\d+/)[0]).to.be.below(500);
 				done();
@@ -346,7 +346,7 @@ describe("API zoom", function() {
 		});
 
 		it("should be updated zoom range", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const range = chart.zoom.range({
 				min: -2,
 				max: 7

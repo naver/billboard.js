@@ -1,6 +1,7 @@
 {
 	"compilerOptions": {
 		"module": "commonjs",
+		"moduleResolution": "node",
 		"noImplicitAny": false,
 		"noImplicitThis": false,
 		"strictNullChecks": true,
@@ -8,9 +9,6 @@
 		"baseUrl": "../",
 		"lib": [
 			"es6", "dom"
-		],
-		"typeRoots": [
-			"./node_modules/@types"
 		]
 	},
 	"include": [

@@ -18,7 +18,7 @@ describe("API grid", function() {
 
 	describe("ygrids.add() / ygrids.remove()", () => {
 		it("should update y grids", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const expectedGrids = [{
 					value: 100,
 					text: "Pressure Low"
@@ -61,7 +61,7 @@ describe("API grid", function() {
 		});
 
 		it("should update x ygrids even if it's zoomed", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const expectedGrids = [{
 						value: 0,
 						text: "Pressure Low"
@@ -142,7 +142,7 @@ describe("API grid", function() {
 			chart.xgrids([gridData]);
 
 			setTimeout(() => {
-				const xgrid = chart.internal.main.select(`.${CLASS.xgridLine}`);
+				const xgrid = chart.internal.$el.main.select(`.${CLASS.xgridLine}`);
 
 				expect(xgrid.classed(gridData.class)).to.be.true;
 
@@ -180,7 +180,7 @@ describe("API grid", function() {
 			chart.ygrids([gridData]);
 
 			setTimeout(() => {
-				const ygrid = chart.internal.main.select(`.${CLASS.ygridLine}`);
+				const ygrid = chart.internal.$el.main.select(`.${CLASS.ygridLine}`);
 
 				expect(ygrid.classed(gridData.class)).to.be.true;
 

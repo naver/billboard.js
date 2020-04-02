@@ -27,7 +27,7 @@ describe("API focus", function() {
 
 	describe("focus()", () => {
 		it("should focus all targets", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();
@@ -53,7 +53,7 @@ describe("API focus", function() {
 		});
 
 		it("should focus one target", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 			const targets = {
 				data1: main.select(".bb-chart-line.bb-target.bb-target-data1"),
@@ -83,7 +83,7 @@ describe("API focus", function() {
 		});
 
 		it("should focus multiple targets", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 			const targets = {
 				data1: main.select(".bb-chart-line.bb-target.bb-target-data1"),
@@ -116,7 +116,7 @@ describe("API focus", function() {
 
 	describe("defocus()", () => {
 		it("should defocus all targets", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 			const targets = main.selectAll(".bb-chart-line.bb-target");
 			const legendItems = legend.selectAll(".bb-legend-item");
@@ -144,7 +144,7 @@ describe("API focus", function() {
 
 
 		it("should defocus one target", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 			const targets = main.selectAll(".bb-chart-line.bb-target");
 			const legendItems = legend.selectAll(".bb-legend-item");
@@ -180,7 +180,7 @@ describe("API focus", function() {
 		});
 
 		it("should defocus multiple targets", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 			const targets = main.selectAll(".bb-chart-line.bb-target");
 			const legendItems = legend.selectAll(".bb-legend-item");
@@ -216,7 +216,7 @@ describe("API focus", function() {
 		});
 
 		it("should defocus multiple targets after focused", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();
@@ -257,7 +257,7 @@ describe("API focus", function() {
 
 	describe("revert()", () => {
 		it("should revert all targets after focus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();
@@ -288,7 +288,7 @@ describe("API focus", function() {
 		});
 
 		it("should revert all targets after defocus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.defocus();
@@ -319,7 +319,7 @@ describe("API focus", function() {
 		});
 
 		it("should revert one target after focus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();
@@ -358,7 +358,7 @@ describe("API focus", function() {
 		});
 
 		it("should revert one target after defocus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.defocus();
@@ -397,7 +397,7 @@ describe("API focus", function() {
 		});
 
 		it("should focus multiple targets after focus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();
@@ -436,7 +436,7 @@ describe("API focus", function() {
 		});
 
 		it("should focus multiple targets after defocus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.defocus();
@@ -491,7 +491,7 @@ describe("API focus", function() {
 		});
 
 		it("should focus all targets without showing legend", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();
@@ -513,7 +513,7 @@ describe("API focus", function() {
 		});
 
 		it("should defocus all targets without showing legend", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.defocus();
@@ -535,7 +535,7 @@ describe("API focus", function() {
 		});
 
 		it("should revert all targets after focus", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const legend = chart.internal.legend;
 
 			chart.focus();

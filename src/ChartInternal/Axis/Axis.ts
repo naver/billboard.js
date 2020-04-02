@@ -879,18 +879,19 @@ export default class Axis {
 		}
 
 		["y", "y2"].forEach(key => {
-			const axis = scale[key];
+			const axisScale = scale[key];
 
-			if (axis) {
+			if (axisScale) {
 				const tickValues = config[`axis_${key}_tick_values`];
 				const tickCount = config[`axis_${key}_tick_count`];
 
-				axis.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
+				axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
 
 				if (!tickValues && tickCount) {
-					const domain = axis.domain();
+					const axis = $$.axis[key];
+					const domain = axisScale.domain();
 
-					$$[`${key}Axis`].tickValues(
+					axis.tickValues(
 						this.generateTickValues(
 							domain,
 							domain.every(v => v === 0) ? 1 : tickCount,

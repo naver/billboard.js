@@ -53,7 +53,7 @@ describe("DATA", () => {
 			const expectedCx = [6, 299, 593];
 			const expectedCy = [371, 391, 332];
 
-			chart.internal.main.selectAll(`.${CLASS.circles}-data1 .${CLASS.circle}`)
+			chart.internal.$el.main.selectAll(`.${CLASS.circles}-data1 .${CLASS.circle}`)
 				.each(checkXY(expectedCx, expectedCy));
 		});
 	});
@@ -90,7 +90,7 @@ describe("DATA", () => {
 		it("should draw correctly", () => {
 			const expectedCx = {443: [98, 294, 490], 995: [98, 294, 490]};
 			const expectedCy = {443: [194, 351, 36], 995: [391, 430, 351]};
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 
 			main.selectAll(`.${CLASS.circles}-443 .${CLASS.circle}`)
 				.each(checkXY(expectedCx[443], expectedCy[443]));
@@ -148,7 +148,7 @@ describe("DATA", () => {
 		})
 
 		it("should draw nested JSON correctly", () => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const expectedCx = [98, 294, 490];
 			const expectedCy = {
 				443: [181, 326, 36],
@@ -443,7 +443,7 @@ describe("DATA", () => {
 				it("should have milliseconds tick format", () => {
 					const expected = ["2014-05-20 17:25:00.123", "2014-05-20 17:30:00.345"];
 
-					chart.internal.main.selectAll(`.${CLASS.axisX} g.tick text`).each(function(d, i) {
+					chart.internal.$el.main.selectAll(`.${CLASS.axisX} g.tick text`).each(function(d, i) {
 						expect(d3Select(this).text()).to.be.equal(expected[i]);
 					});
 				});
@@ -527,7 +527,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -554,7 +554,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -583,7 +583,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
 						const text = d3Select(this);
 
 						expect(+text.attr("y")).to.be.closeTo(expectedTextY[key][i] - 20, 3);
@@ -663,7 +663,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -690,7 +690,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
@@ -730,7 +730,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 3));
 				});
 			});
@@ -757,7 +757,7 @@ describe("DATA", () => {
 				};
 
 				Object.keys(expectedTextY).forEach(key => {
-					chart.internal.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`)
 						.each(checkXY(expectedTextX[key], expectedTextY[key], "", 4));
 				});
 			});
@@ -823,7 +823,7 @@ describe("DATA", () => {
 			});
 
 			it("should have data labels on all data", () => {
-				const main = chart.internal.main;
+				const main = chart.internal.$el.main;
 
 				main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
 					expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
@@ -859,7 +859,7 @@ describe("DATA", () => {
 				});
 
 				it("should have data labels on all data", () => {
-					const main = chart.internal.main;
+					const main = chart.internal.$el.main;
 
 					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
 						expect(d3Select(this).text()).to.equal(`${args.data.columns[0][i + 1]}`);
@@ -894,7 +894,7 @@ describe("DATA", () => {
 				});
 
 				it("should have data labels on all data", () => {
-					const main = chart.internal.main;
+					const main = chart.internal.$el.main;
 
 					main.selectAll(`.${CLASS.texts}-data1 text`).each(function(d, i) {
 						expect(d3Select(this).text()).to.equal(`$${args.data.columns[0][i + 1]}`);
@@ -961,7 +961,7 @@ describe("DATA", () => {
 					const expectedYs = [68, 50, 68, 423];
 					const expectedXs = [75, 225, 374, 524];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
@@ -980,7 +980,7 @@ describe("DATA", () => {
 					const expectedYs = [375, 40, 375, 422];
 					const expectedXs = [6, 202, 397, 593];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
@@ -1006,7 +1006,7 @@ describe("DATA", () => {
 					const expectedYs = [51, 145, 235, 327];
 					const expectedXs = [488.5, 514, 488.5, 4];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 
@@ -1025,7 +1025,7 @@ describe("DATA", () => {
 					const expectedYs = [9, 130, 249, 370];
 					const expectedXs = [76, 526, 76, 4];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 			});
@@ -1063,7 +1063,7 @@ describe("DATA", () => {
 					const expectedYs = [385, 11, 385, 12];
 					const expectedXs = [74, 221, 368, 515];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 
@@ -1082,7 +1082,7 @@ describe("DATA", () => {
 					const expectedYs = [394, 60, 394, 39];
 					const expectedXs = [6, 198, 391, 583];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 4));
 				});
 			});
@@ -1109,7 +1109,7 @@ describe("DATA", () => {
 					const expectedYs = [57, 162, 269, 375];
 					const expectedXs = [80, 584, 80, 514];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 5}));
 				});
 
@@ -1130,7 +1130,7 @@ describe("DATA", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [69, 527, 69, 527]; // 72.50132230092231
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 			});
@@ -1165,7 +1165,7 @@ describe("DATA", () => {
 					const expectedYs = [392, 43, 52, 215];
 					const expectedXs = [74, 221, 368, 515];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 3}));
 				});
 
@@ -1184,7 +1184,7 @@ describe("DATA", () => {
 					const expectedYs = [395, 40, 49, 211];
 					const expectedXs = [6, 198, 391, 583];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 10, y: 3}));
 				});
 			});
@@ -1208,7 +1208,7 @@ describe("DATA", () => {
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [72, 525, 513, 295];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 
@@ -1227,7 +1227,7 @@ describe("DATA", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [70, 527, 515, 297];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", {x: 4, y: 2}));
 				});
 			});
@@ -1261,7 +1261,7 @@ describe("DATA", () => {
 					const expectedYs = [385, 317, 370, 164];
 					const expectedXs = [74, 225, 374, 524];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
@@ -1280,7 +1280,7 @@ describe("DATA", () => {
 					const expectedYs = [344, 284, 331, 144];
 					const expectedXs = [6, 202, 397, 593];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
@@ -1304,7 +1304,7 @@ describe("DATA", () => {
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [57, 150, 77, 362];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 
@@ -1323,7 +1323,7 @@ describe("DATA", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [107, 192, 125, 386];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
@@ -1357,7 +1357,7 @@ describe("DATA", () => {
 					const expectedYs = [50, 117, 64, 270];
 					const expectedXs = [74, 221, 368, 515];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 
@@ -1376,7 +1376,7 @@ describe("DATA", () => {
 					const expectedYs = [90, 151, 103, 290];
 					const expectedXs = [6, 198, 391, 583];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 10));
 				});
 			});
@@ -1400,7 +1400,7 @@ describe("DATA", () => {
 					const expectedYs = [57, 163, 269, 375];
 					const expectedXs = [533, 441, 513, 232];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 3));
 				});
 
@@ -1419,7 +1419,7 @@ describe("DATA", () => {
 					const expectedYs = [9, 147, 286, 424];
 					const expectedXs = [479, 397, 461, 206];
 
-					chart.internal.main.selectAll(`.${CLASS.texts}-data1 text`)
+					chart.internal.$el.main.selectAll(`.${CLASS.texts}-data1 text`)
 						.each(checkXY(expectedXs, expectedYs, "", 5));
 				});
 			});
@@ -1440,7 +1440,7 @@ describe("DATA", () => {
 
 			it("data text label should be generated", () => {
 				const data = chart.data.values("data1");
-				const texts = chart.internal.main.selectAll(`.${CLASS.chartText} text.${CLASS.text}`);
+				const texts = chart.internal.$el.main.selectAll(`.${CLASS.chartText} text.${CLASS.text}`);
 
 				expect(texts.size()).to.be.equal(data.length);
 			});
@@ -1492,14 +1492,14 @@ describe("DATA", () => {
 			it("should draw points for the scatterplot", () => {
 				const id = "data1";
 				const data = chart.data.values(id);
-				const points = chart.internal.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.internal.$el.main.selectAll(`.${CLASS.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(data.length);
 			});
 
 			it("should not draw points for the linechart", () => {
 				const id = "data2";
-				const points = chart.internal.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.internal.$el.main.selectAll(`.${CLASS.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(0);
 			});
@@ -1523,14 +1523,14 @@ describe("DATA", () => {
 			it("should draw points for the first line", () => {
 				const id = "data1";
 				const data = chart.data.values(id);
-				const points = chart.internal.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.internal.$el.main.selectAll(`.${CLASS.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(data.length);
 			});
 
 			it("should not draw points for the second line", () => {
 				const id = "data2";
-				const points = chart.internal.main.selectAll(`.${CLASS.shapes}-${id} circle`);
+				const points = chart.internal.$el.main.selectAll(`.${CLASS.shapes}-${id} circle`);
 
 				expect(points.size()).to.be.equal(0);
 			});
@@ -1780,7 +1780,7 @@ describe("DATA", () => {
 		});
 
 		const checkPathLengths = expected => {
-			const line = chart.internal.main.select(`path.${CLASS.line}-data1`);
+			const line = chart.internal.$el.main.select(`path.${CLASS.line}-data1`);
 			const path = line.attr("d");
 
 			expect(path.split("M").length).to.be.equal(expected.M);

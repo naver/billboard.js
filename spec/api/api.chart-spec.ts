@@ -3,14 +3,15 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import bb from "../../src";
 
-describe("API chart", () => {
+describe.only("API chart", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400],
@@ -25,63 +26,13 @@ describe("API chart", () => {
 
 	describe("flush()", () => {
 		it("should be flushed correctly", () => {
-			const svg = d3Select(chart.internal.main.node().parentNode);
+			const svg = d3Select(chart.internal.$el.main.node().parentNode);
 			const width = +svg.attr("width");
 
 			svg.attr("width", 100);
 			chart.flush();
 
 			expect(+svg.attr("width")).to.be.equal(width);
-		});
-	});
-
-	describe("transform()", () => {
-		it("should be transformed 'data1' to bar correctly", () => {
-			const main = chart.internal.main;
-			const bar = main.select(`.${CLASS.bars}-data1`);
-
-			expect(bar.selectAll("path").size()).to.be.equal(0);
-			chart.transform("bar", "data1");
-
-			expect(bar.selectAll("path").size()).to.be.equal(chart.data()[0].values.length);
-		});
-
-		it("should be transformed all data to bar correctly", () => {
-			const main = chart.internal.main;
-			const bar = main.select(`.${CLASS.chartBars}`);
-
-			expect(bar.selectAll("path").size()).to.be.equal(0);
-			chart.transform("bar");
-
-			expect(bar.selectAll("path").size()).to.be.equal(chart.data()[0].values.length + chart.data()[1].values.length);
-		});
-
-		it("should be transformed all data to pie correctly", () => {
-			const main = chart.internal.main;
-			const pie = main.select(`.${CLASS.chartArcs}`);
-
-			expect(pie.selectAll("path").size()).to.be.equal(0);
-			chart.transform("pie");
-
-			expect(pie.selectAll("path").size()).to.be.equal(chart.data().length);
-		});
-
-		it("should be transformed line -> pie -> line", done => {
-			const main = chart.internal.main;
-			const pie = main.select(`.${CLASS.chartArcs}`);
-
-			chart.transform("pie");
-
-			setTimeout(() => {
-				chart.transform("line");
-			}, 500);
-
-			setTimeout(() => {
-				// pie should be redrawn
-				expect(pie.selectAll("path").size()).to.be.equal(0);
-
-				done();
-			}, 1000);
 		});
 	});
 
@@ -95,7 +46,7 @@ describe("API chart", () => {
 		});
 
 		it("should update groups correctly", done => {
-			const main = chart.internal.main;
+			const main = chart.internal.$el.main;
 			const path = main.select(`.${CLASS.bars}-data1 path`);
 			const barWidth = path.node().getBBox().width;
 

@@ -60,7 +60,7 @@ describe("COLOR", () => {
 		});
 
 		it("check if color pattern applied to data elements", () => {
-			chart.internal.main.selectAll(`.${CLASS.chartBars} .${CLASS.target} path:first-child`)
+			chart.internal.$el.main.selectAll(`.${CLASS.chartBars} .${CLASS.target} path:first-child`)
 				.each(function(v, i) {
 					expect(this.style.fill).to.be.equal(util.hexToRgb(pattern[i]));
 				});
@@ -143,7 +143,7 @@ describe("COLOR", () => {
 
 		it("check for tooltip color tiles", () => {
 			const colors = [chart.color("data1"), chart.color("data2")];
-			const eventRect = chart.internal.main
+			const eventRect = chart.internal.$el.main
 				.select(`.${CLASS.eventRect}-1`)
 				.node();
 

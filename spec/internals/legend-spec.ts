@@ -33,7 +33,7 @@ describe("LEGEND", () => {
 			const expectedLeft = [156, 266, 378];
 			const expectedWidth = [112, 114, 104];
 
-			chart.internal.main.selectAll(".bb-legend-item").each(function(d, i) {
+			chart.internal.$el.main.selectAll(".bb-legend-item").each(function(d, i) {
 				const rect = d3Select(this)
 					.node()
 					.getBoundingClientRect();

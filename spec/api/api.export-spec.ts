@@ -3,11 +3,12 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import util from "../assets/util";
 
-describe("API export", () => {
+describe.only("API export", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250],
@@ -36,7 +37,7 @@ describe("API export", () => {
 
 	it("should export chart as image/png", done => {
 		function exportCallback(dataUrl) {
-			const link = document.createElement("link");
+			const link: any = document.createElement("link");
 
 			link.download = `${Date.now}.png`;
 			link.href = dataUrl;

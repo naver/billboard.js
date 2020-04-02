@@ -3,10 +3,11 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API data", function() {
+describe.only("API data", function() {
 	const data = [
 		["data", 30, 30, 100, 400, 150, 250],
 		["data2", 5000, 2000, 1000, 4000, 1500, 2500]
@@ -128,7 +129,6 @@ describe("API data", function() {
 
 			expect(values).to.be.null;
 		});
-
 	});
 
 	describe("data.names()", () => {
@@ -239,6 +239,7 @@ describe("API data", function() {
 
 	describe("data.min/max()", () => {
 		it("should return min value", () => {
+			// @ts-ignore
 			const min = Math.min(...data[0].slice(1));
 			const minData = chart.data.min();
 
@@ -248,6 +249,7 @@ describe("API data", function() {
 		});
 
 		it("should return max value", () => {
+			// @ts-ignore
 			const max = Math.max(...data[1].slice(1));
 			const maxData = chart.data.max();
 

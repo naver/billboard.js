@@ -73,16 +73,16 @@ describe("PLUGIN: STANFORD ELEMENTS", () => {
 
 	describe("stanford lines", () => {
 		it("should show stanford lines", () => {
-			expect(chart.internal.main.selectAll(`.${CLASS.stanfordLines} .${CLASS.stanfordLine} line`).size()).to.be.equal(3);
+			expect(chart.internal.$el.main.selectAll(`.${CLASS.stanfordLines} .${CLASS.stanfordLine} line`).size()).to.be.equal(3);
 		});
 	});
 
 	describe("stanford regions", () => {
 		it("should create the stanford region polygon", () => {
-			expect(chart.internal.main.selectAll(`.${CLASS.stanfordRegions} .${CLASS.stanfordRegion} polygon`).size()).to.be.equal(3);
+			expect(chart.internal.$el.main.selectAll(`.${CLASS.stanfordRegions} .${CLASS.stanfordRegion} polygon`).size()).to.be.equal(3);
 		});
 		it("should create the stanford region text", () => {
-			expect(chart.internal.main.selectAll(`.${CLASS.stanfordRegions} .${CLASS.stanfordRegion} text`).size()).to.be.equal(3);
+			expect(chart.internal.$el.main.selectAll(`.${CLASS.stanfordRegions} .${CLASS.stanfordRegion} text`).size()).to.be.equal(3);
 		});
 	});
 });

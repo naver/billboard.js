@@ -3,10 +3,13 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
+import sinon from "sinon";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import {isTabVisible} from "../../src/module/util";
 
-describe("API flow", () => {
+describe.only("API flow", () => {
 	const chart = util.generate({
 		data: {
 			x: "x",
@@ -35,7 +38,7 @@ describe("API flow", () => {
 				["data3", 200, 120]
 			],
 			done: () => {
-				const lineSize = chart.internal.main.selectAll(`.${CLASS.chartLines} > g`).size();
+				const lineSize = chart.internal.$el.main.selectAll(`.${CLASS.chartLines} > g`).size();
 
 				expect(lineSize).to.be.equal(chart.data().length);
 				done();
@@ -59,7 +62,7 @@ describe("API flow", () => {
 		});
 
 		setTimeout(() => {
-			chart.internal.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(d, i) {
+			chart.internal.$el.main.selectAll(`.${CLASS.axisX} .tick tspan`).each(function(d, i) {
 				expect(this.textContent).to.be.equal(tickText[i]);
 				expect(d.splitted).to.be.equal(tickText[i]);
 			});

@@ -75,7 +75,7 @@ extend(data, {
 	 * // --> [10, 20, 30, 40]
 	 */
 	values: function(targetIds?: string | string[], flat: boolean = true): number[]|number[][] {
-		let values;
+		let values = null;
 
 		if (targetIds) {
 			const targets = this.data(targetIds);
