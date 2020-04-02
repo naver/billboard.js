@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200330132151
+ * @version 1.11.1-nightly-20200402132514
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8753,20 +8753,19 @@ extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   textForArcLabel: function textForArcLabel(selection) {
-    var $$ = this;
+    var $$ = this,
+        hasGauge = $$.hasType("gauge");
     $$.shouldShowArcLabel() && selection.each(function (d) {
       var node = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
           updated = $$.updateAngle(d),
-          value = updated ? updated.value : d.value,
           ratio = $$.getRatio("arc", updated),
-          id = d.data.id,
-          hasGauge = $$.hasType("gauge"),
           isUnderThreshold = hasGauge || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
-        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        var value = (updated || d).value,
+            text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, d.data.id).toString();
         setTextValue(node, text, [-1, 1], hasGauge);
-      }
+      } else node.text("");
     });
   },
   textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
@@ -14911,7 +14910,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200330132151",
+  version: "1.11.1-nightly-20200402132514",
 
   /**
    * Generate chart
@@ -15010,7 +15009,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200330132151
+ * @version 1.11.1-nightly-20200402132514
  */
 
 

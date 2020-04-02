@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200330132151
+ * @version 1.11.1-nightly-20200402132514
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -19303,11 +19303,12 @@ var locale_map = Array.prototype.map,
           valueSuffix = suffix;
       if (type === "c") valueSuffix = formatType(value) + valueSuffix, value = "";else {
         value = +value;
-        // Perform the initial formatting.
-        var valueNegative = value < 0;
+        // Determine the sign. -0 is not less than 0, but 1 / -0 is!
+        var valueNegative = value < 0 || 1 / value < 0; // Perform the initial formatting.
+
         // Break the formatted value into the integer “value” part that can be
         // grouped, and fractional or exponential “suffix” part that is not.
-        if (value = isNaN(value) ? nan : formatType(Math.abs(value), precision), trim && (value = formatTrim(value)), valueNegative && +value === 0 && (valueNegative = !1), valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix, valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : ""), maybeSuffix) for (i = -1, n = value.length; ++i < n;) if (c = value.charCodeAt(i), 48 > c || c > 57) {
+        if (value = isNaN(value) ? nan : formatType(Math.abs(value), precision), trim && (value = formatTrim(value)), valueNegative && +value === 0 && sign !== "+" && (valueNegative = !1), valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix, valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : ""), maybeSuffix) for (i = -1, n = value.length; ++i < n;) if (c = value.charCodeAt(i), 48 > c || c > 57) {
           valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix, value = value.slice(0, i);
           break;
         }
@@ -31188,20 +31189,19 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     });
   },
   textForArcLabel: function textForArcLabel(selection) {
-    var $$ = this;
+    var $$ = this,
+        hasGauge = $$.hasType("gauge");
     $$.shouldShowArcLabel() && selection.each(function (d) {
       var node = src_select(this),
           updated = $$.updateAngle(d),
-          value = updated ? updated.value : d.value,
           ratio = $$.getRatio("arc", updated),
-          id = d.data.id,
-          hasGauge = $$.hasType("gauge"),
           isUnderThreshold = hasGauge || $$.meetsArcLabelThreshold(ratio);
 
       if (isUnderThreshold) {
-        var text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, id).toString();
+        var value = (updated || d).value,
+            text = ($$.getArcLabelFormat() || $$.defaultArcValueFormat)(value, ratio, d.data.id).toString();
         setTextValue(node, text, [-1, 1], hasGauge);
-      }
+      } else node.text("");
     });
   },
   textForGaugeMinMax: function textForGaugeMinMax(value, isMax) {
@@ -37703,7 +37703,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200330132151",
+  version: "1.11.1-nightly-20200402132514",
 
   /**
    * Generate chart
@@ -37802,7 +37802,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200330132151
+ * @version 1.11.1-nightly-20200402132514
  */
 
 
