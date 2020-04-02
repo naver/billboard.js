@@ -127,7 +127,7 @@
     "cross-env": "^7.0.0",
     "css-loader": "^3.4.2",
     "d3-array": "^2.4.0",
-    "d3-format": "^1.4.3",
+    "d3-format": "^1.4.4",
     "d3-polygon": "^1.0.6",
     "d3-voronoi": "^1.1.4",
     "docdash": "^1.2.0",
