@@ -223,6 +223,54 @@ describe("SHAPE ARC", () => {
 				done();
 			}, 500);
 		});
+
+		it("check for Pie's threshold data label text", done => {
+			const chart = util.generate({
+				data: {
+				  columns: [
+					  ["data1", 10],
+					  ["data2", 30],
+					  ["data3", 60]
+				  ],
+				  type: "pie"
+				},
+				pie: {
+				  label:{
+					  threshold: 0.2
+				  }
+				}
+			  });
+
+			const checkText = () => {
+				chart.$.arc.selectAll("text").each(function(d, i) {
+					expect(this.textContent).to.be.equal(expectedText[i]);
+				});
+			};
+
+			let expectedText = ["", "30.0%", "60.0%"];
+
+			checkText();
+
+			new Promise((resolve, reject) => {
+				// when
+				chart.toggle("data3");
+				expectedText = ["25.0%", "75.0%", ""];
+
+				setTimeout(() => {
+					checkText();
+					resolve();
+				}, 200);
+			}).then(() => {
+				// when
+				chart.toggle("data3");
+				expectedText = ["", "30.0%", "60.0%"];
+
+				setTimeout(() => {
+					checkText();
+					done();
+				}, 200);
+			});
+		});
 	});
 
 	describe("show gauge", () => {

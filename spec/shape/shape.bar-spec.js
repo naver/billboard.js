@@ -516,6 +516,51 @@ describe("SHAPE BAR", () => {
 				expect(this.getAttribute("d")).to.be.equal(expectedPath[i]);
 			});
 		});
+
+		// check non-grouped bar path position
+		const checkBarPathPos = type => {
+			// Get x Axis pos
+			let xAxisYPos = chart.$.main.select(`.${CLASS.axisX} path`).node().getBoundingClientRect();
+
+			xAxisYPos = type === "y" ? xAxisYPos[type] : xAxisYPos[type] + xAxisYPos.width;
+	
+			chart.$.bar.bars.each(function() {
+				const rect = this.getBoundingClientRect();
+			
+				expect(rect[type] + (type === "y" ? rect.height : 0)).to.be.closeTo(xAxisYPos, 1);
+			});
+		}
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 20000, 35000, 30000]
+					],
+					type: "bar"
+				  },
+				  axis: {
+					y: {
+						min: 10000,
+						padding: {
+							bottom: 0
+						}
+					}
+				}
+			};
+		});
+
+		it("check bar path node position: non rotated Axis", () => {
+			checkBarPathPos("y");
+		});
+
+		it("set option axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("check bar path node position: rotated Axis", () => {
+			checkBarPathPos("x");
+		});
 	});
 
 	describe("bar sensitivity", () => {
