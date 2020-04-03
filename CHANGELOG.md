@@ -1,3 +1,11 @@
+## [1.12.2](https://github.com/naver/billboard.js/compare/1.12.1...1.12.2) (2020-04-03)
+
+
+### Bug Fixes
+
+* **arc:** Fix label text update w/threshold ([46a2bea](https://github.com/naver/billboard.js/commit/46a2bea85254592f7098f1288e82ef48eda44261)), closes [#1298](https://github.com/naver/billboard.js/issues/1298)
+* **shape:** Fix non-grouped area/bar to be drawn from bottom of x Axis ([a47a829](https://github.com/naver/billboard.js/commit/a47a8290b59c579610ba1ffdd4a3916a8f975a71)), closes [#1302](https://github.com/naver/billboard.js/issues/1302)
+
 ## [1.12.1](https://github.com/naver/billboard.js/compare/1.12.0...1.12.1) (2020-03-23)
 
 
