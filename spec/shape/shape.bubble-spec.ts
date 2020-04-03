@@ -192,7 +192,7 @@ describe("SHAPE BUBBLE", () => {
 				const y = (isArray(v.value) && v.value[0]) ||
 					(isObject(v.value) && v.value.y) || v.value;
 
-				expect(+this.getAttribute("cy")).to.be.equal(chart.internal.y(y));
+				expect(+this.getAttribute("cy")).to.be.equal(chart.internal.scale.y(y));
 
 				i++;
 			});

@@ -26,7 +26,7 @@ describe.only("API chart", () => {
 
 	describe("flush()", () => {
 		it("should be flushed correctly", () => {
-			const svg = d3Select(chart.internal.$el.main.node().parentNode);
+			const svg = d3Select(chart.$.main.node().parentNode);
 			const width = +svg.attr("width");
 
 			svg.attr("width", 100);
@@ -46,7 +46,7 @@ describe.only("API chart", () => {
 		});
 
 		it("should update groups correctly", done => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const path = main.select(`.${CLASS.bars}-data1 path`);
 			const barWidth = path.node().getBBox().width;
 

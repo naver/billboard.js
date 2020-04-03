@@ -33,7 +33,7 @@ describe("LEGEND", () => {
 			const expectedLeft = [156, 266, 378];
 			const expectedWidth = [112, 114, 104];
 
-			chart.internal.$el.main.selectAll(".bb-legend-item").each(function(d, i) {
+			chart.$.main.selectAll(".bb-legend-item").each(function(d, i) {
 				const rect = d3Select(this)
 					.node()
 					.getBoundingClientRect();
@@ -57,7 +57,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should be located on the center of chart", () => {
-			const box = chart.internal.legend.node()
+			const box = chart.$.legend.node()
 				.getBoundingClientRect();
 
 			expect(box.left + box.right).to.be.closeTo(638, 3); // org : 640

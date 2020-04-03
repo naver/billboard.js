@@ -54,7 +54,7 @@ describe("CLASS", function() {
 		it("should replace space to '-' with multibyte characters", () => {
 			const selector = ".bb-target-data3-мужчины";
 
-			expect(chart.internal.$el.main.select(selector).size()).to.be.equal(1);
+			expect(chart.$.main.select(selector).size()).to.be.equal(1);
 		});
 	});
 });

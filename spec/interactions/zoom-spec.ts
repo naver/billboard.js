@@ -99,7 +99,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check for data zoom", () => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
 
 			// when
@@ -109,7 +109,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check for zoom event callbacks", done => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
 
 			new Promise((resolve, reject) => {
@@ -165,7 +165,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check for data zoom", () => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const xValue = +main.select(`.${CLASS.eventRect}-2`).attr("x");
 
 			// when
@@ -175,7 +175,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check for x axis resize after zoom", () => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const rx = /H(\d+)/;
 
 			const domain = main.select(`.${CLASS.axisX} > .domain`);
@@ -188,7 +188,7 @@ describe("ZOOM", function() {
 		});
 
 		it("check for x axis resize after zoom in/out", () => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const rx = /H(\d+)/;
 
 			const domain = main.select(`.${CLASS.axisX} > .domain`);

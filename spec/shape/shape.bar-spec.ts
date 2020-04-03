@@ -36,7 +36,7 @@ describe("SHAPE BAR", () => {
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
-				chart.internal.$el.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
 					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
@@ -73,7 +73,7 @@ describe("SHAPE BAR", () => {
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
-				chart.internal.$el.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
 					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
@@ -93,7 +93,7 @@ describe("SHAPE BAR", () => {
 			});
 
 			it("check for bar width regardless tick count limit", () => {
-				const width = chart.internal.$el.main.select(`.${CLASS.bars}-data1 .${CLASS.bar}`).node()
+				const width = chart.$.main.select(`.${CLASS.bars}-data1 .${CLASS.bar}`).node()
 					.getBoundingClientRect().width;
 
 				expect(width).to.be.equal(barWidth);
@@ -126,7 +126,7 @@ describe("SHAPE BAR", () => {
 			it("should be stacked", () => {
 				const expectedBottom = [275, 293, 365, 281, 395, 290];
 
-				chart.internal.$el.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
+				chart.$.main.selectAll(`.${CLASS.bars}-data1 .${CLASS.bar}`).each(function(d, i) {
 					const rect = d3Select(this).node()
 						.getBoundingClientRect();
 
@@ -386,7 +386,7 @@ describe("SHAPE BAR", () => {
 
 		const checkRadius = path => {
 			const removeSpace = v => v.replace(/\s/g,"");
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 
 			// check the path from the third data value
 			main.selectAll(`.${CLASS.shape}.${CLASS.bar}-2`).each(function(d, i) {
@@ -395,7 +395,7 @@ describe("SHAPE BAR", () => {
 		};
 
 		it(`bar width should be ${width}px`, () => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const barWidth = main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)
 				.node().getBBox().width;
 
@@ -403,7 +403,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		it(`bar padding should be ${padding}px`, () => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const targetClass = `.${CLASS.chartBar}.${CLASS.target}`;
 
 			const bar1 = main.select(`${targetClass}-data1 path.${CLASS.shape}`)

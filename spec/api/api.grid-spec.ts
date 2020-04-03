@@ -3,11 +3,12 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API grid", function() {
+describe.only("API grid", function() {
 	let chart = util.generate({
 		data: {
 			columns: [
@@ -18,7 +19,7 @@ describe("API grid", function() {
 
 	describe("ygrids.add() / ygrids.remove()", () => {
 		it("should update y grids", done => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const expectedGrids = [{
 					value: 100,
 					text: "Pressure Low"
@@ -41,7 +42,7 @@ describe("API grid", function() {
 				grids.each(function (d, i) {
 					const y = +d3Select(this).select("line").attr("y1");
 					const text = d3Select(this).select("text").text();
-					const expectedY = Math.round(chart.internal.y(expectedGrids[i].value));
+					const expectedY = Math.round(chart.internal.scale.y(expectedGrids[i].value));
 					const expectedText = expectedGrids[i].text;
 
 					expect(y).to.be.equal(expectedY);
@@ -61,16 +62,16 @@ describe("API grid", function() {
 		});
 
 		it("should update x ygrids even if it's zoomed", done => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const expectedGrids = [{
-						value: 0,
-						text: "Pressure Low"
-					},
-					{
-						value: 1,
-						text: "Pressure High"
-					}
-				];
+					value: 0,
+					text: "Pressure Low"
+				},
+				{
+					value: 1,
+					text: "Pressure High"
+				}
+			];
 
 			let grids;
 			let domain;
@@ -91,7 +92,7 @@ describe("API grid", function() {
 					grids.each(function(d, i) {
 						const x = +d3Select(this).select("line").attr("x1");
 						const text = d3Select(this).select("text").text();
-						const expectedX = Math.round(chart.internal.x(expectedGrids[i].value));
+						const expectedX = Math.round(chart.internal.scale.x(expectedGrids[i].value));
 						const expectedText = expectedGrids[i].text;
 
 						expect(x).to.be.equal(expectedX);
@@ -99,7 +100,7 @@ describe("API grid", function() {
 					});
 
 					// check if it was not rescaled
-					domain = chart.internal.y.domain();
+					domain = chart.internal.scale.y.domain();
 					expect(domain[0]).to.be.below(0);
 					expect(domain[1]).to.be.above(400);
 
@@ -142,7 +143,7 @@ describe("API grid", function() {
 			chart.xgrids([gridData]);
 
 			setTimeout(() => {
-				const xgrid = chart.internal.$el.main.select(`.${CLASS.xgridLine}`);
+				const xgrid = chart.$.main.select(`.${CLASS.xgridLine}`);
 
 				expect(xgrid.classed(gridData.class)).to.be.true;
 
@@ -180,7 +181,7 @@ describe("API grid", function() {
 			chart.ygrids([gridData]);
 
 			setTimeout(() => {
-				const ygrid = chart.internal.$el.main.select(`.${CLASS.ygridLine}`);
+				const ygrid = chart.$.main.select(`.${CLASS.ygridLine}`);
 
 				expect(ygrid.classed(gridData.class)).to.be.true;
 

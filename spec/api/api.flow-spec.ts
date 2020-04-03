@@ -72,7 +72,7 @@ describe.only("API flow", () => {
 		}, duration);
 	});
 
-	it("check when is not visible", done => {
+	it.skip("check when is not visible", done => {
 		const spy = sinon.spy();
 		const isTabVisible = chart.internal.isTabVisible();
 

@@ -45,14 +45,14 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("Should render the lines correctly", () => {
-			const target = chart.internal.$el.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 			const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
 
 			expect(commands.length).to.be.equal(6);
 		});
 
 		it("should not have shape-rendering when it's line chart", () => {
-			chart.internal.$el.main.selectAll(`.${CLASS.line}`).each(function() {
+			chart.$.main.selectAll(`.${CLASS.line}`).each(function() {
 				const style = d3Select(this).style("shape-rendering");
 
 				expect(style).to.be.equal("auto");
@@ -65,7 +65,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("should have shape-rendering = crispedges when it's step chart", () => {
-			chart.internal.$el.main.selectAll(`.${CLASS.line}`).each(function() {
+			chart.$.main.selectAll(`.${CLASS.line}`).each(function() {
 				const style = d3Select(this).style("shape-rendering").toLowerCase();
 
 				expect(style).to.be.equal("crispedges");
@@ -96,7 +96,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("should not show the circle for null", () => {
-			const target = chart.internal.$el.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+			const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 
 			expect(+target.select(`.${CLASS.circle}-0`).style("opacity")).to.be.equal(1);
 			expect(+target.select(`.${CLASS.circle}-1`).style("opacity")).to.be.equal(0);
@@ -105,7 +105,7 @@ describe("SHAPE LINE", () => {
 
 		it("should not draw a line segment for null data", done => {
 			setTimeout(() => {
-				const target = chart.internal.$el.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+				const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
 				const commands = parseSvgPath(target.select(`.${CLASS.line}-data1`).attr("d"));
 				let segments = 0;
 
@@ -188,7 +188,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("check for line path data count", () => {
-			chart.internal.$el.main.selectAll(`path.${CLASS.line}`).each(function(d) {
+			chart.$.main.selectAll(`path.${CLASS.line}`).each(function(d) {
 				const line = d3Select(this);
 
 				// it should have 4 lines
@@ -216,13 +216,13 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("<g> selected node shouldn't be generated when point.show=false", () => {
-			const selectedCircle = chart.internal.$el.main.selectAll(`.${CLASS.selectedCircles}`);
+			const selectedCircle = chart.$.main.selectAll(`.${CLASS.selectedCircles}`);
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
 
 		it("<circle> node shouldn't be generated when point.show=false", () => {
-			const circle = chart.internal.$el.main.selectAll("circle");
+			const circle = chart.$.main.selectAll("circle");
 
 			expect(circle.empty()).to.be.true;
 		});
@@ -233,7 +233,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		it("<g> selected node shouldn't be generated when data.selection.enabled=false", () => {
-			const selectedCircle = chart.internal.$el.main.selectAll(`.${CLASS.selectedCircles}`);
+			const selectedCircle = chart.$.main.selectAll(`.${CLASS.selectedCircles}`);
 
 			expect(selectedCircle.empty()).to.be.true;
 		});
@@ -416,7 +416,7 @@ describe("SHAPE LINE", () => {
 		});
 
 		function checkPath(pathData) {
-			const path = chart.internal.$el.main.selectAll(`.${CLASS.target}-data1 path`);
+			const path = chart.$.main.selectAll(`.${CLASS.target}-data1 path`);
 
 			path.each(function(v, i) {
 				expect(this.getAttribute("d")).to.be.equal(pathData[i ? "area" : "line"]);

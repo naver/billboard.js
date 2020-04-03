@@ -37,7 +37,7 @@ describe.only("API category", () => {
 		const name = ["aa","bb","cc", "dd", "ee"];
 		chart.categories(name);
 
-		chart.internal.$el.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
+		chart.$.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
 			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});
@@ -55,7 +55,7 @@ describe.only("API category", () => {
 		});
 
 		// check if <tspan> element value has changed
-		chart.internal.$el.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
+		chart.$.main.selectAll(`.${CLASS.axisX} tspan`).each(function(d, i) {
 			expect(d3Select(this).text()).to.be.equal(name[i]);
 		});
 	});

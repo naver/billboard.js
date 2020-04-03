@@ -53,7 +53,7 @@ describe("CORE", function() {
 		});
 
 		it("y2 Axis shouldn't be generated", () => {
-			const y2 = chart.internal.$el.main.select(`.${CLASS.axisY2}`);
+			const y2 = chart.$.main.select(`.${CLASS.axisY2}`);
 
 			expect(y2.empty()).to.be.true;
 		});
@@ -244,7 +244,7 @@ describe("CORE", function() {
 		});
 
 		it("should generate a chart", () => {
-			const ticks = chart.internal.$el.main.select(`.${CLASS.axisX}`)
+			const ticks = chart.$.main.select(`.${CLASS.axisX}`)
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
@@ -271,7 +271,7 @@ describe("CORE", function() {
 		});
 
 		it("should generate a chart", () => {
-			const ticks = chart.internal.$el.main.select(`.${CLASS.axisX}`)
+			const ticks = chart.$.main.select(`.${CLASS.axisX}`)
 				.selectAll("g.tick");
 
 			expect(ticks.size()).to.be.equal(0);
@@ -292,7 +292,7 @@ describe("CORE", function() {
 		});
 
 		it("chart should have clip-path property", () => {
-			const main = chart.internal.$el.main.select(`.${CLASS.chart}`);
+			const main = chart.$.main.select(`.${CLASS.chart}`);
 
 			expect(main.attr("clip-path")).to.not.be.null;
 		});
@@ -306,7 +306,7 @@ describe("CORE", function() {
 		});
 
 		it("check for chart node's position", () => {
-			const next = chart.internal.$el.main.select(`.${CLASS.axisY2}`).node().nextSibling;
+			const next = chart.$.main.select(`.${CLASS.axisY2}`).node().nextSibling;
 
 			// axis element should be the last positioned
 			expect(next).to.be.null;
@@ -317,13 +317,13 @@ describe("CORE", function() {
 		});
 
 		it("clip-path property should be null", () => {
-			const main = chart.internal.$el.main.select(`.${CLASS.chart}`);
+			const main = chart.$.main.select(`.${CLASS.chart}`);
 
 			expect(main.attr("clip-path")).to.be.null;
 		});
 
 		it("check for chart node's position", () => {
-			const previous = chart.internal.$el.main.select(`.${CLASS.chart}`).node().previousSibling;
+			const previous = chart.$.main.select(`.${CLASS.chart}`).node().previousSibling;
 
 			// chart element should positioned after axis element
 			expect(d3Select(previous).classed(CLASS.grid)).to.be.true;

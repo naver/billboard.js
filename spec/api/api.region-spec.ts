@@ -74,8 +74,8 @@ describe("API region", function() {
 					const height = +rect.attr("height");
 					const expectedClass = "red";
 					const unexpectedClass = "green";
-					const expectedStart = Math.round(chart.internal.y(expectedRegions[i].start));
-					const expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end));
+					const expectedStart = Math.round(chart.internal.scale.y(expectedRegions[i].start));
+					const expectedEnd = Math.round(chart.internal.scale.y(expectedRegions[i].end));
 					const expectedY = expectedEnd;
 					const expectedHeight = expectedStart - expectedEnd;
 
@@ -168,8 +168,8 @@ describe("API region", function() {
 					const y = +rect.attr("y");
 					const height = +rect.attr("height");
 					const expectedClass = expectedClasses[i];
-					const expectedStart = Math.round(chart.internal.y(expectedRegions[i].start));
-					const expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end));
+					const expectedStart = Math.round(chart.internal.scale.y(expectedRegions[i].start));
+					const expectedEnd = Math.round(chart.internal.scale.y(expectedRegions[i].end));
 					const expectedY = expectedEnd;
 					const expectedHeight = expectedStart - expectedEnd;
 
@@ -241,8 +241,8 @@ describe("API region", function() {
 					const y = +rect.attr("y");
 					const height = +rect.attr("height");
 					const expectedClass = expectedClasses[i];
-					const expectedStart = Math.round(chart.internal.y(expectedRegions[i].start));
-					const expectedEnd = Math.round(chart.internal.y(expectedRegions[i].end));
+					const expectedStart = Math.round(chart.internal.scale.y(expectedRegions[i].start));
+					const expectedEnd = Math.round(chart.internal.scale.y(expectedRegions[i].end));
 					const expectedY = expectedEnd;
 					const expectedHeight = expectedStart - expectedEnd;
 

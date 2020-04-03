@@ -52,7 +52,7 @@ describe("PLUGIN: TEXTOVERLAP", () => {
         };
 
         Object.keys(expectedTextDy).forEach(key => {
-            chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
+            chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
                 const text = d3Select(this);
 
                 expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);
@@ -85,7 +85,7 @@ describe("PLUGIN: TEXTOVERLAP", () => {
         };
 
         Object.keys(expectedTextDy).forEach(key => {
-            chart.internal.$el.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
+            chart.$.main.selectAll(`.${CLASS.texts}-${key} text.${CLASS.text}`).each(function(d, i) {
                 const text = d3Select(this);
 
                 expect(text.attr("dy")).to.be.equal(expectedTextDy[key][i]);

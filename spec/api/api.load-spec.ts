@@ -111,8 +111,8 @@ describe("API load", function() {
 
 	describe("indexed data as column", () => {
 		it("should load additional data", done => {
-			const main = chart.internal.$el.main;
-			const legend = chart.internal.legend;
+			const main = chart.$.main;
+			const legend = chart.$.legend;
 
 			chart.load({
 				columns: [
@@ -158,8 +158,8 @@ describe("API load", function() {
 		});
 
 		it("should load additional data", done => {
-			const main = chart.internal.$el.main;
-			const legend = chart.internal.legend;
+			const main = chart.$.main;
+			const legend = chart.$.legend;
 
 			chart.load({
 				columns: [
@@ -209,8 +209,8 @@ describe("API load", function() {
 
 		describe("as column", () => {
 			it("should load additional data #1", done => {
-				const main = chart.internal.$el.main;
-				const legend = chart.internal.legend;
+				const main = chart.$.main;
+				const legend = chart.$.legend;
 
 				chart.load({
 					columns: [
@@ -239,8 +239,8 @@ describe("API load", function() {
 			});
 
 			it("should load additional data #2", done => {
-				const main = chart.internal.$el.main;
-				const legend = chart.internal.legend;
+				const main = chart.$.main;
+				const legend = chart.$.legend;
 
 				chart.load({
 					columns: [

@@ -42,7 +42,7 @@ describe("API show", () => {
 		});
 
 		it("Hide all data", done => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 
 			// hide all data
 			chart.hide();
@@ -234,7 +234,7 @@ describe("API show", () => {
 		});
 
 		it("should correctly rendered having same width", done => {
-			const main = chart.internal.$el.main;
+			const main = chart.$.main;
 			const barWidth = Math.round(main.select(`.${CLASS.bars}-${ids[0]}`).node().getBBox().width);
 
 			chart.toggle(ids.concat().splice(1));
