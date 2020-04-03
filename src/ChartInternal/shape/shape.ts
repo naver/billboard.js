@@ -208,6 +208,18 @@ export default {
 	},
 
 	/**
+	 * Get shape based y Axis min value
+	 * @param {string} id Data id
+	 * @returns {number}
+	 * @private
+	 */
+	getShapeYMin(id: string): number {
+		const $$ = this;
+
+		return (!$$.isGrouped(id) && $$.config[`axis_${$$.axis.getId(id)}_min`]) || 0;
+	},
+
+	/**
 	 * Get Shape's offset data
 	 * @param {Function} typeFilter Type filter function
 	 * @returns {object}
@@ -255,7 +267,7 @@ export default {
 		return (d, idx) => {
 			const ind = $$.getIndices(indices, d.id);
 			const scale = $$.getYScaleById(d.id, isSub);
-			const y0 = scale(0);
+			const y0 = scale($$.getShapeYMin(d.id));
 			const dataXAsNumber = Number(d.x);
 			let offset = y0;
 
