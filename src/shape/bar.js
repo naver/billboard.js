@@ -183,7 +183,7 @@ extend(ChartInternal.prototype, {
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id)(0);
+			const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
 			const offset = barOffset(d, i) || y0; // offset is for stacked bar chart
 			const width = isNumber(barW) ? barW : barW[d.id] || barW.width;
 			const posX = barX(d);

@@ -155,6 +155,18 @@ extend(ChartInternal.prototype, {
 	},
 
 	/**
+	 * Get shape based y Axis min value
+	 * @param {String} id Data id
+	 * @return {Number}
+	 * @private
+	 */
+	getShapeYMin(id) {
+		const $$ = this;
+
+		return (!$$.isGrouped(id) && $$.config[`axis_${$$.axis.getId(id)}_min`]) || 0;
+	},
+
+	/**
 	 * Get Shape's offset data
 	 * @param {function(Object): boolean} typeFilter
 	 * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
@@ -204,7 +216,8 @@ extend(ChartInternal.prototype, {
 		return (d, idx) => {
 			const ind = $$.getIndices(indices, d.id);
 			const scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
-			const y0 = scale(0);
+			const y0 = scale($$.getShapeYMin(d.id));
+
 			const dataXAsNumber = Number(d.x);
 			let offset = y0;
 
