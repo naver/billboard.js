@@ -449,7 +449,7 @@ extend(ChartInternal.prototype, {
 			getPoints(d, i)[0][1] :
 			yScaleGetter.call($$, d.id)(
 				$$.isAreaRangeType(d) ?
-					$$.getAreaRangeData(d, "high") : 0
+					$$.getAreaRangeData(d, "high") : ($$.getShapeYMin(d.id))
 			));
 		const value1 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[1][1] :
