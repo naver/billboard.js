@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200402132514
+ * @version 1.11.1-nightly-20200403132528
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -8500,6 +8500,17 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
 
   /**
+   * Get shape based y Axis min value
+   * @param {String} id Data id
+   * @return {Number}
+   * @private
+   */
+  getShapeYMin: function getShapeYMin(id) {
+    var $$ = this;
+    return !$$.isGrouped(id) && $$.config["axis_".concat($$.axis.getId(id), "_min")] || 0;
+  },
+
+  /**
    * Get Shape's offset data
    * @param {function(Object): boolean} typeFilter
    * @return {{shapeOffsetTargets: ShapeOffsetTarget[], indexMapByTargetId: object}}
@@ -8545,7 +8556,7 @@ extend(ChartInternal_ChartInternal.prototype, {
     return function (d, idx) {
       var ind = $$.getIndices(indices, d.id),
           scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
-          y0 = scale(0),
+          y0 = scale($$.getShapeYMin(d.id)),
           dataXAsNumber = +d.x,
           offset = y0;
       return shapeOffsetTargets.forEach(function (t) {
@@ -9201,7 +9212,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub),
         yScale = isSub ? $$.getSubYScale : $$.getYScale;
     return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
+      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
           offset = barOffset(d, i) || y0,
           width = isNumber(barW) ? barW : barW[d.id] || barW.width,
           posX = barX(d),
@@ -9575,7 +9586,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       return (isSub ? $$.subxx : $$.xx).call($$, d);
     },
         value0 = function (d, i) {
-      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : 0);
+      return $$.isGrouped(d.id) ? getPoints(d, i)[0][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id));
     },
         value1 = function (d, i) {
       return $$.isGrouped(d.id) ? getPoints(d, i)[1][1] : yScaleGetter.call($$, d.id)($$.isAreaRangeType(d) ? $$.getAreaRangeData(d, "low") : d.value);
@@ -14910,7 +14921,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200402132514",
+  version: "1.11.1-nightly-20200403132528",
 
   /**
    * Generate chart
@@ -15009,7 +15020,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200402132514
+ * @version 1.11.1-nightly-20200403132528
  */
 
 
