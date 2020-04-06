@@ -98,7 +98,7 @@ export default {
 		// title
 		$$.redrawTitle && $$.redrawTitle();
 
-		initializing && $$.setChartElements();
+		initializing && $$.updateTypesElements();
 
 		$$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart);
 		$$.callPluginHook("$redraw", options, duration);

@@ -24,7 +24,7 @@ export default {
 	 * Updte current used chart types
 	 * @private
 	 */
-	updateTypes(): void {
+	updateTypesElements(): void {
 		const $$ = this;
 		const {state} = $$;
 
@@ -39,6 +39,9 @@ export default {
 				state.currentTypes.splice(idx, 1);
 			}
 		});
+
+		// Update current chart elements reference
+		$$.setChartElements();
 	},
 
 	/**

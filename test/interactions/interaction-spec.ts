@@ -8,7 +8,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("INTERACTION", () => {
+describe.only("INTERACTION", () => {
 	let chart;
 	let args;
 
@@ -32,7 +32,7 @@ describe("INTERACTION", () => {
 			});
 
 			it("inputType should be 'mouse", () => {
-				expect(chart.internal.inputType).to.be.equal("mouse");
+				expect(chart.internal.state.inputType).to.be.equal("mouse");
 			});
 
 			it("should have 4 event rects properly", () => {
@@ -196,7 +196,7 @@ describe("INTERACTION", () => {
 				it("check if rect & data points are generated correctly", () => {
 					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
 					const dataLen = chart.data()[0].values.length;
-					const circles = chart.$.line.circles;
+					const circles = chart.$.circles;
 
 					rect.each((d, i) => {
 						expect(d.index).to.be.equal(i);
@@ -240,7 +240,7 @@ describe("INTERACTION", () => {
 				it("check if rect & data points are generated correctly", () => {
 					const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
 					const dataLen = chart.data()[0].values.length;
-					const circles = chart.$.line.circles;
+					const circles = chart.$.circles;
 
 					const sampleCircle = circles.filter(d => d.id === "sample");
 					const sample2Circle = circles.filter(d => d.id === "sample2");
@@ -270,7 +270,7 @@ describe("INTERACTION", () => {
 					setTimeout(() => {
 						const rect = chart.$.main.selectAll(`.${CLASS.eventRectsSingle} rect`);
 						const dataLen = chart.data()[1].values.length;
-						const circles = chart.$.line.circles.filter(d => d.id === "sample2");
+						const circles = chart.$.circles.filter(d => d.id === "sample2");
 
 						rect.each((d, i) => {
 							expect(d.index).to.be.equal(i);
@@ -956,7 +956,7 @@ describe("INTERACTION", () => {
 				chart.tooltip.hide();
 
 				setTimeout(() => {
-					const points = chart.$.line.circles.filter(`.${CLASS.circle}-${x}`);
+					const points = chart.$.circles.filter(`.${CLASS.circle}-${x}`);
 
 					expect(+points.attr("r")).to.be.equal(chart.config("point.r"));
 					done();
@@ -1152,7 +1152,7 @@ describe("INTERACTION", () => {
 		});
 
 		it("should show tooltip", () => {
-			const point = chart.$.line.circles.filter(v => v.id === "b" && v.index === 2);
+			const point = chart.$.circles.filter(v => v.id === "b" && v.index === 2);
 			const r = +point.attr("r");
 
 			// when

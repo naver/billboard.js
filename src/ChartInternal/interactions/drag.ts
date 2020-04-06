@@ -127,6 +127,6 @@ export default {
 	},
 
 	setDragStatus(isDragging: boolean): void {
-		this.dragging = isDragging;
+		this.state.dragging = isDragging;
 	}
 };

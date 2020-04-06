@@ -7,7 +7,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API region", function() {
+describe.only("API region", function() {
 	let chart;
 	let args;
 

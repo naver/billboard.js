@@ -8,7 +8,7 @@ import {format as d3Format} from "d3-format";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
-describe("API load", function() {
+describe.only("API load", function() {
 	let chart;
 	let args;
 
@@ -27,7 +27,7 @@ describe("API load", function() {
 
 		it("should be load data via 'url'", done => {
 			chart.load({
-				url: "/base/spec/assets/data/test.json",
+				url: "/base/test/assets/data/test.json",
 				mimeType: "json",
 				headers: {
 					"Content-Type": "text/xml"
@@ -224,7 +224,7 @@ describe("API load", function() {
 						const expected = ["cat1", "cat2", "cat3", "cat4", "cat5", "cat6"];
 
 						expect(target.size()).to.be.equal(1);
-						expect(target.selectAll("circle").size()).to.be.equal(3);
+						expect(chart.$.circles.filter(d => d.id === "data3").size()).to.be.equal(3);
 						expect(legendItem.size()).to.be.equal(1);
 
 						tickTexts.each(function(d, i) {
@@ -373,7 +373,7 @@ describe("API load", function() {
 				ids: target,
 				done: () => {
 					expect(chart.data(target).length).to.be.equal(0);
-					expect(chart.internal.getCache(target)).to.be.null;
+					expect(chart.internal.cache.get(target)).to.be.null;
 				}
 			});
 		});

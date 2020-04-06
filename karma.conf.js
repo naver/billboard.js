@@ -9,10 +9,10 @@ module.exports = function(config) {
 			"./node_modules/hammer-simulator/index.js",
 			"./spec/assets/hammer-simulator.run.ts",
 			"./src/scss/billboard.scss",
-			"./spec/assets/common.css",
-			"./spec/**/*-spec.ts",
+			"./test/assets/common.css",
+			"./test/**/*-spec.ts",
 			{
-				pattern: "./spec/assets/data/*",
+				pattern: "./test/assets/data/*",
 				watched: false,
 				included: false,
 				served: true
@@ -58,7 +58,7 @@ module.exports = function(config) {
 		// available preprocessors: https://npmjs.org/browse/keyword/karma-preprocessor
 		preprocessors: {
 			"./src/scss/billboard.scss": ["scss"],
-			"./spec/**/*-spec.ts": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
+			"./test/**/*-spec.ts": config.coverage ? ["webpack"] : ["webpack", "sourcemap"],
 		},
 
 		scssPreprocessor: {

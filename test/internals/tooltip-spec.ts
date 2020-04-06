@@ -201,7 +201,7 @@ describe("TOOLTIP", function() {
 		describe("do not overlap data point", () => {
 			it("should show tooltip on proper position", done => {
 				const tooltip = chart.$.tooltip;
-				const circles = chart.$.line.circles;
+				const circles = chart.$.circles;
 				const getCircleRectX = x => circles.filter(`.${CLASS.shape}-${x}`)
 					.node().getBoundingClientRect().x;
 

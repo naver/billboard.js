@@ -49,8 +49,8 @@ export default {
 			withLegend: true
 		});
 
-		// Update current state chart type list after redraw
-		$$.updateTypes();
+		// Update current state chart type and elements list after redraw
+		$$.updateTypesElements();
 
 		args.done && args.done.call($$.api);
 	},
@@ -112,7 +112,7 @@ export default {
 			$$.data.targets = $$.data.targets.filter(t => t.id !== id);
 		});
 
-		// Update current state chart type list
-		$$.updateTypes();
+		// Update current state chart type and elements list after redraw
+		$$.updateTypesElements();
 	}
 };

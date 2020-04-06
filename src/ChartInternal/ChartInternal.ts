@@ -444,8 +444,6 @@ export default class ChartInternal {
 		const {hasAxis, hasRadar} = $$.state;
 		const types: string[] = [];
 
-		$$.updateTypes();
-
 		if (hasAxis) {
 			$$.hasType("bar") && types.push("Bar");
 			$$.hasType("bubble") && types.push("Bubble");

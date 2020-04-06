@@ -43,7 +43,7 @@ describe("SHAPE POINT", () => {
 			// when
 			chart.internal.expandCircles(index);
 
-			chart.$.line.circles.filter(d => d.x === index).each(function() {
+			chart.$.circles.filter(d => d.x === index).each(function() {
 				expect(+this.getAttribute("r")).to.be.above(r);
 			});
 		});
@@ -121,7 +121,7 @@ describe("SHAPE POINT", () => {
 			// when
 			chart.internal.expandCircles(index);
 
-			chart.$.line.circles.filter(d => d.x === index).each(function() {
+			chart.$.circles.filter(d => d.x === index).each(function() {
 				const scale = +this.getAttribute("transform").match(/scale\((.*)\)/)[1];
 
 				expect(scale).to.be.equal(1.75);

@@ -7,9 +7,9 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API show", () => {
+describe.only("API show", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400],
@@ -25,7 +25,7 @@ describe("API show", () => {
 	describe("hide()", () => {
 		it("Hide partial data", done => {
 			const internal = chart.internal;
-			const main = internal.main;
+			const {main} = chart.$;
 
 			chart.hide("data1");
 
@@ -35,14 +35,14 @@ describe("API show", () => {
 				expect(+main.select(`${selector}-data1`).style("opacity")).to.be.equal(0);
 				expect(+main.select(`${selector}-data2`).style("opacity")).to.be.equal(1);
 
-				expect(+internal.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
+				expect(+internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
 
 				done();
 			}, 500);
 		});
 
 		it("Hide all data", done => {
-			const main = chart.$.main;
+			const {main} = chart.$;
 
 			// hide all data
 			chart.hide();
@@ -83,7 +83,7 @@ describe("API show", () => {
 	describe("show()", () => {
 		it("Show partial data", done => {
 			const internal = chart.internal;
-			const main = internal.main;
+			const {main} = chart.$;
 
 			chart.hide();
 			chart.show("data1");
@@ -94,7 +94,7 @@ describe("API show", () => {
 				expect(+main.select(`${selector}-data1`).style("opacity")).to.be.equal(1);
 				expect(+main.select(`${selector}-data2`).style("opacity")).to.be.equal(0);
 
-				expect(+internal.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
+				expect(+internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`).size()).to.be.equal(1);
 
 				done();
 			}, 500);
@@ -102,13 +102,13 @@ describe("API show", () => {
 
 		it("Show all data", done => {
 			const internal = chart.internal;
-			const main = internal.main;
+			const {main} = chart.$;
 			let legend;
 
 			// hide all data
 			chart.hide();
 
-			legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+			legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
 			expect(+legend.size()).to.be.equal(chart.data().length);
 
 			// show all data
@@ -119,7 +119,7 @@ describe("API show", () => {
 					expect(+this.style.opacity).to.be.equal(1);
 				});
 
-				legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(0);
 
@@ -133,7 +133,7 @@ describe("API show", () => {
 
 		it("Show all data using 'withLegend' option", done => {
 			const internal = chart.internal;
-			const main = internal.main;
+			const {main} = chart.$;
 
 			// hide all data and legend
 			chart.hide(null, {withLegend: true});
@@ -146,11 +146,11 @@ describe("API show", () => {
 					expect(+this.style.opacity).to.be.equal(1);
 				});
 
-				const legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				const legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(0);
 
-				internal.svg.selectAll(`.${CLASS.legendItem}`).each(function() {
+				internal.$el.svg.selectAll(`.${CLASS.legendItem}`).each(function() {
 					expect(+d3Select(this).style("opacity")).to.be.equal(0);
 				});
 
@@ -162,7 +162,7 @@ describe("API show", () => {
 	describe("toggle()", () => {
 		it("should be toggled hiding and showing data", done => {
 			const internal = chart.internal;
-			const main = internal.main;
+			const {main} = chart.$;
 			let legend;
 
 			// hide data
@@ -173,7 +173,7 @@ describe("API show", () => {
 					expect(+this.style.opacity).to.be.below(1);
 				});
 
-				legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(chart.data().length);
 
@@ -190,7 +190,7 @@ describe("API show", () => {
 					expect(+this.style.opacity).to.be.equal(1);
 				});
 
-				legend = internal.svg.selectAll(`.${CLASS.legendItemHidden}`);
+				legend = internal.$el.svg.selectAll(`.${CLASS.legendItemHidden}`);
 
 				expect(+legend.size()).to.be.equal(0);
 

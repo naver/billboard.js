@@ -457,7 +457,7 @@ describe("ZOOM", function() {
 		it("check for data.onclick", () => {
 			const main = chart.$.main;
 			const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
-			const circle = chart.$.line.circles.node().getBBox();
+			const circle = chart.$.circles.node().getBBox();
 
 			util.fireEvent(rect, "click", {
 				clientX: circle.x,
@@ -845,7 +845,7 @@ describe("ZOOM", function() {
 				clientY: 137
 			});
 
-			const {x, y} = chart.$.line.circles
+			const {x, y} = chart.$.circles
 				.filter(d => d.id === "data1" && d.value === value)
 				.node()
 				.getBBox();

@@ -6,7 +6,7 @@
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API x", () => {
+describe.only("API x", () => {
 	let chart;
 	let args;
 
@@ -78,7 +78,7 @@ describe("API x", () => {
 	});
 
 	describe(".xs()", () => {
-		let xs = {
+		let xs: any = {
 			x1: [10, 30, 45],
 			x2: [30, 50, 75]
 		};

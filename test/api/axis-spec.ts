@@ -3,7 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
-import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";

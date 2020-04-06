@@ -3,11 +3,13 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
+import {parseDate} from "../../src/module/util";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API zoom", function() {
+describe.only("API zoom", function() {
 	let chart;
 
 	describe("zoom line chart #1", () => {
@@ -34,7 +36,7 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
-			const domain = chart.internal.zoomScale.domain().map(Math.round);
+			const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
 			expect(domain[0]).to.be.equal(target[0]);
 			expect(domain[1]).to.be.equal(target[1]);
@@ -49,7 +51,7 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
-			const domain = chart.internal.zoomScale.domain().map(Math.round);
+			const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
 			expect(domain[0]).to.be.equal(target[0]);
 			expect(domain[1]).to.be.equal(target[1]);
@@ -60,12 +62,12 @@ describe("API zoom", function() {
 
 			chart.zoom(target);
 
-			const zoomScale = chart.internal.zoomScale;
+			const zoomScale = chart.internal.scale.zoom;
 
 			// If target contained minus value should not be null
 			expect(zoomScale).to.not.be.null;
 
-			const domain = chart.internal.zoomScale.domain().map(Math.round);
+			const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
 			// domain value must be above than target
 			expect(domain[0]).to.be.above(target[0]);
@@ -100,7 +102,7 @@ describe("API zoom", function() {
 			chart.zoom(target);
 
 			setTimeout(() => {
-				const domain = chart.internal.zoomScale.domain();
+				const domain = chart.internal.scale.zoom.domain();
 
 				expect(domain[0].getFullYear()).to.be.equal(target[0].getFullYear());
 				expect(domain[0].getMonth()).to.be.equal(target[0].getMonth());
@@ -119,8 +121,9 @@ describe("API zoom", function() {
 			chart.zoom(target);
 
 			setTimeout(() => {
-				const domain = chart.internal.zoomScale.domain();
-				const targetDate = [chart.internal.parseDate(target[0]), chart.internal.parseDate(target[1])];
+				const {internal} = chart;
+				const domain = chart.internal.scale.zoom.domain();
+				const targetDate = [parseDate.call(internal, target[0]), parseDate.call(internal, target[1])];
 
 				expect(domain[0].getFullYear()).to.be.equal(targetDate[0].getFullYear());
 				expect(domain[0].getMonth()).to.be.equal(targetDate[0].getMonth());
@@ -156,15 +159,13 @@ describe("API zoom", function() {
 		it("should be zoomed properly", done => {
 			const target = [1,2];
 
-			const internal = chart.internal;
-
 			chart.zoom(target);
 
 			setTimeout(() => {
-				const rectlist = internal.main.selectAll(`.${CLASS.eventRect}`)
+				const rectlist = chart.$.main.selectAll(`.${CLASS.eventRect}`)
 					.filter((v, i) => target.indexOf(i) !== -1);
 				const rectSize = rectlist.attr("width");
-				const domain = internal.zoomScale.domain().map(Math.round);
+				const domain = chart.internal.scale.zoom.domain().map(Math.round);
 
 				expect(domain[0]).to.be.equal(target[0]);
 				expect(domain[1] - 1).to.be.equal(target[1]);
@@ -238,19 +239,19 @@ describe("API zoom", function() {
 		it("should be unzoomed properly", () => {
 			const internal = chart.internal;
 			const target = [1, 4];
-			const original = internal.x.domain();
+			const original = internal.scale.x.domain();
 			let domain;
 
 			chart.zoom(target);
 
-			domain = internal.zoomScale.domain().map(Math.round);
+			domain = internal.scale.zoom.domain().map(Math.round);
 
 			expect(domain[0]).to.be.equal(target[0]);
 			expect(domain[1]).to.be.equal(target[1]);
 
 			chart.unzoom();
 
-			domain = chart.internal.x.domain();
+			domain = chart.internal.scale.x.domain();
 
 			expect(domain[0]).to.be.equal(original[0]);
 			expect(domain[1]).to.be.equal(original[1]);

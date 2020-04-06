@@ -181,7 +181,7 @@ describe("SHAPE BUBBLE", () => {
 				data = data.concat(v.slice(1));
 			});
 
-			chart.$.line.circles.each(function(v) {
+			chart.$.circles.each(function(v) {
 				// check for data value
 				expect(v.value).to.be.deep.equal(data[i]);
 

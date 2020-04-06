@@ -7,7 +7,7 @@
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
-describe("DRAG", function() {
+describe.only("DRAG", function() {
 	let chart;
 
 	describe("default extent", () => {
@@ -41,10 +41,10 @@ describe("DRAG", function() {
 			// when
 			internal.dragstart(xy);
 
-			expect(xy).to.deep.equal(internal.dragStart);
+			expect(xy).to.deep.equal(internal.state.dragStart);
 
 			// dragging flag to be set true
-			expect(internal.dragging).to.be.true;
+			expect(internal.state.dragging).to.be.true;
 		});
 
 		it("should set drag area and points to be selected", () => {
@@ -79,7 +79,7 @@ describe("DRAG", function() {
 				expect(main.select(`.${CLASS.dragarea}`).empty()).to.be.true;
 
 				// dragging flag to be set false
-				expect(internal.dragging).to.be.false;
+				expect(internal.state.dragging).to.be.false;
 
 				done();
 			}, 500);

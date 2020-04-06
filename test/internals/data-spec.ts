@@ -1601,7 +1601,7 @@ describe("DATA", () => {
 			it("label text should locate above the data points", () => {
 				const texts = chart.$.text.texts.nodes();
 
-				chart.$.line.circles.each(function(d, i) {
+				chart.$.circles.each(function(d, i) {
 					expect(+this.getAttribute("cy")).to.be.above(+texts[i].getAttribute("y"));
 				});
 			});
@@ -1613,7 +1613,7 @@ describe("DATA", () => {
 			it("label text should locate above the data points", () => {
 				const texts = chart.$.text.texts.nodes();
 
-				chart.$.line.circles.each(function(d, i) {
+				chart.$.circles.each(function(d, i) {
 					expect(+this.getAttribute("cx")).to.be.below(+texts[i].getAttribute("x"));
 				});
 			});

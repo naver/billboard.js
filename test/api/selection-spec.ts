@@ -7,10 +7,10 @@ import {rgb as d3Rgb} from "d3-color";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe("API select", () => {
+describe.only("API select", () => {
 	let chart;
 	let main;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150],

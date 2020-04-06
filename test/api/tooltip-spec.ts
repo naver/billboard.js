@@ -6,10 +6,11 @@
 import {timeFormat as d3TimeFormat} from "d3-time-format";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
+import sinon from "sinon";
 
-describe("API tooltip", () => {
+describe.only("API tooltip", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			x: "x",
 			columns: [
@@ -35,8 +36,8 @@ describe("API tooltip", () => {
 	describe("for non multiple x", () => {
 		it("should show/hide tooltip using 'index' option", () => {
 			const internal = chart.internal;
-			const config = internal.config;
-			const tooltip = internal.tooltip;
+			const {config} = internal;
+			const {tooltip} = chart.$;
 			const x = 1;
 
 			// show tooltip
@@ -67,7 +68,7 @@ describe("API tooltip", () => {
 		});
 
 		it("should show/hide tooltip using 'x' option", () => {
-			const tooltip = chart.internal.tooltip;
+			const {tooltip} = chart.$;
 			const x = new Date("2018-01-03 00:00");
 
 			// show tooltip
