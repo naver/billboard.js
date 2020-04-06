@@ -123,7 +123,7 @@
     "docdash": "^1.2.0",
     "eslint": "^6.8.0",
     "eslint-config-naver": "^2.1.0",
-    "eslint-loader": "^3.0.3",
+    "eslint-loader": "^4.0.0",
     "eslint-plugin-import": "^2.20.2",
     "exports-loader": "^0.7.0",
     "hammer-simulator": "0.0.1",

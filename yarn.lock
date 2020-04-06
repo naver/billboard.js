@@ -4523,14 +4523,14 @@ eslint-import-resolver-node@^0.3.2:
     debug "^2.6.9"
     resolve "^1.13.1"
 
-eslint-loader@^3.0.3:
-  version "3.0.4"
-  resolved "https://registry.yarnpkg.com/eslint-loader/-/eslint-loader-3.0.4.tgz#4329482877e381c91460a055bcd08d3855b9922d"
-  integrity sha512-I496aBd+Hi23Y0Cx+sKvw+VwlJre4ScIRlkrvTO6Scq68X/UXbN6F3lAhN8b0Zv8atAyprkyrA42K5QBJtCyaw==
+eslint-loader@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/eslint-loader/-/eslint-loader-4.0.0.tgz#ab096ce9168fa167e4159afff66692c173fc7b79"
+  integrity sha512-QoaFRdh3oXt5i2uonSjO8dDnncsG05w7qvA7yYMvGDne8zAEk9R+R1rsfunp3OKVdO5mAJelf1x2Z1kYp664kA==
   dependencies:
-    fs-extra "^8.1.0"
+    fs-extra "^9.0.0"
     loader-fs-cache "^1.0.3"
-    loader-utils "^1.2.3"
+    loader-utils "^2.0.0"
     object-hash "^2.0.3"
     schema-utils "^2.6.5"
 
@@ -5254,15 +5254,6 @@ fs-extra@^7.0.1:
   integrity sha512-YJDaCJZEnBmcbw13fvdAM9AwNOJwOzrE4pqMqBq5nFiEqXUqHwlK4B+3pUw6JNvfSPtX05xFHtYy/1ni01eGCw==
   dependencies:
     graceful-fs "^4.1.2"
-    jsonfile "^4.0.0"
-    universalify "^0.1.0"
-
-fs-extra@^8.1.0:
-  version "8.1.0"
-  resolved "https://registry.yarnpkg.com/fs-extra/-/fs-extra-8.1.0.tgz#49d43c45a88cd9677668cb7be1b46efdb8d2e1c0"
-  integrity sha512-yhlQgA6mnOJUKOsRUFsgJdQCvkKhcz8tlZG5HBQfReYZy46OwLcY+Zia0mtdHsOo9y/hP+CxMN0TU9QxoOtG4g==
-  dependencies:
-    graceful-fs "^4.2.0"
     jsonfile "^4.0.0"
     universalify "^0.1.0"
 
@@ -7368,6 +7359,15 @@ loader-utils@^1.1.0, loader-utils@^1.2.3, loader-utils@^1.4.0:
     big.js "^5.2.2"
     emojis-list "^3.0.0"
     json5 "^1.0.1"
+
+loader-utils@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/loader-utils/-/loader-utils-2.0.0.tgz#e4cace5b816d425a166b5f097e10cd12b36064b0"
+  integrity sha512-rP4F0h2RaWSvPEkD7BLDFQnvSf+nK+wr3ESUjNTyAGobqrijmW92zc+SO6d4p4B1wh7+B/Jg1mkQe5NYUEHtHQ==
+  dependencies:
+    big.js "^5.2.2"
+    emojis-list "^3.0.0"
+    json5 "^2.1.2"
 
 locate-path@^2.0.0:
   version "2.0.0"
