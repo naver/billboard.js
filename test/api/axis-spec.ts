@@ -7,7 +7,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API axis", function() {
+describe("API axis", function() {
 	const chart = util.generate({
 		data: {
 			columns: [

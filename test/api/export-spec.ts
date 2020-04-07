@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import util from "../assets/util";
 
-describe.only("API export", () => {
+describe("API export", () => {
 	let chart;
 	let args: any = {
 		data: {

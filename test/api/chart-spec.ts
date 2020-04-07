@@ -9,7 +9,7 @@ import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import bb from "../../src";
 
-describe.only("API chart", () => {
+describe("API chart", () => {
 	let chart;
 	let args: any = {
 		data: {

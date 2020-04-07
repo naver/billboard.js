@@ -7,7 +7,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 
-describe.only("API focus", function() {
+describe("API focus", function() {
 	const chart = util.generate({
 		data: {
 			columns: [

@@ -10,7 +10,10 @@ module.exports = function(config) {
 			"./spec/assets/hammer-simulator.run.ts",
 			"./src/scss/billboard.scss",
 			"./test/assets/common.css",
-			"./test/**/*-spec.ts",
+			//"./test/**/*-spec.ts",
+			"./test/api/*-spec.ts",
+			"./test/interactions/*-spec.ts",
+			"./test/internals/*-spec.ts",
 			{
 				pattern: "./test/assets/data/*",
 				watched: false,

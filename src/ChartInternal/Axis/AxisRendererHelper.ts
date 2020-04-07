@@ -34,7 +34,7 @@ export default class AxisRendererHelper {
 	 * @returns {{w: number, h: number}}
 	 * @private
 	 */
-	static getSizeFor1Char(node) {
+	static getSizeFor1Char(node?) {
 		// default size for one character
 		const size = {
 			w: 5.5,

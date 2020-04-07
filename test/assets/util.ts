@@ -47,14 +47,19 @@ const generate = args => {
 			inputType = "touch";
 		}
 
-		const initToRender = ChartInternal.prototype.initToRender;
+		// if (inputType === "touch") {
+		// 	window.navigator.userAgent = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36"
 
-		ChartInternal.prototype.initToRender = function(forced) {
-			const $$ = this;
-			
-			$$.state.inpuType = inputType;
-			initToRender.call($$, forced);
-		}
+		// 	const {initToRender} = ChartInternal.prototype;
+	
+		// 	ChartInternal.prototype.initToRender = function(forced) {
+		// 		const $$ = this;
+	
+		// 		//console.log("-->", $$.state)
+		// 		$$.state.inpuType = inputType;
+		// 		initToRender.call($$, forced);
+		// 	}
+		// }
 
 		chart = bb.generate(args);
 	}
@@ -69,7 +74,7 @@ const generate = args => {
  * @param {Object} options value to be set
  * @param {bb} chart billboard.js instance
  */
-const fireEvent = (element, name, options = {}, chart) => {
+const fireEvent = (element, name, options: any = {}, chart?: Chart) => {
 	const paddingLeft =
 		(chart && chart.internal.$el.main.node().transform.baseVal.getItem(0).matrix.e) || 0;
 

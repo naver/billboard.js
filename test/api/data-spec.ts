@@ -7,7 +7,7 @@ import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API data", function() {
+describe("API data", function() {
 	const data = [
 		["data", 30, 30, 100, 400, 150, 250],
 		["data2", 5000, 2000, 1000, 4000, 1500, 2500]

@@ -9,7 +9,7 @@ import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isTabVisible} from "../../src/module/util";
 
-describe.only("API flow", () => {
+describe("API flow", () => {
 	const chart = util.generate({
 		data: {
 			x: "x",

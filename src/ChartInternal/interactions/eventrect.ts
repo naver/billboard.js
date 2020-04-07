@@ -475,7 +475,7 @@ export default {
 	clickHandlerForSingleX(d, ctx): void {
 		const $$ = ctx;
 		const {config, state, $el: {main}} = $$;
-console.log("clickHandler")
+
 		if ($$.hasArcType() || !$$.toggleShape || state.cancelClick) {
 			state.cancelClick && (state.cancelClick = false);
 

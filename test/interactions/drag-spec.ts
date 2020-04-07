@@ -4,10 +4,11 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
-describe.only("DRAG", function() {
+describe("DRAG", function() {
 	let chart;
 
 	describe("default extent", () => {

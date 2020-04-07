@@ -3,11 +3,12 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {rgb as d3Rgb} from "d3-color";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API select", () => {
+describe("API select", () => {
 	let chart;
 	let main;
 	let args: any = {

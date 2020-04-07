@@ -4,6 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
+import sinon from "sinon";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
@@ -40,7 +42,7 @@ describe("ZOOM", function() {
 
 		describe("main chart domain", () => {
 			it("should have original y domain", () => {
-				const yDomain = chart.internal.y.domain();
+				const yDomain = chart.internal.scale.y.domain();
 				const expectedYDomain = [-591.5, 6626.5];
 
 				expect(yDomain[0]).to.be.equal(expectedYDomain[0]);
@@ -50,8 +52,8 @@ describe("ZOOM", function() {
 
 		describe("main chart domain", () => {
 			it("should have original y domain in subchart", () => {
-				const yDomain = chart.internal.y.domain();
-				const subYDomain = chart.internal.subY.domain();
+				const yDomain = chart.internal.scale.y.domain();
+				const subYDomain = chart.internal.scale.subY.domain();
 
 				expect(subYDomain[0]).to.be.equal(yDomain[0]);
 				expect(subYDomain[1]).to.be.equal(yDomain[1]);
@@ -210,22 +212,22 @@ describe("ZOOM", function() {
 			const zoomValue = [1, 3];
 
 			chart.zoom(zoomValue); // zoom in
-			expect(chart.internal.zoomScale.domain()).to.be.deep.equal(zoomValue); // zoomScale value is updated on zoom in
+			expect(chart.internal.scale.zoom.domain()).to.be.deep.equal(zoomValue); // zoomScale value is updated on zoom in
 
 			chart.unzoom(); // zoom set to initial
-			expect(chart.internal.zoomScale).to.be.null; // zoomScale null on zoom out to initial
+			expect(chart.internal.scale.zoom).to.be.null; // zoomScale null on zoom out to initial
 
 		});
 
 		it("check for subX domain values after zoom", () => {
 			const zoomValue = [1, 3];
-			const subX = chart.internal.subX;
+			const {x, subX} = chart.internal.scale;
 
 			chart.zoom(zoomValue); // zoom in
 			expect(subX.domain()).to.not.deep.equal(zoomValue); // subX value not updated on zoom in
 
 			chart.unzoom(); // zoom set to initial
-			expect(subX.domain()).to.be.deep.equal(chart.internal.x.orgDomain()); // subX value not updated on zoom in
+			expect(subX.domain()).to.be.deep.equal(x.orgDomain()); // subX value not updated on zoom in
 		});
 	});
 
@@ -257,8 +259,8 @@ describe("ZOOM", function() {
 		it("check with rescale option", () => {
 			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-2`).node();
 			const orgDomain = {
-				x: chart.internal.x.domain(),
-				y: chart.internal.y.domain()
+				x: chart.internal.scale.x.domain(),
+				y: chart.internal.scale.y.domain()
 			};
 
 			// when zoom in
@@ -273,7 +275,7 @@ describe("ZOOM", function() {
 				const domain = orgDomain[id];
 
 				expect(
-					chart.internal[id].domain()
+					chart.internal.scale[id].domain()
 						.every((v, i) => i > 0 ? v < domain[i] : v > domain[i])
 				).to.be.true;
 			});
@@ -290,7 +292,7 @@ describe("ZOOM", function() {
 				const domain = orgDomain[id];
 
 				expect(
-					chart.internal[id].domain()
+					chart.internal.scale[id].domain()
 						.every((v, i) => v === domain[i])
 				).to.be.true;
 			});
@@ -539,14 +541,14 @@ describe("ZOOM", function() {
 
 		it("zoom scale should maintained on dragging interaction", done => {
 			const internal = chart.internal;
-			const main = internal.main;
+			const {main} = internal.$el;
 			const zoomDomain = [0,2];
 
 			// when
 			chart.zoom(zoomDomain);
 
 			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
-			const zoomedDomain = internal.x.domain();
+			const zoomedDomain = internal.scale.x.domain();
 
 			expect(zoomedDomain).to.be.deep.equal(zoomDomain);
 
@@ -575,7 +577,7 @@ describe("ZOOM", function() {
 						clientY: 150
 					}, chart);
 
-					expect(internal.x.domain()).to.be.deep.equal(zoomedDomain);
+					expect(internal.scale.x.domain()).to.be.deep.equal(zoomedDomain);
 
 					done();
 				}, 500);
@@ -685,7 +687,7 @@ describe("ZOOM", function() {
 			const internal = chart.internal;
 			const main = chart.$.main;
 			const eventRect = main.select(`.${CLASS.eventRect}-2`).node();
-			const zoomedDomain = internal.x.domain();
+			const zoomedDomain = internal.scale.x.domain();
 			const size = {w: 0, h: 0};
 			let brush;
 			let yAxisTickText;
@@ -732,7 +734,7 @@ describe("ZOOM", function() {
 					expect(tickText).to.be.below(yAxisTickText);
 					expect(tickText).to.be.equal(400);
 
-					internal.x.domain().forEach((v, i) => {
+					internal.scale.x.domain().forEach((v, i) => {
 						expect(v).to.be[i ? "below" : "above"](zoomedDomain[i]);
 					});
 
@@ -774,8 +776,8 @@ describe("ZOOM", function() {
 		it("check on wheel zooming", () => {
 			const eventRect = chart.$.main.select(`.${CLASS.eventRect}-40`).node();
 			const orgDomain = {
-				x: chart.internal.x.domain(),
-				y: chart.internal.y.domain()
+				x: chart.internal.scale.x.domain(),
+				y: chart.internal.scale.y.domain()
 			};
 
 			// when zoom in
@@ -787,7 +789,7 @@ describe("ZOOM", function() {
 			});
 
 			["x", "y"].forEach(id => {
-				const domain = chart.internal[id].domain();
+				const domain = chart.internal.scale[id].domain();
 				const org = orgDomain[id];
 
 				if (id === "x") {
@@ -882,11 +884,11 @@ describe("ZOOM", function() {
 			chart.zoom(domain);
 			chart.toggle();
 
-			checkDomain(chart.internal.zoomScale);
+			checkDomain(chart.internal.scale.zoom);
 
 			chart.toggle();
 
-			checkDomain(chart.internal.zoomScale);
+			checkDomain(chart.internal.scale.zoom);
 		});
 	});
 

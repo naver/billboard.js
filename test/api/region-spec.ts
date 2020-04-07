@@ -3,11 +3,12 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API region", function() {
+describe("API region", function() {
 	let chart;
 	let args;
 

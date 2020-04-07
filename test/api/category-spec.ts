@@ -8,7 +8,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API category", () => {
+describe("API category", () => {
 	const chart = util.generate({
 		data: {
 			x: "x",

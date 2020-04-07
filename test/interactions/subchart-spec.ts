@@ -4,9 +4,9 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
-import { doesNotReject } from "assert";
 
 describe("SUBCHART", () => {
 	let chart;
@@ -172,7 +172,7 @@ describe("SUBCHART", () => {
 			// should be maintain zoom area after resize
 			setTimeout(() => {
 				expect(+selection.attr("width")).to.be.below(baseWidth);
-				expect(chart.internal.x.domain()).to.not.deep.equal(chart.internal.orgXDomain);
+				expect(chart.internal.scale.x.domain()).to.not.deep.equal(chart.internal.orgXDomain);
 				done();
 			}, 300);
 		};
@@ -233,7 +233,7 @@ describe("SUBCHART", () => {
 		it("should be limiting selection area for datetime extent", () => {
 			const selection = chart.$.svg.select(".selection");			
 			const range = args.axis.x.extent
-				.map(v => chart.internal.subX(new Date(v)))
+				.map(v => chart.internal.scale.subX(new Date(v)))
 				.reduce((a, c) => Math.abs(a - c));
 
 			// mouse drag selection on subchart

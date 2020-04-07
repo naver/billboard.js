@@ -32,7 +32,7 @@ describe("DOMAIN", function() {
 		});
 
 		it("should be set properly when smaller than max of data", () => {
-			const domain = chart.internal.y.domain();
+			const domain = chart.internal.scale.y.domain();
 
 			expect(domain[0]).to.be.equal(-150);
 			expect(domain[1]).to.be.equal(450);
@@ -45,7 +45,7 @@ describe("DOMAIN", function() {
 		});
 
 		it("should be set properly when bigger than max of data", () => {
-			const domain = chart.internal.y.domain();
+			const domain = chart.internal.scale.y.domain();
 
 			expect(domain[0]).to.be.equal(499);
 			expect(domain[1]).to.be.equal(511);
@@ -66,7 +66,7 @@ describe("DOMAIN", function() {
 		});
 
 		it("should be set properly when bigger than min of data", () => {
-			const domain = chart.internal.y.domain();
+			const domain = chart.internal.scale.y.domain();
 
 			expect(domain[0]).to.be.equal(-89);
 			expect(domain[1]).to.be.equal(1099);
@@ -79,7 +79,7 @@ describe("DOMAIN", function() {
 		});
 
 		it("should be set properly when smaller than min of data", () => {
-			const domain = chart.internal.y.domain();
+			const domain = chart.internal.scale.y.domain();
 
 			expect(domain[0]).to.be.equal(-11);
 			expect(domain[1]).to.be.equal(1);
@@ -105,7 +105,7 @@ describe("DOMAIN", function() {
 		});
 
 		it("should be set properly when bigger than min of data", () => {
-			const domain = chart.internal.y.domain();
+			const domain = chart.internal.scale.y.domain();
 
 			expect(domain[0]).to.be.closeTo(-9, 1);
 			expect(domain[1]).to.be.closeTo(69, 1);
@@ -134,7 +134,7 @@ describe("DOMAIN", function() {
 		});
 
 		it("should be set properly when bigger than min of data", () => {
-			const domain = chart.internal.y.domain();
+			const domain = chart.internal.scale.y.domain();
 
 			expect(domain[0]).to.be.closeTo(-9, 1);
 			expect(domain[1]).to.be.closeTo(69, 1);
@@ -195,8 +195,8 @@ describe("DOMAIN", function() {
 		});
 
 		it("if there is no specified data.axes binding", () => {
-			const yDomain = chart.internal.y.domain();
-			const y2Domain = chart.internal.y2.domain();
+			const yDomain = chart.internal.scale.y.domain();
+			const y2Domain = chart.internal.scale.y2.domain();
 
 			expect(yDomain).to.be.deep.equal(y2Domain);
 		});
@@ -209,8 +209,8 @@ describe("DOMAIN", function() {
 		});
 
 		it("if all data is bound to y axis", () => {
-			const yDomain = chart.internal.y.domain();
-			const y2Domain = chart.internal.y2.domain();
+			const yDomain = chart.internal.scale.y.domain();
+			const y2Domain = chart.internal.scale.y2.domain();
 
 			expect(yDomain).to.be.deep.equal(y2Domain);
 		});
@@ -223,8 +223,8 @@ describe("DOMAIN", function() {
 		});
 
 		it("if all data is bound to y2 axis", () => {
-			const yDomain = chart.internal.y.domain();
-			const y2Domain = chart.internal.y2.domain();
+			const yDomain = chart.internal.scale.y.domain();
+			const y2Domain = chart.internal.scale.y2.domain();
 
 			expect(yDomain).to.be.deep.equal(y2Domain);
 		});

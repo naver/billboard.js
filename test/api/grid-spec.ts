@@ -8,7 +8,7 @@ import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API grid", function() {
+describe("API grid", function() {
 	let chart = util.generate({
 		data: {
 			columns: [

@@ -3,12 +3,13 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {timeFormat as d3TimeFormat} from "d3-time-format";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import sinon from "sinon";
 
-describe.only("API tooltip", () => {
+describe("API tooltip", () => {
 	let chart;
 	let args: any = {
 		data: {

@@ -199,6 +199,7 @@ export default {
 
 		return config.point_type === "circle" &&
 			(!pattern || (isArray(pattern) && pattern.length === 0));
+
 	},
 
 	lineData(d) {

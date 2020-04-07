@@ -3,13 +3,14 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import {parseDate} from "../../src/module/util";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
-describe.only("API zoom", function() {
+describe("API zoom", function() {
 	let chart;
 
 	describe("zoom line chart #1", () => {

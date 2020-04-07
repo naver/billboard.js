@@ -82,7 +82,7 @@ const bb = {
 	 * // data.type defaults to 'bar'
 	 * var chart = bb.generate({ ... });
 	 */
-	defaults(options) {
+	defaults(options?) {
 		if (isObject(options)) {
 			defaults = options;
 		}

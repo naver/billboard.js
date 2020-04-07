@@ -3,12 +3,13 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import bb from "../../src";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";7
 
-describe("Interface & initialization", () => {
+describe.only("Interface & initialization", () => {
 	let chart;
 
 	describe("Initialization", () => {

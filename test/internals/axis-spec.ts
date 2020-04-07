@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import {timeMinute as d3TimeMinute} from "d3-time";
@@ -15,7 +16,7 @@ import AxisRendererHelper from "../../src/ChartInternal/Axis/AxisRendererHelper"
 
 describe("AXIS", function() {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250],
@@ -479,6 +480,7 @@ describe("AXIS", function() {
 
 	describe("axis.x.tick.values", () => {
 		describe("function is provided", () => {
+			let generatedTicks;
 			let tickGenerator = () => {
 				const values = [];
 
@@ -497,7 +499,7 @@ describe("AXIS", function() {
 				};
 
 				chart = bb.generate(args);
-				window.generatedTicks = tickGenerator();
+				generatedTicks = tickGenerator();
 			});
 
 			it("should use 'function' to generate ticks", () => {
@@ -506,7 +508,7 @@ describe("AXIS", function() {
 					.each(function(d, i) {
 						const tick = d3Select(this).select("text").text();
 
-						expect(+tick).to.be.equal(window.generatedTicks[i]);
+						expect(+tick).to.be.equal(generatedTicks[i]);
 					});
 			});
 		});
@@ -1052,7 +1054,7 @@ describe("AXIS", function() {
 
 			it("should have automatically calculated x axis height", () => {
 				const internal = chart.internal;
-				const box = internal.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
+				const box = internal.$el.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
 				const height = internal.getHorizontalAxisHeight("x");
 
 				expect(box.height).to.be.above(50);
@@ -1067,7 +1069,7 @@ describe("AXIS", function() {
 
 		function compare(expectedXAxisTickRotate, expectedXAxisBoundingClientRect, expectedHorizontalXAxisHeight, expectedXAxisTickTextY2Overflow) {
 			const internal = chart.internal;
-			const xAxisBoundingClientRect = internal.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
+			const xAxisBoundingClientRect = internal.$el.main.select(`.${CLASS.axisX}`).node().getBoundingClientRect();
 			const horizontalXAxisHeight = internal.getHorizontalAxisHeight("x");
 			const xAxisTickRotate = internal.getAxisTickRotate("x");
 
@@ -1083,7 +1085,7 @@ describe("AXIS", function() {
 		function compareOverflow(expectedOverflow) {
 			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
 
-			expect(xAxisTickTextY2Overflow).to.be.above(0, 5);
+			expect(xAxisTickTextY2Overflow).to.be.above(0, "5");
 			expect(xAxisTickTextY2Overflow).to.be.equal(expectedOverflow);
 		}
 
@@ -1309,7 +1311,7 @@ describe("AXIS", function() {
 			it("should resize when all data hidden", () => {
 				chart.hide("Temperature");
 
-				compare(args.axis.x.tick.rotate, 6, 70, 105);
+				compare(args.axis.x.tick.rotate, 6, 57, 108);
 			});
 
 			it("should resize when show hidden data", () => {
@@ -1454,7 +1456,7 @@ describe("AXIS", function() {
 						const tick = d3Select(this);
 						const text = tick.select("text");
 						const tspan = text.select("tspan");
-						const transform = text.attr("transform");
+						const transform: any = text.attr("transform");
 
 						transform &&
 							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.equal(args.axis.y.tick.rotate);
@@ -1502,7 +1504,7 @@ describe("AXIS", function() {
 						const tick = d3Select(this);
 						const text = tick.select("text");
 						const tspan = text.select("tspan");
-						const transform = text.attr("transform");
+						const transform: any = text.attr("transform");
 
 						transform &&
 							expect(Math.round(transform.replace(/[A-z()]/g, ""))).to.be.equal(args.axis.y2.tick.rotate);
@@ -2017,9 +2019,9 @@ describe("AXIS", function() {
 
 		it("x and y axis should be hidden", () => {
 			const main = chart.$.main;
-			const internal = chart.internal;
+			const {x, y} = chart.internal.scale;
 
-			expect(internal.x && internal.y).to.be.ok;
+			expect(x && y).to.be.ok;
 
 			["x", "y"].forEach(v => {
 				expect(main.select(`.bb-axis-${v}`).style("visibility")).to.be.equal("hidden");
@@ -2078,13 +2080,13 @@ describe("AXIS", function() {
 		});
 
 		const checkRange = id => {
-			const range = chart.internal[id].range();
-			const axisRange = chart.internal.axesList[id][0].scale().range();
+			const range = chart.internal.scale[id].range();
+			const axisRange = chart.internal.axis.axesList[id][0].scale().range();
 
 			return range.every((v, i) => v === axisRange[i]);
 		};
 
-		const checkXAxes = rotated => {
+		const checkXAxes = (rotated?) => {
 			const main = chart.$.main;
 			const xAxisY = util.parseNum(main.select(`.${CLASS.axis}-x`).attr("transform"));
 			const axis1 = main.select(`.${CLASS.axis}-x-1`);
@@ -2099,10 +2101,10 @@ describe("AXIS", function() {
 			expect(checkRange("x")).to.be.true;
 		};
 
-		const checkYAxes = rotated => {
+		const checkYAxes = (rotated?) => {
 			const main = chart.$.main;
 			const yAxisY = util.parseNum(main.select(`.${CLASS.axis}-y`).attr("transform"));
-			let yAxes = chart.internal.axesList.y;
+			let yAxes = chart.internal.axis.axesList.y;
 			const toBeMethod = rotated ? "above" : "below";
 
 			yAxes = yAxes.map((v, i) => main.select(`.${CLASS.axis}-y-${i + 1}`));
@@ -2127,7 +2129,7 @@ describe("AXIS", function() {
 			expect(checkRange("y")).to.be.true;
 		};
 
-		const checkY2Axes = rotated => {
+		const checkY2Axes = (rotated?) => {
 			const main = chart.$.main;
 			const yAxisY = util.parseNum(main.select(`.${CLASS.axis}-y2`).attr("transform"));
 			const axis1 = main.select(`.${CLASS.axis}-y2-1`);
@@ -2145,7 +2147,7 @@ describe("AXIS", function() {
 
 		it("check for axes generation", () => {
 			const main = chart.$.main;
-			const axesList = chart.internal.axesList;
+			const axesList = chart.internal.axis.axesList;
 
 			["x", "y", "y2"].forEach(id => {
 				axesList[id].forEach((v, i) => {
@@ -2212,7 +2214,7 @@ describe("AXIS", function() {
 			const main = chart.$.main;
 
 			["x", "y", "y2"].forEach(id => {
-				chart.internal.axesList[id]
+				chart.internal.axis.axesList[id]
 					.forEach((v, i) => {
 						const axis = main.select(`.${CLASS.axis}-${id}-${i + 1}`);
 						const domain = v.scale().domain();
@@ -2300,13 +2302,13 @@ describe("AXIS", function() {
 				y2: [0, 100, 200, 300, 400]
 			};
 
-			["subx", "x", "y", "y2"].forEach(v => {
-				const data = chart.internal.axes[v]
+			["subX", "x", "y", "y2"].forEach(v => {
+				const data = chart.internal.$el.axis[v]
 					.selectAll(".tick text").filter(function() {
 						return this.style.display === "block";
 					}).data();
 
-				expect(data).to.be.deep.equal(expected[v === "subx" ? "x" : v]);
+				expect(data).to.be.deep.equal(expected[v === "subX" ? "x" : v]);
 			});
 		}
 
@@ -2387,7 +2389,7 @@ describe("AXIS", function() {
 			expect(lineRect.left).to.be.closeTo(yAxisRect.right, 10);
 
 			// check max
-			expect(lineRect.right).to.be.closeTo(chart.internal.currentWidth, 10);
+			expect(lineRect.right).to.be.closeTo(chart.internal.state.currentWidth, 10);
 		});
 
 		it("set option axis.min/max.fit=false", () => {
@@ -2402,7 +2404,7 @@ describe("AXIS", function() {
 			expect(lineRect.left - yAxisRect.right > 50).to.be.true;
 
 			// check max
-			expect(chart.internal.currentWidth - lineRect.right > 300).to.be.true;
+			expect(chart.internal.state.currentWidth - lineRect.right > 300).to.be.true;
 		});
 
 		it("set option axis.min/max.value", () => {
@@ -2418,7 +2420,7 @@ describe("AXIS", function() {
 		});
 
 		it("check if x axis min/max is not fitten.", () => {
-			const currWidth = chart.internal.currentWidth;
+			const currWidth = chart.internal.state.currentWidth;
 
 			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
 				const xPos = +util.parseNum(this.getAttribute("transform")) / 10;
