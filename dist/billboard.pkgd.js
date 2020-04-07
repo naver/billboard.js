@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200406132747
+ * @version 1.11.1-nightly-20200407132835
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -33177,8 +33177,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this;
 
     if ($$.inputType === "touch") {
-      var d = $$.grid.select("line.".concat(config_classes.xgridFocus)).datum();
-      d && $$.showGridFocus([d]);
+      var xgridFocus = $$.grid.select("line.".concat(config_classes.xgridFocus));
+
+      if (!xgridFocus.empty()) {
+        var d = xgridFocus.datum();
+        d && $$.showGridFocus([d]);
+      }
     } else {
       var _isRotated = $$.config.axis_rotated;
       $$.main.select("line.".concat(config_classes.xgridFocus)).attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? $$.width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : $$.height);
@@ -37714,7 +37718,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200406132747",
+  version: "1.11.1-nightly-20200407132835",
 
   /**
    * Generate chart
@@ -37813,7 +37817,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200406132747
+ * @version 1.11.1-nightly-20200407132835
  */
 
 
