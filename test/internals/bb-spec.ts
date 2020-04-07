@@ -4,12 +4,13 @@
  */
 /* eslint-disable */
 import {expect} from "chai";
-import {select as d3Select} from "d3-selection";
+import sinon from "sinon";
 import bb from "../../src";
 import util from "../assets/util";
-import CLASS from "../../src/config/classes";7
+import CLASS from "../../src/config/classes";
+import {convertInputType} from "../../src/module/util";
 
-describe.only("Interface & initialization", () => {
+describe("Interface & initialization", () => {
 	let chart;
 
 	describe("Initialization", () => {
@@ -21,9 +22,9 @@ describe.only("Interface & initialization", () => {
 
 				if (isNode) {
 					expect(isNode).to.be.true;
-				} else {
+				} else if (v1) {
 					Object.values(v1).forEach(v2 => {
-						expect(isD3Node(v2)).to.be.true;
+						v2 && expect(isD3Node(v2)).to.be.true;
 					});
 				}
 			});
@@ -49,14 +50,16 @@ describe.only("Interface & initialization", () => {
 					},
 					type: "bar"
 				},
-				onrendered: ctx => checkElements(ctx.$)
+				onrendered: function() {
+					checkElements(this.$);
+				}
 			});
 			const internal = chart.internal;
 
 			expect(chart).not.to.be.null;
-			expect(d3Select(chart.element).classed("bb")).to.be.true;
-			expect(internal.svg.node().tagName).to.be.equal("svg");
-			expect(internal.convertInputType()).to.be.equal(internal.inputType);
+			expect(chart.$.chart.classed("bb")).to.be.true;
+			expect(internal.$el.svg.node().tagName).to.be.equal("svg");
+			expect(convertInputType(true, false)).to.be.equal(internal.state.inputType);
 			expect(chart).to.be.equal(bb.instance[0]);
 		});
 
@@ -78,7 +81,7 @@ describe.only("Interface & initialization", () => {
 				}
 			});
 
-			expect(chart.element.classList.contains("bb")).to.be.true;
+			expect(chart.$.chart.classed("bb")).to.be.true;
 		});
 
 		it("instantiate with empty data", () => {
@@ -108,7 +111,7 @@ describe.only("Interface & initialization", () => {
 				}
 			});
 
-			expect(d3Select(chart.element).classed(bindtoClassName)).to.be.true;
+			expect(chart.$.chart.classed(bindtoClassName)).to.be.true;
 		});
 	});
 
@@ -147,7 +150,7 @@ describe.only("Interface & initialization", () => {
 				}
 			});
 
-			const chartWidth = +chart.internal.svg.attr("width");
+			const chartWidth = +chart.internal.$el.svg.attr("width");
 			const diff = 50;
 
 			// shrink width & resize
@@ -155,7 +158,7 @@ describe.only("Interface & initialization", () => {
 			chart.internal.resizeFunction();
 
 			setTimeout(() => {
-				expect(+chart.internal.svg.attr("width")).to.be.equal(chartWidth - diff);
+				expect(+chart.internal.$el.svg.attr("width")).to.be.equal(chartWidth - diff);
 				document.body.innerHTML = innerHTML;
 
 				done();
@@ -176,13 +179,13 @@ describe.only("Interface & initialization", () => {
 					]
 				}
 			});
-			const chartHeight = +chart.internal.svg.attr("height");
+			const chartHeight = +chart.internal.$el.svg.attr("height");
 
 			container.style.width = `${+container.style.width.replace("px", "") - 100}px`;
 			chart.internal.resizeFunction();
 
 			setTimeout(() => {
-				expect(+chart.internal.svg.attr("height")).to.be.equal(chartHeight);
+				expect(+chart.internal.$el.svg.attr("height")).to.be.equal(chartHeight);
 				done();
 			}, 200);
 		});
@@ -212,8 +215,8 @@ describe.only("Interface & initialization", () => {
 			});
 
 			setTimeout(() => {
-				expect(+chart1.internal.svg.attr("width")).to.be.equal(width);
-				expect(+chart2.internal.svg.attr("width")).to.be.equal(width);
+				expect(+chart1.internal.$el.svg.attr("width")).to.be.equal(width);
+				expect(+chart2.internal.$el.svg.attr("width")).to.be.equal(width);
 				done();
 			}, 200);
 		});
@@ -221,7 +224,7 @@ describe.only("Interface & initialization", () => {
 
 	describe("set defaults options", () => {
 		let tickPrefix = "-A-";
-		let args = {
+		let args: any = {
 			data: {
 				types: {
 					data1: "area",
@@ -287,6 +290,7 @@ describe.only("Interface & initialization", () => {
 			chart = util.generate(args);
 
 			expect(chart.config("data.types")).to.be.deep.equal(
+				// @ts-ignore
 				Object.assign({}, bb.defaults().data.types, args.data.types)
 			);
 
@@ -311,7 +315,9 @@ describe.only("Interface & initialization", () => {
 
 			["beforeinit", "init", "rendered", "afterinit", "resize", "resized", "over", "out"]
 				.forEach(v => {
-					args[`on${v}`] = ctx => spy(v, ctx);
+					args[`on${v}`] = function() {
+						spy(v, this);
+					}
 				});
 
 			chart = util.generate(args);
@@ -355,8 +361,8 @@ describe.only("Interface & initialization", () => {
 	});
 
 	describe("check for lazy rendering", () => {
-		const spy = {};
-		const args = {
+		const spy: any = {};
+		const args: any = {
 			data: {
 				columns: [
 					["data1", 300, 350, 300]
@@ -375,7 +381,7 @@ describe.only("Interface & initialization", () => {
 		});
 
 		it("check lazy rendering & mutation observer: style attribute", done => {
-			const el = document.body.querySelector("#chart");
+			const el: any = document.body.querySelector("#chart");
 
 			// hide to lazy render
 			el.style.display = "none";
@@ -425,7 +431,7 @@ describe.only("Interface & initialization", () => {
 		});
 
 		it("check lazy rendering on callbacks", done => {
-			const el = document.body.querySelector("#chart");
+			const el: any = document.body.querySelector("#chart");
 
 			// hide to lazy render
 			el.style.display = "none";
@@ -490,7 +496,7 @@ describe.only("Interface & initialization", () => {
 	});
 
 	describe("check for background", () => {
-		const args = {
+		const args: any = {
 			data: {
 				columns: [
 					["data1", 300, 350, 300]
@@ -507,7 +513,7 @@ describe.only("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
-			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.regions);
+			expect(element.node().parentNode).to.be.equal(chart.$.svg.select("g").node());
 			expect(element.empty()).to.be.false;
 			expect(element.attr("href")).to.be.equal(args.background.imgUrl);
 			expect(element.node().tagName).to.be.equal("image");
@@ -519,7 +525,7 @@ describe.only("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
-			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.chart);
+			expect(element.node().nextSibling.getAttribute("class")).to.be.equal(CLASS.chart);
 		});
 
 		it("set option background.color=red", () => {
@@ -533,7 +539,7 @@ describe.only("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
-			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.regions);
+			expect(element.node().parentNode).to.be.equal(chart.$.svg.select("g").node());
 			expect(element.empty()).to.be.false;
 			expect(element.style("fill")).to.be.equal(args.background.color);
 			expect(element.node().tagName).to.be.equal("rect");
@@ -545,7 +551,7 @@ describe.only("Interface & initialization", () => {
 
 			const element = chart.$.main.select(".myBgClass");
 
-			expect(element.node().parentNode.getAttribute("class")).to.be.equal(CLASS.chart);
+			expect(element.node().nextSibling.getAttribute("class")).to.be.equal(CLASS.chart);
 		});
 	});
 });
