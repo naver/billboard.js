@@ -997,6 +997,18 @@ describe("INTERACTION", () => {
 				done();
 			}, 300);
 		});
+
+		it("set option grid.focus.show=false", () => {
+			args.grid = {
+				focus: {
+					show: false
+				}
+			};
+		});
+
+		it("should not throwing error when grid focus is not shown", () => {
+			expect(chart.tooltip.show({x:2})).to.not.throw;
+		});
 	});
 
 	describe("check for data.over/out", () => {

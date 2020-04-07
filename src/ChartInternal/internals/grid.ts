@@ -429,9 +429,13 @@ export default {
 		const {state: {inputType, width, height}, $el} = $$;
 
 		if (inputType === "touch") {
-			const d = $el.grid.main.select(`line.${CLASS.xgridFocus}`).datum();
+			const xgridFocus = $$.grid.select(`line.${CLASS.xgridFocus}`);
 
-			d && $$.showGridFocus([d]);
+			if (!xgridFocus.empty()) {
+				const d = xgridFocus.datum();
+
+				d && $$.showGridFocus([d]);
+			}
 		} else {
 			const isRotated = $$.config.axis_rotated;
 
