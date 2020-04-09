@@ -340,14 +340,16 @@ const getMinMax = (type, data) => {
  * Get range
  * @param {Number} start Start number
  * @param {Number} end End number
+ * @param {Number} step Step number
  * @return {Array}
  * @private
  */
-const getRange = (start, end) => {
+const getRange = (start, end, step = 1) => {
 	const res = [];
+	const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
-	for (let i = start; i < end; i++) {
-		res.push(i);
+	for (let i = start; i < n; i++) {
+		res.push(start + i * step);
 	}
 
 	return res;
