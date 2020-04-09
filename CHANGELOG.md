@@ -1,3 +1,10 @@
+## [1.12.3](https://github.com/naver/billboard.js/compare/1.12.2...1.12.3) (2020-04-09)
+
+
+### Bug Fixes
+
+* **grid:** Fix possible error when grid.focus.show set false ([be61198](https://github.com/naver/billboard.js/commit/be611985630fb410cb48773ae54d6aee4c2eb58b)), closes [#1306](https://github.com/naver/billboard.js/issues/1306)
+
 ## [1.12.2](https://github.com/naver/billboard.js/compare/1.12.1...1.12.2) (2020-04-03)
 
 
