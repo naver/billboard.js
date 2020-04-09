@@ -21,7 +21,6 @@ import {pointInRegion, compareEpochs} from "./util";
  *   - Is preferable use `scatter` as data.type
  * - **Required modules:**
  *   - [d3-selection](https://github.com/d3/d3-selection)
- *   - [d3-array](https://github.com/d3/d3-array)
  *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
  *   - [d3-color](https://github.com/d3/d3-color)
  *   - [d3-scale](https://github.com/d3/d3-scale)
@@ -30,7 +29,6 @@ import {pointInRegion, compareEpochs} from "./util";
  *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
  * @requires d3-selection
- * @requires d3-array
  * @requires d3-interpolate
  * @requires d3-color
  * @requires d3-scale
