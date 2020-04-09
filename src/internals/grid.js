@@ -386,9 +386,13 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 
 		if ($$.inputType === "touch") {
-			const d = $$.grid.select(`line.${CLASS.xgridFocus}`).datum();
+			const xgridFocus = $$.grid.select(`line.${CLASS.xgridFocus}`);
 
-			d && $$.showGridFocus([d]);
+			if (!xgridFocus.empty()) {
+				const d = xgridFocus.datum();
+
+				d && $$.showGridFocus([d]);
+			}
 		} else {
 			const isRotated = $$.config.axis_rotated;
 
