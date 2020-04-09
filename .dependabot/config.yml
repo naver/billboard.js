@@ -5,3 +5,7 @@ update_configs:
   - package_manager: "javascript"
     directory: "/"
     update_schedule: "live"
+    ignored_updates:
+    - match:
+        dependency_name: "d3-scale"
+        version_requirement: "^2.2.2"

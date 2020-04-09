@@ -2,12 +2,11 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {range as d3Range} from "d3-array";
 import {axisRight as d3AxisRight} from "d3-axis";
 import {format as d3Format} from "d3-format";
 import {scaleSequential as d3ScaleSequential, scaleLog as d3ScaleLog} from "d3-scale";
 import CLASS from "./classes";
-import {isFunction} from "./util";
+import {isFunction, getRange} from "./util";
 
 /**
  * Stanford diagram plugin color scale class
@@ -29,7 +28,7 @@ export default class ColorScale {
 		const height = $$.state.height - config.padding_bottom - config.padding_top;
 		const barWidth = config.scale_width;
 		const barHeight = 5;
-		const points = d3Range(config.padding_bottom, height, barHeight);
+		const points = getRange(config.padding_bottom, height, barHeight);
 
 		const inverseScale = d3ScaleSequential(target.colors)
 			.domain([points[points.length - 1], points[0]]);

@@ -3,10 +3,6 @@
  * billboard.js project is licensed under the MIT license
  */
 // @ts-nocheck
-import {
-	min as d3Min,
-	max as d3Max
-} from "d3-array";
 import {interpolateHslLong as d3InterpolateHslLong} from "d3-interpolate";
 import {hsl as d3Hsl} from "d3-color";
 import {scaleSequentialLog as d3ScaleSequentialLog} from "d3-scale";
@@ -26,7 +22,6 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  *   - Is preferable use `scatter` as data.type
  * - **Required modules:**
  *   - [d3-selection](https://github.com/d3/d3-selection)
- *   - [d3-array](https://github.com/d3/d3-array)
  *   - [d3-interpolate](https://github.com/d3/d3-interpolate)
  *   - [d3-color](https://github.com/d3/d3-color)
  *   - [d3-scale](https://github.com/d3/d3-scale)
@@ -35,7 +30,6 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  *   - [d3-format](https://github.com/d3/d3-format)
  * @class plugin-stanford
  * @requires d3-selection
- * @requires d3-array
  * @requires d3-interpolate
  * @requires d3-color
  * @requires d3-scale
@@ -210,8 +204,8 @@ export default class Stanford extends Plugin {
 		// Get array of epochs
 		const epochs = target.values.map(a => a.epochs);
 
-		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : d3Min(epochs);
-		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : d3Max(epochs);
+		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min(...epochs);
+		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
 
 		target.colors = isFunction(config.colors) ?
 			config.colors : d3InterpolateHslLong(d3Hsl(250, 1, 0.5), d3Hsl(0, 1, 0.5));

@@ -487,18 +487,20 @@ function getMinMax(type: "min" | "max", data: number[] | Date[] | any): number |
  * Get range
  * @param {number} start Start number
  * @param {number} end End number
+ * @param {number} step Step number
  * @returns {Array}
  * @private
  */
-function getRange(start: number, end: number): number[] {
+const getRange = (start: number, end: number, step = 1): number[] => {
 	const res: number[] = [];
+	const n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
-	for (let i: number = start; i < end; i++) {
-		res.push(i);
+	for (let i = start; i < n; i++) {
+		res.push(start + i * step);
 	}
 
 	return res;
-}
+};
 
 // emulate event
 const emulateEvent = {

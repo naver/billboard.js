@@ -4,7 +4,7 @@
  * @ignore
  */
 
-import {isEmpty, isFunction, isString, parseDate} from "../../module/util";
+import {getRange, isEmpty, isFunction, isString, parseDate} from "../../module/util";
 
 /**
  * Check if point is in region
@@ -112,6 +112,7 @@ function getCentroid(points) {
 export {
 	compareEpochs,
 	getCentroid,
+	getRange,
 	getRegionArea,
 	isEmpty,
 	isFunction,
