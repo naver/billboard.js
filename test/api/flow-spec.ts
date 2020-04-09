@@ -7,7 +7,7 @@ import {expect} from "chai";
 import sinon from "sinon";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
-import {isTabVisible} from "../../src/module/util";
+import {window} from "../../src/module/browser";
 
 describe("API flow", () => {
 	const chart = util.generate({
@@ -72,13 +72,11 @@ describe("API flow", () => {
 		}, duration);
 	});
 
-	it.skip("check when is not visible", done => {
+	it("check when is not visible", done => {
 		const spy = sinon.spy();
-		const isTabVisible = chart.internal.isTabVisible();
 
-		// emulate tab is not visible
-		chart.internal.isTabVisible = () => false;
-
+		window.$$TEST$$.isTabVisible = false;
+		
 		chart.flow({
 			columns: [
 				["x", "2017-03-30"],
@@ -95,7 +93,8 @@ describe("API flow", () => {
 			expect(lastTickText).to.be.equal("03/21");
 
 			// restore
-			chart.internal.isTabVisible = isTabVisible;
+			delete window.$$TEST$$.isTabVisible;
+
 			done();
 		}, 500);
 	})

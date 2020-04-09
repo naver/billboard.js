@@ -8,7 +8,6 @@
 import simulant from "simulant";
 import bb from "../../src/";
 import CLASS from "../../src/config/classes";
-import ChartInternal from "../../src/ChartInternal/ChartInternal";
 
 /**
  * Create a DOM element
@@ -47,19 +46,7 @@ const generate = args => {
 			inputType = "touch";
 		}
 
-		// if (inputType === "touch") {
-		// 	window.navigator.userAgent = "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.149 Mobile Safari/537.36"
-
-		// 	const {initToRender} = ChartInternal.prototype;
-	
-		// 	ChartInternal.prototype.initToRender = function(forced) {
-		// 		const $$ = this;
-	
-		// 		//console.log("-->", $$.state)
-		// 		$$.state.inpuType = inputType;
-		// 		initToRender.call($$, forced);
-		// 	}
-		// }
+		window.$$TEST$$.convertInputType = inputType;
 
 		chart = bb.generate(args);
 	}

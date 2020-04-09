@@ -1,3 +1,6 @@
+const webpack = require("webpack");
+const StringReplacePlugin = require("string-replace-webpack-plugin");
+
 // file extension to be tested
 const fileExtensions = /(\.[jt]s)$/;
 
@@ -7,7 +10,7 @@ module.exports = function(config) {
 		files: [
 			"./node_modules/lite-fixture/index.js",
 			"./node_modules/hammer-simulator/index.js",
-			"./spec/assets/hammer-simulator.run.ts",
+			"./test/assets/hammer-simulator.run.js",
 			"./src/scss/billboard.scss",
 			"./test/assets/common.css",
 			//"./test/**/*-spec.ts",
@@ -55,6 +58,14 @@ module.exports = function(config) {
 					}
 				]
 			},
+			plugins: [
+				new webpack.NormalModuleReplacementPlugin(
+					/module\/util\.ts/i, "../../test/assets/module/util.ts"
+				),
+				new webpack.NormalModuleReplacementPlugin(
+					/fake\.ts/i, "../../../src/module/util.ts"
+				)
+			]
 		},
 
 		// preprocess matching files before serving them to the browser

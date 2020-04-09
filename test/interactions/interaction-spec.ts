@@ -855,7 +855,7 @@ describe("INTERACTION", () => {
 			});
 		});
 
-		describe.skip("check for touch move selection", () => {
+		describe("check for touch move selection", () => {
 			const selection = [];
 
 			before(() => {
@@ -964,7 +964,7 @@ describe("INTERACTION", () => {
 		});
 	});
 
-	describe.skip("check for touch move selection", () => {
+	describe("check for touch move selection", () => {
 		const selection = [];
 
 		before(() => {
@@ -1050,11 +1050,11 @@ describe("INTERACTION", () => {
 			expect(spy2.calledTwice).to.be.true;
 		});
 
-		it.skip("set options interaction.inputType.touch=true", () => {
+		it("set options interaction.inputType.touch=true", () => {
 			args.interaction.inputType.touch = true;
 		});
 
-		it.skip("should be called callbacks for touch events", done => {
+		it("should be called callbacks for touch events", done => {
 			chart.internal.callOverOutForTouch.last = null;
 
 			util.simulator(chart.$.svg.node(), {

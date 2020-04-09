@@ -426,10 +426,10 @@ export default {
 
 	updategridFocus(): void {
 		const $$ = this;
-		const {state: {inputType, width, height}, $el} = $$;
+		const {state: {inputType, width, height}, $el: {grid, main}} = $$;
 
 		if (inputType === "touch") {
-			const xgridFocus = $$.grid.select(`line.${CLASS.xgridFocus}`);
+			const xgridFocus = grid.main.select(`line.${CLASS.xgridFocus}`);
 
 			if (!xgridFocus.empty()) {
 				const d = xgridFocus.datum();
@@ -439,7 +439,7 @@ export default {
 		} else {
 			const isRotated = $$.config.axis_rotated;
 
-			$el.main.select(`line.${CLASS.xgridFocus}`)
+			main.select(`line.${CLASS.xgridFocus}`)
 				.attr("x1", isRotated ? 0 : -10)
 				.attr("x2", isRotated ? width : -10)
 				.attr("y1", isRotated ? -10 : 0)
