@@ -2,10 +2,6 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {
-	min as d3Min,
-	max as d3Max
-} from "d3-array";
 import {interpolateHslLong as d3InterpolateHslLong} from "d3-interpolate";
 import {hsl as d3Hsl} from "d3-color";
 import {scaleSequentialLog as d3ScaleSequentialLog} from "d3-scale";
@@ -203,8 +199,8 @@ export default class Stanford extends Plugin {
 		// Get array of epochs
 		const epochs = target.values.map(a => a.epochs);
 
-		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : d3Min(epochs);
-		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : d3Max(epochs);
+		target.minEpochs = !isNaN(config.scale_min) ? config.scale_min : Math.min(...epochs);
+		target.maxEpochs = !isNaN(config.scale_max) ? config.scale_max : Math.max(...epochs);
 
 		target.colors = isFunction(config.colors) ?
 			config.colors : d3InterpolateHslLong(d3Hsl(250, 1, 0.5), d3Hsl(0, 1, 0.5));
