@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200409133047
+ * @version 1.11.1-nightly-20200410133203
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -30115,6 +30115,8 @@ function ascending_sum(series) {
 
 
 // CONCATENATED MODULE: ./src/shape/shape.js
+
+
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -30212,8 +30214,12 @@ util_extend(ChartInternal_ChartInternal.prototype, {
    * @private
    */
   getShapeYMin: function getShapeYMin(id) {
-    var $$ = this;
-    return !$$.isGrouped(id) && $$.config["axis_".concat($$.axis.getId(id), "_min")] || 0;
+    var $$ = this,
+        _$$$$$$axis$getId$dom = $$[$$.axis.getId(id)].domain(),
+        _$$$$$$axis$getId$dom2 = _slicedToArray(_$$$$$$axis$getId$dom, 1),
+        yMin = _$$$$$$axis$getId$dom2[0];
+
+    return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
   },
 
   /**
@@ -31130,7 +31136,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
         yScale = isSub ? $$.getSubYScale : $$.getYScale;
     return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
+      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
           offset = lineOffset(d, i) || y0,
           posX = x(d),
           posY = y(d);
@@ -31320,7 +31326,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub),
         yScale = isSub ? $$.getSubYScale : $$.getYScale;
     return function (d, i) {
-      var y0 = yScale.call($$, d.id)(0),
+      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
           offset = areaOffset(d, i) || y0,
           posX = x(d),
           posY = y(d);
@@ -36985,7 +36991,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200409133047",
+  version: "1.11.1-nightly-20200410133203",
 
   /**
    * Generate chart
@@ -37084,7 +37090,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200409133047
+ * @version 1.11.1-nightly-20200410133203
  */
 
 
