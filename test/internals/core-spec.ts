@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
+import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
@@ -10,7 +12,7 @@ import {window, document} from "../../src/module/browser";
 
 describe("CORE", function() {
 	let chart;
-	let args = {
+	let args: any = {
 		svg: {
 			classname: "customclass"
 		},
@@ -35,6 +37,7 @@ describe("CORE", function() {
 		});
 
 		it("should set 3rd party property to Function", () => {
+			// @ts-ignore
 			Function.prototype.$extIsFunction = true;
 			expect(true).to.be.ok;
 		});
@@ -104,14 +107,15 @@ describe("CORE", function() {
 	});
 
 	describe("onrendered callbacks", () => {
-		const spy = sinon.spy(function(ctx) {
-			const type = args.data.type;
+		const spy = sinon.spy(function() {
+			const {type} = args.data;
+			const {main} = this.$;
 			let d;
 
 			if (type === "radar") {
-				d = ctx.$.main.select("polygon").attr("points");
+				d = main.select("polygon").attr("points");
 			} else {
-				d = ctx.$.main.select("path").attr("d");
+				d = main.select("path").attr("d");
 			}
 
 		  return d;

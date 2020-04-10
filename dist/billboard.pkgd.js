@@ -15,7 +15,7 @@
  * - d3-dsv ^1.2.0
  * - d3-ease ^1.0.6
  * - d3-interpolate ^1.4.0
- * - d3-scale ^3.2.1
+ * - d3-scale ^2.2.2
  * - d3-selection ^1.4.1
  * - d3-shape ^1.3.7
  * - d3-time-format ^2.2.3
@@ -124,7 +124,7 @@ return /******/ (function(modules) { // webpackBootstrap
 
 __webpack_require__(1);
 __webpack_require__(375);
-module.exports = __webpack_require__(378);
+module.exports = __webpack_require__(377);
 
 
 /***/ }),
@@ -13541,15 +13541,8 @@ try {
 
 
 /***/ }),
-/* 376 */
-/***/ (function(module, exports, __webpack_require__) {
-
-module.exports = __webpack_require__(375);
-
-
-/***/ }),
-/* 377 */,
-/* 378 */
+/* 376 */,
+/* 377 */
 /***/ (function(module, __webpack_exports__, __webpack_require__) {
 
 "use strict";
@@ -21884,21 +21877,22 @@ function getMinMax(type, data) {
  * Get range
  * @param {number} start Start number
  * @param {number} end End number
+ * @param {number} step Step number
  * @returns {Array}
  * @private
  */
 
 
-function getRange(start, end) {
-  var res = [];
+var getRange = function (start, end, step) {
+  step === void 0 && (step = 1);
+  var res = [],
+      n = Math.max(0, Math.ceil((end - start) / step)) | 0;
 
-  for (var i = start; i < end; i++) res.push(i);
+  for (var i = start; i < n; i++) res.push(start + i * step);
 
   return res;
-} // emulate event
-
-
-var emulateEvent = {
+},
+    emulateEvent = {
   mouse: function () {
     var getParams = function () {
       return {
@@ -21944,7 +21938,9 @@ var emulateEvent = {
       changedTouches: [touchObj]
     }));
   }
-};
+}; // emulate event
+
+
 /**
  * Process the template  & return bound string
  * @param {string} tpl Template string
@@ -21952,7 +21948,6 @@ var emulateEvent = {
  * @returns {string}
  * @private
  */
-
 function tplProcess(tpl, data) {
   var res = tpl;
 
@@ -23682,250 +23677,73 @@ var ascendingBisect = bisector(src_ascending);
 var bisectRight = ascendingBisect.right;
 var bisectLeft = ascendingBisect.left;
 /* harmony default export */ var bisect = (bisectRight);
-// CONCATENATED MODULE: ./node_modules/d3-array/src/count.js
-function count_count(values, valueof) {
-  var count = 0;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
+// CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
+/* harmony default export */ var pairs = (function (array, f) {
+  f == null && (f = pair);
 
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
+  for (var i = 0, n = array.length - 1, p = array[0], pairs = Array(n < 0 ? 0 : n); i < n;) pairs[i] = f(p, p = array[++i]);
 
-    var value = _ref;
-    value != null && (value = +value) >= value && ++count;
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value && ++count;
-    }
-  }
-  return count;
+  return pairs;
+});
+function pair(a, b) {
+  return [a, b];
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/cross.js
-function cross_length(array) {
-  return array.length | 0;
-}
 
-function cross_empty(length) {
-  return !(length > 0);
-}
+/* harmony default export */ var cross = (function (values0, values1, reduce) {
+  var i0,
+      i1,
+      i,
+      value0,
+      n0 = values0.length,
+      n1 = values1.length,
+      values = Array(n0 * n1);
 
-function arrayify(values) {
-  return typeof values !== "object" || "length" in values ? values : Array.from(values);
-}
+  for (reduce == null && (reduce = pair), i0 = i = 0; i0 < n0; ++i0) for (value0 = values0[i0], i1 = 0; i1 < n1; ++i1, ++i) values[i] = reduce(value0, values1[i1]);
 
-function reducer(reduce) {
-  return function (values) {
-    return reduce.apply(void 0, values);
-  };
-}
-
-function cross() {
-  for (var _len = arguments.length, values = Array(_len), _key = 0; _key < _len; _key++) values[_key] = arguments[_key];
-
-  var reduce = typeof values[values.length - 1] === "function" && reducer(values.pop());
-  values = values.map(arrayify);
-  var lengths = values.map(cross_length),
-      j = values.length - 1,
-      index = Array(j + 1).fill(0),
-      product = [];
-  if (j < 0 || lengths.some(cross_empty)) return product;
-
-  for (;;) {
-    product.push(index.map(function (j, i) {
-      return values[i][j];
-    }));
-
-    for (var i = j; ++index[i] === lengths[i];) {
-      if (i === 0) return reduce ? product.map(reduce) : product;
-      index[i--] = 0;
-    }
-  }
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/cumsum.js
-function cumsum(values, valueof) {
-  var sum = 0,
-      index = 0;
-  return Float64Array.from(values, valueof === undefined ? function (v) {
-    return sum += +v || 0;
-  } : function (v) {
-    return sum += +valueof(v, index++, values) || 0;
-  });
-}
+  return values;
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/descending.js
 /* harmony default export */ var descending = (function (a, b) {
   return b < a ? -1 : b > a ? 1 : b >= a ? 0 : NaN;
 });
+// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
+/* harmony default export */ var src_number = (function (x) {
+  return x === null ? NaN : +x;
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/variance.js
-function variance(values, valueof) {
-  var delta,
-      count = 0,
+
+/* harmony default export */ var variance = (function (values, valueof) {
+  var value,
+      delta,
+      n = values.length,
+      m = 0,
+      i = -1,
       mean = 0,
       sum = 0;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    value != null && (value = +value) >= value && (delta = value - mean, mean += delta / ++count, sum += delta * (value - mean));
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value && (delta = _value - mean, mean += delta / ++count, sum += delta * (_value - mean));
-    }
-  }
-  return count > 1 ? sum / (count - 1) : void 0;
-}
+  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) || (delta = value - mean, mean += delta / ++m, sum += delta * (value - mean));else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) || (delta = value - mean, mean += delta / ++m, sum += delta * (value - mean));
+  return m > 1 ? sum / (m - 1) : void 0;
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/deviation.js
 
-function deviation(values, valueof) {
-  var v = variance(values, valueof);
+/* harmony default export */ var deviation = (function (array, f) {
+  var v = variance(array, f);
   return v ? Math.sqrt(v) : v;
-}
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/extent.js
 /* harmony default export */ var src_extent = (function (values, valueof) {
-  var min, max;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    value != null && (min === undefined ? value >= value && (min = max = value) : (min > value && (min = value), max < value && (max = value)));
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = valueof(_value, ++index, values)) != null && (min === undefined ? _value >= _value && (min = max = _value) : (min > _value && (min = _value), max < _value && (max = _value)));
-    }
-  }
+  var value,
+      min,
+      max,
+      n = values.length,
+      i = -1;
+  if (valueof == null) {
+    for (; ++i < n;) // Find the first comparable value.
+    if ((value = values[i]) != null && value >= value) for (min = max = value; ++i < n;) (value = values[i]) != null && (min > value && (min = value), max < value && (max = value));
+  } else for (; ++i < n;) // Find the first comparable value.
+  if ((value = valueof(values[i], i, values)) != null && value >= value) for (min = max = value; ++i < n;) (value = valueof(values[i], i, values)) != null && (min > value && (min = value), max < value && (max = value));
   return [min, max];
 });
-// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
-/* harmony default export */ var d3_array_src_identity = (function (x) {
-  return x;
-});
-// CONCATENATED MODULE: ./node_modules/d3-array/src/group.js
-
-function group_group(values) {
-  for (var _len = arguments.length, keys = Array(_len > 1 ? _len - 1 : 0), _key = 1; _key < _len; _key++) keys[_key - 1] = arguments[_key];
-
-  return nest(values, d3_array_src_identity, d3_array_src_identity, keys);
-}
-function group_groups(values) {
-  for (var _len2 = arguments.length, keys = Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) keys[_key2 - 1] = arguments[_key2];
-
-  return nest(values, Array.from, d3_array_src_identity, keys);
-}
-function rollup(values, reduce) {
-  for (var _len3 = arguments.length, keys = Array(_len3 > 2 ? _len3 - 2 : 0), _key3 = 2; _key3 < _len3; _key3++) keys[_key3 - 2] = arguments[_key3];
-
-  return nest(values, d3_array_src_identity, reduce, keys);
-}
-function rollups(values, reduce) {
-  for (var _len4 = arguments.length, keys = Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) keys[_key4 - 2] = arguments[_key4];
-
-  return nest(values, Array.from, reduce, keys);
-}
-
-function nest(values, map, reduce, keys) {
-  return function regroup(values, i) {
-    if (i >= keys.length) return reduce(values);
-    var groups = new Map(),
-        keyof = keys[i++],
-        index = -1;
-
-    for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        if (_i = _iterator.next(), _i.done) break;
-        _ref = _i.value;
-      }
-
-      var value = _ref,
-          key = keyof(value, ++index, values),
-          _group = groups.get(key);
-
-      _group ? _group.push(value) : groups.set(key, [value]);
-    }
-
-    for (var _iterator2 = groups, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _ref3 = _ref2,
-          key = _ref3[0],
-          _values = _ref3[1];
-      groups.set(key, regroup(_values, i));
-    }
-
-    return map(groups);
-  }(values, 0);
-}
 // CONCATENATED MODULE: ./node_modules/d3-array/src/array.js
 var array_array = Array.prototype;
 var array_slice = array_array.slice;
@@ -23935,6 +23753,10 @@ var map = array_array.map;
   return function () {
     return x;
   };
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/identity.js
+/* harmony default export */ var d3_array_src_identity = (function (x) {
+  return x;
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/range.js
 /* harmony default export */ var src_range = (function (start, stop, step) {
@@ -23972,11 +23794,10 @@ function tickStep(start, stop, count) {
   return error >= e10 ? step1 *= 10 : error >= e5 ? step1 *= 5 : error >= e2 && (step1 *= 2), stop < start ? -step1 : step1;
 }
 // CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/sturges.js
-
 /* harmony default export */ var sturges = (function (values) {
-  return Math.ceil(Math.log(count_count(values)) / Math.LN2) + 1;
+  return Math.ceil(Math.log(values.length) / Math.LN2) + 1;
 });
-// CONCATENATED MODULE: ./node_modules/d3-array/src/bin.js
+// CONCATENATED MODULE: ./node_modules/d3-array/src/histogram.js
 
 
 
@@ -23985,9 +23806,8 @@ function tickStep(start, stop, count) {
 
 
 
-/* harmony default export */ var src_bin = (function () {
+/* harmony default export */ var src_histogram = (function () {
   function histogram(data) {
-    Array.isArray(data) || (data = Array.from(data));
     var i,
         x,
         n = data.length,
@@ -24029,254 +23849,10 @@ function tickStep(start, stop, count) {
     return arguments.length ? (threshold = typeof _ === "function" ? _ : Array.isArray(_) ? d3_array_src_constant(array_slice.call(_)) : d3_array_src_constant(_), histogram) : threshold;
   }, histogram;
 });
-// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
-function max_max(values, valueof) {
-  var max;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    value != null && (max < value || max === undefined && value >= value) && (max = value);
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = valueof(_value, ++index, values)) != null && (max < _value || max === undefined && _value >= _value) && (max = _value);
-    }
-  }
-  return max;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
-function min_min(values, valueof) {
-  var min;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    value != null && (min > value || min === undefined && value >= value) && (min = value);
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = valueof(_value, ++index, values)) != null && (min > _value || min === undefined && _value >= _value) && (min = _value);
-    }
-  }
-  return min;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/quickselect.js
- // Based on https://github.com/mourner/quickselect
-// ISC license, Copyright 2018 Vladimir Agafonkin.
-
-function quickselect(array, k, left, right, compare) {
-  for (left === void 0 && (left = 0), right === void 0 && (right = array.length - 1), compare === void 0 && (compare = src_ascending); right > left;) {
-    if (right - left > 600) {
-      var n = right - left + 1,
-          m = k - left + 1,
-          z = Math.log(n),
-          s = .5 * Math.exp(2 * z / 3),
-          sd = .5 * Math.sqrt(z * s * (n - s) / n) * (m - n / 2 < 0 ? -1 : 1),
-          newLeft = Math.max(left, Math.floor(k - m * s / n + sd)),
-          newRight = Math.min(right, Math.floor(k + (n - m) * s / n + sd));
-      quickselect(array, k, newLeft, newRight, compare);
-    }
-
-    var t = array[k],
-        i = left,
-        j = right;
-
-    for (swap(array, left, k), compare(array[right], t) > 0 && swap(array, left, right); i < j;) {
-      for (swap(array, i, j), ++i, --j; compare(array[i], t) < 0;) ++i;
-
-      for (; compare(array[j], t) > 0;) --j;
-    }
-
-    compare(array[left], t) === 0 ? swap(array, left, j) : (++j, swap(array, j, right)), j <= k && (left = j + 1), k <= j && (right = j - 1);
-  }
-
-  return array;
-}
-
-function swap(array, i, j) {
-  var t = array[i];
-  array[i] = array[j], array[j] = t;
-}
-// EXTERNAL MODULE: ./node_modules/@babel/runtime/regenerator/index.js
-var regenerator = __webpack_require__(376);
-var regenerator_default = /*#__PURE__*/__webpack_require__.n(regenerator);
-
-// CONCATENATED MODULE: ./node_modules/d3-array/src/number.js
-
-
-var _marked =
-/*#__PURE__*/
-regenerator_default.a.mark(numbers);
-
-/* harmony default export */ var src_number = (function (x) {
-  return x === null ? NaN : +x;
-});
-function numbers(values, valueof) {
-  var _iterator, _isArray, _i, _ref, value, index, _iterator2, _isArray2, _i2, _ref2, _value;
-
-  return regenerator_default.a.wrap(function (_context) {
-    for (;;) switch (_context.prev = _context.next) {
-      case 0:
-        if (valueof !== undefined) {
-          _context.next = 20;
-          break;
-        }
-
-        _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();
-
-      case 2:
-        if (!_isArray) {
-          _context.next = 8;
-          break;
-        }
-
-        if (!(_i >= _iterator.length)) {
-          _context.next = 5;
-          break;
-        }
-
-        return _context.abrupt("break", 18);
-
-      case 5:
-        _ref = _iterator[_i++], _context.next = 11;
-        break;
-
-      case 8:
-        if (_i = _iterator.next(), !_i.done) {
-          _context.next = 10;
-          break;
-        }
-
-        return _context.abrupt("break", 18);
-
-      case 10:
-        _ref = _i.value;
-
-      case 11:
-        if (value = _ref, _context.t0 = value != null && (value = +value) >= value, !_context.t0) {
-          _context.next = 16;
-          break;
-        }
-
-        return _context.next = 16, value;
-
-      case 16:
-        _context.next = 2;
-        break;
-
-      case 18:
-        _context.next = 38;
-        break;
-
-      case 20:
-        index = -1, _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();
-
-      case 22:
-        if (!_isArray2) {
-          _context.next = 28;
-          break;
-        }
-
-        if (!(_i2 >= _iterator2.length)) {
-          _context.next = 25;
-          break;
-        }
-
-        return _context.abrupt("break", 38);
-
-      case 25:
-        _ref2 = _iterator2[_i2++], _context.next = 31;
-        break;
-
-      case 28:
-        if (_i2 = _iterator2.next(), !_i2.done) {
-          _context.next = 30;
-          break;
-        }
-
-        return _context.abrupt("break", 38);
-
-      case 30:
-        _ref2 = _i2.value;
-
-      case 31:
-        if (_value = _ref2, _context.t1 = (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value, !_context.t1) {
-          _context.next = 36;
-          break;
-        }
-
-        return _context.next = 36, _value;
-
-      case 36:
-        _context.next = 22;
-        break;
-
-      case 38:
-      case "end":
-        return _context.stop();
-    }
-  }, _marked);
-}
 // CONCATENATED MODULE: ./node_modules/d3-array/src/quantile.js
 
-
-
-
-function quantile(values, p, valueof) {
-  if (values = Float64Array.from(numbers(values, valueof)), !!(n = values.length)) {
-    if ((p = +p) <= 0 || n < 2) return min_min(values);
-    if (p >= 1) return max_max(values);
-    var n,
-        i = (n - 1) * p,
-        i0 = Math.floor(i),
-        value0 = max_max(quickselect(values, i0).subarray(0, i0 + 1)),
-        value1 = min_min(values.subarray(i0 + 1));
-    return value0 + (value1 - value0) * (i - i0);
-  }
-}
-function quantileSorted(values, p, valueof) {
-  if (valueof === void 0 && (valueof = src_number), !!(n = values.length)) {
+/* harmony default export */ var quantile = (function (values, p, valueof) {
+  if (valueof == null && (valueof = src_number), !!(n = values.length)) {
     if ((p = +p) <= 0 || n < 2) return +valueof(values[0], 0, values);
     if (p >= 1) return +valueof(values[n - 1], n - 1, values);
     var n,
@@ -24286,408 +23862,119 @@ function quantileSorted(values, p, valueof) {
         value1 = +valueof(values[i0 + 1], i0 + 1, values);
     return value0 + (value1 - value0) * (i - i0);
   }
-}
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/freedmanDiaconis.js
 
 
+
+
 /* harmony default export */ var freedmanDiaconis = (function (values, min, max) {
-  return Math.ceil((max - min) / (2 * (quantile(values, .75) - quantile(values, .25)) * Math.pow(count_count(values), -1 / 3)));
+  return values = map.call(values, src_number).sort(src_ascending), Math.ceil((max - min) / (2 * (quantile(values, .75) - quantile(values, .25)) * Math.pow(values.length, -1 / 3)));
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/threshold/scott.js
 
-
 /* harmony default export */ var scott = (function (values, min, max) {
-  return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(count_count(values), -1 / 3)));
+  return Math.ceil((max - min) / (3.5 * deviation(values) * Math.pow(values.length, -1 / 3)));
 });
-// CONCATENATED MODULE: ./node_modules/d3-array/src/maxIndex.js
-function maxIndex(values, valueof) {
-  var max,
-      maxIndex = -1,
-      index = -1;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    ++index, value != null && (max < value || max === undefined && value >= value) && (max = value, maxIndex = index);
-  } else for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-    var _ref2;
-
-    if (_isArray2) {
-      if (_i2 >= _iterator2.length) break;
-      _ref2 = _iterator2[_i2++];
-    } else {
-      if (_i2 = _iterator2.next(), _i2.done) break;
-      _ref2 = _i2.value;
-    }
-
-    var _value = _ref2;
-    (_value = valueof(_value, ++index, values)) != null && (max < _value || max === undefined && _value >= _value) && (max = _value, maxIndex = index);
-  }
-  return maxIndex;
-}
+// CONCATENATED MODULE: ./node_modules/d3-array/src/max.js
+/* harmony default export */ var src_max = (function (values, valueof) {
+  var value,
+      max,
+      n = values.length,
+      i = -1;
+  if (valueof == null) {
+    for (; ++i < n;) // Find the first comparable value.
+    if ((value = values[i]) != null && value >= value) for (max = value; ++i < n;) (value = values[i]) != null && value > max && (max = value);
+  } else for (; ++i < n;) // Find the first comparable value.
+  if ((value = valueof(values[i], i, values)) != null && value >= value) for (max = value; ++i < n;) (value = valueof(values[i], i, values)) != null && value > max && (max = value);
+  return max;
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/mean.js
-function mean(values, valueof) {
-  var count = 0,
+
+/* harmony default export */ var src_mean = (function (values, valueof) {
+  var value,
+      n = values.length,
+      m = n,
+      i = -1,
       sum = 0;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    value != null && (value = +value) >= value && (++count, sum += value);
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = valueof(_value, ++index, values)) != null && (_value = +_value) >= _value && (++count, sum += _value);
-    }
-  }
-  return count ? sum / count : void 0;
-}
+  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) ? --m : sum += value;else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) ? --m : sum += value;
+  return m ? sum / m : void 0;
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/median.js
 
+
+
 /* harmony default export */ var median = (function (values, valueof) {
-  return quantile(values, .5, valueof);
+  var value,
+      n = values.length,
+      i = -1,
+      numbers = [];
+  if (valueof == null) for (; ++i < n;) isNaN(value = src_number(values[i])) || numbers.push(value);else for (; ++i < n;) isNaN(value = src_number(valueof(values[i], i, values))) || numbers.push(value);
+  return quantile(numbers.sort(src_ascending), .5);
 });
 // CONCATENATED MODULE: ./node_modules/d3-array/src/merge.js
+/* harmony default export */ var src_merge = (function (arrays) {
+  for (var m, merged, array, n = arrays.length, i = -1, j = 0; ++i < n;) j += arrays[i].length;
 
+  for (merged = Array(j); --n >= 0;) for (array = arrays[n], m = array.length; --m >= 0;) merged[--j] = array[m];
 
-var merge_marked =
-/*#__PURE__*/
-regenerator_default.a.mark(flatten);
-
-function flatten(arrays) {
-  var _iterator, _isArray, _i, _ref, array;
-
-  return regenerator_default.a.wrap(function (_context) {
-    for (;;) switch (_context.prev = _context.next) {
-      case 0:
-        _iterator = arrays, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();
-
-      case 1:
-        if (!_isArray) {
-          _context.next = 7;
-          break;
-        }
-
-        if (!(_i >= _iterator.length)) {
-          _context.next = 4;
-          break;
-        }
-
-        return _context.abrupt("break", 14);
-
-      case 4:
-        _ref = _iterator[_i++], _context.next = 10;
-        break;
-
-      case 7:
-        if (_i = _iterator.next(), !_i.done) {
-          _context.next = 9;
-          break;
-        }
-
-        return _context.abrupt("break", 14);
-
-      case 9:
-        _ref = _i.value;
-
-      case 10:
-        return array = _ref, _context.delegateYield(array, "t0", 12);
-
-      case 12:
-        _context.next = 1;
-        break;
-
-      case 14:
-      case "end":
-        return _context.stop();
-    }
-  }, merge_marked);
-}
-
-function merge_merge(arrays) {
-  return Array.from(flatten(arrays));
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/minIndex.js
-function minIndex(values, valueof) {
-  var min,
-      minIndex = -1,
-      index = -1;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    ++index, value != null && (min > value || min === undefined && value >= value) && (min = value, minIndex = index);
-  } else for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-    var _ref2;
-
-    if (_isArray2) {
-      if (_i2 >= _iterator2.length) break;
-      _ref2 = _iterator2[_i2++];
-    } else {
-      if (_i2 = _iterator2.next(), _i2.done) break;
-      _ref2 = _i2.value;
-    }
-
-    var _value = _ref2;
-    (_value = valueof(_value, ++index, values)) != null && (min > _value || min === undefined && _value >= _value) && (min = _value, minIndex = index);
-  }
-  return minIndex;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/pairs.js
-function pairs(values, pairof) {
-  pairof === void 0 && (pairof = pair);
-  var previous,
-      pairs = [],
-      first = !1;
-
-  for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    first && pairs.push(pairof(previous, value)), previous = value, first = !0;
-  }
-
-  return pairs;
-}
-function pair(a, b) {
-  return [a, b];
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/permute.js
-/* harmony default export */ var permute = (function (source, keys) {
-  return Array.from(keys, function (key) {
-    return source[key];
-  });
+  return merged;
 });
-// CONCATENATED MODULE: ./node_modules/d3-array/src/least.js
-
-function least(values, compare) {
-  compare === void 0 && (compare = src_ascending);
-  var min,
-      defined = !1;
-
-  if (compare.length === 1) {
-    var minValue;
-
-    for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        if (_i = _iterator.next(), _i.done) break;
-        _ref = _i.value;
-      }
-
-      var element = _ref,
-          value = compare(element);
-      (defined ? src_ascending(value, minValue) < 0 : src_ascending(value, value) === 0) && (min = element, minValue = value, defined = !0);
-    }
-  } else for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-    var _ref2;
-
-    if (_isArray2) {
-      if (_i2 >= _iterator2.length) break;
-      _ref2 = _iterator2[_i2++];
-    } else {
-      if (_i2 = _iterator2.next(), _i2.done) break;
-      _ref2 = _i2.value;
-    }
-
-    var value = _ref2;
-    (defined ? compare(value, min) < 0 : compare(value, value) === 0) && (min = value, defined = !0);
-  }
-
+// CONCATENATED MODULE: ./node_modules/d3-array/src/min.js
+/* harmony default export */ var src_min = (function (values, valueof) {
+  var value,
+      min,
+      n = values.length,
+      i = -1;
+  if (valueof == null) {
+    for (; ++i < n;) // Find the first comparable value.
+    if ((value = values[i]) != null && value >= value) for (min = value; ++i < n;) (value = values[i]) != null && min > value && (min = value);
+  } else for (; ++i < n;) // Find the first comparable value.
+  if ((value = valueof(values[i], i, values)) != null && value >= value) for (min = value; ++i < n;) (value = valueof(values[i], i, values)) != null && min > value && (min = value);
   return min;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/leastIndex.js
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/permute.js
+/* harmony default export */ var permute = (function (array, indexes) {
+  for (var i = indexes.length, permutes = Array(i); i--;) permutes[i] = array[indexes[i]];
 
-
-function leastIndex(values, compare) {
-  if (compare === void 0 && (compare = src_ascending), compare.length === 1) return minIndex(values, compare);
-
-  for (var minValue, min = -1, index = -1, _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    ++index, (min < 0 ? compare(value, value) === 0 : compare(value, minValue) < 0) && (minValue = value, min = index);
-  }
-
-  return min;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/greatest.js
-
-function greatest(values, compare) {
-  compare === void 0 && (compare = src_ascending);
-  var max,
-      defined = !1;
-
-  if (compare.length === 1) {
-    var maxValue;
-
-    for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        if (_i = _iterator.next(), _i.done) break;
-        _ref = _i.value;
-      }
-
-      var element = _ref,
-          value = compare(element);
-      (defined ? src_ascending(value, maxValue) > 0 : src_ascending(value, value) === 0) && (max = element, maxValue = value, defined = !0);
-    }
-  } else for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-    var _ref2;
-
-    if (_isArray2) {
-      if (_i2 >= _iterator2.length) break;
-      _ref2 = _iterator2[_i2++];
-    } else {
-      if (_i2 = _iterator2.next(), _i2.done) break;
-      _ref2 = _i2.value;
-    }
-
-    var value = _ref2;
-    (defined ? compare(value, max) > 0 : compare(value, value) === 0) && (max = value, defined = !0);
-  }
-
-  return max;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/greatestIndex.js
-
-
-function greatestIndex(values, compare) {
-  if (compare === void 0 && (compare = src_ascending), compare.length === 1) return maxIndex(values, compare);
-
-  for (var maxValue, max = -1, index = -1, _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    ++index, (max < 0 ? compare(value, value) === 0 : compare(value, maxValue) > 0) && (maxValue = value, max = index);
-  }
-
-  return max;
-}
+  return permutes;
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/scan.js
 
-function scan(values, compare) {
-  var index = leastIndex(values, compare);
-  return index < 0 ? undefined : index;
-}
-// CONCATENATED MODULE: ./node_modules/d3-array/src/shuffle.js
-function shuffle(array, i0, i1) {
-  i0 === void 0 && (i0 = 0), i1 === void 0 && (i1 = array.length);
+/* harmony default export */ var scan = (function (values, compare) {
+  if (n = values.length) {
+    var n,
+        xi,
+        i = 0,
+        j = 0,
+        xj = values[j];
 
-  for (var t, i, m = i1 - (i0 = +i0); m;) i = Math.random() * m-- | 0, t = array[m + i0], array[m + i0] = array[i + i0], array[i + i0] = t;
+    for (compare == null && (compare = src_ascending); ++i < n;) (compare(xi = values[i], xj) < 0 || compare(xj, xj) !== 0) && (xj = xi, j = i);
+
+    if (compare(xj, xj) === 0) return j;
+  }
+});
+// CONCATENATED MODULE: ./node_modules/d3-array/src/shuffle.js
+/* harmony default export */ var shuffle = (function (array, i0, i1) {
+  for (var t, i, m = (i1 == null ? array.length : i1) - (i0 = i0 == null ? 0 : +i0); m;) i = Math.random() * m-- | 0, t = array[m + i0], array[m + i0] = array[i + i0], array[i + i0] = t;
 
   return array;
-}
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/sum.js
-function sum_sum(values, valueof) {
-  var sum = 0;
-  if (valueof === undefined) for (var _iterator = values, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-    var _ref;
-
-    if (_isArray) {
-      if (_i >= _iterator.length) break;
-      _ref = _iterator[_i++];
-    } else {
-      if (_i = _iterator.next(), _i.done) break;
-      _ref = _i.value;
-    }
-
-    var value = _ref;
-    (value = +value) && (sum += value);
-  } else {
-    var index = -1;
-
-    for (var _iterator2 = values, _isArray2 = Array.isArray(_iterator2), _i2 = 0, _iterator2 = _isArray2 ? _iterator2 : _iterator2[Symbol.iterator]();;) {
-      var _ref2;
-
-      if (_isArray2) {
-        if (_i2 >= _iterator2.length) break;
-        _ref2 = _iterator2[_i2++];
-      } else {
-        if (_i2 = _iterator2.next(), _i2.done) break;
-        _ref2 = _i2.value;
-      }
-
-      var _value = _ref2;
-      (_value = +valueof(_value, ++index, values)) && (sum += _value);
-    }
-  }
+/* harmony default export */ var src_sum = (function (values, valueof) {
+  var value,
+      n = values.length,
+      i = -1,
+      sum = 0;
+  if (valueof == null) for (; ++i < n;) (value = +values[i]) && (sum += value);else for (; ++i < n;) (value = +valueof(values[i], i, values)) && (sum += value);
   return sum;
-}
+});
 // CONCATENATED MODULE: ./node_modules/d3-array/src/transpose.js
 
 /* harmony default export */ var src_transpose = (function (matrix) {
   if (!(n = matrix.length)) return [];
 
-  for (var i = -1, m = min_min(matrix, transpose_length), transpose = Array(m); ++i < m;) for (var n, j = -1, row = transpose[i] = Array(n); ++j < n;) row[j] = matrix[j][i];
+  for (var i = -1, m = src_min(matrix, transpose_length), transpose = Array(m); ++i < m;) for (var n, j = -1, row = transpose[i] = Array(n); ++j < n;) row[j] = matrix[j][i];
 
   return transpose;
 });
@@ -24711,7 +23998,6 @@ function transpose_length(d) {
 
 
 
- // Deprecated; use bin.
 
 
 
@@ -24722,17 +24008,6 @@ function transpose_length(d) {
 
 
 
-
-
-
-
-
-
-
-
-
-
- // Deprecated; use leastIndex.
 
 
 
@@ -24762,23 +24037,249 @@ function initInterpolator(domain, interpolator) {
       break;
 
     case 1:
-      {
-        typeof domain === "function" ? this.interpolator(domain) : this.range(domain);
-        break;
-      }
+      this.interpolator(domain);
+      break;
 
     default:
-      {
-        this.domain(domain), typeof interpolator === "function" ? this.interpolator(interpolator) : this.range(interpolator);
-        break;
-      }
+      this.interpolator(interpolator).domain(domain);
   }
 
   return this;
 }
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/map.js
+var map_prefix = "$";
+
+function Map() {}
+
+Map.prototype = map_map.prototype = {
+  constructor: Map,
+  has: function has(key) {
+    return map_prefix + key in this;
+  },
+  get: function get(key) {
+    return this[map_prefix + key];
+  },
+  set: function set(key, value) {
+    return this[map_prefix + key] = value, this;
+  },
+  remove: function remove(key) {
+    var property = map_prefix + key;
+    return property in this && delete this[property];
+  },
+  clear: function clear() {
+    for (var property in this) property[0] === map_prefix && delete this[property];
+  },
+  keys: function () {
+    var keys = [];
+
+    for (var property in this) property[0] === map_prefix && keys.push(property.slice(1));
+
+    return keys;
+  },
+  values: function () {
+    var values = [];
+
+    for (var property in this) property[0] === map_prefix && values.push(this[property]);
+
+    return values;
+  },
+  entries: function () {
+    var entries = [];
+
+    for (var property in this) property[0] === map_prefix && entries.push({
+      key: property.slice(1),
+      value: this[property]
+    });
+
+    return entries;
+  },
+  size: function () {
+    var size = 0;
+
+    for (var property in this) property[0] === map_prefix && ++size;
+
+    return size;
+  },
+  empty: function empty() {
+    for (var property in this) if (property[0] === map_prefix) return !1;
+
+    return !0;
+  },
+  each: function each(f) {
+    for (var property in this) property[0] === map_prefix && f(this[property], property.slice(1), this);
+  }
+};
+
+function map_map(object, f) {
+  var map = new Map(); // Copy constructor.
+
+  if (object instanceof Map) object.each(function (value, key) {
+    map.set(key, value);
+  }); // Index array by numeric index or specified key function.
+  else if (Array.isArray(object)) {
+      var o,
+          i = -1,
+          n = object.length;
+      if (f == null) for (; ++i < n;) map.set(i, object[i]);else for (; ++i < n;) map.set(f(o = object[i], i, object), o);
+    } // Convert object to map.
+    else if (object) for (var key in object) map.set(key, object[key]);
+  return map;
+}
+
+/* harmony default export */ var src_map = (map_map);
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/nest.js
+
+/* harmony default export */ var src_nest = (function () {
+  function apply(array, depth, createResult, setResult) {
+    if (depth >= keys.length) return _sortValues != null && array.sort(_sortValues), _rollup == null ? array : _rollup(array);
+
+    for (var keyValue, value, values, i = -1, n = array.length, key = keys[depth++], valuesByKey = src_map(), result = createResult(); ++i < n;) (values = valuesByKey.get(keyValue = key(value = array[i]) + "")) ? values.push(value) : valuesByKey.set(keyValue, [value]);
+
+    return valuesByKey.each(function (values, key) {
+      setResult(result, key, apply(values, depth, createResult, setResult));
+    }), result;
+  }
+
+  function _entries(map, depth) {
+    if (++depth > keys.length) return map;
+    var array,
+        sortKey = _sortKeys[depth - 1];
+    return _rollup != null && depth >= keys.length ? array = map.entries() : (array = [], map.each(function (v, k) {
+      array.push({
+        key: k,
+        values: _entries(v, depth)
+      });
+    })), sortKey == null ? array : array.sort(function (a, b) {
+      return sortKey(a.key, b.key);
+    });
+  }
+
+  var _sortValues,
+      _rollup,
+      nest,
+      keys = [],
+      _sortKeys = [];
+
+  return nest = {
+    object: function object(array) {
+      return apply(array, 0, createObject, setObject);
+    },
+    map: function (array) {
+      return apply(array, 0, createMap, setMap);
+    },
+    entries: function entries(array) {
+      return _entries(apply(array, 0, createMap, setMap), 0);
+    },
+    key: function key(d) {
+      return keys.push(d), nest;
+    },
+    sortKeys: function sortKeys(order) {
+      return _sortKeys[keys.length - 1] = order, nest;
+    },
+    sortValues: function sortValues(order) {
+      return _sortValues = order, nest;
+    },
+    rollup: function rollup(f) {
+      return _rollup = f, nest;
+    }
+  };
+});
+
+function createObject() {
+  return {};
+}
+
+function setObject(object, key, value) {
+  object[key] = value;
+}
+
+function createMap() {
+  return src_map();
+}
+
+function setMap(map, key, value) {
+  map.set(key, value);
+}
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/set.js
+
+
+function Set() {}
+
+var proto = src_map.prototype;
+Set.prototype = set_set.prototype = {
+  constructor: Set,
+  has: proto.has,
+  add: function add(value) {
+    return value += "", this[map_prefix + value] = value, this;
+  },
+  remove: proto.remove,
+  clear: proto.clear,
+  values: proto.keys,
+  size: proto.size,
+  empty: proto.empty,
+  each: proto.each
+};
+
+function set_set(object, f) {
+  var set = new Set(); // Copy constructor.
+
+  if (object instanceof Set) object.each(function (value) {
+    set.add(value);
+  }); // Otherwise, assume it’s an array.
+  else if (object) {
+      var i = -1,
+          n = object.length;
+      if (f == null) for (; ++i < n;) set.add(object[i]);else for (; ++i < n;) set.add(f(object[i], i, object));
+    }
+  return set;
+}
+
+/* harmony default export */ var src_set = (set_set);
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/keys.js
+/* harmony default export */ var src_keys = (function (map) {
+  var keys = [];
+
+  for (var key in map) keys.push(key);
+
+  return keys;
+});
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/values.js
+/* harmony default export */ var src_values = (function (map) {
+  var values = [];
+
+  for (var key in map) values.push(map[key]);
+
+  return values;
+});
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/entries.js
+/* harmony default export */ var entries = (function (map) {
+  var entries = [];
+
+  for (var key in map) entries.push({
+    key: key,
+    value: map[key]
+  });
+
+  return entries;
+});
+// CONCATENATED MODULE: ./node_modules/d3-collection/src/index.js
+
+
+
+
+
+
+// CONCATENATED MODULE: ./node_modules/d3-scale/src/array.js
+var src_array_array = Array.prototype;
+var array_map = src_array_array.map;
+var src_array_slice = src_array_array.slice;
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/ordinal.js
 
-var implicit = Symbol("implicit");
+
+
+var implicit = {
+  name: "implicit"
+};
 function ordinal() {
   function scale(d) {
     var key = d + "",
@@ -24792,33 +24293,19 @@ function ordinal() {
     return range[(i - 1) % range.length];
   }
 
-  var index = new Map(),
+  var index = src_map(),
       domain = [],
       range = [],
       unknown = implicit;
   return scale.domain = function (_) {
     if (!arguments.length) return domain.slice();
-    domain = [], index = new Map();
+    domain = [], index = src_map();
 
-    for (var _iterator = _, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        if (_i = _iterator.next(), _i.done) break;
-        _ref = _i.value;
-      }
-
-      var value = _ref,
-          key = value + "";
-      index.has(key) || index.set(key, domain.push(value));
-    }
+    for (var d, key, i = -1, n = _.length; ++i < n;) index.has(key = (d = _[i]) + "") || index.set(key, domain.push(d));
 
     return scale;
   }, scale.range = function (_) {
-    return arguments.length ? (range = Array.from(_), scale) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), scale) : range.slice();
   }, scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   }, scale.copy = function () {
@@ -24832,9 +24319,9 @@ function ordinal() {
 function band() {
   function rescale() {
     var n = domain().length,
-        reverse = r1 < r0,
-        start = reverse ? r1 : r0,
-        stop = reverse ? r0 : r1;
+        reverse = range[1] < range[0],
+        start = range[reverse - 0],
+        stop = range[1 - reverse];
     step = (stop - start) / Math.max(1, n - paddingInner + paddingOuter * 2), round && (step = Math.floor(step)), start += (stop - start - step * (n - paddingInner)) * align, bandwidth = step * (1 - paddingInner), round && (start = Math.round(start), bandwidth = Math.round(bandwidth));
     var values = src_range(n).map(function (i) {
       return start + step * i;
@@ -24847,8 +24334,7 @@ function band() {
       scale = ordinal().unknown(undefined),
       domain = scale.domain,
       ordinalRange = scale.range,
-      r0 = 0,
-      r1 = 1,
+      range = [0, 1],
       round = !1,
       paddingInner = 0,
       paddingOuter = 0,
@@ -24856,13 +24342,9 @@ function band() {
   return delete scale.unknown, scale.domain = function (_) {
     return arguments.length ? (domain(_), rescale()) : domain();
   }, scale.range = function (_) {
-    var _ref;
-
-    return arguments.length ? (_ref = _, r0 = _ref[0], r1 = _ref[1], _ref, r0 = +r0, r1 = +r1, rescale()) : [r0, r1];
+    return arguments.length ? (range = [+_[0], +_[1]], rescale()) : range.slice();
   }, scale.rangeRound = function (_) {
-    var _ref2;
-
-    return _ref2 = _, r0 = _ref2[0], r1 = _ref2[1], _ref2, r0 = +r0, r1 = +r1, round = !0, rescale();
+    return range = [+_[0], +_[1]], round = !0, rescale();
   }, scale.bandwidth = function () {
     return bandwidth;
   }, scale.step = function () {
@@ -24878,7 +24360,7 @@ function band() {
   }, scale.align = function (_) {
     return arguments.length ? (align = Math.max(0, Math.min(1, _)), rescale()) : align;
   }, scale.copy = function () {
-    return band(domain(), [r0, r1]).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
+    return band(domain(), range).round(round).paddingInner(paddingInner).paddingOuter(paddingOuter).align(align);
   }, initRange.apply(rescale(), arguments);
 }
 
@@ -24907,6 +24389,7 @@ function band_point() {
 
 
 
+
 var unit = [0, 1];
 function continuous_identity(x) {
   return x;
@@ -24918,8 +24401,10 @@ function normalize(a, b) {
   } : d3_scale_src_constant(isNaN(b) ? NaN : .5);
 }
 
-function clamper(a, b) {
-  var t;
+function clamper(domain) {
+  var t,
+      a = domain[0],
+      b = domain[domain.length - 1];
   return a > b && (t = a, a = b, b = t), function (x) {
     return Math.max(a, Math.min(b, x));
   };
@@ -24956,8 +24441,7 @@ function copy(source, target) {
 }
 function transformer() {
   function rescale() {
-    var n = Math.min(domain.length, range.length);
-    return clamp !== continuous_identity && (clamp = clamper(domain[0], domain[n - 1])), piecewise = n > 2 ? polymap : bimap, output = input = null, scale;
+    return piecewise = Math.min(domain.length, range.length) > 2 ? polymap : bimap, output = input = null, scale;
   }
 
   function scale(x) {
@@ -24977,13 +24461,13 @@ function transformer() {
   return scale.invert = function (y) {
     return clamp(untransform((input || (input = piecewise(range, domain.map(transform), number)))(y)));
   }, scale.domain = function (_) {
-    return arguments.length ? (domain = Array.from(_, d3_scale_src_number), rescale()) : domain.slice();
+    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), clamp === continuous_identity || (clamp = clamper(domain)), rescale()) : domain.slice();
   }, scale.range = function (_) {
-    return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
   }, scale.rangeRound = function (_) {
-    return range = Array.from(_), interpolate = src_round, rescale();
+    return range = src_array_slice.call(_), interpolate = src_round, rescale();
   }, scale.clamp = function (_) {
-    return arguments.length ? (clamp = !!_ || continuous_identity, rescale()) : clamp !== continuous_identity;
+    return arguments.length ? (clamp = _ ? clamper(domain) : continuous_identity, scale) : clamp !== continuous_identity;
   }, scale.interpolate = function (_) {
     return arguments.length ? (interpolate = _, rescale()) : interpolate;
   }, scale.unknown = function (_) {
@@ -24992,8 +24476,8 @@ function transformer() {
     return transform = t, untransform = u, rescale();
   };
 }
-function continuous() {
-  return transformer()(continuous_identity, continuous_identity);
+function continuous(transform, untransform) {
+  return transformer()(transform, untransform);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatDecimal.js
 // Computes the decimal coefficient and exponent of the specified number x with
@@ -25342,12 +24826,13 @@ function linearish(scale) {
   }, scale;
 }
 function src_linear_linear() {
-  var scale = continuous();
+  var scale = continuous(continuous_identity, continuous_identity);
   return scale.copy = function () {
     return copy(scale, src_linear_linear());
   }, initRange.apply(scale, arguments), linearish(scale);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/identity.js
+
 
 
 function identity_identity(domain) {
@@ -25357,12 +24842,12 @@ function identity_identity(domain) {
 
   var unknown;
   return scale.invert = scale, scale.domain = scale.range = function (_) {
-    return arguments.length ? (domain = Array.from(_, d3_scale_src_number), scale) : domain.slice();
+    return arguments.length ? (domain = array_map.call(_, d3_scale_src_number), scale) : domain.slice();
   }, scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   }, scale.copy = function () {
     return identity_identity(domain).unknown(unknown);
-  }, domain = arguments.length ? Array.from(domain, d3_scale_src_number) : [0, 1], linearish(scale);
+  }, domain = arguments.length ? array_map.call(domain, d3_scale_src_number) : [0, 1], linearish(scale);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/nice.js
 /* harmony default export */ var nice = (function (domain, interval) {
@@ -25446,20 +24931,15 @@ function loggish(transform) {
         j = logs(v),
         n = count == null ? 10 : +count,
         z = [];
-
-    if (!(base % 1) && j - i < n) {
-      if (i = Math.floor(i), j = Math.ceil(j), u > 0) {
-        for (; i <= j; ++i) for (k = 1, p = pows(i); k < base; ++k) if (t = p * k, !(t < u)) {
-          if (t > v) break;
-          z.push(t);
-        }
-      } else for (; i <= j; ++i) for (k = base - 1, p = pows(i); k >= 1; --k) if (t = p * k, !(t < u)) {
+    if (base % 1 || !(j - i < n)) z = src_ticks(i, j, Math.min(j - i, n)).map(pows);else if (i = Math.round(i) - 1, j = Math.round(j) + 1, u > 0) {
+      for (; i < j; ++i) for (k = 1, p = pows(i); k < base; ++k) if (t = p * k, !(t < u)) {
         if (t > v) break;
         z.push(t);
       }
-      z.length * 2 < n && (z = src_ticks(u, v, n));
-    } else z = src_ticks(i, j, Math.min(j - i, n)).map(pows);
-
+    } else for (; i < j; ++i) for (k = base - 1, p = pows(i); k >= 1; --k) if (t = p * k, !(t < u)) {
+      if (t > v) break;
+      z.push(t);
+    }
     return r ? z.reverse() : z;
   }, scale.tickFormat = function (count, specifier) {
     if (specifier == null && (specifier = base === 10 ? ".0e" : ","), typeof specifier !== "function" && (specifier = defaultLocale_format(specifier)), count === Infinity) return specifier;
@@ -25556,49 +25036,8 @@ function pow() {
 function sqrt() {
   return pow.apply(null, arguments).exponent(.5);
 }
-// CONCATENATED MODULE: ./node_modules/d3-scale/src/radial.js
-
-
-
-
-
-function square(x) {
-  return Math.sign(x) * x * x;
-}
-
-function unsquare(x) {
-  return Math.sign(x) * Math.sqrt(Math.abs(x));
-}
-
-function radial() {
-  function scale(x) {
-    var y = unsquare(squared(x));
-    return isNaN(y) ? unknown : round ? Math.round(y) : y;
-  }
-
-  var unknown,
-      squared = continuous(),
-      range = [0, 1],
-      round = !1;
-  return scale.invert = function (y) {
-    return squared.invert(square(y));
-  }, scale.domain = function (_) {
-    return arguments.length ? (squared.domain(_), scale) : squared.domain();
-  }, scale.range = function (_) {
-    return arguments.length ? (squared.range((range = Array.from(_, d3_scale_src_number)).map(square)), scale) : range.slice();
-  }, scale.rangeRound = function (_) {
-    return scale.range(_).round(!0);
-  }, scale.round = function (_) {
-    return arguments.length ? (round = !!_, scale) : round;
-  }, scale.clamp = function (_) {
-    return arguments.length ? (squared.clamp(_), scale) : squared.clamp();
-  }, scale.unknown = function (_) {
-    return arguments.length ? (unknown = _, scale) : unknown;
-  }, scale.copy = function () {
-    return radial(squared.domain(), range).round(round).clamp(squared.clamp()).unknown(unknown);
-  }, initRange.apply(scale, arguments), linearish(scale);
-}
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/quantile.js
+
 
 
 function quantile_quantile() {
@@ -25626,24 +25065,11 @@ function quantile_quantile() {
     if (!arguments.length) return domain.slice();
     domain = [];
 
-    for (var _iterator = _, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        if (_i = _iterator.next(), _i.done) break;
-        _ref = _i.value;
-      }
-
-      var d = _ref;
-      d == null || isNaN(d = +d) || domain.push(d);
-    }
+    for (var d, i = 0, n = _.length; i < n; ++i) (d = _[i], d != null && !isNaN(d = +d)) && domain.push(d);
 
     return domain.sort(src_ascending), rescale();
   }, scale.range = function (_) {
-    return arguments.length ? (range = Array.from(_), rescale()) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), rescale()) : range.slice();
   }, scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   }, scale.quantiles = function () {
@@ -25653,6 +25079,7 @@ function quantile_quantile() {
   }, initRange.apply(scale, arguments);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/quantize.js
+
 
 
 
@@ -25676,11 +25103,9 @@ function quantize_quantize() {
       domain = [.5],
       range = [0, 1];
   return scale.domain = function (_) {
-    var _ref;
-
-    return arguments.length ? (_ref = _, x0 = _ref[0], x1 = _ref[1], _ref, x0 = +x0, x1 = +x1, rescale()) : [x0, x1];
+    return arguments.length ? (x0 = +_[0], x1 = +_[1], rescale()) : [x0, x1];
   }, scale.range = function (_) {
-    return arguments.length ? (n = (range = Array.from(_)).length - 1, rescale()) : range.slice();
+    return arguments.length ? (n = (range = src_array_slice.call(_)).length - 1, rescale()) : range.slice();
   }, scale.invertExtent = function (y) {
     var i = range.indexOf(y);
     return i < 0 ? [NaN, NaN] : i < 1 ? [x0, domain[0]] : i >= n ? [domain[n - 1], x1] : [domain[i - 1], domain[i]];
@@ -25695,6 +25120,7 @@ function quantize_quantize() {
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/threshold.js
 
 
+
 function threshold_threshold() {
   function scale(x) {
     return x <= x ? range[bisect(domain, x, 0, n)] : unknown;
@@ -25705,9 +25131,9 @@ function threshold_threshold() {
       range = [0, 1],
       n = 1;
   return scale.domain = function (_) {
-    return arguments.length ? (domain = Array.from(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
+    return arguments.length ? (domain = src_array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : domain.slice();
   }, scale.range = function (_) {
-    return arguments.length ? (range = Array.from(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
+    return arguments.length ? (range = src_array_slice.call(_), n = Math.min(domain.length, range.length - 1), scale) : range.slice();
   }, scale.invertExtent = function (y) {
     var i = range.indexOf(y);
     return [domain[i - 1], domain[i]];
@@ -25718,6 +25144,7 @@ function threshold_threshold() {
   }, initRange.apply(scale, arguments);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/time.js
+
 
 
 
@@ -25745,23 +25172,22 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
     return (second(date) < date ? formatMillisecond : minute(date) < date ? formatSecond : hour(date) < date ? formatMinute : day(date) < date ? formatHour : month(date) < date ? week(date) < date ? formatDay : formatWeek : year(date) < date ? formatMonth : formatYear)(date);
   }
 
-  function tickInterval(interval, start, stop) {
+  function tickInterval(interval, start, stop, step) {
     // If a desired tick count is specified, pick a reasonable tick interval
     // based on the extent of the domain and a rough estimate of tick size.
     // Otherwise, assume interval is already a time interval and use it.
     if (interval == null && (interval = 10), typeof interval === "number") {
-      var step,
-          target = Math.abs(stop - start) / interval,
+      var target = Math.abs(stop - start) / interval,
           i = bisector(function (i) {
         return i[2];
       }).right(tickIntervals, target);
-      return i === tickIntervals.length ? (step = tickStep(start / durationYear, stop / durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond), interval.every(step);
+      i === tickIntervals.length ? (step = tickStep(start / durationYear, stop / durationYear, interval), interval = year) : i ? (i = tickIntervals[target / tickIntervals[i - 1][2] < tickIntervals[i][2] / target ? i - 1 : i], step = i[1], interval = i[0]) : (step = Math.max(tickStep(start, stop, interval), 1), interval = millisecond);
     }
 
-    return interval;
+    return step == null ? interval : interval.every(step);
   }
 
-  var scale = continuous(),
+  var scale = continuous(continuous_identity, continuous_identity),
       invert = scale.invert,
       domain = scale.domain,
       formatMillisecond = format(".%L"),
@@ -25776,20 +25202,20 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
   return scale.invert = function (y) {
     return new Date(invert(y));
   }, scale.domain = function (_) {
-    return arguments.length ? domain(Array.from(_, time_number)) : domain().map(time_date);
-  }, scale.ticks = function (interval) {
+    return arguments.length ? domain(array_map.call(_, time_number)) : domain().map(time_date);
+  }, scale.ticks = function (interval, step) {
     var t,
         d = domain(),
         t0 = d[0],
         t1 = d[d.length - 1],
         r = t1 < t0;
     // inclusive stop
-    return r && (t = t0, t0 = t1, t1 = t), t = tickInterval(interval, t0, t1), t = t ? t.range(t0, t1 + 1) : [], r ? t.reverse() : t;
+    return r && (t = t0, t0 = t1, t1 = t), t = tickInterval(interval, t0, t1, step), t = t ? t.range(t0, t1 + 1) : [], r ? t.reverse() : t;
   }, scale.tickFormat = function (count, specifier) {
     return specifier == null ? tickFormat : format(specifier);
-  }, scale.nice = function (interval) {
+  }, scale.nice = function (interval, step) {
     var d = domain();
-    return (interval = tickInterval(interval, d[0], d[d.length - 1])) ? domain(nice(d, interval)) : scale;
+    return (interval = tickInterval(interval, d[0], d[d.length - 1], step)) ? domain(nice(d, interval)) : scale;
   }, scale.copy = function () {
     return copy(scale, calendar(year, month, week, day, hour, minute, second, millisecond, format));
   }, scale;
@@ -25813,18 +25239,9 @@ function calendar(year, month, week, day, hour, minute, second, millisecond, for
 
 
 
-
 function sequential_transformer() {
   function scale(x) {
     return isNaN(x = +x) ? unknown : interpolator(k10 === 0 ? .5 : (x = (transform(x) - t0) * k10, clamp ? Math.max(0, Math.min(1, x)) : x));
-  }
-
-  function range(interpolate) {
-    return function (_) {
-      var _ref, r0, r1;
-
-      return arguments.length ? (_ref = _, r0 = _ref[0], r1 = _ref[1], _ref, interpolator = interpolate(r0, r1), scale) : [interpolator(0), interpolator(1)];
-    };
   }
 
   var t0,
@@ -25837,14 +25254,12 @@ function sequential_transformer() {
       interpolator = continuous_identity,
       clamp = !1;
   return scale.domain = function (_) {
-    var _ref2;
-
-    return arguments.length ? (_ref2 = _, x0 = _ref2[0], x1 = _ref2[1], _ref2, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
+    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale) : [x0, x1];
   }, scale.clamp = function (_) {
     return arguments.length ? (clamp = !!_, scale) : clamp;
   }, scale.interpolator = function (_) {
     return arguments.length ? (interpolator = _, scale) : interpolator;
-  }, scale.range = range(src_value), scale.rangeRound = range(src_round), scale.unknown = function (_) {
+  }, scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   }, function (t) {
     return transform = t, t0 = t(x0), t1 = t(x1), k10 = t0 === t1 ? 0 : 1 / (t1 - t0), scale;
@@ -25887,7 +25302,7 @@ function sequentialSqrt() {
 
 function sequentialQuantile() {
   function scale(x) {
-    if (!isNaN(x = +x)) return interpolator((bisect(domain, x, 1) - 1) / (domain.length - 1));
+    if (!isNaN(x = +x)) return interpolator((bisect(domain, x) - 1) / (domain.length - 1));
   }
 
   var domain = [],
@@ -25896,34 +25311,11 @@ function sequentialQuantile() {
     if (!arguments.length) return domain.slice();
     domain = [];
 
-    for (var _iterator = _, _isArray = Array.isArray(_iterator), _i = 0, _iterator = _isArray ? _iterator : _iterator[Symbol.iterator]();;) {
-      var _ref;
-
-      if (_isArray) {
-        if (_i >= _iterator.length) break;
-        _ref = _iterator[_i++];
-      } else {
-        if (_i = _iterator.next(), _i.done) break;
-        _ref = _i.value;
-      }
-
-      var d = _ref;
-      d == null || isNaN(d = +d) || domain.push(d);
-    }
+    for (var d, i = 0, n = _.length; i < n; ++i) (d = _[i], d != null && !isNaN(d = +d)) && domain.push(d);
 
     return domain.sort(src_ascending), scale;
   }, scale.interpolator = function (_) {
     return arguments.length ? (interpolator = _, scale) : interpolator;
-  }, scale.range = function () {
-    return domain.map(function (d, i) {
-      return interpolator(i / (domain.length - 1));
-    });
-  }, scale.quantiles = function (n) {
-    return Array.from({
-      length: n + 1
-    }, function (_, i) {
-      return quantile(domain, i / n);
-    });
   }, scale.copy = function () {
     return sequentialQuantile(interpolator).domain(domain);
   }, initInterpolator.apply(scale, arguments);
@@ -25937,18 +25329,9 @@ function sequentialQuantile() {
 
 
 
-
 function diverging_transformer() {
   function scale(x) {
-    return isNaN(x = +x) ? unknown : (x = .5 + ((x = +transform(x)) - t1) * (s * x < s * t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
-  }
-
-  function range(interpolate) {
-    return function (_) {
-      var _ref, r0, r1, r2;
-
-      return arguments.length ? (_ref = _, r0 = _ref[0], r1 = _ref[1], r2 = _ref[2], _ref, interpolator = piecewise_piecewise(interpolate, [r0, r1, r2]), scale) : [interpolator(0), interpolator(.5), interpolator(1)];
-    };
+    return isNaN(x = +x) ? unknown : (x = .5 + ((x = +transform(x)) - t1) * (x < t1 ? k10 : k21), interpolator(clamp ? Math.max(0, Math.min(1, x)) : x));
   }
 
   var t0,
@@ -25961,21 +25344,18 @@ function diverging_transformer() {
       x0 = 0,
       x1 = .5,
       x2 = 1,
-      s = 1,
       interpolator = continuous_identity,
       clamp = !1;
   return scale.domain = function (_) {
-    var _ref2;
-
-    return arguments.length ? (_ref2 = _, x0 = _ref2[0], x1 = _ref2[1], x2 = _ref2[2], _ref2, t0 = transform(x0 = +x0), t1 = transform(x1 = +x1), t2 = transform(x2 = +x2), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), s = t1 < t0 ? -1 : 1, scale) : [x0, x1, x2];
+    return arguments.length ? (t0 = transform(x0 = +_[0]), t1 = transform(x1 = +_[1]), t2 = transform(x2 = +_[2]), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), scale) : [x0, x1, x2];
   }, scale.clamp = function (_) {
     return arguments.length ? (clamp = !!_, scale) : clamp;
   }, scale.interpolator = function (_) {
     return arguments.length ? (interpolator = _, scale) : interpolator;
-  }, scale.range = range(src_value), scale.rangeRound = range(src_round), scale.unknown = function (_) {
+  }, scale.unknown = function (_) {
     return arguments.length ? (unknown = _, scale) : unknown;
   }, function (t) {
-    return transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), s = t1 < t0 ? -1 : 1, scale;
+    return transform = t, t0 = t(x0), t1 = t(x1), t2 = t(x2), k10 = t0 === t1 ? 0 : .5 / (t1 - t0), k21 = t1 === t2 ? 0 : .5 / (t2 - t1), scale;
   };
 }
 
@@ -26007,7 +25387,6 @@ function divergingSqrt() {
   return divergingPow.apply(null, arguments).exponent(.5);
 }
 // CONCATENATED MODULE: ./node_modules/d3-scale/src/index.js
-
 
 
 
@@ -28022,7 +27401,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         targets = rawTargets;
     // Set targets
     // Redraw with new targets
-    // Update current state chart type list after redraw
+    // Update current state chart type and elements list after redraw
     targets && (args.filter && (targets = targets.filter(args.filter)), (args.type || args.types) && targets.forEach(function (t) {
       var type = args.types && args.types[t.id] || args.type;
       $$.setTargetType(t.id, type);
@@ -28035,7 +27414,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       withUpdateOrgXDomain: !0,
       withUpdateXDomain: !0,
       withLegend: !0
-    }), $$.updateTypes(), args.done && args.done.call($$.api);
+    }), $$.updateTypesElements(), args.done && args.done.call($$.api);
   },
   loadFromArgs: function loadFromArgs(args) {
     var $$ = this; // prevent load when chart is already destroyed
@@ -28058,14 +27437,14 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     // If no target, call done and return
     return $$.cache.reset(), done || (done = function () {}), targetIds = targetIds.filter(function (id) {
       return $$.hasTarget($$.data.targets, id);
-    }), targetIds && targetIds.length !== 0 ? void ( // Update current state chart type list
+    }), targetIds && targetIds.length !== 0 ? void ( // Update current state chart type and elements list after redraw
     $el.svg.selectAll(targetIds.map(function (id) {
       return $$.selectorTarget(id);
     })).transition().style("opacity", "0").remove().call(endall, done), targetIds.forEach(function (id) {
       state.withoutFadeIn[id] = !1, $el.legend && $el.legend.selectAll("." + config_classes.legendItem + $$.getTargetSelectorSuffix(id)).remove(), $$.data.targets = $$.data.targets.filter(function (t) {
         return t.id !== id;
       });
-    }), $$.updateTypes()) : void done();
+    }), $$.updateTypesElements()) : void done();
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/interaction.ts
@@ -29189,7 +28568,7 @@ function getFormat($$, typeValue, v) {
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
     // text
     // title
-    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.setChartElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.updateTypesElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   },
 
   /**
@@ -30540,7 +29919,7 @@ var TYPE_BY_CATEGORY = {
    * Updte current used chart types
    * @private
    */
-  updateTypes: function updateTypes() {
+  updateTypesElements: function updateTypesElements() {
     var $$ = this,
         state = $$.state;
     // Update current chart elements reference
@@ -32110,7 +31489,7 @@ util_extend(zoom_zoom, {
     $$.hasArcType() || !config.data_selection_enabled || (main.select("." + config_classes.dragarea).transition().duration(100).style("opacity", "0").remove(), main.selectAll("." + config_classes.shape).classed(config_classes.INCLUDED, !1), $$.setDragStatus(!1));
   },
   setDragStatus: function setDragStatus(isDragging) {
-    this.dragging = isDragging;
+    this.state.dragging = isDragging;
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/interactions/flow.ts
@@ -33386,14 +32765,20 @@ function smoothLines(el, type) {
         inputType = _$$$state4.inputType,
         width = _$$$state4.width,
         height = _$$$state4.height,
-        $el = $$.$el;
+        _$$$$el6 = $$.$el,
+        grid = _$$$$el6.grid,
+        main = _$$$$el6.main;
 
     if (inputType === "touch") {
-      var d = $el.grid.main.select("line." + config_classes.xgridFocus).datum();
-      d && $$.showGridFocus([d]);
+      var xgridFocus = grid.main.select("line." + config_classes.xgridFocus);
+
+      if (!xgridFocus.empty()) {
+        var d = xgridFocus.datum();
+        d && $$.showGridFocus([d]);
+      }
     } else {
       var _isRotated = $$.config.axis_rotated;
-      $el.main.select("line." + config_classes.xgridFocus).attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : height);
+      main.select("line." + config_classes.xgridFocus).attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : height);
     }
   },
   generateGridData: function generateGridData(type, scale) {
@@ -34445,7 +33830,7 @@ function lineRadial(l) {
   return [(y = +y) * Math.cos(x -= Math.PI / 2), y * Math.sin(x)];
 });
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/array.js
-var src_array_slice = Array.prototype.slice;
+var d3_shape_src_array_slice = Array.prototype.slice;
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/link/index.js
 
 
@@ -34464,7 +33849,7 @@ function linkTarget(d) {
 function link_link(curve) {
   function link() {
     var buffer,
-        argv = src_array_slice.call(arguments),
+        argv = d3_shape_src_array_slice.call(arguments),
         s = source.apply(this, argv),
         t = target.apply(this, argv);
     if (context || (context = buffer = src_path()), curve(context, +x.apply(this, (argv[0] = s, argv)), +y.apply(this, argv), +x.apply(this, (argv[0] = t, argv)), +y.apply(this, argv)), buffer) return context = null, buffer + "" || null;
@@ -34563,7 +33948,7 @@ var ka = .8908130915292852,
   }
 });
 // CONCATENATED MODULE: ./node_modules/d3-shape/src/symbol/square.js
-/* harmony default export */ var symbol_square = ({
+/* harmony default export */ var square = ({
   draw: function draw(context, size) {
     var w = Math.sqrt(size),
         x = -w / 2;
@@ -34605,7 +33990,7 @@ var wye_c = -.5,
 
 
 
-var symbols = [symbol_circle, symbol_cross, diamond, symbol_square, star, triangle, wye];
+var symbols = [symbol_circle, symbol_cross, diamond, square, star, triangle, wye];
 /* harmony default export */ var src_symbol = (function () {
   function symbol() {
     var buffer;
@@ -35525,11 +34910,11 @@ function stackValue(d, key) {
       offset = offset_none,
       value = stackValue;
   return stack.keys = function (_) {
-    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(src_array_slice.call(_)), stack) : keys;
+    return arguments.length ? (keys = typeof _ === "function" ? _ : d3_shape_src_constant(d3_shape_src_array_slice.call(_)), stack) : keys;
   }, stack.value = function (_) {
     return arguments.length ? (value = typeof _ === "function" ? _ : d3_shape_src_constant(+_), stack) : value;
   }, stack.order = function (_) {
-    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(src_array_slice.call(_)), stack) : order;
+    return arguments.length ? (order = _ == null ? order_none : typeof _ === "function" ? _ : d3_shape_src_constant(d3_shape_src_array_slice.call(_)), stack) : order;
   }, stack.offset = function (_) {
     return arguments.length ? (offset = _ == null ? offset_none : _, stack) : offset;
   }, stack;
@@ -37593,7 +36978,7 @@ function () {
         hasAxis = _$$$state.hasAxis,
         hasRadar = _$$$state.hasRadar,
         types = [];
-    $$.updateTypes(), hasAxis ? ($$.hasType("bar") && types.push("Bar"), $$.hasType("bubble") && types.push("Bubble"), $$.hasTypeOf("Line") && types.push("Line")) : (!hasRadar && types.push("Arc", "Pie"), $$.hasType("gauge") ? types.push("Gauge") : hasRadar && types.push("Radar")), types.forEach(function (v) {
+    hasAxis ? ($$.hasType("bar") && types.push("Bar"), $$.hasType("bubble") && types.push("Bubble"), $$.hasTypeOf("Line") && types.push("Line")) : (!hasRadar && types.push("Arc", "Pie"), $$.hasType("gauge") ? types.push("Gauge") : hasRadar && types.push("Radar")), types.forEach(function (v) {
       $$["init" + v]();
     }), notEmpty($$.config.data_labels) && $$.initText();
   }, _proto.setChartElements = function setChartElements() {

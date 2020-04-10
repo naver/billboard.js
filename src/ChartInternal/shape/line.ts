@@ -199,6 +199,8 @@ export default {
 		const yScale = $$.getYScaleById.bind($$);
 
 		return (d, i) => {
+			//if (d.value === null) debugger;
+
 			const y0 = yScale(d.id, isSub)(0);
 			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
@@ -213,7 +215,7 @@ export default {
 
 			// 1 point that marks the line position
 			const point = [posX, posY - (y0 - offset)];
-
+console.log(point)
 			return [
 				point,
 				point, // from here and below, needed for compatibility

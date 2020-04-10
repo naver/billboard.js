@@ -4,13 +4,14 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {format as d3Format} from "d3-format";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
-describe("DATA", () => {
+describe.only("DATA", () => {
 	let chart;
 	let args;
 
@@ -18,7 +19,7 @@ describe("DATA", () => {
 		chart = util.generate(args);
 	});
 
-	const checkXY = function(x, y, prefix = "c", delta = {x: 1, y: 1}) {
+	const checkXY = function(x, y, prefix = "c", delta: any = {x: 1, y: 1}) {
 		if (isNumber(delta)) {
 			delta = {x: delta, y: delta};
 		}
@@ -210,7 +211,7 @@ describe("DATA", () => {
 	});
 
 	describe("XHR data loading", () => {
-		const path = "/base/spec/assets/data/";
+		const path = "/base/test/assets/data/";
 
 		before(() => {
 			args = {
@@ -981,7 +982,12 @@ describe("DATA", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(function() {
+							console.log(this)
+						})
+
+					debugger;
+						//.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
 
@@ -1681,7 +1687,7 @@ describe("DATA", () => {
 	describe("inner functions", () => {
 		it("should check returns of mapToTargetIds", () => {
 			const internal = chart.internal;
-			let data = [1, 2, 3];
+			let data: number | number[] = [1, 2, 3];
 			let newData = internal.mapToTargetIds(data);
 
 			expect(newData).to.deep.equal(data);
@@ -1859,7 +1865,7 @@ describe("DATA", () => {
 		});
 
 		it("check for the normalized bar's height", () => {
-			chartHeight = +chart.$.main.selectAll(`.${CLASS.zoomRect}`).attr("height") - 1;
+			chartHeight = +chart.internal.$el.eventRect.attr("height") - 1;
 			const bars = chart.$.bar.bars.nodes().concat();
 
 			bars.splice(0, 3).forEach((v, i) => {

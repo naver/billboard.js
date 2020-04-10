@@ -3,9 +3,10 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import util from "../assets/util";
 
-describe("CLASS", function() {
+describe.only("CLASS", function() {
 	const chart = util.generate({
 		data: {
 			columns: [

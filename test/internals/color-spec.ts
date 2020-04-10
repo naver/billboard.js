@@ -8,13 +8,14 @@ import {
 	select as d3Select,
 	namespaces as d3Namespaces
 } from "d3-selection";
+import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isFunction, isObject, isString} from "../../src/module/util";
 
 describe("COLOR", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 20, 50],
@@ -40,18 +41,19 @@ describe("COLOR", () => {
 		const pattern = ["#00c73c", "#fa7171", "#2ad0ff", "#7294ce", "#e3e448", "#cc7e6e", "#fb6ccf", "#c98dff", "#4aea99", "#bbbbbb"];
 
 		before(() => {
+			// @ts-ignore
 			document.styleSheets[0].insertRule(`.${CLASS.colorPattern} {
 				background-image: url("${pattern.join(";")}");
 			}`, 0);
 		});
 
 		after(() => {
+			// @ts-ignore
 			document.styleSheets[0].deleteRule(0);
 		});
 
 		it("should get and parse from the stylesheet", () => {
-			const internal = chart.internal;
-			const pttrn = internal.getColorFromCss();
+			const pttrn = chart.internal.getColorFromCss();
 
 			expect(pttrn).to.deep.equal(pattern);
 
@@ -120,7 +122,7 @@ describe("COLOR", () => {
 		});
 
 		it("patterns should be an array with id and pattern objects", () => {
-			const patterns = chart.internal.patterns;
+			const {patterns} = chart.internal;
 			const numPatterns = patterns.length;
 
 			const valid = patterns.map(p => {
@@ -167,8 +169,8 @@ describe("COLOR", () => {
 			});
 
 			it("should create correct pattern names", () => {
-				const internal = chart.internal;
-				const datetimeId = internal.datetimeId;
+				const {internal} = chart;
+				const {datetimeId} = internal.state;
 				const expectedIds = [
 					`${datetimeId}-pattern-red`,
 					`${datetimeId}-pattern-gold`,
@@ -186,14 +188,15 @@ describe("COLOR", () => {
 
 		describe("pattern shouldn't be applying for line types", () => {
 			const checkFill = () => {
-				const internal = chart.internal;
+				const {internal} = chart;
 				const rx = /#bb-\d+-pattern-/;
 
 				chart.data().forEach(v => {
 					const id = v.id;
 					const isLine = internal.isTypeOf(id, ["line", "spline", "step"]) || !internal.config.data_types[id];
-					const stroke = internal.main.select(`.${CLASS.shapes}-${id} path`).style("fill");
+					const stroke = internal.$el.main.select(`.${CLASS.shapes}-${id} path`).style("fill");
 
+					// @ts-ignore
 					expect(rx.test(stroke)).to.be[!isLine];
 				})
 			};
@@ -251,9 +254,9 @@ describe("COLOR", () => {
 				color: {
 					onover: "yellow"
 				},
-				onafterinit: function(ctx) {
+				onafterinit: function() {
 					// set bar stroke color value manually
-					ctx.$.bar.bars
+					this.$.bar.bars
 						.style("stroke", barStrokeColor)
 						.style("stroke-width", 1)
 				}
@@ -262,7 +265,7 @@ describe("COLOR", () => {
 
 		// check color.onover
 		const checkColor = (chart, colorOnover) => {
-			const main = chart.$.main;
+			const {main} = chart.$;
 			const eventRect = main.select(`.${CLASS.eventRect}-1`).node();
 			const shape = main.selectAll(`.${CLASS.shape}-1`);
 			const originalColor = [];
@@ -349,7 +352,7 @@ describe("COLOR", () => {
 
 		it("check for the arc type", done => {
 			setTimeout(() => {
-				const main = chart.$.main;
+				const {main} = chart.$;
 				const arc = main.select(`.${CLASS.arc}-data1`).node();
 				const originalColor = arc.style.fill;
 

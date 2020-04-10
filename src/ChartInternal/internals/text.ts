@@ -120,7 +120,11 @@ export default {
 				// do not apply transition for newly added text elements
 				(withTransition && text.attr("x") ? text.transition(t) : text)
 					.attr("x", x.bind(this)(d, i))
-					.attr("y", y.bind(this)(d, i))
+					.attr("y", d => {
+						const r = y.bind(this)(d, i);
+console.log(d.id, r);
+						return r;
+					})
 					.style("fill", $$.updateTextColor.bind($$))
 					.style("fill-opacity", opacityForText);
 			})

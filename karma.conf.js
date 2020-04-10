@@ -16,7 +16,7 @@ module.exports = function(config) {
 			//"./test/**/*-spec.ts",
 			"./test/api/*-spec.ts",
 			"./test/interactions/*-spec.ts",
-			//"./test/internals/*-spec.ts",
+			"./test/internals/*-spec.ts",
 			{
 				pattern: "./test/assets/data/*",
 				watched: false,
