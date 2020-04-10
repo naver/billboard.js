@@ -1,3 +1,10 @@
+## [1.12.4](https://github.com/naver/billboard.js/compare/1.12.3...1.12.4) (2020-04-10)
+
+
+### Bug Fixes
+
+* **shape:** Fix incorrect area/bar rendering ([9f81fb2](https://github.com/naver/billboard.js/commit/9f81fb27b81f12266d6bb0b86e2ca6cc6fedd168)), closes [#1304](https://github.com/naver/billboard.js/issues/1304) [#1316](https://github.com/naver/billboard.js/issues/1316)
+
 ## [1.12.3](https://github.com/naver/billboard.js/compare/1.12.2...1.12.3) (2020-04-09)
 
 
