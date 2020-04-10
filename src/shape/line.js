@@ -211,7 +211,7 @@ extend(ChartInternal.prototype, {
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return (d, i) => {
-			const y0 = yScale.call($$, d.id)(0);
+			const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
 			const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
 			let posY = y(d);
@@ -449,7 +449,7 @@ extend(ChartInternal.prototype, {
 			getPoints(d, i)[0][1] :
 			yScaleGetter.call($$, d.id)(
 				$$.isAreaRangeType(d) ?
-					$$.getAreaRangeData(d, "high") : ($$.getShapeYMin(d.id))
+					$$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id)
 			));
 		const value1 = (d, i) => ($$.isGrouped(d.id) ?
 			getPoints(d, i)[1][1] :
@@ -507,7 +507,7 @@ extend(ChartInternal.prototype, {
 		const yScale = isSub ? $$.getSubYScale : $$.getYScale;
 
 		return function(d, i) {
-			const y0 = yScale.call($$, d.id)(0);
+			const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
 			const offset = areaOffset(d, i) || y0; // offset is for stacked area chart
 			const posX = x(d);
 			let posY = y(d);
