@@ -6,7 +6,7 @@
 import {expect} from "chai";
 import util from "../assets/util";
 
-describe.only("CLASS", function() {
+describe("CLASS", function() {
 	const chart = util.generate({
 		data: {
 			columns: [

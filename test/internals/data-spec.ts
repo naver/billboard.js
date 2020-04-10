@@ -982,12 +982,7 @@ describe.only("DATA", () => {
 					const expectedXs = [6, 202, 397, 593];
 
 					chart.$.main.selectAll(`.${CLASS.texts}-data1 text`)
-						.each(function() {
-							console.log(this)
-						})
-
-					debugger;
-						//.each(checkXY(expectedXs, expectedYs, "", 2));
+						.each(checkXY(expectedXs, expectedYs, "", 2));
 				});
 			});
 
