@@ -162,8 +162,9 @@ extend(ChartInternal.prototype, {
 	 */
 	getShapeYMin(id) {
 		const $$ = this;
+		const [yMin] = $$[$$.axis.getId(id)].domain();
 
-		return (!$$.isGrouped(id) && $$.config[`axis_${$$.axis.getId(id)}_min`]) || 0;
+		return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
 	},
 
 	/**
