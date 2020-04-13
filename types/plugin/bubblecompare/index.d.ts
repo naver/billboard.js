@@ -9,5 +9,5 @@ export default class Stanford extends Plugin {
     /**
      * Generate stanford diagram
      */
-    constructor(options: BubblecompareOptions);
+    constructor(options: BubblecompareOptions)
 }
