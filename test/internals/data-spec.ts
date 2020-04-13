@@ -11,7 +11,7 @@ import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 import {isNumber} from "../../src/module/util";
 
-describe.only("DATA", () => {
+describe("DATA", () => {
 	let chart;
 	let args;
 

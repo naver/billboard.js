@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import util from "../assets/util";
 
 describe("DOMAIN", function() {
@@ -237,13 +238,13 @@ describe("DOMAIN", function() {
 
 		describe("check the domain value after the data toggle", () => {
 			const checkDomain = (dataId, axisId, done) => {
-				const domain = chart.internal[axisId].domain();
+				const domain = chart.internal.scale[axisId].domain();
 
 				// when
 				chart.toggle(dataId);
 
 				setTimeout(() => {
-					expect(chart.internal[axisId].domain()).to.be.deep.equal(domain);
+					expect(chart.internal.scale[axisId].domain()).to.be.deep.equal(domain);
 					done();
 				}, 300);
 			};

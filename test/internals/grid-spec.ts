@@ -3,11 +3,12 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
-describe("GRID", function() {
+describe.only("GRID", function() {
 	let chart;
 	let args;
 
@@ -36,7 +37,7 @@ describe("GRID", function() {
 
 		it("should show 3 grid lines", () => {
 			// x grid
-			let grid = chart.$.grid.selectAll(`.${CLASS.xgrids} line`).nodes();
+			let grid = chart.$.grid.main.selectAll(`.${CLASS.xgrids} line`).nodes();
 
 			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
 				const x = util.parseNum(this.getAttribute("transform").split(",")[0]);
@@ -48,7 +49,7 @@ describe("GRID", function() {
 			});
 
 			// y grid
-			grid = chart.$.grid.selectAll(`.${CLASS.ygrids} line`).nodes();
+			grid = chart.$.grid.main.selectAll(`.${CLASS.ygrids} line`).nodes();
 
 			chart.$.main.selectAll(`.${CLASS.axisY} .tick`).each(function(d, i) {
 				const y = util.parseNum(this.getAttribute("transform").split(",")[1]);
@@ -127,7 +128,7 @@ describe("GRID", function() {
 			expect(ygrids.selectAll(`.${CLASS.ygrid}`).size()).to.be.equal(5);
 
 			chart.$.main.select(`.${CLASS.axisY}`).selectAll(".tick").each(function(d, i) {
-				let y = d3Select(this).attr("transform").match(/\d+\)/);
+				let y: any = d3Select(this).attr("transform").match(/\d+\)/);
 
 				if (y.length >= 1) {
 					y = parseInt(y[0]);
@@ -526,7 +527,7 @@ describe("GRID", function() {
 		});
 
 		const checkFocusGridPosition = expectedPositions => {
-			chart.$.grid.selectAll("line").each(function(d, i) {
+			chart.$.grid.main.selectAll("line").each(function(d, i) {
 				["x1", "y1", "x2", "y2"].forEach(v => {
 					expect(+this.getAttribute(v)).to.be.equal(expectedPositions[i][v]);
 				});
