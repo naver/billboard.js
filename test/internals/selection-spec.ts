@@ -4,6 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import sinon from "sinon";
+import {expect} from "chai";
 import {
 	select as d3Select,
 	selectAll as d3SelectAll
@@ -43,7 +45,7 @@ describe("SELECTION", () => {
 			});
 
 			it("multiple selection & onselected callback", () => {
-				let circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				let circle = util.getBBox(d3Select(`.${CLASS.shape}-3`));
 				let rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
@@ -53,7 +55,7 @@ describe("SELECTION", () => {
 
 				expect(spySelected.calledOnce).to.be.true;
 
-				circle = d3Select(`.${CLASS.shape}-4`).node().getBBox();
+				circle = util.getBBox(d3Select(`.${CLASS.shape}-4`));
 				rect = d3Select(`.${CLASS.eventRect}-4`).node();
 
 				util.fireEvent(rect, "click", {
@@ -72,7 +74,7 @@ describe("SELECTION", () => {
 			});
 
 			it("one selection & onunselected callback", () => {
-				let circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				let circle = util.getBBox(d3Select(`.${CLASS.shape}-3`));
 				let rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
@@ -82,7 +84,7 @@ describe("SELECTION", () => {
 
 				expect(spySelected.calledOnce).to.be.true;
 
-				circle = d3Select(`.${CLASS.shape}-4`).node().getBBox();
+				circle = util.getBBox(d3Select(`.${CLASS.shape}-4`));
 				rect = d3Select(`.${CLASS.eventRect}-4`).node();
 
 				util.fireEvent(rect, "click", {
@@ -98,7 +100,7 @@ describe("SELECTION", () => {
 			});
 
 			it("onselected & onunselected callback should be called once", () => {
-				const circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				const circle = util.getBBox(d3Select(`.${CLASS.shape}-3`));
 				const rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
@@ -120,7 +122,7 @@ describe("SELECTION", () => {
 			});
 
 			it("grouped selections & onunselected callback", () => {
-				let circle = d3Select(`.${CLASS.shape}-3`).node().getBBox();
+				let circle = util.getBBox(d3Select(`.${CLASS.shape}-3`));
 				let rect = d3Select(`.${CLASS.eventRect}-3`).node();
 
 				util.fireEvent(rect, "click", {
@@ -130,7 +132,7 @@ describe("SELECTION", () => {
 
 				expect(spySelected.calledTwice).to.be.true;
 
-				circle = d3Select(`.${CLASS.shape}-4`).node().getBBox();
+				circle = util.getBBox(d3Select(`.${CLASS.shape}-4`));
 				rect = d3Select(`.${CLASS.eventRect}-4`).node();
 
 				util.fireEvent(rect, "click", {

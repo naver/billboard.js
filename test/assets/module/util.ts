@@ -5,6 +5,8 @@
 /* eslint-disable */
 // @ts-nocheck
 import {window} from "../../../src/module/browser";
+
+// fake module replaced during test build to '/src/module/util.ts' by webpack.NormalModuleReplacementPlugin
 import * as orgUtil from "./fake";
 
 export const {

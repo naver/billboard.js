@@ -446,7 +446,7 @@ describe("SHAPE ARC", () => {
 				expect(+chartArc.select(`.${CLASS.gaugeValue}`).attr("dy")).to.be.above(0);
 
 				// check background height
-				expect(chartArc.select(`.${CLASS.chartArcsBackground}`).node().getBBox().height).to.be.above(300);
+				expect(util.getBBox(chartArc.select(`.${CLASS.chartArcsBackground}`)).height).to.be.above(300);
 
 				// with fullCircle option, only min text is showed
 				expect(min.empty()).to.be.false;

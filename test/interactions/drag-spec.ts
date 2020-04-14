@@ -60,7 +60,7 @@ describe("DRAG", function() {
 			expect(main.selectAll(`.${CLASS.INCLUDED}`).size()).to.be.equal(2);
 
 			// check for selection rect
-			const dragAreaRect = main.select(`.${CLASS.dragarea}`).node().getBBox();
+			const dragAreaRect = util.getBBox(main.select(`.${CLASS.dragarea}`));
 
 			expect(dragAreaRect.width).to.be.above(0);
 			expect(dragAreaRect.height).to.be.above(0);

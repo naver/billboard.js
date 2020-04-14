@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
@@ -95,7 +96,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should be positioned properly", () => {
-			const box = chart.internal.svg
+			const box = chart.internal.$el.svg
 				.select(".bb-legend-background")
 				.node()
 				.getBoundingClientRect();
@@ -105,7 +106,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should have automatically calculated height", () => {
-			const box = chart.internal.svg
+			const box = chart.internal.$el.svg
 				.select(".bb-legend-background")
 				.node()
 				.getBoundingClientRect();
@@ -118,7 +119,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should have automatically calculated height", () => {
-			const box = chart.internal.svg
+			const box = chart.internal.$el.svg
 				.select(".bb-legend-background")
 				.node()
 				.getBoundingClientRect();
@@ -131,7 +132,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should have automatically calculated height", () => {
-			const box = chart.internal.svg
+			const box = chart.internal.$el.svg
 				.select(".bb-legend-background")
 				.node()
 				.getBoundingClientRect();
@@ -155,7 +156,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should locate legend properly", () => {
-			const box = chart.internal.svg
+			const box = chart.internal.$el.svg
 				.select(".bb-legend-background")
 				.node()
 				.getBoundingClientRect();
@@ -181,7 +182,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should not show legends", () => {
-			chart.internal.svg.selectAll(".bb-legend-item").each(function() {
+			chart.internal.$el.svg.selectAll(".bb-legend-item").each(function() {
 				expect(d3Select(this).style("visibility")).to.be.equal("hidden");
 			});
 		});
@@ -201,7 +202,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should not show legends", () => {
-			const svg = chart.internal.svg;
+			const svg = chart.internal.$el.svg;
 
 			expect(svg.select(".bb-legend-item-data1").style("visibility")).to.be.equal("visible");
 			expect(svg.select(".bb-legend-item-data2").style("visibility")).to.be.equal("hidden");
@@ -224,13 +225,13 @@ describe("LEGEND", () => {
 		});
 
 		it("should not initially have rendered any legend items", () => {
-			expect(chart.internal.svg.selectAll(".bb-legend-item").empty()).to.be.equal(true);
+			expect(chart.internal.$el.svg.selectAll(".bb-legend-item").empty()).to.be.equal(true);
 		});
 
 		it("allows us to show the legend on showLegend call", function() {
 			chart.legend.show();
 
-			chart.internal.svg.selectAll(".bb-legend-item").each(function() {
+			chart.internal.$el.svg.selectAll(".bb-legend-item").each(function() {
 				expect(d3Select(this).style("visibility")).to.be.equal("visible");
 				// This selects all the children, but we expect it to be empty
 				expect(d3Select(this).size()).not.to.equal(0);
@@ -259,8 +260,8 @@ describe("LEGEND", () => {
 		});
 
 		it("renders the legend item with the correct width and height", () => {
-			chart.internal.svg.selectAll(".bb-legend-item-tile").each(function() {
-				const el = d3Select(this);
+			chart.internal.$el.svg.selectAll(".bb-legend-item-tile").each(function() {
+				const el: any = d3Select(this);
 				const tileWidth = el.attr("x2") - el.attr("x1");
 
 				expect(el.style("stroke-width")).to.be.equal(`${args.legend.item.tile.height}px`);
@@ -275,11 +276,11 @@ describe("LEGEND", () => {
 		});
 
 		it("renders the correct amount of padding on the legend element", function() {
-			chart.internal.svg.selectAll(".bb-legend-item-padded1 .bb-legend-item-title, .bb-legend-item-padded2 .bb-legend-item-title")
+			chart.internal.$el.svg.selectAll(".bb-legend-item-padded1 .bb-legend-item-title, .bb-legend-item-padded2 .bb-legend-item-title")
 				.each(function(v, i) {
 					const parentNode = d3Select(this).node().parentNode;
 					const itemWidth = parentNode.getBBox().width;
-					const textBoxWidth = d3Select(parentNode).querySelector("text").getBBox().width;
+					const textBoxWidth = parentNode.querySelector("text").getBBox().width;
 					const tileWidth = 15; // default value is 10, plus 5 more for padding
 					const expectedWidth = textBoxWidth + tileWidth + (i ? 0 : 10) + args.legend.padding;
 
@@ -292,6 +293,7 @@ describe("LEGEND", () => {
 		const itemClass = "abcd";
 
 		before(() => {
+			// @ts-ignore
 			sandbox("legend-wrapper").innerHTML = "<ul id='legend'></ul>";
 
 			args = {
@@ -458,7 +460,7 @@ describe("LEGEND", () => {
 		});
 
 		it("should render custom points in legend", () => {
-			const nodes = chart.internal.svg.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemPoint}`);
+			const nodes = chart.internal.$el.svg.selectAll(`.${CLASS.legendItem} .${CLASS.legendItemPoint}`);
 
 			nodes.each((data, idx, selection) => {
 				const node = selection[idx];
@@ -501,7 +503,7 @@ describe("LEGEND", () => {
 		it('selects the color from color_pattern if color_treshold is given', function () {
 			const tileColor = [];
 
-			chart.internal.svg.selectAll(".bb-legend-item-tile").each(function () {
+			chart.internal.$el.svg.selectAll(`.${CLASS.legendItemTile}`).each(function () {
 				tileColor.push(d3Select(this).style('stroke'));
 			});
 
@@ -533,15 +535,23 @@ describe("LEGEND", () => {
 		it("selects the color from data_colors, data_color or default", function() {
 			const tileColor = [];
 
-			chart.internal.svg.selectAll(".bb-legend-item-tile")
+			chart.internal.$el.svg.selectAll(`.${CLASS.legendItemTile}`)
 				.each(function() {
-					tileColor.push(d3Select(this)
-						.style("stroke"));
+					tileColor.push(d3Select(this).style("stroke"));
 				});
 
 			expect(tileColor[0]).to.be.equal("rgb(96, 176, 68)");
-			expect(tileColor[1]).to.be.equal("rgb(0, 199, 60)");
-			expect(tileColor[2]).to.be.equal("rgb(250, 113, 113)");
+			
+			expect(
+				(tileColor[1] === "rgb(31, 119, 180)") ||
+				(tileColor[1] === "rgb(0, 199, 60)")
+			).to.be.true;
+
+			expect(
+				(tileColor[2] === "rgb(255, 127, 14)") ||
+				(tileColor[2] === "rgb(250, 113, 113)")
+			).to.be.true;
+
 			expect(tileColor[3]).to.be.equal("rgb(139, 0, 139)");
 		});
 	});

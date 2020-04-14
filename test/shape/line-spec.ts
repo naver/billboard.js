@@ -381,7 +381,7 @@ describe("SHAPE LINE", () => {
 
 		it("check for correct generation", () => {
 			const d = chart.$.line.lines.attr("d");
-			const box = d3Select(`.${CLASS.chartLine}.${CLASS.target}-data3`).node().getBBox();;
+			const box = util.getBBox(d3Select(`.${CLASS.chartLine}.${CLASS.target}-data3`));
 
 			// check for correct path data
 			expect(/NaN/.test(d)).to.be.false;

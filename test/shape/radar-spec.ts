@@ -124,13 +124,13 @@ describe("SHAPE RADAR", () => {
 			const level = radars.select(`.${CLASS.levels}`);
 			const axis = radars.select(`.${CLASS.axis}`);
 
-			const old = [radars, level, axis].map(v => v.node().getBBox());
+			const old = [radars, level, axis].map(v => util.getBBox(v));
 
 			// when
 			chart.resize({width: 200,height: 200});
 
 			[radars, level, axis].forEach((v, i) => {
-				const resized = v.node().getBBox();
+				const resized = util.getBBox(v);
 
 				expect(old[i].width).to.be.above(resized.width);
 				expect(old[i].height).to.be.above(resized.height);

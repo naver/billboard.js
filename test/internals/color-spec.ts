@@ -39,17 +39,19 @@ describe("COLOR", () => {
 
 	describe("color pattern", () => {
 		const pattern = ["#00c73c", "#fa7171", "#2ad0ff", "#7294ce", "#e3e448", "#cc7e6e", "#fb6ccf", "#c98dff", "#4aea99", "#bbbbbb"];
+		const styleSheet = document.createElement("style");
 
 		before(() => {
-			// @ts-ignore
-			document.styleSheets[0].insertRule(`.${CLASS.colorPattern} {
+			styleSheet.innerHTML = `.${CLASS.colorPattern} {
 				background-image: url("${pattern.join(";")}");
-			}`, 0);
+			}`;
+
+			document.head.appendChild(styleSheet);
 		});
 
 		after(() => {
-			// @ts-ignore
-			document.styleSheets[0].deleteRule(0);
+			styleSheet.innerHTML = "";
+			document.head.removeChild(styleSheet);
 		});
 
 		it("should get and parse from the stylesheet", () => {
@@ -67,6 +69,10 @@ describe("COLOR", () => {
 					expect(this.style.fill).to.be.equal(util.hexToRgb(pattern[i]));
 				});
 		});
+
+		it("", () => {
+			styleSheet.innerHTML = ""
+		})
 	});
 
 	describe("tiles", () => {

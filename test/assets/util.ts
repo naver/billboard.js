@@ -181,9 +181,12 @@ const hexToRgb = hex => {
 
 const parseNum = val => +val.replace(/(\(0|[a-z,()\s])/ig,"");
 
+const getBBox = node => ("getBBox" in node ? node : node.node()).getBBox();
+
 export default {
 	fireEvent,
 	generate,
+	getBBox,
 	hexToRgb,
 	hoverChart,
 	parseNum,

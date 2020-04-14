@@ -69,17 +69,17 @@ export default {
 
 	initGridLines(): void {
 		const $$ = this;
-		const {config, state: {clip}, $el: {gridLines, main}} = $$;
+		const {config, state: {clip}, $el} = $$;
 
 		if (config.grid_x_lines.length || config.grid_y_lines.length) {
-			gridLines.main = main.insert("g", `.${CLASS.chart}${config.grid_lines_front ? " + *" : ""}`)
+			$el.gridLines.main = $el.main.insert("g", `.${CLASS.chart}${config.grid_lines_front ? " + *" : ""}`)
 				.attr("clip-path", clip.pathGrid)
 				.attr("class", `${CLASS.grid} ${CLASS.gridLines}`);
 
-			gridLines.main.append("g").attr("class", CLASS.xgridLines);
-			gridLines.main.append("g").attr("class", CLASS.ygridLines);
+			$el.gridLines.main.append("g").attr("class", CLASS.xgridLines);
+			$el.gridLines.main.append("g").attr("class", CLASS.ygridLines);
 
-			gridLines.x = d3SelectAll([]);
+			$el.gridLines.x = d3SelectAll([]);
 		}
 	},
 
@@ -317,7 +317,7 @@ export default {
 		const $$ = this;
 		const {config, state: {clip}, $el} = $$;
 		const isFront = config.grid_front;
-		const className = `.${CLASS[isFront && $el.grid.main ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
+		const className = `.${CLASS[isFront && $el.gridLines.main ? "gridLines" : "chart"]}${isFront ? " + *" : ""}`;
 
 		const grid = $el.main.insert("g", className)
 			.attr("clip-path", clip.pathGrid)

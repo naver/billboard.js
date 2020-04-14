@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import {toArray, getBoundingRect, getCssRules, getPathBox, getUnique, isArray, isNumber, sortValue} from "../../src/module/util";
 
 describe("UTIL", function() {
@@ -68,6 +69,7 @@ describe("UTIL", function() {
 				expect(v in rect).to.be.true;
 			});
 
+			// @ts-ignore
 			expect(document.body.rect).to.be.deep.equal(rect);
 		});
 	});
@@ -84,12 +86,12 @@ describe("UTIL", function() {
 
 	describe("getUnique", () => {
 		it("should return unique values", () => {
-			let data = [1,3,2,4,5,1,2,3];
+			let data: any = [1,3,2,4,5,1,2,3];
 
 			expect(getUnique(data)).to.deep.equal([1, 3, 2, 4, 5]);
 
 			// for string
-			data = ["a","b","c","a","b"];
+			data = ["a", "b", "c", "a", "b"];
 			expect(getUnique(data)).to.deep.equal(["a", "b", "c"]);
 
 			// for datetime

@@ -48,7 +48,7 @@ describe("API chart", () => {
 		it("should update groups correctly", done => {
 			const main = chart.$.main;
 			const path = main.select(`.${CLASS.bars}-data1 path`);
-			const barWidth = path.node().getBBox().width;
+			const barWidth = util.getBBox(path).width;
 
 			chart.groups([
 				["data1", "data2"]
@@ -59,7 +59,7 @@ describe("API chart", () => {
 				expect(chart.groups()[0].length).to.be.equal(chart.data().length);
 
 				// check for the bars were stacked
-				expect(path.node().getBBox().width).to.be.equal(barWidth * 2);
+				expect(util.getBBox(path).width).to.be.equal(barWidth * 2);
 
 				done();
 			}, 500);

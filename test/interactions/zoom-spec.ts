@@ -459,7 +459,7 @@ describe("ZOOM", function() {
 		it("check for data.onclick", () => {
 			const main = chart.$.main;
 			const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
-			const circle = chart.$.circles.node().getBBox();
+			const circle = util.getBBox(chart.$.circles);
 
 			util.fireEvent(rect, "click", {
 				clientX: circle.x,
@@ -504,7 +504,7 @@ describe("ZOOM", function() {
 		it("region area should be resized on zoom", done => {
 			const main = chart.$.main;
 			const regionRect = main.select(`.${CLASS.region}-0 rect`);
-			const lineWidth = chart.$.line.lines.node().getBBox().width;
+			const lineWidth = util.getBBox(chart.$.line.lines).width;
 
 			const size = {
 				width: +regionRect.attr("width"),
@@ -517,7 +517,7 @@ describe("ZOOM", function() {
 			setTimeout(() => {
 				expect(+regionRect.attr("width")).to.be.above(size.width);
 				expect(+regionRect.attr("x")).to.be.below(size.x);
-				expect(+chart.$.line.lines.node().getBBox().width).to.be.above(lineWidth);
+				expect(+util.getBBox(chart.$.line.lines).width).to.be.above(lineWidth);
 
 				done();
 			}, 500);

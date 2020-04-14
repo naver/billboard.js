@@ -193,12 +193,21 @@ export default {
 	},
 
 	// determine if is 'circle' data point
-	isCirclePoint(): boolean {
+	isCirclePoint(node?): boolean {
 		const {config} = this;
 		const pattern = config.point_pattern;
+		let isCircle = false;
 
-		return config.point_type === "circle" &&
-			(!pattern || (isArray(pattern) && pattern.length === 0));
+		if (node && node.tagName === "circle") {
+			isCircle = true;
+		} else {
+			isCircle = config.point_type === "circle" &&
+				(!pattern || (
+					isArray(pattern) && pattern.length === 0
+				));
+		}
+
+		return isCircle;
 	},
 
 	lineData(d) {

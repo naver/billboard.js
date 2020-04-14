@@ -4,11 +4,12 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import util from "../assets/util";
 
 describe("TITLE", () => {
 	let chart;
-	let args = {
+	let args: any = {
 		data: {
 			columns: [
 				["data1", 30, 200, 100, 400, 150, 250]
@@ -40,7 +41,7 @@ describe("TITLE", () => {
 					.split(",")
 					.map(v => util.parseNum(v));
 
-				expect(x).to.be.equal(chart.internal.currentWidth / 2);
+				expect(x).to.be.equal(chart.internal.state.currentWidth / 2);
 				expect(y).to.be.equal(title.getBBox().height);
 			});
 
@@ -80,7 +81,7 @@ describe("TITLE", () => {
 						.split(",")
 						.map(v => util.parseNum(v));
 	
-					expect(x).to.be.equal(chart.internal.currentWidth / 2);
+					expect(x).to.be.equal(chart.internal.state.currentWidth / 2);
 					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 
@@ -122,7 +123,7 @@ describe("TITLE", () => {
 						.split(",")
 						.map(v => util.parseNum(v));
 
-					expect(x).to.be.equal(chart.internal.currentWidth);
+					expect(x).to.be.equal(chart.internal.state.currentWidth);
 					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 			});

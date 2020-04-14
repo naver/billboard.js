@@ -263,8 +263,7 @@ export default {
 	isWithinCircle(node, r?: number): boolean {
 		const mouse = d3Mouse(node);
 		const element = d3Select(node);
-		const prefix = this.isCirclePoint() ? "c" : "";
-
+		const prefix = this.isCirclePoint(node) ? "c" : "";
 		let cx = +element.attr(`${prefix}x`);
 		let cy = +element.attr(`${prefix}y`);
 

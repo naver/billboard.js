@@ -396,8 +396,7 @@ describe("SHAPE BAR", () => {
 
 		it(`bar width should be ${width}px`, () => {
 			const main = chart.$.main;
-			const barWidth = main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)
-				.node().getBBox().width;
+			const barWidth = util.getBBox(main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)).width;
 
 			expect(barWidth).to.be.equal(width);
 		});
@@ -406,10 +405,8 @@ describe("SHAPE BAR", () => {
 			const main = chart.$.main;
 			const targetClass = `.${CLASS.chartBar}.${CLASS.target}`;
 
-			const bar1 = main.select(`${targetClass}-data1 path.${CLASS.shape}`)
-				.node().getBBox().x + width;
-			const bar2 = main.select(`${targetClass}-data2 path.${CLASS.shape}`)
-				.node().getBBox().x;
+			const bar1 = util.getBBox(main.select(`${targetClass}-data1 path.${CLASS.shape}`)).x + width;
+			const bar2 = util.getBBox(main.select(`${targetClass}-data2 path.${CLASS.shape}`)).x;
 
 			expect(bar2 - bar1).to.be.equal(padding);
 		});

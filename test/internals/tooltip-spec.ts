@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import sinon from "sinon";
+import {expect} from "chai";
 import {
 	select as d3Select,
 	namespaces as d3Namespaces
@@ -13,7 +15,7 @@ import CLASS from "../../src/config/classes";
 describe("TOOLTIP", function() {
 	let chart;
 	let chart2;
-	let args = {
+	let args: any = {
 		data: {
 			x: "x",
 			columns: [
@@ -25,7 +27,7 @@ describe("TOOLTIP", function() {
 		},
 		tooltip: {}
 	};
-	let args2 = {
+	let args2: any = {
 		bindto: "#chart2",
 		data: {
 			x: "x",
@@ -43,7 +45,7 @@ describe("TOOLTIP", function() {
 	const spy2 = sinon.spy();
 
 	// check for the tooltip's ordering
-	const checkTooltip = (checkChart, expected) => {
+	const checkTooltip = (checkChart, expected?) => {
 		util.hoverChart(checkChart);
 
 		const tooltips = checkChart.$.tooltip
@@ -58,7 +60,7 @@ describe("TOOLTIP", function() {
 	};
 
 	// check for the tooltip's ordering
-	const checkLinkedTooltip = (chart1, chart2, expected) => {
+	const checkLinkedTooltip = (chart1, chart2, expected?) => {
 		util.hoverChart(chart1);
 
 		const tooltips = chart2.$.tooltip
@@ -85,7 +87,7 @@ describe("TOOLTIP", function() {
 		expect(width).to.be.above(0);
 		expect(height).to.be.above(0);
 
-		expect(element).to.be.equal(this.main.select(`.${CLASS.eventRect}-2`).node());
+		expect(element).to.be.equal(this.$el.main.select(`.${CLASS.eventRect}-2`).node());
 
 		return tooltipPos;
 	};
@@ -102,10 +104,10 @@ describe("TOOLTIP", function() {
 	describe("Tooltip callbacks", () => {
 		let called = [];
 		const spy = {
-			onshow: sinon.spy((ctx, data) => called.push({ctx, data, type: "onshow"})),
-			onshown: sinon.spy((ctx, data) => called.push({ctx, data, type: "onshown"})),
-			onhide: sinon.spy((ctx, data) => called.push({ctx, data, type: "onhide"})),
-			onhidden: sinon.spy((ctx, data) => called.push({ctx, data, type: "onhidden"}))
+			onshow: sinon.spy(function(data) { called.push({ctx: this, data, type: "onshow"}) }),
+			onshown: sinon.spy(function(data) { called.push({ctx: this, data, type: "onshown"}) }),
+			onhide: sinon.spy(function(data) { called.push({ctx: this, data, type: "onhide"}) }),
+			onhidden: sinon.spy(function(data) { called.push({ctx: this, data, type: "onhidden"}) })
 		};
 
 		const check = fn => {
@@ -145,7 +147,7 @@ describe("TOOLTIP", function() {
 				// check the call order: onshow -> onshown -> onhide -> onhidden
 				expect(call.type).to.be.equal(name);
 
-				// check the passed context argument
+				// check the context
 				expect(call.ctx).to.be.equal(chart);
 
 				// check the passed data argument
@@ -174,12 +176,12 @@ describe("TOOLTIP", function() {
 
 		describe("with left margin", () => {
 			before(() => {
-				chart.element.style.marginLeft = "300px";
+				chart.$.chart.style("marginLeft", "300px");
 			});
 
 			after(() => {
 				// reset to not affect other tests
-				chart.element.style.marginLeft = "";
+				chart.$.chart.style("marginLeft", null);
 			});
 
 			it("should show tooltip on proper position", () => {
@@ -666,7 +668,7 @@ describe("TOOLTIP", function() {
 
 			// check for circle point shape
 			util.hoverChart(chart, undefined, {clientX: 292, clientY: 34});
-
+			
 			value = +chart.$.tooltip.select(`.${CLASS.tooltipName}-data1 .value`).text();
 
 			expect(value).to.be.equal(1000);
@@ -898,6 +900,7 @@ describe("TOOLTIP", function() {
 
 	describe("tooltip display", () => {
 		before(() => {
+			// @ts-ignore
 			sandbox("tooltip-wrapper").innerHTML = "<div id='tooltip'></div>";
 
 			args = {

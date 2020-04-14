@@ -8,7 +8,7 @@ import {select as d3Select} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
 
-describe.only("GRID", function() {
+describe("GRID", function() {
 	let chart;
 	let args;
 

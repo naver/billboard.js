@@ -236,14 +236,14 @@ describe("API show", () => {
 
 		it("should correctly rendered having same width", done => {
 			const main = chart.$.main;
-			const barWidth = Math.round(main.select(`.${CLASS.bars}-${ids[0]}`).node().getBBox().width);
+			const barWidth = Math.round(util.getBBox(main.select(`.${CLASS.bars}-${ids[0]}`)).width);
 
 			chart.toggle(ids.concat().splice(1));
 
 			setTimeout(() => {
 				main.selectAll(`.${CLASS.bars}-${ids[0]}, .${CLASS.bars}-${ids[2]}`)
 					.each(function() {
-						expect(Math.round(this.getBBox().width)).to.be.equal(barWidth);
+						expect(Math.round(util.getBBox(this).width)).to.be.equal(barWidth);
 					});
 
 				done();

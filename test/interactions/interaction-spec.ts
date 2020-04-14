@@ -514,7 +514,7 @@ describe("INTERACTION", () => {
 			it("check for data click for line", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
-				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}-data1 circle`));
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -534,7 +534,7 @@ describe("INTERACTION", () => {
 			it("check for data click for rectangle data point", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
-				const circle = main.select(`.${CLASS.circles}-data1 rect`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}-data1 rect`));
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -557,7 +557,7 @@ describe("INTERACTION", () => {
 			it("check for data click for polygon data point", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
-				const circle = main.select(`.${CLASS.circles}-data2 use`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}-data2 use`));
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -579,7 +579,7 @@ describe("INTERACTION", () => {
 			it("check for data click for area", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
-				const circle = main.select(`.${CLASS.circles}-data1 circle`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}-data1 circle`));
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -599,7 +599,7 @@ describe("INTERACTION", () => {
 			it("check for data click for scatter", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
-				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}-data2 circle`));
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
@@ -619,7 +619,7 @@ describe("INTERACTION", () => {
 			it("check for data click for bubble", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}`).node();
-				const circle = main.select(`.${CLASS.circles}-data2 circle`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}-data2 circle`));
 				const delta = 50;
 
 				util.fireEvent(rect, "click", {
@@ -640,7 +640,7 @@ describe("INTERACTION", () => {
 			it("check for data click for bar", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRect}.${CLASS.eventRect}-0`).node();
-				const path = main.select(`.${CLASS.bars}-data1 path`).node().getBBox();
+				const path = util.getBBox(main.select(`.${CLASS.bars}-data1 path`));
 
 				util.fireEvent(rect, "click", {
 					clientX: path.x,
@@ -719,7 +719,7 @@ describe("INTERACTION", () => {
 			it("check for data click for multiple xs", () => {
 				const main = chart.$.main;
 				const rect = main.select(`.${CLASS.eventRects}.${CLASS.eventRectsMultiple} rect`).node();
-				const circle = main.select(`.${CLASS.circles}.${CLASS.circles}-data1 circle`).node().getBBox();
+				const circle = util.getBBox(main.select(`.${CLASS.circles}.${CLASS.circles}-data1 circle`));
 
 				util.fireEvent(rect, "click", {
 					clientX: circle.x,
