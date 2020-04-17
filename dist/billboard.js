@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200413133521
+ * @version 1.11.1-nightly-20200417133914
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -660,8 +660,8 @@ var isValue = function (v) {
 },
     getTranslation = function (node) {
   var transform = node ? node.transform : null,
-      baseVal = transform ? transform.baseVal : [];
-  return baseVal.length ? baseVal.getItem(0).matrix : {
+      baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
     a: 0,
     b: 0,
     c: 0,
@@ -7472,7 +7472,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       x: x - 1,
       value: value,
       id: id
-    }), x = converted.length, value = converted[x - 1].value, isCategorized && converted.push({
+    }), x = converted.length - 1, value = converted[x].value, isCategorized && converted.push({
       x: x,
       value: value,
       id: id
@@ -8526,16 +8526,16 @@ extend(ChartInternal_ChartInternal.prototype, {
         shapeOffsetTargets = targets.map(function (target) {
       var rowValues = target.values;
       $$.isStepType(target) && (rowValues = $$.convertValuesToStep(rowValues));
-      var values,
-          rowValueMapByXValue = rowValues.reduce(function (out, value) {
+      var rowValueMapByXValue = rowValues.reduce(function (out, value) {
         return out[+value.x] = value, out;
-      }, {});
-      return values = $$.isStackNormalized() ? rowValues.map(function (v) {
+      }, {}),
+          values = rowValues.map($$.isStackNormalized() ? function (v) {
         return $$.getRatio("index", v, !0);
-      }) : rowValues.map(function (_ref) {
+      } : function (_ref) {
         var value = _ref.value;
         return value;
-      }), {
+      });
+      return {
         id: target.id,
         rowValues: rowValues,
         rowValueMapByXValue: rowValueMapByXValue,
@@ -8561,6 +8561,7 @@ extend(ChartInternal_ChartInternal.prototype, {
       var ind = $$.getIndices(indices, d.id),
           scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
           y0 = scale($$.getShapeYMin(d.id)),
+          isStepType = $$.isStepType(d),
           dataXAsNumber = +d.x,
           offset = y0;
       return shapeOffsetTargets.forEach(function (t) {
@@ -8568,9 +8569,9 @@ extend(ChartInternal_ChartInternal.prototype, {
             values = t.values;
 
         if (t.id !== d.id && ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-          var _rowValue = rowValues[idx]; // check if the x values line up
+          var _row5 = rowValues[idx]; // check if the x values line up
 
-          _rowValue && +_rowValue.x === dataXAsNumber || (_rowValue = t.rowValueMapByXValue[dataXAsNumber]), _rowValue && _rowValue.value * d.value >= 0 && (offset += scale(values[_rowValue.index]) - y0);
+          _row5 && +_row5.x === dataXAsNumber || (_row5 = t.rowValueMapByXValue[dataXAsNumber]), _row5 && _row5.value * d.value >= 0 && (offset += scale(values[isStepType ? idx : _row5.index]) - y0);
         }
       }), offset;
     };
@@ -14929,7 +14930,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200413133521",
+  version: "1.11.1-nightly-20200417133914",
 
   /**
    * Generate chart
@@ -15028,7 +15029,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200413133521
+ * @version 1.11.1-nightly-20200417133914
  */
 
 
