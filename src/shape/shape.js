@@ -187,13 +187,11 @@ extend(ChartInternal.prototype, {
 				return out;
 			}, {});
 
-			let values;
-
-			if ($$.isStackNormalized()) {
-				values = rowValues.map(v => $$.getRatio("index", v, true));
-			} else {
-				values = rowValues.map(({value}) => value);
-			}
+			const values = rowValues.map(
+				$$.isStackNormalized() ?
+					v => $$.getRatio("index", v, true) :
+					(({value}) => value)
+			);
 
 			return {
 				id: target.id,
@@ -219,6 +217,7 @@ extend(ChartInternal.prototype, {
 			const scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id);
 			const y0 = scale($$.getShapeYMin(d.id));
 
+			const isStepType = $$.isStepType(d);
 			const dataXAsNumber = Number(d.x);
 			let offset = y0;
 
@@ -232,15 +231,15 @@ extend(ChartInternal.prototype, {
 					}
 
 					if (indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-						let rowValue = rowValues[idx];
+						let row = rowValues[idx];
 
 						// check if the x values line up
-						if (!rowValue || Number(rowValue.x) !== dataXAsNumber) {
-							rowValue = t.rowValueMapByXValue[dataXAsNumber];
+						if (!row || Number(row.x) !== dataXAsNumber) {
+							row = t.rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (rowValue && rowValue.value * d.value >= 0) {
-							offset += scale(values[rowValue.index]) - y0;
+						if (row && row.value * d.value >= 0) {
+							offset += scale(values[isStepType ? idx : row.index]) - y0;
 						}
 					}
 				});
