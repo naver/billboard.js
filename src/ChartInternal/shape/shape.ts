@@ -269,6 +269,8 @@ export default {
 			const ind = $$.getIndices(indices, d.id);
 			const scale = $$.getYScaleById(d.id, isSub);
 			const y0 = scale($$.getShapeYMin(d.id));
+
+			const isStepType = $$.isStepType(d);
 			const dataXAsNumber = Number(d.x);
 			let offset = y0;
 
@@ -282,15 +284,15 @@ export default {
 					}
 
 					if (indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-						let rowValue = rowValues[idx];
+						let row = rowValues[idx];
 
 						// check if the x values line up
-						if (!rowValue || Number(rowValue.x) !== dataXAsNumber) {
-							rowValue = t.rowValueMapByXValue[dataXAsNumber];
+						if (!row || Number(row.x) !== dataXAsNumber) {
+							row = t.rowValueMapByXValue[dataXAsNumber];
 						}
 
-						if (rowValue && rowValue.value * d.value >= 0) {
-							offset += scale(values[rowValue.index]) - y0;
+						if (row && row.value * d.value >= 0) {
+							offset += scale(values[isStepType ? idx : row.index]) - y0;
 						}
 					}
 				});

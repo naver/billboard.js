@@ -2,6 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+import {TYPE, TYPE_BY_CATEGORY} from "../../config/const";
 import {brushEmpty, getBrushSelection, getMinMax, isDefined, notEmpty, isValue, isObject, isNumber, diffDomain, parseDate, sortValue} from "../../module/util";
 
 export default {
@@ -108,8 +109,13 @@ export default {
 		let yDomainMax = $$.getYDomainMax(yTargets);
 
 		const center = config[`${pfx}_center`];
-		let isZeroBased = ["area", "bar", "bubble", "line", "scatter"]
-			.some(v => $$.hasType(v, yTargets) && config[`${v}_zerobased`]);
+		let isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER, ...TYPE_BY_CATEGORY.Line]
+			.some(v => {
+				const type = v.indexOf("area") > -1 ? "area" : v;
+
+				return $$.hasType(v, yTargets) && config[`${type}_zerobased`];
+			});
+
 		const isInverted = config[`${pfx}_inverted`];
 		const showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated;
 		const showVerticalDataLabel = $$.hasDataLabel() && !config.axis_rotated;

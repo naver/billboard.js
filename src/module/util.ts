@@ -370,17 +370,19 @@ function getCssRules(styleSheets: any[]) {
 }
 
 /**
- * Gets the SVGMatrix of an SVGElement
- * @param {SVGElement} node Target node
- * @returns {SVGMatrix} matrix
+ * Gets the SVGMatrix of an SVGGElement
+ * @param {SVGGraphicsElement} node
+ * @return {SVGMatrix} matrix
  * @private
  */
-function getTranslation(node) {
+const getTranslation = node => {
 	const transform = node ? node.transform : null;
-	const baseVal = transform ? transform.baseVal : [];
+	const baseVal = transform && transform.baseVal;
 
-	return baseVal.length ? baseVal.getItem(0).matrix : {a: 0, b: 0, c: 0, d: 0, e: 0, f: 0};
-}
+	return baseVal && baseVal.numberOfItems ?
+		baseVal.getItem(0).matrix :
+		{a: 0, b: 0, c: 0, d: 0, e: 0, f: 0};
+};
 
 /**
  * Get unique value from array

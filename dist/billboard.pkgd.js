@@ -21768,17 +21768,17 @@ function getCssRules(styleSheets) {
   }), rules;
 }
 /**
- * Gets the SVGMatrix of an SVGElement
- * @param {SVGElement} node Target node
- * @returns {SVGMatrix} matrix
+ * Gets the SVGMatrix of an SVGGElement
+ * @param {SVGGraphicsElement} node
+ * @return {SVGMatrix} matrix
  * @private
  */
 
 
-function getTranslation(node) {
+var getTranslation = function (node) {
   var transform = node ? node.transform : null,
-      baseVal = transform ? transform.baseVal : [];
-  return baseVal.length ? baseVal.getItem(0).matrix : {
+      baseVal = transform && transform.baseVal;
+  return baseVal && baseVal.numberOfItems ? baseVal.getItem(0).matrix : {
     a: 0,
     b: 0,
     c: 0,
@@ -21786,7 +21786,7 @@ function getTranslation(node) {
     e: 0,
     f: 0
   };
-}
+};
 /**
  * Get unique value from array
  * @param {Array} data Source data
@@ -27276,7 +27276,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
       x: x - 1,
       value: value,
       id: id
-    }), x = converted.length, value = converted[x - 1].value, isCategorized && converted.push({
+    }), x = converted.length - 1, value = converted[x].value, isCategorized && converted.push({
       x: x,
       value: value,
       id: id
@@ -29185,9 +29185,13 @@ function getFormat($$, typeValue, v) {
         t = getRandom(),
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
     return [$$.$el.text.each(function (d, i) {
-      var text = src_select(this); // do not apply transition for newly added text elements
+      var _this2 = this,
+          text = src_select(this);
 
-      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x.bind(this)(d, i)).attr("y", y.bind(this)(d, i)).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
+      // do not apply transition for newly added text elements
+      (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x.bind(this)(d, i)).attr("y", function (d) {
+        return y.bind(_this2)(d, i);
+      }).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
     })];
   },
 
@@ -29320,7 +29324,7 @@ function getFormat($$, typeValue, v) {
 
     if (d.value === null && !isRotated) {
       var boxHeight = rect.height;
-      yPos < boxHeight ? yPos = boxHeight : yPos > this.height && (yPos = this.height - 4);
+      yPos < boxHeight ? yPos = boxHeight : yPos > state.height && (yPos = state.height - 4);
     }
 
     return isRotated || (yPos += $$.getCenteredTextPos(d, points, textElement)), yPos + $$.getTextPos(d.id, "y");
@@ -30046,10 +30050,11 @@ var TYPE_BY_CATEGORY = {
     return this.isPieType(d) || this.isDonutType(d) || this.isGaugeType(d) || this.isRadarType(d);
   },
   // determine if is 'circle' data point
-  isCirclePoint: function isCirclePoint() {
+  isCirclePoint: function isCirclePoint(node) {
     var config = this.config,
-        pattern = config.point_pattern;
-    return config.point_type === "circle" && (!pattern || isArray(pattern) && pattern.length === 0);
+        pattern = config.point_pattern,
+        isCircle = !1;
+    return isCircle = !!(node && node.tagName === "circle") || config.point_type === "circle" && (!pattern || isArray(pattern) && pattern.length === 0), isCircle;
   },
   lineData: function lineData(d) {
     return this.isLineType(d) ? [d] : [];
@@ -32566,19 +32571,17 @@ function smoothLines(el, type) {
     var $$ = this,
         config = $$.config,
         clip = $$.state.clip,
-        _$$$$el = $$.$el,
-        gridLines = _$$$$el.gridLines,
-        main = _$$$$el.main;
-    (config.grid_x_lines.length || config.grid_y_lines.length) && (gridLines.main = main.insert("g", "." + config_classes.chart + (config.grid_lines_front ? " + *" : "")).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid + " " + config_classes.gridLines), gridLines.main.append("g").attr("class", config_classes.xgridLines), gridLines.main.append("g").attr("class", config_classes.ygridLines), gridLines.x = src_selectAll([]));
+        $el = $$.$el;
+    (config.grid_x_lines.length || config.grid_y_lines.length) && ($el.gridLines.main = $el.main.insert("g", "." + config_classes.chart + (config.grid_lines_front ? " + *" : "")).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid + " " + config_classes.gridLines), $el.gridLines.main.append("g").attr("class", config_classes.xgridLines), $el.gridLines.main.append("g").attr("class", config_classes.ygridLines), $el.gridLines.x = src_selectAll([]));
   },
   updateXGrid: function updateXGrid(withoutUpdate) {
     var $$ = this,
         config = $$.config,
         scale = $$.scale,
         state = $$.state,
-        _$$$$el2 = $$.$el,
-        main = _$$$$el2.main,
-        grid = _$$$$el2.grid,
+        _$$$$el = $$.$el,
+        main = _$$$$el.main,
+        grid = _$$$$el.grid,
         isRotated = config.axis_rotated,
         xgridData = $$.generateGridData(config.grid_x_type, scale.x),
         tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0,
@@ -32609,9 +32612,9 @@ function smoothLines(el, type) {
     var $$ = this,
         config = $$.config,
         state = $$.state,
-        _$$$$el3 = $$.$el,
-        grid = _$$$$el3.grid,
-        main = _$$$$el3.main,
+        _$$$$el2 = $$.$el,
+        grid = _$$$$el2.grid,
+        main = _$$$$el2.main,
         isRotated = config.axis_rotated,
         gridValues = $$.axis.y.tickValues() || $$.scale.y.ticks(config.grid_y_ticks),
         pos = function (d) {
@@ -32622,9 +32625,9 @@ function smoothLines(el, type) {
   },
   updateGrid: function updateGrid(duration) {
     var $$ = this,
-        _$$$$el4 = $$.$el,
-        grid = _$$$$el4.grid,
-        gridLines = _$$$$el4.gridLines;
+        _$$$$el3 = $$.$el,
+        grid = _$$$$el3.grid,
+        gridLines = _$$$$el3.gridLines;
     // hide if arc type
     gridLines.main || $$.initGridLines(), grid.main.style("visibility", $$.hasArcType() ? "hidden" : "visible"), $$.hideGridFocus(), $$.updateXGridLines(duration), $$.updateYGridLines(duration);
   },
@@ -32637,9 +32640,9 @@ function smoothLines(el, type) {
   updateXGridLines: function updateXGridLines(duration) {
     var $$ = this,
         config = $$.config,
-        _$$$$el5 = $$.$el,
-        gridLines = _$$$$el5.gridLines,
-        main = _$$$$el5.main,
+        _$$$$el4 = $$.$el,
+        gridLines = _$$$$el4.gridLines,
+        main = _$$$$el4.main,
         isRotated = config.axis_rotated;
     config.grid_x_show && $$.updateXGrid();
     var xLines = main.select("." + config_classes.xgridLines).selectAll("." + config_classes.xgridLine).data(config.grid_x_lines); // exit
@@ -32702,7 +32705,7 @@ function smoothLines(el, type) {
         clip = $$.state.clip,
         $el = $$.$el,
         isFront = config.grid_front,
-        className = "." + config_classes[isFront && $el.grid.main ? "gridLines" : "chart"] + (isFront ? " + *" : ""),
+        className = "." + config_classes[isFront && $el.gridLines.main ? "gridLines" : "chart"] + (isFront ? " + *" : ""),
         grid = $el.main.insert("g", className).attr("clip-path", clip.pathGrid).attr("class", config_classes.grid);
     $el.grid.main = grid, config.grid_x_show && grid.append("g").attr("class", config_classes.xgrids), config.grid_y_show && grid.append("g").attr("class", config_classes.ygrids), config.grid_focus_show && (grid.append("g").attr("class", config_classes.xgridFocus).append("line").attr("class", config_classes.xgridFocus), config.grid_focus_y && !config.tooltip_grouped && grid.append("g").attr("class", config_classes.ygridFocus).append("line").attr("class", config_classes.ygridFocus));
   },
@@ -32765,9 +32768,9 @@ function smoothLines(el, type) {
         inputType = _$$$state4.inputType,
         width = _$$$state4.width,
         height = _$$$state4.height,
-        _$$$$el6 = $$.$el,
-        grid = _$$$$el6.grid,
-        main = _$$$$el6.main;
+        _$$$$el5 = $$.$el,
+        grid = _$$$$el5.grid,
+        main = _$$$$el5.main;
 
     if (inputType === "touch") {
       var xgridFocus = grid.main.select("line." + config_classes.xgridFocus);
@@ -35183,7 +35186,7 @@ function ascending_sum(series) {
         lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub),
         yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      var y0 = yScale(d.id, isSub)(0),
+      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
           offset = lineOffset(d, i) || y0,
           posX = x(d),
           posY = y(d);
@@ -35381,7 +35384,7 @@ function ascending_sum(series) {
         areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub),
         yScale = $$.getYScaleById.bind($$);
     return function (d, i) {
-      var y0 = yScale(d.id, isSub)(0),
+      var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id)),
           offset = areaOffset(d, i) || y0,
           posX = x(d),
           posY = y(d);
@@ -35560,7 +35563,7 @@ var getTransitionName = function () {
   isWithinCircle: function isWithinCircle(node, r) {
     var mouse = src_mouse(node),
         element = src_select(node),
-        prefix = this.isCirclePoint() ? "c" : "",
+        prefix = this.isCirclePoint(node) ? "c" : "",
         cx = +element.attr(prefix + "x"),
         cy = +element.attr(prefix + "y");
 
@@ -35836,8 +35839,11 @@ var getTransitionName = function () {
    * @private
    */
   getShapeYMin: function getShapeYMin(id) {
-    var $$ = this;
-    return !$$.isGrouped(id) && $$.config["axis_" + $$.axis.getId(id) + "_min"] || 0;
+    var $$ = this,
+        _$$$scale$$$$axis$get = $$.scale[$$.axis.getId(id)].domain(),
+        yMin = _$$$scale$$$$axis$get[0];
+
+    return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
   },
 
   /**
@@ -35887,6 +35893,7 @@ var getTransitionName = function () {
       var ind = $$.getIndices(indices, d.id),
           scale = $$.getYScaleById(d.id, isSub),
           y0 = scale($$.getShapeYMin(d.id)),
+          isStepType = $$.isStepType(d),
           dataXAsNumber = +d.x,
           offset = y0;
       return shapeOffsetTargets.forEach(function (t) {
@@ -35894,9 +35901,9 @@ var getTransitionName = function () {
             values = t.values;
 
         if (t.id !== d.id && ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-          var _rowValue = rowValues[idx]; // check if the x values line up
+          var _row5 = rowValues[idx]; // check if the x values line up
 
-          _rowValue && +_rowValue.x === dataXAsNumber || (_rowValue = t.rowValueMapByXValue[dataXAsNumber]), _rowValue && _rowValue.value * d.value >= 0 && (offset += scale(values[_rowValue.index]) - y0);
+          _row5 && +_row5.x === dataXAsNumber || (_row5 = t.rowValueMapByXValue[dataXAsNumber]), _row5 && _row5.value * d.value >= 0 && (offset += scale(values[isStepType ? idx : _row5.index]) - y0);
         }
       }), offset;
     };

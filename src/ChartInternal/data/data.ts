@@ -703,8 +703,8 @@ export default {
 			converted.unshift({x: x - 1, value, id});
 
 		// append
-		x = converted.length;
-		value = converted[x - 1].value;
+		x = converted.length - 1;
+		value = converted[x].value;
 
 		isCategorized && converted.push({x, value, id});
 
