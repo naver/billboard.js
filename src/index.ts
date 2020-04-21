@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
-import Chart from "./chart/Chart";
+import Chart from "./Chart/Chart";
 import {isObject, mergeObj} from "./module/util";
 
 // eslint-disable-next-line no-use-before-define

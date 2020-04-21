@@ -1,5 +1,28 @@
 const webpack = require("webpack");
-const StringReplacePlugin = require("string-replace-webpack-plugin");
+const isWin = require("os").platform() === "win32";
+
+const plugins = isWin ? [
+	new webpack.NormalModuleReplacementPlugin(
+		/module\/util/i, function(resource) {
+			resource.request = resource.request.replace("module/util", "../test/assets/module/util");
+		}
+	),
+	new webpack.NormalModuleReplacementPlugin(
+		/fake/i, function(resource) {
+			if (/test\\assets\\module/i.test(resource.context)) {
+				resource.request = "../../../src/module/util";
+			}
+		}
+	)
+] :
+[
+	new webpack.NormalModuleReplacementPlugin(
+		/module\/util\.ts/i, "../../test/assets/module/util.ts"
+	),
+	new webpack.NormalModuleReplacementPlugin(
+		/fake\.ts/i, "../../../src/module/util.ts"
+	)
+];
 
 // file extension to be tested
 const fileExtensions = /(\.[jt]s)$/;
@@ -60,20 +83,7 @@ module.exports = function(config) {
 					}
 				]
 			},
-			plugins: [
-				new webpack.NormalModuleReplacementPlugin(
-					/module\/util/i, function(resource) {
-						resource.request = resource.request.replace("module/util", "../test/assets/module/util");
-					}
-				),
-				new webpack.NormalModuleReplacementPlugin(
-					/fake/i, function(resource) {
-						if (/test\\assets\\module/i.test(resource.context)) {
-							resource.request = "../../../src/module/util";
-						}
-					}
-				)
-			]
+			plugins
 		},
 
 		// preprocess matching files before serving them to the browser
