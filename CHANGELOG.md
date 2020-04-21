@@ -1,3 +1,11 @@
+## [1.12.5](https://github.com/naver/billboard.js/compare/1.12.4...1.12.5) (2020-04-21)
+
+
+### Bug Fixes
+
+* **gauge:** fixed 'getTranslation()' not working in IE and Edge ([649553e](https://github.com/naver/billboard.js/commit/649553ef352606af73afcaf35b364ce6b8f6c9cd)), closes [#1329](https://github.com/naver/billboard.js/issues/1329) [#1335](https://github.com/naver/billboard.js/issues/1335)
+* **shape:** Correct stack step type rendering ([5ff1a14](https://github.com/naver/billboard.js/commit/5ff1a14709dee19965409f8a452164ac68b0d2e9)), closes [#1326](https://github.com/naver/billboard.js/issues/1326)
+
 ## [1.12.4](https://github.com/naver/billboard.js/compare/1.12.3...1.12.4) (2020-04-10)
 
 
