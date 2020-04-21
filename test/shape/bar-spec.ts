@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
@@ -156,7 +157,7 @@ describe("SHAPE BAR", () => {
 
 			it("should not be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
@@ -170,7 +171,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
@@ -184,7 +185,7 @@ describe("SHAPE BAR", () => {
 
 			it("should not be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
@@ -198,7 +199,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
@@ -218,7 +219,7 @@ describe("SHAPE BAR", () => {
 
 			it("should not be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.not.be.ok;
 						done();
@@ -232,7 +233,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data1 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
@@ -246,7 +247,7 @@ describe("SHAPE BAR", () => {
 
 			it("should be within bar of negative value", done => {
 				const internal = chart.internal;
-				const bar = internal.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
+				const bar = chart.$.main.select(`.${CLASS.target}-data3 .${CLASS.bar}-0`)
 					.on("click", function() {
 						expect(internal.isWithinBar(this)).to.be.ok;
 						done();
@@ -286,8 +287,7 @@ describe("SHAPE BAR", () => {
 		});
 
 		it("should not throw error on click", () => {
-			const internal = chart.internal;
-			const bar = internal.main.select(`.${CLASS.eventRectsMultiple} rect`).node();
+			const bar = chart.$.main.select(`.${CLASS.eventRectsMultiple} rect`).node();
 
 			expect(() => util.fireEvent(bar, "click")).to.not.throw();
 		});
@@ -362,7 +362,6 @@ describe("SHAPE BAR", () => {
 	describe("options", () => {
 		const width = 15;
 		const padding = 3;
-		const isMac = /Mac OS/.test(navigator.userAgent);
 
 		before(() => {
 			args = {
@@ -386,7 +385,7 @@ describe("SHAPE BAR", () => {
 
 		const checkRadius = path => {
 			const removeSpace = v => v.replace(/\s/g,"");
-			const main = chart.$.main;
+			const {main} = chart.$;
 
 			// check the path from the third data value
 			main.selectAll(`.${CLASS.shape}.${CLASS.bar}-2`).each(function(d, i) {
@@ -395,14 +394,13 @@ describe("SHAPE BAR", () => {
 		};
 
 		it(`bar width should be ${width}px`, () => {
-			const main = chart.$.main;
-			const barWidth = util.getBBox(main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)).width;
+			const barWidth = util.getBBox(chart.$.main.select(`.${CLASS.chartBar} path.${CLASS.shape}`)).width;
 
 			expect(barWidth).to.be.equal(width);
 		});
 
 		it(`bar padding should be ${padding}px`, () => {
-			const main = chart.$.main;
+			const {main} = chart.$;
 			const targetClass = `.${CLASS.chartBar}.${CLASS.target}`;
 
 			const bar1 = util.getBBox(main.select(`${targetClass}-data1 path.${CLASS.shape}`)).x + width;

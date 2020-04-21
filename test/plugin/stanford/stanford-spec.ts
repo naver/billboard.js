@@ -3,6 +3,8 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
+import sinon from "sinon";
 import util from "../../assets/util";
 import Stanford from "../../../src/plugin/stanford/index";
 import {compareEpochs, getCentroid, getRegionArea, pointInRegion} from "../../../src/plugin/stanford/util";

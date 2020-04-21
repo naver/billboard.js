@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -29,11 +30,9 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg circle elements", () => {
-			const target = chart.$.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
-			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
-			const circles = circlesEl.getElementsByTagName("circle");
+			const circles = chart.$.circles.filter(d => d.id === "data1");
 
-			expect(circles.length).to.be.equal(6);
+			expect(circles.size()).to.be.equal(chart.data("data1")[0].values.length);
 		});
 
 		it("circle points are expanded?", () => {
@@ -66,11 +65,13 @@ describe("SHAPE POINT", () => {
 		});
 
 		it("Should render svg rect elements", () => {
-			const target = chart.$.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
-			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
-			const rects = circlesEl.getElementsByTagName("rect");
+			const circles = chart.$.circles.filter(d => d.id === "data1");
 
-			expect(rects.length).to.be.equal(6);
+			expect(circles.size()).to.be.equal(chart.data("data1")[0].values.length);
+
+			circles.each(function() {
+				expect(this.tagName).to.be.equal("rect");
+			});
 		});
 	});
 
@@ -86,18 +87,20 @@ describe("SHAPE POINT", () => {
 				},
 				point: {
 					pattern: [
-						"<polygon points='5 2.5 2.5 5 7.5 5'></polygon>"
+						"<polygon points='2.5 0 0 5 5 5'></polygon>"
 					]
 				}
 			};
 		});
 
 		it("Should render svg \"use\" elements", () => {
-			const target = chart.$.svg.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
-			const circlesEl = target.select(`.${CLASS.circles}-data1`).node();
-			const polygons = circlesEl.getElementsByTagName("use");
+			const circles = chart.$.circles.filter(d => d.id === "data1");
 
-			expect(polygons.length).to.be.equal(6);
+			expect(circles.size()).to.be.equal(chart.data("data1")[0].values.length);
+
+			circles.each(function() {
+				expect(this.tagName).to.be.equal("use");
+			});
 		});
 
 		it("set options point.pattern", () => {

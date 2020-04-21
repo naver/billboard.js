@@ -13,7 +13,7 @@ import {getCentroid, isString, parseDate} from "./util";
  * @private
  */
 export default class Elements {
-	owner;
+	private owner;
 
 	constructor(owner) {
 		this.owner = owner;

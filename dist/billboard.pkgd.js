@@ -18697,7 +18697,7 @@ var noop = {
 
 function dispatch_dispatch() {
   for (var t, i = 0, n = arguments.length, _ = {}; i < n; ++i) {
-    if (!(t = arguments[i] + "") || t in _ || /[\s.]/.test(t)) throw new Error("illegal type: " + t);
+    if (!(t = arguments[i] + "") || t in _) throw new Error("illegal type: " + t);
     _[t] = [];
   }
 
@@ -24479,7 +24479,7 @@ function transformer() {
 function continuous(transform, untransform) {
   return transformer()(transform, untransform);
 }
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatDecimal.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatDecimal.js
 // Computes the decimal coefficient and exponent of the specified number x with
 // significant digits p, where x is positive and p is in [1, 21] or undefined.
 // For example, formatDecimal(1.23) returns ["123", 0].
@@ -24492,12 +24492,12 @@ function continuous(transform, untransform) {
 
   return [coefficient.length > 1 ? coefficient[0] + coefficient.slice(2) : coefficient, +x.slice(i + 1)];
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/exponent.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/exponent.js
 
 /* harmony default export */ var src_exponent = (function (x) {
   return x = formatDecimal(Math.abs(x)), x ? x[1] : NaN;
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatGroup.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatGroup.js
 /* harmony default export */ var formatGroup = (function (grouping, thousands) {
   return function (value, width) {
     for (var i = value.length, t = [], j = 0, g = grouping[0], length = 0; i > 0 && g > 0 && (length + g + 1 > width && (g = Math.max(1, width - length)), t.push(value.substring(i -= g, i + g)), !((length += g + 1) > width));) g = grouping[j = (j + 1) % grouping.length];
@@ -24505,7 +24505,7 @@ function continuous(transform, untransform) {
     return t.reverse().join(thousands);
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatNumerals.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatNumerals.js
 /* harmony default export */ var formatNumerals = (function (numerals) {
   return function (value) {
     return value.replace(/[0-9]/g, function (i) {
@@ -24513,7 +24513,7 @@ function continuous(transform, untransform) {
     });
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatSpecifier.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatSpecifier.js
 // [[fill]align][sign][symbol][0][width][,][.precision][~][type]
 var re = /^(?:(.)?([<>=^]))?([+\-( ])?([$#])?(0)?(\d+)?(,)?(\.\d+)?(~)?([a-z%])?$/i;
 function formatSpecifier(specifier) {
@@ -24541,7 +24541,7 @@ function FormatSpecifier(specifier) {
 FormatSpecifier.prototype.toString = function () {
   return this.fill + this.align + this.sign + this.symbol + (this.zero ? "0" : "") + (this.width === undefined ? "" : Math.max(1, this.width | 0)) + (this.comma ? "," : "") + (this.precision === undefined ? "" : "." + Math.max(0, this.precision | 0)) + (this.trim ? "~" : "") + this.type;
 };
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatTrim.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTrim.js
 // Trims insignificant zeros, e.g., replaces 1.2000k with 1.2k.
 /* harmony default export */ var formatTrim = (function (s) {
   out: for (var i1, n = s.length, i = 1, i0 = -1; i < n; ++i) switch (s[i]) {
@@ -24560,7 +24560,7 @@ FormatSpecifier.prototype.toString = function () {
 
   return i0 > 0 ? s.slice(0, i0) + s.slice(i1 + 1) : s;
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatPrefixAuto.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatPrefixAuto.js
 
 var prefixExponent;
 /* harmony default export */ var formatPrefixAuto = (function (x, p) {
@@ -24572,7 +24572,7 @@ var prefixExponent;
       n = coefficient.length;
   return i === n ? coefficient : i > n ? coefficient + Array(i - n + 1).join("0") : i > 0 ? coefficient.slice(0, i) + "." + coefficient.slice(i) : "0." + Array(1 - i).join("0") + formatDecimal(x, Math.max(0, p + i - 1))[0]; // less than 1y!
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatRounded.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatRounded.js
 
 /* harmony default export */ var formatRounded = (function (x, p) {
   var d = formatDecimal(x, p);
@@ -24581,7 +24581,7 @@ var prefixExponent;
       exponent = d[1];
   return exponent < 0 ? "0." + Array(-exponent).join("0") + coefficient : coefficient.length > exponent + 1 ? coefficient.slice(0, exponent + 1) + "." + coefficient.slice(exponent + 1) : coefficient + Array(exponent - coefficient.length + 2).join("0");
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/formatTypes.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/formatTypes.js
 
 
 /* harmony default export */ var formatTypes = ({
@@ -24621,11 +24621,11 @@ var prefixExponent;
     return Math.round(_x).toString(16);
   }
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/identity.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/identity.js
 /* harmony default export */ var d3_format_src_identity = (function (x) {
   return x;
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/locale.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/locale.js
 
 
 
@@ -24646,11 +24646,12 @@ var locale_map = Array.prototype.map,
           valueSuffix = suffix;
       if (type === "c") valueSuffix = formatType(value) + valueSuffix, value = "";else {
         value = +value;
-        // Perform the initial formatting.
-        var valueNegative = value < 0;
+        // Determine the sign. -0 is not less than 0, but 1 / -0 is!
+        var valueNegative = value < 0 || 1 / value < 0; // Perform the initial formatting.
+
         // Break the formatted value into the integer “value” part that can be
         // grouped, and fractional or exponential “suffix” part that is not.
-        if (value = isNaN(value) ? nan : formatType(Math.abs(value), precision), trim && (value = formatTrim(value)), valueNegative && +value === 0 && (valueNegative = !1), valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix, valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : ""), maybeSuffix) for (i = -1, n = value.length; ++i < n;) if (c = value.charCodeAt(i), 48 > c || c > 57) {
+        if (value = isNaN(value) ? nan : formatType(Math.abs(value), precision), trim && (value = formatTrim(value)), valueNegative && +value === 0 && sign !== "+" && (valueNegative = !1), valuePrefix = (valueNegative ? sign === "(" ? sign : minus : sign === "-" || sign === "(" ? "" : sign) + valuePrefix, valueSuffix = (type === "s" ? prefixes[8 + prefixExponent / 3] : "") + valueSuffix + (valueNegative && sign === "(" ? ")" : ""), maybeSuffix) for (i = -1, n = value.length; ++i < n;) if (c = value.charCodeAt(i), 48 > c || c > 57) {
           valueSuffix = (c === 46 ? decimal + value.slice(i + 1) : value.slice(i)) + valueSuffix, value = value.slice(0, i);
           break;
         }
@@ -24730,7 +24731,7 @@ var locale_map = Array.prototype.map,
     }
   };
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/defaultLocale.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/defaultLocale.js
 
 var src_defaultLocale_locale;
 var defaultLocale_format;
@@ -24745,22 +24746,22 @@ defaultLocale_defaultLocale({
 function defaultLocale_defaultLocale(definition) {
   return src_defaultLocale_locale = src_locale(definition), defaultLocale_format = src_defaultLocale_locale.format, formatPrefix = src_defaultLocale_locale.formatPrefix, src_defaultLocale_locale;
 }
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionFixed.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionFixed.js
 
 /* harmony default export */ var precisionFixed = (function (step) {
   return Math.max(0, -src_exponent(Math.abs(step)));
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionPrefix.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionPrefix.js
 
 /* harmony default export */ var precisionPrefix = (function (step, value) {
   return Math.max(0, Math.max(-8, Math.min(8, Math.floor(src_exponent(value) / 3))) * 3 - src_exponent(Math.abs(step)));
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/precisionRound.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/precisionRound.js
 
 /* harmony default export */ var precisionRound = (function (step, max) {
   return step = Math.abs(step), max = Math.abs(max) - step, Math.max(0, src_exponent(max) - src_exponent(step)) + 1;
 });
-// CONCATENATED MODULE: ./node_modules/d3-scale/node_modules/d3-format/src/index.js
+// CONCATENATED MODULE: ./node_modules/d3-format/src/index.js
 
 
 
@@ -27816,11 +27817,52 @@ var colorizePattern = function (pattern, color, id) {
     } : isFunction(onover) && (color = color.bind($$.api)), isObject(d) ? main.selectAll("." + config_classes.arc + $$.getTargetSelectorSuffix(d.id)).style("fill", color(d)) : main.selectAll("." + config_classes.shape + "-" + d).style("fill", color);
   }
 });
+// CONCATENATED MODULE: ./src/config/const.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * Chart type constant
+ * @private
+ */
+var TYPE = {
+  AREA: "area",
+  AREA_LINE_RANGE: "area-line-range",
+  AREA_SPLINE: "area-spline",
+  AREA_SPLINE_RANGE: "area-spline-range",
+  AREA_STEP: "area-step",
+  BAR: "bar",
+  BUBBLE: "bubble",
+  DONUT: "donut",
+  GAUGE: "gauge",
+  LINE: "line",
+  PIE: "pie",
+  RADAR: "radar",
+  SCATTER: "scatter",
+  SPLINE: "spline",
+  STEP: "step"
+};
+/**
+ * chart types by category
+ * @private
+ */
+
+var TYPE_BY_CATEGORY = {
+  Area: [TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.AREA_STEP],
+  AreaRange: [TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE],
+  Arc: [TYPE.PIE, TYPE.DONUT, TYPE.GAUGE, TYPE.RADAR],
+  Line: [TYPE.LINE, TYPE.SPLINE, TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.STEP, TYPE.AREA_STEP],
+  Step: [TYPE.STEP, TYPE.AREA_STEP],
+  Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
+};
 // CONCATENATED MODULE: ./src/ChartInternal/internals/domain.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+
 
 /* harmony default export */ var internals_domain = ({
   getYDomainMinMax: function getYDomainMinMax(targets, type) {
@@ -27897,8 +27939,9 @@ var colorizePattern = function (pattern, color, id) {
         yDomainMin = $$.getYDomainMin(yTargets),
         yDomainMax = $$.getYDomainMax(yTargets),
         center = config[pfx + "_center"],
-        isZeroBased = ["area", "bar", "bubble", "line", "scatter"].some(function (v) {
-      return $$.hasType(v, yTargets) && config[v + "_zerobased"];
+        isZeroBased = [TYPE.BAR, TYPE.BUBBLE, TYPE.SCATTER].concat(TYPE_BY_CATEGORY.Line).some(function (v) {
+      var type = v.indexOf("area") > -1 ? "area" : v;
+      return $$.hasType(v, yTargets) && config[type + "_zerobased"];
     }),
         isInverted = config[pfx + "_inverted"],
         showHorizontalDataLabel = $$.hasDataLabel() && config.axis_rotated,
@@ -29862,46 +29905,6 @@ function getTextPos(pos, width) {
     $$.transformMain(withTransition, transitions), hasAxis && config.subchart_show && $$.transformContext(withTransition, transitions), $el.legend && $$.transformLegend(withTransition);
   }
 });
-// CONCATENATED MODULE: ./src/config/const.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * Chart type constant
- * @private
- */
-var TYPE = {
-  AREA: "area",
-  AREA_LINE_RANGE: "area-line-range",
-  AREA_SPLINE: "area-spline",
-  AREA_SPLINE_RANGE: "area-spline-range",
-  AREA_STEP: "area-step",
-  BAR: "bar",
-  BUBBLE: "bubble",
-  DONUT: "donut",
-  GAUGE: "gauge",
-  LINE: "line",
-  PIE: "pie",
-  RADAR: "radar",
-  SCATTER: "scatter",
-  SPLINE: "spline",
-  STEP: "step"
-};
-/**
- * chart types by category
- * @private
- */
-
-var TYPE_BY_CATEGORY = {
-  Area: [TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.AREA_STEP],
-  AreaRange: [TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE],
-  Arc: [TYPE.PIE, TYPE.DONUT, TYPE.GAUGE, TYPE.RADAR],
-  Line: [TYPE.LINE, TYPE.SPLINE, TYPE.AREA, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE, TYPE.AREA_LINE_RANGE, TYPE.STEP, TYPE.AREA_STEP],
-  Step: [TYPE.STEP, TYPE.AREA_STEP],
-  Spline: [TYPE.SPLINE, TYPE.AREA_SPLINE, TYPE.AREA_SPLINE_RANGE]
-};
 // CONCATENATED MODULE: ./src/ChartInternal/internals/type.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -33210,17 +33213,18 @@ function smoothLines(el, type) {
   },
 
   /**
-   * Get user agent's computed value for the total length of the path in user units
-   * https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/getTotalLength
+   * Get user agent's computed value
    * @returns {number}
    * @private
    */
   getBaseLength: function getBaseLength() {
     var $$ = this,
-        axis = $$.$el.axis,
+        _$$$state = $$.state,
+        width = _$$$state.width,
+        height = _$$$state.height,
         cacheKey = KEY.bubbleBaseLength,
         baseLength = $$.cache.get(cacheKey);
-    return baseLength || $$.cache.add(cacheKey, baseLength = getMinMax("min", [axis.x.select("path").node().getTotalLength(), axis.y.select("path").node().getTotalLength()])), baseLength;
+    return baseLength || $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height])), baseLength;
   },
 
   /**

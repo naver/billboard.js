@@ -1,4 +1,5 @@
 /* eslint-disable */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import BubbleCompare from "../../../src/plugin/bubblecompare";
 import util from "../../assets/util";

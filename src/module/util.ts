@@ -371,8 +371,8 @@ function getCssRules(styleSheets: any[]) {
 
 /**
  * Gets the SVGMatrix of an SVGGElement
- * @param {SVGGraphicsElement} node
- * @return {SVGMatrix} matrix
+ * @param {SVGElement} node Node element
+ * @returns {SVGMatrix} matrix
  * @private
  */
 const getTranslation = node => {

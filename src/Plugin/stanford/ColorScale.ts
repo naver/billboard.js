@@ -15,8 +15,8 @@ import {isFunction, getRange} from "./util";
  * @private
  */
 export default class ColorScale {
-	owner;
-	colorScale;
+	private owner;
+	private colorScale;
 
 	constructor(owner) {
 		this.owner = owner;

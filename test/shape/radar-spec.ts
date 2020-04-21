@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import util from "../assets/util";
 import CLASS from "../../src/config/classes";
 
@@ -33,14 +34,14 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("radar should be positioned at center", () => {
-			const rect = chart.$.main.select(".bb-chart-radars").node().getBoundingClientRect();
-			const left = (chart.element.getBoundingClientRect().width - rect.width) / 2;
+			const rect = chart.$.main.select(`.${CLASS.chartRadars}`).node().getBoundingClientRect();
+			const left = (chart.$.chart.node().getBoundingClientRect().width - rect.width) / 2;
 
 			expect(left).to.be.closeTo(rect.x, 3);
 		});
 
 		it("data points should positioned over radar chart element", () => {
-			expect(chart.internal.radars.node().nextSibling.classList.contains(CLASS.chartLines)).to.be.true;
+			expect(chart.internal.$el.radars.node().nextSibling.classList.contains(CLASS.chartCircles)).to.be.true;
 		});
 
 		it("check for shape rendering", done => {

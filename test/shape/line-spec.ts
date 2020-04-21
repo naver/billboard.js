@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import {
 	curveStepAfter as d3CurveStepAfter,
@@ -95,12 +96,17 @@ describe("SHAPE LINE", () => {
 			};
 		});
 
-		it("should not show the circle for null", () => {
-			const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-data1`);
+		it("should not show the circle for null", (done) => {
+			const target = chart.$.circles.filter(d => d.id === "data1");
 
-			expect(+target.select(`.${CLASS.circle}-0`).style("opacity")).to.be.equal(1);
-			expect(+target.select(`.${CLASS.circle}-1`).style("opacity")).to.be.equal(0);
-			expect(+target.select(`.${CLASS.circle}-2`).style("opacity")).to.be.equal(1);
+			setTimeout(() => {
+				target.each(function(d, i) {
+					expect(this.style.opacity).to.be.equal(d.index === 1 ? "0" : "1");
+				});
+
+				done();
+			}, 300)
+
 		});
 
 		it("should not draw a line segment for null data", done => {
@@ -329,22 +335,24 @@ describe("SHAPE LINE", () => {
 		});
 
 		const checkLineLen = dataName => {
-			const internal = chart.internal;
-			const target = internal.main.select(`.${CLASS.chartLine}.${CLASS.target}-${dataName}`);
+			const target = chart.$.main.select(`.${CLASS.chartLine}.${CLASS.target}-${dataName}`);
 			const commands = target.select(`.${CLASS.line}-${dataName}`).attr("d").split("C");
-			const dataLen = internal.filterRemoveNull(chart.data(dataName)[0].values).length;
+			const dataLen = chart.internal.filterRemoveNull(chart.data(dataName)[0].values).length;
 
 			expect(commands.length).to.be.equal(dataLen);
 
 			// null data points, shouldn't be showing
-			internal.main.selectAll(`.${CLASS.circles}-${dataName} circle`).each(function(d, i) {
+			chart.$.circles.filter(d => d.id === dataName).each(function(d, i) {
 				expect(+this.style.opacity).to.be.equal(i > 1 ? 1 : 0);
 			})
 		};
 
-		it("Should render the lines correctly when array data supplied", () => {
-			checkLineLen("data1");
-			checkLineLen("data2");
+		it("Should render the lines correctly when array data supplied", done => {
+			setTimeout(() => {
+				checkLineLen("data1");
+				checkLineLen("data2");
+				done();
+			}, 300)
 		});
 
 		it("should use cardinal interpolation by default", () => {
@@ -695,7 +703,7 @@ describe("SHAPE LINE", () => {
 			chart.data().forEach(v => {
 				const color = chart.color(v.id);
 				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
-				const id = `#${internal.datetimeId}-areaGradient${selectorSuffix}`;
+				const id = `#${internal.state.datetimeId}-areaGradient${selectorSuffix}`;
 				const gradient = chart.$.svg.select(id);
 
 				expect(gradient.empty()).to.be.false;
@@ -733,7 +741,7 @@ describe("SHAPE LINE", () => {
 
 			chart.data().forEach(v => {
 				const selectorSuffix = internal.getTargetSelectorSuffix(v.id);
-				const id = `#${internal.datetimeId}-areaGradient${selectorSuffix}`;
+				const id = `#${internal.state.datetimeId}-areaGradient${selectorSuffix}`;
 				const gradient = chart.$.svg.select(id);
 
 				expect(gradient.empty()).to.be.false;

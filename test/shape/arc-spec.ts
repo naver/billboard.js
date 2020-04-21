@@ -4,6 +4,8 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
+import sinon from "sinon";
 import {select as d3Select} from "d3-selection";
 import {selectAll as d3SelectAll} from "d3-selection";
 import CLASS from "../../src/config/classes";
@@ -152,8 +154,10 @@ describe("SHAPE ARC", () => {
 			expect(chart.$.main.selectAll(`text.${CLASS.chartArcsTitle} tspan`).size()).to.be.equal(3);
 
 			d3SelectAll(`.${CLASS.chartArc} text`).each(function(d) {
+				// @ts-ignore
 				const value = parseInt(this.textContent);
 
+				// @ts-ignore
 				expect(value).to.be.equal(d.value);
 			});
 		});
@@ -178,11 +182,13 @@ describe("SHAPE ARC", () => {
 			const internal = chart.internal;
 
 			expect(internal.pie.padAngle()()).to.be.equal(padding * 0.01);
-			expect(internal.innerRadius).to.be.equal(innerRadius);
+			expect(internal.state.innerRadius).to.be.equal(innerRadius);
 
 			d3SelectAll(`.${CLASS.chartArc} text`).each(function(d) {
+				// @ts-ignore
 				const value = parseInt(this.textContent);
 
+				// @ts-ignore
 				expect(value).to.be.equal(d.value);
 			});
 		});
@@ -213,7 +219,7 @@ describe("SHAPE ARC", () => {
 				data3: "M-201.48132297712823,-65.46525025833276A211.85,211.85,0,0,1,1.4924438455356651e-13,-211.85L0,0Z"
 			};
 
-			expect(chart.internal.innerRadius).to.be.deep.equal(innerRadius);
+			expect(chart.internal.state.innerRadius).to.be.deep.equal(innerRadius);
 
 			setTimeout(() => {
 				chart.$.arc.selectAll("path").each(function(d) {

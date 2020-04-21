@@ -22,24 +22,18 @@ export default {
 	},
 
 	/**
-	 * Get user agent's computed value for the total length of the path in user units
-	 * https://developer.mozilla.org/en-US/docs/Web/API/SVGGeometryElement/getTotalLength
+	 * Get user agent's computed value
 	 * @returns {number}
 	 * @private
 	 */
 	getBaseLength(): number {
 		const $$ = this;
-		const {axis} = $$.$el;
+		const {width, height} = $$.state;
 		const cacheKey = KEY.bubbleBaseLength;
 		let baseLength = $$.cache.get(cacheKey);
 
 		if (!baseLength) {
-			$$.cache.add(cacheKey, baseLength = getMinMax("min", [
-				axis.x.select("path").node()
-					.getTotalLength(),
-				axis.y.select("path").node()
-					.getTotalLength()
-			]));
+			$$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
 		}
 
 		return baseLength;

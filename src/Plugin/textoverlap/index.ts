@@ -56,7 +56,7 @@ import Options from "./Options";
  * })
  */
 export default class TextOverlap extends Plugin {
-	config;
+	private config;
 
 	constructor(options) {
 		super(options);

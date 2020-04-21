@@ -3,6 +3,7 @@
  * billboard.js project is licensed under the MIT license
  */
 /* eslint-disable */
+import {expect} from "chai";
 import util from "../../assets/util";
 import Stanford from "../../../src/plugin/stanford/index";
 import CLASS from "../../../src/plugin/stanford/classes";

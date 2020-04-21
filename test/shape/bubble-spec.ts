@@ -4,6 +4,7 @@
  */
 /* eslint-disable */
 /* global describe, beforeEach, it, expect */
+import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import CLASS from "../../src/config/classes";
 import util from "../assets/util";
@@ -51,22 +52,21 @@ describe("SHAPE BUBBLE", () => {
 			chart.load({
 				columns: [
 					['data1', 500, 350, 200, 380, 10]
-				]
+				],
+				done: function() {
+					chart.$.main.selectAll(`.${CLASS.circles}-data1 circle`)
+						.each(function(v, i) {
+							const r = +d3Select(this).attr("r");
+
+							if (i === 0) {
+								expect(r).to.be.equal(35);
+							} else if (i === 4) {
+								expect(r).to.be.closeTo(5, 1);
+								done();
+							}
+						});
+				}
 			});
-
-			setTimeout(() => {
-				chart.$.main.selectAll(`.${CLASS.circles}-data1 circle`)
-					.each(function(v, i) {
-						const r = +d3Select(this).attr("r");
-
-						if (i === 0) {
-							expect(r).to.be.equal(35);
-						} else if (i === 4) {
-							expect(r).to.be.closeTo(5, 1);
-							done();
-						}
-					});
-			}, 500);
 		});
 
 		it("set options bubble.maxR", () => {

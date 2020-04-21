@@ -97,9 +97,9 @@ import {compareEpochs, isEmpty, isFunction, isString, parseDate, pointInRegion} 
  * })
  */
 export default class Stanford extends Plugin {
-	config;
-	colorScale;
-	elements;
+	private config;
+	private colorScale;
+	private elements;
 
 	constructor(options) {
 		super(options);
