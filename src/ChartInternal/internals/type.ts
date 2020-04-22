@@ -26,17 +26,17 @@ export default {
 	 */
 	updateTypesElements(): void {
 		const $$ = this;
-		const {state} = $$;
+		const {state: {current}} = $$;
 
 		Object.keys(TYPE).forEach(v => {
 			const t = TYPE[v];
 			const has = $$.hasType(t, null, true);
-			const idx = state.currentTypes.indexOf(t);
+			const idx = current.types.indexOf(t);
 
 			if (idx === -1 && has) {
-				state.currentTypes.push(t);
+				current.types.push(t);
 			} else if (idx > -1 && !has) {
-				state.currentTypes.splice(idx, 1);
+				current.types.splice(idx, 1);
 			}
 		});
 
@@ -54,12 +54,12 @@ export default {
 	 */
 	hasType(type: string, targetsValue?, checkFromData = false): boolean {
 		const $$ = this;
-		const {config, state: {currentTypes}} = $$;
+		const {config, state: {current}} = $$;
 		const types = config.data_types;
 		const targets = targetsValue || $$.data.targets;
 		let has = false;
 
-		if (!checkFromData && currentTypes.length && currentTypes.indexOf(type) > -1) {
+		if (!checkFromData && current.types.length && current.types.indexOf(type) > -1) {
 			has = true;
 		} else if (targets && targets.length) {
 			targets.forEach(target => {

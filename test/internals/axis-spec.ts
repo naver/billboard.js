@@ -2389,7 +2389,7 @@ describe("AXIS", function() {
 			expect(lineRect.left).to.be.closeTo(yAxisRect.right, 10);
 
 			// check max
-			expect(lineRect.right).to.be.closeTo(chart.internal.state.currentWidth, 10);
+			expect(lineRect.right).to.be.closeTo(chart.internal.state.current.width, 10);
 		});
 
 		it("set option axis.min/max.fit=false", () => {
@@ -2404,7 +2404,7 @@ describe("AXIS", function() {
 			expect(lineRect.left - yAxisRect.right > 50).to.be.true;
 
 			// check max
-			expect(chart.internal.state.currentWidth - lineRect.right > 300).to.be.true;
+			expect(chart.internal.state.current.width - lineRect.right > 300).to.be.true;
 		});
 
 		it("set option axis.min/max.value", () => {
@@ -2420,7 +2420,7 @@ describe("AXIS", function() {
 		});
 
 		it("check if x axis min/max is not fitten.", () => {
-			const currWidth = chart.internal.state.currentWidth;
+			const currWidth = chart.internal.state.current.width;
 
 			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
 				const xPos = +util.parseNum(this.getAttribute("transform")) / 10;

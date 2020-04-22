@@ -35,15 +35,24 @@ export default class State {
 			},
 			arcWidth: 0,
 			arcHeight: 0,
-			currentWidth: 0,
-			currentHeight: 0,
-
-			currentData: {
-				max: 0
-			},
 
 			hasAxis: false,
 			hasRadar: false,
+
+			current: {
+				width: 0,
+				height: 0,
+				dataMax: 0,
+
+				maxTickWidths: {
+					x: {size: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
+					y: {size: 0, domain: ""},
+					y2: {size: 0, domain: ""}
+				},
+
+				// current used chart type list
+				types: <string[]> [],
+			},
 
 			// legend
 			isLegendRight: false,
@@ -62,11 +71,6 @@ export default class State {
 				}
 			},
 
-			currentMaxTickWidths: {
-				x: {size: 0, ticks: <number[]> [], clipPath: 0, domain: ""},
-				y: {size: 0, domain: ""},
-				y2: {size: 0, domain: ""}
-			},
 			rotatedPadding: {
 				left: 30,
 				right: 0,
@@ -105,9 +109,6 @@ export default class State {
 			hasPositiveValue: true,
 
 			orgAreaOpacity: "0.2",
-
-			// current used chart type list
-			currentTypes: <string[]> [],
 
 			// ID strings
 			hiddenTargetIds: <string[]> [],

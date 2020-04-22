@@ -147,26 +147,26 @@ export default {
 
 	setXAxisTickClipWidth(): void {
 		const $$ = this;
-		const {config, state: {currentMaxTickWidths}} = $$;
+		const {config, state: {current: {maxTickWidths}}} = $$;
 
 		const xAxisTickRotate = $$.getAxisTickRotate("x");
 
 		if (!config.axis_x_tick_multiline && xAxisTickRotate) {
 			const sinRotation = Math.sin(Math.PI / 180 * Math.abs(xAxisTickRotate));
 
-			currentMaxTickWidths.x.clipPath = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
+			maxTickWidths.x.clipPath = ($$.getHorizontalAxisHeight("x") - 20) / sinRotation;
 		} else {
-			currentMaxTickWidths.x.clipPath = null;
+			maxTickWidths.x.clipPath = null;
 		}
 	},
 
 	setXAxisTickTextClipPathWidth(): void {
 		const $$ = this;
-		const {state: {clip, currentMaxTickWidths}, $el: {svg}} = $$;
+		const {state: {clip, current}, $el: {svg}} = $$;
 
 		if (svg) {
 			svg.select(`#${clip.idXAxisTickTexts} rect`)
-				.attr("width", currentMaxTickWidths.x.clipPath)
+				.attr("width", current.maxTickWidths.x.clipPath)
 				.attr("height", 30);
 		}
 	}

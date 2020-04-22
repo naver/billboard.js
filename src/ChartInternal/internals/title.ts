@@ -54,13 +54,13 @@ export default {
 	 */
 	redrawTitle(): void {
 		const $$ = this;
-		const {config, state: {currentWidth}, $el: {title}} = $$;
+		const {config, state: {current}, $el: {title}} = $$;
 
 		if (title) {
 			const y = $$.yForTitle.call($$);
 
 			if (/g/i.test(title.node().tagName)) {
-				title.attr("transform", `translate(${getTextPos(config.title_position, currentWidth)}, ${y})`);
+				title.attr("transform", `translate(${getTextPos(config.title_position, current.width)}, ${y})`);
 			} else {
 				title.attr("x", $$.xForTitle.call($$)).attr("y", y);
 			}
@@ -74,18 +74,18 @@ export default {
 	 */
 	xForTitle(): number {
 		const $$ = this;
-		const {config, state: {currentWidth}} = $$;
+		const {config, state: {current}} = $$;
 		const position = config.title_position || "left";
 		const textRectWidth = $$.getTextRect($$.$el.title, CLASS.title).width;
 		let x;
 
 		if (/(right|center)/.test(position)) {
-			x = currentWidth - textRectWidth;
+			x = current.width - textRectWidth;
 
 			if (position.indexOf("right") >= 0) {
-				x = currentWidth - textRectWidth - config.title_padding.right;
+				x = current.width - textRectWidth - config.title_padding.right;
 			} else if (position.indexOf("center") >= 0) {
-				x = (currentWidth - textRectWidth) / 2;
+				x = (current.width - textRectWidth) / 2;
 			}
 		} else { // left
 			x = (config.title_padding.left || 0);

@@ -128,26 +128,26 @@ export default {
 	updateSizeForLegend(size): void {
 		const $$ = this;
 		const {config, state: {
-			isLegendTop, isLegendLeft, isLegendRight, isLegendInset, currentWidth, currentHeight
+			isLegendTop, isLegendLeft, isLegendRight, isLegendInset, current
 		}} = $$;
 		const {width, height} = size;
 
 		const insetLegendPosition = {
 			top: isLegendTop ?
 				$$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 :
-				currentHeight - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+				current.height - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
 			left: isLegendLeft ?
 				$$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 :
-				currentWidth - width - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
+				current.width - width - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
 		};
 
 		$$.state.margin3 = {
 			top: isLegendRight ?
-				0 : isLegendInset ? insetLegendPosition.top : currentHeight - height,
+				0 : isLegendInset ? insetLegendPosition.top : current.height - height,
 			right: NaN,
 			bottom: 0,
 			left: isLegendRight ?
-				currentWidth - width : isLegendInset ? insetLegendPosition.left : 0
+				current.width - width : isLegendInset ? insetLegendPosition.left : 0
 		};
 	},
 
@@ -209,11 +209,11 @@ export default {
 	 */
 	getLegendWidth(): number {
 		const $$ = this;
-		const {currentWidth, isLegendRight, isLegendInset, legendItemWidth, legendStep} = $$.state;
+		const {current: {width}, isLegendRight, isLegendInset, legendItemWidth, legendStep} = $$.state;
 
 		return $$.config.legend_show ? (
 			isLegendRight || isLegendInset ?
-				legendItemWidth * (legendStep + 1) : currentWidth
+				legendItemWidth * (legendStep + 1) : width
 		) : 0;
 	},
 
@@ -224,11 +224,11 @@ export default {
 	 */
 	getLegendHeight(): number {
 		const $$ = this;
-		const {currentHeight, isLegendRight, legendItemHeight, legendStep} = $$.state;
+		const {current, isLegendRight, legendItemHeight, legendStep} = $$.state;
 
 		return $$.config.legend_show ? (
 			isLegendRight ?
-				currentHeight : Math.max(20, legendItemHeight) * (legendStep + 1)
+				current.height : Math.max(20, legendItemHeight) * (legendStep + 1)
 		) : 0;
 	},
 

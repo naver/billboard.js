@@ -89,7 +89,7 @@ export default class ColorScale {
 				.text(d => Math.round(Math.log(d) / Math.LN10));
 		}
 
-		this.colorScale.attr("transform", `translate(${$$.state.currentWidth - this.xForColorScale()}, 0)`);
+		this.colorScale.attr("transform", `translate(${$$.state.current.width - this.xForColorScale()}, 0)`);
 	}
 
 	xForColorScale(): number {

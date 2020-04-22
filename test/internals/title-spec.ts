@@ -41,7 +41,7 @@ describe("TITLE", () => {
 					.split(",")
 					.map(v => util.parseNum(v));
 
-				expect(x).to.be.equal(chart.internal.state.currentWidth / 2);
+				expect(x).to.be.equal(chart.internal.state.current.width / 2);
 				expect(y).to.be.equal(title.getBBox().height);
 			});
 
@@ -81,7 +81,7 @@ describe("TITLE", () => {
 						.split(",")
 						.map(v => util.parseNum(v));
 	
-					expect(x).to.be.equal(chart.internal.state.currentWidth / 2);
+					expect(x).to.be.equal(chart.internal.state.current.width / 2);
 					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 
@@ -123,7 +123,7 @@ describe("TITLE", () => {
 						.split(",")
 						.map(v => util.parseNum(v));
 
-					expect(x).to.be.equal(chart.internal.state.currentWidth);
+					expect(x).to.be.equal(chart.internal.state.current.width);
 					expect(y).to.be.equal(title.getBBox().height + args.title.padding.top);
 				});
 			});

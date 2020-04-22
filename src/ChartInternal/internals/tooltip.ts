@@ -241,11 +241,11 @@ export default {
 		{top: number, left: number} {
 		const $$ = this;
 		const {config, scale} = $$;
-		const {width, height, currentWidth, currentHeight, isLegendRight, inputType} = $$.state;
+		const {width, height, current, isLegendRight, inputType} = $$.state;
 		const hasGauge = $$.hasType("gauge") && !config.gauge_fullCircle;
 		const svgLeft = $$.getSvgLeft(true);
 		let [left, top] = d3Mouse(element);
-		let chartRight = svgLeft + currentWidth - $$.getCurrentPaddingRight(true);
+		let chartRight = svgLeft + current.width - $$.getCurrentPaddingRight(true);
 		const chartLeft = $$.getCurrentPaddingLeft(true);
 		const size = 20;
 
@@ -277,7 +277,7 @@ export default {
 			left -= (svgLeft + tWidth + chartLeft);
 		}
 
-		if (top + tHeight > currentHeight) {
+		if (top + tHeight > current.height) {
 			top -= hasGauge ? tHeight * 3 : tHeight + 30;
 		}
 
@@ -348,7 +348,7 @@ export default {
 
 				// Remember left pos in percentage to be used on resize call
 				if (v === "left" && !datum.xPosInPercent) {
-					datum.xPosInPercent = value / state.currentWidth * 100;
+					datum.xPosInPercent = value / state.current.width * 100;
 				}
 			});
 		}
@@ -364,10 +364,10 @@ export default {
 
 		resizeFunction.add(() => {
 			if (tooltip.style("display") === "block") {
-				const {currentWidth} = state;
+				const {current} = state;
 				const {width, xPosInPercent} = tooltip.datum();
-				let value = currentWidth / 100 * xPosInPercent;
-				const diff = currentWidth - (value + width);
+				let value = current.width / 100 * xPosInPercent;
+				const diff = current.width - (value + width);
 
 				// if tooltip size overs current viewport size
 				if (diff < 0) {

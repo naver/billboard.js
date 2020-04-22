@@ -16,8 +16,8 @@ export default {
 		const $$ = this;
 		const {state} = $$;
 
-		state.currentWidth = $$.getCurrentWidth();
-		state.currentHeight = $$.getCurrentHeight();
+		state.current.width = $$.getCurrentWidth();
+		state.current.height = $$.getCurrentHeight();
 	},
 
 	getCurrentWidth(): number {
@@ -208,7 +208,7 @@ export default {
 	getHorizontalAxisHeight(id: AxisType): number {
 		const $$ = this;
 		const {config} = $$;
-		const {currentHeight, rotatedPadding, isLegendRight, isLegendInset} = $$.state;
+		const {current, rotatedPadding, isLegendRight, isLegendInset} = $$.state;
 		const isRotated = config.axis_rotated;
 		let h = 30;
 
@@ -240,9 +240,9 @@ export default {
 				$$.axis.getMaxTickWidth(id) *
 				Math.cos(Math.PI * (90 - rotate) / 180);
 
-			if (!config.axis_x_tick_multiline && currentHeight) {
-				if (h > currentHeight / 2) {
-					h = currentHeight / 2;
+			if (!config.axis_x_tick_multiline && current.height) {
+				if (h > current.height / 2) {
+					h = current.height / 2;
 				}
 			}
 		}
@@ -274,7 +274,7 @@ export default {
 			let tickCount = 0;
 
 			if (config.axis_x_tick_fit && allowedXAxisTypes) {
-				tickCount = state.currentMaxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+				tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
 
 				if (tickCount !== state.axis.x.tickCount) {
 					state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
@@ -305,11 +305,11 @@ export default {
 	 */
 	needToRotateXAxisTickTexts(): boolean {
 		const $$ = this;
-		const {state} = $$;
-		const xAxisLength = state.currentWidth -
+		const {state: {axis, current}} = $$;
+		const xAxisLength = current.width -
 			$$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
-		const tickCountWithPadding = state.axis.x.tickCount +
-			state.axis.x.padding.left + state.axis.x.padding.right;
+		const tickCountWithPadding = axis.x.tickCount +
+			axis.x.padding.left + axis.x.padding.right;
 
 		const maxTickWidth = $$.axis.getMaxTickWidth("x");
 		const tickLength = (xAxisLength / tickCountWithPadding) || 0;
@@ -342,8 +342,8 @@ export default {
 		const {state, $el: {svg}} = $$;
 
 		svg
-			.attr("width", state.currentWidth)
-			.attr("height", state.currentHeight);
+			.attr("width", state.current.width)
+			.attr("height", state.current.height);
 
 		if (state.hasAxis) {
 			const brush = svg.select(`.${CLASS.brush} .overlay`);
@@ -430,7 +430,7 @@ export default {
 			bottom: 20 + legendHeightForBottom,
 			left: $$.state.rotatedPadding.left
 		} : {
-			top: state.currentHeight - subchartHeight - legendHeightForBottom,
+			top: state.current.height - subchartHeight - legendHeightForBottom,
 			right: NaN,
 			bottom: subchartXAxisHeight + legendHeightForBottom,
 			left: state.margin.left
@@ -446,8 +446,8 @@ export default {
 
 		$$.updateSizeForLegend && $$.updateSizeForLegend(currLegend);
 
-		state.width = state.currentWidth - state.margin.left - state.margin.right;
-		state.height = state.currentHeight - state.margin.top - state.margin.bottom;
+		state.width = state.current.width - state.margin.left - state.margin.right;
+		state.height = state.current.height - state.margin.top - state.margin.bottom;
 
 		if (state.width < 0) {
 			state.width = 0;
@@ -461,7 +461,7 @@ export default {
 			state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width;
 
 		state.height2 = isRotated ?
-			state.height : state.currentHeight - state.margin2.top - state.margin2.bottom;
+			state.height : state.current.height - state.margin2.top - state.margin2.bottom;
 
 		if (state.width2 < 0) {
 			state.width2 = 0;

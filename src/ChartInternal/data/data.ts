@@ -823,7 +823,7 @@ export default {
 				ratio = d.ratio;
 			} else if (type === "radar") {
 				ratio = (
-					parseFloat(String(Math.max(d.value, 0))) / state.currentData.max
+					parseFloat(String(Math.max(d.value, 0))) / state.current.dataMax
 				) * config.radar_size_ratio;
 			}
 		}

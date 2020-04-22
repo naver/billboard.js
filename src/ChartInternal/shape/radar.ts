@@ -35,7 +35,7 @@ const cacheKey = KEY.radarPoints;
 export default {
 	initRadar(): void {
 		const $$ = this;
-		const {config, state: {currentData}, $el} = $$;
+		const {config, state: {current}, $el} = $$;
 
 		if ($$.hasType("radar")) {
 			$el.radars = $el.main.select(`.${CLASS.chart}`).append("g")
@@ -53,7 +53,7 @@ export default {
 			$el.radars.shapes = $el.radars.append("g")
 				.attr("class", CLASS.shapes);
 
-			currentData.max = config.radar_axis_max || $$.getMinMaxData().max[0].value;
+			current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
 		}
 	},
 
@@ -205,7 +205,7 @@ export default {
 				.attr("dx", "-.5em")
 				.style("text-anchor", "end")
 				.text(d => levelTextFormat(
-					state.currentData.max / levelData.length * (d + 1)
+					state.current.dataMax / levelData.length * (d + 1)
 				));
 		}
 

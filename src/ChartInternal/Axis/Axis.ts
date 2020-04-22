@@ -535,8 +535,8 @@ export default class Axis {
 
 	getMaxTickWidth(id: string, withoutRecompute?: boolean): number {
 		const $$ = this.owner;
-		const {config, state, $el: {svg, chart}} = $$;
-		const currentTickMax = state.currentMaxTickWidths[id];
+		const {config, state: {current}, $el: {svg, chart}} = $$;
+		const currentTickMax = current.maxTickWidths[id];
 		let maxWidth = 0;
 
 		if (withoutRecompute || !config[`axis_${id}_show`] || $$.filterTargetsToShow().length === 0) {
@@ -618,7 +618,7 @@ export default class Axis {
 			!config.axis_x_tick_multiline &&
 			positiveRotation
 		) {
-			const widthWithoutCurrentPaddingLeft = state.currentWidth - $$.getCurrentPaddingLeft();
+			const widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft();
 			const maxOverflow = this.getXAxisTickMaxOverflow(
 				xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding
 			);
@@ -636,7 +636,7 @@ export default class Axis {
 		const {axis, config, state} = $$;
 		const isTimeSeries = axis.isTimeSeries();
 
-		const tickTextWidths = state.currentMaxTickWidths.x.ticks;
+		const tickTextWidths = state.current.maxTickWidths.x.ticks;
 		const tickCount = tickTextWidths.length;
 		const {left, right} = state.axis.x.padding;
 		let maxOverflow = 0;
@@ -926,7 +926,7 @@ export default class Axis {
 	 */
 	setCulling() {
 		const $$ = this.owner;
-		const {config, state: {clip, currentMaxTickWidths}, $el} = $$;
+		const {config, state: {clip, current}, $el} = $$;
 
 		["subX", "x", "y", "y2"].forEach(type => {
 			const axis = $el.axis[type];
@@ -959,7 +959,7 @@ export default class Axis {
 
 				// set/unset x_axis_tick_clippath
 				if (type === "x") {
-					const clipPath = currentMaxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
+					const clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
 
 					$el.svg.selectAll(`.${CLASS.axisX} .tick text`)
 						.attr("clip-path", clipPath);

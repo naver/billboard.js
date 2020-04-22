@@ -85,7 +85,7 @@ export default {
 	export(mimeType?: string, callback?: (dataUrl: string) => void): string {
 		const $$ = this.internal;
 		const {state, $el: {chart}} = $$;
-		const {currentWidth: width, currentHeight: height} = state;
+		const {width, height} = state.current;
 		const svgDataUrl = nodeToSvgDataUrl(chart.node(), {width, height});
 
 		if (callback && isFunction(callback)) {
