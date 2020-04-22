@@ -7,7 +7,7 @@ import {expect} from "chai";
 import {select as d3Select} from "d3-selection";
 import util from "../../assets/util";
 import CLASS from "../../../src/config/classes";
-import TextOverlap from "../../../src/plugin/textoverlap";
+import TextOverlap from "../../../src/Plugin/textoverlap";
 
 describe("PLUGIN: TEXTOVERLAP", () => {
 	let chart;

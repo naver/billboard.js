@@ -5,8 +5,8 @@
 /* eslint-disable */
 import {expect} from "chai";
 import util from "../../assets/util";
-import Stanford from "../../../src/plugin/stanford/index";
-import CLASS from "../../../src/plugin/stanford/classes";
+import Stanford from "../../../src/Plugin/stanford/index";
+import CLASS from "../../../src/Plugin/stanford/classes";
 
 describe("PLUGIN: STANFORD ELEMENTS", () => {
 	let chart;

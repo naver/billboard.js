@@ -1,29 +1,6 @@
 const webpack = require("webpack");
 const isWin = require("os").platform() === "win32";
 
-const plugins = isWin ? [
-	new webpack.NormalModuleReplacementPlugin(
-		/module\/util/i, function(resource) {
-			resource.request = resource.request.replace("module/util", "../test/assets/module/util");
-		}
-	),
-	new webpack.NormalModuleReplacementPlugin(
-		/fake/i, function(resource) {
-			if (/test\\assets\\module/i.test(resource.context)) {
-				resource.request = "../../../src/module/util";
-			}
-		}
-	)
-] :
-[
-	new webpack.NormalModuleReplacementPlugin(
-		/module\/util\.ts/i, "../../test/assets/module/util.ts"
-	),
-	new webpack.NormalModuleReplacementPlugin(
-		/fake\.ts/i, "../../../src/module/util.ts"
-	)
-];
-
 // file extension to be tested
 const fileExtensions = /(\.[jt]s)$/;
 
@@ -36,12 +13,7 @@ module.exports = function(config) {
 			"./test/assets/hammer-simulator.run.js",
 			"./src/scss/billboard.scss",
 			"./test/assets/common.css",
-			//"./test/**/*-spec.ts",
-			"./test/api/*-spec.ts",
-			"./test/interactions/*-spec.ts",
-			"./test/internals/*-spec.ts",
-			//"./test/plugin/**/*-spec.ts",
-			"./test/shape/*-spec.ts",
+			"./test/**/*-spec.ts",
 			{
 				pattern: "./test/assets/data/*",
 				watched: false,
@@ -83,7 +55,27 @@ module.exports = function(config) {
 					}
 				]
 			},
-			plugins
+			plugins: isWin ? [
+				new webpack.NormalModuleReplacementPlugin(
+					/module\/util/i, function(resource) {
+						resource.request = resource.request.replace("module/util", "../test/assets/module/util");
+					}
+				),
+				new webpack.NormalModuleReplacementPlugin(
+					/fake/i, function(resource) {
+						if (/test\\assets\\module/i.test(resource.context)) {
+							resource.request = "../../../src/module/util";
+						}
+					}
+				)
+			] : [
+				new webpack.NormalModuleReplacementPlugin(
+					/module\/util\.ts/i, "../../test/assets/module/util.ts"
+				),
+				new webpack.NormalModuleReplacementPlugin(
+					/fake\.ts/i, "../../../src/module/util.ts"
+				)
+			]
 		},
 
 		// preprocess matching files before serving them to the browser
