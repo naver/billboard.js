@@ -131,8 +131,16 @@ describe("CORE", function() {
 			}
 		});
 
-		it("check radar type", () => {
+		it("check radar type", done => {
 			expect(spy.returnValues).to.be.not.empty;
+
+			// when
+			chart.toggle("data1");
+
+			setTimeout(() => {
+				expect(spy.calledTwice).to.be.true;
+				done();
+			}, 300);
 		});
 
 		it("set options data.type='donut'", () => {
@@ -140,7 +148,7 @@ describe("CORE", function() {
 			spy.resetHistory();
 		});
 
-		// Note: Arc types are rendered with transition
+		// Note: Arc types are rendered with tra3nsition
 		it("check donut type", done => {
 			setTimeout(() => {
 				expect(spy.returnValues).to.be.not.empty;
@@ -150,13 +158,15 @@ describe("CORE", function() {
 
 		it("set options data.type='line'", () => {
 			args.data.type = "line";
-			spy.resetHistory();
+			args.onrendered = sinon.spy;
 		});
 
 		// Note: Arc types are rendered with transition
-		it("check donut type", done => {
+		it("check line type", done => {
+			expect(spy.calledOnce).to.be.true;
+
 			setTimeout(() => {
-				expect(spy.returnValues).to.be.not.empty;
+				expect(spy.calledTwice).to.be.true;
 				done();
 			}, 300);
 		});

@@ -108,18 +108,20 @@ extend(ChartInternal.prototype, {
 		const t = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
-		return [
-			$$.mainText.each(function(d, i) {
-				const text = d3Select(this);
+		$$.mainText.each(function(d, i) {
+			const text = d3Select(this);
 
-				// do not apply transition for newly added text elements
-				(withTransition && text.attr("x") ? text.transition(t) : text)
-					.attr("x", x.bind(this)(d, i))
-					.attr("y", y.bind(this)(d, i))
-					.style("fill", $$.updateTextColor.bind($$))
-					.style("fill-opacity", opacityForText);
-			})
-		];
+			// do not apply transition for newly added text elements
+			(withTransition && text.attr("x") ? text.transition(t) : text)
+				.attr("x", x.bind(this)(d, i))
+				.attr("y", y.bind(this)(d, i))
+				.style("fill", $$.updateTextColor.bind($$))
+				.style("fill-opacity", opacityForText);
+		});
+
+		// need to return 'true' as of being pushed to the redraw list
+		// ref: getRedrawList()
+		return true;
 	},
 
 	/**
