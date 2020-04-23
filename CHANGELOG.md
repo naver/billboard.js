@@ -1,3 +1,10 @@
+## [1.12.6](https://github.com/naver/billboard.js/compare/1.12.5...1.12.6) (2020-04-23)
+
+
+### Bug Fixes
+
+* **core:** Fix handling transition tasks ([ecb9621](https://github.com/naver/billboard.js/commit/ecb9621388bf9df6701311a96876f8306b372af5)), closes [#1276](https://github.com/naver/billboard.js/issues/1276) [#1276](https://github.com/naver/billboard.js/issues/1276) [#1343](https://github.com/naver/billboard.js/issues/1343)
+
 ## [1.12.5](https://github.com/naver/billboard.js/compare/1.12.4...1.12.5) (2020-04-21)
 
 
