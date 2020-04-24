@@ -838,7 +838,7 @@ export default class ChartInternal {
 			}
 
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-			!flow && list.push($$.updategridFocus());
+			!flow && list.push($$.updateGridFocus());
 		}
 
 		if (!hasArcType || $$.hasType("radar")) {
@@ -1200,7 +1200,7 @@ export default class ChartInternal {
 				let done = 0;
 
 				for (let i = 0, t; (t = transitionsToWait[i]); i++) {
-					if (t.empty()) {
+					if (t === true || (t.empty && t.empty())) {
 						done++;
 						continue;
 					}
