@@ -158,9 +158,12 @@ describe("CORE", function() {
 		});
 
 		// Note: Arc types are rendered with transition
-		it("check donut type", done => {
+		it("check line type", done => {
+			chart.toggle("data1");
+
 			setTimeout(() => {
 				expect(spy.returnValues).to.be.not.empty;
+				expect(spy.callCount);
 				done();
 			}, 300);
 		});

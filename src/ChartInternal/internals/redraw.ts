@@ -186,7 +186,7 @@ export default {
 			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
 			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-			!flow && list.push($$.updategridFocus());
+			!flow && list.push($$.updateGridFocus());
 		}
 
 		if (!$$.hasArcType() || hasRadar) {

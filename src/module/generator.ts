@@ -52,14 +52,14 @@ export function generateWait() {
 		function loop() {
 			let done = 0;
 
-			for (let i = 0, tr; (tr = transitionsToWait[i]); i++) {
-				if (tr.empty()) {
+			for (let i = 0, t; (t = transitionsToWait[i]); i++) {
+				if (t === true || (t.empty && t.empty())) {
 					done++;
 					continue;
 				}
 
 				try {
-					tr.transition();
+					t.transition();
 				} catch (e) {
 					done++;
 				}

@@ -108,23 +108,25 @@ export default {
 	 * @returns {Array}
 	 * @private
 	 */
-	redrawText(x, y, forFlow?: boolean, withTransition?: boolean) {
+	redrawText(x, y, forFlow?: boolean, withTransition?: boolean): boolean {
 		const $$ = this;
 		const t: any = getRandom();
 		const opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
 
-		return [
-			$$.$el.text.each(function(d, i: number) {
-				const text = d3Select(this);
+		$$.$el.text.each(function(d, i: number) {
+			const text = d3Select(this);
 
-				// do not apply transition for newly added text elements
-				(withTransition && text.attr("x") ? text.transition(t) : text)
-					.attr("x", x.bind(this)(d, i))
-					.attr("y", d => y.bind(this)(d, i))
-					.style("fill", $$.updateTextColor.bind($$))
-					.style("fill-opacity", opacityForText);
-			})
-		];
+			// do not apply transition for newly added text elements
+			(withTransition && text.attr("x") ? text.transition(t) : text)
+				.attr("x", x.bind(this)(d, i))
+				.attr("y", d => y.bind(this)(d, i))
+				.style("fill", $$.updateTextColor.bind($$))
+				.style("fill-opacity", opacityForText);
+		});
+
+		// need to return 'true' as of being pushed to the redraw list
+		// ref: getRedrawList()
+		return true;
 	},
 
 	/**
