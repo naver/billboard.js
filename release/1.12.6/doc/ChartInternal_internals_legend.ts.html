@@ -1,0 +1,804 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    
+    <meta charset="utf-8">
+    <title>ChartInternal/internals/legend.ts - billboard.js API doc</title>
+    
+    <meta name="description" content="Re-usable, easy interface JavaScript chart library based on D3 v4+" />
+    
+        <meta name="keywords" content="chart, SVG, D3, Data Visualization" />
+        <meta name="keyword" content="chart, SVG, D3, Data Visualization" />
+    
+    
+    
+    <script src="scripts/prettify/prettify.js"></script>
+    <script src="scripts/prettify/lang-css.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <link type="text/css" rel="stylesheet" href="styles/prettify.css">
+    <link type="text/css" rel="stylesheet" href="styles/jsdoc.css">
+    <script src="scripts/nav.js" defer></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body>
+
+<input type="checkbox" id="nav-trigger" class="nav-trigger" />
+<label for="nav-trigger" class="navicon-button x">
+  <div class="navicon"></div>
+</label>
+
+<label for="nav-trigger" class="overlay"></label>
+
+<nav >
+    
+    <input type="text" id="nav-search" placeholder="Search" />
+    
+    <h2><a href="index.html">Home</a></h2><h2><a href="https://naver.github.io/billboard.js/demo/" target="_blank" >Examples</a></h2><h2><a href="https://github.com/naver/billboard.js" target="_blank" >GitHub</a></h2><h3>Namespaces</h3><ul><li><a href="bb.html">bb</a><ul class='members'><li data-type='member'><a href="bb.html#.instance">instance</a></li><li data-type='member'><a href="bb.html#.plugin">plugin</a></li><li data-type='member'><a href="bb.html#.version">version</a></li></ul><ul class='methods'><li data-type='method'><a href="bb.html#.defaults">defaults</a></li><li data-type='method'><a href="bb.html#.generate">generate</a></li></ul></li></ul><h3>Classes</h3><ul><li><a href="Chart.html">Chart</a><ul class='members'><li data-type='member'><a href="Chart.html#.$">$</a></li><li data-type='member'><a href="Chart.html#plugins">plugins</a></li><li data-type='member'><a href="Chart.html#plugins">plugins</a></li></ul><ul class='methods'><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4labels">axis․labels</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4max">axis․max</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4min">axis․min</a></li><li data-type='method'><a href="Chart.html#axis%25E2%2580%25A4range">axis․range</a></li><li data-type='method'><a href="Chart.html#categories">categories</a></li><li data-type='method'><a href="Chart.html#category">category</a></li><li data-type='method'><a href="Chart.html#color">color</a></li><li data-type='method'><a href="Chart.html#config">config</a></li><li data-type='method'><a href="Chart.html#data">data</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4axes">data․axes</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4colors">data․colors</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4max">data․max</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4min">data․min</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4names">data․names</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4shown">data․shown</a></li><li data-type='method'><a href="Chart.html#data%25E2%2580%25A4values">data․values</a></li><li data-type='method'><a href="Chart.html#defocus">defocus</a></li><li data-type='method'><a href="Chart.html#destroy">destroy</a></li><li data-type='method'><a href="Chart.html#export">export</a></li><li data-type='method'><a href="Chart.html#flow">flow</a></li><li data-type='method'><a href="Chart.html#flush">flush</a></li><li data-type='method'><a href="Chart.html#focus">focus</a></li><li data-type='method'><a href="Chart.html#groups">groups</a></li><li data-type='method'><a href="Chart.html#hide">hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4hide">legend․hide</a></li><li data-type='method'><a href="Chart.html#legend%25E2%2580%25A4show">legend․show</a></li><li data-type='method'><a href="Chart.html#load">load</a></li><li data-type='method'><a href="Chart.html#regions">regions</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4add">regions․add</a></li><li data-type='method'><a href="Chart.html#regions%25E2%2580%25A4remove">regions․remove</a></li><li data-type='method'><a href="Chart.html#resize">resize</a></li><li data-type='method'><a href="Chart.html#revert">revert</a></li><li data-type='method'><a href="Chart.html#select">select</a></li><li data-type='method'><a href="Chart.html#selected">selected</a></li><li data-type='method'><a href="Chart.html#show">show</a></li><li data-type='method'><a href="Chart.html#toggle">toggle</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4hide">tooltip․hide</a></li><li data-type='method'><a href="Chart.html#tooltip%25E2%2580%25A4show">tooltip․show</a></li><li data-type='method'><a href="Chart.html#unload">unload</a></li><li data-type='method'><a href="Chart.html#unselect">unselect</a></li><li data-type='method'><a href="Chart.html#unzoom">unzoom</a></li><li data-type='method'><a href="Chart.html#x">x</a></li><li data-type='method'><a href="Chart.html#xgrids">xgrids</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4add">xgrids․add</a></li><li data-type='method'><a href="Chart.html#xgrids%25E2%2580%25A4remove">xgrids․remove</a></li><li data-type='method'><a href="Chart.html#xs">xs</a></li><li data-type='method'><a href="Chart.html#ygrids">ygrids</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4add">ygrids․add</a></li><li data-type='method'><a href="Chart.html#ygrids%25E2%2580%25A4remove">ygrids․remove</a></li><li data-type='method'><a href="Chart.html#zoom">zoom</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4enable">zoom․enable</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4max">zoom․max</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4min">zoom․min</a></li><li data-type='method'><a href="Chart.html#zoom%25E2%2580%25A4range">zoom․range</a></li></ul></li><li><a href="module.html#.exports">exports</a><ul class='methods'><li data-type='method'><a href="module.html#.exports#.getLegendItemTextBox">getLegendItemTextBox</a></li><li data-type='method'><a href="module.html#.exports#.updateTypes">updateTypes</a></li></ul></li><li></li><li><a href="Options.html">Options</a><ul class='members'><li data-type='member'><a href="Options.html#.area">area</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4rotated">axis․rotated</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4axes">axis․x․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4categories">axis․x․categories</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4clipPath">axis․x․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4extent">axis․x․extent</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4height">axis․x․height</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4label">axis․x․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4localtime">axis․x․localtime</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4max">axis․x․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4min">axis․x․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4padding">axis․x․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4show">axis․x․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4autorotate">axis․x․tick․autorotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4centered">axis․x․tick․centered</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4count">axis․x․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․x․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․x․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4fit">axis․x․tick․fit</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4format">axis․x․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4multiline">axis․x․tick․multiline</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․x․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․x․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4show">axis․x․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․x․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․x․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4tooltip">axis․x․tick․tooltip</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4values">axis․x․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4tick%25E2%2580%25A4width">axis․x․tick․width</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4x%25E2%2580%25A4type">axis․x․type</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4axes">axis․y2․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4center">axis․y2․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4default">axis․y2․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inner">axis․y2․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4inverted">axis․y2․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4label">axis․y2․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4max">axis․y2․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4min">axis․y2․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4padding">axis․y2․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4show">axis․y2․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y2․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y2․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y2․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y2․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y2․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y2․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y2․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y2․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y2․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y2․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y2%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y2․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4axes">axis․y․axes</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4center">axis․y․center</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4clipPath">axis․y․clipPath</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4default">axis․y․default</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inner">axis․y․inner</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4inverted">axis․y․inverted</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4label">axis․y․label</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4max">axis․y․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4min">axis․y․min</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4padding">axis․y․padding</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4show">axis․y․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4count">axis․y․tick․count</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling">axis․y․tick․culling</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4culling%25E2%2580%25A4max">axis․y․tick․culling․max</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4format">axis․y․tick․format</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4outer">axis․y․tick․outer</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4rotate">axis․y․tick․rotate</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4show">axis․y․tick․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4stepSize">axis․y․tick․stepSize</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4position">axis․y․tick․text․position</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4text%25E2%2580%25A4show">axis․y․tick․text․show</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4tick%25E2%2580%25A4values">axis․y․tick․values</a></li><li data-type='member'><a href="Options.html#.axis%25E2%2580%25A4y%25E2%2580%25A4type">axis․y․type</a></li><li data-type='member'><a href="Options.html#.background">background</a></li><li data-type='member'><a href="Options.html#.bar">bar</a></li><li data-type='member'><a href="Options.html#.bindto">bindto</a></li><li data-type='member'><a href="Options.html#.bubble">bubble</a></li><li data-type='member'><a href="Options.html#.clipPath">clipPath</a></li><li data-type='member'><a href="Options.html#.color">color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4axes">data․axes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4classes">data․classes</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4color">data․color</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4colors">data․colors</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4columns">data․columns</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4empty%25E2%2580%25A4label%25E2%2580%25A4text">data․empty․label․text</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4filter">data․filter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4groups">data․groups</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4headers">data․headers</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4hide">data․hide</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4idConverter">data․idConverter</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4json">data․json</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4keys">data․keys</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4labels">data․labels</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4mimeType">data․mimeType</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4names">data․names</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onclick">data․onclick</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmax">data․onmax</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onmin">data․onmin</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onout">data․onout</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onover">data․onover</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onselected">data․onselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4onunselected">data․onunselected</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4order">data․order</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4regions">data․regions</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4rows">data․rows</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4draggable">data․selection․draggable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4enabled">data․selection․enabled</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4grouped">data․selection․grouped</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4isselectable">data․selection․isselectable</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4selection%25E2%2580%25A4multiple">data․selection․multiple</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4stack%25E2%2580%25A4normalize">data․stack․normalize</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4type">data․type</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4types">data․types</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4url">data․url</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4x">data․x</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xFormat">data․xFormat</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xLocaltime">data․xLocaltime</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xs">data․xs</a></li><li data-type='member'><a href="Options.html#.data%25E2%2580%25A4xSort">data․xSort</a></li><li data-type='member'><a href="Options.html#.donut">donut</a></li><li data-type='member'><a href="Options.html#.gauge">gauge</a></li><li data-type='member'><a href="Options.html#.grid">grid</a></li><li data-type='member'><a href="Options.html#.interaction">interaction</a></li><li data-type='member'><a href="Options.html#.legend">legend</a></li><li data-type='member'><a href="Options.html#.line">line</a></li><li data-type='member'><a href="Options.html#.onafterinit">onafterinit</a></li><li data-type='member'><a href="Options.html#.onbeforeinit">onbeforeinit</a></li><li data-type='member'><a href="Options.html#.oninit">oninit</a></li><li data-type='member'><a href="Options.html#.onout">onout</a></li><li data-type='member'><a href="Options.html#.onover">onover</a></li><li data-type='member'><a href="Options.html#.onrendered">onrendered</a></li><li data-type='member'><a href="Options.html#.onresize">onresize</a></li><li data-type='member'><a href="Options.html#.onresized">onresized</a></li><li data-type='member'><a href="Options.html#.padding">padding</a></li><li data-type='member'><a href="Options.html#.pie">pie</a></li><li data-type='member'><a href="Options.html#.plugins">plugins</a></li><li data-type='member'><a href="Options.html#.point">point</a></li><li data-type='member'><a href="Options.html#.radar">radar</a></li><li data-type='member'><a href="Options.html#.regions">regions</a></li><li data-type='member'><a href="Options.html#.render">render</a></li><li data-type='member'><a href="Options.html#.resize">resize</a></li><li data-type='member'><a href="Options.html#.scatter">scatter</a></li><li data-type='member'><a href="Options.html#.size">size</a></li><li data-type='member'><a href="Options.html#.spline">spline</a></li><li data-type='member'><a href="Options.html#.subchart">subchart</a></li><li data-type='member'><a href="Options.html#.svg">svg</a></li><li data-type='member'><a href="Options.html#.title">title</a></li><li data-type='member'><a href="Options.html#.tooltip">tooltip</a></li><li data-type='member'><a href="Options.html#.transition">transition</a></li><li data-type='member'><a href="Options.html#.zoom">zoom</a></li></ul></li><li><a href="Plugin.html">Plugin</a><ul class='members'><li data-type='member'><a href="Plugin.html#.version">version</a></li><li data-type='member'><a href="Plugin.html#.version">version</a></li></ul></li><li><a href="plugin-bubblecompare.html">plugin-bubblecompare</a><ul class='members'><li data-type='member'><a href="plugin-bubblecompare.html#.expandScale">expandScale</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.maxR">maxR</a></li><li data-type='member'><a href="plugin-bubblecompare.html#.minR">minR</a></li></ul></li><li><a href="plugin-stanford.html">plugin-stanford</a><ul class='members'><li data-type='member'><a href="plugin-stanford.html#.colors">colors</a></li><li data-type='member'><a href="plugin-stanford.html#.epochs">epochs</a></li><li data-type='member'><a href="plugin-stanford.html#.lines">lines</a></li><li data-type='member'><a href="plugin-stanford.html#.padding">padding</a></li><li data-type='member'><a href="plugin-stanford.html#.regions">regions</a></li><li data-type='member'><a href="plugin-stanford.html#.scale">scale</a></li></ul></li><li><a href="plugin-textoverlap.html">plugin-textoverlap</a><ul class='members'><li data-type='member'><a href="plugin-textoverlap.html#.area">area</a></li><li data-type='member'><a href="plugin-textoverlap.html#.extent">extent</a></li><li data-type='member'><a href="plugin-textoverlap.html#.selector">selector</a></li></ul></li></ul><h3>Global</h3><ul><li><a href="global.html#KEY">KEY</a></li><li><a href="global.html#TYPE">TYPE</a></li></ul>
+</nav>
+
+<div id="main">
+    
+    <h1 class="page-title">ChartInternal/internals/legend.ts</h1>
+    
+
+    
+
+
+
+    
+    <section>
+        <article>
+            <pre class="prettyprint source linenums"><code>/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+import {
+	select as d3Select,
+	event as d3Event,
+	namespaces as d3Namespaces
+} from "d3-selection";
+import {document} from "../../module/browser";
+import CLASS from "../../config/classes";
+import {KEY} from "../../module/Cache";
+import {callFn, isDefined, getOption, isEmpty, isFunction, notEmpty, tplProcess} from "../../module/util";
+
+export default {
+	/**
+	 * Initialize the legend.
+	 * @private
+	 */
+	initLegend() {
+		const $$ = this;
+		const {config, $el} = $$;
+
+		$$.legendItemTextBox = {};
+		$$.state.legendHasRendered = false;
+
+		if (config.legend_show) {
+			if (!config.legend_contents_bindto) {
+				$el.legend = $$.$el.svg.append("g")
+					.attr("transform", $$.getTranslate("legend"));
+			}
+
+			// MEMO: call here to update legend box and translate for all
+			// MEMO: translate will be updated by this, so transform not needed in updateLegend()
+			$$.updateLegend();
+		} else {
+			$$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
+		}
+	},
+
+	/**
+	 * Update legend element
+	 * @param {Array} targetIds ID's of target
+	 * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+	 * @param {object} transitions Return value of the generateTransitions
+	 * @private
+	 */
+	updateLegend(targetIds, options, transitions) {
+		const $$ = this;
+		const {config, state, scale, $el} = $$;
+		const optionz = options || {
+			withTransform: false,
+			withTransitionForTransform: false,
+			withTransition: false
+		};
+
+		optionz.withTransition = getOption(optionz, "withTransition", true);
+		optionz.withTransitionForTransform = getOption(optionz, "withTransitionForTransform", true);
+
+		if (config.legend_contents_bindto &amp;&amp; config.legend_contents_template) {
+			$$.updateLegendTemplate();
+		} else {
+			$$.updateLegendElement(
+				targetIds || $$.mapToIds($$.data.targets),
+				optionz,
+				transitions
+			);
+		}
+
+		// toggle legend state
+		$el.legend.selectAll(`.${CLASS.legendItem}`)
+			.classed(CLASS.legendItemHidden, id => !$$.isTargetToShow(id));
+
+		// Update size and scale
+		$$.updateScales(false, !scale.zoom);
+		$$.updateSvgSize();
+
+		// Update g positions
+		$$.transformAll(optionz.withTransitionForTransform, transitions);
+
+		state.legendHasRendered = true;
+	},
+
+	/**
+	 * Update legend using template option
+	 * @private
+	 */
+	updateLegendTemplate() {
+		const $$ = this;
+		const {config, $el} = $$;
+		const wrapper = d3Select(config.legend_contents_bindto);
+		const template = config.legend_contents_template;
+
+		if (!wrapper.empty()) {
+			const targets = $$.mapToIds($$.data.targets);
+			const ids: any[] = [];
+			let html = "";
+
+			targets.forEach(v => {
+				const content = isFunction(template) ?
+					template.bind($$.api)(v, $$.color(v), $$.api.data(v)[0].values) :
+					tplProcess(template, {
+						COLOR: $$.color(v),
+						TITLE: v
+					});
+
+				if (content) {
+					ids.push(v);
+					html += content;
+				}
+			});
+
+			const legendItem = wrapper.html(html)
+				.selectAll(function() { return this.childNodes; })
+				.data(ids);
+
+			$$.setLegendItem(legendItem);
+
+			$el.legend = wrapper;
+		}
+	},
+
+	/**
+	 * Update the size of the legend.
+	 * @private
+	 * @param {Obejct} size S
+	 */
+	updateSizeForLegend(size) {
+		const $$ = this;
+		const {config, state: {
+			isLegendTop, isLegendLeft, isLegendRight, isLegendInset, currentWidth, currentHeight
+		}} = $$;
+		const {width, height} = size;
+
+		const insetLegendPosition = {
+			top: isLegendTop ?
+				$$.getCurrentPaddingTop() + config.legend_inset_y + 5.5 :
+				currentHeight - height - $$.getCurrentPaddingBottom() - config.legend_inset_y,
+			left: isLegendLeft ?
+				$$.getCurrentPaddingLeft() + config.legend_inset_x + 0.5 :
+				currentWidth - width - $$.getCurrentPaddingRight() - config.legend_inset_x + 0.5
+		};
+
+		$$.state.margin3 = {
+			top: isLegendRight ?
+				0 : isLegendInset ? insetLegendPosition.top : currentHeight - height,
+			right: NaN,
+			bottom: 0,
+			left: isLegendRight ?
+				currentWidth - width : isLegendInset ? insetLegendPosition.left : 0
+		};
+	},
+
+	/**
+	 * Transform Legend
+	 * @private
+	 * @param {Boolean} whether or not to transition.
+	 */
+	transformLegend(withTransition) {
+		const $$ = this;
+		const {legend} = $$.$el;
+
+		(withTransition ? legend.transition() : legend)
+			.attr("transform", $$.getTranslate("legend"));
+	},
+
+	/**
+	 * Update the legend step
+	 * @private
+	 * @param {number} step
+	 */
+	updateLegendStep(step) {
+		this.state.legendStep = step;
+	},
+
+	/**
+	 * Update legend item width
+	 * @private
+	 * @param {number} width
+	 */
+	updateLegendItemWidth(w) {
+		this.state.legendItemWidth = w;
+	},
+
+	/**
+	 * Update legend item height
+	 * @private
+	 * @param {number} height
+	 */
+	updateLegendItemHeight(h) {
+		this.state.legendItemHeight = h;
+	},
+
+	/**
+	 * Update legend item color
+	 * @private
+	 * @param {string} id Corresponding data ID value
+	 * @param {string} color Color value
+	 */
+	updateLegendItemColor(id, color) {
+		this.$el.legend.select(`.${CLASS.legendItem}-${id} line`)
+			.style("stroke", color);
+	},
+
+	/**
+	 * Get the width of the legend
+	 * @private
+	 * @returns {number} width
+	 */
+	getLegendWidth() {
+		const $$ = this;
+		const {currentWidth, isLegendRight, isLegendInset, legendItemWidth, legendStep} = $$.state;
+
+		return $$.config.legend_show ? (
+			isLegendRight || isLegendInset ?
+				legendItemWidth * (legendStep + 1) : currentWidth
+		) : 0;
+	},
+
+	/**
+	 * Get the height of the legend
+	 * @returns {number} height
+	 * @private
+	 */
+	getLegendHeight() {
+		const $$ = this;
+		const {currentHeight, isLegendRight, legendItemHeight, legendStep} = $$.state;
+
+		return $$.config.legend_show ? (
+			isLegendRight ?
+				currentHeight : Math.max(20, legendItemHeight) * (legendStep + 1)
+		) : 0;
+	},
+
+	/**
+	 * Get the opacity of the legend
+	 * @private
+	 * @param {object} d3.Select
+	 * @returns {number} opacity
+	 */
+	opacityForLegend(legendItem) {
+		return legendItem.classed(CLASS.legendItemHidden) ? null : "1";
+	},
+
+	/**
+	 * Get the opacity of the legend that is unfocused
+	 * @private
+	 * @param {object} legendItem, d3.Select
+	 * @returns {number} opacity
+	 */
+	opacityForUnfocusedLegend(legendItem) {
+		return legendItem.classed(CLASS.legendItemHidden) ? null : "0.3";
+	},
+
+	/**
+	 * Toggles the focus of the legend
+	 * @private
+	 * @param {Array} ID's of target
+	 * @param {Boolean} whether or not to focus.
+	 */
+	toggleFocusLegend(targetIds, focus) {
+		const $$ = this;
+		const {legend} = $$.$el;
+		const targetIdz = $$.mapToTargetIds(targetIds);
+
+		legend &amp;&amp; legend.selectAll(`.${CLASS.legendItem}`)
+			.filter(id => targetIdz.indexOf(id) >= 0)
+			.classed(CLASS.legendItemFocused, focus)
+			.transition()
+			.duration(100)
+			.style("opacity", function() {
+				return (focus ? $$.opacityForLegend : $$.opacityForUnfocusedLegend)
+					.call($$, d3Select(this));
+			});
+	},
+
+	/**
+	 * Revert the legend to its default state
+	 * @private
+	 */
+	revertLegend() {
+		const $$ = this;
+		const {legend} = $$.$el;
+
+		legend &amp;&amp; legend.selectAll(`.${CLASS.legendItem}`)
+			.classed(CLASS.legendItemFocused, false)
+			.transition()
+			.duration(100)
+			.style("opacity", function() {
+				return $$.opacityForLegend(d3Select(this));
+			});
+	},
+
+	/**
+	 * Shows the legend
+	 * @private
+	 * @param {Array} ID's of target
+	 */
+	showLegend(targetIds) {
+		const $$ = this;
+		const {config, $el} = $$;
+
+		if (!config.legend_show) {
+			config.legend_show = true;
+
+			$el.legend ?
+				$el.legend.style("visibility", "visible") :
+				$$.initLegend();
+
+			!$$.state.legendHasRendered &amp;&amp; $$.updateLegend();
+		}
+
+		$$.removeHiddenLegendIds(targetIds);
+
+		$el.legend.selectAll($$.selectorLegends(targetIds))
+			.style("visibility", "visible")
+			.transition()
+			.style("opacity", function() {
+				return $$.opacityForLegend(d3Select(this));
+			});
+	},
+
+	/**
+	 * Hide the legend
+	 * @private
+	 * @param {Array} ID's of target
+	 */
+	hideLegend(targetIds) {
+		const $$ = this;
+		const {config, $el: {legend}} = $$;
+
+		if (config.legend_show &amp;&amp; isEmpty(targetIds)) {
+			config.legend_show = false;
+			legend.style("visibility", "hidden");
+		}
+
+		$$.addHiddenLegendIds(targetIds);
+		legend.selectAll($$.selectorLegends(targetIds))
+			.style("opacity", "0")
+			.style("visibility", "hidden");
+	},
+
+	/**
+	 * Get legend item textbox dimension
+	 * @param {string} id
+	 * @param {HTMLElement|d3.selection} textElement
+	 */
+	getLegendItemTextBox(id?: string, textElement?) {
+		const $$ = this;
+		const {cache} = $$;
+		let data;
+
+		// do not prefix w/'$', to not be resetted cache in .load() call
+		const cacheKey = KEY.legendItemTextBox;
+
+		if (id) {
+			data = cache.get(cacheKey) || {};
+
+			if (!data[id]) {
+				data[id] = $$.getTextRect(textElement, CLASS.legendItem);
+				cache.add(cacheKey, data);
+			}
+
+			data = data[id];
+		}
+
+		return data;
+	},
+
+	/**
+	 * Set legend item style &amp; bind events
+	 * @private
+	 * @param {d3.selection} item
+	 */
+	setLegendItem(item) {
+		const $$ = this;
+		const {api, config, state} = $$;
+		const isTouch = state.inputType === "touch";
+		const hasGauge = $$.hasType("gauge");
+
+		item
+			.attr("class", function(id) {
+				const node = d3Select(this);
+				const itemClass = (!node.empty() &amp;&amp; node.attr("class")) || "";
+
+				return itemClass + $$.generateClass(CLASS.legendItem, id);
+			})
+			.style("visibility", id => ($$.isLegendToShow(id) ? "visible" : "hidden"))
+			.style("cursor", "pointer")
+			.on("click", id => {
+				if (!callFn(config.legend_item_onclick, api, id)) {
+					if (d3Event.altKey) {
+						api.hide();
+						api.show(id);
+					} else {
+						api.toggle(id);
+						!isTouch &amp;&amp; $$.isTargetToShow(id) ? api.focus(id) : api.revert();
+					}
+				}
+
+				isTouch &amp;&amp; $$.hideTooltip();
+			});
+
+		if (!isTouch) {
+			item
+				.on("mouseout", function(id) {
+					if (!callFn(config.legend_item_onout, api, id)) {
+						d3Select(this).classed(CLASS.legendItemFocused, false);
+
+						if (hasGauge) {
+							$$.undoMarkOverlapped($$, `.${CLASS.gaugeValue}`);
+						}
+
+						$$.api.revert();
+					}
+				})
+				.on("mouseover", function(id) {
+					if (!callFn(config.legend_item_onover, api, id)) {
+						d3Select(this).classed(CLASS.legendItemFocused, true);
+
+						if (hasGauge) {
+							$$.markOverlapped(id, $$, `.${CLASS.gaugeValue}`);
+						}
+
+						if (!state.transiting &amp;&amp; $$.isTargetToShow(id)) {
+							api.focus(id);
+						}
+					}
+				});
+		}
+	},
+
+	/**
+	 * Update the legend
+	 * @param {Array} targetIds ID's of target
+	 * @param {object} options withTransform : Whether to use the transform property / withTransitionForTransform: Whether transition is used when using the transform property / withTransition : whether or not to transition.
+ 	 * @private
+	 */
+	updateLegendElement(targetIds, options) {
+		const $$ = this;
+		const {config, state, $el: {legend}} = $$;
+		const paddingTop = 4;
+		const paddingRight = 10;
+		const posMin = 10;
+		const tileWidth = config.legend_item_tile_width + 5;
+		let maxWidth = 0;
+		let maxHeight = 0;
+		let xForLegend;
+		let yForLegend;
+		let totalLength = 0;
+		const offsets = {};
+		const widths = {};
+		const heights = {};
+		const margins = [0];
+		const steps = {};
+		let step = 0;
+		let background;
+		const isLegendRightOrInset = state.isLegendRight || state.isLegendInset;
+
+		// Skip elements when their name is set to null
+		const targetIdz = targetIds
+			.filter(id => !isDefined(config.data_names[id]) || config.data_names[id] !== null);
+
+		const withTransition = options.withTransition;
+
+		const updatePositions = function(textElement, id, index) {
+			const reset = index === 0;
+			const isLast = index === targetIdz.length - 1;
+			const box = $$.getLegendItemTextBox(id, textElement);
+			const itemWidth = box.width + tileWidth +
+				(isLast &amp;&amp; !isLegendRightOrInset ? 0 : paddingRight) + config.legend_padding;
+			const itemHeight = box.height + paddingTop;
+			const itemLength = isLegendRightOrInset ? itemHeight : itemWidth;
+			const areaLength = isLegendRightOrInset ? $$.getLegendHeight() : $$.getLegendWidth();
+			let margin;
+
+			// MEMO: care about condifion of step, totalLength
+			const updateValues = function(id2, withoutStep?: boolean) {
+				if (!withoutStep) {
+					margin = (areaLength - totalLength - itemLength) / 2;
+
+					if (margin &lt; posMin) {
+						margin = (areaLength - itemLength) / 2;
+						totalLength = 0;
+						step++;
+					}
+				}
+
+				steps[id2] = step;
+				margins[step] = state.isLegendInset ? 10 : margin;
+				offsets[id2] = totalLength;
+				totalLength += itemLength;
+			};
+
+			if (reset) {
+				totalLength = 0;
+				step = 0;
+				maxWidth = 0;
+				maxHeight = 0;
+			}
+
+			if (config.legend_show &amp;&amp; !$$.isLegendToShow(id)) {
+				widths[id] = 0;
+				heights[id] = 0;
+				steps[id] = 0;
+				offsets[id] = 0;
+
+				return;
+			}
+
+			widths[id] = itemWidth;
+			heights[id] = itemHeight;
+
+			if (!maxWidth || itemWidth >= maxWidth) {
+				maxWidth = itemWidth;
+			}
+
+			if (!maxHeight || itemHeight >= maxHeight) {
+				maxHeight = itemHeight;
+			}
+
+			const maxLength = isLegendRightOrInset ? maxHeight : maxWidth;
+
+			if (config.legend_equally) {
+				Object.keys(widths).forEach(id2 => (widths[id2] = maxWidth));
+				Object.keys(heights).forEach(id2 => (heights[id2] = maxHeight));
+				margin = (areaLength - maxLength * targetIdz.length) / 2;
+
+				if (margin &lt; posMin) {
+					totalLength = 0;
+					step = 0;
+					targetIdz.forEach(id2 => updateValues(id2));
+				} else {
+					updateValues(id, true);
+				}
+			} else {
+				updateValues(id);
+			}
+		};
+
+		if (state.isLegendInset) {
+			step = config.legend_inset_step ? config.legend_inset_step : targetIdz.length;
+			$$.updateLegendStep(step);
+		}
+
+		if (state.isLegendRight) {
+			xForLegend = id => maxWidth * steps[id];
+			yForLegend = id => margins[steps[id]] + offsets[id];
+		} else if (state.isLegendInset) {
+			xForLegend = id => maxWidth * steps[id] + 10;
+			yForLegend = id => margins[steps[id]] + offsets[id];
+		} else {
+			xForLegend = id => margins[steps[id]] + offsets[id];
+			yForLegend = id => maxHeight * steps[id];
+		}
+
+		const xForLegendText = (id, i?: number) => xForLegend(id, i) + 4 + config.legend_item_tile_width;
+		const xForLegendRect = (id, i?: number) => xForLegend(id, i);
+		const x1ForLegendTile = (id, i?: number) => xForLegend(id, i) - 2;
+		const x2ForLegendTile = (id, i?: number) => xForLegend(id, i) - 2 + config.legend_item_tile_width;
+
+		const yForLegendText = (id, i?: number) => yForLegend(id, i) + 9;
+		const yForLegendRect = (id, i?: number) => yForLegend(id, i) - 5;
+		const yForLegendTile = (id, i?: number) => yForLegend(id, i) + 4;
+
+		const pos = -200;
+
+		// Define g for legend area
+		const l = legend.selectAll(`.${CLASS.legendItem}`)
+			.data(targetIdz)
+			.enter()
+			.append("g");
+
+		$$.setLegendItem(l);
+
+		l.append("text")
+			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id))
+			.each(function(id, i) {
+				updatePositions(this, id, i);
+			})
+			.style("pointer-events", "none")
+			.attr("x", isLegendRightOrInset ? xForLegendText : pos)
+			.attr("y", isLegendRightOrInset ? pos : yForLegendText);
+
+		l.append("rect")
+			.attr("class", CLASS.legendItemEvent)
+			.style("fill-opacity", "0")
+			.attr("x", isLegendRightOrInset ? xForLegendRect : pos)
+			.attr("y", isLegendRightOrInset ? pos : yForLegendRect);
+
+		const usePoint = config.legend_usePoint;
+
+		if (usePoint) {
+			const ids: any[] = [];
+
+			l.append(d => {
+				const pattern = notEmpty(config.point_pattern) ?
+					config.point_pattern : [config.point_type];
+
+				ids.indexOf(d) === -1 &amp;&amp; ids.push(d);
+
+				let point = pattern[ids.indexOf(d) % pattern.length];
+
+				if (point === "rectangle") {
+					point = "rect";
+				}
+
+				return document.createElementNS(d3Namespaces.svg, $$.hasValidPointType(point) ? point : "use");
+			})
+				.attr("class", CLASS.legendItemPoint)
+				.style("fill", d => $$.color(d))
+				.style("pointer-events", "none")
+				.attr("href", (data, idx, selection) => {
+					const node = selection[idx];
+					const nodeName = node.nodeName.toLowerCase();
+
+					return nodeName === "use" ? `#${state.datetimeId}-point-${data}` : undefined;
+				});
+		} else {
+			l.append("line")
+				.attr("class", CLASS.legendItemTile)
+				.style("stroke", $$.color)
+				.style("pointer-events", "none")
+				.attr("x1", isLegendRightOrInset ? x1ForLegendTile : pos)
+				.attr("y1", isLegendRightOrInset ? pos : yForLegendTile)
+				.attr("x2", isLegendRightOrInset ? x2ForLegendTile : pos)
+				.attr("y2", isLegendRightOrInset ? pos : yForLegendTile)
+				.attr("stroke-width", config.legend_item_tile_height);
+		}
+
+		// Set background for inset legend
+		background = legend.select(`.${CLASS.legendBackground} rect`);
+
+		if (state.isLegendInset &amp;&amp; maxWidth > 0 &amp;&amp; background.size() === 0) {
+			background = legend.insert("g", `.${CLASS.legendItem}`)
+				.attr("class", CLASS.legendBackground)
+				.append("rect");
+		}
+
+		const texts = legend.selectAll("text")
+			.data(targetIdz)
+			.text(id => (isDefined(config.data_names[id]) ? config.data_names[id] : id)) // MEMO: needed for update
+			.each(function(id, i) {
+				updatePositions(this, id, i);
+			});
+
+		(withTransition ? texts.transition() : texts)
+			.attr("x", xForLegendText)
+			.attr("y", yForLegendText);
+
+		const rects = legend.selectAll(`rect.${CLASS.legendItemEvent}`)
+			.data(targetIdz);
+
+		(withTransition ? rects.transition() : rects)
+			.attr("width", id => widths[id])
+			.attr("height", id => heights[id])
+			.attr("x", xForLegendRect)
+			.attr("y", yForLegendRect);
+
+
+		if (usePoint) {
+			const tiles = legend.selectAll(`.${CLASS.legendItemPoint}`)
+				.data(targetIdz);
+
+			(withTransition ? tiles.transition() : tiles)
+				.each(function() {
+					const nodeName = this.nodeName.toLowerCase();
+					const pointR = config.point_r;
+					let x = "x";
+					let y = "y";
+					let xOffset = 2;
+					let yOffset = 2.5;
+					let radius;
+					let width;
+					let height;
+
+					if (nodeName === "circle") {
+						const size = pointR * 0.2;
+
+						x = "cx";
+						y = "cy";
+						radius = pointR + size;
+						xOffset = pointR * 2;
+						yOffset = -size;
+					} else if (nodeName === "rect") {
+						const size = pointR * 2.5;
+
+						width = size;
+						height = size;
+						yOffset = 3;
+					}
+
+					d3Select(this)
+						.attr(x, d => x1ForLegendTile(d) + xOffset)
+						.attr(y, d => yForLegendTile(d) - yOffset)
+						.attr("r", radius)
+						.attr("width", width)
+						.attr("height", height);
+				});
+		} else {
+			const tiles = legend.selectAll(`line.${CLASS.legendItemTile}`)
+				.data(targetIdz);
+
+			(withTransition ? tiles.transition() : tiles)
+				.style("stroke", $$.levelColor ? id => $$.levelColor($$.cache.get(id).values[0].value) : $$.color)
+				.attr("x1", x1ForLegendTile)
+				.attr("y1", yForLegendTile)
+				.attr("x2", x2ForLegendTile)
+				.attr("y2", yForLegendTile);
+		}
+
+		if (background) {
+			(withTransition ? background.transition() : background)
+				.attr("height", $$.getLegendHeight() - 12)
+				.attr("width", maxWidth * (step + 1) + 10);
+		}
+
+		// Update all to reflect change of legend
+		$$.updateLegendItemWidth(maxWidth);
+		$$.updateLegendItemHeight(maxHeight);
+		$$.updateLegendStep(step);
+	}
+};
+</code></pre>
+        </article>
+    </section>
+
+
+
+
+    
+    
+</div>
+
+<br class="clear">
+
+<footer>
+    Documentation generated by <a href="https://github.com/jsdoc3/jsdoc">JSDoc 3.6.3</a> using the <a href="https://github.com/clenemt/docdash">docdash</a> theme.
+</footer>
+
+<script>prettyPrint();</script>
+<script src="scripts/polyfill.js"></script>
+<script src="scripts/linenumber.js"></script>
+
+<script src="scripts/search.js" defer></script>
+
+
+
+    <link type="text/css" rel="stylesheet" href="../../../css/doc.css">
+    
+</body>
+</html>
