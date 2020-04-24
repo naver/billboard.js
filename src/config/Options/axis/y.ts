@@ -38,12 +38,11 @@ export default {
 	 * Set type of y axis.<br><br>
 	 * **Available Values:**
 	 *   - timeseries
-	 *   - category
 	 *   - indexed
 	 * @name axis․y․type
 	 * @memberof Options
 	 * @type {string}
-	 * @default undefined
+	 * @default "indexed"
 	 * @example
 	 * axis: {
 	 *   y: {
