@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * http://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200421134350
+ * @version 1.11.1-nightly-20200424134546
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -21959,7 +21959,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
             area = _shape$type.area,
             bar = _shape$type.bar,
             line = _shape$type.line;
-        (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && (list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition))), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), flow || list.push($$.updategridFocus());
+        (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && (list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition))), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), flow || list.push($$.updateGridFocus());
       }
 
       return (!hasArcType || $$.hasType("radar")) && (notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), list.push($$.redrawCircle(cx, cy, isTransition, flowFn))), list;
@@ -22164,7 +22164,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
           f = function (transition, callback) {
         function loop() {
           for (var t, done = 0, i = 0; t = transitionsToWait[i]; i++) {
-            if (t.empty()) {
+            if (t === !0 || t.empty && t.empty()) {
               done++;
               continue;
             }
@@ -24488,12 +24488,11 @@ var Options_Options = function Options() {
      * Set type of y axis.<br><br>
      * **Available Values:**
      *   - timeseries
-     *   - category
      *   - indexed
      * @name axis․y․type
      * @memberof Options
      * @type {String}
-     * @default undefined
+     * @default "indexed"
      * @example
      * axis: {
      *   y: {
@@ -31922,11 +31921,13 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this,
         t = getRandom(),
         opacityForText = forFlow ? 0 : $$.opacityForText.bind($$);
-    return [$$.mainText.each(function (d, i) {
+    // need to return 'true' as of being pushed to the redraw list
+    // ref: getRedrawList()
+    return $$.mainText.each(function (d, i) {
       var text = src_select(this); // do not apply transition for newly added text elements
 
       (withTransition && text.attr("x") ? text.transition(t) : text).attr("x", x.bind(this)(d, i)).attr("y", y.bind(this)(d, i)).style("fill", $$.updateTextColor.bind($$)).style("fill-opacity", opacityForText);
-    })];
+    }), !0;
   },
 
   /**
@@ -32447,20 +32448,21 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     var $$ = this;
     $$.inputType === "mouse" && $$.main.selectAll("line.".concat(config_classes.xgridFocus, ", line.").concat(config_classes.ygridFocus)).style("visibility", "hidden");
   },
-  updategridFocus: function updategridFocus() {
-    var $$ = this;
+  updateGridFocus: function updateGridFocus() {
+    var $$ = this,
+        xgridFocus = $$.grid.select("line.".concat(config_classes.xgridFocus));
 
-    if ($$.inputType === "touch") {
-      var xgridFocus = $$.grid.select("line.".concat(config_classes.xgridFocus));
-
-      if (!xgridFocus.empty()) {
-        var d = xgridFocus.datum();
-        d && $$.showGridFocus([d]);
-      }
-    } else {
+    if (!($$.inputType === "touch")) {
       var _isRotated = $$.config.axis_rotated;
-      $$.main.select("line.".concat(config_classes.xgridFocus)).attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? $$.width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : $$.height);
-    }
+      xgridFocus.attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? $$.width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : $$.height);
+    } else if (!xgridFocus.empty()) {
+      var d = xgridFocus.datum();
+      d && $$.showGridFocus([d]);
+    } // need to return 'true' as of being pushed to the redraw list
+    // ref: getRedrawList()
+
+
+    return !0;
   },
   generateGridData: function generateGridData(type, scale) {
     var $$ = this,
@@ -36992,7 +36994,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200421134350",
+  version: "1.11.1-nightly-20200424134546",
 
   /**
    * Generate chart
@@ -37091,7 +37093,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200421134350
+ * @version 1.11.1-nightly-20200424134546
  */
 
 
