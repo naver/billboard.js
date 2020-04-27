@@ -4666,11 +4666,6 @@ eslint@^6.8.0:
     text-table "^0.2.0"
     v8-compile-cache "^2.0.3"
 
-esm@3.2.25:
-  version "3.2.25"
-  resolved "https://registry.yarnpkg.com/esm/-/esm-3.2.25.tgz#342c18c29d56157688ba5ce31f8431fbb795cc10"
-  integrity sha512-U1suiZ2oDVWv4zPO56S0NcR5QriEahGtdN2OR6FiOG4WJvcjBVFB0qI4+eKoWFH483PKGuLuu6V8Z4T5g63UVA==
-
 espree@^5.0.1:
   version "5.0.1"
   resolved "https://registry.yarnpkg.com/espree/-/espree-5.0.1.tgz#5d6526fa4fc7f0788a5cf75b15f30323e2f81f7a"
@@ -12116,11 +12111,10 @@ webpack-bundle-analyzer@^3.7.0:
     ws "^6.0.0"
 
 webpack-clean@^1.2.4:
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/webpack-clean/-/webpack-clean-1.2.4.tgz#10ae7e28fcb47eb123a365d9db2a4d35bf4b5168"
-  integrity sha512-6Z1otnY7ghGJ1PFKNeheqNJyaNElcC7zIy4vk+ADjKyGMj69fi1NMP3AgwOvkhkIz5Da+MB4azoFLojUbNLm8Q==
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/webpack-clean/-/webpack-clean-1.2.5.tgz#350fe56e67e32cd51ff43f953d228bc1802b4edc"
+  integrity sha512-4puC5JNaGTKwlp7kbc+xJGMMOMw+1YtmrAiv53zEDQeZPTtxcE3w1sVfRlKIFbItTjg3FyW88XBNqhAIUeXUCw==
   dependencies:
-    esm "3.2.25"
     file-exists "5.0.1"
     fs-extra "9.0.0"
     winston-color "1.0.0"
