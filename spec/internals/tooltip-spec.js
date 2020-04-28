@@ -234,6 +234,35 @@ describe("TOOLTIP", function() {
 			});
 		});
 
+		describe("flex display tooltip", () => {
+			before(() => {
+				args.bindto = "#display_flex";
+			});
+
+			after(() => {
+				delete args.bindto;
+			});
+
+			it("check tooltip position", done => {
+				chart.resize({width:300});
+
+				setTimeout(() => {
+					chart.tooltip.show({
+						index:5
+					});
+
+					const {line: {circles}, tooltip} = chart.$;
+					const pointRect = circles.filter(".bb-circle-5").node().getBoundingClientRect();
+					const tooltipPos = parseInt(tooltip.style("left")) + parseInt(tooltip.style("width"));
+
+					expect(pointRect.left > tooltipPos).to.be.true;
+					expect(pointRect.left).to.be.above(tooltipPos, 20);
+
+					done();
+				}, 300);
+			})
+		});
+
 		describe("when zoomed", () => {
 			before(() => {
 				args.zoom = {enabled: true};
