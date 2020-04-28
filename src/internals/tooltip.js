@@ -263,7 +263,7 @@ extend(ChartInternal.prototype, {
 
 		// when tooltip left + tWidth > chart's width
 		if ((left + tWidth + 15) > chartRight) {
-			left -= (svgLeft + tWidth + chartLeft);
+			left -= tWidth + chartLeft;
 		}
 
 		if (top + tHeight > $$.currentHeight) {
