@@ -3,9 +3,9 @@
  * billboard.js project is licensed under the MIT license
  * 
  * billboard.js, JavaScript chart library
- * http://naver.github.io/billboard.js/
+ * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200427134807
+ * @version 1.11.1-nightly-20200428134819
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -32709,7 +32709,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
     } // when tooltip left + tWidth > chart's width
 
 
-    return left + tWidth + 15 > chartRight && (left -= svgLeft + tWidth + chartLeft), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
+    return left + tWidth + 15 > chartRight && (left -= tWidth + chartLeft), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
       top: top,
       left: left
     };
@@ -36994,7 +36994,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200427134807",
+  version: "1.11.1-nightly-20200428134819",
 
   /**
    * Generate chart
@@ -37093,7 +37093,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200427134807
+ * @version 1.11.1-nightly-20200428134819
  */
 
 
