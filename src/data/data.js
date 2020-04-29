@@ -40,12 +40,15 @@ extend(ChartInternal.prototype, {
 	isStackNormalized() {
 		const config = this.config;
 
-		return config.data_stack_normalize && config.data_groups.length;
+		return config.data_stack_normalize && this.isGrouped();
 	},
 
 	isGrouped(id) {
-		return this.config.data_groups
-			.map(v => v.indexOf(id) >= 0)[0];
+		const groups = this.config.data_groups;
+
+		return id ?
+			groups.some(v => v.indexOf(id) >= 0 && v.length > 1) :
+			groups.length > 0;
 	},
 
 	getXKey(id) {

@@ -2155,12 +2155,11 @@ export default class Options {
 			 * Set type of y axis.<br><br>
 			 * **Available Values:**
 			 *   - timeseries
-			 *   - category
 			 *   - indexed
 			 * @name axis․y․type
 			 * @memberof Options
 			 * @type {String}
-			 * @default undefined
+			 * @default "indexed"
 			 * @example
 			 * axis: {
 			 *   y: {

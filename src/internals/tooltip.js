@@ -104,7 +104,7 @@ extend(ChartInternal.prototype, {
 		const tplStr = contents.template;
 		const targetIds = $$.mapToTargetIds();
 
-		if (order === null && config.data_groups.length) {
+		if (order === null && $$.isGrouped()) {
 			// for stacked data, order should aligned with the visually displayed data
 			const ids = $$.orderTargets($$.data.targets)
 				.map(i2 => i2.id)
@@ -263,7 +263,7 @@ extend(ChartInternal.prototype, {
 
 		// when tooltip left + tWidth > chart's width
 		if ((left + tWidth + 15) > chartRight) {
-			left -= (svgLeft + tWidth + chartLeft);
+			left -= tWidth + chartLeft;
 		}
 
 		if (top + tHeight > $$.currentHeight) {
