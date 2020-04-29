@@ -1,3 +1,11 @@
+## [1.12.7](https://github.com/naver/billboard.js/compare/1.12.6...1.12.7) (2020-04-29)
+
+
+### Bug Fixes
+
+* **data:** Fix on determine grouped data ([50f9fb1](https://github.com/naver/billboard.js/commit/50f9fb1dc42d6a7abe34606847bcab0b62784a27)), closes [#1365](https://github.com/naver/billboard.js/issues/1365)
+* **tooltip:** Fix tooltip rightest positioning ([59845e3](https://github.com/naver/billboard.js/commit/59845e39a453fbab13c5be108ba0e05fcba95dee)), closes [#1362](https://github.com/naver/billboard.js/issues/1362)
+
 ## [1.12.6](https://github.com/naver/billboard.js/compare/1.12.5...1.12.6) (2020-04-23)
 
 
