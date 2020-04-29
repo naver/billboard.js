@@ -1,6 +1,8 @@
 .DS_Store
 *.log
 *.iml
+*.sh
+*.bat
 package-lock.json
 /*.css
 /*.html
