@@ -70,7 +70,7 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const config = $$.config;
 		const maxDataCount = $$.getMaxDataCount();
-		const isGrouped = config.data_groups.length;
+		const isGrouped = $$.isGrouped();
 		const tickInterval = ($$.zoomScale || $$) && !$$.isCategorized() ?
 			$$.xx($$.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
 		let result;
@@ -126,7 +126,7 @@ extend(ChartInternal.prototype, {
 		const config = $$.config;
 		const getPoints = $$.generateGetBarPoints(barIndices, isSub);
 		const isRotated = config.axis_rotated;
-		const isGrouped = config.data_groups.length;
+		const isGrouped = $$.isGrouped();
 		const barRadius = config.bar_radius;
 		const barRadiusRatio = config.bar_radius_ratio;
 
