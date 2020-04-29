@@ -578,6 +578,57 @@ describe("SHAPE LINE", () => {
 		});
 	});
 
+	describe("stacked grouped area", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", -1000, -100, 0, 100, 1000],
+						["data2", -1000, -100, 0, 100, 1000],
+						["data3", -1000, -100, 0, 100, 1000],
+						["data4", -1000, -100, 0, 100, 1000]
+					],
+					type: "area-step",
+					groups: [
+						["data1", "data2"],
+						["data3", "data4"]
+					],
+					labels: {
+						show: true
+					}
+				},
+				axis: {
+					y2: {
+						show: true
+					}
+				}
+			};
+		});
+
+		const checkPath = (type, expected) => {
+			const selection = chart.$.line[type];
+			let i = 0;
+
+			selection.each(function() {
+				expect(this.getAttribute("d")).to.be.equal(selection.nodes()[i < 2 ? i : i - 2].getAttribute("d"));
+				i++;
+			});
+		}
+
+		it("should be rendered correctly", () => {
+			checkPath("areas");
+			checkPath("lines");
+		});
+
+		it("set option axis.rotated=true", () => {
+			args.axis.rotated = true;
+		});
+
+		it("should be rendered correctly when axis is rotated", () => {
+			checkPath("areas");
+			checkPath("lines");
+		});
+	});
 	
 	describe("line options", () => {
 		before(() => {
