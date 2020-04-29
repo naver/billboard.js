@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200428134819
+ * @version 1.11.1-nightly-20200429134910
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -6955,12 +6955,13 @@ extend(ChartInternal_ChartInternal.prototype, {
   },
   isStackNormalized: function isStackNormalized() {
     var config = this.config;
-    return config.data_stack_normalize && config.data_groups.length;
+    return config.data_stack_normalize && this.isGrouped();
   },
   isGrouped: function isGrouped(id) {
-    return this.config.data_groups.map(function (v) {
-      return v.indexOf(id) >= 0;
-    })[0];
+    var groups = this.config.data_groups;
+    return id ? groups.some(function (v) {
+      return v.indexOf(id) >= 0 && v.length > 1;
+    }) : groups.length > 0;
   },
   getXKey: function getXKey(id) {
     var $$ = this,
@@ -9141,7 +9142,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         $$ = this,
         config = $$.config,
         maxDataCount = $$.getMaxDataCount(),
-        isGrouped = config.data_groups.length,
+        isGrouped = $$.isGrouped(),
         tickInterval = ($$.zoomScale || $$) && !$$.isCategorized() ? $$.xx($$.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount),
         getWidth = function (id) {
       var width = id ? config.bar_width[id] : config.bar_width,
@@ -9175,7 +9176,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         getPoints = $$.generateGetBarPoints(barIndices, isSub),
         isRotated = config.axis_rotated,
-        isGrouped = config.data_groups.length,
+        isGrouped = $$.isGrouped(),
         barRadius = config.bar_radius,
         barRadiusRatio = config.bar_radius_ratio,
         getRadius = isNumber(barRadius) && barRadius > 0 ? function () {
@@ -10886,7 +10887,7 @@ extend(ChartInternal_ChartInternal.prototype, {
         tplStr = contents.template,
         targetIds = $$.mapToTargetIds();
 
-    if (order === null && config.data_groups.length) {
+    if (order === null && $$.isGrouped()) {
       // for stacked data, order should aligned with the visually displayed data
       var ids = $$.orderTargets($$.data.targets).map(function (i2) {
         return i2.id;
@@ -14932,7 +14933,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200428134819",
+  version: "1.11.1-nightly-20200429134910",
 
   /**
    * Generate chart
@@ -15031,7 +15032,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200428134819
+ * @version 1.11.1-nightly-20200429134910
  */
 
 
