@@ -747,7 +747,7 @@ export interface AreaLinearGradientOptions {
 		 * - setting 'null' for stop-color, will set its original data color
 		 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
 		 */
-		[number, string | null | ((this: void, id: string) => string), number]
+		[number, string | null | ((id: string) => string), number][]
 	];
 }
 
