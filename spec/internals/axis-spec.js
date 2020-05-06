@@ -1084,7 +1084,7 @@ describe("AXIS", function() {
 			const xAxisTickTextY2Overflow = chart.internal.axis.getXAxisTickTextY2Overflow(defaultPadding);
 
 			expect(xAxisTickTextY2Overflow).to.be.above(0, 5);
-			expect(xAxisTickTextY2Overflow).to.be.equal(expectedOverflow);
+			expect(xAxisTickTextY2Overflow).to.be.closeTo(expectedOverflow, 1);
 		}
 
 		describe("`axis.x.type = category`", () => {
