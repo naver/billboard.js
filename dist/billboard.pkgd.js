@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200429134910
+ * @version 1.11.1-nightly-20200507135455
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -13609,7 +13609,7 @@ function _unsupportedIterableToArray(o, minLen) {
   if (typeof o === "string") return _arrayLikeToArray(o, minLen);
   var n = Object.prototype.toString.call(o).slice(8, -1);
   if (n === "Object" && o.constructor) n = o.constructor.name;
-  if (n === "Map" || n === "Set") return Array.from(n);
+  if (n === "Map" || n === "Set") return Array.from(o);
   if (n === "Arguments" || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)) return _arrayLikeToArray(o, minLen);
 }
 // CONCATENATED MODULE: ./node_modules/@babel/runtime/helpers/esm/nonIterableRest.js
@@ -30231,18 +30231,15 @@ util_extend(ChartInternal_ChartInternal.prototype, {
   getShapeOffsetData: function getShapeOffsetData(typeFilter) {
     var $$ = this,
         targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))),
+        isStackNormalized = $$.isStackNormalized(),
         shapeOffsetTargets = targets.map(function (target) {
-      var rowValues = target.values;
+      var rowValues = target.values,
+          values = {};
       $$.isStepType(target) && (rowValues = $$.convertValuesToStep(rowValues));
-      var rowValueMapByXValue = rowValues.reduce(function (out, value) {
-        return out[+value.x] = value, out;
-      }, {}),
-          values = rowValues.map($$.isStackNormalized() ? function (v) {
-        return $$.getRatio("index", v, !0);
-      } : function (_ref) {
-        var value = _ref.value;
-        return value;
-      });
+      var rowValueMapByXValue = rowValues.reduce(function (out, d) {
+        var key = +d.x;
+        return out[key] = d, values[key] = isStackNormalized ? $$.getRatio("index", d, !0) : d.value, out;
+      }, {});
       return {
         id: target.id,
         rowValues: rowValues,
@@ -30250,8 +30247,8 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         values: values
       };
     }),
-        indexMapByTargetId = targets.reduce(function (out, _ref2, index) {
-      var id = _ref2.id;
+        indexMapByTargetId = targets.reduce(function (out, _ref, index) {
+      var id = _ref.id;
       return out[id] = index, out;
     }, {});
     return {
@@ -30269,17 +30266,15 @@ util_extend(ChartInternal_ChartInternal.prototype, {
       var ind = $$.getIndices(indices, d.id),
           scale = isSub ? $$.getSubYScale(d.id) : $$.getYScale(d.id),
           y0 = scale($$.getShapeYMin(d.id)),
-          isStepType = $$.isStepType(d),
           dataXAsNumber = +d.x,
           offset = y0;
-      return shapeOffsetTargets.forEach(function (t) {
-        var rowValues = t.rowValues,
-            values = t.values;
+      return shapeOffsetTargets.filter(function (t) {
+        return t.id !== d.id;
+      }).forEach(function (t) {
+        if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+          var row = t.rowValues[idx]; // check if the x values line up
 
-        if (t.id !== d.id && ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-          var _row5 = rowValues[idx]; // check if the x values line up
-
-          _row5 && +_row5.x === dataXAsNumber || (_row5 = t.rowValueMapByXValue[dataXAsNumber]), _row5 && _row5.value * d.value >= 0 && (offset += scale(values[isStepType ? idx : _row5.index]) - y0);
+          row && +row.x === dataXAsNumber || (row = t.rowValueMapByXValue[dataXAsNumber]), row && row.value * d.value >= 0 && (offset += scale(t.values[dataXAsNumber]) - y0);
         }
       }), offset;
     };
@@ -36995,7 +36990,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200429134910",
+  version: "1.11.1-nightly-20200507135455",
 
   /**
    * Generate chart
@@ -37094,7 +37089,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200429134910
+ * @version 1.11.1-nightly-20200507135455
  */
 
 
