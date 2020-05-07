@@ -856,7 +856,7 @@ describe("INTERACTION", () => {
 			});
 		});
 
-		describe("check for touch move selection", () => {
+		describe("check for touch move selection #1", () => {
 			const selection = [];
 
 			before(() => {
@@ -934,24 +934,37 @@ describe("INTERACTION", () => {
 			});
 
 			it("check if tooltip visibility maintained and position updated after resize", done => {
-				// when
-				chart.tooltip.show({x:2});
+				let left;
 
-				const left = parseInt(chart.$.tooltip.style("left"));
+				new Promise(resolve => {
+					util.simulator(chart.$.svg.node(), {
+						pos: [250,150],
+						deltaX: -200,
+						deltaY: 0,
+						duration: 500,
+					}, resolve);
 
-				// when
-				chart.resize({width: 300});
+					//setTimeout(resolve, 300);
+				}).then(resolve => {
+					left = parseInt(chart.$.tooltip.style("left"));
+					
+					// when
+					chart.resize({width: 300});
 
-				setTimeout(() => {
-					expect(args.onresized.calledOnce).to.be.true;
-					expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
+					setTimeout(resolve, 300);
+				}).then(() => {
 
-					done();
-				}, 300)
+					setTimeout(() => {
+						expect(args.onresized.calledOnce).to.be.true;
+						expect(parseInt(chart.$.tooltip.style("left"))).to.be.above(left);
+	
+						done();
+					}, 300);
+				});
 			});
 
-			it("check if data point radius size rollsback after hide API is called", done => {
-				const x = 2;
+			it("check if data point radius size roll back after hide API is called", done => {
+				const x = 1;
 				chart.tooltip.show({x});
 				chart.tooltip.hide();
 
@@ -965,7 +978,7 @@ describe("INTERACTION", () => {
 		});
 	});
 
-	describe("check for touch move selection", () => {
+	describe("check for touch move selection #2", () => {
 		const selection = [];
 
 		before(() => {
@@ -984,19 +997,29 @@ describe("INTERACTION", () => {
 		});
 
 		it("x focus grid position & visibility should be maintained after resize", done => {
-			chart.tooltip.show({x:2});
-			chart.resize({width:300});
-
-			setTimeout(() => {
-				const xGridFocus = chart.$.main.select(`.${CLASS.xgridFocus} line`);
-				const x = chart.internal.xx(xGridFocus.datum());
-
-				expect(x).to.be.equal(+xGridFocus.attr("x1"));
-				expect(x).to.be.equal(+xGridFocus.attr("x2"));
-				expect(xGridFocus.style("visibility")).to.be.equal("visible");
-
-				done();
-			}, 300);
+			new Promise(resolve => {
+				// when
+				util.simulator(chart.$.svg.node(), {
+					pos: [250,150],
+					deltaX: -200,
+					deltaY: 0,
+					duration: 500,
+				}, resolve);
+			}).then(resolve => {
+				chart.resize({width:300});
+				setTimeout(resolve, 300);
+			}).then(() => {
+				setTimeout(() => {
+					const xGridFocus = chart.$.main.select(`.${CLASS.xgridFocus} line`);
+					const x = chart.internal.xx(xGridFocus.datum());
+	
+					expect(x).to.be.equal(+xGridFocus.attr("x1"));
+					expect(x).to.be.equal(+xGridFocus.attr("x2"));
+					expect(xGridFocus.style("visibility")).to.be.equal("visible");
+	
+					done();
+				}, 500);
+			});
 		});
 
 		it("set option grid.focus.show=false", () => {
