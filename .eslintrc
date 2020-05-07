@@ -20,6 +20,7 @@
     "rules": {
         "linebreak-style": 0,
         "consistent-this": 0,
+        "camelcase": 0,
         "no-nested-ternary": 0,
         "object-shorthand": 0,
         "comma-dangle": 0,

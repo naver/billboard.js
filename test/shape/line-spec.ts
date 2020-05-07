@@ -584,6 +584,68 @@ describe("SHAPE LINE", () => {
 
 			checkPath(expectedPath);
 		});
+
+		it("set options", () => {
+			args = {
+				data: {
+					columns: [
+						["data1", 400000, 18000, 0, -18000, -400000],
+						["data2", 31000, 31000, 0, -31000, -31000]
+					],
+					type: "area-step",
+					groups: [["data1", "data2"]],
+					labels: {
+						show: true
+					},
+					order: null
+				},
+				axis: {
+					x: {
+						categories: [
+							"category1",
+							"category2",
+							"category3",
+							"category4",
+							"category5"
+						],
+						type: "category"
+					}
+				}
+			};
+		});
+
+		it("check data label text position", () => {
+			const expected = {
+				data1: [
+					[57, 52.97743035922552],
+					[171, 200.54648436616517], 
+					[285, 207.5],
+					[398, 235.95351563383483],
+					[512, 383.52256964077446]
+				],
+				data2: [
+					[57, 41.0019312120655],
+					[171, 188.57098521900514],
+					[285, 207.5],
+					[398, 247.9290147809948],
+					[512, 395.49806878793447]
+				]
+			};
+
+			const checkPos = id => {
+				chart.$.text.texts.filter(d => d.id === id).each(function(d, i) {
+					const x = +this.getAttribute("x");
+					const y = +this.getAttribute("y");
+					const expectedPos = expected[id][i];
+	
+					expect(x).to.be.closeTo(expectedPos[0], 1);
+					expect(y).to.be.closeTo(expectedPos[1], 1);
+				});
+			}
+
+			checkPos("data1");
+			checkPos("data2");
+		});
 	});
 
 	describe("line options", () => {

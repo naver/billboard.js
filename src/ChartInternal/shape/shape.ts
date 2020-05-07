@@ -229,28 +229,30 @@ export default {
 	getShapeOffsetData(typeFilter) {
 		const $$ = this;
 		const targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)));
+		const isStackNormalized = $$.isStackNormalized();
+
 		const shapeOffsetTargets = targets.map(target => {
 			let rowValues = target.values;
+			const values = {};
 
 			if ($$.isStepType(target)) {
 				rowValues = $$.convertValuesToStep(rowValues);
 			}
-			const rowValueMapByXValue = rowValues.reduce((out, value) => {
-				out[Number(value.x)] = value;
+
+			const rowValueMapByXValue = rowValues.reduce((out, d) => {
+				const key = Number(d.x);
+
+				out[key] = d;
+				values[key] = isStackNormalized ? $$.getRatio("index", d, true) : d.value;
+
 				return out;
 			}, {});
-
-			const values = rowValues.map(
-				$$.isStackNormalized() ?
-					v => $$.getRatio("index", v, true) :
-					({value}) => value
-			);
 
 			return {
 				id: target.id,
 				rowValues,
 				rowValueMapByXValue,
-				values,
+				values
 			};
 		});
 		const indexMapByTargetId = targets.reduce((out, {id}, index) => {
@@ -270,21 +272,14 @@ export default {
 			const scale = $$.getYScaleById(d.id, isSub);
 			const y0 = scale($$.getShapeYMin(d.id));
 
-			const isStepType = $$.isStepType(d);
 			const dataXAsNumber = Number(d.x);
 			let offset = y0;
 
 			shapeOffsetTargets
+				.filter(t => t.id !== d.id)
 				.forEach(t => {
-					const rowValues = t.rowValues;
-					const values = t.values;
-
-					if (t.id === d.id || ind[t.id] !== ind[d.id]) {
-						return;
-					}
-
-					if (indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-						let row = rowValues[idx];
+					if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+						let row = t.rowValues[idx];
 
 						// check if the x values line up
 						if (!row || Number(row.x) !== dataXAsNumber) {
@@ -292,7 +287,7 @@ export default {
 						}
 
 						if (row && row.value * d.value >= 0) {
-							offset += scale(values[isStepType ? idx : row.index]) - y0;
+							offset += scale(t.values[dataXAsNumber]) - y0;
 						}
 					}
 				});
