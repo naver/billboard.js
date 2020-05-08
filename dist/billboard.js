@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200507135455
+ * @version 1.11.1-nightly-20200508135537
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -7156,26 +7156,42 @@ extend(ChartInternal_ChartInternal.prototype, {
 
   /**
    * Get total data sum
+   * @param {boolean} subtractHidden Subtract hidden data from total
    * @return {Number}
   	 * @private
    */
-  getTotalDataSum: function getTotalDataSum() {
+  getTotalDataSum: function getTotalDataSum(subtractHidden) {
     var $$ = this,
         cacheKey = "$totalDataSum",
-        totalDataSum = $$.getCache(cacheKey);
+        total = $$.getCache(cacheKey);
 
-    if (!totalDataSum) {
-      var total = mergeArray($$.data.targets.map(function (t) {
+    if (!isNumber(total)) {
+      var sum = mergeArray($$.data.targets.map(function (t) {
         return t.values;
       })).map(function (v) {
         return v.value;
       }).reduce(function (p, c) {
         return p + c;
       });
-      $$.addCache(cacheKey, totalDataSum = total);
+      $$.addCache(cacheKey, total = sum);
     }
 
-    return totalDataSum;
+    return subtractHidden && (total -= $$.getHiddenTotalDataSum()), total;
+  },
+
+  /**
+   * Get total hidden data sum
+   * @return {Number}
+  	 * @private
+   */
+  getHiddenTotalDataSum: function getHiddenTotalDataSum() {
+    var $$ = this,
+        api = $$.api,
+        hiddenTargetIds = $$.hiddenTargetIds,
+        total = 0;
+    return hiddenTargetIds.length && (total = api.data.values.bind(api)(hiddenTargetIds).reduce(function (p, c) {
+      return p + c;
+    })), total;
   },
 
   /**
@@ -7533,35 +7549,23 @@ extend(ChartInternal_ChartInternal.prototype, {
         config = $$.config,
         api = $$.api,
         ratio = 0;
+    if (d && api.data.shown.call(api).length) if (ratio = d.ratio || d.value, type === "arc") ratio = $$.pie.padAngle()() ? d.value / $$.getTotalDataSum(!0) : (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));else if (type === "index") {
+      var dataValues = api.data.values.bind(api),
+          total = this.getTotalPerIndex();
 
-    if (d && api.data.shown.call(api).length) {
-      var dataValues = api.data.values.bind(api);
-      if (ratio = d.ratio || d.value, type === "arc") {
-          // if has padAngle set, calculate rate based on value
-          if ($$.pie.padAngle()()) {
-            var total = $$.getTotalDataSum();
-            $$.hiddenTargetIds.length && (total -= dataValues($$.hiddenTargetIds).reduce(function (p, c) {
-              return p + c;
-            })), ratio = d.value / total;
-          } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
-      } else if (type === "index") {
-        var _total = this.getTotalPerIndex();
+      if ($$.hiddenTargetIds.length) {
+        var hiddenSum = dataValues($$.hiddenTargetIds, !1);
+        hiddenSum.length && (hiddenSum = hiddenSum.reduce(function (acc, curr) {
+          return acc.map(function (v, i) {
+            return (isNumber(v) ? v : 0) + curr[i];
+          });
+        }), total = total.map(function (v, i) {
+          return v - hiddenSum[i];
+        }));
+      }
 
-        if ($$.hiddenTargetIds.length) {
-          var hiddenSum = dataValues($$.hiddenTargetIds, !1);
-          hiddenSum.length && (hiddenSum = hiddenSum.reduce(function (acc, curr) {
-            return acc.map(function (v, i) {
-              return (isNumber(v) ? v : 0) + curr[i];
-            });
-          }), _total = _total.map(function (v, i) {
-            return v - hiddenSum[i];
-          }));
-        }
-
-        d.ratio = isNumber(d.value) && _total && _total[d.index] > 0 ? d.value / _total[d.index] : 0, ratio = d.ratio;
-      } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
-    }
-
+      d.ratio = isNumber(d.value) && total && total[d.index] > 0 ? d.value / total[d.index] : 0, ratio = d.ratio;
+    } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0)) / $$.maxValue * config.radar_size_ratio);
     return asPercent && ratio ? ratio * 100 : ratio;
   },
 
@@ -8671,7 +8675,8 @@ extend(ChartInternal_ChartInternal.prototype, {
         gStart = config.gauge_startingAngle;
 
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-      var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
+      // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+      var totalSum = $$.getTotalDataSum($$.rendered); // if gauge_max less than totalSum, make totalSum to max value
 
       totalSum > config.gauge_max && (config.gauge_max = totalSum);
       var gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
@@ -14928,7 +14933,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200507135455",
+  version: "1.11.1-nightly-20200508135537",
 
   /**
    * Generate chart
@@ -15027,7 +15032,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200507135455
+ * @version 1.11.1-nightly-20200508135537
  */
 
 
