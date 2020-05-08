@@ -318,23 +318,46 @@ extend(ChartInternal.prototype, {
 
 	/**
 	 * Get total data sum
+	 * @param {boolean} subtractHidden Subtract hidden data from total
 	 * @return {Number}
  	 * @private
 	 */
-	getTotalDataSum() {
+	getTotalDataSum(subtractHidden) {
 		const $$ = this;
 		const cacheKey = "$totalDataSum";
-		let totalDataSum = $$.getCache(cacheKey);
+		let total = $$.getCache(cacheKey);
 
-		if (!totalDataSum) {
-			const total = mergeArray($$.data.targets.map(t => t.values))
+		if (!isNumber(total)) {
+			const sum = mergeArray($$.data.targets.map(t => t.values))
 				.map(v => v.value)
 				.reduce((p, c) => p + c);
 
-			$$.addCache(cacheKey, totalDataSum = total);
+			$$.addCache(cacheKey, total = sum);
 		}
 
-		return totalDataSum;
+		if (subtractHidden) {
+			total -= $$.getHiddenTotalDataSum();
+		}
+
+		return total;
+	},
+
+	/**
+	 * Get total hidden data sum
+	 * @return {Number}
+ 	 * @private
+	 */
+	getHiddenTotalDataSum() {
+		const $$ = this;
+		const {api, hiddenTargetIds} = $$;
+		let total = 0;
+
+		if (hiddenTargetIds.length) {
+			total = api.data.values.bind(api)(hiddenTargetIds)
+				.reduce((p, c) => p + c);
+		}
+
+		return total;
 	},
 
 	/**
@@ -785,28 +808,21 @@ extend(ChartInternal.prototype, {
 		let ratio = 0;
 
 		if (d && api.data.shown.call(api).length) {
-			const dataValues = api.data.values.bind(api);
-
 			ratio = d.ratio || d.value;
 
 			if (type === "arc") {
 				// if has padAngle set, calculate rate based on value
 				if ($$.pie.padAngle()()) {
-					let total = $$.getTotalDataSum();
+					ratio = d.value / $$.getTotalDataSum(true);
 
-					if ($$.hiddenTargetIds.length) {
-						total -= dataValues($$.hiddenTargetIds).reduce((p, c) => p + c);
-					}
-
-					ratio = d.value / total;
-
-					// otherwise, based on the rendered angle value
+				// otherwise, based on the rendered angle value
 				} else {
 					ratio = (d.endAngle - d.startAngle) / (
 						Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2)
 					);
 				}
 			} else if (type === "index") {
+				const dataValues = api.data.values.bind(api);
 				let total = this.getTotalPerIndex();
 
 				if ($$.hiddenTargetIds.length) {
