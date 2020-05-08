@@ -1,3 +1,11 @@
+## [1.12.8](https://github.com/naver/billboard.js/compare/1.12.7...1.12.8) (2020-05-08)
+
+
+### Bug Fixes
+
+* **arc:** Fix data ratio for stacked gauge ([ad9f42d](https://github.com/naver/billboard.js/commit/ad9f42d3c773db1122c9231b7e49558d65efb63e)), closes [#1376](https://github.com/naver/billboard.js/issues/1376)
+* **shape:** Fix step type data label text position ([2663006](https://github.com/naver/billboard.js/commit/2663006fd181bed84ec3b2f541f28eac6486bee8)), closes [#1368](https://github.com/naver/billboard.js/issues/1368) [#1336](https://github.com/naver/billboard.js/issues/1336)
+
 ## [1.12.7](https://github.com/naver/billboard.js/compare/1.12.6...1.12.7) (2020-04-29)
 
 
