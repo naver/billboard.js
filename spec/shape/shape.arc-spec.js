@@ -472,6 +472,9 @@ describe("SHAPE ARC", () => {
 					],
 					type: "gauge",
 					order: null
+				},
+				transition: {
+					duration: 0
 				}
 			});
 
@@ -531,6 +534,38 @@ describe("SHAPE ARC", () => {
 
 				done();
 			}, 100);
+		});
+
+		it("check for stack data #3", done => {
+			const chart = util.generate({
+				size: {
+					width: 640,
+					height: 480
+				},
+				data: {
+					columns: [
+						["data1", 50, 10],
+						["data2", 200],
+						["data3", 70]
+					],
+					type: "gauge",
+					hide: ["data3"]
+				}
+			});
+
+			const expected = [
+				"M99.4286608484961,-287.28024888925927A304,304,0,0,1,238.9601408018073,-187.92033181106407L143.37608448108438,-112.75219908663844A182.4,182.4,0,0,0,59.65719650909766,-172.36814933355555Z",
+				"M-304,-3.7229262694079536e-14A304,304,0,0,1,99.4286608484961,-287.28024888925927L59.65719650909766,-172.36814933355555A182.4,182.4,0,0,0,-182.4,-2.2337557616447722e-14Z",
+				"M 0 0"
+			];
+
+			setTimeout(() => {
+				chart.$.arc.selectAll(`.${CLASS.target} path`).each(function(d, i) {
+					expect(this.getAttribute("d")).to.be.equal(expected[i]);
+				});
+				
+				done();
+			}, 500);
 		});
 
 		it("check for startingAngle option", () => {
