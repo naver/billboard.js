@@ -313,23 +313,46 @@ export default {
 
 	/**
 	 * Get total data sum
+	 * @param {boolean} subtractHidden Subtract hidden data from total
 	 * @returns {number}
 	 * @private
 	 */
-	getTotalDataSum(): number {
+	getTotalDataSum(subtractHidden) {
 		const $$ = this;
 		const cacheKey = KEY.dataTotalSum;
-		let totalDataSum = $$.cache.get(cacheKey);
+		let total = $$.cache.get(cacheKey);
 
-		if (!totalDataSum) {
-			const total = mergeArray($$.data.targets.map(t => t.values))
+		if (!isNumber(total)) {
+			const sum = mergeArray($$.data.targets.map(t => t.values))
 				.map(v => v.value)
 				.reduce((p, c) => p + c);
 
-			$$.cache.add(cacheKey, totalDataSum = total);
+			$$.cache.add(cacheKey, total = sum);
 		}
 
-		return totalDataSum;
+		if (subtractHidden) {
+			total -= $$.getHiddenTotalDataSum();
+		}
+
+		return total;
+	},
+
+	/**
+	 * Get total hidden data sum
+	 * @return {Number}
+ 	 * @private
+	 */
+	getHiddenTotalDataSum() {
+		const $$ = this;
+		const {api, state: {hiddenTargetIds}} = $$;
+		let total = 0;
+
+		if (hiddenTargetIds.length) {
+			total = api.data.values.bind(api)(hiddenTargetIds)
+				.reduce((p, c) => p + c);
+		}
+
+		return total;
 	},
 
 	/**
@@ -782,20 +805,12 @@ export default {
 		let ratio = 0;
 
 		if (d && api.data.shown().length) {
-			const dataValues = api.data.values.bind(api);
-
 			ratio = d.ratio || d.value;
 
 			if (type === "arc") {
 				// if has padAngle set, calculate rate based on value
 				if ($$.pie.padAngle()()) {
-					let total = $$.getTotalDataSum();
-
-					if (state.hiddenTargetIds.length) {
-						total -= dataValues(state.hiddenTargetIds).reduce((p, c) => p + c);
-					}
-
-					ratio = d.value / total;
+					ratio = d.value / $$.getTotalDataSum(true);
 
 					// otherwise, based on the rendered angle value
 				} else {
@@ -804,6 +819,7 @@ export default {
 					);
 				}
 			} else if (type === "index") {
+				const dataValues = api.data.values.bind(api);
 				let total = this.getTotalPerIndex();
 
 				if (state.hiddenTargetIds.length) {

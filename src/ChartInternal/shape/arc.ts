@@ -86,7 +86,7 @@ export default {
 
 	updateAngle(dValue) {
 		const $$ = this;
-		const {config} = $$;
+		const {config, state} = $$;
 		let pie = $$.pie;
 		let d = dValue;
 		let found = false;
@@ -99,7 +99,8 @@ export default {
 		const gStart = config.gauge_startingAngle;
 
 		if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-			const totalSum = $$.getTotalDataSum();
+			// to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+			const totalSum = $$.getTotalDataSum(state.rendered);
 
 			// if gauge_max less than totalSum, make totalSum to max value
 			if (totalSum > config.gauge_max) {
