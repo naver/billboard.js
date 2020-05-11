@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200508135537
+ * @version 1.11.1-nightly-20200511135656
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -956,22 +956,22 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
     value: function create(g) {
       var ctx = this,
           config = this.config,
+          helper = this.helper,
           params = this.params,
-          helperInst = this.helper,
-          scale = helperInst.scale,
+          scale = helper.scale,
           orient = config.orient,
           splitTickText = this.splitTickText.bind(this),
           isLeftRight = /^(left|right)$/.test(orient),
           isTopBottom = /^(top|bottom)$/.test(orient),
-          tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y"),
-          axisPx = tickTransform === helperInst.axisX ? "y" : "x",
+          tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y"),
+          axisPx = tickTransform === helper.axisX ? "y" : "x",
           sign = /^(top|left)$/.test(orient) ? -1 : 1,
           rotate = params.tickTextRotate;
-      this.config.range = scale.rangeExtent ? scale.rangeExtent() : helperInst.scaleExtent((params.orgXScale || scale).range());
-      var _config = config,
-          innerTickSize = _config.innerTickSize,
-          tickLength = _config.tickLength,
-          range = _config.range,
+      this.config.range = scale.rangeExtent ? scale.rangeExtent() : helper.scaleExtent((params.orgXScale || scale).range());
+      var _config2 = config,
+          innerTickSize = _config2.innerTickSize,
+          tickLength = _config2.tickLength,
+          range = _config2.range,
           name = params.name,
           tickTextPos = name && /^(x|y|y2)$/.test(name) ? params.config["axis_".concat(name, "_tick_text_position")] : {
         x: 0,
@@ -988,17 +988,17 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
       g.each(function () {
         var g = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
             scale0 = this.__chart__ || scale,
-            scale1 = helperInst.copyScale();
+            scale1 = helper.copyScale();
         $g = g, this.__chart__ = scale1, config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
         // update selection - data join
         var path = g.selectAll(".domain").data([0]); // enter + update selection
 
-        if (path.enter().append("path").attr("class", "domain").merge(helperInst.transitionise(path)).attr("d", function () {
+        if (path.enter().append("path").attr("class", "domain").merge(helper.transitionise(path)).attr("d", function () {
           var outerTickSized = config.outerTickSize * sign;
           return isTopBottom ? "M".concat(range[0], ",").concat(outerTickSized, "V0H").concat(range[1], "V").concat(outerTickSized) : "M".concat(outerTickSized, ",").concat(range[0], "H0V").concat(range[1], "H").concat(outerTickSized);
         }), tickShow.tick || tickShow.text) {
           // count of tick data in array
-          var ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight),
+          var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight),
               tick = g.selectAll(".tick").data(ticks, scale1),
               tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
               tickExit = tick.exit().remove(); // update selection
@@ -1007,7 +1007,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
           var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
               counts = [],
               tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-            var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helperInst.textFormatted(d)) ? helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)];
+            var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
             return counts[index] = split.length, split.map(function (splitted) {
               return {
                 index: index,
@@ -1043,7 +1043,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
             }, scale1 = scale0;
           } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
 
-          tickTransform(tickEnter, scale0), tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
+          tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
         }
       }), this.g = $g;
     }
@@ -1381,7 +1381,7 @@ var Axis_Axis = /*#__PURE__*/function () {
           config = $$.config,
           fit = config.axis_x_tick_fit,
           count = config.axis_x_tick_count;
-      return (fit || count && fit) && (values = this.generateTickValues($$.mapTargetsToUniqueXs(targets), count, $$.isTimeSeries())), axis ? axis.tickValues(values) : $$.xAxis && ($$.xAxis.tickValues(values), $$.subXAxis.tickValues(values)), values;
+      return (fit || count && fit) && (values = $$.mapTargetsToUniqueXs(targets), $$.isCategorized() && count > values.length && (count = values.length), values = this.generateTickValues(values, count, $$.isTimeSeries())), axis ? axis.tickValues(values) : $$.xAxis && ($$.xAxis.tickValues(values), $$.subXAxis.tickValues(values)), values;
     }
   }, {
     key: "getId",
@@ -1655,21 +1655,20 @@ var Axis_Axis = /*#__PURE__*/function () {
   }, {
     key: "generateTickValues",
     value: function generateTickValues(values, tickCount, forTimeSeries) {
-      var start,
-          end,
-          count,
-          interval,
-          i,
-          tickValue,
-          tickValues = values;
+      var tickValues = values;
 
       if (tickCount) {
         var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
 
         if (targetCount === 1) tickValues = [values[0]];else if (targetCount === 2) tickValues = [values[0], values[values.length - 1]];else if (targetCount > 2) {
-          var isCategorized = this.owner.isCategorized();
+          var tickValue,
+              isCategorized = this.owner.isCategorized(),
+              count = targetCount - 2,
+              start = values[0],
+              end = values[values.length - 1];
+          tickValues = [start];
 
-          for (count = targetCount - 2, start = values[0], end = values[values.length - 1], interval = (end - start) / (count + 1), tickValues = [start], i = 0; i < count; i++) tickValue = +start + interval * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
+          for (var i = 0; i < count; i++) tickValue = +start + (end - start) / (count + 1) * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
 
           tickValues.push(end);
         }
@@ -1768,8 +1767,8 @@ var Axis_Axis = /*#__PURE__*/function () {
               cullingMax = config["axis_".concat(id, "_tick_culling_max")];
 
           if (tickSize) {
-            for (var _i = 1; _i < tickSize; _i++) if (tickSize / _i < cullingMax) {
-              intervalForCulling = _i;
+            for (var i = 1; i < tickSize; i++) if (tickSize / i < cullingMax) {
+              intervalForCulling = i;
               break;
             }
 
@@ -10385,7 +10384,7 @@ extend(ChartInternal_ChartInternal.prototype, {
           filteredTextNode = Object(external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_d3_["select"])(this),
           nodeForWidth = calcHypo(translate.e, translate.f) > calcHypo(coordinate.e, coordinate.f) ? textNode : filteredTextNode,
           overlapsX = Math.ceil(Math.abs(translate.e - coordinate.e)) < Math.ceil(nodeForWidth.node().getComputedTextLength()),
-          overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 0);
+          overlapsY = Math.ceil(Math.abs(translate.f - coordinate.f)) < parseInt(textNode.style("font-size"), 10);
       filteredTextNode.classed(config_classes.TextOverlapping, overlapsX && overlapsY);
     });
   },
@@ -14933,7 +14932,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200508135537",
+  version: "1.11.1-nightly-20200511135656",
 
   /**
    * Generate chart
@@ -15032,7 +15031,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200508135537
+ * @version 1.11.1-nightly-20200511135656
  */
 
 
