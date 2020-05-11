@@ -1145,8 +1145,7 @@ var demos = {
 								multiline: false,
 								autorotate: true,
 								rotate: 15,
-								culling: false,
-								count: 10,
+								culling: false
 							}
 						}
 					}
