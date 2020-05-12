@@ -94,8 +94,10 @@ export interface ChartOptions {
 	color?: {
 		/**
 		 * Set custom color pattern.
+		 *
+		 * Passing 'null' will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
 		 */
-		pattern?: string[];
+		pattern?: (string|null)[];
 
 		/**
 		 * color threshold for gauge and tooltip color

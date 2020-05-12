@@ -76,6 +76,17 @@ describe("AXIS", function() {
 				).to.be.equal(expectedXPos[i]);
 			});
 		});
+
+		it("set option axis.x.tick.count=10", () => {
+			args.axis.x.tick.count = 10;
+		});
+
+		it("x Axis tick size shouldn't surpass real data size", () => {
+			const tickSize = chart.internal.$el.axis.x.selectAll(".tick").size();
+
+			expect(tickSize).to.be.equal(chart.data()[0].values.length);
+			expect(tickSize).to.be.below(args.axis.x.tick.count);
+		});
 	});
 
 	describe("axis.y.tick.count", () => {

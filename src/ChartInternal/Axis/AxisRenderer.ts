@@ -46,16 +46,16 @@ export default class AxisRenderer {
 	 */
 	create(g: d3Selection): void {
 		const ctx = this;
-		const {config, params, helper: helperInst} = this;
-		const scale = helperInst.scale;
-		const orient = config.orient;
+		const {config, helper, params} = this;
+		const {scale} = helper;
+		const {orient} = config;
 		const splitTickText = this.splitTickText.bind(this);
 		const isLeftRight = /^(left|right)$/.test(orient);
 		const isTopBottom = /^(top|bottom)$/.test(orient);
 
 		// line/text enter and path update
-		const tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y");
-		const axisPx = tickTransform === helperInst.axisX ? "y" : "x";
+		const tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y");
+		const axisPx = tickTransform === helper.axisX ? "y" : "x";
 		const sign = /^(top|left)$/.test(orient) ? -1 : 1;
 
 		// tick text helpers
@@ -63,7 +63,7 @@ export default class AxisRenderer {
 
 		this.config.range = scale.rangeExtent ?
 			scale.rangeExtent() :
-			helperInst.scaleExtent((params.orgXScale || scale).range());
+			helper.scaleExtent((params.orgXScale || scale).range());
 
 		const {innerTickSize, tickLength, range} = config;
 
@@ -85,7 +85,7 @@ export default class AxisRenderer {
 		g.each(function() {
 			const g = d3Select(this);
 			let scale0 = this.__chart__ || scale;
-			let scale1 = helperInst.copyScale();
+			let scale1 = helper.copyScale();
 
 			$g = g;
 			this.__chart__ = scale1;
@@ -99,7 +99,7 @@ export default class AxisRenderer {
 			// enter + update selection
 			path.enter().append("path")
 				.attr("class", "domain")
-				.merge(helperInst.transitionise(path))
+				.merge(helper.transitionise(path))
 				.attr("d", () => {
 					const outerTickSized = config.outerTickSize * sign;
 
@@ -110,7 +110,7 @@ export default class AxisRenderer {
 
 			if (tickShow.tick || tickShow.text) {
 				// count of tick data in array
-				const ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight);
+				const ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight);
 
 				// update selection
 				let tick: d3Selection = g.selectAll(".tick")
@@ -140,8 +140,8 @@ export default class AxisRenderer {
 					.data((d, index) => {
 						const split = params.tickMultiline ?
 							splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : (
-								isArray(helperInst.textFormatted(d)) ?
-									helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)]
+								isArray(helper.textFormatted(d)) ?
+									helper.textFormatted(d).concat() : [helper.textFormatted(d)]
 							);
 
 						counts[index] = split.length;
@@ -215,7 +215,7 @@ export default class AxisRenderer {
 				}
 
 				tickTransform(tickEnter, scale0);
-				tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
+				tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
 			}
 		});
 

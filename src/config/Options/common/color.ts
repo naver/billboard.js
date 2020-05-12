@@ -13,7 +13,7 @@ export default {
 	 * @type {object}
 	 * @property {object} color color object
 	 * @property {string|object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
-	 * @property {Array} [color.pattern=[]] custom color pattern
+	 * @property {Array|null} [color.pattern=[]] Set custom color pattern. Passing `null` will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
 	 * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
 	 *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
 	 *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
@@ -80,7 +80,7 @@ export default {
 	 *      }
 	 *  }
 	 */
-	color_pattern: <string[]> [],
+	color_pattern: <(string|null)[]> [],
 	color_tiles: <(() => [])|undefined> undefined,
 	color_threshold: <{unit?: string; values?: number[]; max: number;}> {},
 	color_onover: <string|object|undefined> undefined
