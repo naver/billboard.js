@@ -219,4 +219,105 @@ describe("SHAPE POINT", () => {
 			expect(chart.$.tooltip.selectAll(".name").size()).to.be.equal(1);
 		});
 	});
+
+	describe("point.focus.only", () => {
+		before(() => {
+			args = {
+				data: {
+					columns: [
+						["data1", 100, 350, null, 300, 250],
+						["data2", 130, 100, 140, 200, 150]
+					]
+				},
+				point: {
+					focus: {
+						only: true
+					}
+				}
+			};
+		});
+
+		it("circle visibility", () => {
+			const {circles} = chart.$;
+			const pos = {};
+			let x = 3;
+
+			circles.each(function(d) {
+				pos[d.id] = [+this.getAttribute("cx"), +this.getAttribute("cy")];
+			});
+
+			expect(circles.size()).to.be.equal(chart.data().length);
+
+			// when
+			chart.tooltip.show({x});
+			const cx = chart.internal.scale.x(x);
+
+			circles.each(function(d) {
+				const p = pos[d.id];
+				
+				expect(+this.getAttribute("cx")).to.be.above(p[0]);
+				expect(+this.getAttribute("cy")).to.be.below(p[1]);
+				expect(d.x).to.be.equal(x);
+				expect(+this.getAttribute("cx")).to.be.equal(cx);
+			});
+
+			// when
+			x = 2;
+			chart.tooltip.show({x});
+
+			// 'null' data point shoudn't be displayed
+			expect(circles.filter(`.${CLASS.EXPANDED}`).size()).to.be.equal(1);
+		});
+
+		it("visibility with data toggle", () => {
+			const {circles} = chart.$;
+			let x = 2;
+			
+			// when
+			chart.toggle("data1");
+			chart.tooltip.show({x});
+
+			circles.each(function(d, i) {
+				if (i === 0) {
+					expect(this.style.opacity).to.be.equal("0");
+				} else {
+					expect(d.id).to.be.equal("data2");
+					expect(d.x).to.be.equal(x);
+				}
+			});
+		});
+
+		it("visibility with data load", done => {
+			let {circles} = chart.$;
+			const size = circles.size();
+
+			expect(size).to.be.equal(chart.data().length);
+
+			chart.load({
+				columns: [["data3", 100, 100, null, 100]],
+				done: function() {
+					circles = chart.$.circles;
+					expect(circles.size()).to.be.equal(size + 1);
+
+					circles.each(function() {
+						expect(+this.style.opacity).to.be.equal(0);
+					});
+					
+					// when
+					const x = 3;
+					const cx = chart.internal.scale.x(x);
+
+					chart.tooltip.show({x});
+
+					circles.each(function(d) {
+						expect(+this.style.opacity).to.be.equal(1);
+						expect(d.x).to.be.equal(x);
+						expect(+this.getAttribute("cx")).to.be.equal(cx);
+					});
+					
+					done();
+				}
+			});
+		});
+	});
 });

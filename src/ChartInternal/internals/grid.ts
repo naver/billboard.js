@@ -414,14 +414,20 @@ export default {
 			});
 
 		smoothLines(focusEl, "grid");
+
+		$$.showCircleFocus(selectedData);
 	},
 
 	hideGridFocus(): void {
 		const $$ = this;
-		const {state, $el} = $$;
+		const {state: {inputType}, $el: {main}} = $$;
 
-		state.inputType === "mouse" && $el.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
-			.style("visibility", "hidden");
+		if (inputType === "mouse") {
+			main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
+				.style("visibility", "hidden");
+
+			$$.hideCircleFocus();
+		}
 	},
 
 	updateGridFocus(): boolean {
@@ -435,6 +441,8 @@ export default {
 
 				d && $$.showGridFocus([d]);
 			}
+
+			$$.showCircleFocus();
 		} else {
 			const isRotated = $$.config.axis_rotated;
 

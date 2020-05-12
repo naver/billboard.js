@@ -18,6 +18,7 @@ export default {
 	 * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
 	 * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
 	 *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+	 * @property {boolean} [point.focus.only=false] Show point only when is focused.
 	 * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
 	 * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
 	 * @property {string} [point.type="circle"] The type of point to be drawn
@@ -53,7 +54,8 @@ export default {
 	 *          expand: {
 	 *              enabled: true,
 	 *              r: 1
-	 *          }
+	 *          },
+	 *          only: true
 	 *      },
 	 *      select: {
 	 *          r: 3
@@ -78,6 +80,7 @@ export default {
 	point_sensitivity: 10,
 	point_focus_expand_enabled: true,
 	point_focus_expand_r: <number|undefined> undefined,
+	point_focus_only: false,
 	point_pattern: <string[]> [],
 	point_select_r: <number|undefined> undefined,
 	point_type: "circle"

@@ -339,8 +339,8 @@ export default {
 
 	/**
 	 * Get total hidden data sum
-	 * @return {Number}
- 	 * @private
+	 * @returns {number}
+	 * @private
 	 */
 	getHiddenTotalDataSum() {
 		const $$ = this;

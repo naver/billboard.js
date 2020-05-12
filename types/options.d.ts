@@ -1124,6 +1124,11 @@ export interface PointOptions {
 			 */
 			r?: number;
 		};
+
+		/**
+		 * Show point only when is focused.
+		 */
+		only?: boolean;
 	};
 
 	select?: {

@@ -34,7 +34,8 @@ export default {
 	},
 
 	opacityForCircle(d): "0.5" | "1" | "0" {
-		const opacity = this.config.point_show ? "1" : "0";
+		const {config} = this;
+		const opacity = config.point_show && !config.point_focus_only ? "1" : "0";
 
 		return isValue(this.getBaseValue(d)) ?
 			(this.isBubbleType(d) || this.isScatterType(d) ?
@@ -93,29 +94,34 @@ export default {
 	updateCircle(): void {
 		const $$ = this;
 		const {config, $el} = $$;
+		const focusOnly = config.point_focus_only;
 
-		if (!config.point_show) {
-			return;
+		if (config.point_show) {
+			const circles = $el.main.selectAll(`.${CLASS.circles}`)
+				.selectAll(`.${CLASS.circle}`)
+				.data(d => {
+					const data = !$$.isBarType(d) && (
+						!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
+					) && $$.labelishData(d);
+
+					return focusOnly ? [data[0]] : data;
+				});
+
+			circles.exit().remove();
+
+			const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
+
+			circles.enter()
+				.append(fn)
+				.merge(circles)
+				.style("stroke", $$.color)
+				.style("opacity", $$.initialOpacityForCircle.bind($$));
+
+			$el.circle = $el.main.selectAll(`.${CLASS.circles} .${CLASS.circle}`);
 		}
-
-		const circles = $el.main.selectAll(`.${CLASS.circles}`).selectAll(`.${CLASS.circle}`)
-			.data(d => !$$.isBarType(d) && (
-				!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
-			) && $$.labelishData(d)
-			);
-
-		circles.exit().remove();
-
-		const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-
-		$el.circle = circles.enter()
-			.append(fn)
-			.merge(circles)
-			.style("stroke", $$.color)
-			.style("opacity", $$.initialOpacityForCircle.bind($$));
 	},
 
-	redrawCircle(cx: number, cy: number, withTransition: boolean, flow) {
+	redrawCircle(cx: Function, cy: Function, withTransition: boolean, flow) {
 		const $$ = this;
 		const {state: {rendered}, $el: {circle, main}} = $$;
 		const selectedCircles = main.selectAll(`.${CLASS.selectedCircle}`);
@@ -147,6 +153,53 @@ export default {
 				.attr(`${posAttr}x`, cx)
 				.attr(`${posAttr}y`, cy)
 		];
+	},
+
+	/**
+	 * Show focused data point circle
+	 * @param {object} d Selected data
+	 * @private
+	 */
+	showCircleFocus(d?): void {
+		const $$ = this;
+		const {config, state, $el} = $$;
+
+		if (state.transiting === false && config.point_focus_only) {
+			let {circle} = $el;
+			const cx = $$.circleX.bind($$);
+			const cy = $$.circleY.bind($$);
+			const fn = $$.point("update", $$, cx, cy, $$.color);
+
+			if (d) {
+				const data = d.filter(d => d && isValue(d.value));
+
+				circle = circle
+					.filter(d => data.some(v => v.id === d.id))
+					.data(data);
+			}
+
+			circle
+				.attr("class", this.updatePointClass.bind(this))
+				.style("opacity", "1")
+				.each(function(d) {
+					fn.bind(this)(d);
+					$$.expandCircles(d.index, d.id);
+				})
+				.style("visibility", null);
+		}
+	},
+
+	/**
+	 * Hide focused data point circle
+	 * @private
+	 */
+	hideCircleFocus(): void {
+		const $$ = this;
+		const {config, $el} = $$;
+
+		if (config.point_focus_only) {
+			$el.circle.style("visibility", "hidden");
+		}
 	},
 
 	circleX(d): number | null {
