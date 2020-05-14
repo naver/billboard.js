@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import CLASS from "../../config/classes";
-import {emulateEvent, isNumber, isObject, isValue} from "../../module/util";
+import {emulateEvent, isNumber, isObject} from "../../module/util";
 
 export default {
 	/**
