@@ -319,5 +319,34 @@ describe("SHAPE POINT", () => {
 				}
 			});
 		});
+
+		it("set option: to radar type", () => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
+						["data1", 330, 350, 200, 380, 150],
+						["data2", 130, 100, null, 200, 80],
+						["data3", 230, 153, 85, 300, 250]
+					],
+					type: "radar"
+				  },
+				  radar: {
+					direction: {
+					  clockwise: true
+					}
+				  },
+				  point: {
+					focus: {
+						only: true
+					}
+				  }
+			};
+		});
+
+		it("", () => {
+
+		})
 	});
 });

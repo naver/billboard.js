@@ -300,6 +300,7 @@ export default {
 	bindEvent(): void {
 		const $$ = this;
 		const {config, state: {inputType, transiting}, $el: {radars, svg}} = $$;
+		const focusOnly = config.point_focus_only;
 
 		if (config.interaction_enabled) {
 			const isMouse = inputType === "mouse";
@@ -320,8 +321,11 @@ export default {
 				const noIndex = isUndefined(index);
 
 				if (isMouse || noIndex) {
-					this.hideTooltip();
-					this.unexpandCircles();
+					$$.hideTooltip();
+
+					focusOnly ?
+						$$.hideCircleFocus() :
+						$$.unexpandCircles();
 
 					if (isMouse) {
 						$$.setOverOut(false, index);

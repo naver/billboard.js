@@ -135,11 +135,24 @@ export default {
 		return data;
 	},
 
-	getAllValuesOnIndex(index: number) {
+	/**
+	 * Get all values on given index
+	 * @param {number} index Index
+	 * @param {boolean} filterNull Filter nullish value
+	 * @returns {Array}
+	 * @private
+	 */
+	getAllValuesOnIndex(index: number, filterNull = false) {
 		const $$ = this;
 
-		return $$.filterTargetsToShow($$.data.targets)
+		let value = $$.filterTargetsToShow($$.data.targets)
 			.map(t => $$.addName($$.getValueOnIndex(t.values, index)));
+
+		if (filterNull) {
+			value = value.filter(v => isValue(v.value));
+		}
+
+		return value;
 	},
 
 	getValueOnIndex(values, index: number) {

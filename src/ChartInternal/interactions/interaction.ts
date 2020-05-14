@@ -8,7 +8,7 @@ import {
 } from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import CLASS from "../../config/classes";
-import {emulateEvent, isNumber, isObject} from "../../module/util";
+import {emulateEvent, isNumber, isObject, isValue} from "../../module/util";
 
 export default {
 	/**
@@ -56,7 +56,11 @@ export default {
 
 				callee.last = last;
 			} else {
-				isOver && $$.expandCirclesBars(d, null, true);
+				if (isOver) {
+					config.point_focus_only ?
+						$$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
+						$$.expandCirclesBars(d, null, true);
+				}
 
 				!$$.isMultipleX() && main.selectAll(`.${CLASS.shape}-${d}`)
 					.each(function(d) {

@@ -166,16 +166,15 @@ export default {
 
 		if (state.transiting === false && config.point_focus_only) {
 			let {circle} = $el;
-			const cx = $$.circleX.bind($$);
-			const cy = $$.circleY.bind($$);
-			const fn = $$.point("update", $$, cx, cy, $$.color);
+			const {hasRadar} = state;
+			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
+			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
+			const fn = $$.point("update", $$, cx, cy, $$.color, false);
 
 			if (d) {
-				const data = d.filter(d => d && isValue(d.value));
-
 				circle = circle
-					.filter(d => data.some(v => v.id === d.id))
-					.data(data);
+					.filter(t => d.some(v => v.id === t.id))
+					.data(d);
 			}
 
 			circle
@@ -203,13 +202,7 @@ export default {
 	},
 
 	circleX(d): number | null {
-		const $$ = this;
-		const {x, zoom} = $$.scale;
-		const hasValue = isValue(d.x);
-
-		return $$.config.zoom_enabled && zoom ?
-			(hasValue ? zoom(d.x) : null) :
-			(hasValue ? x(d.x) : null);
+		return this.xx(d);
 	},
 
 	updateCircleY(): void {
