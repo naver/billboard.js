@@ -256,7 +256,7 @@ describe("SHAPE POINT", () => {
 				const p = pos[d.id];
 				
 				expect(+this.getAttribute("cx")).to.be.above(p[0]);
-				expect(+this.getAttribute("cy")).to.be.below(p[1]);
+				expect(+this.getAttribute("cy")).to.be.above(p[1]);
 				expect(d.x).to.be.equal(x);
 				expect(+this.getAttribute("cx")).to.be.equal(cx);
 			});
@@ -269,21 +269,30 @@ describe("SHAPE POINT", () => {
 			expect(circles.filter(`.${CLASS.EXPANDED}`).size()).to.be.equal(1);
 		});
 
-		it("visibility with data toggle", () => {
+		it("visibility with data toggle", done => {
 			const {circles} = chart.$;
 			let x = 2;
 			
-			// when
-			chart.toggle("data1");
-			chart.tooltip.show({x});
+			new Promise(resolve => {
+				chart.toggle("data1");
 
-			circles.each(function(d, i) {
-				if (i === 0) {
-					expect(this.style.opacity).to.be.equal("0");
-				} else {
-					expect(d.id).to.be.equal("data2");
-					expect(d.x).to.be.equal(x);
-				}
+				setTimeout(resolve, 300);
+			}).then(resolve => {
+				chart.tooltip.show({x});
+
+				// @ts-ignore
+				setTimeout(resolve, 300);
+			}).then(() => {
+				circles.each(function(d, i) {
+					if (i === 0) {
+						expect(this.style.opacity).to.be.equal("0");
+					} else {
+						expect(d.id).to.be.equal("data2");
+						expect(d.x).to.be.equal(x);
+					}
+				});
+
+				done();
 			});
 		});
 
@@ -319,34 +328,5 @@ describe("SHAPE POINT", () => {
 				}
 			});
 		});
-
-		it("set option: to radar type", () => {
-			args = {
-				data: {
-					x: "x",
-					columns: [
-						["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
-						["data1", 330, 350, 200, 380, 150],
-						["data2", 130, 100, null, 200, 80],
-						["data3", 230, 153, 85, 300, 250]
-					],
-					type: "radar"
-				  },
-				  radar: {
-					direction: {
-					  clockwise: true
-					}
-				  },
-				  point: {
-					focus: {
-						only: true
-					}
-				  }
-			};
-		});
-
-		it("", () => {
-
-		})
 	});
 });

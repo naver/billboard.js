@@ -39,6 +39,7 @@ export default {
 	 *   - svg shape tag interpreted as string<br>
 	 *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
 	 * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
+	 * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
 	 * @example
 	 *  point: {
 	 *      show: false,

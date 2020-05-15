@@ -181,10 +181,15 @@ export default {
 				.attr("class", this.updatePointClass.bind(this))
 				.style("opacity", "1")
 				.each(function(d) {
-					fn.bind(this)(d);
-					$$.expandCircles(d.index, d.id);
-				})
-				.style("visibility", null);
+					if (isValue(d.value)) {
+						fn.bind(this)(d);
+						$$.expandCircles(d.index, d.id);
+						this.style.visibility = "";
+					} else {
+						this.style.visibility = "hidden";
+						$$.unexpandCircles(d.index);
+					}
+				});
 		}
 	},
 
@@ -197,6 +202,7 @@ export default {
 		const {config, $el} = $$;
 
 		if (config.point_focus_only) {
+			$$.unexpandCircles();
 			$el.circle.style("visibility", "hidden");
 		}
 	},

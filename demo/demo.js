@@ -2884,7 +2884,8 @@ d3.select(".chart_area")
 				axis: {
 					x: {
 						tick: {
-							count: 5
+							culling: false,
+							values: [0, 100, 200, 300, 400, 500, 600, 700, 800, 900]
 						}
 					}
 				}
@@ -3223,11 +3224,8 @@ d3.select(".chart_area")
 						}
 					},
 					point: {
-						r: 0,
 						focus: {
-							expand: {
-								r: 5
-							}
+							only: true
 						}
 					}
 				}

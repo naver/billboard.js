@@ -42,7 +42,7 @@ export default class Element {
 			line: null, // mainLine,
 			area: null, // mainArea,
 			circle: null, // mainCircle,
-			radars: null,
+			radar: null,
 			text: null, // mainText,
 			grid: {
 				main: null, // grid (also focus)

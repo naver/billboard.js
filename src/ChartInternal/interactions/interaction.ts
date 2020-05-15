@@ -19,7 +19,7 @@ export default {
 	 */
 	setOverOut(isOver: boolean, d): void {
 		const $$ = this;
-		const {config, $el: {main}} = $$;
+		const {config, state: {hasRadar}, $el: {main}} = $$;
 		const isArc = isObject(d);
 
 		// Call event handler
@@ -57,7 +57,7 @@ export default {
 				callee.last = last;
 			} else {
 				if (isOver) {
-					config.point_focus_only ?
+					config.point_focus_only && hasRadar ?
 						$$.showCircleFocus($$.getAllValuesOnIndex(d, true)) :
 						$$.expandCirclesBars(d, null, true);
 				}
@@ -119,9 +119,11 @@ export default {
 	 */
 	dispatchEvent(type: string, index: number, mouse): void {
 		const $$ = this;
+		const {state: {hasRadar}, $el: {main, radar}} = $$;
 		const isMultipleX = $$.isMultipleX();
-		const selector = `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
-		const eventRect = $$.$el.main.select(selector).node();
+		const selector = hasRadar ? `.${CLASS.axis}-${index} text` : `.${isMultipleX ? CLASS.eventRect : `${CLASS.eventRect}-${index}`}`;
+		const eventRect = (hasRadar ? radar.axes : main).select(selector).node();
+
 		const {width, left, top} = eventRect.getBoundingClientRect();
 		const x = left + (mouse ? mouse[0] : 0) + (
 			isMultipleX || $$.config.axis_rotated ? 0 : (width / 2)

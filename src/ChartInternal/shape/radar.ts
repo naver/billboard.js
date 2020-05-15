@@ -38,19 +38,19 @@ export default {
 		const {config, state: {current}, $el} = $$;
 
 		if ($$.hasType("radar")) {
-			$el.radars = $el.main.select(`.${CLASS.chart}`).append("g")
+			$el.radar = $el.main.select(`.${CLASS.chart}`).append("g")
 				.attr("class", CLASS.chartRadars);
 
 			// level
-			$el.radars.levels = $el.radars.append("g")
+			$el.radar.levels = $el.radar.append("g")
 				.attr("class", CLASS.levels);
 
 			// axis
-			$el.radars.axes = $el.radars.append("g")
+			$el.radar.axes = $el.radar.append("g")
 				.attr("class", CLASS.axis);
 
 			// shapes
-			$el.radars.shapes = $el.radars.append("g")
+			$el.radar.shapes = $el.radar.append("g")
 				.attr("class", CLASS.shapes);
 
 			current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value;
@@ -123,12 +123,12 @@ export default {
 
 	redrawRadar(durationForExit: number): void {
 		const $$ = this;
-		const {radars, main} = $$.$el;
+		const {radar, main} = $$.$el;
 		const translate = $$.getTranslate("radar");
 
 		// Adjust radar, circles and texts' position
 		if (translate) {
-			radars.attr("transform", translate);
+			radar.attr("transform", translate);
 			main.selectAll(`.${CLASS.circles}`).attr("transform", translate);
 			main.select(`.${CLASS.chartTexts}`).attr("transform", translate);
 
@@ -156,13 +156,13 @@ export default {
 
 	updateRadarLevel(): void {
 		const $$ = this;
-		const {config, state, $el: {radars}} = $$;
+		const {config, state, $el: {radar}} = $$;
 		const [width, height] = $$.getRadarSize();
 		const depth = config.radar_level_depth;
 		const edge = config.axis_x_categories.length;
 		const showText = config.radar_level_text_show;
 
-		const radarLevels = radars.levels;
+		const radarLevels = radar.levels;
 		const levelData = getRange(0, depth);
 
 		const radius = config.radar_size_ratio * Math.min(width, height);
@@ -225,11 +225,11 @@ export default {
 
 	updateRadarAxes(): void {
 		const $$ = this;
-		const {config, $el: {radars}} = $$;
+		const {config, $el: {radar}} = $$;
 		const [width, height] = $$.getRadarSize();
 		const categories = config.axis_x_categories;
 
-		let axis = radars.axes.selectAll("g")
+		let axis = radar.axes.selectAll("g")
 			.data(categories);
 
 		axis.exit().remove();
@@ -299,7 +299,7 @@ export default {
 
 	bindEvent(): void {
 		const $$ = this;
-		const {config, state: {inputType, transiting}, $el: {radars, svg}} = $$;
+		const {config, state: {inputType, transiting}, $el: {radar, svg}} = $$;
 		const focusOnly = config.point_focus_only;
 
 		if (config.interaction_enabled) {
@@ -335,7 +335,7 @@ export default {
 				}
 			};
 
-			radars.select(`.${CLASS.axis}`)
+			radar.axes.selectAll("text")
 				.on(isMouse ? "mouseover " : "touchstart", () => {
 					if (transiting) { // skip while transiting
 						return;
@@ -359,7 +359,7 @@ export default {
 		const targets = $$.data.targets;
 		const points = $$.cache.get(cacheKey);
 
-		const areas = $$.$el.radars.shapes
+		const areas = $$.$el.radar.shapes
 			.selectAll("polygon")
 			.data(targets);
 

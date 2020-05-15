@@ -15515,7 +15515,7 @@ var Element = function () {
     // mainArea,
     circle: null,
     // mainCircle,
-    radars: null,
+    radar: null,
     text: null,
     // mainText,
     grid: {
@@ -15657,6 +15657,8 @@ var State = function () {
     mouseover: !1,
     rendered: !1,
     transiting: !1,
+    resizing: !1,
+    // resize event called
     hasNegativeValue: !1,
     hasPositiveValue: !0,
     orgAreaOpacity: "0.2",
@@ -16279,7 +16281,7 @@ var Store = /*#__PURE__*/function () {
    * @type {object}
    * @property {object} color color object
    * @property {string|object|Function} [color.onover] Set the color value for each data point when mouse/touch onover event occurs.
-   * @property {Array} [color.pattern=[]] custom color pattern
+   * @property {Array|null} [color.pattern=[]] Set custom color pattern. Passing `null` will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
    * @property {Function} [color.tiles] if defined, allows use svg's patterns to fill data area. It should return an array of [SVGPatternElement](https://developer.mozilla.org/en-US/docs/Web/API/SVGPatternElement).
    *  - **NOTE:** The pattern element's id will be defined as `bb-colorize-pattern-$COLOR-VALUE`.<br>
    *    ex. When color pattern value is `['red', '#fff']` and defined 2 patterns,then ids for pattern elements are:<br>
@@ -21534,7 +21536,7 @@ function getOption(options, key, defaultValue) {
  */
 
 
-function util_hasValue(dict, value) {
+function hasValue(dict, value) {
   var found = !1;
   return Object.keys(dict).forEach(function (key) {
     return dict[key] === value && (found = !0);
@@ -22147,6 +22149,7 @@ function convertInputType(mouse, touch) {
    * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
    * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
    *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+   * @property {boolean} [point.focus.only=false] Show point only when is focused.
    * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
    * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
    * @property {string} [point.type="circle"] The type of point to be drawn
@@ -22167,6 +22170,7 @@ function convertInputType(mouse, touch) {
    *   - svg shape tag interpreted as string<br>
    *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
    * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
+   * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
    * @example
    *  point: {
    *      show: false,
@@ -22182,7 +22186,8 @@ function convertInputType(mouse, touch) {
    *          expand: {
    *              enabled: true,
    *              r: 1
-   *          }
+   *          },
+   *          only: true
    *      },
    *      select: {
    *          r: 3
@@ -22207,6 +22212,7 @@ function convertInputType(mouse, touch) {
   point_sensitivity: 10,
   point_focus_expand_enabled: !0,
   point_focus_expand_r: undefined,
+  point_focus_only: !1,
   point_pattern: [],
   point_select_r: undefined,
   point_type: "circle"
@@ -22878,7 +22884,7 @@ function convertInputType(mouse, touch) {
 /**
  * x Axis config options
  */
-/* harmony default export */ var radar = ({
+/* harmony default export */ var shape_radar = ({
   /**
    * Set radar options
    * - **NOTE:**
@@ -22987,7 +22993,7 @@ function convertInputType(mouse, touch) {
  */
 
 var Options = function () {
-  var config = [data_data, common_color, interaction, common_legend, common_title, common_tooltip].concat([donut, gauge, shape_pie, radar], [data_axis, data_selection, axis_axis, common_grid, common_point, common_subchart, common_zoom], [shape_area, shape_bar, bubble, shape_line, shape_spline]);
+  var config = [data_data, common_color, interaction, common_legend, common_title, common_tooltip].concat([donut, gauge, shape_pie, shape_radar], [data_axis, data_selection, axis_axis, common_grid, common_point, common_subchart, common_zoom], [shape_area, shape_bar, bubble, shape_line, shape_spline]);
   return mergeObj.apply(void 0, [{
     /**
      * Specify the CSS selector or the element which the chart will be set to. D3 selection object can be specified also.<br>
@@ -25561,23 +25567,23 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
   return _proto.create = function create(g) {
     var ctx = this,
         config = this.config,
+        helper = this.helper,
         params = this.params,
-        helperInst = this.helper,
-        scale = helperInst.scale,
+        scale = helper.scale,
         orient = config.orient,
         splitTickText = this.splitTickText.bind(this),
         isLeftRight = /^(left|right)$/.test(orient),
         isTopBottom = /^(top|bottom)$/.test(orient),
-        tickTransform = helperInst.getTickTransformSetter(isTopBottom ? "x" : "y"),
-        axisPx = tickTransform === helperInst.axisX ? "y" : "x",
+        tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y"),
+        axisPx = tickTransform === helper.axisX ? "y" : "x",
         sign = /^(top|left)$/.test(orient) ? -1 : 1,
         rotate = params.tickTextRotate;
-    this.config.range = scale.rangeExtent ? scale.rangeExtent() : helperInst.scaleExtent((params.orgXScale || scale).range());
+    this.config.range = scale.rangeExtent ? scale.rangeExtent() : helper.scaleExtent((params.orgXScale || scale).range());
     var $g,
-        _config = config,
-        innerTickSize = _config.innerTickSize,
-        tickLength = _config.tickLength,
-        range = _config.range,
+        _config2 = config,
+        innerTickSize = _config2.innerTickSize,
+        tickLength = _config2.tickLength,
+        range = _config2.range,
         id = params.id,
         tickTextPos = id && /^(x|y|y2)$/.test(id) ? params.config["axis_" + id + "_tick_text_position"] : {
       x: 0,
@@ -25593,17 +25599,17 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
     g.each(function () {
       var g = src_select(this),
           scale0 = this.__chart__ || scale,
-          scale1 = helperInst.copyScale();
+          scale1 = helper.copyScale();
       $g = g, this.__chart__ = scale1, config.tickOffset = params.isCategory ? Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
       // update selection - data join
       var path = g.selectAll(".domain").data([0]); // enter + update selection
 
-      if (path.enter().append("path").attr("class", "domain").merge(helperInst.transitionise(path)).attr("d", function () {
+      if (path.enter().append("path").attr("class", "domain").merge(helper.transitionise(path)).attr("d", function () {
         var outerTickSized = config.outerTickSize * sign;
         return isTopBottom ? "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized : "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
       }), tickShow.tick || tickShow.text) {
         // count of tick data in array
-        var ticks = config.tickValues || helperInst.generateTicks(scale1, isLeftRight),
+        var ticks = config.tickValues || helper.generateTicks(scale1, isLeftRight),
             tick = g.selectAll(".tick").data(ticks, scale1),
             tickEnter = tick.enter().insert("g", ".domain").attr("class", "tick").style("opacity", "1"),
             tickExit = tick.exit().remove(); // update selection
@@ -25612,7 +25618,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
         var sizeFor1Char = AxisRendererHelper_AxisRendererHelper.getSizeFor1Char(tick),
             counts = [],
             tspan = tick.select("text").selectAll("tspan").data(function (d, index) {
-          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helperInst.textFormatted(d)) ? helperInst.textFormatted(d).concat() : [helperInst.textFormatted(d)];
+          var split = params.tickMultiline ? splitTickText(d, scale1, ticks, isLeftRight, sizeFor1Char.w) : isArray(helper.textFormatted(d)) ? helper.textFormatted(d).concat() : [helper.textFormatted(d)];
           return counts[index] = split.length, split.map(function (splitted) {
             return {
               index: index,
@@ -25648,7 +25654,7 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
           }, scale1 = scale0;
         } else scale0.bandwidth ? scale0 = scale1 : tickTransform(tickExit, scale1);
 
-        tickTransform(tickEnter, scale0), tickTransform(helperInst.transitionise(tick).style("opacity", "1"), scale1);
+        tickTransform(tickEnter, scale0), tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
       }
     }), this.g = $g;
   }
@@ -25674,9 +25680,9 @@ var AxisRenderer_AxisRenderer = /*#__PURE__*/function () {
   , _proto.getTickSize = function getTickSize(d) {
     var scale = this.helper.scale,
         config = this.config,
-        _config2 = config,
-        innerTickSize = _config2.innerTickSize,
-        range = _config2.range,
+        _config3 = config,
+        innerTickSize = _config3.innerTickSize,
+        range = _config3.range,
         tickPosition = scale(d) + (config.tickCentered ? 0 : config.tickOffset);
     return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
   }
@@ -25987,7 +25993,7 @@ var Axis_Axis = /*#__PURE__*/function () {
         config = $$.config,
         fit = config.axis_x_tick_fit,
         count = config.axis_x_tick_count;
-    return (fit || count && fit) && (values = this.generateTickValues($$.mapTargetsToUniqueXs(targets), count, this.isTimeSeries())), axis ? axis.tickValues(values) : this.x && (this.x.tickValues(values), this.subX && this.subX.tickValues(values)), values;
+    return (fit || count && fit) && (values = $$.mapTargetsToUniqueXs(targets), this.isCategorized() && count > values.length && (count = values.length), values = this.generateTickValues(values, count, this.isTimeSeries())), axis ? axis.tickValues(values) : this.x && (this.x.tickValues(values), this.subX && this.subX.tickValues(values)), values;
   }, _proto.getId = function getId(id) {
     var _this$owner2 = this.owner,
         config = _this$owner2.config,
@@ -26216,21 +26222,20 @@ var Axis_Axis = /*#__PURE__*/function () {
         length = config.axis_rotated ? width : height;
     return domainLength * (pixels / length);
   }, _proto.generateTickValues = function generateTickValues(values, tickCount, forTimeSeries) {
-    var start,
-        end,
-        count,
-        interval,
-        i,
-        tickValue,
-        tickValues = values;
+    var tickValues = values;
 
     if (tickCount) {
       var targetCount = isFunction(tickCount) ? tickCount() : tickCount; // compute ticks according to tickCount
 
       if (targetCount === 1) tickValues = [values[0]];else if (targetCount === 2) tickValues = [values[0], values[values.length - 1]];else if (targetCount > 2) {
-        var isCategorized = this.isCategorized();
+        var tickValue,
+            isCategorized = this.isCategorized(),
+            count = targetCount - 2,
+            start = values[0],
+            end = values[values.length - 1];
+        tickValues = [start];
 
-        for (count = targetCount - 2, start = values[0], end = values[values.length - 1], interval = (end - start) / (count + 1), tickValues = [start], i = 0; i < count; i++) tickValue = +start + interval * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
+        for (var i = 0; i < count; i++) tickValue = +start + (end - start) / (count + 1) * (i + 1), tickValues.push(forTimeSeries ? new Date(tickValue) : isCategorized ? Math.round(tickValue) : tickValue);
 
         tickValues.push(end);
       }
@@ -26330,8 +26335,8 @@ var Axis_Axis = /*#__PURE__*/function () {
             cullingMax = config["axis_" + id + "_tick_culling_max"];
 
         if (tickSize) {
-          for (var _i = 1; _i < tickSize; _i++) if (tickSize / _i < cullingMax) {
-            intervalForCulling = _i;
+          for (var i = 1; i < tickSize; i++) if (tickSize / i < cullingMax) {
+            intervalForCulling = i;
             break;
           }
 
@@ -26753,7 +26758,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
     var $$ = this,
         config = $$.config,
         dataKey = config.data_x && key === config.data_x,
-        existValue = notEmpty(config.data_xs) && util_hasValue(config.data_xs, key);
+        existValue = notEmpty(config.data_xs) && hasValue(config.data_xs, key);
     return dataKey || existValue;
   },
   isNotX: function isNotX(key) {
@@ -26824,11 +26829,23 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         config = $$.config;
     return data && (name = config.data_names[data.id], data.name = name === undefined ? data.id : name), data;
   },
-  getAllValuesOnIndex: function getAllValuesOnIndex(index) {
-    var $$ = this;
-    return $$.filterTargetsToShow($$.data.targets).map(function (t) {
+
+  /**
+   * Get all values on given index
+   * @param {number} index Index
+   * @param {boolean} filterNull Filter nullish value
+   * @returns {Array}
+   * @private
+   */
+  getAllValuesOnIndex: function getAllValuesOnIndex(index, filterNull) {
+    filterNull === void 0 && (filterNull = !1);
+    var $$ = this,
+        value = $$.filterTargetsToShow($$.data.targets).map(function (t) {
       return $$.addName($$.getValueOnIndex(t.values, index));
     });
+    return filterNull && (value = value.filter(function (v) {
+      return isValue(v.value);
+    })), value;
   },
   getValueOnIndex: function getValueOnIndex(values, index) {
     var valueOnIndex = values.filter(function (v) {
@@ -26959,26 +26976,42 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
 
   /**
    * Get total data sum
+   * @param {boolean} subtractHidden Subtract hidden data from total
    * @returns {number}
    * @private
    */
-  getTotalDataSum: function getTotalDataSum() {
+  getTotalDataSum: function getTotalDataSum(subtractHidden) {
     var $$ = this,
         cacheKey = KEY.dataTotalSum,
-        totalDataSum = $$.cache.get(cacheKey);
+        total = $$.cache.get(cacheKey);
 
-    if (!totalDataSum) {
-      var total = mergeArray($$.data.targets.map(function (t) {
+    if (!isNumber(total)) {
+      var sum = mergeArray($$.data.targets.map(function (t) {
         return t.values;
       })).map(function (v) {
         return v.value;
       }).reduce(function (p, c) {
         return p + c;
       });
-      $$.cache.add(cacheKey, totalDataSum = total);
+      $$.cache.add(cacheKey, total = sum);
     }
 
-    return totalDataSum;
+    return subtractHidden && (total -= $$.getHiddenTotalDataSum()), total;
+  },
+
+  /**
+   * Get total hidden data sum
+   * @returns {number}
+   * @private
+   */
+  getHiddenTotalDataSum: function getHiddenTotalDataSum() {
+    var $$ = this,
+        api = $$.api,
+        hiddenTargetIds = $$.state.hiddenTargetIds,
+        total = 0;
+    return hiddenTargetIds.length && (total = api.data.values.bind(api)(hiddenTargetIds).reduce(function (p, c) {
+      return p + c;
+    })), total;
   },
 
   /**
@@ -27342,35 +27375,23 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         state = $$.state,
         api = $$.api,
         ratio = 0;
+    if (d && api.data.shown().length) if (ratio = d.ratio || d.value, type === "arc") ratio = $$.pie.padAngle()() ? d.value / $$.getTotalDataSum(!0) : (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));else if (type === "index") {
+      var dataValues = api.data.values.bind(api),
+          total = this.getTotalPerIndex();
 
-    if (d && api.data.shown().length) {
-      var dataValues = api.data.values.bind(api);
-      if (ratio = d.ratio || d.value, type === "arc") {
-          // if has padAngle set, calculate rate based on value
-          if ($$.pie.padAngle()()) {
-            var total = $$.getTotalDataSum();
-            state.hiddenTargetIds.length && (total -= dataValues(state.hiddenTargetIds).reduce(function (p, c) {
-              return p + c;
-            })), ratio = d.value / total;
-          } else ratio = (d.endAngle - d.startAngle) / (Math.PI * ($$.hasType("gauge") && !config.gauge_fullCircle ? 1 : 2));
-      } else if (type === "index") {
-        var _total = this.getTotalPerIndex();
+      if (state.hiddenTargetIds.length) {
+        var hiddenSum = dataValues(state.hiddenTargetIds, !1);
+        hiddenSum.length && (hiddenSum = hiddenSum.reduce(function (acc, curr) {
+          return acc.map(function (v, i) {
+            return (isNumber(v) ? v : 0) + curr[i];
+          });
+        }), total = total.map(function (v, i) {
+          return v - hiddenSum[i];
+        }));
+      }
 
-        if (state.hiddenTargetIds.length) {
-          var hiddenSum = dataValues(state.hiddenTargetIds, !1);
-          hiddenSum.length && (hiddenSum = hiddenSum.reduce(function (acc, curr) {
-            return acc.map(function (v, i) {
-              return (isNumber(v) ? v : 0) + curr[i];
-            });
-          }), _total = _total.map(function (v, i) {
-            return v - hiddenSum[i];
-          }));
-        }
-
-        d.ratio = isNumber(d.value) && _total && _total[d.index] > 0 ? d.value / _total[d.index] : 0, ratio = d.ratio;
-      } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0) + "") / state.current.dataMax * config.radar_size_ratio);
-    }
-
+      d.ratio = isNumber(d.value) && total && total[d.index] > 0 ? d.value / total[d.index] : 0, ratio = d.ratio;
+    } else type === "radar" && (ratio = parseFloat(Math.max(d.value, 0) + "") / state.current.dataMax * config.radar_size_ratio);
     return asPercent && ratio ? ratio * 100 : ratio;
   },
 
@@ -27470,6 +27491,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
   setOverOut: function setOverOut(isOver, d) {
     var $$ = this,
         config = $$.config,
+        hasRadar = $$.state.hasRadar,
         main = $$.$el.main,
         isArc = isObject(d);
 
@@ -27491,7 +27513,7 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
         }), last.length > 0 && shape.empty() && (callback = config.data_onout.bind($$.api), last.forEach(function (v) {
           return callback(src_select(v).datum(), v);
         }), last = []), callee.last = last;
-      } else isOver && $$.expandCirclesBars(d, null, !0), $$.isMultipleX() || main.selectAll("." + config_classes.shape + "-" + d).each(function (d) {
+      } else isOver && (config.point_focus_only && hasRadar ? $$.showCircleFocus($$.getAllValuesOnIndex(d, !0)) : $$.expandCirclesBars(d, null, !0)), $$.isMultipleX() || main.selectAll("." + config_classes.shape + "-" + d).each(function (d) {
         callback(d, this);
       });
     }
@@ -27537,9 +27559,13 @@ var fixtz = new Date("2019-01-01T00:00").getHours() || new Date("2019-07-01T00:0
    */
   dispatchEvent: function dispatchEvent(type, index, mouse) {
     var $$ = this,
+        hasRadar = $$.state.hasRadar,
+        _$$$$el = $$.$el,
+        main = _$$$$el.main,
+        radar = _$$$$el.radar,
         isMultipleX = $$.isMultipleX(),
-        selector = "." + (isMultipleX ? config_classes.eventRect : config_classes.eventRect + "-" + index),
-        eventRect = $$.$el.main.select(selector).node(),
+        selector = hasRadar ? "." + config_classes.axis + "-" + index + " text" : "." + (isMultipleX ? config_classes.eventRect : config_classes.eventRect + "-" + index),
+        eventRect = (hasRadar ? radar.axes : main).select(selector).node(),
         _eventRect$getBoundin = eventRect.getBoundingClientRect(),
         width = _eventRect$getBoundin.width,
         left = _eventRect$getBoundin.left,
@@ -28613,7 +28639,7 @@ function getFormat($$, typeValue, v) {
         transitions = transitionsValue || $$.axis && $$.axis.generateTransitions(durationForAxis);
     // text
     // title
-    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radars && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.updateTypesElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
+    $$.updateSizes(initializing), wth.Legend && config.legend_show ? $$.updateLegend($$.mapToIds($$.data.targets), options, transitions) : wth.Dimension && $$.updateDimension(!0), $$.hasDataLabel() && $$.updateText(durationForExit), (!$$.hasArcType() || state.hasRadar) && $$.updateCircleY(), !state.resizing && ($$.hasPointType() || state.hasRadar) && $$.updateCircle(), state.hasAxis ? ($$.axis.redrawAxis(targetsToShow, wth, transitions, flow, initializing), config.data_empty_label_text && main.select("text." + config_classes.text + "." + config_classes.empty).attr("x", state.width / 2).attr("y", state.height / 2).text(config.data_empty_label_text).style("display", targetsToShow.length ? "none" : null), $$.hasGrid() && $$.updateGrid(duration), config.regions.length && $$.updateRegion(duration), $$.hasType("bar") && $$.updateBar(durationForExit), $$.hasTypeOf("Line") && $$.updateLine(durationForExit), $$.hasTypeOf("Area") && $$.updateArea(durationForExit), $el.text && main.selectAll("." + config_classes.selectedCircles).filter($$.isBarType.bind($$)).selectAll("circle").remove(), config.interaction_enabled && !flow && wth.EventRect && $$.bindZoomEvent()) : ($el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform), $el.radar && $$.redrawRadar(durationForExit)), $$.redrawTitle && $$.redrawTitle(), initializing && $$.updateTypesElements(), $$.generateRedrawList(targetsToShow, flow, duration, wth.Subchart), $$.callPluginHook("$redraw", options, duration);
   },
 
   /**
@@ -28682,7 +28708,7 @@ function getFormat($$, typeValue, v) {
       (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), flow || list.push($$.updateGridFocus());
     }
 
-    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
+    return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && !config.point_focus_only && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
   },
   updateAndRedraw: function updateAndRedraw(options) {
     options === void 0 && (options = {});
@@ -31832,11 +31858,12 @@ util_extend(zoom_zoom, {
    */
   unselectRect: function unselectRect() {
     var $$ = this,
+        config = $$.config,
         _$$$$el2 = $$.$el,
         bar = _$$$$el2.bar,
         circle = _$$$$el2.circle,
         tooltip = _$$$$el2.tooltip;
-    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), tooltip && ($$.hideTooltip(), $$._handleLinkedCharts(!1)), circle && $$.unexpandCircles(), bar && $$.unexpandBars();
+    $$.$el.svg.select("." + config_classes.eventRect).style("cursor", null), $$.hideGridFocus(), tooltip && ($$.hideTooltip(), $$._handleLinkedCharts(!1)), circle && !config.point_focus_only && $$.unexpandCircles(), bar && $$.unexpandBars();
   },
 
   /**
@@ -32719,24 +32746,24 @@ function smoothLines(el, type) {
 
   /**
    * Show grid focus line
-   * @param {Array} selectedData Selected data
+   * @param {Array} data Selected data
    * @private
    */
-  showGridFocus: function showGridFocus(selectedData) {
+  showGridFocus: function showGridFocus(data) {
     var $$ = this,
         config = $$.config,
         _$$$state3 = $$.state,
         width = _$$$state3.width,
         height = _$$$state3.height,
         isRotated = config.axis_rotated,
-        dataToShow = selectedData.filter(function (d) {
+        focusEl = $$.$el.main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus),
+        dataToShow = (data || [focusEl.datum()]).filter(function (d) {
       return d && isValue($$.getBaseValue(d));
     });
 
     // Hide when bubble/scatter/stanford plot exists
     if (!(!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType())) {
-      var focusEl = $$.$el.main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus),
-          isEdge = config.grid_focus_edge && !config.tooltip_grouped,
+      var isEdge = config.grid_focus_edge && !config.tooltip_grouped,
           xx = $$.xx.bind($$);
       focusEl.style("visibility", "visible").data(dataToShow.concat(dataToShow)).each(function (d) {
         var xy,
@@ -32760,14 +32787,14 @@ function smoothLines(el, type) {
         ["x1", "y1", "x2", "y2"].forEach(function (v, i) {
           return el.attr(v, xy[i]);
         });
-      }), smoothLines(focusEl, "grid");
+      }), smoothLines(focusEl, "grid"), $$.showCircleFocus(data);
     }
   },
   hideGridFocus: function hideGridFocus() {
     var $$ = this,
-        state = $$.state,
-        $el = $$.$el;
-    state.inputType === "mouse" && $el.main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden");
+        inputType = $$.state.inputType,
+        main = $$.$el.main;
+    inputType === "mouse" && (main.selectAll("line." + config_classes.xgridFocus + ", line." + config_classes.ygridFocus).style("visibility", "hidden"), $$.hideCircleFocus());
   },
   updateGridFocus: function updateGridFocus() {
     var $$ = this,
@@ -32775,18 +32802,14 @@ function smoothLines(el, type) {
         inputType = _$$$state4.inputType,
         width = _$$$state4.width,
         height = _$$$state4.height,
+        resizing = _$$$state4.resizing,
         grid = $$.$el.grid,
         xgridFocus = grid.main.select("line." + config_classes.xgridFocus);
-
-    if (!(inputType === "touch")) {
+    if (inputType === "touch") xgridFocus.empty() ? resizing && $$.showCircleFocus() : $$.showGridFocus();else {
       var _isRotated = $$.config.axis_rotated;
       xgridFocus.attr("x1", _isRotated ? 0 : -10).attr("x2", _isRotated ? width : -10).attr("y1", _isRotated ? -10 : 0).attr("y2", _isRotated ? -10 : height);
-    } else if (!xgridFocus.empty()) {
-      var d = xgridFocus.datum();
-      d && $$.showGridFocus([d]);
     } // need to return 'true' as of being pushed to the redraw list
     // ref: getRedrawList()
-
 
     return !0;
   },
@@ -35436,7 +35459,8 @@ var getTransitionName = function () {
     return this.getBaseValue(d) !== null && withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
   },
   opacityForCircle: function opacityForCircle(d) {
-    var opacity = this.config.point_show ? "1" : "0";
+    var config = this.config,
+        opacity = config.point_show && !config.point_focus_only ? "1" : "0";
     return isValue(this.getBaseValue(d)) ? this.isBubbleType(d) || this.isScatterType(d) ? "0.5" : opacity : "0";
   },
   initCircle: function initCircle() {
@@ -35470,15 +35494,17 @@ var getTransitionName = function () {
   updateCircle: function updateCircle() {
     var $$ = this,
         config = $$.config,
-        $el = $$.$el;
+        $el = $$.$el,
+        focusOnly = config.point_focus_only;
 
     if (config.point_show) {
       var circles = $el.main.selectAll("." + config_classes.circles).selectAll("." + config_classes.circle).data(function (d) {
-        return !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
+        var data = !$$.isBarType(d) && (!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)) && $$.labelishData(d);
+        return focusOnly ? [data[0]] : data;
       });
       circles.exit().remove();
       var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-      $el.circle = circles.enter().append(fn).merge(circles).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$));
+      circles.enter().append(fn).merge(circles).style("stroke", $$.color).style("opacity", $$.initialOpacityForCircle.bind($$)), $el.circle = $el.main.selectAll("." + config_classes.circles + " ." + config_classes.circle);
     }
   },
   redrawCircle: function redrawCircle(cx, cy, withTransition, flow) {
@@ -35499,13 +35525,46 @@ var getTransitionName = function () {
       result = (withTransition || !rendered ? result.transition(t) : result).style("opacity", opacityStyleFn), mainCircles.push(result);
     }), [mainCircles, selectedCircles.attr(posAttr + "x", cx).attr(posAttr + "y", cy)];
   },
-  circleX: function circleX(d) {
+
+  /**
+   * Show focused data point circle
+   * @param {object} d Selected data
+   * @private
+   */
+  showCircleFocus: function showCircleFocus(d) {
     var $$ = this,
-        _$$$scale = $$.scale,
-        x = _$$$scale.x,
-        zoom = _$$$scale.zoom,
-        hasValue = isValue(d.x);
-    return $$.config.zoom_enabled && zoom ? hasValue ? zoom(d.x) : null : hasValue ? x(d.x) : null;
+        config = $$.config,
+        state = $$.state,
+        $el = $$.$el;
+
+    if (state.transiting === !1 && config.point_focus_only) {
+      var circle = $el.circle,
+          hasRadar = state.hasRadar,
+          cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$),
+          cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$),
+          fn = $$.point("update", $$, cx, cy, $$.color, !1);
+      d && (circle = circle.filter(function (t) {
+        return d.some(function (v) {
+          return v.id === t.id;
+        });
+      }).data(d)), circle.attr("class", this.updatePointClass.bind(this)).style("opacity", "1").each(function (d) {
+        isValue(d.value) ? (fn.bind(this)(d), $$.expandCircles(d.index, d.id), this.style.visibility = "") : (this.style.visibility = "hidden", $$.unexpandCircles(d.index));
+      });
+    }
+  },
+
+  /**
+   * Hide focused data point circle
+   * @private
+   */
+  hideCircleFocus: function hideCircleFocus() {
+    var $$ = this,
+        config = $$.config,
+        $el = $$.$el;
+    config.point_focus_only && ($$.unexpandCircles(), $el.circle.style("visibility", "hidden"));
+  },
+  circleX: function circleX(d) {
+    return this.xx(d);
   },
   updateCircleY: function updateCircleY() {
     var $$ = this,
@@ -36038,6 +36097,7 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
   updateAngle: function updateAngle(dValue) {
     var $$ = this,
         config = $$.config,
+        state = $$.state,
         pie = $$.pie,
         d = dValue,
         found = !1;
@@ -36046,7 +36106,8 @@ var internal = [interactions_drag, interactions_flow, interactions_subchart, int
         gStart = config.gauge_startingAngle;
 
     if (d.data && $$.isGaugeType(d.data) && !$$.hasMultiArcGauge()) {
-      var totalSum = $$.getTotalDataSum(); // if gauge_max less than totalSum, make totalSum to max value
+      // to prevent excluding total data sum during the init(when data.hide option is used), use $$.rendered state value
+      var totalSum = $$.getTotalDataSum(state.rendered); // if gauge_max less than totalSum, make totalSum to max value
 
       totalSum > config.gauge_max && (config.gauge_max = totalSum);
       var gEnd = radius * (totalSum / (config.gauge_max - config.gauge_min));
@@ -36516,13 +36577,13 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 
 
 var radar_cacheKey = KEY.radarPoints;
-/* harmony default export */ var shape_radar = ({
+/* harmony default export */ var ChartInternal_shape_radar = ({
   initRadar: function initRadar() {
     var $$ = this,
         config = $$.config,
         current = $$.state.current,
         $el = $$.$el;
-    $$.hasType("radar") && ($el.radars = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $el.radars.levels = $el.radars.append("g").attr("class", config_classes.levels), $el.radars.axes = $el.radars.append("g").attr("class", config_classes.axis), $el.radars.shapes = $el.radars.append("g").attr("class", config_classes.shapes), current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value);
+    $$.hasType("radar") && ($el.radar = $el.main.select("." + config_classes.chart).append("g").attr("class", config_classes.chartRadars), $el.radar.levels = $el.radar.append("g").attr("class", config_classes.levels), $el.radar.axes = $el.radar.append("g").attr("class", config_classes.axis), $el.radar.shapes = $el.radar.append("g").attr("class", config_classes.shapes), current.dataMax = config.radar_axis_max || $$.getMinMaxData().max[0].value);
   },
   getRadarSize: function getRadarSize() {
     var $$ = this,
@@ -36581,10 +36642,10 @@ var radar_cacheKey = KEY.radarPoints;
   redrawRadar: function redrawRadar(durationForExit) {
     var $$ = this,
         _$$$$el = $$.$el,
-        radars = _$$$$el.radars,
+        radar = _$$$$el.radar,
         main = _$$$$el.main,
         translate = $$.getTranslate("radar");
-    translate && (radars.attr("transform", translate), main.selectAll("." + config_classes.circles).attr("transform", translate), main.select("." + config_classes.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(durationForExit));
+    translate && (radar.attr("transform", translate), main.selectAll("." + config_classes.circles).attr("transform", translate), main.select("." + config_classes.chartTexts).attr("transform", translate), $$.generateRadarPoints(), $$.updateRadarLevel(), $$.updateRadarAxes(), $$.updateRadarShape(durationForExit));
   },
   generateGetRadarPoints: function generateGetRadarPoints() {
     var points = this.cache.get(radar_cacheKey);
@@ -36597,14 +36658,14 @@ var radar_cacheKey = KEY.radarPoints;
     var $$ = this,
         config = $$.config,
         state = $$.state,
-        radars = $$.$el.radars,
+        radar = $$.$el.radar,
         _$$$getRadarSize3 = $$.getRadarSize(),
         width = _$$$getRadarSize3[0],
         height = _$$$getRadarSize3[1],
         depth = config.radar_level_depth,
         edge = config.axis_x_categories.length,
         showText = config.radar_level_text_show,
-        radarLevels = radars.levels,
+        radarLevels = radar.levels,
         levelData = getRange(0, depth),
         radius = config.radar_size_ratio * Math.min(width, height),
         levelRatio = levelData.map(function (l) {
@@ -36641,12 +36702,12 @@ var radar_cacheKey = KEY.radarPoints;
   updateRadarAxes: function updateRadarAxes() {
     var $$ = this,
         config = $$.config,
-        radars = $$.$el.radars,
+        radar = $$.$el.radar,
         _$$$getRadarSize4 = $$.getRadarSize(),
         width = _$$$getRadarSize4[0],
         height = _$$$getRadarSize4[1],
         categories = config.axis_x_categories,
-        axis = radars.axes.selectAll("g").data(categories);
+        axis = radar.axes.selectAll("g").data(categories);
 
     axis.exit().remove();
     var axisEnter = axis.enter().append("g").attr("class", function (d, i) {
@@ -36683,15 +36744,15 @@ var radar_cacheKey = KEY.radarPoints;
     $$.bindEvent();
   },
   bindEvent: function bindEvent() {
-    var _this = this,
-        $$ = this,
+    var $$ = this,
         config = $$.config,
         _$$$state2 = $$.state,
         inputType = _$$$state2.inputType,
         transiting = _$$$state2.transiting,
         _$$$$el2 = $$.$el,
-        radars = _$$$$el2.radars,
-        svg = _$$$$el2.svg;
+        radar = _$$$$el2.radar,
+        svg = _$$$$el2.svg,
+        focusOnly = config.point_focus_only;
 
     if (config.interaction_enabled) {
       var isMouse = inputType === "mouse",
@@ -36705,10 +36766,10 @@ var radar_cacheKey = KEY.radarPoints;
           hide = function () {
         var index = getIndex(),
             noIndex = isUndefined(index);
-        (isMouse || noIndex) && (_this.hideTooltip(), _this.unexpandCircles(), isMouse ? $$.setOverOut(!1, index) : noIndex && $$.callOverOutForTouch());
+        (isMouse || noIndex) && ($$.hideTooltip(), focusOnly ? $$.hideCircleFocus() : $$.unexpandCircles(), isMouse ? $$.setOverOut(!1, index) : noIndex && $$.callOverOutForTouch());
       };
 
-      radars.select("." + config_classes.axis).on(isMouse ? "mouseover " : "touchstart", function () {
+      radar.axes.selectAll("text").on(isMouse ? "mouseover " : "touchstart", function () {
         if (!transiting) // skip while transiting
           {
             var index = getIndex();
@@ -36721,7 +36782,7 @@ var radar_cacheKey = KEY.radarPoints;
     var $$ = this,
         targets = $$.data.targets,
         points = $$.cache.get(radar_cacheKey),
-        areas = $$.$el.radars.shapes.selectAll("polygon").data(targets),
+        areas = $$.$el.radar.shapes.selectAll("polygon").data(targets),
         areasEnter = areas.enter().append("g").attr("class", $$.classChartRadar.bind($$));
     areas.exit().transition().duration(durationForExit).remove(), areasEnter.append("polygon").merge(areas).style("fill", $$.color).style("stroke", $$.color).attr("points", function (d) {
       return points[d.id].join(" ");
@@ -36760,7 +36821,7 @@ var radar_cacheKey = KEY.radarPoints;
 // shape
 
 
-var arc_internal = [shape_arc, shape_radar];
+var arc_internal = [shape_arc, ChartInternal_shape_radar];
 // CONCATENATED MODULE: ./src/ChartInternal/ChartInternal.ts
 
 
@@ -37093,17 +37154,18 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
   }, _proto.bindResize = function bindResize() {
     var $$ = this,
         config = $$.config,
+        state = $$.state,
         resizeFunction = generateResize(),
         list = [];
     list.push(function () {
       return callFn(config.onresize, $$, $$.api);
     }), config.resize_auto && list.push(function () {
-      return $$.api.flush(!1, !0);
+      state.resizing = !0, $$.api.flush(!1);
     }), list.push(function () {
-      return callFn(config.onresized, $$, $$.api);
+      callFn(config.onresized, $$, $$.api), state.resizing = !1;
     }), list.forEach(function (v) {
       return resizeFunction.add(v);
-    }), win.addEventListener("resize", $$.resizeFunction = resizeFunction);
+    }), $$.resizeFunction = resizeFunction, win.addEventListener("resize", $$.resizeFunction = resizeFunction);
   }
   /**
    * Call plugin hook
@@ -37190,8 +37252,9 @@ function loadConfig(config) {
    * chart.flush(true);
    */
   flush: function flush(soft) {
-    var $$ = this.internal;
-    $$.state.rendered ? (arguments[1] ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.scale.zoom = null, soft ? $$.redraw({
+    var $$ = this.internal,
+        state = $$.state;
+    state.rendered ? (state.resizing ? $$.brush && $$.brush.updateResize() : $$.axis && $$.axis.setOrient(), $$.scale.zoom = null, soft ? $$.redraw({
       withTransform: !0,
       withUpdateXDomain: !0,
       withUpdateOrgXDomain: !0,

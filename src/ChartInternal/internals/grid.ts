@@ -349,21 +349,22 @@ export default {
 
 	/**
 	 * Show grid focus line
-	 * @param {Array} selectedData Selected data
+	 * @param {Array} data Selected data
 	 * @private
 	 */
-	showGridFocus(selectedData): void {
+	showGridFocus(data?): void {
 		const $$ = this;
 		const {config, state: {width, height}} = $$;
 		const isRotated = config.axis_rotated;
-		const dataToShow = selectedData.filter(d => d && isValue($$.getBaseValue(d)));
+		const focusEl = $$.$el.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`);
+
+		const dataToShow = (data || [focusEl.datum()]).filter(d => d && isValue($$.getBaseValue(d)));
 
 		// Hide when bubble/scatter/stanford plot exists
 		if (!config.tooltip_show || dataToShow.length === 0 || $$.hasType("bubble") || $$.hasArcType()) {
 			return;
 		}
 
-		const focusEl = $$.$el.main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`);
 		const isEdge = config.grid_focus_edge && !config.tooltip_grouped;
 		const xx = $$.xx.bind($$);
 
@@ -414,8 +415,7 @@ export default {
 			});
 
 		smoothLines(focusEl, "grid");
-
-		$$.showCircleFocus(selectedData);
+		$$.showCircleFocus(data);
 	},
 
 	hideGridFocus(): void {
@@ -432,17 +432,15 @@ export default {
 
 	updateGridFocus(): boolean {
 		const $$ = this;
-		const {state: {inputType, width, height}, $el: {grid}} = $$;
+		const {state: {inputType, width, height, resizing}, $el: {grid}} = $$;
 		const xgridFocus = grid.main.select(`line.${CLASS.xgridFocus}`);
 
 		if (inputType === "touch") {
-			if (!xgridFocus.empty()) {
-				const d = xgridFocus.datum();
-
-				d && $$.showGridFocus([d]);
+			if (xgridFocus.empty()) {
+				resizing && $$.showCircleFocus();
+			} else {
+				$$.showGridFocus();
 			}
-
-			$$.showCircleFocus();
 		} else {
 			const isRotated = $$.config.axis_rotated;
 

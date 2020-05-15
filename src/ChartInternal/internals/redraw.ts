@@ -43,7 +43,7 @@ export default {
 		}
 
 		// @TODO: Axis & Radar type
-		if ($$.hasPointType() || state.hasRadar) {
+		if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
 			$$.updateCircle();
 		}
 
@@ -92,7 +92,7 @@ export default {
 			$el.arcs && $$.redrawArc(duration, durationForExit, wth.Transform);
 
 			// radar
-			$el.radars && $$.redrawRadar(durationForExit);
+			$el.radar && $$.redrawRadar(durationForExit);
 		}
 
 		// title

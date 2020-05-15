@@ -105,6 +105,7 @@ export default class State {
 			mouseover: false,
 			rendered: false,
 			transiting: false,
+			resizing: false, // resize event called
 			hasNegativeValue: false,
 			hasPositiveValue: true,
 

@@ -615,20 +615,28 @@ export default class ChartInternal {
 
 	bindResize(): void {
 		const $$ = <any> this;
-		const config = $$.config;
+		const {config, state} = $$;
 		const resizeFunction = generateResize();
 		const list: Function[] = [];
 
 		list.push(() => callFn(config.onresize, $$, $$.api));
 
 		if (config.resize_auto) {
-			list.push(() => $$.api.flush(false, true));
+			list.push(() => {
+				state.resizing = true;
+				$$.api.flush(false);
+			});
 		}
 
-		list.push(() => callFn(config.onresized, $$, $$.api));
+		list.push(() => {
+			callFn(config.onresized, $$, $$.api);
+			state.resizing = false;
+		});
 
 		// add resize functions
 		list.forEach(v => resizeFunction.add(v));
+
+		$$.resizeFunction = resizeFunction;
 
 		// attach resize event
 		window.addEventListener("resize", $$.resizeFunction = resizeFunction);

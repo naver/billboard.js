@@ -41,7 +41,7 @@ describe("SHAPE RADAR", () => {
 		});
 
 		it("data points should positioned over radar chart element", () => {
-			expect(chart.internal.$el.radars.node().nextSibling.classList.contains(CLASS.chartCircles)).to.be.true;
+			expect(chart.internal.$el.radar.node().nextSibling.classList.contains(CLASS.chartCircles)).to.be.true;
 		});
 
 		it("check for shape rendering", done => {
@@ -290,6 +290,62 @@ describe("SHAPE RADAR", () => {
 						expect(Math.abs(rect.top - textPos[i].top)).to.be.equal(y);
 					}
 				});
+		});
+	});
+
+	describe("point.focus.only", () => {
+		before(() => {
+			args = {
+				data: {
+					x: "x",
+					columns: [
+						["x", "Data A", "Data B", "Data C", "Data D", "Data E"],
+						["data1", 330, 350, 200, 380, 150],
+						["data2", 130, 100, null, 200, 80],
+						["data3", 230, 153, 85, 300, 250]
+					],
+					type: "radar"
+				  },
+				  radar: {
+					direction: {
+					  clockwise: true
+					}
+				  },
+				  point: {
+					focus: {
+						only: true
+					}
+				  }
+			};
+		});
+
+		it("circle visibility", () => {
+			const {circles} = chart.$;
+			const pos = {};
+			let x = 3;
+
+			circles.each(function(d) {
+				pos[d.id] = [+this.getAttribute("cx"), +this.getAttribute("cy")];
+			});
+
+			expect(circles.size()).to.be.equal(chart.data().length);
+
+			// when
+			chart.tooltip.show({x});
+
+			circles.each(function(d) {
+				const p = pos[d.id];
+				
+				expect(+this.getAttribute("cx")).to.be.above(p[0]);
+				expect(+this.getAttribute("cy")).to.be.above(p[1]);
+			});
+
+			// when
+			x = 2;
+			chart.tooltip.show({x});
+
+			// 'null' data point shoudn't be displayed
+			expect(circles.filter(`.${CLASS.EXPANDED}`).size()).to.be.equal(chart.data().length);			
 		});
 	});
 });

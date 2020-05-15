@@ -390,7 +390,7 @@ export default {
 	 */
 	unselectRect(): void {
 		const $$ = this;
-		const {$el: {bar, circle, tooltip}} = $$;
+		const {config, $el: {bar, circle, tooltip}} = $$;
 
 		$$.$el.svg.select(`.${CLASS.eventRect}`).style("cursor", null);
 		$$.hideGridFocus();
@@ -400,7 +400,7 @@ export default {
 			$$._handleLinkedCharts(false);
 		}
 
-		circle && $$.unexpandCircles();
+		circle && !config.point_focus_only && $$.unexpandCircles();
 		bar && $$.unexpandBars();
 	},
 
