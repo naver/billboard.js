@@ -94,8 +94,10 @@ export interface ChartOptions {
 	color?: {
 		/**
 		 * Set custom color pattern.
+		 *
+		 * Passing 'null' will not set a color for these elements, which requires the usage of custom CSS-based theming to work.
 		 */
-		pattern?: string[];
+		pattern?: (string|null)[];
 
 		/**
 		 * color threshold for gauge and tooltip color
@@ -740,7 +742,7 @@ export interface AreaLinearGradientOptions {
 
 	/**
 	 * The ramp of colors to use on a gradient
-	 * 
+	 *
 	 * offset, stop-color, stop-opacity
 	 * - setting 'null' for stop-color, will set its original data color
 	 * - setting 'function' for stop-color, will pass data id as argument. It should return color string or null value
