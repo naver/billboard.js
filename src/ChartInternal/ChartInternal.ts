@@ -62,7 +62,6 @@ export default class ChartInternal {
 	public $el; // elements
 	public state; // state variables
 	public charts; // all Chart instances array within page (equivalent of 'bb.instances')
-	public isArc = false; // if is Arc type chart
 
 	// data object
 	public data = {

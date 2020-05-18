@@ -2,7 +2,7 @@
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-import {toArray} from "./util";
+import {isValue, toArray} from "./util";
 import {DataRow} from "../../types/types";
 
 /**
@@ -18,6 +18,8 @@ export const KEY = {
 	dataTotalPerIndex: "$totalPerIndex",
 	legendItemTextBox: "legendItemTextBox",
 	radarPoints: "$radarPoints",
+	setOverOut: "setOverOut",
+	callOverOutForTouch: "callOverOutForTouch",
 	textRect: "textRect"
 };
 
@@ -65,7 +67,9 @@ export default class Cache {
 
 			return targets;
 		} else {
-			return this.cache[key] || null;
+			const value = this.cache[key];
+
+			return isValue(value) ? value : null;
 		}
 	}
 

@@ -35,6 +35,7 @@ export default class State {
 			},
 			arcWidth: 0,
 			arcHeight: 0,
+			xAxisHeight: 0,
 
 			hasAxis: false,
 			hasRadar: false,

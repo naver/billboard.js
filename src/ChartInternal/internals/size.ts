@@ -207,8 +207,8 @@ export default {
 
 	getHorizontalAxisHeight(id: AxisType): number {
 		const $$ = this;
-		const {config} = $$;
-		const {current, rotatedPadding, isLegendRight, isLegendInset} = $$.state;
+		const {config, state} = $$;
+		const {current, rotatedPadding, isLegendRight, isLegendInset} = state;
 		const isRotated = config.axis_rotated;
 		let h = 30;
 

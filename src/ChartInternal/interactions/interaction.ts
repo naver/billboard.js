@@ -8,6 +8,7 @@ import {
 } from "d3-selection";
 import {drag as d3Drag} from "d3-drag";
 import CLASS from "../../config/classes";
+import {KEY} from "../../module/Cache";
 import {emulateEvent, isNumber, isObject} from "../../module/util";
 
 export default {
@@ -31,8 +32,8 @@ export default {
 			if (isArc) {
 				callback(d, main.select(`.${CLASS.arc}${$$.getTargetSelectorSuffix(d.id)}`).node());
 			} else if (!config.tooltip_grouped) {
-				const callee = $$.setOverOut;
-				let last = callee.last || [];
+				let last = $$.cache.get(KEY.setOverOut) || [];
+
 
 				const shape = main.selectAll(`.${CLASS.shape}-${d}`)
 					.filter(function(d) {
@@ -54,7 +55,7 @@ export default {
 					last = [];
 				}
 
-				callee.last = last;
+				$$.cache.add(KEY.setOverOut, last);
 			} else {
 				if (isOver) {
 					config.point_focus_only && hasRadar ?
@@ -77,14 +78,13 @@ export default {
 	 */
 	callOverOutForTouch(d): void {
 		const $$ = this;
-		const callee = $$.callOverOutForTouch;
-		const {last} = callee;
+		const last = $$.cache.get(KEY.callOverOutForTouch);
 
 		if (isObject(d) && last ? d.id !== last.id : (d !== last)) {
 			(last || isNumber(last)) && $$.setOverOut(false, last);
 			(d || isNumber(d)) && $$.setOverOut(true, d);
 
-			callee.last = d;
+			$$.cache.add(KEY.callOverOutForTouch, d);
 		}
 	},
 

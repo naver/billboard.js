@@ -128,21 +128,21 @@ export default {
 
 	updateXAxisTickClip(): void {
 		const $$ = this;
-		const {clip} = $$.state;
+		const {clip, xAxisHeight} = $$.state;
 		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
 
-		clip.idXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
+		clip.idXAxisTickTexts = `${clip.id}-xaxisticktexts`;
 		clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
 
 		if (!$$.config.axis_x_tick_multiline &&
 			$$.getAxisTickRotate("x") &&
-			newXAxisHeight !== $$.xAxisHeight
+			newXAxisHeight !== xAxisHeight
 		) {
 			$$.setXAxisTickClipWidth();
 			$$.setXAxisTickTextClipPathWidth();
 		}
 
-		$$.xAxisHeight = newXAxisHeight;
+		$$.state.xAxisHeight = newXAxisHeight;
 	},
 
 	setXAxisTickClipWidth(): void {
