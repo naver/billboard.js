@@ -10,7 +10,7 @@ import {
 import {d3Selection} from "../../../types/types";
 import CLASS from "../../config/classes";
 import {document} from "../../module/browser";
-import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isValue, toArray, notEmpty} from "../../module/util";
+import {getBoundingRect, getRandom, isFunction, isObject, isObjectType, isUndefined, isValue, toArray, notEmpty} from "../../module/util";
 
 const getTransitionName = () => getRandom();
 
@@ -58,12 +58,18 @@ export default {
 	updateTargetForCircle(t): void {
 		const $$ = this;
 		const {config, data, $el} = $$;
-		const targets = t || data.targets;
-		const classCircles = $$.classCircles.bind($$);
 
 		if (!$el.circle && config.point_show) {
 			$$.initCircle();
 		}
+
+		const classCircles = $$.classCircles.bind($$);
+		const targets = (t || data.targets)
+			.filter(v => (
+				!$$.isBarType(v) && (
+					!$$.isLineType(v) || $$.shouldDrawPointsForLine(v)
+				) && $$.labelishData(v)
+			));
 
 		const mainCircle = $el.main.select(`.${CLASS.chartCircles}`)
 			.style("pointer-events", "none")
@@ -93,25 +99,23 @@ export default {
 
 	updateCircle(): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, state, $el} = $$;
 		const focusOnly = config.point_focus_only;
 
-		if (config.point_show) {
+		if (config.point_show && !state.toggling) {
+			const currIndex = focusOnly && $el.circle ?
+				$el.circle.data()[0].index : 0;
+
 			const circles = $el.main.selectAll(`.${CLASS.circles}`)
 				.selectAll(`.${CLASS.circle}`)
-				.data(d => {
-					const data = !$$.isBarType(d) && (
-						!$$.isLineType(d) || $$.shouldDrawPointsForLine(d)
-					) && $$.labelishData(d);
-
-					return focusOnly ? [data[0]] : data;
-				});
+				.data(d => (focusOnly ? [d.values[currIndex]] : d.values));
 
 			circles.exit().remove();
 
 			const fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
 
 			circles.enter()
+				.filter(d => d)
 				.append(fn)
 				.merge(circles)
 				.style("stroke", $$.color)
@@ -162,33 +166,39 @@ export default {
 	 */
 	showCircleFocus(d?): void {
 		const $$ = this;
-		const {config, state, $el} = $$;
+		const {config, state: {hasRadar, resizing, toggling, transiting}, $el} = $$;
+		let {circle} = $el;
 
-		if (state.transiting === false && config.point_focus_only) {
-			let {circle} = $el;
-			const {hasRadar} = state;
+		if (transiting === false && config.point_focus_only && circle) {
 			const cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
 			const cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
-			const fn = $$.point("update", $$, cx, cy, $$.color, false);
+			const withTransition = toggling || isUndefined(d);
+			const fn = $$.point("update", $$, cx, cy, $$.color, resizing ? false : withTransition);
 
 			if (d) {
 				circle = circle
-					.filter(t => d.some(v => v.id === t.id))
-					.data(d);
+					.filter(function(t) {
+						const data = d.filter(v => v.id === t.id);
+
+						return data.length ?
+							d3Select(this).datum(data[0]) : false;
+					});
 			}
 
 			circle
 				.attr("class", this.updatePointClass.bind(this))
 				.style("opacity", "1")
 				.each(function(d) {
-					if (isValue(d.value)) {
+					const {id, index, value} = d;
+					let visibility = "hidden";
+
+					if (isValue(value)) {
 						fn.bind(this)(d);
-						$$.expandCircles(d.index, d.id);
-						this.style.visibility = "";
-					} else {
-						this.style.visibility = "hidden";
-						$$.unexpandCircles(d.index);
+						$$.expandCircles(index, id);
+						visibility = "";
 					}
+
+					this.style.visibility = visibility;
 				});
 		}
 	},
@@ -199,11 +209,11 @@ export default {
 	 */
 	hideCircleFocus(): void {
 		const $$ = this;
-		const {config, $el} = $$;
+		const {config, $el: {circle}} = $$;
 
-		if (config.point_focus_only) {
+		if (config.point_focus_only && circle) {
 			$$.unexpandCircles();
-			$el.circle.style("visibility", "hidden");
+			circle.style("visibility", "hidden");
 		}
 	},
 
@@ -284,9 +294,7 @@ export default {
 		const pointR = config.point_r;
 		let r = pointR;
 
-		if ($$.isStepType(d)) {
-			r = 0;
-		} else if ($$.isBubbleType(d)) {
+		if ($$.isBubbleType(d)) {
 			r = $$.getBubbleR(d);
 		} else if (isFunction(pointR)) {
 			r = pointR.bind($$.api)(d);
@@ -453,7 +461,7 @@ export default {
 				flow && mainCircles.attr("x", xPosFn2);
 
 				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles.transition(getTransitionName());
+				selectedCircles && selectedCircles.transition(getTransitionName());
 			}
 
 			return mainCircles
@@ -492,7 +500,7 @@ export default {
 					mainCircles = mainCircles.transition(transitionName);
 				}
 
-				selectedCircles.transition(getTransitionName());
+				selectedCircles && selectedCircles.transition(getTransitionName());
 			}
 
 			return mainCircles
@@ -530,7 +538,7 @@ export default {
 				flow && mainCircles.attr("x", rectXPosFn);
 
 				mainCircles = mainCircles.transition(transitionName);
-				selectedCircles.transition(getTransitionName());
+				selectedCircles && selectedCircles.transition(getTransitionName());
 			}
 
 			return mainCircles

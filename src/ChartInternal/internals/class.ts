@@ -146,11 +146,10 @@ export default {
 	},
 
 	selectorTargets(idsValue, prefix: string): string[] | null {
-		const $$ = this;
 		const ids = idsValue || [];
 
 		return ids.length ?
-			ids.map(id => $$.selectorTarget(id, prefix)) : null;
+			ids.map(id => this.selectorTarget(id, prefix)) : null;
 	},
 
 	selectorLegend(id: string): string {
@@ -158,9 +157,7 @@ export default {
 	},
 
 	selectorLegends(ids): string[] | null {
-		const $$ = this;
-
 		return ids && ids.length ?
-			ids.map(id => $$.selectorLegend(id)) : null;
+			ids.map(id => this.selectorLegend(id)) : null;
 	},
 };

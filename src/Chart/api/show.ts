@@ -15,6 +15,8 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 	const $$ = this.internal;
 	const targetIds = $$.mapToTargetIds(targetIdsValue);
 
+	$$.state.toggling = true;
+
 	$$[`${show ? "remove" : "add"}HiddenTargetIds`](targetIds);
 
 	const targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
@@ -33,6 +35,8 @@ function showHide(show: boolean, targetIdsValue: string[], options: any): void {
 		withUpdateXDomain: true,
 		withLegend: true
 	});
+
+	$$.state.toggling = false;
 }
 
 export default {

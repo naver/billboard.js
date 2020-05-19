@@ -328,5 +328,33 @@ describe("SHAPE POINT", () => {
 				}
 			});
 		});
+
+		it("set option: data.type=bar", () => {
+			args.data.types = {
+				data1: "bar"
+			};
+		});
+
+		it("visibility with combination with bar type", done => {
+			const {circles} = chart.$;
+			let x = 2;
+
+			expect(circles.size()).to.be.equal(1);
+
+			new Promise(resolve => {
+				chart.tooltip.show({x});
+
+				// @ts-ignore
+				setTimeout(resolve, 300);
+			}).then(() => {
+
+				circles.each(function(d, i) {
+						expect(d.id).to.be.equal("data2");
+						expect(d.x).to.be.equal(x);
+					});
+
+				done();
+			});
+		});
 	});
 });

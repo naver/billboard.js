@@ -66,7 +66,7 @@ extend(data, {
 	 * @function data․values
 	 * @instance
 	 * @memberof Chart
-	 * @param {string|Array} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+	 * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
 	 * @param {boolean} [flat=true] Get flatten values
 	 * @returns {Array} Data values
 	 * @example
@@ -74,8 +74,8 @@ extend(data, {
 	 * chart.data.values("data1");
 	 * // --> [10, 20, 30, 40]
 	 */
-	values: function(targetIds?: string | string[], flat: boolean = true): number[]|number[][] {
-		let values = null;
+	values: function(targetIds?: string | string[], flat: boolean = true): number[]|number[][]|null {
+		let values: any = null;
 
 		if (targetIds) {
 			const targets = this.data(targetIds);
