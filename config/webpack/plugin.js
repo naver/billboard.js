@@ -4,16 +4,16 @@ const fs = require("fs");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const TerserPlugin = require("terser-webpack-plugin");
-const terserConfig = require("./terserConfig");
-const banner = require("./banner");
+const terserConfig = require("../terserConfig");
+const banner = require("../banner");
 
 const srcPath = "./src/Plugin/";
-const distPath = path.resolve(__dirname, "../dist/plugin/");
+const distPath = path.resolve(__dirname, "../../dist/plugin/");
 
 // construct entry point
 const entry = {};
 
-fs.readdirSync(path.resolve(__dirname, `.${srcPath}`), {
+fs.readdirSync(path.resolve(__dirname, `../../${srcPath}`), {
 	withFileTypes: true
 }).forEach(dirent => {
 	if (dirent.isDirectory()) {

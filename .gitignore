@@ -8,6 +8,7 @@ package-lock.json
 /.*
 /coverage
 /demo/work
+/dist
 /doc
 /monitor
 /node_modules

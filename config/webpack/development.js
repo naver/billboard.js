@@ -1,6 +1,6 @@
 const merge = require("webpack-merge");
 const WriteFilePlugin = require("write-file-webpack-plugin");
-const plugin = require("./webpack.config.plugin")();
+const plugin = require("./plugin")();
 
 const config = {
 	devtool: "inline-source-map",

@@ -4,19 +4,19 @@ const fs = require("fs");
 const path = require("path");
 const CleanWebpackPlugin = require("clean-webpack-plugin").CleanWebpackPlugin;
 const WebpackCleanPlugin = require("webpack-clean");
-const banner = require("./banner");
+const banner = require("../banner");
 const OptimizeCssAssetsPlugin = require("optimize-css-assets-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
 const srcPath = "./src/scss/theme/";
-const distPath = path.resolve(__dirname, "../dist/theme/");
+const distPath = path.resolve(__dirname, "../../dist/theme/");
 const tmpExt = "tmp";
 const rx = /\.scss$/;
 
 // construct entry point
 const entry = {};
 
-fs.readdirSync(path.resolve(__dirname, `.${srcPath}`)).forEach(file => {
+fs.readdirSync(path.resolve(__dirname, `../../${srcPath}`)).forEach(file => {
 	if (rx.test(file)) {
 		const key = file.replace(rx, "");
 		const dist = srcPath + file;

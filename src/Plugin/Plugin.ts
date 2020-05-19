@@ -18,7 +18,7 @@
 export default class Plugin {
 	public $$;
 	public options;
-	static version = "#__VERSION__#";
+	static version = "__VERSION__";
 
 	/**
 	 * Constructor

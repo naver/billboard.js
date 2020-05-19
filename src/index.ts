@@ -12,7 +12,7 @@ let defaults = {};
 
 /**
  * @namespace bb
- * @version #__VERSION__#
+ * @version __VERSION__
  */
 const bb = {
 	/**
@@ -22,7 +22,7 @@ const bb = {
 	 *    bb.version;  // "1.0.0"
 	 * @memberof bb
 	 */
-	version: "#__VERSION__#",
+	version: "__VERSION__",
 
 	/**
 	 * Generate chart
