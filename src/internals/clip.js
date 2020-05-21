@@ -126,8 +126,13 @@ extend(ChartInternal.prototype, {
 		const $$ = this;
 		const newXAxisHeight = $$.getHorizontalAxisHeight("x");
 
-		$$.clipIdForXAxisTickTexts = `${$$.clipId}-xaxisticktexts`;
-		$$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts);
+		if ($$.defs && !$$.clipXAxisTickTexts) {
+			const clipId = `${$$.clipId}-xaxisticktexts`;
+
+			$$.clipXAxisTickTexts = $$.appendClip($$.defs, clipId);
+			$$.clipPathForXAxisTickTexts = $$.getClipPath(clipId);
+			$$.clipIdForXAxisTickTexts = clipId;
+		}
 
 		if (!$$.config.axis_x_tick_multiline &&
 			$$.getAxisTickRotate("x") &&
