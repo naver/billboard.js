@@ -281,11 +281,16 @@ export default {
 			top -= hasGauge ? tHeight * 3 : tHeight + 30;
 		}
 
-		if (top < 0) {
-			top = 0;
-		}
+		const pos = {top, left};
 
-		return {top, left};
+		// make sure to not be positioned out of viewport
+		Object.keys(pos).forEach(v => {
+			if (pos[v] < 0) {
+				pos[v] = 0;
+			}
+		});
+
+		return pos;
 	},
 
 	/**

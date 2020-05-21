@@ -287,6 +287,72 @@ describe("TOOLTIP", function() {
 				expect(left).to.be.above(tooltipPos.left);
 			});
 		});
+
+		describe("Narrow width container's tooltip position", () => {
+			const orgArgs = args;
+
+			before(() => {
+				args = {
+					"transition":{
+						"duration":0
+					  },
+					  "axis":{
+						"x":{
+						  "type":"category"
+						},
+						"rotated":true
+					  },
+					  "data":{
+						"json":[
+						  {
+							"region":"South and Central America",
+							"A":10.34,
+							"B":22.62,
+							"Total":32.96
+						  },
+						  {
+							"region":"North America",
+							"A":7.73,
+							"B":22.64,
+							"Total":30.37
+						  },
+						  {
+							"region":"East and South East Asia",
+							"A":12.28,
+							"B":15.02,
+							"Total":27.299999999999997
+						  },
+						  {
+							"region":"Europe",
+							"A":9.72,
+							"B":14.42,
+							"Total":24.14
+						  }
+						],
+						"type":"bar",
+						"keys":{
+						  "x":"region",
+						  "value":["region", "A"]
+						}
+					}
+				};
+
+				chart.$.chart.style("width", "200px");
+			});
+
+			after(() => {
+				// revert
+				chart.$.chart.style("width", "640px");
+				args = orgArgs;
+			});
+
+			it("tooltip shoundn't be positioned out of viewport", () => {
+				// when
+				chart.tooltip.show({x: 2});
+
+				expect(chart.$.tooltip.style("left")).to.equal("0px");
+			});
+		});
 	});
 
 	describe("tooltip positionFunction", () => {
