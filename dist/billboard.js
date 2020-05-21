@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200519140105
+ * @version 1.11.1-nightly-20200521140318
  */
 (function webpackUniversalModuleDefinition(root, factory) {
 	if(typeof exports === 'object' && typeof module === 'object')
@@ -1919,7 +1919,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         });
       }
 
-      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipXAxisTickTexts = $$.appendClip($$.defs, $$.clipIdForXAxisTickTexts), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
+      config.svg_classname && $$.svg.attr("class", config.svg_classname), $$.defs = $$.svg.append("defs"), $$.clipChart = $$.appendClip($$.defs, $$.clipId), $$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis), $$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis), $$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid), isFunction(config.color_tiles) && $$.patterns && $$.patterns.forEach(function (p) {
         return $$.defs.append(function () {
           return p.node;
         });
@@ -2053,7 +2053,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         right: NaN,
         bottom: 0,
         left: 0
-      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1), !hasArc && config.axis_x_show && $$.updateXAxisTickClip();
+      }, $$.updateSizeForLegend && $$.updateSizeForLegend(legend), $$.width = $$.currentWidth - $$.margin.left - $$.margin.right, $$.height = $$.currentHeight - $$.margin.top - $$.margin.bottom, $$.width < 0 && ($$.width = 0), $$.height < 0 && ($$.height = 0), $$.width2 = isRotated ? $$.margin.left - $$.rotated_padding_left - $$.rotated_padding_right : $$.width, $$.height2 = isRotated ? $$.height : $$.currentHeight - $$.margin2.top - $$.margin2.bottom, $$.width2 < 0 && ($$.width2 = 0), $$.height2 < 0 && ($$.height2 = 0), $$.arcWidth = $$.width - ($$.isLegendRight ? legend.width + 10 : 0), $$.arcHeight = $$.height - ($$.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && ($$.arcHeight += $$.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), $$.isLegendRight && hasArc && ($$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1), !hasArc && config.axis_x_show && config.axis_x_tick_autorotate && $$.updateXAxisTickClip();
     }
     /**
      * Update targeted element with given data
@@ -11004,10 +11004,15 @@ extend(ChartInternal_ChartInternal.prototype, {
     } // when tooltip left + tWidth > chart's width
 
 
-    return left + tWidth + 15 > chartRight && (left -= tWidth + chartLeft), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
+    left + tWidth + 15 > chartRight && (left -= tWidth + chartLeft), top + tHeight > $$.currentHeight && (top -= hasGauge ? tHeight * 3 : tHeight + 30);
+    var pos = {
       top: top,
       left: left
-    };
+    }; // make sure to not be positioned out of viewport
+
+    return Object.keys(pos).forEach(function (v) {
+      pos[v] < 0 && (pos[v] = 0);
+    }), pos;
   },
 
   /**
@@ -11732,7 +11737,13 @@ extend(ChartInternal_ChartInternal.prototype, {
   updateXAxisTickClip: function updateXAxisTickClip() {
     var $$ = this,
         newXAxisHeight = $$.getHorizontalAxisHeight("x");
-    $$.clipIdForXAxisTickTexts = "".concat($$.clipId, "-xaxisticktexts"), $$.clipPathForXAxisTickTexts = $$.getClipPath($$.clipIdForXAxisTickTexts), !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== $$.xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.xAxisHeight = newXAxisHeight;
+
+    if ($$.defs && !$$.clipXAxisTickTexts) {
+      var clipId = "".concat($$.clipId, "-xaxisticktexts");
+      $$.clipXAxisTickTexts = $$.appendClip($$.defs, clipId), $$.clipPathForXAxisTickTexts = $$.getClipPath(clipId), $$.clipIdForXAxisTickTexts = clipId;
+    }
+
+    !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== $$.xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.xAxisHeight = newXAxisHeight;
   },
   setXAxisTickClipWidth: function setXAxisTickClipWidth() {
     var $$ = this,
@@ -14932,7 +14943,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200519140105",
+  version: "1.11.1-nightly-20200521140318",
 
   /**
    * Generate chart
@@ -15031,7 +15042,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200519140105
+ * @version 1.11.1-nightly-20200521140318
  */
 
 
