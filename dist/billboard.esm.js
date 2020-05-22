@@ -9777,7 +9777,7 @@ var size = {
         if (state.isLegendRight && hasArc) {
             state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
         }
-        if (!hasArc && config.axis_x_show && config.axis_x_tick_culling) {
+        if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
             $$.updateXAxisTickClip();
         }
     }
@@ -10439,10 +10439,14 @@ var tooltip$1 = {
         if (top + tHeight > current.height) {
             top -= hasGauge ? tHeight * 3 : tHeight + 30;
         }
-        if (top < 0) {
-            top = 0;
-        }
-        return { top: top, left: left };
+        var pos = { top: top, left: left };
+        // make sure to not be positioned out of viewport
+        Object.keys(pos).forEach(function (v) {
+            if (pos[v] < 0) {
+                pos[v] = 0;
+            }
+        });
+        return pos;
     },
     /**
      * Show the tooltip
@@ -13556,10 +13560,14 @@ var clip = {
     },
     updateXAxisTickClip: function () {
         var $$ = this;
-        var _a = $$.state, clip = _a.clip, xAxisHeight = _a.xAxisHeight;
+        var _a = $$.state, clip = _a.clip, xAxisHeight = _a.xAxisHeight, defs = $$.$el.defs;
         var newXAxisHeight = $$.getHorizontalAxisHeight("x");
-        clip.idXAxisTickTexts = clip.id + "-xaxisticktexts";
-        clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
+        if (defs && !$$.clipXAxisTickTexts) {
+            var clipId = $$.clipId + "-xaxisticktexts";
+            $$.appendClip(defs, clipId);
+            clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts);
+            clip.idXAxisTickTexts = clipId;
+        }
         if (!$$.config.axis_x_tick_multiline &&
             $$.getAxisTickRotate("x") &&
             newXAxisHeight !== xAxisHeight) {
@@ -16928,7 +16936,7 @@ var ChartInternal = /** @class */ (function () {
         if (hasAxis || hasColorPatterns) {
             $el.defs = $el.svg.append("defs");
             if (hasAxis) {
-                ["id", "idXAxis", "idYAxis", "idXAxisTickTexts", "idGrid"].forEach(function (v) {
+                ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
                     $$.appendClip($el.defs, state.clip[v]);
                 });
             }

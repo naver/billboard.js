@@ -29180,7 +29180,7 @@ function getFormat($$, typeValue, v) {
       right: NaN,
       bottom: 0,
       left: 0
-    }, $$.updateSizeForLegend && $$.updateSizeForLegend(currLegend), state.width = state.current.width - state.margin.left - state.margin.right, state.height = state.current.height - state.margin.top - state.margin.bottom, state.width < 0 && (state.width = 0), state.height < 0 && (state.height = 0), state.width2 = isRotated ? state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width, state.height2 = isRotated ? state.height : state.current.height - state.margin2.top - state.margin2.bottom, state.width2 < 0 && (state.width2 = 0), state.height2 < 0 && (state.height2 = 0), state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (state.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1), !hasArc && config.axis_x_show && config.axis_x_tick_culling && $$.updateXAxisTickClip();
+    }, $$.updateSizeForLegend && $$.updateSizeForLegend(currLegend), state.width = state.current.width - state.margin.left - state.margin.right, state.height = state.current.height - state.margin.top - state.margin.bottom, state.width < 0 && (state.width = 0), state.height < 0 && (state.height = 0), state.width2 = isRotated ? state.margin.left - state.rotatedPadding.left - state.rotatedPadding.right : state.width, state.height2 = isRotated ? state.height : state.current.height - state.margin2.top - state.margin2.bottom, state.width2 < 0 && (state.width2 = 0), state.height2 < 0 && (state.height2 = 0), state.arcWidth = state.width - (state.isLegendRight ? currLegend.width + 10 : 0), state.arcHeight = state.height - (state.isLegendRight ? 0 : 10), $$.hasType("gauge") && !config.gauge_fullCircle && (state.arcHeight += state.height - $$.getGaugeLabelHeight()), $$.updateRadius && $$.updateRadius(), state.isLegendRight && hasArc && (state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1), !hasArc && config.axis_x_show && config.axis_x_tick_autorotate && $$.updateXAxisTickClip();
   }
 });
 // CONCATENATED MODULE: ./src/ChartInternal/internals/text.ts
@@ -29762,10 +29762,15 @@ function getTextPos(pos, width) {
     } // when tooltip left + tWidth > chart's width
 
 
-    return left + tWidth + 15 > chartRight && (left -= tWidth + chartLeft), top + tHeight > current.height && (top -= hasGauge ? tHeight * 3 : tHeight + 30), top < 0 && (top = 0), {
+    left + tWidth + 15 > chartRight && (left -= tWidth + chartLeft), top + tHeight > current.height && (top -= hasGauge ? tHeight * 3 : tHeight + 30);
+    var pos = {
       top: top,
       left: left
-    };
+    }; // make sure to not be positioned out of viewport
+
+    return Object.keys(pos).forEach(function (v) {
+      pos[v] < 0 && (pos[v] = 0);
+    }), pos;
   },
 
   /**
@@ -32530,8 +32535,15 @@ util_extend(zoom_zoom, {
         _$$$state2 = $$.state,
         clip = _$$$state2.clip,
         xAxisHeight = _$$$state2.xAxisHeight,
+        defs = $$.$el.defs,
         newXAxisHeight = $$.getHorizontalAxisHeight("x");
-    clip.idXAxisTickTexts = clip.id + "-xaxisticktexts", clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts), !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.state.xAxisHeight = newXAxisHeight;
+
+    if (defs && !$$.clipXAxisTickTexts) {
+      var clipId = $$.clipId + "-xaxisticktexts";
+      $$.appendClip(defs, clipId), clip.pathXAxisTickTexts = $$.getClipPath(clip.idXAxisTickTexts), clip.idXAxisTickTexts = clipId;
+    }
+
+    !$$.config.axis_x_tick_multiline && $$.getAxisTickRotate("x") && newXAxisHeight !== xAxisHeight && ($$.setXAxisTickClipWidth(), $$.setXAxisTickTextClipPathWidth()), $$.state.xAxisHeight = newXAxisHeight;
   },
   setXAxisTickClipWidth: function setXAxisTickClipWidth() {
     var $$ = this,
@@ -37038,7 +37050,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
     config.svg_classname && $el.svg.attr("class", config.svg_classname);
     // Define defs
     var hasColorPatterns = isFunction(config.color_tiles) && $$.patterns;
-    (hasAxis || hasColorPatterns) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idXAxisTickTexts", "idGrid"].forEach(function (v) {
+    (hasAxis || hasColorPatterns) && ($el.defs = $el.svg.append("defs"), hasAxis && ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
       $$.appendClip($el.defs, state.clip[v]);
     }), hasColorPatterns && $$.patterns.forEach(function (p) {
       return $el.defs.append(function () {
