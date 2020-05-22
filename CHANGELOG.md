@@ -1,3 +1,11 @@
+## [1.12.9](https://github.com/naver/billboard.js/compare/1.12.8...1.12.9) (2020-05-22)
+
+
+### Bug Fixes
+
+* **axis:** Fix duplicated axis text generation ([6d8e00b](https://github.com/naver/billboard.js/commit/6d8e00b5f0422d9e371352e53efa0cb00f372fc9)), closes [#1392](https://github.com/naver/billboard.js/issues/1392)
+* **tooltip:** Fix tooltip position in narrow size container ([fc174a7](https://github.com/naver/billboard.js/commit/fc174a7de92ced9f82e66d3ef7cc9524238e5fde)), closes [#1400](https://github.com/naver/billboard.js/issues/1400)
+
 ## [1.12.8](https://github.com/naver/billboard.js/compare/1.12.7...1.12.8) (2020-05-08)
 
 
