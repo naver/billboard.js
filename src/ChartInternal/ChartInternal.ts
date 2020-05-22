@@ -341,7 +341,7 @@ export default class ChartInternal {
 			$el.defs = $el.svg.append("defs");
 
 			if (hasAxis) {
-				["id", "idXAxis", "idYAxis", "idXAxisTickTexts", "idGrid"].forEach(v => {
+				["id", "idXAxis", "idYAxis", "idGrid"].forEach(v => {
 					$$.appendClip($el.defs, state.clip[v]);
 				});
 			}

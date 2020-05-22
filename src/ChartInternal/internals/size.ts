@@ -485,8 +485,7 @@ export default {
 			state.margin3.left = state.arcWidth / 2 + state.radiusExpanded * 1.1;
 		}
 
-		if (!hasArc && config.axis_x_show &&
-			config.axis_x_tick_culling && config.axis_x_tick_autorotate) {
+		if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
 			$$.updateXAxisTickClip();
 		}
 	}
