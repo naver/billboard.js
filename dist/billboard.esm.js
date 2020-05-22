@@ -9145,7 +9145,7 @@ var redraw = {
     },
     getRedrawList: function (shape, flow, flowFn, isTransition) {
         var $$ = this;
-        var config = $$.config, _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
+        var config = $$.config, _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar, grid = $$.$el.grid;
         var _b = shape.pos, cx = _b.cx, cy = _b.cy, xForText = _b.xForText, yForText = _b.yForText;
         var list = [];
         if (hasAxis) {
@@ -9159,7 +9159,7 @@ var redraw = {
             $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
             $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
             $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-            !flow && list.push($$.updateGridFocus());
+            !flow && grid.main && list.push($$.updateGridFocus());
         }
         if (!$$.hasArcType() || hasRadar) {
             notEmpty(config.data_labels) &&
@@ -13650,7 +13650,7 @@ var grid$1 = {
     initGrid: function () {
         var $$ = this;
         $$.hasGrid() && $$.initGridLines();
-        $$.initFocusGrid();
+        $$.config.interaction_enabled && $$.initFocusGrid();
     },
     initGridLines: function () {
         var $$ = this;
@@ -16880,6 +16880,7 @@ var ChartInternal = /** @class */ (function () {
         var $$ = this;
         var config = $$.config, scale = $$.scale, state = $$.state, $el = $$.$el, org = $$.org;
         var hasAxis = state.hasAxis;
+        var hasInteraction = config.interaction_enabled;
         // for arc type, set axes to not be shown
         // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
         if (hasAxis) {
@@ -16925,7 +16926,7 @@ var ChartInternal = /** @class */ (function () {
         $el.svg = $el.chart.append("svg")
             .style("overflow", "hidden")
             .style("display", "block");
-        if (config.interaction_enabled && state.inputType) {
+        if (hasInteraction && state.inputType) {
             var isTouch = state.inputType === "touch";
             $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () { return callFn(config.onover, $$.api); })
                 .on(isTouch ? "touchend" : "mouseleave", function () { return callFn(config.onout, $$.api); });
@@ -16976,7 +16977,7 @@ var ChartInternal = /** @class */ (function () {
         $$.callPluginHook("$init");
         if (hasAxis) {
             // Cover whole with rects for events
-            $$.initEventRect && $$.initEventRect();
+            hasInteraction && $$.initEventRect && $$.initEventRect();
             // Grids
             $$.initGrid();
             // Add Axis here, when clipPath is 'true'

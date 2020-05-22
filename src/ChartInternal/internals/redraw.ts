@@ -168,7 +168,7 @@ export default {
 
 	getRedrawList(shape, flow, flowFn, isTransition: boolean): Function[] {
 		const $$ = <any> this;
-		const {config, state: {hasAxis, hasRadar}} = $$;
+		const {config, state: {hasAxis, hasRadar}, $el: {grid}} = $$;
 		const {cx, cy, xForText, yForText} = shape.pos;
 		const list: Function[] = [];
 
@@ -186,7 +186,7 @@ export default {
 			$$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition));
 			$$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition));
 			$$.hasType("bar") && list.push($$.redrawBar(bar, isTransition));
-			!flow && list.push($$.updateGridFocus());
+			!flow && grid.main && list.push($$.updateGridFocus());
 		}
 
 		if (!$$.hasArcType() || hasRadar) {

@@ -64,7 +64,7 @@ export default {
 		const $$ = this;
 
 		$$.hasGrid() && $$.initGridLines();
-		$$.initFocusGrid();
+		$$.config.interaction_enabled && $$.initFocusGrid();
 	},
 
 	initGridLines(): void {

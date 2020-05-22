@@ -263,6 +263,7 @@ export default class ChartInternal {
 		const $$ = <any> this;
 		const {config, scale, state, $el, org} = $$;
 		const {hasAxis} = state;
+		const hasInteraction = config.interaction_enabled;
 
 		// for arc type, set axes to not be shown
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
@@ -325,7 +326,7 @@ export default class ChartInternal {
 			.style("overflow", "hidden")
 			.style("display", "block");
 
-		if (config.interaction_enabled && state.inputType) {
+		if (hasInteraction && state.inputType) {
 			const isTouch = state.inputType === "touch";
 
 			$el.svg.on(isTouch ? "touchstart" : "mouseenter", () => callFn(config.onover, $$.api))
@@ -395,7 +396,7 @@ export default class ChartInternal {
 
 		if (hasAxis) {
 			// Cover whole with rects for events
-			$$.initEventRect && $$.initEventRect();
+			hasInteraction && $$.initEventRect && $$.initEventRect();
 
 			// Grids
 			$$.initGrid();

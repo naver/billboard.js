@@ -816,6 +816,11 @@ describe("INTERACTION", () => {
 					expect(el.on("mouseout")).to.be.undefined;
 				});
 			});
+
+			it("Focus grid line and event rect shouldn't be generated", () => {
+				expect(chart.$.grid.main).to.be.null;
+				expect(chart.$.main.select(`.${CLASS.eventRects}`).empty()).to.be.true;
+			});
 		});
 
 		describe("check for data.selection", () => {
@@ -950,6 +955,7 @@ describe("INTERACTION", () => {
 					// when
 					chart.resize({width: 300});
 
+					// @ts-ignore
 					setTimeout(resolve, 300);
 				}).then(() => {
 
@@ -1006,6 +1012,8 @@ describe("INTERACTION", () => {
 				}, resolve);
 			}).then(resolve => {
 				chart.resize({width:300});
+
+				// @ts-ignore
 				setTimeout(resolve, 300);
 			}).then(() => {
 				setTimeout(() => {

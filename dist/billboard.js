@@ -8799,6 +8799,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
         _$$$state = $$.state,
         hasAxis = _$$$state.hasAxis,
         hasRadar = _$$$state.hasRadar,
+        grid = $$.$el.grid,
         _shape$pos = shape.pos,
         cx = _shape$pos.cx,
         cy = _shape$pos.cy,
@@ -8811,7 +8812,7 @@ var external_commonjs_d3_transition_commonjs2_d3_transition_amd_d3_transition_ro
           area = _shape$type.area,
           bar = _shape$type.bar,
           line = _shape$type.line;
-      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), flow || list.push($$.updateGridFocus());
+      (config.grid_x_lines.length || config.grid_y_lines.length) && list.push($$.redrawGrid(isTransition)), config.regions.length && list.push($$.redrawRegion(isTransition)), $$.hasTypeOf("Line") && list.push($$.redrawLine(line, isTransition)), $$.hasTypeOf("Area") && list.push($$.redrawArea(area, isTransition)), $$.hasType("bar") && list.push($$.redrawBar(bar, isTransition)), !flow && grid.main && list.push($$.updateGridFocus());
     }
 
     return (!$$.hasArcType() || hasRadar) && notEmpty(config.data_labels) && list.push($$.redrawText(xForText, yForText, flow, isTransition)), ($$.hasPointType() || hasRadar) && !config.point_focus_only && list.push($$.redrawCircle(cx, cy, isTransition, flowFn)), list;
@@ -12360,7 +12361,7 @@ function smoothLines(el, type) {
   },
   initGrid: function initGrid() {
     var $$ = this;
-    $$.hasGrid() && $$.initGridLines(), $$.initFocusGrid();
+    $$.hasGrid() && $$.initGridLines(), $$.config.interaction_enabled && $$.initFocusGrid();
   },
   initGridLines: function initGridLines() {
     var $$ = this,
@@ -14964,7 +14965,8 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         state = $$.state,
         $el = $$.$el,
         org = $$.org,
-        hasAxis = state.hasAxis;
+        hasAxis = state.hasAxis,
+        hasInteraction = config.interaction_enabled;
     hasAxis && ($$.axis = new Axis_Axis($$), config.zoom_enabled && $$.initZoom()), $$.data.xs = {}, $$.data.targets = $$.convertDataToTargets(data), config.data_filter && ($$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api))), config.data_hide && $$.addHiddenTargetIds(config.data_hide === !0 ? $$.mapToIds($$.data.targets) : config.data_hide), config.legend_hide && $$.addHiddenLegendIds(config.legend_hide === !0 ? $$.mapToIds($$.data.targets) : config.legend_hide), $$.updateSizes(), $$.updateScales(!0);
     // retrieve scale after the 'updateScales()' is called
     var x = scale.x,
@@ -14974,7 +14976,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
         subY = scale.subY,
         subY2 = scale.subY2; // Set domains for each scale
 
-    if (x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), config.interaction_enabled && state.inputType) {
+    if (x && (x.domain(util_sortValue($$.getXDomain($$.data.targets))), subX.domain(x.domain()), org.xDomain = x.domain()), y && (y.domain($$.getYDomain($$.data.targets, "y")), subY.domain(y.domain())), y2 && (y2.domain($$.getYDomain($$.data.targets, "y2")), subY2 && subY2.domain(y2.domain())), $el.svg = $el.chart.append("svg").style("overflow", "hidden").style("display", "block"), hasInteraction && state.inputType) {
       var isTouch = state.inputType === "touch";
       $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () {
         return callFn(config.onover, $$.api);
@@ -14998,7 +15000,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
 
     // data.onmin/max callback
     if ($el.main = main, config.subchart_show && $$.initSubchart(), config.tooltip_show && $$.initTooltip(), config.title_text && $$.initTitle(), config.legend_show && $$.initLegend(), config.data_empty_label_text && main.append("text").attr("class", config_classes.text + " " + config_classes.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-    .attr("dominant-baseline", "middle"), hasAxis && (config.regions.length && $$.initRegion(), !config.clipPath && $$.axis.init()), main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path), $$.callPluginHook("$init"), hasAxis && ($$.initEventRect && $$.initEventRect(), $$.initGrid(), config.clipPath && $$.axis && $$.axis.init()), $$.initChartElements(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$.api), $$.setBackground(), $$.redraw({
+    .attr("dominant-baseline", "middle"), hasAxis && (config.regions.length && $$.initRegion(), !config.clipPath && $$.axis.init()), main.append("g").attr("class", config_classes.chart).attr("clip-path", state.clip.path), $$.callPluginHook("$init"), hasAxis && (hasInteraction && $$.initEventRect && $$.initEventRect(), $$.initGrid(), config.clipPath && $$.axis && $$.axis.init()), $$.initChartElements(), $$.updateTargets($$.data.targets), $$.updateDimension(), callFn(config.oninit, $$.api), $$.setBackground(), $$.redraw({
       withTransition: !1,
       withTransform: !0,
       withUpdateXDomain: !0,
