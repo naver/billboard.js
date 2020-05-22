@@ -268,7 +268,6 @@ export default class ChartInternal {
 
 		$$.clipChart = $$.appendClip($$.defs, $$.clipId);
 		$$.clipXAxis = $$.appendClip($$.defs, $$.clipIdForXAxis);
-		$$.clipXAxisTickTexts = $$.appendClip($$.defs, $$.clipIdForXAxisTickTexts);
 		$$.clipYAxis = $$.appendClip($$.defs, $$.clipIdForYAxis);
 		$$.clipGrid = $$.appendClip($$.defs, $$.clipIdForGrid);
 
@@ -547,7 +546,9 @@ export default class ChartInternal {
 			$$.margin3.left = $$.arcWidth / 2 + $$.radiusExpanded * 1.1;
 		}
 
-		!hasArc && config.axis_x_show && $$.updateXAxisTickClip();
+		if (!hasArc && config.axis_x_show && config.axis_x_tick_autorotate) {
+			$$.updateXAxisTickClip();
+		}
 	}
 
 	/**

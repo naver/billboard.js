@@ -241,12 +241,19 @@ export default class Axis {
 		const $$ = this.owner;
 		const config = $$.config;
 		const fit = config.axis_x_tick_fit;
-		const count = config.axis_x_tick_count;
+		let count = config.axis_x_tick_count;
 		let values;
 
 		if (fit || (count && fit)) {
+			values = $$.mapTargetsToUniqueXs(targets);
+
+			// if given count is greater than the value length, then limit the count.
+			if ($$.isCategorized() && count > values.length) {
+				count = values.length;
+			}
+
 			values = this.generateTickValues(
-				$$.mapTargetsToUniqueXs(targets),
+				values,
 				count,
 				$$.isTimeSeries()
 			);
@@ -674,12 +681,6 @@ export default class Axis {
 
 	generateTickValues(values, tickCount, forTimeSeries) {
 		let tickValues = values;
-		let start;
-		let end;
-		let count;
-		let interval;
-		let i;
-		let tickValue;
 
 		if (tickCount) {
 			const targetCount = isFunction(tickCount) ? tickCount() : tickCount;
@@ -692,15 +693,16 @@ export default class Axis {
 			} else if (targetCount > 2) {
 				const isCategorized = this.owner.isCategorized();
 
-				count = targetCount - 2;
-				start = values[0];
-				end = values[values.length - 1];
-				interval = (end - start) / (count + 1);
+				const count = targetCount - 2;
+				const start = values[0];
+				const end = values[values.length - 1];
+				const interval = (end - start) / (count + 1);
+				let tickValue;
 
 				// re-construct unique values
 				tickValues = [start];
 
-				for (i = 0; i < count; i++) {
+				for (let i = 0; i < count; i++) {
 					tickValue = +start + interval * (i + 1);
 					tickValues.push(
 						forTimeSeries ? new Date(tickValue) : (
