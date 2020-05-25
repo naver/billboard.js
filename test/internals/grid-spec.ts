@@ -36,29 +36,66 @@ describe("GRID", function() {
 		});
 
 		it("should show 3 grid lines", () => {
-			// x grid
-			let grid = chart.$.grid.main.selectAll(`.${CLASS.xgrids} line`).nodes();
+			const checkGridLines = isX => {
+				const grid = chart.$.grid.main.selectAll(`.${isX ? CLASS.xgrids : CLASS.ygrids} line`).nodes();
 
-			chart.$.main.selectAll(`.${CLASS.axisX} .tick`).each(function(d, i) {
-				const x = util.parseNum(this.getAttribute("transform").split(",")[0]);
-				const node = grid[i];
-				const x1 = +node.getAttribute("x1")
+				chart.$.main.selectAll(`.${isX ? CLASS.axisX : CLASS.axisY} .tick`).each(function(d, i) {
+					const node = grid[i];
+					const name = isX ? "x" : "y";
 
-				expect(x1).to.be.equal(+node.getAttribute("x2"));
-				expect(x).to.be.equal(x1);
-			});
+					const attr = util.parseNum(this.getAttribute("transform").split(",")[isX ? 0 : 1]);
+					const pos = +node.getAttribute(`${name}1`)
+	
+					expect(pos).to.be.equal(+node.getAttribute(`${name}2`));
+					expect(attr).to.be.equal(pos);
+				});
+			}
 
-			// y grid
-			grid = chart.$.grid.main.selectAll(`.${CLASS.ygrids} line`).nodes();
+			checkGridLines(true); // x grid
+			checkGridLines(false); // y grid
+		});
 
-			chart.$.main.selectAll(`.${CLASS.axisY} .tick`).each(function(d, i) {
-				const y = util.parseNum(this.getAttribute("transform").split(",")[1]);
-				const node = grid[i];
-				const y1 = +node.getAttribute("y1")
+		
+		it("check grid lines position for non rotated axis", () => {
+			const checkGridLinesPos = isX => {
+				const axis = chart.$.main.selectAll(`.${isX ? CLASS.axisX : CLASS.axisY} line`).nodes();
+				const prop = isX ? "x" : "y";
+	
+				chart.$.grid.main.selectAll(`.${isX ? CLASS.xgrids : CLASS.ygrids} line`)
+					.each(function(d, i) {
+						const pos = this.getBoundingClientRect()[prop];
+						const axisPos = axis[i].getBoundingClientRect()[prop];
 
-				expect(y1).to.be.equal(+node.getAttribute("y2"));
-				expect(y).to.be.equal(y1);
-			});
+						expect(pos).to.be.equal(axisPos);
+	
+				});
+			}
+
+			checkGridLinesPos("x");
+			checkGridLinesPos("y");
+		});
+
+		it("set option: axis.rotated=true", () => {
+			args.axis = {rotated: true};
+		});
+
+		it("check grid lines position for rotated axis", () => {
+			const checkGridLinesPos = isX => {
+				const axis = chart.$.main.selectAll(`.${isX ? CLASS.axisX : CLASS.axisY} line`).nodes();
+				const prop = isX ? "y" : "x";
+	
+				chart.$.grid.main.selectAll(`.${isX ? CLASS.xgrids : CLASS.ygrids} line`)
+					.each(function(d, i) {
+						const pos = this.getBoundingClientRect()[prop];
+						const axisPos = axis[i].getBoundingClientRect()[prop];
+
+						expect(pos).to.be.equal(axisPos);
+	
+				});
+			}
+
+			checkGridLinesPos(true);
+			checkGridLinesPos(false);
 		});
 	});
 

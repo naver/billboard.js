@@ -32643,7 +32643,7 @@ function smoothLines(el, type) {
         xgridData = $$.generateGridData(config.grid_x_type, scale.x),
         tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0,
         pos = function (d) {
-      return ((scale.zoom || scale.x)(d) + tickOffset) * (isRotated ? -1 : 1);
+      return (scale.zoom || scale.x)(d) + tickOffset * (isRotated ? -1 : 1);
     };
 
     state.xgridAttr = isRotated ? {
