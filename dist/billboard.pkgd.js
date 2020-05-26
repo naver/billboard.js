@@ -5,7 +5,7 @@
  * billboard.js, JavaScript chart library
  * https://naver.github.io/billboard.js/
  * 
- * @version 1.11.1-nightly-20200521140318
+ * @version 1.11.1-nightly-20200526140731
  * 
  * All-in-one packaged file for ease use of 'billboard.js' with dependant d3.js modules & polyfills.
  * - d3-axis ^1.0.12
@@ -32302,7 +32302,7 @@ util_extend(ChartInternal_ChartInternal.prototype, {
         xgridData = $$.generateGridData(config.grid_x_type, $$.x),
         tickOffset = $$.isCategorized() ? $$.xAxis.tickOffset() : 0,
         pos = function (d) {
-      return (($$.zoomScale || $$.x)(d) + tickOffset) * (isRotated ? -1 : 1);
+      return ($$.zoomScale || $$.x)(d) + tickOffset * (isRotated ? -1 : 1);
     };
 
     $$.xgridAttr = isRotated ? {
@@ -37005,7 +37005,7 @@ var _defaults = {},
    *    bb.version;  // "1.0.0"
    * @memberof bb
    */
-  version: "1.11.1-nightly-20200521140318",
+  version: "1.11.1-nightly-20200526140731",
 
   /**
    * Generate chart
@@ -37104,7 +37104,7 @@ var _defaults = {},
 };
 /**
  * @namespace bb
- * @version 1.11.1-nightly-20200521140318
+ * @version 1.11.1-nightly-20200526140731
  */
 
 
