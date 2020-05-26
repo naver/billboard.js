@@ -1,3 +1,10 @@
+## [1.12.10](https://github.com/naver/billboard.js/compare/1.12.9...1.12.10) (2020-05-26)
+
+
+### Bug Fixes
+
+* **grid:** Fix x grid positioning & rendering ([3f62b20](https://github.com/naver/billboard.js/commit/3f62b20e73de24d26382f57c24b173bacdeec1a0)), closes [#1407](https://github.com/naver/billboard.js/issues/1407)
+
 ## [1.12.9](https://github.com/naver/billboard.js/compare/1.12.8...1.12.9) (2020-05-22)
 
 
