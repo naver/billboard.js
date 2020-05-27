@@ -18706,6 +18706,945 @@ var Store = /*#__PURE__*/function () {
    */
   axis_y2_axes: []
 });
+// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
+
+
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var source, i = 1; i < arguments.length; i++) source = arguments[i] == null ? {} : arguments[i], i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); return target; }
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+
+
+/**
+ * y Axis  config options
+ */
+
+/* harmony default export */ var axis_axis = (_objectSpread(_objectSpread(_objectSpread({
+  /**
+   * Switch x and y axis position.
+   * @name axis․rotated
+   * @memberof Options
+   * @type {boolean}
+   * @default false
+   * @example
+   * axis: {
+   *   rotated: true
+   * }
+   */
+  axis_rotated: !1
+}, axis_x), axis_y), axis_y2));
+// CONCATENATED MODULE: ./src/config/Options/common/grid.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * grid config options
+ */
+/* harmony default export */ var common_grid = ({
+  /**
+   * Set related options
+   * @name grid
+   * @memberof Options
+   * @type {object}
+   * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
+   * @property {object} x Grid x object
+   * @property {boolean} [x.show=false] Show grids along x axis.
+   * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
+   *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
+   *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
+   * @property {object} y Grid y object
+   * @property {boolean} [y.show=false] Show grids along x axis.
+   * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
+   *  This option accepts array including object that has value, text, position and class.
+   * @property {number} [y.ticks=10] Number of y grids to be shown.
+   * @property {object} focus Grid focus object
+   * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+   * @property {boolean} [focus.show=true] Show grid line when focus.
+   * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
+   * @property {object} lines Grid lines object
+   * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
+   * @default undefined
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
+   * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
+   * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
+   * @example
+   * grid: {
+   *   x: {
+   *     show: true,
+   *     lines: [
+   *       {value: 2, text: "Label on 2"},
+   *       {value: 5, text: "Label on 5", class: "label-5"},
+   *       {value: 6, text: "Label on 6", position: "start"}
+   *     ]
+   *   },
+   *   y: {
+   *     show: true,
+   *     lines: [
+   *       {value: 100, text: "Label on 100"},
+   *       {value: 200, text: "Label on 200", class: "label-200"},
+   *       {value: 300, text: "Label on 300", position: 'middle'}
+   *     ],
+   *     ticks: 5
+   *   },
+   *   front: true,
+   *   focus: {
+   *      show: false,
+   *
+   *      // Below options are available when 'tooltip.grouped=false' option is set
+   *      edge: true,
+   *      y: true
+   *   },
+   *   lines: {
+   *      front: false
+   *   }
+   * }
+   */
+  grid_x_show: !1,
+  grid_x_type: "tick",
+  grid_x_lines: [],
+  grid_y_show: !1,
+  grid_y_lines: [],
+  grid_y_ticks: 10,
+  grid_focus_edge: !1,
+  grid_focus_show: !0,
+  grid_focus_y: !1,
+  grid_front: !1,
+  grid_lines_front: !0
+});
+// CONCATENATED MODULE: ./src/config/Options/common/point.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * point config options
+ */
+/* harmony default export */ var common_point = ({
+  /**
+   * Set point options
+   * @name point
+   * @memberof Options
+   * @type {object}
+   * @property {object} point Point object
+   * @property {boolean} [point.show=true] Whether to show each point in line.
+   * @property {number|Function} [point.r=2.5] The radius size of each point.
+   *  - **NOTE:** Disabled for 'bubble' type
+   * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
+   * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
+   *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
+   * @property {boolean} [point.focus.only=false] Show point only when is focused.
+   * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
+   * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
+   * @property {string} [point.type="circle"] The type of point to be drawn
+   * - **NOTE:**
+   *   - If chart has 'bubble' type, only circle can be used.
+   *   - For IE, non circle point expansions are not supported due to lack of transform support.
+   * - **Available Values:**
+   *   - circle
+   *   - rectangle
+   * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
+   * - **NOTE:**
+   *   - This is an `experimental` feature and can have some unexpected behaviors.
+   *   - If chart has 'bubble' type, only circle can be used.
+   *   - For IE, non circle point expansions are not supported due to lack of transform support.
+   * - **Available Values:**
+   *   - circle
+   *   - rectangle
+   *   - svg shape tag interpreted as string<br>
+   *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
+   * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
+   * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
+   * @example
+   *  point: {
+   *      show: false,
+   *      r: 5,
+   *
+   *      // or customize the radius
+   *      r: function(d) {
+   *          ...
+   *          return r;
+   *      },
+   *
+   *      focus: {
+   *          expand: {
+   *              enabled: true,
+   *              r: 1
+   *          },
+   *          only: true
+   *      },
+   *      select: {
+   *          r: 3
+   *      },
+   *
+   *      // having lower value, means how closer to be for interaction
+   *      sensitivity: 3,
+   *
+   *      // valid values are "circle" or "rectangle"
+   *      type: "rectangle",
+   *
+   *      // or indicate as pattern
+   *      pattern: [
+   *        "circle",
+   *        "rectangle",
+   *        "<polygon points='0 6 4 0 -4 0'></polygon>"
+   *     ],
+   *  }
+   */
+  point_show: !0,
+  point_r: 2.5,
+  point_sensitivity: 10,
+  point_focus_expand_enabled: !0,
+  point_focus_expand_r: undefined,
+  point_focus_only: !1,
+  point_pattern: [],
+  point_select_r: undefined,
+  point_type: "circle"
+});
+// CONCATENATED MODULE: ./src/config/Options/common/subchart.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * x Axis config options
+ */
+/* harmony default export */ var common_subchart = ({
+  /**
+   * Set subchart options
+   * @name subchart
+   * @memberof Options
+   * @type {object}
+   * @property {object} subchart Subchart object
+   * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
+   * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
+   * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
+   * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
+   * @property {number} [subchart.size.height] Change the height of the subchart.
+   * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
+   *  Specified function receives the current zoomed x domain.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
+   * @example
+   *  subchart: {
+   *      axis: {
+   *      	x: {
+   *      	  show: true,
+   *      	    tick: {
+   *      	      show: true,
+   *      	      text: {
+   *      	        show: false
+   *      	      }
+   *      	    }
+   *      	}
+   *      },
+   *      show: true,
+   *      size: {
+   *          height: 20
+   *      },
+   *      onbrush: function(domain) { ... }
+   *  }
+   */
+  subchart_show: !1,
+  subchart_size_height: 60,
+  subchart_axis_x_show: !0,
+  subchart_axis_x_tick_show: !0,
+  subchart_axis_x_tick_text_show: !0,
+  subchart_onbrush: function subchart_onbrush() {}
+});
+// CONCATENATED MODULE: ./src/config/Options/common/zoom.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * zoom config options
+ */
+/* harmony default export */ var common_zoom = ({
+  /**
+   * Set zoom options
+   * @name zoom
+   * @memberof Options
+   * @type {object}
+   * @property {object} zoom Zoom object
+   * @property {boolean} [zoom.enabled=false] Enable zooming.
+   * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
+   *  - **Available types:**
+   *    - wheel
+   *    - drag
+   * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
+   *  If true set, y domain will be updated according to the zoomed region.
+   * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
+   * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
+   * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
+   * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
+   *  Specified function receives the zoom event.
+   * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
+   *  Specified function receives the zoomed domain.
+   * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
+   *  Specified function receives the zoomed domain.
+   * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
+   * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
+   * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
+   * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
+   * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
+   * @example
+   *  zoom: {
+   *      enabled: {
+   *          type: "drag"
+   *      },
+   *      rescale: true,
+   *      extent: [1, 100]  // enable more zooming
+   *      x: {
+   *          min: -1,  // set min range
+   *          max: 10  // set max range
+   *      },
+   *      onzoomstart: function(event) { ... },
+   *      onzoom: function(domain) { ... },
+   *      onzoomend: function(domain) { ... },
+   *
+   *      // show reset button when is zoomed-in
+   *      resetButton: true,
+   *
+   *      resetButton: {
+   *          // onclick callback when reset button is clicked
+   *          onclick: function(button) {
+   *            button; // Reset button element reference
+   *            ...
+   *          },
+   *
+   *          // customized text value for reset zoom button
+   *          text: "Unzoom"
+   *      }
+   *  }
+   */
+  zoom_enabled: undefined,
+  zoom_extent: undefined,
+  zoom_privileged: !1,
+  zoom_rescale: !1,
+  zoom_onzoom: undefined,
+  zoom_onzoomstart: undefined,
+  zoom_onzoomend: undefined,
+  zoom_resetButton: !0,
+  zoom_x_min: undefined,
+  zoom_x_max: undefined
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/area.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * area config options
+ */
+/* harmony default export */ var shape_area = ({
+  /**
+   * Set area options
+   * @name area
+   * @memberof Options
+   * @type {object}
+   * @property {object} area Area object
+   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
+   * @property {boolean} [area.above=false] Set background area above the data chart line.
+   * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
+   * Or customize by giving below object value:
+   *  - x {Array}: `x1`, `x2` value
+   *  - y {Array}: `y1`, `y2` value
+   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
+   * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
+   * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
+   * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
+   * @example
+   *  area: {
+   *      zerobased: false,
+   *      above: true,
+   *
+   *      // will generate follwing linearGradient:
+   *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
+   *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
+   *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
+   *      // </linearGradient>
+   *      linearGradient: true,
+   *
+   *      // Or customized gradient
+   *      linearGradient: {
+   *      	x: [0, 0],  // x1, x2 attributes
+   *      	y: [0, 0],  // y1, y2 attributes
+   *      	stops: [
+   *      	  // offset, stop-color, stop-opacity
+   *      	  [0, "#7cb5ec", 1],
+   *
+   *      	  // setting 'null' for stop-color, will set its original data color
+   *      	  [0.5, null, 0],
+   *
+   *      	  // setting 'function' for stop-color, will pass data id as argument.
+   *      	  // It should return color string or null value
+   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
+   *      	]
+   *      }
+   *  }
+   */
+  area_zerobased: !0,
+  area_above: !1,
+  area_linearGradient: !1
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * bar config options
+ */
+/* harmony default export */ var shape_bar = ({
+  /**
+   * Set bar options
+   * @name bar
+   * @memberof Options
+   * @type {object}
+   * @property {object} bar Bar object
+   * @property {number} [bar.padding=0] The padding pixel value between each bar.
+   * @property {number} [bar.radius] Set the radius of bar edge in pixel.
+   * - **NOTE:** Works only for non-stacked bar
+   * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
+   * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
+   * @property {number} [bar.width] Change the width of bar chart.
+   * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
+   * @property {number} [bar.width.max] The maximum width value for ratio.
+   * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
+   * - **NOTE:**
+   *   - Works only for non-stacked bar
+   *   - Bars are centered accoding its total width value
+   * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
+   * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
+   * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
+   * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
+   * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
+   * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
+   * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
+   * @example
+   *  bar: {
+   *      padding: 1,
+   *
+   *      // the 'radius' option can be used only for non-stacking bars
+   *      radius: 10,
+   *      // or
+   *      radius: {
+   *          ratio: 0.5
+   *      }
+   *
+   *      // will not have offset between each bar elements for interaction
+   *      sensitivity: 0,
+   *
+   *      width: 10,
+   *
+   *      // or
+   *      width: {
+   *          ratio: 0.2,
+   *          max: 20
+   *      },
+   *
+   *      // or specify width per dataset
+   *      width: {
+   *          data1: 20,
+   *          data2: {
+   *              ratio: 0.2,
+   *              max: 20
+   *          }
+   *      },
+   *
+   *      zerobased: false
+   *  }
+   */
+  bar_padding: 0,
+  bar_radius: undefined,
+  bar_radius_ratio: undefined,
+  bar_sensitivity: 2,
+  bar_width: undefined,
+  bar_width_ratio: .6,
+  bar_width_max: undefined,
+  bar_zerobased: !0
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/bubble.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * bubble config options
+ */
+/* harmony default export */ var bubble = ({
+  /**
+   * Set bubble options
+   * @name bubble
+   * @memberof Options
+   * @type {object}
+   * @property {object} bubble bubble object
+   * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
+   * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
+   * @example
+   *  bubble: {
+   *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
+   *      // And the lesser will have radius relatively from tha max value.
+   *      maxR: 50,
+   *
+   *      // or set radius callback
+   *      maxR: function(d) {
+   *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
+   *          ...
+   *          return Math.sqrt(d.value * 2);
+   *      },
+   *      zerobased: false
+   *  }
+   */
+  bubble_maxR: 35,
+  bubble_zerobased: !1
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * line config options
+ */
+/* harmony default export */ var shape_line = ({
+  /**
+   * Set line options
+   * @name line
+   * @memberof Options
+   * @type {object}
+   * @property {object} line Line object
+   * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
+   *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
+   * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
+   * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
+   * **Available values:**
+   * - step
+   * - step-before
+   * - step-after
+   * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
+   * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
+   * @example
+   *  line: {
+   *      connectNull: true,
+   *      classes: [
+   *          "line-class1",
+   *          "line-class2"
+   *      ],
+   *      step: {
+   *          type: "step-after"
+   *      },
+   *
+   *      // hide all data points ('point.show=false' also has similar effect)
+   *      point: false,
+   *
+   *      // show data points for only indicated datas
+   *      point: [
+   *          "data1", "data3"
+   *      ],
+   *
+   *      zerobased: false
+   *  }
+   */
+  line_connectNull: !1,
+  line_step_type: "step",
+  line_zerobased: !1,
+  line_classes: undefined,
+  line_point: !0
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * x Axis config options
+ */
+/* harmony default export */ var shape_spline = ({
+  /**
+   * Set spline options
+   * - **Available interpolation type values:**
+   *  - basis (d3.curveBasis)
+   *  - basis-closed (d3.curveBasisClosed)
+   *  - basis-open (d3.curveBasisOpen)
+   *  - bundle (d3.curveBundle)
+   *  - cardinal (d3.curveCardinal)
+   *  - cardinal-closed (d3.curveCardinalClosed)
+   *  - cardinal-open (d3.curveCardinalOpen)
+   *  - catmull-rom (d3.curveCatmullRom)
+   *  - catmull-rom-closed (d3.curveCatmullRomClosed)
+   *  - catmull-rom-open (d3.curveCatmullRomOpen)
+   *  - monotone-x (d3.curveMonotoneX)
+   *  - monotone-y (d3.curveMonotoneY)
+   *  - natural (d3.curveNatural)
+   *  - linear-closed (d3.curveLinearClosed)
+   *  - linear (d3.curveLinear)
+   *  - step (d3.curveStep)
+   *  - step-after (d3.curveStepAfter)
+   *  - step-before (d3.curveStepBefore)
+   * @name spline
+   * @memberof Options
+   * @type {object}
+   * @property {object} spline Spline object
+   * @property {object} spline.interpolation Spline interpolation object
+   * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
+   * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
+   * @example
+   *  spline: {
+   *      interpolation: {
+   *          type: "cardinal"
+   *      }
+   *  }
+   */
+  spline_interpolation_type: "cardinal"
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * donut config options
+ */
+/* harmony default export */ var donut = ({
+  /**
+   * Set donut options
+   * @name donut
+   * @memberof Options
+   * @type {object}
+   * @property {object} donut Donut object
+   * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
+   * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
+   * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
+   * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
+   * @property {number} [donut.expand.rate=0.98] Set expand rate.
+   * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
+   * @property {number} [donut.width] Set width of donut chart.
+   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
+   * @property {number} [donut.padAngle=0] Set padding between data.
+   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+   * @example
+   *  donut: {
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *          	...
+   *          	return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5
+   *      },
+   *
+   *      // disable expand transition for interaction
+   *      expand: false,
+   *
+   *      expand: {
+   *      	// set duration of expand transition to 500ms.
+   *          duration: 500,
+   *
+   *      	// set expand area rate
+   *          rate: 1
+   *      },
+   *
+   *      width: 10,
+   *      padAngle: 0.2,
+   *      startingAngle: 1,
+   *      title: "Donut Title"
+   *
+   *      // title with line break
+   *      title: "Title1\nTitle2"
+   *  }
+   */
+  donut_label_show: !0,
+  donut_label_format: undefined,
+  donut_label_threshold: .05,
+  donut_label_ratio: undefined,
+  donut_width: undefined,
+  donut_title: "",
+  donut_expand: {},
+  donut_expand_rate: .98,
+  donut_expand_duration: 50,
+  donut_padAngle: 0,
+  donut_startingAngle: 0
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * gauge config options
+ */
+/* harmony default export */ var gauge = ({
+  /**
+   * Set gauge options
+   * @name gauge
+   * @memberof Options
+   * @type {object}
+   * @property {object} gauge Gauge object
+   * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
+   * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
+   * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
+   * @property {Function} [gauge.label.extents] Set customized min/max label text.
+   * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
+   * @property {number} [gauge.expand.rate=0.98] Set expand rate.
+   * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
+   * @property {number} [gauge.min=0] Set min value of the gauge.
+   * @property {number} [gauge.max=100] Set max value of the gauge.
+   * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
+   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
+   * @property {string} [gauge.units] Set units of the gauge.
+   * @property {number} [gauge.width] Set width of gauge chart.
+   * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
+   * **Available Values:**
+   * - single
+   * - multi
+   * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
+   * @example
+   *  gauge: {
+   *      fullCircle: false,
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio) {
+   *              return value;
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *          extents: function(value, isMax) {
+   *              return (isMax ? "Max:" : "Min:") + value;
+   *          }
+   *      },
+   *
+   *      // disable expand transition for interaction
+   *      expand: false,
+   *
+   *      expand: {
+   *      	// set duration of expand transition to 500ms.
+   *          duration: 500,
+   *
+   *      	// set expand area rate
+   *          rate: 1
+   *      },
+   *
+   *      min: -100,
+   *      max: 200,
+   *      type: "single"  // or 'multi'
+   *      title: "Title Text",
+   *      units: "%",
+   *      width: 10,
+   *      arcs: {
+   *          minWidth: 5
+   *      }
+   *  }
+   */
+  gauge_fullCircle: !1,
+  gauge_label_show: !0,
+  gauge_label_format: undefined,
+  gauge_label_extents: undefined,
+  gauge_min: 0,
+  gauge_max: 100,
+  gauge_type: "single",
+  gauge_startingAngle: -1 * Math.PI / 2,
+  gauge_title: "",
+  gauge_units: undefined,
+  gauge_width: undefined,
+  gauge_arcs_minWidth: 5,
+  gauge_expand: {},
+  gauge_expand_rate: .98,
+  gauge_expand_duration: 50
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * x Axis config options
+ */
+/* harmony default export */ var shape_pie = ({
+  /**
+   * Set pie options
+   * @name pie
+   * @memberof Options
+   * @type {object}
+   * @property {object} pie Pie object
+   * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
+   * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
+   * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
+   * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
+   * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
+   * @property {number} [pie.expand.rate=0.98] Set expand rate.
+   * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
+   * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
+   * @property {number} [pie.padAngle=0] Set padding between data.
+   * @property {number} [pie.padding=0] Sets the gap between pie arcs.
+   * @property {object} donut Donut object
+   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
+   * @example
+   *  pie: {
+   *      label: {
+   *          show: false,
+   *          format: function(value, ratio, id) {
+   *              return d3.format("$")(value);
+   *
+   *              // to multiline, return with '\n' character
+   *              // return value +"%\nLine1\n2Line2";
+   *          },
+   *          threshold: 0.1,
+   *
+   *          // set ratio callback. Should return ratio value
+   *          ratio: function(d, radius, h) {
+   *              ...
+   *              return ratio;
+   *          },
+   *          // or set ratio number
+   *          ratio: 0.5
+   *      },
+   *
+   *      // disable expand transition for interaction
+   *      expand: false,
+   *
+   *      expand: {
+   *      	// set duration of expand transition to 500ms.
+   *          duration: 500,
+   *
+   *      	// set expand area rate
+   *          rate: 1
+   *      },
+   *
+   *      innerRadius: 0,
+   *
+   *      // set different innerRadius for each data
+   *      innerRadius: {
+   *      	data1: 10,
+   *      	data2: 0
+   *      }
+   *
+   *      padAngle: 0.1,
+   *      padding: 0,
+   *      startingAngle: 1
+   *  }
+   */
+  pie_label_show: !0,
+  pie_label_format: undefined,
+  pie_label_threshold: .05,
+  pie_label_ratio: undefined,
+  pie_expand: {},
+  pie_expand_rate: .98,
+  pie_expand_duration: 50,
+  pie_innerRadius: 0,
+  pie_padAngle: 0,
+  pie_padding: 0,
+  pie_startingAngle: 0
+});
+// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+
+/**
+ * x Axis config options
+ */
+/* harmony default export */ var shape_radar = ({
+  /**
+   * Set radar options
+   * - **NOTE:**
+   *  > When x tick text contains `\n`, it's used as line break.
+   * @name radar
+   * @memberof Options
+   * @type {object}
+   * @property {object} radar Radar object
+   * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
+   * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
+   * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
+   * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
+   * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
+   * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
+   * @property {number} [radar.level.depth=3] Set the level depth.
+   * @property {boolean} [radar.level.show=true] Show or hide level.
+   * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
+   * @property {boolean} [radar.level.text.show=true] Show or hide level text.
+   * @property {number} [radar.size.ratio=0.87] Set size ratio.
+   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
+   * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
+   * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
+   * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
+   * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
+   * @example
+   *  radar: {
+   *      axis: {
+   *          max: 50,
+   *          line: {
+   *              show: false
+   *          },
+   *          text: {
+   *              position: {
+   *              	x: 0,
+   *              	y: 0
+   *              },
+   *              show: false
+   *          }
+   *      },
+   *      direction: {
+   *          clockwise: true
+   *      },
+   *      level: {
+   *          show: false,
+   *          text: {
+   *              format: function(x) {
+   *                  return x + "%";
+   *              },
+   *              show: true
+   *          }
+   *      },
+   *      size: {
+   *          ratio: 0.7
+   *      }
+   *  }
+   */
+  radar_axis_max: undefined,
+  radar_axis_line_show: !0,
+  radar_axis_text_show: !0,
+  radar_axis_text_position: {},
+  radar_level_depth: 3,
+  radar_level_show: !0,
+  radar_level_text_format: function radar_level_text_format(x) {
+    return x % 1 === 0 ? x : x.toFixed(2);
+  },
+  radar_level_text_show: !0,
+  radar_size_ratio: .87,
+  radar_direction_clockwise: !1
+});
 // CONCATENATED MODULE: ./node_modules/d3-dispatch/src/dispatch.js
 var noop = {
   value: function value() {}
@@ -22023,940 +22962,6 @@ function convertInputType(mouse, touch) {
   var hasMouse = !(!mouse || isMobile) && "onmouseover" in win;
   return hasMouse && "mouse" || isMobile && "touch" || null;
 }
-// CONCATENATED MODULE: ./src/config/Options/axis/axis.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-
-
-
-/**
- * y Axis  config options
- */
-
-/* harmony default export */ var axis_axis = (mergeObj({
-  /**
-   * Switch x and y axis position.
-   * @name axis․rotated
-   * @memberof Options
-   * @type {boolean}
-   * @default false
-   * @example
-   * axis: {
-   *   rotated: true
-   * }
-   */
-  axis_rotated: !1
-}, axis_x, axis_y, axis_y2));
-// CONCATENATED MODULE: ./src/config/Options/common/grid.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * grid config options
- */
-/* harmony default export */ var common_grid = ({
-  /**
-   * Set related options
-   * @name grid
-   * @memberof Options
-   * @type {object}
-   * @property {boolean} [front=false] Set 'grid & focus lines' to be positioned over grid lines and chart elements.
-   * @property {object} x Grid x object
-   * @property {boolean} [x.show=false] Show grids along x axis.
-   * @property {Array} [x.lines=[]] Show additional grid lines along x axis.<br>
-   *  This option accepts array including object that has value, text, position and class. text, position and class are optional. For position, start, middle and end (default) are available.
-   *  If x axis is category axis, value can be category name. If x axis is timeseries axis, value can be date string, Date object and unixtime integer.
-   * @property {object} y Grid y object
-   * @property {boolean} [y.show=false] Show grids along x axis.
-   * @property {Array} [y.lines=[]] Show additional grid lines along y axis.<br>
-   *  This option accepts array including object that has value, text, position and class.
-   * @property {number} [y.ticks=10] Number of y grids to be shown.
-   * @property {object} focus Grid focus object
-   * @property {boolean} [focus.edge=false] Show edged focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-   * @property {boolean} [focus.show=true] Show grid line when focus.
-   * @property {boolean} [focus.y=false] Show y coordinate focus grid line.<br>**NOTE:** Available when [`tooltip.grouped=false`](#.tooltip) option is set.
-   * @property {object} lines Grid lines object
-   * @property {boolean} [lines.front=true] Set grid lines to be positioned over chart elements.
-   * @default undefined
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Grid.GridLines)
-   * @see [Demo: X Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalXGridLines)
-   * @see [Demo: Y Grid Lines](https://naver.github.io/billboard.js/demo/#Grid.OptionalYGridLines)
-   * @example
-   * grid: {
-   *   x: {
-   *     show: true,
-   *     lines: [
-   *       {value: 2, text: "Label on 2"},
-   *       {value: 5, text: "Label on 5", class: "label-5"},
-   *       {value: 6, text: "Label on 6", position: "start"}
-   *     ]
-   *   },
-   *   y: {
-   *     show: true,
-   *     lines: [
-   *       {value: 100, text: "Label on 100"},
-   *       {value: 200, text: "Label on 200", class: "label-200"},
-   *       {value: 300, text: "Label on 300", position: 'middle'}
-   *     ],
-   *     ticks: 5
-   *   },
-   *   front: true,
-   *   focus: {
-   *      show: false,
-   *
-   *      // Below options are available when 'tooltip.grouped=false' option is set
-   *      edge: true,
-   *      y: true
-   *   },
-   *   lines: {
-   *      front: false
-   *   }
-   * }
-   */
-  grid_x_show: !1,
-  grid_x_type: "tick",
-  grid_x_lines: [],
-  grid_y_show: !1,
-  grid_y_lines: [],
-  grid_y_ticks: 10,
-  grid_focus_edge: !1,
-  grid_focus_show: !0,
-  grid_focus_y: !1,
-  grid_front: !1,
-  grid_lines_front: !0
-});
-// CONCATENATED MODULE: ./src/config/Options/common/point.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * point config options
- */
-/* harmony default export */ var common_point = ({
-  /**
-   * Set point options
-   * @name point
-   * @memberof Options
-   * @type {object}
-   * @property {object} point Point object
-   * @property {boolean} [point.show=true] Whether to show each point in line.
-   * @property {number|Function} [point.r=2.5] The radius size of each point.
-   *  - **NOTE:** Disabled for 'bubble' type
-   * @property {boolean} [point.focus.expand.enabled=true] Whether to expand each point on focus.
-   * @property {number} [point.focus.expand.r=point.r*1.75] The radius size of each point on focus.
-   *  - **NOTE:** For 'bubble' type, the default is `bubbleSize*1.15`
-   * @property {boolean} [point.focus.only=false] Show point only when is focused.
-   * @property {number} [point.sensitivity=10] The senstivity value for interaction boundary.
-   * @property {number} [point.select.r=point.r*4] The radius size of each point on selected.
-   * @property {string} [point.type="circle"] The type of point to be drawn
-   * - **NOTE:**
-   *   - If chart has 'bubble' type, only circle can be used.
-   *   - For IE, non circle point expansions are not supported due to lack of transform support.
-   * - **Available Values:**
-   *   - circle
-   *   - rectangle
-   * @property {Array} [point.pattern=[]] The type of point or svg shape as string, to be drawn for each line
-   * - **NOTE:**
-   *   - This is an `experimental` feature and can have some unexpected behaviors.
-   *   - If chart has 'bubble' type, only circle can be used.
-   *   - For IE, non circle point expansions are not supported due to lack of transform support.
-   * - **Available Values:**
-   *   - circle
-   *   - rectangle
-   *   - svg shape tag interpreted as string<br>
-   *     (ex. `<polygon points='2.5 0 0 5 5 5'></polygon>`)
-   * @see [Demo: point type](https://naver.github.io/billboard.js/demo/#Point.RectanglePoints)
-   * @see [Demo: point focus only](https://naver.github.io/billboard.js/demo/#Point.FocusOnly)
-   * @example
-   *  point: {
-   *      show: false,
-   *      r: 5,
-   *
-   *      // or customize the radius
-   *      r: function(d) {
-   *          ...
-   *          return r;
-   *      },
-   *
-   *      focus: {
-   *          expand: {
-   *              enabled: true,
-   *              r: 1
-   *          },
-   *          only: true
-   *      },
-   *      select: {
-   *          r: 3
-   *      },
-   *
-   *      // having lower value, means how closer to be for interaction
-   *      sensitivity: 3,
-   *
-   *      // valid values are "circle" or "rectangle"
-   *      type: "rectangle",
-   *
-   *      // or indicate as pattern
-   *      pattern: [
-   *        "circle",
-   *        "rectangle",
-   *        "<polygon points='0 6 4 0 -4 0'></polygon>"
-   *     ],
-   *  }
-   */
-  point_show: !0,
-  point_r: 2.5,
-  point_sensitivity: 10,
-  point_focus_expand_enabled: !0,
-  point_focus_expand_r: undefined,
-  point_focus_only: !1,
-  point_pattern: [],
-  point_select_r: undefined,
-  point_type: "circle"
-});
-// CONCATENATED MODULE: ./src/config/Options/common/subchart.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * x Axis config options
- */
-/* harmony default export */ var common_subchart = ({
-  /**
-   * Set subchart options
-   * @name subchart
-   * @memberof Options
-   * @type {object}
-   * @property {object} subchart Subchart object
-   * @property {boolean} [subchart.show=false] Show sub chart on the bottom of the chart.
-   * @property {boolean} [subchart.axis.x.show=true] Show or hide x axis.
-   * @property {boolean} [subchart.axis.x.tick.show=true] Show or hide x axis tick line.
-   * @property {boolean} [subchart.axis.x.tick.text.show=true] Show or hide x axis tick text.
-   * @property {number} [subchart.size.height] Change the height of the subchart.
-   * @property {Function} [subchart.onbrush] Set callback for brush event.<br>
-   *  Specified function receives the current zoomed x domain.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Interaction.SubChart)
-   * @example
-   *  subchart: {
-   *      axis: {
-   *      	x: {
-   *      	  show: true,
-   *      	    tick: {
-   *      	      show: true,
-   *      	      text: {
-   *      	        show: false
-   *      	      }
-   *      	    }
-   *      	}
-   *      },
-   *      show: true,
-   *      size: {
-   *          height: 20
-   *      },
-   *      onbrush: function(domain) { ... }
-   *  }
-   */
-  subchart_show: !1,
-  subchart_size_height: 60,
-  subchart_axis_x_show: !0,
-  subchart_axis_x_tick_show: !0,
-  subchart_axis_x_tick_text_show: !0,
-  subchart_onbrush: function subchart_onbrush() {}
-});
-// CONCATENATED MODULE: ./src/config/Options/common/zoom.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * zoom config options
- */
-/* harmony default export */ var common_zoom = ({
-  /**
-   * Set zoom options
-   * @name zoom
-   * @memberof Options
-   * @type {object}
-   * @property {object} zoom Zoom object
-   * @property {boolean} [zoom.enabled=false] Enable zooming.
-   * @property {string} [zoom.enabled.type='wheel'] Set zoom interaction type.
-   *  - **Available types:**
-   *    - wheel
-   *    - drag
-   * @property {boolean} [zoom.rescale=false] Enable to rescale after zooming.<br>
-   *  If true set, y domain will be updated according to the zoomed region.
-   * @property {Array} [zoom.extent=[1, 10]] Change zoom extent.
-   * @property {number|Date} [zoom.x.min] Set x Axis minimum zoom range
-   * @property {number|Date} [zoom.x.max] Set x Axis maximum zoom range
-   * @property {Function} [zoom.onzoomstart=undefined] Set callback that is called when zooming starts.<br>
-   *  Specified function receives the zoom event.
-   * @property {Function} [zoom.onzoom=undefined] Set callback that is called when the chart is zooming.<br>
-   *  Specified function receives the zoomed domain.
-   * @property {Function} [zoom.onzoomend=undefined] Set callback that is called when zooming ends.<br>
-   *  Specified function receives the zoomed domain.
-   * @property {boolean|object} [zoom.resetButton=true] Set to display zoom reset button for 'drag' type zoom
-   * @property {Function} [zoom.resetButton.onclick] Set callback when clicks the reset button. The callback will receive reset button element reference as argument.
-   * @property {string} [zoom.resetButton.text='Reset Zoom'] Text value for zoom reset button.
-   * @see [Demo:zoom](https://naver.github.io/billboard.js/demo/#Interaction.Zoom)
-   * @see [Demo:drag zoom](https://naver.github.io/billboard.js/demo/#Interaction.DragZoom)
-   * @example
-   *  zoom: {
-   *      enabled: {
-   *          type: "drag"
-   *      },
-   *      rescale: true,
-   *      extent: [1, 100]  // enable more zooming
-   *      x: {
-   *          min: -1,  // set min range
-   *          max: 10  // set max range
-   *      },
-   *      onzoomstart: function(event) { ... },
-   *      onzoom: function(domain) { ... },
-   *      onzoomend: function(domain) { ... },
-   *
-   *      // show reset button when is zoomed-in
-   *      resetButton: true,
-   *
-   *      resetButton: {
-   *          // onclick callback when reset button is clicked
-   *          onclick: function(button) {
-   *            button; // Reset button element reference
-   *            ...
-   *          },
-   *
-   *          // customized text value for reset zoom button
-   *          text: "Unzoom"
-   *      }
-   *  }
-   */
-  zoom_enabled: undefined,
-  zoom_extent: undefined,
-  zoom_privileged: !1,
-  zoom_rescale: !1,
-  zoom_onzoom: undefined,
-  zoom_onzoomstart: undefined,
-  zoom_onzoomend: undefined,
-  zoom_resetButton: !0,
-  zoom_x_min: undefined,
-  zoom_x_max: undefined
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/area.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * area config options
- */
-/* harmony default export */ var shape_area = ({
-  /**
-   * Set area options
-   * @name area
-   * @memberof Options
-   * @type {object}
-   * @property {object} area Area object
-   * @property {boolean} [area.zerobased=true] Set if min or max value will be 0 on area chart.
-   * @property {boolean} [area.above=false] Set background area above the data chart line.
-   * @property {boolean|object} [area.linearGradient=false] Set the linear gradient on area.<br><br>
-   * Or customize by giving below object value:
-   *  - x {Array}: `x1`, `x2` value
-   *  - y {Array}: `y1`, `y2` value
-   *  - stops {Array}: Each item should be having `[offset, stop-color, stop-opacity]` values.
-   * @see [MDN's &lt;linearGradient>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/linearGradient), [&lt;stop>](https://developer.mozilla.org/en-US/docs/Web/SVG/Element/stop)
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.AreaChart)
-   * @see [Demo: above](https://naver.github.io/billboard.js/demo/#AreaChartOptions.Above)
-   * @see [Demo: linearGradient](https://naver.github.io/billboard.js/demo/#AreaChartOptions.LinearGradient)
-   * @example
-   *  area: {
-   *      zerobased: false,
-   *      above: true,
-   *
-   *      // will generate follwing linearGradient:
-   *      // <linearGradient x1="0" x2="0" y1="0" y2="1">
-   *      //    <stop offset="0" stop-color="$DATA_COLOR" stop-opacity="1"></stop>
-   *      //    <stop offset="1" stop-color="$DATA_COLOR" stop-opacity="0"></stop>
-   *      // </linearGradient>
-   *      linearGradient: true,
-   *
-   *      // Or customized gradient
-   *      linearGradient: {
-   *      	x: [0, 0],  // x1, x2 attributes
-   *      	y: [0, 0],  // y1, y2 attributes
-   *      	stops: [
-   *      	  // offset, stop-color, stop-opacity
-   *      	  [0, "#7cb5ec", 1],
-   *
-   *      	  // setting 'null' for stop-color, will set its original data color
-   *      	  [0.5, null, 0],
-   *
-   *      	  // setting 'function' for stop-color, will pass data id as argument.
-   *      	  // It should return color string or null value
-   *      	  [1, function(id) { return id === "data1" ? "red" : "blue"; }, 0],
-   *      	]
-   *      }
-   *  }
-   */
-  area_zerobased: !0,
-  area_above: !1,
-  area_linearGradient: !1
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/bar.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * bar config options
- */
-/* harmony default export */ var shape_bar = ({
-  /**
-   * Set bar options
-   * @name bar
-   * @memberof Options
-   * @type {object}
-   * @property {object} bar Bar object
-   * @property {number} [bar.padding=0] The padding pixel value between each bar.
-   * @property {number} [bar.radius] Set the radius of bar edge in pixel.
-   * - **NOTE:** Works only for non-stacked bar
-   * @property {number} [bar.radius.ratio] Set the radius ratio of bar edge in relative the bar's width.
-   * @property {number} [bar.sensitivity=2] The senstivity offset value for interaction boundary.
-   * @property {number} [bar.width] Change the width of bar chart.
-   * @property {number} [bar.width.ratio=0.6] Change the width of bar chart by ratio.
-   * @property {number} [bar.width.max] The maximum width value for ratio.
-   * @property {number} [bar.width.dataname] Change the width of bar for indicated dataset only.
-   * - **NOTE:**
-   *   - Works only for non-stacked bar
-   *   - Bars are centered accoding its total width value
-   * @property {number} [bar.width.dataname.ratio=0.6] Change the width of bar chart by ratio.
-   * @property {number} [bar.width.dataname.max] The maximum width value for ratio.
-   * @property {boolean} [bar.zerobased=true] Set if min or max value will be 0 on bar chart.
-   * @see [Demo: bar padding](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarPadding)
-   * @see [Demo: bar radius](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarRadius)
-   * @see [Demo: bar width](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidth)
-   * @see [Demo: bar width variant](https://naver.github.io/billboard.js/demo/#BarChartOptions.BarWidthVariant)
-   * @example
-   *  bar: {
-   *      padding: 1,
-   *
-   *      // the 'radius' option can be used only for non-stacking bars
-   *      radius: 10,
-   *      // or
-   *      radius: {
-   *          ratio: 0.5
-   *      }
-   *
-   *      // will not have offset between each bar elements for interaction
-   *      sensitivity: 0,
-   *
-   *      width: 10,
-   *
-   *      // or
-   *      width: {
-   *          ratio: 0.2,
-   *          max: 20
-   *      },
-   *
-   *      // or specify width per dataset
-   *      width: {
-   *          data1: 20,
-   *          data2: {
-   *              ratio: 0.2,
-   *              max: 20
-   *          }
-   *      },
-   *
-   *      zerobased: false
-   *  }
-   */
-  bar_padding: 0,
-  bar_radius: undefined,
-  bar_radius_ratio: undefined,
-  bar_sensitivity: 2,
-  bar_width: undefined,
-  bar_width_ratio: .6,
-  bar_width_max: undefined,
-  bar_zerobased: !0
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/bubble.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * bubble config options
- */
-/* harmony default export */ var bubble = ({
-  /**
-   * Set bubble options
-   * @name bubble
-   * @memberof Options
-   * @type {object}
-   * @property {object} bubble bubble object
-   * @property {number|Function} [bubble.maxR=35] Set the max bubble radius value
-   * @property {boolean} [bubble.zerobased=false] Set if min or max value will be 0 on bubble chart.
-   * @example
-   *  bubble: {
-   *      // ex) If 100 is the highest value among data bound, the representation bubble of 100 will have radius of 50.
-   *      // And the lesser will have radius relatively from tha max value.
-   *      maxR: 50,
-   *
-   *      // or set radius callback
-   *      maxR: function(d) {
-   *          // ex. of d param - {x: Fri Oct 06 2017 00:00:00 GMT+0900, value: 80, id: "data2", index: 5}
-   *          ...
-   *          return Math.sqrt(d.value * 2);
-   *      },
-   *      zerobased: false
-   *  }
-   */
-  bubble_maxR: 35,
-  bubble_zerobased: !1
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/line.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * line config options
- */
-/* harmony default export */ var shape_line = ({
-  /**
-   * Set line options
-   * @name line
-   * @memberof Options
-   * @type {object}
-   * @property {object} line Line object
-   * @property {boolean} [line.connectNull=false] Set if null data point will be connected or not.<br>
-   *  If true set, the region of null data will be connected without any data point. If false set, the region of null data will not be connected and get empty.
-   * @property {Array}   [line.classes=undefined] If set, used to set a css class on each line.
-   * @property {boolean} [line.step.type=step] Change step type for step chart.<br>
-   * **Available values:**
-   * - step
-   * - step-before
-   * - step-after
-   * @property {boolean|Array} [line.point=true] Set to false to not draw points on linecharts. Or pass an array of line ids to draw points for.
-   * @property {boolean} [line.zerobased=false] Set if min or max value will be 0 on line chart.
-   * @example
-   *  line: {
-   *      connectNull: true,
-   *      classes: [
-   *          "line-class1",
-   *          "line-class2"
-   *      ],
-   *      step: {
-   *          type: "step-after"
-   *      },
-   *
-   *      // hide all data points ('point.show=false' also has similar effect)
-   *      point: false,
-   *
-   *      // show data points for only indicated datas
-   *      point: [
-   *          "data1", "data3"
-   *      ],
-   *
-   *      zerobased: false
-   *  }
-   */
-  line_connectNull: !1,
-  line_step_type: "step",
-  line_zerobased: !1,
-  line_classes: undefined,
-  line_point: !0
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/spline.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * x Axis config options
- */
-/* harmony default export */ var shape_spline = ({
-  /**
-   * Set spline options
-   * - **Available interpolation type values:**
-   *  - basis (d3.curveBasis)
-   *  - basis-closed (d3.curveBasisClosed)
-   *  - basis-open (d3.curveBasisOpen)
-   *  - bundle (d3.curveBundle)
-   *  - cardinal (d3.curveCardinal)
-   *  - cardinal-closed (d3.curveCardinalClosed)
-   *  - cardinal-open (d3.curveCardinalOpen)
-   *  - catmull-rom (d3.curveCatmullRom)
-   *  - catmull-rom-closed (d3.curveCatmullRomClosed)
-   *  - catmull-rom-open (d3.curveCatmullRomOpen)
-   *  - monotone-x (d3.curveMonotoneX)
-   *  - monotone-y (d3.curveMonotoneY)
-   *  - natural (d3.curveNatural)
-   *  - linear-closed (d3.curveLinearClosed)
-   *  - linear (d3.curveLinear)
-   *  - step (d3.curveStep)
-   *  - step-after (d3.curveStepAfter)
-   *  - step-before (d3.curveStepBefore)
-   * @name spline
-   * @memberof Options
-   * @type {object}
-   * @property {object} spline Spline object
-   * @property {object} spline.interpolation Spline interpolation object
-   * @property {string} [spline.interpolation.type="cardinal"] Interpolation type
-   * @see [Interpolation (d3 v4)](http://bl.ocks.org/emmasaunders/c25a147970def2b02d8c7c2719dc7502)
-   * @example
-   *  spline: {
-   *      interpolation: {
-   *          type: "cardinal"
-   *      }
-   *  }
-   */
-  spline_interpolation_type: "cardinal"
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/donut.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * donut config options
- */
-/* harmony default export */ var donut = ({
-  /**
-   * Set donut options
-   * @name donut
-   * @memberof Options
-   * @type {object}
-   * @property {object} donut Donut object
-   * @property {boolean} [donut.label.show=true] Show or hide label on each donut piece.
-   * @property {Function} [donut.label.format] Set formatter for the label on each donut piece.
-   * @property {number} [donut.label.threshold=0.05] Set threshold to show/hide labels.
-   * @property {number|Function} [donut.label.ratio=undefined] Set ratio of labels position.
-   * @property {boolean} [donut.expand=true] Enable or disable expanding donut pieces.
-   * @property {number} [donut.expand.rate=0.98] Set expand rate.
-   * @property {number} [donut.expand.duration=50] Set expand transition time in ms.
-   * @property {number} [donut.width] Set width of donut chart.
-   * @property {string} [donut.title=""] Set title of donut chart. Use `\n` character to enter line break.
-   * @property {number} [donut.padAngle=0] Set padding between data.
-   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
-   * @example
-   *  donut: {
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio, id) {
-   *              return d3.format("$")(value);
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *          threshold: 0.1,
-   *
-   *          // set ratio callback. Should return ratio value
-   *          ratio: function(d, radius, h) {
-   *          	...
-   *          	return ratio;
-   *          },
-   *          // or set ratio number
-   *          ratio: 0.5
-   *      },
-   *
-   *      // disable expand transition for interaction
-   *      expand: false,
-   *
-   *      expand: {
-   *      	// set duration of expand transition to 500ms.
-   *          duration: 500,
-   *
-   *      	// set expand area rate
-   *          rate: 1
-   *      },
-   *
-   *      width: 10,
-   *      padAngle: 0.2,
-   *      startingAngle: 1,
-   *      title: "Donut Title"
-   *
-   *      // title with line break
-   *      title: "Title1\nTitle2"
-   *  }
-   */
-  donut_label_show: !0,
-  donut_label_format: undefined,
-  donut_label_threshold: .05,
-  donut_label_ratio: undefined,
-  donut_width: undefined,
-  donut_title: "",
-  donut_expand: {},
-  donut_expand_rate: .98,
-  donut_expand_duration: 50,
-  donut_padAngle: 0,
-  donut_startingAngle: 0
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/gauge.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * gauge config options
- */
-/* harmony default export */ var gauge = ({
-  /**
-   * Set gauge options
-   * @name gauge
-   * @memberof Options
-   * @type {object}
-   * @property {object} gauge Gauge object
-   * @property {boolean} [gauge.fullCircle=false] Show full circle as donut. When set to 'true', the max label will not be showed due to start and end points are same location.
-   * @property {boolean} [gauge.label.show=true] Show or hide label on gauge.
-   * @property {Function} [gauge.label.format] Set formatter for the label on gauge. Label text can be multilined with `\n` character.
-   * @property {Function} [gauge.label.extents] Set customized min/max label text.
-   * @property {boolean} [gauge.expand=true] Enable or disable expanding gauge.
-   * @property {number} [gauge.expand.rate=0.98] Set expand rate.
-   * @property {number} [gauge.expand.duration=50] Set the expand transition time in milliseconds.
-   * @property {number} [gauge.min=0] Set min value of the gauge.
-   * @property {number} [gauge.max=100] Set max value of the gauge.
-   * @property {number} [gauge.startingAngle=-1 * Math.PI / 2] Set starting angle where data draws.
-   * @property {string} [gauge.title=""] Set title of gauge chart. Use `\n` character to enter line break.
-   * @property {string} [gauge.units] Set units of the gauge.
-   * @property {number} [gauge.width] Set width of gauge chart.
-   * @property {string} [gauge.type="single"] Set type of gauge to be displayed.<br><br>
-   * **Available Values:**
-   * - single
-   * - multi
-   * @property {string} [gauge.arcs.minWidth=5] Set minimal width of gauge arcs until the innerRadius disappears.
-   * @example
-   *  gauge: {
-   *      fullCircle: false,
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio) {
-   *              return value;
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *          extents: function(value, isMax) {
-   *              return (isMax ? "Max:" : "Min:") + value;
-   *          }
-   *      },
-   *
-   *      // disable expand transition for interaction
-   *      expand: false,
-   *
-   *      expand: {
-   *      	// set duration of expand transition to 500ms.
-   *          duration: 500,
-   *
-   *      	// set expand area rate
-   *          rate: 1
-   *      },
-   *
-   *      min: -100,
-   *      max: 200,
-   *      type: "single"  // or 'multi'
-   *      title: "Title Text",
-   *      units: "%",
-   *      width: 10,
-   *      arcs: {
-   *          minWidth: 5
-   *      }
-   *  }
-   */
-  gauge_fullCircle: !1,
-  gauge_label_show: !0,
-  gauge_label_format: undefined,
-  gauge_label_extents: undefined,
-  gauge_min: 0,
-  gauge_max: 100,
-  gauge_type: "single",
-  gauge_startingAngle: -1 * Math.PI / 2,
-  gauge_title: "",
-  gauge_units: undefined,
-  gauge_width: undefined,
-  gauge_arcs_minWidth: 5,
-  gauge_expand: {},
-  gauge_expand_rate: .98,
-  gauge_expand_duration: 50
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/pie.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * x Axis config options
- */
-/* harmony default export */ var shape_pie = ({
-  /**
-   * Set pie options
-   * @name pie
-   * @memberof Options
-   * @type {object}
-   * @property {object} pie Pie object
-   * @property {boolean} [pie.label.show=true] Show or hide label on each pie piece.
-   * @property {Function} [pie.label.format] Set formatter for the label on each pie piece.
-   * @property {number} [pie.label.threshold=0.05] Set threshold to show/hide labels.
-   * @property {number|Function} [pie.label.ratio=undefined] Set ratio of labels position.
-   * @property {boolean|object} [pie.expand=true] Enable or disable expanding pie pieces.
-   * @property {number} [pie.expand.rate=0.98] Set expand rate.
-   * @property {number} [pie.expand.duration=50] Set expand transition time in ms.
-   * @property {number|object} [pie.innerRadius=0] Sets the inner radius of pie arc.
-   * @property {number} [pie.padAngle=0] Set padding between data.
-   * @property {number} [pie.padding=0] Sets the gap between pie arcs.
-   * @property {object} donut Donut object
-   * @property {number} [donut.startingAngle=0] Set starting angle where data draws.
-   * @example
-   *  pie: {
-   *      label: {
-   *          show: false,
-   *          format: function(value, ratio, id) {
-   *              return d3.format("$")(value);
-   *
-   *              // to multiline, return with '\n' character
-   *              // return value +"%\nLine1\n2Line2";
-   *          },
-   *          threshold: 0.1,
-   *
-   *          // set ratio callback. Should return ratio value
-   *          ratio: function(d, radius, h) {
-   *              ...
-   *              return ratio;
-   *          },
-   *          // or set ratio number
-   *          ratio: 0.5
-   *      },
-   *
-   *      // disable expand transition for interaction
-   *      expand: false,
-   *
-   *      expand: {
-   *      	// set duration of expand transition to 500ms.
-   *          duration: 500,
-   *
-   *      	// set expand area rate
-   *          rate: 1
-   *      },
-   *
-   *      innerRadius: 0,
-   *
-   *      // set different innerRadius for each data
-   *      innerRadius: {
-   *      	data1: 10,
-   *      	data2: 0
-   *      }
-   *
-   *      padAngle: 0.1,
-   *      padding: 0,
-   *      startingAngle: 1
-   *  }
-   */
-  pie_label_show: !0,
-  pie_label_format: undefined,
-  pie_label_threshold: .05,
-  pie_label_ratio: undefined,
-  pie_expand: {},
-  pie_expand_rate: .98,
-  pie_expand_duration: 50,
-  pie_innerRadius: 0,
-  pie_padAngle: 0,
-  pie_padding: 0,
-  pie_startingAngle: 0
-});
-// CONCATENATED MODULE: ./src/config/Options/shape/radar.ts
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-
-/**
- * x Axis config options
- */
-/* harmony default export */ var shape_radar = ({
-  /**
-   * Set radar options
-   * - **NOTE:**
-   *  > When x tick text contains `\n`, it's used as line break.
-   * @name radar
-   * @memberof Options
-   * @type {object}
-   * @property {object} radar Radar object
-   * @property {number} [radar.axis.max=undefined] The max value of axis. If not given, it'll take the max value from the given data.
-   * @property {boolean} [radar.axis.line.show=true] Show or hide axis line.
-   * @property {number} [radar.axis.text.position.x=0] x coordinate position, relative the original.
-   * @property {number} [radar.axis.text.position.y=0] y coordinate position, relative the original.
-   * @property {boolean} [radar.axis.text.show=true] Show or hide axis text.
-   * @property {boolean} [radar.direction.clockwise=false] Set the direction to be drawn.
-   * @property {number} [radar.level.depth=3] Set the level depth.
-   * @property {boolean} [radar.level.show=true] Show or hide level.
-   * @property {Function} [radar.level.text.format=(x) => (x % 1 === 0 ? x : x.toFixed(2))] Set format function for the level value.
-   * @property {boolean} [radar.level.text.show=true] Show or hide level text.
-   * @property {number} [radar.size.ratio=0.87] Set size ratio.
-   * @see [Demo](https://naver.github.io/billboard.js/demo/#Chart.RadarChart)
-   * @see [Demo: radar axis](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxis)
-   * @see [Demo: radar level](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarLevel)
-   * @see [Demo: radar size](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarSize)
-   * @see [Demo: radar axis multiline](https://naver.github.io/billboard.js/demo/#RadarChartOptions.RadarAxisMultiline)
-   * @example
-   *  radar: {
-   *      axis: {
-   *          max: 50,
-   *          line: {
-   *              show: false
-   *          },
-   *          text: {
-   *              position: {
-   *              	x: 0,
-   *              	y: 0
-   *              },
-   *              show: false
-   *          }
-   *      },
-   *      direction: {
-   *          clockwise: true
-   *      },
-   *      level: {
-   *          show: false,
-   *          text: {
-   *              format: function(x) {
-   *                  return x + "%";
-   *              },
-   *              show: true
-   *          }
-   *      },
-   *      size: {
-   *          ratio: 0.7
-   *      }
-   *  }
-   */
-  radar_axis_max: undefined,
-  radar_axis_line_show: !0,
-  radar_axis_text_show: !0,
-  radar_axis_text_position: {},
-  radar_level_depth: 3,
-  radar_level_show: !0,
-  radar_level_text_format: function radar_level_text_format(x) {
-    return x % 1 === 0 ? x : x.toFixed(2);
-  },
-  radar_level_text_show: !0,
-  radar_size_ratio: .87,
-  radar_direction_clockwise: !1
-});
 // CONCATENATED MODULE: ./src/config/Options/Options.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
