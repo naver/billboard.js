@@ -69,8 +69,7 @@ module.exports = function(config) {
 				),
 				new webpack.NormalModuleReplacementPlugin(
 					/fake\.ts/i, "../../../src/module/util.ts"
-				),
-				new webpack.optimize.ModuleConcatenationPlugin()
+				)
 			]
 		},
 
@@ -114,7 +113,7 @@ module.exports = function(config) {
 
 		karmaConfig.webpack.module.rules.unshift({
 			test: fileExtensions,
-			exclude: /(node_modules|test|Options)/,
+			exclude: /(node_modules|test)/,
 			use: {
 				loader: "istanbul-instrumenter-loader",
 				query: {

@@ -289,6 +289,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
   gaugeValue: "bb-gauge-value",
   grid: "bb-grid",
   gridLines: "bb-grid-lines",
+  legend: "bb-legend",
   legendBackground: "bb-legend-background",
   legendItem: "bb-legend-item",
   legendItemEvent: "bb-legend-item-event",
@@ -300,6 +301,7 @@ var external_commonjs_d3_selection_commonjs2_d3_selection_amd_d3_selection_root_
   levels: "bb-levels",
   line: "bb-line",
   lines: "bb-lines",
+  main: "bb-main",
   region: "bb-region",
   regions: "bb-regions",
   selectedCircle: "bb-selected-circle",
@@ -6636,7 +6638,7 @@ var Axis_Axis = /*#__PURE__*/function () {
 // EXTERNAL MODULE: external {"commonjs":"d3-dsv","commonjs2":"d3-dsv","amd":"d3-dsv","root":"d3"}
 var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_require__(7);
 
-// CONCATENATED MODULE: ./src/ChartInternal/data/data.convert.ts
+// CONCATENATED MODULE: ./src/ChartInternal/data/convert.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
@@ -6649,7 +6651,7 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
  * @private
  */
 
-/* harmony default export */ var data_convert = ({
+/* harmony default export */ var convert = ({
   /**
    * Convert data according its type
    * @param {object} args data object
@@ -7517,14 +7519,14 @@ var external_commonjs_d3_dsv_commonjs2_d3_dsv_amd_d3_dsv_root_d3_ = __webpack_re
     });
   }
 });
-// CONCATENATED MODULE: ./src/ChartInternal/data/data.load.ts
+// CONCATENATED MODULE: ./src/ChartInternal/data/load.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
 
 
-/* harmony default export */ var data_load = ({
+/* harmony default export */ var load = ({
   load: function load(rawTargets, args) {
     var $$ = this,
         targets = rawTargets;
@@ -8269,7 +8271,7 @@ function getFormat($$, typeValue, v) {
     var $$ = this,
         config = $$.config,
         $el = $$.$el;
-    $$.legendItemTextBox = {}, $$.state.legendHasRendered = !1, config.legend_show ? (!config.legend_contents_bindto && ($el.legend = $$.$el.svg.append("g").attr("transform", $$.getTranslate("legend"))), $$.updateLegend()) : $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
+    $$.legendItemTextBox = {}, $$.state.legendHasRendered = !1, config.legend_show ? (!config.legend_contents_bindto && ($el.legend = $$.$el.svg.append("g").classed(config_classes.legend, !0).attr("transform", $$.getTranslate("legend"))), $$.updateLegend()) : $$.state.hiddenLegendIds = $$.mapToIds($$.data.targets);
   },
 
   /**
@@ -15001,7 +15003,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
       });
     })), $$.updateSvgSize(), $$.bindResize();
     // Define regions
-    var main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
+    var main = $el.svg.append("g").classed(config_classes.main, !0).attr("transform", $$.getTranslate("main"));
 
     // data.onmin/max callback
     if ($el.main = main, config.subchart_show && $$.initSubchart(), config.tooltip_show && $$.initTooltip(), config.title_text && $$.initTitle(), config.legend_show && $$.initLegend(), config.data_empty_label_text && main.append("text").attr("class", config_classes.text + " " + config_classes.empty).attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
@@ -15162,7 +15164,7 @@ var ChartInternal_ChartInternal = /*#__PURE__*/function () {
 
 
 extend(ChartInternal_ChartInternal.prototype, [// common
-data_convert, ChartInternal_data_data, data_load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(arc_internal, internal));
+convert, ChartInternal_data_data, load, category, internals_class, internals_color, internals_domain, interactions_interaction, internals_format, internals_legend, internals_redraw, internals_scale, internals_size, internals_text, internals_title, internals_tooltip, internals_transform, internals_type].concat(arc_internal, internal));
 // CONCATENATED MODULE: ./src/config/config.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -15777,7 +15779,7 @@ var legend_legend = {
  * billboard.js project is licensed under the MIT license
  */
 
-/* harmony default export */ var load = ({
+/* harmony default export */ var api_load = ({
   /**
    * Load data to the chart.<br><br>
    * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
@@ -16229,7 +16231,7 @@ var Chart_Chart = function Chart(options) {
 
 
 
-extend(Chart_Chart.prototype, [api_chart, api_color, api_data, api_export, api_focus, api_legend, load, api_show, api_tooltip].concat(axis_api));
+extend(Chart_Chart.prototype, [api_chart, api_color, api_data, api_export, api_focus, api_legend, api_load, api_show, api_tooltip].concat(axis_api));
 // CONCATENATED MODULE: ./src/index.ts
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.

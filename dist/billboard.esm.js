@@ -110,6 +110,7 @@ var CLASS = {
     gaugeValue: "bb-gauge-value",
     grid: "bb-grid",
     gridLines: "bb-grid-lines",
+    legend: "bb-legend",
     legendBackground: "bb-legend-background",
     legendItem: "bb-legend-item",
     legendItemEvent: "bb-legend-item-event",
@@ -121,6 +122,7 @@ var CLASS = {
     levels: "bb-levels",
     line: "bb-line",
     lines: "bb-lines",
+    main: "bb-main",
     region: "bb-region",
     regions: "bb-regions",
     selectedCircle: "bb-selected-circle",
@@ -8418,6 +8420,7 @@ var legend$1 = {
         if (config.legend_show) {
             if (!config.legend_contents_bindto) {
                 $el.legend = $$.$el.svg.append("g")
+                    .classed(CLASS.legend, true)
                     .attr("transform", $$.getTranslate("legend"));
             }
             // MEMO: call here to update legend box and translate for all
@@ -13673,7 +13676,7 @@ var grid$1 = {
         var isRotated = config.axis_rotated;
         var xgridData = $$.generateGridData(config.grid_x_type, scale.x);
         var tickOffset = $$.axis.isCategorized() ? $$.axis.x.tickOffset() : 0;
-        var pos = function (d) { return ((scale.zoom || scale.x)(d) + tickOffset) * (isRotated ? -1 : 1); };
+        var pos = function (d) { return ((scale.zoom || scale.x)(d) + (tickOffset * (isRotated ? -1 : 1))); };
         state.xgridAttr = isRotated ? {
             "x1": 0,
             "x2": state.width,
@@ -16769,7 +16772,7 @@ var ChartInternal = /** @class */ (function () {
             axisTime: null // axisTimeFormat
         };
         var $$ = this;
-        $$.api = api; // Chart instance
+        $$.api = api; // Chart class instance alias
         $$.config = new Options();
         $$.cache = new Cache();
         var store = new Store();
@@ -16953,7 +16956,9 @@ var ChartInternal = /** @class */ (function () {
         // Bind resize event
         $$.bindResize();
         // Define regions
-        var main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
+        var main = $el.svg.append("g")
+            .classed(CLASS.main, true)
+            .attr("transform", $$.getTranslate("main"));
         $el.main = main;
         // initialize subchart when subchart show option is set
         config.subchart_show && $$.initSubchart();

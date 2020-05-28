@@ -22,9 +22,9 @@ import {extend, notEmpty, convertInputType, getOption, isFunction, isObject, isS
 import Axis from "./Axis/Axis";
 
 // data
-import dataConvert from "./data/data.convert";
+import dataConvert from "./data/convert";
 import data from "./data/data";
-import dataLoad from "./data/data.load";
+import dataLoad from "./data/load";
 
 // interactions
 import interaction from "./interactions/interaction";
@@ -108,7 +108,7 @@ export default class ChartInternal {
 	constructor(api) {
 		const $$ = this;
 
-		$$.api = api; // Chart instance
+		$$.api = api; // Chart class instance alias
 		$$.config = new Options();
 		$$.cache = new Cache();
 
@@ -359,7 +359,9 @@ export default class ChartInternal {
 		$$.bindResize();
 
 		// Define regions
-		const main = $el.svg.append("g").attr("transform", $$.getTranslate("main"));
+		const main = $el.svg.append("g")
+			.classed(CLASS.main, true)
+			.attr("transform", $$.getTranslate("main"));
 
 		$el.main = main;
 

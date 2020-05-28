@@ -27,6 +27,7 @@ export default {
 		if (config.legend_show) {
 			if (!config.legend_contents_bindto) {
 				$el.legend = $$.$el.svg.append("g")
+					.classed(CLASS.legend, true)
 					.attr("transform", $$.getTranslate("legend"));
 			}
 
