@@ -38,22 +38,17 @@ module.exports = function(config) {
 			module: {
 				rules: [
 					{
-						test: fileExtensions,
-						exclude: /node_modules/,
-						use: {
-							loader: "babel-loader",
-							options: {
-								presets: [
-									"@babel/typescript",
-									"@babel/env"
-								],
-								plugins: [
-									"add-module-exports"
-								]
-							}
+						test: /(\.[jt]s)$/,
+						loader: "babel-loader",
+						exclude: {
+							test: /node_modules/,
+							not: [/(d3\-.*)$/]
 						}
 					}
 				]
+			},
+			optimization: {
+				usedExports: true
 			},
 			plugins: isWin ? [
 				new webpack.NormalModuleReplacementPlugin(
@@ -74,7 +69,8 @@ module.exports = function(config) {
 				),
 				new webpack.NormalModuleReplacementPlugin(
 					/fake\.ts/i, "../../../src/module/util.ts"
-				)
+				),
+				new webpack.optimize.ModuleConcatenationPlugin()
 			]
 		},
 
@@ -118,7 +114,7 @@ module.exports = function(config) {
 
 		karmaConfig.webpack.module.rules.unshift({
 			test: fileExtensions,
-			exclude: /(node_modules|test)/,
+			exclude: /(node_modules|test|Options)/,
 			use: {
 				loader: "istanbul-instrumenter-loader",
 				query: {

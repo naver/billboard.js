@@ -6,12 +6,10 @@ import x from "./x";
 import y from "./y";
 import y2 from "./y2";
 
-import {mergeObj} from "../../../module/util";
-
 /**
  * y Axis  config options
  */
-export default mergeObj({
+export default {
 	/**
 	 * Switch x and y axis position.
 	 * @name axis․rotated
@@ -23,5 +21,8 @@ export default mergeObj({
 	 *   rotated: true
 	 * }
 	 */
-	axis_rotated: false
-}, x, y, y2);
+	axis_rotated: false,
+	...x,
+	...y,
+	...y2
+};
