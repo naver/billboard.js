@@ -47,10 +47,8 @@ export default {
 			.attr("class", classLines);
 
 		// Areas
-		if ($$.hasTypeOf("Area")) {
-			mainLineEnter.append("g")
-				.attr("class", $$.classAreas.bind($$));
-		}
+		$$.hasTypeOf("Area") &&
+			$$.initArea(mainLineEnter);
 
 		// MEMO: can not keep same color...
 		// mainLineUpdate.exit().remove();

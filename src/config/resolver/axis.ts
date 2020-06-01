@@ -29,6 +29,7 @@ import grid from "../../ChartInternal/internals/grid";
 import region from "../../ChartInternal/internals/region";
 import selection from "../../ChartInternal/internals/selection";
 
+import area from "../../ChartInternal/shape/area";
 import bar from "../../ChartInternal/shape/bar";
 import bubble from "../../ChartInternal/shape/bubble";
 import line from "../../ChartInternal/shape/line";
@@ -60,6 +61,7 @@ export const internal = [
 	selection,
 	eventrect,
 
+	area,
 	bar,
 	bubble,
 	line,
