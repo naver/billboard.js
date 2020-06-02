@@ -1,6 +1,7 @@
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
+ * @ignore
  */
 import Chart from "./Chart/Chart";
 import ChartInternal from "./ChartInternal/ChartInternal";
@@ -45,6 +46,7 @@ export {
  * Extend Axis
  * @param {Array} module Module to be extended
  * @returns {boolean}
+ * @private
  */
 function extendAxis(...module) {
 	extend(ChartInternal.prototype, [...internalAxis, ...module]);
@@ -56,6 +58,7 @@ function extendAxis(...module) {
  * Extend Line type modules
  * @param {Array} module Module to be extended
  * @returns {boolean}
+ * @private
  */
 function extendLine(...module) {
 	extendAxis(shapePoint, shapeLine, ...module);
@@ -66,6 +69,7 @@ function extendLine(...module) {
  * Extend Arc type modules
  * @param {Array} module Module to be extended
  * @returns {boolean}
+ * @private
  */
 function extendArc(...module) {
 	extend(ChartInternal.prototype, [shapeArc, ...module]);
