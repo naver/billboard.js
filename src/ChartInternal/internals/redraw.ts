@@ -39,7 +39,7 @@ export default {
 
 		// update circleY based on updated parameters
 		if (!$$.hasArcType() || state.hasRadar) {
-			$$.updateCircleY();
+			$$.updateCircleY && $$.updateCircleY();
 		}
 
 		// @TODO: Axis & Radar type
@@ -195,7 +195,7 @@ export default {
 		}
 
 		if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
-			list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+			$$.redrawCircle && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
 		}
 
 		return list;

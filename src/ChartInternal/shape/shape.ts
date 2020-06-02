@@ -67,13 +67,15 @@ export default {
 		}
 
 		if (!$$.hasArcType() || hasRadar) {
+			// generate circle x/y functions depending on updated params
+			const cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
+			const cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
+
 			shape.pos = {
 				xForText: $$.generateXYForText(shape.indices, true),
 				yForText: $$.generateXYForText(shape.indices, false),
-
-				// generate circle x/y functions depending on updated params
-				cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
-				cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
+				cx: (cx || function() {}).bind($$),
+				cy: (cy || function() {}).bind($$)
 			};
 		}
 

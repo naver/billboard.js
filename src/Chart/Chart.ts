@@ -16,8 +16,6 @@ import apiLoad from "./api/load";
 import apiShow from "./api/show";
 import apiTooltip from "./api/tooltip";
 
-import {api as apiAxis} from "../config/resolver/axis";
-
 /**
  * Main chart class.
  * - Note: Instantiated via `bb.generate()`.
@@ -134,6 +132,5 @@ extend(Chart.prototype, [
 	apiLegend,
 	apiLoad,
 	apiShow,
-	apiTooltip,
-	...apiAxis
+	apiTooltip
 ]);

@@ -418,7 +418,7 @@ export default {
 			});
 
 		smoothLines(focusEl, "grid");
-		$$.showCircleFocus(data);
+		$$.showCircleFocus && $$.showCircleFocus(data);
 	},
 
 	hideGridFocus(): void {
@@ -429,7 +429,7 @@ export default {
 			main.selectAll(`line.${CLASS.xgridFocus}, line.${CLASS.ygridFocus}`)
 				.style("visibility", "hidden");
 
-			$$.hideCircleFocus();
+			$$.hideCircleFocus && $$.hideCircleFocus();
 		}
 	},
 

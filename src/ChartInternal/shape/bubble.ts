@@ -76,20 +76,5 @@ export default {
 	 */
 	getBubbleZData(d, type: "y" | "z"): number {
 		return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
-	},
-
-	/**
-	 * Determine if bubble has dimension data
-	 * @param {object|Array} d data value
-	 * @returns {boolean}
-	 * @private
-	 */
-	isBubbleZType(d): boolean {
-		const $$ = this;
-
-		return $$.isBubbleType(d) && (
-			(isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
-			(isArray(d.value) && d.value.length === 2)
-		);
 	}
 };

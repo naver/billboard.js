@@ -18,9 +18,6 @@ import Cache from "../module/Cache";
 import {generateResize} from "../module/generator";
 import {extend, notEmpty, convertInputType, getOption, isFunction, isObject, isString, callFn, sortValue} from "../module/util";
 
-// Axis
-import Axis from "./Axis/Axis";
-
 // data
 import dataConvert from "./data/convert";
 import data from "./data/data";
@@ -38,15 +35,13 @@ import format from "./internals/format";
 import legend from "./internals/legend";
 import redraw from "./internals/redraw";
 import scale from "./internals/scale";
+import shape from "./shape/shape";
 import size from "./internals/size";
 import text from "./internals/text";
 import title from "./internals/title";
 import tooltip from "./internals/tooltip";
 import transform from "./internals/transform";
 import type from "./internals/type";
-
-import {internal as axisInternal} from "../config/resolver/axis";
-import {internal as arcInternal} from "../config/resolver/arc";
 
 /**
  * Internal chart class.
@@ -269,7 +264,7 @@ export default class ChartInternal {
 		// $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
 
 		if (hasAxis) {
-			$$.axis = new Axis($$);
+			$$.axis = $$.getAxisInstance();
 			config.zoom_enabled && $$.initZoom();
 		}
 
@@ -539,7 +534,7 @@ export default class ChartInternal {
 
 		// circle
 		if ($$.hasPointType() || hasRadar) {
-			$$.updateTargetForCircle();
+			$$.updateTargetForCircle && $$.updateTargetForCircle();
 		}
 
 		if (hasAxis) {
@@ -676,12 +671,11 @@ extend(ChartInternal.prototype, [
 	legend,
 	redraw,
 	scale,
+	shape,
 	size,
 	text,
 	title,
 	tooltip,
 	transform,
-	type,
-	...arcInternal,
-	...axisInternal
+	type
 ]);

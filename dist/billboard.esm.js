@@ -10,15 +10,15 @@
 import { timeParse, utcParse, timeFormat, utcFormat } from 'd3-time-format';
 import { event, select, mouse, namespaces, selectAll } from 'd3-selection';
 import { brushSelection, brushY, brushX } from 'd3-brush';
-import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
-import { scaleLinear, scaleOrdinal, scaleTime } from 'd3-scale';
 import { csvParseRows, csvParse, tsvParseRows, tsvParse } from 'd3-dsv';
 import { drag as drag$1 } from 'd3-drag';
+import { scaleOrdinal, scaleTime, scaleLinear } from 'd3-scale';
 import { transition } from 'd3-transition';
+import { curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$2, arc, area as area$2, line as line$2 } from 'd3-shape';
 import { zoomIdentity, zoomTransform, zoom as zoom$3 } from 'd3-zoom';
+import { axisLeft, axisBottom, axisTop, axisRight } from 'd3-axis';
 import { easeLinear } from 'd3-ease';
 import { rgb } from 'd3-color';
-import { line as line$2, area as area$1, curveBasis, curveBasisClosed, curveBasisOpen, curveBundle, curveCardinal, curveCardinalClosed, curveCardinalOpen, curveCatmullRom, curveCatmullRomClosed, curveCatmullRomOpen, curveMonotoneX, curveMonotoneY, curveNatural, curveLinearClosed, curveLinear, curveStep, curveStepAfter, curveStepBefore, pie as pie$1, arc as arc$1 } from 'd3-shape';
 import { interpolate } from 'd3-interpolate';
 
 /*! *****************************************************************************
@@ -4368,7 +4368,7 @@ function extend(target, source) {
     }
     // exclude name with only numbers
     for (var p in source) {
-        if (/^\d+$/.test(p)) {
+        if (/^\d+$/.test(p) || p in target) {
             continue;
         }
         target[p] = source[p];
@@ -5196,1291 +5196,6 @@ function generateWait() {
     };
     return f;
 }
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-var AxisRendererHelper = /** @class */ (function () {
-    function AxisRendererHelper(owner) {
-        var scale = scaleLinear();
-        var config = owner.config, params = owner.params;
-        this.owner = owner;
-        this.config = config;
-        this.scale = scale;
-        if (config.noTransition || !params.config.transition_duration) {
-            config.withoutTransition = true;
-        }
-        // set range
-        config.range = this.scaleExtent((params.orgXScale || scale).range());
-    }
-    /**
-     * Compute a character dimension
-     * @param {d3.selection} node <g class=tick> node
-     * @returns {{w: number, h: number}}
-     * @private
-     */
-    AxisRendererHelper.getSizeFor1Char = function (node) {
-        // default size for one character
-        var size = {
-            w: 5.5,
-            h: 11.5
-        };
-        !node.empty() && node.select("text")
-            .text("0")
-            .call(function (el) {
-            try {
-                var _a = el.node().getBBox(), width = _a.width, height = _a.height;
-                if (width && height) {
-                    size.w = width;
-                    size.h = height;
-                }
-            }
-            catch (e) {
-            }
-            finally {
-                el.text("");
-            }
-        });
-        this.getSizeFor1Char = function () { return size; };
-        return size;
-    };
-    /**
-     * Get tick transform setter function
-     * @param {string} id Axis id
-     * @returns {Function} transfrom setter function
-     * @private
-     */
-    AxisRendererHelper.prototype.getTickTransformSetter = function (id) {
-        var config = this.config;
-        var fn = id === "x" ?
-            function (value) { return "translate(" + (value + config.tickOffset) + ",0)"; } :
-            function (value) { return "translate(0," + value + ")"; };
-        return function (selection, scale) {
-            selection.attr("transform", function (d) { return fn(Math.ceil(scale(d))); });
-        };
-    };
-    AxisRendererHelper.prototype.scaleExtent = function (domain) {
-        var start = domain[0];
-        var stop = domain[domain.length - 1];
-        return start < stop ? [start, stop] : [stop, start];
-    };
-    AxisRendererHelper.prototype.generateTicks = function (scale, isYAxes) {
-        var tickStepSize = this.owner.params.tickStepSize;
-        var ticks = [];
-        // When 'axis[y|y2].tick.stepSize' option is set
-        if (isYAxes && tickStepSize) {
-            var _a = scale.domain(), start = _a[0], end = _a[1];
-            var interval = start;
-            while (interval <= end) {
-                ticks.push(interval);
-                interval += tickStepSize;
-            }
-        }
-        else if (scale.ticks) {
-            ticks = scale.ticks.apply(scale, (this.config.tickArguments || [])).map(function (v) { return (
-            // round the tick value if is number
-            (isString(v) && isNumber(v) && !isNaN(v) &&
-                Math.round(v * 10) / 10) || v); });
-        }
-        else {
-            var domain = scale.domain();
-            for (var i = Math.ceil(domain[0]); i < domain[1]; i++) {
-                ticks.push(i);
-            }
-            if (ticks.length > 0 && ticks[0] > 0) {
-                ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
-            }
-        }
-        return ticks;
-    };
-    AxisRendererHelper.prototype.copyScale = function () {
-        var newScale = this.scale.copy();
-        if (!newScale.domain().length) {
-            newScale.domain(this.scale.domain());
-        }
-        return newScale;
-    };
-    AxisRendererHelper.prototype.textFormatted = function (v) {
-        var tickFormat = this.config.tickFormat;
-        // to round float numbers from 'binary floating point'
-        // https://en.wikipedia.org/wiki/Double-precision_floating-point_format
-        // https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
-        var value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v).replace(/0+\d$/, "") : v;
-        var formatted = tickFormat ? tickFormat(value) : value;
-        return isDefined(formatted) ? formatted : "";
-    };
-    AxisRendererHelper.prototype.transitionise = function (selection) {
-        var config = this.config;
-        return config.withoutTransition ?
-            selection.interrupt() : selection.transition(config.transition);
-    };
-    return AxisRendererHelper;
-}());
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- * @ignore
- */
-var AxisRenderer = /** @class */ (function () {
-    function AxisRenderer(params) {
-        if (params === void 0) { params = {}; }
-        var config = {
-            innerTickSize: 6,
-            outerTickSize: params.outerTick ? 6 : 0,
-            orient: "bottom",
-            range: [],
-            tickArguments: null,
-            tickCentered: null,
-            tickCulling: true,
-            tickFormat: null,
-            tickLength: 9,
-            tickOffset: 0,
-            tickPadding: 3,
-            tickValues: null,
-            transition: null,
-            noTransition: params.noTransition
-        };
-        config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
-        this.config = config;
-        this.params = params;
-        this.helper = new AxisRendererHelper(this);
-    }
-    /**
-     * Create axis element
-     * @param {d3.selection} g Axis selection
-     * @private
-     */
-    AxisRenderer.prototype.create = function (g) {
-        var ctx = this;
-        var _a = this, config = _a.config, helper = _a.helper, params = _a.params;
-        var scale = helper.scale;
-        var orient = config.orient;
-        var splitTickText = this.splitTickText.bind(this);
-        var isLeftRight = /^(left|right)$/.test(orient);
-        var isTopBottom = /^(top|bottom)$/.test(orient);
-        // line/text enter and path update
-        var tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y");
-        var axisPx = tickTransform === helper.axisX ? "y" : "x";
-        var sign = /^(top|left)$/.test(orient) ? -1 : 1;
-        // tick text helpers
-        var rotate = params.tickTextRotate;
-        this.config.range = scale.rangeExtent ?
-            scale.rangeExtent() :
-            helper.scaleExtent((params.orgXScale || scale).range());
-        var innerTickSize = config.innerTickSize, tickLength = config.tickLength, range = config.range;
-        // // get the axis' tick position configuration
-        var id = params.id;
-        var tickTextPos = id && /^(x|y|y2)$/.test(id) ?
-            params.config["axis_" + id + "_tick_text_position"] : { x: 0, y: 0 };
-        // tick visiblity
-        var prefix = id === "subX" ? "subchart_axis_x" : "axis_" + id;
-        var axisShow = params.config[prefix + "_show"];
-        var tickShow = {
-            tick: axisShow ? params.config[prefix + "_tick_show"] : false,
-            text: axisShow ? params.config[prefix + "_tick_text_show"] : false
-        };
-        var $g;
-        g.each(function () {
-            var g = select(this);
-            var scale0 = this.__chart__ || scale;
-            var scale1 = helper.copyScale();
-            $g = g;
-            this.__chart__ = scale1;
-            config.tickOffset = params.isCategory ?
-                Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
-            // update selection - data join
-            var path = g.selectAll(".domain").data([0]);
-            // enter + update selection
-            path.enter().append("path")
-                .attr("class", "domain")
-                .merge(helper.transitionise(path))
-                .attr("d", function () {
-                var outerTickSized = config.outerTickSize * sign;
-                return isTopBottom ?
-                    "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized :
-                    "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
-            });
-            if (tickShow.tick || tickShow.text) {
-                // count of tick data in array
-                var ticks_1 = config.tickValues || helper.generateTicks(scale1, isLeftRight);
-                // update selection
-                var tick = g.selectAll(".tick")
-                    .data(ticks_1, scale1);
-                // enter selection
-                var tickEnter = tick
-                    .enter()
-                    .insert("g", ".domain")
-                    .attr("class", "tick")
-                    .style("opacity", "1");
-                // MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
-                var tickExit = tick.exit().remove();
-                // enter + update selection
-                tick = tickEnter.merge(tick);
-                tickShow.tick && tickEnter.append("line");
-                tickShow.text && tickEnter.append("text");
-                var sizeFor1Char_1 = AxisRendererHelper.getSizeFor1Char(tick);
-                var counts_1 = [];
-                var tspan = tick.select("text")
-                    .selectAll("tspan")
-                    .data(function (d, index) {
-                    var split = params.tickMultiline ?
-                        splitTickText(d, scale1, ticks_1, isLeftRight, sizeFor1Char_1.w) : (isArray(helper.textFormatted(d)) ?
-                        helper.textFormatted(d).concat() : [helper.textFormatted(d)]);
-                    counts_1[index] = split.length;
-                    return split.map(function (splitted) { return ({ index: index, splitted: splitted }); });
-                });
-                tspan.exit().remove();
-                tspan = tspan
-                    .enter()
-                    .append("tspan")
-                    .merge(tspan)
-                    .text(function (d) { return d.splitted; });
-                // set <tspan>'s position
-                tspan
-                    .attr("x", isTopBottom ? 0 : tickLength * sign)
-                    .attr("dx", (function () {
-                    var dx = 0;
-                    if (/(top|bottom)/.test(orient) && rotate) {
-                        dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
-                    }
-                    return dx + (tickTextPos.x || 0);
-                })())
-                    .attr("dy", function (d, i) {
-                    var defValue = ".71em";
-                    var dy = 0;
-                    if (orient !== "top") {
-                        dy = sizeFor1Char_1.h;
-                        if (i === 0) {
-                            dy = isLeftRight ? -((counts_1[d.index] - 1) * (sizeFor1Char_1.h / 2) - 3) :
-                                (tickTextPos.y === 0 ? defValue : 0);
-                        }
-                    }
-                    return isNumber(dy) && tickTextPos.y ?
-                        dy + tickTextPos.y : dy || defValue;
-                });
-                var lineUpdate = tick.select("line");
-                var textUpdate = tick.select("text");
-                tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign);
-                tickEnter.select("text").attr(axisPx, tickLength * sign);
-                ctx.setTickLineTextPosition(lineUpdate, textUpdate);
-                // Append <title> for tooltip display
-                if (params.tickTitle) {
-                    var title = textUpdate.select("title");
-                    (title.empty() ? textUpdate.append("title") : title)
-                        .text(function (index) { return params.tickTitle[index]; });
-                }
-                if (scale1.bandwidth) {
-                    var x_1 = scale1;
-                    var dx_1 = x_1.bandwidth() / 2;
-                    scale0 = function (d) { return x_1(d) + dx_1; };
-                    scale1 = scale0;
-                }
-                else if (scale0.bandwidth) {
-                    scale0 = scale1;
-                }
-                else {
-                    tickTransform(tickExit, scale1);
-                }
-                tickTransform(tickEnter, scale0);
-                tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
-            }
-        });
-        this.g = $g;
-    };
-    /**
-     * Get tick x/y coordinate
-     * @returns {{x: number, y: number}}
-     * @private
-     */
-    AxisRenderer.prototype.getTickXY = function () {
-        var config = this.config;
-        var pos = { x: 0, y: 0 };
-        if (this.params.isCategory) {
-            pos.x = config.tickCentered ? 0 : config.tickOffset;
-            pos.y = config.tickCentered ? config.tickOffset : 0;
-        }
-        return pos;
-    };
-    /**
-     * Get tick size
-     * @param {object} d data object
-     * @returns {number}
-     * @private
-     */
-    AxisRenderer.prototype.getTickSize = function (d) {
-        var scale = this.helper.scale;
-        var config = this.config;
-        var innerTickSize = config.innerTickSize, range = config.range;
-        var tickPosition = scale(d) +
-            (config.tickCentered ? 0 : config.tickOffset);
-        return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
-    };
-    /**
-     * Set tick's line & text position
-     * @param {d3.selection} lineUpdate Line selection
-     * @param {d3.selection} textUpdate Text selection
-     * @private
-     */
-    AxisRenderer.prototype.setTickLineTextPosition = function (lineUpdate, textUpdate) {
-        var tickPos = this.getTickXY();
-        var _a = this.config, innerTickSize = _a.innerTickSize, orient = _a.orient, tickLength = _a.tickLength, tickOffset = _a.tickOffset;
-        var rotate = this.params.tickTextRotate;
-        var textAnchorForText = function (r) {
-            var value = ["start", "end"];
-            orient === "top" && value.reverse();
-            return !r ? "middle" : (r > 0 ? value[0] : value[1]);
-        };
-        var textTransform = function (r) { return (r ? "rotate(" + r + ")" : null); };
-        var yForText = function (r) {
-            var r2 = r / (orient === "bottom" ? 15 : 23);
-            return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
-        };
-        switch (orient) {
-            case "bottom":
-                lineUpdate
-                    .attr("x1", tickPos.x)
-                    .attr("x2", tickPos.x)
-                    .attr("y2", this.getTickSize.bind(this));
-                textUpdate
-                    .attr("x", 0)
-                    .attr("y", yForText(rotate))
-                    .style("text-anchor", textAnchorForText(rotate))
-                    .attr("transform", textTransform(rotate));
-                break;
-            case "top":
-                lineUpdate
-                    .attr("x2", 0)
-                    .attr("y2", -innerTickSize);
-                textUpdate
-                    .attr("x", 0)
-                    .attr("y", -yForText(rotate) * 2)
-                    .style("text-anchor", textAnchorForText(rotate))
-                    .attr("transform", textTransform(rotate));
-                break;
-            case "left":
-                lineUpdate
-                    .attr("x2", -innerTickSize)
-                    .attr("y1", tickPos.y)
-                    .attr("y2", tickPos.y);
-                textUpdate
-                    .attr("x", -tickLength)
-                    .attr("y", tickOffset)
-                    .style("text-anchor", "end");
-                break;
-            case "right":
-                lineUpdate
-                    .attr("x2", innerTickSize)
-                    .attr("y2", 0);
-                textUpdate
-                    .attr("x", tickLength)
-                    .attr("y", 0)
-                    .style("text-anchor", "start");
-        }
-    };
-    // this should be called only when category axis
-    AxisRenderer.prototype.splitTickText = function (d, scale, ticks, isLeftRight, charWidth) {
-        var params = this.params;
-        var tickText = this.helper.textFormatted(d);
-        var splitted = isString(tickText) && tickText.indexOf("\n") > -1 ?
-            tickText.split("\n") : [];
-        if (splitted.length) {
-            return splitted;
-        }
-        if (isArray(tickText)) {
-            return tickText;
-        }
-        var tickWidth = params.tickWidth;
-        if (!tickWidth || tickWidth <= 0) {
-            tickWidth = isLeftRight ? 95 : (params.isCategory ?
-                (Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12) : 110);
-        }
-        // split given text by tick width size
-        // eslint-disable-next-line
-        function split(splitted, text) {
-            var subtext;
-            var spaceIndex;
-            var textWidth;
-            for (var i = 1; i < text.length; i++) {
-                if (text.charAt(i) === " ") {
-                    spaceIndex = i;
-                }
-                subtext = text.substr(0, i + 1);
-                textWidth = charWidth * subtext.length;
-                // if text width gets over tick width, split by space index or current index
-                if (tickWidth < textWidth) {
-                    return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
-                }
-            }
-            return splitted.concat(text);
-        }
-        return split(splitted, String(tickText));
-    };
-    AxisRenderer.prototype.scale = function (x) {
-        if (!arguments.length) {
-            return this.helper.scale;
-        }
-        this.helper.scale = x;
-        return this;
-    };
-    AxisRenderer.prototype.orient = function (x) {
-        if (!arguments.length) {
-            return this.config.orient;
-        }
-        this.config.orient = x in {
-            top: 1,
-            right: 1,
-            bottom: 1,
-            left: 1
-        } ? String(x) : "bottom";
-        return this;
-    };
-    AxisRenderer.prototype.tickFormat = function (format) {
-        var config = this.config;
-        if (!arguments.length) {
-            return config.tickFormat;
-        }
-        config.tickFormat = format;
-        return this;
-    };
-    AxisRenderer.prototype.tickCentered = function (isCentered) {
-        var config = this.config;
-        if (!arguments.length) {
-            return config.tickCentered;
-        }
-        config.tickCentered = isCentered;
-        return this;
-    };
-    /**
-     * Return tick's offset value.
-     * The value will be set for 'category' axis type.
-     * @returns {number}
-     * @private
-     */
-    AxisRenderer.prototype.tickOffset = function () {
-        return this.config.tickOffset;
-    };
-    /**
-     * Get tick interval count
-     * @private
-     * @param {number} size Total data size
-     * @returns {number}
-     */
-    AxisRenderer.prototype.tickInterval = function (size) {
-        var interval;
-        if (this.params.isCategory) {
-            interval = this.config.tickOffset * 2;
-        }
-        else {
-            var length_1 = this.g.select("path.domain")
-                .node()
-                .getTotalLength() - this.config.outerTickSize * 2;
-            interval = length_1 / (size || this.g.selectAll("line").size());
-        }
-        return interval === Infinity ? 0 : interval;
-    };
-    AxisRenderer.prototype.ticks = function () {
-        var args = [];
-        for (var _i = 0; _i < arguments.length; _i++) {
-            args[_i] = arguments[_i];
-        }
-        var config = this.config;
-        if (!args.length) {
-            return config.tickArguments;
-        }
-        config.tickArguments = toArray(args);
-        return this;
-    };
-    AxisRenderer.prototype.tickCulling = function (culling) {
-        var config = this.config;
-        if (!arguments.length) {
-            return config.tickCulling;
-        }
-        config.tickCulling = culling;
-        return this;
-    };
-    AxisRenderer.prototype.tickValues = function (x) {
-        var _this = this;
-        var config = this.config;
-        if (isFunction(x)) {
-            config.tickValues = function () { return x(_this.helper.scale.domain()); };
-        }
-        else {
-            if (!arguments.length) {
-                return config.tickValues;
-            }
-            config.tickValues = x;
-        }
-        return this;
-    };
-    AxisRenderer.prototype.setTransition = function (t) {
-        this.config.transition = t;
-        return this;
-    };
-    return AxisRenderer;
-}());
-
-var Axis = /** @class */ (function () {
-    function Axis(owner) {
-        this.axesList = {};
-        this.tick = {
-            x: null, y: null, y2: null
-        };
-        this.xs = [];
-        this.orient = {
-            x: "bottom",
-            y: "left",
-            y2: "right",
-            subX: "bottom"
-        };
-        this.owner = owner;
-        this.setOrient();
-    }
-    Axis.prototype.getAxisClassName = function (id) {
-        return CLASS.axis + " " + CLASS["axis" + capitalize(id)];
-    };
-    Axis.prototype.isHorizontal = function ($$, forHorizontal) {
-        var isRotated = $$.config.axis_rotated;
-        return forHorizontal ? isRotated : !isRotated;
-    };
-    Axis.prototype.isCategorized = function () {
-        var _a = this.owner, config = _a.config, state = _a.state;
-        return config.axis_x_type.indexOf("category") >= 0 || state.hasRadar;
-    };
-    Axis.prototype.isCustomX = function () {
-        var config = this.owner.config;
-        return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
-    };
-    Axis.prototype.isTimeSeries = function (id) {
-        if (id === void 0) { id = "x"; }
-        var config = this.owner.config;
-        return config["axis_" + id + "_type"] === "timeseries";
-    };
-    Axis.prototype.isTimeSeriesY = function () {
-        return this.isTimeSeries("y");
-    };
-    Axis.prototype.init = function () {
-        var _this = this;
-        var $$ = this.owner;
-        var config = $$.config, _a = $$.$el, main = _a.main, axis = _a.axis, clip = $$.state.clip;
-        var isRotated = config.axis_rotated;
-        var target = ["x", "y"];
-        config.axis_y2_show && target.push("y2");
-        target.forEach(function (v) {
-            var classAxis = _this.getAxisClassName(v);
-            var classLabel = CLASS["axis" + v.toUpperCase() + "Label"];
-            axis[v] = main.append("g")
-                .attr("class", classAxis)
-                .attr("clip-path", function () {
-                var res = null;
-                if (v === "x") {
-                    res = clip.pathXAxis;
-                }
-                else if (v === "y" && config.axis_y_inner) {
-                    res = clip.pathYAxis;
-                }
-                return res;
-            })
-                .attr("transform", $$.getTranslate(v))
-                .style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden");
-            axis[v].append("text")
-                .attr("class", classLabel)
-                .attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated])
-                .style("text-anchor", function () { return _this.textAnchorForAxisLabel(v); });
-            _this.generateAxes(v);
-        });
-    };
-    /**
-     * Set axis orient according option value
-     * @private
-     */
-    Axis.prototype.setOrient = function () {
-        var $$ = this.owner;
-        var _a = $$.config, isRotated = _a.axis_rotated, yInner = _a.axis_y_inner, y2Inner = _a.axis_y2_inner;
-        this.orient = {
-            x: isRotated ? "left" : "bottom",
-            y: isRotated ? (yInner ? "top" : "bottom") : (yInner ? "right" : "left"),
-            y2: isRotated ? (y2Inner ? "bottom" : "top") : (y2Inner ? "left" : "right"),
-            subX: isRotated ? "left" : "bottom"
-        };
-    };
-    /**
-     * Generate axes
-     * It's used when axis' axes option is set
-     * @param {string} id Axis id
-     * @private
-     */
-    Axis.prototype.generateAxes = function (id) {
-        var $$ = this.owner;
-        var config = $$.config;
-        var axes = [];
-        var axesConfig = config["axis_" + id + "_axes"];
-        var isRotated = config.axis_rotated;
-        var d3Axis;
-        if (id === "x") {
-            d3Axis = isRotated ? axisLeft : axisBottom;
-        }
-        else if (id === "y") {
-            d3Axis = isRotated ? axisBottom : axisLeft;
-        }
-        else if (id === "y2") {
-            d3Axis = isRotated ? axisTop : axisRight;
-        }
-        if (axesConfig.length) {
-            axesConfig.forEach(function (v) {
-                var tick = v.tick || {};
-                var scale = $$.scale[id].copy();
-                v.domain && scale.domain(v.domain);
-                axes.push(d3Axis(scale)
-                    .ticks(tick.count)
-                    .tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : (function (x) { return x; }))
-                    .tickValues(tick.values)
-                    .tickSizeOuter(tick.outer === false ? 0 : 6));
-            });
-        }
-        this.axesList[id] = axes;
-    };
-    /**
-     * Update axes nodes
-     * @private
-     */
-    Axis.prototype.updateAxes = function () {
-        var _this = this;
-        var $$ = this.owner;
-        var config = $$.config, main = $$.$el.main;
-        Object.keys(this.axesList).forEach(function (id) {
-            var axesConfig = config["axis_" + id + "_axes"];
-            var scale = $$.scale[id].copy();
-            var range = scale.range();
-            _this.axesList[id].forEach(function (v, i) {
-                var axisRange = v.scale().range();
-                // adjust range value with the current
-                // https://github.com/naver/billboard.js/issues/859
-                if (!range.every(function (v, i) { return v === axisRange[i]; })) {
-                    v.scale().range(range);
-                }
-                var className = _this.getAxisClassName(id) + "-" + (i + 1);
-                var g = main.select("." + className.replace(/\s/, "."));
-                if (g.empty()) {
-                    g = main.append("g")
-                        .attr("class", className)
-                        .style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden")
-                        .call(v);
-                }
-                else {
-                    axesConfig[i].domain && scale.domain(axesConfig[i].domain);
-                    _this.x.helper.transitionise(g)
-                        .call(v.scale(scale));
-                }
-                g.attr("transform", $$.getTranslate(id, i + 1));
-            });
-        });
-    };
-    /**
-     * Set Axis & tick values
-     * called from: updateScales()
-     * @param {string} id Axis id string
-     * @param {Array} args Arguments
-     * @private
-     */
-    Axis.prototype.setAxis = function (id) {
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        if (id !== "subX") {
-            this.tick[id] = this.getTickValues(id);
-        }
-        // @ts-ignore
-        this[id] = this.getAxis.apply(this, __spreadArrays([id], args));
-    };
-    // called from : getMaxTickWidth()
-    Axis.prototype.getAxis = function (id, scale, outerTick, noTransition, noTickTextRotate) {
-        var $$ = this.owner;
-        var config = $$.config;
-        var isX = /^(x|subX)$/.test(id);
-        var type = isX ? "x" : id;
-        var isCategory = isX && this.isCategorized();
-        var orient = this.orient[id];
-        var tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
-        var tickFormat;
-        if (isX) {
-            tickFormat = $$.format.xAxisTick;
-        }
-        else {
-            var fn = config["axis_" + id + "_tick_format"];
-            if (isFunction(fn)) {
-                tickFormat = fn.bind($$.api);
-            }
-        }
-        var tickValues = this.tick[type];
-        var axisParams = mergeObj({
-            outerTick: outerTick,
-            noTransition: noTransition,
-            config: config,
-            id: id,
-            tickTextRotate: tickTextRotate
-        }, isX && {
-            isCategory: isCategory,
-            tickMultiline: config.axis_x_tick_multiline,
-            tickWidth: config.axis_x_tick_width,
-            tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
-            orgXScale: $$.scale.x
-        });
-        if (!isX) {
-            axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"];
-        }
-        var axis = new AxisRenderer(axisParams)
-            .scale((isX && $$.scale.zoom) || scale)
-            .orient(orient);
-        if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
-            var fn_1 = parseDate.bind($$);
-            tickValues = tickValues.map(function (v) { return fn_1(v); });
-        }
-        else if (!isX && this.isTimeSeriesY()) {
-            // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
-            axis.ticks(config.axis_y_tick_time_value);
-            tickValues = null;
-        }
-        tickValues && axis.tickValues(tickValues);
-        // Set tick
-        axis.tickFormat(tickFormat || (!isX && ($$.isStackNormalized() && (function (x) { return x + "%"; }))));
-        if (isCategory) {
-            axis.tickCentered(config.axis_x_tick_centered);
-            if (isEmpty(config.axis_x_tick_culling)) {
-                config.axis_x_tick_culling = false;
-            }
-        }
-        var tickCount = config["axis_" + type + "_tick_count"];
-        tickCount && axis.ticks(tickCount);
-        return axis;
-    };
-    Axis.prototype.updateXAxisTickValues = function (targets, axis) {
-        var $$ = this.owner;
-        var config = $$.config;
-        var fit = config.axis_x_tick_fit;
-        var count = config.axis_x_tick_count;
-        var values;
-        if (fit || (count && fit)) {
-            values = $$.mapTargetsToUniqueXs(targets);
-            // if given count is greater than the value length, then limit the count.
-            if (this.isCategorized() && count > values.length) {
-                count = values.length;
-            }
-            values = this.generateTickValues(values, count, this.isTimeSeries());
-        }
-        if (axis) {
-            axis.tickValues(values);
-        }
-        else if (this.x) {
-            this.x.tickValues(values);
-            this.subX && this.subX.tickValues(values);
-        }
-        return values;
-    };
-    Axis.prototype.getId = function (id) {
-        var _a = this.owner, config = _a.config, scale = _a.scale;
-        var axis = config.data_axes[id];
-        // when data.axes option has 'y2', but 'axis.y2.show=true' isn't set will return 'y'
-        if (!axis || !scale[axis]) {
-            axis = "y";
-        }
-        return axis;
-    };
-    Axis.prototype.getXAxisTickFormat = function () {
-        var $$ = this.owner;
-        var config = $$.config, format = $$.format;
-        var tickFormat = config.axis_x_tick_format;
-        var isTimeSeries = this.isTimeSeries();
-        var isCategorized = this.isCategorized();
-        var currFormat;
-        if (tickFormat) {
-            if (isFunction(tickFormat)) {
-                currFormat = tickFormat.bind($$.api);
-            }
-            else if (isTimeSeries) {
-                currFormat = function (date) { return (date ? format.axisTime(tickFormat)(date) : ""); };
-            }
-        }
-        else {
-            currFormat = isTimeSeries ? format.defaultAxisTime : (isCategorized ?
-                $$.categoryName : function (v) { return (v < 0 ? v.toFixed(0) : v); });
-        }
-        return isFunction(currFormat) ? function (v) {
-            return currFormat.apply($$, isCategorized ?
-                [v, $$.categoryName(v)] : [v]);
-        } : currFormat;
-    };
-    Axis.prototype.getTickValues = function (id) {
-        var $$ = this.owner;
-        var tickValues = $$.config["axis_" + id + "_tick_values"];
-        var axis = $$[id + "Axis"];
-        return (isFunction(tickValues) ? tickValues.call($$.api) : tickValues) ||
-            (axis ? axis.tickValues() : undefined);
-    };
-    Axis.prototype.getLabelOptionByAxisId = function (id) {
-        return this.owner.config["axis_" + id + "_label"];
-    };
-    Axis.prototype.getLabelText = function (id) {
-        var option = this.getLabelOptionByAxisId(id);
-        return isString(option) ? option : (option ? option.text : null);
-    };
-    Axis.prototype.setLabelText = function (id, text) {
-        var $$ = this.owner;
-        var config = $$.config;
-        var option = this.getLabelOptionByAxisId(id);
-        if (isString(option)) {
-            config["axis_" + id + "_label"] = text;
-        }
-        else if (option) {
-            option.text = text;
-        }
-    };
-    Axis.prototype.getLabelPosition = function (id, defaultPosition) {
-        var isRotated = this.owner.config.axis_rotated;
-        var option = this.getLabelOptionByAxisId(id);
-        var position = (isObjectType(option) && option.position) ?
-            option.position : defaultPosition[+!isRotated];
-        var has = function (v) { return !!~position.indexOf(v); };
-        return {
-            isInner: has("inner"),
-            isOuter: has("outer"),
-            isLeft: has("left"),
-            isCenter: has("center"),
-            isRight: has("right"),
-            isTop: has("top"),
-            isMiddle: has("middle"),
-            isBottom: has("bottom")
-        };
-    };
-    Axis.prototype.getAxisLabelPosition = function (id) {
-        return this.getLabelPosition(id, id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
-    };
-    Axis.prototype.getLabelPositionById = function (id) {
-        return this.getAxisLabelPosition(id);
-    };
-    Axis.prototype.xForAxisLabel = function (id) {
-        var $$ = this.owner;
-        var _a = $$.state, width = _a.width, height = _a.height;
-        var position = this.getAxisLabelPosition(id);
-        var x = position.isMiddle ? -height / 2 : 0;
-        if (this.isHorizontal($$, id !== "x")) {
-            x = position.isLeft ? 0 : (position.isCenter ? width / 2 : width);
-        }
-        else if (position.isBottom) {
-            x = -height;
-        }
-        return x;
-    };
-    Axis.prototype.dxForAxisLabel = function (id) {
-        var $$ = this.owner;
-        var position = this.getAxisLabelPosition(id);
-        var dx = position.isBottom ? "0.5em" : "0";
-        if (this.isHorizontal($$, id !== "x")) {
-            dx = position.isLeft ? "0.5em" : (position.isRight ? "-0.5em" : "0");
-        }
-        else if (position.isTop) {
-            dx = "-0.5em";
-        }
-        return dx;
-    };
-    Axis.prototype.textAnchorForAxisLabel = function (id) {
-        var $$ = this.owner;
-        var position = this.getAxisLabelPosition(id);
-        var anchor = position.isMiddle ? "middle" : "end";
-        if (this.isHorizontal($$, id !== "x")) {
-            anchor = position.isLeft ? "start" : (position.isCenter ? "middle" : "end");
-        }
-        else if (position.isBottom) {
-            anchor = "start";
-        }
-        return anchor;
-    };
-    Axis.prototype.dyForAxisLabel = function (id) {
-        var $$ = this.owner;
-        var config = $$.config;
-        var isRotated = config.axis_rotated;
-        var isInner = this.getAxisLabelPosition(id).isInner;
-        var tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0;
-        var maxTickWidth = this.getMaxTickWidth(id);
-        var dy;
-        if (id === "x") {
-            var xHeight = config.axis_x_height;
-            if (isRotated) {
-                dy = isInner ? "1.2em" : -25 - maxTickWidth;
-            }
-            else if (isInner) {
-                dy = "-0.5em";
-            }
-            else if (xHeight) {
-                dy = xHeight - 10;
-            }
-            else if (tickRotate) {
-                dy = tickRotate - 10;
-            }
-            else {
-                dy = "3em";
-            }
-        }
-        else {
-            dy = {
-                y: ["-0.5em", 10, "3em", "1.2em", 10],
-                y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
-            }[id];
-            if (isRotated) {
-                if (isInner) {
-                    dy = dy[0];
-                }
-                else if (tickRotate) {
-                    dy = tickRotate * (id === "y2" ? -1 : 1) - dy[1];
-                }
-                else {
-                    dy = dy[2];
-                }
-            }
-            else {
-                dy = isInner ?
-                    dy[3] : (dy[4] + (config["axis_" + id + "_inner"] ? 0 : (maxTickWidth + dy[4]))) * (id === "y" ? -1 : 1);
-            }
-        }
-        return dy;
-    };
-    Axis.prototype.getMaxTickWidth = function (id, withoutRecompute) {
-        var $$ = this.owner;
-        var config = $$.config, current = $$.state.current, _a = $$.$el, svg = _a.svg, chart = _a.chart;
-        var currentTickMax = current.maxTickWidths[id];
-        var maxWidth = 0;
-        if (withoutRecompute || !config["axis_" + id + "_show"] || $$.filterTargetsToShow().length === 0) {
-            return currentTickMax.size;
-        }
-        if (svg) {
-            var isYAxis = /^y2?$/.test(id);
-            var targetsToShow = $$.filterTargetsToShow($$.data.targets);
-            var scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id));
-            var domain = scale.domain();
-            // do not compute if domain is same
-            if (domain[0] === domain[1] ||
-                (isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])) {
-                return currentTickMax.size;
-            }
-            else {
-                currentTickMax.domain = domain;
-            }
-            var axis = this.getAxis(id, scale, false, false, true);
-            var tickCount = config["axis_" + id + "_tick_count"];
-            var tickValues = config["axis_" + id + "_tick_values"];
-            // Make to generate the final tick text to be rendered
-            // https://github.com/naver/billboard.js/issues/920
-            // Do not generate if 'tick values' option is given
-            // https://github.com/naver/billboard.js/issues/1251
-            if (!tickValues && tickCount) {
-                axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
-            }
-            !isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
-            var dummy = chart.append("svg")
-                .style("visibility", "hidden")
-                .style("position", "fixed")
-                .style("top", "0px")
-                .style("left", "0px");
-            axis.create(dummy);
-            dummy.selectAll("text")
-                .each(function (d, i) {
-                var currentTextWidth = this.getBoundingClientRect().width;
-                maxWidth = Math.max(maxWidth, currentTextWidth);
-                // cache tick text width for getXAxisTickTextY2Overflow()
-                if (id === "x") {
-                    currentTickMax.ticks[i] = currentTextWidth;
-                }
-            });
-            dummy.remove();
-        }
-        if (maxWidth > 0) {
-            currentTickMax.size = maxWidth;
-        }
-        return currentTickMax.size;
-    };
-    Axis.prototype.getXAxisTickTextY2Overflow = function (defaultPadding) {
-        var $$ = this.owner;
-        var axis = $$.axis, config = $$.config, state = $$.state;
-        var xAxisTickRotate = $$.getAxisTickRotate("x");
-        var positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
-        if ((axis.isCategorized() || axis.isTimeSeries()) &&
-            config.axis_x_tick_fit &&
-            !config.axis_x_tick_culling &&
-            !config.axis_x_tick_multiline &&
-            positiveRotation) {
-            var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft();
-            var maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding);
-            var xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
-                defaultPadding; // for display inconsistencies between browsers
-            return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
-        }
-        return 0;
-    };
-    Axis.prototype.getXAxisTickMaxOverflow = function (xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
-        var $$ = this.owner;
-        var axis = $$.axis, config = $$.config, state = $$.state;
-        var isTimeSeries = axis.isTimeSeries();
-        var tickTextWidths = state.current.maxTickWidths.x.ticks;
-        var tickCount = tickTextWidths.length;
-        var _a = state.axis.x.padding, left = _a.left, right = _a.right;
-        var maxOverflow = 0;
-        var remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? 0.5 : 0);
-        for (var i = 0; i < tickCount; i++) {
-            var tickIndex = i + 1;
-            var rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i];
-            var ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + left;
-            // Skip ticks if there are no ticks before them
-            if (ticksBeforeTickText <= 0) {
-                continue;
-            }
-            var xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft - rotatedTickTextWidth;
-            var tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
-            var remainingTicks = remaining - tickIndex;
-            var paddingRightLength = right * tickLength;
-            var remainingTickWidth = (remainingTicks * tickLength) + paddingRightLength;
-            var overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
-            maxOverflow = Math.max(maxOverflow, overflow);
-        }
-        var tickOffset = 0;
-        if (!isTimeSeries) {
-            var scale = scaleLinear()
-                .domain([
-                left * -1,
-                $$.getXDomainMax($$.data.targets) + 1 + right
-            ])
-                .range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
-            tickOffset = (Math.ceil((scale(1) - scale(0)) / 2));
-        }
-        return maxOverflow + tickOffset;
-    };
-    /**
-     * Get x Axis padding
-     * @param {number} tickCount Tick count
-     * @returns {object} Padding object values with 'left' & 'right' key
-     * @private
-     */
-    Axis.prototype.getXAxisPadding = function (tickCount) {
-        var $$ = this.owner;
-        var padding = $$.config.axis_x_padding;
-        if (isEmpty(padding)) {
-            padding = { left: 0, right: 0 };
-        }
-        else {
-            padding.left = padding.left || 0;
-            padding.right = padding.right || 0;
-        }
-        if ($$.axis.isTimeSeries()) {
-            var firstX = +$$.getXDomainMin($$.data.targets);
-            var lastX = +$$.getXDomainMax($$.data.targets);
-            var timeDiff = lastX - firstX;
-            var range = timeDiff + padding.left + padding.right;
-            var relativeTickWidth = (timeDiff / tickCount) / range;
-            var left = padding.left / range / relativeTickWidth || 0;
-            var right = padding.right / range / relativeTickWidth || 0;
-            padding = { left: left, right: right };
-        }
-        return padding;
-    };
-    Axis.prototype.updateLabels = function (withTransition) {
-        var _this = this;
-        var $$ = this.owner;
-        var main = $$.$el.main;
-        var labels = {
-            x: main.select("." + CLASS.axisX + " ." + CLASS.axisXLabel),
-            y: main.select("." + CLASS.axisY + " ." + CLASS.axisYLabel),
-            y2: main.select("." + CLASS.axisY2 + " ." + CLASS.axisY2Label)
-        };
-        Object.keys(labels).filter(function (id) { return !labels[id].empty(); })
-            .forEach(function (v) {
-            var node = labels[v];
-            (withTransition ? node.transition() : node)
-                .attr("x", function () { return _this.xForAxisLabel(v); })
-                .attr("dx", function () { return _this.dxForAxisLabel(v); })
-                .attr("dy", function () { return _this.dyForAxisLabel(v); })
-                .text(function () { return _this.getLabelText(v); });
-        });
-    };
-    Axis.prototype.getPadding = function (padding, key, defaultValue, domainLength) {
-        var p = isNumber(padding) ? padding : padding[key];
-        if (!isValue(p)) {
-            return defaultValue;
-        }
-        return this.convertPixelsToAxisPadding(p, domainLength);
-    };
-    Axis.prototype.convertPixelsToAxisPadding = function (pixels, domainLength) {
-        var $$ = this.owner;
-        var config = $$.config, _a = $$.state, width = _a.width, height = _a.height;
-        var length = config.axis_rotated ? width : height;
-        return domainLength * (pixels / length);
-    };
-    Axis.prototype.generateTickValues = function (values, tickCount, forTimeSeries) {
-        var tickValues = values;
-        if (tickCount) {
-            var targetCount = isFunction(tickCount) ? tickCount() : tickCount;
-            // compute ticks according to tickCount
-            if (targetCount === 1) {
-                tickValues = [values[0]];
-            }
-            else if (targetCount === 2) {
-                tickValues = [values[0], values[values.length - 1]];
-            }
-            else if (targetCount > 2) {
-                var isCategorized = this.isCategorized();
-                var count = targetCount - 2;
-                var start = values[0];
-                var end = values[values.length - 1];
-                var interval = (end - start) / (count + 1);
-                var tickValue = void 0;
-                // re-construct unique values
-                tickValues = [start];
-                for (var i = 0; i < count; i++) {
-                    tickValue = +start + interval * (i + 1);
-                    tickValues.push(forTimeSeries ? new Date(tickValue) : (isCategorized ? Math.round(tickValue) : tickValue));
-                }
-                tickValues.push(end);
-            }
-        }
-        if (!forTimeSeries) {
-            tickValues = tickValues.sort(function (a, b) { return a - b; });
-        }
-        return tickValues;
-    };
-    Axis.prototype.generateTransitions = function (duration) {
-        var $$ = this.owner;
-        var axis = $$.$el.axis;
-        var _a = ["x", "y", "y2", "subX"]
-            .map(function (v) {
-            var ax = axis[v];
-            if (ax && duration) {
-                ax = ax.transition().duration(duration);
-            }
-            return ax;
-        }), axisX = _a[0], axisY = _a[1], axisY2 = _a[2], axisSubX = _a[3];
-        return { axisX: axisX, axisY: axisY, axisY2: axisY2, axisSubX: axisSubX };
-    };
-    Axis.prototype.redraw = function (transitions, isHidden, isInit) {
-        var _this = this;
-        var $$ = this.owner;
-        var config = $$.config, $el = $$.$el;
-        var opacity = isHidden ? "0" : "1";
-        ["x", "y", "y2", "subX"].forEach(function (id) {
-            var axis = _this[id];
-            var $axis = $el.axis[id];
-            if (axis && $axis) {
-                if (!isInit) {
-                    axis.config.withoutTransition = !config.transition_duration;
-                }
-                $axis.style("opacity", opacity);
-                axis.create(transitions["axis" + capitalize(id)]);
-            }
-        });
-        this.updateAxes();
-    };
-    /**
-     * Redraw axis
-     * @param {Array} targetsToShow targets data to be shown
-     * @param {object} wth option object
-     * @param {d3.Transition} transitions Transition object
-     * @param {object} flow flow object
-     * @param {boolean} isInit called from initialization
-     * @private
-     */
-    Axis.prototype.redrawAxis = function (targetsToShow, wth, transitions, flow, isInit) {
-        var _this = this;
-        var $$ = this.owner;
-        var config = $$.config, scale = $$.scale, $el = $$.$el;
-        var hasZoom = !!scale.zoom;
-        var xDomainForZoom;
-        if (!hasZoom && this.isCategorized() && targetsToShow.length === 0) {
-            scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]);
-        }
-        if (scale.x && targetsToShow.length) {
-            !hasZoom &&
-                $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
-            if (!config.axis_x_tick_values) {
-                this.updateXAxisTickValues(targetsToShow);
-            }
-        }
-        else if (this.x) {
-            this.x.tickValues([]);
-            this.subX && this.subX.tickValues([]);
-        }
-        if (config.zoom_rescale && !flow) {
-            xDomainForZoom = scale.x.orgDomain();
-        }
-        ["y", "y2"].forEach(function (key) {
-            var axisScale = scale[key];
-            if (axisScale) {
-                var tickValues = config["axis_" + key + "_tick_values"];
-                var tickCount = config["axis_" + key + "_tick_count"];
-                axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
-                if (!tickValues && tickCount) {
-                    var axis = $$.axis[key];
-                    var domain = axisScale.domain();
-                    axis.tickValues(_this.generateTickValues(domain, domain.every(function (v) { return v === 0; }) ? 1 : tickCount, _this.isTimeSeriesY()));
-                }
-            }
-        });
-        // axes
-        this.redraw(transitions, $$.hasArcType(), isInit);
-        // Update axis label
-        this.updateLabels(wth.Transition);
-        // show/hide if manual culling needed
-        if ((wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length) {
-            this.setCulling();
-        }
-        // Update sub domain
-        if (wth.Y) {
-            scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y"));
-            scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2"));
-        }
-    };
-    /**
-     * Set manual culling
-     * @private
-     */
-    Axis.prototype.setCulling = function () {
-        var $$ = this.owner;
-        var config = $$.config, _a = $$.state, clip = _a.clip, current = _a.current, $el = $$.$el;
-        ["subX", "x", "y", "y2"].forEach(function (type) {
-            var axis = $el.axis[type];
-            // subchart x axis should be aligned with x axis culling
-            var id = type === "subX" ? "x" : type;
-            var toCull = config["axis_" + id + "_tick_culling"];
-            if (axis && toCull) {
-                var tickText = axis.selectAll(".tick text");
-                var tickValues_1 = sortValue(tickText.data());
-                var tickSize = tickValues_1.length;
-                var cullingMax = config["axis_" + id + "_tick_culling_max"];
-                var intervalForCulling_1;
-                if (tickSize) {
-                    for (var i = 1; i < tickSize; i++) {
-                        if (tickSize / i < cullingMax) {
-                            intervalForCulling_1 = i;
-                            break;
-                        }
-                    }
-                    tickText.each(function (d) {
-                        this.style.display = tickValues_1.indexOf(d) % intervalForCulling_1 ? "none" : "block";
-                    });
-                }
-                else {
-                    tickText.style("display", "block");
-                }
-                // set/unset x_axis_tick_clippath
-                if (type === "x") {
-                    var clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
-                    $el.svg.selectAll("." + CLASS.axisX + " .tick text")
-                        .attr("clip-path", clipPath);
-                }
-            }
-        });
-    };
-    return Axis;
-}());
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
@@ -7482,6 +6197,17 @@ var data$1 = {
                 value.index = index;
             });
         });
+    },
+    /**
+     * Determine if bubble has dimension data
+     * @param {object|Array} d data value
+     * @returns {boolean}
+     * @private
+     */
+    isBubbleZType: function (d) {
+        var $$ = this;
+        return $$.isBubbleType(d) && ((isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
+            (isArray(d.value) && d.value.length === 2));
     }
 };
 
@@ -9043,7 +7769,7 @@ var redraw = {
         $$.hasDataLabel() && $$.updateText(durationForExit);
         // update circleY based on updated parameters
         if (!$$.hasArcType() || state.hasRadar) {
-            $$.updateCircleY();
+            $$.updateCircleY && $$.updateCircleY();
         }
         // @TODO: Axis & Radar type
         if (!state.resizing && ($$.hasPointType() || state.hasRadar)) {
@@ -9172,7 +7898,7 @@ var redraw = {
                 list.push($$.redrawText(xForText, yForText, flow, isTransition));
         }
         if (($$.hasPointType() || hasRadar) && !config.point_focus_only) {
-            list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
+            $$.redrawCircle && list.push($$.redrawCircle(cx, cy, isTransition, flowFn));
         }
         return list;
     },
@@ -9390,6 +8116,282 @@ var scale = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+var shape = {
+    /**
+     * Get the shape draw function
+     * @returns {object}
+     * @private
+     */
+    getDrawShape: function () {
+        var $$ = this;
+        var isRotated = $$.config.axis_rotated;
+        var hasRadar = $$.state.hasRadar;
+        var shape = { type: {}, indices: {}, pos: {} };
+        // setup drawer - MEMO: these must be called after axis updated
+        if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
+            var indices = $$.getShapeIndices($$.isLineType);
+            shape.indices.line = indices;
+            shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
+            if ($$.hasTypeOf("Area")) {
+                var indices_1 = $$.getShapeIndices($$.isAreaType);
+                shape.indices.area = indices_1;
+                shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices_1, false) : undefined;
+            }
+        }
+        if ($$.hasType("bar")) {
+            var indices = $$.getShapeIndices($$.isBarType);
+            shape.indices.bar = indices;
+            shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
+        }
+        if (!$$.hasArcType() || hasRadar) {
+            // generate circle x/y functions depending on updated params
+            var cx = hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX);
+            var cy = hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY);
+            shape.pos = {
+                xForText: $$.generateXYForText(shape.indices, true),
+                yForText: $$.generateXYForText(shape.indices, false),
+                cx: (cx || function () { }).bind($$),
+                cy: (cy || function () { }).bind($$)
+            };
+        }
+        return shape;
+    },
+    getShapeIndices: function (typeFilter) {
+        var $$ = this;
+        var config = $$.config;
+        var xs = config.data_xs;
+        var hasXs = notEmpty(xs);
+        var indices = {};
+        var i = hasXs ? {} : 0;
+        if (hasXs) {
+            getUnique(Object.keys(xs).map(function (v) { return xs[v]; }))
+                .forEach(function (v) {
+                i[v] = 0;
+                indices[v] = {};
+            });
+        }
+        $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
+            .forEach(function (d) {
+            var xKey = d.id in xs ? xs[d.id] : "";
+            var ind = xKey ? indices[xKey] : indices;
+            for (var j = 0, groups = void 0; (groups = config.data_groups[j]); j++) {
+                if (groups.indexOf(d.id) < 0) {
+                    continue;
+                }
+                for (var k = 0, row = void 0; (row = groups[k]); k++) {
+                    if (row in ind) {
+                        ind[d.id] = ind[row];
+                        break;
+                    }
+                }
+            }
+            if (isUndefined(ind[d.id])) {
+                ind[d.id] = xKey ? i[xKey]++ : i++;
+                ind.__max__ = (xKey ? i[xKey] : i) - 1;
+            }
+        });
+        return indices;
+    },
+    /**
+     * Get indices value based on data ID value
+     * @param {object} indices Indices object
+     * @param {string} id Data id value
+     * @returns {object} Indices object
+     * @private
+     */
+    getIndices: function (indices, id) {
+        var xs = this.config.data_xs;
+        return notEmpty(xs) ?
+            indices[xs[id]] : indices;
+    },
+    /**
+     * Get indices max number
+     * @param {object} indices Indices object
+     * @returns {number} Max number
+     * @private
+     */
+    getIndicesMax: function (indices) {
+        return notEmpty(this.config.data_xs) ?
+            // if is multiple xs, return total sum of xs' __max__ value
+            Object.keys(indices)
+                .map(function (v) { return indices[v].__max__ || 0; })
+                .reduce(function (acc, curr) { return acc + curr; }) : indices.__max__;
+    },
+    getShapeX: function (offset, indices, isSub) {
+        var $$ = this;
+        var config = $$.config, scale = $$.scale;
+        var currScale = isSub ? scale.subX : (scale.zoom || scale.x);
+        var barPadding = config.bar_padding;
+        var sum = function (p, c) { return p + c; };
+        var halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
+        return function (d) {
+            var ind = $$.getIndices(indices, d.id);
+            var index = d.id in ind ? ind[d.id] : 0;
+            var targetsNum = (ind.__max__ || 0) + 1;
+            var x = 0;
+            if (notEmpty(d.x)) {
+                var xPos = currScale(d.x);
+                if (halfWidth) {
+                    x = xPos - (offset[d.id] || offset.width) +
+                        offset.total.slice(0, index + 1).reduce(sum) -
+                        halfWidth;
+                }
+                else {
+                    x = xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
+                }
+            }
+            // adjust x position for bar.padding optionq
+            if (offset && x && targetsNum > 1 && barPadding) {
+                if (index) {
+                    x += barPadding * index;
+                }
+                if (targetsNum > 2) {
+                    x -= (targetsNum - 1) * barPadding / 2;
+                }
+                else if (targetsNum === 2) {
+                    x -= barPadding / 2;
+                }
+            }
+            return x;
+        };
+    },
+    getShapeY: function (isSub) {
+        var $$ = this;
+        var isStackNormalized = $$.isStackNormalized();
+        return function (d) {
+            var value = isStackNormalized ? $$.getRatio("index", d, true) : ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value);
+            return $$.getYScaleById(d.id, isSub)(value);
+        };
+    },
+    /**
+     * Get shape based y Axis min value
+     * @param {string} id Data id
+     * @returns {number}
+     * @private
+     */
+    getShapeYMin: function (id) {
+        var $$ = this;
+        var yMin = $$.scale[$$.axis.getId(id)].domain()[0];
+        return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
+    },
+    /**
+     * Get Shape's offset data
+     * @param {Function} typeFilter Type filter function
+     * @returns {object}
+     * @private
+     */
+    getShapeOffsetData: function (typeFilter) {
+        var $$ = this;
+        var targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)));
+        var isStackNormalized = $$.isStackNormalized();
+        var shapeOffsetTargets = targets.map(function (target) {
+            var rowValues = target.values;
+            var values = {};
+            if ($$.isStepType(target)) {
+                rowValues = $$.convertValuesToStep(rowValues);
+            }
+            var rowValueMapByXValue = rowValues.reduce(function (out, d) {
+                var key = Number(d.x);
+                out[key] = d;
+                values[key] = isStackNormalized ? $$.getRatio("index", d, true) : d.value;
+                return out;
+            }, {});
+            return {
+                id: target.id,
+                rowValues: rowValues,
+                rowValueMapByXValue: rowValueMapByXValue,
+                values: values
+            };
+        });
+        var indexMapByTargetId = targets.reduce(function (out, _a, index) {
+            var id = _a.id;
+            out[id] = index;
+            return out;
+        }, {});
+        return { indexMapByTargetId: indexMapByTargetId, shapeOffsetTargets: shapeOffsetTargets };
+    },
+    getShapeOffset: function (typeFilter, indices, isSub) {
+        var $$ = this;
+        var _a = $$.getShapeOffsetData(typeFilter), shapeOffsetTargets = _a.shapeOffsetTargets, indexMapByTargetId = _a.indexMapByTargetId;
+        return function (d, idx) {
+            var ind = $$.getIndices(indices, d.id);
+            var scale = $$.getYScaleById(d.id, isSub);
+            var y0 = scale($$.getShapeYMin(d.id));
+            var dataXAsNumber = Number(d.x);
+            var offset = y0;
+            shapeOffsetTargets
+                .filter(function (t) { return t.id !== d.id; })
+                .forEach(function (t) {
+                if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
+                    var row = t.rowValues[idx];
+                    // check if the x values line up
+                    if (!row || Number(row.x) !== dataXAsNumber) {
+                        row = t.rowValueMapByXValue[dataXAsNumber];
+                    }
+                    if (row && row.value * d.value >= 0) {
+                        offset += scale(t.values[dataXAsNumber]) - y0;
+                    }
+                }
+            });
+            return offset;
+        };
+    },
+    isWithinShape: function (that, d) {
+        var $$ = this;
+        var shape = select(that);
+        var isWithin;
+        if (!$$.isTargetToShow(d.id)) {
+            isWithin = false;
+        }
+        else if ($$.hasValidPointType(that.nodeName)) {
+            isWithin = $$.isStepType(d) ?
+                $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
+                $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
+        }
+        else if (that.nodeName === "path") {
+            isWithin = shape.classed(CLASS.bar) ? $$.isWithinBar(that) : true;
+        }
+        return isWithin;
+    },
+    getInterpolate: function (d) {
+        var $$ = this;
+        var interpolation = $$.getInterpolateType(d);
+        return {
+            "basis": curveBasis,
+            "basis-closed": curveBasisClosed,
+            "basis-open": curveBasisOpen,
+            "bundle": curveBundle,
+            "cardinal": curveCardinal,
+            "cardinal-closed": curveCardinalClosed,
+            "cardinal-open": curveCardinalOpen,
+            "catmull-rom": curveCatmullRom,
+            "catmull-rom-closed": curveCatmullRomClosed,
+            "catmull-rom-open": curveCatmullRomOpen,
+            "monotone-x": curveMonotoneX,
+            "monotone-y": curveMonotoneY,
+            "natural": curveNatural,
+            "linear-closed": curveLinearClosed,
+            "linear": curveLinear,
+            "step": curveStep,
+            "step-after": curveStepAfter,
+            "step-before": curveStepBefore
+        }[interpolation];
+    },
+    getInterpolateType: function (d) {
+        var $$ = this;
+        var config = $$.config;
+        var type = config.spline_interpolation_type;
+        var interpolation = $$.isInterpolationType(type) ? type : "cardinal";
+        return $$.isSplineType(d) ?
+            interpolation : ($$.isStepType(d) ?
+            config.line_step_type : "linear");
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 var size = {
     /**
      * Update container size
@@ -9410,19 +8412,6 @@ var size = {
         var config = $$.config;
         var h = config.size_height || $$.getParentHeight();
         return h > 0 ? h : 320 / ($$.hasType("gauge") && !config.gauge_fullCircle ? 2 : 1);
-    },
-    /**
-     * Get Axis size according its position
-     * @param {string} id Axis id value - x, y or y2
-     * @returns {number} size Axis size value
-     * @private
-     */
-    getAxisSize: function (id) {
-        var $$ = this;
-        var isRotated = $$.config.axis_rotated;
-        return (isRotated && id === "x") || (!isRotated && /y2?/.test(id)) ?
-            $$.getAxisWidthByAxisId(id, true) :
-            $$.getHorizontalAxisHeight(id);
     },
     getCurrentPaddingTop: function () {
         var $$ = this;
@@ -9473,11 +8462,11 @@ var size = {
     getCurrentPaddingRight: function (withoutTickTextOverflow) {
         if (withoutTickTextOverflow === void 0) { withoutTickTextOverflow = false; }
         var $$ = this;
-        var config = $$.config;
+        var config = $$.config, hasAxis = $$.state.hasAxis;
         var defaultPadding = 10;
         var legendWidthOnRight = $$.state.isLegendRight ? $$.getLegendWidth() + 20 : 0;
         var axesLen = config.axis_y2_axes.length;
-        var axisWidth = $$.getAxisWidthByAxisId("y2");
+        var axisWidth = hasAxis ? $$.getAxisWidthByAxisId("y2") : 0;
         var xAxisTickTextOverflow = withoutTickTextOverflow ?
             0 : $$.axis.getXAxisTickTextY2Overflow(defaultPadding);
         var padding;
@@ -9545,106 +8534,6 @@ var size = {
         var svgLeft = svgRect.right - chartRect.left -
             (hasArc ? 0 : $$.getCurrentPaddingLeft(withoutRecompute));
         return svgLeft > 0 ? svgLeft : 0;
-    },
-    getAxisWidthByAxisId: function (id, withoutRecompute) {
-        var $$ = this;
-        if ($$.axis) {
-            var position = $$.axis && $$.axis.getLabelPositionById(id);
-            return $$.axis.getMaxTickWidth(id, withoutRecompute) +
-                (position.isInner ? 20 : 40);
-        }
-        else {
-            return 40;
-        }
-    },
-    getHorizontalAxisHeight: function (id) {
-        var $$ = this;
-        var config = $$.config, state = $$.state;
-        var current = state.current, rotatedPadding = state.rotatedPadding, isLegendRight = state.isLegendRight, isLegendInset = state.isLegendInset;
-        var isRotated = config.axis_rotated;
-        var h = 30;
-        if (id === "x" && !config.axis_x_show) {
-            return 8;
-        }
-        if (id === "x" && config.axis_x_height) {
-            return config.axis_x_height;
-        }
-        if (id === "y" && !config.axis_y_show) {
-            return config.legend_show &&
-                !isLegendRight &&
-                !isLegendInset ? 10 : 1;
-        }
-        if (id === "y2" && !config.axis_y2_show) {
-            return rotatedPadding.top;
-        }
-        var rotate = $$.getAxisTickRotate(id);
-        // Calculate x/y axis height when tick rotated
-        if (((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate) {
-            h = 30 +
-                $$.axis.getMaxTickWidth(id) *
-                    Math.cos(Math.PI * (90 - rotate) / 180);
-            if (!config.axis_x_tick_multiline && current.height) {
-                if (h > current.height / 2) {
-                    h = current.height / 2;
-                }
-            }
-        }
-        return h +
-            ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) +
-            (id === "y2" && !isRotated ? -10 : 0);
-    },
-    getEventRectWidth: function () {
-        return Math.max(0, this.axis.x.tickInterval());
-    },
-    /**
-     * Get axis tick test rotate value
-     * @param {string} id Axis id
-     * @returns {number} rotate value
-     * @private
-     */
-    getAxisTickRotate: function (id) {
-        var $$ = this;
-        var axis = $$.axis, config = $$.config, state = $$.state, $el = $$.$el;
-        var rotate = config["axis_" + id + "_tick_rotate"];
-        if (id === "x") {
-            var isCategorized = axis.isCategorized();
-            var isTimeSeries = axis.isTimeSeries();
-            var allowedXAxisTypes = isCategorized || isTimeSeries;
-            var tickCount = 0;
-            if (config.axis_x_tick_fit && allowedXAxisTypes) {
-                tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
-                if (tickCount !== state.axis.x.tickCount) {
-                    state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
-                }
-                state.axis.x.tickCount = tickCount;
-            }
-            if ($el.svg &&
-                config.axis_x_tick_fit &&
-                !config.axis_x_tick_multiline &&
-                !config.axis_x_tick_culling &&
-                config.axis_x_tick_autorotate &&
-                allowedXAxisTypes) {
-                rotate = $$.needToRotateXAxisTickTexts() ?
-                    config.axis_x_tick_rotate : 0;
-            }
-        }
-        return rotate;
-    },
-    /**
-     * Check weather axis tick text needs to be rotated
-     * @returns {boolean}
-     * @private
-     */
-    needToRotateXAxisTickTexts: function () {
-        var $$ = this;
-        var _a = $$.state, axis = _a.axis, current = _a.current;
-        var xAxisLength = current.width -
-            $$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
-        var tickCountWithPadding = axis.x.tickCount +
-            axis.x.padding.left + axis.x.padding.right;
-        var maxTickWidth = $$.axis.getMaxTickWidth("x");
-        var tickLength = (xAxisLength / tickCountWithPadding) || 0;
-        return maxTickWidth > tickLength;
     },
     updateDimension: function (withoutAxis) {
         var $$ = this;
@@ -10922,6 +9811,1619 @@ var type = {
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+/**
+ * Internal chart class.
+ * - Note: Instantiated internally, not exposed for public.
+ * @class ChartInternal
+ * @ignore
+ * @private
+ */
+var ChartInternal = /** @class */ (function () {
+    function ChartInternal(api) {
+        // data object
+        this.data = {
+            xs: {},
+            targets: []
+        };
+        // scales
+        this.scale = {
+            x: null,
+            y: null,
+            y2: null,
+            subX: null,
+            subY: null,
+            subY2: null,
+            zoom: null
+        };
+        // original values
+        this.org = {
+            xScale: null,
+            xDomain: null
+        };
+        // format function
+        this.format = {
+            extraLineClasses: null,
+            xAxisTick: null,
+            dataTime: null,
+            defaultAxisTime: null,
+            axisTime: null // axisTimeFormat
+        };
+        var $$ = this;
+        $$.api = api; // Chart class instance alias
+        $$.config = new Options();
+        $$.cache = new Cache();
+        var store = new Store();
+        $$.$el = store.getStore("element");
+        $$.state = store.getStore("state");
+    }
+    ChartInternal.prototype.beforeInit = function () {
+        var $$ = this;
+        $$.callPluginHook("$beforeInit");
+        // can do something
+        callFn($$.config.onbeforeinit, $$.api);
+    };
+    ChartInternal.prototype.afterInit = function () {
+        var $$ = this;
+        $$.callPluginHook("$afterInit");
+        // can do something
+        callFn($$.config.onafterinit, $$.api);
+    };
+    ChartInternal.prototype.init = function () {
+        var $$ = this;
+        var config = $$.config, state = $$.state, $el = $$.$el;
+        state.hasAxis = !$$.hasArcType();
+        state.hasRadar = !state.hasAxis && $$.hasType("radar");
+        $$.initParams();
+        var bindto = {
+            element: config.bindto,
+            classname: "bb"
+        };
+        if (isObject(config.bindto)) {
+            bindto.element = config.bindto.element || "#chart";
+            bindto.classname = config.bindto.classname || bindto.classname;
+        }
+        // select bind element
+        $el.chart = isFunction(bindto.element.node) ?
+            config.bindto.element : select(bindto.element || []);
+        if ($el.chart.empty()) {
+            $el.chart = select(doc.body.appendChild(doc.createElement("div")));
+        }
+        $el.chart.html("").classed(bindto.classname, true);
+        $$.initToRender();
+    };
+    /**
+     * Initialize the rendering process
+     * @param {boolean} forced Force to render process
+     * @private
+     */
+    ChartInternal.prototype.initToRender = function (forced) {
+        var $$ = this;
+        var config = $$.config, state = $$.state, chart = $$.$el.chart;
+        var isHidden = function () { return chart.style("display") === "none" || chart.style("visibility") === "hidden"; };
+        var isLazy = config.render.lazy || isHidden();
+        var MutationObserver = win.MutationObserver;
+        if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
+            new MutationObserver(function (mutation, observer) {
+                if (!isHidden()) {
+                    observer.disconnect();
+                    !state.rendered && $$.initToRender(true);
+                }
+            }).observe(chart.node(), {
+                attributes: true,
+                attributeFilter: ["class", "style"]
+            });
+        }
+        if (!isLazy || forced) {
+            var convertedData = $$.convertData(config, $$.initWithData);
+            convertedData && $$.initWithData(convertedData);
+            $$.afterInit();
+        }
+    };
+    ChartInternal.prototype.initParams = function () {
+        var $$ = this;
+        var _a = $$, config = _a.config, format = _a.format, state = _a.state;
+        var isRotated = config.axis_rotated;
+        // datetime to be used for uniqueness
+        state.datetimeId = "bb-" + +new Date();
+        $$.color = $$.generateColor();
+        $$.levelColor = $$.generateLevelColor();
+        if ($$.hasPointType()) {
+            $$.point = $$.generatePoint();
+        }
+        if (state.hasAxis) {
+            $$.initClip();
+            format.extraLineClasses = $$.generateExtraLineClass();
+            format.dataTime = config.data_xLocaltime ? timeParse : utcParse;
+            format.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
+            var isDragZoom_1 = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
+            format.defaultAxisTime = function (d) {
+                var _a = $$.scale, x = _a.x, zoom = _a.zoom;
+                var isZoomed = isDragZoom_1 ? zoom :
+                    zoom && x.orgDomain().toString() !== zoom.domain().toString();
+                var specifier = (d.getMilliseconds() && ".%L") ||
+                    (d.getSeconds() && ".:%S") ||
+                    (d.getMinutes() && "%I:%M") ||
+                    (d.getHours() && "%I %p") ||
+                    (d.getDate() !== 1 && "%b %d") ||
+                    (isZoomed && d.getDate() === 1 && "%b\'%y") ||
+                    (d.getMonth() && "%-m/%-d") || "%Y";
+                return format.axisTime(specifier)(d);
+            };
+        }
+        state.isLegendRight = config.legend_position === "right";
+        state.isLegendInset = config.legend_position === "inset";
+        state.isLegendTop = config.legend_inset_anchor === "top-left" ||
+            config.legend_inset_anchor === "top-right";
+        state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
+            config.legend_inset_anchor === "bottom-left";
+        state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
+        state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
+    };
+    ChartInternal.prototype.initWithData = function (data) {
+        var $$ = this;
+        var config = $$.config, scale = $$.scale, state = $$.state, $el = $$.$el, org = $$.org;
+        var hasAxis = state.hasAxis;
+        var hasInteraction = config.interaction_enabled;
+        // for arc type, set axes to not be shown
+        // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
+        if (hasAxis) {
+            $$.axis = $$.getAxisInstance(); // new Axis($$);
+            config.zoom_enabled && $$.initZoom();
+        }
+        // Init data as targets
+        $$.data.xs = {};
+        $$.data.targets = $$.convertDataToTargets(data);
+        if (config.data_filter) {
+            $$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api));
+        }
+        // Set targets to hide if needed
+        if (config.data_hide) {
+            $$.addHiddenTargetIds(config.data_hide === true ?
+                $$.mapToIds($$.data.targets) : config.data_hide);
+        }
+        if (config.legend_hide) {
+            $$.addHiddenLegendIds(config.legend_hide === true ?
+                $$.mapToIds($$.data.targets) : config.legend_hide);
+        }
+        // Init sizes and scales
+        $$.updateSizes();
+        $$.updateScales(true);
+        // retrieve scale after the 'updateScales()' is called
+        var x = scale.x, y = scale.y, y2 = scale.y2, subX = scale.subX, subY = scale.subY, subY2 = scale.subY2;
+        // Set domains for each scale
+        if (x) {
+            x.domain(sortValue($$.getXDomain($$.data.targets)));
+            subX.domain(x.domain());
+            // Save original x domain for zoom update
+            org.xDomain = x.domain();
+        }
+        if (y) {
+            y.domain($$.getYDomain($$.data.targets, "y"));
+            subY.domain(y.domain());
+        }
+        if (y2) {
+            y2.domain($$.getYDomain($$.data.targets, "y2"));
+            subY2 && subY2.domain(y2.domain());
+        }
+        // -- Basic Elements --
+        $el.svg = $el.chart.append("svg")
+            .style("overflow", "hidden")
+            .style("display", "block");
+        if (hasInteraction && state.inputType) {
+            var isTouch = state.inputType === "touch";
+            $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () { return callFn(config.onover, $$.api); })
+                .on(isTouch ? "touchend" : "mouseleave", function () { return callFn(config.onout, $$.api); });
+        }
+        config.svg_classname && $el.svg.attr("class", config.svg_classname);
+        // Define defs
+        var hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
+        if (hasAxis || hasColorPatterns) {
+            $el.defs = $el.svg.append("defs");
+            if (hasAxis) {
+                ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
+                    $$.appendClip($el.defs, state.clip[v]);
+                });
+            }
+            // set color patterns
+            if (hasColorPatterns) {
+                $$.patterns.forEach(function (p) { return $el.defs.append(function () { return p.node; }); });
+            }
+        }
+        $$.updateSvgSize();
+        // Bind resize event
+        $$.bindResize();
+        // Define regions
+        var main = $el.svg.append("g")
+            .classed(CLASS.main, true)
+            .attr("transform", $$.getTranslate("main"));
+        $el.main = main;
+        // initialize subchart when subchart show option is set
+        config.subchart_show && $$.initSubchart();
+        config.tooltip_show && $$.initTooltip();
+        config.title_text && $$.initTitle();
+        config.legend_show && $$.initLegend();
+        // -- Main Region --
+        // text when empty
+        if (config.data_empty_label_text) {
+            main.append("text")
+                .attr("class", CLASS.text + " " + CLASS.empty)
+                .attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
+                .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
+        }
+        if (hasAxis) {
+            // Regions
+            config.regions.length && $$.initRegion();
+            // Add Axis here, when clipPath is 'false'
+            !config.clipPath && $$.axis.init();
+        }
+        // Define g for chart area
+        main.append("g").attr("class", CLASS.chart)
+            .attr("clip-path", state.clip.path);
+        $$.callPluginHook("$init");
+        if (hasAxis) {
+            // Cover whole with rects for events
+            hasInteraction && $$.initEventRect && $$.initEventRect();
+            // Grids
+            $$.initGrid();
+            // Add Axis here, when clipPath is 'true'
+            config.clipPath && $$.axis && $$.axis.init();
+        }
+        $$.initChartElements();
+        // Set targets
+        $$.updateTargets($$.data.targets);
+        // Draw with targets
+        $$.updateDimension();
+        // oninit callback
+        callFn(config.oninit, $$.api);
+        // Set background
+        $$.setBackground();
+        $$.redraw({
+            withTransition: false,
+            withTransform: true,
+            withUpdateXDomain: true,
+            withUpdateOrgXDomain: true,
+            withTransitionForAxis: false,
+            initializing: true
+        });
+        // data.onmin/max callback
+        if (config.data_onmin || config.data_onmax) {
+            var minMax = $$.getMinMaxData();
+            callFn(config.data_onmin, $$.api, minMax.min);
+            callFn(config.data_onmax, $$.api, minMax.max);
+        }
+        state.rendered = true;
+    };
+    ChartInternal.prototype.initChartElements = function () {
+        var $$ = this;
+        var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
+        var types = [];
+        if (hasAxis) {
+            $$.hasType("bar") && types.push("Bar");
+            $$.hasType("bubble") && types.push("Bubble");
+            $$.hasTypeOf("Line") && types.push("Line");
+        }
+        else {
+            if (!hasRadar) {
+                types.push("Arc", "Pie");
+            }
+            if ($$.hasType("gauge")) {
+                types.push("Gauge");
+            }
+            else if (hasRadar) {
+                types.push("Radar");
+            }
+        }
+        types.forEach(function (v) {
+            $$["init" + v]();
+        });
+        notEmpty($$.config.data_labels) && $$.initText();
+    };
+    ChartInternal.prototype.setChartElements = function () {
+        var $$ = this;
+        var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, lines = _a.line, areas = _a.area, texts = _a.text;
+        $$.api.$ = {
+            chart: chart,
+            svg: svg,
+            defs: defs,
+            main: main,
+            tooltip: tooltip,
+            legend: legend,
+            title: title,
+            grid: grid,
+            arc: arc,
+            circles: circles,
+            bar: { bars: bars },
+            line: { lines: lines, areas: areas },
+            text: { texts: texts }
+        };
+    };
+    /**
+     * Set background element/image
+     * @private
+     */
+    ChartInternal.prototype.setBackground = function () {
+        var $$ = this;
+        var bg = $$.config.background, state = $$.state, svg = $$.$el.svg;
+        if (notEmpty(bg)) {
+            var element = svg.select("g")
+                .insert(bg.imgUrl ? "image" : "rect", ":first-child");
+            if (bg.imgUrl) {
+                element.attr("href", bg.imgUrl);
+            }
+            else if (bg.color) {
+                element
+                    .style("fill", bg.color)
+                    .attr("clip-path", state.clip.path);
+            }
+            element
+                .attr("class", bg["class"] || null)
+                .attr("width", "100%")
+                .attr("height", "100%");
+        }
+    };
+    /**
+     * Update targeted element with given data
+     * @param {object} targets Data object formatted as 'target'
+     * @private
+     */
+    ChartInternal.prototype.updateTargets = function (targets) {
+        var $$ = this;
+        var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
+        // Text
+        $$.updateTargetsForText(targets);
+        // circle
+        if ($$.hasPointType() || hasRadar) {
+            $$.updateTargetForCircle && $$.updateTargetForCircle();
+        }
+        if (hasAxis) {
+            $$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
+            $$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
+            // Sub Chart
+            $$.updateTargetsForSubchart &&
+                $$.updateTargetsForSubchart(targets);
+        }
+        else {
+            // Arc & Radar
+            $$.hasArcType(targets) && (hasRadar ?
+                $$.updateTargetsForRadar(targets) :
+                $$.updateTargetsForArc(targets));
+        }
+        // Fade-in each chart
+        $$.showTargets();
+    };
+    /**
+     * Display targeted elements
+     * @private
+     */
+    ChartInternal.prototype.showTargets = function () {
+        var $$ = this;
+        var config = $$.config, svg = $$.$el.svg;
+        svg.selectAll("." + CLASS.target)
+            .filter(function (d) { return $$.isTargetToShow(d.id); })
+            .transition()
+            .duration(config.transition_duration)
+            .style("opacity", "1");
+    };
+    ChartInternal.prototype.getWithOption = function (options) {
+        var withOptions = {
+            Y: true,
+            Subchart: true,
+            Transition: true,
+            EventRect: true,
+            Dimension: true,
+            TrimXDomain: true,
+            Transform: false,
+            UpdateXDomain: false,
+            UpdateOrgXDomain: false,
+            Legend: false,
+            UpdateXAxis: "UpdateXDomain",
+            TransitionForExit: "Transition",
+            TransitionForAxis: "Transition"
+        };
+        Object.keys(withOptions).forEach(function (key) {
+            var defVal = withOptions[key];
+            if (isString(defVal)) {
+                defVal = withOptions[defVal];
+            }
+            withOptions[key] = getOption(options, "with" + key, defVal);
+        });
+        return withOptions;
+    };
+    ChartInternal.prototype.initialOpacity = function (d) {
+        var $$ = this;
+        var withoutFadeIn = $$.state.withoutFadeIn;
+        return $$.getBaseValue(d) !== null &&
+            withoutFadeIn[d.id] ? "1" : "0";
+    };
+    ChartInternal.prototype.bindResize = function () {
+        var $$ = this;
+        var config = $$.config, state = $$.state;
+        var resizeFunction = generateResize();
+        var list = [];
+        list.push(function () { return callFn(config.onresize, $$, $$.api); });
+        if (config.resize_auto) {
+            list.push(function () {
+                state.resizing = true;
+                $$.api.flush(false);
+            });
+        }
+        list.push(function () {
+            callFn(config.onresized, $$, $$.api);
+            state.resizing = false;
+        });
+        // add resize functions
+        list.forEach(function (v) { return resizeFunction.add(v); });
+        $$.resizeFunction = resizeFunction;
+        // attach resize event
+        win.addEventListener("resize", $$.resizeFunction = resizeFunction);
+    };
+    /**
+     * Call plugin hook
+     * @param {string} phase The lifecycle phase
+     * @param {Array} args Arguments
+     * @private
+     */
+    ChartInternal.prototype.callPluginHook = function (phase) {
+        var _this = this;
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        this.config.plugins.forEach(function (v) {
+            if (phase === "$beforeInit") {
+                v.$$ = _this;
+                _this.api.plugins.push(v);
+            }
+            v[phase].apply(v, args);
+        });
+    };
+    return ChartInternal;
+}());
+extend(ChartInternal.prototype, [
+    // common
+    dataConvert,
+    data$1,
+    dataLoad,
+    category,
+    classModule,
+    color$1,
+    domain,
+    interaction$1,
+    format,
+    legend$1,
+    redraw,
+    scale,
+    shape,
+    size,
+    text,
+    title$1,
+    tooltip$1,
+    transform,
+    type
+]);
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Load configuration option
+ * @param {object} config User's generation config value
+ * @private
+ */
+function loadConfig(config) {
+    var thisConfig = this.config;
+    var target;
+    var keys;
+    var read;
+    var find = function () {
+        var key = keys.shift();
+        if (key && target && isObjectType(target) && key in target) {
+            target = target[key];
+            return find();
+        }
+        else if (!key) {
+            return target;
+        }
+        return undefined;
+    };
+    Object.keys(thisConfig).forEach(function (key) {
+        target = config;
+        keys = key.split("_");
+        read = find();
+        if (isDefined(read)) {
+            thisConfig[key] = read;
+        }
+    });
+}
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var apiChart = {
+    /**
+     * Resize the chart.
+     * @function resize
+     * @instance
+     * @memberof Chart
+     * @param {object} size This argument should include width and height in pixels.
+     * @example
+     * // Resize to 640x480
+     * chart.resize({
+     *    width: 640,
+     *    height: 480
+     * });
+     */
+    resize: function (size) {
+        var $$ = this.internal;
+        var config = $$.config, state = $$.state;
+        if (state.rendered) {
+            config.size_width = size ? size.width : null;
+            config.size_height = size ? size.height : null;
+            this.flush(false, true);
+            $$.resizeFunction();
+        }
+    },
+    /**
+     * Force to redraw.
+     * @function flush
+     * @instance
+     * @memberof Chart
+     * @param {boolean} [soft] For soft redraw.
+     * @example
+     * chart.flush();
+     *
+     * // for soft redraw
+     * chart.flush(true);
+     */
+    flush: function (soft) {
+        var $$ = this.internal;
+        var state = $$.state;
+        if (state.rendered) {
+            // reset possible zoom scale when is called from resize event
+            // eslint-disable-next-line prefer-rest-params
+            if (state.resizing) { // arguments[1] is given when is called from resize
+                $$.brush && $$.brush.updateResize();
+            }
+            else {
+                // re-update config info
+                $$.axis && $$.axis.setOrient();
+            }
+            $$.scale.zoom = null;
+            soft ? $$.redraw({
+                withTransform: true,
+                withUpdateXDomain: true,
+                withUpdateOrgXDomain: true,
+                withLegend: true
+            }) : $$.updateAndRedraw({
+                withLegend: true,
+                withTransition: false,
+                withTransitionForTransform: false
+            });
+        }
+        else {
+            $$.initToRender(true);
+        }
+    },
+    /**
+     * Reset the chart object and remove element and events completely.
+     * @function destroy
+     * @instance
+     * @memberof Chart
+     * @returns {null}
+     * @example
+     * chart.destroy();
+     */
+    destroy: function () {
+        var _this = this;
+        var $$ = this.internal;
+        var _a = $$.$el, chart = _a.chart, svg = _a.svg;
+        if (notEmpty($$)) {
+            $$.callPluginHook("$willDestroy");
+            $$.charts.splice($$.charts.indexOf(this), 1);
+            // clear timers && pending transition
+            svg.select("*").interrupt();
+            $$.resizeFunction.clear();
+            win.removeEventListener("resize", $$.resizeFunction);
+            chart.classed("bb", false).html("");
+            // releasing references
+            Object.keys(this).forEach(function (key) {
+                key === "internal" && Object.keys($$).forEach(function (k) {
+                    $$[k] = null;
+                });
+                _this[key] = null;
+                delete _this[key];
+            });
+        }
+        return null;
+    },
+    /**
+     * Get or set single config option value.
+     * @function config
+     * @instance
+     * @memberof Chart
+     * @param {string} name The option key name.
+     * @param {*} [value] The value accepted for indicated option.
+     * @param {boolean} [redraw] Set to redraw with the new option changes.
+     * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
+     * @returns {*}
+     * @example
+     * // Getter
+     * chart.config("gauge.max");
+     *
+     * // Setter
+     * chart.config("gauge.max", 100);
+     *
+     * // Setter & redraw with the new option
+     * chart.config("gauge.max", 100, true);
+     */
+    config: function (name, value, redraw) {
+        var $$ = this.internal;
+        var config = $$.config;
+        var key = name && name.replace(/\./g, "_");
+        var res;
+        if (key in config) {
+            if (isDefined(value)) {
+                config[key] = value;
+                res = value;
+                redraw && this.flush();
+            }
+            else {
+                res = config[key];
+            }
+        }
+        return res;
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var apiColor = {
+    /**
+     * Get the color
+     * @function color
+     * @instance
+     * @memberof Chart
+     * @param {string} id id to get the color
+     * @returns {string}
+     * @example
+     * chart.color("data1");
+     */
+    color: function (id) {
+        return this.internal.color(id); // more patterns
+    }
+};
+
+/**
+ * Get data loaded in the chart.
+ * @function data
+ * @instance
+ * @memberof Chart
+ * @param {string|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
+ * @returns {Array} Data objects
+ * @example
+ * // Get only data1 data
+ * chart.data("data1");
+ * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
+ *
+ * // Get data1 and data2 data
+ * chart.data(["data1", "data2"]);
+ *
+ * // Get all data
+ * chart.data();
+ */
+function data$2(targetIds) {
+    var targets = this.internal.data.targets;
+    if (!isUndefined(targetIds)) {
+        var ids_1 = isArray(targetIds) ? targetIds : [targetIds];
+        return targets.filter(function (t) { return ids_1.some(function (v) { return v === t.id; }); });
+    }
+    return targets;
+}
+extend(data$2, {
+    /**
+     * Get data shown in the chart.
+     * @function data․shown
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
+     * @returns {Array} Data objects
+     * @example
+     * // Get shown data by filtering to include only data1 data
+     * chart.data.shown("data1");
+     * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
+     *
+     * // Get shown data by filtering to include data1 and data2 data
+     * chart.data.shown(["data1", "data2"]);
+     *
+     * // Get all shown data
+     * chart.data.shown();
+     */
+    shown: function (targetIds) {
+        return this.internal.filterTargetsToShow(this.data(targetIds));
+    },
+    /**
+     * Get values of the data loaded in the chart.
+     * @function data․values
+     * @instance
+     * @memberof Chart
+     * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
+     * @param {boolean} [flat=true] Get flatten values
+     * @returns {Array} Data values
+     * @example
+     * // Get data1 values
+     * chart.data.values("data1");
+     * // --> [10, 20, 30, 40]
+     */
+    values: function (targetIds, flat) {
+        if (flat === void 0) { flat = true; }
+        var values = null;
+        if (targetIds) {
+            var targets = this.data(targetIds);
+            if (targets && isArray(targets)) {
+                values = [];
+                targets.forEach(function (v) {
+                    var dataValue = v.values.map(function (d) { return d.value; });
+                    flat ? (values = values.concat(dataValue)) : values.push(dataValue);
+                });
+            }
+        }
+        return values;
+    },
+    /**
+     * Get and set names of the data loaded in the chart.
+     * @function data․names
+     * @instance
+     * @memberof Chart
+     * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
+     * @returns {object} Corresponding names according its key value, if specified names values.
+     * @example
+     * // Get current names
+     * chart.data.names();
+     * // --> {data1: "test1", data2: "test2"}
+     *
+     * // Update names
+     * chart.data.names({
+     *  data1: "New Name 1",
+     *  data2: "New Name 2"
+     *});
+     */
+    names: function (names) {
+        var $$ = this.internal;
+        // reset existing legend item dimension cache data
+        $$.cache.remove(KEY.legendItemTextBox);
+        return $$.updateDataAttributes("names", names);
+    },
+    /**
+     * Get and set colors of the data loaded in the chart.
+     * @function data․colors
+     * @instance
+     * @memberof Chart
+     * @param {object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
+     * @returns {object} Corresponding data color value according its key value.
+     * @example
+     * // Get current colors
+     * chart.data.colors();
+     * // --> {data1: "#00c73c", data2: "#fa7171"}
+     *
+     * // Update colors
+     * chart.data.colors({
+     *  data1: "#FFFFFF",
+     *  data2: "#000000"
+     * });
+     */
+    colors: function (colors) {
+        return this.internal.updateDataAttributes("colors", colors);
+    },
+    /**
+     * Get and set axes of the data loaded in the chart.
+     * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
+     * @function data․axes
+     * @instance
+     * @memberof Chart
+     * @param {object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
+     * @returns {object} Corresponding axes value for data, if specified axes value.
+     * @example
+     * // Get current axes
+     * chart.data.axes();
+     * // --> {data1: "y"}
+     *
+     * // Update axes
+     * chart.data.axes({
+     *  data1: "y",
+     *  data2: "y2"
+     * });
+     */
+    axes: function (axes) {
+        return this.internal.updateDataAttributes("axes", axes);
+    },
+    /**
+     * Get the minimum data value bound to the chart
+     * @function data․min
+     * @instance
+     * @memberof Chart
+     * @returns {Array} Data objects
+     * @example
+     * // Get current axes
+     * chart.data.min();
+     * // --> [{x: 0, value: 30, id: "data1", index: 0}, ...]
+     */
+    min: function () {
+        return this.internal.getMinMaxData().min;
+    },
+    /**
+     * Get the maximum data value bound to the chart
+     * @function data․max
+     * @instance
+     * @memberof Chart
+     * @returns {Array} Data objects
+     * @example
+     * // Get current axes
+     * chart.data.max();
+     * // --> [{x: 3, value: 400, id: "data1", index: 3}, ...]
+     */
+    max: function () {
+        return this.internal.getMinMaxData().max;
+    }
+});
+var apiData = { data: data$2 };
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Encode to base64
+ * @param {string} str string to be encoded
+ * @returns {string}
+ * @private
+ * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
+ */
+var b64EncodeUnicode = function (str) { return btoa(encodeURIComponent(str)
+    .replace(/%([0-9A-F]{2})/g, function (match, p) { return String.fromCharCode(Number("0x" + p)); })); };
+/**
+ * Convert svg node to data url
+ * @param {HTMLElement} node target node
+ * @param {object} size object containing {width, height}
+ * @returns {string}
+ * @private
+ */
+function nodeToSvgDataUrl(node, size) {
+    var serializer = new XMLSerializer();
+    var clone = node.cloneNode(true);
+    var cssText = getCssRules(toArray(doc.styleSheets))
+        .filter(function (r) { return r.cssText; })
+        .map(function (r) { return r.cssText; });
+    clone.setAttribute("xmlns", namespaces.xhtml);
+    var nodeXml = serializer.serializeToString(clone);
+    // escape css for XML
+    var style = doc.createElement("style");
+    style.appendChild(doc.createTextNode(cssText.join("\n")));
+    var styleXml = serializer.serializeToString(style);
+    // foreignObject not supported in IE11 and below
+    // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
+    var dataStr = ("<svg xmlns=\"" + namespaces.svg + "\" width=\"" + size.width + "\" height=\"" + size.height + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>")
+        .replace("/\n/g", "%0A");
+    return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
+}
+var apiExport = {
+    /**
+     * Export chart as an image.
+     * - **NOTE:**
+     *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
+     *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
+     * @function export
+     * @instance
+     * @memberof Chart
+     * @param {string} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
+     * @param {Function} [callback] The callback to be invoked when export is ready.
+     * @returns {string} dataURI
+     * @example
+     *  chart.export();
+     *  // --> "data:image/svg+xml;base64,PHN..."
+     *
+     *  // Initialize the download automatically
+     *  chart.export("image/png", dataUrl => {
+     *     const link = document.createElement("a");
+     *
+     *     link.download = `${Date.now()}.png`;
+     *     link.href = dataUrl;
+     *     link.innerHTML = "Download chart as image";
+     *
+     *     document.body.appendChild(link);
+     *  });
+     */
+    "export": function (mimeType, callback) {
+        var _this = this;
+        var $$ = this.internal;
+        var state = $$.state, chart = $$.$el.chart;
+        var _a = state.current, width = _a.width, height = _a.height;
+        var svgDataUrl = nodeToSvgDataUrl(chart.node(), { width: width, height: height });
+        if (callback && isFunction(callback)) {
+            var img_1 = new Image();
+            img_1.crossOrigin = "Anonymous";
+            img_1.onload = function () {
+                var canvas = doc.createElement("canvas");
+                var ctx = canvas.getContext("2d");
+                canvas.width = width;
+                canvas.height = height;
+                ctx.drawImage(img_1, 0, 0);
+                callback.bind(_this)(canvas.toDataURL(mimeType));
+            };
+            img_1.src = svgDataUrl;
+        }
+        return svgDataUrl;
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var apiFocus = {
+    /**
+     * This API highlights specified targets and fade out the others.<br><br>
+     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
+     * @function focus
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} targetIdsValue Target ids to be highlighted.
+     * @example
+     *  // data1 will be highlighted and the others will be faded out
+     *  chart.focus("data1");
+     *
+     * // data1 and data2 will be highlighted and the others will be faded out
+     * chart.focus(["data1", "data2"]);
+     *
+     * // all targets will be highlighted
+     * chart.focus();
+     */
+    focus: function (targetIdsValue) {
+        var $$ = this.internal;
+        var state = $$.state;
+        var targetIds = $$.mapToTargetIds(targetIdsValue);
+        var candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
+        this.revert();
+        this.defocus();
+        candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
+        if ($$.hasArcType() && !state.hasRadar) {
+            $$.expandArc(targetIds);
+            $$.hasType("gauge") &&
+                $$.markOverlapped(targetIdsValue, $$, "." + CLASS.gaugeValue);
+        }
+        $$.toggleFocusLegend(targetIds, true);
+        state.focusedTargetIds = targetIds;
+        state.defocusedTargetIds = state.defocusedTargetIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
+    },
+    /**
+     * This API fades out specified targets and reverts the others.<br><br>
+     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
+     * @function defocus
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} targetIdsValue Target ids to be faded out.
+     * @example
+     * // data1 will be faded out and the others will be reverted.
+     * chart.defocus("data1");
+     *
+     * // data1 and data2 will be faded out and the others will be reverted.
+     * chart.defocus(["data1", "data2"]);
+     *
+     * // all targets will be faded out.
+     * chart.defocus();
+     */
+    defocus: function (targetIdsValue) {
+        var $$ = this.internal;
+        var state = $$.state;
+        var targetIds = $$.mapToTargetIds(targetIdsValue);
+        var candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
+        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
+        if ($$.hasArcType()) {
+            $$.unexpandArc(targetIds);
+            $$.hasType("gauge") &&
+                $$.undoMarkOverlapped($$, "." + CLASS.gaugeValue);
+        }
+        $$.toggleFocusLegend(targetIds, false);
+        state.focusedTargetIds = state.focusedTargetIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
+        state.defocusedTargetIds = targetIds;
+    },
+    /**
+     * This API reverts specified targets.<br><br>
+     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
+     * @function revert
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} targetIdsValue Target ids to be reverted
+     * @example
+     * // data1 will be reverted.
+     * chart.revert("data1");
+     *
+     * // data1 and data2 will be reverted.
+     * chart.revert(["data1", "data2"]);
+     *
+     * // all targets will be reverted.
+     * chart.revert();
+     */
+    revert: function (targetIdsValue) {
+        var $$ = this.internal;
+        var config = $$.config, state = $$.state, $el = $$.$el;
+        var targetIds = $$.mapToTargetIds(targetIdsValue);
+        var candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
+        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
+        $$.hasArcType() && $$.unexpandArc(targetIds);
+        if (config.legend_show) {
+            $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
+            $el.legend.selectAll($$.selectorLegends(targetIds))
+                .filter(function () {
+                return select(this).classed(CLASS.legendItemFocused);
+            })
+                .classed(CLASS.legendItemFocused, false);
+        }
+        state.focusedTargetIds = [];
+        state.defocusedTargetIds = [];
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Define legend
+ * @ignore
+ */
+var legend$2 = {
+    /**
+     * Show legend for each target.
+     * @function legend․show
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} targetIds
+     * - If targetIds is given, specified target's legend will be shown.
+     * - If only one target is the candidate, String can be passed.
+     * - If no argument is given, all of target's legend will be shown.
+     * @example
+     * // Show legend for data1.
+     * chart.legend.show("data1");
+     *
+     * // Show legend for data1 and data2.
+     * chart.legend.show(["data1", "data2"]);
+     *
+     * // Show all legend.
+     * chart.legend.show();
+     */
+    show: function (targetIds) {
+        var $$ = this.internal;
+        $$.showLegend($$.mapToTargetIds(targetIds));
+        $$.updateAndRedraw({ withLegend: true });
+    },
+    /**
+     * Hide legend for each target.
+     * @function legend․hide
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} targetIds
+     * - If targetIds is given, specified target's legend will be hidden.
+     * - If only one target is the candidate, String can be passed.
+     * - If no argument is given, all of target's legend will be hidden.
+     * @example
+     * // Hide legend for data1.
+     * chart.legend.hide("data1");
+     *
+     * // Hide legend for data1 and data2.
+     * chart.legend.hide(["data1", "data2"]);
+     *
+     * // Hide all legend.
+     * chart.legend.hide();
+     */
+    hide: function (targetIds) {
+        var $$ = this.internal;
+        $$.hideLegend($$.mapToTargetIds(targetIds));
+        $$.updateAndRedraw({ withLegend: true });
+    }
+};
+var apiLegend = { legend: legend$2 };
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var apiLoad = {
+    /**
+     * Load data to the chart.<br><br>
+     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+     * - <b>Note:</b>
+     *   - unload should be used if some data needs to be unloaded simultaneously.
+     *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
+     *   - done will be called after data loaded, but it's not after rendering.
+     *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
+     * @function load
+     * @instance
+     * @memberof Chart
+     * @param {object} args The object can consist with following members:<br>
+     *
+     *    | Key | Description |
+     *    | --- | --- |
+     *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
+     *    | data | Data objects to be loaded. Checkout the example. |
+     *    | names | Same as data.names() |
+     *    | xs | Same as data.xs option  |
+     *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
+     *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
+     *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
+     *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
+     *    | headers |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
+     *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
+     *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
+     *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
+     *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
+     *    | done | The specified function will be called after data loaded.|
+     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
+     * @example
+     * // Load data1 and unload data2 and data3
+     * chart.load({
+     *     columns: [
+     *        ["data1", 100, 200, 150, ...],
+     *        ...
+     *    ],
+     *    unload: ["data2", "data3"],
+     *    url: "...",
+     *    done: function() { ... }
+     * });
+     * @example
+     * // myAPI.json
+     * // {
+     * //   "data1": [220, 240, 270, 250, 280],
+     * //   "data2": [180, 150, 300, 70, 120]
+     * // }
+     *
+     * chart.load({
+     *     url: './data/myAPI.json',
+     *     mimeType: "json",
+     *
+     *     // set request header if is needed
+     *     headers: {
+     *       "Content-Type": "text/json"
+     *     }
+     * });
+     * @example
+     * chart.load({
+     *     data: [
+     *       // equivalent as: columns: [["data1", 30, 200, 100]]
+     *       {"data1": 30}, {"data1": 200}, {"data1": 100}
+     *
+     *       // or
+     *       // equivalent as: columns: [["data1", 10, 20], ["data2", 13, 30]]
+     *       // {"data1": 10, "data2": 13}, {"data1": 20, "data2": 30}}
+     *     ]
+     * });
+     */
+    load: function (args) {
+        var $$ = this.internal;
+        var config = $$.config;
+        // update xs if specified
+        args.xs && $$.addXs(args.xs);
+        // update names if exists
+        "names" in args && this.data.names(args.names);
+        // update classes if exists
+        "classes" in args && Object.keys(args.classes).forEach(function (id) {
+            config.data_classes[id] = args.classes[id];
+        });
+        // update categories if exists
+        if ("categories" in args && $$.axis.isCategorized()) {
+            config.axis_x_categories = args.categories;
+        }
+        // update axes if exists
+        "axes" in args && Object.keys(args.axes).forEach(function (id) {
+            config.data_axes[id] = args.axes[id];
+        });
+        // update colors if exists
+        "colors" in args && Object.keys(args.colors).forEach(function (id) {
+            config.data_colors[id] = args.colors[id];
+        });
+        // unload if needed
+        if ("unload" in args && args.unload !== false) {
+            // TODO: do not unload if target will load (included in url/rows/columns)
+            $$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), function () {
+                return $$.loadFromArgs(args);
+            });
+        }
+        else {
+            $$.loadFromArgs(args);
+        }
+    },
+    /**
+     * Unload data to the chart.<br><br>
+     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
+     * - <b>Note:</b>
+     * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.<br>
+     * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
+     * @function unload
+     * @instance
+     * @memberof Chart
+     * @param {object} argsValue
+     *  | key | Type | Description |
+     *  | --- | --- | --- |
+     *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
+     *  | done | Fuction | Callback after data is unloaded. |
+     * @example
+     *  // Unload data2 and data3
+     *  chart.unload({
+     *    ids: ["data2", "data3"],
+     *    done: function() {
+     *       // called after the unloaded
+     *    }
+     *  });
+     */
+    unload: function (argsValue) {
+        var _this = this;
+        var $$ = this.internal;
+        var args = argsValue || {};
+        if (isArray(args)) {
+            args = { ids: args };
+        }
+        else if (isString(args)) {
+            args = { ids: [args] };
+        }
+        var ids = $$.mapToTargetIds(args.ids);
+        $$.unload(ids, function () {
+            $$.redraw({
+                withUpdateOrgXDomain: true,
+                withUpdateXDomain: true,
+                withLegend: true
+            });
+            $$.cache.remove(ids);
+            args.done && args.done.call(_this);
+        });
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Show/Hide data series
+ * @param {boolean} show Show or hide
+ * @param {Array} targetIdsValue Target id values
+ * @param {object} options Options
+ * @private
+ */
+function showHide(show, targetIdsValue, options) {
+    var $$ = this.internal;
+    var targetIds = $$.mapToTargetIds(targetIdsValue);
+    $$.state.toggling = true;
+    $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
+    var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
+    var opacity = show ? "1" : "0";
+    targets.transition()
+        .style("opacity", opacity, "important")
+        .call(endall, function () {
+        targets.style("opacity", null).style("opacity", opacity);
+    });
+    options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds);
+    $$.redraw({
+        withUpdateOrgXDomain: true,
+        withUpdateXDomain: true,
+        withLegend: true
+    });
+    $$.state.toggling = false;
+}
+var apiShow = {
+    /**
+     * Show data series on chart
+     * @function show
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} [targetIdsValue] The target id value.
+     * @param {object} [options] The object can consist with following members:<br>
+     *
+     *    | Key | Type | default | Description |
+     *    | --- | --- | --- | --- |
+     *    | withLegend | boolean | false | whether or not display legend |
+     *
+     * @example
+     * // show 'data1'
+     * chart.show("data1");
+     *
+     * // show 'data1' and 'data3'
+     * chart.show(["data1", "data3"]);
+     */
+    show: function (targetIdsValue, options) {
+        if (options === void 0) { options = {}; }
+        showHide.call(this, true, targetIdsValue, options);
+    },
+    /**
+     * Hide data series from chart
+     * @function hide
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} [targetIdsValue] The target id value.
+     * @param {object} [options] The object can consist with following members:<br>
+     *
+     *    | Key | Type | default | Description |
+     *    | --- | --- | --- | --- |
+     *    | withLegend | boolean | false | whether or not display legend |
+     *
+     * @example
+     * // hide 'data1'
+     * chart.hide("data1");
+     *
+     * // hide 'data1' and 'data3'
+     * chart.hide(["data1", "data3"]);
+     */
+    hide: function (targetIdsValue, options) {
+        if (options === void 0) { options = {}; }
+        showHide.call(this, false, targetIdsValue, options);
+    },
+    /**
+     * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
+     * @function toggle
+     * @instance
+     * @memberof Chart
+     * @param {string|Array} [targetIds] The target id value.
+     * @param {object} [options] The object can consist with following members:<br>
+     *
+     *    | Key | Type | default | Description |
+     *    | --- | --- | --- | --- |
+     *    | withLegend | boolean | false | whether or not display legend |
+     *
+     * @example
+     * // toggle 'data1'
+     * chart.toggle("data1");
+     *
+     * // toggle 'data1' and 'data3'
+     * chart.toggle(["data1", "data3"]);
+     */
+    toggle: function (targetIds, options) {
+        var _this = this;
+        if (options === void 0) { options = {}; }
+        var $$ = this.internal;
+        var targets = { show: [], hide: [] };
+        // sort show & hide target ids
+        $$.mapToTargetIds(targetIds)
+            .forEach(function (id) { return targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id); });
+        // perform show & hide task separately
+        // https://github.com/naver/billboard.js/issues/454
+        targets.show.length && this.show(targets.show, options);
+        targets.hide.length && setTimeout(function () { return _this.hide(targets.hide, options); }, 0);
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Define tooltip
+ * @ignore
+ */
+var tooltip$2 = {
+    /**
+     * Show tooltip
+     * @function tooltip․show
+     * @instance
+     * @memberof Chart
+     * @param {object} args The object can consist with following members:<br>
+     *
+     *    | Key | Type | Description |
+     *    | --- | --- | --- |
+     *    | index | Number | Determine focus by index |
+     *    | x | Number &vert; Date | Determine focus by x Axis index |
+     *    | mouse | Array | Determine x and y coordinate value relative the targeted '.bb-event-rect' x Axis.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
+     *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {number &verbar; Date}: x Axis value<br>- index {number}: x Axis index (useless for data.xs)<br>- id {string}: data id<br>- value {number}: The corresponding value for tooltip. |
+     *
+     * @example
+     *  // show the 2nd x Axis coordinate tooltip
+     *  chart.tooltip.show({
+     *    index: 1
+     *  });
+     *
+     *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate of '.bb-event-rect' of the x Axis.
+     *  chart.tooltip.show({
+     *    x: 2,
+     *    mouse: [50, 100]
+     *  });
+     *
+     *  // show tooltip for timeseries x axis
+     *  chart.tooltip.show({
+     *    x: new Date("2018-01-02 00:00")
+     *  });
+     *
+     *  // when data.xs is used
+     *  chart.tooltip.show({
+     *    data: {
+     *        x: 3,  // x Axis value
+     *        id: "data1",  // data id
+     *        value: 500  // data value
+     *    }
+     *  });
+     *
+     *  // when data.xs isn't used, but tooltip.grouped=false is set
+     *  chart.tooltip.show({
+     *    data: {
+     *        index: 3,  // or 'x' key value
+     *        id: "data1",  // data id
+     *        value: 500  // data value
+     *    }
+     *  });
+     */
+    show: function (args) {
+        var $$ = this.internal;
+        var config = $$.config, inputType = $$.state.inputType;
+        var index;
+        var mouse;
+        // determine mouse position on the chart
+        if (args.mouse) {
+            mouse = args.mouse;
+        }
+        // determine focus data
+        if (args.data) {
+            var data = args.data;
+            var y = $$.getYScaleById(data.id)(data.value);
+            if ($$.isMultipleX()) {
+                // if multiple xs, target point will be determined by mouse
+                mouse = [$$.scale.x(data.x), y];
+            }
+            else {
+                if (!config.tooltip_grouped) {
+                    mouse = [0, y];
+                }
+                index = isValue(data.index) ? data.index : $$.getIndexByX(data.x);
+            }
+        }
+        else if (isDefined(args.x)) {
+            index = $$.getIndexByX(args.x);
+        }
+        else if (isDefined(args.index)) {
+            index = args.index;
+        }
+        // emulate events to show
+        (inputType === "mouse" ?
+            ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
+            $$.dispatchEvent(eventName, index, mouse);
+        });
+    },
+    /**
+     * Hide tooltip
+     * @function tooltip․hide
+     * @instance
+     * @memberof Chart
+     */
+    hide: function () {
+        var $$ = this.internal;
+        // reset last touch point index
+        $$.inputType === "touch" && $$.callOverOutForTouch();
+        $$.hideTooltip(true);
+        $$.hideGridFocus();
+        $$.unexpandCircles();
+        $$.unexpandBars();
+    }
+};
+var apiTooltip = { tooltip: tooltip$2 };
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+/**
+ * Main chart class.
+ * - Note: Instantiated via `bb.generate()`.
+ * @class Chart
+ * @example
+ * var chart = bb.generate({
+ *  data: {
+ *    columns: [
+ *	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
+ * 	    ["count1", 11, 8, 7, 6, 5 ],
+ *	    ["count2", 9, 3, 6, 2, 8 ]
+ *   ]}
+ * }
+ * @see {@link bb.generate} for the initialization.
+ */
+/**
+ * Access instance's primary node elements
+ * @member {object} $
+ * @property {object} $ Access instance's primary node elements
+ * @property {d3.selection} $.chart Wrapper element
+ * @property {d3.selection} $.svg Main svg element
+ * @property {d3.selection} $.defs Definition element
+ * @property {d3.selection} $.main Main grouping element
+ * @property {d3.selection} $.tooltip Tooltip element
+ * @property {d3.selection} $.legend Legend element
+ * @property {d3.selection} $.title Title element
+ * @property {d3.selection} $.grid Grid element
+ * @property {d3.selection} $.arc Arc element
+ * @property {d3.selection} $.circles Data point circle elements
+ * @property {object} $.bar Bar element object
+ * @property {d3.selection} $.bar.bars Bar elements
+ * @property {object} $.line Line element object
+ * @property {d3.selection} $.line.lines Line elements
+ * @property {d3.selection} $.line.areas Areas elements
+ * @property {object} $.text Text element object
+ * @property {d3.selection} $.text.texts Data label text elements
+ * @memberof Chart
+ * @example
+ * var chart = bb.generate({ ... });
+ *
+ * chart.$.chart; // wrapper element
+ * chart.$.line.circles;  // all data point circle elements
+ */
+/**
+ * Plugin instance array
+ * @member {Array} plugins
+ * @memberof Chart
+ * @example
+ *  var chart = bb.generate({
+ *     ...
+ *     plugins: [
+ *        new bb.plugin.stanford({ ... }),
+ *        new PluginA()
+ *     ]
+ *  });
+ *
+ *  chart.plugins; // [Stanford, PluginA] - instance array
+ */
+var Chart = /** @class */ (function () {
+    function Chart(options) {
+        this.plugins = [];
+        var ctx = this;
+        // const {type, types} = options.data;
+        // let isArc = false;
+        // if (type) {
+        // 	isArc = TYPES.Arc.indexOf(type) > -1;
+        // } else if (types) {
+        // 	for (const x in types) {
+        // 		if (TYPES.Arc.indexOf(types[x]) > -1) {
+        // 			isArc = true;
+        // 			break;
+        // 		}
+        // 	}
+        // }
+        var $$ = new ChartInternal(ctx);
+        this.internal = $$;
+        // bind to namespaced APIs
+        (function bindThis(fn, target, argThis) {
+            Object.keys(fn).forEach(function (key) {
+                var isFunc = isFunction(fn[key]);
+                var isChild = target !== argThis;
+                var hasChild = Object.keys(fn[key]).length > 0;
+                if (isFunc && ((!isChild && hasChild) || isChild)) {
+                    target[key] = fn[key].bind(argThis);
+                }
+                else if (!isFunc) {
+                    target[key] = {};
+                }
+                hasChild && bindThis(fn[key], target[key], argThis);
+            });
+        })(Chart.prototype, this, this);
+        loadConfig.call($$, options);
+        $$.beforeInit();
+        $$.init();
+    }
+    return Chart;
+}());
+// extend common APIs as part of Chart class
+extend(Chart.prototype, [
+    apiChart,
+    apiColor,
+    apiData,
+    apiExport,
+    apiFocus,
+    apiLegend,
+    apiLoad,
+    apiShow,
+    apiTooltip
+]);
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
  */
 /**
  * Set the min/max value
@@ -12020,6 +12522,1296 @@ var apiZoom = {
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+var AxisRendererHelper = /** @class */ (function () {
+    function AxisRendererHelper(owner) {
+        var scale = scaleLinear();
+        var config = owner.config, params = owner.params;
+        this.owner = owner;
+        this.config = config;
+        this.scale = scale;
+        if (config.noTransition || !params.config.transition_duration) {
+            config.withoutTransition = true;
+        }
+        // set range
+        config.range = this.scaleExtent((params.orgXScale || scale).range());
+    }
+    /**
+     * Compute a character dimension
+     * @param {d3.selection} node <g class=tick> node
+     * @returns {{w: number, h: number}}
+     * @private
+     */
+    AxisRendererHelper.getSizeFor1Char = function (node) {
+        // default size for one character
+        var size = {
+            w: 5.5,
+            h: 11.5
+        };
+        !node.empty() && node.select("text")
+            .text("0")
+            .call(function (el) {
+            try {
+                var _a = el.node().getBBox(), width = _a.width, height = _a.height;
+                if (width && height) {
+                    size.w = width;
+                    size.h = height;
+                }
+            }
+            catch (e) {
+            }
+            finally {
+                el.text("");
+            }
+        });
+        this.getSizeFor1Char = function () { return size; };
+        return size;
+    };
+    /**
+     * Get tick transform setter function
+     * @param {string} id Axis id
+     * @returns {Function} transfrom setter function
+     * @private
+     */
+    AxisRendererHelper.prototype.getTickTransformSetter = function (id) {
+        var config = this.config;
+        var fn = id === "x" ?
+            function (value) { return "translate(" + (value + config.tickOffset) + ",0)"; } :
+            function (value) { return "translate(0," + value + ")"; };
+        return function (selection, scale) {
+            selection.attr("transform", function (d) { return fn(Math.ceil(scale(d))); });
+        };
+    };
+    AxisRendererHelper.prototype.scaleExtent = function (domain) {
+        var start = domain[0];
+        var stop = domain[domain.length - 1];
+        return start < stop ? [start, stop] : [stop, start];
+    };
+    AxisRendererHelper.prototype.generateTicks = function (scale, isYAxes) {
+        var tickStepSize = this.owner.params.tickStepSize;
+        var ticks = [];
+        // When 'axis[y|y2].tick.stepSize' option is set
+        if (isYAxes && tickStepSize) {
+            var _a = scale.domain(), start = _a[0], end = _a[1];
+            var interval = start;
+            while (interval <= end) {
+                ticks.push(interval);
+                interval += tickStepSize;
+            }
+        }
+        else if (scale.ticks) {
+            ticks = scale.ticks.apply(scale, (this.config.tickArguments || [])).map(function (v) { return (
+            // round the tick value if is number
+            (isString(v) && isNumber(v) && !isNaN(v) &&
+                Math.round(v * 10) / 10) || v); });
+        }
+        else {
+            var domain = scale.domain();
+            for (var i = Math.ceil(domain[0]); i < domain[1]; i++) {
+                ticks.push(i);
+            }
+            if (ticks.length > 0 && ticks[0] > 0) {
+                ticks.unshift(ticks[0] - (ticks[1] - ticks[0]));
+            }
+        }
+        return ticks;
+    };
+    AxisRendererHelper.prototype.copyScale = function () {
+        var newScale = this.scale.copy();
+        if (!newScale.domain().length) {
+            newScale.domain(this.scale.domain());
+        }
+        return newScale;
+    };
+    AxisRendererHelper.prototype.textFormatted = function (v) {
+        var tickFormat = this.config.tickFormat;
+        // to round float numbers from 'binary floating point'
+        // https://en.wikipedia.org/wiki/Double-precision_floating-point_format
+        // https://stackoverflow.com/questions/17849101/laymans-explanation-for-why-javascript-has-weird-floating-math-ieee-754-stand
+        var value = /\d+\.\d+0{5,}\d$/.test(v) ? +String(v).replace(/0+\d$/, "") : v;
+        var formatted = tickFormat ? tickFormat(value) : value;
+        return isDefined(formatted) ? formatted : "";
+    };
+    AxisRendererHelper.prototype.transitionise = function (selection) {
+        var config = this.config;
+        return config.withoutTransition ?
+            selection.interrupt() : selection.transition(config.transition);
+    };
+    return AxisRendererHelper;
+}());
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ * @ignore
+ */
+var AxisRenderer = /** @class */ (function () {
+    function AxisRenderer(params) {
+        if (params === void 0) { params = {}; }
+        var config = {
+            innerTickSize: 6,
+            outerTickSize: params.outerTick ? 6 : 0,
+            orient: "bottom",
+            range: [],
+            tickArguments: null,
+            tickCentered: null,
+            tickCulling: true,
+            tickFormat: null,
+            tickLength: 9,
+            tickOffset: 0,
+            tickPadding: 3,
+            tickValues: null,
+            transition: null,
+            noTransition: params.noTransition
+        };
+        config.tickLength = Math.max(config.innerTickSize, 0) + config.tickPadding;
+        this.config = config;
+        this.params = params;
+        this.helper = new AxisRendererHelper(this);
+    }
+    /**
+     * Create axis element
+     * @param {d3.selection} g Axis selection
+     * @private
+     */
+    AxisRenderer.prototype.create = function (g) {
+        var ctx = this;
+        var _a = this, config = _a.config, helper = _a.helper, params = _a.params;
+        var scale = helper.scale;
+        var orient = config.orient;
+        var splitTickText = this.splitTickText.bind(this);
+        var isLeftRight = /^(left|right)$/.test(orient);
+        var isTopBottom = /^(top|bottom)$/.test(orient);
+        // line/text enter and path update
+        var tickTransform = helper.getTickTransformSetter(isTopBottom ? "x" : "y");
+        var axisPx = tickTransform === helper.axisX ? "y" : "x";
+        var sign = /^(top|left)$/.test(orient) ? -1 : 1;
+        // tick text helpers
+        var rotate = params.tickTextRotate;
+        this.config.range = scale.rangeExtent ?
+            scale.rangeExtent() :
+            helper.scaleExtent((params.orgXScale || scale).range());
+        var innerTickSize = config.innerTickSize, tickLength = config.tickLength, range = config.range;
+        // // get the axis' tick position configuration
+        var id = params.id;
+        var tickTextPos = id && /^(x|y|y2)$/.test(id) ?
+            params.config["axis_" + id + "_tick_text_position"] : { x: 0, y: 0 };
+        // tick visiblity
+        var prefix = id === "subX" ? "subchart_axis_x" : "axis_" + id;
+        var axisShow = params.config[prefix + "_show"];
+        var tickShow = {
+            tick: axisShow ? params.config[prefix + "_tick_show"] : false,
+            text: axisShow ? params.config[prefix + "_tick_text_show"] : false
+        };
+        var $g;
+        g.each(function () {
+            var g = select(this);
+            var scale0 = this.__chart__ || scale;
+            var scale1 = helper.copyScale();
+            $g = g;
+            this.__chart__ = scale1;
+            config.tickOffset = params.isCategory ?
+                Math.ceil((scale1(1) - scale1(0)) / 2) : 0;
+            // update selection - data join
+            var path = g.selectAll(".domain").data([0]);
+            // enter + update selection
+            path.enter().append("path")
+                .attr("class", "domain")
+                .merge(helper.transitionise(path))
+                .attr("d", function () {
+                var outerTickSized = config.outerTickSize * sign;
+                return isTopBottom ?
+                    "M" + range[0] + "," + outerTickSized + "V0H" + range[1] + "V" + outerTickSized :
+                    "M" + outerTickSized + "," + range[0] + "H0V" + range[1] + "H" + outerTickSized;
+            });
+            if (tickShow.tick || tickShow.text) {
+                // count of tick data in array
+                var ticks_1 = config.tickValues || helper.generateTicks(scale1, isLeftRight);
+                // update selection
+                var tick = g.selectAll(".tick")
+                    .data(ticks_1, scale1);
+                // enter selection
+                var tickEnter = tick
+                    .enter()
+                    .insert("g", ".domain")
+                    .attr("class", "tick")
+                    .style("opacity", "1");
+                // MEMO: No exit transition. The reason is this transition affects max tick width calculation because old tick will be included in the ticks.
+                var tickExit = tick.exit().remove();
+                // enter + update selection
+                tick = tickEnter.merge(tick);
+                tickShow.tick && tickEnter.append("line");
+                tickShow.text && tickEnter.append("text");
+                var sizeFor1Char_1 = AxisRendererHelper.getSizeFor1Char(tick);
+                var counts_1 = [];
+                var tspan = tick.select("text")
+                    .selectAll("tspan")
+                    .data(function (d, index) {
+                    var split = params.tickMultiline ?
+                        splitTickText(d, scale1, ticks_1, isLeftRight, sizeFor1Char_1.w) : (isArray(helper.textFormatted(d)) ?
+                        helper.textFormatted(d).concat() : [helper.textFormatted(d)]);
+                    counts_1[index] = split.length;
+                    return split.map(function (splitted) { return ({ index: index, splitted: splitted }); });
+                });
+                tspan.exit().remove();
+                tspan = tspan
+                    .enter()
+                    .append("tspan")
+                    .merge(tspan)
+                    .text(function (d) { return d.splitted; });
+                // set <tspan>'s position
+                tspan
+                    .attr("x", isTopBottom ? 0 : tickLength * sign)
+                    .attr("dx", (function () {
+                    var dx = 0;
+                    if (/(top|bottom)/.test(orient) && rotate) {
+                        dx = 8 * Math.sin(Math.PI * (rotate / 180)) * (orient === "top" ? -1 : 1);
+                    }
+                    return dx + (tickTextPos.x || 0);
+                })())
+                    .attr("dy", function (d, i) {
+                    var defValue = ".71em";
+                    var dy = 0;
+                    if (orient !== "top") {
+                        dy = sizeFor1Char_1.h;
+                        if (i === 0) {
+                            dy = isLeftRight ? -((counts_1[d.index] - 1) * (sizeFor1Char_1.h / 2) - 3) :
+                                (tickTextPos.y === 0 ? defValue : 0);
+                        }
+                    }
+                    return isNumber(dy) && tickTextPos.y ?
+                        dy + tickTextPos.y : dy || defValue;
+                });
+                var lineUpdate = tick.select("line");
+                var textUpdate = tick.select("text");
+                tickEnter.select("line").attr(axisPx + "2", innerTickSize * sign);
+                tickEnter.select("text").attr(axisPx, tickLength * sign);
+                ctx.setTickLineTextPosition(lineUpdate, textUpdate);
+                // Append <title> for tooltip display
+                if (params.tickTitle) {
+                    var title = textUpdate.select("title");
+                    (title.empty() ? textUpdate.append("title") : title)
+                        .text(function (index) { return params.tickTitle[index]; });
+                }
+                if (scale1.bandwidth) {
+                    var x_1 = scale1;
+                    var dx_1 = x_1.bandwidth() / 2;
+                    scale0 = function (d) { return x_1(d) + dx_1; };
+                    scale1 = scale0;
+                }
+                else if (scale0.bandwidth) {
+                    scale0 = scale1;
+                }
+                else {
+                    tickTransform(tickExit, scale1);
+                }
+                tickTransform(tickEnter, scale0);
+                tickTransform(helper.transitionise(tick).style("opacity", "1"), scale1);
+            }
+        });
+        this.g = $g;
+    };
+    /**
+     * Get tick x/y coordinate
+     * @returns {{x: number, y: number}}
+     * @private
+     */
+    AxisRenderer.prototype.getTickXY = function () {
+        var config = this.config;
+        var pos = { x: 0, y: 0 };
+        if (this.params.isCategory) {
+            pos.x = config.tickCentered ? 0 : config.tickOffset;
+            pos.y = config.tickCentered ? config.tickOffset : 0;
+        }
+        return pos;
+    };
+    /**
+     * Get tick size
+     * @param {object} d data object
+     * @returns {number}
+     * @private
+     */
+    AxisRenderer.prototype.getTickSize = function (d) {
+        var scale = this.helper.scale;
+        var config = this.config;
+        var innerTickSize = config.innerTickSize, range = config.range;
+        var tickPosition = scale(d) +
+            (config.tickCentered ? 0 : config.tickOffset);
+        return range[0] < tickPosition && tickPosition < range[1] ? innerTickSize : 0;
+    };
+    /**
+     * Set tick's line & text position
+     * @param {d3.selection} lineUpdate Line selection
+     * @param {d3.selection} textUpdate Text selection
+     * @private
+     */
+    AxisRenderer.prototype.setTickLineTextPosition = function (lineUpdate, textUpdate) {
+        var tickPos = this.getTickXY();
+        var _a = this.config, innerTickSize = _a.innerTickSize, orient = _a.orient, tickLength = _a.tickLength, tickOffset = _a.tickOffset;
+        var rotate = this.params.tickTextRotate;
+        var textAnchorForText = function (r) {
+            var value = ["start", "end"];
+            orient === "top" && value.reverse();
+            return !r ? "middle" : (r > 0 ? value[0] : value[1]);
+        };
+        var textTransform = function (r) { return (r ? "rotate(" + r + ")" : null); };
+        var yForText = function (r) {
+            var r2 = r / (orient === "bottom" ? 15 : 23);
+            return r ? 11.5 - 2.5 * r2 * (r > 0 ? 1 : -1) : tickLength;
+        };
+        switch (orient) {
+            case "bottom":
+                lineUpdate
+                    .attr("x1", tickPos.x)
+                    .attr("x2", tickPos.x)
+                    .attr("y2", this.getTickSize.bind(this));
+                textUpdate
+                    .attr("x", 0)
+                    .attr("y", yForText(rotate))
+                    .style("text-anchor", textAnchorForText(rotate))
+                    .attr("transform", textTransform(rotate));
+                break;
+            case "top":
+                lineUpdate
+                    .attr("x2", 0)
+                    .attr("y2", -innerTickSize);
+                textUpdate
+                    .attr("x", 0)
+                    .attr("y", -yForText(rotate) * 2)
+                    .style("text-anchor", textAnchorForText(rotate))
+                    .attr("transform", textTransform(rotate));
+                break;
+            case "left":
+                lineUpdate
+                    .attr("x2", -innerTickSize)
+                    .attr("y1", tickPos.y)
+                    .attr("y2", tickPos.y);
+                textUpdate
+                    .attr("x", -tickLength)
+                    .attr("y", tickOffset)
+                    .style("text-anchor", "end");
+                break;
+            case "right":
+                lineUpdate
+                    .attr("x2", innerTickSize)
+                    .attr("y2", 0);
+                textUpdate
+                    .attr("x", tickLength)
+                    .attr("y", 0)
+                    .style("text-anchor", "start");
+        }
+    };
+    // this should be called only when category axis
+    AxisRenderer.prototype.splitTickText = function (d, scale, ticks, isLeftRight, charWidth) {
+        var params = this.params;
+        var tickText = this.helper.textFormatted(d);
+        var splitted = isString(tickText) && tickText.indexOf("\n") > -1 ?
+            tickText.split("\n") : [];
+        if (splitted.length) {
+            return splitted;
+        }
+        if (isArray(tickText)) {
+            return tickText;
+        }
+        var tickWidth = params.tickWidth;
+        if (!tickWidth || tickWidth <= 0) {
+            tickWidth = isLeftRight ? 95 : (params.isCategory ?
+                (Math.ceil(scale(ticks[1]) - scale(ticks[0])) - 12) : 110);
+        }
+        // split given text by tick width size
+        // eslint-disable-next-line
+        function split(splitted, text) {
+            var subtext;
+            var spaceIndex;
+            var textWidth;
+            for (var i = 1; i < text.length; i++) {
+                if (text.charAt(i) === " ") {
+                    spaceIndex = i;
+                }
+                subtext = text.substr(0, i + 1);
+                textWidth = charWidth * subtext.length;
+                // if text width gets over tick width, split by space index or current index
+                if (tickWidth < textWidth) {
+                    return split(splitted.concat(text.substr(0, spaceIndex || i)), text.slice(spaceIndex ? spaceIndex + 1 : i));
+                }
+            }
+            return splitted.concat(text);
+        }
+        return split(splitted, String(tickText));
+    };
+    AxisRenderer.prototype.scale = function (x) {
+        if (!arguments.length) {
+            return this.helper.scale;
+        }
+        this.helper.scale = x;
+        return this;
+    };
+    AxisRenderer.prototype.orient = function (x) {
+        if (!arguments.length) {
+            return this.config.orient;
+        }
+        this.config.orient = x in {
+            top: 1,
+            right: 1,
+            bottom: 1,
+            left: 1
+        } ? String(x) : "bottom";
+        return this;
+    };
+    AxisRenderer.prototype.tickFormat = function (format) {
+        var config = this.config;
+        if (!arguments.length) {
+            return config.tickFormat;
+        }
+        config.tickFormat = format;
+        return this;
+    };
+    AxisRenderer.prototype.tickCentered = function (isCentered) {
+        var config = this.config;
+        if (!arguments.length) {
+            return config.tickCentered;
+        }
+        config.tickCentered = isCentered;
+        return this;
+    };
+    /**
+     * Return tick's offset value.
+     * The value will be set for 'category' axis type.
+     * @returns {number}
+     * @private
+     */
+    AxisRenderer.prototype.tickOffset = function () {
+        return this.config.tickOffset;
+    };
+    /**
+     * Get tick interval count
+     * @private
+     * @param {number} size Total data size
+     * @returns {number}
+     */
+    AxisRenderer.prototype.tickInterval = function (size) {
+        var interval;
+        if (this.params.isCategory) {
+            interval = this.config.tickOffset * 2;
+        }
+        else {
+            var length_1 = this.g.select("path.domain")
+                .node()
+                .getTotalLength() - this.config.outerTickSize * 2;
+            interval = length_1 / (size || this.g.selectAll("line").size());
+        }
+        return interval === Infinity ? 0 : interval;
+    };
+    AxisRenderer.prototype.ticks = function () {
+        var args = [];
+        for (var _i = 0; _i < arguments.length; _i++) {
+            args[_i] = arguments[_i];
+        }
+        var config = this.config;
+        if (!args.length) {
+            return config.tickArguments;
+        }
+        config.tickArguments = toArray(args);
+        return this;
+    };
+    AxisRenderer.prototype.tickCulling = function (culling) {
+        var config = this.config;
+        if (!arguments.length) {
+            return config.tickCulling;
+        }
+        config.tickCulling = culling;
+        return this;
+    };
+    AxisRenderer.prototype.tickValues = function (x) {
+        var _this = this;
+        var config = this.config;
+        if (isFunction(x)) {
+            config.tickValues = function () { return x(_this.helper.scale.domain()); };
+        }
+        else {
+            if (!arguments.length) {
+                return config.tickValues;
+            }
+            config.tickValues = x;
+        }
+        return this;
+    };
+    AxisRenderer.prototype.setTransition = function (t) {
+        this.config.transition = t;
+        return this;
+    };
+    return AxisRenderer;
+}());
+
+var axis$2 = {
+    getAxisInstance: function () {
+        return this.axis || new Axis(this);
+    }
+};
+var Axis = /** @class */ (function () {
+    function Axis(owner) {
+        this.axesList = {};
+        this.tick = {
+            x: null, y: null, y2: null
+        };
+        this.xs = [];
+        this.orient = {
+            x: "bottom",
+            y: "left",
+            y2: "right",
+            subX: "bottom"
+        };
+        this.owner = owner;
+        this.setOrient();
+    }
+    Axis.prototype.getAxisClassName = function (id) {
+        return CLASS.axis + " " + CLASS["axis" + capitalize(id)];
+    };
+    Axis.prototype.isHorizontal = function ($$, forHorizontal) {
+        var isRotated = $$.config.axis_rotated;
+        return forHorizontal ? isRotated : !isRotated;
+    };
+    Axis.prototype.isCategorized = function () {
+        var _a = this.owner, config = _a.config, state = _a.state;
+        return config.axis_x_type.indexOf("category") >= 0 || state.hasRadar;
+    };
+    Axis.prototype.isCustomX = function () {
+        var config = this.owner.config;
+        return !this.isTimeSeries() && (config.data_x || notEmpty(config.data_xs));
+    };
+    Axis.prototype.isTimeSeries = function (id) {
+        if (id === void 0) { id = "x"; }
+        var config = this.owner.config;
+        return config["axis_" + id + "_type"] === "timeseries";
+    };
+    Axis.prototype.isTimeSeriesY = function () {
+        return this.isTimeSeries("y");
+    };
+    Axis.prototype.init = function () {
+        var _this = this;
+        var $$ = this.owner;
+        var config = $$.config, _a = $$.$el, main = _a.main, axis = _a.axis, clip = $$.state.clip;
+        var isRotated = config.axis_rotated;
+        var target = ["x", "y"];
+        config.axis_y2_show && target.push("y2");
+        target.forEach(function (v) {
+            var classAxis = _this.getAxisClassName(v);
+            var classLabel = CLASS["axis" + v.toUpperCase() + "Label"];
+            axis[v] = main.append("g")
+                .attr("class", classAxis)
+                .attr("clip-path", function () {
+                var res = null;
+                if (v === "x") {
+                    res = clip.pathXAxis;
+                }
+                else if (v === "y" && config.axis_y_inner) {
+                    res = clip.pathYAxis;
+                }
+                return res;
+            })
+                .attr("transform", $$.getTranslate(v))
+                .style("visibility", config["axis_" + v + "_show"] ? "visible" : "hidden");
+            axis[v].append("text")
+                .attr("class", classLabel)
+                .attr("transform", ["rotate(-90)", null][v === "x" ? +!isRotated : +isRotated])
+                .style("text-anchor", function () { return _this.textAnchorForAxisLabel(v); });
+            _this.generateAxes(v);
+        });
+    };
+    /**
+     * Set axis orient according option value
+     * @private
+     */
+    Axis.prototype.setOrient = function () {
+        var $$ = this.owner;
+        var _a = $$.config, isRotated = _a.axis_rotated, yInner = _a.axis_y_inner, y2Inner = _a.axis_y2_inner;
+        this.orient = {
+            x: isRotated ? "left" : "bottom",
+            y: isRotated ? (yInner ? "top" : "bottom") : (yInner ? "right" : "left"),
+            y2: isRotated ? (y2Inner ? "bottom" : "top") : (y2Inner ? "left" : "right"),
+            subX: isRotated ? "left" : "bottom"
+        };
+    };
+    /**
+     * Generate axes
+     * It's used when axis' axes option is set
+     * @param {string} id Axis id
+     * @private
+     */
+    Axis.prototype.generateAxes = function (id) {
+        var $$ = this.owner;
+        var config = $$.config;
+        var axes = [];
+        var axesConfig = config["axis_" + id + "_axes"];
+        var isRotated = config.axis_rotated;
+        var d3Axis;
+        if (id === "x") {
+            d3Axis = isRotated ? axisLeft : axisBottom;
+        }
+        else if (id === "y") {
+            d3Axis = isRotated ? axisBottom : axisLeft;
+        }
+        else if (id === "y2") {
+            d3Axis = isRotated ? axisTop : axisRight;
+        }
+        if (axesConfig.length) {
+            axesConfig.forEach(function (v) {
+                var tick = v.tick || {};
+                var scale = $$.scale[id].copy();
+                v.domain && scale.domain(v.domain);
+                axes.push(d3Axis(scale)
+                    .ticks(tick.count)
+                    .tickFormat(isFunction(tick.format) ? tick.format.bind($$.api) : (function (x) { return x; }))
+                    .tickValues(tick.values)
+                    .tickSizeOuter(tick.outer === false ? 0 : 6));
+            });
+        }
+        this.axesList[id] = axes;
+    };
+    /**
+     * Update axes nodes
+     * @private
+     */
+    Axis.prototype.updateAxes = function () {
+        var _this = this;
+        var $$ = this.owner;
+        var config = $$.config, main = $$.$el.main;
+        Object.keys(this.axesList).forEach(function (id) {
+            var axesConfig = config["axis_" + id + "_axes"];
+            var scale = $$.scale[id].copy();
+            var range = scale.range();
+            _this.axesList[id].forEach(function (v, i) {
+                var axisRange = v.scale().range();
+                // adjust range value with the current
+                // https://github.com/naver/billboard.js/issues/859
+                if (!range.every(function (v, i) { return v === axisRange[i]; })) {
+                    v.scale().range(range);
+                }
+                var className = _this.getAxisClassName(id) + "-" + (i + 1);
+                var g = main.select("." + className.replace(/\s/, "."));
+                if (g.empty()) {
+                    g = main.append("g")
+                        .attr("class", className)
+                        .style("visibility", config["axis_" + id + "_show"] ? "visible" : "hidden")
+                        .call(v);
+                }
+                else {
+                    axesConfig[i].domain && scale.domain(axesConfig[i].domain);
+                    _this.x.helper.transitionise(g)
+                        .call(v.scale(scale));
+                }
+                g.attr("transform", $$.getTranslate(id, i + 1));
+            });
+        });
+    };
+    /**
+     * Set Axis & tick values
+     * called from: updateScales()
+     * @param {string} id Axis id string
+     * @param {Array} args Arguments
+     * @private
+     */
+    Axis.prototype.setAxis = function (id) {
+        var args = [];
+        for (var _i = 1; _i < arguments.length; _i++) {
+            args[_i - 1] = arguments[_i];
+        }
+        if (id !== "subX") {
+            this.tick[id] = this.getTickValues(id);
+        }
+        // @ts-ignore
+        this[id] = this.getAxis.apply(this, __spreadArrays([id], args));
+    };
+    // called from : getMaxTickWidth()
+    Axis.prototype.getAxis = function (id, scale, outerTick, noTransition, noTickTextRotate) {
+        var $$ = this.owner;
+        var config = $$.config;
+        var isX = /^(x|subX)$/.test(id);
+        var type = isX ? "x" : id;
+        var isCategory = isX && this.isCategorized();
+        var orient = this.orient[id];
+        var tickTextRotate = noTickTextRotate ? 0 : $$.getAxisTickRotate(type);
+        var tickFormat;
+        if (isX) {
+            tickFormat = $$.format.xAxisTick;
+        }
+        else {
+            var fn = config["axis_" + id + "_tick_format"];
+            if (isFunction(fn)) {
+                tickFormat = fn.bind($$.api);
+            }
+        }
+        var tickValues = this.tick[type];
+        var axisParams = mergeObj({
+            outerTick: outerTick,
+            noTransition: noTransition,
+            config: config,
+            id: id,
+            tickTextRotate: tickTextRotate
+        }, isX && {
+            isCategory: isCategory,
+            tickMultiline: config.axis_x_tick_multiline,
+            tickWidth: config.axis_x_tick_width,
+            tickTitle: isCategory && config.axis_x_tick_tooltip && $$.api.categories(),
+            orgXScale: $$.scale.x
+        });
+        if (!isX) {
+            axisParams.tickStepSize = config["axis_" + type + "_tick_stepSize"];
+        }
+        var axis = new AxisRenderer(axisParams)
+            .scale((isX && $$.scale.zoom) || scale)
+            .orient(orient);
+        if (isX && this.isTimeSeries() && tickValues && !isFunction(tickValues)) {
+            var fn_1 = parseDate.bind($$);
+            tickValues = tickValues.map(function (v) { return fn_1(v); });
+        }
+        else if (!isX && this.isTimeSeriesY()) {
+            // https://github.com/d3/d3/blob/master/CHANGES.md#time-intervals-d3-time
+            axis.ticks(config.axis_y_tick_time_value);
+            tickValues = null;
+        }
+        tickValues && axis.tickValues(tickValues);
+        // Set tick
+        axis.tickFormat(tickFormat || (!isX && ($$.isStackNormalized() && (function (x) { return x + "%"; }))));
+        if (isCategory) {
+            axis.tickCentered(config.axis_x_tick_centered);
+            if (isEmpty(config.axis_x_tick_culling)) {
+                config.axis_x_tick_culling = false;
+            }
+        }
+        var tickCount = config["axis_" + type + "_tick_count"];
+        tickCount && axis.ticks(tickCount);
+        return axis;
+    };
+    Axis.prototype.updateXAxisTickValues = function (targets, axis) {
+        var $$ = this.owner;
+        var config = $$.config;
+        var fit = config.axis_x_tick_fit;
+        var count = config.axis_x_tick_count;
+        var values;
+        if (fit || (count && fit)) {
+            values = $$.mapTargetsToUniqueXs(targets);
+            // if given count is greater than the value length, then limit the count.
+            if (this.isCategorized() && count > values.length) {
+                count = values.length;
+            }
+            values = this.generateTickValues(values, count, this.isTimeSeries());
+        }
+        if (axis) {
+            axis.tickValues(values);
+        }
+        else if (this.x) {
+            this.x.tickValues(values);
+            this.subX && this.subX.tickValues(values);
+        }
+        return values;
+    };
+    Axis.prototype.getId = function (id) {
+        var _a = this.owner, config = _a.config, scale = _a.scale;
+        var axis = config.data_axes[id];
+        // when data.axes option has 'y2', but 'axis.y2.show=true' isn't set will return 'y'
+        if (!axis || !scale[axis]) {
+            axis = "y";
+        }
+        return axis;
+    };
+    Axis.prototype.getXAxisTickFormat = function () {
+        var $$ = this.owner;
+        var config = $$.config, format = $$.format;
+        var tickFormat = config.axis_x_tick_format;
+        var isTimeSeries = this.isTimeSeries();
+        var isCategorized = this.isCategorized();
+        var currFormat;
+        if (tickFormat) {
+            if (isFunction(tickFormat)) {
+                currFormat = tickFormat.bind($$.api);
+            }
+            else if (isTimeSeries) {
+                currFormat = function (date) { return (date ? format.axisTime(tickFormat)(date) : ""); };
+            }
+        }
+        else {
+            currFormat = isTimeSeries ? format.defaultAxisTime : (isCategorized ?
+                $$.categoryName : function (v) { return (v < 0 ? v.toFixed(0) : v); });
+        }
+        return isFunction(currFormat) ? function (v) {
+            return currFormat.apply($$, isCategorized ?
+                [v, $$.categoryName(v)] : [v]);
+        } : currFormat;
+    };
+    Axis.prototype.getTickValues = function (id) {
+        var $$ = this.owner;
+        var tickValues = $$.config["axis_" + id + "_tick_values"];
+        var axis = $$[id + "Axis"];
+        return (isFunction(tickValues) ? tickValues.call($$.api) : tickValues) ||
+            (axis ? axis.tickValues() : undefined);
+    };
+    Axis.prototype.getLabelOptionByAxisId = function (id) {
+        return this.owner.config["axis_" + id + "_label"];
+    };
+    Axis.prototype.getLabelText = function (id) {
+        var option = this.getLabelOptionByAxisId(id);
+        return isString(option) ? option : (option ? option.text : null);
+    };
+    Axis.prototype.setLabelText = function (id, text) {
+        var $$ = this.owner;
+        var config = $$.config;
+        var option = this.getLabelOptionByAxisId(id);
+        if (isString(option)) {
+            config["axis_" + id + "_label"] = text;
+        }
+        else if (option) {
+            option.text = text;
+        }
+    };
+    Axis.prototype.getLabelPosition = function (id, defaultPosition) {
+        var isRotated = this.owner.config.axis_rotated;
+        var option = this.getLabelOptionByAxisId(id);
+        var position = (isObjectType(option) && option.position) ?
+            option.position : defaultPosition[+!isRotated];
+        var has = function (v) { return !!~position.indexOf(v); };
+        return {
+            isInner: has("inner"),
+            isOuter: has("outer"),
+            isLeft: has("left"),
+            isCenter: has("center"),
+            isRight: has("right"),
+            isTop: has("top"),
+            isMiddle: has("middle"),
+            isBottom: has("bottom")
+        };
+    };
+    Axis.prototype.getAxisLabelPosition = function (id) {
+        return this.getLabelPosition(id, id === "x" ? ["inner-top", "inner-right"] : ["inner-right", "inner-top"]);
+    };
+    Axis.prototype.getLabelPositionById = function (id) {
+        return this.getAxisLabelPosition(id);
+    };
+    Axis.prototype.xForAxisLabel = function (id) {
+        var $$ = this.owner;
+        var _a = $$.state, width = _a.width, height = _a.height;
+        var position = this.getAxisLabelPosition(id);
+        var x = position.isMiddle ? -height / 2 : 0;
+        if (this.isHorizontal($$, id !== "x")) {
+            x = position.isLeft ? 0 : (position.isCenter ? width / 2 : width);
+        }
+        else if (position.isBottom) {
+            x = -height;
+        }
+        return x;
+    };
+    Axis.prototype.dxForAxisLabel = function (id) {
+        var $$ = this.owner;
+        var position = this.getAxisLabelPosition(id);
+        var dx = position.isBottom ? "0.5em" : "0";
+        if (this.isHorizontal($$, id !== "x")) {
+            dx = position.isLeft ? "0.5em" : (position.isRight ? "-0.5em" : "0");
+        }
+        else if (position.isTop) {
+            dx = "-0.5em";
+        }
+        return dx;
+    };
+    Axis.prototype.textAnchorForAxisLabel = function (id) {
+        var $$ = this.owner;
+        var position = this.getAxisLabelPosition(id);
+        var anchor = position.isMiddle ? "middle" : "end";
+        if (this.isHorizontal($$, id !== "x")) {
+            anchor = position.isLeft ? "start" : (position.isCenter ? "middle" : "end");
+        }
+        else if (position.isBottom) {
+            anchor = "start";
+        }
+        return anchor;
+    };
+    Axis.prototype.dyForAxisLabel = function (id) {
+        var $$ = this.owner;
+        var config = $$.config;
+        var isRotated = config.axis_rotated;
+        var isInner = this.getAxisLabelPosition(id).isInner;
+        var tickRotate = config["axis_" + id + "_tick_rotate"] ? $$.getHorizontalAxisHeight(id) : 0;
+        var maxTickWidth = this.getMaxTickWidth(id);
+        var dy;
+        if (id === "x") {
+            var xHeight = config.axis_x_height;
+            if (isRotated) {
+                dy = isInner ? "1.2em" : -25 - maxTickWidth;
+            }
+            else if (isInner) {
+                dy = "-0.5em";
+            }
+            else if (xHeight) {
+                dy = xHeight - 10;
+            }
+            else if (tickRotate) {
+                dy = tickRotate - 10;
+            }
+            else {
+                dy = "3em";
+            }
+        }
+        else {
+            dy = {
+                y: ["-0.5em", 10, "3em", "1.2em", 10],
+                y2: ["1.2em", -20, "-2.2em", "-0.5em", 15]
+            }[id];
+            if (isRotated) {
+                if (isInner) {
+                    dy = dy[0];
+                }
+                else if (tickRotate) {
+                    dy = tickRotate * (id === "y2" ? -1 : 1) - dy[1];
+                }
+                else {
+                    dy = dy[2];
+                }
+            }
+            else {
+                dy = isInner ?
+                    dy[3] : (dy[4] + (config["axis_" + id + "_inner"] ? 0 : (maxTickWidth + dy[4]))) * (id === "y" ? -1 : 1);
+            }
+        }
+        return dy;
+    };
+    Axis.prototype.getMaxTickWidth = function (id, withoutRecompute) {
+        var $$ = this.owner;
+        var config = $$.config, current = $$.state.current, _a = $$.$el, svg = _a.svg, chart = _a.chart;
+        var currentTickMax = current.maxTickWidths[id];
+        var maxWidth = 0;
+        if (withoutRecompute || !config["axis_" + id + "_show"] || $$.filterTargetsToShow().length === 0) {
+            return currentTickMax.size;
+        }
+        if (svg) {
+            var isYAxis = /^y2?$/.test(id);
+            var targetsToShow = $$.filterTargetsToShow($$.data.targets);
+            var scale = $$.scale[id].copy().domain($$["get" + (isYAxis ? "Y" : "X") + "Domain"](targetsToShow, id));
+            var domain = scale.domain();
+            // do not compute if domain is same
+            if (domain[0] === domain[1] ||
+                (isArray(currentTickMax.domain) && currentTickMax.domain[0] === currentTickMax.domain[1])) {
+                return currentTickMax.size;
+            }
+            else {
+                currentTickMax.domain = domain;
+            }
+            var axis = this.getAxis(id, scale, false, false, true);
+            var tickCount = config["axis_" + id + "_tick_count"];
+            var tickValues = config["axis_" + id + "_tick_values"];
+            // Make to generate the final tick text to be rendered
+            // https://github.com/naver/billboard.js/issues/920
+            // Do not generate if 'tick values' option is given
+            // https://github.com/naver/billboard.js/issues/1251
+            if (!tickValues && tickCount) {
+                axis.tickValues(this.generateTickValues(domain, tickCount, isYAxis ? this.isTimeSeriesY() : this.isTimeSeries()));
+            }
+            !isYAxis && this.updateXAxisTickValues(targetsToShow, axis);
+            var dummy = chart.append("svg")
+                .style("visibility", "hidden")
+                .style("position", "fixed")
+                .style("top", "0px")
+                .style("left", "0px");
+            axis.create(dummy);
+            dummy.selectAll("text")
+                .each(function (d, i) {
+                var currentTextWidth = this.getBoundingClientRect().width;
+                maxWidth = Math.max(maxWidth, currentTextWidth);
+                // cache tick text width for getXAxisTickTextY2Overflow()
+                if (id === "x") {
+                    currentTickMax.ticks[i] = currentTextWidth;
+                }
+            });
+            dummy.remove();
+        }
+        if (maxWidth > 0) {
+            currentTickMax.size = maxWidth;
+        }
+        return currentTickMax.size;
+    };
+    Axis.prototype.getXAxisTickTextY2Overflow = function (defaultPadding) {
+        var $$ = this.owner;
+        var axis = $$.axis, config = $$.config, state = $$.state;
+        var xAxisTickRotate = $$.getAxisTickRotate("x");
+        var positiveRotation = xAxisTickRotate > 0 && xAxisTickRotate < 90;
+        if ((axis.isCategorized() || axis.isTimeSeries()) &&
+            config.axis_x_tick_fit &&
+            !config.axis_x_tick_culling &&
+            !config.axis_x_tick_multiline &&
+            positiveRotation) {
+            var widthWithoutCurrentPaddingLeft = state.current.width - $$.getCurrentPaddingLeft();
+            var maxOverflow = this.getXAxisTickMaxOverflow(xAxisTickRotate, widthWithoutCurrentPaddingLeft - defaultPadding);
+            var xAxisTickTextY2Overflow = Math.max(0, maxOverflow) +
+                defaultPadding; // for display inconsistencies between browsers
+            return Math.min(xAxisTickTextY2Overflow, widthWithoutCurrentPaddingLeft / 2);
+        }
+        return 0;
+    };
+    Axis.prototype.getXAxisTickMaxOverflow = function (xAxisTickRotate, widthWithoutCurrentPaddingLeft) {
+        var $$ = this.owner;
+        var axis = $$.axis, config = $$.config, state = $$.state;
+        var isTimeSeries = axis.isTimeSeries();
+        var tickTextWidths = state.current.maxTickWidths.x.ticks;
+        var tickCount = tickTextWidths.length;
+        var _a = state.axis.x.padding, left = _a.left, right = _a.right;
+        var maxOverflow = 0;
+        var remaining = tickCount - (isTimeSeries && config.axis_x_tick_fit ? 0.5 : 0);
+        for (var i = 0; i < tickCount; i++) {
+            var tickIndex = i + 1;
+            var rotatedTickTextWidth = Math.cos(Math.PI * xAxisTickRotate / 180) * tickTextWidths[i];
+            var ticksBeforeTickText = tickIndex - (isTimeSeries ? 1 : 0.5) + left;
+            // Skip ticks if there are no ticks before them
+            if (ticksBeforeTickText <= 0) {
+                continue;
+            }
+            var xAxisLengthWithoutTickTextWidth = widthWithoutCurrentPaddingLeft - rotatedTickTextWidth;
+            var tickLength = xAxisLengthWithoutTickTextWidth / ticksBeforeTickText;
+            var remainingTicks = remaining - tickIndex;
+            var paddingRightLength = right * tickLength;
+            var remainingTickWidth = (remainingTicks * tickLength) + paddingRightLength;
+            var overflow = rotatedTickTextWidth - (tickLength / 2) - remainingTickWidth;
+            maxOverflow = Math.max(maxOverflow, overflow);
+        }
+        var tickOffset = 0;
+        if (!isTimeSeries) {
+            var scale = scaleLinear()
+                .domain([
+                left * -1,
+                $$.getXDomainMax($$.data.targets) + 1 + right
+            ])
+                .range([0, widthWithoutCurrentPaddingLeft - maxOverflow]);
+            tickOffset = (Math.ceil((scale(1) - scale(0)) / 2));
+        }
+        return maxOverflow + tickOffset;
+    };
+    /**
+     * Get x Axis padding
+     * @param {number} tickCount Tick count
+     * @returns {object} Padding object values with 'left' & 'right' key
+     * @private
+     */
+    Axis.prototype.getXAxisPadding = function (tickCount) {
+        var $$ = this.owner;
+        var padding = $$.config.axis_x_padding;
+        if (isEmpty(padding)) {
+            padding = { left: 0, right: 0 };
+        }
+        else {
+            padding.left = padding.left || 0;
+            padding.right = padding.right || 0;
+        }
+        if ($$.axis.isTimeSeries()) {
+            var firstX = +$$.getXDomainMin($$.data.targets);
+            var lastX = +$$.getXDomainMax($$.data.targets);
+            var timeDiff = lastX - firstX;
+            var range = timeDiff + padding.left + padding.right;
+            var relativeTickWidth = (timeDiff / tickCount) / range;
+            var left = padding.left / range / relativeTickWidth || 0;
+            var right = padding.right / range / relativeTickWidth || 0;
+            padding = { left: left, right: right };
+        }
+        return padding;
+    };
+    Axis.prototype.updateLabels = function (withTransition) {
+        var _this = this;
+        var $$ = this.owner;
+        var main = $$.$el.main;
+        var labels = {
+            x: main.select("." + CLASS.axisX + " ." + CLASS.axisXLabel),
+            y: main.select("." + CLASS.axisY + " ." + CLASS.axisYLabel),
+            y2: main.select("." + CLASS.axisY2 + " ." + CLASS.axisY2Label)
+        };
+        Object.keys(labels).filter(function (id) { return !labels[id].empty(); })
+            .forEach(function (v) {
+            var node = labels[v];
+            (withTransition ? node.transition() : node)
+                .attr("x", function () { return _this.xForAxisLabel(v); })
+                .attr("dx", function () { return _this.dxForAxisLabel(v); })
+                .attr("dy", function () { return _this.dyForAxisLabel(v); })
+                .text(function () { return _this.getLabelText(v); });
+        });
+    };
+    Axis.prototype.getPadding = function (padding, key, defaultValue, domainLength) {
+        var p = isNumber(padding) ? padding : padding[key];
+        if (!isValue(p)) {
+            return defaultValue;
+        }
+        return this.convertPixelsToAxisPadding(p, domainLength);
+    };
+    Axis.prototype.convertPixelsToAxisPadding = function (pixels, domainLength) {
+        var $$ = this.owner;
+        var config = $$.config, _a = $$.state, width = _a.width, height = _a.height;
+        var length = config.axis_rotated ? width : height;
+        return domainLength * (pixels / length);
+    };
+    Axis.prototype.generateTickValues = function (values, tickCount, forTimeSeries) {
+        var tickValues = values;
+        if (tickCount) {
+            var targetCount = isFunction(tickCount) ? tickCount() : tickCount;
+            // compute ticks according to tickCount
+            if (targetCount === 1) {
+                tickValues = [values[0]];
+            }
+            else if (targetCount === 2) {
+                tickValues = [values[0], values[values.length - 1]];
+            }
+            else if (targetCount > 2) {
+                var isCategorized = this.isCategorized();
+                var count = targetCount - 2;
+                var start = values[0];
+                var end = values[values.length - 1];
+                var interval = (end - start) / (count + 1);
+                var tickValue = void 0;
+                // re-construct unique values
+                tickValues = [start];
+                for (var i = 0; i < count; i++) {
+                    tickValue = +start + interval * (i + 1);
+                    tickValues.push(forTimeSeries ? new Date(tickValue) : (isCategorized ? Math.round(tickValue) : tickValue));
+                }
+                tickValues.push(end);
+            }
+        }
+        if (!forTimeSeries) {
+            tickValues = tickValues.sort(function (a, b) { return a - b; });
+        }
+        return tickValues;
+    };
+    Axis.prototype.generateTransitions = function (duration) {
+        var $$ = this.owner;
+        var axis = $$.$el.axis;
+        var _a = ["x", "y", "y2", "subX"]
+            .map(function (v) {
+            var ax = axis[v];
+            if (ax && duration) {
+                ax = ax.transition().duration(duration);
+            }
+            return ax;
+        }), axisX = _a[0], axisY = _a[1], axisY2 = _a[2], axisSubX = _a[3];
+        return { axisX: axisX, axisY: axisY, axisY2: axisY2, axisSubX: axisSubX };
+    };
+    Axis.prototype.redraw = function (transitions, isHidden, isInit) {
+        var _this = this;
+        var $$ = this.owner;
+        var config = $$.config, $el = $$.$el;
+        var opacity = isHidden ? "0" : "1";
+        ["x", "y", "y2", "subX"].forEach(function (id) {
+            var axis = _this[id];
+            var $axis = $el.axis[id];
+            if (axis && $axis) {
+                if (!isInit) {
+                    axis.config.withoutTransition = !config.transition_duration;
+                }
+                $axis.style("opacity", opacity);
+                axis.create(transitions["axis" + capitalize(id)]);
+            }
+        });
+        this.updateAxes();
+    };
+    /**
+     * Redraw axis
+     * @param {Array} targetsToShow targets data to be shown
+     * @param {object} wth option object
+     * @param {d3.Transition} transitions Transition object
+     * @param {object} flow flow object
+     * @param {boolean} isInit called from initialization
+     * @private
+     */
+    Axis.prototype.redrawAxis = function (targetsToShow, wth, transitions, flow, isInit) {
+        var _this = this;
+        var $$ = this.owner;
+        var config = $$.config, scale = $$.scale, $el = $$.$el;
+        var hasZoom = !!scale.zoom;
+        var xDomainForZoom;
+        if (!hasZoom && this.isCategorized() && targetsToShow.length === 0) {
+            scale.x.domain([0, $el.axis.x.selectAll(".tick").size()]);
+        }
+        if (scale.x && targetsToShow.length) {
+            !hasZoom &&
+                $$.updateXDomain(targetsToShow, wth.UpdateXDomain, wth.UpdateOrgXDomain, wth.TrimXDomain);
+            if (!config.axis_x_tick_values) {
+                this.updateXAxisTickValues(targetsToShow);
+            }
+        }
+        else if (this.x) {
+            this.x.tickValues([]);
+            this.subX && this.subX.tickValues([]);
+        }
+        if (config.zoom_rescale && !flow) {
+            xDomainForZoom = scale.x.orgDomain();
+        }
+        ["y", "y2"].forEach(function (key) {
+            var axisScale = scale[key];
+            if (axisScale) {
+                var tickValues = config["axis_" + key + "_tick_values"];
+                var tickCount = config["axis_" + key + "_tick_count"];
+                axisScale.domain($$.getYDomain(targetsToShow, key, xDomainForZoom));
+                if (!tickValues && tickCount) {
+                    var axis = $$.axis[key];
+                    var domain = axisScale.domain();
+                    axis.tickValues(_this.generateTickValues(domain, domain.every(function (v) { return v === 0; }) ? 1 : tickCount, _this.isTimeSeriesY()));
+                }
+            }
+        });
+        // axes
+        this.redraw(transitions, $$.hasArcType(), isInit);
+        // Update axis label
+        this.updateLabels(wth.Transition);
+        // show/hide if manual culling needed
+        if ((wth.UpdateXDomain || wth.UpdateXAxis || wth.Y) && targetsToShow.length) {
+            this.setCulling();
+        }
+        // Update sub domain
+        if (wth.Y) {
+            scale.subY && scale.subY.domain($$.getYDomain(targetsToShow, "y"));
+            scale.subY2 && scale.subY2.domain($$.getYDomain(targetsToShow, "y2"));
+        }
+    };
+    /**
+     * Set manual culling
+     * @private
+     */
+    Axis.prototype.setCulling = function () {
+        var $$ = this.owner;
+        var config = $$.config, _a = $$.state, clip = _a.clip, current = _a.current, $el = $$.$el;
+        ["subX", "x", "y", "y2"].forEach(function (type) {
+            var axis = $el.axis[type];
+            // subchart x axis should be aligned with x axis culling
+            var id = type === "subX" ? "x" : type;
+            var toCull = config["axis_" + id + "_tick_culling"];
+            if (axis && toCull) {
+                var tickText = axis.selectAll(".tick text");
+                var tickValues_1 = sortValue(tickText.data());
+                var tickSize = tickValues_1.length;
+                var cullingMax = config["axis_" + id + "_tick_culling_max"];
+                var intervalForCulling_1;
+                if (tickSize) {
+                    for (var i = 1; i < tickSize; i++) {
+                        if (tickSize / i < cullingMax) {
+                            intervalForCulling_1 = i;
+                            break;
+                        }
+                    }
+                    tickText.each(function (d) {
+                        this.style.display = tickValues_1.indexOf(d) % intervalForCulling_1 ? "none" : "block";
+                    });
+                }
+                else {
+                    tickText.style("display", "block");
+                }
+                // set/unset x_axis_tick_clippath
+                if (type === "x") {
+                    var clipPath = current.maxTickWidths.x.clipPath ? clip.pathXAxisTickTexts : null;
+                    $el.svg.selectAll("." + CLASS.axisX + " .tick text")
+                        .attr("clip-path", clipPath);
+                }
+            }
+        });
+    };
+    return Axis;
+}());
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
  */
 var drag = {
     /**
@@ -12380,7 +14172,7 @@ var eventrect = {
             // update data's index value to be alinged with the x Axis
             $$.updateDataIndexByX(xAxisTickValues);
             $$.updateXs(xAxisTickValues);
-            $$.updatePointClass(true);
+            $$.updatePointClass && $$.updatePointClass(true);
             eventRects.datum(xAxisTickValues);
             $el.eventRect = eventRects.selectAll("." + CLASS.eventRect);
             eventRectUpdate = $el.eventRect.data(function (d) { return d; });
@@ -13938,7 +15730,7 @@ var grid$1 = {
                 .forEach(function (v, i) { return el.attr(v, xy[i]); });
         });
         smoothLines(focusEl, "grid");
-        $$.showCircleFocus(data);
+        $$.showCircleFocus && $$.showCircleFocus(data);
     },
     hideGridFocus: function () {
         var $$ = this;
@@ -13946,7 +15738,7 @@ var grid$1 = {
         if (inputType === "mouse") {
             main.selectAll("line." + CLASS.xgridFocus + ", line." + CLASS.ygridFocus)
                 .style("visibility", "hidden");
-            $$.hideCircleFocus();
+            $$.hideCircleFocus && $$.hideCircleFocus();
         }
     },
     updateGridFocus: function () {
@@ -14305,1383 +16097,119 @@ var selection = {
     }
 };
 
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var bar$1 = {
-    initBar: function () {
-        var $el = this.$el;
-        $el.bar = $el.main.select("." + CLASS.chart)
-            // should positioned at the beginning of the shape node to not overlap others
-            .insert("g", ":first-child")
-            .attr("class", CLASS.chartBars);
-    },
-    updateTargetsForBar: function (targets) {
+var sizeAxis = {
+    /**
+     * Get Axis size according its position
+     * @param {string} id Axis id value - x, y or y2
+     * @returns {number} size Axis size value
+     * @private
+     */
+    getAxisSize: function (id) {
         var $$ = this;
-        var config = $$.config, $el = $$.$el;
-        var classChartBar = $$.classChartBar.bind($$);
-        var classBars = $$.classBars.bind($$);
-        var classFocus = $$.classFocus.bind($$);
-        if (!$el.bar) {
-            $$.initBar();
+        var isRotated = $$.config.axis_rotated;
+        return (isRotated && id === "x") || (!isRotated && /y2?/.test(id)) ?
+            $$.getAxisWidthByAxisId(id, true) :
+            $$.getHorizontalAxisHeight(id);
+    },
+    getAxisWidthByAxisId: function (id, withoutRecompute) {
+        var $$ = this;
+        if ($$.axis) {
+            var position = $$.axis && $$.axis.getLabelPositionById(id);
+            return $$.axis.getMaxTickWidth(id, withoutRecompute) +
+                (position.isInner ? 20 : 40);
         }
-        var mainBarUpdate = $$.$el.main.select("." + CLASS.chartBars)
-            .selectAll("." + CLASS.chartBar)
-            .data(targets)
-            .attr("class", function (d) { return classChartBar(d) + classFocus(d); });
-        var mainBarEnter = mainBarUpdate.enter().append("g")
-            .attr("class", classChartBar)
-            .style("opacity", "0")
-            .style("pointer-events", "none");
-        // Bars for each data
-        mainBarEnter.append("g")
-            .attr("class", classBars)
-            .style("cursor", function (d) { return (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null); });
-    },
-    updateBar: function (durationForExit) {
-        var $$ = this;
-        var $el = $$.$el;
-        var barData = $$.barData.bind($$);
-        var classBar = $$.classBar.bind($$);
-        var initialOpacity = $$.initialOpacity.bind($$);
-        $el.bar = $el.main.selectAll("." + CLASS.bars).selectAll("." + CLASS.bar)
-            .data(barData);
-        $el.bar.exit().transition()
-            .duration(durationForExit)
-            .style("opacity", "0")
-            .remove();
-        $el.bar = $el.bar.enter().append("path")
-            .attr("class", classBar)
-            .style("fill", $$.color)
-            .merge($el.bar)
-            .style("opacity", initialOpacity);
-    },
-    redrawBar: function (drawBar, withTransition) {
-        var bar = this.$el.bar;
-        return [
-            (withTransition ? bar.transition(getRandom()) : bar)
-                .attr("d", drawBar)
-                .style("fill", this.color)
-                .style("opacity", "1")
-        ];
-    },
-    getBarW: function (axis, barTargetsNum) {
-        var $$ = this;
-        var config = $$.config, scale = $$.scale;
-        var maxDataCount = $$.getMaxDataCount();
-        var isGrouped = config.data_groups.length;
-        var tickInterval = (scale.zoom || $$) && !$$.axis.isCategorized() ?
-            $$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
-        var result;
-        var getWidth = function (id) {
-            var width = id ? config.bar_width[id] : config.bar_width;
-            var ratio = id ? width.ratio : config.bar_width_ratio;
-            var max = id ? width.max : config.bar_width_max;
-            var w = isNumber(width) ?
-                width : barTargetsNum ? (tickInterval * ratio) / barTargetsNum : 0;
-            return max && w > max ? max : w;
-        };
-        result = getWidth();
-        if (!isGrouped && isObjectType(config.bar_width)) {
-            result = { width: result, total: [] };
-            $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
-                if (config.bar_width[v.id]) {
-                    result[v.id] = getWidth(v.id);
-                    result.total.push(result[v.id] || result.width);
-                }
-            });
+        else {
+            return 40;
         }
-        return result;
     },
-    getBars: function (i, id) {
+    getHorizontalAxisHeight: function (id) {
         var $$ = this;
-        var main = $$.$el.main;
-        var suffix = (isValue(i) ? "-" + i : "");
-        return (id ? main
-            .selectAll("." + CLASS.bars + $$.getTargetSelectorSuffix(id)) : main)
-            .selectAll("." + CLASS.bar + suffix);
-    },
-    expandBars: function (i, id, reset) {
-        var $$ = this;
-        reset && $$.unexpandBars();
-        $$.getBars(i, id).classed(CLASS.EXPANDED, true);
-    },
-    unexpandBars: function (i) {
-        this.getBars(i).classed(CLASS.EXPANDED, false);
-    },
-    generateDrawBar: function (barIndices, isSub) {
-        var $$ = this;
-        var config = $$.config;
-        var getPoints = $$.generateGetBarPoints(barIndices, isSub);
+        var config = $$.config, state = $$.state;
+        var current = state.current, rotatedPadding = state.rotatedPadding, isLegendRight = state.isLegendRight, isLegendInset = state.isLegendInset;
         var isRotated = config.axis_rotated;
-        var isGrouped = config.data_groups.length;
-        var barRadius = config.bar_radius;
-        var barRadiusRatio = config.bar_radius_ratio;
-        // get the bar radius
-        var getRadius = isNumber(barRadius) && barRadius > 0 ?
-            function () { return barRadius; } : (isNumber(barRadiusRatio) ? function (w) { return w * barRadiusRatio; } : null);
-        return function (d, i) {
-            // 4 points that make a bar
-            var points = getPoints(d, i);
-            // switch points if axis is rotated, not applicable for sub chart
-            var indexX = +isRotated;
-            var indexY = +!indexX;
-            var isNegative = d.value < 0;
-            var pathRadius = ["", ""];
-            var radius = 0;
-            if (getRadius && !isGrouped) {
-                var index = isRotated ? indexY : indexX;
-                var barW = points[2][index] - points[0][index];
-                radius = getRadius(barW);
-                var arc = "a" + radius + "," + radius + " " + (isNegative ? "1 0 0" : "0 0 1") + " ";
-                pathRadius[+!isRotated] = "" + arc + radius + "," + radius;
-                pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"]();
-                isNegative && pathRadius.reverse();
+        var h = 30;
+        if (id === "x" && !config.axis_x_show) {
+            return 8;
+        }
+        if (id === "x" && config.axis_x_height) {
+            return config.axis_x_height;
+        }
+        if (id === "y" && !config.axis_y_show) {
+            return config.legend_show &&
+                !isLegendRight &&
+                !isLegendInset ? 10 : 1;
+        }
+        if (id === "y2" && !config.axis_y2_show) {
+            return rotatedPadding.top;
+        }
+        var rotate = $$.getAxisTickRotate(id);
+        // Calculate x/y axis height when tick rotated
+        if (((id === "x" && !isRotated) || (/y2?/.test(id) && isRotated)) && rotate) {
+            h = 30 +
+                $$.axis.getMaxTickWidth(id) *
+                    Math.cos(Math.PI * (90 - rotate) / 180);
+            if (!config.axis_x_tick_multiline && current.height) {
+                if (h > current.height / 2) {
+                    h = current.height / 2;
+                }
             }
-            // path string data shouldn't be containing new line chars
-            // https://github.com/naver/billboard.js/issues/530
-            var path = isRotated ?
-                "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] :
-                "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
-            return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
-        };
+        }
+        return h +
+            ($$.axis.getLabelPositionById(id).isInner ? 0 : 10) +
+            (id === "y2" && !isRotated ? -10 : 0);
     },
-    generateGetBarPoints: function (barIndices, isSub) {
+    getEventRectWidth: function () {
+        return Math.max(0, this.axis.x.tickInterval());
+    },
+    /**
+     * Get axis tick test rotate value
+     * @param {string} id Axis id
+     * @returns {number} rotate value
+     * @private
+     */
+    getAxisTickRotate: function (id) {
         var $$ = this;
-        var config = $$.config;
-        var axis = isSub ? $$.axis.subX : $$.axis.x;
-        var barTargetsNum = $$.getIndicesMax(barIndices) + 1;
-        var barW = $$.getBarW(axis, barTargetsNum);
-        var barX = $$.getShapeX(barW, barIndices, !!isSub);
-        var barY = $$.getShapeY(!!isSub);
-        var barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
-        var yScale = $$.getYScaleById.bind($$);
-        return function (d, i) {
-            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
-            var offset = barOffset(d, i) || y0; // offset is for stacked bar chart
-            var width = isNumber(barW) ? barW : barW[d.id] || barW.width;
-            var posX = barX(d);
-            var posY = barY(d);
-            // fix posY not to overflow opposite quadrant
-            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
-                posY = y0;
+        var axis = $$.axis, config = $$.config, state = $$.state, $el = $$.$el;
+        var rotate = config["axis_" + id + "_tick_rotate"];
+        if (id === "x") {
+            var isCategorized = axis.isCategorized();
+            var isTimeSeries = axis.isTimeSeries();
+            var allowedXAxisTypes = isCategorized || isTimeSeries;
+            var tickCount = 0;
+            if (config.axis_x_tick_fit && allowedXAxisTypes) {
+                tickCount = state.current.maxTickWidths.x.ticks.length + (isTimeSeries ? -1 : 1);
+                if (tickCount !== state.axis.x.tickCount) {
+                    state.axis.x.padding = $$.axis.getXAxisPadding(tickCount);
+                }
+                state.axis.x.tickCount = tickCount;
             }
-            posY -= (y0 - offset);
-            // 4 points that make a bar
-            return [
-                [posX, offset],
-                [posX, posY],
-                [posX + width, posY],
-                [posX + width, offset]
-            ];
-        };
-    },
-    isWithinBar: function (that) {
-        var mouse$1 = mouse(that);
-        var list = getRectSegList(that);
-        var seg0 = list[0], seg1 = list[1];
-        var x = Math.min(seg0.x, seg1.x);
-        var y = Math.min(seg0.y, seg1.y);
-        var offset = this.config.bar_sensitivity;
-        var _a = that.getBBox(), width = _a.width, height = _a.height;
-        var sx = x - offset;
-        var ex = x + width + offset;
-        var sy = y + height + offset;
-        var ey = y - offset;
-        return sx < mouse$1[0] &&
-            mouse$1[0] < ex &&
-            ey < mouse$1[1] &&
-            mouse$1[1] < sy;
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var bubble$1 = {
-    /**
-     * Initializer
-     * @private
-     */
-    initBubble: function () {
-        var $$ = this;
-        var config = $$.config;
-        if ($$.hasType("bubble")) {
-            config.point_show = true;
-            config.point_type = "circle";
-            config.point_sensitivity = 25;
+            if ($el.svg &&
+                config.axis_x_tick_fit &&
+                !config.axis_x_tick_multiline &&
+                !config.axis_x_tick_culling &&
+                config.axis_x_tick_autorotate &&
+                allowedXAxisTypes) {
+                rotate = $$.needToRotateXAxisTickTexts() ?
+                    config.axis_x_tick_rotate : 0;
+            }
         }
+        return rotate;
     },
     /**
-     * Get user agent's computed value
-     * @returns {number}
-     * @private
-     */
-    getBaseLength: function () {
-        var $$ = this;
-        var _a = $$.state, width = _a.width, height = _a.height;
-        var cacheKey = KEY.bubbleBaseLength;
-        var baseLength = $$.cache.get(cacheKey);
-        if (!baseLength) {
-            $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
-        }
-        return baseLength;
-    },
-    /**
-     * Get the radius value for bubble circle
-     * @param {object} d Data object
-     * @returns {number}
-     * @private
-     */
-    getBubbleR: function (d) {
-        var $$ = this;
-        var maxR = $$.config.bubble_maxR;
-        if (isFunction(maxR)) {
-            maxR = maxR.bind($$.api)(d);
-        }
-        else if (!isNumber(maxR)) {
-            maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
-        }
-        var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) { return ($$.isBubbleZType(d) ?
-            $$.getBubbleZData(d.value, "y") : (isObject(d.value) ? d.value.mid : d.value)); }));
-        var maxArea = maxR * maxR * Math.PI;
-        var area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
-        return Math.sqrt(area / Math.PI);
-    },
-    /**
-     * Get bubble dimension data
-     * @param {object|Array} d data value
-     * @param {string} type - y or z
-     * @returns {number}
-     * @private
-     */
-    getBubbleZData: function (d, type) {
-        return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
-    },
-    /**
-     * Determine if bubble has dimension data
-     * @param {object|Array} d data value
+     * Check weather axis tick text needs to be rotated
      * @returns {boolean}
      * @private
      */
-    isBubbleZType: function (d) {
+    needToRotateXAxisTickTexts: function () {
         var $$ = this;
-        return $$.isBubbleType(d) && ((isObject(d.value) && ("z" in d.value || "y" in d.value)) ||
-            (isArray(d.value) && d.value.length === 2));
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var line$1 = {
-    initLine: function () {
-        var $el = this.$el;
-        $el.line = $el.main.select("." + CLASS.chart).append("g")
-            .attr("class", CLASS.chartLines);
-    },
-    updateTargetsForLine: function (targets) {
-        var $$ = this;
-        var $el = $$.$el;
-        var classChartLine = $$.classChartLine.bind($$);
-        var classLines = $$.classLines.bind($$);
-        var classFocus = $$.classFocus.bind($$);
-        if (!$el.line) {
-            $$.initLine();
-        }
-        var mainLineUpdate = $el.main.select("." + CLASS.chartLines)
-            .selectAll("." + CLASS.chartLine)
-            .data(targets)
-            .attr("class", function (d) { return classChartLine(d) + classFocus(d); });
-        var mainLineEnter = mainLineUpdate.enter().append("g")
-            .attr("class", classChartLine)
-            .style("opacity", "0")
-            .style("pointer-events", "none");
-        // Lines for each data
-        mainLineEnter.append("g")
-            .attr("class", classLines);
-        // Areas
-        if ($$.hasTypeOf("Area")) {
-            mainLineEnter.append("g")
-                .attr("class", $$.classAreas.bind($$));
-        }
-        // MEMO: can not keep same color...
-        // mainLineUpdate.exit().remove();
-    },
-    updateLine: function (durationForExit) {
-        var $$ = this;
-        var extraLineClasses = $$.format.extraLineClasses, $el = $$.$el;
-        $el.line = $el.main
-            .selectAll("." + CLASS.lines)
-            .selectAll("." + CLASS.line)
-            .data($$.lineData.bind($$));
-        $el.line.exit().transition()
-            .duration(durationForExit)
-            .style("opacity", "0")
-            .remove();
-        $el.line = $el.line.enter()
-            .append("path")
-            .attr("class", function (d) { return $$.classLine.bind($$)(d) + " " + (extraLineClasses(d) || ""); })
-            .style("stroke", $$.color)
-            .merge($el.line)
-            .style("opacity", $$.initialOpacity.bind($$))
-            .style("shape-rendering", function (d) { return ($$.isStepType(d) ? "crispEdges" : ""); })
-            .attr("transform", null);
-    },
-    redrawLine: function (drawLine, withTransition) {
-        var line = this.$el.line;
-        return [
-            (withTransition ? line.transition(getRandom()) : line)
-                .attr("d", drawLine)
-                .style("stroke", this.color)
-                .style("opacity", "1")
-        ];
-    },
-    /**
-     * Get the curve interpolate
-     * @param {Array} d Data object
-     * @returns {Function}
-     * @private
-     */
-    getCurve: function (d) {
-        var $$ = this;
-        var isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
-        // when is step & rotated, should be computed in different way
-        // https://github.com/naver/billboard.js/issues/471
-        return isRotatedStepType ? function (context) {
-            var step = $$.getInterpolate(d)(context);
-            // keep the original method
-            step.orgPoint = step.point;
-            // to get rotated path data
-            step.pointRotated = function (x, y) {
-                this._point === 1 && (this._point = 2);
-                var y1 = this._y * (1 - this._t) + y * this._t;
-                this._context.lineTo(this._x, y1);
-                this._context.lineTo(x, y1);
-                this._x = x;
-                this._y = y;
-            };
-            step.point = function (x, y) {
-                this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
-            };
-            return step;
-        } : $$.getInterpolate(d);
-    },
-    generateDrawLine: function (lineIndices, isSub) {
-        var $$ = this;
-        var config = $$.config, scale = $$.scale;
-        var lineConnectNull = config.line_connectNull;
-        var isRotated = config.axis_rotated;
-        var getPoints = $$.generateGetLinePoints(lineIndices, isSub);
-        var yScale = $$.getYScaleById.bind($$);
-        var xValue = function (d) { return (isSub ? $$.subxx : $$.xx).call($$, d); };
-        var yValue = function (d, i) { return ($$.isGrouped(d.id) ?
-            getPoints(d, i)[0][1] :
-            yScale(d.id, isSub)($$.getBaseValue(d))); };
-        var line = line$2();
-        line = isRotated ?
-            line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
-        if (!lineConnectNull) {
-            line = line.defined(function (d) { return $$.getBaseValue(d) !== null; });
-        }
-        var x = isSub ? scale.subX : scale.x;
-        return function (d) {
-            var y = yScale(d.id, isSub);
-            var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-            var x0 = 0;
-            var y0 = 0;
-            var path;
-            if ($$.isLineType(d)) {
-                var regions = config.data_regions[d.id];
-                if (regions) {
-                    path = $$.lineWithRegions(values, x, y, regions);
-                }
-                else {
-                    if ($$.isStepType(d)) {
-                        values = $$.convertValuesToStep(values);
-                    }
-                    path = line.curve($$.getCurve(d))(values);
-                }
-            }
-            else {
-                if (values[0]) {
-                    x0 = x(values[0].x);
-                    y0 = y(values[0].value);
-                }
-                path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
-            }
-            return path || "M 0 0";
-        };
-    },
-    generateGetLinePoints: function (lineIndices, isSubValue) {
-        var $$ = this;
-        var config = $$.config;
-        var isSub = !!isSubValue;
-        var x = $$.getShapeX(0, lineIndices, isSub);
-        var y = $$.getShapeY(isSub);
-        var lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
-        var yScale = $$.getYScaleById.bind($$);
-        return function (d, i) {
-            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
-            var offset = lineOffset(d, i) || y0; // offset is for stacked area chart
-            var posX = x(d);
-            var posY = y(d);
-            // fix posY not to overflow opposite quadrant
-            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
-                posY = y0;
-            }
-            // 1 point that marks the line position
-            var point = [posX, posY - (y0 - offset)];
-            return [
-                point,
-                point,
-                point,
-                point
-            ];
-        };
-    },
-    lineWithRegions: function (d, x, y, _regions) {
-        var $$ = this;
-        var config = $$.config;
-        var isRotated = config.axis_rotated;
-        var isTimeSeries = $$.axis.isTimeSeries();
-        var xOffset = $$.axis.isCategorized() ? 0.5 : 0;
-        var regions = [];
-        var dasharray = "2 2"; // default value
-        var xp;
-        var yp;
-        var diff;
-        var diffx2;
-        // check weather data is within region
-        var isWithinRegions = function (withinX, withinRegions) {
-            for (var i = 0, reg = void 0; (reg = withinRegions[i]); i++) {
-                if (reg.start < withinX && withinX <= reg.end) {
-                    return reg.style;
-                }
-            }
-            return false;
-        };
-        // Check start/end of regions
-        if (isDefined(_regions)) {
-            var getValue = function (v, def) { return (isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)); };
-            for (var i = 0, reg = void 0; (reg = _regions[i]); i++) {
-                var start = getValue(reg.start, d[0].x);
-                var end = getValue(reg.end, d[d.length - 1].x);
-                var style = reg.style || { dasharray: dasharray };
-                regions[i] = { start: start, end: end, style: style };
-            }
-        }
-        // Set scales
-        var xValue = isRotated ? function (dt) { return y(dt.value); } : function (dt) { return x(dt.x); };
-        var yValue = isRotated ? function (dt) { return x(dt.x); } : function (dt) { return y(dt.value); };
-        // Define svg generator function for region
-        var generateM = function (points) { return "M" + points[0][0] + "," + points[0][1] + "L" + points[1][0] + "," + points[1][1]; };
-        var sWithRegion = isTimeSeries ? function (d0, d1, k, timeseriesDiff) {
-            var x0 = d0.x.getTime();
-            var xDiff = d1.x - d0.x;
-            var xv0 = new Date(x0 + xDiff * k);
-            var xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
-            var points = isRotated ?
-                [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] :
-                [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
-            return generateM(points);
-        } : function (d0, d1, k, otherDiff) {
-            var points = isRotated ?
-                [[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]] :
-                [[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
-            return generateM(points);
-        };
-        // Generate
-        var path = "";
-        for (var i = 0, data = void 0; (data = d[i]); i++) {
-            var prevData = d[i - 1];
-            var hasPrevData = prevData && isValue(prevData.value);
-            var style = isWithinRegions(data.x, regions);
-            // https://github.com/naver/billboard.js/issues/1172
-            if (!isValue(data.value)) {
-                continue;
-            }
-            // Draw as normal
-            if (isUndefined(regions) || !style || !hasPrevData) {
-                path += "" + (i && hasPrevData ? "L" : "M") + xValue(data) + "," + yValue(data);
-            }
-            else if (hasPrevData) {
-                try {
-                    style = style.dasharray.split(" ");
-                }
-                catch (e) {
-                    style = dasharray.split(" ");
-                }
-                // Draw with region // TODO: Fix for horizotal charts
-                xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries);
-                yp = $$.getScale(prevData.value, data.value);
-                var dx = x(data.x) - x(prevData.x);
-                var dy = y(data.value) - y(prevData.value);
-                var dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
-                diff = style[0] / dd;
-                diffx2 = diff * style[1];
-                for (var j = diff; j <= 1; j += diffx2) {
-                    path += sWithRegion(prevData, data, j, diff);
-                    // to make sure correct line drawing
-                    if (j + diffx2 >= 1) {
-                        path += sWithRegion(prevData, data, 1, 0);
-                    }
-                }
-            }
-        }
-        return path;
-    },
-    updateAreaGradient: function () {
-        var $$ = this;
-        var config = $$.config, datetimeId = $$.state.datetimeId, defs = $$.$el.defs;
-        $$.data.targets.forEach(function (d) {
-            var id = datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id);
-            if ($$.isAreaType(d) && defs.select("#" + id).empty()) {
-                var color_1 = $$.color(d);
-                var _a = config.area_linearGradient, _b = _a.x, x = _b === void 0 ? [0, 0] : _b, _c = _a.y, y = _c === void 0 ? [0, 1] : _c, _d = _a.stops, stops = _d === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _d;
-                var linearGradient_1 = defs.append("linearGradient")
-                    .attr("id", "" + id)
-                    .attr("x1", x[0])
-                    .attr("x2", x[1])
-                    .attr("y1", y[0])
-                    .attr("y2", y[1]);
-                stops.forEach(function (v) {
-                    var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
-                    linearGradient_1.append("stop")
-                        .attr("offset", v[0])
-                        .attr("stop-color", stopColor || color_1)
-                        .attr("stop-opacity", v[2]);
-                });
-            }
-        });
-    },
-    updateAreaColor: function (d) {
-        var $$ = this;
-        return $$.config.area_linearGradient ?
-            "url(#" + $$.state.datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id) + ")" :
-            $$.color(d);
-    },
-    updateArea: function (durationForExit) {
-        var $$ = this;
-        var config = $$.config, state = $$.state, $el = $$.$el;
-        config.area_linearGradient && $$.updateAreaGradient();
-        $el.area = $el.main.selectAll("." + CLASS.areas)
-            .selectAll("." + CLASS.area)
-            .data($$.lineData.bind($$));
-        $el.area.exit().transition()
-            .duration(durationForExit)
-            .style("opacity", "0")
-            .remove();
-        $el.area = $el.area.enter().append("path")
-            .attr("class", $$.classArea.bind($$))
-            .style("fill", $$.updateAreaColor.bind($$))
-            .style("opacity", function () {
-            state.orgAreaOpacity = select(this).style("opacity");
-            return "0";
-        })
-            .merge($el.area);
-        $el.area
-            .style("opacity", state.orgAreaOpacity);
-    },
-    redrawArea: function (drawArea, withTransition) {
-        var $$ = this;
-        var orgAreaOpacity = $$.state.orgAreaOpacity;
-        return [
-            (withTransition ? $$.$el.area.transition(getRandom()) : $$.$el.area)
-                .attr("d", drawArea)
-                .style("fill", $$.updateAreaColor.bind($$))
-                .style("opacity", function (d) { return String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity); })
-        ];
-    },
-    /**
-     * Generate area path data
-     * @param {object} areaIndices Indices
-     * @param {boolean} isSub Weather is sub axis
-     * @returns {Function}
-     * @private
-     */
-    generateDrawArea: function (areaIndices, isSub) {
-        var $$ = this;
-        var config = $$.config;
-        var lineConnectNull = config.line_connectNull;
-        var isRotated = config.axis_rotated;
-        var getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
-        var yScale = $$.getYScaleById.bind($$);
-        var xValue = function (d) { return (isSub ? $$.subxx : $$.xx).call($$, d); };
-        var value0 = function (d, i) { return ($$.isGrouped(d.id) ?
-            getPoints(d, i)[0][1] :
-            yScale(d.id, isSub)($$.isAreaRangeType(d) ?
-                $$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id))); };
-        var value1 = function (d, i) { return ($$.isGrouped(d.id) ?
-            getPoints(d, i)[1][1] :
-            yScale(d.id, isSub)($$.isAreaRangeType(d) ?
-                $$.getAreaRangeData(d, "low") : d.value)); };
-        return function (d) {
-            var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
-            var x0 = 0;
-            var y0 = 0;
-            var path;
-            if ($$.isAreaType(d)) {
-                var area = area$1();
-                area = isRotated ?
-                    area.y(xValue)
-                        .x0(value0)
-                        .x1(value1) :
-                    area.x(xValue)
-                        // @ts-ignore
-                        .y0(config.area_above ? 0 : value0)
-                        .y1(value1);
-                if (!lineConnectNull) {
-                    area = area.defined(function (d) { return $$.getBaseValue(d) !== null; });
-                }
-                if ($$.isStepType(d)) {
-                    values = $$.convertValuesToStep(values);
-                }
-                path = area.curve($$.getCurve(d))(values);
-            }
-            else {
-                if (values[0]) {
-                    x0 = $$.scale.x(values[0].x);
-                    y0 = $$.getYScaleById(d.id)(values[0].value);
-                }
-                path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
-            }
-            return path || "M 0 0";
-        };
-    },
-    generateGetAreaPoints: function (areaIndices, isSub) {
-        // partial duplication of generateGetBarPoints
-        var $$ = this;
-        var config = $$.config;
-        var x = $$.getShapeX(0, areaIndices, !!isSub);
-        var y = $$.getShapeY(!!isSub);
-        var areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
-        var yScale = $$.getYScaleById.bind($$);
-        return function (d, i) {
-            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
-            var offset = areaOffset(d, i) || y0; // offset is for stacked area chart
-            var posX = x(d);
-            var posY = y(d);
-            // fix posY not to overflow opposite quadrant
-            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
-                posY = y0;
-            }
-            // 1 point that marks the area position
-            return [
-                [posX, offset],
-                [posX, posY - (y0 - offset)],
-                [posX, posY - (y0 - offset)],
-                [posX, offset] // needed for compatibility
-            ];
-        };
-    },
-    isWithinStep: function (that, y) {
-        return Math.abs(y - mouse(that)[1]) < 30;
-    },
-    shouldDrawPointsForLine: function (d) {
-        var linePoint = this.config.line_point;
-        return linePoint === true ||
-            (isArray(linePoint) && linePoint.indexOf(d.id) !== -1);
-    }
-};
-
-var getTransitionName = function () { return getRandom(); };
-var point$1 = {
-    hasValidPointType: function (type) {
-        return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
-    },
-    hasValidPointDrawMethods: function (type) {
-        var pointType = type || this.config.point_type;
-        return isObjectType(pointType) &&
-            isFunction(pointType.create) && isFunction(pointType.update);
-    },
-    initialOpacityForCircle: function (d) {
-        var withoutFadeIn = this.state.withoutFadeIn;
-        return this.getBaseValue(d) !== null &&
-            withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
-    },
-    opacityForCircle: function (d) {
-        var config = this.config;
-        var opacity = config.point_show && !config.point_focus_only ? "1" : "0";
-        return isValue(this.getBaseValue(d)) ?
-            (this.isBubbleType(d) || this.isScatterType(d) ?
-                "0.5" : opacity) : "0";
-    },
-    initCircle: function () {
-        var $$ = this;
-        var config = $$.config, main = $$.$el.main;
-        $$.point = $$.generatePoint();
-        if (config.point_show) {
-            main.select("." + CLASS.chart)
-                .append("g")
-                .attr("class", CLASS.chartCircles);
-        }
-    },
-    updateTargetForCircle: function (t) {
-        var $$ = this;
-        var config = $$.config, data = $$.data, $el = $$.$el;
-        if (!$el.circle && config.point_show) {
-            $$.initCircle();
-        }
-        var classCircles = $$.classCircles.bind($$);
-        var targets = (t || data.targets)
-            .filter(function (v) { return (!$$.isBarType(v) && (!$$.isLineType(v) || $$.shouldDrawPointsForLine(v)) && $$.labelishData(v)); });
-        var mainCircle = $el.main.select("." + CLASS.chartCircles)
-            .style("pointer-events", "none")
-            .selectAll("." + CLASS.circles)
-            .data(targets)
-            .attr("class", classCircles);
-        var mainCircleEnter = mainCircle.enter();
-        // Circles for each data point on lines
-        config.data_selection_enabled && mainCircleEnter.append("g")
-            .attr("class", function (d) { return $$.generateClass(CLASS.selectedCircles, d.id); });
-        mainCircleEnter.append("g")
-            .attr("class", classCircles)
-            .style("cursor", function (d) { return (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null); });
-        // Update date for selected circles
-        targets.forEach(function (t) {
-            $el.main.selectAll("." + CLASS.selectedCircles + $$.getTargetSelectorSuffix(t.id))
-                .selectAll("" + CLASS.selectedCircle)
-                .each(function (d) {
-                d.value = t.values[d.index].value;
-            });
-        });
-    },
-    updateCircle: function () {
-        var $$ = this;
-        var config = $$.config, state = $$.state, $el = $$.$el;
-        var focusOnly = config.point_focus_only;
-        if (config.point_show && !state.toggling) {
-            var currIndex_1 = focusOnly && $el.circle ?
-                $el.circle.data()[0].index : 0;
-            var circles = $el.main.selectAll("." + CLASS.circles)
-                .selectAll("." + CLASS.circle)
-                .data(function (d) { return (focusOnly ? [d.values[currIndex_1]] : d.values); });
-            circles.exit().remove();
-            var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
-            circles.enter()
-                .filter(function (d) { return d; })
-                .append(fn)
-                .merge(circles)
-                .style("stroke", $$.color)
-                .style("opacity", $$.initialOpacityForCircle.bind($$));
-            $el.circle = $el.main.selectAll("." + CLASS.circles + " ." + CLASS.circle);
-        }
-    },
-    redrawCircle: function (cx, cy, withTransition, flow) {
-        var $$ = this;
-        var rendered = $$.state.rendered, _a = $$.$el, circle = _a.circle, main = _a.main;
-        var selectedCircles = main.selectAll("." + CLASS.selectedCircle);
-        if (!$$.config.point_show) {
-            return [];
-        }
-        var fn = $$.point("update", $$, cx, cy, $$.color, withTransition, flow, selectedCircles);
-        var posAttr = $$.isCirclePoint() ? "c" : "";
-        var t = getRandom();
-        var opacityStyleFn = $$.opacityForCircle.bind($$);
-        var mainCircles = [];
-        circle.each(function (d) {
-            var result = fn.bind(this)(d);
-            result = ((withTransition || !rendered) ? result.transition(t) : result)
-                .style("opacity", opacityStyleFn);
-            mainCircles.push(result);
-        });
-        return [
-            mainCircles,
-            selectedCircles
-                .attr(posAttr + "x", cx)
-                .attr(posAttr + "y", cy)
-        ];
-    },
-    /**
-     * Show focused data point circle
-     * @param {object} d Selected data
-     * @private
-     */
-    showCircleFocus: function (d) {
-        var $$ = this;
-        var config = $$.config, _a = $$.state, hasRadar = _a.hasRadar, resizing = _a.resizing, toggling = _a.toggling, transiting = _a.transiting, $el = $$.$el;
-        var circle = $el.circle;
-        if (transiting === false && config.point_focus_only && circle) {
-            var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
-            var cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
-            var withTransition = toggling || isUndefined(d);
-            var fn_1 = $$.point("update", $$, cx, cy, $$.color, resizing ? false : withTransition);
-            if (d) {
-                circle = circle
-                    .filter(function (t) {
-                    var data = d.filter(function (v) { return v.id === t.id; });
-                    return data.length ?
-                        select(this).datum(data[0]) : false;
-                });
-            }
-            circle
-                .attr("class", this.updatePointClass.bind(this))
-                .style("opacity", "1")
-                .each(function (d) {
-                var id = d.id, index = d.index, value = d.value;
-                var visibility = "hidden";
-                if (isValue(value)) {
-                    fn_1.bind(this)(d);
-                    $$.expandCircles(index, id);
-                    visibility = "";
-                }
-                this.style.visibility = visibility;
-            });
-        }
-    },
-    /**
-     * Hide focused data point circle
-     * @private
-     */
-    hideCircleFocus: function () {
-        var $$ = this;
-        var config = $$.config, circle = $$.$el.circle;
-        if (config.point_focus_only && circle) {
-            $$.unexpandCircles();
-            circle.style("visibility", "hidden");
-        }
-    },
-    circleX: function (d) {
-        return this.xx(d);
-    },
-    updateCircleY: function () {
-        var $$ = this;
-        var getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
-        $$.circleY = function (d, i) {
-            var id = d.id;
-            return $$.isGrouped(id) ?
-                getPoints(d, i)[0][1] :
-                $$.getYScaleById(id)($$.getBaseValue(d));
-        };
-    },
-    getCircles: function (i, id) {
-        var $$ = this;
-        var suffix = (isValue(i) ? "-" + i : "");
-        return (id ? $$.$el.main.selectAll("." + CLASS.circles + $$.getTargetSelectorSuffix(id)) : $$.$el.main)
-            .selectAll("." + CLASS.circle + suffix);
-    },
-    expandCircles: function (i, id, reset) {
-        var $$ = this;
-        var r = $$.pointExpandedR.bind($$);
-        reset && $$.unexpandCircles();
-        var circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
-        var scale = r(circles) / $$.config.point_r;
-        var ratio = 1 - scale;
-        if ($$.isCirclePoint()) {
-            circles.attr("r", r);
-        }
-        else {
-            // transform must be applied to each node individually
-            circles.each(function () {
-                var point = select(this);
-                if (this.tagName === "circle") {
-                    point.attr("r", r);
-                }
-                else {
-                    var _a = this.getBBox(), width = _a.width, height = _a.height;
-                    var x = ratio * (+point.attr("x") + width / 2);
-                    var y = ratio * (+point.attr("y") + height / 2);
-                    point.attr("transform", "translate(" + x + " " + y + ") scale(" + scale + ")");
-                }
-            });
-        }
-    },
-    unexpandCircles: function (i) {
-        var $$ = this;
-        var r = $$.pointR.bind($$);
-        var circles = $$.getCircles(i)
-            .filter(function () {
-            return select(this).classed(CLASS.EXPANDED);
-        })
-            .classed(CLASS.EXPANDED, false);
-        circles.attr("r", r);
-        !$$.isCirclePoint() &&
-            circles.attr("transform", "scale(" + r(circles) / $$.config.point_r + ")");
-    },
-    pointR: function (d) {
-        var $$ = this;
-        var config = $$.config;
-        var pointR = config.point_r;
-        var r = pointR;
-        if ($$.isBubbleType(d)) {
-            r = $$.getBubbleR(d);
-        }
-        else if (isFunction(pointR)) {
-            r = pointR.bind($$.api)(d);
-        }
-        return r;
-    },
-    pointExpandedR: function (d) {
-        var $$ = this;
-        var config = $$.config;
-        var scale = $$.isBubbleType(d) ? 1.15 : 1.75;
-        return config.point_focus_expand_enabled ?
-            (config.point_focus_expand_r || $$.pointR(d) * scale) : $$.pointR(d);
-    },
-    pointSelectR: function (d) {
-        var $$ = this;
-        var selectR = $$.config.point_select_r;
-        return isFunction(selectR) ?
-            selectR(d) : (selectR || $$.pointR(d) * 4);
-    },
-    isWithinCircle: function (node, r) {
-        var mouse$1 = mouse(node);
-        var element = select(node);
-        var prefix = this.isCirclePoint(node) ? "c" : "";
-        var cx = +element.attr(prefix + "x");
-        var cy = +element.attr(prefix + "y");
-        // if node don't have cx/y or x/y attribute value
-        if (!(cx || cy) && node.nodeType === 1) {
-            var _a = getBoundingRect(node), x = _a.x, y = _a.y;
-            cx = x;
-            cy = y;
-        }
-        return Math.sqrt(Math.pow(cx - mouse$1[0], 2) + Math.pow(cy - mouse$1[1], 2)) < (r || this.config.point_sensitivity);
-    },
-    insertPointInfoDefs: function (point, id) {
-        var $$ = this;
-        var copyAttr = function (from, target) {
-            var attribs = from.attributes;
-            for (var i = 0, name_1; (name_1 = attribs[i]); i++) {
-                name_1 = name_1.name;
-                target.setAttribute(name_1, from.getAttribute(name_1));
-            }
-        };
-        var doc$1 = new DOMParser().parseFromString(point, "image/svg+xml");
-        var node = doc$1.documentElement;
-        var clone = doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
-        clone.id = id;
-        clone.style.fill = "inherit";
-        clone.style.stroke = "inherit";
-        copyAttr(node, clone);
-        if (node.childNodes && node.childNodes.length) {
-            var parent_1 = select(clone);
-            if ("innerHTML" in clone) {
-                parent_1.html(node.innerHTML);
-            }
-            else {
-                toArray(node.childNodes).forEach(function (v) {
-                    copyAttr(v, parent_1.append(v.tagName).node());
-                });
-            }
-        }
-        $$.$el.defs.node().appendChild(clone);
-    },
-    pointFromDefs: function (id) {
-        return this.$el.defs.select("#" + id);
-    },
-    updatePointClass: function (d) {
-        var $$ = this;
-        var circle = $$.$el.circle;
-        var pointClass = false;
-        if (isObject(d) || circle) {
-            pointClass = d === true ?
-                circle.each(function (d) {
-                    var className = $$.classCircle.bind($$)(d);
-                    if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
-                        className += " " + CLASS.EXPANDED;
-                    }
-                    this.setAttribute("class", className);
-                }) : $$.classCircle(d);
-        }
-        return pointClass;
-    },
-    generatePoint: function () {
-        var $$ = this;
-        var config = $$.config, datetimeId = $$.state.datetimeId;
-        var ids = [];
-        var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
-        return function (method, context) {
-            var args = [];
-            for (var _i = 2; _i < arguments.length; _i++) {
-                args[_i - 2] = arguments[_i];
-            }
-            return function (d) {
-                var id = d.id || (d.data && d.data.id) || d;
-                var element = select(this);
-                ids.indexOf(id) < 0 && ids.push(id);
-                var point = pattern[ids.indexOf(id) % pattern.length];
-                if ($$.hasValidPointType(point)) {
-                    point = $$[point];
-                }
-                else if (!$$.hasValidPointDrawMethods(point)) {
-                    var pointId = datetimeId + "-point-" + id;
-                    var pointFromDefs = $$.pointFromDefs(pointId);
-                    if (pointFromDefs.size() < 1) {
-                        $$.insertPointInfoDefs(point, pointId);
-                    }
-                    if (method === "create") {
-                        return $$.custom.create.bind(context).apply(void 0, __spreadArrays([element, pointId], args));
-                    }
-                    else if (method === "update") {
-                        return $$.custom.update.bind(context).apply(void 0, __spreadArrays([element], args));
-                    }
-                }
-                return point[method].bind(context).apply(void 0, __spreadArrays([element], args));
-            };
-        };
-    },
-    custom: {
-        create: function (element, id, sizeFn, fillStyleFn) {
-            return element.append("use")
-                .attr("xlink:href", "#" + id)
-                .attr("class", this.updatePointClass.bind(this))
-                .style("fill", fillStyleFn)
-                .node();
-        },
-        update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-            var _a = element.node().getBBox(), width = _a.width, height = _a.height;
-            var xPosFn2 = function (d) { return xPosFn(d) - width / 2; };
-            var yPosFn2 = function (d) { return yPosFn(d) - height / 2; };
-            var mainCircles = element;
-            if (withTransition) {
-                var transitionName = getTransitionName();
-                flow && mainCircles.attr("x", xPosFn2);
-                mainCircles = mainCircles.transition(transitionName);
-                selectedCircles && selectedCircles.transition(getTransitionName());
-            }
-            return mainCircles
-                .attr("x", xPosFn2)
-                .attr("y", yPosFn2)
-                .style("fill", fillStyleFn);
-        }
-    },
-    // 'circle' data point
-    circle: {
-        create: function (element, sizeFn, fillStyleFn) {
-            return element.append("circle")
-                .attr("class", this.updatePointClass.bind(this))
-                .attr("r", sizeFn)
-                .style("fill", fillStyleFn)
-                .node();
-        },
-        update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-            var $$ = this;
-            var mainCircles = element;
-            // when '.load()' called, bubble size should be updated
-            if ($$.hasType("bubble")) {
-                mainCircles.attr("r", $$.pointR.bind($$));
-            }
-            if (withTransition) {
-                var transitionName = getTransitionName();
-                flow && mainCircles.attr("cx", xPosFn);
-                if (mainCircles.attr("cx")) {
-                    mainCircles = mainCircles.transition(transitionName);
-                }
-                selectedCircles && selectedCircles.transition(getTransitionName());
-            }
-            return mainCircles
-                .attr("cx", xPosFn)
-                .attr("cy", yPosFn)
-                .style("fill", fillStyleFn);
-        }
-    },
-    // 'rectangle' data point
-    rectangle: {
-        create: function (element, sizeFn, fillStyleFn) {
-            var rectSizeFn = function (d) { return sizeFn(d) * 2.0; };
-            return element.append("rect")
-                .attr("class", this.updatePointClass.bind(this))
-                .attr("width", rectSizeFn)
-                .attr("height", rectSizeFn)
-                .style("fill", fillStyleFn)
-                .node();
-        },
-        update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
-            var $$ = this;
-            var r = $$.config.point_r;
-            var rectXPosFn = function (d) { return xPosFn(d) - r; };
-            var rectYPosFn = function (d) { return yPosFn(d) - r; };
-            var mainCircles = element;
-            if (withTransition) {
-                var transitionName = getTransitionName();
-                flow && mainCircles.attr("x", rectXPosFn);
-                mainCircles = mainCircles.transition(transitionName);
-                selectedCircles && selectedCircles.transition(getTransitionName());
-            }
-            return mainCircles
-                .attr("x", rectXPosFn)
-                .attr("y", rectYPosFn)
-                .style("fill", fillStyleFn);
-        }
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var shape = {
-    /**
-     * Get the shape draw function
-     * @returns {object}
-     * @private
-     */
-    getDrawShape: function () {
-        var $$ = this;
-        var isRotated = $$.config.axis_rotated;
-        var hasRadar = $$.state.hasRadar;
-        var shape = { type: {}, indices: {}, pos: {} };
-        // setup drawer - MEMO: these must be called after axis updated
-        if ($$.hasTypeOf("Line") || $$.hasType("bubble") || $$.hasType("scatter")) {
-            var indices = $$.getShapeIndices($$.isLineType);
-            shape.indices.line = indices;
-            shape.type.line = $$.generateDrawLine ? $$.generateDrawLine(indices, false) : undefined;
-            if ($$.hasTypeOf("Area")) {
-                var indices_1 = $$.getShapeIndices($$.isAreaType);
-                shape.indices.area = indices_1;
-                shape.type.area = $$.generateDrawArea ? $$.generateDrawArea(indices_1, false) : undefined;
-            }
-        }
-        if ($$.hasType("bar")) {
-            var indices = $$.getShapeIndices($$.isBarType);
-            shape.indices.bar = indices;
-            shape.type.bar = $$.generateDrawBar ? $$.generateDrawBar(indices) : undefined;
-        }
-        if (!$$.hasArcType() || hasRadar) {
-            shape.pos = {
-                xForText: $$.generateXYForText(shape.indices, true),
-                yForText: $$.generateXYForText(shape.indices, false),
-                // generate circle x/y functions depending on updated params
-                cx: (hasRadar ? $$.radarCircleX : (isRotated ? $$.circleY : $$.circleX)).bind($$),
-                cy: (hasRadar ? $$.radarCircleY : (isRotated ? $$.circleX : $$.circleY)).bind($$)
-            };
-        }
-        return shape;
-    },
-    getShapeIndices: function (typeFilter) {
-        var $$ = this;
-        var config = $$.config;
-        var xs = config.data_xs;
-        var hasXs = notEmpty(xs);
-        var indices = {};
-        var i = hasXs ? {} : 0;
-        if (hasXs) {
-            getUnique(Object.keys(xs).map(function (v) { return xs[v]; }))
-                .forEach(function (v) {
-                i[v] = 0;
-                indices[v] = {};
-            });
-        }
-        $$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$))
-            .forEach(function (d) {
-            var xKey = d.id in xs ? xs[d.id] : "";
-            var ind = xKey ? indices[xKey] : indices;
-            for (var j = 0, groups = void 0; (groups = config.data_groups[j]); j++) {
-                if (groups.indexOf(d.id) < 0) {
-                    continue;
-                }
-                for (var k = 0, row = void 0; (row = groups[k]); k++) {
-                    if (row in ind) {
-                        ind[d.id] = ind[row];
-                        break;
-                    }
-                }
-            }
-            if (isUndefined(ind[d.id])) {
-                ind[d.id] = xKey ? i[xKey]++ : i++;
-                ind.__max__ = (xKey ? i[xKey] : i) - 1;
-            }
-        });
-        return indices;
-    },
-    /**
-     * Get indices value based on data ID value
-     * @param {object} indices Indices object
-     * @param {string} id Data id value
-     * @returns {object} Indices object
-     * @private
-     */
-    getIndices: function (indices, id) {
-        var xs = this.config.data_xs;
-        return notEmpty(xs) ?
-            indices[xs[id]] : indices;
-    },
-    /**
-     * Get indices max number
-     * @param {object} indices Indices object
-     * @returns {number} Max number
-     * @private
-     */
-    getIndicesMax: function (indices) {
-        return notEmpty(this.config.data_xs) ?
-            // if is multiple xs, return total sum of xs' __max__ value
-            Object.keys(indices)
-                .map(function (v) { return indices[v].__max__ || 0; })
-                .reduce(function (acc, curr) { return acc + curr; }) : indices.__max__;
-    },
-    getShapeX: function (offset, indices, isSub) {
-        var $$ = this;
-        var config = $$.config, scale = $$.scale;
-        var currScale = isSub ? scale.subX : (scale.zoom || scale.x);
-        var barPadding = config.bar_padding;
-        var sum = function (p, c) { return p + c; };
-        var halfWidth = isObjectType(offset) && offset.total.length ? offset.total.reduce(sum) / 2 : 0;
-        return function (d) {
-            var ind = $$.getIndices(indices, d.id);
-            var index = d.id in ind ? ind[d.id] : 0;
-            var targetsNum = (ind.__max__ || 0) + 1;
-            var x = 0;
-            if (notEmpty(d.x)) {
-                var xPos = currScale(d.x);
-                if (halfWidth) {
-                    x = xPos - (offset[d.id] || offset.width) +
-                        offset.total.slice(0, index + 1).reduce(sum) -
-                        halfWidth;
-                }
-                else {
-                    x = xPos - (isNumber(offset) ? offset : offset.width) * (targetsNum / 2 - index);
-                }
-            }
-            // adjust x position for bar.padding optionq
-            if (offset && x && targetsNum > 1 && barPadding) {
-                if (index) {
-                    x += barPadding * index;
-                }
-                if (targetsNum > 2) {
-                    x -= (targetsNum - 1) * barPadding / 2;
-                }
-                else if (targetsNum === 2) {
-                    x -= barPadding / 2;
-                }
-            }
-            return x;
-        };
-    },
-    getShapeY: function (isSub) {
-        var $$ = this;
-        var isStackNormalized = $$.isStackNormalized();
-        return function (d) {
-            var value = isStackNormalized ? $$.getRatio("index", d, true) : ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "y") : d.value);
-            return $$.getYScaleById(d.id, isSub)(value);
-        };
-    },
-    /**
-     * Get shape based y Axis min value
-     * @param {string} id Data id
-     * @returns {number}
-     * @private
-     */
-    getShapeYMin: function (id) {
-        var $$ = this;
-        var yMin = $$.scale[$$.axis.getId(id)].domain()[0];
-        return !$$.isGrouped(id) && yMin > 0 ? yMin : 0;
-    },
-    /**
-     * Get Shape's offset data
-     * @param {Function} typeFilter Type filter function
-     * @returns {object}
-     * @private
-     */
-    getShapeOffsetData: function (typeFilter) {
-        var $$ = this;
-        var targets = $$.orderTargets($$.filterTargetsToShow($$.data.targets.filter(typeFilter, $$)));
-        var isStackNormalized = $$.isStackNormalized();
-        var shapeOffsetTargets = targets.map(function (target) {
-            var rowValues = target.values;
-            var values = {};
-            if ($$.isStepType(target)) {
-                rowValues = $$.convertValuesToStep(rowValues);
-            }
-            var rowValueMapByXValue = rowValues.reduce(function (out, d) {
-                var key = Number(d.x);
-                out[key] = d;
-                values[key] = isStackNormalized ? $$.getRatio("index", d, true) : d.value;
-                return out;
-            }, {});
-            return {
-                id: target.id,
-                rowValues: rowValues,
-                rowValueMapByXValue: rowValueMapByXValue,
-                values: values
-            };
-        });
-        var indexMapByTargetId = targets.reduce(function (out, _a, index) {
-            var id = _a.id;
-            out[id] = index;
-            return out;
-        }, {});
-        return { indexMapByTargetId: indexMapByTargetId, shapeOffsetTargets: shapeOffsetTargets };
-    },
-    getShapeOffset: function (typeFilter, indices, isSub) {
-        var $$ = this;
-        var _a = $$.getShapeOffsetData(typeFilter), shapeOffsetTargets = _a.shapeOffsetTargets, indexMapByTargetId = _a.indexMapByTargetId;
-        return function (d, idx) {
-            var ind = $$.getIndices(indices, d.id);
-            var scale = $$.getYScaleById(d.id, isSub);
-            var y0 = scale($$.getShapeYMin(d.id));
-            var dataXAsNumber = Number(d.x);
-            var offset = y0;
-            shapeOffsetTargets
-                .filter(function (t) { return t.id !== d.id; })
-                .forEach(function (t) {
-                if (ind[t.id] === ind[d.id] && indexMapByTargetId[t.id] < indexMapByTargetId[d.id]) {
-                    var row = t.rowValues[idx];
-                    // check if the x values line up
-                    if (!row || Number(row.x) !== dataXAsNumber) {
-                        row = t.rowValueMapByXValue[dataXAsNumber];
-                    }
-                    if (row && row.value * d.value >= 0) {
-                        offset += scale(t.values[dataXAsNumber]) - y0;
-                    }
-                }
-            });
-            return offset;
-        };
-    },
-    isWithinShape: function (that, d) {
-        var $$ = this;
-        var shape = select(that);
-        var isWithin;
-        if (!$$.isTargetToShow(d.id)) {
-            isWithin = false;
-        }
-        else if ($$.hasValidPointType(that.nodeName)) {
-            isWithin = $$.isStepType(d) ?
-                $$.isWithinStep(that, $$.getYScaleById(d.id)(d.value)) :
-                $$.isWithinCircle(that, $$.isBubbleType(d) ? $$.pointSelectR(d) * 1.5 : 0);
-        }
-        else if (that.nodeName === "path") {
-            isWithin = shape.classed(CLASS.bar) ? $$.isWithinBar(that) : true;
-        }
-        return isWithin;
-    },
-    getInterpolate: function (d) {
-        var $$ = this;
-        var interpolation = $$.getInterpolateType(d);
-        return {
-            "basis": curveBasis,
-            "basis-closed": curveBasisClosed,
-            "basis-open": curveBasisOpen,
-            "bundle": curveBundle,
-            "cardinal": curveCardinal,
-            "cardinal-closed": curveCardinalClosed,
-            "cardinal-open": curveCardinalOpen,
-            "catmull-rom": curveCatmullRom,
-            "catmull-rom-closed": curveCatmullRomClosed,
-            "catmull-rom-open": curveCatmullRomOpen,
-            "monotone-x": curveMonotoneX,
-            "monotone-y": curveMonotoneY,
-            "natural": curveNatural,
-            "linear-closed": curveLinearClosed,
-            "linear": curveLinear,
-            "step": curveStep,
-            "step-after": curveStepAfter,
-            "step-before": curveStepBefore
-        }[interpolation];
-    },
-    getInterpolateType: function (d) {
-        var $$ = this;
-        var config = $$.config;
-        var type = config.spline_interpolation_type;
-        var interpolation = $$.isInterpolationType(type) ? type : "cardinal";
-        return $$.isSplineType(d) ?
-            interpolation : ($$.isStepType(d) ?
-            config.line_step_type : "linear");
+        var _a = $$.state, axis = _a.axis, current = _a.current;
+        var xAxisLength = current.width -
+            $$.getCurrentPaddingLeft(false) - $$.getCurrentPaddingRight(true);
+        var tickCountWithPadding = axis.x.tickCount +
+            axis.x.padding.left + axis.x.padding.right;
+        var maxTickWidth = $$.axis.getMaxTickWidth("x");
+        var tickLength = (xAxisLength / tickCountWithPadding) || 0;
+        return maxTickWidth > tickLength;
     }
 };
 
@@ -15702,27 +16230,24 @@ var api = [
     apiZoom
 ];
 var internal = [
+    axis$2,
     drag,
     flow,
     subchart$1,
     zoom$2,
     clip,
+    eventrect,
     grid$1,
     region,
     selection,
-    eventrect,
-    bar$1,
-    bubble$1,
-    line$1,
-    point$1,
-    shape
+    sizeAxis
 ];
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
-var arc = {
+var shapeArc = {
     initPie: function () {
         var $$ = this;
         var config = $$.config;
@@ -15733,7 +16258,7 @@ var arc = {
             config[dataType + "_padAngle"]) || 0;
         var sortValue = $$.isOrderAsc() || $$.isOrderDesc() ?
             function (a, b) { return ($$.isOrderAsc() ? a - b : b - a); } : null;
-        $$.pie = pie$1()
+        $$.pie = pie$2()
             .startAngle(startingAngle)
             .endAngle(startingAngle + (2 * Math.PI))
             .padAngle(padAngle)
@@ -15830,7 +16355,7 @@ var arc = {
         var ir = $$.getInnerRadius();
         var singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
         var hasMultiArcGauge = $$.hasMultiArcGauge();
-        var arc = arc$1()
+        var arc$1 = arc()
             .outerRadius(function (d) { return (hasMultiArcGauge ? (state.radius - singleArcWidth * d.index) : state.radius); })
             .innerRadius(function (d) { return (hasMultiArcGauge ?
             state.radius - singleArcWidth * (d.index + 1) :
@@ -15839,20 +16364,20 @@ var arc = {
             var path = "M 0 0";
             if (d.value || d.data) {
                 if (!isNumber(ir)) {
-                    arc = arc.innerRadius($$.getInnerRadius(d));
+                    arc$1 = arc$1.innerRadius($$.getInnerRadius(d));
                 }
                 var updated = !withoutUpdate && $$.updateAngle(d);
                 if (withoutUpdate) {
-                    path = arc(d);
+                    path = arc$1(d);
                 }
                 else if (updated) {
-                    path = arc(updated);
+                    path = arc$1(updated);
                 }
             }
             return path;
         };
         // TODO: extends all function
-        newArc.centroid = arc.centroid;
+        newArc.centroid = arc$1.centroid;
         return newArc;
     },
     getSvgArcExpanded: function (rate) {
@@ -15862,7 +16387,7 @@ var arc = {
         var singleArcWidth = state.gaugeArcWidth / $$.filterTargetsToShow($$.data.targets).length;
         var hasMultiArcGauge = $$.hasMultiArcGauge();
         var expandWidth = Math.min(state.radiusExpanded * newRate - state.radius, singleArcWidth * 0.8 - (1 - newRate) * 100);
-        var arc = arc$1()
+        var arc$1 = arc()
             .outerRadius(function (d) { return (hasMultiArcGauge ?
             state.radius - singleArcWidth * d.index + expandWidth :
             state.radiusExpanded * newRate); })
@@ -15871,7 +16396,7 @@ var arc = {
         return function (d) {
             var updated = $$.updateAngle(d);
             if (updated) {
-                return (hasMultiArcGauge ? arc : arc.innerRadius($$.getInnerRadius(d)))(updated);
+                return (hasMultiArcGauge ? arc$1 : arc$1.innerRadius($$.getInnerRadius(d)))(updated);
             }
             else {
                 return "M 0 0";
@@ -16419,6 +16944,1285 @@ var arc = {
  * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard.js project is licensed under the MIT license
  */
+var shapeArea = {
+    initArea: function (mainLineEnter) {
+        var $$ = this;
+        mainLineEnter
+            .append("g")
+            .attr("class", $$.classAreas.bind($$));
+    },
+    updateAreaGradient: function () {
+        var $$ = this;
+        var config = $$.config, datetimeId = $$.state.datetimeId, defs = $$.$el.defs;
+        $$.data.targets.forEach(function (d) {
+            var id = datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id);
+            if ($$.isAreaType(d) && defs.select("#" + id).empty()) {
+                var color_1 = $$.color(d);
+                var _a = config.area_linearGradient, _b = _a.x, x = _b === void 0 ? [0, 0] : _b, _c = _a.y, y = _c === void 0 ? [0, 1] : _c, _d = _a.stops, stops = _d === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _d;
+                var linearGradient_1 = defs.append("linearGradient")
+                    .attr("id", "" + id)
+                    .attr("x1", x[0])
+                    .attr("x2", x[1])
+                    .attr("y1", y[0])
+                    .attr("y2", y[1]);
+                stops.forEach(function (v) {
+                    var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
+                    linearGradient_1.append("stop")
+                        .attr("offset", v[0])
+                        .attr("stop-color", stopColor || color_1)
+                        .attr("stop-opacity", v[2]);
+                });
+            }
+        });
+    },
+    updateAreaColor: function (d) {
+        var $$ = this;
+        return $$.config.area_linearGradient ?
+            "url(#" + $$.state.datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id) + ")" :
+            $$.color(d);
+    },
+    updateArea: function (durationForExit) {
+        var $$ = this;
+        var config = $$.config, state = $$.state, $el = $$.$el;
+        config.area_linearGradient && $$.updateAreaGradient();
+        $el.area = $el.main.selectAll("." + CLASS.areas)
+            .selectAll("." + CLASS.area)
+            .data($$.lineData.bind($$));
+        $el.area.exit().transition()
+            .duration(durationForExit)
+            .style("opacity", "0")
+            .remove();
+        $el.area = $el.area.enter().append("path")
+            .attr("class", $$.classArea.bind($$))
+            .style("fill", $$.updateAreaColor.bind($$))
+            .style("opacity", function () {
+            state.orgAreaOpacity = select(this).style("opacity");
+            return "0";
+        })
+            .merge($el.area);
+        $el.area
+            .style("opacity", state.orgAreaOpacity);
+    },
+    redrawArea: function (drawArea, withTransition) {
+        var $$ = this;
+        var orgAreaOpacity = $$.state.orgAreaOpacity;
+        return [
+            (withTransition ? $$.$el.area.transition(getRandom()) : $$.$el.area)
+                .attr("d", drawArea)
+                .style("fill", $$.updateAreaColor.bind($$))
+                .style("opacity", function (d) { return String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity); })
+        ];
+    },
+    /**
+     * Generate area path data
+     * @param {object} areaIndices Indices
+     * @param {boolean} isSub Weather is sub axis
+     * @returns {Function}
+     * @private
+     */
+    generateDrawArea: function (areaIndices, isSub) {
+        var $$ = this;
+        var config = $$.config;
+        var lineConnectNull = config.line_connectNull;
+        var isRotated = config.axis_rotated;
+        var getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        var xValue = function (d) { return (isSub ? $$.subxx : $$.xx).call($$, d); };
+        var value0 = function (d, i) { return ($$.isGrouped(d.id) ?
+            getPoints(d, i)[0][1] :
+            yScale(d.id, isSub)($$.isAreaRangeType(d) ?
+                $$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id))); };
+        var value1 = function (d, i) { return ($$.isGrouped(d.id) ?
+            getPoints(d, i)[1][1] :
+            yScale(d.id, isSub)($$.isAreaRangeType(d) ?
+                $$.getAreaRangeData(d, "low") : d.value)); };
+        return function (d) {
+            var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+            var x0 = 0;
+            var y0 = 0;
+            var path;
+            if ($$.isAreaType(d)) {
+                var area = area$2();
+                area = isRotated ?
+                    area.y(xValue)
+                        .x0(value0)
+                        .x1(value1) :
+                    area.x(xValue)
+                        // @ts-ignore
+                        .y0(config.area_above ? 0 : value0)
+                        .y1(value1);
+                if (!lineConnectNull) {
+                    area = area.defined(function (d) { return $$.getBaseValue(d) !== null; });
+                }
+                if ($$.isStepType(d)) {
+                    values = $$.convertValuesToStep(values);
+                }
+                path = area.curve($$.getCurve(d))(values);
+            }
+            else {
+                if (values[0]) {
+                    x0 = $$.scale.x(values[0].x);
+                    y0 = $$.getYScaleById(d.id)(values[0].value);
+                }
+                path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+            }
+            return path || "M 0 0";
+        };
+    },
+    generateGetAreaPoints: function (areaIndices, isSub) {
+        // partial duplication of generateGetBarPoints
+        var $$ = this;
+        var config = $$.config;
+        var x = $$.getShapeX(0, areaIndices, !!isSub);
+        var y = $$.getShapeY(!!isSub);
+        var areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        return function (d, i) {
+            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+            var offset = areaOffset(d, i) || y0; // offset is for stacked area chart
+            var posX = x(d);
+            var posY = y(d);
+            // fix posY not to overflow opposite quadrant
+            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
+                posY = y0;
+            }
+            // 1 point that marks the area position
+            return [
+                [posX, offset],
+                [posX, posY - (y0 - offset)],
+                [posX, posY - (y0 - offset)],
+                [posX, offset] // needed for compatibility
+            ];
+        };
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var shapeBar = {
+    initBar: function () {
+        var $el = this.$el;
+        $el.bar = $el.main.select("." + CLASS.chart)
+            // should positioned at the beginning of the shape node to not overlap others
+            .insert("g", ":first-child")
+            .attr("class", CLASS.chartBars);
+    },
+    updateTargetsForBar: function (targets) {
+        var $$ = this;
+        var config = $$.config, $el = $$.$el;
+        var classChartBar = $$.classChartBar.bind($$);
+        var classBars = $$.classBars.bind($$);
+        var classFocus = $$.classFocus.bind($$);
+        if (!$el.bar) {
+            $$.initBar();
+        }
+        var mainBarUpdate = $$.$el.main.select("." + CLASS.chartBars)
+            .selectAll("." + CLASS.chartBar)
+            .data(targets)
+            .attr("class", function (d) { return classChartBar(d) + classFocus(d); });
+        var mainBarEnter = mainBarUpdate.enter().append("g")
+            .attr("class", classChartBar)
+            .style("opacity", "0")
+            .style("pointer-events", "none");
+        // Bars for each data
+        mainBarEnter.append("g")
+            .attr("class", classBars)
+            .style("cursor", function (d) { return (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null); });
+    },
+    updateBar: function (durationForExit) {
+        var $$ = this;
+        var $el = $$.$el;
+        var barData = $$.barData.bind($$);
+        var classBar = $$.classBar.bind($$);
+        var initialOpacity = $$.initialOpacity.bind($$);
+        $el.bar = $el.main.selectAll("." + CLASS.bars).selectAll("." + CLASS.bar)
+            .data(barData);
+        $el.bar.exit().transition()
+            .duration(durationForExit)
+            .style("opacity", "0")
+            .remove();
+        $el.bar = $el.bar.enter().append("path")
+            .attr("class", classBar)
+            .style("fill", $$.color)
+            .merge($el.bar)
+            .style("opacity", initialOpacity);
+    },
+    redrawBar: function (drawBar, withTransition) {
+        var bar = this.$el.bar;
+        return [
+            (withTransition ? bar.transition(getRandom()) : bar)
+                .attr("d", drawBar)
+                .style("fill", this.color)
+                .style("opacity", "1")
+        ];
+    },
+    getBarW: function (axis, barTargetsNum) {
+        var $$ = this;
+        var config = $$.config, scale = $$.scale;
+        var maxDataCount = $$.getMaxDataCount();
+        var isGrouped = config.data_groups.length;
+        var tickInterval = (scale.zoom || $$) && !$$.axis.isCategorized() ?
+            $$.xx(scale.subX.domain()[1]) / maxDataCount : axis.tickInterval(maxDataCount);
+        var result;
+        var getWidth = function (id) {
+            var width = id ? config.bar_width[id] : config.bar_width;
+            var ratio = id ? width.ratio : config.bar_width_ratio;
+            var max = id ? width.max : config.bar_width_max;
+            var w = isNumber(width) ?
+                width : barTargetsNum ? (tickInterval * ratio) / barTargetsNum : 0;
+            return max && w > max ? max : w;
+        };
+        result = getWidth();
+        if (!isGrouped && isObjectType(config.bar_width)) {
+            result = { width: result, total: [] };
+            $$.filterTargetsToShow($$.data.targets).forEach(function (v) {
+                if (config.bar_width[v.id]) {
+                    result[v.id] = getWidth(v.id);
+                    result.total.push(result[v.id] || result.width);
+                }
+            });
+        }
+        return result;
+    },
+    getBars: function (i, id) {
+        var $$ = this;
+        var main = $$.$el.main;
+        var suffix = (isValue(i) ? "-" + i : "");
+        return (id ? main
+            .selectAll("." + CLASS.bars + $$.getTargetSelectorSuffix(id)) : main)
+            .selectAll("." + CLASS.bar + suffix);
+    },
+    expandBars: function (i, id, reset) {
+        var $$ = this;
+        reset && $$.unexpandBars();
+        $$.getBars(i, id).classed(CLASS.EXPANDED, true);
+    },
+    unexpandBars: function (i) {
+        this.getBars(i).classed(CLASS.EXPANDED, false);
+    },
+    generateDrawBar: function (barIndices, isSub) {
+        var $$ = this;
+        var config = $$.config;
+        var getPoints = $$.generateGetBarPoints(barIndices, isSub);
+        var isRotated = config.axis_rotated;
+        var isGrouped = config.data_groups.length;
+        var barRadius = config.bar_radius;
+        var barRadiusRatio = config.bar_radius_ratio;
+        // get the bar radius
+        var getRadius = isNumber(barRadius) && barRadius > 0 ?
+            function () { return barRadius; } : (isNumber(barRadiusRatio) ? function (w) { return w * barRadiusRatio; } : null);
+        return function (d, i) {
+            // 4 points that make a bar
+            var points = getPoints(d, i);
+            // switch points if axis is rotated, not applicable for sub chart
+            var indexX = +isRotated;
+            var indexY = +!indexX;
+            var isNegative = d.value < 0;
+            var pathRadius = ["", ""];
+            var radius = 0;
+            if (getRadius && !isGrouped) {
+                var index = isRotated ? indexY : indexX;
+                var barW = points[2][index] - points[0][index];
+                radius = getRadius(barW);
+                var arc = "a" + radius + "," + radius + " " + (isNegative ? "1 0 0" : "0 0 1") + " ";
+                pathRadius[+!isRotated] = "" + arc + radius + "," + radius;
+                pathRadius[+isRotated] = "" + arc + [-radius, radius][isRotated ? "sort" : "reverse"]();
+                isNegative && pathRadius.reverse();
+            }
+            // path string data shouldn't be containing new line chars
+            // https://github.com/naver/billboard.js/issues/530
+            var path = isRotated ?
+                "H" + (points[1][indexX] - radius) + " " + pathRadius[0] + "V" + (points[2][indexY] - radius) + " " + pathRadius[1] + "H" + points[3][indexX] :
+                "V" + (points[1][indexY] + (isNegative ? -radius : radius)) + " " + pathRadius[0] + "H" + (points[2][indexX] - radius) + " " + pathRadius[1] + "V" + points[3][indexY];
+            return "M" + points[0][indexX] + "," + points[0][indexY] + path + "z";
+        };
+    },
+    generateGetBarPoints: function (barIndices, isSub) {
+        var $$ = this;
+        var config = $$.config;
+        var axis = isSub ? $$.axis.subX : $$.axis.x;
+        var barTargetsNum = $$.getIndicesMax(barIndices) + 1;
+        var barW = $$.getBarW(axis, barTargetsNum);
+        var barX = $$.getShapeX(barW, barIndices, !!isSub);
+        var barY = $$.getShapeY(!!isSub);
+        var barOffset = $$.getShapeOffset($$.isBarType, barIndices, !!isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        return function (d, i) {
+            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+            var offset = barOffset(d, i) || y0; // offset is for stacked bar chart
+            var width = isNumber(barW) ? barW : barW[d.id] || barW.width;
+            var posX = barX(d);
+            var posY = barY(d);
+            // fix posY not to overflow opposite quadrant
+            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
+                posY = y0;
+            }
+            posY -= (y0 - offset);
+            // 4 points that make a bar
+            return [
+                [posX, offset],
+                [posX, posY],
+                [posX + width, posY],
+                [posX + width, offset]
+            ];
+        };
+    },
+    isWithinBar: function (that) {
+        var mouse$1 = mouse(that);
+        var list = getRectSegList(that);
+        var seg0 = list[0], seg1 = list[1];
+        var x = Math.min(seg0.x, seg1.x);
+        var y = Math.min(seg0.y, seg1.y);
+        var offset = this.config.bar_sensitivity;
+        var _a = that.getBBox(), width = _a.width, height = _a.height;
+        var sx = x - offset;
+        var ex = x + width + offset;
+        var sy = y + height + offset;
+        var ey = y - offset;
+        return sx < mouse$1[0] &&
+            mouse$1[0] < ex &&
+            ey < mouse$1[1] &&
+            mouse$1[1] < sy;
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var shapeBubble = {
+    /**
+     * Initializer
+     * @private
+     */
+    initBubble: function () {
+        var $$ = this;
+        var config = $$.config;
+        if ($$.hasType("bubble")) {
+            config.point_show = true;
+            config.point_type = "circle";
+            config.point_sensitivity = 25;
+        }
+    },
+    /**
+     * Get user agent's computed value
+     * @returns {number}
+     * @private
+     */
+    getBaseLength: function () {
+        var $$ = this;
+        var _a = $$.state, width = _a.width, height = _a.height;
+        var cacheKey = KEY.bubbleBaseLength;
+        var baseLength = $$.cache.get(cacheKey);
+        if (!baseLength) {
+            $$.cache.add(cacheKey, baseLength = getMinMax("min", [width, height]));
+        }
+        return baseLength;
+    },
+    /**
+     * Get the radius value for bubble circle
+     * @param {object} d Data object
+     * @returns {number}
+     * @private
+     */
+    getBubbleR: function (d) {
+        var $$ = this;
+        var maxR = $$.config.bubble_maxR;
+        if (isFunction(maxR)) {
+            maxR = maxR.bind($$.api)(d);
+        }
+        else if (!isNumber(maxR)) {
+            maxR = ($$.getBaseLength() / ($$.getMaxDataCount() * 2)) + 12;
+        }
+        var max = getMinMax("max", $$.getMinMaxData().max.map(function (d) { return ($$.isBubbleZType(d) ?
+            $$.getBubbleZData(d.value, "y") : (isObject(d.value) ? d.value.mid : d.value)); }));
+        var maxArea = maxR * maxR * Math.PI;
+        var area = ($$.isBubbleZType(d) ? $$.getBubbleZData(d.value, "z") : d.value) * (maxArea / max);
+        return Math.sqrt(area / Math.PI);
+    },
+    /**
+     * Get bubble dimension data
+     * @param {object|Array} d data value
+     * @param {string} type - y or z
+     * @returns {number}
+     * @private
+     */
+    getBubbleZData: function (d, type) {
+        return isObject(d) ? d[type] : d[type === "y" ? 0 : 1];
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
+var shapeLine = {
+    initLine: function () {
+        var $el = this.$el;
+        $el.line = $el.main.select("." + CLASS.chart).append("g")
+            .attr("class", CLASS.chartLines);
+    },
+    updateTargetsForLine: function (targets) {
+        var $$ = this;
+        var $el = $$.$el;
+        var classChartLine = $$.classChartLine.bind($$);
+        var classLines = $$.classLines.bind($$);
+        var classFocus = $$.classFocus.bind($$);
+        if (!$el.line) {
+            $$.initLine();
+        }
+        var mainLineUpdate = $el.main.select("." + CLASS.chartLines)
+            .selectAll("." + CLASS.chartLine)
+            .data(targets)
+            .attr("class", function (d) { return classChartLine(d) + classFocus(d); });
+        var mainLineEnter = mainLineUpdate.enter().append("g")
+            .attr("class", classChartLine)
+            .style("opacity", "0")
+            .style("pointer-events", "none");
+        // Lines for each data
+        mainLineEnter.append("g")
+            .attr("class", classLines);
+        // Areas
+        $$.hasTypeOf("Area") &&
+            $$.initArea(mainLineEnter);
+        // MEMO: can not keep same color...
+        // mainLineUpdate.exit().remove();
+    },
+    updateLine: function (durationForExit) {
+        var $$ = this;
+        var extraLineClasses = $$.format.extraLineClasses, $el = $$.$el;
+        $el.line = $el.main
+            .selectAll("." + CLASS.lines)
+            .selectAll("." + CLASS.line)
+            .data($$.lineData.bind($$));
+        $el.line.exit().transition()
+            .duration(durationForExit)
+            .style("opacity", "0")
+            .remove();
+        $el.line = $el.line.enter()
+            .append("path")
+            .attr("class", function (d) { return $$.classLine.bind($$)(d) + " " + (extraLineClasses(d) || ""); })
+            .style("stroke", $$.color)
+            .merge($el.line)
+            .style("opacity", $$.initialOpacity.bind($$))
+            .style("shape-rendering", function (d) { return ($$.isStepType(d) ? "crispEdges" : ""); })
+            .attr("transform", null);
+    },
+    redrawLine: function (drawLine, withTransition) {
+        var line = this.$el.line;
+        return [
+            (withTransition ? line.transition(getRandom()) : line)
+                .attr("d", drawLine)
+                .style("stroke", this.color)
+                .style("opacity", "1")
+        ];
+    },
+    /**
+     * Get the curve interpolate
+     * @param {Array} d Data object
+     * @returns {Function}
+     * @private
+     */
+    getCurve: function (d) {
+        var $$ = this;
+        var isRotatedStepType = $$.config.axis_rotated && $$.isStepType(d);
+        // when is step & rotated, should be computed in different way
+        // https://github.com/naver/billboard.js/issues/471
+        return isRotatedStepType ? function (context) {
+            var step = $$.getInterpolate(d)(context);
+            // keep the original method
+            step.orgPoint = step.point;
+            // to get rotated path data
+            step.pointRotated = function (x, y) {
+                this._point === 1 && (this._point = 2);
+                var y1 = this._y * (1 - this._t) + y * this._t;
+                this._context.lineTo(this._x, y1);
+                this._context.lineTo(x, y1);
+                this._x = x;
+                this._y = y;
+            };
+            step.point = function (x, y) {
+                this._point === 0 ? this.orgPoint(x, y) : this.pointRotated(x, y);
+            };
+            return step;
+        } : $$.getInterpolate(d);
+    },
+    generateDrawLine: function (lineIndices, isSub) {
+        var $$ = this;
+        var config = $$.config, scale = $$.scale;
+        var lineConnectNull = config.line_connectNull;
+        var isRotated = config.axis_rotated;
+        var getPoints = $$.generateGetLinePoints(lineIndices, isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        var xValue = function (d) { return (isSub ? $$.subxx : $$.xx).call($$, d); };
+        var yValue = function (d, i) { return ($$.isGrouped(d.id) ?
+            getPoints(d, i)[0][1] :
+            yScale(d.id, isSub)($$.getBaseValue(d))); };
+        var line = line$2();
+        line = isRotated ?
+            line.x(yValue).y(xValue) : line.x(xValue).y(yValue);
+        if (!lineConnectNull) {
+            line = line.defined(function (d) { return $$.getBaseValue(d) !== null; });
+        }
+        var x = isSub ? scale.subX : scale.x;
+        return function (d) {
+            var y = yScale(d.id, isSub);
+            var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+            var x0 = 0;
+            var y0 = 0;
+            var path;
+            if ($$.isLineType(d)) {
+                var regions = config.data_regions[d.id];
+                if (regions) {
+                    path = $$.lineWithRegions(values, x, y, regions);
+                }
+                else {
+                    if ($$.isStepType(d)) {
+                        values = $$.convertValuesToStep(values);
+                    }
+                    path = line.curve($$.getCurve(d))(values);
+                }
+            }
+            else {
+                if (values[0]) {
+                    x0 = x(values[0].x);
+                    y0 = y(values[0].value);
+                }
+                path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+            }
+            return path || "M 0 0";
+        };
+    },
+    // generateGetLinePoints(lineIndices, isSubValue?: boolean):Function { // partial duplication of generateGetBarPoints
+    // 	const $$ = this;
+    // 	const {config} = $$;
+    // 	const isSub = !!isSubValue;
+    // 	const x = $$.getShapeX(0, lineIndices, isSub);
+    // 	const y = $$.getShapeY(isSub);
+    // 	const lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
+    // 	const yScale = $$.getYScaleById.bind($$);
+    // 	return (d, i) => {
+    // 		const y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+    // 		const offset = lineOffset(d, i) || y0; // offset is for stacked area chart
+    // 		const posX = x(d);
+    // 		let posY = y(d);
+    // 		// fix posY not to overflow opposite quadrant
+    // 		if (config.axis_rotated && (
+    // 			(d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY)
+    // 		)) {
+    // 			posY = y0;
+    // 		}
+    // 		// 1 point that marks the line position
+    // 		const point = [posX, posY - (y0 - offset)];
+    // 		return [
+    // 			point,
+    // 			point, // from here and below, needed for compatibility
+    // 			point,
+    // 			point
+    // 		];
+    // 	};
+    // },
+    lineWithRegions: function (d, x, y, _regions) {
+        var $$ = this;
+        var config = $$.config;
+        var isRotated = config.axis_rotated;
+        var isTimeSeries = $$.axis.isTimeSeries();
+        var xOffset = $$.axis.isCategorized() ? 0.5 : 0;
+        var regions = [];
+        var dasharray = "2 2"; // default value
+        var xp;
+        var yp;
+        var diff;
+        var diffx2;
+        // check weather data is within region
+        var isWithinRegions = function (withinX, withinRegions) {
+            for (var i = 0, reg = void 0; (reg = withinRegions[i]); i++) {
+                if (reg.start < withinX && withinX <= reg.end) {
+                    return reg.style;
+                }
+            }
+            return false;
+        };
+        // Check start/end of regions
+        if (isDefined(_regions)) {
+            var getValue = function (v, def) { return (isUndefined(v) ? def : (isTimeSeries ? parseDate.call($$, v) : v)); };
+            for (var i = 0, reg = void 0; (reg = _regions[i]); i++) {
+                var start = getValue(reg.start, d[0].x);
+                var end = getValue(reg.end, d[d.length - 1].x);
+                var style = reg.style || { dasharray: dasharray };
+                regions[i] = { start: start, end: end, style: style };
+            }
+        }
+        // Set scales
+        var xValue = isRotated ? function (dt) { return y(dt.value); } : function (dt) { return x(dt.x); };
+        var yValue = isRotated ? function (dt) { return x(dt.x); } : function (dt) { return y(dt.value); };
+        // Define svg generator function for region
+        var generateM = function (points) { return "M" + points[0][0] + "," + points[0][1] + "L" + points[1][0] + "," + points[1][1]; };
+        var sWithRegion = isTimeSeries ? function (d0, d1, k, timeseriesDiff) {
+            var x0 = d0.x.getTime();
+            var xDiff = d1.x - d0.x;
+            var xv0 = new Date(x0 + xDiff * k);
+            var xv1 = new Date(x0 + xDiff * (k + timeseriesDiff));
+            var points = isRotated ?
+                [[y(yp(k)), x(xv0)], [y(yp(k + diff)), x(xv1)]] :
+                [[x(xv0), y(yp(k))], [x(xv1), y(yp(k + diff))]];
+            return generateM(points);
+        } : function (d0, d1, k, otherDiff) {
+            var points = isRotated ?
+                [[y(yp(k), true), x(xp(k))], [y(yp(k + otherDiff), true), x(xp(k + otherDiff))]] :
+                [[x(xp(k), true), y(yp(k))], [x(xp(k + otherDiff), true), y(yp(k + otherDiff))]];
+            return generateM(points);
+        };
+        // Generate
+        var path = "";
+        for (var i = 0, data = void 0; (data = d[i]); i++) {
+            var prevData = d[i - 1];
+            var hasPrevData = prevData && isValue(prevData.value);
+            var style = isWithinRegions(data.x, regions);
+            // https://github.com/naver/billboard.js/issues/1172
+            if (!isValue(data.value)) {
+                continue;
+            }
+            // Draw as normal
+            if (isUndefined(regions) || !style || !hasPrevData) {
+                path += "" + (i && hasPrevData ? "L" : "M") + xValue(data) + "," + yValue(data);
+            }
+            else if (hasPrevData) {
+                try {
+                    style = style.dasharray.split(" ");
+                }
+                catch (e) {
+                    style = dasharray.split(" ");
+                }
+                // Draw with region // TODO: Fix for horizotal charts
+                xp = $$.getScale(prevData.x + xOffset, data.x + xOffset, isTimeSeries);
+                yp = $$.getScale(prevData.value, data.value);
+                var dx = x(data.x) - x(prevData.x);
+                var dy = y(data.value) - y(prevData.value);
+                var dd = Math.sqrt(Math.pow(dx, 2) + Math.pow(dy, 2));
+                diff = style[0] / dd;
+                diffx2 = diff * style[1];
+                for (var j = diff; j <= 1; j += diffx2) {
+                    path += sWithRegion(prevData, data, j, diff);
+                    // to make sure correct line drawing
+                    if (j + diffx2 >= 1) {
+                        path += sWithRegion(prevData, data, 1, 0);
+                    }
+                }
+            }
+        }
+        return path;
+    },
+    updateAreaGradient: function () {
+        var $$ = this;
+        var config = $$.config, datetimeId = $$.state.datetimeId, defs = $$.$el.defs;
+        $$.data.targets.forEach(function (d) {
+            var id = datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id);
+            if ($$.isAreaType(d) && defs.select("#" + id).empty()) {
+                var color_1 = $$.color(d);
+                var _a = config.area_linearGradient, _b = _a.x, x = _b === void 0 ? [0, 0] : _b, _c = _a.y, y = _c === void 0 ? [0, 1] : _c, _d = _a.stops, stops = _d === void 0 ? [[0, color_1, 1], [1, color_1, 0]] : _d;
+                var linearGradient_1 = defs.append("linearGradient")
+                    .attr("id", "" + id)
+                    .attr("x1", x[0])
+                    .attr("x2", x[1])
+                    .attr("y1", y[0])
+                    .attr("y2", y[1]);
+                stops.forEach(function (v) {
+                    var stopColor = isFunction(v[1]) ? v[1].bind($$.api)(d.id) : v[1];
+                    linearGradient_1.append("stop")
+                        .attr("offset", v[0])
+                        .attr("stop-color", stopColor || color_1)
+                        .attr("stop-opacity", v[2]);
+                });
+            }
+        });
+    },
+    updateAreaColor: function (d) {
+        var $$ = this;
+        return $$.config.area_linearGradient ?
+            "url(#" + $$.state.datetimeId + "-areaGradient" + $$.getTargetSelectorSuffix(d.id) + ")" :
+            $$.color(d);
+    },
+    updateArea: function (durationForExit) {
+        var $$ = this;
+        var config = $$.config, state = $$.state, $el = $$.$el;
+        config.area_linearGradient && $$.updateAreaGradient();
+        $el.area = $el.main.selectAll("." + CLASS.areas)
+            .selectAll("." + CLASS.area)
+            .data($$.lineData.bind($$));
+        $el.area.exit().transition()
+            .duration(durationForExit)
+            .style("opacity", "0")
+            .remove();
+        $el.area = $el.area.enter().append("path")
+            .attr("class", $$.classArea.bind($$))
+            .style("fill", $$.updateAreaColor.bind($$))
+            .style("opacity", function () {
+            state.orgAreaOpacity = select(this).style("opacity");
+            return "0";
+        })
+            .merge($el.area);
+        $el.area
+            .style("opacity", state.orgAreaOpacity);
+    },
+    redrawArea: function (drawArea, withTransition) {
+        var $$ = this;
+        var orgAreaOpacity = $$.state.orgAreaOpacity;
+        return [
+            (withTransition ? $$.$el.area.transition(getRandom()) : $$.$el.area)
+                .attr("d", drawArea)
+                .style("fill", $$.updateAreaColor.bind($$))
+                .style("opacity", function (d) { return String($$.isAreaRangeType(d) ? orgAreaOpacity / 1.75 : orgAreaOpacity); })
+        ];
+    },
+    /**
+     * Generate area path data
+     * @param {object} areaIndices Indices
+     * @param {boolean} isSub Weather is sub axis
+     * @returns {Function}
+     * @private
+     */
+    generateDrawArea: function (areaIndices, isSub) {
+        var $$ = this;
+        var config = $$.config;
+        var lineConnectNull = config.line_connectNull;
+        var isRotated = config.axis_rotated;
+        var getPoints = $$.generateGetAreaPoints(areaIndices, isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        var xValue = function (d) { return (isSub ? $$.subxx : $$.xx).call($$, d); };
+        var value0 = function (d, i) { return ($$.isGrouped(d.id) ?
+            getPoints(d, i)[0][1] :
+            yScale(d.id, isSub)($$.isAreaRangeType(d) ?
+                $$.getAreaRangeData(d, "high") : $$.getShapeYMin(d.id))); };
+        var value1 = function (d, i) { return ($$.isGrouped(d.id) ?
+            getPoints(d, i)[1][1] :
+            yScale(d.id, isSub)($$.isAreaRangeType(d) ?
+                $$.getAreaRangeData(d, "low") : d.value)); };
+        return function (d) {
+            var values = lineConnectNull ? $$.filterRemoveNull(d.values) : d.values;
+            var x0 = 0;
+            var y0 = 0;
+            var path;
+            if ($$.isAreaType(d)) {
+                var area = area$2();
+                area = isRotated ?
+                    area.y(xValue)
+                        .x0(value0)
+                        .x1(value1) :
+                    area.x(xValue)
+                        // @ts-ignore
+                        .y0(config.area_above ? 0 : value0)
+                        .y1(value1);
+                if (!lineConnectNull) {
+                    area = area.defined(function (d) { return $$.getBaseValue(d) !== null; });
+                }
+                if ($$.isStepType(d)) {
+                    values = $$.convertValuesToStep(values);
+                }
+                path = area.curve($$.getCurve(d))(values);
+            }
+            else {
+                if (values[0]) {
+                    x0 = $$.scale.x(values[0].x);
+                    y0 = $$.getYScaleById(d.id)(values[0].value);
+                }
+                path = isRotated ? "M " + y0 + " " + x0 : "M " + x0 + " " + y0;
+            }
+            return path || "M 0 0";
+        };
+    },
+    generateGetAreaPoints: function (areaIndices, isSub) {
+        // partial duplication of generateGetBarPoints
+        var $$ = this;
+        var config = $$.config;
+        var x = $$.getShapeX(0, areaIndices, !!isSub);
+        var y = $$.getShapeY(!!isSub);
+        var areaOffset = $$.getShapeOffset($$.isAreaType, areaIndices, !!isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        return function (d, i) {
+            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+            var offset = areaOffset(d, i) || y0; // offset is for stacked area chart
+            var posX = x(d);
+            var posY = y(d);
+            // fix posY not to overflow opposite quadrant
+            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
+                posY = y0;
+            }
+            // 1 point that marks the area position
+            return [
+                [posX, offset],
+                [posX, posY - (y0 - offset)],
+                [posX, posY - (y0 - offset)],
+                [posX, offset] // needed for compatibility
+            ];
+        };
+    },
+    isWithinStep: function (that, y) {
+        return Math.abs(y - mouse(that)[1]) < 30;
+    },
+    shouldDrawPointsForLine: function (d) {
+        var linePoint = this.config.line_point;
+        return linePoint === true ||
+            (isArray(linePoint) && linePoint.indexOf(d.id) !== -1);
+    }
+};
+
+var getTransitionName = function () { return getRandom(); };
+var shapePoint = {
+    hasValidPointType: function (type) {
+        return /^(circle|rect(angle)?|polygon|ellipse|use)$/i.test(type || this.config.point_type);
+    },
+    hasValidPointDrawMethods: function (type) {
+        var pointType = type || this.config.point_type;
+        return isObjectType(pointType) &&
+            isFunction(pointType.create) && isFunction(pointType.update);
+    },
+    initialOpacityForCircle: function (d) {
+        var withoutFadeIn = this.state.withoutFadeIn;
+        return this.getBaseValue(d) !== null &&
+            withoutFadeIn[d.id] ? this.opacityForCircle(d) : "0";
+    },
+    opacityForCircle: function (d) {
+        var config = this.config;
+        var opacity = config.point_show && !config.point_focus_only ? "1" : "0";
+        return isValue(this.getBaseValue(d)) ?
+            (this.isBubbleType(d) || this.isScatterType(d) ?
+                "0.5" : opacity) : "0";
+    },
+    initCircle: function () {
+        var $$ = this;
+        var config = $$.config, main = $$.$el.main;
+        $$.point = $$.generatePoint();
+        if (config.point_show) {
+            main.select("." + CLASS.chart)
+                .append("g")
+                .attr("class", CLASS.chartCircles);
+        }
+    },
+    updateTargetForCircle: function (t) {
+        var $$ = this;
+        var config = $$.config, data = $$.data, $el = $$.$el;
+        if (!$el.circle && config.point_show) {
+            $$.initCircle();
+        }
+        var classCircles = $$.classCircles.bind($$);
+        var targets = (t || data.targets)
+            .filter(function (v) { return (!$$.isBarType(v) && (!$$.isLineType(v) || $$.shouldDrawPointsForLine(v)) && $$.labelishData(v)); });
+        var mainCircle = $el.main.select("." + CLASS.chartCircles)
+            .style("pointer-events", "none")
+            .selectAll("." + CLASS.circles)
+            .data(targets)
+            .attr("class", classCircles);
+        var mainCircleEnter = mainCircle.enter();
+        // Circles for each data point on lines
+        config.data_selection_enabled && mainCircleEnter.append("g")
+            .attr("class", function (d) { return $$.generateClass(CLASS.selectedCircles, d.id); });
+        mainCircleEnter.append("g")
+            .attr("class", classCircles)
+            .style("cursor", function (d) { return (config.data_selection_isselectable.bind($$.api)(d) ? "pointer" : null); });
+        // Update date for selected circles
+        targets.forEach(function (t) {
+            $el.main.selectAll("." + CLASS.selectedCircles + $$.getTargetSelectorSuffix(t.id))
+                .selectAll("" + CLASS.selectedCircle)
+                .each(function (d) {
+                d.value = t.values[d.index].value;
+            });
+        });
+    },
+    updateCircle: function () {
+        var $$ = this;
+        var config = $$.config, state = $$.state, $el = $$.$el;
+        var focusOnly = config.point_focus_only;
+        if (config.point_show && !state.toggling) {
+            var currIndex_1 = focusOnly && $el.circle ?
+                $el.circle.data()[0].index : 0;
+            var circles = $el.main.selectAll("." + CLASS.circles)
+                .selectAll("." + CLASS.circle)
+                .data(function (d) { return (focusOnly ? [d.values[currIndex_1]] : d.values); });
+            circles.exit().remove();
+            var fn = $$.point("create", this, $$.pointR.bind($$), $$.color);
+            circles.enter()
+                .filter(function (d) { return d; })
+                .append(fn)
+                .merge(circles)
+                .style("stroke", $$.color)
+                .style("opacity", $$.initialOpacityForCircle.bind($$));
+            $el.circle = $el.main.selectAll("." + CLASS.circles + " ." + CLASS.circle);
+        }
+    },
+    redrawCircle: function (cx, cy, withTransition, flow) {
+        var $$ = this;
+        var rendered = $$.state.rendered, _a = $$.$el, circle = _a.circle, main = _a.main;
+        var selectedCircles = main.selectAll("." + CLASS.selectedCircle);
+        if (!$$.config.point_show) {
+            return [];
+        }
+        var fn = $$.point("update", $$, cx, cy, $$.color, withTransition, flow, selectedCircles);
+        var posAttr = $$.isCirclePoint() ? "c" : "";
+        var t = getRandom();
+        var opacityStyleFn = $$.opacityForCircle.bind($$);
+        var mainCircles = [];
+        circle.each(function (d) {
+            var result = fn.bind(this)(d);
+            result = ((withTransition || !rendered) ? result.transition(t) : result)
+                .style("opacity", opacityStyleFn);
+            mainCircles.push(result);
+        });
+        return [
+            mainCircles,
+            selectedCircles
+                .attr(posAttr + "x", cx)
+                .attr(posAttr + "y", cy)
+        ];
+    },
+    /**
+     * Show focused data point circle
+     * @param {object} d Selected data
+     * @private
+     */
+    showCircleFocus: function (d) {
+        var $$ = this;
+        var config = $$.config, _a = $$.state, hasRadar = _a.hasRadar, resizing = _a.resizing, toggling = _a.toggling, transiting = _a.transiting, $el = $$.$el;
+        var circle = $el.circle;
+        if (transiting === false && config.point_focus_only && circle) {
+            var cx = (hasRadar ? $$.radarCircleX : $$.circleX).bind($$);
+            var cy = (hasRadar ? $$.radarCircleY : $$.circleY).bind($$);
+            var withTransition = toggling || isUndefined(d);
+            var fn_1 = $$.point("update", $$, cx, cy, $$.color, resizing ? false : withTransition);
+            if (d) {
+                circle = circle
+                    .filter(function (t) {
+                    var data = d.filter(function (v) { return v.id === t.id; });
+                    return data.length ?
+                        select(this).datum(data[0]) : false;
+                });
+            }
+            circle
+                .attr("class", this.updatePointClass.bind(this))
+                .style("opacity", "1")
+                .each(function (d) {
+                var id = d.id, index = d.index, value = d.value;
+                var visibility = "hidden";
+                if (isValue(value)) {
+                    fn_1.bind(this)(d);
+                    $$.expandCircles(index, id);
+                    visibility = "";
+                }
+                this.style.visibility = visibility;
+            });
+        }
+    },
+    /**
+     * Hide focused data point circle
+     * @private
+     */
+    hideCircleFocus: function () {
+        var $$ = this;
+        var config = $$.config, circle = $$.$el.circle;
+        if (config.point_focus_only && circle) {
+            $$.unexpandCircles();
+            circle.style("visibility", "hidden");
+        }
+    },
+    circleX: function (d) {
+        return this.xx(d);
+    },
+    updateCircleY: function () {
+        var $$ = this;
+        var getPoints = $$.generateGetLinePoints($$.getShapeIndices($$.isLineType), false);
+        $$.circleY = function (d, i) {
+            var id = d.id;
+            return $$.isGrouped(id) ?
+                getPoints(d, i)[0][1] :
+                $$.getYScaleById(id)($$.getBaseValue(d));
+        };
+    },
+    getCircles: function (i, id) {
+        var $$ = this;
+        var suffix = (isValue(i) ? "-" + i : "");
+        return (id ? $$.$el.main.selectAll("." + CLASS.circles + $$.getTargetSelectorSuffix(id)) : $$.$el.main)
+            .selectAll("." + CLASS.circle + suffix);
+    },
+    expandCircles: function (i, id, reset) {
+        var $$ = this;
+        var r = $$.pointExpandedR.bind($$);
+        reset && $$.unexpandCircles();
+        var circles = $$.getCircles(i, id).classed(CLASS.EXPANDED, true);
+        var scale = r(circles) / $$.config.point_r;
+        var ratio = 1 - scale;
+        if ($$.isCirclePoint()) {
+            circles.attr("r", r);
+        }
+        else {
+            // transform must be applied to each node individually
+            circles.each(function () {
+                var point = select(this);
+                if (this.tagName === "circle") {
+                    point.attr("r", r);
+                }
+                else {
+                    var _a = this.getBBox(), width = _a.width, height = _a.height;
+                    var x = ratio * (+point.attr("x") + width / 2);
+                    var y = ratio * (+point.attr("y") + height / 2);
+                    point.attr("transform", "translate(" + x + " " + y + ") scale(" + scale + ")");
+                }
+            });
+        }
+    },
+    unexpandCircles: function (i) {
+        var $$ = this;
+        var r = $$.pointR.bind($$);
+        var circles = $$.getCircles(i)
+            .filter(function () {
+            return select(this).classed(CLASS.EXPANDED);
+        })
+            .classed(CLASS.EXPANDED, false);
+        circles.attr("r", r);
+        !$$.isCirclePoint() &&
+            circles.attr("transform", "scale(" + r(circles) / $$.config.point_r + ")");
+    },
+    pointR: function (d) {
+        var $$ = this;
+        var config = $$.config;
+        var pointR = config.point_r;
+        var r = pointR;
+        if ($$.isBubbleType(d)) {
+            r = $$.getBubbleR(d);
+        }
+        else if (isFunction(pointR)) {
+            r = pointR.bind($$.api)(d);
+        }
+        return r;
+    },
+    pointExpandedR: function (d) {
+        var $$ = this;
+        var config = $$.config;
+        var scale = $$.isBubbleType(d) ? 1.15 : 1.75;
+        return config.point_focus_expand_enabled ?
+            (config.point_focus_expand_r || $$.pointR(d) * scale) : $$.pointR(d);
+    },
+    pointSelectR: function (d) {
+        var $$ = this;
+        var selectR = $$.config.point_select_r;
+        return isFunction(selectR) ?
+            selectR(d) : (selectR || $$.pointR(d) * 4);
+    },
+    isWithinCircle: function (node, r) {
+        var mouse$1 = mouse(node);
+        var element = select(node);
+        var prefix = this.isCirclePoint(node) ? "c" : "";
+        var cx = +element.attr(prefix + "x");
+        var cy = +element.attr(prefix + "y");
+        // if node don't have cx/y or x/y attribute value
+        if (!(cx || cy) && node.nodeType === 1) {
+            var _a = getBoundingRect(node), x = _a.x, y = _a.y;
+            cx = x;
+            cy = y;
+        }
+        return Math.sqrt(Math.pow(cx - mouse$1[0], 2) + Math.pow(cy - mouse$1[1], 2)) < (r || this.config.point_sensitivity);
+    },
+    insertPointInfoDefs: function (point, id) {
+        var $$ = this;
+        var copyAttr = function (from, target) {
+            var attribs = from.attributes;
+            for (var i = 0, name_1; (name_1 = attribs[i]); i++) {
+                name_1 = name_1.name;
+                target.setAttribute(name_1, from.getAttribute(name_1));
+            }
+        };
+        var doc$1 = new DOMParser().parseFromString(point, "image/svg+xml");
+        var node = doc$1.documentElement;
+        var clone = doc.createElementNS(namespaces.svg, node.nodeName.toLowerCase());
+        clone.id = id;
+        clone.style.fill = "inherit";
+        clone.style.stroke = "inherit";
+        copyAttr(node, clone);
+        if (node.childNodes && node.childNodes.length) {
+            var parent_1 = select(clone);
+            if ("innerHTML" in clone) {
+                parent_1.html(node.innerHTML);
+            }
+            else {
+                toArray(node.childNodes).forEach(function (v) {
+                    copyAttr(v, parent_1.append(v.tagName).node());
+                });
+            }
+        }
+        $$.$el.defs.node().appendChild(clone);
+    },
+    pointFromDefs: function (id) {
+        return this.$el.defs.select("#" + id);
+    },
+    updatePointClass: function (d) {
+        var $$ = this;
+        var circle = $$.$el.circle;
+        var pointClass = false;
+        if (isObject(d) || circle) {
+            pointClass = d === true ?
+                circle.each(function (d) {
+                    var className = $$.classCircle.bind($$)(d);
+                    if (this.getAttribute("class").indexOf(CLASS.EXPANDED) > -1) {
+                        className += " " + CLASS.EXPANDED;
+                    }
+                    this.setAttribute("class", className);
+                }) : $$.classCircle(d);
+        }
+        return pointClass;
+    },
+    generateGetLinePoints: function (lineIndices, isSubValue) {
+        var $$ = this;
+        var config = $$.config;
+        var isSub = !!isSubValue;
+        var x = $$.getShapeX(0, lineIndices, isSub);
+        var y = $$.getShapeY(isSub);
+        var lineOffset = $$.getShapeOffset($$.isLineType, lineIndices, isSub);
+        var yScale = $$.getYScaleById.bind($$);
+        return function (d, i) {
+            var y0 = yScale.call($$, d.id)($$.getShapeYMin(d.id));
+            var offset = lineOffset(d, i) || y0; // offset is for stacked area chart
+            var posX = x(d);
+            var posY = y(d);
+            // fix posY not to overflow opposite quadrant
+            if (config.axis_rotated && ((d.value > 0 && posY < y0) || (d.value < 0 && y0 < posY))) {
+                posY = y0;
+            }
+            // 1 point that marks the line position
+            var point = [posX, posY - (y0 - offset)];
+            return [
+                point,
+                point,
+                point,
+                point
+            ];
+        };
+    },
+    generatePoint: function () {
+        var $$ = this;
+        var config = $$.config, datetimeId = $$.state.datetimeId;
+        var ids = [];
+        var pattern = notEmpty(config.point_pattern) ? config.point_pattern : [config.point_type];
+        return function (method, context) {
+            var args = [];
+            for (var _i = 2; _i < arguments.length; _i++) {
+                args[_i - 2] = arguments[_i];
+            }
+            return function (d) {
+                var id = d.id || (d.data && d.data.id) || d;
+                var element = select(this);
+                ids.indexOf(id) < 0 && ids.push(id);
+                var point = pattern[ids.indexOf(id) % pattern.length];
+                if ($$.hasValidPointType(point)) {
+                    point = $$[point];
+                }
+                else if (!$$.hasValidPointDrawMethods(point)) {
+                    var pointId = datetimeId + "-point-" + id;
+                    var pointFromDefs = $$.pointFromDefs(pointId);
+                    if (pointFromDefs.size() < 1) {
+                        $$.insertPointInfoDefs(point, pointId);
+                    }
+                    if (method === "create") {
+                        return $$.custom.create.bind(context).apply(void 0, __spreadArrays([element, pointId], args));
+                    }
+                    else if (method === "update") {
+                        return $$.custom.update.bind(context).apply(void 0, __spreadArrays([element], args));
+                    }
+                }
+                return point[method].bind(context).apply(void 0, __spreadArrays([element], args));
+            };
+        };
+    },
+    custom: {
+        create: function (element, id, sizeFn, fillStyleFn) {
+            return element.append("use")
+                .attr("xlink:href", "#" + id)
+                .attr("class", this.updatePointClass.bind(this))
+                .style("fill", fillStyleFn)
+                .node();
+        },
+        update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
+            var _a = element.node().getBBox(), width = _a.width, height = _a.height;
+            var xPosFn2 = function (d) { return xPosFn(d) - width / 2; };
+            var yPosFn2 = function (d) { return yPosFn(d) - height / 2; };
+            var mainCircles = element;
+            if (withTransition) {
+                var transitionName = getTransitionName();
+                flow && mainCircles.attr("x", xPosFn2);
+                mainCircles = mainCircles.transition(transitionName);
+                selectedCircles && selectedCircles.transition(getTransitionName());
+            }
+            return mainCircles
+                .attr("x", xPosFn2)
+                .attr("y", yPosFn2)
+                .style("fill", fillStyleFn);
+        }
+    },
+    // 'circle' data point
+    circle: {
+        create: function (element, sizeFn, fillStyleFn) {
+            return element.append("circle")
+                .attr("class", this.updatePointClass.bind(this))
+                .attr("r", sizeFn)
+                .style("fill", fillStyleFn)
+                .node();
+        },
+        update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
+            var $$ = this;
+            var mainCircles = element;
+            // when '.load()' called, bubble size should be updated
+            if ($$.hasType("bubble")) {
+                mainCircles.attr("r", $$.pointR.bind($$));
+            }
+            if (withTransition) {
+                var transitionName = getTransitionName();
+                flow && mainCircles.attr("cx", xPosFn);
+                if (mainCircles.attr("cx")) {
+                    mainCircles = mainCircles.transition(transitionName);
+                }
+                selectedCircles && selectedCircles.transition(getTransitionName());
+            }
+            return mainCircles
+                .attr("cx", xPosFn)
+                .attr("cy", yPosFn)
+                .style("fill", fillStyleFn);
+        }
+    },
+    // 'rectangle' data point
+    rectangle: {
+        create: function (element, sizeFn, fillStyleFn) {
+            var rectSizeFn = function (d) { return sizeFn(d) * 2.0; };
+            return element.append("rect")
+                .attr("class", this.updatePointClass.bind(this))
+                .attr("width", rectSizeFn)
+                .attr("height", rectSizeFn)
+                .style("fill", fillStyleFn)
+                .node();
+        },
+        update: function (element, xPosFn, yPosFn, fillStyleFn, withTransition, flow, selectedCircles) {
+            var $$ = this;
+            var r = $$.config.point_r;
+            var rectXPosFn = function (d) { return xPosFn(d) - r; };
+            var rectYPosFn = function (d) { return yPosFn(d) - r; };
+            var mainCircles = element;
+            if (withTransition) {
+                var transitionName = getTransitionName();
+                flow && mainCircles.attr("x", rectXPosFn);
+                mainCircles = mainCircles.transition(transitionName);
+                selectedCircles && selectedCircles.transition(getTransitionName());
+            }
+            return mainCircles
+                .attr("x", rectXPosFn)
+                .attr("y", rectYPosFn)
+                .style("fill", fillStyleFn);
+        }
+    }
+};
+
+/**
+ * Copyright (c) 2017 ~ present NAVER Corp.
+ * billboard.js project is licensed under the MIT license
+ */
 /**
  * Get the position value
  * @param {boolean} isClockwise If the direction is clockwise
@@ -16438,7 +18242,7 @@ function getPosition(isClockwise, type, edge, pos, range, ratio) {
 }
 // cache key
 var cacheKey = KEY.radarPoints;
-var radar$1 = {
+var shapeRadar = {
     initRadar: function () {
         var $$ = this;
         var config = $$.config, current = $$.state.current, $el = $$.$el;
@@ -16727,1618 +18531,6 @@ var radar$1 = {
 
 /**
  * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var internal$1 = [
-    arc,
-    radar$1
-];
-
-/**
- * Internal chart class.
- * - Note: Instantiated internally, not exposed for public.
- * @class ChartInternal
- * @ignore
- * @private
- */
-var ChartInternal = /** @class */ (function () {
-    function ChartInternal(api) {
-        // data object
-        this.data = {
-            xs: {},
-            targets: []
-        };
-        // scales
-        this.scale = {
-            x: null,
-            y: null,
-            y2: null,
-            subX: null,
-            subY: null,
-            subY2: null,
-            zoom: null
-        };
-        // original values
-        this.org = {
-            xScale: null,
-            xDomain: null
-        };
-        // format function
-        this.format = {
-            extraLineClasses: null,
-            xAxisTick: null,
-            dataTime: null,
-            defaultAxisTime: null,
-            axisTime: null // axisTimeFormat
-        };
-        var $$ = this;
-        $$.api = api; // Chart class instance alias
-        $$.config = new Options();
-        $$.cache = new Cache();
-        var store = new Store();
-        $$.$el = store.getStore("element");
-        $$.state = store.getStore("state");
-    }
-    ChartInternal.prototype.beforeInit = function () {
-        var $$ = this;
-        $$.callPluginHook("$beforeInit");
-        // can do something
-        callFn($$.config.onbeforeinit, $$.api);
-    };
-    ChartInternal.prototype.afterInit = function () {
-        var $$ = this;
-        $$.callPluginHook("$afterInit");
-        // can do something
-        callFn($$.config.onafterinit, $$.api);
-    };
-    ChartInternal.prototype.init = function () {
-        var $$ = this;
-        var config = $$.config, state = $$.state, $el = $$.$el;
-        state.hasAxis = !$$.hasArcType();
-        state.hasRadar = !state.hasAxis && $$.hasType("radar");
-        $$.initParams();
-        var bindto = {
-            element: config.bindto,
-            classname: "bb"
-        };
-        if (isObject(config.bindto)) {
-            bindto.element = config.bindto.element || "#chart";
-            bindto.classname = config.bindto.classname || bindto.classname;
-        }
-        // select bind element
-        $el.chart = isFunction(bindto.element.node) ?
-            config.bindto.element : select(bindto.element || []);
-        if ($el.chart.empty()) {
-            $el.chart = select(doc.body.appendChild(doc.createElement("div")));
-        }
-        $el.chart.html("").classed(bindto.classname, true);
-        $$.initToRender();
-    };
-    /**
-     * Initialize the rendering process
-     * @param {boolean} forced Force to render process
-     * @private
-     */
-    ChartInternal.prototype.initToRender = function (forced) {
-        var $$ = this;
-        var config = $$.config, state = $$.state, chart = $$.$el.chart;
-        var isHidden = function () { return chart.style("display") === "none" || chart.style("visibility") === "hidden"; };
-        var isLazy = config.render.lazy || isHidden();
-        var MutationObserver = win.MutationObserver;
-        if (isLazy && MutationObserver && config.render.observe !== false && !forced) {
-            new MutationObserver(function (mutation, observer) {
-                if (!isHidden()) {
-                    observer.disconnect();
-                    !state.rendered && $$.initToRender(true);
-                }
-            }).observe(chart.node(), {
-                attributes: true,
-                attributeFilter: ["class", "style"]
-            });
-        }
-        if (!isLazy || forced) {
-            var convertedData = $$.convertData(config, $$.initWithData);
-            convertedData && $$.initWithData(convertedData);
-            $$.afterInit();
-        }
-    };
-    ChartInternal.prototype.initParams = function () {
-        var $$ = this;
-        var _a = $$, config = _a.config, format = _a.format, state = _a.state;
-        var isRotated = config.axis_rotated;
-        // datetime to be used for uniqueness
-        state.datetimeId = "bb-" + +new Date();
-        $$.color = $$.generateColor();
-        $$.levelColor = $$.generateLevelColor();
-        if ($$.hasPointType()) {
-            $$.point = $$.generatePoint();
-        }
-        if (state.hasAxis) {
-            $$.initClip();
-            format.extraLineClasses = $$.generateExtraLineClass();
-            format.dataTime = config.data_xLocaltime ? timeParse : utcParse;
-            format.axisTime = config.axis_x_localtime ? timeFormat : utcFormat;
-            var isDragZoom_1 = $$.config.zoom_enabled && $$.config.zoom_enabled.type === "drag";
-            format.defaultAxisTime = function (d) {
-                var _a = $$.scale, x = _a.x, zoom = _a.zoom;
-                var isZoomed = isDragZoom_1 ? zoom :
-                    zoom && x.orgDomain().toString() !== zoom.domain().toString();
-                var specifier = (d.getMilliseconds() && ".%L") ||
-                    (d.getSeconds() && ".:%S") ||
-                    (d.getMinutes() && "%I:%M") ||
-                    (d.getHours() && "%I %p") ||
-                    (d.getDate() !== 1 && "%b %d") ||
-                    (isZoomed && d.getDate() === 1 && "%b\'%y") ||
-                    (d.getMonth() && "%-m/%-d") || "%Y";
-                return format.axisTime(specifier)(d);
-            };
-        }
-        state.isLegendRight = config.legend_position === "right";
-        state.isLegendInset = config.legend_position === "inset";
-        state.isLegendTop = config.legend_inset_anchor === "top-left" ||
-            config.legend_inset_anchor === "top-right";
-        state.isLegendLeft = config.legend_inset_anchor === "top-left" ||
-            config.legend_inset_anchor === "bottom-left";
-        state.rotatedPaddingRight = isRotated && !config.axis_x_show ? 0 : 30;
-        state.inputType = convertInputType(config.interaction_inputType_mouse, config.interaction_inputType_touch);
-    };
-    ChartInternal.prototype.initWithData = function (data) {
-        var $$ = this;
-        var config = $$.config, scale = $$.scale, state = $$.state, $el = $$.$el, org = $$.org;
-        var hasAxis = state.hasAxis;
-        var hasInteraction = config.interaction_enabled;
-        // for arc type, set axes to not be shown
-        // $$.hasArcType() && ["x", "y", "y2"].forEach(id => (config[`axis_${id}_show`] = false));
-        if (hasAxis) {
-            $$.axis = new Axis($$);
-            config.zoom_enabled && $$.initZoom();
-        }
-        // Init data as targets
-        $$.data.xs = {};
-        $$.data.targets = $$.convertDataToTargets(data);
-        if (config.data_filter) {
-            $$.data.targets = $$.data.targets.filter(config.data_filter.bind($$.api));
-        }
-        // Set targets to hide if needed
-        if (config.data_hide) {
-            $$.addHiddenTargetIds(config.data_hide === true ?
-                $$.mapToIds($$.data.targets) : config.data_hide);
-        }
-        if (config.legend_hide) {
-            $$.addHiddenLegendIds(config.legend_hide === true ?
-                $$.mapToIds($$.data.targets) : config.legend_hide);
-        }
-        // Init sizes and scales
-        $$.updateSizes();
-        $$.updateScales(true);
-        // retrieve scale after the 'updateScales()' is called
-        var x = scale.x, y = scale.y, y2 = scale.y2, subX = scale.subX, subY = scale.subY, subY2 = scale.subY2;
-        // Set domains for each scale
-        if (x) {
-            x.domain(sortValue($$.getXDomain($$.data.targets)));
-            subX.domain(x.domain());
-            // Save original x domain for zoom update
-            org.xDomain = x.domain();
-        }
-        if (y) {
-            y.domain($$.getYDomain($$.data.targets, "y"));
-            subY.domain(y.domain());
-        }
-        if (y2) {
-            y2.domain($$.getYDomain($$.data.targets, "y2"));
-            subY2 && subY2.domain(y2.domain());
-        }
-        // -- Basic Elements --
-        $el.svg = $el.chart.append("svg")
-            .style("overflow", "hidden")
-            .style("display", "block");
-        if (hasInteraction && state.inputType) {
-            var isTouch = state.inputType === "touch";
-            $el.svg.on(isTouch ? "touchstart" : "mouseenter", function () { return callFn(config.onover, $$.api); })
-                .on(isTouch ? "touchend" : "mouseleave", function () { return callFn(config.onout, $$.api); });
-        }
-        config.svg_classname && $el.svg.attr("class", config.svg_classname);
-        // Define defs
-        var hasColorPatterns = (isFunction(config.color_tiles) && $$.patterns);
-        if (hasAxis || hasColorPatterns) {
-            $el.defs = $el.svg.append("defs");
-            if (hasAxis) {
-                ["id", "idXAxis", "idYAxis", "idGrid"].forEach(function (v) {
-                    $$.appendClip($el.defs, state.clip[v]);
-                });
-            }
-            // set color patterns
-            if (hasColorPatterns) {
-                $$.patterns.forEach(function (p) { return $el.defs.append(function () { return p.node; }); });
-            }
-        }
-        $$.updateSvgSize();
-        // Bind resize event
-        $$.bindResize();
-        // Define regions
-        var main = $el.svg.append("g")
-            .classed(CLASS.main, true)
-            .attr("transform", $$.getTranslate("main"));
-        $el.main = main;
-        // initialize subchart when subchart show option is set
-        config.subchart_show && $$.initSubchart();
-        config.tooltip_show && $$.initTooltip();
-        config.title_text && $$.initTitle();
-        config.legend_show && $$.initLegend();
-        // -- Main Region --
-        // text when empty
-        if (config.data_empty_label_text) {
-            main.append("text")
-                .attr("class", CLASS.text + " " + CLASS.empty)
-                .attr("text-anchor", "middle") // horizontal centering of text at x position in all browsers.
-                .attr("dominant-baseline", "middle"); // vertical centering of text at y position in all browsers, except IE.
-        }
-        if (hasAxis) {
-            // Regions
-            config.regions.length && $$.initRegion();
-            // Add Axis here, when clipPath is 'false'
-            !config.clipPath && $$.axis.init();
-        }
-        // Define g for chart area
-        main.append("g").attr("class", CLASS.chart)
-            .attr("clip-path", state.clip.path);
-        $$.callPluginHook("$init");
-        if (hasAxis) {
-            // Cover whole with rects for events
-            hasInteraction && $$.initEventRect && $$.initEventRect();
-            // Grids
-            $$.initGrid();
-            // Add Axis here, when clipPath is 'true'
-            config.clipPath && $$.axis && $$.axis.init();
-        }
-        $$.initChartElements();
-        // Set targets
-        $$.updateTargets($$.data.targets);
-        // Draw with targets
-        $$.updateDimension();
-        // oninit callback
-        callFn(config.oninit, $$.api);
-        // Set background
-        $$.setBackground();
-        $$.redraw({
-            withTransition: false,
-            withTransform: true,
-            withUpdateXDomain: true,
-            withUpdateOrgXDomain: true,
-            withTransitionForAxis: false,
-            initializing: true
-        });
-        // data.onmin/max callback
-        if (config.data_onmin || config.data_onmax) {
-            var minMax = $$.getMinMaxData();
-            callFn(config.data_onmin, $$.api, minMax.min);
-            callFn(config.data_onmax, $$.api, minMax.max);
-        }
-        state.rendered = true;
-    };
-    ChartInternal.prototype.initChartElements = function () {
-        var $$ = this;
-        var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
-        var types = [];
-        if (hasAxis) {
-            $$.hasType("bar") && types.push("Bar");
-            $$.hasType("bubble") && types.push("Bubble");
-            $$.hasTypeOf("Line") && types.push("Line");
-        }
-        else {
-            if (!hasRadar) {
-                types.push("Arc", "Pie");
-            }
-            if ($$.hasType("gauge")) {
-                types.push("Gauge");
-            }
-            else if (hasRadar) {
-                types.push("Radar");
-            }
-        }
-        types.forEach(function (v) {
-            $$["init" + v]();
-        });
-        notEmpty($$.config.data_labels) && $$.initText();
-    };
-    ChartInternal.prototype.setChartElements = function () {
-        var $$ = this;
-        var _a = $$.$el, chart = _a.chart, svg = _a.svg, defs = _a.defs, main = _a.main, tooltip = _a.tooltip, legend = _a.legend, title = _a.title, grid = _a.grid, arc = _a.arcs, circles = _a.circle, bars = _a.bar, lines = _a.line, areas = _a.area, texts = _a.text;
-        $$.api.$ = {
-            chart: chart,
-            svg: svg,
-            defs: defs,
-            main: main,
-            tooltip: tooltip,
-            legend: legend,
-            title: title,
-            grid: grid,
-            arc: arc,
-            circles: circles,
-            bar: { bars: bars },
-            line: { lines: lines, areas: areas },
-            text: { texts: texts }
-        };
-    };
-    /**
-     * Set background element/image
-     * @private
-     */
-    ChartInternal.prototype.setBackground = function () {
-        var $$ = this;
-        var bg = $$.config.background, state = $$.state, svg = $$.$el.svg;
-        if (notEmpty(bg)) {
-            var element = svg.select("g")
-                .insert(bg.imgUrl ? "image" : "rect", ":first-child");
-            if (bg.imgUrl) {
-                element.attr("href", bg.imgUrl);
-            }
-            else if (bg.color) {
-                element
-                    .style("fill", bg.color)
-                    .attr("clip-path", state.clip.path);
-            }
-            element
-                .attr("class", bg["class"] || null)
-                .attr("width", "100%")
-                .attr("height", "100%");
-        }
-    };
-    /**
-     * Update targeted element with given data
-     * @param {object} targets Data object formatted as 'target'
-     * @private
-     */
-    ChartInternal.prototype.updateTargets = function (targets) {
-        var $$ = this;
-        var _a = $$.state, hasAxis = _a.hasAxis, hasRadar = _a.hasRadar;
-        // Text
-        $$.updateTargetsForText(targets);
-        // circle
-        if ($$.hasPointType() || hasRadar) {
-            $$.updateTargetForCircle();
-        }
-        if (hasAxis) {
-            $$.hasType("bar") && $$.updateTargetsForBar(targets); // Bar
-            $$.hasTypeOf("Line") && $$.updateTargetsForLine(targets); // Line
-            // Sub Chart
-            $$.updateTargetsForSubchart &&
-                $$.updateTargetsForSubchart(targets);
-        }
-        else {
-            // Arc & Radar
-            $$.hasArcType(targets) && (hasRadar ?
-                $$.updateTargetsForRadar(targets) :
-                $$.updateTargetsForArc(targets));
-        }
-        // Fade-in each chart
-        $$.showTargets();
-    };
-    /**
-     * Display targeted elements
-     * @private
-     */
-    ChartInternal.prototype.showTargets = function () {
-        var $$ = this;
-        var config = $$.config, svg = $$.$el.svg;
-        svg.selectAll("." + CLASS.target)
-            .filter(function (d) { return $$.isTargetToShow(d.id); })
-            .transition()
-            .duration(config.transition_duration)
-            .style("opacity", "1");
-    };
-    ChartInternal.prototype.getWithOption = function (options) {
-        var withOptions = {
-            Y: true,
-            Subchart: true,
-            Transition: true,
-            EventRect: true,
-            Dimension: true,
-            TrimXDomain: true,
-            Transform: false,
-            UpdateXDomain: false,
-            UpdateOrgXDomain: false,
-            Legend: false,
-            UpdateXAxis: "UpdateXDomain",
-            TransitionForExit: "Transition",
-            TransitionForAxis: "Transition"
-        };
-        Object.keys(withOptions).forEach(function (key) {
-            var defVal = withOptions[key];
-            if (isString(defVal)) {
-                defVal = withOptions[defVal];
-            }
-            withOptions[key] = getOption(options, "with" + key, defVal);
-        });
-        return withOptions;
-    };
-    ChartInternal.prototype.initialOpacity = function (d) {
-        var $$ = this;
-        var withoutFadeIn = $$.state.withoutFadeIn;
-        return $$.getBaseValue(d) !== null &&
-            withoutFadeIn[d.id] ? "1" : "0";
-    };
-    ChartInternal.prototype.bindResize = function () {
-        var $$ = this;
-        var config = $$.config, state = $$.state;
-        var resizeFunction = generateResize();
-        var list = [];
-        list.push(function () { return callFn(config.onresize, $$, $$.api); });
-        if (config.resize_auto) {
-            list.push(function () {
-                state.resizing = true;
-                $$.api.flush(false);
-            });
-        }
-        list.push(function () {
-            callFn(config.onresized, $$, $$.api);
-            state.resizing = false;
-        });
-        // add resize functions
-        list.forEach(function (v) { return resizeFunction.add(v); });
-        $$.resizeFunction = resizeFunction;
-        // attach resize event
-        win.addEventListener("resize", $$.resizeFunction = resizeFunction);
-    };
-    /**
-     * Call plugin hook
-     * @param {string} phase The lifecycle phase
-     * @param {Array} args Arguments
-     * @private
-     */
-    ChartInternal.prototype.callPluginHook = function (phase) {
-        var _this = this;
-        var args = [];
-        for (var _i = 1; _i < arguments.length; _i++) {
-            args[_i - 1] = arguments[_i];
-        }
-        this.config.plugins.forEach(function (v) {
-            if (phase === "$beforeInit") {
-                v.$$ = _this;
-                _this.api.plugins.push(v);
-            }
-            v[phase].apply(v, args);
-        });
-    };
-    return ChartInternal;
-}());
-extend(ChartInternal.prototype, __spreadArrays([
-    // common
-    dataConvert,
-    data$1,
-    dataLoad,
-    category,
-    classModule,
-    color$1,
-    domain,
-    interaction$1,
-    format,
-    legend$1,
-    redraw,
-    scale,
-    size,
-    text,
-    title$1,
-    tooltip$1,
-    transform,
-    type
-], internal$1, internal));
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Load configuration option
- * @param {object} config User's generation config value
- * @private
- */
-function loadConfig(config) {
-    var thisConfig = this.config;
-    var target;
-    var keys;
-    var read;
-    var find = function () {
-        var key = keys.shift();
-        if (key && target && isObjectType(target) && key in target) {
-            target = target[key];
-            return find();
-        }
-        else if (!key) {
-            return target;
-        }
-        return undefined;
-    };
-    Object.keys(thisConfig).forEach(function (key) {
-        target = config;
-        keys = key.split("_");
-        read = find();
-        if (isDefined(read)) {
-            thisConfig[key] = read;
-        }
-    });
-}
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var apiChart = {
-    /**
-     * Resize the chart.
-     * @function resize
-     * @instance
-     * @memberof Chart
-     * @param {object} size This argument should include width and height in pixels.
-     * @example
-     * // Resize to 640x480
-     * chart.resize({
-     *    width: 640,
-     *    height: 480
-     * });
-     */
-    resize: function (size) {
-        var $$ = this.internal;
-        var config = $$.config, state = $$.state;
-        if (state.rendered) {
-            config.size_width = size ? size.width : null;
-            config.size_height = size ? size.height : null;
-            this.flush(false, true);
-            $$.resizeFunction();
-        }
-    },
-    /**
-     * Force to redraw.
-     * @function flush
-     * @instance
-     * @memberof Chart
-     * @param {boolean} [soft] For soft redraw.
-     * @example
-     * chart.flush();
-     *
-     * // for soft redraw
-     * chart.flush(true);
-     */
-    flush: function (soft) {
-        var $$ = this.internal;
-        var state = $$.state;
-        if (state.rendered) {
-            // reset possible zoom scale when is called from resize event
-            // eslint-disable-next-line prefer-rest-params
-            if (state.resizing) { // arguments[1] is given when is called from resize
-                $$.brush && $$.brush.updateResize();
-            }
-            else {
-                // re-update config info
-                $$.axis && $$.axis.setOrient();
-            }
-            $$.scale.zoom = null;
-            soft ? $$.redraw({
-                withTransform: true,
-                withUpdateXDomain: true,
-                withUpdateOrgXDomain: true,
-                withLegend: true
-            }) : $$.updateAndRedraw({
-                withLegend: true,
-                withTransition: false,
-                withTransitionForTransform: false
-            });
-        }
-        else {
-            $$.initToRender(true);
-        }
-    },
-    /**
-     * Reset the chart object and remove element and events completely.
-     * @function destroy
-     * @instance
-     * @memberof Chart
-     * @returns {null}
-     * @example
-     * chart.destroy();
-     */
-    destroy: function () {
-        var _this = this;
-        var $$ = this.internal;
-        var _a = $$.$el, chart = _a.chart, svg = _a.svg;
-        if (notEmpty($$)) {
-            $$.callPluginHook("$willDestroy");
-            $$.charts.splice($$.charts.indexOf(this), 1);
-            // clear timers && pending transition
-            svg.select("*").interrupt();
-            $$.resizeFunction.clear();
-            win.removeEventListener("resize", $$.resizeFunction);
-            chart.classed("bb", false).html("");
-            // releasing references
-            Object.keys(this).forEach(function (key) {
-                key === "internal" && Object.keys($$).forEach(function (k) {
-                    $$[k] = null;
-                });
-                _this[key] = null;
-                delete _this[key];
-            });
-        }
-        return null;
-    },
-    /**
-     * Get or set single config option value.
-     * @function config
-     * @instance
-     * @memberof Chart
-     * @param {string} name The option key name.
-     * @param {*} [value] The value accepted for indicated option.
-     * @param {boolean} [redraw] Set to redraw with the new option changes.
-     * - **NOTE:** Doesn't guarantee work in all circumstances. It can be applied for limited options only.
-     * @returns {*}
-     * @example
-     * // Getter
-     * chart.config("gauge.max");
-     *
-     * // Setter
-     * chart.config("gauge.max", 100);
-     *
-     * // Setter & redraw with the new option
-     * chart.config("gauge.max", 100, true);
-     */
-    config: function (name, value, redraw) {
-        var $$ = this.internal;
-        var config = $$.config;
-        var key = name && name.replace(/\./g, "_");
-        var res;
-        if (key in config) {
-            if (isDefined(value)) {
-                config[key] = value;
-                res = value;
-                redraw && this.flush();
-            }
-            else {
-                res = config[key];
-            }
-        }
-        return res;
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var apiColor = {
-    /**
-     * Get the color
-     * @function color
-     * @instance
-     * @memberof Chart
-     * @param {string} id id to get the color
-     * @returns {string}
-     * @example
-     * chart.color("data1");
-     */
-    color: function (id) {
-        return this.internal.color(id); // more patterns
-    }
-};
-
-/**
- * Get data loaded in the chart.
- * @function data
- * @instance
- * @memberof Chart
- * @param {string|Array} targetIds If this argument is given, this API returns the specified target data. If this argument is not given, all of data will be returned.
- * @returns {Array} Data objects
- * @example
- * // Get only data1 data
- * chart.data("data1");
- * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
- *
- * // Get data1 and data2 data
- * chart.data(["data1", "data2"]);
- *
- * // Get all data
- * chart.data();
- */
-function data$2(targetIds) {
-    var targets = this.internal.data.targets;
-    if (!isUndefined(targetIds)) {
-        var ids_1 = isArray(targetIds) ? targetIds : [targetIds];
-        return targets.filter(function (t) { return ids_1.some(function (v) { return v === t.id; }); });
-    }
-    return targets;
-}
-extend(data$2, {
-    /**
-     * Get data shown in the chart.
-     * @function data․shown
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} targetIds If this argument is given, this API filters the data with specified target ids. If this argument is not given, all shown data will be returned.
-     * @returns {Array} Data objects
-     * @example
-     * // Get shown data by filtering to include only data1 data
-     * chart.data.shown("data1");
-     * // --> [{id: "data1", id_org: "data1", values: Array(6)}, ...]
-     *
-     * // Get shown data by filtering to include data1 and data2 data
-     * chart.data.shown(["data1", "data2"]);
-     *
-     * // Get all shown data
-     * chart.data.shown();
-     */
-    shown: function (targetIds) {
-        return this.internal.filterTargetsToShow(this.data(targetIds));
-    },
-    /**
-     * Get values of the data loaded in the chart.
-     * @function data․values
-     * @instance
-     * @memberof Chart
-     * @param {string|Array|null} targetIds This API returns the values of specified target. If this argument is not given, null will be retruned
-     * @param {boolean} [flat=true] Get flatten values
-     * @returns {Array} Data values
-     * @example
-     * // Get data1 values
-     * chart.data.values("data1");
-     * // --> [10, 20, 30, 40]
-     */
-    values: function (targetIds, flat) {
-        if (flat === void 0) { flat = true; }
-        var values = null;
-        if (targetIds) {
-            var targets = this.data(targetIds);
-            if (targets && isArray(targets)) {
-                values = [];
-                targets.forEach(function (v) {
-                    var dataValue = v.values.map(function (d) { return d.value; });
-                    flat ? (values = values.concat(dataValue)) : values.push(dataValue);
-                });
-            }
-        }
-        return values;
-    },
-    /**
-     * Get and set names of the data loaded in the chart.
-     * @function data․names
-     * @instance
-     * @memberof Chart
-     * @param {object} names If this argument is given, the names of data will be updated. If not given, the current names will be returned. The format of this argument is the same as
-     * @returns {object} Corresponding names according its key value, if specified names values.
-     * @example
-     * // Get current names
-     * chart.data.names();
-     * // --> {data1: "test1", data2: "test2"}
-     *
-     * // Update names
-     * chart.data.names({
-     *  data1: "New Name 1",
-     *  data2: "New Name 2"
-     *});
-     */
-    names: function (names) {
-        var $$ = this.internal;
-        // reset existing legend item dimension cache data
-        $$.cache.remove(KEY.legendItemTextBox);
-        return $$.updateDataAttributes("names", names);
-    },
-    /**
-     * Get and set colors of the data loaded in the chart.
-     * @function data․colors
-     * @instance
-     * @memberof Chart
-     * @param {object} colors If this argument is given, the colors of data will be updated. If not given, the current colors will be returned. The format of this argument is the same as [data.colors](./Options.html#.data%25E2%2580%25A4colors).
-     * @returns {object} Corresponding data color value according its key value.
-     * @example
-     * // Get current colors
-     * chart.data.colors();
-     * // --> {data1: "#00c73c", data2: "#fa7171"}
-     *
-     * // Update colors
-     * chart.data.colors({
-     *  data1: "#FFFFFF",
-     *  data2: "#000000"
-     * });
-     */
-    colors: function (colors) {
-        return this.internal.updateDataAttributes("colors", colors);
-    },
-    /**
-     * Get and set axes of the data loaded in the chart.
-     * - **NOTE:** If all data is related to one of the axes, the domain of axis without related data will be replaced by the domain from the axis with related data
-     * @function data․axes
-     * @instance
-     * @memberof Chart
-     * @param {object} axes If this argument is given, the axes of data will be updated. If not given, the current axes will be returned. The format of this argument is the same as
-     * @returns {object} Corresponding axes value for data, if specified axes value.
-     * @example
-     * // Get current axes
-     * chart.data.axes();
-     * // --> {data1: "y"}
-     *
-     * // Update axes
-     * chart.data.axes({
-     *  data1: "y",
-     *  data2: "y2"
-     * });
-     */
-    axes: function (axes) {
-        return this.internal.updateDataAttributes("axes", axes);
-    },
-    /**
-     * Get the minimum data value bound to the chart
-     * @function data․min
-     * @instance
-     * @memberof Chart
-     * @returns {Array} Data objects
-     * @example
-     * // Get current axes
-     * chart.data.min();
-     * // --> [{x: 0, value: 30, id: "data1", index: 0}, ...]
-     */
-    min: function () {
-        return this.internal.getMinMaxData().min;
-    },
-    /**
-     * Get the maximum data value bound to the chart
-     * @function data․max
-     * @instance
-     * @memberof Chart
-     * @returns {Array} Data objects
-     * @example
-     * // Get current axes
-     * chart.data.max();
-     * // --> [{x: 3, value: 400, id: "data1", index: 3}, ...]
-     */
-    max: function () {
-        return this.internal.getMinMaxData().max;
-    }
-});
-var apiData = { data: data$2 };
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Encode to base64
- * @param {string} str string to be encoded
- * @returns {string}
- * @private
- * @see https://developer.mozilla.org/ko/docs/Web/API/WindowBase64/Base64_encoding_and_decoding
- */
-var b64EncodeUnicode = function (str) { return btoa(encodeURIComponent(str)
-    .replace(/%([0-9A-F]{2})/g, function (match, p) { return String.fromCharCode(Number("0x" + p)); })); };
-/**
- * Convert svg node to data url
- * @param {HTMLElement} node target node
- * @param {object} size object containing {width, height}
- * @returns {string}
- * @private
- */
-function nodeToSvgDataUrl(node, size) {
-    var serializer = new XMLSerializer();
-    var clone = node.cloneNode(true);
-    var cssText = getCssRules(toArray(doc.styleSheets))
-        .filter(function (r) { return r.cssText; })
-        .map(function (r) { return r.cssText; });
-    clone.setAttribute("xmlns", namespaces.xhtml);
-    var nodeXml = serializer.serializeToString(clone);
-    // escape css for XML
-    var style = doc.createElement("style");
-    style.appendChild(doc.createTextNode(cssText.join("\n")));
-    var styleXml = serializer.serializeToString(style);
-    // foreignObject not supported in IE11 and below
-    // https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx
-    var dataStr = ("<svg xmlns=\"" + namespaces.svg + "\" width=\"" + size.width + "\" height=\"" + size.height + "\">\n\t\t\t<foreignObject width=\"100%\" height=\"100%\">\n\t\t\t\t" + styleXml + "\n\t\t\t\t" + nodeXml.replace(/(url\()[^#]+/g, "$1") + "\n\t\t\t</foreignObject></svg>")
-        .replace("/\n/g", "%0A");
-    return "data:image/svg+xml;base64," + b64EncodeUnicode(dataStr);
-}
-var apiExport = {
-    /**
-     * Export chart as an image.
-     * - **NOTE:**
-     *   - IE11 and below not work properly due to the lack of the feature(<a href="https://msdn.microsoft.com/en-us/library/hh834675(v=vs.85).aspx">foreignObject</a>) support
-     *   - The basic CSS file(ex. billboard.css) should be at same domain as API call context to get correct styled export image.
-     * @function export
-     * @instance
-     * @memberof Chart
-     * @param {string} [mimeType=image/png] The desired output image format. (ex. 'image/png' for png, 'image/jpeg' for jpeg format)
-     * @param {Function} [callback] The callback to be invoked when export is ready.
-     * @returns {string} dataURI
-     * @example
-     *  chart.export();
-     *  // --> "data:image/svg+xml;base64,PHN..."
-     *
-     *  // Initialize the download automatically
-     *  chart.export("image/png", dataUrl => {
-     *     const link = document.createElement("a");
-     *
-     *     link.download = `${Date.now()}.png`;
-     *     link.href = dataUrl;
-     *     link.innerHTML = "Download chart as image";
-     *
-     *     document.body.appendChild(link);
-     *  });
-     */
-    "export": function (mimeType, callback) {
-        var _this = this;
-        var $$ = this.internal;
-        var state = $$.state, chart = $$.$el.chart;
-        var _a = state.current, width = _a.width, height = _a.height;
-        var svgDataUrl = nodeToSvgDataUrl(chart.node(), { width: width, height: height });
-        if (callback && isFunction(callback)) {
-            var img_1 = new Image();
-            img_1.crossOrigin = "Anonymous";
-            img_1.onload = function () {
-                var canvas = doc.createElement("canvas");
-                var ctx = canvas.getContext("2d");
-                canvas.width = width;
-                canvas.height = height;
-                ctx.drawImage(img_1, 0, 0);
-                callback.bind(_this)(canvas.toDataURL(mimeType));
-            };
-            img_1.src = svgDataUrl;
-        }
-        return svgDataUrl;
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var apiFocus = {
-    /**
-     * This API highlights specified targets and fade out the others.<br><br>
-     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be highlighted.
-     * @function focus
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} targetIdsValue Target ids to be highlighted.
-     * @example
-     *  // data1 will be highlighted and the others will be faded out
-     *  chart.focus("data1");
-     *
-     * // data1 and data2 will be highlighted and the others will be faded out
-     * chart.focus(["data1", "data2"]);
-     *
-     * // all targets will be highlighted
-     * chart.focus();
-     */
-    focus: function (targetIdsValue) {
-        var $$ = this.internal;
-        var state = $$.state;
-        var targetIds = $$.mapToTargetIds(targetIdsValue);
-        var candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-        this.revert();
-        this.defocus();
-        candidates.classed(CLASS.focused, true).classed(CLASS.defocused, false);
-        if ($$.hasArcType() && !state.hasRadar) {
-            $$.expandArc(targetIds);
-            $$.hasType("gauge") &&
-                $$.markOverlapped(targetIdsValue, $$, "." + CLASS.gaugeValue);
-        }
-        $$.toggleFocusLegend(targetIds, true);
-        state.focusedTargetIds = targetIds;
-        state.defocusedTargetIds = state.defocusedTargetIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
-    },
-    /**
-     * This API fades out specified targets and reverts the others.<br><br>
-     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be faded out.
-     * @function defocus
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} targetIdsValue Target ids to be faded out.
-     * @example
-     * // data1 will be faded out and the others will be reverted.
-     * chart.defocus("data1");
-     *
-     * // data1 and data2 will be faded out and the others will be reverted.
-     * chart.defocus(["data1", "data2"]);
-     *
-     * // all targets will be faded out.
-     * chart.defocus();
-     */
-    defocus: function (targetIdsValue) {
-        var $$ = this.internal;
-        var state = $$.state;
-        var targetIds = $$.mapToTargetIds(targetIdsValue);
-        var candidates = $$.$el.svg.selectAll($$.selectorTargets(targetIds.filter($$.isTargetToShow, $$)));
-        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, true);
-        if ($$.hasArcType()) {
-            $$.unexpandArc(targetIds);
-            $$.hasType("gauge") &&
-                $$.undoMarkOverlapped($$, "." + CLASS.gaugeValue);
-        }
-        $$.toggleFocusLegend(targetIds, false);
-        state.focusedTargetIds = state.focusedTargetIds.filter(function (id) { return targetIds.indexOf(id) < 0; });
-        state.defocusedTargetIds = targetIds;
-    },
-    /**
-     * This API reverts specified targets.<br><br>
-     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be reverted.
-     * @function revert
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} targetIdsValue Target ids to be reverted
-     * @example
-     * // data1 will be reverted.
-     * chart.revert("data1");
-     *
-     * // data1 and data2 will be reverted.
-     * chart.revert(["data1", "data2"]);
-     *
-     * // all targets will be reverted.
-     * chart.revert();
-     */
-    revert: function (targetIdsValue) {
-        var $$ = this.internal;
-        var config = $$.config, state = $$.state, $el = $$.$el;
-        var targetIds = $$.mapToTargetIds(targetIdsValue);
-        var candidates = $el.svg.selectAll($$.selectorTargets(targetIds)); // should be for all targets
-        candidates.classed(CLASS.focused, false).classed(CLASS.defocused, false);
-        $$.hasArcType() && $$.unexpandArc(targetIds);
-        if (config.legend_show) {
-            $$.showLegend(targetIds.filter($$.isLegendToShow.bind($$)));
-            $el.legend.selectAll($$.selectorLegends(targetIds))
-                .filter(function () {
-                return select(this).classed(CLASS.legendItemFocused);
-            })
-                .classed(CLASS.legendItemFocused, false);
-        }
-        state.focusedTargetIds = [];
-        state.defocusedTargetIds = [];
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Define legend
- * @ignore
- */
-var legend$2 = {
-    /**
-     * Show legend for each target.
-     * @function legend․show
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} targetIds
-     * - If targetIds is given, specified target's legend will be shown.
-     * - If only one target is the candidate, String can be passed.
-     * - If no argument is given, all of target's legend will be shown.
-     * @example
-     * // Show legend for data1.
-     * chart.legend.show("data1");
-     *
-     * // Show legend for data1 and data2.
-     * chart.legend.show(["data1", "data2"]);
-     *
-     * // Show all legend.
-     * chart.legend.show();
-     */
-    show: function (targetIds) {
-        var $$ = this.internal;
-        $$.showLegend($$.mapToTargetIds(targetIds));
-        $$.updateAndRedraw({ withLegend: true });
-    },
-    /**
-     * Hide legend for each target.
-     * @function legend․hide
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} targetIds
-     * - If targetIds is given, specified target's legend will be hidden.
-     * - If only one target is the candidate, String can be passed.
-     * - If no argument is given, all of target's legend will be hidden.
-     * @example
-     * // Hide legend for data1.
-     * chart.legend.hide("data1");
-     *
-     * // Hide legend for data1 and data2.
-     * chart.legend.hide(["data1", "data2"]);
-     *
-     * // Hide all legend.
-     * chart.legend.hide();
-     */
-    hide: function (targetIds) {
-        var $$ = this.internal;
-        $$.hideLegend($$.mapToTargetIds(targetIds));
-        $$.updateAndRedraw({ withLegend: true });
-    }
-};
-var apiLegend = { legend: legend$2 };
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-var apiLoad = {
-    /**
-     * Load data to the chart.<br><br>
-     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
-     * - <b>Note:</b>
-     *   - unload should be used if some data needs to be unloaded simultaneously.
-     *     If you call unload API soon after/before load instead of unload param, chart will not be rendered properly because of cancel of animation.<br>
-     *   - done will be called after data loaded, but it's not after rendering.
-     *     It's because rendering will finish after some transition and there is some time lag between loading and rendering
-     * @function load
-     * @instance
-     * @memberof Chart
-     * @param {object} args The object can consist with following members:<br>
-     *
-     *    | Key | Description |
-     *    | --- | --- |
-     *    | - url<br>- json<br>- rows<br>- columns | The data will be loaded. If data that has the same target id is given, the chart will be updated. Otherwise, new target will be added |
-     *    | data | Data objects to be loaded. Checkout the example. |
-     *    | names | Same as data.names() |
-     *    | xs | Same as data.xs option  |
-     *    | classes | The classes specified by data.classes will be updated. classes must be Object that has target id as keys. |
-     *    | categories | The categories specified by axis.x.categories or data.x will be updated. categories must be Array. |
-     *    | axes | The axes specified by data.axes will be updated. axes must be Object that has target id as keys. |
-     *    | colors | The colors specified by data.colors will be updated. colors must be Object that has target id as keys. |
-     *    | headers |  Set request header if loading via `data.url`.<br>@see [data․headers](Options.html#.data%25E2%2580%25A4headers) |
-     *    | keys |  Choose which JSON objects keys correspond to desired data.<br>**NOTE:** Only for JSON object given as array.<br>@see [data․keys](Options.html#.data%25E2%2580%25A4keys) |
-     *    | mimeType |  Set 'json' if loading JSON via url.<br>@see [data․mimeType](Options.html#.data%25E2%2580%25A4mimeType) |
-     *    | - type<br>- types | The type of targets will be updated. type must be String and types must be Object. |
-     *    | unload | Specify the data will be unloaded before loading new data. If true given, all of data will be unloaded. If target ids given as String or Array, specified targets will be unloaded. If absent or false given, unload will not occur. |
-     *    | done | The specified function will be called after data loaded.|
-     * @see [Demo](https://naver.github.io/billboard.js/demo/#Data.DataFromURL)
-     * @example
-     * // Load data1 and unload data2 and data3
-     * chart.load({
-     *     columns: [
-     *        ["data1", 100, 200, 150, ...],
-     *        ...
-     *    ],
-     *    unload: ["data2", "data3"],
-     *    url: "...",
-     *    done: function() { ... }
-     * });
-     * @example
-     * // myAPI.json
-     * // {
-     * //   "data1": [220, 240, 270, 250, 280],
-     * //   "data2": [180, 150, 300, 70, 120]
-     * // }
-     *
-     * chart.load({
-     *     url: './data/myAPI.json',
-     *     mimeType: "json",
-     *
-     *     // set request header if is needed
-     *     headers: {
-     *       "Content-Type": "text/json"
-     *     }
-     * });
-     * @example
-     * chart.load({
-     *     data: [
-     *       // equivalent as: columns: [["data1", 30, 200, 100]]
-     *       {"data1": 30}, {"data1": 200}, {"data1": 100}
-     *
-     *       // or
-     *       // equivalent as: columns: [["data1", 10, 20], ["data2", 13, 30]]
-     *       // {"data1": 10, "data2": 13}, {"data1": 20, "data2": 30}}
-     *     ]
-     * });
-     */
-    load: function (args) {
-        var $$ = this.internal;
-        var config = $$.config;
-        // update xs if specified
-        args.xs && $$.addXs(args.xs);
-        // update names if exists
-        "names" in args && this.data.names(args.names);
-        // update classes if exists
-        "classes" in args && Object.keys(args.classes).forEach(function (id) {
-            config.data_classes[id] = args.classes[id];
-        });
-        // update categories if exists
-        if ("categories" in args && $$.axis.isCategorized()) {
-            config.axis_x_categories = args.categories;
-        }
-        // update axes if exists
-        "axes" in args && Object.keys(args.axes).forEach(function (id) {
-            config.data_axes[id] = args.axes[id];
-        });
-        // update colors if exists
-        "colors" in args && Object.keys(args.colors).forEach(function (id) {
-            config.data_colors[id] = args.colors[id];
-        });
-        // unload if needed
-        if ("unload" in args && args.unload !== false) {
-            // TODO: do not unload if target will load (included in url/rows/columns)
-            $$.unload($$.mapToTargetIds(args.unload === true ? null : args.unload), function () {
-                return $$.loadFromArgs(args);
-            });
-        }
-        else {
-            $$.loadFromArgs(args);
-        }
-    },
-    /**
-     * Unload data to the chart.<br><br>
-     * You can specify multiple targets by giving an array that includes id as String. If no argument is given, all of targets will be toggles.
-     * - <b>Note:</b>
-     * If you call load API soon after/before unload, unload param of load should be used. Otherwise chart will not be rendered properly because of cancel of animation.<br>
-     * `done` will be called after data loaded, but it's not after rendering. It's because rendering will finish after some transition and there is some time lag between loading and rendering.
-     * @function unload
-     * @instance
-     * @memberof Chart
-     * @param {object} argsValue
-     *  | key | Type | Description |
-     *  | --- | --- | --- |
-     *  | ids | String &vert; Array | Target id data to be unloaded. If not given, all data will be unloaded. |
-     *  | done | Fuction | Callback after data is unloaded. |
-     * @example
-     *  // Unload data2 and data3
-     *  chart.unload({
-     *    ids: ["data2", "data3"],
-     *    done: function() {
-     *       // called after the unloaded
-     *    }
-     *  });
-     */
-    unload: function (argsValue) {
-        var _this = this;
-        var $$ = this.internal;
-        var args = argsValue || {};
-        if (isArray(args)) {
-            args = { ids: args };
-        }
-        else if (isString(args)) {
-            args = { ids: [args] };
-        }
-        var ids = $$.mapToTargetIds(args.ids);
-        $$.unload(ids, function () {
-            $$.redraw({
-                withUpdateOrgXDomain: true,
-                withUpdateXDomain: true,
-                withLegend: true
-            });
-            $$.cache.remove(ids);
-            args.done && args.done.call(_this);
-        });
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Show/Hide data series
- * @param {boolean} show Show or hide
- * @param {Array} targetIdsValue Target id values
- * @param {object} options Options
- * @private
- */
-function showHide(show, targetIdsValue, options) {
-    var $$ = this.internal;
-    var targetIds = $$.mapToTargetIds(targetIdsValue);
-    $$.state.toggling = true;
-    $$[(show ? "remove" : "add") + "HiddenTargetIds"](targetIds);
-    var targets = $$.$el.svg.selectAll($$.selectorTargets(targetIds));
-    var opacity = show ? "1" : "0";
-    targets.transition()
-        .style("opacity", opacity, "important")
-        .call(endall, function () {
-        targets.style("opacity", null).style("opacity", opacity);
-    });
-    options.withLegend && $$[(show ? "show" : "hide") + "Legend"](targetIds);
-    $$.redraw({
-        withUpdateOrgXDomain: true,
-        withUpdateXDomain: true,
-        withLegend: true
-    });
-    $$.state.toggling = false;
-}
-var apiShow = {
-    /**
-     * Show data series on chart
-     * @function show
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} [targetIdsValue] The target id value.
-     * @param {object} [options] The object can consist with following members:<br>
-     *
-     *    | Key | Type | default | Description |
-     *    | --- | --- | --- | --- |
-     *    | withLegend | boolean | false | whether or not display legend |
-     *
-     * @example
-     * // show 'data1'
-     * chart.show("data1");
-     *
-     * // show 'data1' and 'data3'
-     * chart.show(["data1", "data3"]);
-     */
-    show: function (targetIdsValue, options) {
-        if (options === void 0) { options = {}; }
-        showHide.call(this, true, targetIdsValue, options);
-    },
-    /**
-     * Hide data series from chart
-     * @function hide
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} [targetIdsValue] The target id value.
-     * @param {object} [options] The object can consist with following members:<br>
-     *
-     *    | Key | Type | default | Description |
-     *    | --- | --- | --- | --- |
-     *    | withLegend | boolean | false | whether or not display legend |
-     *
-     * @example
-     * // hide 'data1'
-     * chart.hide("data1");
-     *
-     * // hide 'data1' and 'data3'
-     * chart.hide(["data1", "data3"]);
-     */
-    hide: function (targetIdsValue, options) {
-        if (options === void 0) { options = {}; }
-        showHide.call(this, false, targetIdsValue, options);
-    },
-    /**
-     * Toggle data series on chart. When target data is hidden, it will show. If is shown, it will hide in vice versa.
-     * @function toggle
-     * @instance
-     * @memberof Chart
-     * @param {string|Array} [targetIds] The target id value.
-     * @param {object} [options] The object can consist with following members:<br>
-     *
-     *    | Key | Type | default | Description |
-     *    | --- | --- | --- | --- |
-     *    | withLegend | boolean | false | whether or not display legend |
-     *
-     * @example
-     * // toggle 'data1'
-     * chart.toggle("data1");
-     *
-     * // toggle 'data1' and 'data3'
-     * chart.toggle(["data1", "data3"]);
-     */
-    toggle: function (targetIds, options) {
-        var _this = this;
-        if (options === void 0) { options = {}; }
-        var $$ = this.internal;
-        var targets = { show: [], hide: [] };
-        // sort show & hide target ids
-        $$.mapToTargetIds(targetIds)
-            .forEach(function (id) { return targets[$$.isTargetToShow(id) ? "hide" : "show"].push(id); });
-        // perform show & hide task separately
-        // https://github.com/naver/billboard.js/issues/454
-        targets.show.length && this.show(targets.show, options);
-        targets.hide.length && setTimeout(function () { return _this.hide(targets.hide, options); }, 0);
-    }
-};
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
- * billboard.js project is licensed under the MIT license
- */
-/**
- * Define tooltip
- * @ignore
- */
-var tooltip$2 = {
-    /**
-     * Show tooltip
-     * @function tooltip․show
-     * @instance
-     * @memberof Chart
-     * @param {object} args The object can consist with following members:<br>
-     *
-     *    | Key | Type | Description |
-     *    | --- | --- | --- |
-     *    | index | Number | Determine focus by index |
-     *    | x | Number &vert; Date | Determine focus by x Axis index |
-     *    | mouse | Array | Determine x and y coordinate value relative the targeted '.bb-event-rect' x Axis.<br>It should be used along with `data`, `index` or `x` value. The default value is set as `[0,0]` |
-     *    | data | Object | When [data.xs](Options.html#.data%25E2%2580%25A4xs) option is used or [tooltip.grouped](Options.html#.tooltip) set to 'false', `should be used giving this param`.<br><br>**Key:**<br>- x {number &verbar; Date}: x Axis value<br>- index {number}: x Axis index (useless for data.xs)<br>- id {string}: data id<br>- value {number}: The corresponding value for tooltip. |
-     *
-     * @example
-     *  // show the 2nd x Axis coordinate tooltip
-     *  chart.tooltip.show({
-     *    index: 1
-     *  });
-     *
-     *  // show tooltip for the 3rd x Axis in x:50 and y:100 coordinate of '.bb-event-rect' of the x Axis.
-     *  chart.tooltip.show({
-     *    x: 2,
-     *    mouse: [50, 100]
-     *  });
-     *
-     *  // show tooltip for timeseries x axis
-     *  chart.tooltip.show({
-     *    x: new Date("2018-01-02 00:00")
-     *  });
-     *
-     *  // when data.xs is used
-     *  chart.tooltip.show({
-     *    data: {
-     *        x: 3,  // x Axis value
-     *        id: "data1",  // data id
-     *        value: 500  // data value
-     *    }
-     *  });
-     *
-     *  // when data.xs isn't used, but tooltip.grouped=false is set
-     *  chart.tooltip.show({
-     *    data: {
-     *        index: 3,  // or 'x' key value
-     *        id: "data1",  // data id
-     *        value: 500  // data value
-     *    }
-     *  });
-     */
-    show: function (args) {
-        var $$ = this.internal;
-        var config = $$.config, inputType = $$.state.inputType;
-        var index;
-        var mouse;
-        // determine mouse position on the chart
-        if (args.mouse) {
-            mouse = args.mouse;
-        }
-        // determine focus data
-        if (args.data) {
-            var data = args.data;
-            var y = $$.getYScaleById(data.id)(data.value);
-            if ($$.isMultipleX()) {
-                // if multiple xs, target point will be determined by mouse
-                mouse = [$$.scale.x(data.x), y];
-            }
-            else {
-                if (!config.tooltip_grouped) {
-                    mouse = [0, y];
-                }
-                index = isValue(data.index) ? data.index : $$.getIndexByX(data.x);
-            }
-        }
-        else if (isDefined(args.x)) {
-            index = $$.getIndexByX(args.x);
-        }
-        else if (isDefined(args.index)) {
-            index = args.index;
-        }
-        // emulate events to show
-        (inputType === "mouse" ?
-            ["mouseover", "mousemove"] : ["touchstart"]).forEach(function (eventName) {
-            $$.dispatchEvent(eventName, index, mouse);
-        });
-    },
-    /**
-     * Hide tooltip
-     * @function tooltip․hide
-     * @instance
-     * @memberof Chart
-     */
-    hide: function () {
-        var $$ = this.internal;
-        // reset last touch point index
-        $$.inputType === "touch" && $$.callOverOutForTouch();
-        $$.hideTooltip(true);
-        $$.hideGridFocus();
-        $$.unexpandCircles();
-        $$.unexpandBars();
-    }
-};
-var apiTooltip = { tooltip: tooltip$2 };
-
-/**
- * Main chart class.
- * - Note: Instantiated via `bb.generate()`.
- * @class Chart
- * @example
- * var chart = bb.generate({
- *  data: {
- *    columns: [
- *	    ["x", "2015-11-02", "2015-12-01", "2016-01-01", "2016-02-01", "2016-03-01"],
- * 	    ["count1", 11, 8, 7, 6, 5 ],
- *	    ["count2", 9, 3, 6, 2, 8 ]
- *   ]}
- * }
- * @see {@link bb.generate} for the initialization.
- */
-/**
- * Access instance's primary node elements
- * @member {object} $
- * @property {object} $ Access instance's primary node elements
- * @property {d3.selection} $.chart Wrapper element
- * @property {d3.selection} $.svg Main svg element
- * @property {d3.selection} $.defs Definition element
- * @property {d3.selection} $.main Main grouping element
- * @property {d3.selection} $.tooltip Tooltip element
- * @property {d3.selection} $.legend Legend element
- * @property {d3.selection} $.title Title element
- * @property {d3.selection} $.grid Grid element
- * @property {d3.selection} $.arc Arc element
- * @property {d3.selection} $.circles Data point circle elements
- * @property {object} $.bar Bar element object
- * @property {d3.selection} $.bar.bars Bar elements
- * @property {object} $.line Line element object
- * @property {d3.selection} $.line.lines Line elements
- * @property {d3.selection} $.line.areas Areas elements
- * @property {object} $.text Text element object
- * @property {d3.selection} $.text.texts Data label text elements
- * @memberof Chart
- * @example
- * var chart = bb.generate({ ... });
- *
- * chart.$.chart; // wrapper element
- * chart.$.line.circles;  // all data point circle elements
- */
-/**
- * Plugin instance array
- * @member {Array} plugins
- * @memberof Chart
- * @example
- *  var chart = bb.generate({
- *     ...
- *     plugins: [
- *        new bb.plugin.stanford({ ... }),
- *        new PluginA()
- *     ]
- *  });
- *
- *  chart.plugins; // [Stanford, PluginA] - instance array
- */
-var Chart = /** @class */ (function () {
-    function Chart(options) {
-        this.plugins = [];
-        var ctx = this;
-        // const {type, types} = options.data;
-        // let isArc = false;
-        // if (type) {
-        // 	isArc = TYPES.Arc.indexOf(type) > -1;
-        // } else if (types) {
-        // 	for (const x in types) {
-        // 		if (TYPES.Arc.indexOf(types[x]) > -1) {
-        // 			isArc = true;
-        // 			break;
-        // 		}
-        // 	}
-        // }
-        var $$ = new ChartInternal(ctx);
-        this.internal = $$;
-        // bind to namespaced APIs
-        (function bindThis(fn, target, argThis) {
-            Object.keys(fn).forEach(function (key) {
-                var isFunc = isFunction(fn[key]);
-                var isChild = target !== argThis;
-                var hasChild = Object.keys(fn[key]).length > 0;
-                if (isFunc && ((!isChild && hasChild) || isChild)) {
-                    target[key] = fn[key].bind(argThis);
-                }
-                else if (!isFunc) {
-                    target[key] = {};
-                }
-                hasChild && bindThis(fn[key], target[key], argThis);
-            });
-        })(Chart.prototype, this, this);
-        loadConfig.call($$, options);
-        $$.beforeInit();
-        $$.init();
-    }
-    return Chart;
-}());
-// extend common APIs as part of Chart class
-extend(Chart.prototype, __spreadArrays([
-    apiChart,
-    apiColor,
-    apiData,
-    apiExport,
-    apiFocus,
-    apiLegend,
-    apiLoad,
-    apiShow,
-    apiTooltip
-], api));
-
-/**
- * Copyright (c) 2017 ~ present NAVER Corp.
  * billboard project is licensed under the MIT license
  */
 var defaults = {};
@@ -18439,5 +18631,65 @@ var bb = {
     plugin: {}
 };
 
+/**
+ * Extend Axis
+ * @param {Array} module Module to be extended
+ * @returns {boolean}
+ */
+function extendAxis() {
+    var module = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        module[_i] = arguments[_i];
+    }
+    extend(ChartInternal.prototype, __spreadArrays(internal, module));
+    extend(Chart.prototype, api);
+    return true;
+}
+/**
+ * Extend Line type modules
+ * @param {Array} module Module to be extended
+ * @returns {boolean}
+ */
+function extendLine() {
+    var module = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        module[_i] = arguments[_i];
+    }
+    extendAxis.apply(void 0, __spreadArrays([shapePoint, shapeLine], module));
+    return true;
+}
+/**
+ * Extend Arc type modules
+ * @param {Array} module Module to be extended
+ * @returns {boolean}
+ */
+function extendArc() {
+    var module = [];
+    for (var _i = 0; _i < arguments.length; _i++) {
+        module[_i] = arguments[_i];
+    }
+    extend(ChartInternal.prototype, __spreadArrays([shapeArc], module));
+    return true;
+}
+// Area types
+var area$1 = function () { return (extendLine(shapeArea) && TYPE.AREA); };
+var areaLineRange = function () { return (extendLine(shapeArea) && TYPE.AREA_LINE_RANGE); };
+var areaSpline = function () { return (extendLine(shapeArea) && TYPE.AREA_SPLINE); };
+var areaSplineRange = function () { return (extendLine(shapeArea) && TYPE.AREA_SPLINE_RANGE); };
+var areaStep = function () { return (extendLine(shapeArea) && TYPE.AREA_STEP); };
+// Line types
+var line$1 = function () { return (extendLine() && TYPE.LINE); };
+var spline$1 = function () { return (extendLine() && TYPE.SPLINE); };
+var step = function () { return (extendLine() && TYPE.STEP); };
+// Arc types
+var donut$1 = function () { return (extendArc() && TYPE.DONUT); };
+var gauge$1 = function () { return (extendArc() && TYPE.GAUGE); };
+var pie$1 = function () { return (extendArc() && TYPE.PIE); };
+var radar$1 = function () { return (extendArc(shapePoint, shapeRadar) && TYPE.RADAR); };
+// Axis based types
+var bar$1 = function () { return (extendAxis(shapeBar) && TYPE.BAR); };
+var bubble$1 = function () { return (extendAxis(shapePoint, shapeBubble) && TYPE.BUBBLE); };
+var scatter = function () { return (extendAxis(shapePoint) && TYPE.SCATTER); };
+
 export default bb;
-export { bb };
+export { area$1 as area, areaLineRange, areaSpline, areaSplineRange, areaStep, bar$1 as bar, bb, bubble$1 as bubble, donut$1 as donut, gauge$1 as gauge, line$1 as line, pie$1 as pie, radar$1 as radar, scatter, spline$1 as spline, step };

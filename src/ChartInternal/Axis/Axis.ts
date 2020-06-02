@@ -13,7 +13,13 @@ import AxisRenderer from "./AxisRenderer";
 import CLASS from "../../config/classes";
 import {capitalize, isArray, isFunction, isString, isValue, isEmpty, isNumber, isObjectType, mergeObj, notEmpty, parseDate, sortValue} from "../../module/util";
 
-export default class Axis {
+export default {
+	getAxisInstance: function() {
+		return this.axis || new Axis(this);
+	}
+};
+
+class Axis {
 	public owner;
 
 	public x;

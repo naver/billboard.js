@@ -64,7 +64,7 @@ export default {
 			// update data's index value to be alinged with the x Axis
 			$$.updateDataIndexByX(xAxisTickValues);
 			$$.updateXs(xAxisTickValues);
-			$$.updatePointClass(true);
+			$$.updatePointClass && $$.updatePointClass(true);
 
 			eventRects.datum(xAxisTickValues);
 

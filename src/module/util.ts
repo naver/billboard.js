@@ -321,7 +321,7 @@ function extend(target = {}, source): object {
 
 	// exclude name with only numbers
 	for (const p in source) {
-		if (/^\d+$/.test(p)) {
+		if (/^\d+$/.test(p) || p in target) {
 			continue;
 		}
 

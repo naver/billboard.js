@@ -18,6 +18,7 @@ import apiX from "../../Chart/api/x";
 import apiZoom from "../../Chart/api/zoom";
 
 // ChartInternal
+import axis from "../../ChartInternal/Axis/Axis";
 import drag from "../../ChartInternal/interactions/drag";
 import flow from "../../ChartInternal/interactions/flow";
 import eventrect from "../../ChartInternal/interactions/eventrect";
@@ -28,13 +29,7 @@ import clip from "../../ChartInternal/internals/clip";
 import grid from "../../ChartInternal/internals/grid";
 import region from "../../ChartInternal/internals/region";
 import selection from "../../ChartInternal/internals/selection";
-
-import area from "../../ChartInternal/shape/area";
-import bar from "../../ChartInternal/shape/bar";
-import bubble from "../../ChartInternal/shape/bubble";
-import line from "../../ChartInternal/shape/line";
-import point from "../../ChartInternal/shape/point";
-import shape from "../../ChartInternal/shape/shape";
+import sizeAxis from "../../ChartInternal/internals/size.axis";
 
 export const api = [
 	apiAxis,
@@ -50,21 +45,16 @@ export const api = [
 ];
 
 export const internal = [
+	axis,
 	drag,
 	flow,
 	subchart,
 	zoom,
 
 	clip,
+	eventrect,
 	grid,
 	region,
 	selection,
-	eventrect,
-
-	area,
-	bar,
-	bubble,
-	line,
-	point,
-	shape
+	sizeAxis
 ];

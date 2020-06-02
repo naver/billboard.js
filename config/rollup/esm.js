@@ -47,7 +47,7 @@ const bbPlugins = fs.readdirSync(path.resolve(__dirname, "../../src/Plugin/"), {
 
 export default [
     {
-        input: "src/index.ts",
+        input: "src/index.esm.ts",
         output: {
             file: "dist/billboard.esm.js",
             format: "es",
